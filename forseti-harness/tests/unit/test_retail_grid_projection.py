@@ -2058,3 +2058,173 @@ def _ulta_grid_html(
         + f"<p>You have viewed {declared if viewed is None else viewed} of {declared}</p>"
         + f"{button}{stale_state}</body></html>"
     )
+
+
+def _ulta_category_card(position: int, product_id: str) -> dict:
+    return {
+        "grid_position": position,
+        "source_product_id": product_id,
+        "selected_sku_id": f"sku{position}",
+        "product_url": f"https://www.ulta.com/p/item-{product_id}?sku=sku{position}",
+        "brand_name": "Rare Beauty",
+        "name": f"Product {position}",
+        "price_display": "$25.00",
+        "average_rating": "4.7",
+        "review_count": 100 + position,
+        "visible_variant_count": None,
+        "visible_variant_label": None,
+        "badges": [],
+    }
+
+
+def _ulta_category_record(
+    *,
+    cards: list[dict],
+    viewed_count: int | None,
+    declared_count: int | None,
+    load_more_control_present: bool,
+    selected_sort_id: str | None,
+    category_heading: str = "Makeup",
+) -> bytes:
+    record = {
+        "content_record_version": ULTA_GRID_CONTENT_RECORD_VERSION,
+        "retailer": "ulta",
+        "final_url": "https://www.ulta.com/shop/makeup/all?sort=best_sellers",
+        "brand_name": category_heading,
+        "viewed_count": viewed_count,
+        "declared_count": declared_count,
+        "load_more_control_present": load_more_control_present,
+        "explicit_currency_codes": [],
+        "selected_sort_id": selected_sort_id,
+        "cards": cards,
+    }
+    return json.dumps(record, separators=(",", ":")).encode()
+
+
+def _ulta_category_projection(
+    body: bytes, *, locator: str = "https://www.ulta.com/shop/makeup/all"
+):
+    packet = _packet(
+        retailer="ulta",
+        locator=locator,
+        relative_path="raw/content_record.json",
+        body=body,
+        surface="cloakbrowser_snapshot",
+    )
+    return build_retail_grid_projection(
+        packet=packet, raw_file_bytes_by_file_id={"file_01": body}
+    )
+
+
+def test_ulta_category_grid_confirms_native_bestseller_bounded_top_window() -> None:
+    cards = [_ulta_category_card(i, f"pimprod{i:04d}") for i in range(1, 5)]
+    body = _ulta_category_record(
+        cards=cards,
+        viewed_count=4,
+        declared_count=7000,
+        load_more_control_present=True,
+        selected_sort_id="best_sellers",
+    )
+    projection = _ulta_category_projection(body)
+    gf = projection.source_visible_grid_facts
+    assert gf["page_kind"] == "category_grid"
+    assert gf["requested_category_slug"] == "makeup"
+    assert gf["subject_binding_confirmed"] is True
+    assert gf["native_bestseller_order_confirmed"] is True
+    assert gf["selected_sort_id"] == "best_sellers"
+    assert gf["page_declared_result_count"] == 7000
+    assert gf["captured_window_placement_count"] == 4
+    # A bounded top window: more remain, and that is NOT an incompleteness.
+    assert gf["more_available_beyond_window"] is True
+    assert projection.completeness.status == "complete"
+    assert projection.completeness.termination == "requested_page_window_reconciled"
+    assert projection.completeness.residuals == []
+
+
+def test_ulta_category_grid_wrong_category_subject_fails() -> None:
+    cards = [_ulta_category_card(i, f"pimprod{i:04d}") for i in range(1, 4)]
+    body = _ulta_category_record(
+        cards=cards,
+        viewed_count=3,
+        declared_count=7000,
+        load_more_control_present=True,
+        selected_sort_id="best_sellers",
+        category_heading="Fragrance",
+    )
+    projection = _ulta_category_projection(
+        body, locator="https://www.ulta.com/shop/makeup/all"
+    )
+    assert projection.source_visible_grid_facts["subject_binding_confirmed"] is False
+    assert projection.completeness.status == "incomplete"
+    assert (
+        "ulta_category_grid_subject_binding_unconfirmed"
+        in projection.completeness.residuals
+    )
+
+
+def test_ulta_category_grid_non_bestseller_sort_fails_for_sort_not_cards() -> None:
+    cards = [_ulta_category_card(i, f"pimprod{i:04d}") for i in range(1, 4)]
+    body = _ulta_category_record(
+        cards=cards,
+        viewed_count=3,
+        declared_count=7000,
+        load_more_control_present=True,
+        selected_sort_id="top_rated",
+    )
+    projection = _ulta_category_projection(body)
+    # Cards are intact and ordered; admission fails for the sort, not missing cards.
+    assert len(projection.rows) == 3
+    assert (
+        projection.source_visible_grid_facts["native_bestseller_order_confirmed"]
+        is False
+    )
+    assert projection.completeness.status == "incomplete"
+    assert any(
+        residual.startswith("ulta_category_grid_bestseller_sort_unconfirmed")
+        for residual in projection.completeness.residuals
+    )
+
+
+def test_ulta_category_grid_premature_stop_breaks_rank_contiguity() -> None:
+    # Positions 1,2,4 (missing 3) simulate a dropped placement / premature stop.
+    cards = [_ulta_category_card(p, f"pimprod{p:04d}") for p in (1, 2, 4)]
+    body = _ulta_category_record(
+        cards=cards,
+        viewed_count=3,
+        declared_count=7000,
+        load_more_control_present=True,
+        selected_sort_id="best_sellers",
+    )
+    projection = _ulta_category_projection(body)
+    assert projection.completeness.status == "incomplete"
+    assert (
+        "ulta_category_grid_rank_sequence_non_contiguous"
+        in projection.completeness.residuals
+    )
+
+
+def test_ulta_category_grid_duplicate_parent_stays_visible() -> None:
+    # Same product at positions 1 and 3; a distinct product at 2.
+    base = _ulta_category_card(1, "pimprod0001")
+    duplicate = dict(base)
+    duplicate["grid_position"] = 3
+    cards = [base, _ulta_category_card(2, "pimprod0002"), duplicate]
+    body = _ulta_category_record(
+        cards=cards,
+        viewed_count=3,
+        declared_count=7000,
+        load_more_control_present=True,
+        selected_sort_id="best_sellers",
+    )
+    projection = _ulta_category_projection(body)
+    assert projection.completeness.extracted_unique_parent_count == 2
+    assert projection.completeness.extracted_placement_count == 3
+    assert projection.completeness.duplicate_placement_count == 1
+    dup = next(
+        row
+        for row in projection.rows
+        if row.source_visible_fields["source_product_id"] == "pimprod0001"
+    )
+    assert len(dup.placements) == 2
+    # Duplicate visibility is not itself an incompleteness for a category grid.
+    assert projection.completeness.status == "complete"

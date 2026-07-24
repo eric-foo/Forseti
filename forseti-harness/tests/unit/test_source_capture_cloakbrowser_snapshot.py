@@ -1012,6 +1012,10 @@ def test_live_engine_clicks_load_more_until_selector_gone(monkeypatch: pytest.Mo
             calls.append("content")
             return "<html><body>reviews</body></html>"
 
+        def evaluate(self, script: str, arg: object = None) -> object:
+            # Post-load-more scroll-to-bottom lands the terminal footer in view.
+            return 0 if "scrollHeight" in script else None
+
         def locator(self, selector: str):
             if selector == "body":
                 return FakeBodyLocator()
