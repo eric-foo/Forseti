@@ -2,8 +2,8 @@
 
 ```yaml
 retrieval_header_version: 1
-artifact_role: evidence-layer dogfood record and p06-to-p08 comparison
-scope: REVOLVE completion, durable TSG capture, and bounded Sephora four-family closure; no Turn B or company report
+artifact_role: evidence-layer dogfood record and p06-to-p09 comparison
+scope: REVOLVE completion, durable company/event capture, Sephora customer-depth closure, and whole-gate reconciliation; no Turn B or company report
 use_when:
   - Evaluating whether complete bounded review-corpus acquisition improves Phase A decision usefulness.
   - Verifying the completed Summer Fridays Phase A evidence layer without rerunning completed work.
@@ -12,7 +12,7 @@ open_next:
   - docs/workflows/summer_fridays_understanding_dogfood_20260725_p07/acquisition_seal.md
   - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
 stale_if:
-  - The p07 completion receipt, TSG packet, p08 Sephora packets, or p06 control artifacts change.
+  - The p07 completion receipt, company/event packets, p08 Sephora packets, p09 body-launch packets, or p06 control artifacts change.
 ```
 
 ## Bound question
@@ -203,21 +203,137 @@ This closes the exact four-family Sephora job named by the p07 seal. The
 separate 44-product direct-provider experiment remains test-only and is not
 needed for this closure.
 
+## Whole-gate reconciliation
+
+A fresh whole-gate read after the earlier blocked-to-pass transition exposed
+three material bases that the last-blocker-only adjudication had missed. The
+p06 artifacts remain the historical control; this section records the
+supplemental correction.
+
+### Current body-category expansion
+
+The admitted p06 Sephora grid already contained ten new, zero-review launch
+placements that the onboarding had retained as `UNMATCHED_MATCH`. A current
+company-owned body collection independently exposes six products as coming
+August 6: Vanilla, Pink Guava, and Pistachio body fragrance mists plus the same
+three scents as Body Butter Balms.
+
+The ten grid placements reconcile to six launch families rather than ten
+independent products:
+
+| Normalized family | Sephora placements | PDP result |
+| --- | --- | --- |
+| `body-fragrance-mist-vanilla` | `P525593` | admitted baseline |
+| `body-fragrance-mist-pink-guava` | `P525659`, mini `P525609` | parent admitted; mini route failed on the canonical attempt and one retry |
+| `body-fragrance-mist-pistachio-milk` | `P525642`, mini `P525633` | parent admitted; mini route failed on the canonical attempt and one retry |
+| `body-butter-balm-vanilla` | `P525660` | admitted baseline |
+| `body-butter-balm-pink-guava` | `P525613`, mini `P525652` | both admitted |
+| `body-butter-balm-pistachio-milk` | `P525641`, mini `P525665` | both admitted |
+
+Eight exact US/USD PDP baselines passed the Sephora aggregate profile. The two
+mist travel-size URLs redirected to search on both the canonical attempt and
+the one exact-SKU retry and are not admitted as successful PDP packets. Their
+grid rows remain typed placements; the corresponding admitted full-size
+parents expose a two-size choice and bind the same scent/product family. The
+failures therefore remain visible exact-placement residuals without creating
+two additional product families or erasing the material body/fragrance
+expansion.
+
+Primary packets:
+
+| Evidence | Packet | Manifest SHA-256 |
+| --- | --- | --- |
+| Official body collection | `01KYATGMXV504G5C4YDA5NVMS9` | `bb3adebc0fa8227b5ce34fad328bc77c69abda10e68f860116bd35038d3f9876` |
+| `P525593` | `01KYATPF3C10Z5HGHQYGHH85GG` | `a30e3a9afdc231ed5d022ed34d03487cae4f46b76832a0e277e51719b4aca7df` |
+| `P525613` | `01KYATRDM1AF7FKTGE6QD8RQCN` | `2b08307f9af8558ef2be7fb020bf7c5ea9a8300594bba74589e9218f60e4aede` |
+| `P525641` | `01KYATTBGM5883XFJVV1GXA8WV` | `6fb2dcca4e44203a80451e614c131d14d1dcb471aa3018699faaffcff8e1b852` |
+| `P525642` | `01KYATVCS70HA001G3T9YV369J` | `6848e46ea6926eb1d904c093240106460929561fe78119ceeb77c56036ef5726` |
+| `P525652` | `01KYATWFQRRF8MKE3CZV9G0SJ3` | `c0969ebde92ae50a69ef26997e57eeef9ef90de0c37c3c64d1cc934890d04579` |
+| `P525659` | `01KYATXKNP2QGXAA1DP551GS14` | `c97b0f4e1f559d6e748ed860ee5920988eeec673e63dc940f2eb1436c7d3ea22` |
+| `P525660` | `01KYATYKK1SSE5MG4EKDR8DN0R` | `26130dc79f69dceedc287b93ce457f8dd19d855cf1ef58a0f5d3fc2177297633` |
+| `P525665` | `01KYATZKFF42RQXNK551S2M40Z` | `10f76f713bb90adf91e6e4b2d75e28001b481ff9d2bfe5b75e04dad349c796c5` |
+| `P525609` failed retry | `01KYAV1FQRAN4993RFXCCFSEPP` | `e0b19f858b22e017f9428c83c2bec05fa0970970840d95cc81252f0543ef42cd` |
+| `P525633` failed retry | `01KYAV2CDPNWJTK0KP82KTZHB4` | `e3068ca696736295b564231ea725b521019b9eb3d01b23a2e8df36f415326d4f` |
+
+All packets are under
+`C:\tmp\forseti-sf-phase-a-seal-hardening-20260725\`.
+
+### Outside-in scale and channel position
+
+A current Forbes contributor profile reports that Summer Fridays ranked first
+among skincare brands at Sephora in YipitData's 2025 US sales rankings, held
+seven of Sephora's top ten skincare SKUs, and recorded double-digit global
+retail-sales growth in 2025 after expansion to more than 830 Sephora EU doors
+across 15 countries. These are publisher-reported traction and channel-position
+claims, not audited company financials, present sales, market share, or a
+guarantee of future rank.
+
+The browser packet is `01KYATGW3NF39N6RD6MPC8JRY5`; manifest SHA-256
+`d630dbecfb63288a7a9e4f44cdb20aac1e406d65c69a05f827d44d22aa91b2e2`.
+
+### Jet Lag production incident
+
+The official historical statement says certain third-party-manufacturer
+production batches were compromised. It records stricter manufacturing
+protocols, a minor reformulation including removal of essential oils, returns
+of specified retailer lot codes, refunds, and patch-test guidance. This is
+evidence of a historical production and response event. It does not establish
+that current product or current customer complaints come from an affected
+batch.
+
+The browser packet is `01KYATH20TG6KSZHD4EWAQ1QR4`; manifest SHA-256
+`986090638cb6b39bcbf37c4b5ed37f538f4349d1f855065ca22e9ea2d75cfb36`.
+
+### Sunlit Vanilla official review-provider probe
+
+The official PDP visibly reports 961 reviews and loads a Yotpo widget for
+Shopify product `7633970888781` using store identifier
+`hAnCQ8TdC1im1AlyOrM2vMEn3Fdg8zmmdzJ4M32n`. The rendered DOM also carries
+alternate/legacy Okendo metadata with a count of 26, so the aggregate is not
+treated as provider-clean merely because Yotpo is the active widget. No review
+rows were captured and no native-ID overlap was measured. This probe therefore
+adds no independent customer-row credit and establishes no dedupe relationship
+with REVOLVE's separate Yotpo tenant.
+
+The browser packet is `01KYATH7GMH5CGHRPN6G3C2JP6`; manifest SHA-256
+`1f51bf8951d8b3d9c19ef1e42a600aa1acaca4b6989a3c648a7bb7448e93519b`.
+
+### Preserved access failures
+
+The first direct-HTTP attempt for each of the four pages was preserved as a
+typed access shell and is not source evidence: body collection
+`9d0e966939bcd96ea11ae707be43bd34e053c5b1732d19b76accd606c426240a`,
+Forbes `9eda5b4050e0a96cbb9569044e64d892c29a050f63e463ddeb5ae812614cd60e`,
+Jet Lag statement
+`c43289391328cb0b98eaaf8ea7c0412bd96ef1550277f06029f01991476e0999`,
+and Sunlit PDP
+`d0b39aee3c7d32b7f54326f733062d458a85f7726dff1b0ae0562179e4bf66b1`.
+
 ## Adjudication
 
 The implementation and dogfood succeed for the bounded non-Sephora corpus-board
-goal. They materially improve the Phase A evidence layer, close the durable TSG
-transaction-event gap, and now close the bounded four-family Sephora job.
+goal. The fresh whole-gate reconciliation also closes the material company
+scale/position, body-launch trajectory, and production-incident bases that the
+earlier last-blocker-only pass missed. The two failed travel-size PDP routes and
+Sunlit row-level provider overlap remain explicit non-material residuals.
 
 ```yaml
 implementation_dogfood: pass
 revolve_review_corpus_board: complete
 tsg_transaction_event_capture: complete
+company_scale_position_check: complete_with_claim_ceiling
+jet_lag_incident_capture: complete_historical_event
+body_launch_grid_placements: 10
+body_launch_normalized_families: 6
+body_launch_pdp_baselines_admitted: 8
+body_launch_exact_placement_route_failures: 2
 sunlit_vanilla_blocker: false
+sunlit_dtc_provider_probe: aggregate_only_no_row_credit
 sephora_required_family_count: 4
 sephora_standard_summary_success_families: 3
 sephora_manually_adjudicated_grouped_family_fallbacks: 1
 sephora_review_corpus_board: complete
+whole_acquisition_gate_re_adjudicated: true
 phase_a_complete: true
 phase_b_started: false
 turn_b_started: false

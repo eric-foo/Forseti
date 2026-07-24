@@ -3,7 +3,7 @@
 ```yaml
 retrieval_header_version: 1
 artifact_role: evidence-layer acquisition seal
-scope: Manual adjudication of the p06 control plus p07 REVOLVE/TSG and p08 Sephora four-family completion evidence.
+scope: Manual whole-gate adjudication of the p06 control plus p07-p09 completion evidence.
 use_when:
   - Checking whether Summer Fridays Understanding may proceed from Phase A acquisition into Turn B.
   - Verifying the sealed Phase A evidence layer before any separately authorized Turn B.
@@ -12,7 +12,7 @@ open_next:
   - docs/research/summer_fridays_understanding_dogfood_20260725_p07/evidence_layer_completion.md
   - docs/research/summer_fridays_understanding_dogfood_20260724_p06/coordinated/turn_a_acquisition_record.md
 stale_if:
-  - The p06 control, p07 completion receipt, TSG capture, or p08 Sephora packets change.
+  - The p06 control, p07 completion receipt, company/event captures, p08 Sephora packets, or p09 body-launch packets change.
   - The Jet Lag grouped-family adjudication or any required-family packet is re-adjudicated.
 ```
 
@@ -32,8 +32,8 @@ company_report_exists: false
 
 ## Decision
 
-The complete Phase A acquisition passes after the bounded p08 Sephora
-four-family completion.
+The complete Phase A acquisition passes after a fresh whole-gate read of the
+p06 control and p07-p09 completion evidence.
 
 Closed since the p06 control:
 
@@ -55,9 +55,23 @@ Closed since the p06 control:
    native-ID overlap for Q&A, Helpful, and Recent across the two parent queries
    and admits the grouped `jet-lag-mask` family corpus without relabelling the
    parser failures.
+6. The ten new Sephora body-launch placements reconcile to six product
+   families. Eight exact PDP baselines pass; the Pink Guava and Pistachio mist
+   travel-size routes remain typed redirect failures after one retry, while
+   their admitted family parents expose the corresponding mini-size option.
+7. A bounded outside-in source now calibrates current company scale and Sephora
+   position with explicit third-party/publisher claim ceilings.
+8. The official Jet Lag statement durably closes the historical production-
+   incident, response, and reformulation chronology.
+9. The official Sunlit PDP exposes an active Yotpo widget and 961-review
+   aggregate alongside conflicting legacy/alternate provider metadata. No
+   review rows or cross-retailer overlap are claimed.
 
-The four-family Sephora customer-depth job and durable company-event job are
-complete. No material Phase A acquisition blocker remains.
+The four-family Sephora customer-depth job, bounded review-corpus board,
+material company/event chronology, current scale check, and body-launch
+trajectory are complete. The two travel-size redirect failures and the
+aggregate-only Sunlit provider probe remain visible accepted residuals. No
+material Phase A acquisition blocker remains.
 
 ## Seal statement
 
