@@ -227,11 +227,12 @@ ulta_probe:
   native_order: PROVEN — default+param best_sellers, serialized in page state
   declared_count: OBSERVED — e.g. makeup 7093 results
   continuation: OBSERVED — "You have viewed N of M" + button.LoadContent__button + ?page=N ; cap 720
-implementation: landed on branch (commits b05e8fc7, 5b45d9c4); 6 harness files; parser reused
-dogfood: {makeup: complete/128, skincare: complete/128, hair: complete/384, fragrance: complete/384, bath_and_body: complete/320}
-validation: 255 focused tests pass; git diff --check clean; 5/5 projections verified from fresh reads; US route confirmed each
-open_robustness: load-more depth varies (128-384) for a fixed click budget; consistent ~720 needs continuation tuning
-lifecycle: on branch claude/ulta-category-bestseller-parity; delegated de-correlated review commissioned; no PR yet
-verdict: PATCH_ADJUDICATION_REQUIRED
-exact_next_action: Adjudicate delegated review findings; patch + revalidate; then PR + land.
+implementation: landed on branch; deterministic ?page=N traversal after delegated review + home adjudication (commit ed469377)
+dogfood: {makeup: complete/720, skincare: complete/720, hair: complete/720, fragrance: complete/564(exact quartile), bath_and_body: complete/720}
+validation: 264 focused tests pass; git diff --check clean; 5/5 deterministic projections verified from fresh reads (contiguous ranks, 0 dupes, native best_sellers + US route each)
+delegated_review: de-correlated GPT-family delegate (PATCH_THEN_SHIP); home model accepted F1-F5 + added 3 live-validation fixes (title declared-count, numeric product ids, footer-independent admission)
+resolved_robustness: flaky Load-More (128-384) replaced by deterministic ?page=N top-quartile/720 traversal
+lifecycle: on branch claude/ulta-category-bestseller-parity (pushed); PR to open
+verdict: READY_TO_LAND
+exact_next_action: Open per-lane PR; observe checks; self-merge when repository guards permit.
 ```
