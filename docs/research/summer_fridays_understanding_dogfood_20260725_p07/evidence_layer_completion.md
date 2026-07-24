@@ -2,17 +2,17 @@
 
 ```yaml
 retrieval_header_version: 1
-artifact_role: evidence-layer dogfood record and p06-to-p07 comparison
-scope: REVOLVE bounded review-corpus completion plus one durable TSG event capture; no Turn B or company report
+artifact_role: evidence-layer dogfood record and p06-to-p08 comparison
+scope: REVOLVE completion, durable TSG capture, and bounded Sephora four-family closure; no Turn B or company report
 use_when:
   - Evaluating whether complete bounded review-corpus acquisition improves Phase A decision usefulness.
-  - Resuming the remaining Summer Fridays acquisition gap without rerunning completed p06 work.
+  - Verifying the completed Summer Fridays Phase A evidence layer without rerunning completed work.
 authority_boundary: retrieval_only
 open_next:
   - docs/workflows/summer_fridays_understanding_dogfood_20260725_p07/acquisition_seal.md
   - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
 stale_if:
-  - The p07 completion receipt, TSG packet, or p06 control artifacts change.
+  - The p07 completion receipt, TSG packet, p08 Sephora packets, or p06 control artifacts change.
 ```
 
 ## Bound question
@@ -144,27 +144,82 @@ Primary packet:
 
 Sunlit Vanilla is not treated as an acquisition blocker in this completion.
 
+## Sephora four-family closure
+
+The p08 completion captured normal US/USD Sephora PDP parents and standard
+three-role onboarding packets for Lip Butter Balm, Dream Lip Oil, and Flushed
+Lip Stain:
+
+- Lip Butter Balm `P455936`: packet `01KYAKYRC9VZEA4X6K1QTX9Q6T`,
+  manifest SHA-256
+  `20aff7024cd5a5008d41cca0337e6948c5c9ff297fe0552034141f57354f38b4`;
+- Dream Lip Oil `P509439`: packet `01KYAMHHHX43P6G86F2MZ68T3E`,
+  manifest SHA-256
+  `212639645fb3d199502bb594203313fa3abdf85d51eb784fb744ca8c8e3f8f6e`;
+- Flushed Lip Stain `P520759`: packet `01KYAMHKJVYMXX27NVJBJVQZSW`,
+  manifest SHA-256
+  `4651b913a2fb6b4aefc499c688b6bcf5cd7a73abb41b1c7600136d288cd6bd29`.
+
+Each carries `sephora_bazaarvoice_onboarding_summary_v4`. The remaining Jet
+Lag family required explicit manual adjudication:
+
+- full-size PDP `P429952` passed the standard Sephora US/USD profile in packet
+  `01KYAPMN9M09NBVWKB2QGDV3MD` (manifest SHA-256
+  `c4388a17eda66aaebd717dc790dfd7bd5e616e718fa3857f6c55ac00e40ce8e8`);
+- mini PDP `P480630` passed the same profile in packet
+  `01KYAPS9KZ0YM7GBAP4189CXQS` (manifest SHA-256
+  `924eb51100c530bce8ad6f6b433c870dcf3223798949f38bb4d3231465413cf3`);
+- the corresponding standard onboarding packets
+  `01KYAPP8P40FRBYNH7EWF9YA7N` and
+  `01KYAPSPP8ZSEPSKVDXQE6Z4VP` each preserved all three requested raw roles
+  before the summary adapter failed closed.
+
+The adapter failure is a conservative identity mismatch, not missing source
+data. Both parent queries returned the same native family corpus:
+
+| Role | Captured rows | Declared total | Native-ID overlap across parents | Observed source product IDs |
+| --- | ---: | ---: | ---: | --- |
+| Most Answers Q&A | 100 | 241 | 100 / 100 | `P429952`, `P480630`, historical mini `P443825` |
+| non-incentivized Most Helpful | 100 | 2,393 | 100 / 100 | `P429952`, `P480630`, historical mini `P443825` |
+| non-incentivized Most Recent | 100 | 2,393 | 100 / 100 | `P429952`, `P480630` |
+
+The full-size and mini listings are already normalized to the owned
+`jet-lag-mask` family. The provider's mixed IDs and byte-identical
+question/helpful responses therefore establish a source-native grouped family
+corpus. Manual seal adjudication admits that bounded family evidence while
+preserving both `sephora_bazaarvoice_onboarding_adaptation_failure_v4`
+outcomes. It does not relabel either parser result as success and does not
+weaken the global product-identity check.
+
+Raw role SHA-256 values from the full-size onboarding packet:
+
+- Q&A: `4ea01de73c665dbe38afab77e15f1c5899fc2d35049f1494a13c2358916e7f12`;
+- Helpful/statistics:
+  `f4d70fa398b5538dd8bc617a33cc981a027045763d36ab5a45ea1d2dd50be9f2`;
+- Recent:
+  `ea9129abf34ec0eda3724cfd19c4dd4c0039d7441e3a8b3e588f48862e23169a`.
+
+This closes the exact four-family Sephora job named by the p07 seal. The
+separate 44-product direct-provider experiment remains test-only and is not
+needed for this closure.
+
 ## Adjudication
 
 The implementation and dogfood succeed for the bounded non-Sephora corpus-board
-goal. They materially improve the Phase A evidence layer and close the durable
-TSG transaction-event gap.
-
-They do not complete the full Summer Fridays acquisition. Sephora is the
-official primary retailer and its distinct review-corpus onboarding remains
-absent. Under the source-specific policy, each admitted Sephora corpus needs its
-bounded Helpful/statistics, Recent, and Q&A roles or a typed terminal outcome.
-That remaining primary-retailer gap keeps the acquisition seal blocked.
+goal. They materially improve the Phase A evidence layer, close the durable TSG
+transaction-event gap, and now close the bounded four-family Sephora job.
 
 ```yaml
 implementation_dogfood: pass
 revolve_review_corpus_board: complete
 tsg_transaction_event_capture: complete
 sunlit_vanilla_blocker: false
-sephora_review_corpus_board: incomplete
-phase_a_complete: false
+sephora_required_family_count: 4
+sephora_standard_summary_success_families: 3
+sephora_manually_adjudicated_grouped_family_fallbacks: 1
+sephora_review_corpus_board: complete
+phase_a_complete: true
 phase_b_started: false
 turn_b_started: false
 company_report_exists: false
 ```
-
