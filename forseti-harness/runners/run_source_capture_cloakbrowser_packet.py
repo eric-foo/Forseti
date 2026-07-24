@@ -213,9 +213,11 @@ _RETAIL_GRID_PROJECTION_PROFILES = frozenset(
         "amazon_grid_aggregate",
         "target_grid_aggregate",
         "ulta_grid_aggregate",
+        "ulta_category_grid_aggregate",
         "revolve_grid_aggregate",
     }
 )
+_ULTA_GRID_PROFILES = frozenset({"ulta_grid_aggregate", "ulta_category_grid_aggregate"})
 
 
 def run_source_capture_cloakbrowser_packet(
@@ -383,7 +385,7 @@ def run_source_capture_cloakbrowser_packet(
                 )
             if content_extraction is None:
                 content_extraction = _ulta_content_extraction_spec("content")
-        if retail_capture_profile.name == "ulta_grid_aggregate":
+        if retail_capture_profile.name in _ULTA_GRID_PROFILES:
             if content_extraction is None:
                 content_extraction = _ulta_grid_content_extraction_spec()
         if retail_capture_profile.name == REVOLVE_PDP_CONTENT_PROFILE:
@@ -552,7 +554,7 @@ def run_source_capture_cloakbrowser_packet(
         ulta_page_kind = (
             "grid"
             if retail_capture_profile is not None
-            and retail_capture_profile.name == "ulta_grid_aggregate"
+            and retail_capture_profile.name in _ULTA_GRID_PROFILES
             else "pdp"
         )
         ulta_sku = _validate_ulta_us_market_url(url, page_kind=ulta_page_kind)
@@ -1525,9 +1527,11 @@ def _validate_retail_grid_projection_request(
             raise ValueError(
                 f"{retail_capture_profile.name} requires --sephora-market US"
             )
-    elif retail_capture_profile.name == "ulta_grid_aggregate":
+    elif retail_capture_profile.name in _ULTA_GRID_PROFILES:
         if ulta_market != "US":
-            raise ValueError("ulta_grid_aggregate requires --ulta-market US")
+            raise ValueError(
+                f"{retail_capture_profile.name} requires --ulta-market US"
+            )
     elif retail_capture_profile.name == "revolve_grid_aggregate":
         if revolve_market != "US":
             raise ValueError("revolve_grid_aggregate requires --revolve-market US")
@@ -1709,12 +1713,14 @@ def _validate_ulta_us_market_url(
     parsed = urlparse(url)
     hostname = (parsed.hostname or "").lower()
     if page_kind == "grid":
-        if (
-            hostname not in _ULTA_HOSTS
-            or not re.fullmatch(r"/brand/[a-z0-9][a-z0-9-]*", parsed.path.rstrip("/"))
+        path = parsed.path.rstrip("/")
+        if hostname not in _ULTA_HOSTS or not (
+            re.fullmatch(r"/brand/[a-z0-9][a-z0-9-]*", path)
+            or re.fullmatch(r"/shop/[a-z0-9][a-z0-9-]*/all", path)
         ):
             raise ValueError(
-                "--ulta-market US grid capture requires an exact ulta.com/brand/<slug> URL"
+                "--ulta-market US grid capture requires an exact "
+                "ulta.com/brand/<slug> or ulta.com/shop/<category>/all URL"
             )
         return None
     sku_values = parse_qs(parsed.query).get("sku", [])
@@ -2824,7 +2830,7 @@ def main(
                 page_kind=(
                     "grid"
                     if retail_capture_profile is not None
-                    and retail_capture_profile.name == "ulta_grid_aggregate"
+                    and retail_capture_profile.name in _ULTA_GRID_PROFILES
                     else "pdp"
                 ),
             )

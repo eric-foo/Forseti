@@ -54,6 +54,9 @@ class UltaBrandGridState:
     load_more_control_present: bool
     explicit_currency_codes: tuple[str, ...]
     content_record_version: str | None = None
+    # The retailer-owned selected sort id (e.g. ``best_sellers``) rendered in the
+    # grid's Sort By control. ``None`` on brand grids, which expose no sort control.
+    selected_sort_id: str | None = None
 
 
 @dataclass
@@ -90,6 +93,7 @@ class _UltaBrandGridParser(HTMLParser):
         self.h1_depth: int | None = None
         self.load_more_control_present = False
         self.explicit_currency_codes: list[str] = []
+        self.selected_sort_id: str | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         lowered_tag = tag.lower()
@@ -100,6 +104,13 @@ class _UltaBrandGridParser(HTMLParser):
         currency = attributes.get("data-currency", "").strip()
         if currency:
             self.explicit_currency_codes.append(currency)
+        if (
+            self.selected_sort_id is None
+            and attributes.get("data-testid") == "dropdown__header__value"
+        ):
+            sort_id = (attributes.get("id") or "").strip()
+            if sort_id:
+                self.selected_sort_id = sort_id
 
         if (
             self.current_card is None
@@ -205,6 +216,7 @@ def load_ulta_brand_grid_state(rendered_dom: str) -> UltaBrandGridState | None:
         cards=tuple(parser.cards),
         load_more_control_present=parser.load_more_control_present,
         explicit_currency_codes=tuple(dict.fromkeys(parser.explicit_currency_codes)),
+        selected_sort_id=parser.selected_sort_id,
     )
 
 
@@ -227,6 +239,7 @@ def build_ulta_brand_grid_content_record(
         "declared_count": state.declared_count,
         "load_more_control_present": state.load_more_control_present,
         "explicit_currency_codes": list(state.explicit_currency_codes),
+        "selected_sort_id": state.selected_sort_id,
         "cards": [
             {
                 "grid_position": card.grid_position,
@@ -330,6 +343,7 @@ def _load_compact_state(value: str) -> UltaBrandGridState | None:
         load_more_control_present=load_more,
         explicit_currency_codes=tuple(currency_codes),
         content_record_version=ULTA_GRID_CONTENT_RECORD_VERSION,
+        selected_sort_id=_optional_text_field(payload, "selected_sort_id", -1),
     )
 
 

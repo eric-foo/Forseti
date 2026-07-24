@@ -173,6 +173,23 @@ def build_ulta_grid_projection(
     placement_count = sum(max(1, len(row.placements)) for row in rows)
     duplicate_count = placement_count - len(rows)
     state = states[0] if len(states) == 1 else None
+
+    requested_category_slug = _requested_category_slug(packet)
+    if requested_category_slug is not None:
+        return _build_ulta_category_grid_result(
+            packet=packet,
+            rows=rows,
+            residuals=residuals,
+            states=states,
+            state=state,
+            placement_count=placement_count,
+            duplicate_count=duplicate_count,
+            requested_category_slug=requested_category_slug,
+            RetailGridCompletenessReconciliation=RetailGridCompletenessReconciliation,
+            RetailGridProjectionLossLedger=RetailGridProjectionLossLedger,
+            RetailGridProjectionPacket=RetailGridProjectionPacket,
+        )
+
     reconciliation_residuals: list[str] = []
     if not states:
         reconciliation_residuals.append("ulta_grid_state_absent")
@@ -289,6 +306,143 @@ def _requested_brand_slug(packet: SourceCapturePacket) -> str | None:
             if len(parts) >= 2 and parts[0].lower() == "brand":
                 return parts[1].lower()
     return None
+
+
+def _requested_category_slug(packet: SourceCapturePacket) -> str | None:
+    """Return the Ulta category slug for a ``/shop/<category>/all`` grid request."""
+    locators = [_fact_value(packet.source_locator)] + [
+        _fact_value(source_slice.locator) for source_slice in packet.source_slices
+    ]
+    for locator in locators:
+        if locator:
+            parts = [part for part in urlparse(locator).path.split("/") if part]
+            if (
+                len(parts) == 3
+                and parts[0].lower() == "shop"
+                and parts[2].lower() == "all"
+            ):
+                return parts[1].lower()
+    return None
+
+
+def _build_ulta_category_grid_result(
+    *,
+    packet,
+    rows,
+    residuals,
+    states,
+    state,
+    placement_count,
+    duplicate_count,
+    requested_category_slug,
+    RetailGridCompletenessReconciliation,
+    RetailGridProjectionLossLedger,
+    RetailGridProjectionPacket,
+):
+    """Reconcile a bounded top-window Ulta category bestseller grid.
+
+    Unlike the brand grid (where captured count must equal the declared count), a
+    category grid captures a bounded top window of a much larger cohort, so
+    ``declared != captured`` is expected and a still-present load-more control is
+    not an error. Native bestseller order and category subject must be
+    source-confirmed, and the captured window must be a contiguous rank-ordered slice.
+    """
+    cat_residuals: list[str] = []
+    if not states:
+        cat_residuals.append("ulta_category_grid_state_absent")
+    elif len(states) != 1:
+        cat_residuals.append(f"ulta_category_grid_state_count:{len(states)}")
+
+    # The category grid renders its category name in the same <h1> the brand grid
+    # uses for the brand name.
+    observed_category = state.brand_name if state else None
+    selected_sort = state.selected_sort_id if state else None
+    subject_confirmed = bool(
+        observed_category and _slugify(observed_category) == requested_category_slug
+    )
+    if not subject_confirmed:
+        cat_residuals.append("ulta_category_grid_subject_binding_unconfirmed")
+    native_order_confirmed = selected_sort == "best_sellers"
+    if not native_order_confirmed:
+        cat_residuals.append(
+            f"ulta_category_grid_bestseller_sort_unconfirmed:{selected_sort}"
+        )
+
+    declared_count = state.declared_count if state else None
+    viewed_count = state.viewed_count if state else None
+    if declared_count is None:
+        cat_residuals.append("ulta_category_grid_declared_count_absent")
+    if viewed_count is None:
+        cat_residuals.append("ulta_category_grid_viewed_count_absent")
+    elif viewed_count != placement_count:
+        cat_residuals.append(
+            "ulta_category_grid_viewed_count_mismatch:"
+            f"viewed={viewed_count}:anchored={placement_count}"
+        )
+    if state and len(state.cards) != placement_count:
+        cat_residuals.append(
+            "ulta_category_grid_serialized_placement_count_mismatch:"
+            f"serialized={len(state.cards)}:anchored={placement_count}"
+        )
+    positions = sorted(
+        placement.grid_position for row in rows for placement in row.placements
+    )
+    if positions != list(range(1, placement_count + 1)):
+        cat_residuals.append("ulta_category_grid_rank_sequence_non_contiguous")
+    if declared_count is not None and placement_count > declared_count:
+        cat_residuals.append("ulta_category_grid_window_exceeds_declared_cohort")
+    if any("identity_incomplete" in item for item in residuals):
+        cat_residuals.append("ulta_category_grid_incomplete_product_identity_present")
+
+    window_exhausts_cohort = (
+        declared_count is not None and placement_count >= declared_count
+    )
+    more_available = bool(state.load_more_control_present) if state else None
+    complete = not cat_residuals
+    completeness = RetailGridCompletenessReconciliation(
+        status="complete" if complete else "incomplete",
+        page_declared_result_count=declared_count,
+        extracted_unique_parent_count=len(rows),
+        extracted_placement_count=placement_count,
+        duplicate_placement_count=duplicate_count,
+        subject_binding_confirmed=subject_confirmed,
+        termination=(
+            (
+                "retailer_terminal_reconciled"
+                if window_exhausts_cohort
+                else "requested_page_window_reconciled"
+            )
+            if complete
+            else "unproven"
+        ),
+        residuals=cat_residuals,
+    )
+    grid_facts = {
+        "retailer": "ulta",
+        "page_kind": "category_grid",
+        "category_name": observed_category,
+        "requested_category_slug": requested_category_slug,
+        "subject_binding_confirmed": subject_confirmed,
+        "selected_sort_id": selected_sort,
+        "native_bestseller_order_confirmed": native_order_confirmed,
+        "page_declared_result_count": declared_count,
+        "captured_window_placement_count": placement_count,
+        "viewed_product_placement_count": viewed_count,
+        "serialized_product_placement_count": len(state.cards) if state else None,
+        "more_available_beyond_window": more_available,
+        "explicit_currency_codes": list(state.explicit_currency_codes) if state else [],
+        "delivery_location_pin": None,
+    }
+    return RetailGridProjectionPacket(
+        packet_id=packet.packet_id,
+        rows=rows,
+        source_visible_grid_facts=grid_facts,
+        completeness=completeness,
+        loss_ledger=RetailGridProjectionLossLedger(
+            preserved_evidence_rows=len(rows), structure_preserved=bool(rows)
+        ),
+        residuals=list(dict.fromkeys(residuals)),
+    )
 
 
 def _fact_value(fact: object | None) -> str | None:

@@ -2717,7 +2717,10 @@ def detect_retail_grid_retailer(packet: SourceCapturePacket) -> RetailGridRetail
             or extract_sephora_catalog_request(locator) is not None
         ):
             return "sephora"
-        if _hostname_matches(hostname, "ulta.com") and path.startswith("/brand/"):
+        if _hostname_matches(hostname, "ulta.com") and (
+            path.startswith("/brand/")
+            or re.fullmatch(r"/shop/[a-z0-9][a-z0-9-]*/all", path)
+        ):
             return "ulta"
         if (
             _hostname_matches(hostname, "amazon.com")
@@ -2736,8 +2739,8 @@ def detect_retail_grid_retailer(packet: SourceCapturePacket) -> RetailGridRetail
             return "revolve"
     raise RetailGridProjectionInputError(
         "retail grid projection requires an admitted source-visible Walmart search, "
-        "Target search/brand, Sephora brand/catalog, Ulta brand, Amazon search, or "
-        "REVOLVE brand locator"
+        "Target search/brand, Sephora brand/catalog, Ulta brand/category, Amazon search, "
+        "or REVOLVE brand locator"
     )
 
 

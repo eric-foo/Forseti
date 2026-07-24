@@ -745,6 +745,33 @@ _PROFILES = {
             ),
         ),
         RetailCaptureProfile(
+            name="ulta_category_grid_aggregate",
+            retailer="ulta",
+            page_kind="grid_aggregate",
+            hostname="www.ulta.com",
+            source_surface="cloakbrowser_snapshot",
+            ordinary_operation=True,
+            settle_seconds=5.0,
+            scroll_passes=1,
+            load_more_selector="button.LoadContent__button",
+            # A category cohort is far larger than one page (~64 cards); drive the
+            # bounded top window toward the 720 cap. ~11 continuations * ~64 ~= 704.
+            load_more_clicks=11,
+            requirements_define_scroll_stop=False,
+            requirements=_requirements(
+                visible_text_contains=("Add to bag",),
+                visible_text_regexes=(
+                    r"You have viewed\s+\d+\s+of\s+\d+",
+                    r"\$\d+\.\d{2}",
+                ),
+                rendered_dom_contains=(
+                    'data-test="products-list"',
+                    'data-test="products-list-item"',
+                    "window.__APP_LOCALE__",
+                ),
+            ),
+        ),
+        RetailCaptureProfile(
             name="ulta_pdp_aggregate",
             retailer="ulta",
             page_kind="pdp_aggregate",

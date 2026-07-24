@@ -49,9 +49,14 @@ class UltaUSMarketPlugin:
         if parsed.scheme != "https" or (parsed.hostname or "").lower() not in _ULTA_HOSTS:
             raise ValueError("Ulta market assertion requires an HTTPS ulta.com URL")
         if self.page_kind == "grid":
-            if not re.fullmatch(r"/brand/[a-z0-9][a-z0-9-]*", parsed.path.rstrip("/")):
+            path = parsed.path.rstrip("/")
+            if not (
+                re.fullmatch(r"/brand/[a-z0-9][a-z0-9-]*", path)
+                or re.fullmatch(r"/shop/[a-z0-9][a-z0-9-]*/all", path)
+            ):
                 raise ValueError(
-                    "Ulta grid market assertion requires an exact /brand/<slug> URL"
+                    "Ulta grid market assertion requires an exact /brand/<slug> "
+                    "or /shop/<category>/all URL"
                 )
             return
         requested_skus = parse_qs(parsed.query).get("sku", [])
