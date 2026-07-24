@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
@@ -100,7 +103,7 @@ def test_promotion_policy_excludes_pins_and_routes_middle_to_oldest() -> None:
         if pinned:
             items.append({"createTime": int(captured.timestamp() - 18 * 86400), "pinned_visible": True, "stats": {"playCount": pinned}})
         return {"creator_handle": handle, "collection_receipt": {"capture_timestamp": "2026-07-21T12:00:00Z"}, "items": items}
-    document = build_tiktok_creator_promotion_decisions([grid("strong", 30000), grid("middle", 6000), grid("low", 1000, 9000000)])
+    document = build_tiktok_creator_promotion_decisions([grid("strong", 300000), grid("middle", 60000), grid("low", 1000, 9000000)])
     rows = {row["handle"]: row for row in document["tiktok_creator_promotion_decisions"]["decisions"]}
     assert rows["strong"]["registry_action"] == "promote_now"
     assert rows["middle"]["registry_action"] == "promote_now"
@@ -130,7 +133,7 @@ def test_promotion_policy_emits_follower_observability_without_changing_action()
             {
                 "createTime": int(captured.timestamp() - age * 86400),
                 "pinned_visible": False,
-                "stats": {"playCount": 30_000},
+                "stats": {"playCount": 300_000},
             }
             for age in (16, 20, 25)
         ],
@@ -143,11 +146,11 @@ def test_promotion_policy_emits_follower_observability_without_changing_action()
     assert row["decision_reason_code"] == "cleared_both_p25"
     assert row["follower_count_or_none"] == 50_000
     assert row["follower_band"] == "50k_250k"
-    assert row["reliable_weekly_reach_per_1k_followers_or_none"] == 933.333333
-    assert row["age_normalized_median_reach_per_follower_or_none"] == 0.6
+    assert row["reliable_weekly_reach_per_1k_followers_or_none"] == 9333.333333
+    assert row["age_normalized_median_reach_per_follower_or_none"] == 6.0
     assert "followers=50000" in row["decision_note"]
     assert "follower_band=50k_250k" in row["decision_note"]
-    assert "weekly_reach_per_1k_followers=933.333333" in row["decision_note"]
+    assert "weekly_reach_per_1k_followers=9333.333333" in row["decision_note"]
 
 
 def test_promotion_policy_missing_followers_are_unknown_and_nonblocking() -> None:
@@ -165,7 +168,7 @@ def test_promotion_policy_missing_followers_are_unknown_and_nonblocking() -> Non
             {
                 "createTime": int(captured.timestamp() - age * 86400),
                 "pinned_visible": False,
-                "stats": {"playCount": 30_000},
+                "stats": {"playCount": 300_000},
             }
             for age in (16, 20, 25)
         ],
@@ -206,7 +209,7 @@ def test_promotion_policy_follower_band_boundaries(
     ("quality", "weekly", "action", "reason", "cleared"),
     [
         (
-            0.34425675,
+            4.713114,
             0.0,
             "promote_now",
             "cleared_quality_p25",
@@ -214,22 +217,22 @@ def test_promotion_policy_follower_band_boundaries(
         ),
         (
             0.0,
-            15213.659348,
+            186641.046627,
             "promote_now",
             "cleared_weekly_reach_p25",
             ["weekly_reach_p25"],
         ),
         (
-            0.34425675,
-            15213.659348,
+            4.713114,
+            186641.046627,
             "promote_now",
             "cleared_both_p25",
             ["quality_p25", "weekly_reach_p25"],
         ),
-        (0.34425674, 15213.659347, "do_not_promote", "below_both_p25", []),
+        (4.713113, 186641.046626, "do_not_promote", "below_both_p25", []),
         (
             None,
-            15213.659347,
+            186641.046626,
             "do_not_promote",
             "quality_unavailable_weekly_below_p25",
             [],
@@ -253,9 +256,65 @@ def test_promotion_policy_p25_boundaries_are_inclusive_and_compensatory(
     assert decision["registry_action"] == action
     assert decision["decision_reason_code"] == reason
     assert decision["cleared_thresholds"] == cleared
-    assert "policy=tiktok_fragrance_creator_promotion_policy_v2" in decision["decision_note"]
-    assert "quality_p25=0.34425675" in decision["decision_note"]
-    assert "weekly_reach_p25=15213.659348" in decision["decision_note"]
+    assert "policy=tiktok_fragrance_creator_promotion_policy_v3" in decision["decision_note"]
+    assert "quality_p25=4.71311400" in decision["decision_note"]
+    assert "weekly_reach_p25=186641.046627" in decision["decision_note"]
+
+
+def test_promotion_policy_v3_calibration_is_bound_to_admitted_cohort() -> None:
+    path = Path(frontier_selector.__file__).with_name(
+        "tiktok_fragrance_creator_promotion_policy_v3_calibration.json"
+    )
+    raw = path.read_bytes()
+    calibration = json.loads(raw)
+    cohort = calibration["cohort"]
+    policy = frontier_selector._PROMOTION_POLICY
+
+    assert hashlib.sha256(raw).hexdigest() == policy["calibration_report_sha256"]
+    canonical_cohort = json.dumps(
+        cohort,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+    assert (
+        hashlib.sha256(canonical_cohort).hexdigest()
+        == policy["calibration_source_set_sha256"]
+        == calibration["source_set_sha256"]
+    )
+    assert len(cohort) == policy["calibration_cohort_size"] == 9
+    assert {row["handle"] for row in cohort}.isdisjoint({"fragrancekyle"})
+
+    qualities = [row["quality"] for row in cohort]
+    weekly_reaches = [row["reliable_weekly_reach"] for row in cohort]
+    assert frontier_selector._percentile(qualities, .25) == policy["quality_p25"]
+    assert (
+        frontier_selector._percentile(weekly_reaches, .25)
+        == policy["weekly_reach_p25"]
+    )
+
+    replay = {
+        row["handle"]: frontier_selector._promotion_decision_fields(
+            quality=row["quality"],
+            weekly_reach=row["reliable_weekly_reach"],
+            followers=row["follower_count"],
+            weekly_reach_per_1k_followers=(
+                row["reliable_weekly_reach"] / (row["follower_count"] / 1000)
+            ),
+        )["registry_action"]
+        for row in cohort
+    }
+    assert sum(action == "promote_now" for action in replay.values()) == 8
+    assert replay["zergggfragrance"] == "do_not_promote"
+    assert (
+        frontier_selector._promotion_decision_fields(
+            quality=0.260564,
+            weekly_reach=16556.044349,
+            followers=14500,
+            weekly_reach_per_1k_followers=1141.796162,
+        )["registry_action"]
+        == "do_not_promote"
+    )
 
 
 def test_onboarding_dedupe_preserves_performance_and_removes_known_or_scanned() -> None:
@@ -268,7 +327,7 @@ def test_onboarding_dedupe_preserves_performance_and_removes_known_or_scanned() 
                 {
                     "createTime": int(captured.timestamp() - age * 86400),
                     "pinned_visible": False,
-                    "stats": {"playCount": 30000},
+                    "stats": {"playCount": 300000},
                 }
                 for age in (16, 20, 25)
             ],
@@ -311,7 +370,7 @@ def test_onboarding_dedupe_routes_current_frontier_and_registry_states() -> None
                 {
                     "createTime": int(captured.timestamp() - age * 86400),
                     "pinned_visible": False,
-                    "stats": {"playCount": 30000},
+                    "stats": {"playCount": 300000},
                 }
                 for age in (16, 20, 25)
             ],

@@ -32,13 +32,15 @@ _FRAGRANCE_TOKENS = (
 
 TIKTOK_CREATOR_PROMOTION_SCHEMA = "tiktok_creator_promotion_decisions_v1"
 _PROMOTION_POLICY = {
-    "version": "tiktok_fragrance_creator_promotion_policy_v2",
-    "calibration_report_sha256": "449c4781dd71c530bb3d62fc6d58a6d1efd24c5d666b7c5ccd28fdbb5acf38e4",
-    "calibration_source_set_sha256": "ef9ff8a3175b34d4f9f8f7df0949c6e79c9fdddc229c26e91b49aa0ca2c5da77",
+    "version": "tiktok_fragrance_creator_promotion_policy_v3",
+    "calibration_report_sha256": "14a5a49359a7c70ed0584b61718a80ae5ae946fbd64a3daecc2e7e1f36b388fe",
+    "calibration_source_set_sha256": "6d74d4f0c0f1158d4c97c1aa1dc0655bd3363fffa04af42f9d247730db034be4",
+    "calibration_cohort_size": 9,
+    "calibration_posture": "positive_only_candidate_admitted_excluding_owner_removed_fragrancekyle",
     "cohort_medians": {"0-2d": 5383.25, "3-7d": 6636.0, "8-14d": 7662.0, "15-30d": 11481.5, "31d+": 28600.0},
     "multipliers": {"0-2d": 2.132819, "3-7d": 1.730184, "8-14d": 1.498499, "15-30d": 1.0, "31d+": 0.401451},
-    "quality_p25": 0.34425675, "quality_median": 0.907743, "quality_p75": 2.3942015,
-    "weekly_reach_p25": 15213.659348, "weekly_reach_p75": 89258.649442,
+    "quality_p25": 4.713114, "quality_median": 5.262225, "quality_p75": 6.808817,
+    "weekly_reach_p25": 186641.046627, "weekly_reach_median": 278618.347224, "weekly_reach_p75": 295282.8891,
     "cadence_cap": 10.629303,
 }
 _OWNER_ONBOARDING_DISPOSITIONS = {

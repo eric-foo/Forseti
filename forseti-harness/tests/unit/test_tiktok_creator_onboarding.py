@@ -387,9 +387,9 @@ def test_explicit_promotion_persists_frontier_and_replays_idempotently(
 ) -> None:
     root = DataLakeRoot.for_test(tmp_path / "lake")
     note = (
-        "policy=tiktok_fragrance_creator_promotion_policy_v2; "
-        "decision=promote_now; quality=0.500000; quality_p25=0.34425675; "
-        "reliable_weekly_reach=10000.000000; weekly_reach_p25=15213.659348; "
+        "policy=tiktok_fragrance_creator_promotion_policy_v3; "
+        "decision=promote_now; quality=5.000000; quality_p25=4.71311400; "
+        "reliable_weekly_reach=100000.000000; weekly_reach_p25=186641.046627; "
         "cleared=quality_p25; reconsider=none"
     )
     document = _promotion_document(
@@ -514,7 +514,7 @@ def test_promotion_refuses_to_supersede_owner_nonperformance_disposition(
         registry_action="promote_now",
         decision_reason_code="cleared_both_p25",
         decision_note=(
-            "policy=tiktok_fragrance_creator_promotion_policy_v2; "
+            "policy=tiktok_fragrance_creator_promotion_policy_v3; "
             "decision=promote_now"
         ),
     )
@@ -549,7 +549,7 @@ def test_promotion_refuses_to_override_compatibility_owner_disposition(
             registry_action="promote_now",
             decision_reason_code="cleared_both_p25",
             decision_note=(
-                "policy=tiktok_fragrance_creator_promotion_policy_v2; "
+                "policy=tiktok_fragrance_creator_promotion_policy_v3; "
                 "decision=promote_now"
             ),
         ),

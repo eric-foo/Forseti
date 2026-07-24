@@ -1,0 +1,142 @@
+{
+  "schema_version": "tiktok_creator_promotion_calibration_v1",
+  "policy_version": "tiktok_fragrance_creator_promotion_policy_v3",
+  "observed_at_utc": "2026-07-24T19:08:42.366207Z",
+  "authority": {
+    "data_root_uuid": "01KW7N6ERSVVANCEZ8SD6YW3EQ",
+    "registry_authority": "data_lake",
+    "frontier_view": "creator_frontier_disposition_current_v1"
+  },
+  "cohort_definition": {
+    "included": "Nine TikTok accounts candidate-admitted during the next-ten onboarding run.",
+    "excluded": {
+      "handle": "fragrancekyle",
+      "reason": "Owner-directed exclusion from recalibration after the admitted grid appeared below the intended quality bar."
+    },
+    "selection_posture": "positive-only admitted cohort; selection-biased and suitable only for a stricter empirical filtering update"
+  },
+  "source_set_canonicalization": "SHA-256 of UTF-8 JSON for cohort with sort_keys=true and separators=(',', ':')",
+  "source_set_sha256": "6d74d4f0c0f1158d4c97c1aa1dc0655bd3363fffa04af42f9d247730db034be4",
+  "cohort": [
+    {
+      "assessment_packet_id": "01KYAK1XHDJKXP8FT31GJBSJ4K",
+      "authority_record_ref": "derived/fd3/01KYAK2SHFFW7AT0J60JRZEH43/creator_frontier_disposition/cfdb_1aad1b4140f8aadb7952ecc7",
+      "authority_record_sha256": "671b001a8c891b7289559dbd3b69aa5a0d722f7b82cf9718a616b0080151e2dc",
+      "disposition_id": "cfd_aa2da9a57edb162f91e98eac",
+      "follower_count": 183800,
+      "handle": "ka.fragrances",
+      "quality": 8.229618,
+      "reliable_weekly_reach": 205585.14688
+    },
+    {
+      "assessment_packet_id": "01KYAK5DTPGDPQQ2GBY2P1KC7N",
+      "authority_record_ref": "derived/b43/01KYAK5N3AJWG4WBDJ9JYHR7X8/creator_frontier_disposition/cfdb_8281043a9f8afbd4cc615d5b",
+      "authority_record_sha256": "43cd7bcf32b0b097896af36de9510866add69ff77898ff6d478e4e061929a2e8",
+      "disposition_id": "cfd_53a5456c01c6c392f40c208a",
+      "follower_count": 98200,
+      "handle": "thebenscents",
+      "quality": 4.633255,
+      "reliable_weekly_reach": 475251.742102
+    },
+    {
+      "assessment_packet_id": "01KYAK76S0WBK89QAD70WBX8GY",
+      "authority_record_ref": "derived/519/01KYAK7DV3FBWB9AENSN5YWXSV/creator_frontier_disposition/cfdb_2920146f74f24a2982b44ec9",
+      "authority_record_sha256": "4ae6c867877a271a9f6844ea9523ca17655ce73a50d1d3388869682e9c8ebebe",
+      "disposition_id": "cfd_887e70effda20bfbc9d13fcd",
+      "follower_count": 1100000,
+      "handle": "thenoelthomas",
+      "quality": 6.808817,
+      "reliable_weekly_reach": 495168.250759
+    },
+    {
+      "assessment_packet_id": "01KYAK816HR24WF5XMJ4G0S1Y1",
+      "authority_record_ref": "derived/b13/01KYAK88VRYYWC38VE6AYESTYP/creator_frontier_disposition/cfdb_01ff8a7ea02e4cc45c6fc124",
+      "authority_record_sha256": "ffde2d676f935028febd5802bd5d5dd32b593533e4898287233910347af88db1",
+      "disposition_id": "cfd_0d524172d993fc08aa7f4a52",
+      "follower_count": 4627,
+      "handle": "zergggfragrance",
+      "quality": 3.589141,
+      "reliable_weekly_reach": 1953.027253
+    },
+    {
+      "assessment_packet_id": "01KYAK9PPTT9ZGTEQTD6A7VY4W",
+      "authority_record_ref": "derived/a9a/01KYAK9XTG54X9GB0TSZZNQTJN/creator_frontier_disposition/cfdb_7640f56bcfd57e77d2525977",
+      "authority_record_sha256": "bf24aad56bc7ebef2c9e4a16b6f62f36e4f597532577be720ad3ed16f80a1c96",
+      "disposition_id": "cfd_f4bc25f921a6856af2bd2b67",
+      "follower_count": 238600,
+      "handle": "extraitderayen",
+      "quality": 7.353828,
+      "reliable_weekly_reach": 186641.046627
+    },
+    {
+      "assessment_packet_id": "01KYAM8ASDG6BGVNS1ZBXY2P74",
+      "authority_record_ref": "derived/8bf/01KYAM943BDY812XK8STV9X0QF/creator_frontier_disposition/cfdb_33a3b9c1789fa8d10e89e511",
+      "authority_record_sha256": "1294f0def18e7fbe7e3223ca54452d34dfce8abb6bbf6373e3e361bd2c8078cc",
+      "disposition_id": "cfd_1f5b5c109e2264bea1920fb6",
+      "follower_count": 1000000,
+      "handle": "fragrances",
+      "quality": 5.174889,
+      "reliable_weekly_reach": 295282.8891
+    },
+    {
+      "assessment_packet_id": "01KYAMD27X5EC9R6PMFDGHXH0S",
+      "authority_record_ref": "derived/77f/01KYAMEV6C9852NS5HTXX2EGVT/creator_frontier_disposition/cfdb_32fb79b5c898997fd8cf9bf4",
+      "authority_record_sha256": "28e7073ab49239a51b204c3a45a2ef4c80690526ea067cb4f5b8799c9951996e",
+      "disposition_id": "cfd_428c6e30c9b226ef90019fe8",
+      "follower_count": 115500,
+      "handle": "fragswithnick",
+      "quality": 5.262225,
+      "reliable_weekly_reach": 102850.83528
+    },
+    {
+      "assessment_packet_id": "01KYAMH7BG5GZZG9SY2TQ5CKT3",
+      "authority_record_ref": "derived/9cf/01KYAMJH04Z0ZFQKVD7H07RPVN/creator_frontier_disposition/cfdb_2bcbc90199e6f1e4bd279710",
+      "authority_record_sha256": "e625982f36a635c7250152b582ebb176f70c3c22c7d16fc30c84c19e73094530",
+      "disposition_id": "cfd_0b0e41261bdec079d2b20d75",
+      "follower_count": 91900,
+      "handle": "llcoudjo",
+      "quality": 4.713114,
+      "reliable_weekly_reach": 291032.035961
+    },
+    {
+      "assessment_packet_id": "01KYAMN5P1KXWN38MTXCT36XPC",
+      "authority_record_ref": "derived/302/01KYAMNVK1H4DR9943MH8APKHV/creator_frontier_disposition/cfdb_b10ea7c4ed20c463749e6f1e",
+      "authority_record_sha256": "84d49e8840e154e5055b994c762664593b267a49cebae74d05e67f5866ffd2ac",
+      "disposition_id": "cfd_030e954eba8fbbbed3bd0347",
+      "follower_count": 7052,
+      "handle": "tygartate",
+      "quality": 5.878817,
+      "reliable_weekly_reach": 278618.347224
+    }
+  ],
+  "derived_thresholds": {
+    "percentile_method": "linear interpolation at (n - 1) * q",
+    "quality_median": 5.262225,
+    "quality_p25": 4.713114,
+    "quality_p75": 6.808817,
+    "weekly_reach_median": 278618.347224,
+    "weekly_reach_p25": 186641.046627,
+    "weekly_reach_p75": 295282.8891
+  },
+  "replay": {
+    "gate": "promote when quality_p25 or weekly_reach_p25 clears",
+    "included_cohort_promote_count": 8,
+    "included_cohort_reject_count": 1,
+    "included_cohort_rejected_handles": [
+      "zergggfragrance"
+    ],
+    "excluded_holdout": {
+      "handle": "fragrancekyle",
+      "quality": 0.260564,
+      "reliable_weekly_reach": 16556.044349,
+      "result": "do_not_promote"
+    }
+  },
+  "non_claims": [
+    "Not evidence that promotion caused later onboarding success.",
+    "Not buyer, campaign, conversion, or creator-quality proof.",
+    "Not a representative TikTok creator population.",
+    "Not a causal model of TikTok session logout or platform enforcement.",
+    "The positive-only admitted cohort can tighten the empirical filter but cannot estimate false-negative rates."
+  ]
+}
