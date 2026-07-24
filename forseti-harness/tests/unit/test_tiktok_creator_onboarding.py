@@ -41,6 +41,7 @@ from source_capture.tiktok.creator_onboarding import (
     TIKTOK_ONBOARDING_RECEIPT_JSON_NAME,
     TIKTOK_ONBOARDING_SELECTION_JSON_NAME,
     TikTokCreatorMarketDeferred,
+    TikTokLoggedOutSessionError,
     TikTokCreatorOnboardingError,
     assess_tiktok_creator_market,
     build_tiktok_grid_window,
@@ -387,9 +388,9 @@ def test_explicit_promotion_persists_frontier_and_replays_idempotently(
 ) -> None:
     root = DataLakeRoot.for_test(tmp_path / "lake")
     note = (
-        "policy=tiktok_fragrance_creator_promotion_policy_v2; "
-        "decision=promote_now; quality=0.500000; quality_p25=0.34425675; "
-        "reliable_weekly_reach=10000.000000; weekly_reach_p25=15213.659348; "
+        "policy=tiktok_fragrance_creator_promotion_policy_v3; "
+        "decision=promote_now; quality=5.000000; quality_p25=4.71311400; "
+        "reliable_weekly_reach=100000.000000; weekly_reach_p25=186641.046627; "
         "cleared=quality_p25; reconsider=none"
     )
     document = _promotion_document(
@@ -514,7 +515,7 @@ def test_promotion_refuses_to_supersede_owner_nonperformance_disposition(
         registry_action="promote_now",
         decision_reason_code="cleared_both_p25",
         decision_note=(
-            "policy=tiktok_fragrance_creator_promotion_policy_v2; "
+            "policy=tiktok_fragrance_creator_promotion_policy_v3; "
             "decision=promote_now"
         ),
     )
@@ -549,7 +550,7 @@ def test_promotion_refuses_to_override_compatibility_owner_disposition(
             registry_action="promote_now",
             decision_reason_code="cleared_both_p25",
             decision_note=(
-                "policy=tiktok_fragrance_creator_promotion_policy_v2; "
+                "policy=tiktok_fragrance_creator_promotion_policy_v3; "
                 "decision=promote_now"
             ),
         ),
@@ -803,7 +804,10 @@ def test_browser_capture_structural_logout_is_systemic(
         lambda **_kwargs: capture,
     )
 
-    with pytest.raises(TikTokCreatorOnboardingError, match="logged_out_session"):
+    with pytest.raises(
+        TikTokLoggedOutSessionError,
+        match="logged_out_session",
+    ):
         onboarding.fetch_browser_page_observation_capture(url="https://example.test")
 
 
@@ -3985,6 +3989,153 @@ def _visible_tiles_capture(
     if loaded_ids is not None:
         capture.dom_observation["loaded_grid_video_ids"] = list(loaded_ids)
     return capture
+
+
+def test_observation_activity_views_two_exact_videos_without_content_collection(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    state_path = tmp_path / "state.json"
+    state_path.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(
+        onboarding,
+        "validate_auth_state_provenance_requirement",
+        lambda *_args, **_kwargs: state_path,
+    )
+    engine = _FakeEngine(
+        [
+            _visible_tiles_capture("1", "2"),
+            _clicked_capture("1"),
+            _closed_overlay_capture(),
+            _visible_tiles_capture("2"),
+            _clicked_capture("2"),
+            _closed_overlay_capture(),
+        ]
+    )
+
+    class _FirstRng:
+        def sample(self, rows, count):
+            return list(rows[:count])
+
+        def choice(self, rows):
+            return rows[0]
+
+        def randint(self, low, _high):
+            return low
+
+        def random(self):
+            return 0.5
+
+        def uniform(self, low, _high):
+            return low
+
+    sleeps: list[float] = []
+    events: list[tuple[str, dict[str, object]]] = []
+    receipt = onboarding.run_tiktok_creator_observation_activity(
+        creator_handle="creator",
+        session_profile=_profile(),
+        grid_window={
+            "creator_handle": "creator",
+            "items": [
+                {
+                    "authorUniqueId": "creator",
+                    "grid_position": index,
+                    "pinned_visible": False,
+                    "video_id": str(index),
+                    "video_url": (
+                        f"https://www.tiktok.com/@creator/video/{index}"
+                    ),
+                    "visible_in_viewport": True,
+                }
+                for index in range(1, 4)
+            ],
+        },
+        engine=engine,
+        rng=_FirstRng(),
+        sleep_fn=sleeps.append,
+        monotonic_fn=lambda: 0.0,
+        event_fn=lambda event, fields: events.append((event, fields)),
+    )
+
+    assert receipt["status"] == "complete"
+    assert receipt["selected_video_ids"] == ["1", "2"]
+    assert receipt["selected_video_ids_in_capture_order"] == ["1", "2"]
+    assert receipt["content_response_collection_enabled"] is False
+    assert sleeps == [5.0, 5.0]
+    assert [row["dwell_band"] for row in receipt["dwells"]] == [
+        "typical",
+        "typical",
+    ]
+    assert [event for event, _fields in events].count("dwell_finished") == 2
+    click_calls = [
+        call
+        for call in engine.calls
+        if call.get("post_load_pointer_actions")
+        and call["post_load_pointer_actions"][0].action_name
+        == "tiktok_visible_selected_grid_video_v0"
+    ]
+    assert len(click_calls) == 2
+    assert all(
+        call["response_url_predicate"](
+            "https://www.tiktok.com/api/comment/list/?aweme_id=1"
+        )
+        is False
+        for call in click_calls
+    )
+
+
+def test_observation_activity_selection_excludes_pins_and_duplicates() -> None:
+    rows = onboarding._select_observation_activity_rows(
+        grid_window={
+            "items": [
+                {
+                    "authorUniqueId": "creator",
+                    "grid_position": index,
+                    "pinned_visible": index == 1,
+                    "video_id": str(index),
+                    "video_url": (
+                        f"https://www.tiktok.com/@creator/video/{index}"
+                    ),
+                    "visible_in_viewport": True,
+                }
+                for index in range(1, 5)
+            ]
+        },
+        creator_handle="creator",
+        observation_count=2,
+        rng=random.Random(4),
+    )
+
+    assert len(rows) == 2
+    assert len({row["video_id"] for row in rows}) == 2
+    assert "1" not in {row["video_id"] for row in rows}
+
+
+def test_observation_activity_dwell_uses_existing_weighted_long_tail_policy() -> None:
+    class _BandRng:
+        def __init__(self, random_value: float) -> None:
+            self.random_value = random_value
+
+        def random(self) -> float:
+            return self.random_value
+
+        def uniform(self, low: float, high: float) -> float:
+            return (low + high) / 2
+
+    typical, typical_band = (
+        onboarding._sample_tiktok_onboarding_long_tail_delay_seconds(
+            rng=_BandRng(0.5)
+        )
+    )
+    tail, tail_band = (
+        onboarding._sample_tiktok_onboarding_long_tail_delay_seconds(
+            rng=_BandRng(0.01)
+        )
+    )
+
+    assert (typical, typical_band) == (12.5, "typical")
+    assert (tail, tail_band) == (40.0, "tail")
+    assert onboarding.TIKTOK_ONBOARDING_LONG_TAIL_TAIL_PROBABILITY == 0.05
 
 
 def test_failed_run_receipt_separates_overlay_capture_from_deep_completion(
