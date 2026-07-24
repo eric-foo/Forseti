@@ -41,6 +41,7 @@ from source_capture.tiktok.creator_onboarding import (
     TIKTOK_ONBOARDING_RECEIPT_JSON_NAME,
     TIKTOK_ONBOARDING_SELECTION_JSON_NAME,
     TikTokCreatorMarketDeferred,
+    TikTokLoggedOutSessionError,
     TikTokCreatorOnboardingError,
     assess_tiktok_creator_market,
     build_tiktok_grid_window,
@@ -803,7 +804,10 @@ def test_browser_capture_structural_logout_is_systemic(
         lambda **_kwargs: capture,
     )
 
-    with pytest.raises(TikTokCreatorOnboardingError, match="logged_out_session"):
+    with pytest.raises(
+        TikTokLoggedOutSessionError,
+        match="logged_out_session",
+    ):
         onboarding.fetch_browser_page_observation_capture(url="https://example.test")
 
 

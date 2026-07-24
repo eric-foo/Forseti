@@ -801,6 +801,10 @@ class TikTokCreatorOnboardingError(RuntimeError):
     """Raised when supervised onboarding cannot produce trustworthy completion."""
 
 
+class TikTokLoggedOutSessionError(TikTokCreatorOnboardingError):
+    """Raised when retained-session observation detects a logged-out page."""
+
+
 def fetch_browser_page_observation_capture(
     **kwargs: object,
 ) -> BrowserPageObservationSuccess | BrowserSnapshotFailure:
@@ -814,7 +818,7 @@ def fetch_browser_page_observation_capture(
                 attempt.get("stop_kind") == "logged_out_session"
                 or attempt.get("matched_marker") in {"log in to comment", "/login"}
             ):
-                raise TikTokCreatorOnboardingError("logged_out_session")
+                raise TikTokLoggedOutSessionError("logged_out_session")
     return capture
 
 

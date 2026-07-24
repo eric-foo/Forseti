@@ -36,6 +36,7 @@ from source_capture.session_profiles import (
 )
 from source_capture.tiktok.creator_onboarding import (
     TIKTOK_ONBOARDING_GRID_WINDOW_JSON_NAME,
+    TikTokLoggedOutSessionError,
     run_tiktok_creator_observation_activity,
 )
 
@@ -560,6 +561,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             status = "complete"
             terminal_reason = "five_handle_probe_complete"
         return 0 if status == "complete" else 2
+    except TikTokLoggedOutSessionError:
+        status = "logged_out"
+        terminal_reason = "forced_logout_detected"
+        journal.record(
+            "first_logout_detected",
+            handle=handle,
+            details={"phase": "observation_activity"},
+        )
+        return 2
     except Exception as exc:
         journal.record(
             "probe_failure",
