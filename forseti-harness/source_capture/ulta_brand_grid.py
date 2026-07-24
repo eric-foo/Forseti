@@ -8,13 +8,22 @@ from urllib.parse import urlparse
 
 
 _VIEWED_COUNT_RE = re.compile(r"You have viewed\s+(?P<viewed>\d+)\s+of\s+(?P<total>\d+)", re.IGNORECASE)
+# Ulta category grids carry the declared cohort size in the document <title>
+# (e.g. "Shop All Makeup - 7092 Products | Ulta Beauty"). This is a robust
+# fallback for the declared count when the view-triggered "You have viewed N of M"
+# footer has not rendered. Brand-grid titles carry no "N Products" phrase.
+_PRODUCTS_TITLE_COUNT_RE = re.compile(r"(?P<total>\d[\d,]*)\s+Products\b", re.IGNORECASE)
 _RATING_RE = re.compile(
     r"(?P<rating>\d+(?:\.\d+)?)\s+out of 5 stars\s*;\s*"
     r"(?P<reviews>\d[\d,]*)\s+reviews?",
     re.IGNORECASE,
 )
 _VARIANT_RE = re.compile(r"(?P<count>\d+)\s+(?:colou?rs?|sizes?)", re.IGNORECASE)
-_PRODUCT_ID_RE = re.compile(r"-([A-Za-z][A-Za-z0-9]*\d+)$")
+# Ulta product URLs end in ``-<productId>`` where the id ends in a digit. The id
+# is usually letter-prefixed (``pimprod2059833``, ``xlsImpprod14251035``) but
+# legacy drugstore products carry a purely-numeric id (e.g. ``-2641``), so the
+# leading letter must be optional or those real products lose their identity.
+_PRODUCT_ID_RE = re.compile(r"-([A-Za-z0-9]*\d)$")
 _VOID_TAGS = frozenset(
     {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
 )
@@ -23,6 +32,7 @@ _VOID_TAGS = frozenset(
 # rendered text, so it must never reach the visible-text or card captures.
 _NON_RENDERED_TEXT_TAGS = frozenset({"script", "style"})
 ULTA_GRID_CONTENT_RECORD_VERSION = "ulta_grid_content_v1"
+ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION = "ulta_category_grid_content_v1"
 
 
 class UltaBrandGridStateError(ValueError):
@@ -57,6 +67,11 @@ class UltaBrandGridState:
     # The retailer-owned selected sort id (e.g. ``best_sellers``) rendered in the
     # grid's Sort By control. ``None`` on brand grids, which expose no sort control.
     selected_sort_id: str | None = None
+    category_name: str | None = None
+    requested_window_count: int | None = None
+    requested_page_count: int | None = None
+    captured_page_count: int | None = None
+    traversal_termination: str | None = None
 
 
 @dataclass
@@ -91,9 +106,11 @@ class _UltaBrandGridParser(HTMLParser):
         self.visible_parts: list[str] = []
         self.h1_parts: list[str] = []
         self.h1_depth: int | None = None
+        self.title_parts: list[str] = []
+        self.in_title = False
         self.load_more_control_present = False
         self.explicit_currency_codes: list[str] = []
-        self.selected_sort_id: str | None = None
+        self.selected_sort_ids: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         lowered_tag = tag.lower()
@@ -104,13 +121,12 @@ class _UltaBrandGridParser(HTMLParser):
         currency = attributes.get("data-currency", "").strip()
         if currency:
             self.explicit_currency_codes.append(currency)
-        if (
-            self.selected_sort_id is None
-            and attributes.get("data-testid") == "dropdown__header__value"
-        ):
+        if attributes.get("data-testid") == "dropdown__header__value":
             sort_id = (attributes.get("id") or "").strip()
-            if sort_id:
-                self.selected_sort_id = sort_id
+            if sort_id and sort_id not in self.selected_sort_ids:
+                self.selected_sort_ids.append(sort_id)
+        if lowered_tag == "title":
+            self.in_title = True
 
         if (
             self.current_card is None
@@ -150,6 +166,8 @@ class _UltaBrandGridParser(HTMLParser):
         if not text:
             return
         self.visible_parts.append(text)
+        if self.in_title:
+            self.title_parts.append(text)
         if self.h1_depth is not None:
             self.h1_parts.append(text)
         for capture in self.captures:
@@ -164,6 +182,8 @@ class _UltaBrandGridParser(HTMLParser):
                 self.captures.remove(capture)
         if self.h1_depth == depth and lowered_tag == "h1":
             self.h1_depth = None
+        if lowered_tag == "title":
+            self.in_title = False
         if self.current_card is not None and lowered_tag == "li" and self.card_start_depth == depth:
             self.cards.append(_finish_card(self.current_card))
             self.current_card = None
@@ -209,6 +229,10 @@ def load_ulta_brand_grid_state(rendered_dom: str) -> UltaBrandGridState | None:
     if count_matches:
         viewed_count = int(count_matches[-1].group("viewed"))
         declared_count = int(count_matches[-1].group("total"))
+    if declared_count is None:
+        title_match = _PRODUCTS_TITLE_COUNT_RE.search(" ".join(parser.title_parts))
+        if title_match:
+            declared_count = int(title_match.group("total").replace(",", ""))
     return UltaBrandGridState(
         brand_name=" ".join(parser.h1_parts).strip() or None,
         viewed_count=viewed_count,
@@ -216,7 +240,11 @@ def load_ulta_brand_grid_state(rendered_dom: str) -> UltaBrandGridState | None:
         cards=tuple(parser.cards),
         load_more_control_present=parser.load_more_control_present,
         explicit_currency_codes=tuple(dict.fromkeys(parser.explicit_currency_codes)),
-        selected_sort_id=parser.selected_sort_id,
+        selected_sort_id=(
+            parser.selected_sort_ids[0]
+            if len(parser.selected_sort_ids) == 1
+            else None
+        ),
     )
 
 
@@ -270,7 +298,11 @@ def _load_compact_state(value: str) -> UltaBrandGridState | None:
         return None
     if not isinstance(payload, dict) or "content_record_version" not in payload:
         return None
-    if payload.get("content_record_version") != ULTA_GRID_CONTENT_RECORD_VERSION:
+    content_record_version = payload.get("content_record_version")
+    if content_record_version not in {
+        ULTA_GRID_CONTENT_RECORD_VERSION,
+        ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
+    }:
         raise UltaBrandGridStateError("Ulta grid content record version is unsupported")
     if payload.get("retailer") != "ulta":
         raise UltaBrandGridStateError(
@@ -342,8 +374,21 @@ def _load_compact_state(value: str) -> UltaBrandGridState | None:
         cards=tuple(cards),
         load_more_control_present=load_more,
         explicit_currency_codes=tuple(currency_codes),
-        content_record_version=ULTA_GRID_CONTENT_RECORD_VERSION,
+        content_record_version=str(content_record_version),
         selected_sort_id=_optional_text_field(payload, "selected_sort_id", -1),
+        category_name=_optional_text_field(payload, "category_name", -1),
+        requested_window_count=_optional_integer_field(
+            payload, "requested_window_count", -1
+        ),
+        requested_page_count=_optional_integer_field(
+            payload, "requested_page_count", -1
+        ),
+        captured_page_count=_optional_integer_field(
+            payload, "captured_page_count", -1
+        ),
+        traversal_termination=_optional_text_field(
+            payload, "traversal_termination", -1
+        ),
     )
 
 
@@ -426,6 +471,7 @@ def _class_tokens(value: str) -> frozenset[str]:
 
 
 __all__ = [
+    "ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION",
     "ULTA_GRID_CONTENT_RECORD_VERSION",
     "UltaBrandGridCard",
     "UltaBrandGridState",

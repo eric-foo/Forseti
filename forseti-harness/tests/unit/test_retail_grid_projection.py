@@ -43,8 +43,10 @@ from source_capture.sephora_catalog_grid import (
     build_sephora_catalog_grid_aggregate_content_record,
 )
 from source_capture.ulta_brand_grid import (
+    ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
     ULTA_GRID_CONTENT_RECORD_VERSION,
     build_ulta_brand_grid_content_record,
+    load_ulta_brand_grid_state,
 )
 from source_capture.writer import write_local_source_capture_packet
 
@@ -2085,17 +2087,29 @@ def _ulta_category_record(
     load_more_control_present: bool,
     selected_sort_id: str | None,
     category_heading: str = "Makeup",
+    requested_window_count: int | None = None,
 ) -> bytes:
+    assert declared_count is not None
+    requested_window = (
+        requested_window_count
+        if requested_window_count is not None
+        else min((declared_count + 3) // 4, 720)
+    )
+    requested_pages = (requested_window + 63) // 64
     record = {
-        "content_record_version": ULTA_GRID_CONTENT_RECORD_VERSION,
+        "content_record_version": ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
         "retailer": "ulta",
         "final_url": "https://www.ulta.com/shop/makeup/all?sort=best_sellers",
-        "brand_name": category_heading,
+        "category_name": category_heading,
         "viewed_count": viewed_count,
         "declared_count": declared_count,
         "load_more_control_present": load_more_control_present,
         "explicit_currency_codes": [],
         "selected_sort_id": selected_sort_id,
+        "requested_window_count": requested_window,
+        "requested_page_count": requested_pages,
+        "captured_page_count": requested_pages,
+        "traversal_termination": "requested_page_window_reconciled",
         "cards": cards,
     }
     return json.dumps(record, separators=(",", ":")).encode()
@@ -2121,7 +2135,7 @@ def test_ulta_category_grid_confirms_native_bestseller_bounded_top_window() -> N
     body = _ulta_category_record(
         cards=cards,
         viewed_count=4,
-        declared_count=7000,
+        declared_count=16,
         load_more_control_present=True,
         selected_sort_id="best_sellers",
     )
@@ -2132,8 +2146,14 @@ def test_ulta_category_grid_confirms_native_bestseller_bounded_top_window() -> N
     assert gf["subject_binding_confirmed"] is True
     assert gf["native_bestseller_order_confirmed"] is True
     assert gf["selected_sort_id"] == "best_sellers"
-    assert gf["page_declared_result_count"] == 7000
+    assert gf["page_declared_result_count"] == 16
+    assert gf["requested_window_placement_count"] == 4
     assert gf["captured_window_placement_count"] == 4
+    assert all(row.source_visible_fields["category"] == "Makeup" for row in projection.rows)
+    assert all(
+        row.source_visible_fields["page_kind"] == "category_grid"
+        for row in projection.rows
+    )
     # A bounded top window: more remain, and that is NOT an incompleteness.
     assert gf["more_available_beyond_window"] is True
     assert projection.completeness.status == "complete"
@@ -2146,7 +2166,7 @@ def test_ulta_category_grid_wrong_category_subject_fails() -> None:
     body = _ulta_category_record(
         cards=cards,
         viewed_count=3,
-        declared_count=7000,
+        declared_count=12,
         load_more_control_present=True,
         selected_sort_id="best_sellers",
         category_heading="Fragrance",
@@ -2167,7 +2187,7 @@ def test_ulta_category_grid_non_bestseller_sort_fails_for_sort_not_cards() -> No
     body = _ulta_category_record(
         cards=cards,
         viewed_count=3,
-        declared_count=7000,
+        declared_count=12,
         load_more_control_present=True,
         selected_sort_id="top_rated",
     )
@@ -2191,7 +2211,7 @@ def test_ulta_category_grid_premature_stop_breaks_rank_contiguity() -> None:
     body = _ulta_category_record(
         cards=cards,
         viewed_count=3,
-        declared_count=7000,
+        declared_count=12,
         load_more_control_present=True,
         selected_sort_id="best_sellers",
     )
@@ -2212,7 +2232,7 @@ def test_ulta_category_grid_duplicate_parent_stays_visible() -> None:
     body = _ulta_category_record(
         cards=cards,
         viewed_count=3,
-        declared_count=7000,
+        declared_count=12,
         load_more_control_present=True,
         selected_sort_id="best_sellers",
     )
@@ -2228,3 +2248,50 @@ def test_ulta_category_grid_duplicate_parent_stays_visible() -> None:
     assert len(dup.placements) == 2
     # Duplicate visibility is not itself an incompleteness for a category grid.
     assert projection.completeness.status == "complete"
+
+
+def test_ulta_grid_declared_count_from_title_and_numeric_product_id() -> None:
+    # A ?page=N category page can render with NO "You have viewed N of M" footer;
+    # the declared cohort must fall back to the <title> "N Products". A legacy
+    # drugstore product carries a purely-numeric id (-2641) that must resolve.
+    dom = (
+        "<html><head><title>Shop All Makeup - 7,092 Products | Ulta Beauty</title>"
+        "</head><body><h1>Makeup</h1>"
+        '<div data-testid="dropdown__header__value" id="best_sellers">'
+        "<span>Best Sellers</span></div>"
+        '<ul data-test="products-list">'
+        '<li data-test="products-list-item" data-sku-id="2063643">'
+        '<a href="/p/voluminous-original-washable-mascara-2641?sku=2063643">'
+        '<span class="pal-c-ProductCardBody--title">Voluminous Mascara</span></a>'
+        '<span class="pal-c-ProductCardBody--brandName">L\'Oreal</span>'
+        '<span class="pal-c-ProductCardBody--price">$11.99</span>'
+        "</li></ul></body></html>"
+    )
+    state = load_ulta_brand_grid_state(dom)
+    assert state is not None
+    # No footer -> declared count comes from the <title> "7,092 Products".
+    assert state.declared_count == 7092
+    assert state.viewed_count is None
+    assert state.selected_sort_id == "best_sellers"
+    # Purely-numeric legacy product id must resolve, not drop identity to None.
+    assert state.cards[0].source_product_id == "2641"
+
+
+def test_ulta_category_grid_rejects_window_smaller_than_top_quartile_policy() -> None:
+    cards = [_ulta_category_card(i, f"pimprod{i:04d}") for i in range(1, 4)]
+    body = _ulta_category_record(
+        cards=cards,
+        viewed_count=3,
+        declared_count=16,
+        load_more_control_present=True,
+        selected_sort_id="best_sellers",
+        requested_window_count=3,
+    )
+
+    projection = _ulta_category_projection(body)
+
+    assert projection.completeness.status == "incomplete"
+    assert any(
+        residual.startswith("ulta_category_grid_requested_window_policy_mismatch")
+        for residual in projection.completeness.residuals
+    )

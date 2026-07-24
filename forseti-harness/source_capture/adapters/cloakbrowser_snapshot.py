@@ -887,11 +887,6 @@ class _CloakBrowserSnapshotEngine:
                         )
                         if check_scroll_stop(stage="load_more", index=index + 1):
                             break
-                    # A footer/terminal control (e.g. Ulta's "You have viewed N of
-                    # M") may render only once scrolled into view; land at the
-                    # bottom and settle so it is serialized into the captured DOM.
-                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                    page.wait_for_timeout(_SCROLL_PASS_SETTLE_MS)
                 before_snapshot_outcome: PreCaptureOutcome | None = None
                 before_snapshot_started_ns = clock_ns()
                 before_snapshot = getattr(pre_capture, "before_snapshot", None)

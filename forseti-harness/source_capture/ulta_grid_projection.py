@@ -7,11 +7,13 @@ from urllib.parse import urlparse, urlunparse
 
 from source_capture.models import SourceCapturePacket, VisibleFactStatus
 from source_capture.ulta_brand_grid import (
+    ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
     ULTA_GRID_CONTENT_RECORD_VERSION,
     UltaBrandGridState,
     UltaBrandGridStateError,
     load_ulta_brand_grid_state,
 )
+from source_capture.ulta_category_grid import requested_ulta_category_window
 
 
 _PRICE_RANGE_RE = re.compile(
@@ -74,7 +76,10 @@ def build_ulta_grid_projection(
                         f"{source_slice.slice_id}:ulta:grid_tile_identity_incomplete:{card.grid_position}"
                     )
                     continue
-                if state.content_record_version == ULTA_GRID_CONTENT_RECORD_VERSION:
+                if state.content_record_version in {
+                    ULTA_GRID_CONTENT_RECORD_VERSION,
+                    ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
+                }:
                     placement_anchor = raw_anchor.model_copy(
                         update={
                             "anchor_kind": "json_pointer",
@@ -355,7 +360,7 @@ def _build_ulta_category_grid_result(
 
     # The category grid renders its category name in the same <h1> the brand grid
     # uses for the brand name.
-    observed_category = state.brand_name if state else None
+    observed_category = state.category_name if state else None
     selected_sort = state.selected_sort_id if state else None
     subject_confirmed = bool(
         observed_category and _slugify(observed_category) == requested_category_slug
@@ -370,8 +375,45 @@ def _build_ulta_category_grid_result(
 
     declared_count = state.declared_count if state else None
     viewed_count = state.viewed_count if state else None
+    requested_window_count = state.requested_window_count if state else None
+    requested_page_count = state.requested_page_count if state else None
+    captured_page_count = state.captured_page_count if state else None
+    traversal_termination = state.traversal_termination if state else None
     if declared_count is None:
         cat_residuals.append("ulta_category_grid_declared_count_absent")
+    if requested_window_count is None:
+        cat_residuals.append("ulta_category_grid_requested_window_absent")
+    else:
+        if (
+            declared_count is not None
+            and requested_window_count
+            != requested_ulta_category_window(declared_count)
+        ):
+            cat_residuals.append(
+                "ulta_category_grid_requested_window_policy_mismatch:"
+                f"declared={declared_count}:requested={requested_window_count}"
+            )
+        if placement_count != requested_window_count:
+            cat_residuals.append(
+                "ulta_category_grid_requested_window_mismatch:"
+                f"requested={requested_window_count}:anchored={placement_count}"
+            )
+    if requested_page_count is None:
+        cat_residuals.append("ulta_category_grid_requested_page_count_absent")
+    if captured_page_count is None:
+        cat_residuals.append("ulta_category_grid_captured_page_count_absent")
+    elif requested_page_count is not None and captured_page_count != requested_page_count:
+        cat_residuals.append(
+            "ulta_category_grid_page_count_mismatch:"
+            f"requested={requested_page_count}:captured={captured_page_count}"
+        )
+    if traversal_termination not in {
+        "requested_page_window_reconciled",
+        "retailer_terminal_reconciled",
+    }:
+        cat_residuals.append(
+            f"ulta_category_grid_traversal_unreconciled:{traversal_termination}"
+        )
     if viewed_count is None:
         cat_residuals.append("ulta_category_grid_viewed_count_absent")
     elif viewed_count != placement_count:
@@ -394,10 +436,27 @@ def _build_ulta_category_grid_result(
     if any("identity_incomplete" in item for item in residuals):
         cat_residuals.append("ulta_category_grid_incomplete_product_identity_present")
 
-    window_exhausts_cohort = (
-        declared_count is not None and placement_count >= declared_count
+    category_value = observed_category or requested_category_slug
+    rows = [
+        row.model_copy(
+            update={
+                "source_visible_fields": {
+                    **row.source_visible_fields,
+                    "page_kind": "category_grid",
+                    "category": category_value,
+                },
+                "residuals": [
+                    item
+                    for item in row.residuals
+                    if item != "ulta_grid_product_category_not_observed"
+                ],
+            }
+        )
+        for row in rows
+    ]
+    more_available = (
+        placement_count < declared_count if declared_count is not None else None
     )
-    more_available = bool(state.load_more_control_present) if state else None
     complete = not cat_residuals
     completeness = RetailGridCompletenessReconciliation(
         status="complete" if complete else "incomplete",
@@ -406,15 +465,7 @@ def _build_ulta_category_grid_result(
         extracted_placement_count=placement_count,
         duplicate_placement_count=duplicate_count,
         subject_binding_confirmed=subject_confirmed,
-        termination=(
-            (
-                "retailer_terminal_reconciled"
-                if window_exhausts_cohort
-                else "requested_page_window_reconciled"
-            )
-            if complete
-            else "unproven"
-        ),
+        termination=traversal_termination if complete else "unproven",
         residuals=cat_residuals,
     )
     grid_facts = {
@@ -426,10 +477,19 @@ def _build_ulta_category_grid_result(
         "selected_sort_id": selected_sort,
         "native_bestseller_order_confirmed": native_order_confirmed,
         "page_declared_result_count": declared_count,
+        "requested_window_placement_count": requested_window_count,
+        "requested_page_count": requested_page_count,
+        "captured_page_count": captured_page_count,
         "captured_window_placement_count": placement_count,
+        "captured_window_share": (
+            placement_count / declared_count
+            if declared_count
+            else None
+        ),
         "viewed_product_placement_count": viewed_count,
         "serialized_product_placement_count": len(state.cards) if state else None,
         "more_available_beyond_window": more_available,
+        "traversal_termination": traversal_termination,
         "explicit_currency_codes": list(state.explicit_currency_codes) if state else [],
         "delivery_location_pin": None,
     }
