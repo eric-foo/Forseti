@@ -88,8 +88,10 @@ The default coordinated route has exactly four evidence actors:
 - `CO0`: whole-run Chief Architect, integration, durable-record owner, and
   acquisition-seal owner;
 - `CO1`: owned company and high-yield core — identity, ownership, leadership,
-  offering/portfolio architecture, official authorization, chronology, and
-  material events;
+  offering/portfolio architecture, official authorization, chronology,
+  material events, and one bounded current outside-in check of company scale
+  or market/channel position when a credible source can materially calibrate
+  the company core;
 - `CO2`: unified official-first portfolio and selected-retailer corpus —
   authorization board, grids, union/reconciliation, exact PDP baselines,
   retailer-native facts, failures, overlap, and provider/corpus identity; never
@@ -143,6 +145,10 @@ Run those four actors through this lean execution protocol:
    distinct. Existing commission producers such as retail portfolio onboarding,
    depth selection, and review linkage should consume the resulting manifests;
    this protocol creates no parallel evidence schema or orchestration runtime.
+   Before retrying a review/Q&A adaptation failure, apply the grouped-family
+   raw-corpus adjudication in the Retailer PDP Information-Extraction Standard;
+   do not spend the retry when the preserved raw parents already satisfy that
+   acceptance rule.
 4. Specialists persist evidence as it is produced, then write one terminal
    role return that indexes the durable artifacts, completed and unresolved
    jobs, material failures, and follow-ups. They do not paste raw corpora into
@@ -237,11 +243,19 @@ specific topology instead of pretending the selected-retailer role applies.
    ```
 
    This is event-triggered, not a checkpoint for every route issue. If the owner
-   resolves it, resume acquisition and record the real route receipt. If it
-   remains unresolved, keep acquisition blocked or record the owner's explicit
-   narrowing of the commission. Never carry a fixable load-bearing capture
-   failure forward merely as a final-report caveat, silently omit it, infer
-   absence from it, or proceed as complete.
+   resolves it, resume acquisition and record the real route receipt, using at
+   most one retry for each failed material route. If it remains unresolved,
+   keep acquisition blocked or record the owner's explicit narrowing of the
+   commission. Never carry a fixable load-bearing capture failure forward
+   merely as a final-report caveat, silently omit it, infer absence from it, or
+   proceed as complete. A repair may stay delta-scoped, but any transition from
+   a blocked acquisition seal to a passing seal requires `CO0` to fresh-read
+   the current specialist artifacts and integrated record and re-adjudicate the
+   whole acquisition gate. Every material residual remains load-bearing until
+   supported, contradicted, meaningfully bounded, or honestly blocked/gapped;
+   this includes newly exposed or unmatched rows, URL-only material claims,
+   machine-readable failures, and evidence-revealed contradictions, not only
+   the last repaired blocker.
 6. Write the phase acquisition seal below. Context compaction may discard chat,
    but not this artifact.
 

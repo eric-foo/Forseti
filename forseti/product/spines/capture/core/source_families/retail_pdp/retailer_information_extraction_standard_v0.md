@@ -184,6 +184,20 @@ Every onboarding packet requires:
 - append-only retention: legacy and failed raw packets are never retroactively
   deleted or rewritten.
 
+Before retrying a review/Q&A adaptation failure, adjudicate whether its
+hash-verified raw parents already form one complete grouped-family corpus.
+Admit that raw corpus only when every required role completed successfully,
+the request manifests bind the exact parents, the parents map to one
+evidence-backed normalized family, their totals/filter/order semantics are
+compatible, and the admitted windows have complete source-native-ID overlap
+across alternate parents. Extra historical IDs may extend the family but may
+not contradict it. Count the result once at family level, preserve every
+original adaptation failure, and never relabel a parser failure as parser
+success. If those facts are incomplete, incompatible, or non-overlapping,
+preserve the typed identity/adaptation gap and use at most one authorized
+alternate-parent or source-authority-approved retry for that failed material
+route.
+
 Legacy sampled-raw packets may describe the same historical evidence as
 `parser-fit` or `projection equivalence`. Current Retail/PDP content routes do
 not create a PDP Projection packet: canonical content is retained at capture,
