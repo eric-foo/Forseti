@@ -3,17 +3,17 @@
 ```yaml
 retrieval_header_version: 1
 artifact_role: evidence-layer acquisition seal
-scope: Manual adjudication of the p06 control plus the bounded p07 REVOLVE and TSG completion evidence.
+scope: Manual adjudication of the p06 control plus p07 REVOLVE/TSG and p08 Sephora four-family completion evidence.
 use_when:
   - Checking whether Summer Fridays Understanding may proceed from Phase A acquisition into Turn B.
-  - Resuming the one remaining primary-retailer evidence gap.
+  - Verifying the sealed Phase A evidence layer before any separately authorized Turn B.
 authority_boundary: retrieval_only
 open_next:
   - docs/research/summer_fridays_understanding_dogfood_20260725_p07/evidence_layer_completion.md
   - docs/research/summer_fridays_understanding_dogfood_20260724_p06/coordinated/turn_a_acquisition_record.md
 stale_if:
-  - The p06 control, p07 completion receipt, or TSG capture changes.
-  - Sephora review-corpus onboarding is added or re-adjudicated.
+  - The p06 control, p07 completion receipt, TSG capture, or p08 Sephora packets change.
+  - The Jet Lag grouped-family adjudication or any required-family packet is re-adjudicated.
 ```
 
 ```yaml
@@ -21,10 +21,10 @@ subject: Summer Fridays
 cycle_id: sf_understanding_20260725_p07_evidence_completion
 seal_owner: current_home_actor
 adjudication_mode: manual_after_fresh_read
-state: BLOCKED_ACQUISITION_INCOMPLETE
-gate: fail
-deliver_allowed: false
-phase_a_complete: false
+state: SEALED_READY_FOR_DELIVER
+gate: pass
+deliver_allowed: true
+phase_a_complete: true
 phase_b_started: false
 turn_b_started: false
 company_report_exists: false
@@ -32,8 +32,8 @@ company_report_exists: false
 
 ## Decision
 
-The p07 bounded completion passed for REVOLVE and the TSG transaction event, but
-the complete Phase A acquisition does not yet pass.
+The complete Phase A acquisition passes after the bounded p08 Sephora
+four-family completion.
 
 Closed since the p06 control:
 
@@ -46,19 +46,23 @@ Closed since the p06 control:
    and Prelude-exit claims.
 3. Sunlit Vanilla is no longer an acquisition blocker.
 
-One material gap remains: Sephora is the officially named primary retailer, but
-its review-corpus onboarding is absent. The REVOLVE board adds substantial
-skincare, body, makeup, and set coverage but cannot substitute for Sephora's
-distinct customer corpus or close fragrance depth when REVOLVE has no admitted
-fragrance listing.
+4. Lip Butter Balm, Dream Lip Oil, and Flushed Lip Stain have standard
+   source-specific Sephora onboarding summaries.
+5. Jet Lag Mask has two standard US/USD PDP parents and two standard onboarding
+   packets preserving all three raw roles. The summary adapter correctly
+   retained a typed failure because Sephora/Bazaarvoice interleaves full-size,
+   mini, and historical-mini IDs. Fresh manual adjudication verified 100/100
+   native-ID overlap for Q&A, Helpful, and Recent across the two parent queries
+   and admits the grouped `jet-lag-mask` family corpus without relabelling the
+   parser failures.
 
-## Smallest unblock
+The four-family Sephora customer-depth job and durable company-event job are
+complete. No material Phase A acquisition blocker remains.
 
-Complete the bounded Sephora review-corpus board using its existing
-source-specific onboarding roles—Helpful plus statistics, Recent, and Q&A—then
-re-adjudicate only that job and this seal.
+## Seal statement
 
-Do not rerun completed p06 identity or retailer work, add another retailer,
-retry Reddit, capture Sunlit Vanilla, start Turn B, or author the company report
-for this unblock.
+`SEALED_READY_FOR_DELIVER`.
 
+This seal authorizes no automatic next phase. Turn B and the company report
+remain unstarted and require a separate owner instruction. Do not rerun
+completed identity, retailer, event, Reddit, or customer-depth work by default.
