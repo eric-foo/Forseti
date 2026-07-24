@@ -29,6 +29,7 @@ from data_lake.creator_audience_queue import assert_creator_audience_capacity
 from data_lake.creator_registry import load_current_registry_preflight_view
 from data_lake.creator_registry import load_current_creator_registry
 from data_lake.root import DataLakeRoot
+from harness_utils import sha256_bytes
 from source_capture.adapters.browser_session_probe import probe_local_cdp_endpoints
 from source_capture.session_profiles import (
     default_session_profile_auth_state_root,
@@ -707,8 +708,8 @@ def _record_authority_snapshot(
         "authority_snapshot",
         handle=handle,
         details={
-            "registry_sha256": _sha256_json(registry),
-            "frontier_sha256": _sha256_json(frontier),
+            "registry_sha256": sha256_bytes(canonical_record_bytes(registry)),
+            "frontier_sha256": sha256_bytes(canonical_record_bytes(frontier)),
             "queue_queued": int(queue_counts.get("queued") or 0),
             "queue_running": int(queue_counts.get("running") or 0),
             "cdp_available": True,
@@ -938,12 +939,6 @@ def _reject_forbidden_material(value: object, *, path: str = "$") -> None:
         raise ValueError(
             f"probe journal contains forbidden string material at {path}"
         )
-
-
-def _sha256_json(value: Mapping[str, object]) -> str:
-    import hashlib
-
-    return hashlib.sha256(canonical_record_bytes(value)).hexdigest()
 
 
 def _normalize_handle(value: str) -> str:
