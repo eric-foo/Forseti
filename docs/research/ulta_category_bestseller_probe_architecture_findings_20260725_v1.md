@@ -140,23 +140,46 @@ extend only its `__post_init__` guard to accept `/shop/<category>/all`.
 | S7 | Safe transport + lifecycle | **HONORED** — anonymous, no login/proxy/cookies |
 | S8 | Full dogfood (all five, real captures) | **PENDING** — implement, then dogfood five to top-quartile/720 |
 
-## 5. Smallest-Complete Implementation Route (reuse-based)
+## 5. Smallest-Complete Implementation Route (reuse-based; touch points verified)
 
-1. `ulta_category_grid.py` parser: detect the `/all` card container + reuse the
-   brand-grid field extraction, the "You have viewed N of M" terminal parse, and
-   `_product_id_from_url`. Emit a `ulta_category_grid_content_v1` record.
-2. Category subject binding from `/shop/<cat>/all` (+ optional `?sort=best_sellers`);
-   native-order evidence from serialized `best_sellers`.
-3. Category projection path: extend `ulta_grid_projection.py` (or a sibling) with
-   `page_kind=category_grid`, category identity, native-order fact, and the
-   declared-count/viewed/continuation reconciliation — without breaking `/brand/<slug>`.
-4. Extend `UltaUSMarketPlugin.__post_init__` to accept `/shop/<category>/all`.
-5. Add a `ulta_category_grid_aggregate` runner profile (load_more `button.LoadContent__button`,
-   bounded clicks to reach top-quartile capped at 720) + runner wiring + raised artifact cap.
-6. Wrong-cause tests: wrong-category subject, removed/changed sort evidence,
-   premature-stop, duplicate, hidden-challenge-vs-visible-block, cap/terminal.
-7. Dogfood all five `/shop/<cat>/all?sort=best_sellers` live at human rate to fresh roots.
-8. Delegated de-correlated review-and-patch of the runtime diff; adjudicate; PR; land.
+**PROVEN: the existing parser is reused as-is.** Running the current
+`source_capture.ulta_brand_grid.load_ulta_brand_grid_state()` against the real
+captured `/shop/makeup/all` DOM returned **64 cards, all identity-complete**,
+`viewed_count=64`, `declared_count=7093`, `load_more_control_present=True`, `h1="Makeup"`,
+correct bestseller order (#1 Rare Beauty Soft Pinch Lip Oil Stick $25.00 → #64 TIRTIR).
+The `/all` grid uses the same `<li data-test="products-list-item">` container and the
+same `pal-c-ProductCardBody--{brandName,title,price}` tokens as the brand grid. **No new
+parser is needed.** So the delta is only category semantics on top of the reused card
+extraction:
+
+1. **Native-order evidence (S1):** extend `build_ulta_brand_grid_content_record`
+   (`ulta_brand_grid.py`) to capture the selected sort (`best_sellers`) into the content
+   record; brand grids leave it `None` (no behavior change). Require the capture URL to
+   carry `?sort=best_sellers` and confirm the serialized value.
+2. **Category subject + bounded window (S2/S3) — `ulta_grid_projection.py`:**
+   add `_requested_category_slug(packet)` parsing `/shop/<cat>/all`; branch
+   `build_ulta_grid_projection` on it (category vs the existing `/brand/<slug>` path,
+   which stays byte-identical). Category branch: subject-bind category slug ↔ h1,
+   `page_kind=category_grid`, native-order fact, and **Sephora-catalog-style bounded-window
+   completeness** — declared 7093 is context; the captured top-window (cap 720 / top
+   quartile) is the bound; `has_more`/`viewed N of M` reconcile continuation and terminal state.
+3. **Market URL guard (S5):** `_validate_ulta_us_market_url` (runner, line 1706) and
+   `UltaUSMarketPlugin.__post_init__` (`ulta_us_market.py`, line 52) both hard-require
+   `/brand/<slug>`; add a `/shop/<cat>/all` grid shape. The grid `confirm_ulta_us_market`
+   conjunction is already URL-agnostic — reused unchanged.
+4. **Profile + wiring:** add `ulta_category_grid_aggregate` to `retail_capture_profiles.py`
+   (load_more `button.LoadContent__button`, `load_more_clicks` high enough for the 720 cap,
+   raised artifact cap); register it in `_RETAIL_GRID_PROJECTION_PROFILES` and
+   `_validate_retail_grid_projection_request` (runner lines 209, 1528) parallel to
+   `ulta_grid_aggregate`; set `ulta_page_kind=grid` + `_ulta_grid_content_extraction_spec()` for it.
+5. **Tests:** wrong-category subject, removed/changed sort evidence, premature-stop,
+   duplicate, hidden-challenge-vs-visible-block, cap/terminal.
+6. **Dogfood** all five `/shop/<cat>/all?sort=best_sellers` live at human rate to fresh
+   local roots (mirror the Sephora dogfood: `--output` + `--retail-grid-projection-output`,
+   `retail_grid_mechanical_projection` v0). Each needs ~11 Load-More continuations to reach
+   the 720 cap (deep window, per owner "counts higher than 60"); raise `--max-artifact-bytes`
+   (64 cards ≈ 5 MB DOM → 720 ≈ ~56 MB).
+7. Delegated de-correlated review-and-patch of the runtime diff; adjudicate; PR; land.
 
 ## 6. Explicit Non-Claims
 
