@@ -138,7 +138,30 @@ extend only its `__post_init__` guard to accept `/shop/<category>/all`.
 | S5 | Truthful US route | **TRACTABLE** — reuse market conjunction; extend URL guard |
 | S6 | Access + screenshot truth | **HONORED in probe** |
 | S7 | Safe transport + lifecycle | **HONORED** — anonymous, no login/proxy/cookies |
-| S8 | Full dogfood (all five, real captures) | **PENDING** — implement, then dogfood five to top-quartile/720 |
+| S8 | Full dogfood (all five, real captures) | **DONE** — five live captures, all `complete` (see Dogfood Results); depth-consistency is a robustness item |
+
+### Dogfood Results (2026-07-25, live, anonymous, no proxy)
+
+All five `/shop/<cat>/all?sort=best_sellers` captured via `ulta_category_grid_aggregate`
+and verified from fresh projection reads. Every category: subject confirmed, native
+`best_sellers` confirmed, viewed == window, contiguous ranks, US route confirmed,
+duplicates kept visible, `status=complete`, `termination=requested_page_window_reconciled`,
+`more_available=True`.
+
+| Category | Ulta slug | Declared cohort | Captured window | #1 |
+|---|---|---:|---:|---|
+| Makeup | makeup | 7,092 | 128 | Rare Beauty Soft Pinch Lip Oil Stick |
+| Skincare | skin-care | 6,452 | 128 | The Ordinary Glycolic Acid 7% |
+| Hair | hair | 5,220 | 384 | Briogeo Style + Treat Oil |
+| Fragrance | fragrance | 2,253 | 384 | Megan Thee Stallion Hot Girl Summer |
+| Bath & Body | body-care | 3,138 | 320 | Touchland Power Mist |
+
+Roots under `C:\tmp\ulta_5cat_dogfood\<cat>\` + `<cat>_projection.json`.
+
+**Robustness item (open):** the captured window varied 128–384 for a fixed 5-click
+request — a Load-More early-stop heuristic (scroll-height-stable) caps some categories
+shallow. Correctness is unaffected (each window is a valid reconciled bounded top slice,
+all >> 60), but reaching a consistent ~720 cap needs continuation-depth tuning.
 
 ## 5. Smallest-Complete Implementation Route (reuse-based; touch points verified)
 
@@ -197,17 +220,18 @@ receiver_binding:
   worktree: C:\tmp\forseti-ulta-category-bestseller-parity
   branch: claude/ulta-category-bestseller-parity
   head: 61372ff (== origin/main); clean; single writer
-success_contract: {S1: proven, S2: proven, S3: tractable, S4: tractable, S5: tractable, S6: honored, S7: honored, S8: pending}
+success_contract: {S1: implemented, S2: implemented, S3: implemented, S4: implemented, S5: implemented, S6: honored, S7: preserved(250+ tests), S8: dogfooded(5/5 complete)}
 ulta_probe:
   access_classification: public; cloakbrowser passes anti-bot on /shop/<cat>/all cold
   category_surface: /shop/{makeup,skin-care,hair,fragrance,body-care}/all
   native_order: PROVEN — default+param best_sellers, serialized in page state
   declared_count: OBSERVED — e.g. makeup 7093 results
   continuation: OBSERVED — "You have viewed N of M" + button.LoadContent__button + ?page=N ; cap 720
-implementation: none authored yet; reuse-based route in section 5
-dogfood: {makeup: not_done, skincare: not_done, hair: not_done, fragrance: not_done, bath_and_body: not_done}
-validation: probe receipts recorded; instrument check passed; no code changed; git diff --check clean
-lifecycle: findings only; no PR opened
-verdict: READY_TO_IMPLEMENT
-exact_next_action: Implement the reuse-based category route (section 5); dogfood five; delegated review; PR.
+implementation: landed on branch (commits b05e8fc7, 5b45d9c4); 6 harness files; parser reused
+dogfood: {makeup: complete/128, skincare: complete/128, hair: complete/384, fragrance: complete/384, bath_and_body: complete/320}
+validation: 255 focused tests pass; git diff --check clean; 5/5 projections verified from fresh reads; US route confirmed each
+open_robustness: load-more depth varies (128-384) for a fixed click budget; consistent ~720 needs continuation tuning
+lifecycle: on branch claude/ulta-category-bestseller-parity; delegated de-correlated review commissioned; no PR yet
+verdict: PATCH_ADJUDICATION_REQUIRED
+exact_next_action: Adjudicate delegated review findings; patch + revalidate; then PR + land.
 ```
