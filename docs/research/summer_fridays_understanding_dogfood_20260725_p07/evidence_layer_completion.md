@@ -224,8 +224,8 @@ independent products:
 | Normalized family | Sephora placements | PDP result |
 | --- | --- | --- |
 | `body-fragrance-mist-vanilla` | `P525593` | admitted baseline |
-| `body-fragrance-mist-pink-guava` | `P525659`, mini `P525609` | parent admitted; mini route failed twice |
-| `body-fragrance-mist-pistachio-milk` | `P525642`, mini `P525633` | parent admitted; mini route failed twice |
+| `body-fragrance-mist-pink-guava` | `P525659`, mini `P525609` | parent admitted; mini route failed on the canonical attempt and one retry |
+| `body-fragrance-mist-pistachio-milk` | `P525642`, mini `P525633` | parent admitted; mini route failed on the canonical attempt and one retry |
 | `body-butter-balm-vanilla` | `P525660` | admitted baseline |
 | `body-butter-balm-pink-guava` | `P525613`, mini `P525652` | both admitted |
 | `body-butter-balm-pistachio-milk` | `P525641`, mini `P525665` | both admitted |

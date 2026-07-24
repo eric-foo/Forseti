@@ -15,7 +15,7 @@ input_hashes:
   company_core: 6ed7095c9aaae60f4a647eba2f9841e70a0503d5890178ada0098bb982d32d10
   retail_portfolio: b3418ea2a8cd904880f5b0216c4ffccfac95a6dbf2338267182828931ff105e8
   customer_community: 33f1456b0c830830328a640aa5f07f18bcdd87d904f43c6be1cc9ea4d92130b8
-  evidence_completion: 13ca8f0087d25baee6fabb92db2e5743dab0a3fa7874687531c85867ef7a5452
+  evidence_completion: 593ff96e1c731cdbfdc7fd1cc3966ca98d8881269bfe3e1a9a50dfb450a8a7cd
   acquisition_seal: 1f3512de1ae2e011e9614d5af3c1c1b2609ea6402b1b6666f9363f222b2b5f17
 stale_if: Any listed input hash changes.
 ```
@@ -73,7 +73,7 @@ readiness, return advisory-only critique and do not emit a bound verdict.
 | Company/high-yield core | `docs/research/summer_fridays_understanding_dogfood_20260724_p06/coordinated/specialists/co1_company_core_identity.md` | `6ed7095c9aaae60f4a647eba2f9841e70a0503d5890178ada0098bb982d32d10` |
 | Retail portfolio | `docs/research/summer_fridays_understanding_dogfood_20260724_p06/coordinated/specialists/co2_retail_portfolio.md` | `b3418ea2a8cd904880f5b0216c4ffccfac95a6dbf2338267182828931ff105e8` |
 | Customer/community depth | `docs/research/summer_fridays_understanding_dogfood_20260724_p06/coordinated/specialists/co3_customer_community_depth.md` | `33f1456b0c830830328a640aa5f07f18bcdd87d904f43c6be1cc9ea4d92130b8` |
-| Evidence completion and whole-gate reconciliation | `docs/research/summer_fridays_understanding_dogfood_20260725_p07/evidence_layer_completion.md` | `13ca8f0087d25baee6fabb92db2e5743dab0a3fa7874687531c85867ef7a5452` |
+| Evidence completion and whole-gate reconciliation | `docs/research/summer_fridays_understanding_dogfood_20260725_p07/evidence_layer_completion.md` | `593ff96e1c731cdbfdc7fd1cc3966ca98d8881269bfe3e1a9a50dfb450a8a7cd` |
 | Acquisition seal | `docs/workflows/summer_fridays_understanding_dogfood_20260725_p07/acquisition_seal.md` | `1f3512de1ae2e011e9614d5af3c1c1b2609ea6402b1b6666f9363f222b2b5f17` |
 
 ## Artifact-only boundary
