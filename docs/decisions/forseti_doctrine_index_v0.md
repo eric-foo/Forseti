@@ -55,7 +55,7 @@ Owner: Eric. Review_by: 2026-12-11.
 | Source Loading Doctrine | source-loading.md | Read packs, context budgets |
 | Skill Adoption Doctrine | skill-adoption.md | Skill source boundaries |
 | Artifact roles | artifact-roles.md | Role bindings, freshness markers |
-| Delegated review-patch (PROVISIONAL) | delegated-review-patch.md | High-stakes artifact hardening convention |
+| Delegated review-patch (bound, opt-in commission) | delegated-review-patch.md | High-stakes artifact hardening lane |
 
 ## Decision-record doctrine (docs/decisions/)
 

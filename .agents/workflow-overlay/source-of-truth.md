@@ -143,7 +143,7 @@ promotion.
 - `.agents/workflow-overlay/template-registry.md`: Forseti-owned prompt template registry for project-local templates.
 - `.agents/workflow-overlay/product-proof.md`: Forseti buyer-proof semantics, trust-objection handling, pull signals, and product-proof non-claims.
 - `.agents/workflow-overlay/communication-style.md`: Forseti response style for Chief Architect sequencing, review closeouts, and prompt handoffs.
-- `.agents/workflow-overlay/delegated-review-patch.md`: provisional opt-in Delegated Review-and-Patch convention; not a bound review lane, no strict claims.
+- `.agents/workflow-overlay/delegated-review-patch.md`: bound opt-in Delegated Review-and-Patch commission lane; activates only by explicit Chief Architect commission, and its returns stay decision input under the strict-claim boundary.
 - `docs/STRUCTURE.md`: docs-folder usage guide for future agents; subordinate to this overlay if conflicts appear.
 - `docs/workflows/orca_bootstrap_record.md`: Turn 6 bootstrap record.
 - `docs/workflows/forseti_repo_map_v0.md`: compact repo map for source-pack selection and prompt setup.
