@@ -22,13 +22,23 @@ from source_capture.sephora_onboarding_capture import (
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Use a hash-verified rendered Sephora PDP packet to capture a raw-preserved "
-            "Bazaarvoice onboarding companion. The data root is explicit because this "
-            "command performs live structured acquisition and commits append-only raw evidence."
+            "Use a hash-verified rendered Sephora PDP or canonical aggregate-content "
+            "parent packet to capture a raw-preserved Bazaarvoice onboarding companion. "
+            "Aggregate-content parents trigger a target-bound live configuration refresh. "
+            "The data root is explicit because this command performs live structured "
+            "acquisition and commits append-only raw evidence."
         )
     )
     parser.add_argument("--data-root", required=True)
     parser.add_argument("--parent-packet-id", required=True)
+    parser.add_argument(
+        "--configuration-source-packet-id",
+        help=(
+            "Optional hash-verified Sephora US packet whose preserved rendered DOM "
+            "supplies tenant-level read configuration when the canonical content "
+            "parent has none."
+        ),
+    )
     parser.add_argument(
         "--question-limit",
         type=int,
@@ -63,6 +73,7 @@ def main(argv: list[str] | None = None) -> int:
         recent_window_days=args.recent_window_days,
         timeout_seconds=args.timeout_seconds,
         max_bytes=args.max_bytes,
+        configuration_source_packet_id=args.configuration_source_packet_id,
     )
     summary = result["summary"]
     compact = {

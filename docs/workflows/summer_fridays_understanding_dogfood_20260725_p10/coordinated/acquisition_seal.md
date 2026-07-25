@@ -5,12 +5,14 @@ retrieval_header_version: 1
 artifact_role: Intelligence Cycle acquisition seal
 scope: >
   Manual CO0 whole-gate closeout for the cold Summer Fridays p10 Understanding
-  Acquire & Seal run.
+  Acquire & Seal run, plus the current separately authorized recovery
+  adjudication.
 use_when:
   - Verifying whether Summer Fridays p10 Deliver is authorized.
   - Auditing the material routes that block the p10 acquisition gate.
 authority_boundary: retrieval_only
 open_next:
+  - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/turn_a_acquisition_record.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/commission_board.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/specialists/co1_company_core_identity.md
@@ -22,11 +24,17 @@ stale_if:
 ```
 
 ```yaml
-current_lifecycle_status: ACQUISITION_BLOCKED
-intelligence_cycle_phase_status: UNDERSTANDING_ACQUIRE_AND_SEAL_COMPLETED_BLOCKED
-resume_allowed: true_only_by_new_commission_or_material_source_change
+current_lifecycle_status: ACQUISITION_BLOCKED_COV006_UNCAPTURED
+intelligence_cycle_phase_status: UNDERSTANDING_RECOVERY_ACQUISITION_PARTIAL
+resume_allowed: true_for_cov006_recovery_acquisition
 correct_intake_result: BLOCKED_ACQUISITION_INCOMPLETE
+original_seal_state: BLOCKED_ACQUISITION_INCOMPLETE
+recovery_adjudication_locator: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
 ```
+
+The `phase_acquisition_seal` block below is the preserved original p10 seal.
+Its Sephora blocker has been superseded by the recovery adjudication; its
+historical observations and packet accounting remain unchanged.
 
 ```yaml
 phase_acquisition_seal:
@@ -151,3 +159,16 @@ phase_acquisition_seal:
 The run reached a truthful, evidence-backed stop. Deliver is not authorized.
 REVOLVE completion, community evidence, and a verified raw corpus do not erase
 the material selected-Sephora PDP and onboarding failures.
+
+## Current Recovery Adjudication
+
+The Sephora route is recovered: all 40 admitted canonical parents now have one
+successful Helpful/Recent/Q&A companion disposition, including honestly
+preserved source-declared zero-result contexts. The two missing mini fragrance
+PDPs are accepted non-strategic middle-of-curve residuals under the current
+materiality rule.
+
+Deliver remains blocked because the COV-006 probe found two material California
+Proposition 65 notices that have not yet been preserved and adjudicated into
+the acquisition record. The current controlling state is therefore
+`BLOCKED_ACQUISITION_INCOMPLETE`, with COV-006 as the remaining blocker.

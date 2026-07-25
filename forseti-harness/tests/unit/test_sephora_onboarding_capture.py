@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from source_capture.sephora_onboarding_capture import (
     ApiRequestSpec,
     ApiResponse,
     BazaarvoiceReadConfig,
+    ParentConfigurationRefresh,
     SEPHORA_AGE_BUCKETS,
     SephoraOnboardingCaptureError,
     capture_sephora_onboarding_packet,
@@ -26,12 +28,7 @@ _REVIEW_TOKEN = "review-read-token"
 _QUESTION_TOKEN = "question-read-token"
 
 
-def _parent_packet(
-    root: DataLakeRoot,
-    tmp_path: Path,
-    *,
-    link_store_product_id: str = "P420652",
-) -> str:
+def _rendered_dom(*, link_store_product_id: str = "P420652") -> str:
     link_store = {
         "page": {
             "product": {
@@ -64,13 +61,22 @@ def _parent_packet(
             "token": _QUESTION_TOKEN,
         },
     }
-    html = (
+    return (
         '<script id="linkStore" type="text/json">'
         + json.dumps(link_store, separators=(",", ":"))
         + "</script><script>Sephora.configurationSettings="
         + json.dumps(config, separators=(",", ":"))
         + ";</script>"
     )
+
+
+def _parent_packet(
+    root: DataLakeRoot,
+    tmp_path: Path,
+    *,
+    link_store_product_id: str = "P420652",
+) -> str:
+    html = _rendered_dom(link_store_product_id=link_store_product_id)
     source = tmp_path / f"parent-{link_store_product_id}.html"
     source.write_text(html, encoding="utf-8")
     result = write_local_source_capture_packet(
@@ -81,6 +87,80 @@ def _parent_packet(
         source_locator=known_fact(_PRODUCT_URL),
         decision_question="test Sephora parent",
         capture_context="rendered Sephora sample packet",
+    )
+    return result.packet.packet_id
+
+
+def _content_parent_packet(root: DataLakeRoot, tmp_path: Path) -> str:
+    content = {
+        "record_kind": "retail_pdp_sephora_aggregate_content",
+        "schema_version": "retail_pdp_sephora_aggregate_content_v4",
+        "source_url": _PRODUCT_URL,
+        "rows": [
+            {
+                "source_visible_fields": {
+                    "product_id": "P420652",
+                    "sku": "2961324",
+                }
+            },
+            {
+                "source_visible_fields": {
+                    "product_id": "P420652",
+                    "sku": "1966258",
+                }
+            },
+        ],
+    }
+    source = tmp_path / "parent-content.json"
+    source.write_text(json.dumps(content), encoding="utf-8")
+    metadata = tmp_path / "parent-metadata.json"
+    metadata.write_text(
+        json.dumps(
+            {
+                "pin_confirmed": True,
+                "country_code_requested": "US",
+                "currency_code_requested": "USD",
+                "access_blocked": False,
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = write_local_source_capture_packet(
+        data_root=root,
+        input_files=[source, metadata],
+        source_family="retail_pdp",
+        source_surface="sephora_pdp_content",
+        source_locator=known_fact(_PRODUCT_URL),
+        decision_question="test canonical Sephora content parent",
+        capture_context="canonical aggregate-content Sephora sample packet",
+    )
+    return result.packet.packet_id
+
+
+def _configuration_source_packet(root: DataLakeRoot, tmp_path: Path) -> str:
+    source_url = "https://www.sephora.com/brand/test?country_switch=us"
+    rendered = tmp_path / "configuration-source.html"
+    rendered.write_text(_rendered_dom(), encoding="utf-8")
+    metadata = tmp_path / "configuration-source-metadata.json"
+    metadata.write_text(
+        json.dumps(
+            {
+                "pin_confirmed": True,
+                "country_code_requested": "US",
+                "currency_code_requested": "USD",
+                "access_blocked": False,
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = write_local_source_capture_packet(
+        data_root=root,
+        input_files=[rendered, metadata],
+        source_family="retail_pdp",
+        source_surface="sephora_brand_grid",
+        source_locator=known_fact(source_url),
+        decision_question="test preserved Sephora configuration source",
+        capture_context="hash-verified Sephora US configuration source",
     )
     return result.packet.packet_id
 
@@ -101,7 +181,7 @@ def _question_document() -> dict:
             },
             {
                 "Id": "q2",
-                "ProductId": "P420652",
+                "ProductId": "P429952",
                 "QuestionSummary": "Second?",
                 "QuestionDetails": "Second question details",
                 "TotalAnswerCount": 1,
@@ -195,7 +275,12 @@ def _statistics_product(
     }
 
 
-def _fake_fetcher(*, corrupt_artifact: str | None = None):
+def _fake_fetcher(
+    *,
+    corrupt_artifact: str | None = None,
+    questions_empty: bool = False,
+    reviews_empty: bool = False,
+):
     def fetch(
         spec: ApiRequestSpec,
         config: BazaarvoiceReadConfig,
@@ -205,7 +290,16 @@ def _fake_fetcher(*, corrupt_artifact: str | None = None):
         assert config.host == "api.bazaarvoice.com"
         if spec.config_kind == "questions":
             assert config.token == _QUESTION_TOKEN
-            document = _question_document()
+            document = (
+                {
+                    "HasErrors": False,
+                    "TotalResults": 0,
+                    "Results": [],
+                    "Includes": {"Answers": {}},
+                }
+                if questions_empty
+                else _question_document()
+            )
         else:
             assert config.token == _REVIEW_TOKEN
             assert (
@@ -217,39 +311,66 @@ def _fake_fetcher(*, corrupt_artifact: str | None = None):
                 assert ("Include", "Products") in spec.parameters
                 assert ("Stats", "Reviews") in spec.parameters
                 assert ("FilteredStats", "Reviews") in spec.parameters
-                document = {
-                    "HasErrors": False,
-                    "TotalResults": 14327,
-                    "Results": [
-                        _review_row("h1", "2026-07-18T00:00:00Z", "Helpful one"),
-                        _review_row(
-                            "h2",
-                            "2026-07-01T00:00:00Z",
-                            "Helpful two",
-                            product_id="2901072",
-                        ),
-                    ],
-                    "Includes": {"Products": {"P420652": _statistics_product()}},
-                }
+                document = (
+                    {
+                        "HasErrors": False,
+                        "TotalResults": 0,
+                        "Results": [],
+                        "Includes": {},
+                    }
+                    if reviews_empty
+                    else {
+                        "HasErrors": False,
+                        "TotalResults": 14327,
+                        "Results": [
+                            _review_row(
+                                "h1",
+                                "2026-07-18T00:00:00Z",
+                                "Helpful one",
+                            ),
+                            _review_row(
+                                "h2",
+                                "2026-07-01T00:00:00Z",
+                                "Helpful two",
+                                product_id="2901072",
+                            ),
+                        ],
+                        "Includes": {
+                            "Products": {"P420652": _statistics_product()}
+                        },
+                    }
+                )
             else:
                 assert spec.artifact_name.startswith(
                     "reviews_non_incentivized_most_recent_offset_"
                 )
                 assert ("Sort", "SubmissionTime:desc") in spec.parameters
                 offset = int(dict(spec.parameters)["Offset"])
-                pages = {
-                    0: [
-                        _review_row("r1", "2026-07-19T00:00:00Z", "Recent one"),
-                        _review_row("r2", "2026-07-10T00:00:00Z", "Recent two"),
-                    ],
-                    2: [
-                        _review_row("r3", "2026-06-25T00:00:00Z", "Recent three"),
-                        _review_row("r4", "2026-06-19T00:00:00Z", "Boundary"),
-                    ],
-                }
+                pages = (
+                    {0: []}
+                    if reviews_empty
+                    else {
+                        0: [
+                            _review_row(
+                                "r1", "2026-07-19T00:00:00Z", "Recent one"
+                            ),
+                            _review_row(
+                                "r2", "2026-07-10T00:00:00Z", "Recent two"
+                            ),
+                        ],
+                        2: [
+                            _review_row(
+                                "r3", "2026-06-25T00:00:00Z", "Recent three"
+                            ),
+                            _review_row(
+                                "r4", "2026-06-19T00:00:00Z", "Boundary"
+                            ),
+                        ],
+                    }
+                )
                 document = {
                     "HasErrors": False,
-                    "TotalResults": 14327,
+                    "TotalResults": 0 if reviews_empty else 14327,
                     "Results": pages[offset],
                 }
         if spec.artifact_name == corrupt_artifact:
@@ -364,6 +485,15 @@ def test_success_uses_three_roles_and_promotes_filtered_statistics(
     assert summary["questions"]["total_questions"] == 1390
     assert summary["questions"]["captured_question_rows"] == 2
     assert summary["questions"]["captured_included_answer_rows"] == 3
+    assert summary["questions"]["question_product_identity"] == {
+        "requested_product_group_id": "P420652",
+        "observed_question_product_ids": ["P420652", "P429952"],
+        "provider_collection_product_ids": [
+            "2901072",
+            "P420652",
+            "P429952",
+        ],
+    }
     assert summary["row_accounting"]["answers_equal"] is True
     assert summary["row_accounting"]["most_helpful_row_order_equal"] is True
     assert summary["row_accounting"]["most_recent_row_order_equal"] is True
@@ -390,6 +520,184 @@ def test_success_uses_three_roles_and_promotes_filtered_statistics(
     persisted = b"".join(loaded.bodies.values())
     assert _REVIEW_TOKEN.encode() not in persisted
     assert _QUESTION_TOKEN.encode() not in persisted
+
+
+def test_content_parent_succeeds_with_injected_live_configuration_refresh(
+    tmp_path: Path,
+) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _content_parent_packet(root, tmp_path)
+    rendered_dom = _rendered_dom()
+    refresh_calls: list[tuple[str, float]] = []
+
+    def refresh(product_url: str, timeout_seconds: float) -> ParentConfigurationRefresh:
+        refresh_calls.append((product_url, timeout_seconds))
+        return ParentConfigurationRefresh(
+            requested_url=product_url,
+            final_url=product_url,
+            rendered_dom=rendered_dom,
+            rendered_dom_sha256=hashlib.sha256(
+                rendered_dom.encode("utf-8")
+            ).hexdigest(),
+            pin_confirmed=True,
+        )
+
+    exit_code, result = capture_sephora_onboarding_packet(
+        data_root=root,
+        parent_packet_id=parent_id,
+        review_page_limit=2,
+        timeout_seconds=7.5,
+        fetcher=_fake_fetcher(),
+        configuration_refresher=refresh,
+    )
+
+    assert exit_code == 0
+    assert refresh_calls == [(_PRODUCT_URL, 7.5)]
+    parent = root.load_raw_packet(parent_id)
+    parent_file = parent.manifest["preserved_files"][0]
+    parent_metadata = parent.manifest["preserved_files"][1]
+    loaded = root.load_raw_packet(result["packet_id"])
+    summary = _artifact_json(loaded, "sephora_onboarding_summary.json")
+    configuration = summary["parent_packet"]["configuration"]
+    assert configuration == {
+        "mode": "live_target_bound_refresh",
+        "requested_url": _PRODUCT_URL,
+        "final_url": _PRODUCT_URL,
+        "rendered_dom_sha256": hashlib.sha256(
+            rendered_dom.encode("utf-8")
+        ).hexdigest(),
+        "pin_confirmed": True,
+        "content_parent_file_id": parent_file["file_id"],
+        "content_parent_file_sha256": parent_file["sha256"],
+        "content_parent_market_metadata_file_id": parent_metadata["file_id"],
+        "content_parent_market_metadata_sha256": parent_metadata["sha256"],
+        "content_parent_market": "US/USD",
+        "credential_posture": (
+            "page-declared read tokens used only in memory and not persisted"
+        ),
+    }
+    persisted = b"".join(loaded.bodies.values())
+    assert _REVIEW_TOKEN.encode() not in persisted
+    assert _QUESTION_TOKEN.encode() not in persisted
+
+
+def test_content_parent_accepts_hash_verified_sephora_configuration_source(
+    tmp_path: Path,
+) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _content_parent_packet(root, tmp_path)
+    configuration_source_id = _configuration_source_packet(root, tmp_path)
+
+    exit_code, result = capture_sephora_onboarding_packet(
+        data_root=root,
+        parent_packet_id=parent_id,
+        review_page_limit=2,
+        fetcher=_fake_fetcher(),
+        configuration_source_packet_id=configuration_source_id,
+    )
+
+    assert exit_code == 0
+    loaded = root.load_raw_packet(result["packet_id"])
+    summary = _artifact_json(loaded, "sephora_onboarding_summary.json")
+    configuration = summary["parent_packet"]["configuration"]
+    assert configuration["mode"] == "preserved_sephora_configuration_source"
+    assert configuration["configuration_source_packet_id"] == configuration_source_id
+    assert configuration["configuration_scope"] == "tenant_read_configuration_only"
+    assert configuration["configuration_source_market"] == "US"
+    assert configuration["content_parent_market"] == "US/USD"
+    persisted = b"".join(loaded.bodies.values())
+    assert _REVIEW_TOKEN.encode() not in persisted
+    assert _QUESTION_TOKEN.encode() not in persisted
+
+
+def test_zero_question_source_result_is_preserved_as_declared_absence(
+    tmp_path: Path,
+) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _parent_packet(root, tmp_path)
+
+    exit_code, result = capture_sephora_onboarding_packet(
+        data_root=root,
+        parent_packet_id=parent_id,
+        review_page_limit=2,
+        fetcher=_fake_fetcher(questions_empty=True),
+    )
+
+    assert exit_code == 0
+    loaded = root.load_raw_packet(result["packet_id"])
+    summary = _artifact_json(loaded, "sephora_onboarding_summary.json")
+    assert summary["questions"]["total_questions"] == 0
+    assert summary["questions"]["captured_question_rows"] == 0
+    assert summary["questions"]["question_product_identity"][
+        "observed_question_product_ids"
+    ] == []
+
+
+def test_zero_review_source_result_is_preserved_as_declared_absence(
+    tmp_path: Path,
+) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _parent_packet(root, tmp_path)
+
+    exit_code, result = capture_sephora_onboarding_packet(
+        data_root=root,
+        parent_packet_id=parent_id,
+        review_page_limit=2,
+        fetcher=_fake_fetcher(questions_empty=True, reviews_empty=True),
+    )
+
+    assert exit_code == 0
+    loaded = root.load_raw_packet(result["packet_id"])
+    summary = _artifact_json(loaded, "sephora_onboarding_summary.json")
+    assert summary["reviews"]["exact_non_incentivized_total"] == 0
+    assert summary["reviews"]["most_helpful"]["captured_review_rows"] == 0
+    assert summary["reviews"]["most_recent_30d"]["coverage_status"] == (
+        "source_exhausted"
+    )
+    assert summary["content_qualification"]["combined_statistics_present"] is False
+    assert summary["content_qualification"]["combined_statistics_status"] == (
+        "not_applicable_source_declared_zero_reviews"
+    )
+    assert summary["content_qualification"]["age_bucket_vocabulary_exact"] is None
+
+
+def test_content_parent_refresh_product_mismatch_fails_before_api_fetch(
+    tmp_path: Path,
+) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _content_parent_packet(root, tmp_path)
+    api_calls = 0
+
+    def fetch(*_args, **_kwargs):
+        nonlocal api_calls
+        api_calls += 1
+        raise AssertionError("must not fetch Bazaarvoice")
+
+    def refresh(product_url: str, _timeout_seconds: float) -> ParentConfigurationRefresh:
+        return ParentConfigurationRefresh(
+            requested_url=product_url,
+            final_url=product_url.replace("P420652", "P999999"),
+            rendered_dom=_rendered_dom(link_store_product_id="P999999"),
+            rendered_dom_sha256="mismatch-is-rejected-before-persistence",
+            pin_confirmed=True,
+        )
+
+    with pytest.raises(
+        SephoraOnboardingCaptureError,
+        match=(
+            "configuration refresh product mismatch: "
+            "parent=P420652, final=P999999"
+        ),
+    ):
+        capture_sephora_onboarding_packet(
+            data_root=root,
+            parent_packet_id=parent_id,
+            fetcher=fetch,
+            configuration_refresher=refresh,
+        )
+
+    assert api_calls == 0
+    assert root.list_committed_packet_ids() == [parent_id]
 
 
 def test_missing_combined_statistics_fails_adaptation_with_raw_fallback(
