@@ -93,6 +93,24 @@ direct_success_packet_verification:
 Failed adaptation packets from intermediate recovery attempts remain
 append-only diagnostic evidence. They receive no success credit.
 
+### Source-declared zero-Q&A parents
+
+These nine exact companion requests returned `TotalResults: 0`,
+`HasErrors: false`. The PDP labels below are shortened for readability; each
+link preserves the exact captured parent and SKU binding.
+
+| Parent | Sephora PDP | Q&A response |
+| --- | --- | --- |
+| `P522831` | [The Bronzer Brush](https://www.sephora.com/product/the-bronzer-brush-P522831?skuId=2968881&country_switch=us&lang=en) | Source-declared zero |
+| `P525593` | [Vanilla Hair + Body Fragrance Mist](https://www.sephora.com/product/hair-body-fragrance-mist-vanilla-P525593?skuId=2996726&country_switch=us&lang=en) | Source-declared zero |
+| `P525613` | [Pink Guava Body Butter Balm](https://www.sephora.com/product/body-butter-balm-pink-guava-P525613?skuId=2995512&country_switch=us&lang=en) | Source-declared zero |
+| `P525641` | [Pistachio Milk Body Butter Balm](https://www.sephora.com/product/body-butter-balm-pistachio-milk-P525641?skuId=2995504&country_switch=us&lang=en) | Source-declared zero |
+| `P525642` | [Pistachio Milk Body Fragrance Mist](https://www.sephora.com/product/body-fragrance-mist-pistachio-milk-full-size-P525642?skuId=2996684&country_switch=us&lang=en) | Source-declared zero |
+| `P525652` | [Mini Pink Guava Body Butter Balm](https://www.sephora.com/product/body-butter-balm-pink-guava-travel-size-P525652?skuId=2995488&country_switch=us&lang=en) | Source-declared zero |
+| `P525659` | [Pink Guava Hair + Body Fragrance Mist](https://www.sephora.com/product/hair-body-fragrance-mist-pink-guava-P525659?skuId=2996700&country_switch=us&lang=en) | Source-declared zero |
+| `P525660` | [Vanilla Body Butter Balm](https://www.sephora.com/product/body-butter-balm-vanilla-P525660?skuId=2995496&country_switch=us&lang=en) | Source-declared zero |
+| `P525665` | [Mini Pistachio Milk Body Butter Balm](https://www.sephora.com/product/body-butter-balm-pistachio-milk-travel-size-P525665?skuId=2995470&country_switch=us&lang=en) | Source-declared zero |
+
 ## Exact PDP Materiality Adjudication
 
 All 42 exact non-bundle Sephora listings received an attempted disposition.
