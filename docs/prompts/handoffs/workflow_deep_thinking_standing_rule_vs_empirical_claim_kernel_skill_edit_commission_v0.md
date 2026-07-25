@@ -15,6 +15,7 @@ scope: >
 use_when:
   - Executing the commissioned workflow-deep-thinking kernel-skill edit in that skill's own source lane.
 authority_boundary: retrieval_only
+output_mode: file-write (this artifact) + paste-ready-chat (courier copy for the receiving lane)
 open_next:
   - docs/product/judgment_spine/judgment_spine_demand_read_grading_rubric_v0.md  # Orca's own (non-kernel) application of the rule; provenance only — do NOT import into the skill
 provenance: >
