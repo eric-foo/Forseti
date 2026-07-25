@@ -7,32 +7,36 @@ artifact_role: >
 scope: >
   Paste-ready commission for a downstream agent operating in the workflow-deep-thinking
   skill's own source + deployment lane (external to Orca). It asks that agent to encode
-  one domain-agnostic reasoning rule (deductive standing-rule vs empirical generalization)
-  into the skill's Strict-Claims / decision discipline, route it through the skill's own
+  two bounded domain-agnostic reasoning rules (deductive standing-rule vs empirical
+  generalization; proportionality / stop when adequately supported)
+  into the skill's Strict-Claims / decision discipline, route them through the skill's own
   adversarial review + deployment gate, and never treat the installed copy or the Orca
   repo as the skill's source of truth.
 use_when:
   - Executing the commissioned workflow-deep-thinking kernel-skill edit in that skill's own source lane.
 authority_boundary: retrieval_only
+output_mode: file-write (this artifact) + paste-ready-chat (courier copy for the receiving lane)
 open_next:
   - docs/product/judgment_spine/judgment_spine_demand_read_grading_rubric_v0.md  # Orca's own (non-kernel) application of the rule; provenance only — do NOT import into the skill
 provenance: >
-  Surfaced in the Orca demand-read judgment lane (2026-06-15) while establishing a
-  demand-read grading standing rule. The encoded rule is general epistemics; the Orca
-  application stays in Orca and is not imported into the kernel skill.
+  Rule 1 surfaced in the Orca demand-read judgment lane (2026-06-15) while establishing a
+  demand-read grading standing rule. Rule 2 surfaced in the Forseti Smallest-Complete
+  assessment of AGENTS.md and the deep-think lane (2026-07-25). Both encoded rules are
+  general epistemics/decision discipline; the project applications stay in the project
+  repo and are not imported into the kernel skill.
 stale_if:
   - workflow-deep-thinking's Strict-Claims / decision-discipline structure is restructured before this lands.
   - The owner withdraws the kernel-skill change in favor of Orca-doctrine-only capture.
 ---
 
-# Commission — encode "deductive standing-rule vs empirical generalization" into the `workflow-deep-thinking` kernel skill (kernel-skill source edit; gated + reviewed)
+# Commission — encode two decision-discipline rules ("deductive standing-rule vs empirical generalization"; "proportionality / stop when adequately supported") into the `workflow-deep-thinking` kernel skill (kernel-skill source edit; gated + reviewed)
 
 ## Role and target
 
 You are operating in the **canonical source repository of the `workflow-deep-thinking`
 workflow-kernel skill** — wherever that skill's source-of-truth actually lives. Your job
-is to make one small, domain-agnostic addition to that skill's reasoning discipline,
-then route it through the skill's own review and deployment process.
+is to make two small, domain-agnostic additions to that skill's reasoning discipline,
+then route them through the skill's own review and deployment process.
 
 **Before editing, confirm the target:**
 
@@ -44,7 +48,7 @@ then route it through the skill's own review and deployment process.
 - If you cannot positively identify the skill's canonical source, **stop and report**
   `BLOCKED_SOURCE_UNCONFIRMED` rather than editing a copy.
 
-## What to encode (domain-agnostic — no project facts)
+## What to encode — rule 1 (domain-agnostic — no project facts)
 
 Add a rule to `workflow-deep-thinking`'s **Strict Claims** handling (or its decision
 discipline, wherever the skill stabilizes "what is proven vs not proven"). The skill
@@ -71,6 +75,33 @@ Keep it **project-agnostic**: state it in general terms (premises, claims, cases
 the smallest wording that fits the skill's existing voice and section structure; do not
 restructure the skill or expand its scope.
 
+## What to encode — rule 2 (added 2026-07-25; domain-agnostic — no project facts)
+
+Add a proportionality stop to the skill's decision discipline. The skill currently
+maximizes rigor — option comparison, assumption inventories, verification — but has no
+rule bounding that machinery to what the decision needs, so a full pass can itself
+become ceremony on narrow decisions. Encode:
+
+> **Proportion the pass to the decision; stop when it is adequately supported.**
+>
+> - Scale option generation, evidence demands, and verification depth to the stakes,
+>   reversibility, and lock-in of the decision itself — not to the importance or
+>   breadth of the surrounding system.
+> - Once the recommendation is adequately supported, stop: deliver the decision and the
+>   decisive rationale, plus at most the assumptions or reversal conditions that would
+>   change it. Do not append roadmaps, policies, fallbacks, checklists, or standing
+>   mechanisms unless the request asks for them.
+> - Weigh subtraction equally with addition: an option that removes or simplifies an
+>   existing rule, step, or mechanism competes on equal standing with additive options.
+>   Among adequately supported options, prefer the smaller durable surface and lower
+>   lock-in; surface the tradeoff when a higher-lock-in option genuinely serves the
+>   request better.
+
+Same discipline as rule 1: general terms only, smallest wording that fits the skill's
+existing voice and section structure, no restructuring, no scope expansion. If the
+skill already carries an equivalent proportionality rule, report that instead of
+duplicating it.
+
 ## Hard constraints
 
 - **Global blast radius.** This skill is used across every project that loads it. Treat
@@ -80,18 +111,20 @@ restructure the skill or expand its scope.
   until an explicit deployment turn," respect that — produce the source edit and stop at
   the deployment gate.
 - **Adversarial review recommended before landing.** Given the blast radius, have an
-  independent reviewer check that (a) the rule is correct general epistemics, (b) it does
-  not contradict or duplicate the skill's existing Strict-Claims language, and (c) it
-  carries no domain leakage. Findings-first; the reviewer holds no deployment authority.
+  independent reviewer check that (a) each rule is correct general epistemics/decision
+  discipline, (b) it does not contradict or duplicate the skill's existing Strict-Claims
+  or decision-discipline language, and (c) it carries no domain leakage. Findings-first;
+  the reviewer holds no deployment authority.
 - **No project leakage.** Nothing from the originating project (paths, examples, lifecycle
   labels, product facts) enters the skill text.
 
 ## Process
 
 1. **Locate + confirm** the skill's canonical source (else `BLOCKED_SOURCE_UNCONFIRMED`).
-2. **Draft** the smallest domain-agnostic edit into the Strict-Claims / decision-discipline
-   section, matching the skill's existing voice.
-3. **Adversarial review** the draft (correctness, non-duplication, no leakage); revise.
+2. **Draft** the smallest domain-agnostic edits (both rules) into the Strict-Claims /
+   decision-discipline section, matching the skill's existing voice.
+3. **Adversarial review** the draft (correctness, non-duplication, no leakage — for
+   each rule); revise.
 4. **Route to deployment** through the skill's own gate; stop at the gate if deployment is
    not authorized this turn.
 5. **Report** the source path edited, the diff, the review outcome, and the deployment

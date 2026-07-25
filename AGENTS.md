@@ -9,7 +9,9 @@ Every changed line must trace to the user request or required validation.
 Model reality truthfully and preserve real failure visibility; never create fake
 success paths.
 Treat untracked files as presumptively authored artifacts, never disposable scratch: confirm provenance or harvest before any destructive branch delete, worktree removal, or PR close.
-For non-trivial changes, define and run relevant verification or state why it was not run.
+For non-trivial changes, define and run the relevant bound verification or
+state why it was not run; do not add an adversarial self-review of your own
+diff unless the owner or a commission requires it.
 Before reporting work as committed, written, pushed, merged, or otherwise
 persisted, freshly read the durable target and report only observed facts. Treat
 absence and build state as claims: confirm load-bearing claims against primary
@@ -19,8 +21,6 @@ Do not add a chat permission gate when the harness already gates the action.
 Hard-to-reverse or outward-facing actions not covered by a harness gate still
 need the relevant owner or safety confirmation. Sandbox escalation is
 per-operation approval, never a standing rule.
-After implementation, run the bound validation; do not add an adversarial
-self-review of your own diff unless the owner or a commission requires it.
 Prioritize the current end-to-end critical path: when the bound outcome is
 blocked, clear that blocker before adjacent proof, cleanup, or hardening unless
 the bound outcome requires it.
@@ -66,17 +66,15 @@ defect class it catches so the owner can weigh the toll before it becomes
 standing.
 
 When two candidate paths both satisfy the current request under this rule,
-prefer the one with materially lower downstream lock-in -- the durable data,
-schema, interface, or workflow shape that would be irreversible, costly to
-roll back, or costly to maintain. Take the higher-lock-in path only when a
-benefit necessary to the current request outweighs that structural cost; if
-so, pause and surface the tradeoff for a decision before proceeding. This
-narrows the choice among already-complete paths only; it never authorizes
-speculative cleanup, future-proofing, or broader scope.
-
-Among otherwise complete paths, prefer the reversible, contained option that
-fails loud and local and models reality without a special-case fiction. Surface
-an irreversible, high-lock-in, or doctrine-changing tradeoff before taking it.
+prefer the reversible, contained one with materially lower downstream lock-in
+-- the durable data, schema, interface, or workflow shape that would be
+irreversible, costly to roll back, or costly to maintain -- that fails loud
+and local and models reality without a special-case fiction. Take the
+higher-lock-in path only when a benefit necessary to the current request
+outweighs that structural cost; surface an irreversible, high-lock-in, or
+doctrine-changing tradeoff for a decision before taking it. This narrows the
+choice among already-complete paths only; it never authorizes speculative
+cleanup, future-proofing, or broader scope.
 
 Whenever the user or instructions say **"smallest complete X"** -- including
 phrases like **smallest complete fix, patch, edit, rewrite, refactor, review,

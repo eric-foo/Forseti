@@ -45,7 +45,7 @@ history; do not keep it resident in live authority.
 - `validation-gates.md`: checks required before claiming completion.
 - `review-lanes.md`: read-only review lanes, patch/integration execution boundaries, and template retrieval rules.
 - `batch0-process-pilot.md`: retired compatibility pointer to the preserved Batch 0 evidence record.
-- `delegated-review-patch.md`: provisional, opt-in Delegated Review-and-Patch convention for high-stakes authored artifacts, and the overlay-interface fields a future skill implementation may read. Not a bound review lane.
+- `delegated-review-patch.md`: bound, opt-in Delegated Review-and-Patch commission lane for high-stakes authored artifacts and bounded code diffs, and the overlay-interface fields a future skill implementation may read. Activates only by explicit Chief Architect commission; never mandatory or machine-routable.
 - `safety-rules.md`: project-specific safety and forbidden drift.
 - `skill-adoption.md`: skill source, shadow, and adoption status.
 

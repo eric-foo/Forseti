@@ -56,7 +56,11 @@ delegate lifecycle hard stop, de-correlation commission constants — are owned
 by `docs/prompts/templates/shared/forseti_preflight_defaults_v0.md`. A prompt
 that relies on one cites that artifact instead of restating it; restating a
 constant owned there in a new or materially touched prompt is a prompt-quality
-defect. Per-prompt deltas — revision pins, named targets, repository-state
+defect. Exception: an operator-couriered cross-vendor delegate prompt is
+written self-contained for its external receiver and restates the
+delegate-facing constants (`environment_baseline`, `lifecycle_hard_stop`,
+`decorrelation_commission`) inline; that restatement must stay faithful to the
+owning artifact, and every other constant stays pointer-cited. Per-prompt deltas — revision pins, named targets, repository-state
 allowance, workspace root, validation route, and any content hashes required
 outside the couriered repo-bound receiver rule below — are always stated
 inline and never replaced by a pointer. Routine prompts state only the
@@ -395,11 +399,12 @@ Render one compact pointer-first prompt containing:
    delegate family, using `operator_to_fill` only for an inferable but genuinely
    operator-owned value;
 4. pointers to `AGENTS.md`, `.agents/workflow-overlay/README.md`, the targeted
-   sections of `.agents/workflow-overlay/delegated-review-patch.md`, the
-   relevant review skill or lane, and the `environment_baseline`,
-   `lifecycle_hard_stop`, and `decorrelation_commission` constants in
-   `docs/prompts/templates/shared/forseti_preflight_defaults_v0.md` (cited,
-   not restated);
+   sections of `.agents/workflow-overlay/delegated-review-patch.md`, and the
+   relevant review skill or lane; the delegate-facing `environment_baseline`,
+   `lifecycle_hard_stop`, and `decorrelation_commission` constants from
+   `docs/prompts/templates/shared/forseti_preflight_defaults_v0.md` are
+   restated inline, faithful to that owning artifact, so the courier body is
+   self-contained for its external receiver;
 5. named validation expectations with real failure and not-run reporting;
 6. the controller return: findings, bounded diff, neutral citations, validation
    evidence, verdict, and residual risk; and
@@ -467,7 +472,12 @@ separate:
   kept in ignored `docs/_inbox/` scratch when a disk handoff is useful. Do not
   open a separate prompt-only PR for that material, and do not commit it solely
   to manufacture a durable prompt artifact. The durable record is the lane PR
-  plus the downstream artifact the prompt asks the receiver to write. Closeout
+  plus the downstream artifact the prompt asks the receiver to write. A
+  lane-scoped courier prompt committed to the repository despite this default
+  (for example, for cross-machine transport) is retired — deleted in its lane
+  PR — once its return is consumed;
+  `.agents/workflow-overlay/delegated-review-patch.md` binds that retirement at
+  adjudication closeout. Closeout
   notes and other lane-continuity docs follow the same filing rule: they ride
   the originating work-unit lane PR or stay in ignored scratch until consumed,
   and get a standalone PR only when the doc itself is the bounded publication
