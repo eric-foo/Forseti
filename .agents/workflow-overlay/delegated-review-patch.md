@@ -44,16 +44,18 @@ from the executor rule "edit only inside accepted scope" — the commission is t
 accepted scope.
 
 **When it applies — by commission, not by category.** This lane is available
-only under an explicit Chief Architect commission that (1) names the single
-target artifact file, (2) states why ordinary source-read-only review is
+only under an explicit Chief Architect commission that (1) names the target
+required by the applicable target kind — one authored artifact or one explicit
+multi-file code set — (2) states why ordinary source-read-only review is
 insufficient, and (3) declares the bounded patch scope. Absent such a commission
-it does not apply. It is intended for high-stakes *authored* artifacts —
-doctrine, operating contracts, and eval/scoring/validation instruments — where
-the author encodes guardrails and can reintroduce the exact failure mode those
-guardrails exist to prevent; but the category alone never triggers it. Trivial
-edits, routine prose, mechanical patches, and ordinary review continue to use
-the cheap inline path — the author edits directly, or the standard
-source-read-only review lane applies. This is never a mandatory front door.
+it does not apply. The default target kind is for high-stakes *authored*
+artifacts — doctrine, operating contracts, and eval/scoring/validation
+instruments — where the author encodes guardrails and can reintroduce the exact
+failure mode those guardrails exist to prevent; but the category alone never
+triggers it. Trivial edits, routine prose, mechanical patches, and ordinary
+review continue to use the cheap inline path — the author edits directly, or
+the standard source-read-only review lane applies. This is never a mandatory
+front door.
 
 An owner instruction to `success implement` is an explicit **conditional**
 commission for this lane, not a universal review gate. At implementation
@@ -251,12 +253,11 @@ The default loop above targets a single *authored* artifact and uses the
 delegate's own adversarial analysis as the review. A bounded multi-file
 implementation/code diff is handled by this **sibling target kind**: the same
 commissioned convention with exactly two binding deltas. Everything else —
-explicit commission, the de-correlation who-constraint and two-bar rule, the
-`repo` / `no_repo` access-mode obligations, CA adjudication of the returned diff
-before any keep, the `NEEDS_ARCHITECTURE_PASS` escalation, the strict-claim
-boundary, and the no-runtime-model-recommendation rule — is inherited unchanged.
-The code-review method remains the method in both access modes; `no_repo` only
-changes repository access and patch authorship.
+explicit commission, the de-correlation who-constraint, the repo-only access
+obligation, CA adjudication of the returned diff before any keep, the
+`NEEDS_ARCHITECTURE_PASS` escalation, the strict-claim boundary, and the
+no-runtime-model-recommendation rule — is inherited unchanged. The code-review
+lane is the review method; `no_repo` remains outside this convention.
 
 1. **The review method is the code review lane, not artifact review.** The
    delegate's review portion is `workflow-code-review` run under the Review
@@ -293,10 +294,12 @@ Two obligations are stated explicitly here because code carries them:
   routes to read-only code review.
 
 **Repo-mode discovery discharges a downstream independent-review gate.** When a
-cross-vendor delegate runs the `repo`-mode loop — full-artifact adversarial
-discovery (loop step 1, not only the patched lines) plus authorship of the
-bounded fix — and the CA adjudicates and independently verifies closure (a
-class-level sweep for the finding's leak class plus byte/scope checks), that pass
+cross-vendor delegate runs the `repo`-mode loop — full-target discovery under
+the target kind's bound review method (the delegate's own adversarial analysis
+for an authored artifact per loop step 1, the code review lane for a named
+code set; not only the patched lines) plus authorship of the bounded fix — and
+the CA adjudicates and independently verifies closure (a class-level sweep for
+the finding's leak class plus byte/scope checks), that pass
 **satisfies** a `cross_vendor_discovery` independent-review requirement for the
 *patched* artifact (for example, a pre-freeze leakage gate). A separate
 standalone post-patch re-scan is **not** additionally required to clear that gate.
