@@ -14,6 +14,13 @@ authority_boundary: retrieval_only
 ```
 
 - Status: PROPOSED_LOCK
+- Superseded in part (2026-07-25): the standing "wrap every high-stakes
+  decision in deep-thinking" posture in this record is not live doctrine.
+  Deep-thinking runs on explicit invocation only, per the
+  `workflow-deep-thinking` scope in `.agents/workflow-overlay/skill-adoption.md`
+  and the overlay Behavioral Admission; the Batch 0 benchmark
+  (`docs/workflows/process_improvement_batch0/deep_thinking_benchmark_v0.md`)
+  closed with no standing deep-think obligation.
 - Date: 2026-05-13
 - Scope: docs-first workflow strategy for maximizing the first three Orca workflow methods
 - Implementation authorized this turn: no
