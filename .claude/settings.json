@@ -2,8 +2,8 @@
   "extraKnownMarketplaces": {
     "agent-workflow-local": {
       "source": {
-        "source": "file",
-        "path": "../agent-workflow/marketplace.json"
+        "source": "github",
+        "repo": "eric-foo/agent-workflow"
       }
     }
   },
