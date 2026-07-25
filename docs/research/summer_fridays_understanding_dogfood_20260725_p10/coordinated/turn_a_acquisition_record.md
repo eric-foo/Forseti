@@ -30,9 +30,25 @@ p10 stopped. Its Sephora blocker is superseded by
 have successful companion dispositions, and the two missing mini fragrance PDPs
 are accepted non-strategic residuals under the current materiality rule.
 
-The acquisition gate remains blocked only because the COV-006 probe found a
-material regulatory/product-safety category that has not yet been preserved and
-adjudicated. Deliver remains forbidden until that recovery closes.
+The COV-006 hidden-venue job is also closed. Its two Proposition 65 notices,
+procedural index state, and relevant later product-state evidence are preserved
+and typed as contextual, non-decision-bearing, and monitor-only; chronology is
+not promoted to causation.
+
+```yaml
+current_recovery_gate: SEALED_READY_FOR_DELIVER
+acquisition_gate: passed
+deliver_allowed: true
+materially_complete_for_bound_decision: true
+consequential_flaw_exposure: sufficient
+exhaustive_corpus_claimed: false
+production_ci_readiness_claimed: false
+```
+
+The current corpus is materially complete enough to support useful Deliver
+decisions and expose consequential flaws, contradictions, and uncertainty.
+The recovery adjudication is the controlling source for that result. The
+original blocked record below remains unchanged as historical evidence.
 
 ## Run Identity And Boundary
 

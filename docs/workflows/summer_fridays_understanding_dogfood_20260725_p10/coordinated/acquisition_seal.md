@@ -24,10 +24,10 @@ stale_if:
 ```
 
 ```yaml
-current_lifecycle_status: ACQUISITION_BLOCKED_COV006_UNCAPTURED
-intelligence_cycle_phase_status: UNDERSTANDING_RECOVERY_ACQUISITION_PARTIAL
-resume_allowed: true_for_cov006_recovery_acquisition
-correct_intake_result: BLOCKED_ACQUISITION_INCOMPLETE
+current_lifecycle_status: ACQUISITION_SEALED_READY_FOR_DELIVER
+intelligence_cycle_phase_status: UNDERSTANDING_ACQUISITION_COMPLETE
+resume_allowed: true_for_deliver_after_commissioned_review_adjudication
+correct_intake_result: SEALED_READY_FOR_DELIVER
 original_seal_state: BLOCKED_ACQUISITION_INCOMPLETE
 recovery_adjudication_locator: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
 ```
@@ -168,7 +168,47 @@ preserved source-declared zero-result contexts. The two missing mini fragrance
 PDPs are accepted non-strategic middle-of-curve residuals under the current
 materiality rule.
 
-Deliver remains blocked because the COV-006 probe found two material California
-Proposition 65 notices that have not yet been preserved and adjudicated into
-the acquisition record. The current controlling state is therefore
-`BLOCKED_ACQUISITION_INCOMPLETE`, with COV-006 as the remaining blocker.
+COV-006 is also closed. The two California Proposition 65 notice records,
+their PDFs, the current public registry follow-on counts, and the relevant
+later company-owned product-state pages are preserved. The notices are
+allegations, not findings. The public registry displayed zero complaints,
+settlements, and judgments for both target rows at capture time, and no
+withdrawal record was displayed. Cloud Dew later changed formula and
+ingredients, but no evidence establishes that the notice caused that change;
+Rich Cushion's current state likewise does not prove its historical
+composition or remediation.
+
+```yaml
+current_recovery_seal:
+  seal_state: SEALED_READY_FOR_DELIVER
+  acquisition_gate: passed
+  deliver_allowed: true
+  ci_fitness:
+    materially_complete_for_bound_decision: true
+    consequential_flaw_exposure: sufficient
+    exhaustive_web_or_customer_corpus: false
+    production_ci_readiness_claimed: false
+  cov_006:
+    status: closed
+    disposition: contextual_non_decision_bearing_monitor_only
+    public_registry_counts_at_capture:
+      complaint: 0
+      settlement: 0
+      judgment: 0
+    displayed_withdrawal_record: false
+    notice_to_product_change_causation: unproven
+  accepted_residuals:
+    - two attempted non-strategic Sephora mini-size PDP misses
+    - six bundle/set corpus-identity gaps
+    - four unmatched retailer rows
+    - bounded non-representative community evidence
+    - sparse REVOLVE review bodies
+    - explicit ownership, leadership, market, incident, and currentness ceilings
+  current_source: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
+```
+
+The corpus is materially complete for the bound Summer Fridays Understanding
+decision and exposes enough negative, contradictory, and uncertain evidence
+for a useful Deliver synthesis. It is not exhaustive and the seal is not a
+claim of method superiority or production-CI readiness. Phase A acquisition is
+complete; this lane does not itself start Deliver.

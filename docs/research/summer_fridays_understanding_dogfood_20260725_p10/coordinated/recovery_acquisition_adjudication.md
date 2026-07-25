@@ -6,7 +6,8 @@ artifact_role: Summer Fridays p10 post-seal recovery acquisition adjudication
 scope: >
   Records the separately authorized recovery of the Sephora review/Q&A
   companion route, owner-directed exact-PDP materiality correction, bounded
-  COV-006 probe, and Target/Amazon prior-corpus inventory.
+  COV-006 reconciliation, whole-gate CI-fitness adjudication, and
+  Target/Amazon prior-corpus inventory.
 use_when:
   - Determining the current gate after the original blocked p10 seal.
   - Deciding whether the preserved p10 Sephora PDP corpus must be recollected.
@@ -19,27 +20,33 @@ open_next:
   - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
 stale_if:
   - Any successful recovery companion packet or its parent changes.
-  - COV-006 receives preserved acquisition and a new whole-gate adjudication.
+  - Any claim-bearing COV-006 packet or the materiality rule changes.
 ```
 
 ## Current Gate
 
 ```yaml
-recovery_state: SEPHORA_ROUTE_RECOVERED
-acquisition_gate: blocked
-deliver_allowed: false
-remaining_blocker:
-  route: COV-006
-  reason: >
-    The bounded hidden-venue probe found a material regulatory/product-safety
-    category that p10 did not acquire: two California Proposition 65 notices
-    naming Summer Fridays products. The probe is discovery evidence only; the
-    source records have not yet been preserved and adjudicated into p10.
-adjudicated_at: "2026-07-25T16:05:48.3911911+08:00"
+recovery_state: SEALED_READY_FOR_DELIVER
+acquisition_gate: passed
+deliver_allowed: true
+ci_fitness:
+  materially_complete_for_bound_decision: true
+  consequential_flaw_exposure: sufficient
+  exhaustive_web_or_customer_corpus: false
+  production_ci_readiness_claimed: false
+cov_006:
+  status: closed
+  disposition: contextual_non_decision_bearing_monitor_only
+  causation_between_notice_and_later_product_change: unproven
+adjudicated_at: "2026-07-25T21:26:28.6389180+08:00"
 ```
 
-The Sephora acquisition failure is cleared. Deliver is still not authorized
-because COV-006 found a whole material category that remains probe-only.
+The recovery closes both material acquisition failures. The corpus is
+materially complete for the bound Summer Fridays Understanding decision: it
+can support useful synthesis and expose consequential weaknesses,
+contradictions, and uncertainty without pretending to be an exhaustive web,
+customer, legal, or product-safety corpus. This authorizes Deliver; it does
+not itself perform Deliver or establish production-CI readiness.
 
 ## Sephora Composition Recovery
 
@@ -128,27 +135,72 @@ question. Under the owner-directed materiality rule, 40/42 is therefore an
 accepted residual, not an acquisition blocker. This does not create a numeric
 threshold or permission to skip attempts.
 
-## COV-006 Probe
+## COV-006 Reconciliation
 
-The bounded category-aware hidden-venue probe found a material
-regulatory/product-safety category absent from p10:
+The category-aware hidden-venue job is now performed and bounded. Seven
+claim-bearing packets preserve the two California Proposition 65 notice
+records, their PDFs, one current defendant-filtered registry result view, and
+the relevant later company-owned product-state pages.
 
-- California Proposition 65 notice
-  [2024-02857](https://oag.ca.gov/prop65/60-Day-Notice-2024-02857), naming
-  Summer Fridays, Sephora, Mini Cloud Dew, and an alleged diethanolamine
-  exposure;
-- California Proposition 65 notice
-  [2024-03063](https://www.oag.ca.gov/prop65/60-Day-Notice-2024-03063), naming
-  Summer Fridays, Revolve, Rich Cushion Cream, and an alleged diethanolamine
-  exposure.
+| Role | Packet | Manifest SHA-256 |
+| --- | --- | --- |
+| Notice 2024-02857 registry | `01KYCPQQMG1S28QA3RTQYMG6F0` | `264b2cc66f02ac6fd184fead9931aeb9cf8578af88755737e9a24a92a26df5f3` |
+| Notice 2024-02857 PDF | `01KYCPQTPZK6XD8W08PQB0TZCE` | `1a2e70842b117f97d3e3653d3a2e68be1e46ba8633241c8101b232aea0e05688` |
+| Notice 2024-03063 registry | `01KYCPQWXHM2NJ43Q6DCS9GAP0` | `35a4c6872ef80b798e5c794ea7aefb2a59007062542cb45def452a76c33bade0` |
+| Notice 2024-03063 PDF | `01KYCPQZ670Z08047WTHRT3RR9` | `2720c074e1c1cf6c4e68dbb1548984ad0851bc53eab7009687b9a688441fa52c` |
+| Later Cloud Dew formula statement | `01KYCPR0M5ZR4ZAZJJ7J5AKAHP` | `2960fa96f8d74fbe8cb5f3b15d2f94e482ce5dfbfc749b364488f4a457a640b1` |
+| Current Rich Cushion product page | `01KYCPR29GBC32FJVXEGVQ0TGD` | `27b10cf8d24bd8fc8309f998a6c30673b52590cca2fdaab9aedbd6ff2d7ae0a7` |
+| Current Summer Fridays registry results | `01KYCQ84THK86S9FDZVRRNKFN6` | `7a97a36ecf73d6a68bd9aec72fe2bfcc69f23f17d3f9444fdf7183c634d5ad41` |
 
-These are private-party notices, not findings of violation, product contents,
-liability, or current-formula status. The same probe also found official or
-specialist venues for a Gap collaboration, National Eczema Association product
-listings, USPTO proceedings, current careers/community claims, and a PETA
-assurance-program discrepancy. Those surfaces may bound later claims but do not
-erase the regulatory-category gap. Zero-result FDA/FTC queries are query
-negatives, not certified absence.
+```yaml
+cov_006_raw_root: C:\tmp\forseti-sf-p10-deliver-recovery-data\cov006_lake
+claim_bearing_packet_count: 7
+claim_bearing_preserved_file_count: 14
+whole_lake_direct_verification:
+  manifest_count: 12
+  preserved_file_count: 24
+  missing_file_count: 0
+  hash_mismatch_count: 0
+  size_mismatch_count: 0
+diagnostic_result_index_packets_without_target_binding: 5
+diagnostic_packet_claim_credit: 0
+```
+
+The five diagnostic packets remain append-only failure evidence. Although each
+returned HTTP 200, its result body did not bind the requested notice record.
+The defendant-filtered packet above contains both target rows and is the only
+result-index packet receiving claim credit.
+
+The typed adjudication is:
+
+- Notice `2024-02857` names Summer Fridays and Sephora in connection with Mini
+  Cloud Dew and an alleged diethanolamine exposure. Notice `2024-03063` names
+  Summer Fridays and Revolve in connection with Rich Cushion Cream and the
+  same alleged chemical.
+- These are private-party notices, not findings of violation, liability,
+  product contents, safety, or remediation.
+- At capture time, the public defendant-filtered registry row for each notice
+  displayed `Complaint (0)`, `Settlement (0)`, and `Judgment (0)`, with no
+  withdrawal record displayed. That is a bounded public-index observation,
+  not proof that no private resolution or later unindexed event exists.
+- Summer Fridays later described Cloud Dew as having an updated formula,
+  updated ingredients, and new packaging. That chronology does not establish
+  that the notice caused the change.
+- Rich Cushion remains a current product. Its current online ingredient list
+  does not name diethanolamine, but the page itself says packaging controls
+  and the online list may be incomplete or stale. It does not prove the
+  noticed product's historical composition or a remediation.
+
+COV-006 is therefore closed as contextual, non-decision-bearing, and
+monitor-only on current evidence. It belongs in Deliver as a bounded risk
+signal and claim ceiling, not as a lead conclusion or a blocker.
+
+The same probe found official or specialist venues for a Gap collaboration,
+National Eczema Association product listings, USPTO proceedings, current
+careers/community claims, and a PETA assurance-program discrepancy. Those
+surfaces may bound later claims but do not presently expose another
+decision-changing missing evidence family. Zero-result FDA/FTC queries remain
+query negatives, not certified absence.
 
 ## Target And Amazon Prior-Corpus Inventory
 
@@ -164,8 +216,24 @@ the original packet provenance, currentness ceiling, authorization boundary,
 and exact product identity; it must not silently become fresh or complete
 corpus credit.
 
-## Next Required Move
+## Gate Rationale And Next Move
 
-Preserve and adjudicate the two COV-006 Proposition 65 notice records, including
-their procedural status and claim ceiling, then rerun the whole acquisition
-gate. Do not start Deliver before that adjudication.
+The current corpus covers the commissioned company, portfolio/retailer,
+customer/community, chronology, provenance, uncertainty, and hidden-venue
+jobs at a materiality level sufficient for Deliver. It includes supportive,
+negative, contradictory, and unresolved evidence, so a downstream
+synthesizer can make useful decisions and expose consequential flaws rather
+than merely summarize favorable material.
+
+Accepted residuals remain explicit: two non-strategic Sephora mini-size PDP
+misses, six bundle/set corpus-identity gaps, four unmatched retailer rows,
+bounded non-representative community evidence, sparse REVOLVE review bodies,
+and attributed company/market/currentness ceilings. None currently removes a
+strategic product family, selected-retailer evidence family, material customer
+signal, or decision-changing risk category.
+
+Phase A acquisition is complete and Deliver is authorized. This recovery lane
+stops here; the commissioned external review should first test this
+CI-fitness/material-completeness adjudication and may patch only its bound
+scope. It should not demand exhaustive provenance as the objective or promote
+this seal into a production-CI readiness claim.
