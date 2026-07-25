@@ -115,12 +115,14 @@ phase_acquisition_seal:
     - Four retailer rows do not match the current company-owned parent ledger.
     - Company leadership, ownership, incident, and outside-in calibration retain the explicit ceilings in CO1.
     - REVOLVE review bodies are sparse and community evidence is bounded and non-representative.
+    - Commission-stage coverage row `COV-006` commissioned category-aware hidden-venue `search_discovery`, but no specialist terminal or integrated artifact records a route or disposition; p10 coverage accounting leaves that row gapped.
   blocked_requirements:
     - complete selected-retailer exact PDP baseline coverage
     - complete bounded Sephora distinct-corpus onboarding
     - complete selected-retailer customer-evidence acquisition
   accepted_route_residuals:
     - Company-owned HTML packets retain challenge-classifier residuals; strict portfolio counting comes from the clean public products JSON.
+    - The single bounded outside-in Forbes calibration packet is also runner-`access_failed` behind a `datadome` block shell; its article text was manually inspected from the preserved body and remains attributed to Forbes/YipitData rather than promoted to audited fact.
     - REVOLVE complete breadth does not compensate for the blocked Sephora route.
     - Six bundle/set corpus identities and four unmatched retailer rows remain typed without false completion credit.
   direct_manifest_verification:
@@ -133,6 +135,14 @@ phase_acquisition_seal:
   acquisition_gate: blocked
   deliver_allowed: false
   sealed_at: "2026-07-25T05:46:06.7088499+08:00"
+  delegated_review_adjudication:
+    controller_family: Anthropic Claude
+    reviewed_revision: 899c9d081a726a6a905755073dbdcd21589bbd75
+    adjudication: accepted_with_home_modifications
+    accepted_findings: [AR-01, AR-02, AR-03, AR-04]
+    reported_not_patched: [AR-05, AR-06]
+    gate_effect: none
+    adjudicated_at: "2026-07-25T15:20:13.6213385+08:00"
   next_authorized_step: Stop this p10 run. A separately authorized recovery acquisition may repair the Sephora parent/companion route; Turn B, a company report, and p07 comparison remain forbidden.
 ```
 

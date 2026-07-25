@@ -38,10 +38,12 @@ actor_topology:
   - CO2
   - CO3
 coldness_observed: >
-  CO0 and each specialist stayed within the p10 handoff, current methods and
-  contracts, fresh p10 captures, and fresh public sources. No prior Summer
+  CO0 stayed within the p10 handoff, current methods and contracts, fresh p10
+  captures, and fresh public sources. CO1-CO3 coldness is terminal
+  self-attestation that CO0 fresh-read but cannot independently observe from
+  the durable artifacts: each specialist return states that no prior Summer
   Fridays prompt, packet, board, specialist return, acquisition record, seal,
-  review, selection, conclusion, or comparison output was used.
+  review, selection, conclusion, or comparison output was read.
 turn_b_started: false
 company_report_written: false
 p07_comparison_performed: false
@@ -106,7 +108,9 @@ co0_manual_gate:
   outside-in market/channel calibration are preserved with their source
   ceilings. Exact post-TSG control, the current CEO successor, independent
   incident causation/remediation, and underlying Forbes/YipitData methodology
-  remain unresolved or attributed-only.
+  remain unresolved or attributed-only. The single Forbes calibration packet
+  also carries an unresolved `datadome` classifier residual; see the route
+  ledger below.
 
 ### Retailer breadth and exact PDPs
 
@@ -119,11 +123,15 @@ co0_manual_gate:
 | Bundles/sets retained without required PDP baselines | 2 | 4 | 6 |
 
 REVOLVE is the truthful working primary: 37/37 grid rows and 33/33 exact
-non-bundle PDP baselines. Sephora remains selected but is not route-complete:
-`P525609` and `P525633` redirected to search and lost target identity after
-the permitted paths. Four retailer rows remain unmatched to the current
-company-owned parent ledger; their retailer presence is preserved without
-inventing company-owned identity.
+non-bundle PDP baselines. Sephora remains selected but is not route-complete.
+Both canonical attempts redirected to Sephora search and lost target identity,
+but the two terminal failures are not the same shape: `P525633` redirected
+again on its retry, while `P525609`'s retry failed local recapture-metadata
+validation before network and wrote no packet. CO2 recorded `P525609`'s retry
+budget as exhausted; that is a bounded-attempt accounting decision, not an
+observed source-side refusal, and this record does not re-adjudicate it. Four
+retailer rows remain unmatched to the current company-owned parent ledger;
+their retailer presence is preserved without inventing company-owned identity.
 
 ### Customer, community, and distinct review corpora
 
@@ -153,8 +161,9 @@ inventing company-owned identity.
 | Company-owned products JSON | Clean HTTP 200, 149 parents | Not needed | Used |
 | Jet Lag upgrade statement | Live URL 404 | One verified Wayback retry succeeded | Used as archived company statement |
 | TSG investment announcement | BusinessWire 403 | One TSG-hosted retry succeeded | Used |
+| Forbes outside-in calibration | Runner `access_failed` at HTTP 200 behind a `datadome` block shell; full source-native article text preserved and manually inspected | No retry spent; one bounded secondary calibration only | Used with an attributed Forbes/YipitData ceiling and an unresolved classifier residual |
 | Sephora grid | 44/44 admitted | Not needed | Used |
-| Sephora PDPs | 40 admitted; `P525609` and `P525633` target failures | One retry each; neither closed | Blocked material route |
+| Sephora PDPs | 40 admitted; `P525609` and `P525633` target failures | One retry invocation each; neither closed. `P525633` redirected to search again; `P525609`'s retry invocation failed local recapture-metadata validation before network and wrote no packet | Blocked material route |
 | REVOLVE grid and PDPs | 37/37 grid, 33/33 exact non-bundle PDPs | Not needed | Used |
 | Reddit scout | Three initial URLs failed local scope validation before network; corrected subreddit-scoped routes succeeded | Corrected route only; duplicate completed batch counted once after exact overlap | Used |
 | REVOLVE review onboarding | First invocation failed local limit validation before network | One corrected limit-30 attempt completed 33/33 | Used |
@@ -220,6 +229,10 @@ direct_manifest_verification:
    efficacy/safety, sales, nationwide availability, nor internal company fact.
 6. This record does not prove method superiority, exhaustive web coverage,
    production readiness, or improvement over any prior run.
+7. Commission-stage coverage row `COV-006` commissioned category-aware
+   hidden-venue `search_discovery`, but no specialist terminal or integrated
+   artifact records a route, disposition, or typed outcome for it. P10
+   coverage accounting therefore leaves that row gapped rather than closed.
 
 ## Terminal State
 
