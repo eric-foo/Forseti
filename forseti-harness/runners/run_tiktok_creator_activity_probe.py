@@ -10,10 +10,8 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
-from uuid import uuid4
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -40,6 +38,18 @@ from source_capture.tiktok.creator_onboarding import (
     TikTokLoggedOutSessionError,
     run_tiktok_creator_observation_activity,
 )
+from tiktok_creator_metronome import (
+    JOURNAL_SCHEMA_VERSION,
+    METRONOME_PROJECTION_KEY,
+    METRONOME_PROJECTION_SCHEMA_VERSION,
+    METRONOME_UMBRELLA_NAME,
+    PROBE_JOURNAL_NAME,
+    SUPERVISED_ENV_NAME,
+    TikTokMetronomeJournal,
+    refresh_metronome_umbrella,
+    summarize_metronome_journal,
+    validate_metronome_row,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,26 +60,15 @@ REGISTRY_RUNNER = ROOT / "forseti-harness/runners/run_creator_registry_lake.py"
 SUMMARY_PREFIX = "tiktok_creator_onboarding_summary_json="
 PROGRESS_PREFIX = "tiktok_creator_onboarding_progress_json="
 BLOCKER_PREFIX = "tiktok_creator_onboarding_blocker_json="
-PROBE_JOURNAL_NAME = "tiktok_creator_activity_probe.jsonl"
-PROBE_SCHEMA_VERSION = "tiktok_creator_activity_probe_v0"
-METRONOME_UMBRELLA_NAME = "metronome_activity_log.json"
-METRONOME_PROJECTION_SCHEMA_VERSION = (
-    "tiktok_creator_activity_probe_projection_v0"
-)
+PROBE_SCHEMA_VERSION = JOURNAL_SCHEMA_VERSION
 PROFILE_DELAY_MIN_SECONDS = 41
 PROFILE_DELAY_MAX_SECONDS = 93
 REJECTION_STREAK_TRIGGER = 1
 OBSERVATION_COUNT = 1
-_FORBIDDEN_KEY_PARTS = (
-    "url",
-    "body",
-    "cookie",
-    "token",
-    "storage",
-    "text",
-    "html",
-    "dom",
-)
+_ProbeJournal = TikTokMetronomeJournal
+_refresh_metronome_umbrella = refresh_metronome_umbrella
+_summarize_probe_journal = summarize_metronome_journal
+_validate_probe_journal_row = validate_metronome_row
 
 
 class TikTokCreatorActivityProbeError(RuntimeError):
@@ -114,278 +113,6 @@ class _ProbeState:
             ),
             "rejection_streak": self.rejection_streak,
         }
-
-
-class _ProbeJournal:
-    def __init__(
-        self,
-        path: Path,
-        *,
-        monotonic_fn: Callable[[], float] = time.monotonic,
-        utc_now_fn: Callable[[], datetime] = lambda: datetime.now(UTC),
-    ) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        self.path = path
-        self._stream = path.open("xb")
-        self._monotonic_fn = monotonic_fn
-        self._utc_now_fn = utc_now_fn
-        self._started_monotonic = monotonic_fn()
-        self._run_id = uuid4().hex
-        self._sequence = 0
-        self._closed = False
-        candidate_umbrella_path = path.parent.parent / METRONOME_UMBRELLA_NAME
-        self._umbrella_path = (
-            candidate_umbrella_path
-            if candidate_umbrella_path.is_file()
-            else None
-        )
-
-    def record(
-        self,
-        event_type: str,
-        *,
-        handle: str | None = None,
-        details: Mapping[str, object] | None = None,
-    ) -> None:
-        if self._closed:
-            raise TikTokCreatorActivityProbeError(
-                "probe journal is already closed"
-            )
-        row = {
-            "schema_version": PROBE_SCHEMA_VERSION,
-            "run_id": self._run_id,
-            "sequence": self._sequence,
-            "observed_at_utc": _utc_iso(self._utc_now_fn()),
-            "elapsed_ms": int(
-                round(
-                    max(
-                        0.0,
-                        self._monotonic_fn() - self._started_monotonic,
-                    )
-                    * 1000
-                )
-            ),
-            "event_type": event_type,
-            "handle_or_none": handle,
-            "details": dict(details or {}),
-        }
-        _validate_probe_journal_row(row)
-        self._stream.write(
-            json.dumps(
-                row,
-                ensure_ascii=False,
-                sort_keys=True,
-                separators=(",", ":"),
-            ).encode("utf-8")
-            + b"\n"
-        )
-        self._stream.flush()
-        os.fsync(self._stream.fileno())
-        self._sequence += 1
-        if self._umbrella_path is not None:
-            _refresh_metronome_umbrella(
-                self._umbrella_path,
-                active_journal_path=self.path,
-                refreshed_at_utc=str(row["observed_at_utc"]),
-            )
-
-    def close(
-        self,
-        *,
-        status: str,
-        terminal_reason: str,
-        counters: Mapping[str, int],
-    ) -> None:
-        if self._closed:
-            return
-        try:
-            self.record(
-                "terminal",
-                details={
-                    "status": status,
-                    "terminal_reason": terminal_reason,
-                    **dict(counters),
-                },
-            )
-        finally:
-            self._stream.close()
-            self._closed = True
-
-
-def _refresh_metronome_umbrella(
-    umbrella_path: Path,
-    *,
-    active_journal_path: Path | None = None,
-    refreshed_at_utc: str | None = None,
-) -> dict[str, object]:
-    document = json.loads(umbrella_path.read_text(encoding="utf-8"))
-    if not isinstance(document, dict):
-        raise TikTokCreatorActivityProbeError(
-            "metronome umbrella must contain one JSON object"
-        )
-
-    run_root = umbrella_path.parent
-    runs = [
-        _summarize_probe_journal(
-            path,
-            run_root=run_root,
-            is_active=(
-                active_journal_path is not None
-                and path.resolve() == active_journal_path.resolve()
-            ),
-        )
-        for path in sorted(run_root.rglob(PROBE_JOURNAL_NAME))
-    ]
-    status_counts: dict[str, int] = {}
-    event_count = 0
-    logout_detection_count = 0
-    for run in runs:
-        status = str(run["status"])
-        status_counts[status] = status_counts.get(status, 0) + 1
-        event_count += int(run["event_count"])
-        event_type_counts = run["event_type_counts"]
-        assert isinstance(event_type_counts, dict)
-        logout_detection_count += int(
-            event_type_counts.get("first_logout_detected", 0)
-        )
-
-    document["activity_probe_journal_projection"] = {
-        "schema_version": METRONOME_PROJECTION_SCHEMA_VERSION,
-        "refreshed_at_utc": (
-            refreshed_at_utc or _utc_iso(datetime.now(UTC))
-        ),
-        "authority": (
-            "Per-run tiktok_creator_activity_probe.jsonl files are the "
-            "authoritative millisecond event logs; this field is an "
-            "atomically refreshed projection."
-        ),
-        "run_root": str(run_root.resolve()),
-        "aggregate": {
-            "run_count": len(runs),
-            "event_count": event_count,
-            "logout_detection_count": logout_detection_count,
-            "status_counts": dict(sorted(status_counts.items())),
-        },
-        "runs": runs,
-    }
-    _atomic_write_json(umbrella_path, document)
-    return document
-
-
-def _summarize_probe_journal(
-    path: Path,
-    *,
-    run_root: Path,
-    is_active: bool = False,
-) -> dict[str, object]:
-    raw_bytes = path.read_bytes()
-    rows: list[dict[str, object]] = []
-    for line_number, raw_line in enumerate(raw_bytes.splitlines(), start=1):
-        try:
-            row = json.loads(raw_line)
-        except json.JSONDecodeError as exc:
-            raise TikTokCreatorActivityProbeError(
-                f"invalid probe journal JSON at {path}:{line_number}"
-            ) from exc
-        if not isinstance(row, dict):
-            raise TikTokCreatorActivityProbeError(
-                f"probe journal row is not an object at {path}:{line_number}"
-            )
-        _validate_probe_journal_row(row)
-        rows.append(row)
-    if not rows:
-        raise TikTokCreatorActivityProbeError(
-            f"probe journal is empty: {path}"
-        )
-
-    run_ids = {str(row["run_id"]) for row in rows}
-    if len(run_ids) != 1:
-        raise TikTokCreatorActivityProbeError(
-            f"probe journal contains multiple run ids: {path}"
-        )
-    sequences = [int(row["sequence"]) for row in rows]
-    if sequences != list(range(len(rows))):
-        raise TikTokCreatorActivityProbeError(
-            f"probe journal sequence is not contiguous: {path}"
-        )
-
-    event_type_counts: dict[str, int] = {}
-    creator_handles: list[str] = []
-    terminal_details: dict[str, object] | None = None
-    current_handle: str | None = None
-    for row in rows:
-        event_type = str(row["event_type"])
-        event_type_counts[event_type] = (
-            event_type_counts.get(event_type, 0) + 1
-        )
-        handle = row.get("handle_or_none")
-        if isinstance(handle, str):
-            current_handle = handle
-        details = row["details"]
-        assert isinstance(details, dict)
-        if event_type == "run_started":
-            raw_handles = details.get("creator_handles")
-            if isinstance(raw_handles, list):
-                creator_handles = [
-                    str(value) for value in raw_handles if isinstance(value, str)
-                ]
-        elif event_type == "terminal":
-            terminal_details = details
-
-    if terminal_details is None:
-        status = "running" if is_active else "interrupted_without_terminal"
-        terminal_reason: object = None
-        counters: dict[str, int] = {}
-    else:
-        status = str(terminal_details.get("status") or "unknown")
-        terminal_reason = terminal_details.get("terminal_reason")
-        counters = {
-            key: int(value)
-            for key, value in terminal_details.items()
-            if key not in {"status", "terminal_reason"}
-            and isinstance(value, int)
-        }
-
-    return {
-        "journal_path": path.relative_to(run_root).as_posix(),
-        "journal_sha256": sha256_bytes(raw_bytes),
-        "journal_byte_length": len(raw_bytes),
-        "run_id": next(iter(run_ids)),
-        "creator_handles": creator_handles,
-        "first_observed_at_utc": str(rows[0]["observed_at_utc"]),
-        "last_observed_at_utc": str(rows[-1]["observed_at_utc"]),
-        "last_sequence": sequences[-1],
-        "event_count": len(rows),
-        "event_type_counts": dict(sorted(event_type_counts.items())),
-        "current_handle_or_none": current_handle,
-        "status": status,
-        "terminal_reason_or_none": terminal_reason,
-        "terminal_counters": counters,
-    }
-
-
-def _atomic_write_json(path: Path, document: Mapping[str, object]) -> None:
-    temporary_path = path.with_name(
-        f".{path.name}.{os.getpid()}.{uuid4().hex}.tmp"
-    )
-    payload = (
-        json.dumps(
-            document,
-            ensure_ascii=False,
-            indent=2,
-            sort_keys=False,
-        ).encode("utf-8")
-        + b"\n"
-    )
-    try:
-        with temporary_path.open("xb") as stream:
-            stream.write(payload)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary_path, path)
-    finally:
-        if temporary_path.exists():
-            temporary_path.unlink()
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -477,6 +204,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         journal.record(
             "run_started",
             details={
+                "run_kind": "creator_activity_probe",
                 "creator_handles": list(handles),
                 "profile_delay_min_seconds": PROFILE_DELAY_MIN_SECONDS,
                 "profile_delay_max_seconds": PROFILE_DELAY_MAX_SECONDS,
@@ -849,9 +577,12 @@ def _run_onboarding_child(
     on_progress: Callable[[dict[str, object]], None] | None = None,
 ) -> _ChildResult:
     command = [sys.executable, str(ONBOARDING_RUNNER), *args]
+    child_environment = os.environ.copy()
+    child_environment[SUPERVISED_ENV_NAME] = "1"
     process = subprocess.Popen(
         command,
         cwd=ROOT,
+        env=child_environment,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
@@ -1143,61 +874,11 @@ def _has_blocker(result: _ChildResult, code: str) -> bool:
     return any(blocker.get("code") == code for blocker in result.blockers)
 
 
-def _validate_probe_journal_row(row: Mapping[str, object]) -> None:
-    if row.get("schema_version") != PROBE_SCHEMA_VERSION:
-        raise ValueError("probe journal schema version is invalid")
-    if not isinstance(row.get("run_id"), str) or not row["run_id"]:
-        raise ValueError("probe journal run id is required")
-    if not isinstance(row.get("sequence"), int):
-        raise ValueError("probe journal sequence is invalid")
-    if not isinstance(row.get("elapsed_ms"), int) or row["elapsed_ms"] < 0:
-        raise ValueError("probe journal elapsed_ms is invalid")
-    if not isinstance(row.get("event_type"), str) or not row["event_type"]:
-        raise ValueError("probe journal event type is required")
-    handle = row.get("handle_or_none")
-    if handle is not None and (
-        not isinstance(handle, str) or _normalize_handle(handle) != handle
-    ):
-        raise ValueError("probe journal handle is invalid")
-    details = row.get("details")
-    if not isinstance(details, Mapping):
-        raise ValueError("probe journal details must be an object")
-    _reject_forbidden_material(details)
-    json.dumps(row, ensure_ascii=False, allow_nan=False)
-
-
-def _reject_forbidden_material(value: object, *, path: str = "$") -> None:
-    if isinstance(value, Mapping):
-        for key, child in value.items():
-            lowered = str(key).lower()
-            if any(part in lowered for part in _FORBIDDEN_KEY_PARTS):
-                raise ValueError(
-                    f"probe journal contains forbidden field at {path}.{key}"
-                )
-            _reject_forbidden_material(child, path=f"{path}.{key}")
-    elif isinstance(value, list):
-        for index, child in enumerate(value):
-            _reject_forbidden_material(child, path=f"{path}[{index}]")
-    elif isinstance(value, str) and (
-        "://" in value
-        or value.lower().startswith(("bearer ", "sessionid="))
-    ):
-        raise ValueError(
-            f"probe journal contains forbidden string material at {path}"
-        )
-
-
 def _normalize_handle(value: str) -> str:
     normalized = value.strip().lstrip("@").lower()
     if not normalized:
         raise ValueError("TikTok handle is required")
     return normalized
-
-
-def _utc_iso(value: datetime) -> str:
-    if value.tzinfo is None:
-        raise ValueError("UTC time must be timezone-aware")
-    return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
 if __name__ == "__main__":

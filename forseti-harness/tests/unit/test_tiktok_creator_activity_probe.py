@@ -7,6 +7,11 @@ from hashlib import sha256
 import pytest
 
 from runners import run_tiktok_creator_activity_probe as probe
+from runners import run_source_capture_tiktok_creator_onboarding as direct_runner
+from tiktok_creator_metronome import (
+    DIRECT_RUN_JOURNAL_NAME,
+    SUPERVISED_ENV_NAME,
+)
 
 
 def test_first_rejection_requires_observation_and_resets() -> None:
@@ -327,14 +332,13 @@ def test_probe_journal_keeps_existing_metronome_umbrella_current(
     journal.record("profile_timer_started", handle="one")
 
     running_document = json.loads(umbrella_path.read_text(encoding="utf-8"))
-    running_projection = running_document[
-        "activity_probe_journal_projection"
-    ]
+    running_projection = running_document[probe.METRONOME_PROJECTION_KEY]
     assert running_document["runs"] == [{"handle": "one"}]
     assert running_projection["aggregate"] == {
         "run_count": 1,
         "event_count": 2,
         "logout_detection_count": 0,
+        "journal_kind_counts": {"activity_probe": 1},
         "status_counts": {"running": 1},
     }
     assert running_projection["runs"][0]["last_sequence"] == 1
@@ -347,7 +351,7 @@ def test_probe_journal_keeps_existing_metronome_umbrella_current(
     )
 
     complete_document = json.loads(umbrella_path.read_text(encoding="utf-8"))
-    run = complete_document["activity_probe_journal_projection"]["runs"][0]
+    run = complete_document[probe.METRONOME_PROJECTION_KEY]["runs"][0]
     assert run["status"] == "complete"
     assert run["terminal_reason_or_none"] == "test_complete"
     assert run["terminal_counters"]["assessed_count"] == 1
@@ -377,12 +381,13 @@ def test_refresh_metronome_umbrella_backfills_all_probe_journals(
         umbrella_path,
         refreshed_at_utc="2026-07-25T01:02:03.004Z",
     )
-    projection = document["activity_probe_journal_projection"]
+    projection = document[probe.METRONOME_PROJECTION_KEY]
     assert projection["refreshed_at_utc"] == "2026-07-25T01:02:03.004Z"
     assert projection["aggregate"] == {
         "run_count": 2,
         "event_count": 4,
         "logout_detection_count": 1,
+        "journal_kind_counts": {"activity_probe": 2},
         "status_counts": {
             "interrupted_without_terminal": 1,
             "logged_out": 1,
@@ -397,6 +402,129 @@ def test_refresh_metronome_umbrella_backfills_all_probe_journals(
         status="failed",
         terminal_reason="owner_interrupted",
         counters=probe._ProbeState().counters(),
+    )
+
+
+def test_direct_runner_automatically_logs_under_metronome_root(
+    tmp_path, monkeypatch
+) -> None:
+    umbrella_path = tmp_path / probe.METRONOME_UMBRELLA_NAME
+    umbrella_path.write_text('{"schema_version":"legacy"}', encoding="utf-8")
+    output_dir = tmp_path / "promotion" / "creator" / "capture"
+
+    def fake_run(_parser, _args):
+        direct_runner._emit_progress(
+            "collect_profile_grid",
+            {"creator_handle": "creator"},
+        )
+        direct_runner._emit_summary(
+            {
+                "status": "complete",
+                "capture_scope": "candidate_assessment",
+                "creator_intent": "new_capture",
+                "completed_deep_capture_count": 0,
+            }
+        )
+        return 0
+
+    monkeypatch.setattr(direct_runner, "_run_main", fake_run)
+    assert direct_runner.main(
+        [
+            "--creator-handle",
+            "creator",
+            "--creator-intent",
+            "new_capture",
+            "--output-dir",
+            str(output_dir),
+        ]
+    ) == 0
+
+    journal_path = output_dir / DIRECT_RUN_JOURNAL_NAME
+    rows = [
+        json.loads(line)
+        for line in journal_path.read_text(encoding="utf-8").splitlines()
+    ]
+    assert [row["event_type"] for row in rows] == [
+        "run_started",
+        "runner_progress",
+        "runner_summary",
+        "terminal",
+    ]
+    assert [row["sequence"] for row in rows] == [0, 1, 2, 3]
+    projection = json.loads(umbrella_path.read_text(encoding="utf-8"))[
+        probe.METRONOME_PROJECTION_KEY
+    ]
+    assert projection["aggregate"]["journal_kind_counts"] == {
+        "direct_runner": 1
+    }
+    assert projection["runs"][0]["status"] == "complete"
+    assert projection["runs"][0]["journal_sha256"] == sha256(
+        journal_path.read_bytes()
+    ).hexdigest()
+
+
+def test_direct_runner_logs_logout_and_repeat_without_overwriting(
+    tmp_path, monkeypatch
+) -> None:
+    umbrella_path = tmp_path / probe.METRONOME_UMBRELLA_NAME
+    umbrella_path.write_text("{}", encoding="utf-8")
+
+    def fake_logout(parser, _args):
+        direct_runner._emit_blocker(
+            "LOGGED_OUT_SESSION",
+            "authenticated_browser_session",
+        )
+        parser.exit(2, "logged out\n")
+
+    monkeypatch.setattr(direct_runner, "_run_main", fake_logout)
+    for handle in ("one", "two"):
+        with pytest.raises(SystemExit) as exc:
+            direct_runner.main(
+                [
+                    "--creator-handle",
+                    handle,
+                    "--creator-intent",
+                    "new_capture",
+                    "--output-dir",
+                    str(tmp_path / handle / "capture"),
+                ]
+            )
+        assert exc.value.code == 2
+
+    projection = json.loads(umbrella_path.read_text(encoding="utf-8"))[
+        probe.METRONOME_PROJECTION_KEY
+    ]
+    assert projection["aggregate"]["run_count"] == 2
+    assert projection["aggregate"]["logout_detection_count"] == 2
+    assert projection["aggregate"]["status_counts"] == {"logged_out": 2}
+    assert {run["current_handle_or_none"] for run in projection["runs"]} == {
+        "one",
+        "two",
+    }
+
+
+def test_probe_supervision_avoids_duplicate_direct_journal(
+    tmp_path, monkeypatch
+) -> None:
+    umbrella_path = tmp_path / probe.METRONOME_UMBRELLA_NAME
+    umbrella_path.write_text("{}", encoding="utf-8")
+    output_dir = tmp_path / "supervised" / "capture"
+    monkeypatch.setenv(SUPERVISED_ENV_NAME, "1")
+    monkeypatch.setattr(direct_runner, "_run_main", lambda *_args: 0)
+
+    assert direct_runner.main(
+        [
+            "--creator-handle",
+            "creator",
+            "--creator-intent",
+            "new_capture",
+            "--output-dir",
+            str(output_dir),
+        ]
+    ) == 0
+    assert not (output_dir / DIRECT_RUN_JOURNAL_NAME).exists()
+    assert probe.METRONOME_PROJECTION_KEY not in json.loads(
+        umbrella_path.read_text(encoding="utf-8")
     )
 
 
