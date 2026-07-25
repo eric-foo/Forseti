@@ -12,6 +12,17 @@ def test_first_rejection_requires_observation_and_resets() -> None:
     assert probe.PROFILE_DELAY_MIN_SECONDS == 44
     assert probe.PROFILE_DELAY_MAX_SECONDS == 96
     assert probe.OBSERVATION_COUNT == 1
+    args = probe.build_parser().parse_args(
+        [
+            "--creator-handle",
+            "one",
+            "--data-root",
+            "lake",
+            "--output-dir",
+            "output",
+        ]
+    )
+    assert args.settle_seconds == 5.0
 
     state = probe._ProbeState()
 

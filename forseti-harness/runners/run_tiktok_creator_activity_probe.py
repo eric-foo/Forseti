@@ -212,7 +212,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--session-profile-config", type=Path)
     parser.add_argument("--timeout-seconds", type=float, default=30.0)
-    parser.add_argument("--settle-seconds", type=float, default=2.0)
+    parser.add_argument("--settle-seconds", type=float, default=5.0)
     return parser
 
 
