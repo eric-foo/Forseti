@@ -62,6 +62,9 @@ from source_capture.adapters.target_delivery_location import (
     TargetDeliveryLocationPlugin,
     TargetGridPlugin,
 )
+from source_capture.adapters.ulta_category_traversal import (
+    UltaCategoryTraversalPlugin,
+)
 from source_capture.adapters.ulta_us_market import UltaUSMarketPlugin
 from source_capture.auth_state import AuthenticatedSessionMode
 from source_capture.browser_user_data import browser_user_data_path_for_label
@@ -106,6 +109,10 @@ from source_capture.sephora_catalog_grid import (
 from source_capture.ulta_brand_grid import (
     ULTA_GRID_CONTENT_RECORD_VERSION,
     build_ulta_brand_grid_content_record,
+)
+from source_capture.ulta_category_grid import (
+    ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
+    build_ulta_category_grid_aggregate_content_record,
 )
 from source_capture.revolve_brand_grid import (
     REVOLVE_GRID_PARSER_VERSION,
@@ -203,6 +210,7 @@ _SEPHORA_GRID_CONTENT_PROFILES = frozenset(
 _TARGET_HOSTS = frozenset({"target.com", "www.target.com"})
 ULTA_MARKET_PIN_FAILURE_MODE_CHANGE = "ulta_market_pin_failed"
 _ULTA_HOSTS = frozenset({"ulta.com", "www.ulta.com"})
+ULTA_CATEGORY_GRID_CONTENT_PROFILE = "ulta_category_grid_aggregate"
 REVOLVE_MARKET_PIN_FAILURE_MODE_CHANGE = "revolve_market_pin_failed"
 _REVOLVE_HOSTS = frozenset({"revolve.com", "www.revolve.com"})
 RETAIL_TARGET_IDENTITY_FAILURE_MODE_CHANGE = "retail_target_identity_failed"
@@ -213,8 +221,12 @@ _RETAIL_GRID_PROJECTION_PROFILES = frozenset(
         "amazon_grid_aggregate",
         "target_grid_aggregate",
         "ulta_grid_aggregate",
+        ULTA_CATEGORY_GRID_CONTENT_PROFILE,
         "revolve_grid_aggregate",
     }
+)
+_ULTA_GRID_PROFILES = frozenset(
+    {"ulta_grid_aggregate", ULTA_CATEGORY_GRID_CONTENT_PROFILE}
 )
 
 
@@ -313,6 +325,15 @@ def run_source_capture_cloakbrowser_packet(
             scroll_step_px = retail_capture_profile.scroll_step_px
             load_more_selector = retail_capture_profile.load_more_selector
             load_more_clicks = retail_capture_profile.load_more_clicks
+        if retail_capture_profile.name == ULTA_CATEGORY_GRID_CONTENT_PROFILE:
+            # Category continuation is owned by the deterministic ``?page=N``
+            # plugin. Generic scrolling/clicking would reintroduce the transient
+            # selector and scroll-height early-stop failure this profile avoids.
+            settle_seconds = retail_capture_profile.settle_seconds
+            scroll_passes = retail_capture_profile.scroll_passes
+            scroll_step_px = retail_capture_profile.scroll_step_px
+            load_more_selector = None
+            load_more_clicks = 0
         if retail_capture_profile.source_surface != "cloakbrowser_snapshot":
             raise ValueError(
                 f"retail capture profile {retail_capture_profile.name} belongs to "
@@ -383,7 +404,7 @@ def run_source_capture_cloakbrowser_packet(
                 )
             if content_extraction is None:
                 content_extraction = _ulta_content_extraction_spec("content")
-        if retail_capture_profile.name == "ulta_grid_aggregate":
+        if retail_capture_profile.name in _ULTA_GRID_PROFILES:
             if content_extraction is None:
                 content_extraction = _ulta_grid_content_extraction_spec()
         if retail_capture_profile.name == REVOLVE_PDP_CONTENT_PROFILE:
@@ -511,6 +532,31 @@ def run_source_capture_cloakbrowser_packet(
                 )
             ),
         )
+    elif (
+        retail_capture_profile is not None
+        and retail_capture_profile.name == ULTA_CATEGORY_GRID_CONTENT_PROFILE
+    ):
+        if ulta_market != "US":
+            raise ValueError(
+                "ulta_category_grid_aggregate requires --ulta-market US"
+            )
+        pre_capture = UltaCategoryTraversalPlugin(
+            target_url=url,
+            traversal_timeout_seconds=timeout_seconds,
+        )
+        content_extraction = RenderedContentExtractionSpec(
+            requested_retention_mode="content",
+            extractor_version=ULTA_CATEGORY_GRID_CONTENT_RECORD_VERSION,
+            json_indent=None,
+            extractor=lambda _rendered_dom, _visible_text, _final_url: (
+                build_ulta_category_grid_aggregate_content_record(
+                    rendered_pages=pre_capture.grid_page_doms,
+                    requested_url=url,
+                    page_urls=pre_capture.grid_page_urls,
+                    traversal_observation=pre_capture.grid_observation,
+                )
+            ),
+        )
     elif delivery_zip is not None:
         _validate_amazon_delivery_zip_url(url)
         pre_capture = AmazonDeliveryLocationPlugin(
@@ -552,7 +598,7 @@ def run_source_capture_cloakbrowser_packet(
         ulta_page_kind = (
             "grid"
             if retail_capture_profile is not None
-            and retail_capture_profile.name == "ulta_grid_aggregate"
+            and retail_capture_profile.name in _ULTA_GRID_PROFILES
             else "pdp"
         )
         ulta_sku = _validate_ulta_us_market_url(url, page_kind=ulta_page_kind)
@@ -942,7 +988,11 @@ def run_source_capture_cloakbrowser_packet(
     grid_traversal_failed = (
         retail_capture_profile is not None
         and retail_capture_profile.name
-        in {TARGET_GRID_CONTENT_PROFILE, AMAZON_GRID_CONTENT_PROFILE}
+        in {
+            TARGET_GRID_CONTENT_PROFILE,
+            AMAZON_GRID_CONTENT_PROFILE,
+            ULTA_CATEGORY_GRID_CONTENT_PROFILE,
+        }
         and capture_result.metadata.get("before_snapshot_steps_completed") is not True
     )
     retention_admission_failed = (
@@ -1525,9 +1575,11 @@ def _validate_retail_grid_projection_request(
             raise ValueError(
                 f"{retail_capture_profile.name} requires --sephora-market US"
             )
-    elif retail_capture_profile.name == "ulta_grid_aggregate":
+    elif retail_capture_profile.name in _ULTA_GRID_PROFILES:
         if ulta_market != "US":
-            raise ValueError("ulta_grid_aggregate requires --ulta-market US")
+            raise ValueError(
+                f"{retail_capture_profile.name} requires --ulta-market US"
+            )
     elif retail_capture_profile.name == "revolve_grid_aggregate":
         if revolve_market != "US":
             raise ValueError("revolve_grid_aggregate requires --revolve-market US")
@@ -1709,12 +1761,14 @@ def _validate_ulta_us_market_url(
     parsed = urlparse(url)
     hostname = (parsed.hostname or "").lower()
     if page_kind == "grid":
-        if (
-            hostname not in _ULTA_HOSTS
-            or not re.fullmatch(r"/brand/[a-z0-9][a-z0-9-]*", parsed.path.rstrip("/"))
+        path = parsed.path.rstrip("/")
+        if hostname not in _ULTA_HOSTS or not (
+            re.fullmatch(r"/brand/[a-z0-9][a-z0-9-]*", path)
+            or re.fullmatch(r"/shop/[a-z0-9][a-z0-9-]*/all", path)
         ):
             raise ValueError(
-                "--ulta-market US grid capture requires an exact ulta.com/brand/<slug> URL"
+                "--ulta-market US grid capture requires an exact "
+                "ulta.com/brand/<slug> or ulta.com/shop/<category>/all URL"
             )
         return None
     sku_values = parse_qs(parsed.query).get("sku", [])
@@ -2606,7 +2660,7 @@ def main(
             TARGET_GRID_CONTENT_PROFILE,
             "sephora_grid_aggregate",
             SEPHORA_CATALOG_GRID_CONTENT_PROFILE,
-            "ulta_grid_aggregate",
+            *_ULTA_GRID_PROFILES,
             "revolve_grid_aggregate",
         }
         if args.retention_mode is not None and (
@@ -2699,11 +2753,11 @@ def main(
             )
         elif (
             retail_capture_profile is not None
-            and retail_capture_profile.name == "ulta_grid_aggregate"
+            and retail_capture_profile.name in _ULTA_GRID_PROFILES
         ):
             if args.retention_mode not in {None, "content"}:
                 raise ValueError(
-                    "ulta_grid_aggregate requires compact content retention"
+                    f"{retail_capture_profile.name} requires compact content retention"
                 )
             content_extraction = _ulta_grid_content_extraction_spec()
         elif (
@@ -2824,7 +2878,7 @@ def main(
                 page_kind=(
                     "grid"
                     if retail_capture_profile is not None
-                    and retail_capture_profile.name == "ulta_grid_aggregate"
+                    and retail_capture_profile.name in _ULTA_GRID_PROFILES
                     else "pdp"
                 ),
             )

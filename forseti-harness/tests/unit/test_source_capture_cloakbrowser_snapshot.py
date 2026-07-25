@@ -2632,6 +2632,11 @@ def test_cloakbrowser_snapshot_cli_preflight_validates_without_capture(
             "https://www.ulta.com/brand/clinique",
             "--ulta-market",
         ),
+        (
+            "ulta_category_grid_aggregate",
+            "https://www.ulta.com/shop/makeup/all?sort=best_sellers",
+            "--ulta-market",
+        ),
     ],
 )
 def test_compact_grid_profiles_accept_explicit_content_retention_preflight(

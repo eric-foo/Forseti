@@ -745,6 +745,38 @@ _PROFILES = {
             ),
         ),
         RetailCaptureProfile(
+            name="ulta_category_grid_aggregate",
+            retailer="ulta",
+            page_kind="grid_aggregate",
+            hostname="www.ulta.com",
+            source_surface="cloakbrowser_snapshot",
+            ordinary_operation=True,
+            wait_until="domcontentloaded",
+            settle_seconds=0.0,
+            scroll_passes=0,
+            load_more_selector=None,
+            load_more_clicks=0,
+            requirements_define_scroll_stop=False,
+            requirements=_requirements(
+                visible_text_contains=("Add to bag",),
+                visible_text_regexes=(
+                    r"\$\d+\.\d{2}",
+                ),
+                rendered_dom_contains=(
+                    'data-test="products-list"',
+                    'data-test="products-list-item"',
+                    "window.__APP_LOCALE__",
+                ),
+                # The declared cohort count lives in the <title> ("N Products") on
+                # every ?page=N page; unlike the view-triggered "You have viewed N of
+                # M" footer it renders deterministically, so it is the admission
+                # marker for the deterministic page traversal.
+                rendered_dom_regexes=(
+                    r"\d[\d,]*\s+Products",
+                ),
+            ),
+        ),
+        RetailCaptureProfile(
             name="ulta_pdp_aggregate",
             retailer="ulta",
             page_kind="pdp_aggregate",

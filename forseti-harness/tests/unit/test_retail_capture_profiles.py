@@ -933,3 +933,13 @@ def test_ulta_grid_profile_is_subject_agnostic_and_owns_bounded_continuation() -
     )
 
     assert result.passed is True
+
+
+def test_ulta_category_grid_profile_delegates_continuation_to_page_traversal() -> None:
+    profile = get_retail_capture_profile("ulta_category_grid_aggregate")
+
+    assert profile.ordinary_operation is True
+    assert profile.wait_until == "domcontentloaded"
+    assert profile.scroll_passes == 0
+    assert profile.load_more_selector is None
+    assert profile.load_more_clicks == 0
