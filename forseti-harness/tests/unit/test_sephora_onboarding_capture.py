@@ -659,6 +659,90 @@ def test_zero_review_source_result_is_preserved_as_declared_absence(
         "not_applicable_source_declared_zero_reviews"
     )
     assert summary["content_qualification"]["age_bucket_vocabulary_exact"] is None
+    assert (
+        summary["reviews"]["most_recent_30d"]["pages"][0]["oldest_submission_time"]
+        is None
+    )
+
+
+def test_zero_question_total_with_rows_fails_adaptation_with_raw_fallback(
+    tmp_path: Path,
+) -> None:
+    def fetch(
+        spec: ApiRequestSpec,
+        config: BazaarvoiceReadConfig,
+        timeout_seconds: float,
+        max_bytes: int,
+    ) -> ApiResponse:
+        response = _fake_fetcher()(spec, config, timeout_seconds, max_bytes)
+        if spec.artifact_name == "questions_most_answers_offset_000.json":
+            document = json.loads(response.body)
+            document["TotalResults"] = 0
+            response = ApiResponse(
+                status=200,
+                reason="OK",
+                body=json.dumps(document).encode("utf-8"),
+                content_type="application/json",
+                captured_at=response.captured_at,
+            )
+        return response
+
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _parent_packet(root, tmp_path)
+    exit_code, result = capture_sephora_onboarding_packet(
+        data_root=root,
+        parent_packet_id=parent_id,
+        review_page_limit=2,
+        fetcher=fetch,
+    )
+    assert exit_code == 5
+    loaded = root.load_raw_packet(result["packet_id"])
+    failure = _artifact_json(loaded, "sephora_adaptation_failure.json")
+    assert (
+        "questions response declares zero TotalResults but returned rows"
+        in failure["failure"]["error"]
+    )
+
+
+def test_zero_recent_total_with_rows_fails_adaptation_with_raw_fallback(
+    tmp_path: Path,
+) -> None:
+    def fetch(
+        spec: ApiRequestSpec,
+        config: BazaarvoiceReadConfig,
+        timeout_seconds: float,
+        max_bytes: int,
+    ) -> ApiResponse:
+        response = _fake_fetcher()(spec, config, timeout_seconds, max_bytes)
+        if spec.artifact_name.startswith(
+            "reviews_non_incentivized_most_recent_offset_"
+        ):
+            document = json.loads(response.body)
+            document["TotalResults"] = 0
+            response = ApiResponse(
+                status=200,
+                reason="OK",
+                body=json.dumps(document).encode("utf-8"),
+                content_type="application/json",
+                captured_at=response.captured_at,
+            )
+        return response
+
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    parent_id = _parent_packet(root, tmp_path)
+    exit_code, result = capture_sephora_onboarding_packet(
+        data_root=root,
+        parent_packet_id=parent_id,
+        review_page_limit=2,
+        fetcher=fetch,
+    )
+    assert exit_code == 5
+    loaded = root.load_raw_packet(result["packet_id"])
+    failure = _artifact_json(loaded, "sephora_adaptation_failure.json")
+    assert (
+        "declares zero TotalResults but returned rows"
+        in failure["failure"]["error"]
+    )
 
 
 def test_content_parent_refresh_product_mismatch_fails_before_api_fetch(

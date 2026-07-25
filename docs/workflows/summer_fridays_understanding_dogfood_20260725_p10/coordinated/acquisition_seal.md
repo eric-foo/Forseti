@@ -26,7 +26,7 @@ stale_if:
 ```yaml
 current_lifecycle_status: ACQUISITION_SEALED_READY_FOR_DELIVER
 intelligence_cycle_phase_status: UNDERSTANDING_ACQUISITION_COMPLETE
-resume_allowed: true_for_deliver_after_commissioned_review_adjudication
+resume_allowed: true_for_deliver
 correct_intake_result: SEALED_READY_FOR_DELIVER
 original_seal_state: BLOCKED_ACQUISITION_INCOMPLETE
 recovery_adjudication_locator: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
@@ -197,12 +197,21 @@ current_recovery_seal:
       judgment: 0
     displayed_withdrawal_record: false
     notice_to_product_change_causation: unproven
+  delegated_ci_fitness_review:
+    reviewed_revision: 47eb324db57d079f4aa4178e798f7dccb084fa56
+    returned_verdict: READY_FOR_DELIVER_AFTER_PATCH
+    adjudication: accepted
+    adjudicated_at: "2026-07-26T00:22:37.8401234+08:00"
+    accepted_findings: [CODE-01, CODE-02, ART-01, ART-02, ART-03, ART-04, ART-05]
   accepted_residuals:
     - two attempted non-strategic Sephora mini-size PDP misses
     - six bundle/set corpus-identity gaps
     - four unmatched retailer rows
     - bounded non-representative community evidence
     - sparse REVOLVE review bodies
+    - one byte-identical viewport screenshot shared by the two verified mini
+      Body Butter Balm parents (visual layer only; identity records distinct
+      and hash-verified)
     - explicit ownership, leadership, market, incident, and currentness ceilings
   current_source: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
 ```
@@ -211,4 +220,5 @@ The corpus is materially complete for the bound Summer Fridays Understanding
 decision and exposes enough negative, contradictory, and uncertain evidence
 for a useful Deliver synthesis. It is not exhaustive and the seal is not a
 claim of method superiority or production-CI readiness. Phase A acquisition is
-complete; this lane does not itself start Deliver.
+complete, the commissioned CI-fitness review is accepted, and Deliver is the
+next authorized turn. This lane does not itself start Deliver.

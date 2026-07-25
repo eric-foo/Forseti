@@ -38,6 +38,19 @@ cov_006:
   status: closed
   disposition: contextual_non_decision_bearing_monitor_only
   causation_between_notice_and_later_product_change: unproven
+delegated_ci_fitness_review:
+  reviewed_revision: 47eb324db57d079f4aa4178e798f7dccb084fa56
+  returned_verdict: READY_FOR_DELIVER_AFTER_PATCH
+  adjudication: accepted
+  adjudicated_at: "2026-07-26T00:22:37.8401234+08:00"
+  accepted_findings:
+    - CODE-01
+    - CODE-02
+    - ART-01
+    - ART-02
+    - ART-03
+    - ART-04
+    - ART-05
 adjudicated_at: "2026-07-25T21:26:28.6389180+08:00"
 ```
 
@@ -63,7 +76,11 @@ target-bound configuration refresh. When Sephora blocks that browser refresh, a
 separately hash-verified, successfully pinned Sephora US packet may supply only
 the public tenant-level Bazaarvoice read configuration. The retained p10 parent
 and exact API `ProductId` filter remain the product binding. Read tokens are
-used only in memory and are not persisted.
+used only in memory and are not persisted. A failed live refresh fails closed
+before any packet is written, so the per-packet configuration receipts (five
+live refreshes, 35 preserved-source contexts) are the observable record of
+which route ran; route-level blocking remains an operator adjudication rather
+than a per-parent receipt.
 
 ```yaml
 recovery_raw_roots:
@@ -75,6 +92,10 @@ configuration_source:
   packet_id: 01KY4KPKD6MW2G2BASBPYMHM2Z
   manifest_sha256: 8928a83c725bd67e0462d0e20726d67ec89f2ca0bce180e38d67d68de41ac0f5
   source_locator: https://www.sephora.com/brand/summer-fridays?country_switch=us
+  captured_at: "2026-07-22T09:49:52Z"
+  capture_window_note: >
+    Captured before the p10 execution window; admitted only as tenant-level
+    read configuration, not as Summer Fridays subject evidence.
   role: tenant_read_configuration_only
   current_viability_probe:
     questions_status: 200
@@ -190,17 +211,27 @@ The typed adjudication is:
   does not name diethanolamine, but the page itself says packaging controls
   and the online list may be incomplete or stale. It does not prove the
   noticed product's historical composition or a remediation.
+- Both company-owned product-state packets carry the shared Shopify
+  challenge-classifier residual: their runner metadata records
+  `access_failed`/`block_shell (hcaptcha)` although the exact source-native
+  blog and product-page text is present and was manually inspected. The two
+  statements above therefore carry the same
+  `SUPPORTED_WITH_CLASSIFIER_RESIDUAL` ceiling as the p10 company-owned
+  packets.
 
 COV-006 is therefore closed as contextual, non-decision-bearing, and
 monitor-only on current evidence. It belongs in Deliver as a bounded risk
 signal and claim ceiling, not as a lead conclusion or a blocker.
 
-The same probe found official or specialist venues for a Gap collaboration,
-National Eczema Association product listings, USPTO proceedings, current
-careers/community claims, and a PETA assurance-program discrepancy. Those
-surfaces may bound later claims but do not presently expose another
-decision-changing missing evidence family. Zero-result FDA/FTC queries remain
-query negatives, not certified absence.
+The same probe surfaced candidate venues for a Gap collaboration, National
+Eczema Association product listings, USPTO proceedings, current
+careers/community claims, and a PETA assurance-program discrepancy. Of these,
+only the National Eczema Association reference is durably preserved, inside
+the captured Cloud Dew statement body; the others are unpreserved probe
+observations and monitor pointers, not durable evidence. On the preserved
+packets plus those typed observations, no additional decision-changing
+missing evidence family is presently exposed. Zero-result FDA/FTC queries
+remain query negatives, not certified absence.
 
 ## Target And Amazon Prior-Corpus Inventory
 
@@ -228,12 +259,16 @@ than merely summarize favorable material.
 Accepted residuals remain explicit: two non-strategic Sephora mini-size PDP
 misses, six bundle/set corpus-identity gaps, four unmatched retailer rows,
 bounded non-representative community evidence, sparse REVOLVE review bodies,
-and attributed company/market/currentness ceilings. None currently removes a
-strategic product family, selected-retailer evidence family, material customer
-signal, or decision-changing risk category.
+one byte-identical viewport screenshot shared by the two verified mini Body
+Butter Balm parents (`P525652`, `P525665`) whose content records, final URLs,
+and US/USD capture metadata remain distinct and hash-verified, and attributed
+company/market/currentness ceilings. None currently removes a strategic
+product family, selected-retailer evidence family, material customer signal,
+or decision-changing risk category.
 
-Phase A acquisition is complete and Deliver is authorized. This recovery lane
-stops here; the commissioned external review should first test this
-CI-fitness/material-completeness adjudication and may patch only its bound
-scope. It should not demand exhaustive provenance as the objective or promote
-this seal into a production-CI readiness claim.
+Phase A acquisition is complete and Deliver is authorized. The commissioned
+different-vendor CI-fitness review returned
+`READY_FOR_DELIVER_AFTER_PATCH`; its seven accepted findings are incorporated
+and its bound validation gates reproduce locally. This recovery lane stops
+here. The review did not demand exhaustive provenance as the objective or
+promote this seal into a production-CI readiness claim.

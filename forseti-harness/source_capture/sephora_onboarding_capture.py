@@ -391,6 +391,10 @@ def build_sephora_onboarding_summary(
     questions_doc = by_name["questions_most_answers_offset_000.json"]
     question_rows = _require_list(questions_doc, "Results", "questions")
     question_total = _require_nonnegative_int(questions_doc, "TotalResults", "questions")
+    if question_total == 0 and question_rows:
+        raise SephoraOnboardingCaptureError(
+            "questions response declares zero TotalResults but returned rows"
+        )
     _validate_result_product_ids(
         question_rows,
         allowed_product_ids=(parent.product_id,),
@@ -555,8 +559,10 @@ def build_sephora_onboarding_summary(
                 "artifact_name": spec.artifact_name,
                 "offset": offset,
                 "row_count": state["row_count"],
-                "oldest_submission_time": _format_timestamp(
-                    state["oldest_submission_time"]
+                "oldest_submission_time": (
+                    _format_timestamp(state["oldest_submission_time"])
+                    if state["row_count"]
+                    else None
                 ),
                 "newest_submission_time": _format_timestamp(
                     state["newest_submission_time"]
@@ -1394,6 +1400,10 @@ def _recent_page_state(
     document = _load_api_document(body, label)
     rows = _require_list(document, "Results", label)
     total_results = _total_results(document, label)
+    if total_results == 0 and rows:
+        raise SephoraOnboardingCaptureError(
+            f"{label} declares zero TotalResults but returned rows"
+        )
     _validate_result_product_ids(
         rows,
         allowed_product_ids=allowed_product_ids,
