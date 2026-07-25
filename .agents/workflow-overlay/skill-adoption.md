@@ -85,13 +85,15 @@ Observed on 2026-07-25 (source-repo readback; Claude Code packaging only):
   The source repo carried its manifest only at the repo root, so
   `claude plugin validate .` reported `No manifest found in directory` and no
   Claude Code marketplace source could load the plugin. A manifest at the
-  probed path exists on source branch `claude/add-claude-marketplace-manifest`
-  (`678cb7993c5951ed9afd4025500762c40080618d`), unmerged at observation time.
+  probed path was added on source branch `claude/add-claude-marketplace-manifest`
+  and fast-forwarded into source `main`, which was observed at
+  `678cb7993c5951ed9afd4025500762c40080618d` after the merge. The published
+  `main` tree validated as a marketplace with one cosmetic description warning.
 - Forseti's `.claude/settings.json` previously resolved `agent-workflow-local`
   from a `file` source at `../agent-workflow/marketplace.json`, a path that
   exists only where the `agent-workflow` checkout sits beside `forseti`. It now
-  names the `eric-foo/agent-workflow` GitHub source, which depends on the
-  manifest branch above reaching the source default branch.
+  names the `eric-foo/agent-workflow` GitHub source, which resolves against
+  source `main` and therefore depends on the manifest above staying there.
 - This block is source-location and packaging evidence only. It is not package
   validation, resolver proof, collision re-check, deployment, or adoption. The
   three skills named above carry no recorded collision status, the Codex plugin
