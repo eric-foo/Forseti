@@ -52,8 +52,8 @@ PROGRESS_PREFIX = "tiktok_creator_onboarding_progress_json="
 BLOCKER_PREFIX = "tiktok_creator_onboarding_blocker_json="
 PROBE_JOURNAL_NAME = "tiktok_creator_activity_probe.jsonl"
 PROBE_SCHEMA_VERSION = "tiktok_creator_activity_probe_v0"
-PROFILE_DELAY_MIN_SECONDS = 44
-PROFILE_DELAY_MAX_SECONDS = 96
+PROFILE_DELAY_MIN_SECONDS = 41
+PROFILE_DELAY_MAX_SECONDS = 93
 REJECTION_STREAK_TRIGGER = 1
 OBSERVATION_COUNT = 1
 _FORBIDDEN_KEY_PARTS = (
