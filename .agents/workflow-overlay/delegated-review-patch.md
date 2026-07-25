@@ -1,11 +1,12 @@
-﻿# Delegated Review-and-Patch For High-Stakes Authored Artifacts (Provisional)
+﻿# Delegated Review-and-Patch For High-Stakes Authored Artifacts
 
 ```yaml
 retrieval_header_version: 1
 artifact_role: Forseti overlay authority
 scope: >
-  Provisional delegated review-and-patch convention for high-stakes authored
-  Forseti artifacts, plus the overlay-interface fields a future skill implementation may read.
+  Bound opt-in delegated review-and-patch lane for high-stakes authored
+  Forseti artifacts and bounded code diffs, plus the overlay-interface fields
+  a future skill implementation may read.
 use_when:
   - A Chief Architect is deciding whether to commission a delegated
     review-and-patch hardening pass on a high-stakes authored artifact.
@@ -23,15 +24,13 @@ code-diff commissioning also reads "Code-diff target kind — the
 "Adjudication closeout"; a full-file read is for editing this convention or
 resolving a novel dispute about it.
 
-**Status — provisional convention.** This is an experimental operating
-convention replicated into Forseti from jb's provisional convention (jb branch
-`lane/delegated-review-patch-convention`, commit `345397b`), adopted on limited
-cross-project evidence (see *Evidence* below). It is not bound Forseti review
-doctrine and not a machine-routable review lane: it carries no strict, formal,
-or operational lane authority, and `.agents/workflow-overlay/review-lanes.md`
-"Current Lanes" intentionally does not bind it yet. Treat it as guidance the
-Chief Architect may choose to commission, refined as it is used; promote it to a
-bound lane only after more uses and a separate Forseti overlay binding decision.
+**Status — bound opt-in lane.** This convention is bound Forseti review
+doctrine (owner binding decision, 2026-07-25), on sustained commissioned use
+recorded in Git/PR history plus the adjudicated within-change comparison in
+`docs/workflows/efficiency/pr1111_success_implement_vs_delegated_review_case_v0.md`
+(see *Evidence* below). Bound does not mean mandatory or machine-routable: the
+lane activates only under an explicit Chief Architect commission (below), and
+no category, label, or risk tier ever routes into it automatically.
 
 **What it is — and what it is not.** This is a distinct commissioned,
 bounded-executor lane with an integrated hardening review — not one of the
@@ -102,11 +101,11 @@ Architect reserves final authority over what is kept and may veto any change it
 judges to add no benefit or net-negative value, even when individually
 defensible.
 
-**Delegate lifecycle hard stop.** The delegate may make only the commissioned
-working-tree edits inside the named patch scope. It does not commit, push, open
-or update a PR, merge, stash, reset, clean up a worktree, run repository hygiene,
-or otherwise advance lifecycle state. Those actions remain with the Chief
-Architect after adjudication. A prompt that omits this stop is incomplete.
+**Delegate lifecycle hard stop.** The rule text is the `lifecycle_hard_stop`
+constant in `docs/prompts/templates/shared/forseti_preflight_defaults_v0.md`
+(single owner — do not fork or paraphrase it here). All lifecycle actions
+remain with the Chief Architect after adjudication. A commission prompt that
+omits this stop is incomplete.
 
 **Adjudication closeout.** The delegated return is not complete merely because
 it names a verdict, diff, findings, or residual risk. The return/courier prompt
@@ -126,6 +125,11 @@ is genuinely needed to make that first move usable. A material move must
 substantively advance the goal; commit, push, PR, merge, and other admin or
 lifecycle work never qualify. When no goal or objective is visible, close
 normally without inventing a roadmap or emitting an empty-result placeholder.
+Closeout also retires transport artifacts: a courier prompt that was committed
+to the repository solely for operator transport is deleted in the same lane PR
+once its return is adjudicated (Git history preserves it); the default carrier
+for a lane-scoped courier prompt remains the lane PR body/comment or ignored
+scratch per `.agents/workflow-overlay/prompt-orchestration.md` filing rules.
 This is an adjudicator obligation, not permission for the delegate to decide
 what is kept or widen review scope.
 
@@ -135,7 +139,8 @@ final report write, `python .agents/hooks/check_review_output_provenance.py --st
 exits 0. If the report is changed after that command, rerun it and report only
 the final observed result. Embedded live diffs must be inside a proper
 standalone `diff` fence and must be generated/read back as real multiline text,
-not hand-collapsed into prose. Future-tense placeholders such as "must be
+not hand-collapsed into prose; use `.github/scripts/review-report-mechanics.py`
+to generate and verify an embedded diff instead of hand-pasting one. Future-tense placeholders such as "must be
 checked after this report is written" are not allowed in the durable report.
 This gate is mechanical shape/integrity only: it is not approval, validation,
 readiness, review quality, or acceptance of the delegated findings.
@@ -307,140 +312,47 @@ buyer-proof, not zero. `no_repo` is outside this lane because it loses delegated
 patch authorship; it must route to an ordinary read-only review rather than a
 same-vendor or home-authored patch fallback.
 
+**Delegate-authored capability work does not inherit discovery.** A commission
+may include owner-directed capability work — a redesign or feature the owner
+has already decided, executed by the delegate inside the bounded patch scope.
+The cross-vendor discovery bar then covers only the delegate's review of the
+pre-existing diff; it does not extend to the lines the delegate itself
+authored. Those lines receive the same treatment as the non-independent sliver
+above — mechanical verifiability plus CA adjudication, with the limitation
+recorded on the durable disposition — and when authored capability work
+dominates the returned diff, the pass discharges no independent-review gate
+for that work: route it as an implementation handoff with its own separate
+review instead of relabeling authorship as review.
+
 ## Overlay Interface (fields a future skill implementation may read)
 
 This is the seam to handoff 2 (a skill implementation, authored separately - not in
 this overlay binding). The fields below defer to existing Forseti overlay authority
 and do not fork or restate it.
 
+The prose sections above are the single semantic owner of every rule in this
+convention. The interface below carries only routing facts a skill needs to
+resolve — field names, renderers, and pointers — never a second statement of a
+rule; where a value summarizes prose, the prose section named in the comment
+wins.
+
 ```yaml
 delegated_review_patch_overlay_interface:
-  status: provisional_opt_in   # available only by explicit CA commission; not a bound review lane; not mandatory
+  status: bound_opt_in_commission   # explicit CA commission only; never mandatory or machine-routable
   operating_contract_pointer: .agents/workflow-overlay/delegated-review-patch.md
-  project_prompt_routing_binding: >
-    Forseti prompt-routing depth is owned by prompt-orchestration.md. A
-    resolver-loaded generic skill's always-full-orchestrator default is replaced
-    by Lane-Scoped Delegated Patch Prompt Default when that predicate is
-    satisfied; all review, de-correlation, scope, validation, escalation,
-    adjudication, and lifecycle safeguards remain binding.
-  direct_invocation_contract: >
-    "delegate patch" and equivalent direct invocations author exactly one
-    paste-ready operator-courier prompt. They never discover, create, spawn,
-    dispatch, or execute a receiver. The prompt is preparation-only until a
-    different-vendor controller with direct repo access binds and verifies it;
-    no same-vendor, unknown-lineage, no_repo, self, or Codex-managed fallback is
-    valid.
-  prompt_orchestrator_available:
+  prompt_routing:
     full_renderer: workflow-prompt-orchestrator
     compact_renderer: .agents/workflow-overlay/prompt-orchestration.md#lane-scoped-delegated-patch-prompt-default
-    selection_rule: >
-      Use compact_renderer when its project predicate is satisfied; otherwise
-      use full_renderer. Either renderer satisfies the strict commission prompt
-      availability field without changing the installed skill artifact.
+    selection_rule: compact renderer when its predicate holds; otherwise full renderer; depth never grants dispatch authority
   target_kinds:
-    authored_artifact: >
-      Default target kind; a single CA-named authored artifact (doctrine, operating
-      contract, eval/scoring/validation instrument). Review method is the
-      delegate's own adversarial analysis. Direct repository access and a
-      single-file patch bound are required.
-    delegated_code_review_and_patch: >
-      Sibling target kind for a bounded multi-file implementation/code diff.
-      Review method is the code review lane (workflow-code-review), NOT artifact
-      review and never a merge of the two. Use the code-review method's own
-      failure-mode analysis.
-      Target is
-      an explicitly named file set (one or more) that CANNOT silently widen;
-      everything outside it is read-only / flag-only. Validation/test obligations
-      are named and can fail. Patch authority is an explicit commission
-      subordinate to the implementation-authorization boundary in safety-rules.md
-      / AGENTS.md, never assumed from the category. All other convention machinery
-      (commission, de-correlation / two-bar, access-mode obligations, CA
-      adjudication before keep, NEEDS_ARCHITECTURE_PASS, strict-claim boundary,
-      no runtime-model recommendation) is inherited unchanged. Direct repository
-      access is required; no_repo is outside this target kind.
-  incomplete_commission_route_out:
-    owner: .agents/workflow-overlay/prompt-orchestration.md
-    output_mode: paste-ready-chat
-    use_when: >
-      Target and review purpose are inferable, but operator-owned route fields
-      are missing; emit an operator-fill route-out prompt instead of an inert
-      blocker.
-    default_route: >
-      Eligible current-lane operator-couriered prompts use Lane-Scoped Delegated
-      Patch Prompt Default: one fresh target-state read and a compact pointer-first
-      commission returned to the operator without dispatch. Full
-      workflow-prompt-orchestrator applies only when an escalation condition or
-      owner-invoked Mini God Tier is present and still returns a courier prompt;
-      orchestration depth never grants dispatch authority.
-    code_diff_target_routing: >
-      A multi-file implementation/code diff is handled by the
-      delegated_code_review_and_patch sibling target kind (target_kinds above) when patch
-      authority is commissioned; an un-commissioned diff routes to read-only code
-      review. Patch authority is never assumed from the target category.
-  protected_path_list:
-    authority: .agents/workflow-overlay/safety-rules.md   # defer to it; do not fork or restate the forbidden-edit set
-    rule: >
-      The delegate may patch ONLY the CA-named target — the single authored file
-      in the authored-artifact target kind, or the explicitly named multi-file set in
-      delegated_code_review_and_patch (which cannot silently widen). Everything
-      else is read-only / flag-only: all other Forseti sources; canonical, frozen,
-      or hash-pinned decisions, product contracts, manifests, and
-      provenance/review-output ledgers; other `.agents/workflow-overlay/` files;
-      `AGENTS.md` and `CLAUDE.md` when they are not the named target; and every
-      path the safety rules forbid editing (`jb`, external workflow source,
-      installed / user-level / plugin skills, and external reference folders).
-  delegate_lifecycle_hard_stop: >
-    Delegate may edit only the commissioned named target set. No commit, push,
-    PR creation/update, merge, stash, reset, worktree cleanup, repository hygiene,
-    or other lifecycle action; the CA owns all keep and land decisions after
-    adjudication.
-  model_ladder:
-    ownership: operator_and_commission   # NOT Forseti review-lane authority; review-lane model-neutrality preserved
-    rungs: author -> de_correlated_controller -> cheap_executor
-    de_correlation_criterion: >
-      family = vendor / model lineage (Claude vs GPT), NOT tier. Vendor = the
-      upstream model developer/provider, NOT hosting platform / API reseller or
-      wrapper or fine-tune owner; unknown or undisclosed lineage cannot satisfy
-      cross-vendor. Cross-vendor de-correlation (author vendor != delegate vendor,
-      recorded in the commission) is the DISCOVERY bar, required to claim the
-      no-new-seam standard and to execute this lane. A same-vendor delegate is
-      ineligible, including for bounded verification/sanity or closure recheck.
-      A who-constraint only.
-    concrete_model_ids: none_bound_in_overlay   # operator/tooling decision; the overlay does not prescribe, rank, or imply runtime models
-    fallback: >
-      none. If no different-vendor repo controller is available, leave the
-      courier prompt unexecuted or route a separately named read-only review;
-      never substitute same-vendor sanity or self-review into this lane.
-  access_modes:
-    default: repo
-    values: [repo]
-    selection_rule: >
-      Direct repository/worktree access is required. no_repo routes to an
-      ordinary read-only review prompt and must not be labeled delegated patch.
-  preflight_schema:
-    default: >
-      Forseti Prompt Preflight core plus one fresh target-state read and
-      Lane-Scoped Delegated Patch Prompt Default
-      (.agents/workflow-overlay/prompt-orchestration.md).
-    escalated: >
-      forseti_start_preflight plus Escalated Preflight Fields only when a full
-      orchestration condition or owner-invoked Mini God Tier applies.
-  source_context_fields:
-    - Default commission points to the targeted convention and relevant review lane; the receiver reads the real diff and target sources.
-    - Source-Gated Method Contract and source packs/read budgets apply only when their independent triggers fire.
-  output_destinations:
-    delegate_return: >
-      unified diff + neutral source citations + verdict + residual-risk note,
-      plus an adjudicator next-moves tail that points the commissioning Chief
-      Architect to communication-style.md -> Review Adjudication Next Step
-      (paste-ready courier; delegate does not decide what is kept)
-    commission_route_out: >
-      one paste-ready operator-courier prompt by default; filed canonical prompt artifact or
-      full-orchestrator output only when its routing conditions apply; use
-      operator_to_fill for inferable but genuinely operator-owned values; never
-      dispatch from the authoring invocation
-    durable_review_report: optional only when separately commissioned or required by the owner-invoked Mini God Tier target; otherwise chat or lane PR/comment is the return
-    patch_application: the CA-named target in-repo — single authored file, or the named multi-file set in delegated_code_review_and_patch — under the commission (patch / integration execution authority per .agents/workflow-overlay/review-lanes.md)
+    authored_artifact: single CA-named authored artifact; review method is the delegate's own adversarial analysis   # semantics: "The loop" above
+    delegated_code_review_and_patch: explicitly named multi-file code set; review method is the code review lane   # semantics: "Code-diff target kind" above
+  incomplete_commission_route_out: .agents/workflow-overlay/prompt-orchestration.md   # semantics: "Incomplete commission route-out" above
+  protected_path_list: .agents/workflow-overlay/safety-rules.md   # delegate patches only the CA-named target set; semantics: "The loop"; "Code-diff target kind"
+  delegate_lifecycle_hard_stop: docs/prompts/templates/shared/forseti_preflight_defaults_v0.md   # lifecycle_hard_stop constant
+  de_correlation_commission_constants: docs/prompts/templates/shared/forseti_preflight_defaults_v0.md   # semantics: "De-correlation" above; no fallback of any kind
+  access_modes: repo_only   # semantics: "Access selection rule" above
+  output_destinations: chat or lane PR/comment by default   # semantics: "The loop"; "Adjudication closeout"; prompt-orchestration.md filing rules
 ```
 
 ```yaml
@@ -465,16 +377,19 @@ direction_change_propagation:
 
 ## Evidence And Non-Claims
 
-**Evidence.** Replicated from jb's provisional convention, itself adopted on
-limited in-session evidence — roughly two uses during jb's 2026-06-05
-eval-contract hardening, where a de-correlated pass caught failure modes the
-author had reintroduced against its own guardrails. Those are first-hand process
-observations in jb; the limitation is their small number, not their validity,
-and they are jb-side evidence, not a Forseti-measured result. The evidence
-corroborates the pattern; it does not validate it.
+**Evidence.** Origin: replicated 2026-06 from jb's provisional convention
+(cross-project provenance only; jb authority, paths, and lifecycle mechanics
+are not imported). Forseti-side evidence at binding (2026-07-25): sustained
+commissioned use across lanes recorded in Git/PR history, and one adjudicated
+within-change comparison —
+`docs/workflows/efficiency/pr1111_success_implement_vs_delegated_review_case_v0.md`
+— where the cross-vendor pass contributed one unique accepted material finding
+(a wrong-cause-green test gap) beyond a same-vendor in-session review. This
+supports binding the lane as an opt-in commission; it is not a statistical
+result and the lane's cost remains unmeasured (accepted residual — capture
+wall-clock/token cost on future runs only if a routing decision comes to
+depend on it).
 
-**Non-claims.** This convention is provisional. It is not validation, not
-readiness, not formal review authority, not a mandatory or machine-routable
-review lane, not patch authorization beyond an explicit bounded CA commission,
-and not runtime model routing. It does not import jb project authority, paths, or
-lifecycle mechanics into Forseti; jb is cited only as cross-project provenance.
+**Non-claims.** This lane is not validation, not readiness, not a mandatory or
+machine-routable front door, not patch authorization beyond an explicit
+bounded CA commission, and not runtime model routing.

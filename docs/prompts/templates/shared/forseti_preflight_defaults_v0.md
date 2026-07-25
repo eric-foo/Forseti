@@ -23,7 +23,11 @@ preflight_defaults: docs/prompts/templates/shared/forseti_preflight_defaults_v0.
 
 Restating a constant owned here in a new or materially touched prompt is a
 prompt-quality defect (`.agents/workflow-overlay/prompt-orchestration.md`,
-Forseti Prompt Preflight).
+Forseti Prompt Preflight), with one exception owned there: an
+operator-couriered cross-vendor delegate prompt restates the delegate-facing
+constants (`environment_baseline`, `lifecycle_hard_stop`,
+`decorrelation_commission`) inline, faithful to this artifact, so the courier
+body is self-contained for its external receiver.
 
 ---
 
@@ -42,8 +46,6 @@ These values do not need restating when a prompt cites this artifact.
 | `environment_baseline` | Windows host, PowerShell-first: use PowerShell syntax for shell/test commands; use absolute paths resolvable from any cwd; invoke `python`, never `python3`; do not pass Windows drive-letter paths or heredocs through bash |
 | `lifecycle_hard_stop` | A delegate or receiver does not commit, push, open or update a PR, merge, stash, reset, clean the worktree, or run repository-hygiene actions unless the commission explicitly grants that action |
 | `decorrelation_commission` | `delivery: operator_courier_only` · `access: repo` · `delegate_eligibility: different_vendor_lineage_with_direct_repo_access`; same-vendor, unknown-lineage, no-repo, self, and Codex-managed controller substitutes are invalid; a manager-prefixed target path is neutral; if no eligible controller is available the prompt remains unexecuted |
-| `execution_economy` | `execution_route: five_phase_fast_path_if_eligible`; when the bounded eligibility test in `AGENTS.md` clears, use its five phases, one isolated mutation, and the first-stall circuit/fallback without reopening intake or retrying the stalled patch route |
-| `review_diff_mechanics` | `review_diff_route: review_report_mechanics_if_durable_report_embeds_diff`; if a durable review report embeds target-file changes, draft with the mechanics token and use `.github/scripts/review-report-mechanics.py` to generate and verify the exact zero-context diff instead of hand-pasting a normal-context diff |
 
 The REFERENCE-LOAD / SOURCE-LOAD / SOURCE_CONTEXT_READY / APPLY gate language
 is owned by `.agents/workflow-overlay/prompt-orchestration.md`'s

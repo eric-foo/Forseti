@@ -319,11 +319,13 @@ inherit this floor.
   diff-scoped `--strict` mode, and chat/courier authoring gates the frozen
   rendered body through `--validate-stdin` before use. This check covers only
   exact authorization shape, binding consistency, prohibited manual/repeated
-  creation directives, typed source-load failure, and the delegated-patch
-  courier shell: operator-only delivery, direct repo access, recorded
-  different-vendor eligibility, no same-vendor claim, and no task-creation
-  authorization. It does not prove live receiver identity, vendor truth,
-  capability, source freshness, or writer isolation.
+  creation directives, and typed source-load failure. It does not prove live
+  receiver identity, vendor truth, capability, source freshness, or writer
+  isolation. The former delegated-patch courier-shell check was retired
+  2026-07-25 with the lane binding: the courier who-constraint (operator-only
+  delivery, direct repo access, different-vendor eligibility) is owned by
+  `.agents/workflow-overlay/delegated-review-patch.md` and enforced at CA
+  adjudication, not by a self-declared prompt token.
 - Control-plane source-state gate: repository-aware prompts, prompt-policy
   patches, workflow patches, and CA handoffs must classify controlling Forseti
   sources as clean, modified, untracked, stale, or not checked when those
