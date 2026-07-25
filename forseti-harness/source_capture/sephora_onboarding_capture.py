@@ -11,16 +11,21 @@ in flight from preserved response bytes.
 
 from __future__ import annotations
 
+import hashlib
 import html as html_lib
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timedelta, timezone
-from typing import Any, Mapping, Sequence
-from urllib.parse import unquote
+from typing import Any, Callable, Mapping, Sequence
+from urllib.parse import parse_qs, unquote, urlparse
 
 from data_lake.root import DataLakeRoot, LoadedRawPacket
 from harness_utils import utc_now_z
+from source_capture.adapters.cloakbrowser_snapshot import (
+    CloakBrowserSnapshotFailure,
+    fetch_cloakbrowser_snapshot_capture,
+)
 from source_capture.adapters.bazaarvoice_api import (
     BAZAARVOICE_API_HOST,
     ApiFetcher,
@@ -29,6 +34,7 @@ from source_capture.adapters.bazaarvoice_api import (
     BazaarvoiceReadConfig,
     fetch_bazaarvoice_api_response,
 )
+from source_capture.adapters.sephora_us_market import SephoraUSMarketPlugin
 from source_capture.models import (
     CaptureModeCategory,
     PacketTiming,
@@ -38,6 +44,7 @@ from source_capture.models import (
     unknown_with_reason,
 )
 from source_capture.packet_assembly import stage_and_write_packet, staged_file_id_map
+from source_capture.retail_capture_profiles import get_retail_capture_profile
 
 
 SEPHORA_ONBOARDING_SOURCE_SURFACE = "sephora_bazaarvoice_onboarding"
@@ -97,8 +104,23 @@ class ParentContext:
     product_id: str
     allowed_product_ids: tuple[str, ...]
     product_url: str
-    review_config: BazaarvoiceReadConfig
-    question_config: BazaarvoiceReadConfig
+    review_config: BazaarvoiceReadConfig | None
+    question_config: BazaarvoiceReadConfig | None
+    configuration_receipt: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class ParentConfigurationRefresh:
+    requested_url: str
+    final_url: str
+    rendered_dom: str
+    rendered_dom_sha256: str
+    pin_confirmed: bool
+
+
+ParentConfigurationRefresher = Callable[
+    [str, float], ParentConfigurationRefresh
+]
 
 
 def capture_sephora_onboarding_packet(
@@ -111,6 +133,8 @@ def capture_sephora_onboarding_packet(
     timeout_seconds: float = 20.0,
     max_bytes: int = 8_000_000,
     fetcher: ApiFetcher | None = None,
+    configuration_refresher: ParentConfigurationRefresher | None = None,
+    configuration_source_packet_id: str | None = None,
 ) -> tuple[int, dict[str, Any]]:
     """Capture and commit one Sephora review/Q&A companion packet.
 
@@ -133,6 +157,22 @@ def capture_sephora_onboarding_packet(
         raise ValueError("max_bytes must be greater than zero")
 
     parent = _parent_context(data_root.load_raw_packet(parent_packet_id), parent_packet_id)
+    if parent.review_config is None or parent.question_config is None:
+        if configuration_source_packet_id is not None:
+            parent = _configuration_from_preserved_packet(
+                parent,
+                loaded=data_root.load_raw_packet(configuration_source_packet_id),
+                packet_id=configuration_source_packet_id,
+            )
+        else:
+            parent = _refresh_parent_configuration(
+                parent,
+                refresher=configuration_refresher
+                or _live_parent_configuration_refresh,
+                timeout_seconds=timeout_seconds,
+            )
+    assert parent.review_config is not None
+    assert parent.question_config is not None
     request_specs = list(
         _base_request_specs(parent.product_id, question_limit, review_page_limit)
     )
@@ -350,12 +390,18 @@ def build_sephora_onboarding_summary(
 
     questions_doc = by_name["questions_most_answers_offset_000.json"]
     question_rows = _require_list(questions_doc, "Results", "questions")
+    question_total = _require_nonnegative_int(questions_doc, "TotalResults", "questions")
+    if question_total == 0 and question_rows:
+        raise SephoraOnboardingCaptureError(
+            "questions response declares zero TotalResults but returned rows"
+        )
     _validate_result_product_ids(
         question_rows,
         allowed_product_ids=(parent.product_id,),
         label="questions",
+        allow_empty=question_total == 0,
+        allow_provider_collection_product_ids=True,
     )
-    question_total = _require_nonnegative_int(questions_doc, "TotalResults", "questions")
     includes = questions_doc.get("Includes", questions_doc.get("Included", {}))
     if not isinstance(includes, Mapping):
         raise SephoraOnboardingCaptureError("questions Includes must be an object")
@@ -386,6 +432,10 @@ def build_sephora_onboarding_summary(
             {
                 "rank": index + 1,
                 "question_id": _optional_string(raw_row.get("Id")),
+                "product_id": _required_string(
+                    raw_row.get("ProductId"),
+                    f"question row {index}.ProductId",
+                ),
                 "question_summary_present": question_summary is not None,
                 "question_details_present": question_details is not None,
                 "total_answer_count": answer_count,
@@ -396,19 +446,51 @@ def build_sephora_onboarding_summary(
         )
 
     helpful_doc = by_name["reviews_non_incentivized_most_helpful_offset_000.json"]
-    review_statistics, filtered_statistics = _helpful_statistics(
-        helpful_doc, parent.product_id
+    helpful_rows = _require_list(
+        helpful_doc,
+        "Results",
+        "non-incentivized Most Helpful reviews",
     )
-    non_incentivized_total = _mapping_nonnegative_int(
-        filtered_statistics,
-        "TotalReviewCount",
-        "FilteredReviewStatistics",
+    helpful_total = _total_results(
+        helpful_doc,
+        "non-incentivized Most Helpful reviews",
     )
-    age_distribution = _context_distribution(filtered_statistics, "ageRange")
-    skin_type_distribution = _context_distribution(filtered_statistics, "skinType")
-    skin_concern_distribution = _context_distribution(
-        filtered_statistics, "skinConcerns"
+    _validate_result_product_ids(
+        helpful_rows,
+        allowed_product_ids=parent.allowed_product_ids,
+        label="non-incentivized Most Helpful reviews",
+        allow_empty=helpful_total == 0,
+        allow_provider_collection_product_ids=True,
     )
+    if helpful_total == 0:
+        if helpful_rows:
+            raise SephoraOnboardingCaptureError(
+                "Most Helpful response declares zero TotalResults but returned rows"
+            )
+        review_statistics: Mapping[str, Any] = {}
+        filtered_statistics: Mapping[str, Any] = {}
+        non_incentivized_total = 0
+        age_distribution = None
+        skin_type_distribution = None
+        skin_concern_distribution = None
+    else:
+        review_statistics, filtered_statistics = _helpful_statistics(
+            helpful_doc, parent.product_id
+        )
+        non_incentivized_total = _mapping_nonnegative_int(
+            filtered_statistics,
+            "TotalReviewCount",
+            "FilteredReviewStatistics",
+        )
+        age_distribution = _context_distribution(
+            filtered_statistics, "ageRange"
+        )
+        skin_type_distribution = _context_distribution(
+            filtered_statistics, "skinType"
+        )
+        skin_concern_distribution = _context_distribution(
+            filtered_statistics, "skinConcerns"
+        )
     age_counts: dict[str, int] = {}
     api_label_by_value = {
         bucket.api_value: bucket.display_label for bucket in _AGE_BUCKET_SPECS
@@ -435,22 +517,6 @@ def build_sephora_onboarding_summary(
         }
         for display, count in age_counts.items()
     ]
-    helpful_rows = _require_list(
-        helpful_doc,
-        "Results",
-        "non-incentivized Most Helpful reviews",
-    )
-    helpful_total = _total_results(
-        helpful_doc,
-        "non-incentivized Most Helpful reviews",
-    )
-    _validate_result_product_ids(
-        helpful_rows,
-        allowed_product_ids=parent.allowed_product_ids,
-        label="non-incentivized Most Helpful reviews",
-        allow_empty=helpful_total == 0,
-        allow_historical_review_product_ids=True,
-    )
     helpful_inventory = [
         _review_inventory_row(row, rank=index + 1)
         for index, row in enumerate(helpful_rows)
@@ -493,8 +559,10 @@ def build_sephora_onboarding_summary(
                 "artifact_name": spec.artifact_name,
                 "offset": offset,
                 "row_count": state["row_count"],
-                "oldest_submission_time": _format_timestamp(
-                    state["oldest_submission_time"]
+                "oldest_submission_time": (
+                    _format_timestamp(state["oldest_submission_time"])
+                    if state["row_count"]
+                    else None
                 ),
                 "newest_submission_time": _format_timestamp(
                     state["newest_submission_time"]
@@ -544,6 +612,12 @@ def build_sephora_onboarding_summary(
     recent_fields = _review_field_inventory(recent_rows)
     observed_review_product_ids = sorted(
         {row["product_id"] for row in helpful_inventory + recent_inventory}
+    )
+    observed_question_product_ids = sorted(
+        {row["product_id"] for row in question_inventory}
+    )
+    provider_collection_product_ids = sorted(
+        set(observed_question_product_ids) | set(observed_review_product_ids)
     )
     historical_review_product_ids = sorted(
         set(observed_review_product_ids) - set(parent.allowed_product_ids)
@@ -616,6 +690,17 @@ def build_sephora_onboarding_summary(
             ),
         },
         {
+            "field": "provider_returned_collection_product_ids",
+            "count": len(provider_collection_product_ids),
+            "product_ids": provider_collection_product_ids,
+            "detail": (
+                "the exact parent-product filters returned this provider-defined "
+                "product-ID union across Q&A and review roles; the union is preserved "
+                "as observed collection evidence, not promoted to a permanent tenant, "
+                "syndication, or catalog identity"
+            ),
+        },
+        {
             "field": "review_product_ids_not_in_current_parent_sku_set",
             "count": historical_review_row_count,
             "product_ids": historical_review_product_ids,
@@ -634,6 +719,7 @@ def build_sephora_onboarding_summary(
             "packet_id": parent.packet_id,
             "file_id": parent.file_id,
             "file_sha256": parent.file_sha256,
+            "configuration": dict(parent.configuration_receipt),
         },
         "product": {
             "product_id": parent.product_id,
@@ -648,6 +734,11 @@ def build_sephora_onboarding_summary(
             "captured_question_rows": len(question_rows),
             "captured_included_answer_rows": len(included_answers),
             "captured_question_declared_answer_sum": answer_count_sum,
+            "question_product_identity": {
+                "requested_product_group_id": parent.product_id,
+                "observed_question_product_ids": observed_question_product_ids,
+                "provider_collection_product_ids": provider_collection_product_ids,
+            },
             "question_inventory": question_inventory,
         },
         "reviews": {
@@ -662,6 +753,8 @@ def build_sephora_onboarding_summary(
                 "source": (
                     "FilteredReviewStatistics.ContextDataDistribution of the "
                     "combined Most Helpful response"
+                    if helpful_total > 0
+                    else "not_applicable_source_declared_zero_reviews"
                 ),
                 "age_display_labels": list(SEPHORA_AGE_BUCKETS),
                 "declared_age_subset_total": declared_age_total,
@@ -733,15 +826,29 @@ def build_sephora_onboarding_summary(
                 "observed_review_product_ids": observed_review_product_ids,
                 "historical_or_unlisted_review_product_ids": historical_review_product_ids,
                 "historical_or_unlisted_review_rows": historical_review_row_count,
+                "provider_collection_product_ids": provider_collection_product_ids,
             },
         },
         "content_qualification": {
             "status": "passed",
             "response_documents": len(by_name),
             "three_response_roles_present": True,
-            "combined_statistics_present": True,
-            "age_bucket_vocabulary_exact": sorted(age_counts)
-            == sorted(SEPHORA_AGE_BUCKETS),
+            "combined_statistics_present": helpful_total > 0,
+            "combined_statistics_status": (
+                "present"
+                if helpful_total > 0
+                else "not_applicable_source_declared_zero_reviews"
+            ),
+            "age_bucket_vocabulary_exact": (
+                sorted(age_counts) == sorted(SEPHORA_AGE_BUCKETS)
+                if helpful_total > 0
+                else None
+            ),
+            "age_bucket_vocabulary_status": (
+                "observed"
+                if helpful_total > 0
+                else "not_applicable_source_declared_zero_reviews"
+            ),
             "recent_window_coverage_proven": recent_exhausted
             or recent_cutoff_reached,
             "summary_duplicates_review_or_answer_bodies": False,
@@ -796,11 +903,19 @@ def _parent_context(loaded: LoadedRawPacket, packet_id: str) -> ParentContext:
     for file_id, body in loaded.bodies.items():
         if b'id="linkStore"' in body and b"Sephora.configurationSettings" in body:
             candidates.append((file_id, body))
-    if len(candidates) != 1:
+    if len(candidates) > 1:
         raise SephoraOnboardingCaptureError(
             f"parent packet {packet_id} requires exactly one rendered DOM with "
             "linkStore and Sephora.configurationSettings"
         )
+    if not candidates:
+        return _content_parent_context(
+            loaded=loaded,
+            packet_id=packet_id,
+            product_url=product_url,
+            product_id_from_url=product_id_from_url,
+        )
+
     file_id, body = candidates[0]
     text = body.decode("utf-8", errors="replace")
     product = _link_store_product(text)
@@ -809,6 +924,139 @@ def _parent_context(loaded: LoadedRawPacket, packet_id: str) -> ParentContext:
         raise SephoraOnboardingCaptureError(
             f"parent product mismatch: URL={product_id_from_url}, linkStore={product_id}"
         )
+    parent_file_sha256 = _preserved_file_sha256(manifest, file_id)
+    allowed_product_ids = _sephora_product_and_sku_ids(product)
+    return ParentContext(
+        packet_id=packet_id,
+        file_id=file_id,
+        file_sha256=parent_file_sha256,
+        product_id=product_id,
+        allowed_product_ids=allowed_product_ids,
+        product_url=product_url,
+        review_config=_read_config(text, "bvApi_rwdRating_desktop_read"),
+        question_config=_read_config(text, "bvApi_rwdQandA_desktop_read"),
+        configuration_receipt={
+            "mode": "preserved_rendered_dom",
+            "parent_file_id": file_id,
+            "parent_file_sha256": parent_file_sha256,
+        },
+    )
+
+
+def _content_parent_context(
+    *,
+    loaded: LoadedRawPacket,
+    packet_id: str,
+    product_url: str,
+    product_id_from_url: str,
+) -> ParentContext:
+    candidates: list[tuple[str, Mapping[str, Any]]] = []
+    for file_id, body in loaded.bodies.items():
+        try:
+            document = json.loads(body.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if (
+            isinstance(document, Mapping)
+            and document.get("record_kind") == "retail_pdp_sephora_aggregate_content"
+            and document.get("schema_version")
+            == "retail_pdp_sephora_aggregate_content_v4"
+        ):
+            candidates.append((file_id, document))
+    if len(candidates) != 1:
+        raise SephoraOnboardingCaptureError(
+            f"parent packet {packet_id} requires exactly one rendered DOM with "
+            "linkStore and Sephora.configurationSettings or one canonical "
+            "retail_pdp_sephora_aggregate_content_v4 record"
+        )
+
+    file_id, document = candidates[0]
+    content_source_url = document.get("source_url")
+    if not isinstance(content_source_url, str):
+        raise SephoraOnboardingCaptureError("Sephora content parent source_url is unavailable")
+    content_product_id = _product_id_from_url(content_source_url)
+    if content_product_id != product_id_from_url:
+        raise SephoraOnboardingCaptureError(
+            "content parent product mismatch: "
+            f"manifest={product_id_from_url}, content={content_product_id}"
+        )
+
+    allowed_ids: list[str] = [product_id_from_url]
+    matching_variant = False
+    rows = document.get("rows")
+    if not isinstance(rows, list):
+        raise SephoraOnboardingCaptureError("Sephora content parent rows are unavailable")
+    for row in rows:
+        if not isinstance(row, Mapping):
+            continue
+        fields = row.get("source_visible_fields")
+        if not isinstance(fields, Mapping):
+            continue
+        row_product_id = fields.get("product_id")
+        if row_product_id == product_id_from_url:
+            matching_variant = True
+        sku = fields.get("sku")
+        if isinstance(sku, str) and sku.strip():
+            allowed_ids.append(sku.strip())
+    if not matching_variant:
+        raise SephoraOnboardingCaptureError(
+            "Sephora content parent has no variant bound to the requested product"
+        )
+
+    parent_file_sha256 = _preserved_file_sha256(loaded.manifest, file_id)
+    market_receipt = _content_parent_market_receipt(loaded, packet_id)
+    return ParentContext(
+        packet_id=packet_id,
+        file_id=file_id,
+        file_sha256=parent_file_sha256,
+        product_id=product_id_from_url,
+        allowed_product_ids=tuple(dict.fromkeys(allowed_ids)),
+        product_url=product_url,
+        review_config=None,
+        question_config=None,
+        configuration_receipt={
+            "mode": "live_target_bound_refresh_required",
+            "content_parent_file_id": file_id,
+            "content_parent_file_sha256": parent_file_sha256,
+            **market_receipt,
+        },
+    )
+
+
+def _content_parent_market_receipt(
+    loaded: LoadedRawPacket,
+    packet_id: str,
+) -> dict[str, Any]:
+    candidates: list[str] = []
+    for file_id, body in loaded.bodies.items():
+        try:
+            document = json.loads(body.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if (
+            isinstance(document, Mapping)
+            and document.get("pin_confirmed") is True
+            and document.get("country_code_requested") == "US"
+            and document.get("currency_code_requested") == "USD"
+            and document.get("access_blocked") is False
+        ):
+            candidates.append(file_id)
+    if len(candidates) != 1:
+        raise SephoraOnboardingCaptureError(
+            f"content parent {packet_id} requires exactly one preserved successful "
+            "US/USD capture metadata record"
+        )
+    file_id = candidates[0]
+    return {
+        "content_parent_market_metadata_file_id": file_id,
+        "content_parent_market_metadata_sha256": _preserved_file_sha256(
+            loaded.manifest, file_id
+        ),
+        "content_parent_market": "US/USD",
+    }
+
+
+def _preserved_file_sha256(manifest: Mapping[str, Any], file_id: str) -> str:
     preserved = next(
         (
             item
@@ -818,17 +1066,202 @@ def _parent_context(loaded: LoadedRawPacket, packet_id: str) -> ParentContext:
         None,
     )
     if not isinstance(preserved, Mapping) or not isinstance(preserved.get("sha256"), str):
-        raise SephoraOnboardingCaptureError("parent DOM preserved-file hash is unavailable")
-    allowed_product_ids = _sephora_product_and_sku_ids(product)
-    return ParentContext(
-        packet_id=packet_id,
-        file_id=file_id,
-        file_sha256=str(preserved["sha256"]),
-        product_id=product_id,
-        allowed_product_ids=allowed_product_ids,
-        product_url=product_url,
-        review_config=_read_config(text, "bvApi_rwdRating_desktop_read"),
-        question_config=_read_config(text, "bvApi_rwdQandA_desktop_read"),
+        raise SephoraOnboardingCaptureError("parent preserved-file hash is unavailable")
+    return str(preserved["sha256"])
+
+
+def _refresh_parent_configuration(
+    parent: ParentContext,
+    *,
+    refresher: ParentConfigurationRefresher,
+    timeout_seconds: float,
+) -> ParentContext:
+    refresh = refresher(parent.product_url, timeout_seconds)
+    if refresh.requested_url != parent.product_url:
+        raise SephoraOnboardingCaptureError(
+            "configuration refresh requested a different parent URL"
+        )
+    if not refresh.pin_confirmed:
+        raise SephoraOnboardingCaptureError(
+            "configuration refresh did not confirm the Sephora US/USD PDP route"
+        )
+    final_product_id = _product_id_from_url(refresh.final_url)
+    if final_product_id != parent.product_id:
+        raise SephoraOnboardingCaptureError(
+            "configuration refresh product mismatch: "
+            f"parent={parent.product_id}, final={final_product_id}"
+        )
+    product = _link_store_product(refresh.rendered_dom)
+    refreshed_product_id = _required_string(
+        product.get("productId"), "linkStore.page.product.productId"
+    )
+    if refreshed_product_id != parent.product_id:
+        raise SephoraOnboardingCaptureError(
+            "configuration refresh product mismatch: "
+            f"parent={parent.product_id}, linkStore={refreshed_product_id}"
+        )
+    return replace(
+        parent,
+        allowed_product_ids=_sephora_product_and_sku_ids(product),
+        review_config=_read_config(
+            refresh.rendered_dom, "bvApi_rwdRating_desktop_read"
+        ),
+        question_config=_read_config(
+            refresh.rendered_dom, "bvApi_rwdQandA_desktop_read"
+        ),
+        configuration_receipt={
+            **dict(parent.configuration_receipt),
+            "mode": "live_target_bound_refresh",
+            "requested_url": refresh.requested_url,
+            "final_url": refresh.final_url,
+            "rendered_dom_sha256": refresh.rendered_dom_sha256,
+            "pin_confirmed": refresh.pin_confirmed,
+            "credential_posture": (
+                "page-declared read tokens used only in memory and not persisted"
+            ),
+        },
+    )
+
+
+def _configuration_from_preserved_packet(
+    parent: ParentContext,
+    *,
+    loaded: LoadedRawPacket,
+    packet_id: str,
+) -> ParentContext:
+    manifest = loaded.manifest
+    source_locator = manifest.get("source_locator")
+    source_url = (
+        source_locator.get("value")
+        if isinstance(source_locator, Mapping)
+        and source_locator.get("status") == "known"
+        else None
+    )
+    if not isinstance(source_url, str):
+        raise SephoraOnboardingCaptureError(
+            f"configuration source packet {packet_id} has no known source locator"
+        )
+    parsed = urlparse(source_url)
+    if (
+        parsed.scheme != "https"
+        or (parsed.hostname or "").lower()
+        not in {"sephora.com", "www.sephora.com"}
+        or not any(
+            value.lower() == "us"
+            for value in parse_qs(parsed.query).get("country_switch", [])
+        )
+    ):
+        raise SephoraOnboardingCaptureError(
+            f"configuration source packet {packet_id} is not a Sephora US route"
+        )
+
+    candidates: list[tuple[str, str]] = []
+    for file_id, body in loaded.bodies.items():
+        if (
+            b"bvApi_rwdRating_desktop_read" in body
+            and b"bvApi_rwdQandA_desktop_read" in body
+            and b"Sephora.configurationSettings" in body
+        ):
+            candidates.append((file_id, body.decode("utf-8", errors="replace")))
+    if len(candidates) != 1:
+        raise SephoraOnboardingCaptureError(
+            f"configuration source packet {packet_id} requires exactly one "
+            "preserved rendered DOM with both Bazaarvoice read configurations"
+        )
+    file_id, rendered_dom = candidates[0]
+    pin_receipt = _configuration_source_pin_receipt(loaded, packet_id)
+    return replace(
+        parent,
+        review_config=_read_config(
+            rendered_dom, "bvApi_rwdRating_desktop_read"
+        ),
+        question_config=_read_config(
+            rendered_dom, "bvApi_rwdQandA_desktop_read"
+        ),
+        configuration_receipt={
+            **dict(parent.configuration_receipt),
+            "mode": "preserved_sephora_configuration_source",
+            "configuration_source_packet_id": packet_id,
+            "configuration_source_file_id": file_id,
+            "configuration_source_file_sha256": _preserved_file_sha256(
+                manifest, file_id
+            ),
+            "configuration_source_url": source_url,
+            **pin_receipt,
+            "configuration_scope": "tenant_read_configuration_only",
+            "target_binding": (
+                "hash-verified canonical content parent product ID plus exact "
+                "Bazaarvoice ProductId filter"
+            ),
+            "credential_posture": (
+                "page-declared read tokens used only in memory and not persisted"
+            ),
+        },
+    )
+
+
+def _configuration_source_pin_receipt(
+    loaded: LoadedRawPacket,
+    packet_id: str,
+) -> dict[str, Any]:
+    candidates: list[str] = []
+    for file_id, body in loaded.bodies.items():
+        try:
+            document = json.loads(body.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if (
+            isinstance(document, Mapping)
+            and document.get("pin_confirmed") is True
+            and document.get("country_code_requested") == "US"
+            and document.get("access_blocked") is False
+        ):
+            candidates.append(file_id)
+    if len(candidates) != 1:
+        raise SephoraOnboardingCaptureError(
+            f"configuration source packet {packet_id} requires exactly one "
+            "preserved successful Sephora US capture metadata record"
+        )
+    file_id = candidates[0]
+    return {
+        "configuration_source_market_metadata_file_id": file_id,
+        "configuration_source_market_metadata_sha256": _preserved_file_sha256(
+            loaded.manifest, file_id
+        ),
+        "configuration_source_market": "US",
+    }
+
+
+def _live_parent_configuration_refresh(
+    product_url: str,
+    timeout_seconds: float,
+) -> ParentConfigurationRefresh:
+    profile = get_retail_capture_profile("sephora_pdp_aggregate")
+    capture = fetch_cloakbrowser_snapshot_capture(
+        url=product_url,
+        timeout_seconds=timeout_seconds,
+        wait_until=profile.wait_until,
+        block_heavy_assets=profile.block_heavy_assets,
+        settle_seconds=profile.settle_seconds,
+        pre_capture=SephoraUSMarketPlugin(
+            target_url=product_url,
+            country_code="US",
+            page_kind="pdp",
+        ),
+    )
+    if isinstance(capture, CloakBrowserSnapshotFailure):
+        raise SephoraOnboardingCaptureError(
+            "configuration refresh failed before onboarding: "
+            f"{capture.failure_kind}: {capture.message}"
+        )
+    return ParentConfigurationRefresh(
+        requested_url=capture.requested_url,
+        final_url=capture.final_url,
+        rendered_dom=capture.rendered_dom,
+        rendered_dom_sha256=hashlib.sha256(
+            capture.rendered_dom.encode("utf-8")
+        ).hexdigest(),
+        pin_confirmed=capture.metadata.get("pin_confirmed") is True,
     )
 
 
@@ -967,12 +1400,16 @@ def _recent_page_state(
     document = _load_api_document(body, label)
     rows = _require_list(document, "Results", label)
     total_results = _total_results(document, label)
+    if total_results == 0 and rows:
+        raise SephoraOnboardingCaptureError(
+            f"{label} declares zero TotalResults but returned rows"
+        )
     _validate_result_product_ids(
         rows,
         allowed_product_ids=allowed_product_ids,
         label=label,
         allow_empty=total_results == 0,
-        allow_historical_review_product_ids=True,
+        allow_provider_collection_product_ids=True,
     )
     dates = [
         _parse_timestamp(
@@ -1024,6 +1461,7 @@ def _request_manifest(
         "parent_file_sha256": parent.file_sha256,
         "product_id": parent.product_id,
         "product_url": parent.product_url,
+        "parent_configuration": dict(parent.configuration_receipt),
         "credential_posture": (
             "page-declared read tokens used in flight; tokens and secret-bearing request URLs "
             "are not persisted"
@@ -1202,7 +1640,7 @@ def _validate_result_product_ids(
     allowed_product_ids: Sequence[str],
     label: str,
     allow_empty: bool = False,
-    allow_historical_review_product_ids: bool = False,
+    allow_provider_collection_product_ids: bool = False,
 ) -> None:
     if not rows:
         if allow_empty:
@@ -1218,7 +1656,7 @@ def _validate_result_product_ids(
             f"{label}.Results[{index}].ProductId",
         )
         if (
-            not allow_historical_review_product_ids
+            not allow_provider_collection_product_ids
             and product_id not in allowed_product_ids
         ):
             raise SephoraOnboardingCaptureError(

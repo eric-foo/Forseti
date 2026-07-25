@@ -217,9 +217,16 @@ specific topology instead of pretending the selected-retailer role applies.
    same fields through the existing coverage ledger): one owned-parent
     denominator, the company-owned retailer-authorization board, one typed
     outcome per selected retailer, one reconciliation per
-   verified grid row, and one verified raw PDP baseline per exact non-bundle
-   listing. Duplicate placements, variant URLs, bundles/sets, ambiguity,
-   unmatched rows, missing material variants, and route failures stay distinct.
+   verified grid row, and one attempted exact-parent PDP disposition per
+   non-bundle listing. Preserve every admitted baseline and every typed miss.
+   A miss blocks acquisition only when that listing is strategic or
+   decision-bearing for the bound question, carries a distinct material seam or
+   corpus identity that the remaining baselines cannot support, or reveals a
+   route-wide failure. A non-strategic middle-of-curve miss may be accepted as a
+   named residual when the remaining evidence still supports the commissioned
+   answer; no coverage percentage alone decides materiality. Duplicate
+   placements, variant URLs, bundles/sets, ambiguity, unmatched rows, missing
+   material variants, and route failures stay distinct.
    The compositor output is derived acquisition accounting, not a new ledger
    schema or product-role assignment.
 4. Run authorized scanning and capture. Record every selected route, route
@@ -301,6 +308,15 @@ true`, and when every required route has a supported disposition and receipt or
 an honestly typed blocking result. A required route that was skipped, silently
 substituted, incompletely captured, or described as exhausted without the
 matching route evidence forces the blocked state.
+
+For selected-retailer PDP breadth, `incompletely captured` is a materiality
+judgment, not an automatic all-or-nothing denominator rule. Every exact listing
+still requires an attempted disposition. A typed miss may remain an accepted
+route residual only when fresh evidence shows that it is non-strategic for the
+bound question, adds no distinct decision-bearing seam or required corpus
+identity, does not indicate a route-wide defect, and the retained baselines can
+still support the intended answer. Strategic, decision-bearing,
+corpus-identity-bearing, or route-systemic misses remain blocking.
 
 Route disposition is necessary but not sufficient. A touched lens, zero-yield
 route, exhausted route list, or absence of a promotable candidate cannot
@@ -464,12 +480,16 @@ gate above controls whether Deliver may begin.
     retailers that add material evidence. Acquire each selected grid surface,
     reconcile its listing union with owned candidates, then return to owned
     evidence to close the denominator. Owned
-   evidence remains canonical identity authority. Acquire one full-raw common-
-   floor baseline PDP for every reconciled exact retailer listing. Apply the prompt's
+   evidence remains canonical identity authority. Attempt one common-floor
+   baseline PDP for every reconciled exact retailer listing and preserve each
+   admitted baseline or typed miss. Apply the prompt's
     Sephora-primary rule when it is officially named and route-complete, but do
     not let primary status excuse another selected retailer's baseline. Preserve typed route failures without
    completion credit and retain retailer-native fields when source-visible.
-   Only after exact-parent PDP breadth is sealed, bind every selected-retailer
+   A typed non-strategic middle-of-curve miss may be sealed as an accepted
+   residual only under the materiality rule above; strategic, distinct-seam,
+   required-corpus, and route-systemic misses still block. Only after
+   exact-parent PDP breadth is sealed, bind every selected-retailer
    listing to its observed review-corpus identity and acquire one bounded
    onboarding window per distinct accessible corpus, or preserve a typed
    no-review/not-exposed/blocked/unresolved result. Then select expensive
@@ -699,6 +719,42 @@ direction_change_propagation:
     - not pre-commit enforcement
     - not demand classification
     - not evidence retrieval
+```
+
+## Direction Change Propagation — Exact PDP Materiality
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Exact retailer-listing breadth remains an attempt-and-disposition
+    obligation, but a typed PDP miss blocks only when it is strategic,
+    decision-bearing, distinct-seam, required-corpus, or route-systemic. A
+    freshly supported non-strategic middle-of-curve miss may be an accepted
+    residual; percent coverage alone is not the decision rule.
+  trigger: workflow_authority
+  related_triggers: [architecture_doctrine]
+  controlling_sources_updated:
+    - docs/decisions/forseti_company_intelligence_information_architecture_v0.md
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+  downstream_surfaces_checked:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
+    - docs/workflows/summer_fridays_understanding_dogfood_20260725_p10/coordinated/acquisition_seal.md
+  intentionally_not_updated:
+    - path: prompt structure, validator, and historical raw packets
+      reason: >
+        The prompt surfaces require typed acquisition accounting without
+        encoding the former mechanical denominator rule, and historical packet
+        observations remain immutable.
+  stale_language_search: >
+    rg -n "one verified raw PDP baseline|full-raw common-floor|every reconciled
+    exact retailer listing|complete selected-retailer exact PDP" forseti docs
+    .agents
+  non_claims:
+    - not permission to skip attempts
+    - not a numerical threshold
+    - not validation or readiness
 ```
 
 Older receipts archived verbatim in `docs/decisions/dcp_receipts_archive_v0.md`.

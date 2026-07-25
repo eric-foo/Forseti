@@ -11,6 +11,7 @@ use_when:
   - Determining why the p10 acquisition gate is blocked.
 authority_boundary: retrieval_only
 open_next:
+  - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
   - docs/workflows/summer_fridays_understanding_dogfood_20260725_p10/coordinated/acquisition_seal.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/commission_board.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/specialists/co1_company_core_identity.md
@@ -20,6 +21,34 @@ stale_if:
   - Any p10 terminal artifact or preserved p10 evidence byte changes.
   - A separately authorized recovery acquisition supersedes a blocked route below.
 ```
+
+## Current Recovery Status
+
+The original acquisition record below remains the historical account of why
+p10 stopped. Its Sephora blocker is superseded by
+`recovery_acquisition_adjudication.md`: all 40 admitted canonical parents now
+have successful companion dispositions, and the two missing mini fragrance PDPs
+are accepted non-strategic residuals under the current materiality rule.
+
+The COV-006 hidden-venue job is also closed. Its two Proposition 65 notices,
+procedural index state, and relevant later product-state evidence are preserved
+and typed as contextual, non-decision-bearing, and monitor-only; chronology is
+not promoted to causation.
+
+```yaml
+current_recovery_gate: SEALED_READY_FOR_DELIVER
+acquisition_gate: passed
+deliver_allowed: true
+materially_complete_for_bound_decision: true
+consequential_flaw_exposure: sufficient
+exhaustive_corpus_claimed: false
+production_ci_readiness_claimed: false
+```
+
+The current corpus is materially complete enough to support useful Deliver
+decisions and expose consequential flaws, contradictions, and uncertainty.
+The recovery adjudication is the controlling source for that result. The
+original blocked record below remains unchanged as historical evidence.
 
 ## Run Identity And Boundary
 
@@ -247,3 +276,7 @@ next_authorized_step: >
   Bazaarvoice configuration and then reacquire all required Sephora roles.
   No Deliver or comparison is authorized by this record.
 ```
+
+The terminal block above is the original p10 state. The current recovery state
+and next source are owned by
+`docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md`.

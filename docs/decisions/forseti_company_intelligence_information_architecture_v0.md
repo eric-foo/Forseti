@@ -410,8 +410,14 @@ owned candidates, then return to owned surfaces to close the complete publicly
 exposed denominator and typed gaps. Owned evidence remains canonical identity
 authority; retailer grids are discovery and channel-expression evidence.
 
-Acquire one full-raw baseline PDP for every reconciled exact retailer listing.
-Then bind every listing to provider tenant/store plus product/grouping
+Attempt one common-floor baseline PDP for every reconciled exact retailer
+listing and preserve each admitted baseline or typed miss. A miss is
+acquisition-blocking only when it is strategic or decision-bearing for the
+bound question, carries a distinct material seam or required corpus identity,
+or reveals a route-wide failure. A non-strategic middle-of-curve miss may remain
+an accepted residual when the retained baselines still support the intended
+answer; no coverage percentage alone decides materiality. Then bind every
+admitted listing to provider tenant/store plus product/grouping
 collection context and acquire one bounded onboarding window for every distinct
 accessible review corpus, or preserve its typed no-review, not-exposed,
 blocked, or unresolved outcome. Only after that complete bounded corpus board
@@ -725,6 +731,45 @@ direction_change_propagation:
     - not Packing Spine design or implementation
     - not final packet inclusion or freeze
     - not source-access, capture, or implementation authorization
+```
+
+## Direction Change Propagation — Exact PDP Materiality
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Exact retailer-listing breadth remains an attempt-and-disposition
+    obligation, but a typed PDP miss no longer blocks mechanically. Strategic,
+    decision-bearing, distinct-seam, required-corpus, and route-systemic misses
+    block; a freshly supported non-strategic middle-of-curve miss may be an
+    accepted residual. Percent coverage alone is not the decision rule.
+  trigger: architecture_doctrine
+  related_triggers: [workflow_authority]
+  controlling_sources_updated:
+    - docs/decisions/forseti_company_intelligence_information_architecture_v0.md
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+  downstream_surfaces_checked:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
+    - docs/workflows/summer_fridays_understanding_dogfood_20260725_p10/coordinated/acquisition_seal.md
+  intentionally_not_updated:
+    - path: commission signal board prompt structure and validator
+      reason: >
+        They require acquisition accountability and typed gaps but do not encode
+        the former all-or-nothing exact-PDP denominator rule.
+    - path: historical acquisition records and raw packets
+      reason: >
+        Historical observations remain immutable; a recovery adjudication may
+        supersede only their gate effect.
+  stale_language_search: >
+    rg -n "one verified raw PDP baseline|full-raw common-floor|every reconciled
+    exact retailer listing|complete selected-retailer exact PDP" forseti docs
+    .agents
+  non_claims:
+    - not permission to skip an exact listing attempt
+    - not a numerical coverage threshold
+    - not validation or readiness
 ```
 
 ```yaml

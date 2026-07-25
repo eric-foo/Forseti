@@ -5,12 +5,14 @@ retrieval_header_version: 1
 artifact_role: Intelligence Cycle acquisition seal
 scope: >
   Manual CO0 whole-gate closeout for the cold Summer Fridays p10 Understanding
-  Acquire & Seal run.
+  Acquire & Seal run, plus the current separately authorized recovery
+  adjudication.
 use_when:
   - Verifying whether Summer Fridays p10 Deliver is authorized.
   - Auditing the material routes that block the p10 acquisition gate.
 authority_boundary: retrieval_only
 open_next:
+  - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/turn_a_acquisition_record.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/commission_board.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/specialists/co1_company_core_identity.md
@@ -22,11 +24,17 @@ stale_if:
 ```
 
 ```yaml
-current_lifecycle_status: ACQUISITION_BLOCKED
-intelligence_cycle_phase_status: UNDERSTANDING_ACQUIRE_AND_SEAL_COMPLETED_BLOCKED
-resume_allowed: true_only_by_new_commission_or_material_source_change
-correct_intake_result: BLOCKED_ACQUISITION_INCOMPLETE
+current_lifecycle_status: ACQUISITION_SEALED_READY_FOR_DELIVER
+intelligence_cycle_phase_status: UNDERSTANDING_ACQUISITION_COMPLETE
+resume_allowed: true_for_deliver
+correct_intake_result: SEALED_READY_FOR_DELIVER
+original_seal_state: BLOCKED_ACQUISITION_INCOMPLETE
+recovery_adjudication_locator: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
 ```
+
+The `phase_acquisition_seal` block below is the preserved original p10 seal.
+Its Sephora blocker has been superseded by the recovery adjudication; its
+historical observations and packet accounting remain unchanged.
 
 ```yaml
 phase_acquisition_seal:
@@ -151,3 +159,66 @@ phase_acquisition_seal:
 The run reached a truthful, evidence-backed stop. Deliver is not authorized.
 REVOLVE completion, community evidence, and a verified raw corpus do not erase
 the material selected-Sephora PDP and onboarding failures.
+
+## Current Recovery Adjudication
+
+The Sephora route is recovered: all 40 admitted canonical parents now have one
+successful Helpful/Recent/Q&A companion disposition, including honestly
+preserved source-declared zero-result contexts. The two missing mini fragrance
+PDPs are accepted non-strategic middle-of-curve residuals under the current
+materiality rule.
+
+COV-006 is also closed. The two California Proposition 65 notice records,
+their PDFs, the current public registry follow-on counts, and the relevant
+later company-owned product-state pages are preserved. The notices are
+allegations, not findings. The public registry displayed zero complaints,
+settlements, and judgments for both target rows at capture time, and no
+withdrawal record was displayed. Cloud Dew later changed formula and
+ingredients, but no evidence establishes that the notice caused that change;
+Rich Cushion's current state likewise does not prove its historical
+composition or remediation.
+
+```yaml
+current_recovery_seal:
+  seal_state: SEALED_READY_FOR_DELIVER
+  acquisition_gate: passed
+  deliver_allowed: true
+  ci_fitness:
+    materially_complete_for_bound_decision: true
+    consequential_flaw_exposure: sufficient
+    exhaustive_web_or_customer_corpus: false
+    production_ci_readiness_claimed: false
+  cov_006:
+    status: closed
+    disposition: contextual_non_decision_bearing_monitor_only
+    public_registry_counts_at_capture:
+      complaint: 0
+      settlement: 0
+      judgment: 0
+    displayed_withdrawal_record: false
+    notice_to_product_change_causation: unproven
+  delegated_ci_fitness_review:
+    reviewed_revision: 47eb324db57d079f4aa4178e798f7dccb084fa56
+    returned_verdict: READY_FOR_DELIVER_AFTER_PATCH
+    adjudication: accepted
+    adjudicated_at: "2026-07-26T00:22:37.8401234+08:00"
+    accepted_findings: [CODE-01, CODE-02, ART-01, ART-02, ART-03, ART-04, ART-05]
+  accepted_residuals:
+    - two attempted non-strategic Sephora mini-size PDP misses
+    - six bundle/set corpus-identity gaps
+    - four unmatched retailer rows
+    - bounded non-representative community evidence
+    - sparse REVOLVE review bodies
+    - one byte-identical viewport screenshot shared by the two verified mini
+      Body Butter Balm parents (visual layer only; identity records distinct
+      and hash-verified)
+    - explicit ownership, leadership, market, incident, and currentness ceilings
+  current_source: docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
+```
+
+The corpus is materially complete for the bound Summer Fridays Understanding
+decision and exposes enough negative, contradictory, and uncertain evidence
+for a useful Deliver synthesis. It is not exhaustive and the seal is not a
+claim of method superiority or production-CI readiness. Phase A acquisition is
+complete, the commissioned CI-fitness review is accepted, and Deliver is the
+next authorized turn. This lane does not itself start Deliver.
