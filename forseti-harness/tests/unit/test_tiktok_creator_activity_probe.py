@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
+from hashlib import sha256
 
 import pytest
 
@@ -302,6 +303,99 @@ def test_probe_journal_rejects_secret_or_url_material(tmp_path) -> None:
     journal.close(
         status="failed",
         terminal_reason="test_complete",
+        counters=probe._ProbeState().counters(),
+    )
+
+
+def test_probe_journal_keeps_existing_metronome_umbrella_current(
+    tmp_path,
+) -> None:
+    umbrella_path = tmp_path / probe.METRONOME_UMBRELLA_NAME
+    umbrella_path.write_text(
+        json.dumps({"schema_version": "legacy", "runs": [{"handle": "one"}]}),
+        encoding="utf-8",
+    )
+    journal_path = (
+        tmp_path / "activity-probe-test" / probe.PROBE_JOURNAL_NAME
+    )
+    journal = probe._ProbeJournal(journal_path)
+
+    journal.record(
+        "run_started",
+        details={"creator_handles": ["one", "two"]},
+    )
+    journal.record("profile_timer_started", handle="one")
+
+    running_document = json.loads(umbrella_path.read_text(encoding="utf-8"))
+    running_projection = running_document[
+        "activity_probe_journal_projection"
+    ]
+    assert running_document["runs"] == [{"handle": "one"}]
+    assert running_projection["aggregate"] == {
+        "run_count": 1,
+        "event_count": 2,
+        "logout_detection_count": 0,
+        "status_counts": {"running": 1},
+    }
+    assert running_projection["runs"][0]["last_sequence"] == 1
+    assert running_projection["runs"][0]["current_handle_or_none"] == "one"
+
+    journal.close(
+        status="complete",
+        terminal_reason="test_complete",
+        counters=probe._ProbeState(assessed_count=1).counters(),
+    )
+
+    complete_document = json.loads(umbrella_path.read_text(encoding="utf-8"))
+    run = complete_document["activity_probe_journal_projection"]["runs"][0]
+    assert run["status"] == "complete"
+    assert run["terminal_reason_or_none"] == "test_complete"
+    assert run["terminal_counters"]["assessed_count"] == 1
+    assert run["journal_sha256"] == sha256(journal_path.read_bytes()).hexdigest()
+
+
+def test_refresh_metronome_umbrella_backfills_all_probe_journals(
+    tmp_path,
+) -> None:
+    umbrella_path = tmp_path / probe.METRONOME_UMBRELLA_NAME
+    umbrella_path.write_text('{"schema_version":"legacy"}', encoding="utf-8")
+    first_path = tmp_path / "activity-probe-a" / probe.PROBE_JOURNAL_NAME
+    first = probe._ProbeJournal(first_path)
+    first.record("run_started", details={"creator_handles": ["one"]})
+    first.record("first_logout_detected", handle="one")
+    first.close(
+        status="logged_out",
+        terminal_reason="forced_logout_detected",
+        counters=probe._ProbeState(assessed_count=1).counters(),
+    )
+
+    second_path = tmp_path / "activity-probe-b" / probe.PROBE_JOURNAL_NAME
+    second = probe._ProbeJournal(second_path)
+    second.record("run_started", details={"creator_handles": ["two"]})
+
+    document = probe._refresh_metronome_umbrella(
+        umbrella_path,
+        refreshed_at_utc="2026-07-25T01:02:03.004Z",
+    )
+    projection = document["activity_probe_journal_projection"]
+    assert projection["refreshed_at_utc"] == "2026-07-25T01:02:03.004Z"
+    assert projection["aggregate"] == {
+        "run_count": 2,
+        "event_count": 4,
+        "logout_detection_count": 1,
+        "status_counts": {
+            "interrupted_without_terminal": 1,
+            "logged_out": 1,
+        },
+    }
+    assert [run["journal_path"] for run in projection["runs"]] == [
+        "activity-probe-a/tiktok_creator_activity_probe.jsonl",
+        "activity-probe-b/tiktok_creator_activity_probe.jsonl",
+    ]
+
+    second.close(
+        status="failed",
+        terminal_reason="owner_interrupted",
         counters=probe._ProbeState().counters(),
     )
 
