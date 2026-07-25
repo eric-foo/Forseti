@@ -8,18 +8,242 @@ import pytest
 from runners import run_tiktok_creator_activity_probe as probe
 
 
-def test_rejection_streak_triggers_exactly_on_second_and_resets() -> None:
+def test_first_rejection_requires_observation_and_resets() -> None:
+    assert probe.PROFILE_DELAY_MIN_SECONDS == 44
+    assert probe.PROFILE_DELAY_MAX_SECONDS == 96
+    assert probe.OBSERVATION_COUNT == 1
+
     state = probe._ProbeState()
 
-    assert state.record_performance_rejection() is False
-    assert state.rejection_streak == 1
     assert state.record_performance_rejection() is True
-    assert state.rejection_streak == 2
+    assert state.rejection_streak == 1
 
     state.observation_intervention_count += 1
     state.reset_rejection_streak()
     assert state.rejection_streak == 0
-    assert state.record_performance_rejection() is False
+    assert state.record_performance_rejection() is True
+
+
+def test_required_skip_observation_views_exactly_one_video(
+    tmp_path, monkeypatch
+) -> None:
+    grid_path = tmp_path / "grid.json"
+    grid_path.write_text(
+        json.dumps({"creator_handle": "creator", "items": []}),
+        encoding="utf-8",
+    )
+    calls = []
+    events = []
+
+    class Journal:
+        def record(self, event, *, handle=None, details=None):
+            events.append((event, handle, details))
+
+    def observe(**kwargs):
+        calls.append(kwargs)
+        return {"status": "complete"}
+
+    monkeypatch.setattr(
+        probe, "run_tiktok_creator_observation_activity", observe
+    )
+    state = probe._ProbeState(rejection_streak=1)
+
+    probe._run_required_skip_observation(
+        handle="creator",
+        reason="market_defer",
+        grid_path=grid_path,
+        session_profile=object(),
+        auth_state_root=tmp_path,
+        timeout_seconds=30.0,
+        settle_seconds=2.0,
+        rng=object(),
+        journal=Journal(),
+        state=state,
+    )
+
+    assert len(calls) == 1
+    assert calls[0]["observation_count"] == 1
+    assert calls[0]["grid_window"]["creator_handle"] == "creator"
+    assert state.observation_intervention_count == 1
+    assert state.rejection_streak == 0
+    assert [event[0] for event in events] == [
+        "observation_intervention_started",
+        "observation_intervention_finished",
+    ]
+
+
+def test_failed_skip_observation_stops_before_state_reset(
+    tmp_path, monkeypatch
+) -> None:
+    grid_path = tmp_path / "grid.json"
+    grid_path.write_text(
+        json.dumps({"creator_handle": "creator", "items": []}),
+        encoding="utf-8",
+    )
+
+    class Journal:
+        def record(self, *_args, **_kwargs):
+            pass
+
+    monkeypatch.setattr(
+        probe,
+        "run_tiktok_creator_observation_activity",
+        lambda **_kwargs: {"status": "failed"},
+    )
+    state = probe._ProbeState(rejection_streak=1)
+
+    with pytest.raises(
+        probe.TikTokCreatorActivityProbeError,
+        match="required observation intervention failed",
+    ):
+        probe._run_required_skip_observation(
+            handle="creator",
+            reason="performance_rejection",
+            grid_path=grid_path,
+            session_profile=object(),
+            auth_state_root=tmp_path,
+            timeout_seconds=30.0,
+            settle_seconds=2.0,
+            rng=object(),
+            journal=Journal(),
+            state=state,
+        )
+
+    assert state.observation_intervention_count == 0
+    assert state.rejection_streak == 1
+
+
+@pytest.mark.parametrize("first_outcome", ("market_defer", "performance_reject"))
+def test_first_noninteractive_outcome_observes_before_next_profile(
+    tmp_path, monkeypatch, first_outcome
+) -> None:
+    actions = []
+    first_handle = (
+        "deferred" if first_outcome == "market_defer" else "rejected"
+    )
+
+    class Rng:
+        def randint(self, _minimum, _maximum):
+            return 54
+
+    def run_child(args, *, journal, handle, on_progress=None):
+        del journal
+        if handle == "loggedout":
+            actions.append("capture:loggedout")
+            return probe._ChildResult(
+                exit_code=2,
+                summary=None,
+                progress=(),
+                blockers=({"code": "LOGGED_OUT_SESSION"},),
+            )
+        if "--promotion-only" in args:
+            actions.append(f"promotion:{handle}")
+            output_dir = args[args.index("--output-dir") + 1]
+            decision_dir = tmp_path / "run" / "promotion" / handle / "decision"
+            assert str(decision_dir) == output_dir
+            decision_dir.mkdir(parents=True)
+            (decision_dir / "tiktok_creator_promotion_decisions.json").write_text(
+                "{}",
+                encoding="utf-8",
+            )
+            return probe._ChildResult(
+                exit_code=0,
+                summary={},
+                progress=(),
+                blockers=(),
+            )
+        actions.append(f"capture:{handle}")
+        if on_progress is not None:
+            on_progress({"event": "collect_profile_grid"})
+        capture_dir = tmp_path / "run" / "promotion" / handle / "capture"
+        capture_dir.mkdir(parents=True)
+        (capture_dir / probe.TIKTOK_ONBOARDING_GRID_WINDOW_JSON_NAME).write_text(
+            json.dumps({"creator_handle": handle, "items": []}),
+            encoding="utf-8",
+        )
+        if first_outcome == "market_defer":
+            return probe._ChildResult(
+                exit_code=2,
+                summary=None,
+                progress=(),
+                blockers=({"code": "CANDIDATE_MARKET_DEFERRED"},),
+            )
+        return probe._ChildResult(
+            exit_code=0,
+            summary={"admitted_path_or_none": str(tmp_path / "packet")},
+            progress=(),
+            blockers=(),
+        )
+
+    def observe(**kwargs):
+        actions.append(f"observe:{kwargs['creator_handle']}")
+        assert kwargs["observation_count"] == 1
+        return {"status": "complete"}
+
+    monkeypatch.setattr(probe.random, "SystemRandom", lambda: Rng())
+    monkeypatch.setattr(
+        probe.DataLakeRoot, "resolve", lambda **_kwargs: object()
+    )
+    monkeypatch.setattr(
+        probe, "resolve_session_profile", lambda *_args, **_kwargs: object()
+    )
+    monkeypatch.setattr(
+        probe, "default_session_profile_auth_state_root", lambda: tmp_path
+    )
+    monkeypatch.setattr(
+        probe, "_record_authority_snapshot", lambda **_kwargs: None
+    )
+    monkeypatch.setattr(probe, "_run_onboarding_child", run_child)
+    monkeypatch.setattr(
+        probe,
+        "promotion_decision_for_handle",
+        lambda _document, _handle: {
+            "registry_action": "do_not_promote",
+            "decision_reason_code": "below_both_p25",
+            "age_normalized_quality_index_or_none": 1.0,
+            "reliable_weekly_reach": 1.0,
+        },
+    )
+    monkeypatch.setattr(
+        probe, "run_tiktok_creator_observation_activity", observe
+    )
+    monkeypatch.setattr(
+        probe,
+        "_release_after_timer",
+        lambda **kwargs: actions.append(f"release:{kwargs['handle']}"),
+    )
+
+    exit_code = probe.main(
+        [
+            "--creator-handle",
+            first_handle,
+            "--creator-handle",
+            "loggedout",
+            "--creator-handle",
+            "three",
+            "--creator-handle",
+            "four",
+            "--creator-handle",
+            "five",
+            "--data-root",
+            str(tmp_path / "lake"),
+            "--output-dir",
+            str(tmp_path / "run"),
+        ]
+    )
+
+    assert exit_code == 2
+    expected = [f"capture:{first_handle}"]
+    if first_outcome == "performance_reject":
+        expected.append(f"promotion:{first_handle}")
+    expected.extend(
+        [
+            f"observe:{first_handle}",
+            f"release:{first_handle}",
+            "capture:loggedout",
+        ]
+    )
+    assert actions == expected
 
 
 def test_probe_journal_records_contiguous_millisecond_events(tmp_path) -> None:

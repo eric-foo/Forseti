@@ -52,10 +52,10 @@ PROGRESS_PREFIX = "tiktok_creator_onboarding_progress_json="
 BLOCKER_PREFIX = "tiktok_creator_onboarding_blocker_json="
 PROBE_JOURNAL_NAME = "tiktok_creator_activity_probe.jsonl"
 PROBE_SCHEMA_VERSION = "tiktok_creator_activity_probe_v0"
-PROFILE_DELAY_MIN_SECONDS = 54
-PROFILE_DELAY_MAX_SECONDS = 124
-REJECTION_STREAK_TRIGGER = 2
-OBSERVATION_COUNT = 2
+PROFILE_DELAY_MIN_SECONDS = 44
+PROFILE_DELAY_MAX_SECONDS = 96
+REJECTION_STREAK_TRIGGER = 1
+OBSERVATION_COUNT = 1
 _FORBIDDEN_KEY_PARTS = (
     "url",
     "body",
@@ -216,6 +216,58 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _run_required_skip_observation(
+    *,
+    handle: str,
+    reason: str,
+    grid_path: Path,
+    session_profile: Any,
+    auth_state_root: Path,
+    timeout_seconds: float,
+    settle_seconds: float,
+    rng: Any,
+    journal: _ProbeJournal,
+    state: _ProbeState,
+) -> None:
+    journal.record(
+        "observation_intervention_started",
+        handle=handle,
+        details={
+            "observation_count": OBSERVATION_COUNT,
+            "reason": reason,
+        },
+    )
+    grid_window = json.loads(grid_path.read_text(encoding="utf-8"))
+    receipt = run_tiktok_creator_observation_activity(
+        creator_handle=handle,
+        session_profile=session_profile,
+        grid_window=grid_window,
+        auth_state_root=auth_state_root,
+        observation_count=OBSERVATION_COUNT,
+        timeout_seconds=timeout_seconds,
+        settle_seconds=settle_seconds,
+        max_grid_scroll_passes=1,
+        rng=rng,
+        event_fn=lambda event, fields: journal.record(
+            event, handle=handle, details=fields
+        ),
+    )
+    if receipt.get("status") != "complete":
+        raise TikTokCreatorActivityProbeError(
+            f"required observation intervention failed for {handle}"
+        )
+    state.observation_intervention_count += 1
+    state.reset_rejection_streak()
+    journal.record(
+        "observation_intervention_finished",
+        handle=handle,
+        details={
+            "observation_count": OBSERVATION_COUNT,
+            "reason": reason,
+        },
+    )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     handles = tuple(_normalize_handle(handle) for handle in args.creator_handle)
@@ -241,6 +293,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "observation_dwell_policy": "onboarding_weighted_long_tail",
                 "observation_dwell_median_seconds": 12.894737,
                 "observation_dwell_tail_probability": 0.05,
+                "observation_trigger_policy": (
+                    "after_every_rejected_or_deferred_creator"
+                ),
             },
         )
         data_root = DataLakeRoot.resolve(explicit=args.data_root)
@@ -325,6 +380,21 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "reason": "market_gate",
                     },
                 )
+                _run_required_skip_observation(
+                    handle=handle,
+                    reason="market_defer",
+                    grid_path=(
+                        capture_dir
+                        / TIKTOK_ONBOARDING_GRID_WINDOW_JSON_NAME
+                    ),
+                    session_profile=session_profile,
+                    auth_state_root=auth_state_root,
+                    timeout_seconds=args.timeout_seconds,
+                    settle_seconds=args.settle_seconds,
+                    rng=rng,
+                    journal=journal,
+                    state=state,
+                )
                 _release_after_timer(
                     journal=journal,
                     handle=handle,
@@ -404,33 +474,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                     },
                 )
                 if trigger_observation:
-                    grid_window = json.loads(
-                        grid_path.read_text(encoding="utf-8")
-                    )
-                    receipt = run_tiktok_creator_observation_activity(
-                        creator_handle=handle,
+                    _run_required_skip_observation(
+                        handle=handle,
+                        reason="performance_rejection",
+                        grid_path=grid_path,
                         session_profile=session_profile,
-                        grid_window=grid_window,
                         auth_state_root=auth_state_root,
-                        observation_count=OBSERVATION_COUNT,
                         timeout_seconds=args.timeout_seconds,
                         settle_seconds=args.settle_seconds,
-                        max_grid_scroll_passes=1,
                         rng=rng,
-                        event_fn=lambda event, fields: journal.record(
-                            event, handle=handle, details=fields
-                        ),
-                    )
-                    if receipt.get("status") != "complete":
-                        raise TikTokCreatorActivityProbeError(
-                            f"observation intervention failed for {handle}"
-                        )
-                    state.observation_intervention_count += 1
-                    state.reset_rejection_streak()
-                    journal.record(
-                        "rejection_streak_reset",
-                        handle=handle,
-                        details={"reason": "observation_complete"},
+                        journal=journal,
+                        state=state,
                     )
             elif registry_action == "promote_now":
                 state.promoted_count += 1
