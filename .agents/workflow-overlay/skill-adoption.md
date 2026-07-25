@@ -70,6 +70,34 @@ Observed on 2026-06-05:
   present under `C:\Users\vmon7\.codex\skills`, which is an older user-level
   shadow surface and must not be treated as the Agent Workflow plugin inventory.
 
+Observed on 2026-07-25 (source-repo readback; Claude Code packaging only):
+
+- Source repo `eric-foo/agent-workflow` default-branch HEAD observed:
+  `308908ba41ad321a3497c8e154d050c8d82dcb0a`; shallow clone, clean worktree.
+- Source plugin manifests observed at `plugin/.claude-plugin/plugin.json` and
+  `plugin/.codex-plugin/plugin.json`, both version `0.1.96`. The Claude Code
+  manifest declares itself compatibility metadata with Codex metadata primary.
+- `plugin/skills/` held 31 skill directories. Every skill in the 2026-06-05
+  collision table below was still present. `success-implement`,
+  `workflow-assumption-gate`, and `workflow-distill` were additionally present
+  and are absent from that table.
+- Claude Code resolves a marketplace from `.claude-plugin/marketplace.json`.
+  The source repo carried its manifest only at the repo root, so
+  `claude plugin validate .` reported `No manifest found in directory` and no
+  Claude Code marketplace source could load the plugin. A manifest at the
+  probed path exists on source branch `claude/add-claude-marketplace-manifest`
+  (`678cb7993c5951ed9afd4025500762c40080618d`), unmerged at observation time.
+- Forseti's `.claude/settings.json` previously resolved `agent-workflow-local`
+  from a `file` source at `../agent-workflow/marketplace.json`, a path that
+  exists only where the `agent-workflow` checkout sits beside `forseti`. It now
+  names the `eric-foo/agent-workflow` GitHub source, which depends on the
+  manifest branch above reaching the source default branch.
+- This block is source-location and packaging evidence only. It is not package
+  validation, resolver proof, collision re-check, deployment, or adoption. The
+  three skills named above carry no recorded collision status, the Codex plugin
+  cache was not re-observed, and the `0.1.52` cache facts above were not
+  re-verified.
+
 ## Recognized Workflow Tools
 
 | Skill | Advisory use in Forseti | Collision status observed 2026-06-05 |
@@ -115,6 +143,11 @@ written; a running thread may still resolve against an older cache. If the
 visible skill list looks stale, start a fresh thread or reload before relying on
 automatic triggering or absence decisions, and disclose when active resolver
 behavior was not proven in-thread.
+
+Claude Code installs plugins declared in `.claude/settings.json` at session
+start. A marketplace or plugin change therefore cannot take effect in the
+session that made it, and a resolver reporting `Unknown skill` in that session
+is not evidence the skill is absent from the source.
 
 ## Adoption Rules
 
@@ -288,5 +321,7 @@ cache files, global/user skill roots, or external workflow source.
 
 - The Turn 6 resolver-visible skill snapshot is recorded in
   `docs/workflows/orca_bootstrap_record.md`.
-- The 2026-06-05 collision table above is the current recognition check for
-  Agent Workflow plugin cache `0.1.52`.
+- The 2026-06-05 collision table above remains the most recent collision check.
+  It was taken against Codex plugin cache `0.1.52`. The 2026-07-25 block records
+  source version `0.1.96` and three later skills carrying no collision status,
+  so that table is current for collisions only, not for plugin inventory.
