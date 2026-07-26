@@ -461,8 +461,79 @@ and unrelated to this work.
   viewport deep.
 - Not a ranking measurement, SEO assessment, content-optimization
   recommendation, keyword-volume study, or standing monitor.
-- Not verification of any TikTok or Instagram content claim; for YouTube, only
-  the retained source-native identity and framing are verified, not product truth.
+- Apart from the later packet-bound `@marinabarnoo` item documented in section
+  15, not verification of TikTok or Instagram content claims; for admitted
+  TikTok and YouTube sources, only retained source-native identity, text, and
+  bounded comments are verified, not product truth.
 - Not the Deliver-side join, and not a CI recommendation.
 - Not validation, readiness, buyer proof, Judgment evidence, or Product Lead
   evidence.
+
+## 15. Corroboration progression and query-origin note — 2026-07-27
+
+### Phase boundary
+
+Cross-source corroboration belongs primarily in **Deliver**, not Understanding.
+Understanding should retain source-specific observations, provenance, and typed
+candidate signals. Deliver may then join those signals and decide whether they
+remain isolated, recur independently, conflict, or warrant a bounded CI
+finding. This prevents acquisition coverage from masquerading as insight.
+
+The useful progression record is:
+
+| Candidate issue | Seed evidence | Targeted probe | Native corroboration | Supported statement | Remaining boundary |
+| --- | --- | --- | --- | --- | --- |
+| Lip Butter Balm burning/reaction | Two retained Reddit threads describe burning, flaking, or contact-dermatitis-like experience | Exact product plus `burning OR reaction` Google query | TikTok post `7381649202134207786` and 20 captured comments from a response declaring 77 total | A recurring multi-source reaction narrative exists; Vanilla Beige is repeatedly named in the TikTok source | No prevalence, diagnosis, causality, full-comment census, or product-wide safety conclusion |
+
+For future SERP discovery, begin with neutral breadth and only narrow after the
+surface or an existing source produces a lead:
+
+1. brand;
+2. brand + franchise;
+3. brand + franchise + product;
+4. source-specific follow-through such as social-media domains; and
+5. issue-specific queries only when a retained observation supplies the issue
+   language.
+
+This is a discovery-to-verification route, not a search-volume, prevalence, or
+consumer-journey measurement.
+
+### Burning/reaction query origin
+
+The adverse-experience query did originate in the captured Reddit corpus.
+Before the SERP-composition handoff existed, the Understanding community
+corpus retained:
+
+- `/r/beauty/comments/1mzokbt/dry_flaky_burning_lips_after_using_summer_fridays/`,
+  whose post reports burning, dryness, and flaking after a mint lip balm; and
+- `/r/Sephora/comments/1pf427h/summer_fridays_lip_butter_balm_reaction/`,
+  whose post reports contact-dermatitis-like experience and whose comments
+  include both similar and contrary accounts.
+
+The first Google packet,
+`01KYDAFEGK8Y8PBEWF0A111QCX`, recorded its requested decision context as:
+“What adverse-experience content is Google-visible for the hero product beyond
+the captured Reddit corpus?” It captured the query
+`"summer fridays" lip butter balm burning OR reaction` on
+`2026-07-25T19:01:51Z`.
+
+The later SERP-composition handoff inherited that packet as the known “Lip
+Butter Balm burning/reaction” job and commissioned the more reproducible quoted
+form, `"summer fridays" "lip butter balm" burning OR reaction`, retained as job
+6 packet `01KYEZNWVFNTA7ZGXBS7ZYYQKX`. That result exposed the specific TikTok
+candidate `@marinabarnoo/video/7381649202134207786`.
+
+A subsequent native TikTok admission, packet
+`01KYF1X0V8TTNZ9KH718V1CTJ8`, preserved the post description and a bounded
+20-comment response slice. That later packet supersedes section 10's earlier
+route-blocked state for this one selected TikTok item only. The other selected
+TikTok candidates and Instagram item remain unverified under this artifact's
+record.
+
+The actual chain is therefore:
+
+`Reddit signal → targeted Google expansion → selected TikTok lead → native
+TikTok corroboration`.
+
+The material CI lesson is the corroboration progression, not the number of
+Google cards or the deliberately constructed query-board breadth.
