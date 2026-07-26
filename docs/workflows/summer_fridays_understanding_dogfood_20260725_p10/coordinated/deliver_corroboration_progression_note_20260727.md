@@ -66,33 +66,21 @@ Do not run a mandatory `brand × every franchise × every product` grid. That
 would be combinatorial, repeatedly rediscover official and retailer pages, and
 create query volume without additional decision value.
 
-Use one of two routes:
-
-### Route A — neutral discovery when no grounded lead exists
-
-1. Brand baseline, for example `Summer Fridays`.
-2. Priority franchise baseline, for example
-   `Summer Fridays Lip Butter Balm`.
-3. Product or variant refinement only when the franchise surface or commission
-   makes it material, for example
-   `Summer Fridays Lip Butter Balm Vanilla Beige`.
-4. Source-specific follow-through only after a useful source family or question
-   appears, for example a TikTok-, YouTube-, Reddit-, retailer-, or
-   editorial-specific route.
-
-Do not repeat levels that cannot change the decision. A company with 27 product
-families does not owe 27 franchise queries or every-SKU expansion.
-
-### Route B — sharpen an already grounded lead
-
-Skip generic baselines when a retained source already identifies the product
-and issue. Use the source's exact language to form a bounded query, then seek:
+Start from a retained lead in retailer reviews, Reddit or another community,
+support evidence, legal or regulatory records, owned claims, paid creative, or
+another admitted source. Skip generic brand and franchise baselines. Use the
+source's exact product and issue language to form a bounded query, then seek:
 
 1. an independent native source;
 2. product, variant, timing, or context specificity;
 3. contrary or disconfirming evidence; and
 4. evidence that the repeated language is not merely syndicated, copied, or
    Google-amplified.
+
+SERP is not corroboration. It expands a retained lead into candidate independent
+sources, counterevidence, variants, and more precise search language. Only
+admitted native evidence can later help Deliver judge whether the lead is
+independently corroborated, contradicted, narrowed, or still isolated.
 
 Continue only while a non-dominated next query has a credible chance to change
 the supported statement, its confidence, its product boundary, or the next

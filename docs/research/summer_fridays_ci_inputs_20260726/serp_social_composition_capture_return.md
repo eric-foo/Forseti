@@ -481,22 +481,21 @@ finding. This prevents acquisition coverage from masquerading as insight.
 
 The useful progression record is:
 
-| Candidate issue | Seed evidence | Targeted probe | Native corroboration | Supported statement | Remaining boundary |
+| Candidate issue | Seed evidence | Targeted probe | Native evidence found | Supported statement after cross-source adjudication | Remaining boundary |
 | --- | --- | --- | --- | --- | --- |
 | Lip Butter Balm burning/reaction | Two retained Reddit threads describe burning, flaking, or contact-dermatitis-like experience | Exact product plus `burning OR reaction` Google query | TikTok post `7381649202134207786` and 20 captured comments from a response declaring 77 total | A recurring multi-source reaction narrative exists; Vanilla Beige is repeatedly named in the TikTok source | No prevalence, diagnosis, causality, full-comment census, or product-wide safety conclusion |
 
-For future SERP discovery, begin with neutral breadth and only narrow after the
-surface or an existing source produces a lead:
+For future SERP discovery, always begin with a retained lead from retailer
+reviews, Reddit or another community, support evidence, legal or regulatory
+records, owned claims, paid creative, or another admitted source. Skip neutral
+brand and franchise baselines. Translate the lead's exact product and issue
+language into a targeted query, then use the results to locate candidate native
+sources, counterevidence, relevant variants, and sharper vocabulary.
 
-1. brand;
-2. brand + franchise;
-3. brand + franchise + product;
-4. source-specific follow-through such as social-media domains; and
-5. issue-specific queries only when a retained observation supplies the issue
-   language.
-
-This is a discovery-to-verification route, not a search-volume, prevalence, or
-consumer-journey measurement.
+The SERP result is not corroboration. It opens routes through which separately
+captured native evidence may later corroborate, contradict, narrow, or leave the
+lead isolated. This is a lead-expansion-to-verification route, not a
+search-volume, prevalence, or consumer-journey measurement.
 
 ### Burning/reaction query origin
 
