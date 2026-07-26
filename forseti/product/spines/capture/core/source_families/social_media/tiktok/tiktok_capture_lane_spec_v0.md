@@ -3,10 +3,11 @@
 ```yaml
 retrieval_header_version: 1
 artifact_role: Capture spec
-scope: Behavior/contract spec for the TikTok public creator-momentum + top-comment capture lane, prioritizing (1) lowest practical bot detectability and (2) horizontal scalability. Sessioned/cookied real-browser, ride-the-page's-own-requests.
+scope: Behavior/contract spec for the TikTok public creator-momentum + top-comment capture lane and the bounded TikTok Shop US access-egress gate. Prioritizes (1) lowest practical bot detectability and (2) horizontal scalability. Sessioned/cookied real-browser, ride-the-page's-own-requests.
 use_when:
   - Implementing or reviewing the TikTok capture lane.
   - Deciding the anti-detection + scale design before any build.
+  - Accessing the bounded TikTok Shop US account or surface.
 authority_boundary: retrieval_only
 status: spec only — no build authority; survivability-at-scale UNMEASURED (see Validation + Non-claims)
 derived_from:
@@ -235,6 +236,7 @@ Capture runs under an **authenticated session** whose cookies authenticate it. R
 - **No credentials, cookies, storage-state, or tokens in any packet** (C7 / G-2) — even more load-bearing now that secrets exist.
 - **Provenance labeled `entitled_session`**, not `public_logged_out`. The comment data is still real public comments; only the access path is authenticated.
 - **Harness proxy-profile posture, not egress proof.** Warmed CloakBrowser user-data exports may carry a local ignored auth-state sidecar attesting `harness_proxy_profile_posture` such as `no_proxy_profile_loaded`; the live runner may require it with `--require-harness-proxy-posture no_proxy_profile_loaded`. This attests only the Source Capture harness did not load a proxy profile for that warmed profile, not that the whole machine/network had no proxy/VPN/upstream egress layer, and not that a deliberate local actor could not forge or edit the ignored sidecar.
+- **TikTok Shop US egress gate.** Before each access session to the bounded TikTok Shop US account or surface, the active browser context MUST freshly observe `US` country egress through an external IP-country check. For this bounded access gate, either a VPN or proxy is acceptable; C5's residential/mobile-proxy rule continues to govern scalable capture contexts, and provider or profile identity is not the requirement. If US egress is absent or cannot be confirmed, stop before accessing TikTok Shop. Do not persist the check's exit IP, proxy/VPN credentials, endpoint, cookies, local profile path, or machine-specific launcher (C7). The check proves only observed country egress at that time, not physical location, future continuity, account safety, or capture success.
 - **Public content only** — no private/DM/access-controlled surfaces; authentication buys trust/stability, not access to non-public data.
 - **Account-level stop-on-unresolved-challenge** (per C6): on ban, auth-wall, challenge text that remains after an authorized X/Close follow-through, or any non-closeable captcha/challenge signal, stop that account, cool down, rotate; never drag or solve a challenge.
 
