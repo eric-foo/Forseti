@@ -41,10 +41,12 @@ The original handoff enumerated the **first 60 distinct IDs in source DOM
 order**. A 2026-07-27 continuation now preserves all **416** materialized IDs
 and their direct detail locators in
 `google_ads_transparency_observed_creative_ids_20260726.json`. The result
-remains **PARTIAL** because the source declared 456 cards and no exhaustion
-signal was reached. Direct-detail metadata remains resolved only for the first
-60: **39 Text, 16 Image, and 5 Video**. Ten were last shown `26 Jul 2026`; 50
-were last shown `25 Jul 2026`.
+is **COMPLETE_FOR_BOUND_EVIDENCE_PURPOSE**: it provides a materially sufficient
+verified-advertiser inventory for later Summer Fridays paid-message review.
+Source exhaustion remains **NOT_PROVEN** because the source declared 456 cards
+and no exhaustion signal was reached. Direct-detail metadata remains resolved
+only for the first 60: **39 Text, 16 Image, and 5 Video**. Ten were last shown
+`26 Jul 2026`; 50 were last shown `25 Jul 2026`.
 
 Google rendered most creative content through either an archive-image asset or
 a Google preview script. The public page did not expose stable machine-readable
@@ -369,12 +371,19 @@ request. It:
 - preserves the 456-card denominator and unresolved source-exhaustion gap.
 
 The projected JSON SHA-256 is
-`c7a23f789ef89b321aff4972633cff7a2e720d4c21dfe5f5274e3c14804b5607`.
+`c8667be75c45217f3a2e7b1a3a7d22ad1a886b6e3f3012f2f6fe7b5b8405f408`.
 
 This closes the durable-ID projection gap. It does **not** close creative-media
 interpretation: copy, product family, offer, destination, placement, visual
 deduplication, or performance remain unresolved outside the bounded first-60
 metadata and the one screenshot-preserved offer.
+
+The 40-ID difference between the 456-card denominator and 416 materialized IDs
+has no observed source-specific explanation. The capture stopped after ten
+continuations before an exhaustion signal. More continuation, source
+virtualization, unavailable or restricted rows, or duplicate/collapsed source
+states are possible explanations, but none was proven. The supported fact is
+only that 416 unique IDs materialized before the bounded stop.
 
 Google describes the Ads Transparency Center as a searchable hub of ads served
 from verified advertisers across Search, YouTube, and Display:

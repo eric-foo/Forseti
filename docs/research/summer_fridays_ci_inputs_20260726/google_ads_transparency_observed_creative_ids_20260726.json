@@ -31,7 +31,8 @@
     "extraction_pattern": "creative/(CR\\d+)",
     "duplicate_policy": "retain first DOM occurrence",
     "observed_distinct_creative_id_count": 416,
-    "status": "PARTIAL_SOURCE_INVENTORY",
+    "status": "COMPLETE_FOR_BOUND_EVIDENCE_PURPOSE",
+    "source_inventory_exhaustion_status": "NOT_PROVEN",
     "currentness": "2026-07-26 capture state",
     "next_source_fact": "Further source continuation is required to test exhaustion and reconcile the 456-card denominator against the 416 materialized IDs."
   },
