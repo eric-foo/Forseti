@@ -11,6 +11,8 @@ use_when:
   - Capturing Summer Fridays commercial ads visible in the Meta Ad Library.
   - Producing the paid-creative inventory input for a later Summer Fridays Deliver run.
 authority_boundary: retrieval_only
+superseded_by:
+  - forseti/product/spines/capture/core/source_families/ad_transparency/meta_ad_library/README.md
 open_next:
   - forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
   - forseti/product/spines/capture/core/source_capture_toolbox/capture_recon_index_v0.md
@@ -20,6 +22,13 @@ stale_if:
   - A Forseti Meta Ad Library recipe card or dedicated runner supersedes this first probe.
   - The Summer Fridays company/entity authority or product-family inventory changes.
 ```
+
+> **Consumed and superseded:** this first-probe commission produced
+> `docs/research/summer_fridays_ci_inputs_20260726/meta_ad_library_capture_return.md`.
+> Use
+> `forseti/product/spines/capture/core/source_families/ad_transparency/meta_ad_library/README.md`
+> for future Meta Ad Library capture routing. This prompt remains only because
+> the durable return cites it as provenance.
 
 ## Load Contract
 

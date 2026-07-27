@@ -13,7 +13,7 @@ use_when:
     budget native social follow-through.
 authority_boundary: retrieval_only
 open_next:
-  - docs/prompts/handoffs/summer_fridays_serp_social_composition_capture_handoff_20260726_v0.md
+  - docs/research/summer_fridays_ci_inputs_20260726/serp_social_composition_capture_return.md
   - docs/decisions/search_surface_google_parameterized_us_capture_route_v0.md
 stale_if:
   - An accepted Understanding SERP cycle design absorbs or supersedes these notes.
