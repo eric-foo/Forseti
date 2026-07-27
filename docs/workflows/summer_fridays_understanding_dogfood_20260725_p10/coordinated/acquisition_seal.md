@@ -12,6 +12,7 @@ use_when:
   - Auditing the material routes that block the p10 acquisition gate.
 authority_boundary: retrieval_only
 open_next:
+  - docs/workflows/summer_fridays_understanding_dogfood_20260725_p10/coordinated/deliver_corroboration_progression_note_20260727.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/recovery_acquisition_adjudication.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/turn_a_acquisition_record.md
   - docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/commission_board.md
