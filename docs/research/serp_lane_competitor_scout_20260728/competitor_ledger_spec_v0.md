@@ -49,10 +49,30 @@ does the same", names a cheaper equivalent) already wires into the
 substitute cell. Any complaint or community body naming an equivalent
 emits a ledger entry with `surface_class: complaint_body`. This is
 revealed switching language from actual users — the only channel whose
-language is about leaving, not comparing.
+language is about leaving, not comparing. Cross-thread recurrence
+counts only across DISTINCT authors (check the packet author fields);
+same-author repeats collapse to one voice. (Installed 2026-07-28 after
+the SF Ole Henriksen check: 3 threads, 3 different authors — that
+independence, not any single vote count, justified the promotion.
+Name the venue spread too: those 3 threads are ALL r/Sephora, so the
+corroboration is author-diverse but venue-concentrated; distinct
+subreddits is the stronger bar and stays worth naming when met.)
 
 **Channel 4 — retail shelf co-location.** Corroborative only; never
 originates an entry, only adds a surface class to an existing one.
+
+## Position statement and drift check (installed 2026-07-28)
+
+Every consolidation opens with a one-line DUPE-ECONOMY POSITION
+statement — which side of the dupe economy the subject sits on, read
+from the entry directions already in the ledger (anchor_up received vs
+dupe_association received). Each subsequent pass compares against the
+prior pass's statement: a flip or drift is a HEADLINE finding, not a
+footnote, because drift is the attackable moment (specimen: SF read
+natively as premium original AND newly as duper-of-mass-originals,
+q07 123-pt — two positions at once is itself the finding). Evidence
+base n=2 (T28 dupe-side / SF anchor-side); escalate to a findings-
+ledger cell when the full-bank pass tests it across subjects.
 
 ## The types (the writing)
 
@@ -277,23 +297,39 @@ thread queue (contrarian-titled, claim-attack, vs threads), and the
 EXISTING Reddit lane's fan-out consumes that queue alongside its other
 discovery inputs — its runner, access gate, cadence, and review
 routing already own native capture. The scout only adds a discovery
-source and a priority tag. Outputs per captured thread: composition
-read against the rendered surface (J3) and complaint-borne names
-harvested (Channel 3). Validated on Tower 28: phase 2 CHANGED the
+source and a priority tag. Queue entries carry canonical URLs at
+emission (packet provenance); owner-observed items are located
+in-session while the surface is fresh or explicitly marked deferred —
+3 of SF's 13 rotted unlocatable (installed 2026-07-28). Outputs per
+captured thread: composition read against the rendered surface (J3),
+complaint-borne names harvested (Channel 3), and — in
+comparison-titled threads — THIRD NAMES flagged (names in comments
+absent from the title; twice the highest-value find: Caliray 35-pt,
+Ole Henriksen x3; installed 2026-07-28). Validated on Tower 28: phase 2 CHANGED the
 competitor answer (community consideration set Kosas/NARS/Haus Labs vs
 SERP's Hourglass/NYX; Haus Labs and Kosas reached finding-grade only
 through phase-2/Channel-4 surface independence). Rendered snippets and
 native verdicts can disagree (vs-hourglass specimen) — the glancer
 absorbs Google's verdict, the clicker meets the community's; the gap is
-the J3 fragility measure.
+the J3 fragility measure. Consolidation states the subject's
+dupe-economy POSITION (dupe-side / anchor-side / both) with cites, and
+flags observed DRIFT — position read as moving in community narrative
+(specimen: SF read as newly duping mass originals, 123-pt). Drift is
+an attack surface: self-image lags it, competitors exploit it
+(installed 2026-07-28).
 
 **Cycle loop schedule (owner framing, 2026-07-28):** Within phase 1:
-seeds are front-loaded (mild ~1/min burst — pending the 2026-07-28
-burst-shape test verdict; sustained band otherwise); HARVEST IS LOCAL
+seeds are front-loaded (mild ~1/min burst — CLEARED 2026-07-28: 4
+captures at 60s spacing, zero blocks, `burst_test\` packets; front-load
+stays <=8 captures pending longer-burst evidence); HARVEST IS LOCAL
 COMPUTE and runs rolling as each packet lands, never queued behind
 captures; once harvest emits names, vs probes and J5 price reads are
 ONE merged capture queue at band cadence (the gate is harvest, not
 vs — J5 picks up small deltas as vs probes harvest new rivals). The
+two lanes are complementary, not merely compatible: vs-probe AIOs
+render spec denominators (ml sizes) that price SERPs omit, so the
+per-unit floor needs both lanes (Haus Labs 7ml/$32 = $4.57/ml read
+assembled across b01+b02, burst-test specimen 2026-07-28). The
 Reddit lane starts the moment the trigger-thread queue emits — it
 hits a different host, so it may run concurrently with the Google
 stream (owner-accepted 2026-07-28; block attribution is host-
@@ -302,7 +338,10 @@ specific). Return leg — SERP round 2 after fan-out consolidation:
 per name); (b) evidence-targeted probes authored FROM fan-out
 findings — narrow queries the seed grammar could not have guessed
 (entrant checks like `kulfi vs tower 28`, unmet-value-axis shapes,
-claim-attack follow-ups). Targeted probes obey the same typed-ledger
+claim-attack follow-ups); every finding-grade rival with NO captured
+head-to-head automatically earns a vs probe here (installed
+2026-07-28; motivating case SF/Ole Henriksen — promoted natively,
+never probed). Targeted probes obey the same typed-ledger
 rules, with one guard: a probed name's own echo in its targeted SERP
 bears no new ladder rung (the query was conditioned on the evidence);
 only third names and the surface's composition are new evidence.
