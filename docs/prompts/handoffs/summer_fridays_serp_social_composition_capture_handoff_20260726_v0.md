@@ -26,6 +26,13 @@ stale_if:
   - The existing discovery lake is recaptured or superseded.
 ```
 
+> **Consumed:** this one-shot commission produced
+> `docs/research/summer_fridays_ci_inputs_20260726/serp_social_composition_capture_return.md`,
+> which was consumed by
+> `docs/workflows/summer_fridays_understanding_dogfood_20260725_p10/coordinated/deliver_corroboration_progression_note_20260727.md`.
+> Do not rerun this dated commission as live instructions. It remains only
+> because the durable return cites it as provenance.
+
 ## Load Contract
 
 - `packet_version`: `20260726_v0`

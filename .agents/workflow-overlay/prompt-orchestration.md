@@ -489,6 +489,26 @@ separate:
   same lane PR when that lane owns the change, or in a dedicated prompt PR only
   when the prompt artifact itself is the work unit.
 
+### Durable Prompt Lifecycle Closeout
+
+When a durable one-shot prompt produces its commissioned return, a durable
+prompt's return is consumed, or its `stale_if` condition is observed to have
+fired, the lane observing that transition must not leave the prompt silently
+looking live. Close it in the same lane by taking the first applicable action:
+
+- delete an unreferenced, completed or consumed one-shot prompt;
+- when deletion would break provenance or a downstream reference, retain it
+  with a prominent body notice that says it is completed or consumed and points
+  to the durable return, PR, or commit; or
+- when another durable artifact replaces it, add the retrieval-header
+  `superseded_by` pointer and a prominent body notice naming that successor.
+
+A still-live prompt receives no lifecycle label. Use repository-relative
+pointers for in-repository successors and returns. Do not create a prompt
+registry, closeout receipt, checklist, or standing validation gate for this
+transition, and do not backfill untouched historical prompts solely to
+normalize them.
+
 ### Handoff Transport Versus Publication
 
 For a bounded cold handoff, the receiving task's initial prompt is the default
@@ -556,6 +576,14 @@ state both:
   body/comment location, or an ignored `docs/_inbox/` scratch path; and
 - the exact output artifact path the reviewer or downstream agent should write,
   when the output mode writes a durable artifact.
+
+In-repository source, successor, and output-artifact locators in durable or
+cross-recipient prompts must be repository-relative and carry the revision or
+hash required by this file when stability matters. A machine-local absolute
+path may supplement that portable locator as a runtime binding delta, but must
+not be the sole locator for an in-repository artifact. This does not prohibit
+absolute workspace roots, external data roots, or command paths required by the
+environment baseline.
 
 For a handoff-only packet, those fields are insufficient by themselves: the
 courier also carries the verified transport route, repository-relative path,

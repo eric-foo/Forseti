@@ -21,6 +21,12 @@ stale_if:
   - The Summer Fridays company/entity authority or product-family inventory changes.
 ```
 
+> **Completed:** this one-shot commission produced
+> `docs/research/summer_fridays_ci_inputs_20260726/google_ads_transparency_capture_return.md`.
+> Do not rerun this dated commission as live instructions. It remains only
+> because the durable return cites it as provenance; no durable successor route
+> is claimed here.
+
 ## Load Contract
 
 - `packet_version`: `20260726_v0`
