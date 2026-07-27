@@ -5,9 +5,10 @@ evidence records stay in their run folders; THIS file owns current truth.
 When a finding changes: flip its cell's Status, add one line under
 Supersessions, point Evidence at the new source. Do not fork this file.
 
-Staging location (owner decision 2026-07-27): C:\tmp, not the repo. Routing
-into the repo capture toolbox happens via the proper lane when the owner
-calls it.
+Authored in the repo (owner decision 2026-07-28, superseding the
+2026-07-27 C:\tmp staging rule). The operator drive holds raw capture data
+and in-flight scratch only — never the sole copy of a decision, rule,
+finding, or instrument.
 
 Cold-start index — THIS file is the entry point; satellites in/near this
 folder: `competitor_ledger_spec_v0.md` (competitor types, ladder,

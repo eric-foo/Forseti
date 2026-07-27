@@ -13,7 +13,9 @@ For non-trivial changes, define and run the relevant bound verification or
 state why it was not run; do not add an adversarial self-review of your own
 diff unless the owner or a commission requires it.
 Before reporting work as committed, written, pushed, merged, or otherwise
-persisted, freshly read the durable target and report only observed facts. Treat
+persisted, freshly read the durable target and report only observed facts, and
+run any verification against that durable target rather than the source it was
+copied or moved from. Treat
 absence and build state as claims: confirm load-bearing claims against primary
 sources when cheaply checkable. If verification fails, report the mismatch and
 stop.
@@ -33,6 +35,14 @@ Familiar test and Git commands do not pay this preflight.
 `Complete` is load-bearing. Do not underfix to minimize diff, ceremony, or
 visible change; a slightly larger fix is correct when required for durable,
 coherent, non-fragile completion.
+
+Completeness is measured AT THE CONSUMER, not at the artifact you happened
+to be writing. A change is complete when the source its consumers actually
+read carries it -- the spine, overlay, prompt, or runner they load -- not
+when it is described somewhere true but unread. Writing a note that some
+owning source still needs the change is not a deliverable; it is the work
+left undone. Do it in the same work unit, or say plainly that the change is
+not landed and name what remains.
 
 Prefer the biggest COMPLETE move you can still fully verify and the owner
 can still steer in one pass -- not a thin smoke-test slice that proves

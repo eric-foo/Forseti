@@ -290,9 +290,9 @@ competitor-side reading added by phase 2:
    it states J3 settled at n=10 (2/6/2) and "10 return-leg probes
    authored NOT run," both true only before the r01 return-leg capture
    was executed and folded in on 2026-07-28. The files now show n=11
-   (2/7/2) and 10 authored-not-run + 1 executed. This is the normal
-   staging-ahead-of-repo relationship, not an error, but the two numbers
-   should not be read as the current state.
+   (2/7/2) and 10 authored-not-run + 1 executed. RECONCILED 2026-07-28:
+   `serp_lane_v0.md` now carries n=11 and names the r01 execution, so
+   the two records no longer disagree.
 3. **Two different "#11" numberings collide** across source files
    (queue item #11 vs return-leg probe table row #11, see above) — a
    readability trap for anyone skimming both files together, named here
@@ -306,13 +306,13 @@ competitor-side reading added by phase 2:
 
 ## Authority and currentness
 
-The **living surface** is the operator staging folder
-`C:\tmp\forseti-sf-phase2-native-return-20260728\` (plus its external
-dependencies `C:\tmp\forseti-sf-serp-pass1v1-dogfood-20260727\` for the
-queue and concern ledger, and `C:\tmp\forseti-sf-reddit-anchor-20260727\`
-for the anchor thread's own findings). This file is the **durable routed
-record as of 2026-07-28**. If the two diverge, staging is ahead — as it
-already is relative to `serp_lane_v0.md`'s pre-return-leg summary line
-(see Ambiguities above). Raw capture data (packets, HTML, screenshots)
+**This file is canonical** (lane authority inverted 2026-07-28; see
+`README.md`). It was written from operator-staging sources at
+`C:\tmp\forseti-sf-phase2-native-return-20260728\` (plus
+`C:\tmp\forseti-sf-serp-pass1v1-dogfood-20260727\` for the queue and
+concern ledger, and `C:\tmp\forseti-sf-reddit-anchor-20260727\` for the
+anchor thread), which are now historical and must not be edited
+further — later analysis is authored here. Raw capture data (packets,
+HTML, screenshots)
 stays outside Git on the operator drive; this file preserves only the
 extracted findings, counts, and quotes.

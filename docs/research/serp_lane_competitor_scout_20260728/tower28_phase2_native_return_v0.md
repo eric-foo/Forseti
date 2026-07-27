@@ -234,15 +234,15 @@ blocks in 14 (Reddit lane), 0 in 4 (burst). No stop events.
 
 ## Authority and currentness
 
-The **living surface** is operator staging:
-`C:\tmp\forseti-tower28-scout-20260727\phase2_native_return_v0\`
-(`j3_settlement_v0.md`, `phase2_native_return_findings_v0.md`,
-`competitor_ledger_phase2_consolidated_v0.json`), backed by the raw
-native captures at `C:\tmp\forseti-tower28-reddit-20260728\`
+**This file is canonical** (lane authority inverted 2026-07-28; see
+`README.md`). It was consolidated from operator-staging drafts at
+`C:\tmp\forseti-tower28-scout-20260727\phase2_native_return_v0\`, which
+are now historical and must not be edited further — later analysis is
+authored here. The raw captures those drafts read remain on the
+operator drive, outside Git: `C:\tmp\forseti-tower28-reddit-20260728\`
 (`thread_composition_v0.json`) and the scout-trial packets at
-`C:\tmp\forseti-tower28-scout-20260727\`. **This file is the durable
-routed record as of 2026-07-28.** If the two diverge, staging is
-ahead. This record does not supersede
+`C:\tmp\forseti-tower28-scout-20260727\`. This record does not
+supersede
 `tower28_scout_trial_findings_v0.md` (the phase-1 capture record); it
 fills the phase-2 consolidation gap that previously existed only on
 the operator drive.
