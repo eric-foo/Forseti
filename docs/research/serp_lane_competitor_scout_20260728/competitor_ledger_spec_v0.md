@@ -26,8 +26,8 @@ Ordered by marginal cost. Each channel emits candidates with a
 channel-default type and a source record; the ladder does the filtering,
 so channels are allowed to be noisy.
 
-**Channel 0 — free riders (zero probes).** Every already-captured SERP
-carries competitor signal regardless of its shape: related searches
+**Channel 0 — existing-capture harvest (zero new probes).** Every
+already-captured SERP carries competitor signal regardless of its shape: related searches
 ("{s} vs …"), PAA ("Is {s} better than …?"), organic/video titles with
 comparison pairs, AIO comparison mentions, dupe-aggregator results. One
 emitter pass over the extraction store harvests all of it retroactively.
@@ -190,6 +190,25 @@ routing decision, not something the lane edits.
   subject exposes a new mistake, add its assertion here.
 - Channel-3 emitter does not exist yet (needs the Reddit/native lane);
   the schema above is written to receive it.
+- `scout-dogfood10-20260728/bin/dogfood10_runner.py` — reference
+  implementation of the phase-1 loop (`select_names`,
+  `build_merged_queue`, `interleave`, plus the J5 reserve-tier trigger).
+  Instruments live on the operator drive; the rule below is the
+  normative statement, so the merged queue is reconstructible from this
+  spec alone if the code is unreachable.
+
+**Merged vs+J5 queue — generation rule (normative).** After harvest,
+select up to 2 names typed `rival`/`dupe_association`/`anchor_up`,
+ranked by ladder rung first (candidate before presence), then by
+distinct_queries descending. Emit two job lists: vs jobs
+`{subject} vs {name}` per selected name; J5 jobs `{name} price` per
+selected name PLUS one `{subject} price`. Interleave them strictly
+(vs, J5, vs, J5, …), appending the remainder when one list runs out —
+so a block or stop truncates both lanes evenly rather than losing one
+entirely. At capture time, a J5 SERP returning fewer than 3 rows with
+a `$` price in title or snippet appends one reserve job: the same
+query with `&udm=28` (Shopping tab). Selecting zero names is a valid
+outcome and emits the subject-price job only.
 
 ## Cycle installation: a scout PASS + one ordering rule (not a step)
 
@@ -358,7 +377,8 @@ this spec directly.
    surface yields clean rival names in the title string itself (Delter
    Press, Nanopress, Amazon Basics, DeLonghi Magnifica, Round Lab). The
    dupe surface reliably signals the DOOR ("86 Reddit-Picked Dupes for
-   CeraVe...") but the names sit in the page body — so Channel 0 fills
+   CeraVe...") but the names sit in the page body — so existing-capture
+   harvest (Channel 0) fills
    `rival` well, while `dupe_association`/`anchor_up` mostly wait for
    organic-body or native harvest. This matches the type definitions:
    the substitute-side types are body/complaint-borne by nature.

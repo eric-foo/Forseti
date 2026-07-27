@@ -34,6 +34,10 @@ Standing non-claims carried throughout: counts of observed cards only,
 never prevalence/volume/share; US-parameterized is not physically
 US-local; blocks are stop signals; raw data outside Git.
 
-Phase-2 execution (native return: Reddit-lane consumption, Channel 3,
-J3 settlement, J5 delta, targeted return probes) is commissioned via
-`docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`.
+Execution is commissioned via two handoffs, in order:
+`docs/prompts/handoffs/serp_lane_phase1_scout_execution_handoff_v0.md`
+(seeds -> rolling harvest -> merged vs+J5 queue -> priced ledger +
+trigger-thread queue), then
+`docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`
+(native return: Reddit-lane consumption, Channel 3, J3 settlement, J5
+delta, evidence-targeted return probes).
