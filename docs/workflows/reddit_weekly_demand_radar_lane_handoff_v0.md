@@ -14,6 +14,7 @@ use_when:
   - Deciding how to respond to the 2026-07-22 Reddit capture block.
 authority_boundary: retrieval_only
 open_next:
+  - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_listing_efficiency_policy_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_weekly_demand_radar_spec_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/README.md
   - docs/decisions/forseti_product_thesis_decision_adjudication_v0.md
@@ -22,6 +23,13 @@ stale_if:
   - The open decision below is resolved (a route is selected).
   - A later weekly pass changes the corpus coverage numbers recorded here.
 ```
+
+> **HISTORICAL / SUPERSEDED FOR CURRENT ROUTING (2026-07-28).** This packet
+> preserves 2026-07-23 continuation state. Its pinned revisions, corpus counts,
+> open capture decision, and operating assumptions are stale. Do not use it to
+> select captured Reddit threads or infer current runner behavior. Start with
+> `reddit_listing_efficiency_policy_v0.md` for deep-dive triage and the Reddit
+> source-family `README.md` for the current lane route.
 
 ## Load Contract
 
