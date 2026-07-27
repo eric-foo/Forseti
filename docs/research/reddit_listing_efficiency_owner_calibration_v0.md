@@ -22,7 +22,9 @@ authority_boundary: retrieval_only
 - Additional source checks: four captured-corpus source audits plus one
   transaction-thread-type audit.
 - This is an evidence-backed research conclusion, not runtime implementation,
-  model validation, production readiness, or product authority.
+  production readiness, or product authority. Its listing-selection rules were
+  subsequently stress-tested on the blind 100-thread sample recorded in
+  `docs/research/reddit_listing_efficiency_holdout_100_v0.md`.
 - The missing original handoff
   `docs/hygiene/reddit_listing_efficiency_validation_handoff.md` could not be
   recovered from the commissioned worktree at closeout. This record therefore
@@ -76,24 +78,48 @@ a client conclusion.
 
 Apply these gates in order. Do not collapse them into one additive score.
 
-### Gate 0 — Universal general-scan engagement floor
+### Gate 0 — General-scan discussion floor
 
-Return `no` for the general deep-read queue when either condition is observed
-at selection time:
-
-- captured Reddit score is `0`;
-- captured listing comments are `0`, `1`, `2`, or `3`.
+Return `no` for the general deep-read queue when captured listing comments are
+`0`, `1`, `2`, or `3`.
 
 This is a dive-budget cutoff, not deletion. Preserve the thread in retrieval so
 a later direct brand, competitor, category, issue, or geography commission can
 deliberately recover it.
 
 Do not coerce missing or unknown engagement to zero. Route missing engagement
-as missing data. The 30-pair clean round was constructed with a five-comment
-minimum, so the one-to-three-comment cutoff is an explicit owner policy lock,
-not an empirically tested result from this round. The score-zero rule is
-consistent with the two score-zero examples inspected in `C29` and `C30`, both
-of which remained suppressed from general admission after audit.
+as missing data. Use the freshest available captured engagement snapshot before
+ranking; captured counts can drift materially.
+
+The 100-thread holdout falsified captured score `0` as a universal cutoff:
+seven of 20 sampled zero-score threads justified a general dive, including one
+whose top comment scored 56. Post score can raise or lower priority after the
+other gates, but it cannot veto a commercially promising discussion.
+
+The same holdout found one exception among 20 sampled threads below the comment
+floor: a zero-comment Project Pan post contained five completed-use reviews in
+its body. Keep the floor because the general queue is buying independent
+discussion, but name the poster-only case as an accepted residual. Recover it
+when a direct commission retrieves the thread or cheap listing-visible context
+already exposes a structured completed-use review. Do not silently claim that
+the floor captures every useful post.
+
+### Gate 0.5 — Listing-context sufficiency
+
+Before applying the commercial gates, ask whether the listing projection shows
+the object needed to interpret its claim.
+
+- A deictic title such as “this” or “which one,” a visual punchline, an
+  image-only comparison, or a crosspost payload mismatch is not enough for a
+  confident product-level `yes` or `no`.
+- Use an `insufficient_listing_context` or bounded `borderline` route when the
+  missing context could change admission.
+- Consume media presence/count and cheap linked-product, OCR, or alt context
+  when already available. Do not open hidden discussion merely to repair the
+  pre-dive projection.
+
+This prevents both confident suppression of a hidden purchase decision and
+confident admission of a visual joke mistaken for product failure.
 
 ### Gate 1 — Commission applicability
 
@@ -128,6 +154,10 @@ Strong verbs such as “disappointed,” “obsessed,” “worth it,” “stop
 or “worked” increase priority only when a product/category and current
 commercial decision are also visible.
 
+A direct replacement request for a discontinued named product is a strong
+decision promise even at modest engagement once it clears Gate 0. It can expose
+substitutes, switching constraints, sampling behaviour, and unmet demand.
+
 ### Gate 3 — Objective suppression
 
 Suppress by default when the visible objective is:
@@ -137,7 +167,9 @@ Suppress by default when the visible objective is:
 - a generic showcase with no product, purchase, performance, usage, pricing,
   or market-learning hook;
 - diagnosis, procedure cadence, or clinical-treatment advice outside a matching
-  commission;
+  commission; do not apply this suppression to a purchasable product or
+  consumer-device experience merely because the use condition is medically
+  adjacent;
 - personal, political, or creator gossip without a verified commercial link;
 - technique-only help with no likely product-usability, failure, cost, or
   substitution evidence;
@@ -156,14 +188,16 @@ Engagement is required, but its two visible components mean different things.
 - **Comment count** is the better pre-dive proxy for evidence depth,
   alternatives, disagreement, and corroboration.
 - **Post score** is the better proxy for resonance with the visible post,
-  outcome, concept, or image.
+  outcome, concept, or image, but a captured zero does not establish absence of
+  discussion value.
 - High score with relatively little discussion often means visual appreciation,
   not product evidence.
 - High discussion relative to score often predicts causal debate or problem
   complexity, but does not guarantee brand criticism or product value.
 - Author replies, bot messages, transaction updates, and nested praise can
   inflate the apparent discussion. Inspect independent voices after admission.
-- Listing counts are captured-state evidence, not immutable totals.
+- Listing counts are captured-state evidence, not immutable totals. Prefer the
+  freshest available capture before ranking.
 
 After Gate 0, there is no second universal numeric cutoff yet. In this
 calibration, admitted threads included a 6-score/10-comment request, while
@@ -172,10 +206,10 @@ rejected threads included 960-score/310-comment, 663-score/27-comment, and
 those decisions.
 
 Low engagement is nevertheless a strong default suppressor. A specific but
-weakly engaged thread stays searchable for a direct brand/category commission;
-it does not consume general deep-read capacity. An exception requires unusually
-strong decision content in the listing itself, such as a clear displacement
-claim or tightly defined buyer/problem/product request.
+weakly discussed thread stays searchable for a direct brand/category
+commission; it does not consume general deep-read capacity. An exception
+requires unusually strong decision content in the listing itself, such as a
+clear displacement claim or tightly defined buyer/problem/product request.
 
 ### Gate 5 — Source and format prior
 
@@ -219,6 +253,7 @@ Within the admitted set, prioritize:
 | Named-product failure or disappointment | High | Meaningful discussion can expose mechanisms, disagreement, substitutes, non-repurchase, or expectation gaps | Very low engagement, clinical-only scope, or no current commission fit |
 | Category recommendation or “what worked?” | High | User/problem/product type and constraints are specific; comments can form a weighted product map | Request is broad, weakly engaged, or outside a purchasable decision |
 | Comparison, substitute, dupe, or worth-it question | High to conditional | Competitors, price tiers, performance, abandonment, or cheaper workarounds are likely | Low discussion or category is outside the commission |
+| Discontinued-product replacement | High once Gate 0 is cleared | A named discontinued product and replacement need expose substitutes, constraints, sampling, unmet demand, or a brand roadmap signal | The named product/category is outside the commission |
 | Routine, regimen, or progress | Conditional | Named interventions, a time window, disclosed stack, failure, adherence, or likely tradeoffs are visible | Appearance-only result, empty post, praise-only comments, or no attribution route |
 | Empties, Project Pan, hit-pan, or finish challenges | Conditional | Full use, repurchase/non-repurchase, consumption rate, substitution, or regret can be recovered | Progress is merely aesthetic or no product decision can be inferred |
 | Collection, favourites, current-use, or scent-of-the-day | Conditional | Engagement is sufficient to expose ownership, favourites, gaps, occasions, usage, scarcity, duplicates, or purchase behaviour | Low-comment collection praise or a list with no decision context |
@@ -227,6 +262,7 @@ Within the admitted set, prioritize:
 | Creator or reputation topic | Cross-stitch first | A verified creator-brand relationship and trust, boycott, lost-purchase, sponsorship, or campaign consequence are material | Gossip, personal controversy, or politics has no verified commercial consequence |
 | Availability, price, promotion, retailer, or service | Commission-conditional | The client decision includes distribution, channel, threshold, access, refund, salon/service, or promotion strategy | Current commission is general product CI and the operational issue cannot change it |
 | Medical or diagnosis thread | Suppress by default | A matching pharmaceutical/treatment commission explicitly accepts the safety and corroboration burden | General beauty CI, crowd diagnosis, procedure cadence, or sparse anecdotes |
+| Consumer health-adjacent product or device experience | Conditional | Purchasable products/devices, duration, comparative outcomes, abandonment, failure, or user-fit tradeoffs can change a commissioned product decision | The thread is primarily diagnosis/treatment advice, lacks a purchasable object, or cannot meet the higher safety/corroboration burden |
 | WTS, resale, or swap listing | Suppress | Commission concerns resale price, scarcity, grey market, discontinuation, secondary demand, or channel leakage | Comments are chat requests, sale status, verification, splits, or shipping |
 
 ### Community-language normalization
@@ -358,6 +394,25 @@ Other recurring lessons:
 - title specificity without engagement is usually insufficient;
 - engagement without a commercially relevant objective is also insufficient.
 
+### 100-thread holdout corrections
+
+The subsequent blind holdout is recorded in
+`docs/research/reddit_listing_efficiency_holdout_100_v0.md`. Its decisive
+corrections are incorporated above:
+
+- captured score `0` is not a universal veto;
+- the `0–3` comment floor remains a general budget rule with an explicit
+  poster-only completed-use residual;
+- opaque and media-dependent listings require a context-sufficiency state;
+- discontinued-product replacement and consumer-device experience need
+  narrower, commercially truthful treatment;
+- fresh captured engagement should replace stale listing counts before
+  ranking.
+
+In the stratified stress set, 18 of 20 confident `yes` labels yielded
+decision-bearing evidence. That observed result is not a corpus-wide precision
+estimate.
+
 ## Downstream Deliver note
 
 When a problem recurs across independent sources and is relevant to the
@@ -382,19 +437,19 @@ This calibration does not authorize external participation.
 
 Do not yet create:
 
-- any universal score or comment cutoff beyond Gate 0;
+- any universal score cutoff or comment cutoff beyond Gate 0;
 - learned numeric weights;
 - a subreddit allow/deny list beyond the audited policies;
 - a rule that equates post score with product value;
 - a rule that opens every named-product or highly engaged thread;
 - a requirement to owner-label the remaining 1,752 clean pairs;
-- a production-readiness or selection-quality claim.
+- a production-readiness or corpus-wide selection-quality claim.
 
-The smallest next proof is a blind held-out application of these rules. Measure
-deep-read yield and inspect only false-negative clusters, false-positive
-clusters, and `borderline` disagreements. Ask the owner for more labels only if
-a repeated new archetype or disagreement cluster appears. Otherwise the
-30-pair calibration stops here.
+The blind 100-thread proof is complete. The smallest next proof, if runtime
+implementation is later commissioned, is to encode these corrected gates and
+test the implementation against frozen listing projections. Do not request
+more owner labels unless a repeated new archetype or disagreement cluster
+appears.
 
 ## Evidence trace
 
