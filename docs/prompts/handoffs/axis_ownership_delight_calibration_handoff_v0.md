@@ -78,13 +78,20 @@ bar.
 
 ## Method
 
-1. **Pair eligibility.** From the bank, find subject pairs where BOTH
-   sides are bank subjects with captures (e.g. Aquaphor AND Vaseline;
-   the K-beauty set) plus single subjects whose promoted rivals have
-   any owned surface in holdings. The rival's praise must be minable
-   from the RIVAL's own non-comparison surfaces (its review-family /
-   reddit captures) — that keeps the delight pass blind to the
-   comparison surfaces being predicted.
+1. **Pair eligibility (amended 2026-07-28 after the first execution
+   returned BLOCKED_INPUT_COVERAGE).** From the bank, find subject
+   pairs where BOTH sides are bank subjects with captures — VERIFIED
+   against the bank, never assumed (the v0 text asserted Aquaphor AND
+   Vaseline were both subjects; Vaseline is not). EXACT-SKU RULE: the
+   rival surface must be for the exact winning product — a same-brand
+   different SKU (bank's `skin1004 centella ampoule` vs the winning
+   Madagascar Centella Toning Toner; `cerave moisturizing cream` vs
+   Healing Ointment) is NOT the rival and scoring it would manufacture
+   evidence. The rival's praise must be minable from the RIVAL's own
+   non-comparison surfaces — that keeps the delight pass blind to the
+   comparison surfaces being predicted. A zero-denominator result is
+   the correct return when these bars exclude everything; do not relax
+   them to produce a number.
 2. **Pass P (praise, blind).** Per rival: rank its top praised axes
    from its own surfaces only; verbatim evidence + job_id cites.
    Freeze with hash alongside the complaint pass-A output.
@@ -98,9 +105,14 @@ bar.
    misses.
 5. **Axis-owner table.** Mechanical aggregation across ALL scored
    subjects: rival x axis x subjects-won/cited. Owner candidate at 2+
-   subjects (spec bar). Per subject: top-2 complaint axes marked
-   OCCUPIED (by whom) or VACANT. Type owners by kind
-   (product-superiority / trust-floor / value / category-level).
+   subjects (spec bar) — on the SAME NORMALIZED AXIS, and
+   normalization must never join distinct attributes into one label
+   (amended 2026-07-28: "lightweight/no-white-cast/compatibility" as
+   one axis made the SKIN1004 ownership claim unfalsifiable; the first
+   execution correctly downgraded it to recurring-rival-on-2-axes).
+   Per subject: top-2 complaint axes marked OCCUPIED (by whom) or
+   VACANT. Type owners by kind (product-superiority / trust-floor /
+   value / category-level).
 6. **Counterexample autopsy** per the inherited reason classes, plus
    one new class this commission may emit: `praise-axis-not-decisive`
    (rival praised for X, comparison decided elsewhere).
@@ -113,6 +125,15 @@ controller-side (mechanical matching only). Category-known
 hypothesis-generating pairs (Aquaphor/Vaseline was natively settled
 2026-07-28) are scored but flagged `settled_prior` and excluded from
 the headline rate.
+
+AMENDED 2026-07-28 (contamination defect found by the first
+execution): the v0 handoff's "Standing evidence" section put prior
+OUTCOMES in the executor's required intake, which contaminates any
+praise pass run in the same lane — file-level isolation is not
+cognitive blindness. A non-empty pass P must run in a CLEAN lane whose
+intake carries pair lists and file manifests only, never prior
+outcomes; the Standing-evidence section above is ADJUDICATOR-ONLY
+context and must be stripped from the pass-P executor's dispatch.
 
 ## Return contract (one line per field; `unknown` if absent)
 
