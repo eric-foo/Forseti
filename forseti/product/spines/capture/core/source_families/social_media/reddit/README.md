@@ -12,6 +12,7 @@ use_when:
   - Checking where Reddit discovery/select/capture/read responsibilities split.
 authority_boundary: retrieval_only
 open_next:
+  - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_listing_efficiency_policy_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_subreddit_registry_spec_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_subreddit_registry_lake_cutover_architecture_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_radar_grid_capture_maintenance_design_v0.md
@@ -35,6 +36,7 @@ Reddit has separate stage owners. Do not collapse them into one crawler.
 | Discover | Candidate URL Intake contracts and old Reddit search/listing handling docs | `run_reddit_candidate_intake_live.py` | Candidate subreddit/thread/outbound URL rows only; no bodies and no Source Capture Packet. |
 | Select | Reddit Graph Frontier lane | `run_reddit_graph_frontier_register.py` | Frontier/register receipts and fresh bounded run envelopes; no same-run traversal. |
 | Radar grid | `reddit_radar_grid_capture_maintenance_design_v0.md` + registry spec | `run_reddit_grid_capture.py`; `run_reddit_subreddit_registry_refresh.py` | One `reddit_subreddit_grid` listing packet per tracked subreddit (local or `--data-root` Bronze); read-only registry refresh from committed packets. |
+| Deep-dive selection | `reddit_listing_efficiency_policy_v0.md` + `reddit_weekly_demand_radar_spec_v0.md` | `run_reddit_weekly_demand_read.py` | A fail-closed model-review queue from preserved listing evidence; no exact-thread capture authorization before commission-conditioned adjudication. |
 | Capture | `reddit_capture_operator_playbook_v0.md` | `run_reddit_old_http_batch.py` (supports `--data-root` Bronze commit); `run_reddit_consolidation.py`; `run_reddit_batch_quality_summary.py` | Exact old Reddit thread packets plus derived consolidation outputs. |
 | Fallback | Source Capture Playbook archive route and Reddit operator playbook | `run_source_capture_archive_packet.py`; one-URL CloakBrowser runner when explicitly needed | Same-thread archive/capture only; no discovery, profile capture, or broad crawl. |
 | ECR / downstream | `docs/workflows/reddit_capture_to_ecr_consumption_probe_finding_v0.md` plus ECR authority | `orca-harness/ecr/deriver.py`; Reddit consolidation/projection helpers | ECR consumes packets source-agnostically; no automatic cleared posture without a Decision Frame/cutoff posture. |
@@ -71,6 +73,20 @@ commercial-grade product use lands on the sanctioned path. Every pass
 still records its per-run robots/source-policy posture receipt, and the
 lane must be built before anything runs.
 
+## Deep-Dive Selection Posture
+
+The Data Lake preserves neutral Reddit listing evidence. The Reddit
+source-family lane owns the judgment about which exact threads are worth the
+next read; do not persist a universal valuable/not-valuable label in the lake.
+
+`reddit_listing_efficiency_policy_v0.md` is the governing selection contract.
+Mechanically, a fresh visible count of 0–3 comments suppresses a thread from
+the general deep-dive queue, while 4+ comments routes it to
+commission-conditioned model review. A zero score is not a veto, and a missing
+count is unparsed rather than zero. Title, flair, score, and engagement rank are
+review cues only. The weekly reader therefore emits no capture slots until a
+model records `yes`, `borderline`, or `no` against a named Decision Frame.
+
 ## Silver Envelope Subject Shaping (lake-map courier note, 2026-07-17)
 
 No Reddit Silver envelope writer exists yet. When one is built, shape subjects
@@ -99,6 +115,10 @@ silver-entity-read-layer lane, merged PR #1031; governing plan:
   their selected deep dives; no source-discovery expansion outside bounded
   runs; no user/profile capture; no dashboards.
 - Candidate URL Intake rows do not auto-promote into Capture units.
+- A weekly listing-review row does not auto-promote into an exact-thread
+  capture slot. An unadjudicated capture-list request fails closed.
+- Do not write a commission-agnostic valuable/not-valuable label into the
+  neutral Data Lake.
 - Cold anonymous `.json` is not the default target; warm same-context JSON is a
   future/specialized path only after exact old Reddit HTML is visible.
 
