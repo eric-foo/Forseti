@@ -679,36 +679,63 @@ def test_weekly_demand_read_gates_and_reports(
     assert health["created_utc_or_none"] == "2015-03-03T19:26:01+00:00"
     assert payload["page_overflow_tripwire"] == []
 
-    # Top half by comments selects the problem; the lower-half concrete outcome
-    # title is rescued. The stickied megathread remains excluded.
+    # Both live rows clear the universal comment floor and therefore require
+    # commission-conditioned model review. The stickied megathread remains
+    # excluded, and the mechanical reader authorizes no capture.
     problem, outcome = payload["candidates"]
     assert problem["title_or_none"] == "Nothing works, help"
     assert problem["flair_or_none"] == "Help"
-    assert problem["selection_reason"] == "engagement_head"
+    assert problem["selection_reason"] == "comment_floor_cleared"
+    assert problem["policy_stage"] == "requires_commission_model_adjudication"
     assert outcome["title_or_none"] == "Look at my result"
-    assert outcome["selection_reason"] == "title_explicit"
+    assert outcome["selection_reason"] == "comment_floor_cleared"
     assert payload["eligible_threads_found"] == 2
+    assert payload["listing_review_threads_found"] == 2
+    assert payload["general_floor_suppressed_threads"] == 0
     assert payload["candidates_found"] == 2
-    assert payload["selection_reason_counts"] == {
-        "engagement_head": 1,
-        "title_explicit": 1,
-    }
-    assert payload["capture_slots"] == [
-        {
-            "slot_id": "weekly_0001",
-            "url": "https://old.reddit.com/r/makeupaddiction/comments/pr1/problem/",
-        },
-        {
-            "slot_id": "weekly_0002",
-            "url": "https://old.reddit.com/r/makeupaddiction/comments/br1/broadcast/",
-        },
-    ]
+    assert payload["selection_reason_counts"] == {"comment_floor_cleared": 2}
+    assert payload["capture_list_status"] == (
+        "blocked_pending_commission_model_adjudication"
+    )
+    assert payload["capture_slots"] == []
 
 
-def test_weekly_deep_dive_selection_rescues_titles_and_audits_opaque_tail() -> None:
-    import datetime as dt
+def test_weekly_capture_list_output_fails_closed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    import runners.run_reddit_weekly_demand_read as weekly_reader
 
-    from runners.run_reddit_weekly_demand_read import _select_deep_dive_rows
+    registry = _registry(tmp_path)
+    lake = DataLakeRoot.for_test(tmp_path / "lake")
+    migrate_legacy_registry(lake, registry_path=registry)
+    monkeypatch.setattr(
+        weekly_reader.DataLakeRoot,
+        "resolve_readonly",
+        classmethod(lambda _cls, explicit=None: lake),
+    )
+    capture_list = tmp_path / "unadjudicated_capture_list.json"
+
+    with pytest.raises(SystemExit) as exc_info:
+        weekly_reader.main(
+            [
+                "--as-of",
+                "2026-07-17",
+                "--capture-list-output",
+                str(capture_list),
+            ]
+        )
+
+    assert exc_info.value.code == 2
+    assert "blocked pending commission-conditioned model adjudication" in (
+        capsys.readouterr().err
+    )
+    assert not capture_list.exists()
+
+
+def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
 
     rows = [
         {
@@ -728,111 +755,53 @@ def test_weekly_deep_dive_selection_rescues_titles_and_audits_opaque_tail() -> N
                 ("Opaque head D", 9, 50),
                 ("This product irritated my skin", 3, 40),
                 ("Routine update", 4, 30),
-                ("Opaque tail A", 6, 20),
-                ("Opaque tail B", 7, 10),
+                ("Opaque tail A", 6, 4),
+                ("Opaque tail B", 7, 3),
+                ("Zero comments", 200, 0),
             ],
             start=1,
         )
     ]
 
-    selected = _select_deep_dive_rows(
-        subreddit="example",
+    selected = _build_listing_review_rows(
         rows=rows,
-        as_of=dt.date(2026, 7, 23),
-        opaque_tail_audit_fraction=0.1,
     )
 
-    assert [row["selection_reason"] for row in selected].count("engagement_head") == 4
-    assert [row["selection_reason"] for row in selected].count("title_explicit") == 1
-    assert [row["selection_reason"] for row in selected].count("title_suggestive") == 1
-    assert [row["selection_reason"] for row in selected].count("opaque_tail_audit") == 1
+    assert all(row["comments"] >= 4 for row in selected)
     assert len(selected) == 7
+    assert all(
+        row["selection_reason"] == "comment_floor_cleared" for row in selected
+    )
+    assert all(
+        row["policy_stage"] == "requires_commission_model_adjudication"
+        for row in selected
+    )
+    assert selected[-1]["title_or_none"] == "Opaque tail A"
+    assert selected[-1]["listing_context_state"] == "listing_context_insufficient"
 
 
-@pytest.mark.parametrize(
-    ("title", "flair", "comments", "expected_score", "expected_eligible"),
-    [
-        ("How should I do this?", None, 12, 1, False),
-        ("My current routine", "Routine", 12, 1, False),
-        ("PBE haul", None, 18, 1, False),
-        ("No one else will appreciate this repair", "Showoff", 8, 2, True),
-        ("Alastin serum shout out", None, 5, 3, True),
-        ("Review: new perfume collection", None, 3, 3, True),
-        ("This burned my face", None, 3, 2, True),
-        ("This burned my face", None, 0, 2, False),
-        ("Review: new perfume collection", None, 0, 3, True),
-    ],
-)
-def test_weekly_tail_rescue_requires_decision_signal_and_low_comment_context(
-    title: str,
-    flair: str | None,
-    comments: int,
-    expected_score: int,
-    expected_eligible: bool,
+@pytest.mark.parametrize("score", [0, None])
+def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_four_comments(
+    score: int | None,
 ) -> None:
-    from runners.run_reddit_weekly_demand_read import (
-        _classify_title_signal,
-        _tail_title_rescue_eligible,
-        _tail_title_rescue_score,
-        _title_context_reasons,
-    )
-
-    _title_class, title_reasons = _classify_title_signal(title, flair)
-    context_reasons = _title_context_reasons(title, flair)
-    score = _tail_title_rescue_score(
-        title_reasons=title_reasons,
-        context_reasons=context_reasons,
-    )
-
-    assert score == expected_score
-    assert _tail_title_rescue_eligible(comments=comments, rescue_score=score) is expected_eligible
-
-
-def test_weekly_audit_names_weak_signal_titles_truthfully() -> None:
-    import datetime as dt
-
-    from runners.run_reddit_weekly_demand_read import _select_deep_dive_rows
+    from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
 
     rows = [
         {
             "subreddit": "example",
-            "thread_url": f"https://old.reddit.com/r/example/comments/id{index}/post/",
-            "title_or_none": title,
+            "thread_url": "https://old.reddit.com/r/example/comments/id1/post/",
+            "title_or_none": "Foundation pilling with this serum",
             "flair_or_none": None,
             "timestamp_utc_ms_or_none": None,
-            "score": 20 - index,
-            "comments": 20 - index,
+            "score": score,
+            "comments": 4,
         }
-        for index, title in enumerate(
-            [
-                "Head one",
-                "Head two",
-                "Head three",
-                "How should I do this?",
-                "Opaque tail",
-                "My current routine",
-            ],
-            start=1,
-        )
     ]
 
-    selected = _select_deep_dive_rows(
-        subreddit="example",
-        rows=rows,
-        as_of=dt.date(2026, 7, 23),
-        opaque_tail_audit_fraction=1.0,
-    )
-
-    audit_reasons = {
-        row["title_or_none"]: row["selection_reason"]
-        for row in selected
-        if row["selection_reason"].endswith("_audit")
-    }
-    assert audit_reasons == {
-        "How should I do this?": "weak_signal_tail_audit",
-        "Opaque tail": "opaque_tail_audit",
-        "My current routine": "weak_signal_tail_audit",
-    }
+    (selected,) = _build_listing_review_rows(rows=rows)
+    assert selected["score"] == score
+    assert selected["comments"] == 4
+    assert selected["listing_context_state"] == "listing_context_present"
 
 
 @pytest.mark.parametrize(
