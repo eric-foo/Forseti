@@ -26,8 +26,8 @@ Ordered by marginal cost. Each channel emits candidates with a
 channel-default type and a source record; the ladder does the filtering,
 so channels are allowed to be noisy.
 
-**Channel 0 — free riders (zero probes).** Every already-captured SERP
-carries competitor signal regardless of its shape: related searches
+**Channel 0 — existing-capture harvest (zero new probes).** Every
+already-captured SERP carries competitor signal regardless of its shape: related searches
 ("{s} vs …"), PAA ("Is {s} better than …?"), organic/video titles with
 comparison pairs, AIO comparison mentions, dupe-aggregator results. One
 emitter pass over the extraction store harvests all of it retroactively.
@@ -49,10 +49,30 @@ does the same", names a cheaper equivalent) already wires into the
 substitute cell. Any complaint or community body naming an equivalent
 emits a ledger entry with `surface_class: complaint_body`. This is
 revealed switching language from actual users — the only channel whose
-language is about leaving, not comparing.
+language is about leaving, not comparing. Cross-thread recurrence
+counts only across DISTINCT authors (check the packet author fields);
+same-author repeats collapse to one voice. (Installed 2026-07-28 after
+the SF Ole Henriksen check: 3 threads, 3 different authors — that
+independence, not any single vote count, justified the promotion.
+Name the venue spread too: those 3 threads are ALL r/Sephora, so the
+corroboration is author-diverse but venue-concentrated; distinct
+subreddits is the stronger bar and stays worth naming when met.)
 
 **Channel 4 — retail shelf co-location.** Corroborative only; never
 originates an entry, only adds a surface class to an existing one.
+
+## Position statement and drift check (installed 2026-07-28)
+
+Every consolidation opens with a one-line DUPE-ECONOMY POSITION
+statement — which side of the dupe economy the subject sits on, read
+from the entry directions already in the ledger (anchor_up received vs
+dupe_association received). Each subsequent pass compares against the
+prior pass's statement: a flip or drift is a HEADLINE finding, not a
+footnote, because drift is the attackable moment (specimen: SF read
+natively as premium original AND newly as duper-of-mass-originals,
+q07 123-pt — two positions at once is itself the finding). Evidence
+base n=2 (T28 dupe-side / SF anchor-side); escalate to a findings-
+ledger cell when the full-bank pass tests it across subjects.
 
 ## The types (the writing)
 
@@ -105,6 +125,16 @@ lists, never this ledger.
 
 Demotion: an entry that gains no new source in 2 consecutive analysis
 passes is flagged stale (kept, marked; never silently dropped).
+
+Corroboration strength (owner weighting, installed 2026-07-28): within
+complaint-body evidence, 2 distinct authors is the floor and is easy to
+hit coincidentally; **3+ distinct authors is STRONG** and is the tier
+that earns priority attention; **3+ authors across distinct
+venues/subreddits is STRONGEST** and is named explicitly whenever met.
+Rungs do not change — this grades the confidence line a CI report
+attaches to a finding-grade entry. Specimen: Ole Henriksen promoted at
+3-author/1-venue (r/Sephora), upgraded to author- and venue-diverse by
+the return-leg capture (r/MakeupAddiction + Substack editorial).
 
 ## Wiring into the claims-to-complaints path (owner Q2)
 
@@ -170,6 +200,37 @@ routing decision, not something the lane edits.
   subject exposes a new mistake, add its assertion here.
 - Channel-3 emitter does not exist yet (needs the Reddit/native lane);
   the schema above is written to receive it.
+- **Durable copies (promoted 2026-07-28, owner-authorized).** The
+  instruments above now also live in the repo, because a temp-folder
+  pointer is not a durable locator and 20KB of tuned extraction
+  heuristics plus 12 dogfood-earned fixture assertions are NOT
+  reconstructible from prose:
+  `forseti-harness/runners/serp_competitor_ledger_emitter.py`,
+  `forseti-harness/runners/extract_serp_v2.py`,
+  `forseti-harness/tests/unit/test_serp_competitor_ledger_emitter.py`.
+  Same currentness rule as the docs: staging is the live working copy
+  and is ahead when the two diverge; the repo copy is the durable
+  record. Accepted residual: the two can drift — re-promote whenever an
+  emitter change lands, and treat the fixture test as the drift check.
+- `scout-dogfood10-20260728/bin/dogfood10_runner.py` — reference
+  implementation of the phase-1 loop (`select_names`,
+  `build_merged_queue`, `interleave`, plus the J5 reserve-tier trigger).
+  This one stays operator-drive-only; the rule below is the normative
+  statement, so the merged queue is reconstructible from this spec alone
+  if the code is unreachable.
+
+**Merged vs+J5 queue — generation rule (normative).** After harvest,
+select up to 2 names typed `rival`/`dupe_association`/`anchor_up`,
+ranked by ladder rung first (candidate before presence), then by
+distinct_queries descending. Emit two job lists: vs jobs
+`{subject} vs {name}` per selected name; J5 jobs `{name} price` per
+selected name PLUS one `{subject} price`. Interleave them strictly
+(vs, J5, vs, J5, …), appending the remainder when one list runs out —
+so a block or stop truncates both lanes evenly rather than losing one
+entirely. At capture time, a J5 SERP returning fewer than 3 rows with
+a `$` price in title or snippet appends one reserve job: the same
+query with `&udm=28` (Shopping tab). Selecting zero names is a valid
+outcome and emits the subject-price job only.
 
 ## Cycle installation: a scout PASS + one ordering rule (not a step)
 
@@ -237,6 +298,41 @@ delivered at that price. Two architecture types observed: hidden-floor
 (Tower 28: $28 list, refill floor ≈$17/bottle) and ladder (AeroPress:
 $40 -> $200 self-variant spread; attack the middle, not the floor).
 
+**Value doctrine (owner decision 2026-07-28).** This lane reads VALUE
+competition, not price competition, and Forseti does not help subjects
+compete on price. "Value" is deliberately left undefined in doctrine
+for now (owner call: earlier operational formulations were too anchored
+to one pilot's evidence; candidate formulations live in the calibration
+artifacts, not here). J5's response-trap and floor reads serve value
+analysis, never price advice.
+
+**Verdict-source typing (installed 2026-07-28).** Every rendered
+comparison verdict is typed by its source class at ANALYSIS time —
+editorial (listicle/affiliate outlets), community (reddit/forum),
+brand, marketplace — using the displayed_domain already in the
+extraction; no new capture and no lake storage of editorial pages.
+Editorial-vs-community DIVERGENCE is a standing per-subject line in
+the competitor read: editorial is effectively the glancer's verdict on
+`alternatives`-shape surfaces (it dominated every pilot alternatives
+SERP), community is the clicker's, and the two can point at different
+exits (Breville specimen: editorial → value clone; community →
+fix-the-complaint). Editorial-body capture (non-Google host, http
+packet) is a NAMED optional follow-through only when a dupe-door
+editorial's body holds names the ledger needs — never a standing
+corpus.
+
+**Axis-occupancy read (installed 2026-07-28, the Opalescence rule).**
+Every unmet-value-map axis carries an OCCUPANTS line: the named
+products whose rendered positioning sits on that axis ("Best for
+Sensitive Teeth" on the sensitivity axis). Vacant vs occupied is the
+entry read (entrants: enter on a vacant top axis — the Kulfi/
+Opalescence pattern, observed in 3 categories) and the incumbent
+early-warning (a NEW name appearing on the subject's #1 complaint axis
+is a headline alert, not a footnote). A rival occupying the same axis
+across 2+ subjects is an AXIS-OWNER (SKIN1004 specimen) — flag for
+category-level treatment; the full-bank pass computes the axis-owner
+table.
+
 **Default procedure — 1-2 URL captures per name, zero clicks:**
 1. Price-intent SERP ("{product} price"): shopping carousel with USD
    prices, per-unit math ($1.12/oz), Google's typical-price signal
@@ -277,23 +373,39 @@ thread queue (contrarian-titled, claim-attack, vs threads), and the
 EXISTING Reddit lane's fan-out consumes that queue alongside its other
 discovery inputs — its runner, access gate, cadence, and review
 routing already own native capture. The scout only adds a discovery
-source and a priority tag. Outputs per captured thread: composition
-read against the rendered surface (J3) and complaint-borne names
-harvested (Channel 3). Validated on Tower 28: phase 2 CHANGED the
+source and a priority tag. Queue entries carry canonical URLs at
+emission (packet provenance); owner-observed items are located
+in-session while the surface is fresh or explicitly marked deferred —
+3 of SF's 13 rotted unlocatable (installed 2026-07-28). Outputs per
+captured thread: composition read against the rendered surface (J3),
+complaint-borne names harvested (Channel 3), and — in
+comparison-titled threads — THIRD NAMES flagged (names in comments
+absent from the title; twice the highest-value find: Caliray 35-pt,
+Ole Henriksen x3; installed 2026-07-28). Validated on Tower 28: phase 2 CHANGED the
 competitor answer (community consideration set Kosas/NARS/Haus Labs vs
 SERP's Hourglass/NYX; Haus Labs and Kosas reached finding-grade only
 through phase-2/Channel-4 surface independence). Rendered snippets and
 native verdicts can disagree (vs-hourglass specimen) — the glancer
 absorbs Google's verdict, the clicker meets the community's; the gap is
-the J3 fragility measure.
+the J3 fragility measure. Consolidation states the subject's
+dupe-economy POSITION (dupe-side / anchor-side / both) with cites, and
+flags observed DRIFT — position read as moving in community narrative
+(specimen: SF read as newly duping mass originals, 123-pt). Drift is
+an attack surface: self-image lags it, competitors exploit it
+(installed 2026-07-28).
 
 **Cycle loop schedule (owner framing, 2026-07-28):** Within phase 1:
-seeds are front-loaded (mild ~1/min burst — pending the 2026-07-28
-burst-shape test verdict; sustained band otherwise); HARVEST IS LOCAL
+seeds are front-loaded (mild ~1/min burst — CLEARED 2026-07-28: 4
+captures at 60s spacing, zero blocks, `burst_test\` packets; front-load
+stays <=8 captures pending longer-burst evidence); HARVEST IS LOCAL
 COMPUTE and runs rolling as each packet lands, never queued behind
 captures; once harvest emits names, vs probes and J5 price reads are
 ONE merged capture queue at band cadence (the gate is harvest, not
 vs — J5 picks up small deltas as vs probes harvest new rivals). The
+two lanes are complementary, not merely compatible: vs-probe AIOs
+render spec denominators (ml sizes) that price SERPs omit, so the
+per-unit floor needs both lanes (Haus Labs 7ml/$32 = $4.57/ml read
+assembled across b01+b02, burst-test specimen 2026-07-28). The
 Reddit lane starts the moment the trigger-thread queue emits — it
 hits a different host, so it may run concurrently with the Google
 stream (owner-accepted 2026-07-28; block attribution is host-
@@ -302,16 +414,35 @@ specific). Return leg — SERP round 2 after fan-out consolidation:
 per name); (b) evidence-targeted probes authored FROM fan-out
 findings — narrow queries the seed grammar could not have guessed
 (entrant checks like `kulfi vs tower 28`, unmet-value-axis shapes,
-claim-attack follow-ups). Targeted probes obey the same typed-ledger
+claim-attack follow-ups); every finding-grade rival with NO captured
+head-to-head automatically earns a vs probe here (installed
+2026-07-28; motivating case SF/Ole Henriksen — promoted natively,
+never probed). Targeted probes obey the same typed-ledger
 rules, with one guard: a probed name's own echo in its targeted SERP
 bears no new ladder rung (the query was conditioned on the evidence);
 only third names and the surface's composition are new evidence.
 
-**Repo landing (owner routing):** (a) one line in the CSB
-prompt-structure spine making Section 8 consume a scout ledger when one
-exists; (b) handoff prompts add the seed-harvest-vs ordering between
-subject binding and commission authoring. Until routed, handoffs cite
-this spec directly.
+**Repo landing (owner routing) — LANDED 2026-07-28 (commit 2cc5e038).**
+(a) CSB prompt-structure Section 8 now consumes a scout ledger when one
+exists (type, rung, provenance; sub-finding-grade ships as
+`status: gap`; comparator names must trace to a harvested surface or a
+typed gap). (b) The CSB playbook's Operating Sequence step 6 routes the
+phase-1 handoff before specialist commission authoring, states why the
+seed-harvest-vs ordering is load-bearing, and makes a skipped pass a
+typed gap. Handoffs no longer need to cite this spec to be discovered —
+the cycle's own source names the pass.
+
+**Still open — the D2/D4 chain amendment.** The "Outbound (ledger →
+chain-card)" section above says the substitute cell is filled from
+finding-grade `substitute_down` + `dupe_association` entries. The
+choice-mechanism chain proposal
+(`docs/workflows/forseti_choice_mechanism_chain_design_proposal_v0.md`,
+last touched 2026-07-17/18) still describes the substitute cell being
+filled generically and knows nothing about this ledger. Until that
+amendment lands, the two documents disagree about how the cell gets its
+content and a report author following chain doctrine alone will keep
+filling it ad hoc. This is an owner routing decision on repo doctrine,
+not a lane edit.
 
 ## First-run lessons (95 probes, 74 entries, 9 candidates — 2026-07-27)
 
@@ -319,7 +450,8 @@ this spec directly.
    surface yields clean rival names in the title string itself (Delter
    Press, Nanopress, Amazon Basics, DeLonghi Magnifica, Round Lab). The
    dupe surface reliably signals the DOOR ("86 Reddit-Picked Dupes for
-   CeraVe...") but the names sit in the page body — so Channel 0 fills
+   CeraVe...") but the names sit in the page body — so existing-capture
+   harvest (Channel 0) fills
    `rival` well, while `dupe_association`/`anchor_up` mostly wait for
    organic-body or native harvest. This matches the type definitions:
    the substitute-side types are body/complaint-borne by nature.

@@ -1,0 +1,287 @@
+"""Competitor ledger emitter v0.1 (Channel 0: free-rider harvest).
+
+Harvests typed competitor candidates from already-captured SERP
+extractions — related searches, PAA, organic/video titles, AIO text.
+Types, ladder, and channels: competitor_ledger_spec_v0.md (staging).
+Presence-only signal: citing, never switching; counts of observed
+surfaces only. finding_grade is unreachable from SERP alone (needs a
+second surface class) — by design.
+
+v0.1 (Tower 28 trial lessons): brand-token subject matching (category
+words like "concealer" no longer claim the wrong side), outlet/creator
+names routed to a mediators list instead of the ledger, community
+"X or Y" pattern, imperative/use-context junk rejection.
+
+Two modes:
+  (default)          megadogfood store: run_ledger + query_bank drive
+                     subject/query per extraction; issue subjects skipped.
+  --extractions DIR --subject NAME [--subject NAME2 ...]
+                     Understanding-cycle scout mode: scan a directory of
+                     extract_serp_v2 JSONs; query comes from each packet's
+                     requested_query; harvest only the named subject(s).
+Optional --output FILE overrides the default ledger path.
+"""
+
+import argparse
+import json
+import re
+from collections import defaultdict
+from pathlib import Path
+
+ROOT = Path(r"C:\tmp\forseti-serp-megadogfood-20260727")
+
+STOP = {"the", "a", "an", "of", "for", "and", "or", "with", "my", "your",
+        "best", "top", "good", "better", "new", "review", "reviews"}
+EXCLUDE = {"sephora", "ulta", "amazon", "walmart", "target", "nordstrom",
+           "cvs", "walgreens", "costco", "boots", "reddit", "tiktok",
+           "youtube", "instagram", "facebook", "pinterest", "google",
+           "drugstore", "dupe", "dupes", "alternative", "alternatives",
+           "each other", "one", "it", "them", "other", "others", "vs"}
+# category/product words never establish subject identity on their own
+GENERIC_PRODUCT = {
+    "concealer", "cream", "sunscreen", "spray", "serum", "moisturizer",
+    "moisturizing", "cleanser", "mask", "balm", "lip", "treatment",
+    "powder", "oil", "shampoo", "conditioner", "lotion", "gel", "toner",
+    "mascara", "foundation", "lipstick", "gloss", "tint", "primer",
+    "blush", "bronzer", "spf", "press", "maker", "machine", "grinder",
+    "supplement", "greens", "ointment", "wash", "scrub", "peel", "drops",
+    "healing", "sleeping", "hydrating"}
+# use-context words: a name made only of these is a context, not an entity
+CONTEXT_GENERIC = {
+    "skin", "hair", "face", "acne", "dry", "oily", "sensitive",
+    "combination", "prone", "mature", "teen", "teens", "beginners",
+    "budget", "any", "all", "summer", "winter", "baby", "men", "women",
+    "kids", "everyday", "daily", "version", "body", "hand", "foot",
+    "eye", "night", "day"}
+
+VS_RX = re.compile(r"\s+(?:vs\.?|versus)\s+", re.I)
+OR_RX = re.compile(r"\s+or\s+", re.I)
+BETTER_RX = re.compile(r"better than\s+(.+?)(?:[?.!]|$)", re.I)
+DUPE_FOR_RX = re.compile(r"(.+?)\s+dupes?\s+for\s+(.+)", re.I)
+QUESTION_START = re.compile(
+    r"^(what|which|who|how|why|is|are|does|do|can|where|when)\b", re.I)
+IMPERATIVE_START = re.compile(
+    r"^(recommend|find|get|try|shop|discover|meet|check|see|watch|use|"
+    r"stop|buy|grab|introducing|top|best)\b", re.I)
+OUTLET_RX = re.compile(
+    r"\bon\s+(instagram|tiktok|youtube|facebook|pinterest)\b", re.I)
+
+
+def _norm(t):
+    return re.sub(r"(?<=[a-z])\d+$", "", t)  # tower28 -> tower
+
+
+def sig_tokens(s):
+    toks = {t for t in re.findall(r"[a-z0-9']+", s.lower())
+            if len(t) > 2 and t not in STOP}
+    return toks | {_norm(t) for t in toks}
+
+
+def brand_tokens(subject):
+    """Distinctive subject tokens: category/context words don't count."""
+    toks = sig_tokens(subject) - GENERIC_PRODUCT - CONTEXT_GENERIC
+    return toks or sig_tokens(subject)  # fall back for all-generic subjects
+
+
+def matches_subject(text, brand_toks):
+    return bool(sig_tokens(text) & brand_toks)
+
+
+def clean(name):
+    name = re.split(r"[:|(\[—–?]| - ", name)[0]
+    name = re.sub(r"['’]s\b", "", name)          # possessive only
+    # strip leading question words + articles (keep the noun phrase:
+    # "Is the NYX concealer a" -> "NYX concealer a"); imperatives reject
+    for _ in range(4):
+        stripped = re.sub(r"^(what|which|who|how|why|is|are|does|do|can|"
+                          r"where|when|the|a|an|this|that|these|those)\s+",
+                          "", name.strip(), flags=re.I)
+        if stripped == name.strip():
+            break
+        name = stripped
+    name = re.sub(r"\s+(reddit|review|reviews|the|a|an)$", "", name, flags=re.I)
+    name = name.strip(" .,!\"’-–—")
+    words = name.split()
+    if not (1 <= len(words) <= 6):
+        return None
+    if IMPERATIVE_START.match(name):
+        return None
+    toks = sig_tokens(name)
+    if not toks or name.lower() in EXCLUDE:
+        return None
+    if toks <= (CONTEXT_GENERIC | GENERIC_PRODUCT):
+        return None                              # pure context/category
+    return name
+
+
+def is_outlet(text):
+    return bool(OUTLET_RX.search(text))
+
+
+def pair_yield(parts, brand_toks, typ, surface, text):
+    """For a comparison split (vs/or): sides not matching the subject."""
+    matched = [matches_subject(p, brand_toks) for p in parts]
+    if not any(matched):
+        return
+    for p, m in zip(parts, matched):
+        if not m:
+            name = clean(p)
+            if name:
+                yield name, typ, surface, text
+
+
+def harvest(texts, subject, query):
+    """Yield (name, type, surface, evidence) or ('MEDIATOR', name, ...)."""
+    brand_toks = brand_tokens(subject)
+    for surface, text in texts:
+        if not text:
+            continue
+        if is_outlet(text) and matches_subject(text, brand_toks):
+            m = OUTLET_RX.search(text)
+            handle = text[:m.start()].strip(' "\u201c')
+            if 0 < len(handle.split()) <= 4:
+                yield "MEDIATOR", handle + " (" + m.group(1).lower() + ")", surface, text
+            continue                             # outlets never enter the ledger
+        parts = VS_RX.split(text)
+        if len(parts) >= 2:
+            yield from pair_yield(parts, brand_toks, "rival", surface, text)
+        elif len(text.split()) <= 12:            # short community "X or Y?"
+            parts = OR_RX.split(text)
+            if len(parts) == 2:
+                yield from pair_yield(parts, brand_toks, "rival", surface, text)
+        m = BETTER_RX.search(text)
+        if m and matches_subject(text[:m.start()], brand_toks):
+            name = clean(m.group(1))
+            if name:
+                yield name, "rival", surface, text
+        # "<Y> dupe for <X>": X≈subject → Y is dupe_association;
+        # subject on the dupe side → X is the subject's anchor_up
+        m = DUPE_FOR_RX.search(text)
+        if m:
+            left, right = m.group(1), m.group(2)
+            l_sub, r_sub = (matches_subject(left, brand_toks),
+                            matches_subject(right, brand_toks))
+            if r_sub and not l_sub:
+                name = clean(left)
+                if name:
+                    yield name, "dupe_association", surface, text
+            elif l_sub and not r_sub:
+                name = clean(right)
+                if name:
+                    yield name, "anchor_up", surface, text
+
+
+def packet_texts(pkt):
+    texts = []
+    for r in pkt["rows"]:
+        cls = ("serp_question_layer" if r["module_type"] in
+               ("people_also_ask", "related_search") else "serp_result_title")
+        texts.append((cls, r.get("title")))
+    aio = pkt.get("ai_overview") or {}
+    if aio.get("present"):
+        texts.append(("serp_aio", " ".join(
+            str(v) for v in aio.values() if isinstance(v, str))))
+    return texts
+
+
+def probes_megadogfood():
+    """(subject, category, query, texts) per eligible megadogfood probe."""
+    ledger_rows = [json.loads(l) for l in
+                   (ROOT / "run_ledger.jsonl").read_text(encoding="utf-8").splitlines()]
+    bank = json.loads((ROOT / "query_bank.json").read_text(encoding="utf-8"))
+    issue_subjects = {j["subject"] for j in bank
+                      if j["subject_maturity"] == "issue"}
+    for row in ledger_rows:
+        if row["outcome"] != "ok" or row.get("twin_of"):
+            continue
+        if row["subject"] in issue_subjects:
+            continue  # competitors are a product-subject concept (spec v0)
+        p = ROOT / "extracted_v2" / f"{row['job_id']}.json"
+        if not p.exists():
+            continue
+        pkt = json.loads(p.read_text(encoding="utf-8"))
+        yield row["subject"], row["category"], row["query"], packet_texts(pkt)
+
+
+def probes_scout(exdir, subjects):
+    """Understanding-cycle scout mode: every extraction x every subject."""
+    for p in sorted(Path(exdir).glob("*.json")):
+        pkt = json.loads(p.read_text(encoding="utf-8"))
+        query = pkt.get("requested_query") or pkt.get("rendered_query") or p.stem
+        texts = packet_texts(pkt)
+        for subject in subjects:
+            yield subject, "cycle_scout", query, texts
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--extractions", help="dir of extract_serp_v2 JSONs (scout mode)")
+    ap.add_argument("--subject", action="append", default=[],
+                    help="subject name (scout mode; repeatable)")
+    ap.add_argument("--output", help="output JSON path override")
+    args = ap.parse_args()
+
+    if args.extractions:
+        if not args.subject:
+            ap.error("--extractions requires at least one --subject")
+        probes_iter = probes_scout(args.extractions, args.subject)
+        out_path = Path(args.output) if args.output else (
+            Path(args.extractions).parent / "competitor_ledger_v0.json")
+    else:
+        probes_iter = probes_megadogfood()
+        out_path = Path(args.output) if args.output else (
+            ROOT / "analysis" / "competitor_ledger_v0.json")
+
+    entries = defaultdict(lambda: {"sources": []})
+    mediators = defaultdict(set)
+    probes = 0
+    for subject, category, query, texts in probes_iter:
+        probes += 1
+        for item in harvest(texts, subject, query):
+            if item[0] == "MEDIATOR":
+                mediators[item[1]].add(subject)
+                continue
+            name, typ, surface, evidence = item
+            key = (subject, name.lower(), typ)
+            e = entries[key]
+            e.update({"name": name, "type": typ, "subject": subject,
+                      "category": category, "seed": None})
+            src = {"surface_class": surface, "query": query,
+                   "evidence": evidence[:160]}
+            if src not in e["sources"]:
+                e["sources"].append(src)
+
+    out = []
+    for e in entries.values():
+        queries = {s["query"] for s in e["sources"]}
+        classes = {s["surface_class"] for s in e["sources"]}
+        e["distinct_queries"] = len(queries)
+        e["surface_classes"] = sorted(classes)
+        e["rung"] = "candidate" if len(queries) >= 2 else "presence"
+        out.append(e)
+    out.sort(key=lambda e: (-e["distinct_queries"], e["subject"], e["name"]))
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        json.dumps({"probes_scanned": probes, "entries": out,
+                    "mediators": {k: sorted(v) for k, v in
+                                  sorted(mediators.items())}},
+                   indent=1, ensure_ascii=False), encoding="utf-8")
+
+    n_cand = sum(1 for e in out if e["rung"] == "candidate")
+    print(f"probes scanned: {probes}; entries: {len(out)} "
+          f"({n_cand} candidate, {len(out) - n_cand} presence); "
+          f"mediators routed: {len(mediators)} -> {out_path}")
+    by_type = defaultdict(int)
+    for e in out:
+        by_type[e["type"]] += 1
+    print("by type:", dict(by_type))
+    print("\n=== candidates (2+ distinct queries) ===")
+    for e in out:
+        if e["rung"] == "candidate":
+            print(f"  {e['subject']:<28} {e['type']:<17} {e['name']:<30} "
+                  f"q={e['distinct_queries']}")
+
+
+if __name__ == "__main__":
+    main()

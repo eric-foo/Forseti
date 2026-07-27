@@ -1286,7 +1286,12 @@ Chain rules (conclusion-writing guidance; no other durable structure):
 
 Use bounded comparator pointers only where they interpret the subject. Cite
 observation IDs, contradictions, and gaps. State that deep competitor treatment
-requires a separately named follow-up commission. Collect defensibility raw
+requires a separately named follow-up commission. When a SERP scout ledger
+exists for this subject (produced by the phase-1 scout pass the playbook's
+Operating Sequence routes), consume it here rather than re-deriving comparators:
+carry each entry's type, ladder rung, and provenance, and ship rungs below
+finding-grade as `status: gap`. Comparator names must trace to a harvested
+surface or a typed gap — never to an unsourced prior. Collect defensibility raw
 material where visible — comparator claims language, substitution economics,
 price gaps, claims parity — as bounded observations only; the defensibility
 judgment itself belongs to the downstream adjudication layer, never this
