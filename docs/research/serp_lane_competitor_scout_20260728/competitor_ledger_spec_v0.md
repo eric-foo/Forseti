@@ -298,6 +298,41 @@ delivered at that price. Two architecture types observed: hidden-floor
 (Tower 28: $28 list, refill floor ≈$17/bottle) and ladder (AeroPress:
 $40 -> $200 self-variant spread; attack the middle, not the floor).
 
+**Value doctrine (owner decision 2026-07-28).** This lane reads VALUE
+competition, not price competition, and Forseti does not help subjects
+compete on price. "Value" is deliberately left undefined in doctrine
+for now (owner call: earlier operational formulations were too anchored
+to one pilot's evidence; candidate formulations live in the calibration
+artifacts, not here). J5's response-trap and floor reads serve value
+analysis, never price advice.
+
+**Verdict-source typing (installed 2026-07-28).** Every rendered
+comparison verdict is typed by its source class at ANALYSIS time —
+editorial (listicle/affiliate outlets), community (reddit/forum),
+brand, marketplace — using the displayed_domain already in the
+extraction; no new capture and no lake storage of editorial pages.
+Editorial-vs-community DIVERGENCE is a standing per-subject line in
+the competitor read: editorial is effectively the glancer's verdict on
+`alternatives`-shape surfaces (it dominated every pilot alternatives
+SERP), community is the clicker's, and the two can point at different
+exits (Breville specimen: editorial → value clone; community →
+fix-the-complaint). Editorial-body capture (non-Google host, http
+packet) is a NAMED optional follow-through only when a dupe-door
+editorial's body holds names the ledger needs — never a standing
+corpus.
+
+**Axis-occupancy read (installed 2026-07-28, the Opalescence rule).**
+Every unmet-value-map axis carries an OCCUPANTS line: the named
+products whose rendered positioning sits on that axis ("Best for
+Sensitive Teeth" on the sensitivity axis). Vacant vs occupied is the
+entry read (entrants: enter on a vacant top axis — the Kulfi/
+Opalescence pattern, observed in 3 categories) and the incumbent
+early-warning (a NEW name appearing on the subject's #1 complaint axis
+is a headline alert, not a footnote). A rival occupying the same axis
+across 2+ subjects is an AXIS-OWNER (SKIN1004 specimen) — flag for
+category-level treatment; the full-bank pass computes the axis-owner
+table.
+
 **Default procedure — 1-2 URL captures per name, zero clicks:**
 1. Price-intent SERP ("{product} price"): shopping carousel with USD
    prices, per-unit math ($1.12/oz), Google's typical-price signal
@@ -387,11 +422,27 @@ rules, with one guard: a probed name's own echo in its targeted SERP
 bears no new ladder rung (the query was conditioned on the evidence);
 only third names and the surface's composition are new evidence.
 
-**Repo landing (owner routing):** (a) one line in the CSB
-prompt-structure spine making Section 8 consume a scout ledger when one
-exists; (b) handoff prompts add the seed-harvest-vs ordering between
-subject binding and commission authoring. Until routed, handoffs cite
-this spec directly.
+**Repo landing (owner routing) — LANDED 2026-07-28 (commit 2cc5e038).**
+(a) CSB prompt-structure Section 8 now consumes a scout ledger when one
+exists (type, rung, provenance; sub-finding-grade ships as
+`status: gap`; comparator names must trace to a harvested surface or a
+typed gap). (b) The CSB playbook's Operating Sequence step 6 routes the
+phase-1 handoff before specialist commission authoring, states why the
+seed-harvest-vs ordering is load-bearing, and makes a skipped pass a
+typed gap. Handoffs no longer need to cite this spec to be discovered —
+the cycle's own source names the pass.
+
+**Still open — the D2/D4 chain amendment.** The "Outbound (ledger →
+chain-card)" section above says the substitute cell is filled from
+finding-grade `substitute_down` + `dupe_association` entries. The
+choice-mechanism chain proposal
+(`docs/workflows/forseti_choice_mechanism_chain_design_proposal_v0.md`,
+last touched 2026-07-17/18) still describes the substitute cell being
+filled generically and knows nothing about this ledger. Until that
+amendment lands, the two documents disagree about how the cell gets its
+content and a report author following chain doctrine alone will keep
+filling it ad hoc. This is an owner routing decision on repo doctrine,
+not a lane edit.
 
 ## First-run lessons (95 probes, 74 entries, 9 candidates — 2026-07-27)
 
