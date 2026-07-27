@@ -23,6 +23,12 @@ the operator drive): `C:\tmp\forseti-serp-megadogfood-20260727\`
 PDP captures), `C:\tmp\forseti-tower28-reddit-20260728\` (14 native
 thread packets + composition read).
 
+Phase-2 execution records (promoted from operator staging 2026-07-28
+after an audit found them durable-only on the operator drive):
+`tower28_phase2_native_return_v0.md` and
+`summer_fridays_phase2_native_return_v0.md`. Egress-shape evidence for
+capture cadence: `serp_lane_egress_shape_evidence_v0.md`.
+
 Reading order: `serp_lane_v0.md` (entry point / findings ledger) ->
 `competitor_ledger_spec_v0.md` (types, ladder, cycle installation,
 J1-J5) -> `deliver_note_repair_room_retention_v0.md` ->
