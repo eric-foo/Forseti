@@ -373,13 +373,15 @@ the pane either. No CAPTCHA was encountered. Cost/benefit is decisively
 negative: ~30 human-rate interactions plus challenge risk for one integer
 already implied by the card's "N ads use this creative" text.
 
-**Per-market corpora are genuinely distinct.** IT (11 ads) and FR (11 ads)
-share **zero library IDs**. Each EU country view is its own corpus, not a
-re-slice of one EU set — so market breadth, not per-ad depth, is where
+| E9 | `01KYH9AAY83W1FDQFCYFGS0PTQ` | `country=ES`, `active_status=all`, 25-pass exhaustion | **14 unique IDs** of "~16" declared, footer-terminal, Active/Inactive mix with EU-transparency date ranges. Captured by a second cold receiver validating the patched route card. |
+
+**Per-market corpora are genuinely distinct.** FR (11), IT (11), and ES (14)
+share **zero library IDs pairwise**. Each EU country view is its own corpus,
+not a re-slice of one EU set — so market breadth, not per-ad depth, is where
 remaining value sits (~25 scroll passes per additional country).
 
-Deferred (not performed): typed projection of E1/E5/E8 rows, EU countries
-beyond DE/FR/IT, media-asset preservation.
+Deferred (not performed): typed projection of E1/E5/E8/E9 rows, EU countries
+beyond DE/FR/IT/ES, media-asset preservation.
 
 ## 14. Supersession Of A Parallel Return At This Path
 

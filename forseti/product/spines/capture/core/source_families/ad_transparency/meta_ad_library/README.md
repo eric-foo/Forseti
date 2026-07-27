@@ -223,5 +223,19 @@ run parameters, Meta rewrite behavior, `Library ID:` anchor, and exhaustion
 criterion all held as written. Its audit produced the PowerShell command block,
 the `--data-root` / `--source-surface` / `--decision-question` authoring notes,
 the declared-count extraction recipe, and the correction to false-diagnosis #7
-now present above. **Per-market counts are genuinely per-market**: IT and FR
-each return 11 distinct ads with zero overlap.
+now present above.
+
+**Second cold-receiver validation of the patched card, 2026-07-26.** Because
+the first receiver's audit *produced* the fixes above, the patched card was
+re-tested by a different cold receiver on an unprobed market (`country=ES`),
+barred from consulting prior packets or manifests. It built a working command
+**first try with no failures**, ran the Step 3 verification snippet unmodified,
+and returned packet `01KYH9AAY83W1FDQFCYFGS0PTQ`: 14 unique IDs against "~16
+results", footer-terminal, manifest hashes verified. Asked whether the card
+alone was sufficient, it answered yes with no outstanding defects. The
+authoring notes added after the first run were the specific reason it did not
+need to inspect prior packets to phrase arguments.
+
+**Per-market corpora are genuinely distinct.** FR (11), IT (11), and ES (14)
+share **zero library IDs** pairwise. Each country view is its own corpus, not a
+re-slice of one EU set.
