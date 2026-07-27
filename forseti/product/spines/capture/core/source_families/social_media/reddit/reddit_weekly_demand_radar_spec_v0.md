@@ -1,4 +1,4 @@
-# Reddit Weekly Demand Radar Spec (Proposal v0)
+# Reddit Weekly Demand Radar Spec v0
 
 ```yaml
 retrieval_header_version: 1
@@ -6,16 +6,17 @@ artifact_role: source_capture_family_architecture_contract
 scope: >
   Evidence-layer spec for the weekly Reddit demand radar: one top/?t=week
   listing capture per tracked subreddit (project-default, sampled raw), lake
-  registry coupling, agent-written reach observations, and the density-gated
+  registry coupling, agent-written reach observations, and the listing-policy-gated
   thread deep-dive that feeds problem briefs. Owns the weekly method's
   parameters and their empirical basis; does not own analysis or brief format.
 use_when:
   - Implementing or reviewing the weekly top/week capture runner, its
     materializer coupling, or the observe verb.
-  - Changing listing depth, retention mode, density gate, or dive gate.
+  - Changing listing depth, retention mode, listing review, or dive gate.
   - Onboarding reach observations for new roster subreddits.
 authority_boundary: retrieval_only
 open_next:
+  - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_listing_efficiency_policy_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_radar_grid_capture_maintenance_design_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_subreddit_registry_spec_v0.md
   - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_subreddit_registry_lake_cutover_architecture_v0.md
@@ -25,24 +26,27 @@ stale_if:
   - The radar grid design changes the declared per-subreddit page bound.
   - Reddit's old-web listing markup drops the data-* machine attributes this
     method projects from.
-  - The evidence-layer decisions below are implemented and ratified (this
-    proposal becomes the record or is superseded).
+  - The owner changes the commission frame, universal engagement floor, or
+    model-adjudication boundary.
 ```
 
 ## Status
 
-`IMPLEMENTED — DOGFOOD-REFINED 2026-07-24`. The engagement-head plus title-tail
-selection landed in PR #1319. A subsequent 30-slot lower-tail dogfood retained
-the head and rotating audit while tightening title rescue so generic questions,
-routines, hauls, and discussion flairs no longer route capture by themselves.
+`IMPLEMENTED — OWNER-RECALIBRATED 2026-07-28`. The former engagement-head,
+title-rescue, and rotating-tail rule landed in PR #1319 and was then superseded
+after owner calibration plus a full-corpus application. The reader now produces
+a fail-closed listing-review queue governed by
+`reddit_listing_efficiency_policy_v0.md`; it does not authorize capture.
 
 ## Goal binding
 
-Surface latent problems a company could tackle (GTM + CI), by mining weekly
-consolidated traction on tracked subreddits. The evidence layer captures and
-ledgers; judgment (thread selection beyond the gate, brief writing) stays
-human/agent work outside this spec. Condensed judgment packs are a later,
-separate layer; nothing here persists analysis output to the lake.
+Surface decision-changing evidence a scaling challenger could use for GTM and
+CI while spending exact-thread reads where expected contribution is highest.
+The evidence layer captures and ledgers; commission-conditioned selection and
+brief writing stay model/agent work outside the neutral lake. Title keywords
+may describe visible context but never substitute for that judgment. Condensed
+judgment packs are a later, separate layer; nothing here persists analysis
+output to the lake.
 
 ## Empirical basis (2026-07-22 packets, r/30PlusSkinCare unless noted)
 
@@ -134,26 +138,27 @@ separate layer; nothing here persists analysis output to the lake.
 - The selection pool is every non-stickied, non-promoted listing row with
   parseable score and comment count. Listing evidence remains preserved whether
   or not a thread is selected.
-- Within each subreddit, rank by comments descending, then score descending,
-  then thread URL. Select the top half (rounding up) unconditionally.
-- In the lower half, compute a transparent title-rescue score. Pain/failure,
-  praise/success, comparison/choice, experience/outcome, or review/update earns
-  2 points. A generic question, routine, haul, recommendation, or discussion
-  signal earns 1 point. Concrete listing-visible product/ingredient, technique,
-  price/value, or variant/constraint context adds 1 point.
-- At 1+ listing comments, rescue a title scoring at least 2. At zero comments,
-  require 3 points so a thread with no observed discussion carries both a
-  strong signal and concrete context. These signals route capture only; they
-  are not proof of pain, praise, causation, prevalence, or entity involvement.
-- From every remaining lower-tail row, select one deterministic rotating 10%
-  audit sample, rounded up with a minimum of one when that tail is non-empty.
-  Preserve `opaque_tail_audit` for genuinely opaque titles and
-  `weak_signal_tail_audit` for listing-visible signals that did not clear the
-  rescue gate. The weekly date, subreddit, and thread URL seed the rotation.
-- Emit both the selected rows with their selection reason and a
-  `run_reddit_old_http_batch.py`-compatible capture list. The weekly output
-  always states eligible threads versus selected threads and reason counts; no
-  silent truncation.
+- Apply only the stable mechanical floor in code. A fresh visible count of
+  0–3 comments is suppressed from the general deep-dive queue. A fresh visible
+  count of 4+ comments enters model review. A zero or negative score is not a
+  veto, and an absent/unparseable comment or score cell is recorded as
+  unparsed, never coerced to zero.
+- Rank review rows within each subreddit by comments descending, then score
+  descending, then thread URL. Expose title-signal class, listing-visible
+  context reasons, and context sufficiency as non-binding review cues. Do not
+  calculate a numeric title-rescue score or auto-select an engagement head.
+- The model applies the governing policy in
+  `reddit_listing_efficiency_policy_v0.md` against a named Decision Frame and
+  records `yes`, `borderline`, or `no` plus reason codes and priority.
+  Opaque/deictic/image-dependent rows remain `borderline` until a cheap
+  listing-level preview resolves the missing context; opacity is a reason, not
+  a fourth disposition.
+- Only a recorded `yes` may become a
+  `run_reddit_old_http_batch.py`-compatible capture slot. The weekly reader
+  emits `capture_slots=[]` and
+  `capture_list_status=blocked_pending_commission_model_adjudication`.
+  Its `--capture-list-output` option fails loudly while that status holds.
+  This prevents a mechanical shortlist from masquerading as authorization.
 - Once selected, capture the complete exposed thread and analyse all captured
   comments. Comment points order evidence for presentation; they are not a
   within-thread stopping rule. Record explicitly named brands, products, and
@@ -243,11 +248,15 @@ automatically because the runner reads `--roster` from the fold.
   rules (rotating sample selection, anomaly triggers); materializer surface
   stamping for both listings; projection fields (timestamp, stickied, flair)
   against a stored fixture page.
+- Reader policy: verify `0–3` comments are omitted from the model-review queue,
+  exactly four comments enter it, score zero does not veto, listing cues remain
+  non-binding, `capture_slots` stays empty, and `--capture-list-output` fails
+  closed before writing.
 - Live dogfood in the implementing session: backfill the six observations via
   observe and read them back from the fold; run one real top_week roster pass;
   confirm ledger lines (observation + capture_state) for every roster
-  subreddit; run the reader over the pass output and confirm the candidate
-  list and floor tripwire emit.
+  subreddit; run the reader over the pass output and confirm the review queue,
+  general-floor counts, blocked capture status, and floor tripwire emit.
 - Flair caveat carried honestly: flair extraction returned zero on the
   30PlusSkinCare test page and is unverified against a page known to carry
   flairs; the fixture for the projection test must be a SkincareAddiction page

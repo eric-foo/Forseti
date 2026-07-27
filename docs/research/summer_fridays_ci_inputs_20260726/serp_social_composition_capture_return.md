@@ -41,11 +41,17 @@ brand cards appear at a count of 1–3 per query on every query where they appea
 at all. That is a mediation observation about this captured surface, not a
 market measurement.
 
-Platform-native follow-through verified three selected YouTube items and
-preserved typed blockers for the selected TikTok and Instagram routes. The
-YouTube packets verify source identity and source-native framing; they do not
-turn creator or retailer statements into product truth. The platform outcomes
-and route blockers are recorded in sections 10–12.
+Platform-native follow-through selected eighteen items under the six-per-platform
+cap and verified **fifteen**: six YouTube, six Instagram, and three of six
+TikTok. The three unverified TikTok items carry a typed route blocker. Platform
+packets verify source identity and source-native framing; they do not turn
+creator or retailer statements into product truth. The platform outcomes and
+route blockers are recorded in sections 10–12.
+
+Native verification already contradicts Google's rendering in two places: a
+YouTube video Google attributed to one channel is natively published by another,
+and Google's displayed follower count for the official Instagram account differs
+materially from the natively displayed one. Both are recorded in section 12.
 
 **US-parameterized is not physically US-local.**
 
@@ -253,8 +259,9 @@ support a claim about the brand's actual search performance.
 
 ## 9. AI Overview And Google Synthesis
 
-AI Overview was present on **6 of 14** captured queries: jobs 4, 5, 6, 9, 10 and
-(per module detection) not on the `site:`-restricted or most portfolio queries.
+AI Overview was present on **5 of 14** captured queries — jobs 4, 5, 6, 9, and
+10 — and (per module detection) not on the `site:`-restricted or most portfolio
+queries.
 
 Cited-source labels visible in the AI Overview panels, by job:
 
@@ -279,34 +286,82 @@ expose by name in the rendered surface.
 
 ## 10. Native Follow-Through Selection Ledger
 
-**Status: partial by source, contract-complete.** Three selected YouTube items
-were captured natively. The selected TikTok and Instagram items have typed
-pre-source blockers; their Google rows remain discovery/mediation evidence only.
-The cap remains six items per platform.
+**Status: executed. 15 of 18 selected items verified**, within the six-per-platform
+cap. Selection was deliberately deferred until the whole board was captured,
+because the handoff requires selecting by decision leverage rather than rank, and
+leverage is only assessable against the complete field.
 
 Candidates with source-visible canonical URLs: **Instagram 44, YouTube 27,
 TikTok 27**.
 
-Selection and outcome ledger:
+### YouTube — 6 of 6 verified
 
-| Platform | Selected item | Leverage rationale | Native outcome |
-| --- | --- | --- | --- |
-| Instagram | `instagram.com/summerfridays/` | official identity anchor | **Blocked before source access.** A separate `chowdakr_sg_instagram` state was required; the permitted manual-login bootstrap could not be launched with its required visible helper terminal in this execution environment. No TikTok state was reused and no Instagram auth state was created. |
-| TikTok | `@marinabarnoo/video/7381649202134207786` | specific Lip Butter Balm burning/reaction claim from job 6 | **Blocked before source access.** `chowdakr_sg_tiktok` validated, but resolves to `chrome_cdp`; the packet runner rejects non-CloakBrowser backends as diagnostic-only and forbids the diagnostic override with a session profile. |
-| TikTok | `@alejayofficial/video/7531929760675466526` | visible e.l.f. price-comparison mechanic | **Blocked by the same Chowdakr/backend admission mismatch.** |
-| TikTok | `@jess.einaudi/video/7427497483489561902` | Rhode competitor pair surfaced independently | **Blocked by the same Chowdakr/backend admission mismatch.** |
-| TikTok | `@marewiththehair/video/7482167773292989727` | dominant Laneige comparison pairing | **Blocked by the same Chowdakr/backend admission mismatch.** |
-| YouTube | Holly Ward, `aJNT3Mo6hHg` | Lip Butter Balm range review cited inside Google's job-5 synthesis | **Verified** by packet `01KYF0S4G76GFXC2NB7PQBKCJK`: playable, Holly Ward channel identity, title/description preserve range-review framing, 2,715 observed views, 32 observed likes, and 4 sampled comments from 2 pages. The description also preserves a Summer Fridays discount-code mechanic. |
-| YouTube | Space NK, `5s1fZlH22dM` | retailer-operated Flushed Lip Stain review; under-covered family | **Verified** by packet `01KYF0SJBF7V8WCXH1BYG446SF`: playable, Space NK channel identity, title preserves a six-hour wear-review framing, 3,807 observed views, 47 observed likes, and 1 sampled comment. |
-| YouTube | Gorgeously Aging, `mPjJwVDTrjE` | independent Sheer Skin Tint review; under-covered family | **Verified** by packet `01KYF0SNVTX99FKCFGBPW3DMZV`: playable, Gorgeously Aging channel identity, title and creator-pinned comment preserve the light-coverage/hydration/oily-skin qualification, 456 observed views, 8 observed likes, and 1 sampled comment. |
+| Selected item | Leverage rationale | Native outcome |
+| --- | --- | --- |
+| Holly Ward, `aJNT3Mo6hHg` | full Lip Butter Balm range review **cited inside Google's job-5 AI Overview** | Verified, packet `01KYF16WDMEJK6KFTV0C7NVX0X`: playable, channel identity Holly Ward, 32 likes, 3 sampled comments, more continuation remaining |
+| NATALIE SANTINI, `qf--43DCmxI` | brand-level skincare critique **cited inside Google's job-4 AI Overview** | Verified, packet `01KYF1774WDMJ8ER987MRZB4VC`: playable, 29 likes; comments **not exposed** by the source |
+| Space NK, `5s1fZlH22dM` | retailer-operated creator review; under-covered Flushed Lip Stain family | Verified, packet `01KYF17HSKSESTVKF96SS59DBC`: playable, 47 likes, 1 sampled comment |
+| Gorgeously Aging, `mPjJwVDTrjE` | independent Sheer Skin Tint review; under-covered family | Verified, packet `01KYF17X8Y4QF40FN0C0491V5W`: playable, 8 likes, 1 sampled comment; title directs the review to a pinned comment |
+| Hannah Fosbenner, `18h0qZjEb24` | body/fragrance family, which had 24 cards on job 12 but no other native coverage | Verified, packet `01KYF18848KKB7CNDN73VWH9BV`: playable, 747 likes — the highest observed of the six — 4 sampled comments |
+| `PW6fITp2D6M` | lip oil family; only lip-oil item with visible engagement | Verified, packet `01KYF18JDY5HPVB6SQ8ZBCTFBW`: playable, 36 likes, 3 sampled comments. **Native channel is Monica Villegas, not the Holly Ward attribution Google displayed** (section 12) |
 
-The YouTube route retains selected source-visible metadata and bounded comments,
-not video bytes, complete comment graphs, transcripts, or the enclosing served
-responses. Counts are capture-time observations, not popularity comparisons.
+Three additional YouTube packets for `aJNT3Mo6hHg`, `5s1fZlH22dM`, and
+`mPjJwVDTrjE` (`01KYF0S4G76GFXC2NB7PQBKCJK`, `01KYF0SJBF7V8WCXH1BYG446SF`,
+`01KYF0SNVTX99FKCFGBPW3DMZV`) were written into this lake by an earlier Stage 2
+attempt at 10:50–10:51Z, before the run above. They are retained as independent
+duplicate observations of the same three videos and are not counted again
+against the cap.
+
+### Instagram — 6 of 6 verified
+
+| Selected item | Leverage rationale | Native outcome |
+| --- | --- | --- |
+| `instagram.com/summerfridays/` | official identity anchor | Verified, packet `01KYF1RQRX0M3KM2K2BKGDNV6G`: native profile stats (followers `1M`, following `13`, posts `2,887`) and 12 enumerated posts with captions and dates, including a Body Collection dated August 6th. Likes and comments **gated logged-out** |
+| `DXXkXRUErYL` — Painted by James Cha | lip-balm caution claim from the job-6 burning/reaction query | Verified, packet `01KYF36Y3SH7N5C5NQBSB0DREA`: 15 native audience-comment rows |
+| `DaWFSnghjDh` — katerina | product-return signal for Strawberry Soft Serve | Verified, packet `01KYF39053AMFJXPBGXYHKJCVG`: 8 native audience-comment rows |
+| `DbJdfWwShRw` — Theresa Krug | new-product discovery framing | Verified, packet `01KYF37MS7JQKKWTMQW1VZFVJ6`: 3 native audience-comment rows |
+| `DatAlIDvo83` — Theresa Krug | dupe / look-alike comparison mechanic | Verified, packet `01KYF38BCE86XHP7X3XX3G6NR1`: 1 native audience-comment row |
+| `DY5pIkozIVx` — E.K. Blair | shade-specific Lip Butter Balm praise | Verified, packet `01KYF39N481AYFF49H9AMW0Y9X`: 1 native audience-comment row |
+
+The reel route also writes silver record-sets under `derived/` in lanes
+`silver__capture__audience_comments` and
+`silver__capture__reel_deep_capture__set`, keyed by reel shortcode.
+
+### TikTok — 3 of 6 verified
+
+| Selected item | Leverage rationale | Native outcome |
+| --- | --- | --- |
+| `@marinabarnoo/video/7381649202134207786` | specific shade-level burning claim from job 6 | Verified, packet `01KYF1X0V8TTNZ9KH718V1CTJ8`: 20 captured comments from a 77-comment envelope, 0 challenges |
+| `@melisdoesmakeup/video/7537429735865978125` | Sheer Skin Tint review; under-covered family | Verified, packet `01KYF20WYRDWHNYT7A5R34KBR3`: 20 captured comments from a 79-comment envelope, 0 challenges |
+| `@marewiththehair/video/7482167773292989727` | dominant Laneige comparison pairing | Verified, packet `01KYF1ZSXCM9QBVRABM3SKV0KN`: 6 captured comments from an 11-comment envelope, 0 challenges |
+| `@alejayofficial/video/7531929760675466526` | e.l.f. price-comparison mechanic | **Blocked** — `comment_route_zero_yield` |
+| `@jess.einaudi/video/7427497483489561902` | Rhode competitor pair | **Blocked** — `comment_route_zero_yield` |
+| `@summerfridays/video/7612803296675286302` | official brand framing of the fragrance line | **Blocked** — `comment_route_zero_yield` |
+
+The three TikTok blockers are the same typed class: the comment panel returned
+zero responses, so the runner refused to admit an empty packet. No challenge
+marker was seen, no ban or auth wall was hit, and no challenge was dismissed or
+solved. Subtitles were unavailable on every TikTok item
+(`no_subtitle_url_in_hydration_v0`).
+
+### Route posture and rejections
+
+All three platforms were captured **public and logged-out**. No session,
+cookie, or auth state was created, reused, or persisted. These are public
+creator videos and profiles, not the bounded TikTok Shop US surface, so the
+`tiktok_capture_lane_spec_v0` US egress gate does not apply to them; the Shop
+gate remains in force for any future Shop access (section 12).
 
 Rejection reasoning to preserve: rank alone was not used; official brand
-re-posts of the same asset were treated as one identity item; and the
-VaynerMedia Instagram result was rejected as an entity mismatch (section 12).
+re-posts of the same asset were treated as one identity item; duplicate
+candidate URLs were collapsed; the Julia Amory Instagram reel was rejected as
+probable workplace-concept ambiguity; and the VaynerMedia Instagram result was
+rejected as an entity mismatch (section 12).
+
+Retention limits: the YouTube route retains selected source-visible metadata and
+bounded comments, not video bytes, complete comment graphs, or enclosing served
+responses. TikTok comment bodies are **sanitized at admission**, not stored as
+raw text. Counts are capture-time observations, not popularity comparisons.
 
 ## 11. Independent-Source And Dependency Ledger
 
@@ -316,17 +371,27 @@ Every extracted card carries a dependency label:
   composed. Applies to organic, retailer, and publisher cards.
 - `google_synthesis_only` — AI Overview, People Also Ask, related searches.
   Google-authored; not evidence of any underlying source.
-- `platform_native_unverified` — a TikTok/Instagram/YouTube card observed only
-  as a Google-indexed result. This remains the default for unselected social
-  rows; the snippet is Google's rendering, which may be stale or partial.
-- `platform_native_verified` — the three selected YouTube rows in section 10,
-  each bound to its platform packet.
-- `platform_native_blocked` — the selected Instagram identity row and four
-  selected TikTok rows in section 10.
+- `platform_native_unverified` — a TikTok/Instagram/YouTube card observed only as
+  a Google-indexed result. This remains the default for every social row not
+  selected into section 10; the snippet is Google's rendering, which may be stale
+  or partial.
+- `platform_native_verified` — the 15 selected rows in section 10 (6 YouTube,
+  6 Instagram, 3 TikTok), each bound to its platform packet ID.
+- `platform_native_blocked` — the 3 TikTok rows that returned
+  `comment_route_zero_yield`.
 
-Only the YouTube items' source identity and retained source-native framing are
-verified. Their product statements are attributed source claims, not product
-truth. No TikTok or Instagram content claim is verified.
+What verification does and does not establish. For the 15 verified rows, what is
+verified is **source identity, source-native framing, and the source-visible
+engagement and comment state at capture time** — that the account, the item, and
+its native wording are what Google pointed at. Their product statements remain
+**attributed source claims, not product truth**. A creator saying a shade burns
+their lips is verified as that creator's native statement, not as an established
+product property. The distinction is load-bearing for the Deliver join.
+
+Comment coverage is bounded by design and is not a census: YouTube retained 0–4
+sampled comments per item with continuation remaining on two; Instagram retained
+1–15 rendered rows per reel; TikTok retained 20, 20, and 6 comments against
+envelopes of 77, 79, and 11.
 
 ## 12. Failures, Omissions, Quiet Leads, And Misleading Matches
 
@@ -353,6 +418,32 @@ bounded selected comment rows.
 scheduling concept, not the brand. Retained as a typed misleading match, excluded
 from brand mediation reasoning.
 
+**Google-versus-native discrepancies found by follow-through.** Two, both
+material enough to affect a Deliver join that trusted the SERP row:
+
+1. **Creator attribution.** Google displayed YouTube video `PW6fITp2D6M`
+   ("Summer Fridays Dream Lip Oil Review") under the creator label *Holly Ward*.
+   The native watch packet `01KYF18JDY5HPVB6SQ8ZBCTFBW` reports the publishing
+   channel as **Monica Villegas**. Any creator-level rollup built from the SERP
+   row alone would have mis-attributed this item.
+2. **Follower count.** Google displayed the official Instagram account at
+   *1.5M+ followers*. The native profile packet `01KYF1RQRX0M3KM2K2BKGDNV6G`
+   shows Instagram's own displayed stat as **`1M`**. Both figures are rounded by
+   their respective surfaces, so neither is precise, but they disagree materially
+   and the native figure is the lower one.
+
+**TikTok comment-route zero yield.** Three of six selected TikTok items returned
+no comment responses, so no packet was admitted. This is a route-yield outcome,
+not an access denial: no challenge marker, ban, or auth wall was observed, and no
+challenge was dismissed or solved. Their SERP rows stay
+`platform_native_blocked` and remain discovery/mediation evidence only.
+
+**Optional-dependency provisioning.** The Instagram reel deep-capture route hard
+-fails without the harness's declared `transcribe` extra, even when only captions
+and comments are needed. `yt-dlp` and `faster-whisper` were installed to the
+local environment to unblock the five reels, on explicit owner approval. No
+repository runtime code was modified.
+
 **Stage 2 blocker — TikTok Shop US egress gate.** Commit `878c263b` added a gate
 to `tiktok_capture_lane_spec_v0.md` requiring the browser context to freshly
 observe US country egress before **each** access session to the bounded TikTok
@@ -362,25 +453,19 @@ fresh egress observation and, absent US egress, must stop. The egress check
 recorded in section 2 does **not** satisfy that gate: it is a different session
 and a different surface.
 
-**Selected TikTok blocker — Chowdakr/backend admission mismatch.**
-`check_source_capture_session_profile.py --session-profile
-chowdakr_sg_tiktok` passed with validated auth state, `chrome_cdp`, a configured
-persistent profile, required `no_proxy_profile_loaded` posture, and no exposed
-secret values. The current arbitrary-video packet runner then failed closed
-before browser launch: its packet-grade guard accepts CloakBrowser only, while
-session-profile mode supplies `chrome_cdp` and prohibits the diagnostic-backend
-override. No TikTok page was contacted and no packet was admitted. This is a
-runner/profile compatibility blocker, not evidence that any selected item is
-unavailable.
+**Superseded blockers from the earlier Stage 2 attempt.** An earlier attempt in
+this same lake pursued *sessioned* TikTok and Instagram routes and failed closed
+on environment-specific grounds: the TikTok packet runner accepts a CloakBrowser
+backend only while the session profile supplied `chrome_cdp`, and the Instagram
+manual-login bootstrap could not launch its required visible helper process. No
+credentials were entered and no auth state was written in that attempt.
 
-**Selected Instagram blocker — manual-login bootstrap boundary.** No registered
-Instagram state existed. The separate labels `chowdakr_sg_instagram` and
-`chowdakr_sg_instagram_cloak_v1` were reserved conceptually; TikTok state was
-not reused. The current bootstrap requires a visible browser plus a human Enter
-signal after login, but this execution environment blocked launching the
-required visible helper process before browser start. No credentials were
-entered, no Instagram auth state was written, and the official profile was not
-claimed as natively verified.
+Those blockers are **superseded, not resolved**. The run recorded in section 10
+did not need them: it used the **public logged-out** routes on all three
+platforms, which require no session, cookie, or auth state. The sessioned routes
+remain unproven in this environment, which matters only for surfaces that
+genuinely require entitlement — logged-out Instagram engagement counts, for
+example, stayed gated (section 10).
 
 **Quiet leads.** Cloud Dew and Rich Cushion (job 11) drew the highest
 other-publisher count on the board (13) with only 4 creator-social cards — an
@@ -389,10 +474,23 @@ inverted mediation shape versus every other product query. Not interpreted here.
 ## 13. Source Evidence Bundle
 
 **New composition lake:** `C:\tmp\forseti-sf-serp-social-composition-20260726\data`
-(root UUID recorded in `.forseti-data-root`, lake epoch v4.1). 18 packets:
-1 egress observation + 14 CloakBrowser SERP packets + 3 YouTube native packets.
+(root UUID recorded in `.forseti-data-root`, lake epoch v4.1). **33 raw packets**:
+
+| Group | Count |
+| --- | --- |
+| Network egress observation | 1 |
+| CloakBrowser SERP packets (board jobs 2–15) | 14 |
+| YouTube watch packets (this run) | 6 |
+| YouTube watch packets (earlier Stage 2 attempt, duplicate observations) | 3 |
+| Instagram official profile packet | 1 |
+| Instagram reel deep-capture packets | 5 |
+| TikTok creator batch admission packets | 3 |
+
 SERP packet IDs are listed per job in section 4; the egress packet is
-`01KYEZGMDV4EVD39Z6KTPE2Z8F`; YouTube packet IDs are listed in section 10.
+`01KYEZGMDV4EVD39Z6KTPE2Z8F`; all platform packet IDs are listed in section 10.
+The Instagram reel route additionally writes silver record-sets under `derived/`
+in the `silver__capture__audience_comments` and
+`silver__capture__reel_deep_capture__set` lanes, keyed by reel shortcode.
 
 **Existing discovery lake:** `C:\tmp\forseti-sf-social-search-discovery-20260726\data`,
 19 packets, verified 19/19. Reused and complementary packet IDs are named in
@@ -418,10 +516,13 @@ Job 15 as the worked example:
 | --- | --- |
 | Fresh-read of this artifact before closeout | pass |
 | Every board query resolves to a retained packet | pass — 15/15 |
-| Every `platform_native_verified` row resolves to a platform packet | pass — 3/3 YouTube rows |
+| Every `platform_native_verified` row resolves to a platform packet | pass — 15/15 (6 YouTube, 6 Instagram, 3 TikTok) |
+| Every `platform_native_blocked` row carries a typed blocker | pass — 3/3 (`comment_route_zero_yield`) |
+| Native follow-through within the six-per-platform cap | pass — 6 / 6 / 6 selected |
 | Counts recomputed from normalized rows | pass |
 | Canonical-URL deduplication and dependency labels | pass |
-| Raw-lake manifests verified against preserved files | pass — new lake 18/18, existing lake 19/19, via `run_data_lake_doctor.py` |
+| Raw-lake manifests verified against preserved files | pass — new lake **33/33**, existing lake 19/19, via `run_data_lake_doctor.py`; 0 read failures, 0 stale or orphan availability entries in both |
+| No exit-IP literal present in this artifact | pass — scanned |
 | `check_search_surface_google_route.py --check <this file>` | pass — 0 findings, inspected this path directly |
 | `check_search_surface_google_route.py --strict` | pass — 0 findings |
 | `header_index.py --strict` | exit 0, **but vacuous** — see note |
@@ -461,8 +562,78 @@ and unrelated to this work.
   viewport deep.
 - Not a ranking measurement, SEO assessment, content-optimization
   recommendation, keyword-volume study, or standing monitor.
-- Not verification of any TikTok or Instagram content claim; for YouTube, only
-  the retained source-native identity and framing are verified, not product truth.
+- Apart from the later packet-bound `@marinabarnoo` item documented in section
+  15, not verification of TikTok or Instagram content claims; for admitted
+  TikTok and YouTube sources, only retained source-native identity, text, and
+  bounded comments are verified, not product truth.
 - Not the Deliver-side join, and not a CI recommendation.
 - Not validation, readiness, buyer proof, Judgment evidence, or Product Lead
   evidence.
+
+## 15. Corroboration progression and query-origin note — 2026-07-27
+
+### Phase boundary
+
+Cross-source corroboration belongs primarily in **Deliver**, not Understanding.
+Understanding should retain source-specific observations, provenance, and typed
+candidate signals. Deliver may then join those signals and decide whether they
+remain isolated, recur independently, conflict, or warrant a bounded CI
+finding. This prevents acquisition coverage from masquerading as insight.
+
+The useful progression record is:
+
+| Candidate issue | Seed evidence | Targeted probe | Native evidence found | Supported statement after cross-source adjudication | Remaining boundary |
+| --- | --- | --- | --- | --- | --- |
+| Lip Butter Balm burning/reaction | Two retained Reddit threads describe burning, flaking, or contact-dermatitis-like experience | Exact product plus `burning OR reaction` Google query | TikTok post `7381649202134207786` and 20 captured comments from a response declaring 77 total | A recurring multi-source reaction narrative exists; Vanilla Beige is repeatedly named in the TikTok source | No prevalence, diagnosis, causality, full-comment census, or product-wide safety conclusion |
+
+For future SERP discovery, always begin with a retained lead from retailer
+reviews, Reddit or another community, support evidence, legal or regulatory
+records, owned claims, paid creative, or another admitted source. Skip neutral
+brand and franchise baselines. Translate the lead's exact product and issue
+language into a targeted query, then use the results to locate candidate native
+sources, counterevidence, relevant variants, and sharper vocabulary.
+
+The SERP result is not corroboration. It opens routes through which separately
+captured native evidence may later corroborate, contradict, narrow, or leave the
+lead isolated. This is a lead-expansion-to-verification route, not a
+search-volume, prevalence, or consumer-journey measurement.
+
+### Burning/reaction query origin
+
+The adverse-experience query did originate in the captured Reddit corpus.
+Before the SERP-composition handoff existed, the Understanding community
+corpus retained:
+
+- `/r/beauty/comments/1mzokbt/dry_flaky_burning_lips_after_using_summer_fridays/`,
+  whose post reports burning, dryness, and flaking after a mint lip balm; and
+- `/r/Sephora/comments/1pf427h/summer_fridays_lip_butter_balm_reaction/`,
+  whose post reports contact-dermatitis-like experience and whose comments
+  include both similar and contrary accounts.
+
+The first Google packet,
+`01KYDAFEGK8Y8PBEWF0A111QCX`, recorded its requested decision context as:
+“What adverse-experience content is Google-visible for the hero product beyond
+the captured Reddit corpus?” It captured the query
+`"summer fridays" lip butter balm burning OR reaction` on
+`2026-07-25T19:01:51Z`.
+
+The later SERP-composition handoff inherited that packet as the known “Lip
+Butter Balm burning/reaction” job and commissioned the more reproducible quoted
+form, `"summer fridays" "lip butter balm" burning OR reaction`, retained as job
+6 packet `01KYEZNWVFNTA7ZGXBS7ZYYQKX`. That result exposed the specific TikTok
+candidate `@marinabarnoo/video/7381649202134207786`.
+
+A subsequent native TikTok admission, packet
+`01KYF1X0V8TTNZ9KH718V1CTJ8`, preserved the post description and a bounded
+20-comment response slice. That later packet supersedes section 10's earlier
+route-blocked state for this one selected TikTok item only. The other selected
+TikTok candidates and Instagram item remain unverified under this artifact's
+record.
+
+The actual chain is therefore:
+
+`Reddit signal → targeted Google expansion → selected TikTok lead → native
+TikTok corroboration`.
+
+The material CI lesson is the corroboration progression, not the number of
+Google cards or the deliberately constructed query-board breadth.

@@ -471,7 +471,20 @@ gate above controls whether Deliver may begin.
    action ceiling, rival assessment, or hold condition and no equal-or-better
    included item performs that job. Use exclusion or `not_applicable` records
    for dominated routes.
-6. For company commissions, route retail, customer, and claims research first.
+6. For company commissions, run the SERP competitor scout pass before
+   authoring specialist commissions:
+   `docs/prompts/handoffs/serp_lane_phase1_scout_execution_handoff_v0.md`
+   (its native return leg is
+   `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`).
+   The ordering is load-bearing, not ceremonial: `vs {rival}` cannot run
+   without a harvested name, so seeds must land and be harvested before
+   fan-out; skipping the pass forces specialists back onto hand-picked
+   rivals, which is the confirmation loop the scout exists to kill.
+   Section 8 consumes the resulting typed ledger when one exists. The pass
+   is skippable only when a current scout ledger for this subject already
+   exists — record that reuse — and its absence is a typed gap, never a
+   silent omission.
+   Then route retail, customer, and claims research first.
    Before optional deepening, resolve the prompt's small high-yield core through
    the existing ledgers. A material unresolved core job blocks the acquisition
    seal; other remainders stay typed gaps and non-claims. When retail is material,

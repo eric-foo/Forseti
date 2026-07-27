@@ -6,16 +6,19 @@ artifact_role: Capture return artifact
 scope: >
   Bounded acquisition return for the verified Summer Fridays, LLC advertiser
   visible on the public Google Ads Transparency Center under the recorded
-  United States, Any time, All platforms, All formats state. Preserves the
-  first 60 source creative IDs after ten continuation actions, source format
-  and date fields, media-resolver handles, identity proof, typed omissions,
-  and exact evidence bindings for later Deliver-side use.
+  United States, Any time, All platforms, All formats state. Preserves all 416
+  distinct creative IDs materialized after ten continuation actions, with
+  source format, date, and media-resolver metadata for the first 60, identity
+  proof, typed omissions, and exact evidence bindings for later Deliver-side
+  use.
 use_when:
-  - Reading the first-60 Summer Fridays Google Ads Transparency inventory captured on 2026-07-26.
+  - Reading the observed Summer Fridays Google Ads Transparency inventory captured on 2026-07-26.
+  - Resolving all 416 materialized creative IDs through the companion JSON projection.
   - Checking source-visible Google creative formats, dates, media posture, and the few safely resolved product or offer signals.
   - Planning a later cross-source join without treating this return as spend, targeting, performance, or strategy evidence.
 authority_boundary: retrieval_only
 open_next:
+  - docs/research/summer_fridays_ci_inputs_20260726/google_ads_transparency_observed_creative_ids_20260726.json
   - docs/prompts/handoffs/summer_fridays_google_ads_transparency_capture_handoff_20260726_v0.md
   - forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
   - forseti/product/spines/capture/core/source_capture_toolbox/capture_recon_index_v0.md
@@ -34,11 +37,16 @@ The public Google Ads Transparency Center resolved a **verified**
 card labels declared a 456-ad result set. Ten bounded scroll continuations
 materialized **416 distinct source creative IDs** in the retained DOM.
 
-Per the handoff ceiling, this return enumerates the **first 60 distinct IDs in
-source DOM order** and is therefore **PARTIAL**. All 60 direct creative-detail
-locators resolved the advertiser, region, source-declared last-shown date, and
-format: **39 Text, 16 Image, and 5 Video**. Ten were last shown `26 Jul 2026`;
-50 were last shown `25 Jul 2026`.
+The original handoff enumerated the **first 60 distinct IDs in source DOM
+order**. A 2026-07-27 continuation now preserves all **416** materialized IDs
+and their direct detail locators in
+`google_ads_transparency_observed_creative_ids_20260726.json`. The result
+is **COMPLETE_FOR_BOUND_EVIDENCE_PURPOSE**: it provides a materially sufficient
+verified-advertiser inventory for later Summer Fridays paid-message review.
+Source exhaustion remains **NOT_PROVEN** because the source declared 456 cards
+and no exhaustion signal was reached. Direct-detail metadata remains resolved
+only for the first 60: **39 Text, 16 Image, and 5 Video**. Ten were last shown
+`26 Jul 2026`; 50 were last shown `25 Jul 2026`.
 
 Google rendered most creative content through either an archive-image asset or
 a Google preview script. The public page did not expose stable machine-readable
@@ -319,13 +327,16 @@ the receiver checkpoint.
 
 Safe later uses:
 
-1. Join the 60 source creative IDs, last-shown dates, formats, variation counts,
-   and resolver handles to other independently captured evidence.
-2. Preserve product-family fields as unresolved unless a later retained-media
+1. Use
+   `google_ads_transparency_observed_creative_ids_20260726.json` as the durable
+   ordered inventory of all 416 IDs materialized in the retained DOM.
+2. Join the first 60 source creative IDs' last-shown dates, formats, variation
+   counts, and resolver handles to other independently captured evidence.
+3. Preserve product-family fields as unresolved unless a later retained-media
    review produces independently dereferenceable evidence.
-3. Use the first-60/ten-continuation ceiling and source-default order as a
-   sampling receipt.
-4. Commission a later retained-media review before adding copy-level message
+4. Use the ten-continuation ceiling and source-default order as a capture
+   receipt; use the first-60 boundary only for the enriched detail subset.
+5. Commission a later retained-media review before adding copy-level message
    clusters or no-observed-family rows.
 
 Non-claims:
@@ -341,3 +352,44 @@ Non-claims:
 - not evidence that unresolved product families, offers, destinations, or
   collaborations are absent;
 - not a cross-source CI synthesis or Deliver conclusion.
+
+## 11. Full observed-ID projection — 2026-07-27 continuation
+
+The companion
+`google_ads_transparency_observed_creative_ids_20260726.json` was generated
+from the admitted inventory packet's stored DOM, not from a new Google
+request. It:
+
+- binds advertiser `Summer Fridays, LLC` and
+  `AR00430838150965755905`;
+- binds the recorded United States / Any time / All platforms / All formats
+  filter state;
+- pins source packet `01KYF2MS14047RNMVTE3K5RZFA` and DOM SHA-256
+  `3c6d8548be0e43ca43b9b07f799dd2f8f1cc62f3f52471d23c9fd31a3c689963`;
+- extracts `creative/(CR\d+)`, retains first DOM occurrence, and projects 416
+  ordered creative IDs with exact public detail URLs; and
+- preserves the 456-card denominator and unresolved source-exhaustion gap.
+
+The projected JSON SHA-256 is
+`c8667be75c45217f3a2e7b1a3a7d22ad1a886b6e3f3012f2f6fe7b5b8405f408`.
+
+This closes the durable-ID projection gap. It does **not** close creative-media
+interpretation: copy, product family, offer, destination, placement, visual
+deduplication, or performance remain unresolved outside the bounded first-60
+metadata and the one screenshot-preserved offer.
+
+The 40-ID difference between the 456-card denominator and 416 materialized IDs
+has no observed source-specific explanation. The capture stopped after ten
+continuations before an exhaustion signal. More continuation, source
+virtualization, unavailable or restricted rows, or duplicate/collapsed source
+states are possible explanations, but none was proven. The supported fact is
+only that 416 unique IDs materialized before the bounded stop.
+
+Google describes the Ads Transparency Center as a searchable hub of ads served
+from verified advertisers across Search, YouTube, and Display:
+<https://safety.google/safety/ads-data/>. That makes it the appropriate public
+Google-ad evidence surface for the verified Summer Fridays advertiser. It does
+not make this local projection exhaustive: 416 IDs materialized against a
+456-card denominator, no source-exhaustion signal was reached, and brand-related
+ads paid for by a retailer, partner, agency, affiliate, or another verified
+advertiser would not necessarily appear under this advertiser identity.

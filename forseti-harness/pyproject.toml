@@ -14,7 +14,7 @@ browser = [
   "playwright>=1.44,<2",
 ]
 cloakbrowser = [
-  "cloakbrowser>=0.4.8,<0.5",
+  "cloakbrowser>=0.5.2,<0.6",
 ]
 impersonate = [
   # Chrome TLS/JA3 + HTTP/2 "costume" for stealth public-data capture (youtube_capture/).

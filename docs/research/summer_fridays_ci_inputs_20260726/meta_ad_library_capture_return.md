@@ -1,716 +1,424 @@
-# Summer Fridays Meta Ad Library Capture Return — 2026-07-26 v0
+# Summer Fridays Meta Ad Library Capture Return — 2026-07-26
 
 ```yaml
 retrieval_header_version: 1
-artifact_role: Capture return artifact
+artifact_role: Acquisition capture return
 scope: >
-  Bounded acquisition return for active Summer Fridays commercial creative
-  visible on the public Meta Ad Library surface under the recorded United
-  States, All ads, active-status, exact-advertiser-page parameters. Preserves
-  the first 60 unique library IDs after identity binding and ten continuation
-  actions, deduplicated creative records, product-family coverage, route
-  failures, evidence bindings, and claim limits. Supplemental acquisition
-  input for later Deliver-side competitive-intelligence work.
+  Typed inventory and provenance record of the first Summer Fridays Meta Ad
+  Library acquisition under the 2026-07-26 capture handoff: verified advertiser
+  identity, bounded page-scoped enumeration (PARTIAL), creative/message
+  clusters, product-family coverage, and route recipe evidence.
 use_when:
-  - Reading the first-60 Summer Fridays Meta Ad Library inventory captured on 2026-07-26.
-  - Checking which creative, offer, and product-family signals were source-visible.
-  - Planning a later cross-source join without re-running this capture.
+  - Consuming Summer Fridays Meta paid-creative evidence in a later Deliver run.
+  - Reusing or extending the Meta Ad Library capture route.
 authority_boundary: retrieval_only
 open_next:
   - docs/prompts/handoffs/summer_fridays_meta_ad_library_capture_handoff_20260726_v0.md
   - forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
-  - forseti/product/spines/capture/core/source_capture_toolbox/capture_recon_index_v0.md
 stale_if:
-  - Meta Ad Library filters, sorting, identity, card, or continuation behavior materially changes.
-  - The exact advertiser page, portfolio authority, or raw lake is recaptured or superseded.
-  - A dedicated Forseti Meta Ad Library recipe supersedes this first-probe route.
+  - Meta materially changes Ad Library access, filters, or result fields.
+  - A dedicated Meta Ad Library recipe card or runner supersedes this first probe.
+  - The Summer Fridays portfolio authority is superseded for family normalization.
 ```
 
-## 1. Executive acquisition conclusion
-
-The public Meta Ad Library exact-page surface returned **about 200 active
-results** for the independently bound Summer Fridays advertiser page under
-United States / All ads / Active ads. Ten bounded scroll continuations exposed
-**118 unique library IDs**. Per the handoff ceiling, this return enumerates the
-**first 60 unique IDs** in the resolved source-default order and is therefore
-**PARTIAL**, not an exhaustive advertiser inventory.
-
-Those 60 IDs resolve to **29 deduplicated creative records**: 59 rows name
-`Summer Fridays`; one names `JADE LILY with Summer Fridays` and carries explicit
-creator/ad language. The retained window contains 48 static-image rows and 12
-video rows. Repetition is substantial inside this window: the same creative
-record appears under multiple unique library IDs, sometimes with Meta's
-source-visible “multiple versions” or “N ads use this creative and text”
-annotation. Those annotations are retained as source state and are not expanded
-into inferred campaigns.
-
-The strongest source-visible creative concentration is around limited or
-seasonal lip and summer-set offers. That is a description of this capped,
-default-ordered window only. It is not spend, performance, targeting, campaign
-objective, market-priority, or strategy evidence.
-
-## 2. Route and parameter receipt
-
-- **Primary surface:** public anonymous Meta Ad Library.
-- **Advertiser page:** `Summer Fridays`.
-- **Exact page locator:** `https://www.facebook.com/summerfridaysbeauty/`.
-- **Meta page ID:** `1898638280462729`.
-- **Country/market filter:** `United States` / URL value `country=US`.
-- **Commercial category:** `All ads` / URL value `ad_type=all`.
-- **Status:** `Active ads` / URL value `active_status=active`.
-- **Media filter:** `all`.
-- **Target-country toggle:** `is_targeted_country=false`; this is a source
-  parameter, not a claim about where any ad was delivered.
-- **Search type:** exact advertiser page via `search_type=page` and
-  `view_all_page_id=1898638280462729`.
-- **Requested order:** source default. The retained final URL resolved this to
-  `sort_data[mode]=total_impressions` and `sort_data[direction]=desc`. This
-  source-supplied sort label does **not** expose impression counts.
-- **Capture time:** `2026-07-26T11:05:28Z`.
-- **Continuation ceiling:** ten automated scroll passes.
-- **Observed surface size:** `~200 results`.
-- **Exposed after the ceiling:** 118 unique library IDs.
-- **Enumerated here:** first 60 unique IDs.
-- **Status:** `PARTIAL` because the source showed more than the 60-row ceiling.
-- **Session posture:** anonymous; no stored Meta login, cookies, profile, or
-  paid-ad session.
-- **Proxy posture:** none requested or loaded. No physical-US-local claim is
-  made.
-
-Exact retained URL:
-
-`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&is_targeted_country=false&media_type=all&search_type=page&view_all_page_id=1898638280462729`
-
-### Route non-claims
-
-- `country=US` is a Meta filter, not proof of a physically US-local browser.
-- “Active” is the library's capture-time label, not proof of continuous
-  delivery, impressions, or spend.
-- Source-default order is not performance rank or advertiser priority.
-- About 200 source results does not mean 200 unique campaigns or creatives.
-- The 118 exposed IDs and the first-60 window are not an exhaustive inventory.
-
-## 3. Advertiser identity proof
-
-Identity was bound before the exact-page inventory was accepted:
-
-1. Company-owned packet `01KYF1EJBRGRZK5PMMND4N9F3C` retained the
-   `summerfridays.com` homepage. Its footer directly links
-   `http://facebook.com/summerfridaysbeauty`.
-2. Public Meta Page packet `01KYF1J1HPM3J2HK44AHC22AV6` retained the vanity
-   page `https://www.facebook.com/summerfridaysbeauty/`, visible name `Summer
-   Fridays`, category `Health/beauty`, company-domain locator
-   `summerfridays.com`, and Meta's underlying delegate-page ID
-   `1898638280462729`.
-3. Exact-page inventory packet `01KYF1KWVQZR4ZN4NZVE8DZJ0R` used that numeric
-   page ID. Its header rendered `Summer Fridays`, `Ads`, United States, All ads,
-   and Active ads.
-4. The accepted creative cards link back to the same
-   `facebook.com/summerfridaysbeauty` page and overwhelmingly land on
-   `summerfridays.com`.
-
-The earlier keyword probes are not identity authority. A bare `Summer Fridays`
-keyword search returned about 1,400 results with many unrelated advertisers;
-name matching alone was therefore rejected.
-
-## 4. Inventory row contract and shared fields
-
-Every row below inherits these source fields unless explicitly overridden:
-
-- page identity/locator: `Summer Fridays`,
-  `facebook.com/summerfridaysbeauty`, page ID `1898638280462729`;
-- capture parameters/time: section 2;
-- source status: `Active`;
-- evidence pointer: packet `01KYF1KWVQZR4ZN4NZVE8DZJ0R`,
-  `raw/02_cloakbrowser_visible_text.txt` plus the corresponding retained DOM;
-- placement field: Meta rendered a source platform-icon set per card, but the
-  retained visible text and DOM did not resolve those icons to stable textual
-  platform labels. **Placement is therefore recorded as
-  `source icons retained; labels not text-resolved` for all 60 rows.** No
-  Facebook-versus-Instagram-versus-other placement claim is made.
-
-`Creative` points to the deduplicated record in section 5, which carries body
-copy, headline/landing label in source order, CTA, canonical destination,
-format/media state, family binding, and offer language. Tracking parameters
-were stripped from reported destinations; meaningful Shopify `variant`
-parameters were retained. Source-linked media bytes were not independently
-downloaded.
-
-| # | Library ID | Started | Advertiser label | Creative |
-|---:|---|---|---|---|
-| 1 | `1175398888105507` | 29 Jun 2026 | Summer Fridays | C01 |
-| 2 | `1643744106704060` | 18 Jun 2026 | Summer Fridays | C02 |
-| 3 | `936688215440544` | 10 Mar 2026 | Summer Fridays | C03 |
-| 4 | `27478943508382182` | 7 Jul 2026 | Summer Fridays | C04 |
-| 5 | `1354103216642374` | 3 Jun 2026 | Summer Fridays | C05 |
-| 6 | `1079543094415868` | 14 May 2026 | Summer Fridays | C06 |
-| 7 | `1995557377753931` | 12 May 2026 | Summer Fridays | C05 |
-| 8 | `1523144412489876` | 3 Jun 2026 | Summer Fridays | C05 |
-| 9 | `2186209455493601` | 13 Jul 2026 | Summer Fridays | C07 |
-| 10 | `3998893666911478` | 7 Jul 2026 | Summer Fridays | C08 |
-| 11 | `2314307526189579` | 7 Jul 2026 | Summer Fridays | C04 |
-| 12 | `1348437356636900` | 2 Jul 2026 | Summer Fridays | C09 |
-| 13 | `3648060232000072` | 29 Jun 2026 | Summer Fridays | C01 |
-| 14 | `1356852486340421` | 18 Jun 2026 | Summer Fridays | C02 |
-| 15 | `911206448673863` | 14 Jul 2026 | Summer Fridays | C10 |
-| 16 | `2144636779792062` | 7 Jul 2026 | Summer Fridays | C11 |
-| 17 | `2187399302052086` | 30 Jun 2026 | Summer Fridays | C12 |
-| 18 | `2171959403364171` | 7 Jul 2026 | Summer Fridays | C08 |
-| 19 | `858385367029059` | 7 Jul 2026 | Summer Fridays | C04 |
-| 20 | `2514332795685650` | 23 Jun 2026 | Summer Fridays | C13 |
-| 21 | `1739759233835433` | 13 Jul 2026 | Summer Fridays | C14 |
-| 22 | `2136306663605958` | 29 Jun 2026 | Summer Fridays | C15 |
-| 23 | `1802387080560240` | 14 Jul 2026 | Summer Fridays | C10 |
-| 24 | `1346486990753456` | 29 Jun 2026 | Summer Fridays | C15 |
-| 25 | `889930200210931` | 7 Jul 2026 | Summer Fridays | C16 |
-| 26 | `1865784317714042` | 29 Jun 2026 | Summer Fridays | C15 |
-| 27 | `27874996442118410` | 19 Jun 2026 | Summer Fridays | C04 |
-| 28 | `977706755055639` | 28 May 2026 | Summer Fridays | C17 |
-| 29 | `1319388780302888` | 22 Jun 2026 | Summer Fridays | C18 |
-| 30 | `1703660564116657` | 2 Jul 2026 | Summer Fridays | C19 |
-| 31 | `1016042407839353` | 13 Jul 2026 | Summer Fridays | C20 |
-| 32 | `4049000368733660` | 2 Jul 2026 | Summer Fridays | C19 |
-| 33 | `2502925050155631` | 7 Jul 2026 | Summer Fridays | C16 |
-| 34 | `2509310942878400` | 20 Jul 2026 | Summer Fridays | C21 |
-| 35 | `1030178939943928` | 7 Jul 2026 | Summer Fridays | C04 |
-| 36 | `1029701023319984` | 20 Jul 2026 | Summer Fridays | C01 |
-| 37 | `2567191980366685` | 18 Jun 2026 | Summer Fridays | C02 |
-| 38 | `1009076801898863` | 13 Jul 2026 | Summer Fridays | C22 |
-| 39 | `1036690345420778` | 14 Jul 2026 | Summer Fridays | C10 |
-| 40 | `2120467905178382` | 22 Jun 2026 | Summer Fridays | C13 |
-| 41 | `1794571941529400` | 7 Jul 2026 | Summer Fridays | C23 |
-| 42 | `1021549470370480` | 7 Jul 2026 | Summer Fridays | C08 |
-| 43 | `1377410611271574` | 29 Jun 2026 | Summer Fridays | C01 |
-| 44 | `1496739955533655` | 7 Jul 2026 | Summer Fridays | C24 |
-| 45 | `2817328171962265` | 18 Jun 2026 | Summer Fridays | C02 |
-| 46 | `2110208639841430` | 20 Jul 2026 | Summer Fridays | C21 |
-| 47 | `934357659665182` | 7 Jul 2026 | Summer Fridays | C23 |
-| 48 | `2221518491967774` | 14 Jul 2026 | Summer Fridays | C25 |
-| 49 | `2491822771266461` | 30 Jun 2026 | Summer Fridays | C12 |
-| 50 | `1011312561890157` | 13 Jul 2026 | Summer Fridays | C26 |
-| 51 | `1614930776869359` | 26 Jun 2026 | Summer Fridays | C27 |
-| 52 | `1902336790437623` | 14 Jul 2026 | Summer Fridays | C25 |
-| 53 | `3695374633947514` | 7 Jul 2026 | Summer Fridays | C21 |
-| 54 | `2510676656117995` | 22 Jun 2026 | Summer Fridays | C28 |
-| 55 | `1523308379436521` | 30 Jun 2026 | Summer Fridays | C12 |
-| 56 | `2404000430122820` | 13 Jul 2026 | Summer Fridays | C07 |
-| 57 | `27496407443350705` | 7 Jul 2026 | Summer Fridays | C15 |
-| 58 | `996817423340639` | 7 Jul 2026 | Summer Fridays | C24 |
-| 59 | `1054551390359878` | 15 Jul 2026 | JADE LILY with Summer Fridays | C29 |
-| 60 | `904391208641453` | 7 Jul 2026 | Summer Fridays | C21 |
-
-## 5. Deduplicated creative catalog
-
-Copy below is preserved in source order. The `⟂` separator marks a visible
-line/field boundary; it does not join text that Meta represented as one field.
-
-| Creative | IDs in window | Format / media state | Family binding | Offer / collaboration |
-|---|---:|---|---|---|
-| C01 | 4 | static image retained | Lip Butter Balm; ShadeDrops SPF 50; Sunlit Vanilla Eau de Parfum | free items; `$75 ($92 value)` |
-| C02 | 4 | static image retained | bundle/set; named families not resolved in copy | back in stock; limited edition; `$44 ($55 value)` |
-| C03 | 1 | static image retained | bundle/set; named families not resolved in copy | trio label only |
-| C04 | 5 | static image retained | Flushed Lip Stain; SoftLine Lip Liner; Lip Butter Balm | back in stock; exclusive pouch; `$52 ($66 value)` |
-| C05 | 3 | static image retained | Lip Butter Balm | none explicit |
-| C06 | 1 | static image retained | CC Me Serum | none explicit |
-| C07 | 2 | video; `0:38` source duration | Lip Butter Balm; ShadeDrops SPF 50; Sunlit Vanilla Eau de Parfum | free items; `$75 ($92 value)` |
-| C08 | 3 | static image retained | Lip Butter Balm | new flavor/variant language |
-| C09 | 1 | video; `0:06` source duration | bundle/set; named family not explicit in copy | limited edition; `$22`; while supplies last |
-| C10 | 3 | static image retained | Flushed Lip Stain | back in stock |
-| C11 | 1 | static image retained | bundle/set; named families not resolved in copy | trio label only |
-| C12 | 3 | static image retained | merchandise-with-samples; named families not resolved | four samples |
-| C13 | 2 | static image retained | Flushed Lip Stain | back in stock |
-| C14 | 1 | static image retained | Lip Butter Balm | limited edition; new flavor/variant |
-| C15 | 4 | static image retained | Lip Butter Balm; ShadeDrops SPF 50; Sunlit Vanilla Eau de Parfum | free items; `$75 ($92 value)` |
-| C16 | 2 | static image retained | Lip Butter Balm | new flavor/variant language |
-| C17 | 1 | static image retained | brand-wide | subscribe and save; `15% off` |
-| C18 | 1 | static image retained | Flushed Lip Stain | back in stock |
-| C19 | 2 | video; `0:09` source duration | Lip Butter Balm | limited edition; `$22`; while supplies last |
-| C20 | 1 | video; `0:46` source duration | bundle/set; named families not resolved in copy | back in stock; limited edition; `$44 ($55 value)` |
-| C21 | 4 | static image retained | Lip Butter Balm | limited edition; `$78 ($96 value)` |
-| C22 | 1 | video; `0:22` source duration | merchandise-with-samples; named families not resolved | four samples |
-| C23 | 2 | static image retained | Lip Butter Balm | limited edition; new flavor/variant |
-| C24 | 2 | static image retained | Lip Butter Balm | limited edition; `$60 ($72 value)` |
-| C25 | 2 | video; `0:49` source duration | Flushed Lip Stain | back in stock |
-| C26 | 1 | static image retained | Jet Lag Eye Patches | new jumbo format; 15 pairs |
-| C27 | 1 | video; `0:37` source duration | ShadeDrops SPF 50 Mineral Milk Sunscreen | new-product language |
-| C28 | 1 | video; `0:08` source duration | Flushed Lip Stain | back in stock |
-| C29 | 1 | video; `0:50` source duration | Flushed Lip Stain | advertiser label `JADE LILY with Summer Fridays`; `ad` disclosure |
-
-### C01
-
-- **Copy / headline:** For that endless summer feeling. Sunlit Summer
-  Essentials includes ShadeDrops® SPF 50 Mineral Milk Sunscreen, Lip Butter
-  Balm Vanilla and our travel size Sunlit Vanilla™ Eau de Parfum—plus a free
-  Sunlit Mini Tote in Vanilla and On-The-Go Fragrance Keychain for $75 ($92
-  value). ⟂ Sunlit Summer Essentials
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/sunlit-summer-essentials`
-
-### C02
-
-- **Copy / headline:** Back in stock: mini hydration essentials to take with
-  you, wherever you are. This limited-edition set is perfect for on-the-go
-  moments and effortless travel for $44 ($55 value). ⟂ Dewy Travel Trio is Back
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/dewy-travel-trio`
-
-### C03
-
-- **Copy / headline / landing label:** Vegan, cruelty-free skincare in
-  recyclable packaging—to bring beauty, efficacy and simplicity to your daily
-  routine. ⟂ SUMMERFRIDAYS.COM ⟂ The Essentials Trio ⟂ Shop the Summer Fridays
-  skincare collection. View all products, including eye care, lip care, body
-  care and makeup.
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/skincare-essentials-trio?variant=32278677815373`
-
-### C04
-
-- **Copy / headline:** Your everyday lip combo is back in stock. Choose your
-  favorite shades of Flushed Lip Stain, SoftLine Lip Liner and Lip Butter
-  Balm—plus, receive the exclusive Lip Combo Pouch in the color of your choice.
-  For effortless reapplication wherever you are 💋 $52 ($66 value). ⟂ Essential
-  Lip Kit is BACK
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/pages/essential-lip-kit`
-
-### C05
-
-- **Copy / headline / landing label:** Vegan, cruelty-free skincare in
-  recyclable packaging—to bring beauty, efficacy and simplicity to your daily
-  routine. ⟂ SUMMERFRIDAYS.COM ⟂ Lip Butter Balm Vanilla ⟂ Shop Summer Fridays
-  skincare products. Our collection includes face masks, treatments and serums
-  to leave your skin glowing, with vegan and clean ingredients.
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/lip-butter-balm?variant=39408922853453`
-
-### C06
-
-- **Copy / headline / landing label:** Vegan, cruelty-free skincare in
-  recyclable packaging—to bring beauty, efficacy and simplicity to your daily
-  routine. ⟂ SUMMERFRIDAYS.COM ⟂ CC Me Serum with Vitamin C + Niacinamide ⟂
-  Shop Summer Fridays skincare products. Our collection includes face masks,
-  treatments and serums to leave your skin glowing, with vegan and clean
-  ingredients.
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/cc-me-serum?variant=28908339658829`
-
-### C07
-
-- **Copy / headline:** For that endless summer feeling. Sunlit Summer
-  Essentials includes ShadeDrops® SPF 50 Mineral Milk Sunscreen, Lip Butter
-  Balm Vanilla and our travel size Sunlit Vanilla™ Eau de Parfum—plus a free
-  Sunlit Mini Tote in Vanilla and On-The-Go Fragrance Keychain for $75 ($92
-  value). ⟂ Sunlit Summer Essentials
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/sunlit-summer-essentials`
-
-### C08
-
-- **Copy / headline:** A taste of summer in every swipe 🍓 Meet Lip Butter Balm
-  Strawberry Soft Serve—our award-winning formula with a new creamy strawberry
-  flavor and a baby pink tint. ⟂ NEW Strawberry Soft Serve
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/03d34cc1-c061-45f4-aa60-3d42b52831e4`
-
-### C09
-
-- **Copy / headline:** Limited-edition flavors inspired by your favorite summer
-  treats. Our new Sweet Summer Minis feature three new shades: Peach Granita,
-  Berry Sorbet and Sea Salt Caramel. Available for $22 while supplies last. ⟂
-  NEW! Sweet Summer Minis
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/1f30b244-4f02-4fac-ab14-e88a79cdd515`
-
-### C10
-
-- **Copy / headline:** Flushed Lip Stain is finally back in stock. Lightweight,
-  comfortable and made to last. Available in six shades for the perfect lip
-  look. ⟂ Lip Stains are Back
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/flushed-lip-stain-almond`
-
-### C11
-
-- **Copy / headline / landing label:** Vegan, cruelty-free skincare in
-  recyclable packaging—to bring beauty, efficacy and simplicity to your daily
-  routine. ⟂ SUMMERFRIDAYS.COM ⟂ The Essentials Trio ⟂ Shop Summer Fridays
-  skincare products. Our collection includes face masks, treatments and serums
-  to leave your skin glowing, with vegan and clean ingredients.
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/skincare-essentials-trio?variant=32278677815373`
-
-### C12
-
-- **Copy / headline:** Made for wherever summer takes you. Discover our
-  travel-ready terry pouch, designed to take your everyday favorites with you
-  on the go, featuring four samples of summer essentials. ⟂ Summer Essentials
-  Pouch
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/summer-essentials-terry-pouch`
-
-### C13
-
-- **Copy / headline:** Back in stock: Flushed Lip Stain 💋 Our weightless lip
-  stain enhances your natural tone and lasts all day. Buildable,
-  transfer-proof, effortless—just swipe and go. ⟂ Back in Stock
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/collections/flushed-lip-stains`
-
-### C14
-
-- **Copy / headline:** Lip care that feels like butter. Discover our
-  limited-edition Lip Butter Balm Toasted Marshmallow—featuring golden shimmer,
-  marshmallow sweetness and nourishing hydration in every swipe. ⟂ NEW! Toasted
-  Marshmallow
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/85d86e01-2aff-4418-85b6-f79c3b0f72eb`
-
-### C15
-
-- **Copy / headline:** The summer set we’ll be taking with us everywhere—made
-  for sweet, sun-warmed skin and buttery lips. ⟂ The set includes: ⟂ ☀️
-  ShadeDrops® SPF 50 Mineral Milk Sunscreen ⟂ 🤍 Lip Butter Balm Vanilla ⟂ ✨
-  Sunlit Vanilla™ Eau de Parfum Travel Size ⟂ 👜 Free Sunlit Mini Tote in
-  Vanilla ⟂ 🔑 Free On-The-Go Fragrance Keychain ⟂ $75 ($92 value) ⟂ Sunlit
-  Summer Essentials
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/sunlit-summer-essentials`
-
-### C16
-
-- **Copy / headline:** The same award-winning formula you love, now in our
-  most-wanted flavor 🍓 Lip Butter Balm Strawberry Soft Serve features a cool
-  baby pink tint, creamy strawberry sweetness and nourishing hydration in every
-  swipe. ⟂ NEW Strawberry Soft Serve
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/03d34cc1-c061-45f4-aa60-3d42b52831e4`
-
-### C17
-
-- **Copy / headline:** Never worry about running out of your skincare and
-  hybrid-makeup essentials. Get your favorites delivered automatically and
-  enjoy 15% off. Cancel, pause or edit anytime. ⟂ Subscribe + Save
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/pages/subscription`
-
-### C18
-
-- **Copy / headline:** Flushed Lip Stain is finally back in stock. Lightweight,
-  comfortable and made to last. Available in six shades for the perfect lip
-  look. ⟂ Lip Stains are Back
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/flushed-lip-stain-maple`
-
-### C19
-
-- **Copy / headline:** The award-winning Lip Butter Balm formula you love, now
-  in three new summer-inspired flavors. The Sweet Summer Minis include Peach
-  Granita, Berry Sorbet and Sea Salt Caramel, bundled in one limited-edition
-  set. Available for $22 while supplies last. ⟂ NEW! Sweet Summer Minis
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/1f30b244-4f02-4fac-ab14-e88a79cdd515`
-
-### C20
-
-- **Copy / headline:** Back in stock: mini hydration essentials to take with
-  you, wherever you are. This limited-edition set is perfect for on-the-go
-  moments and effortless travel for $44 ($55 value). ⟂ Dewy Travel Trio is Back
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/dewy-travel-trio`
-
-### C21
-
-- **Copy / headline:** Treat your lips to buttery, nourishing hydration with
-  our new Summer Fruits Set. Featuring four award-winning flavors of Lip Butter
-  Balm for $78 ($96 Value). ⟂ 🍓 Strawberry Soft Serve ⟂ 🌺 Pink Guava ⟂ 🍒
-  Cherry ⟂ 🍊 Poppy ⟂ Limited-Edition Lip Set
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/summer-fruits-set`
-
-### C22
-
-- **Copy / headline:** Made for wherever summer takes you. Discover our
-  travel-ready terry pouch, designed to take your everyday favorites with you
-  on the go, featuring four samples of summer essentials. ⟂ Summer Essentials
-  Pouch
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/summer-essentials-terry-pouch`
-
-### C23
-
-- **Copy / headline:** Complete your Lip Butter Balm collection with Strawberry
-  Soft Serve, the flavor you've been waiting for. Limited edition, creamy and
-  fruity, plus a sheer baby pink tint. It's the strawberry treat you'll reach
-  for every day 🍓 ⟂ NEW Strawberry Soft Serve
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/03d34cc1-c061-45f4-aa60-3d42b52831e4`
-
-### C24
-
-- **Copy / headline:** NEW! This decadent, limited-edition set features our
-  award-winning Lip Butter Balm in three sweet flavors: Strawberry Soft Serve,
-  Vanilla and Hot Cocoa for $60 ($72 value). ⟂ NEW! Neapolitan Lip Trio
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/products/the-neapolitan-lip-trio`
-
-### C25
-
-- **Copy / headline:** Back in stock: Flushed Lip Stain 💋 Our weightless lip
-  stain enhances your natural tone and lasts all day. Buildable,
-  transfer-proof, effortless—just swipe and go. ⟂ Back in Stock
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/products/flushed-lip-stain-almond`
-
-### C26
-
-- **Copy / headline:** Our award-winning Jet Lag Eye Patches visibly de-puff,
-  smooth, and refresh the undereye area—for instant hydration anytime,
-  anywhere. Now available in a jumbo pack featuring 15 pairs of eye patches per
-  box. ⟂ NEW! Jumbo Pack: 15 Pairs
-- **CTA:** Shop Now
-- **Destination:**
-  `https://summerfridays.com/apps/blackcrow/storefronts/crowlink/995bd6c2-0b80-4f03-8ecf-a924a91481d5`
-
-### C27
-
-- **Copy / headline:** Sunscreen that actually feels good on your skin.
-  ShadeDrops SPF 50 Mineral Milk Sunscreen is non-comedogenic, gentle enough for
-  sensitive skin and layers effortlessly under makeup. ⟂ NEW! ShadeDrops SPF 50
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/collections/best-sellers`
-
-### C28
-
-- **Copy / headline:** Flushed Lip Stain is finally back in stock. Lightweight,
-  comfortable and made to last. Available in six shades for the perfect lip
-  look. ⟂ Lip Stains are Back
-- **CTA:** Shop Now
-- **Destination:** `https://summerfridays.com/collections/flushed-lip-stains`
-
-### C29
-
-- **Advertiser label:** JADE LILY with Summer Fridays
-- **Copy / headline / landing label:** My everyday lip combo is finally back ⟂
-  @summerfridays Flushed Lip Stain in Mocha is the lip I'm most loyal to.
-  Available at SummerFridays.com ad #lipstain #lipcombo ⟂ SUMMERFRIDAYS.COM ⟂
-  JADE LILY
-- **CTA:** Shop now
-- **Destination:** `https://summerfridays.com/products/flushed-lip-stain-maple`
-- **Mismatch preserved:** the visible copy names `Mocha`; the retained
-  destination resolves to the `maple` product route. This is not corrected or
-  interpreted.
-
-## 6. Creative clusters in the first-60 window
-
-Cluster counts below count unique library IDs in this retained window. They are
-not source-wide shares or campaign counts.
-
-| Cluster | IDs | Source-visible shape |
-|---|---:|---|
-| Sunlit Summer Essentials | 10 | SPF + Lip Butter Balm + travel fragrance set; free accessories; value framing |
-| Flushed Lip Stain restock / creator variant | 10 | back-in-stock, lasting/transfer-proof copy; one JADE LILY collaboration-labelled row |
-| Strawberry Soft Serve Lip Butter Balm | 7 | new/limited flavor and tint |
-| Evergreen catalog/product ads | 6 | broad skincare collection, Lip Butter Balm Vanilla, CC Me Serum |
-| Essential Lip Kit | 5 | three named lip families, exclusive pouch, value framing |
-| Dewy Travel Trio | 5 | restock, limited-edition travel set, value framing |
-| Sweet Summer Minis / Neapolitan Lip Trio | 5 | limited-edition flavor sets and price/value framing |
-| Summer Fruits Set | 4 | four Lip Butter Balm flavors, price/value framing; one multi-link carousel |
-| Summer Essentials Pouch | 4 | travel-ready pouch with four samples |
-| Subscribe + Save | 1 | recurring delivery and 15% discount |
-| Toasted Marshmallow Lip Butter Balm | 1 | limited-edition flavor |
-| Jet Lag Eye Patches jumbo pack | 1 | 15-pair format |
-| ShadeDrops SPF 50 | 1 | standalone product-benefit creative |
-
-This grouping uses the visible copy, landing labels, destinations, and retained
-media state. It does not infer internal campaign structure or creative-testing
-intent.
-
-## 7. Product-family coverage
-
-The comparison authority was freshly read from
-`C:\tmp\forseti-sf-understanding-dogfood-20260725-p10\data\co1\13_portfolio_parent_disposition_v1\portfolio_parent_disposition_v1.json`,
-SHA-256
-`8B4BE38929B167A1EB1AEBFFE5EA2813A0172DFEDD3525188F534E634E2BD212`.
-It resolves **27 current/exposed families** and **7 historical-only families**.
-
-Counts are the number of first-60 inventory rows whose retained copy names the
-family. A row may name more than one family, so these counts are not additive.
-Bundle, set, merchandise, and sample objects remain typed separately rather
-than being promoted to product families.
-
-| Current/exposed family | Rows observed |
-|---|---:|
-| Lip Butter Balm | 34 |
+## 1. Executive Acquisition Conclusion
+
+Route verdict **GO, enumeration PARTIAL**. The Meta Ad Library is publicly
+viewable logged-out; the verified Summer Fridays page (`1898638280462729`,
+alias `summerfridaysbeauty`) had a source-declared **~200 active-ad surface**
+under `country=US`, all ad types, active-only. Four packets were admitted:
+first-party identity, page identity, initial ad state (22 unique library IDs),
+and scroll-continued ad state (**99 unique library IDs** after 8 of the 10
+permitted continuation actions). Per the handoff cap, **60 unique ads were
+typed** in observed order; 39 retained IDs remain raw-preserved but untyped.
+
+Observed paid posture at capture time: heavy lip-franchise rotation (Lip
+Butter Balm flavors, Flushed Lip Stain restock, lip kits/sets), one SPF/bundle
+push, one subscription-program ad, one creator-partnership ad ("JADE LILY with
+Summer Fridays"), and **all 60 typed destinations on `summerfridays.com`** —
+no observed Sephora/Amazon/retailer destination in the typed set. The 8/6 body
+launch families (Body Butter Balm, Body Fragrance Mist) had **no observed
+active creative** on the captured surface (bounded claim; see §8 and §11).
+
+## 2. Route Verdict And Recipe-Card Section
+
+- **Step 0 access class:** publicly-viewable (logged-out). A "Log in" nav item
+  is present but does not gate the result surface. The `facebook.com/<alias>`
+  page render carries a login nag while page content remains visible.
+- **Step 1 substrate:** JS-rendered SPA. Result cards live in rendered DOM;
+  the page's own `POST /api/graphql/` calls carry typeahead and result data.
+  Direct HTTP to `facebook.com/summerfridaysbeauty` returns **400** (route
+  evidence, not a content block). `summerfridays.com` serves static HTML to
+  direct HTTP (200).
+- **Step 2 routes used, cheapest-first:**
+  1. direct-HTTP (`run_source_capture_http_packet.py`) — company-site identity
+     packet;
+  2. real browser headless (`run_source_capture_browser_packet.py`,
+     `--settle-seconds 10`) — initial ad state, 22 cards; page identity render;
+  3. progressive scroll via `run_source_capture_cloakbrowser_packet.py`
+     (`--scroll-passes 8 --settle-seconds 10`) — escalated on the observed
+     symptom that continuation requires scroll, which the plain browser runner
+     does not implement. No proxy profile; no session; human-rate.
+- **Identity resolution recipe:** the Ad Library search box typeahead fires a
+  GraphQL request whose response exposes `page_id`, `page_alias`, verification,
+  likes, and linked `ig_username` per candidate — the cheapest advertiser-
+  disambiguation surface found (observed in diagnosis; see §9 ledger).
+- **Enumeration recipe:** page-scoped URL
+  `.../ads/library/?active_status=active&ad_type=all&country=US&view_all_page_id=<id>&search_type=page&media_type=all`;
+  Facebook rewrites the final URL to `sort_data[mode]=total_impressions`,
+  `sort_data[direction]=desc`, `is_targeted_country=false` — recorded as the
+  source-declared default sort state, not chosen by this run.
+- **Field extraction recipe:** visible-text card blocks are anchored by
+  `Library ID: <n>` lines (strip zero-width characters); destination URLs are
+  `l.facebook.com/l.php?u=` wrappers per card in DOM order (strip
+  `utm_*`/`fbclid`/`bc_*` params). Platform placement indicators are icon-only
+  with **no accessible names** — not extractable from this surface (§9).
+
+## 3. Capture-Parameter Receipt And Enumeration Ceiling
+
+| Parameter | Frozen value |
+| --- | --- |
+| Advertiser | page `1898638280462729`, alias `summerfridaysbeauty`, name "Summer Fridays" |
+| Country/market | `country=US`; `is_targeted_country=false` (source-added) |
+| Category / ad type | `ad_type=all`, `media_type=all` |
+| Status filter | `active_status=active` (active-only; US surface exposes no inactive non-political ads) |
+| Sort | source default; rewritten by Meta to `total_impressions desc` |
+| Session posture | logged-out; no cookies/profile/proxy |
+| Capture window | 2026-07-26 11:37:39 – 11:40:39 (+08:00 local machine time) |
+| Declared surface | "~200 results" (visible declaration; exhaustion signal **not** observed) |
+| Continuation actions | 8 scroll passes of 10 permitted |
+| Unique IDs retained | 99 (P3) ∪ 22 (P2) = 99 (P2 ⊂ P3) |
+| Typed inventory cap | 60 unique library IDs, observed order; 39 retained untyped |
+| Verdict | **PARTIAL** — typed 60 < retained 99 < declared ~200 |
+
+## 4. Advertiser-Identity Proof
+
+Three admitted legs plus one diagnostic observation:
+
+1. **Company site → alias** (P1): `summerfridays.com` HTML declares
+   `facebook.com/summerfridaysbeauty` and `instagram.com/summerfridays`.
+2. **Alias → page_id** (P4): the logged-out render of
+   `facebook.com/summerfridaysbeauty` shows name "Summer Fridays", "Page ·
+   Health/beauty", `hello@summerfridays.com`, `summerfridays.com`, and the
+   rendered DOM contains `1898638280462729`.
+3. **page_id → ad surface** (P2/P3): the page-scoped Ad Library URL renders
+   advertiser "Summer Fridays" ads for that page_id.
+4. *Diagnostic (unadmitted):* the typeahead GraphQL response bound
+   `page_id 1898638280462729` ↔ alias `summerfridaysbeauty` ↔
+   `ig_username summerfridays` (IG-verified, ~1.46M followers) in one record.
+
+**Rejected ambiguities** (typeahead candidates, name collisions): a stylized
+"𝐒𝐮𝐦𝐦𝐞𝐫 𝐅𝐫𝐢𝐝𝐚𝐲𝐬" page (6 likes, no alias), "Summer Fridays Photography",
+"Summer VIBE Fridays SOHO" (pub), "Summer Crush Fridays at The Standard"
+(nightclub), two Ibiza concert pages, and one unrelated IG ads identity. None
+carries the company alias, domain, or category; all rejected.
+
+## 5. Unique-Ad Inventory (typed 60)
+
+Full row data: `derived/meta_ads_typed_rows.json` in the raw lake (fields:
+library_id, status, started_running_on, multiple_versions,
+creative_reuse_count, advertiser, media, video_duration, body, headline,
+description, cta, destination_url_canonical, also_in_initial_packet). Summary:
+
+- 60/60 status **Active**; start dates 2026-03-10 → 2026-07-15.
+- Advertiser: 59 "Summer Fridays"; 1 "JADE LILY with Summer Fridays".
+- CTA: 59 "Shop Now"; 1 none-visible (the JADE LILY partnership card).
+- Media: 12 video (durations 0:06–2:35 visible); 48 not source-stated in the
+  text layer (static/carousel not distinguishable without opening detail views).
+- Destinations: 60/60 bound; **all on `summerfridays.com`** — 44 product/
+  collection/pages URLs, 16 Black Crow personalization storefront URLs
+  (`/apps/blackcrow/storefronts/crowlink/<uuid>` with `bc_source`/`bc_campaign`/
+  `bc_adid` macros) — a source-visible ad-tech mechanic (Black Crow AI).
+- 22 of the 60 also appear in the independent initial render (P2), giving a
+  two-render stability cross-check.
+
+## 6. Creative/Message Clusters (19 distinct creatives across 60 ads)
+
+| Cluster (headline) | Ads | Earliest start | Product typing (see §7) |
+| --- | ---: | --- | --- |
+| Sunlit Summer Essentials | 10 | 2026-06-29 | bundle: ShadeDrops SPF 50 + Lip Butter Balm Vanilla + Sunlit Vanilla EdP travel |
+| NEW Strawberry Soft Serve | 7 | 2026-07-07 | Lip Butter Balm (new flavor, ad-declared) |
+| Dewy Travel Trio is Back | 5 | 2026-06-18 | bundle (authority-listed) |
+| Essential Lip Kit is BACK | 5 | 2026-06-19 | kit: Flushed Lip Stain + SoftLine Lip Liner + Lip Butter Balm + pouch (kit name not in p10 authority) |
+| Lip Stains are Back | 5 | 2026-06-22 | Flushed Lip Stain |
+| Back in Stock | 4 | 2026-06-22 | Flushed Lip Stain |
+| Limited-Edition Lip Set | 4 | 2026-07-07 | Summer Fruits Set (authority-listed) |
+| Summer Essentials Pouch | 4 | 2026-06-30 | Summer Essentials Terry Pouch (merch-with-samples) |
+| NEW! Sweet Summer Minis | 3 | 2026-07-02 | bundle (authority-listed; Lip Butter Balm minis) |
+| CC Me Serum with Vitamin C + Niacinamide | 2 | 2026-03-10 | CC Me Serum |
+| The Essentials Trio | 2 | 2026-05-14 | set `skincare-essentials-trio` (name not in p10 authority) |
+| NEW! Neapolitan Lip Trio | 2 | 2026-07-07 | The Neapolitan Lip Trio (authority-listed) |
+| Subscribe + Save | 1 | 2026-05-28 | brand-only; subscription program, 15% off |
+| NEW! Jumbo Pack: 15 Pairs | 1 | 2026-07-13 | Jet Lag Eye Patches (jumbo pack) |
+| NEW! ShadeDrops SPF 50 | 1 | 2026-06-26 | ShadeDrops SPF 50 |
+| Lip Butter Balm Vanilla | 1 | 2026-06-03 | Lip Butter Balm |
+| JADE LILY | 1 | 2026-07-15 | Flushed Lip Stain (Mocha/Maple; creator partnership, "ad" disclosure) |
+| NEW! Toasted Marshmallow | 1 | 2026-07-13 | Lip Butter Balm (limited-edition flavor) |
+| The Nighttime Routine | 1 | 2026-06-03 | bundle (authority-listed) |
+
+Message texture: restock ("BACK", "Back in Stock"), newness ("NEW!"),
+limited-edition flavor drops, value bundles with strikethrough-style pricing
+("$75 ($92 value)"), evergreen brand copy ("Vegan, cruelty-free skincare in
+recyclable packaging…"), and one subscription-economics ad. Counts are
+observed-card counts, never spend or emphasis weights.
+
+## 7. Product-Family Coverage Matrix
+
+Normalized against the freshly read p10 CO1 family authority (34 families; 27
+current/exposed). "Observed" means the family name appears in a typed row or
+in the retained card text of P2/P3 (99+22 cards scanned, wider than the typed
+60).
+
+**Families with observed active creative**, with typed-row counts recomputed
+from `derived/meta_ads_typed_rows.json` over the 60-row window (a row may name
+more than one family, so counts are not additive):
+
+| Current/exposed family | Typed rows naming it |
+| --- | ---: |
+| Lip Butter Balm | 32 |
 | Flushed Lip Stain | 15 |
 | ShadeDrops SPF 50 Mineral Milk Sunscreen | 11 |
 | Sunlit Vanilla Eau de Parfum | 10 |
 | SoftLine Lip Liner | 5 |
-| CC Me Serum | 1 |
+| CC Me Serum | 2 |
 | Jet Lag Eye Patches | 1 |
 
-No first-60-window mention was observed for these 20 other current/exposed
-families: Babymoon Belly Balm; Blush Butter Balm; Body Butter Balm; Body
-Fragrance Mist; Bronzer Butter Balm; Bronzing Drops; Cloud Dew Gel Cream
-Moisturizer; Dream Lip Oil; Gentle Reset Daily Exfoliating Pads; Heavenly
-Sixteen All-In-One Face Oil; Illuminating Drops; Jet Lag Deep Hydration Serum;
-Jet Lag Mask; Jet Lag Overnight Eye Serum; Jet Lag Skin Soothing Hydration
-Mist; Light Aura Vitamin C + Peptide Eye Cream; Midnight Ritual Retinol Renewal
-Serum; Pink Dew Gel Cleanser; Rich Cushion Cream; Sheer Skin Tint.
+Matching is over retained copy (body, headline, description); including
+canonical destination URLs changes no count. Cloud Dew appears once in wider
+retained card text outside the typed 60 (bundle-component context only) and so
+carries no row count here.
 
-No first-60-window mention was observed for the seven historical-only families:
-Blush Balm Sticks; Dream Oasis Deep Hydration Serum; Overtime Mask; R+R Mask;
-ShadeDrops SPF 30 Mineral Milk Sunscreen; Soft Reset AHA Exfoliating Solution;
-Super Amino Gel Cleanser.
+**Families with no observed active creative on the captured surface** (18 of
+27 current/exposed): Babymoon Belly Balm; Gentle Reset Daily Exfoliating Pads;
+Heavenly Sixteen All-In-One Face Oil*; Jet Lag Deep Hydration Serum; Jet Lag
+Mask; Jet Lag Overnight Eye Serum; Jet Lag Skin Soothing Hydration Mist; Light
+Aura Eye Cream; Pink Dew Gel Cleanser†; Rich Cushion Cream; Blush Butter Balm;
+Bronzer Butter Balm; Bronzing Drops; Dream Lip Oil; Illuminating Drops; Sheer
+Skin Tint; Body Butter Balm; Body Fragrance Mist; Midnight Ritual Retinol.
 
-These are **window-bounded no-observed statements**, not claims that a family is
-absent from the full Meta library or from Summer Fridays advertising.
+For each such family the exact bounded phrase applies: **"No active Summer
+Fridays commercial creative was observed on the captured Meta Ad Library
+surface under the recorded market/filter/window."** This section was written
+against the bounded run's captured subset. **§12 supersedes its coverage
+ceiling**: the US active surface was later exhausted at 185 unique ads, so
+absence should be re-derived against that exhausted set before any Deliver use.
+The typed-row counts above remain scoped to the 60-row window.
 
-## 8. Probe sequence, failures, and omissions
+\* Heavenly Sixteen appeared in an **unadmitted diagnostic render** under a
+different sort state but in neither admitted packet — see §9.
+† Pink Dew matched retained text only inside "Dewy"-bundle copy
+("The Dewy Pink Set" context was not present; the two mentions are bundle
+descriptions naming Pink Dew Gel Cleanser as a component), so it is typed as
+bundle-component-only, not standalone creative.
 
-1. **Lower browser-runner preflight:** the first command supplied
-   `--scroll-passes` to a runner that does not accept that option. Argument
-   parsing failed before network contact and before packet creation.
-2. **Keyword probe:** packet `01KYF1CHHG7X5JGHP0CPH0ZCAY` returned a
-   source-useful surface, but the approximately 1,400 keyword results included
-   unrelated advertisers. It proved transport and card detail, not advertiser
-   identity.
-3. **First-party identity capture:** packet `01KYF1EJBRGRZK5PMMND4N9F3C`
-   retained the company homepage and its Facebook-page link.
-4. **Page-search probe:** packet `01KYF1H1PFWC53Z2XM2BDJMZ2B` used
-   `search_type=page&q=Summer%20Fridays`, but Meta still rendered the broad
-   approximately 1,400-result keyword surface. It was rejected as inventory
-   authority.
-5. **Public Page identity probe:** packet `01KYF1J1HPM3J2HK44AHC22AV6`
-   bound the vanity locator to page ID `1898638280462729`.
-6. **Exact-page capture:** packet `01KYF1KWVQZR4ZN4NZVE8DZJ0R` used
-   `view_all_page_id=1898638280462729`; Meta rendered the Summer Fridays page
-   header and about 200 results. Ten scroll continuations exposed 118 unique
-   IDs, and the first 60 were retained in this return.
+Notable for Deliver: the **2026-08-06 body-launch families carry no observed
+Meta air cover** in this window on the captured subset, while lip franchises
+dominate observed rotation.
 
-No login handoff was required because the anonymous surface returned ad-level
-detail. A known-positive advertiser canary was not required because the
-commissioned advertiser surface itself passed the card-detail sufficiency
-checks.
+## 8. Failure / Omission Ledger
 
-### Omissions and typed limits
+1. **PARTIAL enumeration:** ~200 declared vs 99 retained vs 60 typed; no
+   exhaustion signal observed; 39 retained IDs untyped (listed in
+   `derived/meta_ads_typed_rows.json` under `overflow_library_ids`).
+2. **Platform/placement fields not extractable:** icon-only, no accessible
+   names in DOM; absence of a placement label is unknown, not unused.
+3. **Per-ad detail panes not opened in this run:** all fields here come from
+   the card surface. Panes were later opened and found to add only a version
+   counter — see §13, which closes this as a dead end rather than a gap.
+4. **Media not durably preserved:** viewport screenshots only; video/image
+   assets were not downloaded; 48 rows have unstated media type.
+5. **Direct-HTTP 400** on `facebook.com/summerfridaysbeauty` (route evidence).
+6. **Snapshot metadata does not confirm scrolling.** schema_version 3 has no
+   `scroll_passes_completed` key (an earlier draft of this return named one
+   that does not exist); `scroll_passes` echoes the requested count and
+   `before_scroll_steps_completed` reads `false` even on runs that
+   demonstrably scrolled. Judge scroll success by unique card count and
+   footer-terminal state.
+7. **Sort not operator-chosen:** Meta rewrote sort to `total_impressions`;
+   composition under other sorts was not captured (see Heavenly Sixteen, §9).
+8. **US surface limits:** active-only; no spend/reach/demographics/targeting
+   fields exist on this surface for non-political ads.
+9. **Coverage ceiling — independent creator pages:** partnership ads in the
+   paired byline format ("X with Summer Fridays") do appear page-scoped (one
+   observed); branded-content ads run solely from a creator's own page would
+   not. Keyword-scoped enumeration was not commissioned.
 
-- The 60-ID ceiling was hit before source exhaustion. IDs 61–118 exposed by the
-  same capture are retained raw but intentionally not enumerated here.
-- The source showed about 200 results, so at least some results were not exposed
-  by the ten continuation actions.
-- Platform icons were retained visually but their labels were not stably
-  serialized into text; placement is unresolved.
-- Viewport screenshot, DOM, and visible text were retained. Linked image/video
-  bytes and full video playback were not independently preserved.
-- Meta's grouped-version annotations were not expanded by opening every summary
-  or detail drawer.
-- Destination tracking parameters were stripped in this report. Raw hrefs
-  remain in the packet DOM.
-- Media-format typing is based on retained duration text, multi-link structure,
-  and DOM media elements. It is not a frame-level creative analysis.
-- The public source did not expose a campaign objective, audience definition,
-  spend, budget, impressions count, conversion result, ROAS, or advertiser
-  rationale.
+## 9. Misleading Matches And Diagnostic-Only Observations
 
-## 9. Source evidence bundle
+- The **keyword** search `"summer fridays"` (~1,400 results) is dominated by
+  unrelated advertisers (Whatnot, Amazon, venues) matching the phrase — do not
+  use keyword counts for brand claims.
+- **Heavenly Sixteen All-In-One Face Oil** and several "SUMMERFRIDAYS.COM
+  domain-card" creatives were observed in the diagnostic pane render (default
+  relevancy sort) but are absent from both admitted packets (impressions-sort
+  renders). Composition is sort-dependent; treat any single render as one
+  observed state.
+- The typeahead GraphQL identity record (§4.4) was observed in diagnosis but
+  not admitted as a packet; identity claims rest on the three admitted legs.
 
-Raw lake:
-`C:\tmp\forseti-sf-meta-ads-discovery-20260726\data`
+## 10. Source Packet Bundle
 
-Lake identity: epoch `v4.1`, root UUID
-`01KYF1BRNBR0P8AYJCJCN92ZY2`.
+Raw lake: `C:\tmp\forseti-sf-meta-ads-discovery-20260726\data` (epoch v4.1;
+packets under `raw/`, manifests+receipts per packet).
 
-| Packet | Role | Accepted use |
-|---|---|---|
-| `01KYF1CHHG7X5JGHP0CPH0ZCAY` | broad keyword probe | transport/card-detail proof and collision evidence only |
-| `01KYF1EJBRGRZK5PMMND4N9F3C` | company homepage | first-party Facebook locator |
-| `01KYF1H1PFWC53Z2XM2BDJMZ2B` | broad page-query probe | rejected route evidence only |
-| `01KYF1J1HPM3J2HK44AHC22AV6` | public Facebook Page | vanity, visible identity, company domain, numeric page ID |
-| `01KYF1KWVQZR4ZN4NZVE8DZJ0R` | exact advertiser-page inventory | primary 60-row inventory and creative catalog |
+**Co-resident packets from a parallel receiver (correction + purge).** At
+capture time the lake was NOT empty: a separate receiver lane accidentally
+wrote five packets into this root at 11:01–11:05 (+08:00), ~30 minutes before
+this run (session IDs `sf-meta-*-20260726`, operator `research`). This run's
+earlier statement that the lake was "initialized this run" was wrong — the
+parallel lane initialized it, and this run's `DataLakeRoot.initialize`
+verified the existing markers idempotently. No packet was overwritten
+(ULID-unique directories). On owner direction (2026-07-26, same session), the
+five foreign packets and their availability-index entries were **purged from
+the lake**; the lake now contains only this run's nine packets. Their
+inventory is preserved here as the purge record:
 
-Every packet contains a `manifest.json`, receipt, stored source artifacts, and
-per-file SHA-256 values. The primary packet retains:
+| Packet ID | Surface | Capture (+08:00) |
+| --- | --- | --- |
+| `01KYF1CHHG7X5JGHP0CPH0ZCAY` | Ad Library keyword search (US active) | 11:01:27 |
+| `01KYF1EJBRGRZK5PMMND4N9F3C` | summerfridays.com homepage | 11:02:34 |
+| `01KYF1H1PFWC53Z2XM2BDJMZ2B` | Ad Library page search (US active) | 11:03:55 |
+| `01KYF1J1HPM3J2HK44AHC22AV6` | facebook.com/summerfridaysbeauty page | 11:04:27 |
+| `01KYF1KWVQZR4ZN4NZVE8DZJ0R` | Ad Library page-scoped inventory (US active, same `view_all_page_id=1898638280462729`) | 11:05:28 |
 
-- rendered DOM SHA-256
-  `02d0c617840c4fd38cd1d3197728400fae3da19c16ba7244597e4452c5876b6d`;
-- visible text SHA-256
-  `57a5fa53e4a8a8e5d033e3e824eca1fa8c81ce9575a95f47b28d0deaf6c23f4a`;
-- viewport screenshot SHA-256
-  `106172877e06b51f8f1fbdf47a38c6f75c009422c3cd5f7b7c5be0658710f6f7`;
-- snapshot metadata SHA-256
-  `c86804d6dbfee39a28e09953e9f4b1a1b329212f5697fbbe4f0306c951b13f32`.
+Before the purge, the parallel lane's packets independently resolved the same
+advertiser page ID — noted as an unplanned cross-receiver observation of §4,
+now historical only (the underlying packets no longer exist in this lake).
 
-## 10. Validation
+| # | Packet ID | Surface | Capture time (+08:00) | manifest SHA-256 |
+| --- | --- | --- | --- | --- |
+| P1 | `01KYF3ETJDH85G4VCKERPR0AX2` | `summerfridays.com` homepage (direct HTTP) | 2026-07-26 11:37:39 | `0925be5db61f1ff988a1a46e295f71ae085b1a87402d649805defc747567f1dc` |
+| P2 | `01KYF3FW49NDWKZQ6V9JDF1C8X` | Ad Library page-scoped, initial render (22 IDs) | 2026-07-26 11:38:14 | `4922f01d950cd984c88e82c7b0f267fcd9b29288cae502960c7874f95a56ff62` |
+| P3 | `01KYF3JGKH4EF7C06QY9799A3K` | Ad Library page-scoped, 8-pass scrolled render (99 IDs) | 2026-07-26 11:39:40 | `c835462ebc52daa7206f1884750785e6d2d61c64b1c52f52cb59eef17921369b` |
+| P4 | `01KYF3MAFCS8J9020VTHN5T5WN` | `facebook.com/summerfridaysbeauty` identity render | 2026-07-26 11:40:39 | `9d003165b0bb04fa2be3cf840aba8c5009f61401dce1d8c9ef8cbbedf20cd61d` |
 
-| Check | Result |
-|---|---|
-| First-60 inventory count | pass — 60 rows |
-| Library-ID uniqueness in inventory | pass — 60/60 unique |
-| Every inventory ID exists in the primary packet visible text | pass — 60/60 |
-| Raw exact-page unique-ID recomputation | pass — 118 |
-| Creative-reference integrity | pass — 29 references / 29 definitions |
-| Creative-copy source binding | pass — 29/29 normalized copy sequences occur in retained source order |
-| Canonical destination source binding | pass — 18/18 unique reported destinations decode from retained Meta outbound hrefs |
-| Media-format recomputation | pass — 12 rows with visible video duration / 48 static-image rows |
-| Cluster arithmetic | pass — cluster counts sum to 60 inventory rows |
-| Advertiser-label recomputation | pass — 59 Summer Fridays / 1 JADE LILY with Summer Fridays |
-| Exact page/filter/order/capture-time receipt | pass |
-| First-party locator + public-page numeric-ID binding | pass |
-| Portfolio authority fresh hash | pass — SHA-256 named in section 7 |
-| Forbidden `not spending` formulation | absent |
-| Placement limitation | present and inherited by all 60 rows |
-| Raw-lake manifest verification | pass — 5/5 packets, 0 read failures, 0 missing/stale/orphan availability rows |
+Derived (non-packet) extraction: `derived/meta_ads_typed_rows.json` (typed 60
+rows + 39 overflow IDs), produced deterministically from P2/P3 text and DOM by
+the extraction script; regeneration requires only the retained packets.
 
-Repository-scoped header, output-mode, and diff validation is reported after
-the artifact is committed so changed-file gates receive a non-vacuous diff.
+Source URLs (canonical): the page-scoped Ad Library URL in §2; the alias page;
+the company homepage. All capture parameters are in §3.
 
-## 11. Safe later joins and non-claims
+## 11. Non-Claims And Safe Deliver-Side Uses
 
-### Safe later joins
+**Non-claims.** No spend, budget, impressions (the sort label is Meta's, no
+values are exposed), reach, targeting, audience, performance, conversion,
+campaign objective, market priority, or executive intent. Active-only US
+surface; one capture window; composition is sort- and render-dependent.
+Family typing is family-level; SKU/variant only where the creative names it.
+Absence rows use the exact bounded phrase in §7 and never mean "not spending."
+The 39 untyped retained IDs and ~101 unrendered declared results mean **counts
+here are floors of the observed subset, not totals**.
 
-1. Join on unique library ID for source-row identity and creative ID for
-   deduplicated copy/media analysis.
-2. Keep Meta's active/status/start-date fields as source-time observations.
-3. Treat prices, value comparisons, discounts, and restock/limited language as
-   advertiser copy, not independently verified offer truth.
-4. Use the 27-family portfolio authority only for family normalization. Keep
-   bundles, sets, samples, merchandise, flavors, and variants at their retained
-   types.
-5. Preserve C29 as a collaboration-labelled source row and its copy/destination
-   mismatch; do not silently normalize it into a plain brand ad.
-6. If later work needs full advertiser coverage, resume from the raw 118-ID
-   exposure or recapture under a separately commissioned ceiling. Do not treat
-   this first-60 window as exhaustive.
+**Safe later joins (not performed here):** paid-claim vs organic-claim
+comparison (which claims the company pays to amplify vs what community
+sources say); paid destination routing (all-DTC in the typed set) vs retailer
+review evidence; restock/launch messaging vs retailer availability; the
+Black Crow personalization mechanic vs DTC funnel observations; the JADE LILY
+partnership vs creator-signal evidence; body-launch air-cover timing vs the
+8/6 launch narrative.
 
-### Non-claims
+## 12. Owner-Commissioned Full-Corpus Extension (same day, 2026-07-26)
 
-- Not spend, budget, impressions, ROAS, conversion, targeting, audience,
-  campaign-objective, market-priority, or executive-intent evidence.
-- Not a claim that any ad was delivered to a particular person, placement, or
-  physical location.
-- Not a campaign count. Unique library IDs, deduplicated creative records, and
-  Meta's grouped-version annotations are different source objects.
-- Not a prevalence, share-of-voice, performance, or creative-effectiveness
-  measurement.
-- Not an exhaustive current inventory; the return is partial at 60 IDs.
-- Not historical coverage. The commercial active-ad surface was captured, not
-  a complete inactive or deleted-ad history.
-- Not independent verification of advertiser efficacy, ingredient, product,
-  offer, stock, discount, or value statements.
-- Not the Deliver-side competitive-intelligence synthesis or recommendation.
-- Not Judgment evidence, buyer proof, Product Lead evidence, readiness, or
-  validation of Forseti.
+Commissioned directly in-session after the bounded run closed; caps lifted to
+"visible exhaustion." Five further packets were admitted (raw truth only;
+**typed projection of these packets is deliberately deferred** — the typed
+inventory in §5–§7 still describes the original 60-row bounded run).
+
+| # | Packet ID | Surface | Capture (+08:00) | manifest SHA-256 | Result |
+| --- | --- | --- | --- | --- | --- |
+| E1 | `01KYF4W3C4SJJYFFBCW6VNAX12` | US active, page-scoped, 25-pass exhaustion | 12:02:23 | `3017d8d5d9342223dddd8375930dc06817193a72f7f2bb729a001b82e3d515dc` | **185 unique library IDs**, footer-terminal state; "~200" declared was Meta rounding. One card carries a "Low impression count" label. |
+| E2 | `01KYF4YWGV8HRM8AYCVE475MXP` | `country=DE`, `active_status=all` (DSA view) | 12:03:54 | `6798dcdca8b9a4db6eaee840da30e8743f399869a80427986a7e5b0d269de5d1` | **Empty**: "This advertiser isn't running ads in the selected country and ad category at this time." Params confirmed un-rewritten. |
+| E3 | `01KYF514VR7SZ2R7Y6P0JXR4CW` | `country=DE` keyword `zalando` control | 12:05:08 | `e92ad938a4e680e6985065cd863cafec404929820ceed477c88192f88de62bde` | **Instrument GO**: >50,000 declared, 49 cards rendered, 43 Inactive with date ranges, per-card "EU transparency" sections. |
+| E4 | `01KYF52WQXSNFZGAMGB5VS07JZ` | `country=FR`, `active_status=all`, 2-pass probe | 12:06:05 | `2af91b17cb54b2e7090b90d554fce711fa152a3b67d277df65da19b548af8dac` | **Positive**: 11 cards render — DE absence is country-specific reach, not EU-wide absence. |
+| E5 | `01KYF55JPSJJ2HXM1YWQJC5YSD` | `country=FR`, `active_status=all`, 25-pass exhaustion | 12:07:33 | `88cb29c2f39e20ae1b0e8ad3334a028ad74c5c553348dd5fc49304cb4e482ae5` | 11 unique IDs of "~16" declared, footer-terminal; 7 Active, 4 Inactive with date ranges; 6 "EU transparency" sections. |
+
+Extension findings (acquisition-level, raw-backed):
+
+1. **US active corpus is now fully captured at the card level**: 185 unique
+   library IDs, exhaustion observed. The §3 PARTIAL verdict is superseded at
+   the card level by E1; grouped "N ads use this creative" versions and detail
+   panes remain unexpanded (residual ceiling).
+2. **EU/DSA view**: no Summer Fridays brand-page ads are viewable under
+   `country=DE` (instrument-proven by E3), while `country=FR` exposes a small
+   corpus (11 cards, ~1-year DSA retention, incl. inactive with date ranges).
+   Absence phrasing per country: "No Summer Fridays ad creative was observed
+   in the Meta Ad Library `country=<X>` all-status view at capture time."
+3. **Channel-routing contrast (raw observation, not yet typed):** the FR
+   creative is French-language and states "Uniquement disponible chez
+   Sephora" — FR paid routes to the retailer, while all 60 typed US rows
+   route DTC to `summerfridays.com`. High-leverage Deliver join.
+4. Non-claims unchanged (§11); the EU view covers EU-reaching ads only, one
+   country view at a time; a country-view absence is not "not spending."
+
+## 13. Depth Probe And Market Extension (2026-07-26, later same session)
+
+Three further packets close the two open depth/breadth questions.
+
+| # | Packet ID | Surface | Result |
+| --- | --- | --- | --- |
+| E6 | `01KYFJ14GQR27Q8NZ6A0Z4SMX1` | single-ad permalink `?id=1175398888105507` | Empty under the run's geo/session ("No ads match") — permalink is viewer-geo-sensitive; the same URL rendered one card in a browser resolving to `country=SG`. |
+| E7 | `01KYFJ24KS4NCVWWX82TQKYFGB` | permalink with `active_status=all` | Renders the page grid (23 cards), not an isolated ad — no URL-addressable per-ad detail route exists. |
+| E8 | `01KYFK6EHXRCZ5C9VKTZ4APXGH` | `country=IT`, `active_status=all`, 25-pass exhaustion | **11 unique IDs** of "~16" declared, footer-terminal, 4 Inactive with date ranges, 6 EU-transparency sections. Captured by a cold receiver following only the route card. |
+
+**Detail panes are a closed question — do not sweep them.** The "See ad
+details" pane was opened live for Library ID `1175398888105507`. Every field it
+shows is already in the grid card; the only addition is a version counter
+(`1 of 5`). The version carousel does **not** advance under synthetic clicks or
+full pointer-event sequences (pointerdown/mousedown/pointerup/click) — it
+requires trusted input, which is the anti-bot boundary. The pane's DOM holds
+only 3 unique creative images for that 5-version ad, so even DOM scraping gives
+partial version coverage. Platform/placement icons carry no accessible names in
+the pane either. No CAPTCHA was encountered. Cost/benefit is decisively
+negative: ~30 human-rate interactions plus challenge risk for one integer
+already implied by the card's "N ads use this creative" text.
+
+**Per-market corpora are genuinely distinct.** IT (11 ads) and FR (11 ads)
+share **zero library IDs**. Each EU country view is its own corpus, not a
+re-slice of one EU set — so market breadth, not per-ad depth, is where
+remaining value sits (~25 scroll passes per additional country).
+
+Deferred (not performed): typed projection of E1/E5/E8 rows, EU countries
+beyond DE/FR/IT, media-asset preservation.
+
+## 14. Supersession Of A Parallel Return At This Path
+
+A second receiver executed the same handoff independently and landed its own
+return at this exact path on `main` (PR #1369, 605 lines). This return replaces
+it at the same path. The record of what happened, because it bears on evidence
+integrity:
+
+**Both runs were legitimate.** The parallel lane was not stray scratch — it was
+a real receiver of the same handoff, writing to the handoff's hard-coded lake
+root. Two receivers collided because the handoff names one lake root and one
+output path, with no receiver-scoping.
+
+**Its evidence base no longer exists.** That return dereferences six packet IDs
+(`01KYF1BRNBR0P8AYJCJCN92ZY2`, `01KYF1CHHG7X5JGHP0CPH0ZCAY`,
+`01KYF1EJBRGRZK5PMMND4N9F3C`, `01KYF1H1PFWC53Z2XM2BDJMZ2B`,
+`01KYF1J1HPM3J2HK44AHC22AV6`, `01KYF1KWVQZR4ZN4NZVE8DZJ0R`). Five were purged
+from the shared lake on owner direction earlier the same day, when they were
+believed to be an accidental cross-lane write rather than a parallel execution;
+the sixth is also absent. None is recoverable — the lake is outside Git. Its
+rows therefore cannot be re-dereferenced to retained packets, which the
+handoff's own validation contract requires.
+
+**Why this return supersedes rather than merges.** Coverage: 185 US active ads
+exhausted plus FR/IT/DE country views, against that return's 118 discovered /
+60 typed, US-only, `PARTIAL`. Provenance: twelve live packets, all manifest
+hashes verified. Its substantive findings are not lost — the two returns agree
+on advertiser identity, the 60-row typed window, all-DTC US destinations, and
+the JADE LILY partnership row.
+
+**What was carried across.** Its per-family row counts (§7 above) were the one
+analysis this return lacked. They are grafted as *recomputed* values from this
+run's live `derived/meta_ads_typed_rows.json`, not copied. Five of seven cells
+reproduce exactly (ShadeDrops 11, Sunlit Vanilla 10, SoftLine 5, Flushed Lip
+Stain 15, Jet Lag Eye Patches 1). Two differ — Lip Butter Balm 32 here vs 34
+there, CC Me Serum 2 here vs 1 there — and the difference is *not* explained by
+including destination URLs in the match. The unreconciled delta is recorded
+rather than silently averaged; the values above are the ones this return's
+evidence supports.
+
+**Standing risk.** Until a handoff scopes lake roots and output paths per
+receiver, any concurrently commissioned receiver pair will collide the same way.

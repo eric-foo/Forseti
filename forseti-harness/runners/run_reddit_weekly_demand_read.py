@@ -1,20 +1,19 @@
 """Weekly demand read over committed reddit_subreddit_grid top/week packets.
 
 Evidence-layer reader (weekly demand radar spec, section E): discovers this
-week's ``top/?t=week`` grid packets for the lake-registry roster, ranks
-problem candidates by discussion density and evidence volume, and emits one
-JSON document. Pure read -- no lake writes, no network, no analysis persisted.
+week's ``top/?t=week`` grid packets for the lake-registry roster, applies the
+stable listing floor, and emits a ranked model-review queue. Pure read -- no
+lake writes, no network, no analysis persisted, and no capture authorization.
 
 Owner contract:
 - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_weekly_demand_radar_spec_v0.md
+- forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_listing_efficiency_policy_v0.md
 """
 from __future__ import annotations
 
 import argparse
 import datetime as _dt
-import hashlib
 import json
-import math
 import re
 import sys
 from collections import Counter
@@ -35,11 +34,8 @@ from data_lake.root import DataLakeRoot
 from runners._scaffold import exit_on_failure
 
 GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
-DEFAULT_ENGAGEMENT_HEAD_FRACTION = 0.5
-DEFAULT_OPAQUE_TAIL_AUDIT_FRACTION = 0.1
-DEFAULT_TAIL_RESCUE_MIN_COMMENTS = 1
-DEFAULT_TAIL_RESCUE_SCORE = 2
-DEFAULT_ZERO_COMMENT_TAIL_RESCUE_SCORE = 3
+LISTING_EFFICIENCY_POLICY_VERSION = "reddit_listing_efficiency_v0"
+GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 3
 # Page-1 score floor above which a subreddit genuinely overflows one page
 # (top-10 carries 65% of weekly score on the measured distribution; a floor
 # past 50 means real traction ran off the page and the next pass should
@@ -143,17 +139,6 @@ _CONCRETE_TITLE_CONTEXT_SIGNALS = (
     ),
 )
 
-_STRONG_TAIL_TITLE_REASONS = frozenset(
-    {
-        "pain_or_failure",
-        "praise_or_success",
-        "comparison_or_choice",
-        "concrete_outcome_or_experience",
-        "review_or_update",
-    }
-)
-
-
 def _int_or_none(value: str | None) -> int | None:
     # helper-delta: unlike harness_utils.int_or_none, this accepts signed
     # strings -- a downvoted thread's data-score is legitimately negative and
@@ -256,59 +241,26 @@ def _title_context_reasons(
     ]
 
 
-def _tail_title_rescue_score(
-    *,
-    title_reasons: list[str],
-    context_reasons: list[str],
-) -> int:
-    # One direct pain/praise/outcome/review family is sufficient evidence to
-    # inspect a thread with observed discussion. Generic questions, routines, hauls, and
-    # discussion flairs carry only one point and need concrete product,
-    # ingredient, technique, price, or variant context to qualify.
-    score = (
-        2
-        if any(reason in _STRONG_TAIL_TITLE_REASONS for reason in title_reasons)
-        else 0
+def _listing_review_sort_key(item: dict[str, Any]) -> tuple[int, bool, int, str]:
+    score = item["score"]
+    return (
+        -item["comments"],
+        score is None,
+        -(score if score is not None else 0),
+        item["thread_url"],
     )
-    if score == 0 and title_reasons:
-        score = 1
-    if context_reasons:
-        score += 1
-    return score
 
 
-def _tail_title_rescue_eligible(*, comments: int, rescue_score: int) -> bool:
-    threshold = (
-        DEFAULT_TAIL_RESCUE_SCORE
-        if comments >= DEFAULT_TAIL_RESCUE_MIN_COMMENTS
-        else DEFAULT_ZERO_COMMENT_TAIL_RESCUE_SCORE
-    )
-    return rescue_score >= threshold
-
-
-def _audit_order_key(*, as_of: _dt.date, subreddit: str, thread_url: str) -> str:
-    return hashlib.sha256(
-        f"{as_of.isoformat()}\0{subreddit}\0{thread_url}".encode("utf-8")
-    ).hexdigest()
-
-
-def _select_deep_dive_rows(
-    *,
-    subreddit: str,
-    rows: list[dict[str, Any]],
-    as_of: _dt.date,
-    opaque_tail_audit_fraction: float,
-) -> list[dict[str, Any]]:
-    if not 0 < opaque_tail_audit_fraction <= 1:
-        raise ValueError("opaque_tail_audit_fraction must be greater than zero and at most one")
-
+def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ranked = sorted(
-        rows,
-        key=lambda item: (-item["comments"], -item["score"], item["thread_url"]),
+        (
+            item
+            for item in rows
+            if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
+        ),
+        key=_listing_review_sort_key,
     )
-    head_size = math.ceil(len(ranked) * DEFAULT_ENGAGEMENT_HEAD_FRACTION)
-    selected: list[dict[str, Any]] = []
-    audit_tail: list[dict[str, Any]] = []
+    review_rows: list[dict[str, Any]] = []
     for position, item in enumerate(ranked, start=1):
         title_class, title_reasons = _classify_title_signal(
             item["title_or_none"],
@@ -318,59 +270,32 @@ def _select_deep_dive_rows(
             item["title_or_none"],
             item["flair_or_none"],
         )
-        title_rescue_score = _tail_title_rescue_score(
-            title_reasons=title_reasons,
-            context_reasons=title_context_reasons,
+        context_state = (
+            "listing_context_insufficient"
+            if title_class == "opaque" and not title_context_reasons
+            else "listing_context_present"
         )
-        title_rescue_eligible = _tail_title_rescue_eligible(
-            comments=item["comments"],
-            rescue_score=title_rescue_score,
+        review_rows.append(
+            {
+                **item,
+                "subreddit_rank_by_comments": position,
+                "subreddit_review_threads": len(ranked),
+                "title_signal_class": title_class,
+                "title_signal_reasons": title_reasons,
+                "title_context_reasons": title_context_reasons,
+                "listing_context_state": context_state,
+                "selection_reason": "comment_floor_cleared",
+                "policy_stage": "requires_commission_model_adjudication",
+            }
         )
-        enriched = {
-            **item,
-            "subreddit_rank_by_comments": position,
-            "subreddit_eligible_threads": len(ranked),
-            "title_signal_class": title_class,
-            "title_signal_reasons": title_reasons,
-            "title_context_reasons": title_context_reasons,
-            "title_rescue_score": title_rescue_score,
-            "title_rescue_eligible": title_rescue_eligible,
-        }
-        if position <= head_size:
-            selected.append({**enriched, "selection_reason": "engagement_head"})
-        elif title_class in {"explicit", "suggestive"} and title_rescue_eligible:
-            selected.append({**enriched, "selection_reason": f"title_{title_class}"})
-        else:
-            audit_tail.append(enriched)
-
-    if audit_tail:
-        audit_size = max(1, math.ceil(len(audit_tail) * opaque_tail_audit_fraction))
-        audited = sorted(
-            audit_tail,
-            key=lambda item: _audit_order_key(
-                as_of=as_of,
-                subreddit=subreddit,
-                thread_url=item["thread_url"],
-            ),
-        )[:audit_size]
-        for item in audited:
-            selection_reason = (
-                "opaque_tail_audit"
-                if item["title_signal_class"] == "opaque"
-                else "weak_signal_tail_audit"
-            )
-            selected.append({**item, "selection_reason": selection_reason})
-    return selected
+    return review_rows
 
 
 def run_weekly_demand_read(
     *,
     data_root: DataLakeRoot,
     as_of: _dt.date,
-    opaque_tail_audit_fraction: float = DEFAULT_OPAQUE_TAIL_AUDIT_FRACTION,
 ) -> dict[str, Any]:
-    if not 0 < opaque_tail_audit_fraction <= 1:
-        raise ValueError("opaque_tail_audit_fraction must be greater than zero and at most one")
     window_start = as_of - _dt.timedelta(days=6)
     # capture_roster: a retired subreddit is not "missing a weekly packet", it
     # is deliberately not captured, and must not inflate the coverage gap.
@@ -425,6 +350,9 @@ def run_weekly_demand_read(
     sub_health: list[dict[str, Any]] = []
     candidates: list[dict[str, Any]] = []
     eligible_threads_found = 0
+    listing_review_threads_found = 0
+    general_floor_suppressed_threads = 0
+    missing_engagement_rows: list[dict[str, Any]] = []
     title_signal_counts: Counter[str] = Counter()
     floor_tripwire: list[str] = []
     for name in sorted(per_sub):
@@ -438,13 +366,49 @@ def run_weekly_demand_read(
             (row, _int_or_none(row.visible_score_or_none), _int_or_none(row.visible_comment_count_or_none))
             for row in rows
         ]
-        usable = [(row, score, comments) for row, score, comments in scored
-                  if score is not None and comments is not None]
-        total_score = sum(score for _, score, _ in usable)
+        usable = [
+            (row, score, comments)
+            for row, score, comments in scored
+            if comments is not None
+        ]
+        missing_comment_rows = [
+            {
+                "subreddit": name,
+                "thread_url": row.thread_url,
+                "title_or_none": row.visible_title_or_none,
+                "flair_or_none": row.flair_or_none,
+                "missing_fields": ["comments"]
+                + (["score"] if score is None else []),
+            }
+            for row, score, comments in scored
+            if comments is None
+        ]
+        missing_engagement_rows.extend(missing_comment_rows)
+        total_score = sum(
+            score for _, score, _ in usable if score is not None
+        )
         total_comments = sum(comments for _, _, comments in usable)
-        score_floor = min((score for _, score, _ in usable), default=None)
+        score_floor = min(
+            (score for _, score, _ in usable if score is not None),
+            default=None,
+        )
         if score_floor is not None and score_floor > PAGE_OVERFLOW_SCORE_FLOOR:
             floor_tripwire.append(name)
+        review_rows = _build_listing_review_rows(
+            rows=[
+                {
+                    "subreddit": name,
+                    "thread_url": row.thread_url,
+                    "title_or_none": row.visible_title_or_none,
+                    "flair_or_none": row.flair_or_none,
+                    "timestamp_utc_ms_or_none": row.timestamp_utc_ms_or_none,
+                    "score": score,
+                    "comments": comments,
+                }
+                for row, score, comments in usable
+            ],
+        )
+        floor_suppressed = len(usable) - len(review_rows)
         sub_health.append(
             {
                 "subreddit": name,
@@ -452,71 +416,42 @@ def run_weekly_demand_read(
                 "observed_at": read.observed_at,
                 "created_utc_or_none": read.grid_view.created_utc_or_none,
                 "posts": len(usable),
-                "rows_dropped_unparsed": len(scored) - len(usable),
+                "rows_dropped_unparsed": len(missing_comment_rows),
+                "rows_with_unparsed_score": sum(
+                    1 for _, score, _ in usable if score is None
+                ),
                 "weekly_score": total_score,
                 "weekly_comments": total_comments,
                 "page1_score_floor": score_floor,
-                "deep_dive_head_size": math.ceil(
-                    len(usable) * DEFAULT_ENGAGEMENT_HEAD_FRACTION
-                ),
+                "listing_policy_review_threads": len(review_rows),
+                "general_floor_suppressed_threads": floor_suppressed,
             }
         )
-        eligible = [
-            {
-                "subreddit": name,
-                "thread_url": row.thread_url,
-                "title_or_none": row.visible_title_or_none,
-                "flair_or_none": row.flair_or_none,
-                "timestamp_utc_ms_or_none": row.timestamp_utc_ms_or_none,
-                "score": score,
-                "comments": comments,
-            }
-            for row, score, comments in usable
-        ]
-        eligible_threads_found += len(eligible)
-        for item in eligible:
-            title_class, _reasons = _classify_title_signal(
-                item["title_or_none"],
-                item["flair_or_none"],
-            )
-            title_signal_counts[title_class] += 1
-        candidates.extend(
-            _select_deep_dive_rows(
-                subreddit=name,
-                rows=eligible,
-                as_of=as_of,
-                opaque_tail_audit_fraction=opaque_tail_audit_fraction,
-            )
-        )
+        eligible_threads_found += len(usable)
+        listing_review_threads_found += len(review_rows)
+        general_floor_suppressed_threads += floor_suppressed
+        for item in review_rows:
+            title_signal_counts[item["title_signal_class"]] += 1
+        candidates.extend(review_rows)
 
-    candidates.sort(key=lambda item: (-item["comments"], item["thread_url"]))
+    candidates.sort(key=_listing_review_sort_key)
     selection_reason_counts = Counter(
         item["selection_reason"] for item in candidates
     )
-    capture_slots = [
-        {"slot_id": f"weekly_{index:04d}", "url": item["thread_url"]}
-        for index, item in enumerate(candidates, start=1)
-    ]
     return {
         "reader": "reddit_weekly_demand_read",
         "as_of": as_of.isoformat(),
         "window_start": window_start.isoformat(),
         "selection_policy": {
-            "engagement_head_fraction": DEFAULT_ENGAGEMENT_HEAD_FRACTION,
+            "policy_version": LISTING_EFFICIENCY_POLICY_VERSION,
+            "general_discussion_floor_max_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS,
+            "review_min_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS + 1,
+            "zero_or_negative_score_is_veto": False,
+            "missing_counts_are_unparsed": True,
             "engagement_rank_primary": "comments",
             "engagement_rank_tiebreakers": ["score", "thread_url"],
-            "tail_title_rescue_classes": ["explicit", "suggestive"],
-            "tail_title_rescue_min_comments": DEFAULT_TAIL_RESCUE_MIN_COMMENTS,
-            "tail_title_rescue_score": DEFAULT_TAIL_RESCUE_SCORE,
-            "zero_comment_tail_rescue_score": DEFAULT_ZERO_COMMENT_TAIL_RESCUE_SCORE,
-            "tail_title_rescue_scoring": {
-                "strong_pain_praise_outcome_comparison_or_review": 2,
-                "generic_question_routine_haul_or_discussion": 1,
-                "concrete_entity_ingredient_technique_price_or_variant_context": 1,
-            },
-            "opaque_tail_audit_fraction": opaque_tail_audit_fraction,
-            "opaque_tail_audit_minimum_per_subreddit": 1,
-            "opaque_tail_audit_rotation": "sha256(as_of, subreddit, thread_url)",
+            "title_signals_are_binding": False,
+            "admission_decision": "commission_conditioned_model_yes_borderline_no",
             "page_overflow_score_floor": PAGE_OVERFLOW_SCORE_FLOOR,
         },
         "roster_count": len(roster),
@@ -538,16 +473,24 @@ def run_weekly_demand_read(
         "superseded_weekly_packets": _bounded_ids(superseded_packets),
         "sub_health": sub_health,
         "eligible_threads_found": eligible_threads_found,
+        "listing_review_threads_found": listing_review_threads_found,
+        "general_floor_suppressed_threads": general_floor_suppressed_threads,
         "candidates_found": len(candidates),
         "selection_reason_counts": dict(sorted(selection_reason_counts.items())),
         "title_signal_counts": dict(sorted(title_signal_counts.items())),
         "candidates": candidates,
-        "capture_slots": capture_slots,
+        "missing_engagement_rows": sorted(
+            missing_engagement_rows,
+            key=lambda item: (item["subreddit"], item["thread_url"]),
+        ),
+        "capture_list_status": "blocked_pending_commission_model_adjudication",
+        "capture_slots": [],
         "page_overflow_tripwire": floor_tripwire,
         "non_claims": [
             "not metric authority",
             "not demand proof or venue scoring",
-            "title signals route capture; they do not establish pain, praise, causation, or prevalence",
+            "review-queue membership is not exact-thread capture authorization",
+            "title signals are non-binding cues; they do not establish pain, praise, causation, or prevalence",
             "not a lake write (recompute from packets at will)",
         ],
     }
@@ -557,22 +500,20 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Read this week's top/?t=week reddit_subreddit_grid packets for the "
-            "registry roster and emit ranked problem candidates as JSON."
+            "registry roster and emit a ranked model-review queue as JSON."
         )
     )
     parser.add_argument("--data-root", default=None, help="Lake root (defaults to resolution).")
     parser.add_argument("--as-of", default=None, help="ISO date closing the 7-day window; defaults to today (UTC).")
-    parser.add_argument(
-        "--opaque-tail-audit-fraction",
-        type=float,
-        default=DEFAULT_OPAQUE_TAIL_AUDIT_FRACTION,
-    )
     parser.add_argument("--output", type=Path, default=None, help="Also write the JSON document here.")
     parser.add_argument(
         "--capture-list-output",
         type=Path,
         default=None,
-        help="Also write a run_reddit_old_http_batch.py-compatible selected URL list.",
+        help=(
+            "Reserved for an adjudicated run_reddit_old_http_batch.py URL list; "
+            "fails closed while the reader output is unadjudicated."
+        ),
     )
     return parser
 
@@ -590,27 +531,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.as_of
             else _dt.datetime.now(_dt.timezone.utc).date()
         )
-        payload = run_weekly_demand_read(
-            data_root=data_root,
-            as_of=as_of,
-            opaque_tail_audit_fraction=args.opaque_tail_audit_fraction,
-        )
+        payload = run_weekly_demand_read(data_root=data_root, as_of=as_of)
         text = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+        if args.capture_list_output is not None:
+            raise ValueError(
+                "--capture-list-output is blocked pending commission-conditioned "
+                "model adjudication; the weekly reader does not authorize capture"
+            )
         if args.output is not None:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(text + "\n", encoding="utf-8")
-        if args.capture_list_output is not None:
-            args.capture_list_output.parent.mkdir(parents=True, exist_ok=True)
-            args.capture_list_output.write_text(
-                json.dumps(
-                    payload["capture_slots"],
-                    indent=2,
-                    ensure_ascii=False,
-                    sort_keys=True,
-                )
-                + "\n",
-                encoding="utf-8",
-            )
         print(text)
     return 0
 

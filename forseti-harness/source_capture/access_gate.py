@@ -86,10 +86,16 @@ def _has_visible_old_reddit_thread(*, parsed_url: ParseResult, body_text: str) -
     if match is None:
         return False
 
+    # A deleted self-post drops the ``thing_t3``/``data-fullname`` post div
+    # while the thread page (title, comment listing) stays public, so the
+    # thread-id-bound comment-listing container is accepted as equal envelope
+    # proof. All markers stay bound to the URL's thread id; a login-wall
+    # interstitial carries none of them.
     thread_id = re.escape(match.group("thread_id"))
     return (
         re.search(
-            rf"""\b(?:id=["']thing_t3_{thread_id}["']|data-fullname=["']t3_{thread_id}["'])""",
+            rf"""\b(?:id=["'](?:thing_t3_{thread_id}|siteTable_t3_{thread_id})["']"""
+            rf"""|data-fullname=["']t3_{thread_id}["'])""",
             body_text,
             re.IGNORECASE,
         )

@@ -165,7 +165,15 @@ for a long-wear brand it is an ordinary defect).
    graduation bar below. Consequence lane: positioning/demand.
 3. **Price-value** — worth/price is the actual grievance ("not worth $24",
    "drugstore does the same", names a cheaper equivalent). Also wires into
-   the substitute cell.
+   the substitute cell. **Post-dates this proposal (2026-07-28):** the SERP
+   lane's typed competitor ledger now specifies that the substitute cell is
+   filled from finding-grade `substitute_down` + `dupe_association` entries
+   with their observation ids, rather than ad hoc per report, and that a
+   complaint naming an equivalent emits such an entry. Whoever adjudicates
+   this proposal should reconcile the two; see
+   `docs/research/serp_lane_competitor_scout_20260728/competitor_ledger_spec_v0.md`
+   ("Wiring into the claims-to-complaints path"). This pointer records the
+   divergence only — it decides nothing.
 4. **Education gap** — expectation/use mismatch where the product performed
    as designed and never claimed otherwise.
 5. **Ordinary defect** — residual class: performance/quality failure
