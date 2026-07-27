@@ -61,9 +61,10 @@ review axis-to-attack, not a review pass bar.
 ## Required reads (pointer-first; the spec owns the method)
 
 1. `docs/research/serp_lane_competitor_scout_20260728/README.md` — reading
-   order, authority note. The LIVING surface is operator staging
-   `C:\tmp\forseti-serp-lane\`; if it diverges from the repo snapshot,
-   staging is ahead.
+   order, authority note. That folder is CANONICAL: lane prose and
+   instruments are authored there, in the repo. The operator drive holds
+   raw capture data and in-flight scratch only. Write your findings into
+   the repo folder, never only into a `C:\tmp` note.
 2. `docs/research/serp_lane_competitor_scout_20260728/competitor_ledger_spec_v0.md`
    — specifically: competitor types + promotion ladder; Channel 3
    (complaint-borne names) and Channel 4 (retail-shelf corroboration); the

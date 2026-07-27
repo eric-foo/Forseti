@@ -1,4 +1,4 @@
-# Competitor Ledger Spec v0 — staging (owner routes into repo when called)
+# Competitor Ledger Spec v0
 
 Companion to `serp_lane_v0.md` F20. Defines the competitor types, how each
 is identified, the promotion ladder, and the wiring into the existing
@@ -173,8 +173,9 @@ routing decision, not something the lane edits.
 
 ## Instruments
 
-- `megadogfood-20260727/bin/competitor_ledger.py` — Channel-0 emitter,
-  v0.1 (2026-07-28). Two modes: megadogfood store (default) and
+- `forseti-harness/runners/serp_competitor_ledger_emitter.py` —
+  Channel-0 emitter, v0.1 (2026-07-28). Two modes: megadogfood store
+  (default; its store path is operator-drive) and
   Understanding-cycle scout mode (`--extractions DIR --subject NAME`).
   v0.1 fixes, dogfooded on both stores: brand-token subject matching
   (direction bug fixed — NYX now dupe_association with correct
@@ -193,31 +194,20 @@ routing decision, not something the lane edits.
   ("Irritated Skin" leaked at q=11). J2 now has THREE exit patterns
   (armed / retention / technique-moat) and J5 TWO price architectures
   (hidden-floor / ladder) — see the dogfood note.
-- `megadogfood-20260727/bin/test_competitor_ledger.py` — pinned-fixture
-  regression check (12 assertions over both frozen stores). RUN THIS
-  AFTER ANY EMITTER EDIT; a FAIL names the broken fact. Each assertion
-  pins a mistake class the emitter actually made once; when a new
-  subject exposes a new mistake, add its assertion here.
+- `forseti-harness/tests/unit/test_serp_competitor_ledger_emitter.py` —
+  pinned-fixture regression check (12 assertions over both frozen
+  stores). RUN THIS AFTER ANY EMITTER EDIT; a FAIL names the broken
+  fact. Each assertion pins a mistake class the emitter actually made
+  once; when a new subject exposes a new mistake, add its assertion
+  here. It SKIPS rather than passes when the operator-drive fixture
+  stores are absent — a skip is not a pass.
 - Channel-3 emitter does not exist yet (needs the Reddit/native lane);
   the schema above is written to receive it.
-- **Durable copies (promoted 2026-07-28, owner-authorized).** The
-  instruments above now also live in the repo, because a temp-folder
-  pointer is not a durable locator and 20KB of tuned extraction
-  heuristics plus 12 dogfood-earned fixture assertions are NOT
-  reconstructible from prose:
-  `forseti-harness/runners/serp_competitor_ledger_emitter.py`,
-  `forseti-harness/runners/extract_serp_v2.py`,
-  `forseti-harness/tests/unit/test_serp_competitor_ledger_emitter.py`.
-  Same currentness rule as the docs: staging is the live working copy
-  and is ahead when the two diverge; the repo copy is the durable
-  record. Accepted residual: the two can drift — re-promote whenever an
-  emitter change lands, and treat the fixture test as the drift check.
-- `scout-dogfood10-20260728/bin/dogfood10_runner.py` — reference
-  implementation of the phase-1 loop (`select_names`,
-  `build_merged_queue`, `interleave`, plus the J5 reserve-tier trigger).
-  This one stays operator-drive-only; the rule below is the normative
-  statement, so the merged queue is reconstructible from this spec alone
-  if the code is unreachable.
+- `dogfood10_runner.py` (phase-1 loop reference: `select_names`,
+  `build_merged_queue`, `interleave`, J5 reserve-tier trigger) has no
+  in-repo copy. The generation rule below is normative, so the merged
+  queue is reconstructible from this spec alone; promote the script if
+  it is ever needed beyond that.
 
 **Merged vs+J5 queue — generation rule (normative).** After harvest,
 select up to 2 names typed `rival`/`dupe_association`/`anchor_up`,
@@ -432,7 +422,10 @@ seed-harvest-vs ordering is load-bearing, and makes a skipped pass a
 typed gap. Handoffs no longer need to cite this spec to be discovered —
 the cycle's own source names the pass.
 
-**Still open — the D2/D4 chain amendment.** The "Outbound (ledger →
+**Still open — the D2/D4 chain amendment** (divergence now flagged
+in the proposal itself at its D2 price-value class, 2026-07-28, so an
+adjudicator meets it there; the decision itself is untaken). The
+"Outbound (ledger →
 chain-card)" section above says the substitute cell is filled from
 finding-grade `substitute_down` + `dupe_association` entries. The
 choice-mechanism chain proposal
