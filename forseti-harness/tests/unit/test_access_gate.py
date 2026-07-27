@@ -62,11 +62,37 @@ def test_detect_login_gate_allows_visible_old_reddit_thread_with_onboarding_form
     assert detection is None
 
 
-@pytest.mark.parametrize("thread_id", ["", "different"])
+def test_detect_login_gate_allows_deleted_op_old_reddit_thread_via_comment_listing() -> None:
+    # A deleted self-post drops the thing_t3/data-fullname post div while the
+    # thread page stays public (observed live 2026-07-26 on
+    # /r/Sephora/comments/19eo5it/): the thread-id-bound comment-listing
+    # container must count as envelope proof.
+    detection = detect_login_gate(
+        final_url="https://old.reddit.com/r/orca_test/comments/abc/visible_thread/",
+        body_text=(
+            '<html><form action="https://www.reddit.com/r/orca_test/post/login">'
+            "Log in</form>"
+            '<div id="siteTable_t3_abc" class="sitetable nestedlisting">'
+            '<div class="thing comment" data-fullname="t1_comment">'
+            '<div class="usertext-body">[deleted] OP, visible comment</div>'
+            "</div></div></html>"
+        ),
+    )
+
+    assert detection is None
+
+
+@pytest.mark.parametrize(
+    "marker",
+    [
+        "",
+        '<div class="thing link" data-fullname="t3_different"></div>',
+        '<div id="siteTable_t3_different" class="sitetable nestedlisting"></div>',
+    ],
+)
 def test_detect_login_gate_requires_matching_old_reddit_thread_evidence(
-    thread_id: str,
+    marker: str,
 ) -> None:
-    marker = f'<div class="thing link" data-fullname="t3_{thread_id}"></div>' if thread_id else ""
     detection = detect_login_gate(
         final_url="https://old.reddit.com/r/orca_test/comments/abc/visible_thread/",
         body_text=(
