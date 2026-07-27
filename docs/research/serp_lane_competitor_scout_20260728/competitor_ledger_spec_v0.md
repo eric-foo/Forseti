@@ -207,33 +207,68 @@ any running campaign — never a parallel stream on the same egress.
    names flow back as `substitute_down` (Channel 3).
 4. Named interpretive jobs (journey levers): **J1** claim-x-dupe cross
    (Tower 28 pattern: live acne-safe claim attack x pre-built NYX
-   exit), **J2** exit-door read (CeraVe: complaint SERP renders "Amazon
-   Basics vs CeraVe"; Tower 28: renders repair content — a retention
-   surface), **J3** rendered-vs-actual fragility (SF 19eo5it vote-mass
-   pattern), **J4** rival offense — J4 IS deep treatment: owner-named
-   only, never auto-invoked. **J5** price-architecture read (added
-   2026-07-28; OWNER-ACCEPTED 2026-07-28 with the entry-blueprint
-   framing — standing floor sets the entry price, ranked unmet-value
-   map quantifies the "x more" delivered at that price): from 1-2 captured PDP/collection pages per subject,
-   emit list price, bundle/refill floor (per-unit math), and the
-   response-trap note — the price point where the incumbent cannot
-   match without cannibalizing its own bundle program. Tower 28
-   specimen: $28 standard, refill floor ≈$17/bottle; a value entrant
-   at $17-19 flat sells the incumbent's hidden price openly and traps
-   the response. Floor rules (owner, 2026-07-28): per-unit normalized;
-   STANDING offers only (durable SKUs like refill programs and jumbo
-   sizes — never promos; the Sephora "Lip Day 50%" banner in the same
-   capture is the excluded counterexample); cross-retailer verified
-   when possible (Swipe $24 matched brand-site vs Sephora). The floor
-   is the entry price anchor; the ranked unmet-value map supplies the
-   "how much more we must deliver at that price". J3 divergence output is a per-surface tag —
-   ALIGNED / RENDERED_BETTER / NATIVE_BETTER (snippet stance vs
-   top-voted native stance, counts-only): NATIVE_BETTER surfaces are
-   where the subject should drive clicks; RENDERED_BETTER surfaces are
-   where it should avoid attention (and where a rival would drive it).
-   Owner routing 2026-07-28: the comparator runs in the REDDIT LANE's
-   analysis step (phase-1 SERP supplies the snippet; the lane supplies
-   the captured thread) — same home as the trigger-thread queue.
+   exit). **J2** exit-door read (three observed patterns: ARMED —
+   CeraVe's complaint SERP renders "Amazon Basics vs CeraVe";
+   RETENTION — Tower 28's renders repair content; TECHNIQUE-MOAT —
+   AeroPress complaints resolve into hobbyist technique content).
+   **J3** rendered-vs-actual fragility: per-surface tag ALIGNED /
+   RENDERED_BETTER / NATIVE_BETTER (snippet stance vs top-voted native
+   stance, counts-only); NATIVE_BETTER surfaces are where the subject
+   should drive clicks, RENDERED_BETTER where it should avoid
+   attention (and where a rival would drive it). Comparator runs in
+   the REDDIT LANE's analysis step (phase-1 supplies the snippet, the
+   lane supplies the thread). **J4** rival offense — IS deep
+   treatment: owner-named only, never auto-invoked. **J5** — own
+   section below.
+
+### J5 — price-architecture read (OWNER-ACCEPTED 2026-07-28)
+
+**Phase: PHASE-1 TAIL.** Subject pricing runs the moment the subject
+is bound; competitor pricing runs right after the harvest step (needs
+names, not threads) — never waits on the Reddit lane. Re-run when
+phase 2 promotes a new name (Kulfi-type entrants that only surface in
+complaint bodies).
+
+**Emits per name:** list price · standing floor (per-unit) · the
+response-trap note (the price where the incumbent cannot match without
+cannibalizing its own bundle/ladder). Entry blueprint: the floor sets
+the entry price; the ranked unmet-value map quantifies the "x more"
+delivered at that price. Two architecture types observed: hidden-floor
+(Tower 28: $28 list, refill floor ≈$17/bottle) and ladder (AeroPress:
+$40 -> $200 self-variant spread; attack the middle, not the floor).
+
+**Default procedure — 1-2 URL captures per name, zero clicks:**
+1. Price-intent SERP ("{product} price"): shopping carousel with USD
+   prices, per-unit math ($1.12/oz), Google's typical-price signal
+   ("Usually $18"), seller names. When present, the AIO's per-retailer
+   price list is itself a floor read.
+2. `&udm=28` Shopping page (URL-addressable, same route) when the
+   carousel is thin: ~50 offers incl. sellers absent from the base
+   SERP. Reserve tier (not default): per-product seller census via
+   product-page URLs harvested from the captured DOM.
+3. Brand-site collection page + one retailer PDP for the SUBJECT
+   (bundle/refill economics + the retailer comparison carousel, which
+   prices the whole prestige set in one capture).
+
+**Floor rules:** per-unit normalized; STANDING offers only (refill
+programs, jumbo SKUs — never promos; "Usually $X" preferred as the
+standing estimate); cross-retailer verified when possible; floor-
+bearing prices only from the subject's harvested retailer set or
+known majors; unknown long-tail sellers and ALL sponsored results are
+recorded but never floor-bearing (gray-market guard — specimens: the
+counterfeit "ceraveese.it.com" sponsored ad; GoSupps at $59-165 for a
+$17 product). Off-price channel presence (T.J.Maxx) is recorded as a
+channel-erosion signal when observed.
+
+**Egress: no proxy, settled 3-way 2026-07-28** (SG-headless vs
+SG-Chrome vs US-proxied-Chrome, same query: floor layer identical
+offer-for-offer; only the ads layer localizes and only physically-
+local modules — "Nearby, X mi", in-store stock — need US egress).
+Owner: online focus, proxy dropped from J5; local
+availability/distribution reads remain a separate owner-gated job on
+the TikTok-Shop-US egress route. Carry the standing non-claim on
+every artifact. Evidence packets: `dogfood2_packets/
+price-surface-test`, `price-surface-shopping-tab`, `pdp_packets/`.
 
 **Two-phase shape (owner framing, 2026-07-28):** Phase 1 = the SERP
 scout pass (doors: typed ledger, thread list, mediator list). Phase 2
@@ -251,6 +286,26 @@ through phase-2/Channel-4 surface independence). Rendered snippets and
 native verdicts can disagree (vs-hourglass specimen) — the glancer
 absorbs Google's verdict, the clicker meets the community's; the gap is
 the J3 fragility measure.
+
+**Cycle loop schedule (owner framing, 2026-07-28):** Within phase 1:
+seeds are front-loaded (mild ~1/min burst — pending the 2026-07-28
+burst-shape test verdict; sustained band otherwise); HARVEST IS LOCAL
+COMPUTE and runs rolling as each packet lands, never queued behind
+captures; once harvest emits names, vs probes and J5 price reads are
+ONE merged capture queue at band cadence (the gate is harvest, not
+vs — J5 picks up small deltas as vs probes harvest new rivals). The
+Reddit lane starts the moment the trigger-thread queue emits — it
+hits a different host, so it may run concurrently with the Google
+stream (owner-accepted 2026-07-28; block attribution is host-
+specific). Return leg — SERP round 2 after fan-out consolidation:
+(a) J5 delta on every phase-2 promotion (the Kulfi pattern, 1-2 URLs
+per name); (b) evidence-targeted probes authored FROM fan-out
+findings — narrow queries the seed grammar could not have guessed
+(entrant checks like `kulfi vs tower 28`, unmet-value-axis shapes,
+claim-attack follow-ups). Targeted probes obey the same typed-ledger
+rules, with one guard: a probed name's own echo in its targeted SERP
+bears no new ladder rung (the query was conditioned on the evidence);
+only third names and the surface's composition are new evidence.
 
 **Repo landing (owner routing):** (a) one line in the CSB
 prompt-structure spine making Section 8 consume a scout ledger when one

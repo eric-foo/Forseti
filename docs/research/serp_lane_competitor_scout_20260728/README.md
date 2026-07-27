@@ -33,3 +33,7 @@ J1-J5) -> `deliver_note_repair_room_retention_v0.md` ->
 Standing non-claims carried throughout: counts of observed cards only,
 never prevalence/volume/share; US-parameterized is not physically
 US-local; blocks are stop signals; raw data outside Git.
+
+Phase-2 execution (native return: Reddit-lane consumption, Channel 3,
+J3 settlement, J5 delta, targeted return probes) is commissioned via
+`docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`.
