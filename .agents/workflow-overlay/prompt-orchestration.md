@@ -494,14 +494,16 @@ separate:
 When a durable one-shot prompt produces its commissioned return, a durable
 prompt's return is consumed, or its `stale_if` condition is observed to have
 fired, the lane observing that transition must not leave the prompt silently
-looking live. Close it in the same lane by taking the first applicable action:
+looking live. Close it in the same lane by choosing one disposition:
 
-- delete an unreferenced, completed or consumed one-shot prompt;
+- delete an unreferenced one-shot prompt in that state; or
 - when deletion would break provenance or a downstream reference, retain it
-  with a prominent body notice that says it is completed or consumed and points
-  to the durable return, PR, or commit; or
-- when another durable artifact replaces it, add the retrieval-header
-  `superseded_by` pointer and a prominent body notice naming that successor.
+  with a prominent body notice naming that state — completed, consumed, or
+  stale — and pointing to the durable return, PR, or commit when one exists.
+
+When another durable artifact replaces a retained prompt, also add the
+retrieval-header `superseded_by` pointer and name that successor in the same
+notice.
 
 A still-live prompt receives no lifecycle label. Use repository-relative
 pointers for in-repository successors and returns. Do not create a prompt
