@@ -169,10 +169,24 @@ current/exposed). "Observed" means the family name appears in a typed row or
 in the retained card text of P2/P3 (99+22 cards scanned, wider than the typed
 60).
 
-**Families with observed active creative:** Lip Butter Balm; Flushed Lip
-Stain; SoftLine Lip Liner (kit component); Jet Lag Eye Patches; CC Me Serum;
-ShadeDrops SPF 50; Sunlit Vanilla Eau de Parfum (bundle component); Cloud Dew
-(single retained-text mention).
+**Families with observed active creative**, with typed-row counts recomputed
+from `derived/meta_ads_typed_rows.json` over the 60-row window (a row may name
+more than one family, so counts are not additive):
+
+| Current/exposed family | Typed rows naming it |
+| --- | ---: |
+| Lip Butter Balm | 32 |
+| Flushed Lip Stain | 15 |
+| ShadeDrops SPF 50 Mineral Milk Sunscreen | 11 |
+| Sunlit Vanilla Eau de Parfum | 10 |
+| SoftLine Lip Liner | 5 |
+| CC Me Serum | 2 |
+| Jet Lag Eye Patches | 1 |
+
+Matching is over retained copy (body, headline, description); including
+canonical destination URLs changes no count. Cloud Dew appears once in wider
+retained card text outside the typed 60 (bundle-component context only) and so
+carries no row count here.
 
 **Families with no observed active creative on the captured surface** (18 of
 27 current/exposed): Babymoon Belly Balm; Gentle Reset Daily Exfoliating Pads;
@@ -184,10 +198,11 @@ Skin Tint; Body Butter Balm; Body Fragrance Mist; Midnight Ritual Retinol.
 
 For each such family the exact bounded phrase applies: **"No active Summer
 Fridays commercial creative was observed on the captured Meta Ad Library
-surface under the recorded market/filter/window."** This is additionally
-bounded by the PARTIAL ceiling: ~101 of ~200 declared results were never
-rendered, so absence here is absence from the captured subset, not from the
-full declared surface.
+surface under the recorded market/filter/window."** This section was written
+against the bounded run's captured subset. **§12 supersedes its coverage
+ceiling**: the US active surface was later exhausted at 185 unique ads, so
+absence should be re-derived against that exhausted set before any Deliver use.
+The typed-row counts above remain scoped to the 60-row window.
 
 \* Heavenly Sixteen appeared in an **unadmitted diagnostic render** under a
 different sort state but in neither admitted packet — see §9.
@@ -207,16 +222,18 @@ dominate observed rotation.
    `derived/meta_ads_typed_rows.json` under `overflow_library_ids`).
 2. **Platform/placement fields not extractable:** icon-only, no accessible
    names in DOM; absence of a placement label is unknown, not unused.
-3. **Per-ad detail panes not opened:** "See ad details/summary details" modals
-   (which may expose platform lists, versions, EU fields) were outside the
-   bounded run; all fields come from the card surface.
+3. **Per-ad detail panes not opened in this run:** all fields here come from
+   the card surface. Panes were later opened and found to add only a version
+   counter — see §13, which closes this as a dead end rather than a gap.
 4. **Media not durably preserved:** viewport screenshots only; video/image
    assets were not downloaded; 48 rows have unstated media type.
 5. **Direct-HTTP 400** on `facebook.com/summerfridaysbeauty` (route evidence).
-6. **Runner metadata gap:** P3 `scroll_passes_completed` is empty /
-   `before_scroll_steps_completed=false` in snapshot metadata although 99
-   cards render (the scroll clearly fired); recorded as a harness metadata
-   defect, not a capture defect.
+6. **Snapshot metadata does not confirm scrolling.** schema_version 3 has no
+   `scroll_passes_completed` key (an earlier draft of this return named one
+   that does not exist); `scroll_passes` echoes the requested count and
+   `before_scroll_steps_completed` reads `false` even on runs that
+   demonstrably scrolled. Judge scroll success by unique card count and
+   footer-terminal state.
 7. **Sort not operator-chosen:** Meta rewrote sort to `total_impressions`;
    composition under other sorts was not captured (see Heavenly Sixteen, §9).
 8. **US surface limits:** active-only; no spend/reach/demographics/targeting
@@ -363,3 +380,45 @@ remaining value sits (~25 scroll passes per additional country).
 
 Deferred (not performed): typed projection of E1/E5/E8 rows, EU countries
 beyond DE/FR/IT, media-asset preservation.
+
+## 14. Supersession Of A Parallel Return At This Path
+
+A second receiver executed the same handoff independently and landed its own
+return at this exact path on `main` (PR #1369, 605 lines). This return replaces
+it at the same path. The record of what happened, because it bears on evidence
+integrity:
+
+**Both runs were legitimate.** The parallel lane was not stray scratch — it was
+a real receiver of the same handoff, writing to the handoff's hard-coded lake
+root. Two receivers collided because the handoff names one lake root and one
+output path, with no receiver-scoping.
+
+**Its evidence base no longer exists.** That return dereferences six packet IDs
+(`01KYF1BRNBR0P8AYJCJCN92ZY2`, `01KYF1CHHG7X5JGHP0CPH0ZCAY`,
+`01KYF1EJBRGRZK5PMMND4N9F3C`, `01KYF1H1PFWC53Z2XM2BDJMZ2B`,
+`01KYF1J1HPM3J2HK44AHC22AV6`, `01KYF1KWVQZR4ZN4NZVE8DZJ0R`). Five were purged
+from the shared lake on owner direction earlier the same day, when they were
+believed to be an accidental cross-lane write rather than a parallel execution;
+the sixth is also absent. None is recoverable — the lake is outside Git. Its
+rows therefore cannot be re-dereferenced to retained packets, which the
+handoff's own validation contract requires.
+
+**Why this return supersedes rather than merges.** Coverage: 185 US active ads
+exhausted plus FR/IT/DE country views, against that return's 118 discovered /
+60 typed, US-only, `PARTIAL`. Provenance: twelve live packets, all manifest
+hashes verified. Its substantive findings are not lost — the two returns agree
+on advertiser identity, the 60-row typed window, all-DTC US destinations, and
+the JADE LILY partnership row.
+
+**What was carried across.** Its per-family row counts (§7 above) were the one
+analysis this return lacked. They are grafted as *recomputed* values from this
+run's live `derived/meta_ads_typed_rows.json`, not copied. Five of seven cells
+reproduce exactly (ShadeDrops 11, Sunlit Vanilla 10, SoftLine 5, Flushed Lip
+Stain 15, Jet Lag Eye Patches 1). Two differ — Lip Butter Balm 32 here vs 34
+there, CC Me Serum 2 here vs 1 there — and the difference is *not* explained by
+including destination URLs in the match. The unreconciled delta is recorded
+rather than silently averaged; the values above are the ones this return's
+evidence supports.
+
+**Standing risk.** Until a handoff scopes lake roots and output paths per
+receiver, any concurrently commissioned receiver pair will collide the same way.
