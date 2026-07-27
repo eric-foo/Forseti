@@ -104,6 +104,15 @@ when a direct commission retrieves the thread or cheap listing-visible context
 already exposes a structured completed-use review. Do not silently claim that
 the floor captures every useful post.
 
+A follow-up test explicitly tried extending this rule to `0–4`. Thirty fresh
+exactly-four-comment listings were mechanically frozen as `no` before deep
+audit. The candidate floor caused nine material false negatives, correctly
+suppressed 14, preserved six narrower-commission misses, and prevented one
+clearly low-yield dive. The proposed extension is therefore rejected:
+**four-comment threads remain eligible for the other gates.** The evidence and
+examples are recorded in
+`docs/research/reddit_listing_efficiency_holdout_100_v0.md`.
+
 ### Gate 0.5 — Listing-context sufficiency
 
 Before applying the commercial gates, ask whether the listing projection shows
@@ -403,6 +412,8 @@ corrections are incorporated above:
 - captured score `0` is not a universal veto;
 - the `0–3` comment floor remains a general budget rule with an explicit
   poster-only completed-use residual;
+- a tested `0–4` extension is rejected because it lost nine valuable threads
+  while preventing one low-yield dive in a fresh 30-thread boundary probe;
 - opaque and media-dependent listings require a context-sufficiency state;
 - discontinued-product replacement and consumer-device experience need
   narrower, commercially truthful treatment;
