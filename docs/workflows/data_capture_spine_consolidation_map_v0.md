@@ -51,6 +51,7 @@ stale_if:
 | Check shared Instagram/TikTok daily grid-heartbeat control and operator routing | `forseti-harness/source_capture/social_heartbeat_run_control.py`, then the platform README (`social_media/instagram/README.md` or `social_media/tiktok/README.md`) and `forseti-harness/docs/source_capture_agent_runbook.md` |
 | Check YouTube public watch/Shorts/transcript capture route map | `forseti/product/spines/capture/core/source_families/social_media/youtube/README.md` |
 | Check bounded Reddit candidate/capture/consolidation route map | `forseti/product/spines/capture/core/source_families/social_media/reddit/README.md` |
+| Triage preserved Reddit listings for scarce exact-thread deep reads | `forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_listing_efficiency_policy_v0.md`; queue runner: `forseti-harness/runners/run_reddit_weekly_demand_read.py` |
 | Check Meta Ad Library paid-creative capture route map | `forseti/product/spines/capture/core/source_families/ad_transparency/meta_ad_library/README.md` |
 | Check whether a source-access build or backend is authorized | `docs/decisions/data_capture_spine_source_access_tooling_build_authorization_v0.md` |
 | Check source-access boundary / hard stops | `forseti/product/spines/capture/core/contracts/source_access_boundary/data_capture_source_access_boundary_decision_v0.md` |
