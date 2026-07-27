@@ -422,7 +422,10 @@ seed-harvest-vs ordering is load-bearing, and makes a skipped pass a
 typed gap. Handoffs no longer need to cite this spec to be discovered —
 the cycle's own source names the pass.
 
-**Still open — the D2/D4 chain amendment.** The "Outbound (ledger →
+**Still open — the D2/D4 chain amendment** (divergence now flagged
+in the proposal itself at its D2 price-value class, 2026-07-28, so an
+adjudicator meets it there; the decision itself is untaken). The
+"Outbound (ledger →
 chain-card)" section above says the substitute cell is filled from
 finding-grade `substitute_down` + `dupe_association` entries. The
 choice-mechanism chain proposal
