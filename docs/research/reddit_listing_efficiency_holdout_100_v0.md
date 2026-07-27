@@ -27,6 +27,9 @@ selection kinks.
    discussion; this content-dense poster-only case is now an explicit accepted
    residual unless its value is visible in the listing projection or recovered
    for a direct commission.
+   A subsequent 30-thread boundary probe rejected extending this floor through
+   four comments: the proposed `0–4` rule caused nine material misses while
+   preventing one clearly low-yield dive.
 3. **Opaque or image-dependent titles need a context-sufficiency state.** One
    false negative hid a Dior purchase decision behind “get this,” while one
    false positive turned out to be a visual joke rather than a Clio product
@@ -89,6 +92,56 @@ The frozen-label artifact records the applied calibration commit
 
 The evidence is captured-corpus evidence only. No live Reddit completeness,
 currentness, or monitoring claim is made.
+
+## Follow-up: proposed `0–4` floor
+
+The owner proposed extending Gate 0 through four captured comments. Only two
+exactly-four-comment threads appeared in the original 100; both were safely
+suppressible for the general commission, but two observations were insufficient
+to lock a universal boundary.
+
+A deterministic follow-up selected 30 fresh exactly-four-comment threads from
+169 eligible rows using seed
+`listing_efficiency_comment_floor_4_probe_v1_20260728`. It excluded all prior
+owner pairs, source-audit samples, pairwise pilot threads, and the full
+100-thread holdout—242 thread IDs in total. Every listing was mechanically
+frozen as `no` under the candidate floor before any post body or comment was
+opened.
+
+| Boundary-probe outcome | Count |
+| --- | ---: |
+| Material false negative caused by the four-comment floor | 9 |
+| Correct general suppression | 14 |
+| Accepted narrower-commission miss | 6 |
+| Candidate floor prevented a low-yield dive | 1 |
+
+The frozen probe plus adjudications has SHA-256
+`7fc05a5976267b5cd4b89b209cb9b6eaca6e0521cdd472a824aa724d1e123423`.
+Its audit capsules have SHA-256
+`0e340970bb12d2b231faa6a80aa4b7742ff314d61f5a692df7acfa0c381b8089`.
+
+The nine material misses were:
+
+| ID | Listing | Decision-bearing evidence lost |
+| --- | --- | --- |
+| `F4-01` | Chanel cream-to-powder blush | Completed use, explicit non-repurchase, formula praise, and product-longevity evidence |
+| `F4-07` | Skin no longer likes hyaluronic acid | Four independent intolerance reports plus replacement humectants |
+| `F4-11` | IT Cosmetics CC Cream alternative | Displacement, clean-beauty claim rejection, alternatives, coverage/wear tradeoffs, and an olive-shade gap |
+| `F4-15` | Canmake Cream Cheek blushes | Sensitivity, finish, wear time, application, and ELF comparison |
+| `F4-18` | Innisfree sunscreen lotion | Dark-skin white-cast performance, acne, finish, eye comfort, and makeup layering |
+| `F4-21` | Buying perfume online without smelling it | Decants, trusted review infrastructure, risk reduction, and full-bottle conversion |
+| `F4-22` | Products for neck lines | Named products, reported efficacy, price tier, treatment context, and diagnostic caution |
+| `F4-25` | Tarte tubing mascara | Performance, price, agreement, dissent, removal friction, and troubleshooting |
+| `F4-29` | Julioly Mango Hair Shot | Hair-type fit, duration limits, trial-size advice, and explicit non-repurchase |
+
+The one saved low-yield dive was a direct request for a discontinued Rexona
+antiperspirant substitute whose comments produced no substitute. Avoiding that
+single failed gamble does not compensate for losing the nine sharp discussions.
+
+**Decision: reject the proposed `0–4` floor and retain `0–3`.** Four comments
+is the first tested boundary where compact but commercially sharp product
+discussion recurs. This focused sample is not a corpus prevalence estimate; it
+is sufficient to falsify four comments as a universal suppression rule.
 
 ## Observed outcomes
 
@@ -229,6 +282,8 @@ remain borderline merely because they use recurring community formats.
 1. Remove captured score `0` from the universal engagement floor.
 2. Keep captured comments `0–3` as the general floor, with the poster-only
    completed-use case named as an accepted residual rather than hidden.
+   The subsequent exact-four boundary probe rejects extending this through
+   four comments.
 3. Use the freshest available captured engagement before ranking.
 4. Add `insufficient_listing_context` for opaque or media-dependent listings;
    expose media presence/count and cheap linked-product context when available.
