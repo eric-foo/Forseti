@@ -126,6 +126,16 @@ lists, never this ledger.
 Demotion: an entry that gains no new source in 2 consecutive analysis
 passes is flagged stale (kept, marked; never silently dropped).
 
+Corroboration strength (owner weighting, installed 2026-07-28): within
+complaint-body evidence, 2 distinct authors is the floor and is easy to
+hit coincidentally; **3+ distinct authors is STRONG** and is the tier
+that earns priority attention; **3+ authors across distinct
+venues/subreddits is STRONGEST** and is named explicitly whenever met.
+Rungs do not change — this grades the confidence line a CI report
+attaches to a finding-grade entry. Specimen: Ole Henriksen promoted at
+3-author/1-venue (r/Sephora), upgraded to author- and venue-diverse by
+the return-leg capture (r/MakeupAddiction + Substack editorial).
+
 ## Wiring into the claims-to-complaints path (owner Q2)
 
 The chain-card IS the complaint journey: claim → buy-reason → experience
@@ -190,12 +200,24 @@ routing decision, not something the lane edits.
   subject exposes a new mistake, add its assertion here.
 - Channel-3 emitter does not exist yet (needs the Reddit/native lane);
   the schema above is written to receive it.
+- **Durable copies (promoted 2026-07-28, owner-authorized).** The
+  instruments above now also live in the repo, because a temp-folder
+  pointer is not a durable locator and 20KB of tuned extraction
+  heuristics plus 12 dogfood-earned fixture assertions are NOT
+  reconstructible from prose:
+  `forseti-harness/runners/serp_competitor_ledger_emitter.py`,
+  `forseti-harness/runners/extract_serp_v2.py`,
+  `forseti-harness/tests/unit/test_serp_competitor_ledger_emitter.py`.
+  Same currentness rule as the docs: staging is the live working copy
+  and is ahead when the two diverge; the repo copy is the durable
+  record. Accepted residual: the two can drift — re-promote whenever an
+  emitter change lands, and treat the fixture test as the drift check.
 - `scout-dogfood10-20260728/bin/dogfood10_runner.py` — reference
   implementation of the phase-1 loop (`select_names`,
   `build_merged_queue`, `interleave`, plus the J5 reserve-tier trigger).
-  Instruments live on the operator drive; the rule below is the
-  normative statement, so the merged queue is reconstructible from this
-  spec alone if the code is unreachable.
+  This one stays operator-drive-only; the rule below is the normative
+  statement, so the merged queue is reconstructible from this spec alone
+  if the code is unreachable.
 
 **Merged vs+J5 queue — generation rule (normative).** After harvest,
 select up to 2 names typed `rival`/`dupe_association`/`anchor_up`,
