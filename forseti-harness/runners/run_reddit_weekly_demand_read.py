@@ -40,6 +40,8 @@ DEFAULT_OPAQUE_TAIL_AUDIT_FRACTION = 0.1
 DEFAULT_TAIL_RESCUE_MIN_COMMENTS = 1
 DEFAULT_TAIL_RESCUE_SCORE = 2
 DEFAULT_ZERO_COMMENT_TAIL_RESCUE_SCORE = 3
+DEFAULT_ABSOLUTE_ENGAGEMENT_MIN_COMMENTS = 5
+DEFAULT_ABSOLUTE_ENGAGEMENT_MIN_SCORE = 25
 # Page-1 score floor above which a subreddit genuinely overflows one page
 # (top-10 carries 65% of weekly score on the measured distribution; a floor
 # past 50 means real traction ran off the page and the next pass should
@@ -292,6 +294,13 @@ def _audit_order_key(*, as_of: _dt.date, subreddit: str, thread_url: str) -> str
     ).hexdigest()
 
 
+def _absolute_engagement_rescue_eligible(*, comments: int, score: int) -> bool:
+    return (
+        comments >= DEFAULT_ABSOLUTE_ENGAGEMENT_MIN_COMMENTS
+        or score >= DEFAULT_ABSOLUTE_ENGAGEMENT_MIN_SCORE
+    )
+
+
 def _select_deep_dive_rows(
     *,
     subreddit: str,
@@ -342,6 +351,13 @@ def _select_deep_dive_rows(
             selected.append({**enriched, "selection_reason": f"title_{title_class}"})
         else:
             audit_tail.append(enriched)
+            if _absolute_engagement_rescue_eligible(
+                comments=item["comments"],
+                score=item["score"],
+            ):
+                selected.append(
+                    {**enriched, "selection_reason": "absolute_engagement_rescue"}
+                )
 
     if audit_tail:
         audit_size = max(1, math.ceil(len(audit_tail) * opaque_tail_audit_fraction))
@@ -353,7 +369,10 @@ def _select_deep_dive_rows(
                 thread_url=item["thread_url"],
             ),
         )[:audit_size]
+        selected_urls = {str(item["thread_url"]) for item in selected}
         for item in audited:
+            if str(item["thread_url"]) in selected_urls:
+                continue
             selection_reason = (
                 "opaque_tail_audit"
                 if item["title_signal_class"] == "opaque"
@@ -509,6 +528,12 @@ def run_weekly_demand_read(
             "tail_title_rescue_min_comments": DEFAULT_TAIL_RESCUE_MIN_COMMENTS,
             "tail_title_rescue_score": DEFAULT_TAIL_RESCUE_SCORE,
             "zero_comment_tail_rescue_score": DEFAULT_ZERO_COMMENT_TAIL_RESCUE_SCORE,
+            "absolute_engagement_rescue_min_comments": (
+                DEFAULT_ABSOLUTE_ENGAGEMENT_MIN_COMMENTS
+            ),
+            "absolute_engagement_rescue_min_score": (
+                DEFAULT_ABSOLUTE_ENGAGEMENT_MIN_SCORE
+            ),
             "tail_title_rescue_scoring": {
                 "strong_pain_praise_outcome_comparison_or_review": 2,
                 "generic_question_routine_haul_or_discussion": 1,

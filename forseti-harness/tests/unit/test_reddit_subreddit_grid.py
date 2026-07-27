@@ -726,10 +726,12 @@ def test_weekly_deep_dive_selection_rescues_titles_and_audits_opaque_tail() -> N
                 ("Opaque head B", 5, 70),
                 ("Opaque head C", 2, 60),
                 ("Opaque head D", 9, 50),
-                ("This product irritated my skin", 3, 40),
-                ("Routine update", 4, 30),
-                ("Opaque tail A", 6, 20),
-                ("Opaque tail B", 7, 10),
+                ("Opaque head E", 1, 40),
+                ("This product irritated my skin", 3, 4),
+                ("Retinol routine", 4, 3),
+                ("Opaque tail by comments", 6, 5),
+                ("Opaque tail by score", 25, 1),
+                ("Opaque audit tail", 1, 0),
             ],
             start=1,
         )
@@ -739,14 +741,44 @@ def test_weekly_deep_dive_selection_rescues_titles_and_audits_opaque_tail() -> N
         subreddit="example",
         rows=rows,
         as_of=dt.date(2026, 7, 23),
-        opaque_tail_audit_fraction=0.1,
+        opaque_tail_audit_fraction=1.0,
     )
 
-    assert [row["selection_reason"] for row in selected].count("engagement_head") == 4
+    assert [row["selection_reason"] for row in selected].count("engagement_head") == 5
     assert [row["selection_reason"] for row in selected].count("title_explicit") == 1
     assert [row["selection_reason"] for row in selected].count("title_suggestive") == 1
+    assert (
+        [row["selection_reason"] for row in selected].count(
+            "absolute_engagement_rescue"
+        )
+        == 2
+    )
     assert [row["selection_reason"] for row in selected].count("opaque_tail_audit") == 1
-    assert len(selected) == 7
+    assert len(selected) == 10
+
+
+@pytest.mark.parametrize(
+    ("comments", "score", "expected"),
+    [
+        (4, 24, False),
+        (5, 0, True),
+        (0, 25, True),
+        (5, 25, True),
+    ],
+)
+def test_weekly_absolute_engagement_rescue_thresholds(
+    comments: int,
+    score: int,
+    expected: bool,
+) -> None:
+    from runners.run_reddit_weekly_demand_read import (
+        _absolute_engagement_rescue_eligible,
+    )
+
+    assert (
+        _absolute_engagement_rescue_eligible(comments=comments, score=score)
+        is expected
+    )
 
 
 @pytest.mark.parametrize(
@@ -800,8 +832,8 @@ def test_weekly_audit_names_weak_signal_titles_truthfully() -> None:
             "title_or_none": title,
             "flair_or_none": None,
             "timestamp_utc_ms_or_none": None,
-            "score": 20 - index,
-            "comments": 20 - index,
+            "score": (20 - index) if index <= 3 else (5 - index),
+            "comments": (20 - index) if index <= 3 else (5 - index),
         }
         for index, title in enumerate(
             [

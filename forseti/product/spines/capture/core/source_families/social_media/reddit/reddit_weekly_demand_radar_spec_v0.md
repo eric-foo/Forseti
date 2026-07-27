@@ -31,10 +31,12 @@ stale_if:
 
 ## Status
 
-`IMPLEMENTED — DOGFOOD-REFINED 2026-07-24`. The engagement-head plus title-tail
-selection landed in PR #1319. A subsequent 30-slot lower-tail dogfood retained
-the head and rotating audit while tightening title rescue so generic questions,
-routines, hauls, and discussion flairs no longer route capture by themselves.
+`IMPLEMENTED — DOGFOOD-REFINED 2026-07-25`. The engagement-head plus title-tail
+selection landed in PR #1319. Subsequent lower-tail dogfoods retained the head
+and rotating audit, added the absolute engagement rescue, and bound
+post-capture resonance to the post or comments that actually carry the claim.
+Generic thread archetypes neither route capture nor justify exclusion by
+themselves.
 
 ## Goal binding
 
@@ -145,6 +147,11 @@ separate layer; nothing here persists analysis output to the lake.
   require 3 points so a thread with no observed discussion carries both a
   strong signal and concrete context. These signals route capture only; they
   are not proof of pain, praise, causation, prevalence, or entity involvement.
+- In the lower half, after title rescue, also select every remaining thread
+  with at least 5 listing comments or a listing score of at least 25. This
+  absolute engagement rescue preserves the relative head while recovering
+  resonant threads from unusually active subreddits whose titles hide the
+  useful evidence.
 - From every remaining lower-tail row, select one deterministic rotating 10%
   audit sample, rounded up with a minimum of one when that tail is non-empty.
   Preserve `opaque_tail_audit` for genuinely opaque titles and
@@ -159,6 +166,41 @@ separate layer; nothing here persists analysis output to the lake.
   within-thread stopping rule. Record explicitly named brands, products, and
   ingredients in their stated context (alleged problem/cause, proposed
   solution, recommendation, comparison, praise, or neutral mention).
+- Selection routes capture; it does not itself qualify a finding. Post-capture
+  qualification binds an explicit decision question and an explicit human
+  judgment for decision relevance, signal kind, context kind, whether the post
+  itself contains evidence, wedge membership, and any comments that contain
+  evidence. Thread archetypes such as showcase, haul, collection, meme, or
+  appearance request are not exclusion reasons by themselves. A question-only
+  post can route discovery but does not count as an independent observation.
+  Missing judgment remains `needs_judgment`.
+- Exclusion requires one explicit reason: no transferable claim, appearance
+  reaction only, transaction only, entertainment only, or outside the bound
+  decision question. A concrete but weakly engaged claim is a `low_lead`, not
+  an exclusion. When the decision question does not settle scope, preserve
+  `needs_judgment` rather than inventing an off-question decision.
+- A decision-relevant, low-engagement thread without independent
+  corroboration is a `low_lead`. Multiple low-engagement threads may become a
+  `stacked_emerging_signal` only after independent-source checks.
+- Count repeated observations conservatively. The same author, a near-identical
+  title/body, a crosspost, or the same incident reposted across subreddits
+  cannot inflate independent recurrence. Unknown or deleted authors do not
+  prove independence.
+- A decision-relevant finding with strong audience resonance is a
+  `priority_signal`. Resonance belongs to the declared evidence source. The
+  thread's relative rank, listing comments, and listing score count only when
+  the post itself carries the claim. Comment points count only for comments
+  explicitly identified as evidence; an unrelated high-point joke or visual
+  reaction cannot promote a buried claim. A declared evidence comment with at
+  least 5 points is resonant. These thresholds prioritize audience response;
+  they are not truth or prevalence claims.
+- `critical_signal` requires all three: explicit decision relevance, resonance,
+  and at least two independent evidence sources after author and
+  near-duplicate deduplication. High-point comments lead presentation while
+  lower-point independent corroboration may still sharpen the wedge.
+- Explicitly off-question evidence is `excluded_not_decision_relevant`.
+  Missing or failed content remains `access_or_processing_gap`; never score an
+  access or processing failure as low value or useless.
 - When direct HTTP returns a body classified as `block_shell`, the bounded batch
   writes a diagnostic PNG and JSON receipt from the exact preserved response
   bytes. The derivation performs no URL re-fetch, browser access, retry, CAPTCHA
