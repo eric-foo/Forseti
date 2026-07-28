@@ -49,6 +49,19 @@ freeze-and-hash protocol, and all standing non-claims: owned by
    alone; brand-site quotes are always flagged; paid/organic
    CONVERGENCE on one axis is itself a signal the axis is real
    (specimen: SKIN1004 advertises exactly the axes it wins with).
+2b. **The choice-statement bar (owner doctrine, 2026-07-28).** A
+   delight axis is SET only on choice-revealing discourse — explicit
+   "chose/switched to/picked X over Y because Z" statements where the
+   cause is stated — corroborated across MULTIPLE distinct authors
+   (the inherited corroboration tiers apply: 2 = floor, 3+ = strong,
+   cross-venue = strongest). Plain descriptive praise ("lightweight",
+   "so smooth") is SUPPORTING evidence only: it can rank candidate
+   axes and corroborate a set axis, but adjectives without a revealed
+   choice never set one — adjectives are cheap, choices are evidence.
+   (The BoJ/SKIN1004 recovery already meets this bar: "I personally
+   prefer the 1004 as it's super lightweight, no white cast" is a
+   stated-cause choice against the subject, corroborated across
+   independent surfaces.)
 3. **No journey doctrine.** The complaint side has the chain-card and
    D2 behind it; delight has no owned journey analog. Named gap — do
    not invent one speculatively.
