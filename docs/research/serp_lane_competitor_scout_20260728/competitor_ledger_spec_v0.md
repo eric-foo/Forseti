@@ -12,10 +12,16 @@ presence on a comparison surface is CITING, not switching (the L6 rule).
 
 ## Why a ledger at all (the efficiency argument)
 
-Competitor identification costs ~zero extra probes. `vs {rival}` and
-`dupe` are already the top shapes on both lane axes (F4/F17/F18), so the
-default 6-probe board already captures the competitor surface — the only
-missing piece is a harvest-and-typing pass over captures we already make.
+Competitor identification costs ~zero extra probes. The comparison
+shapes are already on the default board, so the competitor surface is
+captured either way — the only missing piece is a harvest-and-typing
+pass over captures we already make. (Basis correction, full-bank
+re-judgment 2026-07-28: the panel-era premise that `vs {rival}` is
+the top shape on both axes is superseded — F17's social half is
+withdrawn and `vs` fell to rank 14 of 32 at 0.414; `alternatives` is
+under-credited (F23, 0.749) and the vs/dupe/alternatives shapes
+cannibalize each other when co-present. Owning cells:
+serp_lane_v0.md F17/F23.)
 The expensive mistake is the current one: hand-picking rivals for the #1
 shape, which turns the best probe into a confirmation loop (we only learn
 about competitors we already guessed).
@@ -88,6 +94,38 @@ clarification demand is an ANGLE — the own/preempt play from the
 repair-room playbook applies to answers, not just repair content.
 Full posture taxonomy and specimens (Wimsylou SPF chain; T28
 creasing counter-specimen): `complaints_axis_v0.md`.
+
+## Choice-state and qualified-association boundary (installed 2026-07-28)
+
+Type a statement's choice state after the speech-act posture gate; choice state
+does not replace posture.
+
+- **EXECUTED_CHOICE** — the evidence reports a completed action: returned,
+  switched, went back, replaced, or selected after comparison/use. When the
+  exact subject and cause are stated, emit the completed choice/exit row.
+- **INTENDED_CHOICE** — the evidence makes an unqualified commitment to a
+  future action: "I will return X," "I'm returning X," or "I will replace X
+  with Y." When the exact subject, action, and cause are stated, emit an
+  exit-pressure row marked `INTENDED_CHOICE`; never report it as an executed
+  outcome.
+- **POSSIBLE_CHOICE** — desire, consideration, or conditional action:
+  "might," "may," "tempted," "thinking of," or "if the problem repeats, I
+  will return." Hold it as consideration/demand context. It is not choice
+  evidence and emits no executed or intended choice row.
+
+The cause is load-bearing: a named action without its reason records choice
+state but cannot set or corroborate an attribute axis.
+
+A qualified copy claim ("pretty sure X and Y are identical") may emit a
+`dupe_association` at **presence** only when the exact pair and the claimed
+evidence basis are named. Preserve the qualifier in the source evidence and
+mark the confidence/evidence line **TENTATIVE**. This creates no new rung and
+cannot promote from that statement alone. Hold a qualified claim that lacks
+the exact pair or its basis.
+
+Choice-state ceilings on delight are owned by `delight_axis_v0.md`: only an
+executed choice can satisfy its choice-revealing bar; intended and possible
+choices cannot SET an axis.
 
 ## Read contract (installed 2026-07-28, from cold-agent dogfood round 2)
 
