@@ -84,6 +84,23 @@ repair-room playbook applies to answers, not just repair content.
 Full posture taxonomy and specimens (Wimsylou SPF chain; T28
 creasing counter-specimen): `complaints_axis_v0.md`.
 
+## Read contract (installed 2026-07-28, from cold-agent dogfood round 2)
+
+What a single evidence read EMITS, so output completeness does not
+vary by agent. A **native-thread read** emits: (1) the dupe-economy
+position line; (2) complaint-axis rows (posture-gated, per-SKU,
+per-attribute, contested marks where defended); (3) competitor-ledger
+rows (channels/types above); (4) posture-gated signal rows
+(clarification-demand with resolution, axis-forfeiture alerts);
+(5) held/excluded rows with stated reasons. A **SERP-only read**
+emits: (1) rendered-surface rows with verdict-source typing;
+(2) clarification-demand CANDIDATES (titles are posture-unknown);
+(3) the trigger-thread queue with URLs; (4) composition-level reads
+(J2 room type) where licensed. Every read closes by NAMING what is
+not runnable on its evidence (J3 without the paired render/native
+side; occupancy lines without a rendered layer; delight rows without
+rival-owned surfaces) — honest absence is part of the deliverable.
+
 ## Position statement and drift check (installed 2026-07-28)
 
 Every consolidation opens with a one-line DUPE-ECONOMY POSITION
