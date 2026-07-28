@@ -58,10 +58,14 @@ freeze-and-hash protocol, and all standing non-claims: owned by
    "so smooth") is SUPPORTING evidence only: it can rank candidate
    axes and corroborate a set axis, but adjectives without a revealed
    choice never set one — adjectives are cheap, choices are evidence.
-   (The BoJ/SKIN1004 recovery already meets this bar: "I personally
-   prefer the 1004 as it's super lightweight, no white cast" is a
-   stated-cause choice against the subject, corroborated across
-   independent surfaces.)
+   (Applied to our own best result first: the BoJ/SKIN1004 axis does
+   NOT yet meet this bar. The corroboration scan found exactly one
+   choice-statement author — "I personally prefer the 1004 as it's
+   super lightweight, no white cast" — and the SERP-rendered verdict
+   is that same comment, so the render is the same voice counted
+   once, not corroboration. Multi-author support exists only at the
+   praise-adjective level. Status: CANDIDATE, set only when a second
+   independent choice author lands, ideally from a distinct venue.)
 3. **No journey doctrine.** The complaint side has the chain-card and
    D2 behind it; delight has no owned journey analog. Named gap — do
    not invent one speculatively.
