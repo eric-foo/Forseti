@@ -89,7 +89,11 @@ complaint axis being born.
   trust-pressure probe whose evidential value is its RESOLUTION —
   type that as defused / confirmed / unresolved and score the
   resolution (engagement on the question transfers to the
-  resolution under the post-as-comment rule). An assertion complaint
+  resolution under the post-as-comment rule). Its engagement is
+  additionally a CLARIFICATION-DEMAND signal: proof that many
+  observed voters share the concern, an angle when the answer slot
+  is unoccupied (operative gate and demand-signal routing:
+  `competitor_ledger_spec_v0.md`, speech-act posture gate). An assertion complaint
   stays a complaint regardless of replies: defenses make it
   contested, never defused. Specimen: the Wimsylou SPF-doubt post
   (r/SkincareAddiction 1ors60c, 172 pts) — clarification-seeking,

@@ -61,6 +61,29 @@ subreddits is the stronger bar and stays worth naming when met.)
 **Channel 4 — retail shelf co-location.** Corroborative only; never
 originates an entry, only adds a surface class to an existing one.
 
+**Speech-act posture gate (installed 2026-07-28, owner rule).**
+Before any statement enters a complaint column (`complaint_body`
+entries, unmet-value-map rows, concern ledgers), type its ACT:
+only ASSERTION posture (first-hand experience claim) passes.
+CLARIFICATION-SEEKING posture (doubt as question or secondhand
+report — "I've seen people saying", "I heard", interrogatives, no
+first-hand failure) never enters a complaint column. Posture cannot
+be typed from a SERP title alone: a title is posture-unknown until
+the thread body/comments are read — dive in before typing, or hold
+the row untyped. Clarification-seeking rows route to a separate
+**CLARIFICATION-DEMAND signal**: the row's engagement (post score,
+comment count, under the post-as-comment rule) measures how many
+observed voters share the concern — demand for an authoritative
+answer, meaningful at high engagement even without further
+corroboration (counts of observed engagement only, never
+prevalence). Score its RESOLUTION (defused / confirmed /
+unresolved), and read the resolution slot like an axis: an
+unoccupied or weakly-occupied answer slot on a high-engagement
+clarification demand is an ANGLE — the own/preempt play from the
+repair-room playbook applies to answers, not just repair content.
+Full posture taxonomy and specimens (Wimsylou SPF chain; T28
+creasing counter-specimen): `complaints_axis_v0.md`.
+
 ## Position statement and drift check (installed 2026-07-28)
 
 Every consolidation opens with a one-line DUPE-ECONOMY POSITION
