@@ -69,9 +69,14 @@ anchoring two subjects) is now the low end: `youtube:Dr Dray` spans 9
 subjects (Beauty of Joseon, blackheads, castor oil, damaged barrier,
 Eucerin, heat damage, lip balm dependency, Neutrogena, Paula's Choice).
 
-**F15 — contrarian anchors are rare. NOT RE-JUDGED.** This pass produced
-no contrarian-title frequency count, so the cell keeps its panel-era
-status and its trigger. Do not read the silence as confirmation.
+**F15 — contrarian anchors are rare. HELD, promoted lead → active.**
+(Corrected 2026-07-28: an earlier revision of this note said the pass
+produced no count. It did — `fullbank_social_and_axes.json` →
+`f15_contrarian` — and the cell was re-judged against it.) **42
+contrarian titles across 22 subjects, on 40 of 841 probes (4.8%), out of
+1704 community cards (2.5%).** Rare confirmed; the panel's 0-in-8 is now
+a measured low rate rather than an absence. Concentrated, not uniform:
+`milia from eye cream` carries 8 of the 42, `retinol purge` 4.
 
 **F16 — the social axis ranks shapes differently from the question axis.
 HELD, strongly.** Social share spans 5.6x across shapes: `reddit_suffix`
@@ -140,7 +145,6 @@ signal — those entries exist, they just fail to merge into their parent.
 
 ## What this pass did not settle
 
-- F15 (contrarian anchor frequency) — not measured here.
 - Twin stability (F8, F13's replacement rule) — not measured here.
 - The 95 uncaptured jobs are not random: the run halted subject-clustered,
   so the missing tail is concentrated in specific subjects rather than

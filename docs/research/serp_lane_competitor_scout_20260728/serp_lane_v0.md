@@ -45,7 +45,7 @@ were re-decided against 888 captures / 88 complete subjects; see
 `fullbank_analysis_findings_v0.md` for coverage caveats and the full
 cell-by-cell. Summary: F4, F5, F7, F11, F12, F16, F18, F19, F20, F21
 HELD (several with revised numbers); **F6 weakened**; **F17's
-universal-door claim withdrawn**; F15 was NOT re-judged and keeps its
+universal-door claim withdrawn**; F15 promoted lead → active on its own
 trigger. The run halted at 888/986, so this is not the n≈100
 complete-subject pass the triggers anticipated — fixed-design comparisons
 rest on n=5–21.
@@ -124,10 +124,17 @@ pairs per entity per maturity class.
 **F14. Quoted-operator AIO suppression.** WITHDRAWN 2026-07-27 (ruleset
 dogfood: identical AIOs with and without quotes, both entities).
 
-**F15. Contrarian-titled community anchors are rare and precious.** lead.
-Evidence: 0 in 8 non-SF natural queries; the SF anchor is the exception.
+**F15. Contrarian-titled community anchors are rare and precious.**
+active (promoted from lead 2026-07-28 by the full-bank frequency count
+its own trigger called for). Evidence: **42 contrarian titles across 22
+subjects, on 40 of 841 probes (4.8%), out of 1704 community cards
+(2.5%)** (`analysis/fullbank_social_and_axes.json` → `f15_contrarian`);
+panel era saw 0 in 8 non-SF natural queries. Rare confirmed, and the
+lead's implicit "roughly never" is now a measured floor, not zero.
+Concentration is real: `milia from eye cream` alone carries 8.
 Consequence: title-vs-AIO polarity contradiction = top native-follow-through
-trigger. Trigger: full-bank frequency count.
+trigger. Trigger: a stratum where contrarian rate exceeds ~10% of
+community cards → the anchor stops being a rarity signal there.
 
 ### Social-SEO axis (the lane's original purpose: SERP -> social doors)
 
