@@ -40,6 +40,16 @@ capture opens them. SERP output is never composition evidence by itself.
 
 Format: F# | status: active / lead / withdrawn | evidence | change-trigger.
 
+**Full-bank re-judgment 2026-07-28** — cells carrying a full-bank trigger
+were re-decided against 888 captures / 88 complete subjects; see
+`fullbank_analysis_findings_v0.md` for coverage caveats and the full
+cell-by-cell. Summary: F4, F5, F7, F11, F12, F16, F18, F19, F20, F21
+HELD (several with revised numbers); **F6 weakened**; **F17's
+universal-door claim withdrawn**; F15 was NOT re-judged and keeps its
+trigger. The run halted at 888/986, so this is not the n≈100
+complete-subject pass the triggers anticipated — fixed-design comparisons
+rest on n=5–21.
+
 **F1. Safe sustained rate is 15–20/hour; blocks at 28–40/hour.** active.
 Evidence: egress reconstruction + 99 consecutive clean captures at
 13–18/hr (`megadogfood analysis/egress_budget_finding_v0.md`, recipe §1).
@@ -55,19 +65,24 @@ correlates with cumulative volume rather than rate.
 active. Evidence: 75-min cooldown failed to clear the 07-26 flag.
 Trigger: a measured flag-decay time from any future block.
 
-**F4. `X vs {rival}` is the highest-value shape (~0.90 unique share).**
-active. Evidence: order-independent unique-contribution analysis
-(`analysis/unique_contribution.json`), 6-subject panel. Trigger: full-bank
-re-run of the same analysis at n≈100 subjects (in progress, ETA 2026-07-30).
+**F4. `X vs {rival}` is the highest-value shape (~0.81 unique share).**
+active — RE-JUDGED 2026-07-28 full bank: HELD, number revised down from
+0.889 (panel, n=3) to 0.812 (n=12, fixed 11-shape design). Still #1 by a
+wide margin (next: `side_effects` 0.579, `dupe` 0.564). Evidence:
+`fullbank_analysis_findings_v0.md`; `analysis/fullbank_fixed_design.json`.
+Trigger: re-run once the 95 uncaptured jobs land (fixed-design n is only 12).
 
 **F5. The review family (`review`/`reviews`/`honest review`/`worth it`)
 is ~one probe of information, not four.** active. Evidence: unique shares
 0.34–0.40, mutual duplication in panel. Consequence: boards carry ONE
 review-family probe. Trigger: same as F4.
 
-**F6. Pain shapes (`side effects`, `not working`, `how to fix`) carry high
-exclusive yield (0.63–0.71).** active. Evidence: panel unique-contribution.
-Trigger: same as F4.
+**F6. Pain shapes carry elevated exclusive yield (~0.27–0.58).** active —
+RE-JUDGED 2026-07-28 full bank: CHANGED, weakened. `side_effects`
+0.722→0.579, `not_working` 0.639→0.544, `complaints` 0.411→0.271. Still
+above the review family, but the panel-era 0.63–0.71 band does not hold and
+is withdrawn. Evidence: `fullbank_analysis_findings_v0.md`. Trigger: same
+as F4.
 
 **F7. Efficient frontier ≈ 6 probes/subject (80% of domains in ~4 shapes,
 80% of questions in ~6–7).** active. Evidence: greedy set-cover per panel
@@ -123,11 +138,17 @@ analysis (`analysis/social_surface_analysis.json`). Question-rich shapes
 share); a board optimized purely for questions surfaces almost no native
 content. Trigger: full-bank re-run at n≈100 subjects.
 
-**F17. `X vs {rival}` is the universal door — #1 on BOTH axes.** active.
-Evidence: 0.90 unique question share AND top true-social yield (beauty:
-0.60 social share, 8.3 video rows, 4.2 TikTok + 3.0 IG cards per SERP).
-Comparison intent is where Google routes short-video carousels. Trigger:
-full-bank re-run.
+**F17. `X vs {rival}` leads the QUESTION axis only — the universal-door
+claim is WITHDRAWN 2026-07-28.** Full bank: vs_rival is still #1 for
+questions (0.812) but mid-pack on the social axis in beauty —
+`alternatives` 0.475, `worth_it` 0.445, `dupe` 0.442, `vs_rival` 0.414,
+with `reddit_suffix` 0.739 far above all. Panel-era vs_rival social
+figures did not reproduce (0.60→0.414 social share, 8.3→3.61 video rows,
+4.2→2.11 TikTok cards); `alternatives` now leads TikTok at 3.00.
+Replacement: the question door is `vs_rival`, the community door is
+`reddit_suffix`, and the video door is `alternatives`/`dupe`. Evidence:
+`fullbank_analysis_findings_v0.md`. Trigger: re-run after the remaining
+captures land.
 
 **F18. Platform doors are shape-specific.** active, thin. Evidence
 (beauty): TikTok surfaces on `vs` (4.2), `side effects` (2.0), `dupe`
