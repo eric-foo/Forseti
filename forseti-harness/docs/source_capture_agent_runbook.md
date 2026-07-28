@@ -609,6 +609,94 @@ related URLs, user/profile pages, comment links, recommendations, or "more like
 this" surfaces. `snapshot_count=0` is a real fallback result, not permission to
 search wider.
 
+## Capture Retention Posture
+
+Every capture runner has a stated retention default. `content` projects a
+structured record in flight and discards the source bodies after hashing them;
+`raw` preserves the bodies. Extraction failure or an anomaly tripwire ALWAYS
+falls back to preserving raw for that capture (`retention_outcome=raw_failure`,
+nonzero exit) -- content retention never turns a broken parse into a thin
+success. Where a runner exposes `--retention-mode`, `raw` stays selectable per
+run as an explicit operator evidence posture.
+
+Read this table as the current default, not as permission: flipping a lane to
+content requires its parity gate first (below).
+
+| Lane / surface | Runner | Retention default |
+| --- | --- | --- |
+| Google SERP (US-parameterized) | `run_source_capture_cloakbrowser_packet.py --source-surface google_serp_us_parameterized` | `content` |
+| Reddit old-HTML batch | `run_reddit_old_http_batch.py` | `content` |
+| Reddit subreddit grid | `run_reddit_grid_capture.py` | `content` (one per-run raw canary subreddit) |
+| Basenotes MGT | `run_basenotes_mgt_capture.py` | `content` |
+| Fragrantica MGT | `run_fragrantica_mgt_capture.py` | `content` rendered; `raw` on the Direct HTTP leg |
+| Parfumo MGT | `run_parfumo_mgt_capture.py` | `content` targeted-rendered; `raw` on the Direct HTTP leg |
+| Retail PDP aggregates (Sephora, Ulta, Nordstrom, Target, Amazon, REVOLVE, Luckyscent) | `run_source_capture_cloakbrowser_packet.py --retail-capture-profile <name>_pdp_aggregate` | `content` |
+| Retail grid aggregates (Sephora brand/catalog, Ulta brand/category, Target, Amazon, REVOLVE) | same runner with a `*_grid_aggregate` profile | `content` (Target/Amazon grids require it) |
+| Nordstrom brand corpus | `run_nordstrom_brand_corpus.py` | `raw` (passes `--retention-mode raw` explicitly) |
+| TikTok video / grid | `run_source_capture_tiktok_video_packet.py`, `run_source_capture_tiktok_grid_packet.py` | content-shaped by construction (`raw_response_bodies_excluded:sanitized_admission_only`) |
+| YouTube watch | `run_source_capture_youtube_watch_packet.py` | content-shaped by construction (`retention=selected_observables_only`) |
+| Generic packet runners (Direct HTTP, browser, CloakBrowser without a content profile, archive, media, anti-block HTTP, real-Chrome CDP, authenticated browser, historical, price payload, ATS job posting, IG calls / reels grid) | `run_source_capture_*_packet.py` | `raw` -- `no_extractor_exists` for an arbitrary surface |
+
+`run_source_capture_http_packet.py` has no `--retention-mode` flag: it takes a
+`ContentExtractionSpec` from a calling lane runner and is `raw` when called
+without one.
+
+The Google SERP surface label is a route assertion, not a free-form tag. Its
+`--url` must be an HTTPS `google.com/search` URL with exactly one non-empty `q`
+and exactly `hl=en`, `gl=us`, and `pws=0`; the runner rejects a mislabeled route
+before capture. The content record retains the visible AI Overview text as well
+as typed result rows because the discarded DOM is not a later recovery source.
+
+### Parity gate before a flip
+
+A lane flips to content only after `run_capture_retention_parity_gate.py`
+passes for its surface. The gate is a cheap local script -- no network, no
+model tokens, run once per lane over captures the lane already made:
+
+```powershell
+python runners/run_capture_retention_parity_gate.py packets `
+  --surface google_serp_us_parameterized `
+  --packet-root "<packets with raw/ preserved>" `
+  --baseline-record-dir "<the lane's pre-flip extracted records>" `
+  --output "<verdict json>"
+```
+
+It re-extracts the preserved bytes with the current in-flight extractor,
+field-diffs against the record the lane banked, checks surface invariants, and
+exercises the anomaly tripwires synthetically. If a lane cannot be gated by a
+cheap script, record `gate_not_cheap` and flip without it rather than building
+ceremony.
+
+For Google SERPs, the independent invariants require contiguous per-module
+ranks, retained AI Overview content when that module is present, coherent URL
+presence metadata, and agreement between a retained URL and the row's visible
+domain/platform. In rolling-sample mode, an incomplete sample or a sample that
+the current extractor now rejects fails `rolling_sample_integrity`; it cannot
+produce a passing gate through `not-run`.
+
+### Rolling raw sample
+
+Content retention forecloses re-extraction, so a flipped surface keeps a
+*recent* ground truth instead of a permanent corpus. Pass `--raw-sample-root`
+(and `--raw-sample-run-key` for a batch campaign) and the FIRST content
+capture of that surface per UTC day -- or per run -- copies its rendered bytes
+and the banked content record to an operator-drive sample store outside Git.
+Use a unique run key for each campaign; reusing one suppresses another sample
+until the prior key ages out.
+Samples older than 30 days are pruned on the next claim. Nothing is pinned
+forever and none of it is durable evidence.
+
+After ANY extractor edit, re-run the window:
+
+```powershell
+python runners/run_capture_retention_parity_gate.py rolling-sample `
+  --surface google_serp_us_parameterized `
+  --raw-sample-root "<operator-drive sample root>"
+```
+
+This replaces re-extraction of history as the defect-catching mechanism.
+Extractor fixes apply FORWARD ONLY for captures made under content retention.
+
 ## Restricted Network Permission Discipline
 
 In Codex or another restricted sandbox, launch live network-backed runners with
