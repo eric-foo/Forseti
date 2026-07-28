@@ -57,19 +57,25 @@ so stepping is also cheaper in expectation than jumping.
 # minute of rest is paid for by a tighter burst, because the same captures must
 # fit in less running time. Shortening the rest LOWERS the instantaneous spike.
 #
-# THAT TRADE WAS TESTED AND LOST (2026-07-28). Cutting the rest 10min -> 4min
-# (burst 30x40s -> 24x50s) dropped the spike 90/hr -> 72/hr at the same 60/hr
-# sustained, and blocked on the 11th capture, ~8 minutes in. The same 60/hr
-# sustained had just run ~2.5 hours clean under the 10-minute-rest shape.
-# Reverted here to the shape with the evidence.
+# A block followed a 4-minute-rest experiment on 2026-07-28, but the timing
+# reconstruction shows the shape was NOT the cause and was never actually
+# tested. What happened: a 30-capture burst ended 19:33:45 with a 10-minute
+# rest due; the operator restarted the orchestrator ~2 minutes later, and the
+# fresh process began capturing immediately, truncating that rest to 2.1
+# minutes. The result was 41 captures in 30 minutes -- effectively one
+# continuous half-hour burst -- and a block at the 11th capture after the
+# restart. The 4-minute rest never fired, because the block arrived before the
+# burst reached it.
 #
-# Read that as one observation, not a law: n=1, and blocks are stochastic. But
-# the asymmetry is one-sided enough to act on -- ~150 clean captures on one
-# shape versus 10-then-block on the other, at an identical sustained rate. The
-# working hypothesis it supports is that the REST WINDOW matters more than peak
-# density: a rest may act as a recovery interval rather than dead time, in
-# which case optimizing the spike downward by shortening the rest optimizes the
-# wrong variable. Do not shorten the rest again without a deliberate test.
+# So the honest reading is: rest REMOVAL correlates with the block. "4-minute
+# rest is worse than 10-minute rest" is unsupported -- that comparison has no
+# data. This strengthens the hypothesis that the REST WINDOW is load-bearing
+# (a recovery interval, not dead time) and says nothing about how short a real
+# rest may safely be. n=1 either way; blocks are stochastic.
+#
+# Kept at 10 minutes because that is the shape with ~150 consecutive clean
+# captures at 60/hr behind it. Do not shorten it without a deliberate test that
+# actually runs the shorter rest.
 REST_EVERY = 30           # captures between rests (30 x 40s = 20-min burst at the top rung)
 REST_SECONDS = 10 * 60    # rest length -- load-bearing; see the block above
 
