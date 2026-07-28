@@ -76,6 +76,28 @@ complaint axis being born.
 - **Axis normalization discipline**: distinct attributes are never
   joined into one axis label (falsifiability rule; the SKIN1004
   correction).
+- **Speech-act posture typing (owner rule, 2026-07-28)**: every
+  harvested statement is typed by its ACT before its topic, so a
+  cold agent never files a question as a complaint. Postures:
+  ASSERTION (first-hand experience claim — the only posture that
+  feeds complaint/choice evidence directly), CLARIFICATION-SEEKING
+  (doubt voiced as a question or secondhand report — markers: "I've
+  seen people saying", "I heard", interrogatives, no first-hand
+  failure, OP soliciting input), RESOLUTION (the thread's answer to
+  a clarification-seeking row), REACTION (agreement/thanks). A
+  clarification-seeking row is NEVER a complaint; it is a
+  trust-pressure probe whose evidential value is its RESOLUTION —
+  type that as defused / confirmed / unresolved and score the
+  resolution (engagement on the question transfers to the
+  resolution under the post-as-comment rule). An assertion complaint
+  stays a complaint regardless of replies: defenses make it
+  contested, never defused. Specimen: the Wimsylou SPF-doubt post
+  (r/SkincareAddiction 1ors60c, 172 pts) — clarification-seeking,
+  resolved DEFUSED (114-pt lab/Kolmar rebuttal + OP acceptance);
+  scored as a defused J1 attack, not a complaint row. Counter-
+  specimen: "wears off in minutes" first-hand is an assertion
+  complaint even when replies defend it (contested, the T28
+  creasing specimen).
 
 ## What it predicts (calibration state, 2026-07-28)
 
