@@ -144,6 +144,15 @@ not runnable on its evidence (J3 without the paired render/native
 side; occupancy lines without a rendered layer; delight rows without
 rival-owned surfaces) — honest absence is part of the deliverable.
 
+For native-thread coverage, sweep every evidence row that contains action or
+intent language, or a copy/equivalence/comparison claim. Give each candidate an
+explicit emitted-or-held disposition with its evidence row ID and reason. A
+candidate absent from the final output is not a valid hold; qualified or
+insufficient evidence belongs in held/excluded rows. For an action/intent
+candidate, list its row ID individually and type it `EXECUTED_CHOICE`,
+`INTENDED_CHOICE`, or `POSSIBLE_CHOICE` before the emit/hold decision; a bundled
+row-ID range or association-only explanation is not a choice-state disposition.
+
 ## Cold-agent reading-doctrine calibration protocol (installed 2026-07-28)
 
 Run this protocol whenever the reading doctrine changes materially or a new

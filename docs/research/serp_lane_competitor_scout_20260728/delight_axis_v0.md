@@ -62,6 +62,12 @@ deltas; a neutral prompt must not disclose which one is expected to fire.
    "so smooth") is SUPPORTING evidence only: it can rank candidate
    axes and corroborate a set axis, but adjectives without a revealed
    choice never set one — adjectives are cheap, choices are evidence.
+   Under the choice-state boundary in `competitor_ledger_spec_v0.md`,
+   only `EXECUTED_CHOICE` satisfies this bar. `INTENDED_CHOICE`
+   ("I will return X and replace it with Y") is exit-pressure evidence,
+   not an executed outcome; `POSSIBLE_CHOICE` ("might," "may,"
+   "tempted," or conditional intent) is held as consideration/demand
+   context. Neither can SET a delight axis.
    Engagement weighs alongside author corroboration (owner rule,
    2026-07-28): record thread engagement (post score, comment count)
    and each choice statement's rendered score at capture. A POST
