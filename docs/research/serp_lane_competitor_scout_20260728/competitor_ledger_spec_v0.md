@@ -106,6 +106,52 @@ not runnable on its evidence (J3 without the paired render/native
 side; occupancy lines without a rendered layer; delight rows without
 rival-owned surfaces) — honest absence is part of the deliverable.
 
+## Cold-agent reading-doctrine calibration protocol (installed 2026-07-28)
+
+Run this protocol whenever the reading doctrine changes materially or a new
+evidence class enters scope. It tests whether a cold agent can recover the
+doctrine's intended rows from the text alone; it is separate from outcome-based
+weight calibration.
+
+1. **Pick uncontaminated evidence.** Any thread or SERP named as a specimen in
+   the doctrine is disqualified. Prefer a fresh category, an inverse-direction
+   case (for example, a CONFIRMED resolution when the specimen is DEFUSED), and
+   one case per rule cluster under test.
+2. **Freeze the register before launch.** Use row-level expectations when the
+   register author has read the evidence and rule-level expectations otherwise.
+   Name 2–4 load-bearing discriminators per case. A case passes only when all
+   load-bearing discriminators hit.
+3. **Use a neutral prompt.** Give the cold agent only these three doctrine
+   paths, the subject, the evidence paths, and this generic task: "produce the
+   evidence rows this evidence contributes, applying the doctrine exactly; do
+   not invent rows the doctrine does not license." Never name an expected rule,
+   construct, or finding.
+4. **Match the bank-scale tier.** The worker tier used for bank-scale harvest
+   is the default doctrine-text test tier (Sonnet in the proven 2026-07-28
+   runs). A/B a synthesis tier only when tiering itself is the question; render
+   the doctrine from one pinned commit into a temporary directory for both runs
+   so later doc changes cannot confound the comparison.
+5. **Score against the frozen register.** Mark every discriminator hit,
+   partial, or miss. Record beyond-register findings separately; a cold agent
+   out-scouting the register is signal, not noise.
+6. **Install only repeatable gaps.** A miss warrants one doctrine install only
+   when it recurs across agents or traces to a missing or misplaced rule.
+   Single-agent variance is not a doctrine gap until a second run reproduces
+   it. Install operative rules here; install complaint orientation in
+   `complaints_axis_v0.md` and delight-only deltas in `delight_axis_v0.md`.
+   Completeness is measured at the source cold agents actually load.
+7. **Route open vocabulary edges to the owner.** If an agent correctly holds a
+   row because vocabulary is unresolved, record the question for owner ruling.
+   Never install an answer the owner has not supplied.
+
+Calibration baseline at installation: five cold runs all passed (round 1:
+9 hits/1 partial; round 2: 3/3 cases; synthesis-tier A/B: strict superset with
+no overthink symptoms). Repeatable gaps installed from those runs were the
+axis-forfeiture alert, this read contract, and complaint-side
+ENGAGEMENT-THIN symmetry. Evidence:
+`C:\tmp\forseti-axis-delight-calibration-20260728\second_leg_native\`
+(`dogfood_*_v0.md`, doctrine commits `aaa97d28` through `61793775`).
+
 ## Position statement and drift check (installed 2026-07-28)
 
 Every consolidation opens with a one-line DUPE-ECONOMY POSITION

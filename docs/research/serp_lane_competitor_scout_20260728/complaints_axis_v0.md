@@ -30,6 +30,16 @@ types, corroborates, and *uses* those axes. Its central calibrated
 claim: **a subject's top complaint axes predict WHERE it loses
 head-to-head comparisons — not WHO beats it.**
 
+## How the reading doctrine is calibrated (pointer)
+
+Material doctrine changes and new evidence classes must be tested with the
+cold-agent protocol in `competitor_ledger_spec_v0.md` § "Cold-agent
+reading-doctrine calibration protocol." The protocol freezes an uncontaminated
+expectation register before launch, uses a neutral prompt, scores load-bearing
+discriminators, installs only repeatable gaps, and routes unresolved vocabulary
+to the owner. This document receives complaint-axis orientation only; operative
+read rules stay in the spec, so calibration cannot fork them here.
+
 ## The journey it sits in (pointer)
 
 The chain-card IS the complaint journey: claim → buy-reason →

@@ -33,8 +33,12 @@ other is the value exit).
 The ladder and rungs, corroboration tiers, distinct-author rule,
 axis-occupancy/vacancy read, no-axis-joining normalization,
 verdict-source typing and glance-value priority, blind
-freeze-and-hash protocol, and all standing non-claims: owned by
-`complaints_axis_v0.md` and `competitor_ledger_spec_v0.md`.
+freeze-and-hash protocol, cold-agent reading-doctrine calibration
+protocol, and all standing non-claims: owned by
+`complaints_axis_v0.md` and `competitor_ledger_spec_v0.md`. A delight
+calibration case additionally preserves this document's exact-SKU,
+rival-owned-surface, outcome-free-intake, and choice-over-adjective
+deltas; a neutral prompt must not disclose which one is expected to fire.
 
 ## The deltas (what is actually different)
 
