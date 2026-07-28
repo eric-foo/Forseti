@@ -35,12 +35,18 @@ errors at every rung. Evidence is NOT evenly distributed -- 40/hr carries
 "we ended at 60" is not "60 is proven." Per-rung depth, not the top rung,
 is the thing to read.
 
-All of that evidence was gathered under the PREVIOUS shape (30 captures per
-burst, 10-minute rest). The rest was shortened to 4 minutes on 2026-07-28 to
-cut peak density; sustained rates are unchanged, but the burst shape under
-which the rungs were measured is not the shape they now run. Treat the rungs
-as rate-validated and shape-unvalidated until a clean run accumulates under
-the current shape.
+ONCE FLAGGED, RATE STOPS BEING THE VARIABLE. On 2026-07-28 a first block
+(load-driven -- see the shape comment below) was followed 14 minutes later by
+a second block on the FIRST capture after a ~26-minute total gap, at a rate
+two rungs lower. Zero successful captures separated them. That second block
+says nothing about 55/hr; it says the IP was still flagged and a ~26-minute
+cooldown did not clear it. This matches the lane's standing finding that
+recovery from a flag is slow (>75 min) and that prevention beats reaction.
+Operational consequence: after a block, further probing every 12-15 minutes
+mostly re-confirms the flag. Stop capturing, let the flag decay on a scale of
+hours, then resume at a LOW rung and re-establish a clean baseline before
+reading any rate as evidence. Do not interpret post-flag blocks as data about
+the rate they happened to occur at.
 
 Historical note for context, not a bound: an earlier session profile saw
 blocks somewhere in 28-40/hr; that did not reproduce here, which makes it
@@ -82,7 +88,24 @@ REST_SECONDS = 10 * 60    # rest length -- load-bearing; see the block above
 # Rungs are declared as TARGET SUSTAINED rates; cycles are derived so the shape
 # can change without silently re-rating every rung:
 #     cycle = REST_EVERY * 3600 / rate / REST_EVERY - REST_SECONDS / REST_EVERY
-TARGET_RATES = [27.1, 30.0, 32.7, 36.0, 40.0, 45.0, 50.0, 55.0, 60.0]
+# Rungs 9-11 (2026-07-28, owner-directed) target a ~77/hr peak-30-minute
+# window. Read the SUSTAINED column and the PEAK-30MIN column as different
+# things: a rest does not fall evenly inside every 30-minute slice, so a
+# 30-minute window runs ~1.067x the sustained figure (60/hr sustained measured
+# 64/hr peak-30min over 151 clean captures). That ratio is why the top rung
+# here is 72/hr sustained, not 77: 77 SUSTAINED would put the 30-minute window
+# at ~82/hr, which is precisely where the run's only block landed. 72 sustained
+# lands the window at ~77/hr -- above everything measured clean, below the one
+# observed block.
+#
+# Why the 30-minute window is the metric: at 10- and 20-minute windows the
+# clean stretch and the blocked stretch were IDENTICAL (16 captures / 96/hr and
+# 30 captures / 90/hr respectively). They diverged only at 30 minutes -- 32
+# captures (64/hr) clean versus 41 (82/hr) blocked. So the instantaneous spike
+# is not the discriminating variable; the half-hour total is. One observation,
+# consistent-with rather than measured, and blocks are stochastic.
+TARGET_RATES = [27.1, 30.0, 32.7, 36.0, 40.0, 45.0, 50.0, 55.0, 60.0,
+                65.0, 70.0, 72.0]
 
 RATE_LADDER = [round(3600.0 / r - REST_SECONDS / REST_EVERY, 1)
                for r in TARGET_RATES]
@@ -110,7 +133,12 @@ def cycle_for(rung):
 if __name__ == "__main__":
     for i, c in enumerate(RATE_LADDER):
         burst_min = REST_EVERY * c / 60.0
-        print(f"rung {i}: {c:5.1f}s cycle -> {effective_rate(c):4.1f}/hr "
-              f"sustained, {3600.0/c:5.1f}/hr instantaneous, "
+        sust = effective_rate(c)
+        note = "measured clean" if i <= RUNG_PROVEN_THROUGH else (
+            "above all clean evidence" if sust > 60.0 else "reached, thin evidence")
+        print(f"rung {i:2d}: {c:5.1f}s cycle -> {sust:4.1f}/hr sustained, "
+              f"~{sust*1.067:4.1f}/hr peak-30min, {3600.0/c:5.1f}/hr inst, "
               f"burst {burst_min:4.1f}min + {REST_SECONDS/60:.0f}min rest "
-              f"(hold {rung_hold(i)})")
+              f"({note})")
+    print(f"\nreference: one block observed at 82/hr peak-30min; "
+          f"64/hr peak-30min ran 151 captures clean")
