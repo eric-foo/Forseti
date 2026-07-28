@@ -426,6 +426,44 @@ import for in-run counts.
   spike. Cadence, evidence per rung, and the 72/hr-sustained (~77/hr
   peak-30min) rungs authored for the next attempt live in
   `forseti-harness/runners/serp_egress_cadence.py`.
+- **Wave 2 IN FLIGHT** (launched 2026-07-29 02:2x, owner-set 60/hr for
+  ~10h): 572 jobs appended to `query_bank.json` by
+  `bin/build_wave2_bank.py`; bank 986 → 1558. Pre-wave-2 bank preserved at
+  `query_bank_pre_wave2.json`. Rung 8 (60/hr) frozen — no escalation, so
+  the run is not rate evidence. ETA ~9.5h of capture time.
+  Allocation, chosen against the cells this ledger leaves open:
+  - **p11_fill 113** — the 11-shape product design is n=12 and is now the
+    BINDING limit on F4/F5/F6/F17; capture coverage no longer is. Fills
+    P11 gaps on 32 subjects that already carry most of it, plus the full
+    11 for four deeply-covered products that carry none (CeraVe
+    moisturizing cream, Laneige lip sleeping mask, Rhode peptide lip
+    treatment, AeroPress). Expected n=12 → ~47.
+  - **complaint_ext 204** — six new failure-intent shapes (`regret`,
+    `dont_buy`, `bad_for_you`, `why_stopped_working`, `made_it_worse`,
+    `waste_of_money`) × 34 subjects that already carry `side_effects` and
+    `not_working`, so the new shapes are directly comparable against the
+    proven family. F6 held at full coverage with `not_working` at 0.651.
+  - **platform_suffix 135** — `{subject} tiktok` / `youtube` / `instagram`
+    × 45 subjects. `reddit_suffix` is the only platform-named shape ever
+    run, so F18's "platform door" language is untested outside Reddit.
+    Beauty-first then adjacent/far/issue so the answer is not beauty-only.
+  - **twin 120** — 60 already-captured queries re-run twice inside this
+    run, 4.2–5.2h apart, `twin_of` pointing at the original. The ledger
+    has ~20 findings resting on single captures and the lane has NEVER
+    measured SERP volatility; without a noise floor, close rankings
+    (0.782 vs 0.651) cannot be called distinguishable. Also yields a
+    cross-day comparison against the wave-1 capture.
+
+  Two design rules applied, both from wave-1 failures:
+  (a) **Ordering is round-robin across streams, not clustered.** The
+  07-28 halt landed subject-clustered and that is what made two of the
+  revision-1 judgments coverage artifacts. A wave-2 run that dies at 70%
+  yields 70% of every stream.
+  (b) **`vs_rival` is filled only from harvest.** 23 subjects got a rival
+  from the hand-adjudicated USABLE candidate rung — the cycle-N-ledger →
+  cycle-N+1-`vs` flow F20 specifies, running for the first time. The 15
+  subjects with no harvested rival keep `vs_rival` as a typed gap rather
+  than receiving an operator-picked one.
 - Queued behind the bank, both built, validated, and gated (no captures
   taken, processes stopped with the bank): the 10-brand scout dogfood
   (`C:\tmp\forseti-scout-dogfood10-20260728\`) and the 120-job beauty
