@@ -55,17 +55,23 @@ so stepping is also cheaper in expectation than jumping.
 
 # Burst-and-rest shape. Rest is NOT free: at a fixed sustained rate, every
 # minute of rest is paid for by a tighter burst, because the same captures must
-# fit in less running time. Shortening the rest is therefore how you LOWER the
-# instantaneous spike, not raise it. Owner concern 2026-07-28 was peak density,
-# so the rest was cut from 10 min to 4 min and the burst held at ~20 minutes:
-# at the top rung that moves the spike from 90/hr to 72/hr for the same 60/hr
-# sustained, and cuts worst-case 10-minute density from 15 captures to 12.
-# The floor at 60/hr sustained is a flat 60s cycle with NO rest (spike == 60,
-# density 10); that is available by setting REST_SECONDS = 0 and is the
-# minimum-spike option, at the cost of removing rests entirely -- a variable
-# that was present throughout every clean run to date.
-REST_EVERY = 24           # captures between rests (24 x 50s = 20-min burst at the top rung)
-REST_SECONDS = 4 * 60     # rest length
+# fit in less running time. Shortening the rest LOWERS the instantaneous spike.
+#
+# THAT TRADE WAS TESTED AND LOST (2026-07-28). Cutting the rest 10min -> 4min
+# (burst 30x40s -> 24x50s) dropped the spike 90/hr -> 72/hr at the same 60/hr
+# sustained, and blocked on the 11th capture, ~8 minutes in. The same 60/hr
+# sustained had just run ~2.5 hours clean under the 10-minute-rest shape.
+# Reverted here to the shape with the evidence.
+#
+# Read that as one observation, not a law: n=1, and blocks are stochastic. But
+# the asymmetry is one-sided enough to act on -- ~150 clean captures on one
+# shape versus 10-then-block on the other, at an identical sustained rate. The
+# working hypothesis it supports is that the REST WINDOW matters more than peak
+# density: a rest may act as a recovery interval rather than dead time, in
+# which case optimizing the spike downward by shortening the rest optimizes the
+# wrong variable. Do not shorten the rest again without a deliberate test.
+REST_EVERY = 30           # captures between rests (30 x 40s = 20-min burst at the top rung)
+REST_SECONDS = 10 * 60    # rest length -- load-bearing; see the block above
 
 # Rungs are declared as TARGET SUSTAINED rates; cycles are derived so the shape
 # can change without silently re-rating every rung:
