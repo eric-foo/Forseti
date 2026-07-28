@@ -58,6 +58,13 @@ freeze-and-hash protocol, and all standing non-claims: owned by
    "so smooth") is SUPPORTING evidence only: it can rank candidate
    axes and corroborate a set axis, but adjectives without a revealed
    choice never set one — adjectives are cheap, choices are evidence.
+   Engagement weighs alongside author corroboration (owner rule,
+   2026-07-28): record thread engagement (post score, comment count)
+   and each choice statement's rendered score at capture. Low-score
+   statements still count toward the author tiers, but an axis whose
+   entire support is low-engagement is flagged ENGAGEMENT-THIN in
+   the record; no cross-category engagement comparisons (venue
+   baselines differ).
    (Applied to our own best result first: the BoJ/SKIN1004 sun-serum
    axis initially had only ONE choice author (the SERP render being
    that same voice counted once) and sat at CANDIDATE. The 2026-07-28
