@@ -40,15 +40,19 @@ capture opens them. SERP output is never composition evidence by itself.
 
 Format: F# | status: active / lead / withdrawn | evidence | change-trigger.
 
-**Full-bank re-judgment 2026-07-28** — cells carrying a full-bank trigger
-were re-decided against 888 captures / 88 complete subjects; see
-`fullbank_analysis_findings_v0.md` for coverage caveats and the full
-cell-by-cell. Summary: F4, F5, F7, F11, F12, F16, F18, F19, F20, F21
-HELD (several with revised numbers); **F6 weakened**; **F17's
-universal-door claim withdrawn**; F15 promoted lead → active on its own
-trigger. The run halted at 888/986, so this is not the n≈100
-complete-subject pass the triggers anticipated — fixed-design comparisons
-rest on n=5–21.
+**Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
+carrying a full-bank trigger were re-decided against **986/986 captures /
+98 of 98 complete subjects**; see `fullbank_analysis_findings_v0.md` for
+the full cell-by-cell. Summary: F4, F5, F6, F7, F11, F12, F15, F16, F18,
+F19, F20, F21 HELD (most with revised numbers); **F17 WITHDRAWN**.
+
+Revision 1 ran at 888/986 and two of its own judgments were coverage
+artifacts: it called **F6 weakened** (completion recovers `not_working`
+to 0.651, at panel level) and it put `alternatives` at the head of the
+social axis (completion shows `how_to_use` and `does_work` above it).
+Capture coverage is no longer the binding limit; the fixed *designs*
+are — the 11-shape product design is still n=12 and the deep design n=5,
+because the captured tail was issue-heavy.
 
 **F1. Safe sustained rate is 15–20/hour; blocks at 28–40/hour.** active.
 Evidence: egress reconstruction + 99 consecutive clean captures at
@@ -61,33 +65,50 @@ Evidence: same reconstruction; note an earlier ~100/day claim was
 withdrawn same-day as contradicted by our own run. Trigger: a block that
 correlates with cumulative volume rather than rate.
 
-**F3. Once flagged, recovery is slow (>75 min); prevention beats reaction.**
-active. Evidence: 75-min cooldown failed to clear the 07-26 flag.
-Trigger: a measured flag-decay time from any future block.
+**F3. Once flagged, recovery is slow — bracketed at >26 min and ≤3h25m;
+prevention beats reaction.** active — SHARPENED 2026-07-29. Evidence:
+75-min cooldown failed to clear the 07-26 flag; on 07-28 waits of ~12 and
+~26 min each drew a block on the first capture after the gap; on 07-28/29
+a ~3h25m idle cleared it completely (95/95 clean at 45/hr, then 3 clean
+re-probes of previously-blocked jobs). This is the lane's first positive
+decay observation — before it, every data point was a failure to clear.
+The bracket is wide because nothing between 26 min and 3h25m was tested,
+and the operating rule stays "idle for hours, not minutes". Non-claim:
+the clean resume evidences decay, not that 45/hr is a safe rate —
+escalation was frozen throughout. Trigger: a block after ≥4h idle
+(would break the upper bound), or a clean first capture under 1h (would
+tighten the lower).
 
-**F4. `X vs {rival}` is the highest-value shape (~0.81 unique share).**
-active — RE-JUDGED 2026-07-28 full bank: HELD, number revised down from
-0.889 (panel, n=3) to 0.812 (n=12, fixed 11-shape design). Still #1 by a
-wide margin (next: `side_effects` 0.579, `dupe` 0.564). Evidence:
-`fullbank_analysis_findings_v0.md`; `analysis/fullbank_fixed_design.json`.
-Trigger: re-run once the 95 uncaptured jobs land (fixed-design n is only 12).
+**F4. `X vs {rival}` is the highest-value shape (~0.78 unique share).**
+active — RE-JUDGED 2026-07-29 COMPLETE bank: HELD, revised down from
+0.889 (panel, n=3) to **0.782**. **The "by a wide margin" framing is
+withdrawn**: `not_working` 0.651 and `alternatives`/`best_products` 0.626
+sit close behind. Evidence: `fullbank_analysis_findings_v0.md`;
+`analysis/fullbank_shape_value.json`. Trigger: any shape overtaking it on
+the question axis, or the 11-shape fixed design growing past n=12.
 
 **F5. The review family (`review`/`reviews`/`honest review`/`worth it`)
-is ~one probe of information, not four.** active. Evidence: unique shares
-0.34–0.40, mutual duplication in panel. Consequence: boards carry ONE
-review-family probe. Trigger: same as F4.
+is ~one probe of information, not four.** active — RE-JUDGED 2026-07-29:
+HELD and tightened. `review` 0.377, `worth_it` 0.376, `honest_review`
+0.368, `reviews_plural` 0.323. Consequence: boards carry ONE
+review-family probe. Trigger: any member separating by >0.15 from the
+cluster.
 
-**F6. Pain shapes carry elevated exclusive yield (~0.27–0.58).** active —
-RE-JUDGED 2026-07-28 full bank: CHANGED, weakened. `side_effects`
-0.722→0.579, `not_working` 0.639→0.544, `complaints` 0.411→0.271. Still
-above the review family, but the panel-era 0.63–0.71 band does not hold and
-is withdrawn. Evidence: `fullbank_analysis_findings_v0.md`. Trigger: same
-as F4.
+**F6. Pain shapes carry elevated exclusive yield (~0.32–0.65).** active —
+RE-JUDGED 2026-07-29 COMPLETE bank: HELD. `side_effects` **0.586**,
+`not_working` **0.651**, `complaints` **0.322**. The 2026-07-28
+"weakened" call was largely a coverage artifact of an issue-light 888 —
+`not_working` recovered to panel level and is now the #2 shape overall.
+`complaints` is the weak member and is the one to drop from boards.
+Evidence: `fullbank_analysis_findings_v0.md`. Trigger: `complaints`
+rising above 0.45 in any stratum, or `not_working` falling below 0.55.
 
 **F7. Efficient frontier ≈ 6 probes/subject (80% of domains in ~4 shapes,
-80% of questions in ~6–7).** active. Evidence: greedy set-cover per panel
-subject. Consequence: default boards below. Trigger: full-bank set-cover
-at n≈100 subjects.
+80% of questions in ~6–7).** active — RE-JUDGED 2026-07-29 COMPLETE bank:
+HELD, best-supported cell in the ledger. Across all 98 complete subjects,
+80% of questions at **6.36 shapes**, 80% of domains at **3.92**; issue
+designs 4.83–5.36, product designs 6.21–7.42. Consequence: default boards
+below. Trigger: a stratum needing >9 shapes for 80% of questions.
 
 **F8. Cluster a subject's probes into one session.** active. Evidence:
 same-hour twins ~95% question-layer agreement (n=3) vs ~71% at 4h apart
@@ -111,9 +132,14 @@ Evidence: issue twins 85–100% question overlap; issue shapes high unique
 share — but small n. Trigger: full-bank issue strata results.
 
 **F12. Mediation concentration is a category property; track outlets.**
-lead. Evidence: livethatglow.com anchoring Rhode AND Laneige;
-recurring-AIO-citation bar (2+ independent queries) marks a mediator for
-native follow-through. Trigger: full-bank mediator frequency table.
+active — RE-JUDGED 2026-07-29 COMPLETE bank: HELD, promoted lead →
+active on its own trigger. The panel specimen (livethatglow.com anchoring
+Rhode AND Laneige) is far off the low end: **livethatglow.com spans 11
+subjects**; 113 creators recur across 2+ subjects, led by
+`youtube:Dr Dray` at 11. Recurring-AIO-citation bar (2+ independent
+queries) marks a mediator for native follow-through. Evidence:
+`analysis/fullbank_social_and_axes.json`. Trigger: the top mediator
+falling below 5 subjects in a later pass.
 
 **F13. Maturity-scaled question-layer trust.** WITHDRAWN 2026-07-27.
 Was protocol v1.2 rule 3. Failed direct replication (Byoma 41% vs 100%
@@ -139,41 +165,67 @@ community cards → the anchor stops being a rarity signal there.
 ### Social-SEO axis (the lane's original purpose: SERP -> social doors)
 
 **F16. The social axis ranks shapes DIFFERENTLY than the question axis —
-boards must mix by goal.** active. Evidence: 136-cell social-surface
-analysis (`analysis/social_surface_analysis.json`). Question-rich shapes
-(`what causes`, `bare`, `is X normal`) are social-POOR (0.07–0.17 social
-share); a board optimized purely for questions surfaces almost no native
-content. Trigger: full-bank re-run at n≈100 subjects.
+boards must mix by goal.** active — RE-JUDGED 2026-07-29 COMPLETE bank:
+HELD strongly. Social share spans **6.6x**: `reddit_suffix` 0.736 top,
+`ingredients_specs` 0.111 bottom. Question-rich shapes are social-POOR
+(`what_causes` 0.241, `bare` 0.279, `normal` 0.299, `why` 0.305); a board
+optimized purely for questions surfaces almost no native content.
+Evidence: `analysis/fullbank_social_and_axes.json`. Trigger: any
+question-leading shape exceeding 0.45 social share.
 
 **F17. `X vs {rival}` leads the QUESTION axis only — the universal-door
-claim is WITHDRAWN 2026-07-28.** Full bank: vs_rival is still #1 for
-questions (0.812) but mid-pack on the social axis in beauty —
-`alternatives` 0.475, `worth_it` 0.445, `dupe` 0.442, `vs_rival` 0.414,
-with `reddit_suffix` 0.739 far above all. Panel-era vs_rival social
-figures did not reproduce (0.60→0.414 social share, 8.3→3.61 video rows,
-4.2→2.11 TikTok cards); `alternatives` now leads TikTok at 3.00.
-Replacement: the question door is `vs_rival`, the community door is
-`reddit_suffix`, and the video door is `alternatives`/`dupe`. Evidence:
-`fullbank_analysis_findings_v0.md`. Trigger: re-run after the remaining
-captures land.
+claim is WITHDRAWN.** RE-JUDGED 2026-07-29 COMPLETE bank: withdrawal
+deepens. vs_rival is still #1 for questions (0.782) but does **not reach
+the top ten** on the social axis in beauty. Ranking: `reddit_suffix`
+0.736, `how_to_use` 0.533, `does_work` 0.517, `mistakes` 0.482,
+`honest_review` 0.478, `alternatives` 0.475, `not_working` 0.461,
+`is_good` 0.448, `worth_it` 0.445, `dupe` 0.442. The 2026-07-28 revision
+put `alternatives` at the head of this group; completion showed two
+demonstration-intent shapes above it. Panel-era vs_rival social figures
+did not reproduce (0.60 social share, 8.3 video rows, 4.2 TikTok cards).
+Replacement: **question door `vs_rival`; community door `reddit_suffix`;
+video door = demonstration intent (`how_to_use`, `does_work`,
+`honest_review`).** Evidence: `fullbank_analysis_findings_v0.md`.
+Trigger: vs_rival re-entering the social top 5 in any stratum.
 
-**F18. Platform doors are shape-specific.** active, thin. Evidence
-(beauty): TikTok surfaces on `vs` (4.2), `side effects` (2.0), `dupe`
-(1.75), `review` (1.75); Instagram on `worth it` (4.0), `vs` (3.0),
-`dupe` (2.5), `before and after` (1.8, its only strong door, 0 YT);
-YouTube broadly on review-family and `dupe`; `X reddit` is purely the
-community door (8.8 reddit cards, ~0 video). Consequence: pick the probe
-by which platform's creators you need. Trigger: full-bank per-platform
-table.
+**F18. Platform doors are shape-specific.** active — RE-JUDGED
+2026-07-29 COMPLETE bank, numbers replaced. Beauty per-shape cards:
+TikTok → `alternatives` 3.00, `honest_review` 3.00, `how_to_use` 2.82;
+Instagram → `how_to_use` 3.36, `does_work` 3.09, `honest_review` 2.89,
+`mistakes` 2.89; YouTube → `how_to_fix` 2.56, `mistakes` 2.56,
+`worth_it` 2.38, `does_work` 2.36; Reddit → `reddit_suffix` 7.79,
+dominant and unrivalled. Total video rows led by `honest_review` 9.79.
+**Withdrawn:** `before_after` as an Instagram-only door with zero YouTube
+(actual: YouTube 1.31 vs Instagram 1.58). Consequence: pick the probe by
+which platform's creators you need. Trigger: any platform's leader
+changing across two consecutive full-bank passes.
 
-**F19. A recurring creator layer mediates across subjects.** active.
-Evidence: 15+ sources on 2+ subjects each in 136 cells — skin-derm
-YouTube (Dr. Jenny Liu, Dr. Daniel Sugai, Doctorly, Cassandra Bankson,
-James Welsh) recurring across brands AND issues; parallel niche layers in
-other verticals (Tom's Coffee Corner across both coffee subjects).
-Consequence: the 2+-subject recurrence bar auto-generates the native
-follow-through candidate list, extending F12 from outlets to creators.
-Trigger: full-bank recurrence table (expect the list to grow, not shrink).
+**F22. Video-card CONTENT differs by platform, not just volume.** lead
+(new 2026-07-29). Title-shape classification of 1356 unique video cards:
+YouTube is the explanatory layer (26% review, 20% how-to); TikTok is the
+substitution layer (13% dupe/alternative + 11% head-to-head, ~2x
+Instagram); Instagram is largely non-review caption content (57% matches
+no review/compare/how-to shape). Brand-owned accounts are only 5–8% of
+cards on all three. Consequence: for competitor NAMES prefer TikTok
+cards; for claims prefer YouTube; treat Instagram counts as reach, not
+information. Evidence: scratch classification over `extracted_v2`
+video_block rows — **derivation not yet promoted to a runner**. Trigger:
+promote the derivation, then re-judge; the 29–57% unclassified residue
+may be a classifier limit rather than a platform property.
+
+**F19. A recurring creator layer mediates across subjects.** active —
+RE-JUDGED 2026-07-29 COMPLETE bank: HELD, grew as predicted at both
+scale-ups (panel 15+ → 96 at 888 → **113** at 986). Composition: 73
+YouTube, 24 TikTok, 16 Instagram; **no editorial outlets** — the layer is
+individual creators, and it is medically weighted (Dr Dray 11 subjects,
+Doctorly 8, SkinZone 7, Dr. Daniel Sugai 7). Parallel niche layers exist
+in other verticals (Tom's Coffee Corner, Mattress Nerd, The Run Testers),
+so this is not a beauty artifact. Consequence: the 2+-subject recurrence
+bar auto-generates the native follow-through candidate list, extending
+F12 from outlets to creators. **Non-claim: recurrence evidences reach,
+not independence — sponsorship is not observable from titles.**
+Evidence: `analysis/fullbank_social_and_axes.json`. Trigger: the list
+shrinking at a larger corpus, or an editorial outlet entering the top 10.
 
 **F20. Competitor identification is an instrument without a step; rival
 inputs must come from harvest, not operator priors.** active (gap).
@@ -198,15 +250,18 @@ rung now promotes real names (NYX, Saie, Summer Fridays Lip Butter
 Balm). Trigger: full-bank ledger; owner typing-vocabulary review
 (incl. self_variant); first live cycle running the pass.
 
-**F21. The recurring creator layer splits into two kinds.** active, thin.
-Evidence (n=13 recurring): 9 brand-recurring niche reviewers (comparison
-venues within a category: James Welsh across Olaplex+Rhode) and 4
-professional/derm creators bridging problem-space and brand-space
-(Dr. Sugai across CeraVe + damaged skin barrier). None recurred on
-problems alone. Consequence: cross-scope professionals are the priority
+**F21. The recurring creator layer splits into two kinds.** active —
+RE-JUDGED 2026-07-29 COMPLETE bank: HELD, quantified, and one panel
+sub-claim corrected. Of the 113 recurring creators: **60 product-only,
+39 bridging product and issue scopes, 14 issue-only** — so **34.5%**
+are cross-scope (29% at 888; completing the issue-heavy tail raised it,
+as the cell predicted). **Corrected:** the panel's "none recurred on
+problems alone" is false at scale — 14 issue-only creators exist.
+Consequence unchanged: cross-scope professionals are the priority
 native-follow-through targets — they mediate the problem->product journey
-that is the Understanding-phase entry point. Trigger: full-bank
-recurrence table re-classification.
+that is the Understanding-phase entry point. Evidence:
+`analysis/fullbank_social_and_axes.json` → `f21_classification`.
+Trigger: bridging share falling below 25%.
 
 ## Current default boards (from F4–F8, F16–F18)
 
@@ -330,11 +385,25 @@ import for in-run counts.
 
 ## In progress
 
-- Full-bank run: **HALTED 2026-07-28 20:00 at 889/986 (97 pending)** —
-  owner decision, resume later. Refreshes F4–F8, F11, F12, F15 at n≈100
-  subjects when it completes; the analyses can also be re-run on the 889
-  already captured if the remainder slips.
-  **Why halted:** two blocks 14 minutes apart. The first was
+- Full-bank run: **COMPLETE 2026-07-29 01:55 — 986/986 ok, 98/98
+  subjects.** The tail (95 jobs) ran 2026-07-28 23:42 – 2026-07-29 01:44
+  at a frozen 45/hr with **zero blocks**, after the IP sat idle ~3h25m
+  from the last block; the 3 previously-blocked `rice water for hair
+  growth` jobs were then re-probed successfully. F4–F7, F11, F12, F15,
+  F16, F18–F21 were re-judged at full coverage (revision 2 of
+  `fullbank_analysis_findings_v0.md`); F17 stayed withdrawn and deepened.
+  **Two lane lessons from the resume:**
+  (a) 3+ hours idle cleared a flag that 12–26 minute waits had not — the
+  first F3-consistent *positive* decay observation.
+  (b) A retry helper that reuses the orchestrator's `capture()` inherits
+  its crash-recovery path, which reuses an existing packet directory and
+  re-reads the OLD blocked packet in 0s without contacting Google. That
+  produced 3 fabricated "blocked" ledger rows before it was caught; they
+  are voided by an explicit `RETRY_CORRECTION` row in `run_ledger.jsonl`,
+  and `bin/retry_blocked.py` now archives the prior packet before
+  re-probing. Any future retry path must move the old packet aside first.
+  **Halt history (2026-07-28 20:00, at 889/986):** two blocks 14 minutes
+  apart. The first was
   load-driven and self-inflicted — a restart to change cadence config
   began capturing 2.1 minutes after the previous burst instead of the
   scheduled 10, producing 41 captures in 30 minutes where the schedule
@@ -343,12 +412,11 @@ import for in-run counts.
   that one is flag persistence, not a rate signal (consistent with F3,
   recovery >75 min). Continuing to probe every 14 minutes mostly
   re-confirms a flag, so all capture processes were stopped.
-  **On resume:** the IP should sit idle for hours, not minutes. Then
-  restart the orchestrator, which resumes from its ledger automatically;
-  `rate_state.json` is pre-set to rung 0 (27.1/hr) frozen so it starts
-  at the most-proven rate with no escalation. Earn a clean baseline of a
-  few dozen captures before reading any rate as evidence, and do not
-  unfreeze escalation until that baseline exists.
+  **What the resume confirmed:** the "idle for hours, not minutes"
+  prescription was correct — ~3h25m idle then a frozen rung 5 (45/hr)
+  produced 95/95 clean. Escalation stayed frozen throughout, so the run
+  is evidence about flag decay, not about 45/hr being a ceiling or a
+  floor.
   **What the run established before the blocks:** a clean walk from 27.1
   to 60/hr sustained — 151 consecutive clean captures at 60/hr alone —
   and the observation that clean and blocked stretches were identical at
