@@ -49,7 +49,12 @@ does the same", names a cheaper equivalent) already wires into the
 substitute cell. Any complaint or community body naming an equivalent
 emits a ledger entry with `surface_class: complaint_body`. This is
 revealed switching language from actual users — the only channel whose
-language is about leaving, not comparing. Cross-thread recurrence
+language is about leaving, not comparing. The rule fires on any
+complaint-borne equivalent REGARDLESS of the driving axis
+(owner-ratified 2026-07-28): price is one driver among several —
+efficacy and tolerability switches ("more results with Purito", "skin
+improved once I went back to DHC") fire it equally; the D2
+price-value examples are illustrative, not a requirement. Cross-thread recurrence
 counts only across DISTINCT authors (check the packet author fields);
 same-author repeats collapse to one voice. (Installed 2026-07-28 after
 the SF Ole Henriksen check: 3 threads, 3 different authors — that
@@ -144,9 +149,27 @@ is a dupe for [luxury Y]"). What it feeds: whose demand the subject
 borrows; aspiration positioning; early-warning surface (the anchor's
 complaints foreshadow the subject's).
 
+**self_variant (owner-ratified 2026-07-28)** — the subject's own
+sibling surfacing in comparison position: same brand, different SKU,
+formulation, generation, or discontinued predecessor (Vaseline Blue
+Seal vs Original; MFK house fragrances vs BR 540; the Brooks
+discontinued-variant rivalry; regional reformulations under the
+exact-SKU rule). Signature: shared brand/house with the subject in a
+vs/dupe/alternatives shape. What it feeds: J5 ladder/cannibalization
+reads, hero-product shaping, and succession-to-incumbent analysis —
+NEVER the external-rival reads, vs-probe queue, or axis-occupancy
+counts. Not symmetric with external types; observed in 3+ categories
+before ratification.
+
 Not types: retailers, marketplaces, and ingredient INCI names are
 excluded at harvest. Creators/outlets go to the F12/F19/F21 mediator
-lists, never this ledger.
+lists, never this ledger. **Generic commodities (owner-ratified
+2026-07-28)** — household commodities and home remedies surfacing as
+alternatives ("Vaseline vs olive oil") are excluded from the ledger:
+they cannot be vs-probed, cannot own axes, and carry no CI
+commercial value. The substitute pressure is still recorded — typed
+as a COMMODITY-EXIT signal in the exit-door read, alongside
+behavioral and category exits.
 
 ## The promotion ladder
 
@@ -502,8 +525,12 @@ not a lane edit.
 
 ## Open for owner review
 
-1. The type vocabulary itself (four types; are rival/anchor_up split
-   right for non-beauty verticals?).
+1. The type vocabulary itself (are rival/anchor_up split right for
+   non-beauty verticals?). PARTIALLY RESOLVED 2026-07-28: the
+   self-variant question is ratified as a fifth type and the
+   generic-commodity question as a harvest exclusion with
+   commodity-exit routing (see the types section); the non-beauty
+   vertical fit of rival/anchor_up remains open.
 2. Candidate threshold (2+ queries) and stale window (2 passes).
 3. Whether `substitute_down` should ever be SERP-emittable (currently
    complaint-only by definition).
