@@ -84,7 +84,7 @@ SURFACES = {
                 "structurally_empty_page",
                 b"<html><body>Google</body></html>",
                 _SERP_THIN_PAGE,
-                "https://www.google.com/search?q=example",
+                "https://www.google.com/search?q=example&hl=en&gl=us&pws=0",
             ),
         ),
     }
@@ -292,6 +292,13 @@ def main(argv: list[str] | None = None) -> int:
         "field_diff": report.field_diff_verdict,
         "surface_invariants": report.invariant_verdict,
         "failure_path": failure_verdict,
+        "rolling_sample_integrity": (
+            "fail"
+            if args.mode == "rolling-sample" and report.anomalies
+            else "pass"
+            if args.mode == "rolling-sample" and report.units_compared > 0
+            else "not-run"
+        ),
     }
     gate_passed = all(verdict != "fail" for verdict in verdicts.values())
     result = {

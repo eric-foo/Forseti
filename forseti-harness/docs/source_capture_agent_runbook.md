@@ -641,6 +641,12 @@ content requires its parity gate first (below).
 `ContentExtractionSpec` from a calling lane runner and is `raw` when called
 without one.
 
+The Google SERP surface label is a route assertion, not a free-form tag. Its
+`--url` must be an HTTPS `google.com/search` URL with exactly one non-empty `q`
+and exactly `hl=en`, `gl=us`, and `pws=0`; the runner rejects a mislabeled route
+before capture. The content record retains the visible AI Overview text as well
+as typed result rows because the discarded DOM is not a later recovery source.
+
 ### Parity gate before a flip
 
 A lane flips to content only after `run_capture_retention_parity_gate.py`
@@ -661,13 +667,22 @@ exercises the anomaly tripwires synthetically. If a lane cannot be gated by a
 cheap script, record `gate_not_cheap` and flip without it rather than building
 ceremony.
 
+For Google SERPs, the independent invariants require contiguous per-module
+ranks, retained AI Overview content when that module is present, coherent URL
+presence metadata, and agreement between a retained URL and the row's visible
+domain/platform. In rolling-sample mode, an incomplete sample or a sample that
+the current extractor now rejects fails `rolling_sample_integrity`; it cannot
+produce a passing gate through `not-run`.
+
 ### Rolling raw sample
 
 Content retention forecloses re-extraction, so a flipped surface keeps a
 *recent* ground truth instead of a permanent corpus. Pass `--raw-sample-root`
 (and `--raw-sample-run-key` for a batch campaign) and the FIRST content
-capture of that surface per day -- or per run -- copies its rendered bytes and
-the banked content record to an operator-drive sample store outside Git.
+capture of that surface per UTC day -- or per run -- copies its rendered bytes
+and the banked content record to an operator-drive sample store outside Git.
+Use a unique run key for each campaign; reusing one suppresses another sample
+until the prior key ages out.
 Samples older than 30 days are pruned on the next claim. Nothing is pinned
 forever and none of it is durable evidence.
 

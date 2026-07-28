@@ -20,6 +20,7 @@ its own root.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 from dataclasses import dataclass
@@ -44,6 +45,7 @@ class RollingRawSampleClaim:
     sample_key: str
     reason: str
     directory: Path | None = None
+    sampled_on: date | None = None
     pruned_keys: tuple[str, ...] = ()
 
 
@@ -130,13 +132,8 @@ class RollingRawSampleStore:
             )
 
         directory = self.root / _safe_component(surface) / _safe_component(sample_key)
-        state["samples"][entry_key] = {
-            "surface": surface,
-            "sample_key": sample_key,
-            "sampled_on": capture_date.isoformat(),
-            "relative_path": str(directory.relative_to(self.root)).replace("\\", "/"),
-        }
-        self._write_state(state)
+        if pruned:
+            self._write_state(state)
         return RollingRawSampleClaim(
             granted=True,
             surface=surface,
@@ -146,6 +143,7 @@ class RollingRawSampleStore:
                 f"rendered bytes for the {self.window_days}-day regression window"
             ),
             directory=directory,
+            sampled_on=capture_date,
             pruned_keys=pruned,
         )
 
@@ -158,9 +156,21 @@ class RollingRawSampleStore:
         content_record: bytes,
         metadata: dict,
     ) -> Path:
-        """Write the claimed sample's bytes.  Only valid for a granted claim."""
-        if not claim.granted or claim.directory is None:
+        """Write and then commit a claimed sample.
+
+        State is recorded only after every required byte is present. If a write
+        raises or the process stops early, the next capture can claim the key
+        again instead of treating a nonexistent sample as already banked.
+        """
+        if not claim.granted or claim.directory is None or claim.sampled_on is None:
             raise ValueError("write_sample requires a granted claim")
+        state = self._read_state()
+        entry_key = self._entry_key(claim.surface, claim.sample_key)
+        if entry_key in state["samples"]:
+            raise ValueError(
+                f"rolling raw sample {claim.surface!r}/{claim.sample_key!r} "
+                "was already committed"
+            )
         claim.directory.mkdir(parents=True, exist_ok=True)
         (claim.directory / RENDERED_DOM_SAMPLE_FILENAME).write_bytes(rendered_dom)
         (claim.directory / VISIBLE_TEXT_SAMPLE_FILENAME).write_bytes(visible_text)
@@ -183,6 +193,15 @@ class RollingRawSampleStore:
             + "\n",
             encoding="utf-8",
         )
+        state["samples"][entry_key] = {
+            "surface": claim.surface,
+            "sample_key": claim.sample_key,
+            "sampled_on": claim.sampled_on.isoformat(),
+            "relative_path": str(claim.directory.relative_to(self.root)).replace(
+                "\\", "/"
+            ),
+        }
+        self._write_state(state)
         return claim.directory
 
     # -- prune -----------------------------------------------------------
@@ -229,11 +248,12 @@ class RollingRawSampleStore:
 
 
 def _safe_component(value: str) -> str:
-    """Filesystem-safe single path component; never empty, never traversing."""
+    """Filesystem-safe, collision-resistant component; never empty/traversing."""
     cleaned = "".join(
         char if (char.isalnum() or char in {"-", "_", "."}) else "_" for char in value
     ).strip("._") or "unnamed"
-    return cleaned[:120]
+    digest = hashlib.sha256(value.encode("utf-8")).hexdigest()[:12]
+    return f"{cleaned[:100]}-{digest}"
 
 
 def _is_inside(candidate: Path, root: Path) -> bool:

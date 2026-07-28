@@ -28,7 +28,7 @@ import re
 import urllib.parse as up
 from html.parser import HTMLParser
 
-GOOGLE_SERP_CONTENT_RECORD_VERSION = "google_serp_content_v2"
+GOOGLE_SERP_CONTENT_RECORD_VERSION = "google_serp_content_v3"
 
 MODULE_HEADINGS = {
     "AI Overview": "ai_overview",
@@ -95,7 +95,7 @@ RE_BLOCK_INTERSTITIAL = re.compile(r"unusual traffic|not a robot", re.I)
 
 CARRY_FIELDS = ("visible_date", "engagement_snippet", "price", "rating",
                 "rating_count", "duration", "account_or_creator",
-                "displayed_domain", "displayed_source", "canonical_url")
+                "displayed_domain", "displayed_source")
 
 # Surface invariants.  A rendered SERP that clears the block tripwire but parses
 # to nothing is an extractor defect or an unrecognized layout, not a real empty
@@ -151,17 +151,18 @@ def norm_title(value: str) -> str:
 
 
 class _AnchorTextParser(HTMLParser):
-    """Collect ``normalized anchor text -> direct external href`` pairs.
+    """Collect ``normalized anchor text -> direct external hrefs`` pairs.
 
     Mirrors the reference extractor's BeautifulSoup pass: for every anchor with
     an absolute non-Google href, key the href by the normalized text of the
-    anchor and, separately, by the normalized text of an ``h3`` inside it.
-    First writer wins, matching ``key not in out``.
+    anchor and, separately, by the normalized text of an ``h3`` inside it. A key
+    may identify multiple anchors: repeated result titles are common, and
+    collapsing them to the first URL silently mis-pairs later rows.
     """
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
-        self.hrefs: dict[str, str] = {}
+        self.hrefs: dict[str, list[str]] = {}
         self._anchor_depth = 0
         self._href: str | None = None
         self._anchor_text: list[str] = []
@@ -203,8 +204,10 @@ class _AnchorTextParser(HTMLParser):
             return
         for pieces in (self._anchor_text, self._h3_text):
             key = norm_title(" ".join(pieces))
-            if len(key) >= 8 and key not in self.hrefs:
-                self.hrefs[key] = href
+            if len(key) >= 8:
+                values = self.hrefs.setdefault(key, [])
+                if href not in values:
+                    values.append(href)
         self._anchor_text = []
         self._h3_text = []
 
@@ -219,8 +222,8 @@ class _AnchorTextParser(HTMLParser):
         return href
 
 
-def direct_hrefs(rendered_dom: str) -> dict[str, str]:
-    """Map normalized anchor text -> direct external href, when Google exposes one."""
+def direct_hrefs(rendered_dom: str) -> dict[str, list[str]]:
+    """Map normalized anchor text -> direct external hrefs exposed by Google."""
     parser = _AnchorTextParser()
     try:
         parser.feed(rendered_dom)
@@ -232,17 +235,80 @@ def direct_hrefs(rendered_dom: str) -> dict[str, str]:
     return parser.hrefs
 
 
-def match_href(title: str, href_map: dict[str, str]) -> str | None:
-    """Exact then prefix match; Google truncates titles with an ellipsis."""
+def _normalized_host(value: str) -> str:
+    if "://" in value:
+        host = (up.urlsplit(value).hostname or "").lower()
+    else:
+        host = value.strip().lower().split("/", 1)[0].split(":", 1)[0]
+    return host.removeprefix("www.")
+
+
+def _host_matches(left: str, right: str) -> bool:
+    left_host = _normalized_host(left)
+    right_host = _normalized_host(right)
+    return bool(
+        left_host
+        and right_host
+        and (
+            left_host == right_host
+            or left_host.endswith("." + right_host)
+            or right_host.endswith("." + left_host)
+        )
+    )
+
+
+def match_href(
+    title: str,
+    href_map: dict[str, list[str]],
+    *,
+    displayed_domain: str | None = None,
+    source_label: str | None = None,
+) -> str | None:
+    """Match a title to one unambiguous direct href.
+
+    Google truncates titles, so normalized prefix matches remain necessary.
+    Visible domain/platform identity is authoritative when present; a plausible
+    but contradictory URL is worse than recording that no URL was safely paired.
+    """
     key = norm_title(title)
     if len(key) < 8:
         return None
-    if key in href_map:
-        return href_map[key]
-    for candidate, href in href_map.items():
-        if candidate.startswith(key) or key.startswith(candidate):
-            return href
-    return None
+
+    candidates: list[tuple[str, str]] = []
+    for candidate, hrefs in href_map.items():
+        if candidate == key or candidate.startswith(key) or key.startswith(candidate):
+            candidates.extend((candidate, href) for href in hrefs)
+    if not candidates:
+        return None
+
+    if displayed_domain:
+        candidates = [
+            item for item in candidates if _host_matches(item[1], displayed_domain)
+        ]
+        if not candidates:
+            return None
+    else:
+        expected_platform = platform_for(None, source_label)
+        if expected_platform != "other":
+            candidates = [
+                item
+                for item in candidates
+                if platform_for(_normalized_host(item[1]), None) == expected_platform
+            ]
+            if not candidates:
+                return None
+
+    def rank(item: tuple[str, str]) -> tuple[int, int]:
+        candidate, _href = item
+        return (1 if candidate == key else 0, -abs(len(candidate) - len(key)))
+
+    best_rank = max(rank(item) for item in candidates)
+    best_hrefs = {
+        href for candidate, href in candidates if rank((candidate, href)) == best_rank
+    }
+    if len(best_hrefs) != 1:
+        return None
+    return next(iter(best_hrefs))
 
 
 def is_metadata_only(title: str) -> bool:
@@ -257,8 +323,7 @@ def is_metadata_only(title: str) -> bool:
 
 
 def merge_metadata_rows(rows: list[dict]) -> list[dict]:
-    """Fold metadata-only rows back into the card they were split from, then
-    renumber order_in_module so the counts stay faithful."""
+    """Fold metadata-only rows back into the card they were split from."""
     merged: list[dict] = []
     for row in rows:
         if (merged and row["module_type"] == merged[-1]["module_type"]
@@ -267,31 +332,15 @@ def merge_metadata_rows(rows: list[dict]) -> list[dict]:
             for field in CARRY_FIELDS:
                 if prev.get(field) is None and row.get(field) is not None:
                     prev[field] = row[field]
-            if row.get("canonical_url") and not prev.get("canonical_url"):
-                prev["canonical_url_source_visible"] = True
-                prev["canonical_url_absent_reason"] = None
             prev["snippet"] = " | ".join(
                 x for x in (prev.get("snippet"), row["title"], row.get("snippet")) if x)[:600]
             continue
         merged.append(row)
-
-    # Backfill domain/platform from a recovered canonical URL, then renumber.
-    order: dict[str, int] = {}
-    for row in merged:
-        if not row.get("displayed_domain") and row.get("canonical_url"):
-            row["displayed_domain"] = (
-                up.urlsplit(row["canonical_url"]).netloc or "").lower().removeprefix("www.") or None
-        if row["platform"] == "other":
-            row["platform"] = platform_for(row.get("displayed_domain"),
-                                           row.get("displayed_source"))
-            row["dependency_label"] = dependency_label(row["module_type"], row["platform"])
-        order[row["module_type"]] = order.get(row["module_type"], 0) + 1
-        row["order_in_module"] = order[row["module_type"]]
     return merged
 
 
 def parse_visible_text(
-    text: str, href_map: dict[str, str]
+    text: str, href_map: dict[str, list[str]]
 ) -> tuple[list[dict], list[str], dict]:
     lines = [ln.strip() for ln in text.splitlines()]
     module = "_pre"
@@ -346,8 +395,6 @@ def parse_visible_text(
             source_label = block[url_idx - 1]
 
         platform = platform_for(domain, source_label)
-        href = match_href(title, href_map)
-        canonical = canonicalize(href) if href else None
 
         order[module] = order.get(module, 0) + 1
         rows.append({
@@ -358,12 +405,11 @@ def parse_visible_text(
             "displayed_domain": domain,
             "displayed_path_hint": path_hint or None,
             "account_or_creator": account,
-            "canonical_url": canonical,
-            "canonical_url_source_visible": canonical is not None,
+            "canonical_url": None,
+            "canonical_url_source_visible": False,
             "canonical_url_absent_reason": (
-                None if canonical
-                else "Google served an opaque /goto?url= redirect; destination URL "
-                     "not source-visible in the rendered SERP"),
+                "No unambiguous direct external href matched the rendered result row"
+            ),
             "snippet": snippet[:600] or None,
             "visible_date": date.group(1) if date else None,
             "engagement_snippet": (
@@ -453,17 +499,46 @@ def parse_visible_text(
                 and row.get("displayed_source")
                 and row["title"] == row["displayed_source"]
                 and not prev.get("displayed_source")):
-            for key in ("displayed_source", "displayed_domain", "canonical_url",
-                        "visible_date", "engagement_snippet", "snippet",
-                        "account_or_creator"):
+            for key in ("displayed_source", "displayed_domain", "visible_date",
+                        "engagement_snippet", "snippet", "account_or_creator"):
                 if not prev.get(key) and row.get(key):
                     prev[key] = row[key]
-            if prev.get("canonical_url"):
-                prev["canonical_url_source_visible"] = True
-                prev["canonical_url_absent_reason"] = None
             continue
         paired.append(row)
-    rows = paired
+
+    # URL matching waits until title/source pairing has attached the visible
+    # domain and platform label. Those independent cues disambiguate repeated
+    # titles and prevent a broad prefix (for example a product title) from
+    # stealing a later video/result anchor. Renumber only after every row-
+    # dropping pass so order_in_module is a truthful 1..n rank.
+    rows = []
+    final_order: dict[str, int] = {}
+    for row in paired:
+        if row["module_type"] not in {"people_also_ask", "related_search"}:
+            href = match_href(
+                row["title"],
+                href_map,
+                displayed_domain=row.get("displayed_domain"),
+                source_label=row.get("displayed_source"),
+            )
+            if href:
+                row["canonical_url"] = canonicalize(href)
+                row["canonical_url_source_visible"] = True
+                row["canonical_url_absent_reason"] = None
+        if not row.get("displayed_domain") and row.get("canonical_url"):
+            row["displayed_domain"] = (
+                up.urlsplit(row["canonical_url"]).netloc or ""
+            ).lower().removeprefix("www.") or None
+        if row["module_type"] not in {"people_also_ask", "related_search"}:
+            row["platform"] = platform_for(
+                row.get("displayed_domain"), row.get("displayed_source")
+            )
+            row["dependency_label"] = dependency_label(
+                row["module_type"], row["platform"]
+            )
+        final_order[row["module_type"]] = final_order.get(row["module_type"], 0) + 1
+        row["order_in_module"] = final_order[row["module_type"]]
+        rows.append(row)
 
     ai_overview: dict[str, object] = {}
     if aio_lines:
@@ -478,6 +553,7 @@ def parse_visible_text(
             "present": True,
             "visible_line_count": len(aio_lines),
             "visible_char_count": sum(len(x) for x in aio_lines),
+            "visible_text": "\n".join(aio_lines),
             "cited_source_labels": sorted(set(cited)),
             "section_headings": [x for x in aio_lines if x.endswith(":") or
                                  (len(x) < 46 and not x.endswith(".") and " " in x
@@ -497,6 +573,29 @@ def _query_of(url: str) -> str:
         return up.parse_qs(up.urlsplit(url).query).get("q", [""])[0]
     except ValueError:
         return ""
+
+
+def validate_google_serp_route(url: str, *, label: str = "URL") -> None:
+    """Require the route facts bound by ``google_serp_us_parameterized``."""
+    try:
+        parsed = up.urlsplit(url)
+        query = up.parse_qs(parsed.query, keep_blank_values=True)
+    except ValueError as exc:
+        raise GoogleSerpContentAnomaly(f"{label} is not a valid URL: {url!r}") from exc
+    required = {"hl": ["en"], "gl": ["us"], "pws": ["0"]}
+    if (
+        parsed.scheme.lower() != "https"
+        or (parsed.hostname or "").lower() not in {"google.com", "www.google.com"}
+        or parsed.path.rstrip("/") != "/search"
+        or len(query.get("q", [])) != 1
+        or not query["q"][0].strip()
+        or any(query.get(name) != value for name, value in required.items())
+    ):
+        raise GoogleSerpContentAnomaly(
+            f"{label} for google_serp_us_parameterized must be an HTTPS "
+            "google.com/search URL with exactly one non-empty q and exactly "
+            "hl=en, gl=us, and pws=0"
+        )
 
 
 def build_google_serp_content_record(
@@ -525,6 +624,8 @@ def build_google_serp_content_record(
             "surface; the interstitial body carries a visible exit IP and is "
             "preserved raw rather than projected into a content record"
         )
+    validate_google_serp_route(requested_url or final_url, label="requested URL")
+    validate_google_serp_route(final_url, label="final URL")
     if len(text) < MINIMUM_VISIBLE_TEXT_CHARS:
         raise GoogleSerpContentAnomaly(
             f"rendered visible text was {len(text)} characters, below the "
@@ -584,4 +685,5 @@ __all__ = [
     "match_href",
     "parse_visible_text",
     "platform_for",
+    "validate_google_serp_route",
 ]

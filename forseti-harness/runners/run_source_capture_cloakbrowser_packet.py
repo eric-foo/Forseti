@@ -82,6 +82,7 @@ from source_capture.content_extraction import (
 from source_capture.google_serp_content import (
     GOOGLE_SERP_CONTENT_RECORD_VERSION,
     build_google_serp_content_record,
+    validate_google_serp_route,
 )
 from source_capture.proxy_profiles import ProxyCategory, ProxyProfile, load_proxy_profile
 from source_capture.rolling_raw_sample import RollingRawSampleStore
@@ -2398,8 +2399,9 @@ def _build_parser() -> argparse.ArgumentParser:
         help=(
             "Retention mode for the enabled Sephora, Luckyscent, Nordstrom, "
             "Ulta, Target, Amazon, and REVOLVE aggregate routes, and for the "
-            "google_serp_us_parameterized source surface. Omitted defaults those "
-            "routes to content; other profiles and surfaces remain raw."
+            "google_serp_us_parameterized source surface (which requires an HTTPS "
+            "google.com/search URL with q plus hl=en, gl=us, pws=0). Omitted "
+            "defaults those routes to content; other profiles and surfaces remain raw."
         ),
     )
     parser.add_argument(
@@ -2419,7 +2421,8 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help=(
             "Sample key for a batch campaign, so the run's FIRST capture is "
-            "sampled instead of the day's first. Requires --raw-sample-root."
+            "sampled instead of the day's first. Reusing a key suppresses another "
+            "sample until it ages out. Requires --raw-sample-root."
         ),
     )
     parser.add_argument("--session-id", default=None)
@@ -2785,6 +2788,8 @@ def main(
             "revolve_grid_aggregate",
         }
         is_google_serp_surface = args.source_surface in GOOGLE_SERP_CONTENT_SURFACES
+        if is_google_serp_surface:
+            validate_google_serp_route(args.url, label="--url")
         if args.retention_mode is not None and not is_google_serp_surface and (
             retail_capture_profile is None
             or retail_capture_profile.name not in content_profiles

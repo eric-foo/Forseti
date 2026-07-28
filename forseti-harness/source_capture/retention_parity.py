@@ -23,6 +23,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlsplit
 
 # Row fields every SERP-family content record carries.  Compared exactly: a
 # silent change in any of them is the mis-ranking / mis-pairing defect class
@@ -30,12 +31,13 @@ from typing import Any
 SERP_ROW_COMPARE_FIELDS: tuple[str, ...] = (
     "module_type", "order_in_module", "title", "displayed_source",
     "displayed_domain", "displayed_path_hint", "account_or_creator",
-    "canonical_url", "canonical_url_source_visible", "snippet", "visible_date",
-    "engagement_snippet", "duration", "price", "rating", "rating_count",
-    "sponsored_or_affiliate_label", "platform", "dependency_label",
+    "canonical_url", "canonical_url_source_visible", "canonical_url_absent_reason",
+    "snippet", "visible_date", "engagement_snippet", "duration", "price", "rating",
+    "rating_count", "sponsored_or_affiliate_label", "platform", "dependency_label",
 )
 
 SERP_TOP_LEVEL_COMPARE_FIELDS: tuple[str, ...] = (
+    "content_record_version", "requested_url", "final_url", "requested_query",
     "modules_present", "ai_overview", "visible_text_chars", "direct_href_count",
     "rendered_query", "query_rewritten", "google_location_note",
 )
@@ -209,30 +211,123 @@ def check_serp_invariants(
             )
         )
 
-    per_module: dict[str, list[int]] = {}
+    ai_overview = record.get("ai_overview")
+    if (
+        isinstance(ai_overview, Mapping)
+        and ai_overview.get("present") is True
+        and not str(ai_overview.get("visible_text") or "").strip()
+    ):
+        violations.append(
+            InvariantViolation(
+                unit,
+                "ai_overview_content",
+                "AI Overview is marked present but its visible content is absent",
+            )
+        )
+
+    per_module: dict[str, list[Any]] = {}
     for row in rows:
         module = str(row.get("module_type"))
-        order = row.get("order_in_module")
-        if isinstance(order, int):
-            per_module.setdefault(module, []).append(order)
-    # Strictly ascending, NOT contiguous. `order_in_module` is assigned during
-    # metadata-row merging and the later title/source pairing pass then drops
-    # the merged-away twin without renumbering, so gaps are normal and carry no
-    # meaning (265 of 1113 module sequences in the pre-flip v2 corpus are
-    # gapped). What must never happen is a row appearing out of source order --
-    # that is the arrangement defect the v1 extractor shipped, and zero of those
-    # 1113 sequences violate it.
-    for module, orders in sorted(per_module.items()):
-        if any(later <= earlier for earlier, later in zip(orders, orders[1:])):
+        per_module.setdefault(module, []).append(row.get("order_in_module"))
+
+        if any(
+            name in row
+            for name in (
+                "canonical_url",
+                "canonical_url_source_visible",
+                "canonical_url_absent_reason",
+            )
+        ):
+            canonical_url = row.get("canonical_url")
+            source_visible = row.get("canonical_url_source_visible")
+            absent_reason = row.get("canonical_url_absent_reason")
+            if (
+                bool(canonical_url) != (source_visible is True)
+                or (not canonical_url and not absent_reason)
+            ):
+                violations.append(
+                    InvariantViolation(
+                        unit,
+                        "canonical_url_coherence",
+                        f"row {module}/{row.get('order_in_module')} has contradictory "
+                        "canonical URL presence metadata",
+                    )
+                )
+        else:
+            canonical_url = None
+        if canonical_url and row.get("displayed_domain") and not _hosts_match(
+            str(canonical_url), str(row["displayed_domain"])
+        ):
             violations.append(
                 InvariantViolation(
                     unit,
-                    "order_monotonicity",
+                    "canonical_domain_match",
+                    f"row {module}/{row.get('order_in_module')} URL host "
+                    f"{_host_of(str(canonical_url))!r} contradicts displayed domain "
+                    f"{row['displayed_domain']!r}",
+                )
+            )
+        platform = str(row.get("platform") or "")
+        expected_platform_host = {
+            "instagram": "instagram.com",
+            "tiktok": "tiktok.com",
+            "youtube": "youtube.com",
+        }.get(platform)
+        if (
+            canonical_url
+            and expected_platform_host
+            and not _hosts_match(str(canonical_url), expected_platform_host)
+            and not (
+                platform == "youtube"
+                and _hosts_match(str(canonical_url), "youtu.be")
+            )
+        ):
+            violations.append(
+                InvariantViolation(
+                    unit,
+                    "canonical_platform_match",
+                    f"row {module}/{row.get('order_in_module')} platform {platform!r} "
+                    f"contradicts URL host {_host_of(str(canonical_url))!r}",
+                )
+            )
+
+    # A rank is meaningful only when it is the contiguous 1..n position among
+    # retained rows. Gaps let an ordered row-drop defect pass on units without a
+    # baseline, which is exactly where this invariant is the only oracle.
+    for module, orders in sorted(per_module.items()):
+        expected = list(range(1, len(orders) + 1))
+        if orders != expected:
+            violations.append(
+                InvariantViolation(
+                    unit,
+                    "order_contiguity",
                     f"module {module} order_in_module is {orders[:12]}, "
-                    "which is not strictly ascending in source order",
+                    f"expected {expected[:12]}",
                 )
             )
     return violations
+
+
+def _host_of(value: str) -> str:
+    if "://" in value:
+        host = (urlsplit(value).hostname or "").lower()
+    else:
+        host = value.strip().lower().split("/", 1)[0].split(":", 1)[0]
+    return host.removeprefix("www.")
+
+
+def _hosts_match(left: str, right: str) -> bool:
+    left_host = _host_of(left)
+    right_host = _host_of(right)
+    return bool(
+        left_host
+        and right_host
+        and (
+            left_host == right_host
+            or left_host.endswith("." + right_host)
+            or right_host.endswith("." + left_host)
+        )
+    )
 
 
 def exercise_failure_path(
