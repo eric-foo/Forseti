@@ -69,7 +69,13 @@ complaint axis being born.
   floor (easy to hit by coincidence); 3+ distinct authors = STRONG;
   3+ authors across distinct venues = STRONGEST, named when met.
   Same-author repeats collapse to one voice. One weak quote is never a
-  verdict (the Bloom specimen — ground-truth confirmed).
+  verdict (the Bloom specimen — ground-truth confirmed). Engagement
+  weighs alongside author corroboration on this side too (owner
+  rule; the flag is defined in delight_axis_v0.md delta 2b): record
+  each row's rendered score, apply post-as-comment where the
+  statement is the post, and flag a complaint axis whose entire
+  support is low-engagement ENGAGEMENT-THIN — the author tier
+  stands, the confidence weighting is named.
 - **Axis-occupancy read**: every top axis carries an OCCUPANTS line —
   which named products' rendered positioning sits on it — vacant vs
   occupied, with editorial vs community occupancy typed separately.
