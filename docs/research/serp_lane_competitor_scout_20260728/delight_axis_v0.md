@@ -60,7 +60,9 @@ freeze-and-hash protocol, and all standing non-claims: owned by
    choice never set one — adjectives are cheap, choices are evidence.
    Engagement weighs alongside author corroboration (owner rule,
    2026-07-28): record thread engagement (post score, comment count)
-   and each choice statement's rendered score at capture. Low-score
+   and each choice statement's rendered score at capture. A POST
+   whose title/body carries the statement is itself a statement row:
+   its points are the post score (post-as-comment rule). Low-score
    statements still count toward the author tiers, but an axis whose
    entire support is low-engagement is flagged ENGAGEMENT-THIN in
    the record; no cross-category engagement comparisons (venue
