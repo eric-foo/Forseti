@@ -58,14 +58,17 @@ freeze-and-hash protocol, and all standing non-claims: owned by
    "so smooth") is SUPPORTING evidence only: it can rank candidate
    axes and corroborate a set axis, but adjectives without a revealed
    choice never set one — adjectives are cheap, choices are evidence.
-   (Applied to our own best result first: the BoJ/SKIN1004 axis does
-   NOT yet meet this bar. The corroboration scan found exactly one
-   choice-statement author — "I personally prefer the 1004 as it's
-   super lightweight, no white cast" — and the SERP-rendered verdict
-   is that same comment, so the render is the same voice counted
-   once, not corroboration. Multi-author support exists only at the
-   praise-adjective level. Status: CANDIDATE, set only when a second
-   independent choice author lands, ideally from a distinct venue.)
+   (Applied to our own best result first: the BoJ/SKIN1004 sun-serum
+   axis initially had only ONE choice author (the SERP render being
+   that same voice counted once) and sat at CANDIDATE. The 2026-07-28
+   second-leg native settlement then found 3+ distinct choice authors
+   across two venues (r/AsianBeauty + r/SkincareAddiction) — the axis
+   is now SET at the strongest tier, with a CONDITION PROFILE: the
+   choice statements are largely context-split (SKIN1004 wins
+   oily-skin/summer/no-makeup; BoJ retains winter/under-makeup).
+   Conditional choice statements corroborate an axis while bounding
+   it. Evidence: second_leg_settlement_v0.md,
+   `C:\tmp\forseti-axis-delight-calibration-20260728\second_leg_native\`.)
 3. **No journey doctrine.** The complaint side has the chain-card and
    D2 behind it; delight has no owned journey analog. Named gap — do
    not invent one speculatively.
@@ -85,6 +88,15 @@ freeze-and-hash protocol, and all standing non-claims: owned by
   miss-class cases (BoJ/SKIN1004 exact on both axes;
   Breville/Casabrews value axis; Fellow/OXO missed — adjacent family
   only, and the OXO surfaces suggest a shared-defect pair instead).
+  Second-leg settlement (2026-07-28): the Fellow/OXO "miss" was
+  partly a rendered-verdict error — the native head-to-head sets
+  OXO's axes as speed/temp-accuracy/capacity/value (3 choice
+  authors, 2 venues), which the mined "precision temp control"
+  partially matches; reliability is a CONFIRMED shared defect (both
+  brands fail at 1.5–4 years) and must not be scored as an axis win
+  either way; and the OXO gooseneck is discontinued — the axis
+  winner is exiting (vacancy opening). The frozen pilot 2/3 stands;
+  the full-bank re-score is the real test.
 - **Combined model 7/8** vs complaint-only 5/8 on the pilot subjects.
 - Protocol: 18/18 exact-SKU captures (0 blocks), clean-lane pass P
   with outcome-free intake, frozen (sha256 `4BE95177…FE901`) before
