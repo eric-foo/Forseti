@@ -20,15 +20,40 @@ use_when:
 stale_if:
   - The weighting calibration has run and its results are installed.
   - The reading doctrine docs are superseded.
-authority_boundary: >
-  Task-local execution mechanics only. Doctrine authority stays with
-  the three reading docs; owner rulings stay with the owner. This
-  handoff never licenses doctrine edits beyond the one-install-per-
-  repeatable-gap rule below.
+authority_boundary: retrieval_only
 next_source: the three reading-doctrine docs; calibration evidence in
   C:\tmp\forseti-axis-delight-calibration-20260728\second_leg_native\
   (dogfood_*_v0.md files, 5 scored cold runs at commits
   aaa97d28..61793775).
+```
+
+## Preflight (routine core)
+
+```yaml
+prompt_preflight:
+  output_mode: file-write
+  write_destination: >
+    operator staging - the calibration evidence folder under C:\tmp
+    (alongside the prior dogfood records); repo docs only if the
+    owner later routes a findings snapshot or ratifies an amendment.
+  input_prompt_source: docs/prompts/handoffs/evidence_reading_weighting_calibration_handoff_v0.md
+  edit_permission: docs-write
+  runtime_authorization: >
+    Part A needs only cold-agent dispatch over already-captured
+    evidence and doctrine files - zero new captures. Part B is pure
+    local compute over the completed megadogfood store and existing
+    native settlements; zero new captures on any host. If a check
+    seems to need a fresh capture, record it as an open probe for
+    the SERP lane's return-leg queue instead.
+  targets: the staging calibration folder only; doctrine installs
+    (Part A step 6) land in the three reading docs per their
+    consumer rule; no code, spine, or overlay edits.
+  branch: doctrine installs ride the owning lane's branch; all other
+    output stays in staging.
+  reviews: findings-first; no formal verdict bound. Doctrine
+    authority stays with the three reading docs; owner rulings stay
+    with the owner - this handoff licenses no doctrine edits beyond
+    Part A's one-install-per-repeatable-gap rule.
 ```
 
 ## Part A — the reading-calibration protocol (proven, 5 runs, 2026-07-28)
