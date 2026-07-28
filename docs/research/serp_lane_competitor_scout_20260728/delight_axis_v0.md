@@ -89,6 +89,18 @@ freeze-and-hash protocol, and all standing non-claims: owned by
    also yields its dominant criticism — ready-made
    equivalence-breakers and shared-defect discoveries (Casabrews
    taste; OXO reliability) that the subject-side read cannot see.
+6. **The axis-forfeiture alert (installed 2026-07-28, from the
+   cold-agent dogfood gap).** Mirror of the axis-occupancy
+   early-warning: that rule alerts when a NEW NAME appears on the
+   subject's #1 complaint axis; this one alerts when a NEW
+   ASSERTION COMPLAINT appears on an axis the subject OWNS (a set
+   delight axis). A set axis is the thing being forfeited — the
+   alert is headline-grade even at floor-tier corroboration, and an
+   SKU/formulation-change event tied to it is named in the alert.
+   Specimen: white-cast complaints on SKIN1004's reformulated US
+   SKU (2 distinct authors) landing on its SET
+   lightweight/no-white-cast axis — the US formulation may be
+   forfeiting the axis the brand wins with.
 
 ## Calibration state (2026-07-28, first measured result)
 
