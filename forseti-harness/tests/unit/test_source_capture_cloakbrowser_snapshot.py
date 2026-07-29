@@ -155,7 +155,52 @@ def test_fetch_cloakbrowser_snapshot_capture_with_fake_engine_records_method_pro
         "scroll_target_selector": None,
         "pre_capture": None,
         "user_data_dir": None,
+        "full_page_screenshot": False,
     }
+
+
+def _fake_engine() -> _FakeCloakBrowserEngine:
+    return _FakeCloakBrowserEngine(
+        _FakeEngineResult(
+            final_url="https://example.com/rendered",
+            title="Rendered Source",
+            rendered_dom="<html><body><h1>Rendered source</h1></body></html>",
+            visible_text="Rendered source",
+            screenshot_png=b"cloakbrowser-png-bytes",
+        )
+    )
+
+
+def test_full_page_screenshot_forwards_and_is_stated_in_provenance() -> None:
+    """The flag must reach the engine AND be reported in the metadata.
+
+    screenshot_mode used to be the literal "viewport", which would have kept
+    reporting viewport while capturing full pages. Provenance that silently
+    lies is worse than provenance that is missing: a reader cannot tell it
+    is wrong.
+    """
+    engine = _fake_engine()
+    result = fetch_cloakbrowser_snapshot_capture(
+        url="https://example.com/source",
+        engine=engine,
+        full_page_screenshot=True,
+    )
+    assert isinstance(result, CloakBrowserSnapshotSuccess)
+    assert engine.capture_kwargs is not None
+    assert engine.capture_kwargs["full_page_screenshot"] is True
+    assert result.metadata["screenshot_mode"] == "full_page"
+
+
+def test_viewport_stays_the_default_for_existing_callers() -> None:
+    engine = _fake_engine()
+    result = fetch_cloakbrowser_snapshot_capture(
+        url="https://example.com/source",
+        engine=engine,
+    )
+    assert isinstance(result, CloakBrowserSnapshotSuccess)
+    assert engine.capture_kwargs is not None
+    assert engine.capture_kwargs["full_page_screenshot"] is False
+    assert result.metadata["screenshot_mode"] == "viewport"
 
 
 def test_fetch_cloakbrowser_snapshot_capture_default_engine_is_visible_dependency_stop(
