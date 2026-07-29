@@ -226,18 +226,41 @@ dominant and unrivalled. Total video rows led by `honest_review` 9.79.
 which platform's creators you need. Trigger: any platform's leader
 changing across two consecutive full-bank passes.
 
-**F22. Video-card CONTENT differs by platform, not just volume.** lead
-(new 2026-07-29). Title-shape classification of 1356 unique video cards:
-YouTube is the explanatory layer (26% review, 20% how-to); TikTok is the
-substitution layer (13% dupe/alternative + 11% head-to-head, ~2x
-Instagram); Instagram is largely non-review caption content (57% matches
-no review/compare/how-to shape). Brand-owned accounts are only 5–8% of
-cards on all three. Consequence: for competitor NAMES prefer TikTok
-cards; for claims prefer YouTube; treat Instagram counts as reach, not
-information. Evidence: scratch classification over `extracted_v2`
-video_block rows — **derivation not yet promoted to a runner**. Trigger:
-promote the derivation, then re-judge; the 29–57% unclassified residue
-may be a classifier limit rather than a platform property.
+**F22. Video-card CONTENT differs by platform — but less than titles
+alone suggested.** active — RE-JUDGED 2026-07-29 after full
+classification (keyword tiers + a cached one-shot semantic pass over the
+441-card residue; only 10 of 1488 cards remained truly unclassifiable).
+The trigger fired as written: the earlier "Instagram is 57% non-review
+caption content" was a CLASSIFIER LIMIT, not a platform property, and is
+withdrawn — IG's residue resolved overwhelmingly into how-to,
+educational, and review content wearing caption phrasing. At full
+classification all three platforms are majority evaluative/instructional
+(review+how-to: YT 59%, TT 49%, IG 44%). What genuinely differs:
+- **TikTok is the substitution layer** — dupe/alternative 12.7% +
+  head-to-head 12.4% = **25%**, double IG (12.7%) and well above YT
+  (15.7%). HELD from the first pass.
+- **Instagram is the credentialed-explainer + brand layer** —
+  educational-science 8.2% (derm/stylist explainers), praise 8.0%,
+  promo/brand-copy 4.5%, myth-debunk 2.2% — each the highest of the
+  three platforms.
+- **YouTube is the deepest evaluative layer** (review 31%, how-to 27%)
+  and the only platform where non-beauty verticals appear in volume.
+Two semantic-pass discoveries: **myth-debunk/corrective** content (15
+cards: targeting a specific viral false claim — CeraVe cancer cycle,
+"lips get addicted to balm") is its own genre and a native
+follow-through candidate class; explicit sponsorship markers are rare
+and structurally skewed (13/441; **YouTube 0 — its disclosure lives in
+descriptions, invisible at title level**), so title-level sponsorship
+detection undercounts badly and transcript-level qualification (the
+capture-spine dogfood) is the only honest read. Consequence: for
+competitor NAMES prefer TikTok; for claims and evidence prefer YouTube;
+Instagram is where brands and credentialed professionals broadcast.
+Evidence: `analysis/fullbank_video_card_kinds.json`
+(`serp_fullbank_analysis/video_card_kinds.py`, semantic cache
+`analysis/video_residue_classified.json`, report
+`analysis/video_residue_report.md`). Trigger: UNCACHED_RESIDUE > 0 in a
+re-run (semantic cache stale for a grown corpus), or any platform's
+substitution share moving by >5 points.
 
 **F19. A recurring creator layer mediates across subjects.** active —
 RE-JUDGED 2026-07-29 COMPLETE bank: HELD, grew as predicted at both
