@@ -295,10 +295,11 @@ Billie, Athena Club) plus dense in-corpus mentions (innisfree ×9,
 bubble ×8, byoma ×7 in one creator's window) — a fifth competitor
 channel, pre-transcript; (3) sponsorship markers in descriptions are
 near-absent (2/90), consistent with F22's title-level finding —
-@-brand-tagging is the visible commercial signal, and the honest
-sponsorship read still needs the deep-capture transcript pass
-(`completed_deep_capture_count: 0` in assessment mode — transcripts are
-the onboarding-intent deep capture, not run here). Store:
+@-brand-tagging is the visible commercial signal.
+**Owner decision 2026-07-29: sponsorship identification is
+DEPRIORITIZED** — record disclosure when it appears in captured
+material, spend nothing hunting it; no transcript pass is commissioned
+for sponsorship's sake. Store:
 `C:\tmp\forseti-creator-dogfood-20260729\`.
 
 **F20. Competitor identification is an instrument without a step; rival
@@ -321,8 +322,27 @@ harvest -> vs; fan-out waits for the ledger), carried in the spec's
 "Cycle installation" section — the separate step doc was collapsed into
 the spec and retired. Emitter v0.1 dogfooded on both stores; candidate
 rung now promotes real names (NYX, Saie, Summer Fridays Lip Butter
-Balm). Trigger: full-bank ledger; owner typing-vocabulary review
-(incl. self_variant); first live cycle running the pass.
+Balm). **v0.2 dogfooded 2026-07-29** (owner-directed): two changes,
+both from the full-bank adjudication's root-cause read. (1) Enumeration
+recall — comma-series titles carried no split cue and 70 of 93 yielded
+nothing; a subject-anchored enumeration branch now harvests them
+(Isntree entered the ledger from exactly the poster-child title). (2)
+Brand-or-not promotion gate (`--verdicts`) — recurrence AMPLIFIES
+common English, so the candidate rung is only reachable through a
+cached adjudication verdict; unadjudicated recurrers hold at
+`pending_adjudication`, fail closed. Dogfood on the grown corpus (1022
+probes incl. partial wave 2): ungated candidate rung would be 212
+entries; gated run held 101 new recurrers at the door, a model pass
+adjudicated them (24 USABLE / 57 JUNK / 11 SELF_VARIANT / 9
+RECOVERABLE — the splitter's attribute-list junk died at the gate as
+designed), and the final rung is **59 candidates, 100% adjudicated
+USABLE, 0 junk**. Verdicts cache:
+`analysis/candidate_verdicts_v0.json` (213 entries; the 111 hand labels
+are the seed). 16/16 fixture tests pass, incl. 4 new v0.2 contracts
+(enum recall, all-candidates-usable, junk-never-candidate,
+fails-closed-on-unadjudicated). Trigger: owner typing-vocabulary review
+(incl. self_variant); first live cycle running the gated pass;
+RECOVERABLE parent-collapse still manual.
 
 **F21. The recurring creator layer splits into two kinds.** active —
 RE-JUDGED 2026-07-29 COMPLETE bank: HELD, quantified, and one panel

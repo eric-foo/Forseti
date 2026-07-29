@@ -126,3 +126,59 @@ def test_bare_context_word_body_not_a_name(mega):
 def test_no_question_word_fragment_names(mega):
     assert not any(e["name"].lower().startswith(("what ", "which ", "how "))
                    for e in mega["entries"])
+
+
+# ---- v0.2: enumeration recall + promotion gate --------------------------
+
+VERDICTS = MEGA / "analysis" / "candidate_verdicts_v0.json"
+requires_verdicts = pytest.mark.skipif(
+    not VERDICTS.exists(),
+    reason=f"verdicts cache absent: {VERDICTS}")
+
+
+@pytest.fixture(scope="module")
+def mega_gated():
+    return run(["--verdicts", str(VERDICTS)])
+
+
+@requires_mega
+def test_enum_comma_list_recall(mega):
+    # "Korean Sunscreen Reviews: Beauty of Joseon, Isntree, ..." was one of
+    # 70 zero-yield titles in v0.1; the enumeration branch must recover it.
+    assert entry(mega, "beauty of joseon sunscreen", "isntree", "rival")
+
+
+@requires_mega
+@requires_verdicts
+def test_gate_candidate_rung_is_all_usable(mega_gated):
+    # With a verdicts cache, nothing reaches candidate without USABLE.
+    vd = json.loads(VERDICTS.read_text(encoding="utf-8"))
+    usable = {(v["subject"], v["name"].lower()) for v in vd["verdicts"]
+              if v["verdict"] == "USABLE"}
+    for e in mega_gated["entries"]:
+        if e["rung"] == "candidate":
+            assert (e["subject"], e["name"].lower()) in usable, e["name"]
+
+
+@requires_mega
+@requires_verdicts
+def test_gate_junk_never_candidate(mega_gated):
+    # The 2026-07-28 hand adjudication's worst offenders stay off the rung.
+    for subj, name in (("medicube collagen mask", "real"),
+                       ("hoka clifton 9", "nah"),
+                       ("aquaphor healing ointment", "benefits")):
+        assert not any(e["subject"] == subj and e["name"].lower() == name
+                       and e["rung"] == "candidate"
+                       for e in mega_gated["entries"])
+
+
+@requires_mega
+@requires_verdicts
+def test_gate_fails_closed_on_unadjudicated(mega_gated):
+    # Any recurring entry missing a verdict must be pending, never candidate.
+    vd = json.loads(VERDICTS.read_text(encoding="utf-8"))
+    known = {(v["subject"], v["name"].lower()) for v in vd["verdicts"]}
+    for e in mega_gated["entries"]:
+        if e["distinct_queries"] >= 2 and \
+                (e["subject"], e["name"].lower()) not in known:
+            assert e["rung"] == "pending_adjudication", e["name"]
