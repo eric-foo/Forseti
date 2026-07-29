@@ -45,7 +45,7 @@ satellites (the spec, axis docs, handoffs) POINT at them and must not mint
 or restate them. Two lanes minted F23 independently on 2026-07-29 — this
 ledger for the platform doors, `competitor_ledger_spec_v0.md` for an
 `alternatives` under-crediting claim — because nothing said where numbers
-come from. **Next free: F26.**
+come from. **Next free: F28.**
 
 **Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
 carrying a full-bank trigger were re-decided against **986/986 captures /
@@ -135,6 +135,51 @@ base rate) covers the rest. **Not established**, and the cheap test is
 free: a genuinely quiet day (<100 captures/24h) followed by a cold
 start. If that starts clean, reputation-recovery is real and the
 operating rule becomes a daily budget with recovery days.
+
+**F26. A 30-video creator grid covers 1 month or 4 years depending on
+the creator; cadence, not grid depth, decides whether an old SERP hit is
+comparable.** active (new 2026-07-30). Evidence: 22 TikTok assessment
+captures of the recurring-creator layer. Posting cadence spans **0.89 to
+49.5 days per video — 53x**. So a fixed 30-row grid covers ~26 days for
+`careclarkbsn` and **~3.8 years** for `zakheath`. Consequence, with
+arithmetic instead of judgement: **videos needed = referenced video's age
+÷ creator cadence.** A one-year-old SERP hit needs ~8 rows of depth for a
+monthly poster (already captured) and ~400 for a daily poster (do not
+buy it — mark `UNBASELINED`). Test per referenced video: is its timestamp
+inside the captured grid span? Inside → baselined; outside → deepen with
+`--window-size` only when the arithmetic is cheap. Also: **grid span
+measures cadence, NOT life** — every one of the 22 is ACTIVE (newest
+video ≤2 days), including all the multi-year-span grids. Evidence:
+`creator_grid_liveness.json` in the dogfood store (derivation
+`serp_fullbank_analysis/creator_grid_liveness.py`). Trigger: a DORMANT
+creator appearing (newest video >90 days), which inverts the problem —
+a dormant creator's grid is contemporaneous with the ranked video by
+construction.
+
+**F27. Creator reach is collapsing for most of the recurring layer, which
+makes "the creator's own recent-grid median" an unstable baseline.**
+active (new 2026-07-30). Evidence: within-grid trajectory (median plays,
+oldest third vs newest third — one capture, no cross-era comparison) for
+22 creators: **15 FALLING, 6 STEADY, 1 RISING**. Falls are steep, not
+marginal: `slaybyjess` 1,140,550 → 12,150 (−99%), `rogerwh0` 426,150 →
+9,488 (−98%), `skin.ken` 225,950 → 7,924 (−96%), `natalie_oneillll`
+398,450 → 160,850 (−60%). **Consequence for the ratified engagement
+rule** (`competitor_ledger_spec_v0.md`, 2026-07-29 — engagement weighted
+only against the creator's own recent-grid median): for two-thirds of
+this layer that median is falling fast enough that the same row scores
+differently depending on WHEN the grid was captured, so the weight
+measures capture date as much as the row. **Proposed amendment (owner
+call, and it is the concurrent lane's rule to change): record raw counts,
+never weight them** — which is most of what that rule already says; the
+change is dropping the weighting clause rather than adding anything.
+Replacement signals, all already held: the video ranked on Google
+(relevance, already proven), its rendered prominence, creator recurrence
+across 2+ subjects (prioritisation), and the transcript (the only
+composition-grade evidence here). Reach trend survives as a CREATOR
+state, not a row weight: a creator in −98% decline is a poor partner and
+a good displacement target. Evidence:
+`creator_grid_liveness.json`. Trigger: owner ruling on the amendment, or
+a stratum where reach trend is majority STEADY.
 
 **F25. `vs` / `dupe` / `alternatives` do NOT cannibalise each other;
 the apparent effect is a shape-set-size artifact.** active (new
@@ -481,7 +526,13 @@ CROSS-SUBJECT, so it cannot fire inside a single-subject phase-1 pass;
 this lane-level derivation is where it fires, and
 `serp_recurring_creator_feed_v0.json` is its emission (113 entries with
 subjects, scope, and profile URL where an observed card URL supplied one
-— 20 of 24 TikTok). The existing social capture runners' input queue
+— 20 of 24 TikTok). **Known defect (2026-07-30): handle recovery keys on
+the card's DISPLAY NAME, so distinct accounts sharing a display name
+collapse into one entry** — `careclarkbsn`, `skincarewithshelbs`, and
+`skinwithhav` were emitted as three handles of one creator and are three
+separate accounts (distinct author ids, confirmed by capture). Handles
+must be keyed on the account locator, not the rendered name; until fixed,
+treat multi-handle entries as multiple creators. The existing social capture runners' input queue
 consumes tagged entries; **phase 1 never visits a platform and never
 weights a raw social count.** The other three triggers (a statement a
 read would weight, an axis/answer-slot's only occupant, #ad-convergence)
