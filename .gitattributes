@@ -8,6 +8,7 @@ docs/review-inputs/youtube_shorts_fragrance_tone_expansion30_capture_v0.json tex
 docs/review-inputs/youtube_shorts_fragrance_tone_expansion100_capture_v0.json text eol=lf
 docs/review-inputs/youtube_shorts_fragrance_tone_expansion200_capture_v0.json text eol=lf
 docs/review-inputs/creator_metric_source_live_probe_youtube_v0.json text eol=lf
+forseti-harness/capture_spine/tiktok_creator_discovery_frontier/*.json text eol=lf
 
 # Source Capture packets are byte-faithful evidence: the manifest's recorded
 # sha256 for each preserved raw file must match the raw bytes on every platform
