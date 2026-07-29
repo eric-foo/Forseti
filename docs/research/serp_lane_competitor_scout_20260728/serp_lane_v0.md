@@ -426,22 +426,22 @@ that is the Understanding-phase entry point. Evidence:
 `analysis/fullbank_social_and_axes.json` → `f21_classification`.
 Trigger: bridging share falling below 25%.
 
-## Current default boards (v2, 2026-07-29 — from F4–F8, F16–F18, F23,
-F24, and the F6 tournament; owner-ratified: run all three tied complaint
-shapes)
+## Current default boards (v2.1, 2026-07-29 — from F4–F8, F16–F18, F22,
+F23, F24, and the F6 tournament; owner-ratified: run all three tied
+complaint shapes, and the platform doors are CORE — the creator/social
+layer always matters)
 
-Product subject — CORE (8 probes, one session):
-`{s} vs {rival}` (harvested rival only, F20) · `{s} review` ·
+Product subject — CORE (11 probes, one session):
+`{s} vs {rival}` (harvested rival only, F20; fills from phase-1 rolling
+harvest, refreshed again by phase-2 Reddit names) · `{s} review` ·
 `{s} side effects` · `{s} made it worse` · `{s} not working` ·
-`is {s} bad for you` · `{s} reddit` · `{s} dupe` (or `alternatives`)
+`is {s} bad for you` · `{s} reddit` · `{s} dupe` (or `alternatives`) ·
+`{s} youtube` (evaluative/explainer layer, F22) · `{s} tiktok`
+(substitution layer, F22) · `{s} instagram` (showcase +
+credentialed-explainer layer, F22). The platform doors carry F23's
+discount: 15–31% of their cards are the brand's own account.
 Cut from boards permanently: `{s} complaints`, `regret buying {s}`
 (tournament losers — their content arrives via the kept probes).
-
-Product subject — REACH extension (+3, when the subject's social layer
-matters): `{s} tiktok` · `{s} youtube` · `{s} instagram` (F23: the
-named-platform doors, ~4x any intent door in third-party cards; discount
-the 15–31% brand-own-account share before reading sentiment; richest
-creator-discovery surface we have).
 
 Issue subject (6 probes, one session) — question-rich but social-poor
 (F16): `{i}` · `what causes {i}` · `how to fix {i}` ·
