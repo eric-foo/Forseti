@@ -196,16 +196,34 @@ parent.
 Sequencing this implies: **fix recall (C) and add a validation stage
 before promotion first**; category A is cosmetic by comparison.
 
-## What this pass did not settle
+## Wave-2 addendum (2026-07-29) — everything above's open questions
 
-- Twin stability (F8, F13's replacement rule) — not measured here.
-- The 5 fixed designs that did not grow at completion — the 11/10-shape
-  product designs (n=12) and the 14-shape deep design (n=5). The tail was
-  issue-heavy, so the issue designs roughly doubled while these did not.
-  Any product-design comparison still rests on n=12 or fewer, and that is
-  now the ledger's binding n limit rather than capture coverage.
-- Whether platform-named suffixes work outside Reddit. The bank has 32
-  shapes and exactly one names a platform (`reddit_suffix`). "x tiktok",
-  "x youtube", and "x instagram" have never been probed, so the claim
-  that `reddit_suffix` is a *platform* door rather than a *Reddit* door
-  is untested. ~60 probes on ~20 beauty subjects would settle it.
+Wave 2 (572 jobs: P11 fill, failure-intent tournament, platform
+suffixes, twins) completed 572/572 after one flag episode. It settled
+all three of revision 2's open items; full numbers in
+`analysis/wave2_analysis.json` and re-judged cells F4, F6, F8, F23, F24.
+
+- **P11 grew n=12 → 33** and `vs_rival` re-sharpened to **0.821 with a
+  real margin** (next: 0.624) — revision 2's "wide margin withdrawn" was
+  an artifact of the cross-stratum blend, not the fixed design.
+- **Failure-intent tournament (9 shapes × 34 subjects):** `side_effects`
+  0.547 leads; new shapes `made_it_worse` 0.480 and `bad_for_you` 0.461
+  enter at the top alongside `not_working` 0.469 (2nd–4th
+  indistinguishable at the noise floor); `complaints` 0.368 and `regret`
+  0.358 are cut.
+- **Platform-named suffixes are the strongest doors in the lane (F23):**
+  tiktok 17.2 / instagram 13.5 / youtube 11.9 platform cards per probe
+  vs reddit's 7.7. The "Reddit-only door" hypothesis is refuted.
+- **The noise floor exists and is measured (F24):** same-run question
+  agreement 0.863, cross-day 0.809, cross-day domains 0.734; `vs_rival`
+  most volatile (0.69), `side_effects` most stable (0.943). Gaps under
+  ~0.08 in a fixed design are ties; domain-presence findings need
+  2+ captures on different days.
+
+## What remains unsettled after wave 2
+
+- The 14-shape deep design is still n=5; the 10/11-shape designs are
+  n=33 — fixed-design n is no longer the binding limit anywhere except
+  the deep set.
+- Twin decay beyond one day (a 7-day twin batch would extend the curve).
+- F15's per-stratum contrarian threshold has no stratum near trigger.

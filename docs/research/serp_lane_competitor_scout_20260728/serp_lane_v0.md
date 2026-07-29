@@ -105,13 +105,18 @@ escalation was frozen throughout. Trigger: a block after ≥4h idle
 (would break the upper bound), or a clean first capture under 1h (would
 tighten the lower).
 
-**F4. `X vs {rival}` is the highest-value shape (~0.78 unique share).**
-active — RE-JUDGED 2026-07-29 COMPLETE bank: HELD, revised down from
-0.889 (panel, n=3) to **0.782**. **The "by a wide margin" framing is
-withdrawn**: `not_working` 0.651 and `alternatives`/`best_products` 0.626
-sit close behind. Evidence: `fullbank_analysis_findings_v0.md`;
-`analysis/fullbank_shape_value.json`. Trigger: any shape overtaking it on
-the question axis, or the 11-shape fixed design growing past n=12.
+**F4. `X vs {rival}` is the highest-value shape (~0.82 unique share,
+wide margin).** active — RE-JUDGED 2026-07-29 wave 2, its own trigger
+(design past n=12) fired: the 11-shape fixed design at **n=33** gives
+`vs_rival` **0.821**, with a REAL margin — next is `not_working` 0.624.
+The same-day "wide margin withdrawn" call is itself withdrawn: it came
+from the cross-stratum ALL_complete blend (0.782 with close seconds),
+which mixes different shape sets and blurs the gap; the fixed design is
+the honest comparison and is now well-powered. Note from F24: vs_rival
+is also the most VOLATILE shape between captures (A/B question Jaccard
+0.69) — its content churns while its unique-share rank holds. Evidence:
+`analysis/fullbank_fixed_design.json`. Trigger: any shape within 0.10 of
+it in a fixed design at n≥30.
 
 **F5. The review family (`review`/`reviews`/`honest review`/`worth it`)
 is ~one probe of information, not four.** active — RE-JUDGED 2026-07-29:
@@ -120,14 +125,21 @@ HELD and tightened. `review` 0.377, `worth_it` 0.376, `honest_review`
 review-family probe. Trigger: any member separating by >0.15 from the
 cluster.
 
-**F6. Pain shapes carry elevated exclusive yield (~0.32–0.65).** active —
-RE-JUDGED 2026-07-29 COMPLETE bank: HELD. `side_effects` **0.586**,
-`not_working` **0.651**, `complaints` **0.322**. The 2026-07-28
-"weakened" call was largely a coverage artifact of an issue-light 888 —
-`not_working` recovered to panel level and is now the #2 shape overall.
-`complaints` is the weak member and is the one to drop from boards.
-Evidence: `fullbank_analysis_findings_v0.md`. Trigger: `complaints`
-rising above 0.45 in any stratum, or `not_working` falling below 0.55.
+**F6. Pain shapes carry elevated exclusive yield; the family is now
+tournament-ranked.** active — RE-JUDGED 2026-07-29 wave 2. The
+9-shape failure-intent tournament (3 proven + 6 new, all on the same 34
+subjects, so every subject is its own controlled comparison):
+`side_effects` **0.547** #1; **`made_it_worse` 0.480 (NEW)** beats
+`not_working` 0.469; **`bad_for_you` 0.461 (NEW)** ties it (gaps of
+0.02 are inside the F24 noise floor — 2nd through 4th are
+indistinguishable); then `why_stopped_working` 0.421, `dont_buy` 0.404,
+`waste_of_money` 0.387, `complaints` 0.368, `regret` 0.358.
+**Board consequence: the complaint slots are `side_effects` +
+`made_it_worse`/`not_working`/`bad_for_you`; `complaints` and `regret`
+are CUT** (both under the review family's ambient level). Numbers are
+within-tournament (9 competing shapes) and not comparable to
+11-design numbers. Evidence: `analysis/wave2_analysis.json`. Trigger:
+any cut shape beating a kept one at n≥30 in a later design.
 
 **F7. Efficient frontier ≈ 6 probes/subject (80% of domains in ~4 shapes,
 80% of questions in ~6–7).** active — RE-JUDGED 2026-07-29 COMPLETE bank:
@@ -136,10 +148,17 @@ HELD, best-supported cell in the ledger. Across all 98 complete subjects,
 designs 4.83–5.36, product designs 6.21–7.42. Consequence: default boards
 below. Trigger: a stratum needing >9 shapes for 80% of questions.
 
-**F8. Cluster a subject's probes into one session.** active. Evidence:
-same-hour twins ~95% question-layer agreement (n=3) vs ~71% at 4h apart
-(n=6). Consequence: banks are subject-clustered, never day-spread
-round-robin. Trigger: larger twin sample separating hour/day scales.
+**F8. Cluster a subject's probes into one session — decay is real but
+milder than the panel showed.** active — RE-JUDGED 2026-07-29, its own
+trigger (larger twin sample) fired. At n=60 pairs: 4.5h-apart agreement
+is **0.863** mean question Jaccard (median 0.917), not the panel's ~0.71
+(n=6); cross-day vs the wave-1 original is **0.809**, and domains decay
+faster cross-day (**0.734**). Consequence softened: same-session
+clustering still buys ~5pp of agreement and stays the default, but 4h
+separation is no longer disqualifying for claim comparison; cross-DAY
+domain reads are the fragile thing. Full noise-floor doctrine: F24.
+Evidence: `analysis/wave2_analysis.json`. Trigger: a twin batch at
+7+ days separation.
 
 **F9. AIO is a cached per-intent-cluster object; sample once per cluster.**
 active. Evidence: ruleset dogfood (identical AIO across plural/quotes/most
@@ -261,6 +280,44 @@ Evidence: `analysis/fullbank_video_card_kinds.json`
 `analysis/video_residue_report.md`). Trigger: UNCACHED_RESIDUE > 0 in a
 re-run (semantic cache stale for a grown corpus), or any platform's
 substitution share moving by >5 points.
+
+**F23. Naming the platform IS the door — on every platform, and it is
+the strongest door in the lane.** active (new 2026-07-29, wave 2,
+n=45 subjects per suffix). `{subject} tiktok` surfaces **17.2 TikTok
+cards per probe**; `{subject} instagram` **13.5**; `{subject} youtube`
+**11.9** — versus `reddit_suffix`'s 7.7 Reddit cards, previously the
+lane's strongest door, and versus ~3.0 for the best intent-word door
+(`alternatives` on TikTok). Platform pull is also clean: the tiktok
+suffix surfaces ~0 Instagram/YouTube and vice versa. This REFUTES the
+prior working hypothesis (recorded in this lane 2026-07-29) that
+platform-name suffixes would fail off-Reddit because video posts are
+not indexed documents — Google routes the platform token to dedicated
+platform surfaces regardless. Supersedes F17's video-door replacement
+and sharpens F18's consequence to: **to reach a platform's creators,
+name the platform; use intent words only to shape WHICH creators.**
+The suffix probes also carry high unique question share (`reddit_suffix`
+0.590 in the 11-design) so the door costs little on the question axis.
+Evidence: `analysis/wave2_analysis.json` → `platform_suffix`. Trigger:
+any platform's named-suffix card count dropping below its best
+intent-word door (would mean Google changed the routing).
+
+**F24. The SERP noise floor is measured: ~0.86 same-run, ~0.81
+cross-day question agreement.** active (new 2026-07-29, wave 2, 60 twin
+pairs re-captured twice 4.2–5.2h apart plus their wave-1 originals).
+Same-run A/B: questions Jaccard mean **0.863** (median 0.917, p10
+0.636); domains 0.843. Cross-day vs original: questions **0.809**,
+domains **0.734** — domain churn is ~2x question churn across days.
+Per-shape volatility spans 0.69–0.94: `vs_rival` **0.69** (most
+volatile), `side_effects` **0.943** (most stable), `reddit_suffix`
+0.925. **Doctrine this installs:** (a) unique-share gaps under ~0.08
+within a fixed design are NOT distinguishable — treat such rankings as
+ties (applied in F6); (b) any finding resting on a specific DOMAIN's
+presence needs 2+ captures on different days before it is
+finding-grade; (c) vs_rival conclusions about specific content need
+recurrence, though its RANK is stable. This settles the twin-stability
+question F11/F13 left open. Evidence: `analysis/wave2_analysis.json` →
+`twins`. Trigger: a 7-day twin batch (extends the decay curve), or any
+shape's A/B Jaccard falling below 0.5.
 
 **F19. A recurring creator layer mediates across subjects.** active —
 RE-JUDGED 2026-07-29 COMPLETE bank: HELD, grew as predicted at both
@@ -520,7 +577,13 @@ import for in-run counts.
   spike. Cadence, evidence per rung, and the 72/hr-sustained (~77/hr
   peak-30min) rungs authored for the next attempt live in
   `forseti-harness/runners/serp_egress_cadence.py`.
-- **Wave 2 PARTIAL — flagged 2026-07-29 07:03 at 290/572.** Ran clean
+- **Wave 2 COMPLETE 2026-07-29 20:07 — 572/572 ok** (verified against
+  the durable extraction store; the 6 flag-window blocked jobs re-probed
+  clean at 19:59–20:07 after the archive-first retry path). Analysis
+  landed same evening: F4 re-sharpened (n=33), F6 tournament-ranked, F8
+  revised at n=60, F23 (platform-named doors) and F24 (noise floor)
+  opened. Mid-run flag history kept below for the egress record.
+- Wave-2 flag history — flagged 2026-07-29 07:03 at 290/572. Ran clean
   02:39 → 07:03 (264 captures at a constant frozen 60/hr), then six
   blocks in 2.4h that no rung step-down and no 82-min cooldown cleared;
   the orchestrator is in its episode-2 backoff and self-terminates at
