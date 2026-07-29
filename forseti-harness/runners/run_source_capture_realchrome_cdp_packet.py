@@ -7,10 +7,13 @@ HTTP, CloakBrowser) and deny them cold on any egress. A genuine Chrome executes
 the wall's sensor JS legitimately and earns a valid session on first contact, so
 it reaches content the automation rungs cannot. This runner does NOT launch a
 browser: it attaches to a real Chrome the operator is already running with
-`--remote-debugging-port` (its own dedicated profile), opens a new tab, does an
-optional same-site warm hop (which seeds the wall's session cookies even when the
-hop itself is blocked), navigates the target, and writes the packet through the
-existing `write_local_source_capture_packet` seam.
+`--remote-debugging-port` (its own dedicated profile), opens a new tab by
+default, does an optional same-site warm hop (which seeds the wall's session
+cookies even when the hop itself is blocked), navigates the target, and writes
+the packet through the existing `write_local_source_capture_packet` seam.
+Google queue runners may instead name one persistent tab: the runner reuses
+that tab across jobs and leaves it visible for operator clearance if Google
+renders a challenge.
 
 Honesty boundary: this is not stealth, not proxy, not login/credential capture.
 Only public page content is preserved (rendered DOM, visible text, page-only
@@ -61,6 +64,7 @@ DEFAULT_CDP_ENDPOINT = "http://localhost:9222"
 DEFAULT_TIMEOUT_SECONDS = 45.0
 DEFAULT_VIEWPORT_WIDTH = 1280
 DEFAULT_VIEWPORT_HEIGHT = 800
+DEFAULT_WINDOW_CHROME_HEIGHT_PX = 150
 _PROGRESSIVE_SCROLL_PAUSE_MS = 900
 _MAX_PROGRESSIVE_SCROLL_STEPS = 40
 BrowserProvisioning = Literal["operator_provided", "unattended_xvfb"]
@@ -96,6 +100,8 @@ class RealChromeCDPCaptureResult:
     http_status: int | None
     warm_hop_url: str | None
     warm_hop_blocked: bool | None
+    viewport_width: int | None = None
+    viewport_height: int | None = None
     warning_notes: list[str] = field(default_factory=list)
 
 
@@ -112,11 +118,29 @@ class RealChromeCDPEngine(Protocol):
         timeout_seconds: float,
         viewport_width: int,
         viewport_height: int,
+        persistent_tab_marker: str | None,
+        fit_viewport_to_window: bool,
     ) -> RealChromeCDPCaptureResult: ...
 
 
 class RealChromeCDPUnavailable(RuntimeError):
     pass
+
+
+def _navigate_target(
+    *,
+    page,
+    url: str,
+    timeout_ms: float,
+    persistent_tab_marker: str | None,
+):
+    """Navigate and restore the marker after a cross-origin document swap."""
+    response = page.goto(url, wait_until="load", timeout=timeout_ms)
+    if persistent_tab_marker is not None:
+        page.evaluate(
+            "(marker) => { window.name = marker; }", persistent_tab_marker
+        )
+    return response
 
 
 class _LiveRealChromeCDPEngine:
@@ -132,6 +156,8 @@ class _LiveRealChromeCDPEngine:
         timeout_seconds: float,
         viewport_width: int,
         viewport_height: int,
+        persistent_tab_marker: str | None,
+        fit_viewport_to_window: bool,
     ) -> RealChromeCDPCaptureResult:
         try:
             from playwright.sync_api import sync_playwright
@@ -155,10 +181,30 @@ class _LiveRealChromeCDPEngine:
                     "attached Chrome exposes no browser context; open a normal (non-incognito) window"
                 )
             context = browser.contexts[0]
-            page = context.new_page()
+            page, close_page = _select_or_create_page(
+                context=context,
+                target_url=url,
+                persistent_tab_marker=persistent_tab_marker,
+            )
             warm_hop_blocked: bool | None = None
             try:
-                page.set_viewport_size({"width": viewport_width, "height": viewport_height})
+                actual_viewport_width = viewport_width
+                actual_viewport_height = viewport_height
+                if fit_viewport_to_window:
+                    dimensions = page.evaluate(
+                        "() => ({width: window.outerWidth, height: window.outerHeight})"
+                    )
+                    actual_viewport_width = max(320, int(dimensions["width"]))
+                    actual_viewport_height = max(
+                        600,
+                        int(dimensions["height"]) - DEFAULT_WINDOW_CHROME_HEIGHT_PX,
+                    )
+                page.set_viewport_size(
+                    {
+                        "width": actual_viewport_width,
+                        "height": actual_viewport_height,
+                    }
+                )
                 if warm_hop_url:
                     try:
                         page.goto(warm_hop_url, wait_until="load", timeout=timeout_ms)
@@ -178,10 +224,39 @@ class _LiveRealChromeCDPEngine:
                 # navigation. A raw Playwright error here must become a clean exit-3, not an
                 # uncaught traceback. page.close() in the finally still runs either way.
                 try:
-                    response = page.goto(url, wait_until="load", timeout=timeout_ms)
+                    response = _navigate_target(
+                        page=page,
+                        url=url,
+                        timeout_ms=timeout_ms,
+                        persistent_tab_marker=persistent_tab_marker,
+                    )
                     http_status = response.status if response is not None else None
-                    if settle_seconds > 0:
-                        page.wait_for_timeout(int(settle_seconds * 1000))
+                    settle_block_signal = None
+                    remaining_settle_ms = int(settle_seconds * 1000)
+                    while remaining_settle_ms > 0:
+                        try:
+                            settle_access = classify_rendered_access(
+                                title=page.title(),
+                                rendered_dom=page.content(),
+                                visible_text=page.locator("body").inner_text(
+                                    timeout=min(timeout_ms, 3000)
+                                ),
+                            )
+                            if (
+                                settle_access.classification
+                                == RenderedAccessClass.ACCESS_BLOCKED
+                            ):
+                                settle_block_signal = settle_access.signal
+                        except Exception as exc:
+                            warnings.append(f"settle access inspection failed: {exc}")
+                        pause_ms = min(1000, remaining_settle_ms)
+                        page.wait_for_timeout(pause_ms)
+                        remaining_settle_ms -= pause_ms
+                    if settle_block_signal:
+                        warnings.append(
+                            "transient_access_block_observed_during_settle: "
+                            f"{settle_block_signal}"
+                        )
                     if scroll_step_px > 0:
                         position = 0
                         for _ in range(_MAX_PROGRESSIVE_SCROLL_STEPS):
@@ -209,7 +284,8 @@ class _LiveRealChromeCDPEngine:
                         f"real Chrome target capture failed for {url}: {type(exc).__name__}: {exc}"
                     ) from exc
             finally:
-                page.close()  # close only our tab; never the operator's context/browser
+                if close_page:
+                    page.close()  # close only the tab created for this one-shot capture
         return RealChromeCDPCaptureResult(
             requested_url=url,
             final_url=final_url,
@@ -220,8 +296,46 @@ class _LiveRealChromeCDPEngine:
             http_status=http_status,
             warm_hop_url=warm_hop_url,
             warm_hop_blocked=warm_hop_blocked,
+            viewport_width=actual_viewport_width,
+            viewport_height=actual_viewport_height,
             warning_notes=warnings,
         )
+
+
+def _select_or_create_page(*, context, target_url: str, persistent_tab_marker: str | None):
+    """Return (page, close_after_capture) without touching unrelated tabs."""
+    if persistent_tab_marker is None:
+        return context.new_page(), True
+
+    for page in context.pages:
+        if page.is_closed():
+            continue
+        try:
+            if page.evaluate("() => window.name") == persistent_tab_marker:
+                return page, False
+        except Exception:
+            continue
+
+    target_host = (urlparse(target_url).hostname or "").casefold()
+    if target_host in {"google.com", "www.google.com"}:
+        google_pages = [
+            page
+            for page in context.pages
+            if not page.is_closed()
+            and page.url.startswith(
+                ("https://www.google.com/search", "https://google.com/search")
+            )
+        ]
+        if len(google_pages) == 1:
+            page = google_pages[0]
+            page.evaluate(
+                "(marker) => { window.name = marker; }", persistent_tab_marker
+            )
+            return page, False
+
+    page = context.new_page()
+    page.evaluate("(marker) => { window.name = marker; }", persistent_tab_marker)
+    return page, False
 
 
 def run_source_capture_realchrome_cdp_packet(
@@ -248,12 +362,21 @@ def run_source_capture_realchrome_cdp_packet(
     session_id: str | None = None,
     browser_provisioning: BrowserProvisioning = "operator_provided",
     persistent_profile_loaded: bool = False,
+    persistent_tab_marker: str | None = None,
+    fit_viewport_to_window: bool = False,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
         raise ValueError("exactly one of output_directory or data_root is required")
     if browser_provisioning not in {"operator_provided", "unattended_xvfb"}:
         raise ValueError("browser_provisioning must be operator_provided or unattended_xvfb")
+    if persistent_tab_marker is not None:
+        if browser_provisioning != "operator_provided":
+            raise ValueError("persistent tabs require operator_provided browser provisioning")
+        if not re.fullmatch(r"[A-Za-z0-9_.:-]{1,120}", persistent_tab_marker):
+            raise ValueError(
+                "persistent_tab_marker must be 1-120 safe identifier characters"
+            )
 
     unattended = browser_provisioning == "unattended_xvfb"
     browser_description = (
@@ -273,6 +396,8 @@ def run_source_capture_realchrome_cdp_packet(
         timeout_seconds=timeout_seconds,
         viewport_width=viewport_width,
         viewport_height=viewport_height,
+        persistent_tab_marker=persistent_tab_marker,
+        fit_viewport_to_window=fit_viewport_to_window,
     )
 
     access = classify_rendered_access(
@@ -302,8 +427,11 @@ def run_source_capture_realchrome_cdp_packet(
         "access_block_reason": access_block_reason,
         "rendered_access_classification": access.classification.value,
         "rendered_access_signal": access.signal,
-        "viewport_width": viewport_width,
-        "viewport_height": viewport_height,
+        "viewport_width": result.viewport_width or viewport_width,
+        "viewport_height": result.viewport_height or viewport_height,
+        "persistent_tab": persistent_tab_marker is not None,
+        "persistent_tab_marker": persistent_tab_marker,
+        "fit_viewport_to_window": fit_viewport_to_window,
         "screenshot_mode": "viewport",
         "rendered_dom_byte_count": len(result.rendered_dom.encode("utf-8")),
         "visible_text_byte_count": len(result.visible_text.encode("utf-8")),
@@ -343,6 +471,10 @@ def run_source_capture_realchrome_cdp_packet(
 
     packet_mode_changes = list(visible_mode_changes)
     packet_mode_changes.append("real_browser_cdp_snapshot")
+    if persistent_tab_marker is not None:
+        packet_mode_changes.append("persistent_operator_visible_tab")
+    if fit_viewport_to_window:
+        packet_mode_changes.append("window_fitted_viewport")
     if unattended:
         packet_mode_changes.append("unattended_xvfb_realchrome_cdp")
     sufficiency_mode = source_detail_sufficiency_mode_change(sufficiency)
@@ -499,6 +631,19 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--viewport-width", type=int, default=DEFAULT_VIEWPORT_WIDTH)
     parser.add_argument("--viewport-height", type=int, default=DEFAULT_VIEWPORT_HEIGHT)
+    parser.add_argument(
+        "--persistent-tab-marker",
+        default=None,
+        help=(
+            "Reuse one marker-owned tab across captures and leave it open. "
+            "Intended for an operator-visible Google queue fallback."
+        ),
+    )
+    parser.add_argument(
+        "--fit-viewport-to-window",
+        action="store_true",
+        help="Fit the emulated page viewport to the visible Chrome window.",
+    )
     parser.add_argument("--session-id", default=None)
     parser.add_argument("--warning", action="append", default=[])
     parser.add_argument("--limitation", action="append", default=[])
@@ -553,6 +698,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             timeout_seconds=args.timeout_seconds,
             viewport_width=args.viewport_width,
             viewport_height=args.viewport_height,
+            persistent_tab_marker=args.persistent_tab_marker,
+            fit_viewport_to_window=args.fit_viewport_to_window,
             warnings=args.warning,
             limitations=args.limitation,
             visible_mode_changes=args.visible_mode_change,
