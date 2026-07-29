@@ -13,9 +13,9 @@ use_when:
   - A subject has been bound for the Understanding cycle and the scout
     pass runs before specialist fan-out.
 stale_if:
-  - The competitor-ledger spec sections this handoff points to are
-    superseded (next expected supersession: the full-bank megadogfood
-    re-judgment, ~2026-07-30).
+  - The default boards in serp_lane_v0.md move past v2.1 (2026-07-29,
+    tournament + platform-door + noise-floor re-judgment) without this
+    handoff being re-rendered.
   - The owner egress cadence or the CloakBrowser packet runner changes.
 authority_boundary: retrieval_only
 ```
@@ -72,14 +72,39 @@ target and a review axis-to-attack, not a review pass bar.
 
 ## Method (deltas only; the spec owns the mechanics)
 
-1. **Seeds.** Six rival-free queries: `{s} dupe`, `{s} alternatives`,
-   `{s} reddit`, `is {s} worth it`, one vertical complaint shape, one
-   claim-attack shape. Never plant a competitor name you have not
+1. **Seeds — Board v2.1** (owner-ratified 2026-07-29; live authority:
+   `serp_lane_v0.md` § Current default boards). Ten rival-free queries,
+   run in this order or concurrently — all of them are wanted, so probe
+   selection is not a decision point:
+
+   | probe | the question it asks |
+   | --- | --- |
+   | `{s} review` | what is the consensus verdict? |
+   | `{s} side effects` | what harm do people attribute to it? |
+   | `is {s} bad for you` | what safety worry circulates? |
+   | `{s} made it worse` | how does it backfire, in users' words? |
+   | `{s} not working` | how does it fail to deliver? |
+   | `{s} reddit` | what does the community say unprompted? |
+   | `{s} dupe` (or `alternatives`) | who is it substituted with? |
+   | `{s} youtube` | who explains and reviews it? (YT = the evaluative/explainer layer, F22) |
+   | `{s} tiktok` | who compares and substitutes it? (TT = the substitution layer, F22) |
+   | `{s} instagram` | who showcases it; which brands and credentialed professionals broadcast? (IG = showcase + derm-explainer layer, F22) |
+
+   The three platform doors are CORE, not optional — the creator/social
+   layer always matters (owner call). They are also the volume doors
+   (F23): separate subject-owned accounts before reading the cards as
+   third-party sentiment — sealed own-account share 31%/28%/15%
+   (TT/IG/YT), `analysis/fullbank_suffix_quality.json`.
+   **Never seed** `{s} complaints` or `regret buying {s}`
+   (tournament-cut, F6) and never plant a competitor name you have not
    harvested. Operator-supplied names are allowed but tagged
    `seed:operator` and retired as vs-inputs on the first harvested rival.
-   Front-load them at ~1/min (cleared: 4 captures at 60s spacing, zero
-   blocks; keep the front-load to ≤8 captures pending longer-burst
-   evidence).
+   Front-load no faster than the current owner cadence, ≤10 captures.
+
+   The `vs {rival}` probe is NOT a seed: its rival arrives from this
+   phase's own rolling harvest (Channel 0–2), and again after phase 2 —
+   the Reddit lane's complaint-borne names (Channel 3) refresh the vs
+   queue for the return leg. Two fill moments, both from harvest.
 2. **Harvest — rolling, never queued behind captures.** Harvest is local
    compute over extractions and costs no egress; run the emitter as
    packets land so the ledger has names as early as possible.
@@ -98,11 +123,42 @@ target and a review axis-to-attack, not a review pass bar.
    the Reddit lane hits a different host and may start as soon as the
    queue exists.
 
+## If unsure, proceed like this
+
+- **Harvested name might not be a real competitor?** It cannot reach the
+  candidate rung unadjudicated — the v0.2 gate holds it at
+  `pending_adjudication`, fail closed. Adjudicate from its captured
+  evidence first; when the evidence is too thin to call, spend **one
+  verification probe** on the name itself (`{name} review`): a real
+  brand resolves to a coherent product surface (own site, retail
+  listings, reviews), junk resolves to nothing coherent. Echo guard
+  applies — the verification probe's own echo of the name bears no
+  ladder rung.
+- **Unsure whether an outlet/creator is a standing anchor for the
+  subject?** "Anchor" = the claim that a specific site or creator is
+  durably attached to this subject (the mediator list, native
+  follow-through targets). Domains churn ~27% overnight (F24), so ONE
+  appearance may be Google's shuffle, not a relationship: it takes
+  **two sightings on two different days** to write "anchor" — one
+  sighting is logged as presence only.
+- **Blocked mid-run?** A block is a flag, not a rate signal (F2b).
+  Record it and freeze the rung unless the block fell within the
+  five-attempt probation after a rung increase; only then step back one
+  rung. Idle **60 minutes**, then make exactly one recovery attempt. If
+  that attempt is a second consecutive block, or it is the third block
+  in the run, write `OWNER_PING.json` before stopping for owner routing.
+  Never retry hot or approach the threshold to measure it.
+- **Anything else ambiguous?** Prefer the reading that leaves a typed
+  gap over the reading that invents data — a visible hole routes work;
+  a guessed fill poisons every downstream consumer.
+
 ## Egress boundaries (hard)
 
 - Read the CURRENT owner cadence before the first capture — do not assume
   a historical band. One Google-stream capture at a time. A block is a
-  stop signal: stop that stream, record it, never retry hot, never
+  stop signal per the rule above: record, freeze or probation-step-down,
+  idle 60 minutes, make one recovery attempt, and ping before stopping
+  on a second consecutive or third run block. Never retry hot, never
   interact with a CAPTCHA. Blocks are respected, never approached or
   measured.
 - Standing non-claims on every artifact: counts of observed cards only,
@@ -119,6 +175,11 @@ target and a review axis-to-attack, not a review pass bar.
   ladder.
 - `levers`: J1 cross (live / not observed), J2 exit-door class, J3 tags.
 - `trigger_thread_queue`: URLs handed to the Reddit lane.
-- `mediators`: outlets and creators (never ledger entries).
+- `mediators`: outlets and creators (never ledger entries), each with a
+  `class` — `professional_creator` / `affiliate_outlet` / `editorial` /
+  `brand_owned` / `pending_classification` (uncached names fail visible;
+  cache pattern mirrors the candidate gate). Attachment (2-day rule) and
+  kind are separate judgments — consumers act oppositely on a derm vs an
+  affiliate farm.
 - `blocks`: count and detail, or `0 blocks in N captures`.
 - `artifacts`: staging paths written.

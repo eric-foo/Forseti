@@ -1,0 +1,1375 @@
+{
+ "artifact": "serp_recurring_creator_feed_v0",
+ "generated": "2026-07-29",
+ "source": "google_serp_us_parameterized megadogfood corpus (986-job wave-1 complete; counts refresh when the corpus grows)",
+ "derivation": "forseti-harness/runners/serp_fullbank_analysis/fullbank_social.py -> recurring_creators; handles from video_block canonical_urls",
+ "why_these": "each creator's account surfaced on Google SERPs for 2+ DISTINCT subjects in the corpus (video/social result cards) - SERP recurrence marks them as category mediators worth frontier qualification",
+ "non_claims": [
+  "recurrence evidences SERP reach, not audience size, independence, or sponsorship status",
+  "counts are observed result cards, never prevalence or share of anything real",
+  "this feed is frontier INPUT: nothing here is registry-admitted, qualified, or an owner disposition"
+ ],
+ "consumers": {
+  "tiktok": "discovery-frontier ranking / supervised onboarding lane (admission path exists)",
+  "youtube": "NO admission path exists (typed gap); metric-rollup machinery exists",
+  "instagram": "NO admission path exists (typed gap)"
+ },
+ "n_creators": 113,
+ "creators": [
+  {
+   "platform": "youtube",
+   "display_name": "Dr Dray",
+   "tiktok_handles": [],
+   "n_subjects": 11,
+   "subjects": [
+    "beauty of joseon sunscreen",
+    "blackheads on nose",
+    "castor oil for eyelashes",
+    "damaged skin barrier",
+    "eucerin advanced repair cream",
+    "heat damaged hair",
+    "lip balm dependency",
+    "neutrogena hydro boost",
+    "paulas choice bha exfoliant",
+    "sunscreen pilling",
+    "sunscreen white cast"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Doctorly",
+   "tiktok_handles": [],
+   "n_subjects": 8,
+   "subjects": [
+    "bubble skincare slam dunk",
+    "damaged skin barrier",
+    "dandruff from dry shampoo",
+    "dark circles under eyes",
+    "lip balm dependency",
+    "retinol purge",
+    "slugging breakouts",
+    "the ordinary niacinamide serum"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Daniel Sugai",
+   "tiktok_handles": [],
+   "n_subjects": 7,
+   "subjects": [
+    "cerave moisturizing cream",
+    "cetaphil gentle cleanser",
+    "clogged pores from sunscreen",
+    "damaged skin barrier",
+    "melasma treatment over the counter",
+    "neutrogena hydro boost",
+    "vitamin c serum oxidation"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "SkinZone",
+   "tiktok_handles": [],
+   "n_subjects": 7,
+   "subjects": [
+    "anua heartleaf toner",
+    "cerave moisturizing cream",
+    "medicube collagen mask",
+    "neutrogena hydro boost",
+    "rhode glazing milk",
+    "skin1004 centella ampoule",
+    "the ordinary niacinamide serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Aleksandra Brown DO, FAAD",
+   "tiktok_handles": [],
+   "n_subjects": 6,
+   "subjects": [
+    "cetaphil gentle cleanser",
+    "damaged skin barrier",
+    "dark circles under eyes",
+    "retinol burn",
+    "sebaceous filaments",
+    "supergoop unseen sunscreen"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Melissa Van Dijk",
+   "tiktok_handles": [],
+   "n_subjects": 6,
+   "subjects": [
+    "cerave moisturizing cream",
+    "cetaphil gentle cleanser",
+    "glow recipe watermelon toner",
+    "neutrogena hydro boost",
+    "over exfoliated skin",
+    "paulas choice bha exfoliant"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "No BS Beauty",
+   "tiktok_handles": [],
+   "n_subjects": 5,
+   "subjects": [
+    "anua heartleaf toner",
+    "bubble skincare slam dunk",
+    "drunk elephant protini",
+    "neutrogena hydro boost",
+    "paulas choice bha exfoliant"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "Natalie O'Neill",
+   "tiktok_handles": [
+    "natalie_oneillll"
+   ],
+   "n_subjects": 4,
+   "subjects": [
+    "medicube collagen mask",
+    "neutrogena hydro boost",
+    "paulas choice bha exfoliant",
+    "retinol purge"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "drdrayzday",
+   "tiktok_handles": [
+    "drdrayzday"
+   ],
+   "n_subjects": 4,
+   "subjects": [
+    "castor oil for eyelashes",
+    "lip balm dependency",
+    "nail damage from gel polish",
+    "sunscreen pilling"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Abbey Yung",
+   "tiktok_handles": [],
+   "n_subjects": 4,
+   "subjects": [
+    "dae hair styling cream",
+    "dyson airwrap",
+    "olaplex no 3",
+    "skin cycling routine"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Cassandra Bankson",
+   "tiktok_handles": [],
+   "n_subjects": 4,
+   "subjects": [
+    "fragrance sensitivity on skin",
+    "laneige lip sleeping mask",
+    "lip balm dependency",
+    "supergoop unseen sunscreen"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Jenny Liu",
+   "tiktok_handles": [],
+   "n_subjects": 4,
+   "subjects": [
+    "damaged skin barrier",
+    "paulas choice bha exfoliant",
+    "rosacea skincare routine",
+    "skin cycling routine"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Sam Ellis",
+   "tiktok_handles": [],
+   "n_subjects": 4,
+   "subjects": [
+    "melasma treatment over the counter",
+    "skin cycling routine",
+    "slugging breakouts",
+    "vitamin c serum oxidation"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "alex greyson",
+   "tiktok_handles": [],
+   "n_subjects": 4,
+   "subjects": [
+    "byoma moisturizer",
+    "dieux instant angel moisturizer",
+    "rhode peptide lip treatment",
+    "skin1004 centella ampoule"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Claire Bridgett💄",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "kosas revealer concealer",
+    "rhode glazing milk",
+    "sunscreen pilling"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Himi Khandelwal",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "olaplex no 3",
+    "sol de janeiro perfume mist 62",
+    "the ordinary niacinamide serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "iona francis",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "byoma moisturizer",
+    "drunk elephant protini",
+    "slugging breakouts"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "nipunkapur",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "cetaphil gentle cleanser",
+    "glycolic acid burn",
+    "milia from eye cream"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "thelipsticklesbians",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "kosas revealer concealer",
+    "phlur missing person perfume",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "skincarewithshelbs",
+   "tiktok_handles": [
+    "careclarkbsn",
+    "skincarewithshelbs",
+    "skinwithhav"
+   ],
+   "n_subjects": 3,
+   "subjects": [
+    "bubble skincare slam dunk",
+    "byoma moisturizer",
+    "dieux instant angel moisturizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Alternative Brewing",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "aeropress",
+    "espresso tastes bitter",
+    "fellow stagg kettle"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Coffee Kev",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "aeropress",
+    "breville barista express",
+    "espresso tastes bitter"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Diba's Quest",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "anua heartleaf toner",
+    "cerave moisturizing cream",
+    "medicube collagen mask"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Aanchal MD",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "cerave moisturizing cream",
+    "dyson airwrap",
+    "the ordinary niacinamide serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Dustin Portela",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "cerave moisturizing cream",
+    "over exfoliated skin",
+    "supergoop unseen sunscreen"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Neera Nathan",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "keratosis pilaris",
+    "lip balm dependency",
+    "sebaceous filaments"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Scott Walter MD",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "lip balm dependency",
+    "paulas choice bha exfoliant",
+    "skin1004 centella ampoule"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Flawless Physio | Shoe Reviews",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "brooks ghost 15",
+    "hoka clifton 9",
+    "on cloudmonster"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "James Welsh",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "cerave moisturizing cream",
+    "olaplex no 3",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Mattress Nerd",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "helix mattress",
+    "mattress sleeping hot",
+    "purple mattress"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Skin Cupid",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "anua heartleaf toner",
+    "beauty of joseon sunscreen",
+    "torriden dive in serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "The Run Testers",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "brooks ghost 15",
+    "hoka clifton 9",
+    "on cloudmonster"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Tom's Coffee Corner",
+   "tiktok_handles": [],
+   "n_subjects": 3,
+   "subjects": [
+    "aeropress",
+    "breville barista express",
+    "fellow stagg kettle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Dr. Danny Guo",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "lash serum side effects",
+    "neutrogena hydro boost"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Dr. Dustin Portela | Skincare & Health Expert",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "beauty of joseon sunscreen",
+    "vitamin c serum oxidation"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Dr. Joyce Park MD FAAD | Dermatologist",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "moisturizer pilling under makeup",
+    "slugging breakouts"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "EltaMD Skin Care",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "clogged pores from sunscreen",
+    "sunscreen pilling"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "HAVEN | ESTHETICIAN + MOMMY",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "byoma moisturizer",
+    "paulas choice bha exfoliant"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Jenny Liu, MD FAAD , Skincare Derm",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "slugging breakouts",
+    "vitamin c serum oxidation"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Jess | Makeup • Tutorials",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "olaplex no 3",
+    "revlon one step volumizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "Nipun Kapur Sohal | Skincare Educator",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "cetaphil gentle cleanser",
+    "drunk elephant protini"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "blush rush pokhara",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "anua heartleaf toner",
+    "laneige lip sleeping mask"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "danielsugaimd",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "aquaphor healing ointment",
+    "eucerin advanced repair cream"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "instagram",
+   "display_name": "dannyguo.md",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "lash serum side effects",
+    "neutrogena hydro boost"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "Isomerskincare",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "over exfoliated skin",
+    "vitamin c serum oxidation"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "Kristingl",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "anua heartleaf toner",
+    "fungal acne from moisturizer"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "Skin Cupid",
+   "tiktok_handles": [
+    "skincupid"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "anua heartleaf toner",
+    "paulas choice bha exfoliant"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "abbeyyung",
+   "tiktok_handles": [
+    "abbeyyung"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "dae hair styling cream",
+    "olaplex no 3"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "abbythebadassmom",
+   "tiktok_handles": [
+    "abbythebadassmom"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "bubble skincare slam dunk",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "abis_skincare",
+   "tiktok_handles": [
+    "abis_skincare"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "drunk elephant protini",
+    "paulas choice bha exfoliant"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "audreyvictoria_",
+   "tiktok_handles": [
+    "audreyvictoria_"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "rice water for hair growth"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "drwhitneybowe",
+   "tiktok_handles": [
+    "drwhitneybowe"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "beauty of joseon sunscreen",
+    "sunscreen pilling"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "glamzilla",
+   "tiktok_handles": [
+    "glamzilla"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "neutrogena hydro boost",
+    "rhode glazing milk"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "iiheartbeauties",
+   "tiktok_handles": [
+    "iiheartbeauties"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "bubble skincare slam dunk",
+    "drunk elephant protini"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "juliannahoffman4",
+   "tiktok_handles": [
+    "juliannahoffman4"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "byoma moisturizer",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "kristingl",
+   "tiktok_handles": [
+    "diegomoone",
+    "kristingl"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "anua heartleaf toner",
+    "torriden dive in serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "kristyn hoffman 🫧",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "byoma moisturizer",
+    "dieux instant angel moisturizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "kristynhoffman96",
+   "tiktok_handles": [
+    "kristynhoffman96"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "byoma moisturizer",
+    "dieux instant angel moisturizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "maj.beauty",
+   "tiktok_handles": [
+    "maj.beauty"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "kosas revealer concealer",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "rhode skin",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "rhode glazing milk",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "rogerwh0",
+   "tiktok_handles": [
+    "rogerwh0"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "olaplex no 3",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "scenttakes",
+   "tiktok_handles": [
+    "scenttakes"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "phlur missing person perfume",
+    "sol de janeiro perfume mist 62"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "skin.ken",
+   "tiktok_handles": [
+    "skin.ken"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "sunscreen white cast",
+    "torriden dive in serum"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "slaybyjess",
+   "tiktok_handles": [
+    "slaybyjess"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "olaplex no 3",
+    "revlon one step volumizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "tiktok",
+   "display_name": "zakheath",
+   "tiktok_handles": [
+    "zakheath"
+   ],
+   "n_subjects": 2,
+   "subjects": [
+    "expired makeup",
+    "laneige lip sleeping mask"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "A N G I E B E E",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "heat damaged hair",
+    "rice water for hair growth"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Adore Beauty",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "heatless curls kit",
+    "shark flexstyle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Alastair Running",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "hoka clifton 9",
+    "on cloudmonster"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Alex Gaboury",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "heatless curls kit"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Audrey Victoria",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "rice water for hair growth"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Balcones Dermatology and Aesthetics",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dark circles under eyes",
+    "fragrance sensitivity on skin"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Brad Mondo",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "brassy hair after toning",
+    "hair breakage from bleach"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "CNET Home",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "helix mattress",
+    "purple mattress"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "CYoung",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "damaged skin barrier",
+    "skin1004 centella ampoule"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Charisse Daily",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "anua heartleaf toner",
+    "skin1004 centella ampoule"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Chetali Chadha",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "neutrogena hydro boost",
+    "olaplex no 3"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Chlöe Swift Stylist",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "revlon one step volumizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Chris Gibson",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "castor oil for eyelashes",
+    "slugging breakouts"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Consumer Research Studios",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "helix mattress",
+    "mattress sleeping hot"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Daddy Got Coffee",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "aeropress",
+    "fellow stagg kettle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Doctors of Running",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "brooks ghost 15",
+    "shin splints from new running shoes"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Eric Berg DC",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "magnesium glycinate",
+    "rice water for hair growth"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Dr. Somji Skin",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "cetaphil gentle cleanser",
+    "olaplex no 3"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "EDDBUD",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "brooks ghost 15",
+    "on cloudmonster"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Eve Dawes | Glamour & Gains",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "helix mattress",
+    "olaplex no 3"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Footwear Flix",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "hoka clifton 9",
+    "shin splints from new running shoes"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Gena Marie",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "olaplex no 3",
+    "scalp buildup"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Glam Girl Gabi",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dark circles under eyes",
+    "dyson airwrap"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Hyram",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dark circles under eyes",
+    "drunk elephant protini"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Janna Niki",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "shark flexstyle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Jennifer Wang",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "moisturizer pilling under makeup",
+    "sunscreen pilling"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Julissa Guillen",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "revlon one step volumizer",
+    "shark flexstyle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Katey Davidson",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "ag1 greens powder",
+    "bloom greens powder"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Katie Hoke",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "laneige lip sleeping mask",
+    "rhode peptide lip treatment"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Marriage Kids and Money",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "rocket money app",
+    "ynab budgeting app"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Mirella Manelli",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "hair breakage from bleach",
+    "shark flexstyle"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Modest Money - Reviews & Coupons",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "rocket money app",
+    "ynab budgeting app"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Nadia Vega",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "skin1004 centella ampoule",
+    "the ordinary niacinamide serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "NapLab",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "helix mattress",
+    "purple mattress"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Nipun Kapur",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "glow recipe watermelon toner",
+    "sunscreen white cast"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Rachel Ballinger",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "shark flexstyle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "RunnersNeed",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "brooks ghost 15",
+    "hoka clifton 9"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Seattle Coffee Gear",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "breville barista express",
+    "espresso tastes bitter"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Shundara",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "laneige lip sleeping mask",
+    "neutrogena hydro boost"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Sleep Advisor",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "helix mattress",
+    "mattress sleeping hot"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Sleep Doctor",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "helix mattress",
+    "mattress sleeping hot"
+   ],
+   "scope": "bridging"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Style me Worth it",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dyson airwrap",
+    "shark flexstyle"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Tamuno Abbey",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "beauty of joseon sunscreen",
+    "byoma moisturizer"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Tea with MD",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "dandruff from dry shampoo",
+    "skin cycling routine"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "The Santa Maria",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "phlur missing person perfume",
+    "sol de janeiro perfume mist 62"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "Vaidade Pega",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "laneige lip sleeping mask",
+    "the ordinary niacinamide serum"
+   ],
+   "scope": "product"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "ellebangs",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "brassy hair after toning",
+    "hair breakage from bleach"
+   ],
+   "scope": "issue"
+  },
+  {
+   "platform": "youtube",
+   "display_name": "ii heart beauties",
+   "tiktok_handles": [],
+   "n_subjects": 2,
+   "subjects": [
+    "bubble skincare slam dunk",
+    "drunk elephant protini"
+   ],
+   "scope": "product"
+  }
+ ]
+}
