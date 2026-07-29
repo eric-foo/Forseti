@@ -16,7 +16,8 @@ stale_if:
   - The default boards in serp_lane_v0.md move past v2.2 (2026-07-30,
     tournament + platform-door withdrawal + noise-floor re-judgment)
     without this handoff being re-rendered.
-  - The owner egress cadence or the CloakBrowser packet runner changes.
+  - The owner egress cadence, query policy, or persistent real-Chrome
+    fallback contract changes.
 authority_boundary: retrieval_only
 ```
 
@@ -115,6 +116,10 @@ target and a review axis-to-attack, not a review pass bar.
    capture it at the owner cadence. Reference implementation, if the
    operator drive is reachable:
    `C:\tmp\forseti-scout-dogfood10-20260728\bin\dogfood10_runner.py`.
+   That script is historical mechanics, not current query authority: before
+   egress, gate every job with
+   `source_capture.google_serp_queue_policy.evaluate_queue_job`. Presence is
+   cite-only, and competitor J5 queries require an explicit product scope.
 4. **Levers, read off the same captures — no extra probes.** J1 claim×
    dupe cross; J2 exit-door classification (armed / retention /
    technique-moat); J3 tag where rendered snippets may diverge from
@@ -145,12 +150,13 @@ target and a review axis-to-attack, not a review pass bar.
   **two sightings on two different days** to write "anchor" — one
   sighting is logged as presence only.
 - **Blocked mid-run?** A block is a flag, not a rate signal (F2b).
-  Record it and freeze the rung unless the block fell within the
-  five-attempt probation after a rung increase; only then step back one
-  rung. Idle **60 minutes**, then make exactly one recovery attempt. If
-  that attempt is a second consecutive block, or it is the third block
-  in the run, write `OWNER_PING.json` before stopping for owner routing.
-  Never retry hot or approach the threshold to measure it.
+  Preserve the lower-route block and freeze that transport. If the dedicated
+  persistent real-Chrome route is ready, transition the exact held job and
+  remainder there at the same owner cadence. If it is unavailable, retain the
+  legacy recovery rule: idle **60 minutes**, then make exactly one recovery
+  attempt; on a second consecutive or third run block, write
+  `OWNER_PING.json` before stopping. Never retry a blocked transport hot or
+  approach the threshold to measure it.
 - **Anything else ambiguous?** Prefer the reading that leaves a typed
   gap over the reading that invents data — a visible hole routes work;
   a guessed fill poisons every downstream consumer.
@@ -158,12 +164,20 @@ target and a review axis-to-attack, not a review pass bar.
 ## Egress boundaries (hard)
 
 - Read the CURRENT owner cadence before the first capture — do not assume
-  a historical band. One Google-stream capture at a time. A block is a
-  stop signal per the rule above: record, freeze or probation-step-down,
-  idle 60 minutes, make one recovery attempt, and ping before stopping
-  on a second consecutive or third run block. Never retry hot, never
-  interact with a CAPTCHA. Blocks are respected, never approached or
-  measured.
+  a historical band. One Google-stream capture at a time. A lower-route block
+  is a route-stop signal: preserve it and do not retry that transport hot. If
+  the run's dedicated, logged-out, operator-visible Chrome CDP fallback is
+  ready, use
+  `source_capture.google_serp_queue_policy.decide_block_recovery`, resume the
+  exact held job in one persistent tab, and keep the same owner-set cadence
+  for the remainder. Invoke
+  `run_google_serp_persistent_fallback_packet.py` for the held job and every
+  remaining job, with one `--persistent-tab-marker <run-id>`. The wrapper
+  preserves each block packet, pauses navigation, and pings the operator once
+  for each distinct block — a job blocked again after a clearance pings again;
+  the operator manually clears the visible challenge.
+  Automation never clicks or solves a CAPTCHA. If the fallback is unavailable,
+  follow the one-attempt cooldown rule above; do not silently keep probing.
 - Standing non-claims on every artifact: counts of observed cards only,
   never prevalence/volume/share; US-parameterized is not physically
   US-local; raw capture data stays on the operator drive, outside Git.

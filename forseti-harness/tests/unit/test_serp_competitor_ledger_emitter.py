@@ -16,12 +16,15 @@ was fixed the same day.
 
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
 import pytest
+
+from runners.serp_competitor_ledger_emitter import harvest
 
 RUNNER = Path(__file__).resolve().parents[2] / "runners" / "serp_competitor_ledger_emitter.py"
 T28 = Path(r"C:\tmp\forseti-tower28-scout-20260727")
@@ -44,7 +47,8 @@ def run(args):
     with tempfile.TemporaryDirectory() as td:
         out = Path(td) / "ledger.json"
         subprocess.run([sys.executable, "-B", str(RUNNER), *args,
-                        "--output", str(out)], check=True, capture_output=True)
+                        "--output", str(out)], check=True, capture_output=True,
+                       env={**os.environ, "PYTHONIOENCODING": "utf-8"})
         return json.loads(out.read_text(encoding="utf-8"))
 
 
@@ -254,3 +258,29 @@ def test_empty_mediator_cache_emits_parallel_pending_map(tmp_path):
     assert result["mediators"] == {"Acme (instagram)": ["Acme"]}
     assert result["mediator_classes"] == {
         "Acme (instagram)": "pending_classification"}
+
+
+@pytest.mark.parametrize(
+    ("title", "junk"),
+    [
+        ("Cetaphil gentle cleanser vs bad", "bad"),
+        (
+            "Crest whitening strips vs 30 levels whiter. 7. 4. Why",
+            "30 levels whiter",
+        ),
+        ("Crest whitening strips vs I brush my teeth before", "brush my teeth"),
+        (
+            "CeraVe moisturizing cream vs 86 Reddit-Picked",
+            "reddit-picked",
+        ),
+    ],
+)
+def test_surfaced_title_fragments_never_emit(title, junk):
+    emitted = list(
+        harvest(
+            [("serp_result_title", title, None)],
+            title.split(" vs ", 1)[0],
+            title,
+        )
+    )
+    assert not any(junk in str(item[0]).lower() for item in emitted)

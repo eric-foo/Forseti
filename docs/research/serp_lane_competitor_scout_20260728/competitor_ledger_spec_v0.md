@@ -287,8 +287,10 @@ behavioral and category exits.
 
 ## The promotion ladder
 
-- **presence** — named once, one surface class. Bears NO claim; exists
-  only as a probe-queue entry. Noise is expected here.
+- **presence** — named once, one surface class. Bears NO claim; cite-only.
+  Noise is expected here, so presence never drives Google egress or analysis
+  eligibility without an explicit owner adjudication that supplies a real
+  product identity. The raw ledger row remains preserved.
 - **candidate** — recurrence: named on 2+ independent queries (different
   query strings, any shapes) within a subject. Bears exactly: "a
   comparison association was observed on k captured surfaces" —
@@ -390,7 +392,9 @@ routing decision, not something the lane edits.
   Butter Balm q=4, Amazon Basics q=3). Known v0.2 items: scout-mode
   subject cross-product bleeds product evidence onto sibling subjects;
   self-variant entries ("Premium") pending the owner vocabulary call;
-  residual prose-fragment noise at presence rung (ladder-tolerated);
+  obvious title fragments (`bad`, sentence debris, numeric/editorial labels)
+  now fail closed at emission; any remaining presence noise is quarantined
+  from egress and analysis rather than treated as ladder-tolerated input;
   from cross-company dogfood #2 (2026-07-28,
   `megadogfood analysis/dogfood2_cross_company_note_v0.md`):
   name+context compounds should collapse to parent ("Vaseline for
@@ -414,11 +418,19 @@ routing decision, not something the lane edits.
   it is ever needed beyond that.
 
 **Merged vs+J5 queue — generation rule (normative).** After harvest,
-select up to 2 names typed `rival`/`dupe_association`/`anchor_up`,
-ranked by ladder rung first (candidate before presence), then by
-distinct_queries descending. Emit two job lists: vs jobs
-`{subject} vs {name}` per selected name; J5 jobs `{name} price` per
-selected name PLUS one `{subject} price`. Interleave them strictly
+select up to 2 names typed `rival`/`dupe_association`/`anchor_up` at
+candidate or finding-grade rung, ranked by ladder rung first, then by
+distinct_queries descending. Presence is cite-only and is never selected
+automatically. Run every selected job through
+`source_capture.google_serp_queue_policy.evaluate_queue_job` before egress;
+a rejected job is recorded with its reason and not captured. Emit two job
+lists: vs jobs `{subject} vs {name}` per selected name; J5 jobs
+`{name} {product_scope} price` per selected name PLUS one `{subject} price`.
+`product_scope` is mandatory for competitor J5 even when the selected entity
+is a real brand: `Amazon Basics` or `CeraVe` alone spans many products and
+cannot identify the intended price. A harvested name that is already an exact
+product may repeat its product class explicitly; clarity beats terseness.
+Interleave the lists strictly
 (vs, J5, vs, J5, …), appending the remainder when one list runs out —
 so a block or stop truncates both lanes evenly rather than losing one
 entirely. At capture time, a J5 SERP returning fewer than 3 rows with
@@ -429,6 +441,8 @@ eligible names tied on both ranking keys — zero-select is mandatory
 (owner-ratified 2026-07-29): complete the Channel-1 seeds first and
 let real recurrence break the tie; no third ranking key exists, and
 the tie is a diagnostic that the queue is running ahead of the seeds.
+Raw rejected names and generated-job rejections remain in the ledger/queue
+receipt; “prune” means analysis/egress quarantine, never evidence deletion.
 
 ## Cycle installation: a scout PASS + one ordering rule (not a step)
 
