@@ -283,6 +283,23 @@ handles (20/24). The frontier's scan-receipt register and owner
 disposition batches are NOT written by this lane: a SERP-recurrence
 observation is not a TikTok scan, and dispositions are owner acts.
 YouTube (73) and Instagram (16) have no admission path — typed gap.
+**Capture-spine dogfood 2026-07-29 (3 creators, `new_capture`
+assessment mode, owner session):** the feed→spine pipe works end to end.
+Per creator the lane returned profile metrics + a 30-video grid with
+play counts and full descriptions. CI yield on the three questions:
+(1) engagement separates cleanly — natalie_oneillll median
+plays/follower 0.204 vs drdrayzday 0.049 and skincarewithshelbs 0.047,
+so recurrence rank ≠ audience pull; (2) video DESCRIPTIONS already
+carry competitor names the SERP harvest never saw (Goodal, Purito,
+Billie, Athena Club) plus dense in-corpus mentions (innisfree ×9,
+bubble ×8, byoma ×7 in one creator's window) — a fifth competitor
+channel, pre-transcript; (3) sponsorship markers in descriptions are
+near-absent (2/90), consistent with F22's title-level finding —
+@-brand-tagging is the visible commercial signal, and the honest
+sponsorship read still needs the deep-capture transcript pass
+(`completed_deep_capture_count: 0` in assessment mode — transcripts are
+the onboarding-intent deep capture, not run here). Store:
+`C:\tmp\forseti-creator-dogfood-20260729\`.
 
 **F20. Competitor identification is an instrument without a step; rival
 inputs must come from harvest, not operator priors.** active (gap).
