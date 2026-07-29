@@ -365,7 +365,7 @@ all 113 with the why (subjects, counts, scope) and recovered TikTok
 handles (20/24). The frontier's scan-receipt register and owner
 disposition batches are NOT written by this lane: a SERP-recurrence
 observation is not a TikTok scan, and dispositions are owner acts.
-YouTube (73) and Instagram (16) have no admission path — typed gap.
+YouTube's gap is ROUTED (2026-07-30): `docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md` commissions the admission path on the TikTok lane's mechanism with the Shorts/long-form axis typed. Instagram (16) remains an unrouted typed gap.
 **Capture-spine dogfood 2026-07-29 (3 creators, `new_capture`
 assessment mode, owner session):** the feed→spine pipe works end to end.
 Per creator the lane returned profile metrics + a 30-video grid with

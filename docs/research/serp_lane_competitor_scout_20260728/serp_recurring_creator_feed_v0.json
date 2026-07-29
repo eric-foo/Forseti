@@ -11,7 +11,7 @@
  ],
  "consumers": {
   "tiktok": "discovery-frontier ranking / supervised onboarding lane (admission path exists)",
-  "youtube": "NO admission path exists (typed gap); metric-rollup machinery exists",
+  "youtube": "admission path ROUTED via docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md (not yet built); metric-rollup machinery exists",
   "instagram": "NO admission path exists (typed gap)"
  },
  "n_creators": 113,
