@@ -815,6 +815,19 @@ import for in-run counts.
   failures. The BR540 unnamed-equivalence return leg completed and supplies
   nine rendered named-rival observations for native follow-through. See
   `megadogfood_stage6_queue_completion_v0.md`.
+- BR540 bounded phase-2 native-return dogfood: **COMPLETE 2026-07-30.**
+  The five exact `mq0234` trigger threads captured 5/5 with 513 parsed
+  comments; J3 settled 4 ALIGNED / 1 RENDERED_BETTER / 0 NATIVE_BETTER.
+  The consolidated bounded ledger holds 39 entries (9 finding-grade
+  promotions, 30 complaint-body presence entries). One subject J5,
+  nine promotion J5 reads, and nine evidence-derived head-to-head
+  returns completed through one persistent Chrome tab at the canonical
+  60/hr shape: 19/19 Google packets, 494 typed rows, zero blocks and
+  zero failures. Airplane Mode and Pendora Rouge satisfy the mechanical
+  ladder but remain one-author native cases; EDP/Extrait identity is a
+  load-bearing residual. This is one-subject dogfood, not the full
+  130-subject phase-2 run. See
+  `br540_phase2_native_return_dogfood_v0.md`.
 - Queued behind the bank, both built, validated, and gated (no captures
   taken, processes stopped with the bank): the 10-brand scout dogfood
   (`C:\tmp\forseti-scout-dogfood10-20260728\`) and the 120-job beauty

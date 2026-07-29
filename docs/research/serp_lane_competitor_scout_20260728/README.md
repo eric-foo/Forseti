@@ -5,7 +5,8 @@ ledger (spec + promotion ladder + channels), Understanding-cycle
 installation (scout pass + ordering rule; two-phase shape with the
 Reddit lane), journey levers J1-J5, the Tower 28 and Summer Fridays
 live trials including their phase-2 native returns, the completed
-megadogfood Stage 6 queue and pruned analysis slice, egress-shape evidence,
+megadogfood Stage 6 queue and pruned analysis slice, the bounded BR540
+native-return dogfood, egress-shape evidence,
 the Deliver retention/offense note, and the cross-company dogfood
 (CeraVe / AeroPress).
 
@@ -41,11 +42,15 @@ waits for manual operator clearance without challenge interaction.
 extractions), `C:\tmp\forseti-tower28-scout-20260727\` (scout trial
 packets, PDP captures), `C:\tmp\forseti-tower28-reddit-20260728\` and
 `C:\tmp\forseti-sf-phase2-native-return-20260728\` (native thread
-packets + composition reads).
+packets + composition reads), and
+`C:\tmp\forseti-br540-phase2-native-return-20260730-runtime\`
+(bounded BR540 native-return packets and staging analysis).
 
 Reading order: `serp_lane_v0.md` (entry point / findings ledger) ->
 `megadogfood_stage6_queue_completion_v0.md` (completed queue, pruning,
 future-run corrections) ->
+`br540_phase2_native_return_dogfood_v0.md` (smallest-complete
+one-subject execution of the six-step native-return loop) ->
 `competitor_ledger_spec_v0.md` (types, ladder, cycle installation,
 J1-J5) -> `tower28_scout_trial_findings_v0.md` +
 `tower28_phase2_native_return_v0.md` +
