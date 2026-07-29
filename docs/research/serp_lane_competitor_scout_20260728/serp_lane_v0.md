@@ -297,6 +297,15 @@ and sharpens F18's consequence to: **to reach a platform's creators,
 name the platform; use intent words only to shape WHICH creators.**
 The suffix probes also carry high unique question share (`reddit_suffix`
 0.590 in the 11-design) so the door costs little on the question axis.
+**Quality read (2026-07-29, card-level):** the door is wide but partly
+self-promotional — **31% of TikTok and 28% of Instagram suffix cards
+are the subject brand's OWN account** (YouTube 15%), versus 5–8% on
+intent-word doors. Net third-party yield is still ~12 cards/probe on
+TikTok (≈4x any intent door), 59–73% of titles name a known brand, and
+the doors surfaced **300+ creators per platform absent from the
+113-creator feed** — the recurrence pool's biggest single enlargement.
+Consequence refined: the named door is the VOLUME door; discount its
+brand-owned share before reading it as third-party sentiment.
 Evidence: `analysis/wave2_analysis.json` → `platform_suffix`. Trigger:
 any platform's named-suffix card count dropping below its best
 intent-word door (would mean Google changed the routing).
@@ -353,10 +362,13 @@ bubble ×8, byoma ×7 in one creator's window) — a fifth competitor
 channel, pre-transcript; (3) sponsorship markers in descriptions are
 near-absent (2/90), consistent with F22's title-level finding —
 @-brand-tagging is the visible commercial signal.
-**Owner decision 2026-07-29: sponsorship identification is
-DEPRIORITIZED** — record disclosure when it appears in captured
-material, spend nothing hunting it; no transcript pass is commissioned
-for sponsorship's sake. Store:
+**Owner decision 2026-07-29 (refined same day): sponsorship
+identification is DEPRIORITIZED** — record disclosure when it appears,
+spend nothing hunting it. The transcript pass survives with a different
+rationale: **selective disambiguation** — transcribe a video only when
+its engagement is high AND its title is ambiguous or complaint/praise-
+coded (resonating content whose direction the title can't settle).
+Trigger-based, never blanket. Store:
 `C:\tmp\forseti-creator-dogfood-20260729\`.
 
 **F20. Competitor identification is an instrument without a step; rival
