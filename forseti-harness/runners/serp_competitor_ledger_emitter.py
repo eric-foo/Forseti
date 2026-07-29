@@ -1,4 +1,4 @@
-"""Competitor ledger emitter v0.2 (Channel 0: free-rider harvest).
+"""Competitor ledger emitter v0.3 (Channel 0: free-rider harvest).
 
 Harvests typed competitor candidates from already-captured SERP
 extractions — related searches, PAA, organic/video titles, AIO text.
@@ -18,6 +18,11 @@ a brand-or-not promotion gate (--verdicts): recurrence AMPLIFIES common
 English, so the candidate rung is only reachable through a cached
 adjudication verdict; unadjudicated recurrers hold at
 pending_adjudication, fail closed.
+
+v0.3 (queue-completion adjudication): trailing use-context compounds
+collapse to their parent entity, condition-only names fail closed,
+possessive apostrophes normalize for subject matching, and adjudicated
+self variants carry their ratified type.
 
 Two modes:
   (default)          megadogfood store: run_ledger + query_bank drive
@@ -63,7 +68,8 @@ CONTEXT_GENERIC = {
     "combination", "prone", "mature", "teen", "teens", "beginners",
     "budget", "any", "all", "summer", "winter", "baby", "men", "women",
     "kids", "everyday", "daily", "version", "body", "hand", "foot",
-    "eye", "night", "day"}
+    "eye", "night", "day", "irritated", "wound", "wounds", "scar",
+    "scars", "lips", "aging", "wrinkles", "fine", "curly"}
 
 VS_RX = re.compile(r"\s+(?:vs\.?|versus)\s+", re.I)
 OR_RX = re.compile(r"\s+or\s+", re.I)
@@ -88,9 +94,13 @@ def _norm(t):
 
 
 def sig_tokens(s):
-    toks = {t for t in re.findall(r"[a-z0-9']+", s.lower())
+    # Straight/curly/missing possessive apostrophes must describe the same
+    # brand token ("Paula's", "Paula’s", and "Paula").
+    normalized = s.lower().replace("\u2019", "'")
+    toks = {t for t in re.findall(r"[a-z0-9']+", normalized)
             if len(t) > 2 and t not in STOP}
-    return toks | {_norm(t) for t in toks}
+    return toks | {_norm(t) for t in toks} | {
+        re.sub(r"'s$", "", t) for t in toks}
 
 
 def brand_tokens(subject):
@@ -115,6 +125,24 @@ def clean(name):
         if stripped == name.strip():
             break
         name = stripped
+    # Comparison questions can put the condition before a comma and the
+    # entity after it ("better for irritated skin, Vaseline"). Retain the
+    # entity only when the lead is entirely contextual.
+    condition_lead = re.match(
+        r"^(?:better|best|good)\s+for\s+([^,]+),\s*(.+)$", name, flags=re.I)
+    if condition_lead:
+        lead_toks = sig_tokens(condition_lead.group(1))
+        if lead_toks and lead_toks <= (CONTEXT_GENERIC | GENERIC_PRODUCT):
+            name = condition_lead.group(2)
+    # Context suffixes are not separate entities. Collapse only when the
+    # whole suffix is known context/category vocabulary; otherwise preserve
+    # the candidate and fail visibly through the normal adjudication gate.
+    context = re.search(r"\s+for\s+(.+)$", name, flags=re.I)
+    if context:
+        context_toks = sig_tokens(context.group(1))
+        if context_toks and context_toks <= (
+                CONTEXT_GENERIC | GENERIC_PRODUCT):
+            name = name[:context.start()]
     name = re.sub(r"\s+(reddit|review|reviews|the|a|an)$", "", name, flags=re.I)
     name = name.strip(" .,!\"’-–—")
     words = name.split()
@@ -309,9 +337,12 @@ def main():
             v = verdicts.get((e["subject"], e["name"].lower()))
             if v == "USABLE":
                 e["rung"], e["verdict"] = "candidate", v
+            elif v == "SELF_VARIANT":
+                e["type"], e["rung"], e["verdict"] = (
+                    "self_variant", "presence", v)
             elif v is None:
                 e["rung"] = "pending_adjudication"
-            else:                            # JUNK / SELF_VARIANT / RECOVERABLE
+            else:                            # JUNK / RECOVERABLE
                 e["rung"], e["verdict"] = "presence", v
         out.append(e)
     out.sort(key=lambda e: (-e["distinct_queries"], e["subject"], e["name"]))
