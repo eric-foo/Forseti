@@ -255,11 +255,12 @@ vs/dupe/alternatives shape. What it feeds: J5 ladder/cannibalization
 reads, hero-product shaping, and succession-to-incumbent analysis —
 NEVER the external-rival reads, vs-probe queue, or axis-occupancy
 counts. Not symmetric with external types; observed in 3+ categories
-before ratification. Size binding (owner-ratified 2026-07-29):
-size/fill variants of the same formulation are ONE SKU, not
-self_variant entries — the size spread feeds the J5 ladder read, and
-J5's per-unit normalization is the guard against the known hazard
-that community comparisons rarely compare matching sizes.
+before ratification. Size binding (owner-ratified 2026-07-29, kept
+deliberately simple): one formulation = one SKU; size/fill never
+splits it, because complaints attach to what the product DOES, not
+how much of it was bought. Size spread is J5 ladder input;
+per-unit normalization handles mismatched-size comparisons. No
+further machinery.
 
 Not types: retailers, marketplaces, and ingredient INCI names are
 excluded at harvest. Creators/outlets go to the F12/F19/F21 mediator
