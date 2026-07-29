@@ -177,14 +177,15 @@ def pair_yield(parts, brand_toks, typ, surface, text):
 def harvest(texts, subject, query):
     """Yield (name, type, surface, evidence) or ('MEDIATOR', name, ...)."""
     brand_toks = brand_tokens(subject)
-    for surface, text in texts:
+    for surface, text, locator in texts:
         if not text:
             continue
         if is_outlet(text) and matches_subject(text, brand_toks):
             m = OUTLET_RX.search(text)
             handle = text[:m.start()].strip(' "\u201c')
             if 0 < len(handle.split()) <= 4:
-                yield "MEDIATOR", handle + " (" + m.group(1).lower() + ")", surface, text
+                yield ("MEDIATOR", handle + " (" + m.group(1).lower() + ")",
+                       surface, text, locator)
             continue                             # outlets never enter the ledger
         parts = VS_RX.split(text)
         if len(parts) >= 2:
@@ -230,15 +231,22 @@ def harvest(texts, subject, query):
 
 
 def packet_texts(pkt):
+    """(surface_class, text, locator_or_none) per readable row.
+
+    The locator rides along because a mediator meeting a deep-dive trigger
+    must carry a profile URL AT EMISSION (spec: grid_capture, owner-ratified
+    2026-07-29) -- recovering it later means re-reading packets, and the
+    lane's URL-rot rule exists because 3 of SF's 13 rotted unlocatable.
+    """
     texts = []
     for r in pkt["rows"]:
         cls = ("serp_question_layer" if r["module_type"] in
                ("people_also_ask", "related_search") else "serp_result_title")
-        texts.append((cls, r.get("title")))
+        texts.append((cls, r.get("title"), r.get("canonical_url")))
     aio = pkt.get("ai_overview") or {}
     if aio.get("present"):
         texts.append(("serp_aio", " ".join(
-            str(v) for v in aio.values() if isinstance(v, str))))
+            str(v) for v in aio.values() if isinstance(v, str)), None))
     return texts
 
 
@@ -320,13 +328,16 @@ def main():
             ROOT / "analysis" / "competitor_ledger_v0.json")
 
     entries = defaultdict(lambda: {"sources": []})
-    mediators = defaultdict(set)
+    mediators = defaultdict(lambda: {"subjects": set(), "locators": set()})
     probes = 0
     for subject, category, query, texts in probes_iter:
         probes += 1
         for item in harvest(texts, subject, query):
             if item[0] == "MEDIATOR":
-                mediators[item[1]].add(subject)
+                med = mediators[item[1]]
+                med["subjects"].add(subject)
+                if item[4]:
+                    med["locators"].add(item[4])
                 continue
             name, typ, surface, evidence = item
             key = (subject, name.lower(), typ)
@@ -365,8 +376,55 @@ def main():
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"probes_scanned": probes, "entries": out,
-               "mediators": {k: sorted(v) for k, v in
+               "mediators": {k: sorted(v["subjects"]) for k, v in
                              sorted(mediators.items())}}
+    # grid_capture queue (spec: two-phase shape, owner-ratified 2026-07-29).
+    # Phase 1 never visits a platform; it only TAGS mediators whose entry
+    # meets a deep-dive trigger, and the existing social capture runners'
+    # input queue consumes them.
+    #
+    # Only ONE of the spec's four triggers is emitter-decidable: "creator
+    # recurs on 2+ subjects". The other three -- the row carries a statement
+    # a read would weight, the row is an axis/answer-slot's only occupant,
+    # #ad-convergence needs checking -- are read-time judgments, so a reader
+    # adds those tags. This queue is therefore a floor, not the whole set,
+    # and says so in its own payload.
+    grid_queue = []
+    for name, med in sorted(mediators.items()):
+        subjects = sorted(med["subjects"])
+        if len(subjects) < 2:
+            continue
+        locs = sorted(med["locators"])
+        grid_queue.append({
+            "mediator": name,
+            "trigger": "recurs_on_2plus_subjects",
+            "subjects": subjects,
+            "profile_url_or_none": locs[0] if locs else None,
+            "locator_status": ("card_url_at_emission" if locs
+                               else "unavailable_at_emission"),
+            "all_locators": locs,
+        })
+    payload["grid_capture_queue"] = {
+        "emitted_triggers": ["recurs_on_2plus_subjects"],
+        "reader_added_triggers": [
+            "row carries a statement a read would weight",
+            "row is an axis/answer-slot's only occupant",
+            "#ad-convergence needs checking"],
+        "non_claims": [
+            "phase 1 never visits a platform and never weights a raw "
+            "social count (spec, owner-ratified 2026-07-29)",
+            "profile_url_or_none is the card locator observed at emission, "
+            "not a verified profile URL; unavailable is recorded, never "
+            "guessed",
+            "the recurs-on-2+-subjects trigger is CROSS-SUBJECT and cannot "
+            "fire inside a single-subject phase-1 pass; the lane-level "
+            "recurrence derivation owns it (serp_recurring_creator_feed) "
+            "and this queue is empty by construction in scout mode",
+            "this emitter's mediator population is OUTLET_RX-derived "
+            "(\"<handle> on <platform>\" in a title) and is thinner than "
+            "the video-card creator population the recurrence feed reads"],
+        "entries": grid_queue,
+    }
     if mediator_class_gate:
         # Parallel map, not a shape change: existing consumers keep reading
         # mediators as name -> subjects.
@@ -381,7 +439,8 @@ def main():
     print(f"probes scanned: {probes}; entries: {len(out)} "
           f"({n_cand} candidate, {n_pend} pending_adjudication, "
           f"{len(out) - n_cand - n_pend} presence); "
-          f"mediators routed: {len(mediators)} -> {out_path}")
+          f"mediators routed: {len(mediators)} "
+          f"({len(grid_queue)} grid_capture-tagged) -> {out_path}")
     if n_pend:
         print(f"!! {n_pend} recurring entries lack a brand-or-not verdict; "
               f"adjudicate and append to the verdicts cache, then re-run")

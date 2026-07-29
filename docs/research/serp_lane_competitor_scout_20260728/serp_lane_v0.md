@@ -1,4 +1,4 @@
-# SERP Lane v0 — living state — updated 2026-07-28
+# SERP Lane v0 — living state — updated 2026-07-30
 
 The single current surface for the Google SERP capture lane. Detailed
 evidence records stay in their run folders; THIS file owns current truth.
@@ -39,6 +39,13 @@ capture opens them. SERP output is never composition evidence by itself.
 ## Findings ledger
 
 Format: F# | status: active / lead / withdrawn | evidence | change-trigger.
+
+**F-numbers are allocated HERE and only here.** This file owns the cells;
+satellites (the spec, axis docs, handoffs) POINT at them and must not mint
+or restate them. Two lanes minted F23 independently on 2026-07-29 — this
+ledger for the platform doors, `competitor_ledger_spec_v0.md` for an
+`alternatives` under-crediting claim — because nothing said where numbers
+come from. **Next free: F26.**
 
 **Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
 carrying a full-bank trigger were re-decided against **986/986 captures /
@@ -95,6 +102,95 @@ second consecutive block or third block in the run writes
 `serp_fullbank_analysis/block_decay.py`). Trigger: a counter-case where
 a probation step-back plus the fixed idle separates rate from flag
 decay.
+
+**F2c. Sustained TRAILING LOAD is the variable that separates blocks
+from clean captures — instantaneous rate is not.** active (new
+2026-07-30). Evidence: pooled diagnosis over **all 1714 Google capture
+events across every run directory** (the route is per-IP, so run folders
+are not independent samples), 14 blocks, base rate **0.82%/capture**:
+- **trailing 1h: blocked median 42 vs clean median 39 — no separation.**
+  Rate is definitively not the variable, closing what F1 assumed.
+- **trailing 6h: 249 vs 172. trailing 24h: 818 vs 660 — both separate.**
+It is a GRADIENT, not a gate: the route ran clean at **961 captures/24h
+and 325/6h**, above most blocks, so no threshold is established and none
+should be quoted. Blocks also cluster rather than arrive independently.
+Consequence: budget the DAY, not the minute — a slower cadence at the
+same daily total buys nothing, while a lighter day does.
+Evidence: `analysis/fullbank_block_diagnosis.json` (sealed; derivation
+`serp_fullbank_analysis/block_diagnosis.py`). Trigger: a block at
+trailing-24h under ~200, or a clean run materially past 961/24h.
+
+**The 2026-07-30 00:14 block, diagnosed.** Ruled OUT: the runner
+(`dogfood10_runner.py`'s capture invocation is byte-identical to the
+orchestrator's, which took 1558 clean captures); the rate (trailing 1h =
+**1 capture**); a hot retry (4h06m idle before it). Confirmed: the
+packet landed on `google.com/sorry/index` — the interstitial, not a
+degraded page. What is left is unsatisfying and worth stating plainly:
+it fired at **capture #1 of its session** with the LOWEST trailing-6h
+load (121) of any recent block, on a route carrying 650 captures/24h
+after three consecutive high-volume days. Best available reading — the
+route's standing reputation is depressed by sustained load, so a cold
+start now trips where it used to pass; ordinary stochasticity (0.82%
+base rate) covers the rest. **Not established**, and the cheap test is
+free: a genuinely quiet day (<100 captures/24h) followed by a cold
+start. If that starts clean, reputation-recovery is real and the
+operating rule becomes a daily budget with recovery days.
+
+**F25. `vs` / `dupe` / `alternatives` do NOT cannibalise each other;
+the apparent effect is a shape-set-size artifact.** active (new
+2026-07-30; homes a claim that arrived from the concurrent lane without
+a cell of its own). The claim was that the three shapes eat each other
+when co-present, leaving `alternatives` under-credited. Tested two ways
+on 33 subjects carrying all three:
+- **Mutual overlap refutes the mechanism.** Pairwise question-set
+  Jaccard among the trio is **0.096** against **0.092** for all other
+  shape pairs (n=99 vs n=8280). They duplicate each other no more than
+  any two unrelated shapes — the opposite of the F5 review-family
+  signature, which is how mutual duplication actually looks.
+- **The number that started it is real, and design-relative.**
+  `alternatives` unique share is **0.476 in the 11-shape design** and
+  **0.747 in the 9-shape design** (which carries neither `vs_rival` nor
+  `dupe`). The concurrent lane's "0.749" was the P9 figure quoted
+  without its design. Unique share is depressed by a larger competing
+  shape set — the methodology caveat this ledger already carries — so
+  removing ANY two shapes lifts the rest, and the lift is not evidence
+  of cannibalisation by those two specifically.
+**Board consequence: none.** All three keep their slots; nothing is
+under-credited once compared within a fixed design. Evidence:
+`analysis/fullbank_shape_cannibalisation.json` (sealed; derivation
+`serp_fullbank_analysis/shape_cannibalisation.py`). Trigger: trio
+pairwise overlap exceeding the all-pairs baseline by >0.05 in any
+stratum.
+
+**F2b consumer audit (2026-07-30) — first reading WITHDRAWN, corrected
+same turn.** The doctrine was landed in the megadogfood orchestrator
+only, and the very next run proved that insufficient: `dogfood10_runner`
+still carried the old 12–15-min re-probe policy and used it on its first
+block. Patched, and the policy moved to a shared home
+(`serp_egress_cadence.rung_after_block` / `should_ping_owner` /
+`write_owner_ping`, 13 contract tests).
+
+**The alarming part of the first audit was false and is withdrawn.** It
+claimed 9 runners "would re-probe a live flag," inferred from a marker
+grep rather than from reading their block branches. Reading them: every
+one stops immediately — `return_leg_runner` and `tower28_scout` break on
+the stop signal, `run_capture_queue` returns 2 "without retry",
+`window_probe_runner` stops on first block, `beauty_ext_runner` is
+strictest of all ("a block is the answer to the experiment, not a
+failure to work around"), `probe_vs_oh` and `retry_blocked` are
+supervised one-shots, and the two extractors only classify. **Pause-and-
+continue existed in exactly two runners — the two long-running
+orchestrators — and both now carry the policy.** There was never a fleet
+foot-gun.
+
+What survives: the shared helper earns its place by de-duplicating the
+policy across the only two runners that need it and giving the next
+long-running orchestrator a tested one to import — not by averting a
+danger that did not exist. The two existing runners keep their
+equivalent inline policy until next touched; rewiring live capture code
+for zero behavior change is churn. Method note worth keeping: a marker
+grep is not a behavior audit, and this cell asserted a fleet-wide risk
+from one before reading a single block branch.
 
 **F3. Once flagged, recovery is slow and stochastic; prevention beats
 reaction.** active — CORRECTED 2026-07-29; series SEALED same day.
@@ -179,9 +275,20 @@ active. Evidence: anchor thread `19eo5it` ground truth (50/50 by count,
 label AIO-derived sentiment "rendered-surface sentiment"; composition
 claims require native capture. Trigger: a second thread audit disagreeing.
 
-**F11. Issue-led queries are steadier and richer than brand-led.** lead.
-Evidence: issue twins 85–100% question overlap; issue shapes high unique
-share — but small n. Trigger: full-bank issue strata results.
+**F11. Issue-led queries are richer per probe than product-led.** active
+— RE-JUDGED 2026-07-29 wave 2, promoted lead → active on its own
+trigger (full-bank issue strata). Evidence: issue designs saturate
+faster than product designs on the same measure — 80% of questions at
+**4.83–5.36 shapes vs 6.21–7.42** — on **n=28 and n=29** issue subjects
+(roughly double revision 1's n=20–21), so this is now well-powered.
+`analysis/fullbank_fixed_design.json` (I7/I8 vs P9/P11).
+**Scope correction:** the panel headline said "steadier AND richer" on
+the strength of issue twins showing 85–100% question overlap. Only the
+RICHER half is re-judged here. F24 measured twin stability directly and
+found no issue-vs-product split worth claiming, so **"steadier" is
+withdrawn** — this cell supports fewer probes per issue subject, nothing
+about stability. Trigger: a stratum needing more shapes than the product
+designs for the same saturation.
 
 **F12. Mediation concentration is a category property; track outlets.**
 active — RE-JUDGED 2026-07-29 COMPLETE bank: HELD, promoted lead →
@@ -193,11 +300,19 @@ queries) marks a mediator for native follow-through. Evidence:
 `analysis/fullbank_social_and_axes.json`. Trigger: the top mediator
 falling below 5 subjects in a later pass.
 
-**F13. Maturity-scaled question-layer trust.** WITHDRAWN 2026-07-27.
+**F13. Maturity-scaled question-layer trust.** WITHDRAWN 2026-07-27,
+**revisit trigger fired and the withdrawal is now POSITIVE 2026-07-30.**
 Was protocol v1.2 rule 3. Failed direct replication (Byoma 41% vs 100%
-same-hour, same entity, same instrument). Replacement: twin-capture any
-claim-bearing query regardless of entity age. Trigger to revisit: ≥3 twin
-pairs per entity per maturity class.
+same-hour, same entity, same instrument). The trigger asked for ≥3 twin
+pairs per maturity class; wave 2's 60 pairs deliver 5–22 per class, and
+the claim does not merely fail to replicate — the ordering is inverted
+and flat. Median A/B question stability: **young 1.000, very_new 1.000,
+issue 1.000, mass_mature 0.917, established 0.846**. The youngest
+entities are the MOST stable, and every class sits inside the F24 noise
+floor, so maturity is not a trust axis at all. Replacement stands:
+twin-capture any claim-bearing query regardless of entity age. Evidence:
+`analysis/wave2_analysis.json` → `twins.f13_stability_by_maturity`.
+Trigger to revisit: a class separating by more than the F24 floor.
 
 **F14. Quoted-operator AIO suppression.** WITHDRAWN 2026-07-27 (ruleset
 dogfood: identical AIOs with and without quotes, both entities).
@@ -358,21 +473,33 @@ F12 from outlets to creators. **Non-claim: recurrence evidences reach,
 not independence — sponsorship is not observable from titles.**
 Evidence: `analysis/fullbank_social_and_axes.json`. Trigger: the list
 shrinking at a larger corpus, or an editorial outlet entering the top 10.
-Routing (owner-decided 2026-07-29): the layer feeds the TikTok
-discovery-frontier funnel as CANDIDATE INPUT, never direct registry
-insertion — `serp_recurring_creator_feed_v0.json` (this folder) carries
-all 113 with the why (subjects, counts, scope) and recovered TikTok
-handles (20/24). The frontier's scan-receipt register and owner
+Routing (RECONCILED 2026-07-30 to the ratified spec route): the layer
+emits **`grid_capture` tags** per `competitor_ledger_spec_v0.md`
+(owner-ratified 2026-07-29) — the spec's first deep-dive trigger IS this
+cell's criterion, "creator recurs on 2+ subjects". That trigger is
+CROSS-SUBJECT, so it cannot fire inside a single-subject phase-1 pass;
+this lane-level derivation is where it fires, and
+`serp_recurring_creator_feed_v0.json` is its emission (113 entries with
+subjects, scope, and profile URL where an observed card URL supplied one
+— 20 of 24 TikTok). The existing social capture runners' input queue
+consumes tagged entries; **phase 1 never visits a platform and never
+weights a raw social count.** The other three triggers (a statement a
+read would weight, an axis/answer-slot's only occupant, #ad-convergence)
+are read-time judgments a reader adds. Never direct registry insertion. The frontier's scan-receipt register and owner
 disposition batches are NOT written by this lane: a SERP-recurrence
 observation is not a TikTok scan, and dispositions are owner acts.
-YouTube (73) and Instagram (16) have no admission path — typed gap.
+YouTube's gap is ROUTED (2026-07-30): `docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md` commissions the admission path on the TikTok lane's mechanism with the Shorts/long-form axis typed. Instagram (16) remains an unrouted typed gap.
 **Capture-spine dogfood 2026-07-29 (3 creators, `new_capture`
 assessment mode, owner session):** the feed→spine pipe works end to end.
 Per creator the lane returned profile metrics + a 30-video grid with
 play counts and full descriptions. CI yield on the three questions:
 (1) engagement separates cleanly — natalie_oneillll median
 plays/follower 0.204 vs drdrayzday 0.049 and skincarewithshelbs 0.047,
-so recurrence rank ≠ audience pull; (2) video DESCRIPTIONS already
+so recurrence rank ≠ audience pull. **UNBASELINED under the ratified
+engagement rule** (spec, 2026-07-29): social engagement may be weighted
+only against the creator's own recent-grid median, never compared across
+creators or platforms. These figures are raw observation about who to
+prioritise for capture, and license no corroboration weight on any row; (2) video DESCRIPTIONS already
 carry competitor names the SERP harvest never saw (Goodal, Purito,
 Billie, Athena Club) plus dense in-corpus mentions (innisfree ×9,
 bubble ×8, byoma ×7 in one creator's window) — a fifth competitor
@@ -735,3 +862,41 @@ import for in-run counts.
   `forseti-harness/source_capture/google_serp_content.py`; `bin/extract_serp_v2.py`
   remains the reference the port was proved against, not a second
   implementation to maintain in parallel.
+- 2026-07-29 (wave 1, full bank 986/986): **F17 WITHDRAWN** — `vs {rival}`
+  leads the question axis only; it does not reach the social top ten.
+  F4 revised 0.889 → 0.782 → **0.821** at n=33 (the intermediate
+  "wide margin withdrawn" call came from a cross-stratum blend and is
+  itself withdrawn). F6 re-judged: revision 1's "weakened" was a
+  coverage artifact of an issue-light 888. F5, F7, F12, F15, F16, F18,
+  F19, F20, F21 held with revised numbers; F12 and F15 promoted
+  lead → active. **F22 opened** (video-card content differs by platform).
+  Evidence: `fullbank_analysis_findings_v0.md` rev 2.
+- 2026-07-29 (wave 2, 572/572): **F23 and F24 opened** — naming the
+  platform IS the door (TT 17.2 / IG 13.5 / YT 11.9 cards per probe vs
+  reddit 7.7), and the SERP noise floor is measured (0.863 same-run,
+  0.809 cross-day question agreement). F6 tournament-ranked:
+  `made_it_worse` and `bad_for_you` enter the board, **`complaints` and
+  `regret` cut**. F8 revised at n=60 (4h decay 0.86, not the panel's
+  0.71). F2 sharpened, F2b opened.
+- 2026-07-30: **F2c opened** (trailing load separates blocks, rate does
+  not — 1714 pooled events). F2b's own consumer-audit claim WITHDRAWN
+  (asserted a fleet-wide re-probe risk from a marker grep; reading the
+  block branches showed every other runner already stops dead).
+  **F11 unstaled** — it sat at `lead` with panel-era evidence while the
+  findings note had re-judged it; now active at n=28/29, and its
+  "steadier" half is withdrawn because F24 measured stability directly.
+  **F13's revisit trigger fired and its withdrawal turned positive** —
+  maturity does not scale question-layer trust; the ordering is inverted
+  and inside the noise floor. **F25 opened**, homing a claim that arrived
+  from the concurrent lane without a cell: the vs/dupe/alternatives trio
+  does NOT cannibalise (pairwise overlap 0.096 vs 0.092 baseline); the
+  0.749 that prompted it is the real P9-design figure quoted without its
+  design.
+- 2026-07-30 (cross-lane): PR #1383 landed 20+ owner-ratified rulings on
+  this folder from a concurrent lane after #1384 merged. Reconciled:
+  the creator layer now emits the spec's ratified `grid_capture` shape
+  rather than a parallel feed; social engagement figures carry
+  `UNBASELINED`; the phase-1 handoff return contract carries the tag and
+  the URL-rot rule. Cause fixed at source — **F-number allocation is now
+  stated to live in this file only**, and the spec's restated figures
+  were replaced by pointers rather than policed by a new sync step.

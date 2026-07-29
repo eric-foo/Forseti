@@ -181,5 +181,16 @@ target and a review axis-to-attack, not a review pass bar.
   cache pattern mirrors the candidate gate). Attachment (2-day rule) and
   kind are separate judgments — consumers act oppositely on a derm vs an
   affiliate farm.
+- `grid_capture_queue`: mediator entries meeting a deep-dive trigger,
+  each with `profile_url_or_none` + `locator_status` AT EMISSION (spec,
+  owner-ratified 2026-07-29; the URL-rot rule applies — 3 of SF's 13
+  rotted unlocatable). Reader-added triggers: a row carrying a statement
+  a read would weight, a row that is an axis/answer-slot's only
+  occupant, #ad-convergence needing a check. The recurs-on-2+-subjects
+  trigger is cross-subject and fires at lane level, not in this pass.
+  **Phase 1 never visits a platform and never weights a raw social
+  count**; any engagement figure is weighted only against the creator's
+  own recent-grid median and is `UNBASELINED` otherwise. Doubt withholds
+  the multiplier, never the evidence.
 - `blocks`: count and detail, or `0 blocks in N captures`.
 - `artifacts`: staging paths written.
