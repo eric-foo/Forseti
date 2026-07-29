@@ -426,14 +426,22 @@ that is the Understanding-phase entry point. Evidence:
 `analysis/fullbank_social_and_axes.json` → `f21_classification`.
 Trigger: bridging share falling below 25%.
 
-## Current default boards (from F4–F8, F16–F18)
+## Current default boards (v2, 2026-07-29 — from F4–F8, F16–F18, F23,
+F24, and the F6 tournament; owner-ratified: run all three tied complaint
+shapes)
 
-Product subject (6 probes, one session) — covers both axes:
-`{s} review` · `{s} vs {rival}` · `{s} side effects` (or `not working`) ·
-`{s} reddit` · `{s} dupe` (or `alternatives`) · `is {s} worth it`
-Axis note: `vs`/`dupe`/`worth it` carry the TikTok/IG door, `review` the
-YouTube door, `reddit` the community door — the board is social-complete
-as-is. Swap in `{s} before and after` when Instagram specifically matters.
+Product subject — CORE (8 probes, one session):
+`{s} vs {rival}` (harvested rival only, F20) · `{s} review` ·
+`{s} side effects` · `{s} made it worse` · `{s} not working` ·
+`is {s} bad for you` · `{s} reddit` · `{s} dupe` (or `alternatives`)
+Cut from boards permanently: `{s} complaints`, `regret buying {s}`
+(tournament losers — their content arrives via the kept probes).
+
+Product subject — REACH extension (+3, when the subject's social layer
+matters): `{s} tiktok` · `{s} youtube` · `{s} instagram` (F23: the
+named-platform doors, ~4x any intent door in third-party cards; discount
+the 15–31% brand-own-account share before reading sentiment; richest
+creator-discovery surface we have).
 
 Issue subject (6 probes, one session) — question-rich but social-poor
 (F16): `{i}` · `what causes {i}` · `how to fix {i}` ·
@@ -442,10 +450,12 @@ When an issue needs its creator layer, add ONE product-side social probe
 (`vs` or `dupe` on the issue's leading product) rather than more issue
 phrasings.
 
-Twin-capture the probe whose composition will bear a claim. At 15–20/hr:
-~2.5 subjects/hour, ~16+ subjects/working day. Creator recurrence (F19)
-accrues automatically; review the 2+-subject list each analysis pass for
-native follow-through.
+Twin-capture the probe whose composition will bear a claim (F24: any
+domain-presence claim needs sightings on 2+ days; unique-share gaps
+<0.08 are ties). Creator recurrence (F19) accrues automatically — and
+runs ~3x wider when the reach extension is on (F23 surfaced 300+ unseen
+creators per platform); review the 2+-subject list each analysis pass
+for native follow-through.
 
 ## Instruments (current versions)
 
