@@ -284,6 +284,14 @@ def main():
                          "entry reaches the candidate rung without a cached "
                          "brand-or-not verdict. Unadjudicated entries hold at "
                          "pending_adjudication (fail closed), never candidate.")
+    ap.add_argument("--mediator-classes",
+                    help="mediator classification cache JSON. An anchor's "
+                         "attachment (2+ days, F24) says nothing about its "
+                         "KIND, and consumers act oppositely on a "
+                         "professional_creator vs an affiliate_outlet vs a "
+                         "brand_owned account. Uncached mediators emit "
+                         "pending_classification (fail visible, like the "
+                         "candidate gate).")
     args = ap.parse_args()
 
     verdicts = {}
@@ -291,6 +299,12 @@ def main():
         vd = json.loads(Path(args.verdicts).read_text(encoding="utf-8"))
         verdicts = {(v["subject"], v["name"].lower()): v["verdict"]
                     for v in vd["verdicts"]}
+
+    med_classes = {}
+    if args.mediator_classes and Path(args.mediator_classes).exists():
+        mc = json.loads(Path(args.mediator_classes).read_text(encoding="utf-8"))
+        med_classes = {m["name"].lower(): m["class"]
+                       for m in mc["mediators"]}
 
     if args.extractions:
         if not args.subject:
@@ -348,11 +362,17 @@ def main():
     out.sort(key=lambda e: (-e["distinct_queries"], e["subject"], e["name"]))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"probes_scanned": probes, "entries": out,
+               "mediators": {k: sorted(v) for k, v in
+                             sorted(mediators.items())}}
+    if med_classes:
+        # Parallel map, not a shape change: existing consumers keep reading
+        # mediators as name -> subjects.
+        payload["mediator_classes"] = {
+            k: med_classes.get(k.lower(), "pending_classification")
+            for k in sorted(mediators)}
     out_path.write_text(
-        json.dumps({"probes_scanned": probes, "entries": out,
-                    "mediators": {k: sorted(v) for k, v in
-                                  sorted(mediators.items())}},
-                   indent=1, ensure_ascii=False), encoding="utf-8")
+        json.dumps(payload, indent=1, ensure_ascii=False), encoding="utf-8")
 
     n_cand = sum(1 for e in out if e["rung"] == "candidate")
     n_pend = sum(1 for e in out if e["rung"] == "pending_adjudication")

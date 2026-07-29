@@ -318,7 +318,12 @@ Same-run A/B: questions Jaccard mean **0.863** (median 0.917, p10
 domains **0.734** — domain churn is ~2x question churn across days.
 Per-shape volatility spans 0.69–0.94: `vs_rival` **0.69** (most
 volatile), `side_effects` **0.943** (most stable), `reddit_suffix`
-0.925. **Doctrine this installs:** (a) unique-share gaps under ~0.08
+0.925. Mechanism note: the churn is head-stable, tail-auditioning —
+top positions are locked by accumulated signals while positions ~7–15
+rotate near-threshold pages through one-day auditions, and our capture
+window cuts across that audition zone; so one sighting is often an
+audition, not a tenant, while a top-3 presence is far more stable than
+the aggregate churn number suggests. **Doctrine this installs:** (a) unique-share gaps under ~0.08
 within a fixed design are NOT distinguishable — treat such rankings as
 ties (applied in F6); (b) any finding resting on a specific DOMAIN's
 presence needs 2+ captures on different days before it is

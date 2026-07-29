@@ -172,6 +172,11 @@ target and a review axis-to-attack, not a review pass bar.
   ladder.
 - `levers`: J1 cross (live / not observed), J2 exit-door class, J3 tags.
 - `trigger_thread_queue`: URLs handed to the Reddit lane.
-- `mediators`: outlets and creators (never ledger entries).
+- `mediators`: outlets and creators (never ledger entries), each with a
+  `class` — `professional_creator` / `affiliate_outlet` / `editorial` /
+  `brand_owned` / `pending_classification` (uncached names fail visible;
+  cache pattern mirrors the candidate gate). Attachment (2-day rule) and
+  kind are separate judgments — consumers act oppositely on a derm vs an
+  affiliate farm.
 - `blocks`: count and detail, or `0 blocks in N captures`.
 - `artifacts`: staging paths written.
