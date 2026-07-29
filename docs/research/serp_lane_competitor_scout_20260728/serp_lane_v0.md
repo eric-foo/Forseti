@@ -45,7 +45,7 @@ satellites (the spec, axis docs, handoffs) POINT at them and must not mint
 or restate them. Two lanes minted F23 independently on 2026-07-29 — this
 ledger for the platform doors, `competitor_ledger_spec_v0.md` for an
 `alternatives` under-crediting claim — because nothing said where numbers
-come from. **Next free: F28.**
+come from. **Next free: F29.**
 
 **Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
 carrying a full-bank trigger were re-decided against **986/986 captures /
@@ -135,6 +135,31 @@ base rate) covers the rest. **Not established**, and the cheap test is
 free: a genuinely quiet day (<100 captures/24h) followed by a cold
 start. If that starts clean, reputation-recovery is real and the
 operating rule becomes a daily budget with recovery days.
+
+**F28. Visual provenance stops at the fold, exactly where the
+social-SEO modules begin.** active (new 2026-07-30). Every packet stores
+the full rendered DOM (~1.2MB), so WHAT was on the page is fully
+evidenced. But the screenshot is `screenshot_mode: viewport` at
+**1280x720 with `scroll_passes: 0`** — the top 720px only. Google's
+video carousels and social blocks generally sit BELOW that fold, so the
+lane's visual record does not cover the region F18/F22/F23 make claims
+about, and `rendered prominence` — which the ratified engagement rule
+now leans on harder after the F27 amendment — has DOM evidence but no
+picture. This matters because Google changes SERP layout: the DOM proves
+the module existed, a screenshot proves how it was presented, and only
+the second survives a re-render of what the page looked like. Fix is a
+knob, not a build: the capture runner already accepts `scroll_passes` /
+`scroll_step_px` / `scroll_target_selector`, but they are currently
+driven only by the retail capture profiles and are not reachable for the
+SERP route. Routed to the capture lane (owner of
+`run_source_capture_cloakbrowser_packet.py`, and the runner PR #1386
+touches). Cost estimate: full-page SERP screenshots run several hundred
+KB to ~1.5MB against the current 125KB, and raw capture data lives on
+the operator drive. **Non-claim: existing captures are NOT re-shootable**
+— a screenshot cannot be recovered post-hoc, so everything captured
+before this is fixed keeps fold-limited visual provenance permanently.
+Trigger: the capture lane exposing the scroll/full-page path for the
+SERP route.
 
 **F26. A 30-video creator grid covers 1 month or 4 years depending on
 the creator; cadence, not grid depth, decides whether an old SERP hit is
