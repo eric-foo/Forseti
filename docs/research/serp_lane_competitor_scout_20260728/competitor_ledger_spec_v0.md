@@ -132,7 +132,10 @@ choices cannot SET an axis.
 What a single evidence read EMITS, so output completeness does not
 vary by agent. A **native-thread read** emits: (1) the dupe-economy
 position line; (2) complaint-axis rows (posture-gated, per-SKU,
-per-attribute, contested marks where defended); (3) competitor-ledger
+per-attribute, contested marks where defended; a complaint body
+naming only the BRAND files to a thin brand-level line — owner-
+ratified 2026-07-29 — which is reported alongside but never folded
+into any SKU's axes); (3) competitor-ledger
 rows (channels/types above); (4) posture-gated signal rows
 (clarification-demand with resolution, axis-forfeiture alerts);
 (5) held/excluded rows with stated reasons. A **SERP-only read**
@@ -252,7 +255,11 @@ vs/dupe/alternatives shape. What it feeds: J5 ladder/cannibalization
 reads, hero-product shaping, and succession-to-incumbent analysis —
 NEVER the external-rival reads, vs-probe queue, or axis-occupancy
 counts. Not symmetric with external types; observed in 3+ categories
-before ratification.
+before ratification. Size binding (owner-ratified 2026-07-29):
+size/fill variants of the same formulation are ONE SKU, not
+self_variant entries — the size spread feeds the J5 ladder read, and
+J5's per-unit normalization is the guard against the known hazard
+that community comparisons rarely compare matching sizes.
 
 Not types: retailers, marketplaces, and ingredient INCI names are
 excluded at harvest. Creators/outlets go to the F12/F19/F21 mediator
@@ -624,6 +631,11 @@ not a lane edit.
    generic-commodity question as a harvest exclusion with
    commodity-exit routing (see the types section); the non-beauty
    vertical fit of rival/anchor_up remains open.
-2. Candidate threshold (2+ queries) and stale window (2 passes).
-3. Whether `substitute_down` should ever be SERP-emittable (currently
-   complaint-only by definition).
+2. Candidate threshold (2+ queries) and stale window (2 passes) —
+   FOLDED (owner, 2026-07-29) into the full-bank executor lane's
+   follow-up: tune empirically against the 649-probe / 111-candidate
+   adjudicated harvest, not by rule.
+3. ~~Whether `substitute_down` should ever be SERP-emittable~~ —
+   CLOSED (owner-ratified 2026-07-29): complaint-only stands. The
+   full bank confirmed it empirically: zero SERP emissions at 649
+   probes.
