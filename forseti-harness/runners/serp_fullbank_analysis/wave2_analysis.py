@@ -139,9 +139,25 @@ for r in twin_rows:
     if r.get("q_jaccard_AB") is not None:
         by_shape_q[r["shape"]].append(r["q_jaccard_AB"])
 
+# F13's revisit trigger: >=3 twin pairs per maturity class. The withdrawn
+# cell claimed question-layer trust scales with entity maturity; with the
+# classes now covered, this either revives it or refutes it positively
+# instead of resting on one failed replication.
+by_maturity = collections.defaultdict(list)
+for r in twin_rows:
+    if r.get("q_jaccard_AB") is None:
+        continue
+    by_maturity[by_id[r["orig"]].get("subject_maturity")].append(
+        r["q_jaccard_AB"])
+maturity_stability = {
+    m: {"n": len(v), "median": round(sorted(v)[len(v) // 2], 3),
+        "mean": round(sum(v) / len(v), 3)}
+    for m, v in sorted(by_maturity.items()) if v}
+
 twins = {
     "same_run_4p5h_apart": {"questions": agg("q_jaccard_AB"),
                             "domains": agg("d_jaccard_AB")},
+    "f13_stability_by_maturity": maturity_stability,
     "cross_day_vs_original": {"questions": agg("q_jaccard_origA"),
                               "domains": agg("d_jaccard_origA")},
     "per_shape_q_jaccard_AB": {k: round(sum(v) / len(v), 3)
@@ -184,6 +200,8 @@ print(json.dumps(twins["same_run_4p5h_apart"], indent=1))
 print("cross-day:", json.dumps(twins["cross_day_vs_original"]))
 print("per-shape A/B question jaccard:",
       json.dumps(twins["per_shape_q_jaccard_AB"]))
+print("F13 stability by maturity:",
+      json.dumps(twins["f13_stability_by_maturity"]))
 print("\n### PLATFORM SUFFIX")
 for s in SUFFIX:
     if s in platform:

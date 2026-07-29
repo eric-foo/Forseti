@@ -249,9 +249,20 @@ active. Evidence: anchor thread `19eo5it` ground truth (50/50 by count,
 label AIO-derived sentiment "rendered-surface sentiment"; composition
 claims require native capture. Trigger: a second thread audit disagreeing.
 
-**F11. Issue-led queries are steadier and richer than brand-led.** lead.
-Evidence: issue twins 85–100% question overlap; issue shapes high unique
-share — but small n. Trigger: full-bank issue strata results.
+**F11. Issue-led queries are richer per probe than product-led.** active
+— RE-JUDGED 2026-07-29 wave 2, promoted lead → active on its own
+trigger (full-bank issue strata). Evidence: issue designs saturate
+faster than product designs on the same measure — 80% of questions at
+**4.83–5.36 shapes vs 6.21–7.42** — on **n=28 and n=29** issue subjects
+(roughly double revision 1's n=20–21), so this is now well-powered.
+`analysis/fullbank_fixed_design.json` (I7/I8 vs P9/P11).
+**Scope correction:** the panel headline said "steadier AND richer" on
+the strength of issue twins showing 85–100% question overlap. Only the
+RICHER half is re-judged here. F24 measured twin stability directly and
+found no issue-vs-product split worth claiming, so **"steadier" is
+withdrawn** — this cell supports fewer probes per issue subject, nothing
+about stability. Trigger: a stratum needing more shapes than the product
+designs for the same saturation.
 
 **F12. Mediation concentration is a category property; track outlets.**
 active — RE-JUDGED 2026-07-29 COMPLETE bank: HELD, promoted lead →
@@ -263,11 +274,19 @@ queries) marks a mediator for native follow-through. Evidence:
 `analysis/fullbank_social_and_axes.json`. Trigger: the top mediator
 falling below 5 subjects in a later pass.
 
-**F13. Maturity-scaled question-layer trust.** WITHDRAWN 2026-07-27.
+**F13. Maturity-scaled question-layer trust.** WITHDRAWN 2026-07-27,
+**revisit trigger fired and the withdrawal is now POSITIVE 2026-07-30.**
 Was protocol v1.2 rule 3. Failed direct replication (Byoma 41% vs 100%
-same-hour, same entity, same instrument). Replacement: twin-capture any
-claim-bearing query regardless of entity age. Trigger to revisit: ≥3 twin
-pairs per entity per maturity class.
+same-hour, same entity, same instrument). The trigger asked for ≥3 twin
+pairs per maturity class; wave 2's 60 pairs deliver 5–22 per class, and
+the claim does not merely fail to replicate — the ordering is inverted
+and flat. Median A/B question stability: **young 1.000, very_new 1.000,
+issue 1.000, mass_mature 0.917, established 0.846**. The youngest
+entities are the MOST stable, and every class sits inside the F24 noise
+floor, so maturity is not a trust axis at all. Replacement stands:
+twin-capture any claim-bearing query regardless of entity age. Evidence:
+`analysis/wave2_analysis.json` → `twins.f13_stability_by_maturity`.
+Trigger to revisit: a class separating by more than the F24 floor.
 
 **F14. Quoted-operator AIO suppression.** WITHDRAWN 2026-07-27 (ruleset
 dogfood: identical AIOs with and without quotes, both entities).
