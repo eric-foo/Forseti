@@ -9,6 +9,11 @@ default awaiting the full-bank ledger and owner vocabulary review.
 Standing constraints apply: counts of observed cards only, never
 volume/share/prevalence; US-parameterized is not physically US-local;
 presence on a comparison surface is CITING, not switching (the L6 rule).
+Subject binding (owner-ratified 2026-07-29): every subject commission
+names its binding — exactly one formulation (the hero SKU; siblings
+are `self_variant`); a deliberately brand-level commission is an
+explicitly labeled BRAND READ (thin brand-line complaints only, no
+per-SKU axes, no delight work).
 
 ## Why a ledger at all (the efficiency argument)
 
@@ -207,7 +212,12 @@ ENGAGEMENT-THIN symmetry. Evidence:
 Every consolidation opens with a one-line DUPE-ECONOMY POSITION
 statement — which side of the dupe economy the subject sits on, read
 from the entry directions already in the ledger (anchor_up received vs
-dupe_association received). Each subsequent pass compares against the
+dupe_association received). Referent framing — the subject used as
+the category's reference point in alternatives shapes ("X that isn't
+the {s}") — is recorded on the position line as a named observation,
+counts-only (owner-ratified 2026-07-29): it types no entry, sets no
+position alone, and never triggers drift; it keeps category-defining
+subjects from reading as blank. Each subsequent pass compares against the
 prior pass's statement: a flip or drift is a HEADLINE finding, not a
 footnote, because drift is the attackable moment (specimen: SF read
 natively as premium original AND newly as duper-of-mass-originals,
@@ -395,7 +405,11 @@ so a block or stop truncates both lanes evenly rather than losing one
 entirely. At capture time, a J5 SERP returning fewer than 3 rows with
 a `$` price in title or snippet appends one reserve job: the same
 query with `&udm=28` (Shopping tab). Selecting zero names is a valid
-outcome and emits the subject-price job only.
+outcome and emits the subject-price job only. At FULL PARITY — all
+eligible names tied on both ranking keys — zero-select is mandatory
+(owner-ratified 2026-07-29): complete the Channel-1 seeds first and
+let real recurrence break the tie; no third ranking key exists, and
+the tie is a diagnostic that the queue is running ahead of the seeds.
 
 ## Cycle installation: a scout PASS + one ordering rule (not a step)
 
@@ -437,6 +451,10 @@ any running campaign — never a parallel stream on the same egress.
    CeraVe's complaint SERP renders "Amazon Basics vs CeraVe";
    RETENTION — Tower 28's renders repair content; TECHNIQUE-MOAT —
    AeroPress complaints resolve into hobbyist technique content).
+   An unmatched room shape is recorded as UNNAMED with a one-line
+   description of its resolving content; a shape recurring on 2+
+   subjects earns a naming review (owner-ratified 2026-07-29 —
+   never force-fit into the three named rooms).
    **J3** rendered-vs-actual fragility: per-surface tag ALIGNED /
    RENDERED_BETTER / NATIVE_BETTER (snippet stance vs top-voted native
    stance, counts-only); NATIVE_BETTER surfaces are where the subject
@@ -474,7 +492,11 @@ analysis, never price advice.
 **Verdict-source typing (installed 2026-07-28).** Every rendered
 comparison verdict is typed by its source class at ANALYSIS time —
 editorial (listicle/affiliate outlets), community (reddit/forum),
-brand, marketplace — using the displayed_domain already in the
+brand, marketplace, or CREATOR (owner-ratified 2026-07-29:
+author-over-domain — any row carrying `account_or_creator` types as
+creator regardless of displayed_domain, the Amazon Live case;
+credential subtyping deferred until a read needs the split) —
+using the displayed_domain already in the
 extraction; no new capture and no lake storage of editorial pages.
 Editorial-vs-community DIVERGENCE is a standing per-subject line in
 the competitor read: editorial is effectively the glancer's verdict on
