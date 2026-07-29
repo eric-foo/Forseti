@@ -56,12 +56,14 @@ complaint axis being born.
 
 ## Where complaint evidence comes from (capture side)
 
-1. **Pain-shape SERPs** — `side effects` / `not working` / `how to
-   fix` / `complaints` (F6; full-bank re-judgment 2026-07-28:
-   exclusive yield 0.43–0.65 on the 88-complete-subject basis, with
-   `how to fix` down 0.708→0.433 — the panel-era 0.63–0.71 was
-   computed on a 289/1036 partial read and is superseded; owning
-   cell: serp_lane_v0.md F6). The doors, never the verdicts.
+1. **Pain-shape SERPs** — the failure-intent family, now
+   tournament-ranked (F6, wave-2 2026-07-29): `side_effects` 0.547
+   leads; `made_it_worse` / `not_working` / `bad_for_you` are
+   statistically tied behind it; `complaints` and `regret` trail the
+   family. Panel-era figures (0.63–0.71, a 289/1036 partial read)
+   are superseded; owning cell: serp_lane_v0.md F6, which also
+   carries the board-slot consequence. The doors, never the
+   verdicts.
 2. **Native threads** (Reddit lane) — the only composition-grade
    source. Channel 3 (complaint-borne names) is the highest-precision
    competitor channel: leaving language, not comparing language.

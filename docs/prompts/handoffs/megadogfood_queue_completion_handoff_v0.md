@@ -67,6 +67,16 @@ case, in the emitter + its unit test only.
    condition phrases ("Irritated Skin") as names - fail closed.
 4. Regression case: possessive-apostrophe brand tokens ("Paula's
    Choice") in subject matching.
+5. Creator-field pollution guard (added from dogfood round 5,
+   2026-07-29): `account_or_creator` sometimes carries delivery
+   terms ("30-day returns") or subreddit venue names instead of an
+   author — under the ratified author-over-domain CREATOR typing
+   rule these would false-type as creator rows. Guard the field
+   before applying the precedence.
+Note: emitter v0.2 (merged via PR #1384) already landed enumeration
+recall and a fail-closed promotion gate — reconcile this scope
+against v0.2's actual coverage first and repair only what remains;
+the before/after report self-adjusts either way.
 Then re-run the Channel-0 harvest over the complete bank and report
 the before/after: usable ratio (baseline 31.5%, adjudicated ceiling
 ~65% incl. self_variant typing) and absolute usable-entry count
