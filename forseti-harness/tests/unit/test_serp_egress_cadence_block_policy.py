@@ -57,6 +57,15 @@ class TestShouldPingOwner:
         assert CAD.should_ping_owner(1, ["blocked"])[0] is False
         assert CAD.should_ping_owner(1, [])[0] is False
 
+    def test_persistent_operator_route_never_inherits_automated_stop_ceiling(self):
+        ping, consecutive = CAD.should_ping_owner(
+            3,
+            ["blocked", "blocked"],
+            route="persistent_realchrome",
+        )
+        assert ping is False
+        assert consecutive is True
+
 
 class TestIdleCeiling:
     def test_idle_ceiling_is_the_owner_ratified_hour(self):

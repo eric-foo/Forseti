@@ -1,13 +1,14 @@
 """Canonical Google-SERP capture cadence for Forseti capture runners.
 
-One source of truth for how fast a Google SERP stream may run AND how it
-must respond to a block, imported by every Google capture runner rather than
-copied into each. Runners keep their own job loop; the cadence numbers and
-the block policy live here.
+One source of truth for how fast a Google SERP stream may run and how an
+automated route must respond to a block, imported rather than copied into each
+runner. Query eligibility and route selection live in
+`source_capture.google_serp_queue_policy`; runners must use both authorities.
 
-(Until 2026-07-30 runners kept their own block policy. That is exactly how
-dogfood10 launched with a pre-F2b 12-15 min re-probe policy the day after
-the doctrine landed in a different runner — so the policy moved here.)
+The automated cooldown/stop ceiling deliberately excludes the operator-visible
+`persistent_realchrome` route. That route pauses without navigation, pings the
+operator once per distinct block, waits for manual clearance, and resumes the
+exact held job at the same cadence.
 
 ## Shape
 
@@ -49,11 +50,23 @@ two rungs lower. Zero successful captures separated them. That second block
 says nothing about 55/hr; it says the IP was still flagged and a ~26-minute
 cooldown did not clear it. This matches the lane's standing finding that
 recovery from a flag is slow (>75 min) and that prevention beats reaction.
-Operational consequence: after a block, further probing every 12-15 minutes
-mostly re-confirms the flag. Stop capturing, let the flag decay on a scale of
-hours, then resume at a LOW rung and re-establish a clean baseline before
-reading any rate as evidence. Do not interpret post-flag blocks as data about
-the rate they happened to occur at.
+Operational consequence: after a block, further LOWER-ROUTE probing every
+12-15 minutes mostly re-confirms the flag. Preserve that block packet and stop
+the lower route. When the run has its explicitly enabled dedicated, logged-out,
+operator-visible Chrome fallback ready, transition the exact held job and the
+remainder of that run to one persistent real-Chrome tab. This is a transport
+fallback, not a CAPTCHA solver or evidence that the lower route recovered.
+The executable held-job seam is
+`runners/run_google_serp_persistent_fallback_packet.py`; after transition,
+queue runners use it for each remaining job.
+Keep the owner-set cadence (including a 45/hr or 60/hr band); a route change
+does not authorize a rate increase. If the persistent tab is itself blocked,
+pause navigation, ping the operator once per distinct block, and resume only
+after the operator manually clears the visible challenge. This operator-visible
+route does not inherit the automated repeat-block stop ceiling. Never click or
+solve the challenge in automation. If the fallback is unavailable, fail loud
+and let the lower-route flag decay for hours before a new run at a low rung. Do
+not interpret post-flag blocks as data about the rate they happened to occur at.
 
 Historical note for context, not a bound: an earlier session profile saw
 blocks somewhere in 28-40/hr; that did not reproduce here, which makes it
@@ -143,8 +156,9 @@ def cycle_for(rung):
 #
 # Landed here rather than per-runner because the first attempt landed it in
 # ONE runner and the very next launch (dogfood10, 2026-07-30) re-probed a
-# live flag with the old 12-15 min policy. Every capture runner that talks
-# to the Google route should call this instead of writing its own.
+# live flag with the old 12-15 min policy. Automated Google capture runners
+# should call this instead of writing their own. The operator-visible
+# persistent route owns a separate pause/ping/manual-clear loop.
 #
 # The policy, and why each part:
 #   * step a rung back ONLY inside the escalation probation. A block that
@@ -153,8 +167,10 @@ def cycle_for(rung):
 #     clean captures at all (median 42 vs 39).
 #   * idle at most IDLE_SECONDS_MAX, then make exactly ONE recovery attempt.
 #     12-17 min re-probes failed six times in the sealed decay series.
-#   * a second consecutive block, or the third of a run, writes a ping file
-#     and stops for owner routing. Never probe on.
+#   * on automated routes, a second consecutive block or the third of a run
+#     writes a ping file and stops for owner routing. Never probe on.
+#   * persistent_realchrome is excluded: it pauses and pings the operator once
+#     per distinct block, then waits for manual clearance without navigation.
 # ---------------------------------------------------------------------------
 
 IDLE_SECONDS_MAX = 60 * 60      # owner ceiling: idle at most one hour
@@ -172,10 +188,17 @@ def rung_after_block(rung, jobs_since_rungup):
     return int(rung), False
 
 
-def should_ping_owner(blocks_this_run, recent_outcomes):
-    """True when this block must stop the run for owner routing."""
+def should_ping_owner(blocks_this_run, recent_outcomes, *, route="primary_route"):
+    """True when an automated-route block must stop for owner routing.
+
+    The persistent operator-visible route sends its own immediate notification
+    for every distinct block and waits for manual clearance; it never inherits
+    this automated stop ceiling.
+    """
     recent = list(recent_outcomes)
     consecutive = len(recent) >= 2 and recent[-2] == "blocked"
+    if route == "persistent_realchrome":
+        return False, consecutive
     return (consecutive or blocks_this_run >= 3), consecutive
 
 

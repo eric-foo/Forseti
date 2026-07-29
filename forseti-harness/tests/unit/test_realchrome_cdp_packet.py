@@ -7,6 +7,7 @@ import pytest
 
 from runners.run_source_capture_realchrome_cdp_packet import (
     RealChromeCDPCaptureResult,
+    _select_or_create_page,
     run_source_capture_realchrome_cdp_packet,
 )
 from source_capture.source_detail_sufficiency import (
@@ -148,3 +149,92 @@ def test_requires_exactly_one_output_target(tmp_path: Path) -> None:
             data_root=None,
             engine=engine,
         )
+
+
+def test_persistent_tab_options_are_preserved_and_forwarded(tmp_path: Path) -> None:
+    engine = _FakeEngine(dom=_CONTENT_DOM, text=_CONTENT_TEXT, status=200, title="t")
+    out = tmp_path / "pkt"
+    code, _ = run_source_capture_realchrome_cdp_packet(
+        url="https://www.google.com/search?q=tower+28",
+        source_family="search_discovery",
+        source_surface="google_serp_us_parameterized_realchrome_cdp",
+        decision_question="q",
+        output_directory=out,
+        persistent_tab_marker="forseti.queue.test",
+        fit_viewport_to_window=True,
+        engine=engine,
+    )
+
+    assert code == 0
+    assert engine.calls[0]["persistent_tab_marker"] == "forseti.queue.test"
+    assert engine.calls[0]["fit_viewport_to_window"] is True
+    metadata_file = next(out.glob("raw/*metadata.json"))
+    metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+    assert metadata["persistent_tab"] is True
+    assert metadata["persistent_tab_marker"] == "forseti.queue.test"
+    manifest = _read_manifest(out)
+    assert "persistent_operator_visible_tab" in manifest["visible_mode_changes"]
+    assert "window_fitted_viewport" in manifest["visible_mode_changes"]
+
+
+class _FakePage:
+    def __init__(self, *, url: str, marker: str = "") -> None:
+        self.url = url
+        self.marker = marker
+
+    def is_closed(self) -> bool:
+        return False
+
+    def evaluate(self, script: str, argument=None):
+        if script == "() => window.name":
+            return self.marker
+        if "window.name = marker" in script:
+            self.marker = argument
+            return None
+        raise AssertionError(script)
+
+
+class _FakeContext:
+    def __init__(self, pages: list[_FakePage]) -> None:
+        self.pages = pages
+        self.created = 0
+
+    def new_page(self) -> _FakePage:
+        self.created += 1
+        page = _FakePage(url="about:blank")
+        self.pages.append(page)
+        return page
+
+
+def test_persistent_google_route_reuses_marked_tab() -> None:
+    marked = _FakePage(
+        url="https://www.google.com/search?q=old", marker="forseti.queue"
+    )
+    unrelated = _FakePage(url="https://example.com/")
+    context = _FakeContext([unrelated, marked])
+
+    page, close_after = _select_or_create_page(
+        context=context,
+        target_url="https://www.google.com/search?q=new",
+        persistent_tab_marker="forseti.queue",
+    )
+
+    assert page is marked
+    assert close_after is False
+    assert context.created == 0
+
+
+def test_persistent_google_route_adopts_only_unique_search_tab() -> None:
+    search = _FakePage(url="https://www.google.com/search?q=old")
+    context = _FakeContext([_FakePage(url="https://example.com/"), search])
+
+    page, close_after = _select_or_create_page(
+        context=context,
+        target_url="https://www.google.com/search?q=new",
+        persistent_tab_marker="forseti.queue",
+    )
+
+    assert page is search
+    assert page.marker == "forseti.queue"
+    assert close_after is False
+    assert context.created == 0

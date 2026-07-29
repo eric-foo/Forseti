@@ -4,9 +4,10 @@ The SERP capture lane's competitor-scout work unit: typed competitor
 ledger (spec + promotion ladder + channels), Understanding-cycle
 installation (scout pass + ordering rule; two-phase shape with the
 Reddit lane), journey levers J1-J5, the Tower 28 and Summer Fridays
-live trials including their phase-2 native returns, egress-shape
-evidence, the Deliver retention/offense note, and the cross-company
-dogfood (CeraVe / AeroPress).
+live trials including their phase-2 native returns, the completed
+megadogfood Stage 6 queue and pruned analysis slice, egress-shape evidence,
+the Deliver retention/offense note, and the cross-company dogfood
+(CeraVe / AeroPress).
 
 **Authority: this folder is canonical.** Lane prose and instruments are
 authored here, in the repository. The operator drive holds raw capture
@@ -17,7 +18,9 @@ and produced six separate cases of load-bearing work surviving only in
 a temp folder. There is now one copy, so there is nothing to
 reconcile.) Expected next supersession: the full-bank megadogfood
 analysis pass (~2026-07-30, n~100 subjects) re-judges lane cells
-F4-F21 and the emitter's candidate ladder.
+F4-F21 and the emitter's candidate ladder. Stage 6 queue completion and its
+future-run query/fallback corrections are recorded in
+`megadogfood_stage6_queue_completion_v0.md`.
 
 **Instruments** (in-repo, canonical):
 `forseti-harness/runners/serp_competitor_ledger_emitter.py` (Channel-0
@@ -27,6 +30,11 @@ emitter), `extract_serp_v2.py` (SERP extractor),
 `forseti-harness/tests/unit/test_serp_competitor_ledger_emitter.py`
 (pinned-fixture suite -- run after ANY emitter edit; it skips, rather
 than passes, when the operator-drive fixture stores are absent).
+`forseti-harness/source_capture/google_serp_queue_policy.py` owns the
+pre-egress query gate and lower-route block transition.
+`forseti-harness/runners/run_google_serp_persistent_fallback_packet.py`
+executes the held-job persistent-tab route, preserves block packets, and
+waits for manual operator clearance without challenge interaction.
 
 **Raw capture data stays outside Git**, on the operator drive:
 `C:\tmp\forseti-serp-megadogfood-20260727\` (query bank, run ledger,
@@ -36,6 +44,8 @@ packets, PDP captures), `C:\tmp\forseti-tower28-reddit-20260728\` and
 packets + composition reads).
 
 Reading order: `serp_lane_v0.md` (entry point / findings ledger) ->
+`megadogfood_stage6_queue_completion_v0.md` (completed queue, pruning,
+future-run corrections) ->
 `competitor_ledger_spec_v0.md` (types, ladder, cycle installation,
 J1-J5) -> `tower28_scout_trial_findings_v0.md` +
 `tower28_phase2_native_return_v0.md` +
