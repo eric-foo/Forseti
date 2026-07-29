@@ -680,13 +680,21 @@ import for in-run counts.
   cycle-N+1-`vs` flow F20 specifies, running for the first time. The 15
   subjects with no harvested rival keep `vs_rival` as a typed gap rather
   than receiving an operator-picked one.
+- Stage 6 merged vs+J5 completion: **COMPLETE and sealed 2026-07-30.**
+  The curated scope is 163 base jobs plus two dynamic Shopping reserves;
+  130 jobs are analysis-eligible and 35 are quarantined without deleting
+  evidence. The integrity seal checked 148 packet manifests, 592 preserved
+  file hashes, 17 reused extractions, and all query identities with zero
+  failures. The BR540 unnamed-equivalence return leg completed and supplies
+  nine rendered named-rival observations for native follow-through. See
+  `megadogfood_stage6_queue_completion_v0.md`.
 - Queued behind the bank, both built, validated, and gated (no captures
   taken, processes stopped with the bank): the 10-brand scout dogfood
   (`C:\tmp\forseti-scout-dogfood10-20260728\`) and the 120-job beauty
   corpus extension (`C:\tmp\forseti-beauty-ext-20260728\`, 12 new
   subjects, pools into the megadogfood store via its own pooling
-  script). Both gate on the bank writing a completion state, so neither
-  can fire onto a flagged IP; both pay a full rest at chain hand-off.
+  script). The bank gate is now satisfied; this Stage 6 work unit did not
+  re-verify either queue's independent execution state.
 - Tower 28 phase-2 native return: captures complete (14/14 threads +
   4-capture burst, 0 blocks) and consolidation done 2026-07-28 —
   J3 settlement (3 RENDERED_BETTER / 3 ALIGNED / 1 NATIVE_BETTER on
