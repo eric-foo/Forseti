@@ -1,8 +1,8 @@
 """Capture one held Google job through the persistent operator-visible route.
 
 This wrapper is the queue-runner seam used after a lower-route block. It keeps
-one marked tab, preserves every block packet, notifies once per held job, waits
-without navigation while the operator clears the visible challenge, then
+one marked tab, preserves every block packet, notifies once per distinct block,
+waits without navigation while the operator clears the visible challenge, then
 recaptures the exact URL. It never clicks or solves the challenge.
 """
 
@@ -39,6 +39,7 @@ from source_capture.source_detail_sufficiency import (
 
 
 DEFAULT_POLL_SECONDS = 5.0
+PERSISTENT_BLOCK_ROUTE_MODE = "block_route:persistent_realchrome"
 
 
 def _normalize_query(value: str) -> str:
@@ -104,6 +105,9 @@ def notify_operator_once(*, job_id: str, query: str) -> None:
         "Navigation is paused. Manually clear the visible challenge in the "
         "persistent capture tab; the held query will then resume."
     )
+    # stderr keeps the alert fail-visible to the supervising process even when
+    # the best-effort desktop toast or beep is unavailable.
+    print(message, file=sys.stderr, flush=True)
     try:
         import winsound
 
@@ -161,7 +165,6 @@ def run_google_serp_persistent_fallback(
     if _normalize_query(url_query) != _normalize_query(query):
         raise ValueError("URL query must match the held query exactly")
 
-    notified = False
     alert_path = block_archive / "block_alert.json"
     while True:
         code, message = capture_func(
@@ -175,13 +178,15 @@ def run_google_serp_persistent_fallback(
             settle_seconds=settle_seconds,
             persistent_tab_marker=marker,
             fit_viewport_to_window=True,
+            visible_mode_changes=(PERSISTENT_BLOCK_ROUTE_MODE,),
             source_detail_sufficiency_requirements=SourceDetailSufficiencyRequirements(
                 require_not_access_blocked=True
             ),
         )
         if code != SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE:
-            if code == 0:
-                alert_path.unlink(missing_ok=True)
+            # The process is no longer waiting for an operator, whether the
+            # terminal result is success or a different visible failure.
+            alert_path.unlink(missing_ok=True)
             return code, message
 
         archived = _archive_block_packet(
@@ -197,9 +202,12 @@ def run_google_serp_persistent_fallback(
         alert_path.write_text(
             json.dumps(alert, indent=2) + "\n", encoding="utf-8"
         )
-        if not notified:
-            notify_func(job_id=job_id, query=query)
-            notified = True
+        # Once per DISTINCT block, not once per job: the inner loop below only
+        # exits after the operator has cleared the challenge and the tab has
+        # rendered the held query unblocked, so reaching this line again is a
+        # genuinely new block. Latching on the first one leaves every later
+        # block in the same job waiting silently and forever.
+        notify_func(job_id=job_id, query=query)
 
         while True:
             sleep_func(poll_seconds)

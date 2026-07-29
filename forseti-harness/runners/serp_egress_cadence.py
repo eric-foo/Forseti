@@ -62,11 +62,13 @@ queue runners use it for each remaining job.
 Keep the owner-set cadence (including a 45/hr or 60/hr band); a route change
 does not authorize a rate increase. If the persistent tab is itself blocked,
 pause navigation, ping the operator once per distinct block, and resume only
-after the operator manually clears the visible challenge. This operator-visible
-route does not inherit the automated repeat-block stop ceiling. Never click or
-solve the challenge in automation. If the fallback is unavailable, fail loud
-and let the lower-route flag decay for hours before a new run at a low rung. Do
-not interpret post-flag blocks as data about the rate they happened to occur at.
+after the operator manually clears the visible challenge. A held job that is
+blocked again after a clearance pings again; a single latched ping per job
+would leave the second block waiting silently. This operator-visible route does
+not inherit the automated repeat-block stop ceiling. Never click or solve the
+challenge in automation. If the fallback is unavailable, fail loud and let the
+lower-route flag decay for hours before a new run at a low rung. Do not
+interpret post-flag blocks as data about the rate they happened to occur at.
 
 Historical note for context, not a bound: an earlier session profile saw
 blocks somewhere in 28-40/hr; that did not reproduce here, which makes it

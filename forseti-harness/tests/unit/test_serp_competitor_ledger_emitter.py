@@ -278,7 +278,7 @@ def test_empty_mediator_cache_emits_parallel_pending_map(tmp_path):
 def test_surfaced_title_fragments_never_emit(title, junk):
     emitted = list(
         harvest(
-            [("serp_result_title", title)],
+            [("serp_result_title", title, None)],
             title.split(" vs ", 1)[0],
             title,
         )

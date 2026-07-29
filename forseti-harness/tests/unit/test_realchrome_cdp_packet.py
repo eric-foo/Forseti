@@ -7,6 +7,7 @@ import pytest
 
 from runners.run_source_capture_realchrome_cdp_packet import (
     RealChromeCDPCaptureResult,
+    _navigate_target,
     _select_or_create_page,
     run_source_capture_realchrome_cdp_packet,
 )
@@ -162,6 +163,7 @@ def test_persistent_tab_options_are_preserved_and_forwarded(tmp_path: Path) -> N
         output_directory=out,
         persistent_tab_marker="forseti.queue.test",
         fit_viewport_to_window=True,
+        visible_mode_changes=("block_route:persistent_realchrome",),
         engine=engine,
     )
 
@@ -175,6 +177,35 @@ def test_persistent_tab_options_are_preserved_and_forwarded(tmp_path: Path) -> N
     manifest = _read_manifest(out)
     assert "persistent_operator_visible_tab" in manifest["visible_mode_changes"]
     assert "window_fitted_viewport" in manifest["visible_mode_changes"]
+    assert "block_route:persistent_realchrome" in manifest["visible_mode_changes"]
+
+
+def test_target_navigation_restores_marker_after_document_swap() -> None:
+    class _NavigationPage:
+        def __init__(self) -> None:
+            self.marker = "forseti.queue"
+
+        def goto(self, url, *, wait_until, timeout):
+            assert url == "https://www.google.com/search?q=new"
+            assert wait_until == "load"
+            assert timeout == 10_000
+            self.marker = ""
+            return "response"
+
+        def evaluate(self, script, argument=None):
+            assert script == "(marker) => { window.name = marker; }"
+            self.marker = argument
+
+    page = _NavigationPage()
+    response = _navigate_target(
+        page=page,
+        url="https://www.google.com/search?q=new",
+        timeout_ms=10_000,
+        persistent_tab_marker="forseti.queue",
+    )
+
+    assert response == "response"
+    assert page.marker == "forseti.queue"
 
 
 class _FakePage:
@@ -238,3 +269,29 @@ def test_persistent_google_route_adopts_only_unique_search_tab() -> None:
     assert page.marker == "forseti.queue"
     assert close_after is False
     assert context.created == 0
+
+
+def test_persistent_google_route_never_hijacks_an_ambiguous_search_tab() -> None:
+    """Two unmarked Google tabs are ambiguous: open our own, adopt neither.
+
+    This is the half of "adopts ONLY a unique search tab" that the uniqueness
+    guard exists for. Without it the runner seizes whichever operator tab
+    happens to sort first and navigates it away mid-session.
+    """
+    first = _FakePage(url="https://www.google.com/search?q=operator")
+    second = _FakePage(url="https://www.google.com/search?q=other")
+    context = _FakeContext([first, second])
+
+    page, close_after = _select_or_create_page(
+        context=context,
+        target_url="https://www.google.com/search?q=new",
+        persistent_tab_marker="forseti.queue",
+    )
+
+    assert context.created == 1
+    assert page is not first and page is not second
+    assert page.marker == "forseti.queue"
+    assert close_after is False
+    # Neither operator tab was claimed or renamed.
+    assert first.marker == ""
+    assert second.marker == ""
