@@ -1,4 +1,4 @@
-"""Competitor ledger emitter v0.1 (Channel 0: free-rider harvest).
+"""Competitor ledger emitter v0.3 (Channel 0: free-rider harvest).
 
 Harvests typed competitor candidates from already-captured SERP
 extractions — related searches, PAA, organic/video titles, AIO text.
@@ -11,6 +11,18 @@ v0.1 (Tower 28 trial lessons): brand-token subject matching (category
 words like "concealer" no longer claim the wrong side), outlet/creator
 names routed to a mediators list instead of the ledger, community
 "X or Y" pattern, imperative/use-context junk rejection.
+
+v0.2 (full-bank adjudication lessons): enumerated peer-list recall
+(comma series carried no split cue and 70 titles yielded nothing), and
+a brand-or-not promotion gate (--verdicts): recurrence AMPLIFIES common
+English, so the candidate rung is only reachable through a cached
+adjudication verdict; unadjudicated recurrers hold at
+pending_adjudication, fail closed.
+
+v0.3 (queue-completion adjudication): trailing use-context compounds
+collapse to their parent entity, condition-only names fail closed,
+possessive apostrophes normalize for subject matching, and adjudicated
+self variants carry their ratified type.
 
 Two modes:
   (default)          megadogfood store: run_ledger + query_bank drive
@@ -25,8 +37,12 @@ Optional --output FILE overrides the default ledger path.
 import argparse
 import json
 import re
+import sys
 from collections import defaultdict
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(r"C:\tmp\forseti-serp-megadogfood-20260727")
 
@@ -52,10 +68,16 @@ CONTEXT_GENERIC = {
     "combination", "prone", "mature", "teen", "teens", "beginners",
     "budget", "any", "all", "summer", "winter", "baby", "men", "women",
     "kids", "everyday", "daily", "version", "body", "hand", "foot",
-    "eye", "night", "day"}
+    "eye", "night", "day", "irritated", "wound", "wounds", "scar",
+    "scars", "lips", "aging", "wrinkles", "fine", "curly"}
 
 VS_RX = re.compile(r"\s+(?:vs\.?|versus)\s+", re.I)
 OR_RX = re.compile(r"\s+or\s+", re.I)
+# v0.2 recall: enumerated peer lists ("... : Beauty of Joseon, Isntree,
+# Round Lab, Skin1004"). Full-bank sizing found 93 such titles, 70 of
+# which produced zero ledger entries because none of the four split cues
+# fires on a comma series.
+ENUM_MIN_PARTS = 3
 BETTER_RX = re.compile(r"better than\s+(.+?)(?:[?.!]|$)", re.I)
 DUPE_FOR_RX = re.compile(r"(.+?)\s+dupes?\s+for\s+(.+)", re.I)
 QUESTION_START = re.compile(
@@ -72,9 +94,13 @@ def _norm(t):
 
 
 def sig_tokens(s):
-    toks = {t for t in re.findall(r"[a-z0-9']+", s.lower())
+    # Straight/curly/missing possessive apostrophes must describe the same
+    # brand token ("Paula's", "Paula’s", and "Paula").
+    normalized = s.lower().replace("\u2019", "'")
+    toks = {t for t in re.findall(r"[a-z0-9']+", normalized)
             if len(t) > 2 and t not in STOP}
-    return toks | {_norm(t) for t in toks}
+    return toks | {_norm(t) for t in toks} | {
+        re.sub(r"'s$", "", t) for t in toks}
 
 
 def brand_tokens(subject):
@@ -99,6 +125,24 @@ def clean(name):
         if stripped == name.strip():
             break
         name = stripped
+    # Comparison questions can put the condition before a comma and the
+    # entity after it ("better for irritated skin, Vaseline"). Retain the
+    # entity only when the lead is entirely contextual.
+    condition_lead = re.match(
+        r"^(?:better|best|good)\s+for\s+([^,]+),\s*(.+)$", name, flags=re.I)
+    if condition_lead:
+        lead_toks = sig_tokens(condition_lead.group(1))
+        if lead_toks and lead_toks <= (CONTEXT_GENERIC | GENERIC_PRODUCT):
+            name = condition_lead.group(2)
+    # Context suffixes are not separate entities. Collapse only when the
+    # whole suffix is known context/category vocabulary; otherwise preserve
+    # the candidate and fail visibly through the normal adjudication gate.
+    context = re.search(r"\s+for\s+(.+)$", name, flags=re.I)
+    if context:
+        context_toks = sig_tokens(context.group(1))
+        if context_toks and context_toks <= (
+                CONTEXT_GENERIC | GENERIC_PRODUCT):
+            name = name[:context.start()]
     name = re.sub(r"\s+(reddit|review|reviews|the|a|an)$", "", name, flags=re.I)
     name = name.strip(" .,!\"’-–—")
     words = name.split()
@@ -169,6 +213,20 @@ def harvest(texts, subject, query):
                 name = clean(right)
                 if name:
                     yield name, "anchor_up", surface, text
+        # v0.2: enumerated peer list. Same subject-anchoring rule as the
+        # vs/or split: the title must reach the subject somewhere, and only
+        # the non-subject parts yield. ENUM_MIN_PARTS comma segments keeps
+        # ordinary prose commas out; per-part shape is clean()'s job.
+        if matches_subject(text, brand_toks):
+            tail = text.split(":", 1)[-1]
+            parts = [p.strip() for p in tail.split(",")]
+            if len(parts) >= ENUM_MIN_PARTS and \
+                    all(0 < len(p.split()) <= 4 for p in parts if p):
+                for p in parts:
+                    if p and not matches_subject(p, brand_toks):
+                        name = clean(p)
+                        if name:
+                            yield name, "rival", surface, text
 
 
 def packet_texts(pkt):
@@ -219,7 +277,36 @@ def main():
     ap.add_argument("--subject", action="append", default=[],
                     help="subject name (scout mode; repeatable)")
     ap.add_argument("--output", help="output JSON path override")
+    ap.add_argument("--verdicts",
+                    help="adjudication cache JSON (v0.2 promotion gate). "
+                         "Recurrence alone AMPLIFIES junk -- common English "
+                         "recurs more reliably than any real brand -- so no "
+                         "entry reaches the candidate rung without a cached "
+                         "brand-or-not verdict. Unadjudicated entries hold at "
+                         "pending_adjudication (fail closed), never candidate.")
+    ap.add_argument("--mediator-classes",
+                    help="mediator classification cache JSON. An anchor's "
+                         "attachment (2+ days, F24) says nothing about its "
+                         "KIND, and consumers act oppositely on a "
+                         "professional_creator vs an affiliate_outlet vs a "
+                         "brand_owned account. Uncached mediators emit "
+                         "pending_classification (fail visible, like the "
+                         "candidate gate).")
     args = ap.parse_args()
+
+    verdict_gate = args.verdicts is not None
+    verdicts = {}
+    if verdict_gate and Path(args.verdicts).exists():
+        vd = json.loads(Path(args.verdicts).read_text(encoding="utf-8"))
+        verdicts = {(v["subject"], v["name"].lower()): v["verdict"]
+                    for v in vd["verdicts"]}
+
+    mediator_class_gate = args.mediator_classes is not None
+    med_classes = {}
+    if mediator_class_gate and Path(args.mediator_classes).exists():
+        mc = json.loads(Path(args.mediator_classes).read_text(encoding="utf-8"))
+        med_classes = {m["name"].lower(): m["class"]
+                       for m in mc["mediators"]}
 
     if args.extractions:
         if not args.subject:
@@ -257,21 +344,47 @@ def main():
         classes = {s["surface_class"] for s in e["sources"]}
         e["distinct_queries"] = len(queries)
         e["surface_classes"] = sorted(classes)
-        e["rung"] = "candidate" if len(queries) >= 2 else "presence"
+        recurs = len(queries) >= 2
+        if not recurs:
+            e["rung"] = "presence"
+        elif not verdict_gate:
+            e["rung"] = "candidate"          # v0.1 behavior: no gate supplied
+        else:
+            v = verdicts.get((e["subject"], e["name"].lower()))
+            if v == "USABLE":
+                e["rung"], e["verdict"] = "candidate", v
+            elif v == "SELF_VARIANT":
+                e["type"], e["rung"], e["verdict"] = (
+                    "self_variant", "presence", v)
+            elif v is None:
+                e["rung"] = "pending_adjudication"
+            else:                            # JUNK / RECOVERABLE
+                e["rung"], e["verdict"] = "presence", v
         out.append(e)
     out.sort(key=lambda e: (-e["distinct_queries"], e["subject"], e["name"]))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"probes_scanned": probes, "entries": out,
+               "mediators": {k: sorted(v) for k, v in
+                             sorted(mediators.items())}}
+    if mediator_class_gate:
+        # Parallel map, not a shape change: existing consumers keep reading
+        # mediators as name -> subjects.
+        payload["mediator_classes"] = {
+            k: med_classes.get(k.lower(), "pending_classification")
+            for k in sorted(mediators)}
     out_path.write_text(
-        json.dumps({"probes_scanned": probes, "entries": out,
-                    "mediators": {k: sorted(v) for k, v in
-                                  sorted(mediators.items())}},
-                   indent=1, ensure_ascii=False), encoding="utf-8")
+        json.dumps(payload, indent=1, ensure_ascii=False), encoding="utf-8")
 
     n_cand = sum(1 for e in out if e["rung"] == "candidate")
+    n_pend = sum(1 for e in out if e["rung"] == "pending_adjudication")
     print(f"probes scanned: {probes}; entries: {len(out)} "
-          f"({n_cand} candidate, {len(out) - n_cand} presence); "
+          f"({n_cand} candidate, {n_pend} pending_adjudication, "
+          f"{len(out) - n_cand - n_pend} presence); "
           f"mediators routed: {len(mediators)} -> {out_path}")
+    if n_pend:
+        print(f"!! {n_pend} recurring entries lack a brand-or-not verdict; "
+              f"adjudicate and append to the verdicts cache, then re-run")
     by_type = defaultdict(int)
     for e in out:
         by_type[e["type"]] += 1

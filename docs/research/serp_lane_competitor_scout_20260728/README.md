@@ -45,7 +45,11 @@ phases) -> `tower28_ci_onepager_demo_v0.md` (demo deliverable) ->
 `dogfood2_cross_company_note_v0.md` (generalization check) ->
 `serp_lane_egress_shape_evidence_v0.md` (capture cadence evidence).
 
-Execution is commissioned via two handoffs, in order:
+Re-judging the findings ledger against the full capture store (analysis
+only, no captures) is commissioned via
+`docs/prompts/handoffs/serp_lane_fullbank_analysis_execution_handoff_v0.md`.
+
+Capture execution is commissioned via two handoffs, in order:
 `docs/prompts/handoffs/serp_lane_phase1_scout_execution_handoff_v0.md`
 (seeds -> rolling harvest -> merged vs+J5 queue -> priced ledger +
 trigger-thread queue), then

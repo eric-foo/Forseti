@@ -212,7 +212,7 @@ authorized.
 | --- | --- |
 | `forseti-harness/capture_spine/` | Capture-spine implementation packages. |
 | `forseti-harness/containers/` | Reusable container definitions for bounded unattended capture; currently the private real-Chrome-under-Xvfb browser host. |
-| `forseti-harness/source_capture/` | Packet, adapter, source-family, derived source-classification, transcript, and capture orchestration code. |
+| `forseti-harness/source_capture/` | Packet, adapter, source-family, derived source-classification, transcript, and capture orchestration code, plus capture retention posture (content-vs-raw extraction specs, parity checking, rolling raw sample). |
 | `forseti-harness/youtube_capture/` | Bounded YouTube public-metadata capture helpers. |
 | `forseti-harness/data_lake/` | Filesystem lake, catalog, availability, and retrieval helpers. |
 | `forseti-harness/cleaning/` | Bounded Cleaning models, transforms, and lake writers. |
@@ -223,7 +223,7 @@ authorized.
 | `forseti-harness/packing/` | Packing Spine model-facing serialization: payload-agnostic columnar packing core plus per-consumer adapters; encoding only, never selection. |
 | `forseti-harness/schemas/` | Shared typed models. |
 | `forseti-harness/scoring/` | Deterministic scoring and calibration helpers. |
-| `forseti-harness/runners/` | CLI entry points; enumerate only on demand with `git ls-files forseti-harness/runners/*.py`. |
+| `forseti-harness/runners/` | CLI entry points; enumerate only on demand with `git ls-files forseti-harness/runners/*.py`. Subdirectories are NOT entry points and are missed by that glob — use `git ls-files forseti-harness/runners/` to see them. Current: `serp_fullbank_analysis/` (research derivations and the wave-2 bank builder backing the SERP lane's findings ledger; operator-drive-pinned, not CI-runnable — see its README). |
 | `forseti-harness/cases/` | Tracked deterministic case fixtures. |
 | `forseti-harness/config/` | Static harness configuration. |
 | `forseti-harness/reports/` | Report rendering code; generated outputs are not map authority. |

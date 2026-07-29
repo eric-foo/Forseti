@@ -79,7 +79,13 @@ from source_capture.content_extraction import (
     CONTENT_RECORD_FILENAME,
     RenderedContentExtractionSpec,
 )
+from source_capture.google_serp_content import (
+    GOOGLE_SERP_CONTENT_RECORD_VERSION,
+    build_google_serp_content_record,
+    validate_google_serp_route,
+)
 from source_capture.proxy_profiles import ProxyCategory, ProxyProfile, load_proxy_profile
+from source_capture.rolling_raw_sample import RollingRawSampleStore
 from source_capture.retail_capture_profiles import (
     RetailCaptureProfile,
     get_retail_capture_profile,
@@ -228,6 +234,13 @@ _RETAIL_GRID_PROJECTION_PROFILES = frozenset(
 _ULTA_GRID_PROFILES = frozenset(
     {"ulta_grid_aggregate", ULTA_CATEGORY_GRID_CONTENT_PROFILE}
 )
+# The Google SERP lane is selected by source surface, not a retail capture
+# profile: it captures one search-result page per run through the plain
+# CloakBrowser route. Content retention is its DEFAULT (retention decision
+# 2026-07-28, gated on the parity script in
+# runners/run_capture_retention_parity_gate.py); `--retention-mode raw` stays
+# selectable per run as an explicit operator evidence posture.
+GOOGLE_SERP_CONTENT_SURFACES = frozenset({"google_serp_us_parameterized"})
 
 
 def run_source_capture_cloakbrowser_packet(
@@ -293,6 +306,8 @@ def run_source_capture_cloakbrowser_packet(
     content_extraction: RenderedContentExtractionSpec | None = None,
     retail_grid_projection_output: Path | None = None,
     retain_retail_grid_raw_sample: bool = False,
+    raw_sample_root: Path | None = None,
+    raw_sample_run_key: str | None = None,
     capture_engine: CloakBrowserSnapshotEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
@@ -313,6 +328,14 @@ def run_source_capture_cloakbrowser_packet(
         raise ValueError(
             "retain_retail_grid_raw_sample requires --data-root and a retail grid profile"
         )
+    if raw_sample_root is not None and content_extraction is None:
+        raise ValueError(
+            "raw_sample_root is a content-retention regression input; it requires a "
+            "content-enabled surface or profile, because a raw-retaining capture "
+            "already keeps the bytes the sample would copy"
+        )
+    if raw_sample_run_key is not None and raw_sample_root is None:
+        raise ValueError("raw_sample_run_key requires raw_sample_root")
 
     if retail_capture_profile is not None:
         if retail_capture_profile.name == TARGET_GRID_CONTENT_PROFILE:
@@ -1062,6 +1085,49 @@ def run_source_capture_cloakbrowser_packet(
     if content_record_retained:
         assert content_record_bytes is not None
         artifacts.append((CONTENT_RECORD_FILENAME, content_record_bytes))
+    # Rolling raw sample: only a capture that actually DISCARDED its rendered
+    # bytes owes the regression window a copy. A raw-preserving or failed capture
+    # already keeps them in the packet.
+    rolling_raw_sample_claim = None
+    if (
+        raw_sample_root is not None
+        and retention_outcome == "content"
+        and content_record_bytes is not None
+    ):
+        rolling_raw_sample_store = RollingRawSampleStore(raw_sample_root)
+        rolling_raw_sample_claim = rolling_raw_sample_store.claim(
+            surface=source_surface,
+            capture_date=date.fromisoformat(
+                str(capture_result.metadata["capture_timestamp"])[:10]
+            ),
+            run_key=raw_sample_run_key,
+        )
+        if rolling_raw_sample_claim.granted:
+            _assert_no_browser_secret_bytes(
+                [
+                    ("rendered_dom", rendered_dom_bytes),
+                    ("visible_text", visible_text_bytes),
+                ]
+            )
+            rolling_raw_sample_store.write_sample(
+                rolling_raw_sample_claim,
+                rendered_dom=rendered_dom_bytes,
+                visible_text=visible_text_bytes,
+                content_record=content_record_bytes,
+                metadata={
+                    "requested_url": capture_result.requested_url,
+                    "final_url": capture_result.final_url,
+                    "source_family": source_family,
+                    "extractor_version": content_extraction.extractor_version,
+                    "capture_timestamp": str(
+                        capture_result.metadata["capture_timestamp"]
+                    ),
+                },
+            )
+            packet_visible_mode_changes.append(
+                "rendered bytes copied to the rolling raw regression sample "
+                f"for {rolling_raw_sample_claim.sample_key}"
+            )
     if retail_grid_raw_sample:
         grid_pages = tuple(getattr(pre_capture, "grid_page_doms", ()) or ())
         if not grid_pages:
@@ -1102,6 +1168,16 @@ def run_source_capture_cloakbrowser_packet(
                 }
                 for role, filename, body in input_artifacts
             ],
+            "rolling_raw_sample": (
+                {
+                    "granted": rolling_raw_sample_claim.granted,
+                    "sample_key": rolling_raw_sample_claim.sample_key,
+                    "reason": rolling_raw_sample_claim.reason,
+                    "pruned_keys": list(rolling_raw_sample_claim.pruned_keys),
+                }
+                if rolling_raw_sample_claim is not None
+                else {"granted": False, "reason": "no rolling sample root configured"}
+            ),
         }
         artifacts.append(
             (
@@ -1619,6 +1695,31 @@ def _sephora_market_pin_failure(
     if pin_confirmed is not True:
         reasons.append("required rendered-market assertion was not confirmed")
     return "; ".join(reasons) if reasons else None
+
+
+def _google_serp_content_extraction_spec(
+    mode: str, *, requested_url: str
+) -> RenderedContentExtractionSpec:
+    """Content spec for the US-parameterized Google SERP surface.
+
+    The requested URL is closed over rather than threaded through the shared
+    ``RenderedContentExtractionSpec`` signature: the record needs it only to
+    report ``query_rewritten``, and widening a contract every retail surface
+    also implements would cost more than it buys.
+    """
+    return RenderedContentExtractionSpec(
+        requested_retention_mode=mode,
+        extractor_version=GOOGLE_SERP_CONTENT_RECORD_VERSION,
+        json_indent=None,
+        extractor=lambda rendered_dom, visible_text, final_url: (
+            build_google_serp_content_record(
+                rendered_dom=rendered_dom,
+                visible_text=visible_text,
+                final_url=final_url,
+                requested_url=requested_url,
+            )
+        ),
+    )
 
 
 def _sephora_content_extraction_spec(mode: str) -> RenderedContentExtractionSpec:
@@ -2297,8 +2398,31 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help=(
             "Retention mode for the enabled Sephora, Luckyscent, Nordstrom, "
-            "Ulta, Target, Amazon, and REVOLVE aggregate routes. Omitted defaults those "
-            "routes to content; other profiles remain raw."
+            "Ulta, Target, Amazon, and REVOLVE aggregate routes, and for the "
+            "google_serp_us_parameterized source surface (which requires an HTTPS "
+            "google.com/search URL with q plus hl=en, gl=us, pws=0). Omitted "
+            "defaults those routes to content; other profiles and surfaces remain raw."
+        ),
+    )
+    parser.add_argument(
+        "--raw-sample-root",
+        type=Path,
+        default=None,
+        help=(
+            "Operator-drive directory holding the rolling raw regression sample. "
+            "The first content-retention capture of a surface per day -- or per "
+            "--raw-sample-run-key for a batch campaign -- copies its rendered DOM "
+            "and visible text here; samples outside the 30-day window are pruned "
+            "on the next claim. Not durable evidence and never a pinned corpus."
+        ),
+    )
+    parser.add_argument(
+        "--raw-sample-run-key",
+        default=None,
+        help=(
+            "Sample key for a batch campaign, so the run's FIRST capture is "
+            "sampled instead of the day's first. Reusing a key suppresses another "
+            "sample until it ages out. Requires --raw-sample-root."
         ),
     )
     parser.add_argument("--session-id", default=None)
@@ -2663,13 +2787,16 @@ def main(
             *_ULTA_GRID_PROFILES,
             "revolve_grid_aggregate",
         }
-        if args.retention_mode is not None and (
+        is_google_serp_surface = args.source_surface in GOOGLE_SERP_CONTENT_SURFACES
+        if is_google_serp_surface:
+            validate_google_serp_route(args.url, label="--url")
+        if args.retention_mode is not None and not is_google_serp_surface and (
             retail_capture_profile is None
             or retail_capture_profile.name not in content_profiles
         ):
             raise ValueError(
                 "--retention-mode currently requires an enabled aggregate "
-                "content profile"
+                "content profile or a content-enabled source surface"
             )
         if args.nordstrom_review_posture is not None and (
             retail_capture_profile is None
@@ -2679,7 +2806,14 @@ def main(
                 "--nordstrom-review-posture requires nordstrom_pdp_aggregate"
             )
         content_extraction = None
-        if (
+        if is_google_serp_surface and retail_capture_profile is None:
+            # Content is the SERP lane's default: the flip is the point of the
+            # retention decision, and `--retention-mode raw` remains the explicit
+            # per-run evidence posture.
+            content_extraction = _google_serp_content_extraction_spec(
+                args.retention_mode or "content", requested_url=args.url
+            )
+        elif (
             retail_capture_profile is not None
             and retail_capture_profile.name == SEPHORA_PDP_CONTENT_PROFILE
         ):
@@ -3058,6 +3192,8 @@ def main(
             content_extraction=content_extraction,
             retail_grid_projection_output=args.retail_grid_projection_output,
             retain_retail_grid_raw_sample=args.retain_retail_grid_raw_sample,
+            raw_sample_root=args.raw_sample_root,
+            raw_sample_run_key=args.raw_sample_run_key,
             capture_engine=capture_engine,
         )
     except ValueError as exc:
