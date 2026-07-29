@@ -1,4 +1,4 @@
-# SERP Lane v0 — living state — updated 2026-07-28
+# SERP Lane v0 — living state — updated 2026-07-30
 
 The single current surface for the Google SERP capture lane. Detailed
 evidence records stay in their run folders; THIS file owns current truth.
@@ -45,7 +45,7 @@ satellites (the spec, axis docs, handoffs) POINT at them and must not mint
 or restate them. Two lanes minted F23 independently on 2026-07-29 — this
 ledger for the platform doors, `competitor_ledger_spec_v0.md` for an
 `alternatives` under-crediting claim — because nothing said where numbers
-come from. **Next free: F25.**
+come from. **Next free: F26.**
 
 **Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
 carrying a full-bank trigger were re-decided against **986/986 captures /
@@ -135,6 +135,32 @@ base rate) covers the rest. **Not established**, and the cheap test is
 free: a genuinely quiet day (<100 captures/24h) followed by a cold
 start. If that starts clean, reputation-recovery is real and the
 operating rule becomes a daily budget with recovery days.
+
+**F25. `vs` / `dupe` / `alternatives` do NOT cannibalise each other;
+the apparent effect is a shape-set-size artifact.** active (new
+2026-07-30; homes a claim that arrived from the concurrent lane without
+a cell of its own). The claim was that the three shapes eat each other
+when co-present, leaving `alternatives` under-credited. Tested two ways
+on 33 subjects carrying all three:
+- **Mutual overlap refutes the mechanism.** Pairwise question-set
+  Jaccard among the trio is **0.096** against **0.092** for all other
+  shape pairs (n=99 vs n=8280). They duplicate each other no more than
+  any two unrelated shapes — the opposite of the F5 review-family
+  signature, which is how mutual duplication actually looks.
+- **The number that started it is real, and design-relative.**
+  `alternatives` unique share is **0.476 in the 11-shape design** and
+  **0.747 in the 9-shape design** (which carries neither `vs_rival` nor
+  `dupe`). The concurrent lane's "0.749" was the P9 figure quoted
+  without its design. Unique share is depressed by a larger competing
+  shape set — the methodology caveat this ledger already carries — so
+  removing ANY two shapes lifts the rest, and the lift is not evidence
+  of cannibalisation by those two specifically.
+**Board consequence: none.** All three keep their slots; nothing is
+under-credited once compared within a fixed design. Evidence:
+`analysis/fullbank_shape_cannibalisation.json` (sealed; derivation
+`serp_fullbank_analysis/shape_cannibalisation.py`). Trigger: trio
+pairwise overlap exceeding the all-pairs baseline by >0.05 in any
+stratum.
 
 **F2b consumer audit (2026-07-30) — first reading WITHDRAWN, corrected
 same turn.** The doctrine was landed in the megadogfood orchestrator
@@ -836,3 +862,41 @@ import for in-run counts.
   `forseti-harness/source_capture/google_serp_content.py`; `bin/extract_serp_v2.py`
   remains the reference the port was proved against, not a second
   implementation to maintain in parallel.
+- 2026-07-29 (wave 1, full bank 986/986): **F17 WITHDRAWN** — `vs {rival}`
+  leads the question axis only; it does not reach the social top ten.
+  F4 revised 0.889 → 0.782 → **0.821** at n=33 (the intermediate
+  "wide margin withdrawn" call came from a cross-stratum blend and is
+  itself withdrawn). F6 re-judged: revision 1's "weakened" was a
+  coverage artifact of an issue-light 888. F5, F7, F12, F15, F16, F18,
+  F19, F20, F21 held with revised numbers; F12 and F15 promoted
+  lead → active. **F22 opened** (video-card content differs by platform).
+  Evidence: `fullbank_analysis_findings_v0.md` rev 2.
+- 2026-07-29 (wave 2, 572/572): **F23 and F24 opened** — naming the
+  platform IS the door (TT 17.2 / IG 13.5 / YT 11.9 cards per probe vs
+  reddit 7.7), and the SERP noise floor is measured (0.863 same-run,
+  0.809 cross-day question agreement). F6 tournament-ranked:
+  `made_it_worse` and `bad_for_you` enter the board, **`complaints` and
+  `regret` cut**. F8 revised at n=60 (4h decay 0.86, not the panel's
+  0.71). F2 sharpened, F2b opened.
+- 2026-07-30: **F2c opened** (trailing load separates blocks, rate does
+  not — 1714 pooled events). F2b's own consumer-audit claim WITHDRAWN
+  (asserted a fleet-wide re-probe risk from a marker grep; reading the
+  block branches showed every other runner already stops dead).
+  **F11 unstaled** — it sat at `lead` with panel-era evidence while the
+  findings note had re-judged it; now active at n=28/29, and its
+  "steadier" half is withdrawn because F24 measured stability directly.
+  **F13's revisit trigger fired and its withdrawal turned positive** —
+  maturity does not scale question-layer trust; the ordering is inverted
+  and inside the noise floor. **F25 opened**, homing a claim that arrived
+  from the concurrent lane without a cell: the vs/dupe/alternatives trio
+  does NOT cannibalise (pairwise overlap 0.096 vs 0.092 baseline); the
+  0.749 that prompted it is the real P9-design figure quoted without its
+  design.
+- 2026-07-30 (cross-lane): PR #1383 landed 20+ owner-ratified rulings on
+  this folder from a concurrent lane after #1384 merged. Reconciled:
+  the creator layer now emits the spec's ratified `grid_capture` shape
+  rather than a parallel feed; social engagement figures carry
+  `UNBASELINED`; the phase-1 handoff return contract carries the tag and
+  the URL-rot rule. Cause fixed at source — **F-number allocation is now
+  stated to live in this file only**, and the spec's restated figures
+  were replaced by pointers rather than policed by a new sync step.

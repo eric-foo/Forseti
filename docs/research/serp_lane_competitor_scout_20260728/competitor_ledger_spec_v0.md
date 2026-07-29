@@ -23,14 +23,13 @@ captured either way — the only missing piece is a harvest-and-typing
 pass over captures we already make. (Basis correction: the panel-era premise that
 `vs {rival}` is the top shape on both axes is superseded — its social
 half is withdrawn. **Numbers are not restated here**; the owning cells
-in `serp_lane_v0.md` carry them, and restating them is what let this
-paragraph drift: it cited `alternatives` at 0.749 under an "F23" that
-this lane had independently minted for the platform-door finding, and
-0.749 appears in no sealed analysis output — the full-bank figures are
-`alternatives` 0.475 social share in beauty, 0.476 unique question
-share. Read F17 and F23 in the ledger; do not copy their figures back
-into this file. The shape-cannibalisation claim is untested and is held
-as a lead there.)
+in `serp_lane_v0.md` carry them. This paragraph previously cited
+`alternatives` at 0.749 under an "F23" the ledger had independently
+minted for the platform-door finding; the figure was REAL — it is
+`alternatives` unique question share in the P9 design (sealed 0.747) —
+but unique share is not comparable across designs, so a bare number
+without its design is what drifted, not the measurement. Read F17, F23,
+and F25 in the ledger; do not copy their figures back into this file.)
 The expensive mistake is the current one: hand-picking rivals for the #1
 shape, which turns the best probe into a confirmation loop (we only learn
 about competitors we already guessed).
