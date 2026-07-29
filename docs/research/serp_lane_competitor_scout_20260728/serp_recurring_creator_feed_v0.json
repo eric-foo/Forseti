@@ -3,15 +3,18 @@
  "generated": "2026-07-29",
  "source": "google_serp_us_parameterized megadogfood corpus (986-job wave-1 complete; counts refresh when the corpus grows)",
  "derivation": "forseti-harness/runners/serp_fullbank_analysis/fullbank_social.py -> recurring_creators; handles from video_block canonical_urls",
- "why_these": "each creator's account surfaced on Google SERPs for 2+ DISTINCT subjects in the corpus (video/social result cards) - SERP recurrence marks them as category mediators worth frontier qualification",
+ "shape": "grid_capture tags per competitor_ledger_spec_v0.md (owner-ratified 2026-07-29); consumed by the existing social capture runners' input queue",
+ "why_these": "each creator's account surfaced on Google SERPs for 2+ DISTINCT subjects in the corpus (video/social result cards) - the spec's first deep-dive trigger. The other three triggers (row carries a statement a read would weight; row is an axis/answer-slot's only occupant; #ad-convergence needs checking) are read-time judgments and are added by a reader, not here",
  "non_claims": [
   "recurrence evidences SERP reach, not audience size, independence, or sponsorship status",
   "counts are observed result cards, never prevalence or share of anything real",
-  "this feed is frontier INPUT: nothing here is registry-admitted, qualified, or an owner disposition"
+  "this feed is capture-queue INPUT: nothing here is registry-admitted, qualified, or an owner disposition",
+  "phase 1 never visits a platform and never weights a raw social count; any engagement read is weighted ONLY against the creator's own recent-grid median and is UNBASELINED otherwise (spec, owner-ratified 2026-07-29) - no cross-creator or cross-platform engagement comparison is licensed by this feed",
+  "profile_url_or_none is derived from an observed card URL where one existed; unavailable is recorded, never guessed"
  ],
  "consumers": {
   "tiktok": "discovery-frontier ranking / supervised onboarding lane (admission path exists)",
-  "youtube": "admission path ROUTED via docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md (not yet built); metric-rollup machinery exists",
+  "youtube": "NO admission path exists (typed gap); metric-rollup machinery exists",
   "instagram": "NO admission path exists (typed gap)"
  },
  "n_creators": 113,
@@ -19,6 +22,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr Dray",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 11,
    "subjects": [
@@ -39,6 +46,10 @@
   {
    "platform": "youtube",
    "display_name": "Doctorly",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 8,
    "subjects": [
@@ -56,6 +67,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Daniel Sugai",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 7,
    "subjects": [
@@ -72,6 +87,10 @@
   {
    "platform": "youtube",
    "display_name": "SkinZone",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 7,
    "subjects": [
@@ -88,6 +107,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Aleksandra Brown DO, FAAD",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 6,
    "subjects": [
@@ -103,6 +126,10 @@
   {
    "platform": "youtube",
    "display_name": "Melissa Van Dijk",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 6,
    "subjects": [
@@ -118,6 +145,10 @@
   {
    "platform": "youtube",
    "display_name": "No BS Beauty",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 5,
    "subjects": [
@@ -132,6 +163,10 @@
   {
    "platform": "tiktok",
    "display_name": "Natalie O'Neill",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@natalie_oneillll",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "natalie_oneillll"
    ],
@@ -147,6 +182,10 @@
   {
    "platform": "tiktok",
    "display_name": "drdrayzday",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@drdrayzday",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "drdrayzday"
    ],
@@ -162,6 +201,10 @@
   {
    "platform": "youtube",
    "display_name": "Abbey Yung",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 4,
    "subjects": [
@@ -175,6 +218,10 @@
   {
    "platform": "youtube",
    "display_name": "Cassandra Bankson",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 4,
    "subjects": [
@@ -188,6 +235,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Jenny Liu",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 4,
    "subjects": [
@@ -201,6 +252,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Sam Ellis",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 4,
    "subjects": [
@@ -214,6 +269,10 @@
   {
    "platform": "youtube",
    "display_name": "alex greyson",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 4,
    "subjects": [
@@ -227,6 +286,10 @@
   {
    "platform": "instagram",
    "display_name": "Claire Bridgett💄",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -239,6 +302,10 @@
   {
    "platform": "instagram",
    "display_name": "Himi Khandelwal",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -251,6 +318,10 @@
   {
    "platform": "instagram",
    "display_name": "iona francis",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -263,6 +334,10 @@
   {
    "platform": "instagram",
    "display_name": "nipunkapur",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -275,6 +350,10 @@
   {
    "platform": "instagram",
    "display_name": "thelipsticklesbians",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -287,6 +366,10 @@
   {
    "platform": "tiktok",
    "display_name": "skincarewithshelbs",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@careclarkbsn",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "careclarkbsn",
     "skincarewithshelbs",
@@ -303,6 +386,10 @@
   {
    "platform": "youtube",
    "display_name": "Alternative Brewing",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -315,6 +402,10 @@
   {
    "platform": "youtube",
    "display_name": "Coffee Kev",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -327,6 +418,10 @@
   {
    "platform": "youtube",
    "display_name": "Diba's Quest",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -339,6 +434,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Aanchal MD",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -351,6 +450,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Dustin Portela",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -363,6 +466,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Neera Nathan",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -375,6 +482,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Scott Walter MD",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -387,6 +498,10 @@
   {
    "platform": "youtube",
    "display_name": "Flawless Physio | Shoe Reviews",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -399,6 +514,10 @@
   {
    "platform": "youtube",
    "display_name": "James Welsh",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -411,6 +530,10 @@
   {
    "platform": "youtube",
    "display_name": "Mattress Nerd",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -423,6 +546,10 @@
   {
    "platform": "youtube",
    "display_name": "Skin Cupid",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -435,6 +562,10 @@
   {
    "platform": "youtube",
    "display_name": "The Run Testers",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -447,6 +578,10 @@
   {
    "platform": "youtube",
    "display_name": "Tom's Coffee Corner",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 3,
    "subjects": [
@@ -459,6 +594,10 @@
   {
    "platform": "instagram",
    "display_name": "Dr. Danny Guo",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -470,6 +609,10 @@
   {
    "platform": "instagram",
    "display_name": "Dr. Dustin Portela | Skincare & Health Expert",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -481,6 +624,10 @@
   {
    "platform": "instagram",
    "display_name": "Dr. Joyce Park MD FAAD | Dermatologist",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -492,6 +639,10 @@
   {
    "platform": "instagram",
    "display_name": "EltaMD Skin Care",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -503,6 +654,10 @@
   {
    "platform": "instagram",
    "display_name": "HAVEN | ESTHETICIAN + MOMMY",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -514,6 +669,10 @@
   {
    "platform": "instagram",
    "display_name": "Jenny Liu, MD FAAD , Skincare Derm",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -525,6 +684,10 @@
   {
    "platform": "instagram",
    "display_name": "Jess | Makeup • Tutorials",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -536,6 +699,10 @@
   {
    "platform": "instagram",
    "display_name": "Nipun Kapur Sohal | Skincare Educator",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -547,6 +714,10 @@
   {
    "platform": "instagram",
    "display_name": "blush rush pokhara",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -558,6 +729,10 @@
   {
    "platform": "instagram",
    "display_name": "danielsugaimd",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -569,6 +744,10 @@
   {
    "platform": "instagram",
    "display_name": "dannyguo.md",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -580,6 +759,10 @@
   {
    "platform": "tiktok",
    "display_name": "Isomerskincare",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -591,6 +774,10 @@
   {
    "platform": "tiktok",
    "display_name": "Kristingl",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -602,6 +789,10 @@
   {
    "platform": "tiktok",
    "display_name": "Skin Cupid",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@skincupid",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "skincupid"
    ],
@@ -615,6 +806,10 @@
   {
    "platform": "tiktok",
    "display_name": "abbeyyung",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@abbeyyung",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "abbeyyung"
    ],
@@ -628,6 +823,10 @@
   {
    "platform": "tiktok",
    "display_name": "abbythebadassmom",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@abbythebadassmom",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "abbythebadassmom"
    ],
@@ -641,6 +840,10 @@
   {
    "platform": "tiktok",
    "display_name": "abis_skincare",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@abis_skincare",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "abis_skincare"
    ],
@@ -654,6 +857,10 @@
   {
    "platform": "tiktok",
    "display_name": "audreyvictoria_",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@audreyvictoria_",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "audreyvictoria_"
    ],
@@ -667,6 +874,10 @@
   {
    "platform": "tiktok",
    "display_name": "drwhitneybowe",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@drwhitneybowe",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "drwhitneybowe"
    ],
@@ -680,6 +891,10 @@
   {
    "platform": "tiktok",
    "display_name": "glamzilla",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@glamzilla",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "glamzilla"
    ],
@@ -693,6 +908,10 @@
   {
    "platform": "tiktok",
    "display_name": "iiheartbeauties",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@iiheartbeauties",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "iiheartbeauties"
    ],
@@ -706,6 +925,10 @@
   {
    "platform": "tiktok",
    "display_name": "juliannahoffman4",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@juliannahoffman4",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "juliannahoffman4"
    ],
@@ -719,6 +942,10 @@
   {
    "platform": "tiktok",
    "display_name": "kristingl",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@diegomoone",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "diegomoone",
     "kristingl"
@@ -733,6 +960,10 @@
   {
    "platform": "tiktok",
    "display_name": "kristyn hoffman 🫧",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -744,6 +975,10 @@
   {
    "platform": "tiktok",
    "display_name": "kristynhoffman96",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@kristynhoffman96",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "kristynhoffman96"
    ],
@@ -757,6 +992,10 @@
   {
    "platform": "tiktok",
    "display_name": "maj.beauty",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@maj.beauty",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "maj.beauty"
    ],
@@ -770,6 +1009,10 @@
   {
    "platform": "tiktok",
    "display_name": "rhode skin",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -781,6 +1024,10 @@
   {
    "platform": "tiktok",
    "display_name": "rogerwh0",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@rogerwh0",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "rogerwh0"
    ],
@@ -794,6 +1041,10 @@
   {
    "platform": "tiktok",
    "display_name": "scenttakes",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@scenttakes",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "scenttakes"
    ],
@@ -807,6 +1058,10 @@
   {
    "platform": "tiktok",
    "display_name": "skin.ken",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@skin.ken",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "skin.ken"
    ],
@@ -820,6 +1075,10 @@
   {
    "platform": "tiktok",
    "display_name": "slaybyjess",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@slaybyjess",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "slaybyjess"
    ],
@@ -833,6 +1092,10 @@
   {
    "platform": "tiktok",
    "display_name": "zakheath",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": "https://www.tiktok.com/@zakheath",
+   "locator_status": "derived_from_card_url",
    "tiktok_handles": [
     "zakheath"
    ],
@@ -846,6 +1109,10 @@
   {
    "platform": "youtube",
    "display_name": "A N G I E B E E",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -857,6 +1124,10 @@
   {
    "platform": "youtube",
    "display_name": "Adore Beauty",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -868,6 +1139,10 @@
   {
    "platform": "youtube",
    "display_name": "Alastair Running",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -879,6 +1154,10 @@
   {
    "platform": "youtube",
    "display_name": "Alex Gaboury",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -890,6 +1169,10 @@
   {
    "platform": "youtube",
    "display_name": "Audrey Victoria",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -901,6 +1184,10 @@
   {
    "platform": "youtube",
    "display_name": "Balcones Dermatology and Aesthetics",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -912,6 +1199,10 @@
   {
    "platform": "youtube",
    "display_name": "Brad Mondo",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -923,6 +1214,10 @@
   {
    "platform": "youtube",
    "display_name": "CNET Home",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -934,6 +1229,10 @@
   {
    "platform": "youtube",
    "display_name": "CYoung",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -945,6 +1244,10 @@
   {
    "platform": "youtube",
    "display_name": "Charisse Daily",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -956,6 +1259,10 @@
   {
    "platform": "youtube",
    "display_name": "Chetali Chadha",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -967,6 +1274,10 @@
   {
    "platform": "youtube",
    "display_name": "Chlöe Swift Stylist",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -978,6 +1289,10 @@
   {
    "platform": "youtube",
    "display_name": "Chris Gibson",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -989,6 +1304,10 @@
   {
    "platform": "youtube",
    "display_name": "Consumer Research Studios",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1000,6 +1319,10 @@
   {
    "platform": "youtube",
    "display_name": "Daddy Got Coffee",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1011,6 +1334,10 @@
   {
    "platform": "youtube",
    "display_name": "Doctors of Running",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1022,6 +1349,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Eric Berg DC",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1033,6 +1364,10 @@
   {
    "platform": "youtube",
    "display_name": "Dr. Somji Skin",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1044,6 +1379,10 @@
   {
    "platform": "youtube",
    "display_name": "EDDBUD",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1055,6 +1394,10 @@
   {
    "platform": "youtube",
    "display_name": "Eve Dawes | Glamour & Gains",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1066,6 +1409,10 @@
   {
    "platform": "youtube",
    "display_name": "Footwear Flix",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1077,6 +1424,10 @@
   {
    "platform": "youtube",
    "display_name": "Gena Marie",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1088,6 +1439,10 @@
   {
    "platform": "youtube",
    "display_name": "Glam Girl Gabi",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1099,6 +1454,10 @@
   {
    "platform": "youtube",
    "display_name": "Hyram",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1110,6 +1469,10 @@
   {
    "platform": "youtube",
    "display_name": "Janna Niki",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1121,6 +1484,10 @@
   {
    "platform": "youtube",
    "display_name": "Jennifer Wang",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1132,6 +1499,10 @@
   {
    "platform": "youtube",
    "display_name": "Julissa Guillen",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1143,6 +1514,10 @@
   {
    "platform": "youtube",
    "display_name": "Katey Davidson",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1154,6 +1529,10 @@
   {
    "platform": "youtube",
    "display_name": "Katie Hoke",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1165,6 +1544,10 @@
   {
    "platform": "youtube",
    "display_name": "Marriage Kids and Money",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1176,6 +1559,10 @@
   {
    "platform": "youtube",
    "display_name": "Mirella Manelli",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1187,6 +1574,10 @@
   {
    "platform": "youtube",
    "display_name": "Modest Money - Reviews & Coupons",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1198,6 +1589,10 @@
   {
    "platform": "youtube",
    "display_name": "Nadia Vega",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1209,6 +1604,10 @@
   {
    "platform": "youtube",
    "display_name": "NapLab",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1220,6 +1619,10 @@
   {
    "platform": "youtube",
    "display_name": "Nipun Kapur",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1231,6 +1634,10 @@
   {
    "platform": "youtube",
    "display_name": "Rachel Ballinger",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1242,6 +1649,10 @@
   {
    "platform": "youtube",
    "display_name": "RunnersNeed",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1253,6 +1664,10 @@
   {
    "platform": "youtube",
    "display_name": "Seattle Coffee Gear",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1264,6 +1679,10 @@
   {
    "platform": "youtube",
    "display_name": "Shundara",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1275,6 +1694,10 @@
   {
    "platform": "youtube",
    "display_name": "Sleep Advisor",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1286,6 +1709,10 @@
   {
    "platform": "youtube",
    "display_name": "Sleep Doctor",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1297,6 +1724,10 @@
   {
    "platform": "youtube",
    "display_name": "Style me Worth it",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1308,6 +1739,10 @@
   {
    "platform": "youtube",
    "display_name": "Tamuno Abbey",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1319,6 +1754,10 @@
   {
    "platform": "youtube",
    "display_name": "Tea with MD",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1330,6 +1769,10 @@
   {
    "platform": "youtube",
    "display_name": "The Santa Maria",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1341,6 +1784,10 @@
   {
    "platform": "youtube",
    "display_name": "Vaidade Pega",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1352,6 +1799,10 @@
   {
    "platform": "youtube",
    "display_name": "ellebangs",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [
@@ -1363,6 +1814,10 @@
   {
    "platform": "youtube",
    "display_name": "ii heart beauties",
+   "grid_capture": true,
+   "trigger": "recurs_on_2plus_subjects",
+   "profile_url_or_none": null,
+   "locator_status": "unavailable_at_emission",
    "tiktok_handles": [],
    "n_subjects": 2,
    "subjects": [

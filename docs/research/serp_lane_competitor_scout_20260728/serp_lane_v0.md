@@ -40,6 +40,13 @@ capture opens them. SERP output is never composition evidence by itself.
 
 Format: F# | status: active / lead / withdrawn | evidence | change-trigger.
 
+**F-numbers are allocated HERE and only here.** This file owns the cells;
+satellites (the spec, axis docs, handoffs) POINT at them and must not mint
+or restate them. Two lanes minted F23 independently on 2026-07-29 — this
+ledger for the platform doors, `competitor_ledger_spec_v0.md` for an
+`alternatives` under-crediting claim — because nothing said where numbers
+come from. **Next free: F25.**
+
 **Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
 carrying a full-bank trigger were re-decided against **986/986 captures /
 98 of 98 complete subjects**; see `fullbank_analysis_findings_v0.md` for
@@ -421,11 +428,19 @@ F12 from outlets to creators. **Non-claim: recurrence evidences reach,
 not independence — sponsorship is not observable from titles.**
 Evidence: `analysis/fullbank_social_and_axes.json`. Trigger: the list
 shrinking at a larger corpus, or an editorial outlet entering the top 10.
-Routing (owner-decided 2026-07-29): the layer feeds the TikTok
-discovery-frontier funnel as CANDIDATE INPUT, never direct registry
-insertion — `serp_recurring_creator_feed_v0.json` (this folder) carries
-all 113 with the why (subjects, counts, scope) and recovered TikTok
-handles (20/24). The frontier's scan-receipt register and owner
+Routing (RECONCILED 2026-07-30 to the ratified spec route): the layer
+emits **`grid_capture` tags** per `competitor_ledger_spec_v0.md`
+(owner-ratified 2026-07-29) — the spec's first deep-dive trigger IS this
+cell's criterion, "creator recurs on 2+ subjects". That trigger is
+CROSS-SUBJECT, so it cannot fire inside a single-subject phase-1 pass;
+this lane-level derivation is where it fires, and
+`serp_recurring_creator_feed_v0.json` is its emission (113 entries with
+subjects, scope, and profile URL where an observed card URL supplied one
+— 20 of 24 TikTok). The existing social capture runners' input queue
+consumes tagged entries; **phase 1 never visits a platform and never
+weights a raw social count.** The other three triggers (a statement a
+read would weight, an axis/answer-slot's only occupant, #ad-convergence)
+are read-time judgments a reader adds. Never direct registry insertion. The frontier's scan-receipt register and owner
 disposition batches are NOT written by this lane: a SERP-recurrence
 observation is not a TikTok scan, and dispositions are owner acts.
 YouTube's gap is ROUTED (2026-07-30): `docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md` commissions the admission path on the TikTok lane's mechanism with the Shorts/long-form axis typed. Instagram (16) remains an unrouted typed gap.
@@ -435,7 +450,11 @@ Per creator the lane returned profile metrics + a 30-video grid with
 play counts and full descriptions. CI yield on the three questions:
 (1) engagement separates cleanly — natalie_oneillll median
 plays/follower 0.204 vs drdrayzday 0.049 and skincarewithshelbs 0.047,
-so recurrence rank ≠ audience pull; (2) video DESCRIPTIONS already
+so recurrence rank ≠ audience pull. **UNBASELINED under the ratified
+engagement rule** (spec, 2026-07-29): social engagement may be weighted
+only against the creator's own recent-grid median, never compared across
+creators or platforms. These figures are raw observation about who to
+prioritise for capture, and license no corroboration weight on any row; (2) video DESCRIPTIONS already
 carry competitor names the SERP harvest never saw (Goodal, Purito,
 Billie, Athena Club) plus dense in-corpus mentions (innisfree ×9,
 bubble ×8, byoma ×7 in one creator's window) — a fifth competitor

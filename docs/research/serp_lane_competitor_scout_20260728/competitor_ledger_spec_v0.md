@@ -20,13 +20,17 @@ per-SKU axes, no delight work).
 Competitor identification costs ~zero extra probes. The comparison
 shapes are already on the default board, so the competitor surface is
 captured either way — the only missing piece is a harvest-and-typing
-pass over captures we already make. (Basis correction, full-bank
-re-judgment 2026-07-28: the panel-era premise that `vs {rival}` is
-the top shape on both axes is superseded — F17's social half is
-withdrawn and `vs` fell to rank 14 of 32 at 0.414; `alternatives` is
-under-credited (F23, 0.749) and the vs/dupe/alternatives shapes
-cannibalize each other when co-present. Owning cells:
-serp_lane_v0.md F17/F23.)
+pass over captures we already make. (Basis correction: the panel-era premise that
+`vs {rival}` is the top shape on both axes is superseded — its social
+half is withdrawn. **Numbers are not restated here**; the owning cells
+in `serp_lane_v0.md` carry them, and restating them is what let this
+paragraph drift: it cited `alternatives` at 0.749 under an "F23" that
+this lane had independently minted for the platform-door finding, and
+0.749 appears in no sealed analysis output — the full-bank figures are
+`alternatives` 0.475 social share in beauty, 0.476 unique question
+share. Read F17 and F23 in the ledger; do not copy their figures back
+into this file. The shape-cannibalisation claim is untested and is held
+as a lead there.)
 The expensive mistake is the current one: hand-picking rivals for the #1
 shape, which turns the best probe into a confirmation loop (we only learn
 about competitors we already guessed).
