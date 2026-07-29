@@ -129,21 +129,35 @@ free: a genuinely quiet day (<100 captures/24h) followed by a cold
 start. If that starts clean, reputation-recovery is real and the
 operating rule becomes a daily budget with recovery days.
 
-**F2b consumer audit (2026-07-30).** The doctrine was landed in the
-megadogfood orchestrator only, and the very next run proved that
-insufficient: `dogfood10_runner.py` still carried the old 12–15-min
-re-probe policy and used it on its first block. Patched same turn. Audit
-of every capture runner on the operator drive that detects
-`blocked_google_unusual_traffic` — **2 of 11 now carry the F2b/ping
-policy** (`megadogfood_orchestrator.py`, `dogfood10_runner.py`); the
-other 9 (`return_leg_runner`, `beauty_ext_runner`,
-`run_capture_queue`, `probe_vs_oh`, `tower28_scout`,
-`window_probe_runner`, `retry_blocked`, and the two extractors, which
-only classify) predate it. **Any of them launched today would re-probe a
-live flag.** This is the written-but-unrouted defect class again, now in
-egress-safety code rather than docs: fix a runner before launching it,
-or port the policy to a shared helper. Trigger: the next runner launch —
-check its block branch first.
+**F2b consumer audit (2026-07-30) — first reading WITHDRAWN, corrected
+same turn.** The doctrine was landed in the megadogfood orchestrator
+only, and the very next run proved that insufficient: `dogfood10_runner`
+still carried the old 12–15-min re-probe policy and used it on its first
+block. Patched, and the policy moved to a shared home
+(`serp_egress_cadence.rung_after_block` / `should_ping_owner` /
+`write_owner_ping`, 13 contract tests).
+
+**The alarming part of the first audit was false and is withdrawn.** It
+claimed 9 runners "would re-probe a live flag," inferred from a marker
+grep rather than from reading their block branches. Reading them: every
+one stops immediately — `return_leg_runner` and `tower28_scout` break on
+the stop signal, `run_capture_queue` returns 2 "without retry",
+`window_probe_runner` stops on first block, `beauty_ext_runner` is
+strictest of all ("a block is the answer to the experiment, not a
+failure to work around"), `probe_vs_oh` and `retry_blocked` are
+supervised one-shots, and the two extractors only classify. **Pause-and-
+continue existed in exactly two runners — the two long-running
+orchestrators — and both now carry the policy.** There was never a fleet
+foot-gun.
+
+What survives: the shared helper earns its place by de-duplicating the
+policy across the only two runners that need it and giving the next
+long-running orchestrator a tested one to import — not by averting a
+danger that did not exist. The two existing runners keep their
+equivalent inline policy until next touched; rewiring live capture code
+for zero behavior change is churn. Method note worth keeping: a marker
+grep is not a behavior audit, and this cell asserted a fleet-wide risk
+from one before reading a single block branch.
 
 **F3. Once flagged, recovery is slow and stochastic; prevention beats
 reaction.** active — CORRECTED 2026-07-29; series SEALED same day.

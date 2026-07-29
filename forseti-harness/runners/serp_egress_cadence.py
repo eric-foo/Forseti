@@ -1,8 +1,13 @@
 """Canonical Google-SERP capture cadence for Forseti capture runners.
 
-One source of truth for how fast a Google SERP stream may run, imported by
-every Google capture runner rather than copied into each. Runners keep their
-own block policy and job loop; only the cadence numbers live here.
+One source of truth for how fast a Google SERP stream may run AND how it
+must respond to a block, imported by every Google capture runner rather than
+copied into each. Runners keep their own job loop; the cadence numbers and
+the block policy live here.
+
+(Until 2026-07-30 runners kept their own block policy. That is exactly how
+dogfood10 launched with a pre-F2b 12-15 min re-probe policy the day after
+the doctrine landed in a different runner — so the policy moved here.)
 
 ## Shape
 
@@ -131,6 +136,67 @@ def cycle_for(rung):
     """Cycle seconds for a rung index, clamped into the ladder."""
     return RATE_LADDER[max(0, min(int(rung), len(RATE_LADDER) - 1))]
 
+
+
+# ---------------------------------------------------------------------------
+# Block response (F2b/F3 doctrine, owner-ratified 2026-07-29)
+#
+# Landed here rather than per-runner because the first attempt landed it in
+# ONE runner and the very next launch (dogfood10, 2026-07-30) re-probed a
+# live flag with the old 12-15 min policy. Every capture runner that talks
+# to the Google route should call this instead of writing its own.
+#
+# The policy, and why each part:
+#   * step a rung back ONLY inside the escalation probation. A block that
+#     does not follow a rung increase is a flag, not a rate signal, and the
+#     sealed diagnosis shows trailing-1h load does not separate blocks from
+#     clean captures at all (median 42 vs 39).
+#   * idle at most IDLE_SECONDS_MAX, then make exactly ONE recovery attempt.
+#     12-17 min re-probes failed six times in the sealed decay series.
+#   * a second consecutive block, or the third of a run, writes a ping file
+#     and stops for owner routing. Never probe on.
+# ---------------------------------------------------------------------------
+
+IDLE_SECONDS_MAX = 60 * 60      # owner ceiling: idle at most one hour
+RUNGUP_PROBATION_JOBS = 5       # a block this soon after a rung-up may be rate
+
+
+def rung_after_block(rung, jobs_since_rungup):
+    """Rung to hold after a block.
+
+    `jobs_since_rungup` is None outside escalation probation. Inside it, the
+    block plausibly answers the escalation, so step back; otherwise freeze.
+    """
+    if jobs_since_rungup is not None and jobs_since_rungup <= RUNGUP_PROBATION_JOBS:
+        return max(0, int(rung) - 1), True
+    return int(rung), False
+
+
+def should_ping_owner(blocks_this_run, recent_outcomes):
+    """True when this block must stop the run for owner routing."""
+    recent = list(recent_outcomes)
+    consecutive = len(recent) >= 2 and recent[-2] == "blocked"
+    return (consecutive or blocks_this_run >= 3), consecutive
+
+
+def write_owner_ping(ping_path, *, job_id, reason, counts, timestamp,
+                     extra=None):
+    """Write the owner-routing ping. Returns the path written."""
+    import json
+    from pathlib import Path as _Path
+    payload = {"reason": reason, "at": timestamp, "job_id": job_id,
+               "counts": dict(counts),
+               "doctrine": "F2b/F3: a block is a flag, not a rate signal; "
+                           "idle <=60min then ONE recovery attempt; owner "
+                           "routes the resume",
+               "decay_note": "sealed series: 10-17min gaps failed 6x; "
+                             "12.5 and 14.7min cleared once each; elapsed "
+                             "idle alone does not predict clearance"}
+    if extra:
+        payload.update(extra)
+    _Path(ping_path).write_text(json.dumps(payload, indent=1),
+                                encoding="utf-8")
+    return str(ping_path)
 
 if __name__ == "__main__":
     for i, c in enumerate(RATE_LADDER):
