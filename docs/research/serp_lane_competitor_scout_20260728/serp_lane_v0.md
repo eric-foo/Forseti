@@ -302,41 +302,27 @@ import for in-run counts.
 
 ## In progress
 
-- Full-bank run: **HALTED 2026-07-28 20:00 at 889/986 (97 pending)** —
-  owner decision, resume later. Refreshes F4–F8, F11, F12, F15 at n≈100
-  subjects when it completes; the analyses can also be re-run on the 889
-  already captured if the remainder slips.
-  **Why halted:** two blocks 14 minutes apart. The first was
-  load-driven and self-inflicted — a restart to change cadence config
-  began capturing 2.1 minutes after the previous burst instead of the
-  scheduled 10, producing 41 captures in 30 minutes where the schedule
-  allows ~32. The second landed on the FIRST capture after a ~26-minute
-  gap at a rate two rungs lower, with zero successful captures between:
-  that one is flag persistence, not a rate signal (consistent with F3,
-  recovery >75 min). Continuing to probe every 14 minutes mostly
-  re-confirms a flag, so all capture processes were stopped.
-  **On resume:** the IP should sit idle for hours, not minutes. Then
-  restart the orchestrator, which resumes from its ledger automatically;
-  `rate_state.json` is pre-set to rung 0 (27.1/hr) frozen so it starts
-  at the most-proven rate with no escalation. Earn a clean baseline of a
-  few dozen captures before reading any rate as evidence, and do not
-  unfreeze escalation until that baseline exists.
-  **What the run established before the blocks:** a clean walk from 27.1
-  to 60/hr sustained — 151 consecutive clean captures at 60/hr alone —
-  and the observation that clean and blocked stretches were identical at
-  10- and 20-minute windows and diverged only at 30 minutes (32 captures
-  = 64/hr clean vs 41 = 82/hr blocked). Working hypothesis: the
-  half-hour total is the discriminating variable, not the instantaneous
-  spike. Cadence, evidence per rung, and the 72/hr-sustained (~77/hr
-  peak-30min) rungs authored for the next attempt live in
+- Full-bank run: **COMPLETE 2026-07-29 at 1127/1127 successful latest
+  outcomes.** The earlier 889/986 halt remains useful cadence evidence, but
+  no longer describes current completion state. Its load finding still
+  stands: the clean and blocked stretches matched at 10- and 20-minute
+  windows and diverged only at 30 minutes (32 captures = 64/hr clean vs
+  41 = 82/hr blocked). Cadence authority remains
   `forseti-harness/runners/serp_egress_cadence.py`.
-- Queued behind the bank, both built, validated, and gated (no captures
-  taken, processes stopped with the bank): the 10-brand scout dogfood
+- Stage 6 merged vs+J5 completion: **COMPLETE and sealed 2026-07-30.**
+  The curated scope is 163 base jobs plus two dynamic Shopping reserves;
+  130 jobs are analysis-eligible and 35 are quarantined without deleting
+  evidence. The integrity seal checked 148 packet manifests, 592 preserved
+  file hashes, 17 reused extractions, and all query identities with zero
+  failures. The BR540 unnamed-equivalence return leg completed and supplies
+  nine rendered named-rival observations for native follow-through. See
+  `megadogfood_stage6_queue_completion_v0.md`.
+- Previously queued behind the bank: the 10-brand scout dogfood
   (`C:\tmp\forseti-scout-dogfood10-20260728\`) and the 120-job beauty
   corpus extension (`C:\tmp\forseti-beauty-ext-20260728\`, 12 new
   subjects, pools into the megadogfood store via its own pooling
-  script). Both gate on the bank writing a completion state, so neither
-  can fire onto a flagged IP; both pay a full rest at chain hand-off.
+  script). The bank gate is now satisfied; this Stage 6 work unit did not
+  re-verify either queue's independent execution state.
 - Tower 28 phase-2 native return: captures complete (14/14 threads +
   4-capture burst, 0 blocks) and consolidation done 2026-07-28 —
   J3 settlement (3 RENDERED_BETTER / 3 ALIGNED / 1 NATIVE_BETTER on

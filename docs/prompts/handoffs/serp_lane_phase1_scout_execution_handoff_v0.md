@@ -16,7 +16,8 @@ stale_if:
   - The competitor-ledger spec sections this handoff points to are
     superseded (next expected supersession: the full-bank megadogfood
     re-judgment, ~2026-07-30).
-  - The owner egress cadence or the CloakBrowser packet runner changes.
+  - The owner egress cadence, query policy, or persistent real-Chrome
+    fallback contract changes.
 authority_boundary: retrieval_only
 ```
 
@@ -87,6 +88,10 @@ target and a review axis-to-attack, not a review pass bar.
    capture it at the owner cadence. Reference implementation, if the
    operator drive is reachable:
    `C:\tmp\forseti-scout-dogfood10-20260728\bin\dogfood10_runner.py`.
+   That script is historical mechanics, not current query authority: before
+   egress, gate every job with
+   `source_capture.google_serp_queue_policy.evaluate_queue_job`. Presence is
+   cite-only, and competitor J5 queries require an explicit product scope.
 4. **Levers, read off the same captures — no extra probes.** J1 claim×
    dupe cross; J2 exit-door classification (armed / retention /
    technique-moat); J3 tag where rendered snippets may diverge from
@@ -101,10 +106,19 @@ target and a review axis-to-attack, not a review pass bar.
 ## Egress boundaries (hard)
 
 - Read the CURRENT owner cadence before the first capture — do not assume
-  a historical band. One Google-stream capture at a time. A block is a
-  stop signal: stop that stream, record it, never retry hot, never
-  interact with a CAPTCHA. Blocks are respected, never approached or
-  measured.
+  a historical band. One Google-stream capture at a time. A lower-route block
+  is a route-stop signal: preserve it and do not retry that transport hot. If
+  the run's dedicated, logged-out, operator-visible Chrome CDP fallback is
+  ready, use
+  `source_capture.google_serp_queue_policy.decide_block_recovery`, resume the
+  exact held job in one persistent tab, and keep the same owner-set cadence
+  for the remainder. Invoke
+  `run_google_serp_persistent_fallback_packet.py` for the held job and every
+  remaining job, with one `--persistent-tab-marker <run-id>`. The wrapper
+  preserves each block packet, pauses navigation, and pings the operator once
+  for the held job; the operator manually clears the visible challenge.
+  Automation never clicks or solves a CAPTCHA. If the fallback is unavailable,
+  fail loud and stop.
 - Standing non-claims on every artifact: counts of observed cards only,
   never prevalence/volume/share; US-parameterized is not physically
   US-local; raw capture data stays on the operator drive, outside Git.

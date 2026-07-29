@@ -1,8 +1,10 @@
 """Canonical Google-SERP capture cadence for Forseti capture runners.
 
 One source of truth for how fast a Google SERP stream may run, imported by
-every Google capture runner rather than copied into each. Runners keep their
-own block policy and job loop; only the cadence numbers live here.
+every Google capture runner rather than copied into each. Query eligibility
+and the required block transition live in
+`source_capture.google_serp_queue_policy`; runners must use both authorities
+instead of copying either rule into their job loop.
 
 ## Shape
 
@@ -42,11 +44,22 @@ two rungs lower. Zero successful captures separated them. That second block
 says nothing about 55/hr; it says the IP was still flagged and a ~26-minute
 cooldown did not clear it. This matches the lane's standing finding that
 recovery from a flag is slow (>75 min) and that prevention beats reaction.
-Operational consequence: after a block, further probing every 12-15 minutes
-mostly re-confirms the flag. Stop capturing, let the flag decay on a scale of
-hours, then resume at a LOW rung and re-establish a clean baseline before
-reading any rate as evidence. Do not interpret post-flag blocks as data about
-the rate they happened to occur at.
+Operational consequence: after a block, further LOWER-ROUTE probing every
+12-15 minutes mostly re-confirms the flag. Preserve that block packet and stop
+the lower route. When the run has its explicitly enabled dedicated, logged-out,
+operator-visible Chrome fallback ready, transition the exact held job and the
+remainder of that run to one persistent real-Chrome tab. This is a transport
+fallback, not a CAPTCHA solver or evidence that the lower route recovered.
+The executable held-job seam is
+`runners/run_google_serp_persistent_fallback_packet.py`; after transition,
+queue runners use it for each remaining job.
+Keep the owner-set cadence (including a 45/hr or 60/hr band); a route change
+does not authorize a rate increase. If the persistent tab is itself blocked,
+pause navigation, ping the operator once for that held job, and resume only
+after the operator manually clears the visible challenge. Never click or solve
+the challenge in automation. If the fallback is unavailable, fail loud and let
+the lower-route flag decay for hours before a new run at a low rung. Do not
+interpret post-flag blocks as data about the rate they happened to occur at.
 
 Historical note for context, not a bound: an earlier session profile saw
 blocks somewhere in 28-40/hr; that did not reproduce here, which makes it

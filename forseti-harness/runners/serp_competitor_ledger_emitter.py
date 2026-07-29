@@ -65,6 +65,11 @@ IMPERATIVE_START = re.compile(
     r"stop|buy|grab|introducing|top|best)\b", re.I)
 OUTLET_RX = re.compile(
     r"\bon\s+(instagram|tiktok|youtube|facebook|pinterest)\b", re.I)
+OBVIOUS_FRAGMENT_RX = re.compile(
+    r"^(?:good|bad|benefits?)$|^\d+(?:\s|$)|\breddit[- ]picked\b|"
+    r"^(?:i|we|you|they|he|she)\s+|(?:\.\s*\d|\bwhy\b|[?!].+\w)",
+    re.I,
+)
 
 
 def _norm(t):
@@ -90,6 +95,7 @@ def matches_subject(text, brand_toks):
 def clean(name):
     name = re.split(r"[:|(\[—–?]| - ", name)[0]
     name = re.sub(r"['’]s\b", "", name)          # possessive only
+    name = re.sub(r"^better,\s*", "", name, flags=re.I)
     # strip leading question words + articles (keep the noun phrase:
     # "Is the NYX concealer a" -> "NYX concealer a"); imperatives reject
     for _ in range(4):
@@ -105,6 +111,8 @@ def clean(name):
     if not (1 <= len(words) <= 6):
         return None
     if IMPERATIVE_START.match(name):
+        return None
+    if OBVIOUS_FRAGMENT_RX.search(name):
         return None
     toks = sig_tokens(name)
     if not toks or name.lower() in EXCLUDE:
