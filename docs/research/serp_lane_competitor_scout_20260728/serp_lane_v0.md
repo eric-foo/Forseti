@@ -252,6 +252,14 @@ F12 from outlets to creators. **Non-claim: recurrence evidences reach,
 not independence — sponsorship is not observable from titles.**
 Evidence: `analysis/fullbank_social_and_axes.json`. Trigger: the list
 shrinking at a larger corpus, or an editorial outlet entering the top 10.
+Routing (owner-decided 2026-07-29): the layer feeds the TikTok
+discovery-frontier funnel as CANDIDATE INPUT, never direct registry
+insertion — `serp_recurring_creator_feed_v0.json` (this folder) carries
+all 113 with the why (subjects, counts, scope) and recovered TikTok
+handles (20/24). The frontier's scan-receipt register and owner
+disposition batches are NOT written by this lane: a SERP-recurrence
+observation is not a TikTok scan, and dispositions are owner acts.
+YouTube (73) and Instagram (16) have no admission path — typed gap.
 
 **F20. Competitor identification is an instrument without a step; rival
 inputs must come from harvest, not operator priors.** active (gap).
