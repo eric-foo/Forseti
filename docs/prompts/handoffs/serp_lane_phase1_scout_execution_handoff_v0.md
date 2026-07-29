@@ -171,7 +171,8 @@ target and a review axis-to-attack, not a review pass bar.
   `run_google_serp_persistent_fallback_packet.py` for the held job and every
   remaining job, with one `--persistent-tab-marker <run-id>`. The wrapper
   preserves each block packet, pauses navigation, and pings the operator once
-  for the held job; the operator manually clears the visible challenge.
+  for each distinct block — a job blocked again after a clearance pings again;
+  the operator manually clears the visible challenge.
   Automation never clicks or solves a CAPTCHA. If the fallback is unavailable,
   follow the one-attempt cooldown rule above; do not silently keep probing.
 - Standing non-claims on every artifact: counts of observed cards only,

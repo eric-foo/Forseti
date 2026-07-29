@@ -64,9 +64,10 @@ parser/editorial fragments before egress, and require a product scope for
 competitor J5 queries. On a lower-route block, the lower transport stops; an
 enabled run transitions the exact held job and remainder to one dedicated,
 logged-out, operator-visible persistent Chrome tab at the same owner-set
-cadence. If the persistent tab blocks, automation pauses and pings once for
-manual clearance; it never interacts with the challenge. The executable seam
-is `forseti-harness/runners/run_google_serp_persistent_fallback_packet.py`.
+cadence. If the persistent tab blocks, automation pauses and pings once per
+distinct block for manual clearance; it never interacts with the challenge.
+The executable seam is
+`forseti-harness/runners/run_google_serp_persistent_fallback_packet.py`.
 
 ## Sealed operator-drive artifacts
 

@@ -127,6 +127,22 @@ class RealChromeCDPUnavailable(RuntimeError):
     pass
 
 
+def _navigate_target(
+    *,
+    page,
+    url: str,
+    timeout_ms: float,
+    persistent_tab_marker: str | None,
+):
+    """Navigate and restore the marker after a cross-origin document swap."""
+    response = page.goto(url, wait_until="load", timeout=timeout_ms)
+    if persistent_tab_marker is not None:
+        page.evaluate(
+            "(marker) => { window.name = marker; }", persistent_tab_marker
+        )
+    return response
+
+
 class _LiveRealChromeCDPEngine:
     def capture(
         self,
@@ -208,7 +224,12 @@ class _LiveRealChromeCDPEngine:
                 # navigation. A raw Playwright error here must become a clean exit-3, not an
                 # uncaught traceback. page.close() in the finally still runs either way.
                 try:
-                    response = page.goto(url, wait_until="load", timeout=timeout_ms)
+                    response = _navigate_target(
+                        page=page,
+                        url=url,
+                        timeout_ms=timeout_ms,
+                        persistent_tab_marker=persistent_tab_marker,
+                    )
                     http_status = response.status if response is not None else None
                     settle_block_signal = None
                     remaining_settle_ms = int(settle_seconds * 1000)
