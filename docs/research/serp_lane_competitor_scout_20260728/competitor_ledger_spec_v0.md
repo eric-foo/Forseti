@@ -315,16 +315,32 @@ attaches to a finding-grade entry. Specimen: Ole Henriksen promoted at
 3-author/1-venue (r/Sephora), upgraded to author- and venue-diverse by
 the return-leg capture (r/MakeupAddiction + Substack editorial).
 
-Social-platform engagement (owner-ratified 2026-07-29): weighted only
-against the creator's own recent-grid median (median not mean; #ad
-rows flagged inside the grid). Without a defensible grid, the row
-keeps rendered prominence plus an UNBASELINED flag — raw platform
-counts are recorded, never weighted, never compared across platforms.
-Doubt test: if the weight could not be reproduced and defended from
-the packet (grid unavailable, unusable, inapplicable to this row, or
-creator identity unconfirmed), it is UNBASELINED. Doubt withholds the
-multiplier, never the evidence — the row's statement still flows
-through the normal gates.
+Social-platform engagement (owner-ratified 2026-07-29, **AMENDED
+2026-07-30**): **raw platform counts are RECORDED, never weighted.**
+The original rule weighted a row against the creator's own recent-grid
+median. Measurement retired it: 15 of 22 captured creators are FALLING
+on their own within-grid trajectory, several by 96–99% (slaybyjess
+1,140,550 → 12,150), so that median moves fast enough that the same row
+scores differently by capture DATE rather than by anything about the
+row. A baseline that unstable cannot be defended from the packet, which
+is what the doubt test already asked of it. Owning cell:
+`serp_lane_v0.md` F27.
+
+What replaces the multiplier, all already held: the video ranked on
+Google (relevance, already proven by the ranking), its **rendered
+prominence**, creator recurrence across 2+ subjects (prioritisation),
+and the transcript (the only composition-grade evidence in a video).
+The unit of analysis is what a SEARCHER ENCOUNTERS, not what a platform
+distributed — a 5k-view video ranking #2 reaches a buyer that a
+2M-view video Google never surfaces does not.
+
+Still true and unchanged: counts are never compared across platforms;
+`#ad` rows are flagged; reach trend survives as a CREATOR state (a
+creator in −98% decline is a poor partner and a good displacement
+target), never as a row weight. Native-thread engagement is untouched
+by this amendment — post score and comment count still measure how many
+observed voters share a concern under the CLARIFICATION-DEMAND signal,
+which is a different platform and a different question.
 
 ## Wiring into the claims-to-complaints path (owner Q2)
 

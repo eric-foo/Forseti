@@ -45,7 +45,7 @@ satellites (the spec, axis docs, handoffs) POINT at them and must not mint
 or restate them. Two lanes minted F23 independently on 2026-07-29 — this
 ledger for the platform doors, `competitor_ledger_spec_v0.md` for an
 `alternatives` under-crediting claim — because nothing said where numbers
-come from. **Next free: F26.**
+come from. **Next free: F29.**
 
 **Full-bank re-judgment 2026-07-29 (revision 2, COMPLETE bank)** — cells
 carrying a full-bank trigger were re-decided against **986/986 captures /
@@ -135,6 +135,87 @@ base rate) covers the rest. **Not established**, and the cheap test is
 free: a genuinely quiet day (<100 captures/24h) followed by a cold
 start. If that starts clean, reputation-recovery is real and the
 operating rule becomes a daily budget with recovery days.
+
+**F28. Visual provenance stops at the fold, exactly where the
+social-SEO modules begin.** active (new 2026-07-30). Every packet stores
+the full rendered DOM (~1.2MB), so WHAT was on the page is fully
+evidenced. But the screenshot is `screenshot_mode: viewport` at
+**1280x720 with `scroll_passes: 0`** — the top 720px only. Google's
+video carousels and social blocks generally sit BELOW that fold, so the
+lane's visual record does not cover the region F18/F22/F23 make claims
+about, and `rendered prominence` — which the ratified engagement rule
+now leans on harder after the F27 amendment — has DOM evidence but no
+picture. This matters because Google changes SERP layout: the DOM proves
+the module existed, a screenshot proves how it was presented, and only
+the second survives a re-render of what the page looked like. Fix is a
+knob, not a build: the capture runner already accepts `scroll_passes` /
+`scroll_step_px` / `scroll_target_selector`, but they are currently
+driven only by the retail capture profiles and are not reachable for the
+SERP route. Routed to the capture lane (owner of
+`run_source_capture_cloakbrowser_packet.py`, and the runner PR #1386
+touches). Cost estimate: full-page SERP screenshots run several hundred
+KB to ~1.5MB against the current 125KB, and raw capture data lives on
+the operator drive. **Non-claim: existing captures are NOT re-shootable**
+— a screenshot cannot be recovered post-hoc, so everything captured
+before this is fixed keeps fold-limited visual provenance permanently.
+**FIXED 2026-07-30, same turn** (owner-authorized): the capture runner
+now takes `--full-page-screenshot`, threaded through
+`cloakbrowser_snapshot.py` (Protocol, engine impl, entry point, call
+site) to Playwright's `full_page`, and the packet metadata records
+`screenshot_mode: full_page` rather than the previously hardcoded
+`"viewport"` — so provenance states the mode used instead of leaving it
+to be inferred from file size. Proof capture (`laneige lip sleeping mask
+tiktok`, `C:	mporseti-fullpage-proof-20260730`): **1280x3833 px
+against the old 1280x720 — 5.3x the vertical page**, 735KB vs 125KB,
+with 41 `tiktok.com` references in the same packet's content record.
+The carousel that had DOM evidence and no picture now has both. Default
+stays `viewport`, so nothing changes for callers that do not ask.
+Trigger: a SERP page taller than one full-page screenshot can hold.
+
+**F26. A 30-video creator grid covers 1 month or 4 years depending on
+the creator; cadence, not grid depth, decides whether an old SERP hit is
+comparable.** active (new 2026-07-30). Evidence: 22 TikTok assessment
+captures of the recurring-creator layer. Posting cadence spans **0.89 to
+49.5 days per video — 53x**. So a fixed 30-row grid covers ~26 days for
+`careclarkbsn` and **~3.8 years** for `zakheath`. Consequence, with
+arithmetic instead of judgement: **videos needed = referenced video's age
+÷ creator cadence.** A one-year-old SERP hit needs ~8 rows of depth for a
+monthly poster (already captured) and ~400 for a daily poster (do not
+buy it — mark `UNBASELINED`). Test per referenced video: is its timestamp
+inside the captured grid span? Inside → baselined; outside → deepen with
+`--window-size` only when the arithmetic is cheap. Also: **grid span
+measures cadence, NOT life** — every one of the 22 is ACTIVE (newest
+video ≤2 days), including all the multi-year-span grids. Evidence:
+`creator_grid_liveness.json` in the dogfood store (derivation
+`serp_fullbank_analysis/creator_grid_liveness.py`). Trigger: a DORMANT
+creator appearing (newest video >90 days), which inverts the problem —
+a dormant creator's grid is contemporaneous with the ranked video by
+construction.
+
+**F27. Creator reach is collapsing for most of the recurring layer, which
+makes "the creator's own recent-grid median" an unstable baseline.**
+active (new 2026-07-30). Evidence: within-grid trajectory (median plays,
+oldest third vs newest third — one capture, no cross-era comparison) for
+22 creators: **15 FALLING, 6 STEADY, 1 RISING**. Falls are steep, not
+marginal: `slaybyjess` 1,140,550 → 12,150 (−99%), `rogerwh0` 426,150 →
+9,488 (−98%), `skin.ken` 225,950 → 7,924 (−96%), `natalie_oneillll`
+398,450 → 160,850 (−60%). **Consequence for the ratified engagement
+rule** (`competitor_ledger_spec_v0.md`, 2026-07-29 — engagement weighted
+only against the creator's own recent-grid median): for two-thirds of
+this layer that median is falling fast enough that the same row scores
+differently depending on WHEN the grid was captured, so the weight
+measures capture date as much as the row. **Proposed amendment (owner
+call, and it is the concurrent lane's rule to change): record raw counts,
+never weight them** — which is most of what that rule already says; the
+change is dropping the weighting clause rather than adding anything.
+Replacement signals, all already held: the video ranked on Google
+(relevance, already proven), its rendered prominence, creator recurrence
+across 2+ subjects (prioritisation), and the transcript (the only
+composition-grade evidence here). Reach trend survives as a CREATOR
+state, not a row weight: a creator in −98% decline is a poor partner and
+a good displacement target. Evidence:
+`creator_grid_liveness.json`. Trigger: owner ruling on the amendment, or
+a stratum where reach trend is majority STEADY.
 
 **F25. `vs` / `dupe` / `alternatives` do NOT cannibalise each other;
 the apparent effect is a shape-set-size artifact.** active (new
@@ -403,39 +484,53 @@ Evidence: `analysis/fullbank_video_card_kinds.json`
 re-run (semantic cache stale for a grown corpus), or any platform's
 substitution share moving by >5 points.
 
-**F23. Naming the platform IS the door — on every platform, and it is
-the strongest door in the lane.** active (new 2026-07-29, wave 2,
-n=45 subjects per suffix). `{subject} tiktok` surfaces **17.2 TikTok
-cards per probe**; `{subject} instagram` **13.5**; `{subject} youtube`
-**11.9** — versus `reddit_suffix`'s 7.7 Reddit cards, previously the
-lane's strongest door. Platform pull is also clean: the tiktok
-suffix surfaces ~0 Instagram/YouTube and vice versa. This REFUTES the
-prior working hypothesis (recorded in this lane 2026-07-29) that
-platform-name suffixes would fail off-Reddit because video posts are
-not indexed documents — Google routes the platform token to dedicated
-platform surfaces regardless. Supersedes F17's video-door replacement
-and sharpens F18's consequence to: **to reach a platform's creators,
-name the platform; use intent words only to shape WHICH creators.**
-The suffix probes also carry high unique question share (`reddit_suffix`
-0.590 in the 11-design) so the door costs little on the question axis.
-**Quality read (2026-07-29, card-level; evidence sealed same day after
-the delegated review correctly flagged the numbers as uncited):** the
-named door is a volume door but partly self-promotional —
-**own-account share 31% TikTok / 28% Instagram / 15% YouTube**
-(subject-token heuristic: undercounts, never overcounts); known-brand
-title share 59% / 54% / 73%; and the doors surfaced **311 / 431 / 301
-creators absent from the 113-creator feed** — the recurrence pool's
-biggest single enlargement. Separate the own-account share before
-reading cards as third-party sentiment. Kind mix on these cards is
-keyword-tier-only (the semantic cache does not cover them) and the
-sealed JSON says so. Evidence:
-`analysis/fullbank_suffix_quality.json` (derivation
-`serp_fullbank_analysis/suffix_door_quality.py`);
-`analysis/wave2_analysis.json` → `platform_suffix` (card counts);
-`analysis/fullbank_fixed_design.json` → `P11.questions.fullbank`
-(`reddit_suffix` unique question share). Trigger:
-any platform's named-suffix card count dropping below its best
-intent-word door (would mean Google changed the routing).
+**F23. Naming the platform returns the most CARDS — and that volume
+converts on neither job the lane does. Board slots WITHDRAWN.** active —
+RE-JUDGED 2026-07-30, one day after opening, against its own corpus.
+
+The volume finding HOLDS: `{s} tiktok` returns 17.2 TikTok cards per
+probe, `{s} instagram` 13.5, `{s} youtube` 11.9, against `reddit_suffix`
+7.7 and ~3.0 for the best intent word, with clean platform pull. The
+**conversion** claim — that this made them the lane's strongest doors —
+is **WITHDRAWN**. Controlled on the 45 subjects carrying both door types:
+- **Competitor harvest (the lane's stated purpose): zero.** 18 ledger
+  entries were sourced only by suffix probes and **none reached candidate
+  rung** — the names are parser debris (`Milky`, `to Clean`, `fake`,
+  `Pass`).
+- **Creator discovery: a distinct population, three times noisier.**
+  Suffix-only creators 674, of which **10 (1.5%)** clear the lane's
+  2+-subject bar; intent-only 819, of which **35 (4.3%)** clear it. Per
+  probe the suffix door is ~1.8x more efficient at surfacing a recurring
+  creator (0.074 vs 0.041) — but only by making a reader sift 674
+  accounts to find 10.
+- **Coverage: the ordinary probes already reach these platforms.** Intent
+  probes surface YouTube for **44 of 45** subjects, TikTok for 34,
+  Instagram for 35, at 7.5–9.0 creators per subject, as a by-product of
+  asking about dupes, reviews and comparisons. A dedicated probe adds
+  ~5.4 more creators per subject — breadth, not coverage.
+
+**How the error happened, because the pattern repeats:** F23 measured
+cards-per-probe and read a volume number as a value number — the same
+failure as the competitor ladder's junk rung, where recurrence-of-
+anything was mistaken for quality, and made the day after fixing that
+one. A volume metric needs a conversion test before it earns a
+consequence.
+
+**Board consequence: the three platform doors leave the default board**
+(v2.2, 11 → 8 probes). `{s} tiktok` survives as a CONDITIONAL follow-up,
+fired after phase-1 harvest only when a subject's ordinary probes
+returned little or no TikTok AND its social layer is load-bearing
+(~11 of 45 subjects, not all). `{s} youtube` (44/45 already covered) and
+`{s} instagram` are cut outright.
+
+**What the SERP route still has that native capture does not:** it is
+logged-out, reproducible, and carries no account risk, where TikTok's own
+search is personalized and needs a live session. That property — not the
+card count — is what would earn a slot back. Evidence:
+`analysis/fullbank_platform_door_worth.json` (sealed; derivation
+`serp_fullbank_analysis/platform_door_worth.py`). Trigger: a stratum
+where suffix probes clear the 2+-subject bar at intent-probe rates, or a
+consumer needing reproducible logged-out social enumeration.
 
 **F24. The SERP noise floor is measured: ~0.86 same-run, ~0.81
 cross-day question agreement.** active (new 2026-07-29, wave 2, 60 twin
@@ -481,7 +576,13 @@ CROSS-SUBJECT, so it cannot fire inside a single-subject phase-1 pass;
 this lane-level derivation is where it fires, and
 `serp_recurring_creator_feed_v0.json` is its emission (113 entries with
 subjects, scope, and profile URL where an observed card URL supplied one
-— 20 of 24 TikTok). The existing social capture runners' input queue
+— 20 of 24 TikTok). **Known defect (2026-07-30): handle recovery keys on
+the card's DISPLAY NAME, so distinct accounts sharing a display name
+collapse into one entry** — `careclarkbsn`, `skincarewithshelbs`, and
+`skinwithhav` were emitted as three handles of one creator and are three
+separate accounts (distinct author ids, confirmed by capture). Handles
+must be keyed on the account locator, not the rendered name; until fixed,
+treat multi-handle entries as multiple creators. The existing social capture runners' input queue
 consumes tagged entries; **phase 1 never visits a platform and never
 weights a raw social count.** The other three triggers (a statement a
 read would weight, an axis/answer-slot's only occupant, #ad-convergence)
@@ -570,24 +671,31 @@ that is the Understanding-phase entry point. Evidence:
 `analysis/fullbank_social_and_axes.json` → `f21_classification`.
 Trigger: bridging share falling below 25%.
 
-## Current default boards (v2.1, 2026-07-29 — from F4–F8, F16–F18, F22,
+## Current default boards (v2.2, 2026-07-30 — from F4–F8, F16–F18, F22,
 F23, F24, and the F6 tournament; owner-ratified: run all three tied
-complaint shapes, and the platform doors are CORE — the creator/social
-layer always matters)
+complaint shapes. **v2.2 removes the three platform doors** — F23's
+re-judgment found the ordinary probes already surface those platforms,
+and the dedicated probes convert on neither competitor harvest nor
+creator quality.)
 
-Product subject — CORE (11 probes, one session):
+Product subject — CORE (8 probes, one session):
 `{s} vs {rival}` (harvested rival only, F20; fills from phase-1 rolling
 harvest, refreshed again by phase-2 Reddit names) · `{s} review` ·
 `{s} side effects` · `{s} made it worse` · `{s} not working` ·
-`is {s} bad for you` · `{s} reddit` · `{s} dupe` (or `alternatives`) ·
-`{s} youtube` (evaluative/explainer layer, F22) · `{s} tiktok`
-(substitution layer, F22) · `{s} instagram` (showcase +
-credentialed-explainer layer, F22). The platform doors carry F23's
-qualitative discount: separate subject-owned accounts before reading
-the cards as third-party sentiment; no numeric ownership share is
-sealed yet.
+`is {s} bad for you` · `{s} reddit` · `{s} dupe` (or `alternatives`).
+
+These eight already surface the social platforms as a by-product —
+YouTube for 44 of 45 subjects, TikTok for 34, Instagram for 35, at
+7.5–9.0 creators per subject (F23). The social layer is covered by
+default and does not need its own probes.
+
+CONDITIONAL follow-up (not a slot): `{s} tiktok`, fired after harvest
+only when a subject's eight probes returned little or no TikTok AND its
+social layer is load-bearing. Discount its 31% brand-own-account share
+before reading cards as third-party sentiment.
 Cut from boards permanently: `{s} complaints`, `regret buying {s}`
-(tournament losers — their content arrives via the kept probes).
+(tournament losers), and `{s} youtube` / `{s} instagram` (F23 — already
+covered by the core eight).
 
 Issue subject (6 probes, one session) — question-rich but social-poor
 (F16): `{i}` · `what causes {i}` · `how to fix {i}` ·
@@ -900,6 +1008,14 @@ import for in-run counts.
   does NOT cannibalise (pairwise overlap 0.096 vs 0.092 baseline); the
   0.749 that prompted it is the real P9-design figure quoted without its
   design.
+- 2026-07-30 (boards v2.2): **F23's board consequence WITHDRAWN one day
+  after opening.** Platform-door card volume converts on neither
+  competitor harvest (18 suffix-only ledger entries, 0 candidate-rung)
+  nor creator quality (1.5% clear the 2+-subject bar vs 4.3% for intent
+  probes), and ordinary probes already surface these platforms for 34–44
+  of 45 subjects. Default board 11 → 8; `{s} tiktok` becomes conditional,
+  `{s} youtube` and `{s} instagram` are cut. Root error recorded in the
+  cell: a volume metric read as a value metric without a conversion test.
 - 2026-07-30 (cross-lane): PR #1383 landed 20+ owner-ratified rulings on
   this folder from a concurrent lane after #1384 merged. Reconciled:
   the creator layer now emits the spec's ratified `grid_capture` shape

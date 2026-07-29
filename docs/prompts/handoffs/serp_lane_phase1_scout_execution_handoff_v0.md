@@ -13,9 +13,9 @@ use_when:
   - A subject has been bound for the Understanding cycle and the scout
     pass runs before specialist fan-out.
 stale_if:
-  - The default boards in serp_lane_v0.md move past v2.1 (2026-07-29,
-    tournament + platform-door + noise-floor re-judgment) without this
-    handoff being re-rendered.
+  - The default boards in serp_lane_v0.md move past v2.2 (2026-07-30,
+    tournament + platform-door withdrawal + noise-floor re-judgment)
+    without this handoff being re-rendered.
   - The owner egress cadence, query policy, or persistent real-Chrome
     fallback contract changes.
 authority_boundary: retrieval_only
@@ -73,10 +73,10 @@ target and a review axis-to-attack, not a review pass bar.
 
 ## Method (deltas only; the spec owns the mechanics)
 
-1. **Seeds — Board v2.1** (owner-ratified 2026-07-29; live authority:
-   `serp_lane_v0.md` § Current default boards). Ten rival-free queries,
-   run in this order or concurrently — all of them are wanted, so probe
-   selection is not a decision point:
+1. **Seeds — Board v2.2** (owner-ratified 2026-07-30; live authority:
+   `serp_lane_v0.md` § Current default boards). Seven rival-free
+   queries, run in this order or concurrently — all of them are wanted,
+   so probe selection is not a decision point:
 
    | probe | the question it asks |
    | --- | --- |
@@ -87,17 +87,20 @@ target and a review axis-to-attack, not a review pass bar.
    | `{s} not working` | how does it fail to deliver? |
    | `{s} reddit` | what does the community say unprompted? |
    | `{s} dupe` (or `alternatives`) | who is it substituted with? |
-   | `{s} youtube` | who explains and reviews it? (YT = the evaluative/explainer layer, F22) |
-   | `{s} tiktok` | who compares and substitutes it? (TT = the substitution layer, F22) |
-   | `{s} instagram` | who showcases it; which brands and credentialed professionals broadcast? (IG = showcase + derm-explainer layer, F22) |
 
-   The three platform doors are CORE, not optional — the creator/social
-   layer always matters (owner call). They are also the volume doors
-   (F23): separate subject-owned accounts before reading the cards as
-   third-party sentiment — sealed own-account share 31%/28%/15%
-   (TT/IG/YT), `analysis/fullbank_suffix_quality.json`.
-   **Never seed** `{s} complaints` or `regret buying {s}`
-   (tournament-cut, F6) and never plant a competitor name you have not
+   **The social layer is covered by these seven, not by extra probes**
+   (F23, re-judged 2026-07-30): they surface YouTube for 44 of 45
+   subjects, TikTok for 34, Instagram for 35, at 7.5–9.0 creators per
+   subject as a by-product. Dedicated platform probes returned 4x the
+   cards and converted on neither job — zero candidate-rung competitors,
+   and 1.5% of their creators cleared the 2+-subject bar against 4.3%
+   from these. **Conditional follow-up, after harvest, not a seed:**
+   `{s} tiktok` when this subject's seven probes returned little or no
+   TikTok AND its social layer is load-bearing; discount its 31%
+   brand-own-account share before reading cards as third-party sentiment.
+   **Never seed** `{s} youtube`, `{s} instagram`,
+   `{s} complaints`, or `regret buying {s}`
+   (F23/F6 cuts) and never plant a competitor name you have not
    harvested. Operator-supplied names are allowed but tagged
    `seed:operator` and retired as vs-inputs on the first harvested rival.
    Front-load no faster than the current owner cadence, ≤10 captures.
