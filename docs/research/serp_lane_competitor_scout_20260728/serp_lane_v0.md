@@ -96,6 +96,22 @@ second consecutive block or third block in the run writes
 a probation step-back plus the fixed idle separates rate from flag
 decay.
 
+**F2b consumer audit (2026-07-30).** The doctrine was landed in the
+megadogfood orchestrator only, and the very next run proved that
+insufficient: `dogfood10_runner.py` still carried the old 12–15-min
+re-probe policy and used it on its first block. Patched same turn. Audit
+of every capture runner on the operator drive that detects
+`blocked_google_unusual_traffic` — **2 of 11 now carry the F2b/ping
+policy** (`megadogfood_orchestrator.py`, `dogfood10_runner.py`); the
+other 9 (`return_leg_runner`, `beauty_ext_runner`,
+`run_capture_queue`, `probe_vs_oh`, `tower28_scout`,
+`window_probe_runner`, `retry_blocked`, and the two extractors, which
+only classify) predate it. **Any of them launched today would re-probe a
+live flag.** This is the written-but-unrouted defect class again, now in
+egress-safety code rather than docs: fix a runner before launching it,
+or port the policy to a shared helper. Trigger: the next runner launch —
+check its block branch first.
+
 **F3. Once flagged, recovery is slow and stochastic; prevention beats
 reaction.** active — CORRECTED 2026-07-29; series SEALED same day.
 Evidence, full decay series (every block → next-attempt gap, voided
