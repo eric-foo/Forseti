@@ -300,6 +300,17 @@ attaches to a finding-grade entry. Specimen: Ole Henriksen promoted at
 3-author/1-venue (r/Sephora), upgraded to author- and venue-diverse by
 the return-leg capture (r/MakeupAddiction + Substack editorial).
 
+Social-platform engagement (owner-ratified 2026-07-29): weighted only
+against the creator's own recent-grid median (median not mean; #ad
+rows flagged inside the grid). Without a defensible grid, the row
+keeps rendered prominence plus an UNBASELINED flag — raw platform
+counts are recorded, never weighted, never compared across platforms.
+Doubt test: if the weight could not be reproduced and defended from
+the packet (grid unavailable, unusable, inapplicable to this row, or
+creator identity unconfirmed), it is UNBASELINED. Doubt withholds the
+multiplier, never the evidence — the row's statement still flows
+through the normal gates.
+
 ## Wiring into the claims-to-complaints path (owner Q2)
 
 The chain-card IS the complaint journey: claim → buy-reason → experience
@@ -530,7 +541,15 @@ routing already own native capture. The scout only adds a discovery
 source and a priority tag. Queue entries carry canonical URLs at
 emission (packet provenance); owner-observed items are located
 in-session while the surface is fresh or explicitly marked deferred —
-3 of SF's 13 rotted unlocatable (installed 2026-07-28). Outputs per
+3 of SF's 13 rotted unlocatable (installed 2026-07-28). A
+mediator-list entry meeting a deep-dive trigger — creator recurs on
+2+ subjects, or their row carries a statement a read would weight,
+or their row is an axis/answer-slot's only occupant, or
+#ad-convergence needs checking — carries a `grid_capture` tag with
+profile URL at emission (same URL-rot rule); the existing social
+capture runners' input queue consumes tagged entries
+(owner-ratified 2026-07-29). Phase 1 itself never visits a platform
+and never weights a raw social count. Outputs per
 captured thread: composition read against the rendered surface (J3),
 complaint-borne names harvested (Channel 3), and — in
 comparison-titled threads — THIRD NAMES flagged (names in comments
