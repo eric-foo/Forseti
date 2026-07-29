@@ -96,6 +96,39 @@ second consecutive block or third block in the run writes
 a probation step-back plus the fixed idle separates rate from flag
 decay.
 
+**F2c. Sustained TRAILING LOAD is the variable that separates blocks
+from clean captures — instantaneous rate is not.** active (new
+2026-07-30). Evidence: pooled diagnosis over **all 1714 Google capture
+events across every run directory** (the route is per-IP, so run folders
+are not independent samples), 14 blocks, base rate **0.82%/capture**:
+- **trailing 1h: blocked median 42 vs clean median 39 — no separation.**
+  Rate is definitively not the variable, closing what F1 assumed.
+- **trailing 6h: 249 vs 172. trailing 24h: 818 vs 660 — both separate.**
+It is a GRADIENT, not a gate: the route ran clean at **961 captures/24h
+and 325/6h**, above most blocks, so no threshold is established and none
+should be quoted. Blocks also cluster rather than arrive independently.
+Consequence: budget the DAY, not the minute — a slower cadence at the
+same daily total buys nothing, while a lighter day does.
+Evidence: `analysis/fullbank_block_diagnosis.json` (sealed; derivation
+`serp_fullbank_analysis/block_diagnosis.py`). Trigger: a block at
+trailing-24h under ~200, or a clean run materially past 961/24h.
+
+**The 2026-07-30 00:14 block, diagnosed.** Ruled OUT: the runner
+(`dogfood10_runner.py`'s capture invocation is byte-identical to the
+orchestrator's, which took 1558 clean captures); the rate (trailing 1h =
+**1 capture**); a hot retry (4h06m idle before it). Confirmed: the
+packet landed on `google.com/sorry/index` — the interstitial, not a
+degraded page. What is left is unsatisfying and worth stating plainly:
+it fired at **capture #1 of its session** with the LOWEST trailing-6h
+load (121) of any recent block, on a route carrying 650 captures/24h
+after three consecutive high-volume days. Best available reading — the
+route's standing reputation is depressed by sustained load, so a cold
+start now trips where it used to pass; ordinary stochasticity (0.82%
+base rate) covers the rest. **Not established**, and the cheap test is
+free: a genuinely quiet day (<100 captures/24h) followed by a cold
+start. If that starts clean, reputation-recovery is real and the
+operating rule becomes a daily budget with recovery days.
+
 **F2b consumer audit (2026-07-30).** The doctrine was landed in the
 megadogfood orchestrator only, and the very next run proved that
 insufficient: `dogfood10_runner.py` still carried the old 12–15-min
