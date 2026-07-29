@@ -60,10 +60,36 @@ Evidence: egress reconstruction + 99 consecutive clean captures at
 Owner set operating band 15–20/hr. Trigger: any block at ≤20/hr → drop
 band, re-measure; 3 clean days at 20/hr → raise floor.
 
-**F2. No daily cap observed (~185/day reached clean).** active, thin.
-Evidence: same reconstruction; note an earlier ~100/day claim was
-withdrawn same-day as contradicted by our own run. Trigger: a block that
-correlates with cumulative volume rather than rate.
+**F2. No daily cap observed; ~365 clean in 7.2h is the new high-water
+mark, and the lane's first volume-shaped block sits just past it.**
+active — SHARPENED 2026-07-29, its own trigger fired. Evidence: the
+prior figure was ~185/day. On 2026-07-28 23:42 → 2026-07-29 06:53 the
+route ran **365 consecutive clean captures over 7.18h (50.8/hr average,
+constant frozen 60/hr for the last 4.4h of it)** and then blocked at
+07:03 with **no rate change** — the ladder was frozen and the cadence
+identical either side of the boundary. That is this lane's first block
+that correlates with cumulative session volume rather than rate, which
+is exactly what this cell asked for. Read it as ONE observation, not a
+threshold: the 07-28 block WAS rate-shaped (41 captures in 30 min), so
+the two failure modes both appear to exist. Trigger: a second
+volume-shaped block, which would let the two be separated; or a clean
+run materially past 365 in a session, which would withdraw the volume
+reading.
+
+**F2b. A block is not a rate signal, and the ladder currently treats it
+as one.** lead (new 2026-07-29). Evidence: after the 07-03 block the
+orchestrator stepped 60 → 55 → 50 → 45 → 40 → 36 → 32.7/hr, and **every
+single step-down was followed by another block on the first capture
+after the pause** — six blocks, six rungs, zero clean captures between.
+Rate reduction did nothing because the constraint was a live flag, and a
+flagged route rejects the first request regardless of how slowly it
+arrives. An 82-minute episode cooldown also failed to clear it.
+Consequence: the block handler conflates two failure modes and spends
+rungs on the wrong one. The correct response to a block is IDLE TIME
+(F3), not a slower cadence; the rung step-down should be reserved for
+blocks that follow a rung increase. Trigger: implement a split response
+and observe whether flags clear faster, or a counter-case where stepping
+down alone clears a block.
 
 **F3. Once flagged, recovery is slow — bracketed at >26 min and ≤3h25m;
 prevention beats reaction.** active — SHARPENED 2026-07-29. Evidence:
@@ -426,8 +452,25 @@ import for in-run counts.
   spike. Cadence, evidence per rung, and the 72/hr-sustained (~77/hr
   peak-30min) rungs authored for the next attempt live in
   `forseti-harness/runners/serp_egress_cadence.py`.
-- **Wave 2 IN FLIGHT** (launched 2026-07-29 02:2x, owner-set 60/hr for
-  ~10h): 572 jobs appended to `query_bank.json` by
+- **Wave 2 PARTIAL — flagged 2026-07-29 07:03 at 290/572.** Ran clean
+  02:39 → 07:03 (264 captures at a constant frozen 60/hr), then six
+  blocks in 2.4h that no rung step-down and no 82-min cooldown cleared;
+  the orchestrator is in its episode-2 backoff and self-terminates at
+  three episodes. What it produced before the flag, and the reason this
+  partial is still usable: **the round-robin ordering worked.** Every
+  stream landed between 37% and 65% rather than one stream at 100% and
+  the rest at zero —
+  `p11_fill 74/113 (65%)`, `twin 67/120 (56%)`,
+  `platform_suffix 74/135 (55%)`, `complaint_ext 75/204 (37%)`.
+  Every stream has enough for a first read; none is empty. Wave-1's
+  clustered halt is what made two revision-1 judgments coverage
+  artifacts, and this ordering rule was written to prevent exactly that.
+  Resume needs hours of idle (F3), not a lower rate (F2b). Remaining 282
+  jobs stay pending in the bank and the orchestrator resumes from its
+  ledger.
+
+  Design as launched (owner-set 60/hr for ~10h): 572 jobs appended to
+  `query_bank.json` by
   `bin/build_wave2_bank.py`; bank 986 → 1558. Pre-wave-2 bank preserved at
   `query_bank_pre_wave2.json`. Rung 8 (60/hr) frozen — no escalation, so
   the run is not rate evidence. ETA ~9.5h of capture time.
