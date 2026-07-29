@@ -227,6 +227,7 @@ class CloakBrowserSnapshotEngine(Protocol):
         scroll_target_selector: str | None,
         pre_capture: PreCapturePlugin | None,
         user_data_dir: Path | None = None,
+        full_page_screenshot: bool = False,
     ) -> CloakBrowserSnapshotEngineResult:
         ...
 
@@ -251,6 +252,7 @@ def fetch_cloakbrowser_snapshot_capture(
     pre_capture: PreCapturePlugin | None = None,
     user_data_dir: Path | None = None,
     engine: CloakBrowserSnapshotEngine | None = None,
+    full_page_screenshot: bool = False,
 ) -> CloakBrowserSnapshotResult:
     normalized_url = _validate_http_url(url)
     _validate_positive_number("timeout_seconds", timeout_seconds)
@@ -299,6 +301,7 @@ def fetch_cloakbrowser_snapshot_capture(
             scroll_target_selector=scroll_target_selector,
             pre_capture=pre_capture,
             user_data_dir=user_data_dir,
+            full_page_screenshot=full_page_screenshot,
         )
     except _CloakBrowserSnapshotDependencyUnavailable as exc:
         return CloakBrowserSnapshotFailure(
@@ -461,7 +464,8 @@ def fetch_cloakbrowser_snapshot_capture(
         "scroll_target_selector": scroll_target_selector,
         "viewport_width": viewport_width,
         "viewport_height": viewport_height,
-        "screenshot_mode": "viewport",
+        "screenshot_mode": ("full_page" if full_page_screenshot
+                            else "viewport"),
         "method_category": CLOAKBROWSER_METHOD_CATEGORY,
         "browser_engine": "cloakbrowser",
         "cloakbrowser_backend": CLOAKBROWSER_BACKEND,
@@ -602,6 +606,7 @@ class _CloakBrowserSnapshotEngine:
         scroll_target_selector: str | None = None,
         pre_capture: PreCapturePlugin | None = None,
         user_data_dir: Path | None = None,
+        full_page_screenshot: bool = False,
     ) -> CloakBrowserSnapshotEngineResult:
         clock_ns = self._clock_ns
         capture_started_ns = clock_ns()
@@ -911,7 +916,7 @@ class _CloakBrowserSnapshotEngine:
                 screenshot_started_ns = clock_ns()
                 screenshot_png = page.screenshot(
                     type="png",
-                    full_page=False,
+                    full_page=full_page_screenshot,
                     timeout=timeout_ms,
                 )
                 phase_ms["screenshot"] = elapsed_ms(screenshot_started_ns)

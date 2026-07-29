@@ -158,8 +158,19 @@ KB to ~1.5MB against the current 125KB, and raw capture data lives on
 the operator drive. **Non-claim: existing captures are NOT re-shootable**
 — a screenshot cannot be recovered post-hoc, so everything captured
 before this is fixed keeps fold-limited visual provenance permanently.
-Trigger: the capture lane exposing the scroll/full-page path for the
-SERP route.
+**FIXED 2026-07-30, same turn** (owner-authorized): the capture runner
+now takes `--full-page-screenshot`, threaded through
+`cloakbrowser_snapshot.py` (Protocol, engine impl, entry point, call
+site) to Playwright's `full_page`, and the packet metadata records
+`screenshot_mode: full_page` rather than the previously hardcoded
+`"viewport"` — so provenance states the mode used instead of leaving it
+to be inferred from file size. Proof capture (`laneige lip sleeping mask
+tiktok`, `C:	mporseti-fullpage-proof-20260730`): **1280x3833 px
+against the old 1280x720 — 5.3x the vertical page**, 735KB vs 125KB,
+with 41 `tiktok.com` references in the same packet's content record.
+The carousel that had DOM evidence and no picture now has both. Default
+stays `viewport`, so nothing changes for callers that do not ask.
+Trigger: a SERP page taller than one full-page screenshot can hold.
 
 **F26. A 30-video creator grid covers 1 month or 4 years depending on
 the creator; cadence, not grid depth, decides whether an old SERP hit is

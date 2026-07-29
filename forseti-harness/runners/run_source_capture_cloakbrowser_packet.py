@@ -282,6 +282,7 @@ def run_source_capture_cloakbrowser_packet(
     load_more_clicks: int | None = None,
     scroll_step_px: int = 0,
     scroll_target_selector: str | None = None,
+    full_page_screenshot: bool = False,
     delivery_zip: str | None = None,
     delivery_zip_setup_timeout_seconds: float = 30.0,
     amazon_grid_page_count: int = 2,
@@ -710,6 +711,7 @@ def run_source_capture_cloakbrowser_packet(
             if retail_capture_profile is not None
             else None
         ),
+        full_page_screenshot=full_page_screenshot,
         pre_capture=pre_capture,
         user_data_dir=browser_user_data_dir,
         engine=capture_engine,
@@ -2426,6 +2428,18 @@ def _build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--session-id", default=None)
+    parser.add_argument(
+        "--full-page-screenshot",
+        action="store_true",
+        help=(
+            "Capture the WHOLE page, not the 720px viewport. Google's "
+            "video/social carousels sit below the fold, so viewport-only "
+            "screenshots leave the social-SEO modules with DOM evidence "
+            "and no picture. The mode used is recorded in the packet "
+            "metadata as screenshot_mode, so provenance never has to be "
+            "inferred from file size."
+        ),
+    )
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument(
         "--wait-until",
@@ -3132,6 +3146,7 @@ def main(
             load_more_clicks=args.load_more_clicks,
             scroll_step_px=scroll_step_px,
             scroll_target_selector=scroll_target_selector,
+            full_page_screenshot=args.full_page_screenshot,
             delivery_zip=args.delivery_zip,
             delivery_zip_setup_timeout_seconds=args.delivery_zip_setup_timeout_seconds,
             amazon_grid_page_count=args.amazon_grid_page_count,
