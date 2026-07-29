@@ -294,14 +294,16 @@ def main():
                          "candidate gate).")
     args = ap.parse_args()
 
+    verdict_gate = args.verdicts is not None
     verdicts = {}
-    if args.verdicts and Path(args.verdicts).exists():
+    if verdict_gate and Path(args.verdicts).exists():
         vd = json.loads(Path(args.verdicts).read_text(encoding="utf-8"))
         verdicts = {(v["subject"], v["name"].lower()): v["verdict"]
                     for v in vd["verdicts"]}
 
+    mediator_class_gate = args.mediator_classes is not None
     med_classes = {}
-    if args.mediator_classes and Path(args.mediator_classes).exists():
+    if mediator_class_gate and Path(args.mediator_classes).exists():
         mc = json.loads(Path(args.mediator_classes).read_text(encoding="utf-8"))
         med_classes = {m["name"].lower(): m["class"]
                        for m in mc["mediators"]}
@@ -345,7 +347,7 @@ def main():
         recurs = len(queries) >= 2
         if not recurs:
             e["rung"] = "presence"
-        elif not verdicts:
+        elif not verdict_gate:
             e["rung"] = "candidate"          # v0.1 behavior: no gate supplied
         else:
             v = verdicts.get((e["subject"], e["name"].lower()))
@@ -365,7 +367,7 @@ def main():
     payload = {"probes_scanned": probes, "entries": out,
                "mediators": {k: sorted(v) for k, v in
                              sorted(mediators.items())}}
-    if med_classes:
+    if mediator_class_gate:
         # Parallel map, not a shape change: existing consumers keep reading
         # mediators as name -> subjects.
         payload["mediator_classes"] = {

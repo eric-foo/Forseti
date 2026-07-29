@@ -67,6 +67,16 @@ def entry(d, subject, name_part, typ):
                for e in d["entries"])
 
 
+def write_synthetic_extractions(path, titles):
+    path.mkdir()
+    for i, title in enumerate(titles):
+        packet = {
+            "requested_query": f"query-{i}",
+            "rows": [{"module_type": "organic", "title": title}],
+        }
+        (path / f"{i}.json").write_text(json.dumps(packet), encoding="utf-8")
+
+
 # Tower 28 store: real names, correct types/directions
 @requires_t28
 def test_nyx_is_dupe_association_direction(t28):
@@ -214,3 +224,33 @@ def test_gate_fails_closed_on_unadjudicated(mega_gated):
         if e["distinct_queries"] >= 2 and \
                 (e["subject"], e["name"].lower()) not in known:
             assert e["rung"] == "pending_adjudication", e["name"]
+
+
+def test_missing_verdict_cache_still_enables_fail_closed_gate(tmp_path):
+    extractions = tmp_path / "extractions"
+    write_synthetic_extractions(
+        extractions, ["Acme vs RivalCo", "Acme vs RivalCo"])
+    base = ["--extractions", str(extractions), "--subject", "Acme"]
+
+    ungated = run(base)
+    gated = run([*base, "--verdicts", str(tmp_path / "missing.json")])
+
+    assert any(e["name"] == "RivalCo" and e["rung"] == "candidate"
+               for e in ungated["entries"])
+    assert any(e["name"] == "RivalCo"
+               and e["rung"] == "pending_adjudication"
+               for e in gated["entries"])
+
+
+def test_empty_mediator_cache_emits_parallel_pending_map(tmp_path):
+    extractions = tmp_path / "extractions"
+    write_synthetic_extractions(extractions, ["Acme on Instagram"])
+    cache = tmp_path / "mediators.json"
+    cache.write_text(json.dumps({"mediators": []}), encoding="utf-8")
+
+    result = run(["--extractions", str(extractions), "--subject", "Acme",
+                  "--mediator-classes", str(cache)])
+
+    assert result["mediators"] == {"Acme (instagram)": ["Acme"]}
+    assert result["mediator_classes"] == {
+        "Acme (instagram)": "pending_classification"}

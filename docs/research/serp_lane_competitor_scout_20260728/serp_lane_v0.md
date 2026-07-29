@@ -76,34 +76,41 @@ volume-shaped block, which would let the two be separated; or a clean
 run materially past 365 in a session, which would withdraw the volume
 reading.
 
-**F2b. A block is not a rate signal, and the ladder currently treats it
-as one.** lead (new 2026-07-29). Evidence: after the 07-03 block the
-orchestrator stepped 60 → 55 → 50 → 45 → 40 → 36 → 32.7/hr, and **every
-single step-down was followed by another block on the first capture
-after the pause** — six blocks, six rungs, zero clean captures between.
-Rate reduction did nothing because the constraint was a live flag, and a
-flagged route rejects the first request regardless of how slowly it
-arrives. An 82-minute episode cooldown also failed to clear it.
-Consequence: the block handler conflates two failure modes and spends
-rungs on the wrong one. The correct response to a block is IDLE TIME
-(F3), not a slower cadence; the rung step-down should be reserved for
-blocks that follow a rung increase. Trigger: implement a split response
-and observe whether flags clear faster, or a counter-case where stepping
-down alone clears a block.
+**F2b. A block is not a rate signal; step-down is now restricted to
+escalation probation.** active — IMPLEMENTED 2026-07-29. Evidence: after
+the 07:03 block the old handler stepped 60 → 55 → 50 → 45 → 40 → 36 →
+32.7/hr. The operator log does **not** support the earlier claim that all
+six step-downs re-blocked on the first capture with zero clean captures
+between: some did re-block immediately, while others admitted clean
+captures before the next block, and the final step-down preceded a clean
+continuation after cooldown. The defensible conclusion is narrower:
+because every rung change was confounded with a still-live flag and a
+different idle interval, the sequence did not show that step-down alone
+cleared the flag. Landed response: step back only when the block falls
+within five attempted jobs of a rung increase; otherwise freeze the
+current rung. Then idle 60 minutes and make one recovery attempt; a
+second consecutive block or third block in the run writes
+`OWNER_PING.json` and stops for owner routing. Evidence:
+`analysis/fullbank_block_decay.json` (sealed; derivation
+`serp_fullbank_analysis/block_decay.py`). Trigger: a counter-case where
+a probation step-back plus the fixed idle separates rate from flag
+decay.
 
-**F3. Once flagged, recovery is slow — bracketed at >26 min and ≤3h25m;
-prevention beats reaction.** active — SHARPENED 2026-07-29. Evidence:
-75-min cooldown failed to clear the 07-26 flag; on 07-28 waits of ~12 and
-~26 min each drew a block on the first capture after the gap; on 07-28/29
-a ~3h25m idle cleared it completely (95/95 clean at 45/hr, then 3 clean
-re-probes of previously-blocked jobs). This is the lane's first positive
-decay observation — before it, every data point was a failure to clear.
-The bracket is wide because nothing between 26 min and 3h25m was tested,
-and the operating rule stays "idle for hours, not minutes". Non-claim:
-the clean resume evidences decay, not that 45/hr is a safe rate —
-escalation was frozen throughout. Trigger: a block after ≥4h idle
-(would break the upper bound), or a clean first capture under 1h (would
-tighten the lower).
+**F3. Once flagged, recovery is slow and stochastic; prevention beats
+reaction.** active — CORRECTED 2026-07-29; series SEALED same day.
+Evidence, full decay series (every block → next-attempt gap, voided
+retries excluded): cleared at **12.5, 14.7, 83.4, 110.8, and 207.6
+minutes**; failed at 10.3–16.6 (x6), **77.5, and 81.8 minutes**. Gaps of
+12–15 minutes cleared twice the same morning an 81.8-minute wait failed,
+so elapsed idle alone does not separate the outcomes — the earlier
+deterministic >26 min / ≤3h25m bracket is refuted, not refined.
+Operationally: never retry hot; after the commissioned 60-minute maximum
+idle, make one recovery attempt and route a repeated block to the owner.
+Non-claim: a clean resume evidences decay on that occasion, not that its
+cadence is a safe rate. Evidence: `analysis/fullbank_block_decay.json`
+(sealed; derivation `serp_fullbank_analysis/block_decay.py`). Trigger: a
+controlled decay series that can distinguish elapsed idle from run/rung
+history.
 
 **F4. `X vs {rival}` is the highest-value shape (~0.82 unique share,
 wide margin).** active — RE-JUDGED 2026-07-29 wave 2, its own trigger
@@ -286,8 +293,7 @@ the strongest door in the lane.** active (new 2026-07-29, wave 2,
 n=45 subjects per suffix). `{subject} tiktok` surfaces **17.2 TikTok
 cards per probe**; `{subject} instagram` **13.5**; `{subject} youtube`
 **11.9** — versus `reddit_suffix`'s 7.7 Reddit cards, previously the
-lane's strongest door, and versus ~3.0 for the best intent-word door
-(`alternatives` on TikTok). Platform pull is also clean: the tiktok
+lane's strongest door. Platform pull is also clean: the tiktok
 suffix surfaces ~0 Instagram/YouTube and vice versa. This REFUTES the
 prior working hypothesis (recorded in this lane 2026-07-29) that
 platform-name suffixes would fail off-Reddit because video posts are
@@ -297,16 +303,22 @@ and sharpens F18's consequence to: **to reach a platform's creators,
 name the platform; use intent words only to shape WHICH creators.**
 The suffix probes also carry high unique question share (`reddit_suffix`
 0.590 in the 11-design) so the door costs little on the question axis.
-**Quality read (2026-07-29, card-level):** the door is wide but partly
-self-promotional — **31% of TikTok and 28% of Instagram suffix cards
-are the subject brand's OWN account** (YouTube 15%), versus 5–8% on
-intent-word doors. Net third-party yield is still ~12 cards/probe on
-TikTok (≈4x any intent door), 59–73% of titles name a known brand, and
-the doors surfaced **300+ creators per platform absent from the
-113-creator feed** — the recurrence pool's biggest single enlargement.
-Consequence refined: the named door is the VOLUME door; discount its
-brand-owned share before reading it as third-party sentiment.
-Evidence: `analysis/wave2_analysis.json` → `platform_suffix`. Trigger:
+**Quality read (2026-07-29, card-level; evidence sealed same day after
+the delegated review correctly flagged the numbers as uncited):** the
+named door is a volume door but partly self-promotional —
+**own-account share 31% TikTok / 28% Instagram / 15% YouTube**
+(subject-token heuristic: undercounts, never overcounts); known-brand
+title share 59% / 54% / 73%; and the doors surfaced **311 / 431 / 301
+creators absent from the 113-creator feed** — the recurrence pool's
+biggest single enlargement. Separate the own-account share before
+reading cards as third-party sentiment. Kind mix on these cards is
+keyword-tier-only (the semantic cache does not cover them) and the
+sealed JSON says so. Evidence:
+`analysis/fullbank_suffix_quality.json` (derivation
+`serp_fullbank_analysis/suffix_door_quality.py`);
+`analysis/wave2_analysis.json` → `platform_suffix` (card counts);
+`analysis/fullbank_fixed_design.json` → `P11.questions.fullbank`
+(`reddit_suffix` unique question share). Trigger:
 any platform's named-suffix card count dropping below its best
 intent-word door (would mean Google changed the routing).
 
@@ -315,15 +327,15 @@ cross-day question agreement.** active (new 2026-07-29, wave 2, 60 twin
 pairs re-captured twice 4.2–5.2h apart plus their wave-1 originals).
 Same-run A/B: questions Jaccard mean **0.863** (median 0.917, p10
 0.636); domains 0.843. Cross-day vs original: questions **0.809**,
-domains **0.734** — domain churn is ~2x question churn across days.
+domains **0.734** — the agreement drop is 0.109 for domains versus
+0.054 for questions, ~2x the drop.
 Per-shape volatility spans 0.69–0.94: `vs_rival` **0.69** (most
 volatile), `side_effects` **0.943** (most stable), `reddit_suffix`
-0.925. Mechanism note: the churn is head-stable, tail-auditioning —
-top positions are locked by accumulated signals while positions ~7–15
-rotate near-threshold pages through one-day auditions, and our capture
-window cuts across that audition zone; so one sighting is often an
-audition, not a tenant, while a top-3 presence is far more stable than
-the aggregate churn number suggests. **Doctrine this installs:** (a) unique-share gaps under ~0.08
+0.925. **Mechanism not yet measured:** the cited JSON contains aggregate
+set overlap, not rank-position persistence, so it cannot establish a
+head-stable/tail-auditioning mechanism, a 7–15 audition zone, or greater
+top-3 stability. Those remain hypotheses until a position-stratified
+twin analysis exists. **Doctrine this installs:** (a) unique-share gaps under ~0.08
 within a fixed design are NOT distinguishable — treat such rankings as
 ties (applied in F6); (b) any finding resting on a specific DOMAIN's
 presence needs 2+ captures on different days before it is
@@ -444,7 +456,9 @@ harvest, refreshed again by phase-2 Reddit names) · `{s} review` ·
 `{s} youtube` (evaluative/explainer layer, F22) · `{s} tiktok`
 (substitution layer, F22) · `{s} instagram` (showcase +
 credentialed-explainer layer, F22). The platform doors carry F23's
-discount: 15–31% of their cards are the brand's own account.
+qualitative discount: separate subject-owned accounts before reading
+the cards as third-party sentiment; no numeric ownership share is
+sealed yet.
 Cut from boards permanently: `{s} complaints`, `regret buying {s}`
 (tournament losers — their content arrives via the kept probes).
 
@@ -457,10 +471,11 @@ phrasings.
 
 Twin-capture the probe whose composition will bear a claim (F24: any
 domain-presence claim needs sightings on 2+ days; unique-share gaps
-<0.08 are ties). Creator recurrence (F19) accrues automatically — and
-runs ~3x wider when the reach extension is on (F23 surfaced 300+ unseen
-creators per platform); review the 2+-subject list each analysis pass
-for native follow-through.
+<0.08 are ties). Creator recurrence (F19) accrues automatically; review
+the 2+-subject list each analysis pass for native follow-through. The
+platform doors surface 301–431 feed-absent creators per platform
+(sealed: `analysis/fullbank_suffix_quality.json`), so the recurrence
+pool grows substantially every pass that includes them.
 
 ## Instruments (current versions)
 

@@ -92,13 +92,14 @@ target and a review axis-to-attack, not a review pass bar.
 
    The three platform doors are CORE, not optional — the creator/social
    layer always matters (owner call). They are also the volume doors
-   (F23): discount their 15–31% brand-own-account share before reading
-   sentiment. **Never seed** `{s} complaints` or `regret buying {s}`
+   (F23): separate subject-owned accounts before reading the cards as
+   third-party sentiment — sealed own-account share 31%/28%/15%
+   (TT/IG/YT), `analysis/fullbank_suffix_quality.json`.
+   **Never seed** `{s} complaints` or `regret buying {s}`
    (tournament-cut, F6) and never plant a competitor name you have not
    harvested. Operator-supplied names are allowed but tagged
    `seed:operator` and retired as vs-inputs on the first harvested rival.
-   Front-load at ~1/min, ≤10 captures (wave-2 evidence: 60/hr sustained
-   is clean; the constraint is the ~30-min window, not the burst).
+   Front-load no faster than the current owner cadence, ≤10 captures.
 
    The `vs {rival}` probe is NOT a seed: its rival arrives from this
    phase's own rolling harvest (Channel 0–2), and again after phase 2 —
@@ -140,13 +141,13 @@ target and a review axis-to-attack, not a review pass bar.
   appearance may be Google's shuffle, not a relationship: it takes
   **two sightings on two different days** to write "anchor" — one
   sighting is logged as presence only.
-- **Blocked mid-run?** A block is a flag, not a rate signal (F2b) —
-  slowing down cannot clear it. Stop the stream, record it, idle **up
-  to 1 hour maximum, then PING the owner** with the run state and let
-  them route the resume. (Decay evidence, F3: 26 min proven
-  insufficient, ~3h25m proven sufficient — the ping should say the
-  flag likely needs more idle than the hour already spent.) Never retry
-  hot, never approach the threshold to measure it.
+- **Blocked mid-run?** A block is a flag, not a rate signal (F2b).
+  Record it and freeze the rung unless the block fell within the
+  five-attempt probation after a rung increase; only then step back one
+  rung. Idle **60 minutes**, then make exactly one recovery attempt. If
+  that attempt is a second consecutive block, or it is the third block
+  in the run, write `OWNER_PING.json` before stopping for owner routing.
+  Never retry hot or approach the threshold to measure it.
 - **Anything else ambiguous?** Prefer the reading that leaves a typed
   gap over the reading that invents data — a visible hole routes work;
   a guessed fill poisons every downstream consumer.
@@ -155,9 +156,11 @@ target and a review axis-to-attack, not a review pass bar.
 
 - Read the CURRENT owner cadence before the first capture — do not assume
   a historical band. One Google-stream capture at a time. A block is a
-  stop signal per the rule above: stop, record, ≤1h idle, ping owner;
-  never retry hot, never interact with a CAPTCHA. Blocks are respected,
-  never approached or measured.
+  stop signal per the rule above: record, freeze or probation-step-down,
+  idle 60 minutes, make one recovery attempt, and ping before stopping
+  on a second consecutive or third run block. Never retry hot, never
+  interact with a CAPTCHA. Blocks are respected, never approached or
+  measured.
 - Standing non-claims on every artifact: counts of observed cards only,
   never prevalence/volume/share; US-parameterized is not physically
   US-local; raw capture data stays on the operator drive, outside Git.

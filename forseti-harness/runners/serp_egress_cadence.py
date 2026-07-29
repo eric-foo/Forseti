@@ -19,8 +19,10 @@ sustained figure down to 60/hr.
 ## The ladder
 
 A run starts at the rung recorded in its rate-state file and steps up one
-rung after `RUNG_STEP_JOBS` consecutive clean captures. On ANY block it steps
-one rung back and freezes escalation for the remainder of the run; escalation
+rung after `RUNG_STEP_JOBS` consecutive clean captures. On a block WITHIN the
+five-job escalation probation it steps one rung back; any other block freezes
+the current rung (F2b, 2026-07-29: rate reduction cannot clear a live flag).
+Either way escalation freezes for the remainder of the run; escalation
 never resumes after a block without a fresh owner decision. The ladder is a
 graduated approach to a chosen operating rate -- it stops at the top rung and
 never probes past it. Blocks are stop signals to respect, never a threshold
