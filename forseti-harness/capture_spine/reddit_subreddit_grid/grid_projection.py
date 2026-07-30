@@ -31,6 +31,13 @@ GRID_PROJECTION_PARSER_VERSION = "4"
 
 GRID_CONTENT_RECORD_KIND = "reddit_subreddit_grid_view_v0"
 
+# Both Reddit listing hosts are grid capture surfaces.  www joined on 2026-07-30
+# when old.reddit stopped serving this client; old.reddit stays because the
+# block may be lifted and its transport is otherwise unchanged.
+OLD_REDDIT_LISTING_HOST = "old.reddit.com"
+WWW_REDDIT_LISTING_HOST = "www.reddit.com"
+GRID_LISTING_HOSTS = frozenset({OLD_REDDIT_LISTING_HOST, WWW_REDDIT_LISTING_HOST})
+
 
 class RedditGridProjectionError(ValueError):
     def __init__(self, code: str, message: str) -> None:
@@ -206,7 +213,14 @@ def grid_view_projection_anomaly(view: GridView) -> str | None:
 
 
 def same_grid_listing_url(actual_url: str, expected_url: str) -> bool:
-    """Compare one final old-Reddit listing URL to its requested locator."""
+    """Compare one final Reddit listing URL to its requested locator.
+
+    Both hosts are grid surfaces since old.reddit stopped serving this client
+    (2026-07-30), but they must MATCH EACH OTHER rather than merely both being
+    allowed: a www capture that satisfied an old.reddit locator would let one
+    surface's evidence ledger as the other's, which is the cross-surface
+    confusion the two canonical thread-URL helpers are also kept apart to avoid.
+    """
     try:
         actual = urlsplit(actual_url)
         expected = urlsplit(expected_url)
@@ -214,7 +228,8 @@ def same_grid_listing_url(actual_url: str, expected_url: str) -> bool:
         return False
     return (
         actual.scheme.lower() == expected.scheme.lower() == "https"
-        and actual.netloc.lower() == expected.netloc.lower() == "old.reddit.com"
+        and actual.netloc.lower() == expected.netloc.lower()
+        and actual.netloc.lower() in GRID_LISTING_HOSTS
         and actual.path.rstrip("/").casefold() == expected.path.rstrip("/").casefold()
         and sorted(parse_qsl(actual.query, keep_blank_values=True))
         == sorted(parse_qsl(expected.query, keep_blank_values=True))

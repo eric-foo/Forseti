@@ -34,6 +34,8 @@ from data_lake.reddit_subreddit_registry import (
 )
 from data_lake.root import DataLakeRoot
 from capture_spine.reddit_subreddit_grid.grid_projection import (
+    GRID_LISTING_HOSTS,
+    WWW_REDDIT_LISTING_HOST,
     GridView,
     RedditGridProjectionError,
     grid_view_from_record,
@@ -63,14 +65,25 @@ GRID_OBSERVATION_SOURCE_SURFACE = "old_reddit_grid_packet"
 # Weekly demand-radar listing (top/?t=week): same grid family, distinguishable
 # ledger line so readers can tell a weekly consolidated pass from a live pass.
 TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "old_reddit_top_week_packet"
+# The www host is a different capture surface reached by a different transport,
+# so its observations carry their own ledger lines.  A reader comparing a series
+# across the 2026-07-30 host cutover must be able to SEE where it happened
+# rather than infer it from dates.
+WWW_GRID_OBSERVATION_SOURCE_SURFACE = "www_reddit_grid_packet"
+WWW_TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "www_reddit_top_week_packet"
 
 
 def _observation_surface_for(listing_url: str) -> str:
     parsed = urlparse(listing_url)
     parts = [part for part in parsed.path.split("/") if part]
+    www = parsed.netloc.lower() == WWW_REDDIT_LISTING_HOST
     if parts and parts[-1] == "top" and "t=week" in (parsed.query or "").split("&"):
-        return TOP_WEEK_OBSERVATION_SOURCE_SURFACE
-    return GRID_OBSERVATION_SOURCE_SURFACE
+        return (
+            WWW_TOP_WEEK_OBSERVATION_SOURCE_SURFACE
+            if www
+            else TOP_WEEK_OBSERVATION_SOURCE_SURFACE
+        )
+    return WWW_GRID_OBSERVATION_SOURCE_SURFACE if www else GRID_OBSERVATION_SOURCE_SURFACE
 
 
 class RegistryRefreshError(ValueError):
@@ -496,7 +509,7 @@ def _subreddit_from_listing_url(url: str) -> str | None:
     parts = [part for part in parsed.path.split("/") if part]
     if (
         parsed.scheme == "https"
-        and parsed.netloc.lower() == "old.reddit.com"
+        and parsed.netloc.lower() in GRID_LISTING_HOSTS
         and len(parts) >= 3
         and parts[0] == "r"
         and parts[1].isascii()
