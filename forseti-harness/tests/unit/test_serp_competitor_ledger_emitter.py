@@ -284,3 +284,43 @@ def test_surfaced_title_fragments_never_emit(title, junk):
         )
     )
     assert not any(junk in str(item[0]).lower() for item in emitted)
+
+
+# ---- v0.4: parent collapse -----------------------------------------------
+
+@requires_mega
+@requires_verdicts
+def test_recoverable_names_collapse_into_their_parent(mega_gated):
+    """A RECOVERABLE name is evidence FOR a parent, not an entity itself.
+
+    "better AG1" sat at presence looking like debris while AG1 -- a real
+    rival of bloom greens powder with 9 distinct queries behind it -- was
+    invisible. Collapsing merges the evidence so the parent promotes on it.
+    """
+    names = {(e["subject"], e["name"].lower()) for e in mega_gated["entries"]}
+    assert ("bloom greens powder", "ag1") in names
+    assert ("bloom greens powder", "better ag1") not in names
+
+
+@requires_mega
+@requires_verdicts
+def test_collapsed_entries_record_what_they_absorbed(mega_gated):
+    # Provenance: a merged parent must say which mangled names fed it,
+    # or the collapse is unauditable.
+    merged = [e for e in mega_gated["entries"] if e.get("collapsed_from")]
+    assert merged, "expected at least one collapsed parent"
+    for e in merged:
+        assert isinstance(e["collapsed_from"], list) and e["collapsed_from"]
+
+
+@requires_mega
+@requires_verdicts
+def test_unresolved_parent_fails_visible_rather_than_guessing(mega_gated):
+    # parent=null in the cache means "cannot resolve from the evidence".
+    # Those must NOT be silently merged anywhere.
+    vd = json.loads(VERDICTS.read_text(encoding="utf-8"))
+    unresolved = {(v["subject"], v["name"].lower()) for v in vd["verdicts"]
+                  if v.get("verdict") == "RECOVERABLE" and not v.get("parent")}
+    for e in mega_gated["entries"]:
+        for absorbed in e.get("collapsed_from", []):
+            assert (e["subject"], absorbed.lower()) not in unresolved

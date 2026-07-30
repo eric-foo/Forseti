@@ -312,10 +312,19 @@ def main():
 
     verdict_gate = args.verdicts is not None
     verdicts = {}
+    parents = {}          # bound here so the no-gate (v0.1) path still runs
     if verdict_gate and Path(args.verdicts).exists():
         vd = json.loads(Path(args.verdicts).read_text(encoding="utf-8"))
         verdicts = {(v["subject"], v["name"].lower()): v["verdict"]
                     for v in vd["verdicts"]}
+        # v0.4: a RECOVERABLE name is EVIDENCE for a parent entity, not an
+        # entity of its own ("better, Vaseline" is a vote for Vaseline).
+        # Collapsing merges its sources into the parent so the parent
+        # promotes on the evidence it actually has. parent=null stays put
+        # and fails visible rather than being guessed at.
+        parents = {(v["subject"], v["name"].lower()): v["parent"]
+                   for v in vd["verdicts"]
+                   if v.get("verdict") == "RECOVERABLE" and v.get("parent")}
 
     mediator_class_gate = args.mediator_classes is not None
     med_classes = {}
@@ -356,6 +365,25 @@ def main():
                    "evidence": evidence[:160]}
             if src not in e["sources"]:
                 e["sources"].append(src)
+
+    # v0.4 parent collapse, before rung assignment so the parent's
+    # distinct_queries counts the merged evidence.
+    collapsed = 0
+    for key in list(entries):
+        subject, name_l, typ = key
+        parent = parents.get((subject, name_l))
+        if not parent:
+            continue
+        e = entries.pop(key)
+        pkey = (subject, parent.lower(), typ)
+        tgt = entries.setdefault(pkey, {"sources": []})
+        tgt.update({"name": parent, "type": typ, "subject": subject,
+                    "category": e.get("category"), "seed": None})
+        for src in e["sources"]:
+            if src not in tgt["sources"]:
+                tgt["sources"].append(src)
+        tgt.setdefault("collapsed_from", []).append(e["name"])
+        collapsed += 1
 
     out = []
     for e in entries.values():
@@ -442,6 +470,9 @@ def main():
     out_path.write_text(
         json.dumps(payload, indent=1, ensure_ascii=False), encoding="utf-8")
 
+    if verdict_gate:
+        print(f"parent collapse: {collapsed} RECOVERABLE names merged into "
+              f"their parent entity")
     n_cand = sum(1 for e in out if e["rung"] == "candidate")
     n_pend = sum(1 for e in out if e["rung"] == "pending_adjudication")
     print(f"probes scanned: {probes}; entries: {len(out)} "
