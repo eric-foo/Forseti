@@ -14,7 +14,6 @@ import statistics
 import sys
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus
@@ -30,6 +29,7 @@ from capture_spine.creator_profile_current.registry_match_preflight import (
 from data_lake.canonical_json import canonical_record_bytes
 from data_lake.creator_registry import load_current_registry_preflight_view
 from data_lake.root import DataLakeRoot
+from harness_utils import utc_now_z_microseconds
 from source_capture.youtube_creator_assessment import (
     ASSESSMENT_SCHEMA_VERSION,
     write_youtube_creator_assessment_packet,
@@ -153,7 +153,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             registry_document=registry_document,
             registry_source_pointer=registry_pointer,
             registry_sha256=registry_hash,
-            generated_at_utc=_utc_now(),
+            generated_at_utc=utc_now_z_microseconds(),
         )
         preflight_path = args.output_dir / REGISTRY_PREFLIGHT_JSON_NAME
         preflight_path.write_text(
@@ -194,7 +194,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             registry_document=registry_document,
             registry_source_pointer=registry_pointer,
             registry_sha256=registry_hash,
-            generated_at_utc=_utc_now(),
+            generated_at_utc=utc_now_z_microseconds(),
         )
         resolved_preflight_path = (
             args.output_dir / RESOLVED_REGISTRY_PREFLIGHT_JSON_NAME
@@ -344,7 +344,7 @@ def build_youtube_frontier_candidates(
     return {
         "youtube_creator_frontier_candidates": {
             "schema_version": FRONTIER_SCHEMA_VERSION,
-            "generated_at_utc": _utc_now(),
+            "generated_at_utc": utc_now_z_microseconds(),
             "counts": {
                 "recurring_feed": len(recurring),
                 "suffix_feed_absent": len(suffix),
@@ -428,7 +428,7 @@ def capture_youtube_creator_assessment(
             _assert_logged_out(page)
             return {
                 "schema_version": ASSESSMENT_SCHEMA_VERSION,
-                "captured_at_utc": _utc_now(),
+                "captured_at_utc": utc_now_z_microseconds(),
                 "identity": identity,
                 "identity_resolution": resolution,
                 "session_posture": {
@@ -1194,10 +1194,6 @@ def _load_json(path: Path) -> dict[str, Any]:
 def _write_json(path: Path, value: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-
-def _utc_now() -> str:
-    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
 
 if __name__ == "__main__":
