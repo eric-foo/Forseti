@@ -9,13 +9,17 @@ prior receipt only from the store.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 from uuid import uuid4
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from harness_utils import sha256_bytes
 
 try:
     from runners.serp_phase2_decision_contract import (
@@ -37,10 +41,6 @@ PROVENANCE_VERSION = "serp_phase2_settlement_provenance_v0"
 
 class LifecycleError(ValueError):
     """Raised when persistent Phase-2 lifecycle state fails closed."""
-
-
-def _sha256(raw: bytes) -> str:
-    return hashlib.sha256(raw).hexdigest()
 
 
 def _json_bytes(value: Mapping[str, Any]) -> bytes:
@@ -114,7 +114,7 @@ def retain_receipt(store_root: Path, receipt_path: Path) -> dict[str, Any]:
         subject, licensed_entities = validation_licenses_from_receipt(receipt)
     except ContractError as exc:
         raise LifecycleError(f"receipt_contract_invalid:{exc}") from exc
-    digest = _sha256(raw)
+    digest = sha256_bytes(raw)
     stored_path = store_root / "receipts" / f"{digest}.json"
     _write_idempotent(stored_path, raw)
     return {
@@ -134,7 +134,7 @@ def _load_stored_receipt(
         raise LifecycleError("prior_receipt_sha256_invalid")
     path = store_root / "receipts" / f"{digest}.json"
     raw, receipt = _read_json(path, label="stored_receipt")
-    if _sha256(raw) != digest:
+    if sha256_bytes(raw) != digest:
         raise LifecycleError(f"stored_receipt_digest_mismatch:{digest}")
     try:
         subject, licensed_entities = validation_licenses_from_receipt(receipt)
@@ -145,7 +145,7 @@ def _load_stored_receipt(
 
 def _claim_id(subject_entity_key: str, entry_entity_key: str) -> str:
     material = f"{subject_entity_key}\0{entry_entity_key}".encode("utf-8")
-    return _sha256(material)
+    return sha256_bytes(material)
 
 
 def _require_digest(value: str, *, label: str) -> None:
@@ -278,11 +278,11 @@ def seal_claimed_settlement(
         raise LifecycleError(f"settlement_contract_invalid:{exc}") from exc
 
     receipt_raw = _json_bytes(receipt)
-    receipt_digest = _sha256(receipt_raw)
+    receipt_digest = sha256_bytes(receipt_raw)
     provenance = {
         "schema_version": PROVENANCE_VERSION,
         "subject_entity_key": subject_entity_key,
-        "settlement_sha256": _sha256(settlement_raw),
+        "settlement_sha256": sha256_bytes(settlement_raw),
         "receipt_sha256": receipt_digest,
         "claim_ids": sorted(claim["claim_id"] for claim in claims),
         "prior_receipt_sha256s": sorted(receipts_by_digest),
