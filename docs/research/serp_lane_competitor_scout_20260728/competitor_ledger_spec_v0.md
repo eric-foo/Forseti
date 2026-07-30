@@ -326,15 +326,19 @@ enter the decision-ready set. The seal checks key shape, known placeholder
 tokens, and exact equality across the settlement; it does not independently
 prove that the normalizer selected the correct real-world product. Known
 placeholder families include unknown, unspecified, unbound, pending,
-missing, unset, null/none, N/A, and TBD.
+missing, unset/not-set, todo, null/none, N/A, and TBD, including
+Unicode compatibility variants; every key component must also contain
+at least one letter or number.
 
 Native comments carry two separate reads:
 
 - **corroboration** — distinct first-hand authors; repeated comments by
   one author count once. Two authors are the decision-use floor; the
   STRONG/STRONGEST grades above remain unchanged.
-- **engagement** — raw score plus rank inside its own thread. Engagement
-  prioritises what to validate; it never substitutes for corroboration.
+- **engagement** — raw score plus rank inside its own thread, constrained
+  to cross-runtime JSON safe integers (`±9,007,199,254,740,991`; rank
+  remains positive). Engagement prioritises what to validate; it never
+  substitutes for corroboration.
   A popular non-stance or secondhand comment contributes no first-hand
   support and cannot lend its rank to a different product comment.
 
@@ -428,7 +432,10 @@ receipt belongs to the same subject and its same-entity result is
 finding-grade, identity-coherent, one-author, rank-one,
 `validate_once`, and not decision-ready. This preserves the decision that
 authorized the attempt without re-deriving it from mutable post-probe
-rank. A missing, mismatched, or merely self-declared licence fails closed.
+rank. Those one-author and rank-one values must be integers, not JSON
+booleans. The prior receipt's summary must reproduce from its results.
+A missing, internally inconsistent, mismatched, or merely self-declared
+licence fails closed.
 The live scheduler must retain and attach the actual earlier receipt;
 the seal checks its contract shape and contents, not cryptographic
 authenticity or external store provenance.
@@ -457,6 +464,7 @@ On success the seal emits `serp_phase2_decision_receipt_v0`:
     "identity_coherent": true,
     "surface_independent": true,
     "surface_classes": ["complaint_body", "serp_rendered_snippet"],
+    "source_ids": ["mq0234_dossier", "br540_r04_na7ear0"],
     "first_hand_authors": 2,
     "threads": 2,
     "venues": 2,
@@ -495,7 +503,7 @@ On success the seal emits `serp_phase2_decision_receipt_v0`:
 }
 ```
 
-Price-bearing results carry the exact subject price/size and competitor
+Price-bearing results carry finite positive exact subject price/size and competitor
 floor/size used for `subject_multiple`, plus `currency`,
 `comparison_basis`, and `floor_status`. Decision-ready results carry the
 validated value response; weak results do not. The receipt projects only

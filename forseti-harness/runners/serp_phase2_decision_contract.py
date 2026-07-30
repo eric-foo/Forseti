@@ -19,13 +19,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
+import unicodedata
 from pathlib import Path
 from typing import Any
 
 
 SCHEMA_VERSION = "serp_phase2_decision_settlement_v0"
 RECEIPT_VERSION = "serp_phase2_decision_receipt_v0"
+JSON_SAFE_INTEGER_MAX = 9_007_199_254_740_991
 
 POSTURES = {"first_hand", "secondhand", "unclear"}
 VALUE_LEVERS = {"product", "buying_confidence", "ownership", "proof"}
@@ -97,7 +100,10 @@ def _required_text(
 
 
 def _entity_key_is_bound(value: str) -> bool:
-    tokens = [token.strip().lower() for token in value.split("|")]
+    tokens = [
+        unicodedata.normalize("NFKC", token.strip()).casefold()
+        for token in value.split("|")
+    ]
     normalized_tokens = {
         "".join(character for character in token if character.isalnum())
         for token in tokens
@@ -105,6 +111,7 @@ def _entity_key_is_bound(value: str) -> bool:
     return (
         len(tokens) >= 3
         and all(tokens)
+        and all(normalized_tokens)
         and not any(
             marker in token
             for token in normalized_tokens
@@ -117,6 +124,8 @@ def _entity_key_is_bound(value: str) -> bool:
                 "pending",
                 "missing",
                 "unset",
+                "notset",
+                "todo",
             )
         )
         and not normalized_tokens & {"na", "none", "null"}
@@ -139,7 +148,9 @@ def _engagement(
     score = engagement.get("score")
     score_declared = score is not None
     if score_declared and (
-        isinstance(score, bool) or not isinstance(score, int)
+        isinstance(score, bool)
+        or not isinstance(score, int)
+        or abs(score) > JSON_SAFE_INTEGER_MAX
     ):
         violations.append(f"comment_score_invalid:{prefix}")
         score = None
@@ -152,7 +163,12 @@ def _engagement(
         )
 
     rank = engagement.get("rank_in_thread")
-    if not isinstance(rank, int) or isinstance(rank, bool) or rank < 1:
+    if (
+        not isinstance(rank, int)
+        or isinstance(rank, bool)
+        or rank < 1
+        or rank > JSON_SAFE_INTEGER_MAX
+    ):
         violations.append(f"comment_rank_invalid:{prefix}")
         rank = None
     return score, rank
@@ -178,14 +194,17 @@ def _price_result(
         "subject_multiple",
     ):
         value = price.get(field)
-        if (
-            not isinstance(value, (int, float))
-            or isinstance(value, bool)
-            or value <= 0
-        ):
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
             violations.append(f"price_value_invalid:{entry_name}:{field}")
             continue
-        values[field] = float(value)
+        try:
+            normalized_value = float(value)
+        except OverflowError:
+            normalized_value = math.inf
+        if not math.isfinite(normalized_value) or normalized_value <= 0:
+            violations.append(f"price_value_invalid:{entry_name}:{field}")
+            continue
+        values[field] = normalized_value
 
     currency = _required_text(
         price.get("currency"),
@@ -471,6 +490,7 @@ def _evaluate_entry(
         ),
         "surface_independent": surface_independent,
         "surface_classes": sorted(surface_classes),
+        "source_ids": sorted(source_ids),
         "first_hand_authors": author_count,
         "threads": len(threads),
         "venues": len(venues),
@@ -564,6 +584,18 @@ def _prior_validation_entities(
                 f"prior_decision_receipt_results_invalid:{receipt_id}"
             )
             continue
+        try:
+            expected_summary = _expected_summary(results)
+        except (KeyError, TypeError):
+            violations.append(
+                f"prior_decision_receipt_results_invalid:{receipt_id}"
+            )
+            continue
+        if receipt.get("summary") != expected_summary:
+            violations.append(
+                f"prior_decision_receipt_summary_mismatch:{receipt_id}"
+            )
+            continue
         for result in results:
             if not isinstance(result, dict):
                 continue
@@ -574,7 +606,9 @@ def _prior_validation_entities(
                 and result.get("subject_entity_key") == subject_entity_key
                 and result.get("rung") == "finding_grade"
                 and result.get("identity_coherent") is True
+                and type(result.get("first_hand_authors")) is int
                 and result.get("first_hand_authors") == 1
+                and type(result.get("best_comment_rank")) is int
                 and result.get("best_comment_rank") == 1
                 and result.get("action") == "validate_once"
                 and result.get("decision_ready") is False
