@@ -142,6 +142,77 @@ def extract_tiktok_packet_identity(data_root: DataLakeRoot, packet_id: str) -> d
         "public_profile_url": f"https://www.tiktok.com/@{handle}",
         "observed_at": observed_at,
         "identity_source_pointer": rel_pointer,
+        "handle_source_pointer": f"{rel_pointer}#/items/0/author/uniqueId",
+        "display_name_source_pointer": f"{rel_pointer}#/items/0/author/nickname",
+        "display_name_source_field": "items[0].author.nickname",
+        "evidence_source_family": "tiktok",
+        "evidence_source_surface": str(manifest.get("source_surface") or "tiktok_creator_grid"),
+    }
+
+
+def extract_youtube_assessment_packet_identity(
+    data_root: DataLakeRoot, packet_id: str
+) -> dict[str, str]:
+    """Load and verify stable identity from one YouTube creator assessment packet."""
+    loaded = data_root.load_raw_packet(packet_id)
+    manifest = loaded.manifest
+    if manifest.get("source_family") != "youtube":
+        raise CreatorRegistryLakeError(f"packet is not YouTube: {packet_id}")
+    if manifest.get("source_surface") != "youtube_creator_assessment":
+        raise CreatorRegistryLakeError(f"packet is not a YouTube creator assessment: {packet_id}")
+    matches = []
+    for preserved in manifest.get("preserved_files", []):
+        if not isinstance(preserved, Mapping):
+            continue
+        relative = str(preserved.get("relative_packet_path") or "").replace("\\", "/")
+        if relative.endswith("youtube_creator_assessment.json"):
+            matches.append(preserved)
+    if len(matches) != 1:
+        raise CreatorRegistryLakeError(
+            "YouTube assessment packet must preserve exactly one assessment JSON"
+        )
+    preserved = matches[0]
+    relative = _text(preserved.get("relative_packet_path"), "assessment relative path")
+    path = loaded.container.joinpath(*relative.replace("\\", "/").split("/"))
+    body = path.read_bytes()
+    if len(body) != preserved.get("size_bytes"):
+        raise CreatorRegistryLakeError("YouTube assessment size does not match manifest")
+    if hashlib.sha256(body).hexdigest() != preserved.get("sha256"):
+        raise CreatorRegistryLakeError("YouTube assessment hash does not match manifest")
+    assessment = _object(json.loads(body.decode("utf-8-sig")), "YouTube creator assessment")
+    if assessment.get("schema_version") != "youtube_creator_assessment_v0":
+        raise CreatorRegistryLakeError("unsupported YouTube creator assessment schema")
+    identity = _object(assessment.get("identity"), "YouTube assessment identity")
+    channel_id = _text(identity.get("channel_id"), "YouTube channel id")
+    if not re.fullmatch(r"UC[A-Za-z0-9_-]{22}", channel_id):
+        raise CreatorRegistryLakeError("YouTube assessment channel id is not canonical")
+    handle = _normalize_handle(identity.get("handle"))
+    display_name = _text(identity.get("display_name"), "YouTube display name")
+    profile_url = _text(identity.get("profile_url"), "YouTube profile URL")
+    if profile_url.casefold() != f"https://www.youtube.com/@{handle}".casefold():
+        raise CreatorRegistryLakeError("YouTube assessment handle and profile URL disagree")
+    observed_at = _text(assessment.get("captured_at_utc"), "YouTube capture timestamp")
+    posture = _object(assessment.get("session_posture"), "YouTube session posture")
+    if (
+        posture.get("required") != "logged_out_fresh_browser_context"
+        or posture.get("observed_logged_in") is not False
+        or posture.get("context_reused") is not False
+    ):
+        raise CreatorRegistryLakeError("YouTube assessment lacks logged-out fresh-context proof")
+    rel_pointer = f"raw/{raw_shard(packet_id)}/{packet_id}/{relative.replace('\\', '/')}"
+    return {
+        "platform": "youtube",
+        "platform_public_account_id": channel_id,
+        "public_handle": handle,
+        "public_display_name": display_name,
+        "public_profile_url": profile_url,
+        "observed_at": observed_at,
+        "identity_source_pointer": rel_pointer,
+        "handle_source_pointer": f"{rel_pointer}#/identity/handle",
+        "display_name_source_pointer": f"{rel_pointer}#/identity/display_name",
+        "display_name_source_field": "identity.display_name",
+        "evidence_source_family": "youtube",
+        "evidence_source_surface": "youtube_creator_assessment",
     }
 
 
@@ -149,6 +220,26 @@ def resolve_tiktok_profile_subject_id(
     *, data_root: DataLakeRoot, packet_id: str, requested_id: str | None = None
 ) -> str:
     identity = extract_tiktok_packet_identity(data_root, packet_id)
+    return _resolve_profile_subject_id(
+        data_root=data_root, identity=identity, requested_id=requested_id
+    )
+
+
+def resolve_youtube_profile_subject_id(
+    *, data_root: DataLakeRoot, packet_id: str, requested_id: str | None = None
+) -> str:
+    identity = extract_youtube_assessment_packet_identity(data_root, packet_id)
+    return _resolve_profile_subject_id(
+        data_root=data_root, identity=identity, requested_id=requested_id
+    )
+
+
+def _resolve_profile_subject_id(
+    *,
+    data_root: DataLakeRoot,
+    identity: Mapping[str, str],
+    requested_id: str | None,
+) -> str:
     try:
         index = load_current_creator_registry(data_root)
     except CreatorRegistryLakeError as exc:
@@ -161,7 +252,9 @@ def resolve_tiktok_profile_subject_id(
     expected = (
         str(matches[0]["platform_account_id"])
         if matches
-        else deterministic_platform_account_id("tiktok", identity["platform_public_account_id"])
+        else deterministic_platform_account_id(
+            identity["platform"], identity["platform_public_account_id"]
+        )
     )
     if requested_id is not None and requested_id != expected:
         if matches:
@@ -263,13 +356,52 @@ def admit_tiktok_creator_candidate(
 ) -> dict[str, Any]:
     """Admit one grid-identified, owner-eligible TikTok account as not onboarded."""
     identity = extract_tiktok_packet_identity(data_root, packet_id)
+    return _admit_creator_candidate(
+        data_root=data_root,
+        packet_id=packet_id,
+        frontier_disposition_id=frontier_disposition_id,
+        identity=identity,
+        account_id=resolve_tiktok_profile_subject_id(
+            data_root=data_root, packet_id=packet_id
+        ),
+    )
+
+
+def admit_youtube_creator_candidate(
+    *,
+    data_root: DataLakeRoot,
+    packet_id: str,
+    frontier_disposition_id: str,
+) -> dict[str, Any]:
+    """Admit one assessed, owner-eligible YouTube channel as not onboarded."""
+    identity = extract_youtube_assessment_packet_identity(data_root, packet_id)
+    return _admit_creator_candidate(
+        data_root=data_root,
+        packet_id=packet_id,
+        frontier_disposition_id=frontier_disposition_id,
+        identity=identity,
+        account_id=resolve_youtube_profile_subject_id(
+            data_root=data_root, packet_id=packet_id
+        ),
+    )
+
+
+def _admit_creator_candidate(
+    *,
+    data_root: DataLakeRoot,
+    packet_id: str,
+    frontier_disposition_id: str,
+    identity: Mapping[str, str],
+    account_id: str,
+) -> dict[str, Any]:
+    platform = identity["platform"]
     frontier = load_creator_frontier_dispositions(data_root)[
         "creator_frontier_disposition_current"
     ]
     matches = [
         row
         for row in frontier["dispositions"]
-        if row.get("candidate_key") == f"tiktok:@{identity['public_handle']}"
+        if row.get("candidate_key") == f"{platform}:@{identity['public_handle']}"
     ]
     if len(matches) != 1:
         raise CreatorRegistryLakeError(
@@ -283,7 +415,6 @@ def admit_tiktok_creator_candidate(
         raise CreatorRegistryLakeError(
             "candidate admission requires the named current eligible Frontier disposition"
         )
-    account_id = resolve_tiktok_profile_subject_id(data_root=data_root, packet_id=packet_id)
     try:
         current_index = load_current_creator_registry(data_root)
     except CreatorRegistryLakeError as exc:
@@ -295,21 +426,21 @@ def admit_tiktok_creator_candidate(
     existing_matches = _matching_index_rows(current_index, identity)
     if len(existing_matches) > 1:
         raise CreatorRegistryLakeError(
-            "TikTok candidate identity matches multiple current Registry accounts"
+            f"{platform.title()} candidate identity matches multiple current Registry accounts"
         )
     account = {
         "platform_account_id": account_id,
-        "platform": "tiktok",
+        "platform": platform,
         "platform_public_account_id_or_none": identity["platform_public_account_id"],
         "public_handle": identity["public_handle"],
         "public_profile_url": identity["public_profile_url"],
-        "handle_source_pointer": f"{identity['identity_source_pointer']}#/items/0/author/uniqueId",
+        "handle_source_pointer": identity["handle_source_pointer"],
         "handle_observed_at": identity["observed_at"],
         "public_display_name_or_none": identity["public_display_name"],
         "display_name_source_pointer_or_none": (
-            f"{identity['identity_source_pointer']}#/items/0/author/nickname"
+            identity["display_name_source_pointer"]
         ),
-        "display_name_source_field_or_none": "items[0].author.nickname",
+        "display_name_source_field_or_none": identity["display_name_source_field"],
     }
     payload = {
         "schema_version": CANDIDATE_ADMISSION_SCHEMA_VERSION,
@@ -320,8 +451,8 @@ def admit_tiktok_creator_candidate(
             "onboarding_state": "not_onboarded",
             "onboarded_at_or_none": None,
             "evidence_packet_id_or_none": packet_id,
-            "evidence_source_family_or_none": "tiktok",
-            "evidence_source_surface_or_none": "tiktok_creator_grid",
+            "evidence_source_family_or_none": identity["evidence_source_family"],
+            "evidence_source_surface_or_none": identity["evidence_source_surface"],
             "policy_version": "creator_registry_candidate_admission_v1",
         },
         "frontier_disposition": {
@@ -630,6 +761,38 @@ def admit_tiktok_creator_account(
 ) -> dict[str, Any]:
     """Append one validated TikTok onboarding admission and publish/read it back."""
     identity = extract_tiktok_packet_identity(data_root, packet_id)
+    return _admit_creator_account(
+        data_root=data_root,
+        packet_id=packet_id,
+        judgment_outcome_path=judgment_outcome_path,
+        identity=identity,
+    )
+
+
+def admit_youtube_creator_account(
+    *,
+    data_root: DataLakeRoot,
+    packet_id: str,
+    judgment_outcome_path: Path,
+) -> dict[str, Any]:
+    """Append one validated YouTube onboarding admission and publish/read it back."""
+    identity = extract_youtube_assessment_packet_identity(data_root, packet_id)
+    return _admit_creator_account(
+        data_root=data_root,
+        packet_id=packet_id,
+        judgment_outcome_path=judgment_outcome_path,
+        identity=identity,
+    )
+
+
+def _admit_creator_account(
+    *,
+    data_root: DataLakeRoot,
+    packet_id: str,
+    judgment_outcome_path: Path,
+    identity: Mapping[str, str],
+) -> dict[str, Any]:
+    platform = identity["platform"]
     outcome_bytes = judgment_outcome_path.read_bytes()
     outcome = _object(json.loads(outcome_bytes.decode("utf-8-sig")), "Judgment outcome")
     if outcome.get("schema_version") != "creator_audience_judgment_outcome_v1":
@@ -644,9 +807,11 @@ def admit_tiktok_creator_account(
         raise CreatorRegistryLakeError("Judgment snapshot profile subject does not match outcome")
     if snapshot.get("platform_account_id") != profile_subject_id:
         raise CreatorRegistryLakeError("Judgment snapshot platform account does not match outcome")
-    expected_creator_id = f"tiktok:@{identity['public_handle']}"
+    expected_creator_id = f"{platform}:@{identity['public_handle']}"
     if outcome.get("creator_id") != expected_creator_id or snapshot.get("creator_id") != expected_creator_id:
-        raise CreatorRegistryLakeError("Judgment creator identity does not match captured TikTok identity")
+        raise CreatorRegistryLakeError(
+            f"Judgment creator identity does not match captured {platform.title()} identity"
+        )
     expected_outcome = (
         data_root.path
         / "derived"
@@ -659,9 +824,9 @@ def admit_tiktok_creator_account(
         raise CreatorRegistryLakeError("Judgment outcome is not the authoritative lake record path")
     if expected_outcome.read_bytes() != outcome_bytes:
         raise CreatorRegistryLakeError("Judgment outcome bytes changed during admission")
-    profile_subject_id = resolve_tiktok_profile_subject_id(
+    profile_subject_id = _resolve_profile_subject_id(
         data_root=data_root,
-        packet_id=packet_id,
+        identity=identity,
         requested_id=profile_subject_id,
     )
     current_index = load_current_creator_registry(data_root)
@@ -681,7 +846,7 @@ def admit_tiktok_creator_account(
     current_frontier = [
         row
         for row in frontier_rows
-        if row.get("candidate_key") == f"tiktok:@{identity['public_handle']}"
+        if row.get("candidate_key") == f"{platform}:@{identity['public_handle']}"
     ]
     if len(current_frontier) > 1:
         raise CreatorRegistryLakeError(
@@ -696,17 +861,17 @@ def admit_tiktok_creator_account(
     onboarded_at = _text(capture_time.get("value"), "capture time value")
     account = {
         "platform_account_id": profile_subject_id,
-        "platform": "tiktok",
+        "platform": platform,
         "platform_public_account_id_or_none": identity["platform_public_account_id"],
         "public_handle": identity["public_handle"],
         "public_profile_url": identity["public_profile_url"],
-        "handle_source_pointer": f"{identity['identity_source_pointer']}#/items/0/author/uniqueId",
+        "handle_source_pointer": identity["handle_source_pointer"],
         "handle_observed_at": identity["observed_at"],
         "public_display_name_or_none": identity["public_display_name"],
         "display_name_source_pointer_or_none": (
-            f"{identity['identity_source_pointer']}#/items/0/author/nickname"
+            identity["display_name_source_pointer"]
         ),
-        "display_name_source_field_or_none": "items[0].author.nickname",
+        "display_name_source_field_or_none": identity["display_name_source_field"],
     }
     admission_payload = {
         "schema_version": ADMISSION_SCHEMA_VERSION,
@@ -1295,7 +1460,10 @@ def _new_public_profile(
             "metrics_computed_at_or_none": None,
         },
         "limitations": [
-            "Profile is account-scoped to one TikTok platform account; it is not a linked creator record.",
+            (
+                f"Profile is account-scoped to one {account['platform'].title()} platform "
+                "account; it is not a linked creator record."
+            ),
             "No creator metric rollup is joined yet; do not infer channel-wide influence or engagement.",
             "Audience triangulation covers the admitted evidence window only.",
         ],
@@ -1481,7 +1649,10 @@ def _build_public_profiles(records: Mapping[str, Any], *, generated_at: str) -> 
                 "current_metric_rollups": [],
                 "wind_calling_summary": None,
                 "limitations": [
-                    "Profile is account-scoped to one TikTok platform account; it is not a linked creator record.",
+                    (
+                        f"Profile is account-scoped to one {account['platform'].title()} platform "
+                        "account; it is not a linked creator record."
+                    ),
                     "No creator metric rollup is joined yet; do not infer channel-wide influence or engagement.",
                     "Audience triangulation covers the admitted evidence window only.",
                 ],
@@ -1635,14 +1806,15 @@ def _verify_candidate_admission(
             "Creator Registry candidate admission must not be monitoring eligible"
         )
     account = _object(candidate.get("platform_account"), "candidate platform account")
-    if account.get("platform") != "tiktok" or not account.get(
-        "platform_public_account_id_or_none"
-    ):
+    platform = str(account.get("platform") or "").casefold()
+    if platform not in {"tiktok", "youtube"} or not account.get("platform_public_account_id_or_none"):
         raise CreatorRegistryLakeError(
-            "Creator Registry TikTok candidate lacks stable native identity"
+            "Creator Registry candidate lacks a supported platform and stable native identity"
         )
-    identity = extract_tiktok_packet_identity(
-        data_root, _text(candidate.get("raw_anchor"), "candidate raw anchor")
+    identity = _extract_packet_identity_for_platform(
+        data_root=data_root,
+        packet_id=_text(candidate.get("raw_anchor"), "candidate raw anchor"),
+        platform=platform,
     )
     if candidate.get("admitted_at") != identity["observed_at"]:
         raise CreatorRegistryLakeError(
@@ -1650,19 +1822,19 @@ def _verify_candidate_admission(
         )
     expected_account = {
         "platform_account_id": deterministic_platform_account_id(
-            "tiktok", identity["platform_public_account_id"]
+            platform, identity["platform_public_account_id"]
         ),
-        "platform": "tiktok",
+        "platform": platform,
         "platform_public_account_id_or_none": identity["platform_public_account_id"],
         "public_handle": identity["public_handle"],
         "public_profile_url": identity["public_profile_url"],
-        "handle_source_pointer": f"{identity['identity_source_pointer']}#/items/0/author/uniqueId",
+        "handle_source_pointer": identity["handle_source_pointer"],
         "handle_observed_at": identity["observed_at"],
         "public_display_name_or_none": identity["public_display_name"],
         "display_name_source_pointer_or_none": (
-            f"{identity['identity_source_pointer']}#/items/0/author/nickname"
+            identity["display_name_source_pointer"]
         ),
-        "display_name_source_field_or_none": "items[0].author.nickname",
+        "display_name_source_field_or_none": identity["display_name_source_field"],
     }
     if account != expected_account:
         raise CreatorRegistryLakeError(
@@ -1673,8 +1845,8 @@ def _verify_candidate_admission(
         "onboarding_state": "not_onboarded",
         "onboarded_at_or_none": None,
         "evidence_packet_id_or_none": candidate["raw_anchor"],
-        "evidence_source_family_or_none": "tiktok",
-        "evidence_source_surface_or_none": "tiktok_creator_grid",
+        "evidence_source_family_or_none": identity["evidence_source_family"],
+        "evidence_source_surface_or_none": identity["evidence_source_surface"],
         "policy_version": "creator_registry_candidate_admission_v1",
     }:
         raise CreatorRegistryLakeError(
@@ -1709,7 +1881,8 @@ def _verify_candidate_admission(
         len(history) != 1
         or history[0].get("status") != "eligible"
         or history[0].get("candidate_key") != disposition.get("candidate_key")
-        or disposition.get("candidate_key") != f"tiktok:@{identity['public_handle']}"
+        or disposition.get("candidate_key")
+        != f"{platform}:@{identity['public_handle']}"
     ):
         raise CreatorRegistryLakeError(
             "Creator Registry candidate does not cite one eligible Frontier disposition"
@@ -1835,24 +2008,29 @@ def _verify_admission(data_root: DataLakeRoot, admission: Mapping[str, Any]) -> 
     if admission.get("monitoring_eligible") is not True:
         raise CreatorRegistryLakeError("Creator Registry admission must be monitoring eligible")
     account = _object(admission.get("platform_account"), "admission platform account")
-    if account.get("platform") != "tiktok" or not account.get("platform_public_account_id_or_none"):
-        raise CreatorRegistryLakeError("Creator Registry TikTok admission lacks stable native identity")
-    identity = extract_tiktok_packet_identity(
-        data_root, _text(admission.get("raw_anchor"), "admission raw anchor")
+    platform = str(account.get("platform") or "").casefold()
+    if platform not in {"tiktok", "youtube"} or not account.get("platform_public_account_id_or_none"):
+        raise CreatorRegistryLakeError(
+            "Creator Registry admission lacks a supported platform and stable native identity"
+        )
+    identity = _extract_packet_identity_for_platform(
+        data_root=data_root,
+        packet_id=_text(admission.get("raw_anchor"), "admission raw anchor"),
+        platform=platform,
     )
     expected_account = {
         "platform_account_id": account.get("platform_account_id"),
-        "platform": "tiktok",
+        "platform": platform,
         "platform_public_account_id_or_none": identity["platform_public_account_id"],
         "public_handle": identity["public_handle"],
         "public_profile_url": identity["public_profile_url"],
-        "handle_source_pointer": f"{identity['identity_source_pointer']}#/items/0/author/uniqueId",
+        "handle_source_pointer": identity["handle_source_pointer"],
         "handle_observed_at": identity["observed_at"],
         "public_display_name_or_none": identity["public_display_name"],
         "display_name_source_pointer_or_none": (
-            f"{identity['identity_source_pointer']}#/items/0/author/nickname"
+            identity["display_name_source_pointer"]
         ),
-        "display_name_source_field_or_none": "items[0].author.nickname",
+        "display_name_source_field_or_none": identity["display_name_source_field"],
     }
     if account != expected_account:
         raise CreatorRegistryLakeError(
@@ -1875,8 +2053,20 @@ def _verify_admission(data_root: DataLakeRoot, admission: Mapping[str, Any]) -> 
         or snapshot.get("platform_account_id") != account_id
     ):
         raise CreatorRegistryLakeError("Creator Registry admission identity is not bound to Judgment authority")
-    if snapshot.get("creator_id") != f"tiktok:@{_normalize_handle(account.get('public_handle'))}":
+    if snapshot.get("creator_id") != (
+        f"{platform}:@{_normalize_handle(account.get('public_handle'))}"
+    ):
         raise CreatorRegistryLakeError("Creator Registry admission handle is not bound to Judgment creator id")
+
+
+def _extract_packet_identity_for_platform(
+    *, data_root: DataLakeRoot, packet_id: str, platform: str
+) -> dict[str, str]:
+    if platform == "tiktok":
+        return extract_tiktok_packet_identity(data_root, packet_id)
+    if platform == "youtube":
+        return extract_youtube_assessment_packet_identity(data_root, packet_id)
+    raise CreatorRegistryLakeError(f"unsupported Creator Registry admission platform: {platform}")
 
 
 def _validate_authority_admission_set(
@@ -2290,9 +2480,12 @@ __all__ = [
     "CreatorRegistryLakeError",
     "admit_tiktok_creator_account",
     "admit_tiktok_creator_candidate",
+    "admit_youtube_creator_account",
+    "admit_youtube_creator_candidate",
     "cutover_creator_registry_sqlite",
     "deterministic_platform_account_id",
     "extract_tiktok_packet_identity",
+    "extract_youtube_assessment_packet_identity",
     "load_current_creator_profiles",
     "load_current_creator_registry",
     "load_current_registry_preflight_view",
@@ -2301,4 +2494,5 @@ __all__ = [
     "publish_creator_registry_generation",
     "retract_tiktok_creator_candidate",
     "resolve_tiktok_profile_subject_id",
+    "resolve_youtube_profile_subject_id",
 ]

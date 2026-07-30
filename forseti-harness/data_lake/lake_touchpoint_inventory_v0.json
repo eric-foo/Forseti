@@ -376,6 +376,30 @@
       "a2_fork_impact": "none",
       "call": "append_record",
       "count": 1,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "is_record_set_complete",
+      "count": 2,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "lane_dir",
+      "count": 1,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "record_path",
+      "count": 2,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "append_record",
+      "count": 1,
       "module": "signal_content/lake.py"
     },
     {
@@ -801,6 +825,15 @@
       {
         "a2_fork_impact": "manifest_shape",
         "identity_binding": {
+          "mechanism": "before packet write, identity comes from a served channel page exposing an immutable UC channel id, canonical handle, and display name; the evidence-video and channel-search routes additionally require a normalized display-name match against the requested creator plus agreement between the discovering surface's channel id and the served channel page's channel id, and fail closed on ambiguity, disagreement, or a display name with no comparable normalized form; the owner-supplied --profile-url route trusts the owner's locator and records display_name_mismatch as evidence instead of failing closed",
+          "status": "bound"
+        },
+        "kind": "direct_packet_writer",
+        "runner": "run_source_capture_youtube_creator_onboarding.py"
+      },
+      {
+        "a2_fork_impact": "manifest_shape",
+        "identity_binding": {
           "mechanism": "_validate_parsed_channel_identity runs immediately after parsing: the served feed-level yt:channelId must match the requested roster channel (accepting the observed no-UC-prefix variant), any entry-level yt:channelId differing from the request fails, and missing feed identity fails closed; a mismatch is a visible per-channel failure with no packet write",
           "status": "bound"
         },
@@ -925,6 +958,13 @@
           "source_capture/tiktok/video_packet.py"
         ],
         "function": "write_tiktok_video_packet"
+      },
+      {
+        "a2_fork_impact": "manifest_shape",
+        "defined_in": [
+          "source_capture/youtube_creator_assessment.py"
+        ],
+        "function": "write_youtube_creator_assessment_packet"
       },
       {
         "a2_fork_impact": "manifest_shape",

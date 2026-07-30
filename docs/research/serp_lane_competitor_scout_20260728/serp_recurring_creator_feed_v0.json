@@ -14,7 +14,7 @@
  ],
  "consumers": {
   "tiktok": "discovery-frontier ranking / supervised onboarding lane (admission path exists)",
-  "youtube": "NO admission path exists (typed gap); metric-rollup machinery exists",
+  "youtube": "assessment + candidate/judgment/account admission path implemented by forseti-harness/runners/run_source_capture_youtube_creator_onboarding.py; all 73 recurring rows export as display-name frontier candidates. The sealed 301 suffix-door count remains aggregate-only and is not identity-wired: current row extracts do not reproduce that set, so identities must not be guessed or truncated",
   "instagram": "NO admission path exists (typed gap)"
  },
  "n_creators": 113,

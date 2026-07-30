@@ -13,6 +13,8 @@ from data_lake.creator_registry import (
     CreatorRegistryLakeError,
     admit_tiktok_creator_account,
     admit_tiktok_creator_candidate,
+    admit_youtube_creator_account,
+    admit_youtube_creator_candidate,
     cutover_creator_registry_sqlite,
     load_current_creator_profiles,
     load_current_creator_registry,
@@ -83,9 +85,14 @@ def _parser() -> argparse.ArgumentParser:
     admit.add_argument("--packet-id", required=True)
     admit.add_argument("--judgment-outcome", type=Path, required=True)
 
+    admit_youtube = commands.add_parser("admit-youtube")
+    admit_youtube.add_argument("--data-root", required=True)
+    admit_youtube.add_argument("--packet-id", required=True)
+    admit_youtube.add_argument("--judgment-outcome", type=Path, required=True)
+
     disposition = commands.add_parser("frontier-disposition")
     disposition.add_argument("--data-root", required=True)
-    disposition.add_argument("--platform", choices=("tiktok",), default="tiktok")
+    disposition.add_argument("--platform", choices=("tiktok", "youtube"), default="tiktok")
     disposition.add_argument("--handle", required=True)
     disposition.add_argument("--status", choices=("eligible", "deferred", "rejected"), required=True)
     disposition.add_argument("--priority", choices=("super", "high", "normal", "low"))
@@ -113,6 +120,11 @@ def _parser() -> argparse.ArgumentParser:
     candidate.add_argument("--data-root", required=True)
     candidate.add_argument("--packet-id", required=True)
     candidate.add_argument("--frontier-disposition-id", required=True)
+
+    candidate_youtube = commands.add_parser("admit-youtube-candidate")
+    candidate_youtube.add_argument("--data-root", required=True)
+    candidate_youtube.add_argument("--packet-id", required=True)
+    candidate_youtube.add_argument("--frontier-disposition-id", required=True)
 
     retract_candidate = commands.add_parser("retract-tiktok-candidate")
     retract_candidate.add_argument("--data-root", required=True)
@@ -160,6 +172,12 @@ def main(argv: list[str] | None = None) -> int:
                 packet_id=args.packet_id,
                 judgment_outcome_path=args.judgment_outcome,
             )
+        elif args.command == "admit-youtube":
+            result = admit_youtube_creator_account(
+                data_root=root,
+                packet_id=args.packet_id,
+                judgment_outcome_path=args.judgment_outcome,
+            )
         elif args.command == "frontier-disposition":
             result = write_creator_frontier_dispositions(
                 data_root=root,
@@ -189,6 +207,12 @@ def main(argv: list[str] | None = None) -> int:
             result = load_creator_frontier_dispositions(root)
         elif args.command == "admit-tiktok-candidate":
             result = admit_tiktok_creator_candidate(
+                data_root=root,
+                packet_id=args.packet_id,
+                frontier_disposition_id=args.frontier_disposition_id,
+            )
+        elif args.command == "admit-youtube-candidate":
+            result = admit_youtube_creator_candidate(
                 data_root=root,
                 packet_id=args.packet_id,
                 frontier_disposition_id=args.frontier_disposition_id,

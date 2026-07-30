@@ -143,7 +143,7 @@ class CreatorAudienceTriangulationSnapshotV1(StrictModel):
     profile_subject_id: str
     platform_account_id: str
     creator_id: str
-    platform_scope: Literal["tiktok", "instagram"]
+    platform_scope: Literal["tiktok", "instagram", "youtube"]
     generated_at: str
     evidence_cutoff: str
     input_bundle_id: str
