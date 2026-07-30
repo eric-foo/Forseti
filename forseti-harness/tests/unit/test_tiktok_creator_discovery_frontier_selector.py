@@ -270,7 +270,23 @@ def test_promotion_policy_v3_calibration_is_bound_to_admitted_cohort() -> None:
     cohort = calibration["cohort"]
     policy = frontier_selector._PROMOTION_POLICY
 
-    assert hashlib.sha256(raw).hexdigest() == policy["calibration_report_sha256"]
+    expected_sha = policy["calibration_report_sha256"]
+    actual_sha = hashlib.sha256(raw).hexdigest()
+    if actual_sha != expected_sha:
+        # A byte-exact hash over a repo TEXT file fails on Windows whenever git
+        # checked the file out with CRLF, and passes on LF CI - so the bare
+        # mismatch reads as "the calibration was tampered with" when it usually
+        # means "your checkout has CRLF". Say which one it is; the diagnosis
+        # cost ~20 minutes on 2026-07-30 (TD-2026-07-30-001).
+        lf_sha = hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
+        assert lf_sha != expected_sha, (
+            "LINE-ENDING ARTIFACT, not a calibration change: this file was "
+            "checked out with CRLF, and its LF bytes match the pinned hash. "
+            "Fix by pinning the path in .gitattributes (`text eol=lf`), then "
+            "re-checkout the file so the working copy is renormalized. Do NOT "
+            "update the pinned hash - that would break LF platforms."
+        )
+    assert actual_sha == expected_sha
     canonical_cohort = json.dumps(
         cohort,
         sort_keys=True,
