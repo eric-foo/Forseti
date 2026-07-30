@@ -509,6 +509,18 @@ is **WITHDRAWN**. Controlled on the 45 subjects carrying both door types:
   asking about dupes, reviews and comparisons. A dedicated probe adds
   ~5.4 more creators per subject — breadth, not coverage.
 
+**Sealing correction (2026-07-30), raised by the YouTube onboarding
+pilot:** the feed-absent creator figures (311 TikTok / 301 YouTube / 431
+Instagram) were originally sealed as bare COUNTS with the normalisation
+unstated, so the pilot could not turn them into candidates and its own
+extract disagreed. A count that cannot be reconstructed into the thing it
+counts is a claim, not evidence. `fullbank_suffix_quality.json` now seals
+the **named sets** alongside the counts (each verified to reconstruct
+exactly), and states the normalisation it used — `norm_creator()`:
+collapse internal whitespace, strip, casefold. Membership is decided by
+string equality, so a consumer normalising differently WILL get a
+different total; that function is the reconciliation point.
+
 **How the error happened, because the pattern repeats:** F23 measured
 cards-per-probe and read a volume number as a value number — the same
 failure as the competitor ladder's junk rung, where recurrence-of-
@@ -589,7 +601,18 @@ read would weight, an axis/answer-slot's only occupant, #ad-convergence)
 are read-time judgments a reader adds. Never direct registry insertion. The frontier's scan-receipt register and owner
 disposition batches are NOT written by this lane: a SERP-recurrence
 observation is not a TikTok scan, and dispositions are owner acts.
-YouTube's gap is ROUTED (2026-07-30): `docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md` commissions the admission path on the TikTok lane's mechanism with the Shorts/long-form axis typed. Instagram (16) remains an unrouted typed gap.
+YouTube's admission path is IMPLEMENTED, PILOT-ASSESSMENT COMPLETE, AND
+OWNER-REVIEW GATED (2026-07-30):
+`forseti-harness/runners/run_source_capture_youtube_creator_onboarding.py`
+exports all 73 recurring rows as display-name frontier candidates and
+captures public logged-out assessment evidence before the generalized
+candidate → judgment → account registry flow is invoked. No pilot creator
+has been admitted before owner review. The sealed suffix analysis reports
+301 creators outside the 113-row feed, but it preserves only the aggregate;
+the current row extract produces a different named set, so those identities
+remain unwired rather than guessed or truncated. Shorts and long-form remain
+typed, separately baselined axes. Instagram (16) remains an unrouted typed
+gap.
 **Capture-spine dogfood 2026-07-29 (3 creators, `new_capture`
 assessment mode, owner session):** the feed→spine pipe works end to end.
 Per creator the lane returned profile metrics + a 30-video grid with
@@ -636,7 +659,24 @@ harvest -> vs; fan-out waits for the ledger), carried in the spec's
 "Cycle installation" section — the separate step doc was collapsed into
 the spec and retired. Emitter v0.1 dogfooded on both stores; candidate
 rung now promotes real names (NYX, Saie, Summer Fridays Lip Butter
-Balm). **v0.2 dogfooded 2026-07-29** (owner-directed): two changes,
+Balm). **v0.4 parent collapse, 2026-07-30 (owner-directed loose end).** A
+`RECOVERABLE` name is EVIDENCE for a parent entity, not an entity of its
+own: "better AG1" is a vote for AG1. The verdicts cache now carries a
+`parent` per RECOVERABLE name (36 of 37 resolved; 1 left `null` with a
+stated reason and it stays at presence — unresolved fails visible rather
+than being guessed). The emitter merges a collapsed name's sources into
+its parent BEFORE rung assignment, so the parent promotes on the evidence
+it actually has, and records `collapsed_from` for auditability. Result on
+the current corpus: **31 names merged, candidate rung 62 → 74, still 0
+pending and 0 junk.** The recovered entries were real rivals hiding
+behind mangled strings — AG1 (9 distinct queries, vs bloom greens
+powder), Trader Joe's (8, vs Supergoop), CeraVe (7, vs Eucerin), plus
+Wholier, Dyson, Cetaphil, Essence, e.l.f., MCoBeauty, Anytype, Haruharu,
+and one self-variant (Hoka Bondi 9). Three contract tests pin it,
+including that an unresolved parent is never silently merged. This closes
+F20's "RECOVERABLE parent-collapse still manual" trigger.
+
+**v0.2 dogfooded 2026-07-29** (owner-directed): two changes,
 both from the full-bank adjudication's root-cause read. (1) Enumeration
 recall — comma-series titles carried no split cue and 70 of 93 yielded
 nothing; a subject-anchored enumeration branch now harvests them
