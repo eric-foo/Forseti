@@ -53,7 +53,7 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
 # ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-1"
+WWW_GRID_PROJECTION_PARSER_VERSION = "www-2"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a
@@ -80,7 +80,10 @@ _VENUE_RE = re.compile(
 # Flair name is URL-encoded inside the flair link's href
 # (?f=flair_name%3A%22Layering%22).  Reading it there avoids depending on the
 # nested span markup that carries the same text with styling wrappers.
-_FLAIR_HREF_RE = re.compile(r"flair_name%3A%22(?P<flair>[^%]*)%22")
+_FLAIR_HREF_RE = re.compile(
+    r"flair_name%3A%22(?P<flair>.*?)%22",
+    flags=re.IGNORECASE,
+)
 
 # A new-Reddit listing renders the "Stickied post" icon inside EVERY post and
 # hides it with a `hidden` class.  Presence of the markup is therefore not the
@@ -112,6 +115,10 @@ def _timestamp_utc_ms(raw: str | None) -> str | None:
     try:
         moment = datetime.fromisoformat(text)
     except ValueError:
+        return None
+    if moment.tzinfo is None:
+        # ``datetime.timestamp`` interprets a naive value in the host timezone,
+        # which would make this otherwise-pure projection environment-dependent.
         return None
     return str(int(moment.timestamp() * 1000))
 
@@ -244,15 +251,6 @@ def project_www_reddit_grid(
         seen.add(row.thread_url)
         if len(rows) >= max_thread_rows:
             break
-
-    # Stickied detection is class-coupled and therefore the most presentation-
-    # fragile field here.  If a capture claims EVERY row is stickied the signal
-    # has inverted rather than the listing having changed, so it is dropped to
-    # absent instead of silently emptying the deep-dive queue downstream.
-    if rows and all(row.stickied for row in rows):
-        rows = [
-            GridThreadRow(**{**row.__dict__, "stickied": False}) for row in rows
-        ]
 
     venue = _VENUE_RE.search(visible_text or "")
     members = venue.group("members") if venue else None

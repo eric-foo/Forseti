@@ -314,16 +314,22 @@ def should_apply_status_observation(*, row: Mapping[str, Any], observed_at: str)
     Mirrors ``capture_spine.reddit_subreddit_grid.materializer`` so the lake
     writer records the same decision the Git materializer would have made.
     """
+    try:
+        incoming_date = date.fromisoformat(observed_at)
+    except (TypeError, ValueError) as exc:
+        raise RedditSubredditRegistryLakeError(
+            "status_date_invalid",
+            f"non-ISO status date in observation: {observed_at!r}",
+        ) from exc
     current_value = row.get("status_observed_at")
     if not isinstance(current_value, str) or not current_value:
         return True
     try:
         current_date = date.fromisoformat(current_value)
-        incoming_date = date.fromisoformat(observed_at)
     except ValueError as exc:
         raise RedditSubredditRegistryLakeError(
             "status_date_invalid",
-            f"non-ISO status date in fold or observation: {current_value!r} / {observed_at!r}",
+            f"non-ISO status date in fold: {current_value!r}",
         ) from exc
     if incoming_date > current_date:
         return True
@@ -451,6 +457,39 @@ def _apply_roster_change(row: dict[str, Any], record: Mapping[str, Any]) -> None
 def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
     observation = record["observation"]
     pointer = observation["provenance_pointer"]
+    effects = record.get("row_effects", {})
+    if not isinstance(effects, Mapping):
+        raise RedditSubredditRegistryLakeError(
+            "observation_effects_shape",
+            f"observation row_effects must be an object: {effects!r}",
+        )
+    unknown_effects = sorted(set(effects) - {"status", "capture_state"})
+    if unknown_effects:
+        raise RedditSubredditRegistryLakeError(
+            "observation_effect_unknown",
+            f"observation carries unknown row effects: {unknown_effects}",
+        )
+    status = effects.get("status")
+    expected_status = {
+        "status": "active",
+        "status_observed_at": observation["observed_at"],
+    }
+    if status is not None and status != expected_status:
+        raise RedditSubredditRegistryLakeError(
+            "observation_status_effect_invalid",
+            f"grid observation status effect must equal {expected_status!r}: {status!r}",
+        )
+    capture_state = effects.get("capture_state")
+    if capture_state not in {None, "grid_packets_recorded"}:
+        raise RedditSubredditRegistryLakeError(
+            "observation_capture_state_effect_invalid",
+            "grid observation capture_state effect must be "
+            f"'grid_packets_recorded' or None: {capture_state!r}",
+        )
+    status_should_apply = should_apply_status_observation(
+        row=row,
+        observed_at=observation["observed_at"],
+    )
     for existing in row.setdefault("observations", []):
         if existing.get("provenance_pointer") == pointer:
             if existing != observation:
@@ -461,16 +500,12 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             return
     row["observations"].append(deepcopy(observation))
 
-    effects = record.get("row_effects", {})
-    status = effects.get("status")
     # Re-evaluate the two-speed rule at replay time for the same reason the
     # capture_state floor exists: the recorded decision was made against the
     # fold at write time, and a roster change written later replays earlier.
     # Applying it unconditionally would let an older observation revert a newer
     # roster-authored status and append a spurious descriptive_changes entry.
-    if status is not None and should_apply_status_observation(
-        row=row, observed_at=observation["observed_at"]
-    ):
+    if status is not None and status_should_apply:
         if row.get("status") != status.get("status"):
             row.setdefault("descriptive_changes", []).append(
                 {
@@ -481,8 +516,8 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             )
             row["status"] = status["status"]
         row["status_observed_at"] = status["status_observed_at"]
-    if effects.get("capture_state") is not None:
-        _raise_capture_state_floor(row, effects["capture_state"])
+    if capture_state is not None:
+        _raise_capture_state_floor(row, capture_state)
     register_pointers = row.setdefault("register_pointers", [])
     if pointer not in register_pointers:
         register_pointers.append(pointer)

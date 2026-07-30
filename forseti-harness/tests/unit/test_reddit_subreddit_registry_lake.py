@@ -453,6 +453,73 @@ def test_replayed_observation_does_not_revert_a_newer_roster_status(lake: DataLa
     assert [entry["field"] for entry in row["descriptive_changes"]] == []
 
 
+def test_observation_date_is_validated_before_first_status_effect(
+    lake: DataLakeRoot,
+) -> None:
+    """A missing current date must not bypass validation of the incoming date."""
+    append_roster_change(lake, subreddit="newsub", change_kind="add", actor="operator")
+    with pytest.raises(RedditSubredditRegistryLakeError) as excinfo:
+        _observe(
+            lake,
+            "newsub",
+            pointer="F:/lake/raw/invalid-date/manifest.json",
+            observed_at="not-a-date",
+        )
+    assert excinfo.value.code == "status_date_invalid"
+
+
+@pytest.mark.parametrize(
+    ("effect_name", "effect_value", "expected_code"),
+    [
+        (
+            "status",
+            {"status": "private", "status_observed_at": "2026-07-01"},
+            "observation_status_effect_invalid",
+        ),
+        (
+            "status",
+            {"status": "active", "status_observed_at": "1900-01-01"},
+            "observation_status_effect_invalid",
+        ),
+        (
+            "capture_state",
+            "thread_packets_recorded",
+            "observation_capture_state_effect_invalid",
+        ),
+    ],
+)
+def test_fold_refuses_noncanonical_grid_observation_effects(
+    lake: DataLakeRoot,
+    effect_name: str,
+    effect_value: object,
+    expected_code: str,
+) -> None:
+    """Content-hash-valid records still fail if their semantic effects are forged."""
+    append_roster_change(lake, subreddit="newsub", change_kind="add", actor="operator")
+    _observe(
+        lake,
+        "newsub",
+        pointer="F:/lake/raw/forged-effect/manifest.json",
+        observed_at="2026-07-01",
+    )
+    lane = lake.lane_dir(
+        subtree="derived",
+        raw_anchor="newsub",
+        lane=REDDIT_OBSERVATION_LANE,
+    )
+    record_path = next(iter(lane.iterdir()))
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    record["row_effects"][effect_name] = effect_value
+    from data_lake.reddit_subreddit_registry import _content_hash
+
+    record["content_hash"] = _content_hash(record)
+    record_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+
+    with pytest.raises(RedditSubredditRegistryLakeError) as excinfo:
+        fold_subreddit(lake, "newsub")
+    assert excinfo.value.code == expected_code
+
+
 # --------------------------------------------------------------------------
 # Integrity
 # --------------------------------------------------------------------------

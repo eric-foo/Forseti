@@ -17,7 +17,10 @@ from __future__ import annotations
 
 import pytest
 
-from capture_spine.reddit_subreddit_grid.grid_projection import grid_view_from_record
+from capture_spine.reddit_subreddit_grid.grid_projection import (
+    grid_view_from_record,
+    grid_view_projection_anomaly,
+)
 from capture_spine.reddit_subreddit_grid.www_grid_projection import (
     WWW_GRID_PROJECTION_PARSER_VERSION,
     build_www_grid_content_record,
@@ -118,6 +121,24 @@ def test_ads_are_excluded_from_rows_and_thing_count() -> None:
     assert not any(row["promoted"] for row in view["thread_rows"])
 
 
+def test_malformed_organic_post_still_trips_the_row_count_guard() -> None:
+    """Ad exclusion must not make the organic-row guard self-satisfying."""
+    malformed = (
+        '<shreddit-post permalink="/r/testsub/not-a-comments-thread/"'
+        ' created-timestamp="2026-07-24T01:11:13.173000+0000">'
+        "</shreddit-post>"
+    )
+    view = project_www_reddit_grid(
+        rendered_dom=DOM + malformed,
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )
+    assert view.listing_thing_count_or_none == 4
+    assert len(view.thread_rows) == 3
+    assert grid_view_projection_anomaly(view) == "thread_row_count_mismatch"
+
+
 def test_hidden_sticky_icon_does_not_mark_rows_stickied() -> None:
     assert not any(row["stickied"] for row in _record()["grid_view"]["thread_rows"])
 
@@ -135,8 +156,8 @@ def test_shown_sticky_icon_marks_only_that_row() -> None:
     assert [row["stickied"] for row in rows] == [False, True]
 
 
-def test_all_rows_stickied_is_treated_as_an_inverted_signal() -> None:
-    """Class-coupled detection failing open would silently empty the dive queue."""
+def test_all_rows_stickied_remain_source_truth() -> None:
+    """A small listing can genuinely consist only of pinned rows."""
     dom = (
         "<html><body>"
         + _post(slug="aaa", title="One", score="10", comments="5", sticky=True)
@@ -146,7 +167,7 @@ def test_all_rows_stickied_is_treated_as_an_inverted_signal() -> None:
     rows = build_www_grid_content_record(
         rendered_dom=dom, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
     )["grid_view"]["thread_rows"]
-    assert not any(row["stickied"] for row in rows)
+    assert [row["stickied"] for row in rows] == [True, True]
 
 
 def test_venue_envelope_reads_abutting_counts_from_visible_text() -> None:
@@ -175,6 +196,37 @@ def test_flair_and_timestamp_are_projected() -> None:
     # 2026-07-24T01:11:13.173Z, cross-checked against calendar.timegm rather
     # than against the parser's own output.
     assert rows[0]["timestamp_utc_ms_or_none"] == "1784855473173"
+
+
+def test_percent_encoded_flair_is_decoded_in_full() -> None:
+    dom = _post(
+        slug="aaa",
+        title="Encoded flair",
+        score="10",
+        comments="5",
+        flair="Ask%20Me",
+    )
+    row = build_www_grid_content_record(
+        rendered_dom=dom,
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )["grid_view"]["thread_rows"][0]
+    assert row["flair_or_none"] == "Ask Me"
+
+
+def test_timezone_naive_timestamp_stays_absent() -> None:
+    """Naive datetime.timestamp() would vary with the projection host timezone."""
+    dom = _post(slug="aaa", title="Naive time", score="10", comments="5").replace(
+        "+0000", ""
+    )
+    row = build_www_grid_content_record(
+        rendered_dom=dom,
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )["grid_view"]["thread_rows"][0]
+    assert row["timestamp_utc_ms_or_none"] is None
 
 
 def test_record_reuses_the_shared_kind_and_folds_through_the_materializer_path() -> None:
