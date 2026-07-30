@@ -162,6 +162,24 @@ def _payload(entry: dict, *, summary: dict | None = None) -> dict:
     }
 
 
+def _validate_once_receipt() -> dict:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=1)],
+        action="validate_once",
+        confidence="weak",
+        decision_ready=False,
+    )
+    return validate_settlement(
+        _payload(
+            entry,
+            summary=_summary(
+                decision_ready=[],
+                validate_once_names=["Example Product"],
+            ),
+        )
+    )
+
+
 def test_two_independent_first_hand_authors_are_decision_ready() -> None:
     receipt = validate_settlement(_payload(_entry()))
 
@@ -383,6 +401,36 @@ def test_price_multiple_is_recomputed_from_exact_row_values() -> None:
     assert receipt["results"][0]["subject_multiple"] == 14.50
 
 
+def test_receipt_carries_the_value_action_and_exact_price_basis() -> None:
+    price = {
+        "currency": "USD",
+        "subject_price": 360.0,
+        "subject_size": 70.0,
+        "competitor_floor": 49.0,
+        "competitor_size": 50.0,
+        "subject_multiple": 5.25,
+        "comparison_basis": "like_for_like",
+        "floor_status": "cross_retailer_verified",
+    }
+    value_response = _value_response()
+
+    receipt = validate_settlement(
+        _payload(
+            _entry(
+                price=price,
+                value_response=value_response,
+            )
+        )
+    )
+
+    result = receipt["results"][0]
+    assert result["value_response"] == value_response
+    assert result["subject_price"] == 360.0
+    assert result["subject_size"] == 70.0
+    assert result["competitor_floor"] == 49.0
+    assert result["competitor_size"] == 50.0
+
+
 def test_wrong_price_multiple_fails_seal() -> None:
     entry = _entry(
         price={
@@ -533,6 +581,7 @@ def test_weak_entry_cannot_receive_two_automatic_validation_probes() -> None:
             "licensing_action": "validate_once",
         },
     ]
+    payload["prior_decision_receipts"] = [_validate_once_receipt()]
 
     with pytest.raises(
         ContractError,
@@ -616,6 +665,7 @@ def test_padded_entity_key_reconciles_against_its_named_probe() -> None:
             "licensing_action": "validate_once",
         }
     ]
+    payload["prior_decision_receipts"] = [_validate_once_receipt()]
 
     receipt = validate_settlement(payload)
 
@@ -654,6 +704,7 @@ def test_automatic_validation_probe_requires_its_pre_probe_license() -> None:
             "automatic_validation": True,
         }
     ]
+    payload["prior_decision_receipts"] = [_validate_once_receipt()]
 
     with pytest.raises(
         ContractError,
@@ -687,6 +738,7 @@ def test_candidate_entry_cannot_claim_an_automatic_validation_license() -> None:
             "licensing_action": "validate_once",
         }
     ]
+    payload["prior_decision_receipts"] = [_validate_once_receipt()]
 
     with pytest.raises(
         ContractError,
@@ -719,6 +771,7 @@ def test_pre_probe_license_survives_a_later_comment_rank_change() -> None:
             "licensing_action": "validate_once",
         }
     ]
+    payload["prior_decision_receipts"] = [_validate_once_receipt()]
 
     receipt = validate_settlement(payload)
 
@@ -732,6 +785,38 @@ def test_nonautomatic_probe_cannot_claim_a_validation_license() -> None:
     with pytest.raises(
         ContractError,
         match="return_probe_license_forbidden",
+    ):
+        validate_settlement(payload)
+
+
+def test_declared_license_without_prior_receipt_fails_closed() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=4)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+
+    with pytest.raises(
+        ContractError,
+        match="automatic_validation_prior_receipt_missing",
     ):
         validate_settlement(payload)
 
@@ -781,6 +866,19 @@ def test_unattributed_complaint_body_cannot_enter_a_settlement() -> None:
 
 def test_null_variant_token_fails_identity_binding() -> None:
     entry = _entry(entity_key="brand|product|null")
+
+    with pytest.raises(ContractError, match="entity_key_unbound"):
+        validate_settlement(_payload(entry))
+
+
+@pytest.mark.parametrize(
+    "placeholder",
+    ["pending_variant", "variant_missing", "unset"],
+)
+def test_common_placeholder_variants_fail_identity_binding(
+    placeholder: str,
+) -> None:
+    entry = _entry(entity_key=f"brand|product|{placeholder}")
 
     with pytest.raises(ContractError, match="entity_key_unbound"):
         validate_settlement(_payload(entry))

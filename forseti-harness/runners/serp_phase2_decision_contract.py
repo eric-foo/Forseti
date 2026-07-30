@@ -114,6 +114,9 @@ def _entity_key_is_bound(value: str) -> bool:
                 "unspecified",
                 "notspecified",
                 "tbd",
+                "pending",
+                "missing",
+                "unset",
             )
         )
         and not normalized_tokens & {"na", "none", "null"}
@@ -211,6 +214,10 @@ def _price_result(
             )
         return {
             "currency": currency,
+            "subject_price": values["subject_price"],
+            "subject_size": values["subject_size"],
+            "competitor_floor": values["competitor_floor"],
+            "competitor_size": values["competitor_size"],
             "subject_multiple": expected,
             "comparison_basis": comparison_basis,
             "floor_status": floor_status,
@@ -474,6 +481,11 @@ def _evaluate_entry(
         "decision_ready": decision_ready,
         **price_result,
     }
+    if decision_ready and isinstance(value_response, dict):
+        result["value_response"] = {
+            field: value_response.get(field)
+            for field in sorted(VALUE_RESPONSE_FIELDS)
+        }
     return result, violations
 
 
@@ -515,6 +527,62 @@ def _expected_summary(results: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _prior_validation_entities(
+    payload: dict[str, Any],
+    *,
+    subject_name: str,
+    subject_entity_key: str,
+    violations: list[str],
+) -> set[str]:
+    receipts = payload.get("prior_decision_receipts", [])
+    if not isinstance(receipts, list):
+        violations.append("prior_decision_receipts_invalid")
+        return set()
+
+    licensed_entities: set[str] = set()
+    expected_subject = {
+        "name": subject_name,
+        "entity_key": subject_entity_key,
+    }
+    for index, receipt in enumerate(receipts):
+        receipt_id = f"prior_receipt_{index}"
+        if (
+            not isinstance(receipt, dict)
+            or receipt.get("schema_version") != RECEIPT_VERSION
+            or receipt.get("valid") is not True
+        ):
+            violations.append(f"prior_decision_receipt_invalid:{receipt_id}")
+            continue
+        if receipt.get("subject") != expected_subject:
+            violations.append(
+                f"prior_decision_receipt_subject_mismatch:{receipt_id}"
+            )
+            continue
+        results = receipt.get("results")
+        if not isinstance(results, list):
+            violations.append(
+                f"prior_decision_receipt_results_invalid:{receipt_id}"
+            )
+            continue
+        for result in results:
+            if not isinstance(result, dict):
+                continue
+            entity_key = result.get("entity_key")
+            if (
+                isinstance(entity_key, str)
+                and entity_key
+                and result.get("subject_entity_key") == subject_entity_key
+                and result.get("rung") == "finding_grade"
+                and result.get("identity_coherent") is True
+                and result.get("first_hand_authors") == 1
+                and result.get("best_comment_rank") == 1
+                and result.get("action") == "validate_once"
+                and result.get("decision_ready") is False
+            ):
+                licensed_entities.add(entity_key)
+    return licensed_entities
+
+
 def validate_settlement(payload: Any) -> dict[str, Any]:
     """Validate a normalized Phase-2 settlement and return its receipt."""
 
@@ -547,6 +615,13 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
             and not _entity_key_is_bound(subject_entity_key)
         ):
             violations.append("subject_entity_key_unbound:subject")
+
+    prior_validation_entities = _prior_validation_entities(
+        payload,
+        subject_name=subject_name,
+        subject_entity_key=subject_entity_key,
+        violations=violations,
+    )
 
     entries = payload.get("entries")
     if not isinstance(entries, list):
@@ -649,6 +724,11 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
             if licensing_action != "validate_once":
                 violations.append(
                     f"automatic_validation_license_invalid:{job_id}"
+                )
+            if entry_entity_key not in prior_validation_entities:
+                violations.append(
+                    f"automatic_validation_prior_receipt_missing:{job_id}:"
+                    f"{entry_entity_key}"
                 )
             licensed_result = result_by_entity.get(entry_entity_key)
             if licensed_result is not None and (

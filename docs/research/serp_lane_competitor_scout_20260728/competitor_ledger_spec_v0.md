@@ -324,7 +324,9 @@ base/variant mismatches, duplicate aliases for one product identity, and
 surface classes outside the contract allowlist stay visible and cannot
 enter the decision-ready set. The seal checks key shape, known placeholder
 tokens, and exact equality across the settlement; it does not independently
-prove that the normalizer selected the correct real-world product.
+prove that the normalizer selected the correct real-world product. Known
+placeholder families include unknown, unspecified, unbound, pending,
+missing, unset, null/none, N/A, and TBD.
 
 Native comments carry two separate reads:
 
@@ -372,6 +374,7 @@ ledger entry schema below. Its boundary fields are:
     "name": "...",
     "entity_key": "brand|product|variant"
   },
+  "prior_decision_receipts": [],
   "entries": [{
     "name": "...",
     "entity_key": "brand|product|variant",
@@ -418,12 +421,17 @@ ledger entry schema below. Its boundary fields are:
 ```
 
 An automatic validation probe additionally carries
-`"licensing_action": "validate_once"`, recording the pre-probe decision
-that authorized the attempt. The seal rejects an automatic validation
-probe without that licence, a licence attached to a non-automatic probe,
-or a licence whose current entry is not finding-grade with at least one
-first-hand author. It does not re-derive the historical rank: comment
-rank may change after the probe was authorized.
+`"licensing_action": "validate_once"` and the settlement carries the
+earlier `serp_phase2_decision_receipt_v0` in
+`prior_decision_receipts`. The seal accepts the attempt only when that
+receipt belongs to the same subject and its same-entity result is
+finding-grade, identity-coherent, one-author, rank-one,
+`validate_once`, and not decision-ready. This preserves the decision that
+authorized the attempt without re-deriving it from mutable post-probe
+rank. A missing, mismatched, or merely self-declared licence fails closed.
+The live scheduler must retain and attach the actual earlier receipt;
+the seal checks its contract shape and contents, not cryptographic
+authenticity or external store provenance.
 
 Complaint-body sources additionally require author, thread, venue,
 first-hand posture, stance-bearing status, score (or an unavailable
@@ -456,7 +464,24 @@ On success the seal emits `serp_phase2_decision_receipt_v0`:
     "max_comment_score": 10,
     "confidence": "corroborated",
     "action": "use_in_decision",
-    "decision_ready": true
+    "decision_ready": true,
+    "subject_price": 360.0,
+    "subject_size": 70.0,
+    "competitor_floor": 49.0,
+    "competitor_size": 50.0,
+    "currency": "USD",
+    "subject_multiple": 5.25,
+    "comparison_basis": "like_for_like",
+    "floor_status": "cross_retailer_verified",
+    "value_response": {
+      "response_kind": "add_or_prove_value",
+      "customer_gain": "...",
+      "observed_sacrifice": "...",
+      "value_lever": "proof",
+      "value_action": "strengthen_proof",
+      "proof_needed": "...",
+      "price_action": "none"
+    }
   }],
   "summary": {
     "entry_count": 1,
@@ -470,11 +495,13 @@ On success the seal emits `serp_phase2_decision_receipt_v0`:
 }
 ```
 
-Price-bearing results also carry `currency`, `subject_multiple`,
-`comparison_basis`, and `floor_status`. The receipt projects only the
-validated subject name and entity key; unvalidated input metadata is not
-copied into the sealed consumer boundary. Raw evidence remains in the
-input settlement and its cited sources.
+Price-bearing results carry the exact subject price/size and competitor
+floor/size used for `subject_multiple`, plus `currency`,
+`comparison_basis`, and `floor_status`. Decision-ready results carry the
+validated value response; weak results do not. The receipt projects only
+the validated subject name and entity key; unvalidated input metadata is
+not copied into the sealed consumer boundary. Raw evidence remains in
+the input settlement and its cited sources.
 
 Social-platform engagement (owner-ratified 2026-07-29, **AMENDED
 2026-07-30**): **raw platform counts are RECORDED, never weighted.**
