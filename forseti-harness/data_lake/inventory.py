@@ -655,7 +655,7 @@ SILVER_READER_SELECTION_POSTURES: dict[str, dict[str, str]] = {
         "detection": "lane_dir",
         "posture": "selection_rule",
         "mechanism": "local:_selected_transcript_source",
-        "reason": "explicit packet ids bind caption or ASR evidence directly; the ASR lane walk is then confined to that named packet and accepts exactly one complete transcript record whose video and channel identities match the assessment, otherwise failing closed",
+        "reason": "explicit packet ids bind caption or ASR evidence directly, and the ASR lane walk is then confined to that named packet and accepts exactly one complete transcript record, otherwise failing closed; without explicit packet ids the runner picks one winner among the lake-wide eligible sibling sources projected by youtube_capture/behavioral_projection.py, preferring manual caption, then any caption, then ASR, then the latest capture timestamp within that rank -- a silent single-winner selection, not a fail-closed one; either way the selected source's video and channel identity is rebound against the assessment before use",
     },
     "runners/run_transcript_product_extract.py": {
         "detection": "lane_dir",

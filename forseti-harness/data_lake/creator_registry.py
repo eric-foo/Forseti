@@ -812,6 +812,10 @@ def _admit_creator_account(
         raise CreatorRegistryLakeError(
             f"Judgment creator identity does not match captured {platform.title()} identity"
         )
+    if snapshot.get("platform_scope") != platform:
+        raise CreatorRegistryLakeError(
+            f"Judgment snapshot platform scope does not match captured {platform.title()} identity"
+        )
     expected_outcome = (
         data_root.path
         / "derived"

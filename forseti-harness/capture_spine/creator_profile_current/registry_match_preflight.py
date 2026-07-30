@@ -483,6 +483,16 @@ def _action_disposition(
     if intended_action == "new_capture":
         if decision == "new_candidate":
             return "allowed", ["new_capture"], []
+        if display_name_only_match:
+            # Still blocked, but do not route to update_existing: this same
+            # disposition refuses update_existing on a display-name-only match, so
+            # naming it as an allowed next action sends the operator at an action
+            # the module rejects and asserts an account match the evidence lacks.
+            return (
+                "blocked",
+                ["resolve_identity"],
+                ["new_capture_display_name_only_match"],
+            )
         return "blocked", ["update_existing", "resolve_identity_if_not_same"], ["new_capture_existing_match"]
     if intended_action == "update_existing":
         if decision == "existing_match":

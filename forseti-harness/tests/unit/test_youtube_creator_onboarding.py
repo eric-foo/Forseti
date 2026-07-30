@@ -15,6 +15,7 @@ from capture_spine.tiktok_creator_discovery_frontier.register_lake_writer import
 )
 from data_lake.canonical_json import canonical_record_bytes
 from data_lake.creator_registry import (
+    CreatorRegistryLakeError,
     admit_youtube_creator_account,
     admit_youtube_creator_candidate,
     deterministic_platform_account_id,
@@ -319,6 +320,23 @@ def test_display_name_only_match_cannot_authorize_update_existing() -> None:
         "display_name_only_match_insufficient_for_update"
     ]
 
+    # The same disposition must not offer update_existing as the way out of a
+    # display-name-only block: it refuses that very action above.
+    display_only_new_capture = _preflight(
+        registry,
+        {
+            "candidate_id": "display-only-new-capture",
+            "platform": "youtube",
+            "display_name_or_none": "Dr Test",
+            "intended_action": "new_capture",
+        },
+    )
+    assert display_only_new_capture["action_status"] == "blocked"
+    assert display_only_new_capture["action_blockers"] == [
+        "new_capture_display_name_only_match"
+    ]
+    assert display_only_new_capture["allowed_next_actions"] == ["resolve_identity"]
+
     handle_bound = _preflight(
         registry,
         {
@@ -524,7 +542,13 @@ def test_grid_capture_excludes_cross_format_renderers() -> None:
     assert short_grid["engagement_receipt"]["median_view_count_or_none"] == 900_000
 
 
+_ASSESSED_CHANNEL_ID = "UC" + "A" * 22
+
+
 class _FakeSelectedVideoPage:
+    def __init__(self, channel_id: str | None = _ASSESSED_CHANNEL_ID) -> None:
+        self._channel_id = channel_id
+
     def goto(self, url: str, **kwargs: object) -> None:
         return None
 
@@ -535,33 +559,100 @@ class _FakeSelectedVideoPage:
         if "LOGGED_IN" in script:
             return False
         if "ytInitialPlayerResponse" in script:
-            return {
-                "videoDetails": {
-                    "title": "A deliberately long explanatory title",
-                    "viewCount": "0",
-                    "shortDescription": "",
-                }
+            details = {
+                "title": "A deliberately long explanatory title",
+                "viewCount": "0",
+                "shortDescription": "",
             }
+            if self._channel_id is not None:
+                details["channelId"] = self._channel_id
+            return {"videoDetails": details}
         if "ytInitialData" in script:
             return {}
         return None
 
 
+def _selected_row() -> dict:
+    return {
+        "video_id": "abcdefghijk",
+        "format": "long",
+        "title": "A deliberately long explanatory title",
+        "video_url": "https://www.youtube.com/watch?v=abcdefghijk",
+        "view_count_or_none": 999,
+        "same_format_median_view_count_or_none": 100,
+    }
+
+
 def test_selected_video_preserves_zero_view_count() -> None:
     captured = _capture_selected_video(
         _FakeSelectedVideoPage(),
-        {
-            "video_id": "abcdefghijk",
-            "format": "long",
-            "title": "A deliberately long explanatory title",
-            "video_url": "https://www.youtube.com/watch?v=abcdefghijk",
-            "view_count_or_none": 999,
-            "same_format_median_view_count_or_none": 100,
-        },
+        _selected_row(),
+        channel_id=_ASSESSED_CHANNEL_ID,
         timeout_ms=1000,
         settle_seconds=0.0,
     )
     assert captured["engagement"]["view_count_or_none"] == 0
+
+
+def test_selected_video_capture_fails_closed_on_unbound_channel() -> None:
+    """selected_video_pages is the only path into the audience Judgment bundle, so a
+    video page that names another channel -- or names none at all -- must not become
+    assessment-selected evidence for the assessed account."""
+    for channel_id in ("UC" + "B" * 22, None):
+        with pytest.raises(
+            youtube_runner.YoutubeCreatorAssessmentError,
+            match="does not bind the assessed channel",
+        ):
+            _capture_selected_video(
+                _FakeSelectedVideoPage(channel_id),
+                _selected_row(),
+                channel_id=_ASSESSED_CHANNEL_ID,
+                timeout_ms=1000,
+                settle_seconds=0.0,
+            )
+
+
+class _FakeProfilePage:
+    """Header exposing no subscriberCountText, so _capture_profile falls back to the
+    first rendered header string that mentions subscribers."""
+
+    def goto(self, url: str, **kwargs: object) -> None:
+        return None
+
+    def wait_for_timeout(self, milliseconds: int) -> None:
+        return None
+
+    def evaluate(self, script: str) -> object:
+        if "LOGGED_IN" in script:
+            return False
+        if "ytInitialData" in script:
+            return {
+                "header": {
+                    "pageHeaderRenderer": {
+                        "content": {
+                            "metadata": {
+                                "simpleText": "Joined Mar 3, 2019 1.2M subscribers"
+                            }
+                        }
+                    }
+                }
+            }
+        return None
+
+
+def test_profile_subscriber_count_is_label_anchored_not_first_number() -> None:
+    """A composite header string must not report the first integer it contains as
+    the subscriber count; a wrong count is worse than no count."""
+    profile = youtube_runner._capture_profile(
+        _FakeProfilePage(),
+        "https://www.youtube.com/@drtest",
+        1000,
+        0.0,
+    )
+    assert profile["subscriber_count_text_or_none"] == (
+        "Joined Mar 3, 2019 1.2M subscribers"
+    )
+    assert profile["subscriber_count_or_none"] == 1_200_000
 
 
 def test_assessment_writer_requires_canonical_profile_url(tmp_path: Path) -> None:
@@ -660,6 +751,31 @@ def test_youtube_candidate_and_validated_admission_end_to_end(tmp_path: Path) ->
         record_id=outcome["record_id"],
         data=canonical_record_bytes(outcome),
     )
+    # platform_scope became a three-platform field, so the admitted account's
+    # platform must be bound to the Judgment's own declared scope, not only to the
+    # creator id.
+    wrong_scope_snapshot = {**snapshot, "platform_scope": "tiktok"}
+    wrong_scope_outcome = {
+        **outcome,
+        "record_id": "cajo_youtube_drtest_wrong_scope",
+        "snapshot_or_none": wrong_scope_snapshot,
+    }
+    wrong_scope_path = root.append_record(
+        subtree="derived",
+        raw_anchor=packet_id,
+        lane="creator_audience_judgment_outcome",
+        record_id=wrong_scope_outcome["record_id"],
+        data=canonical_record_bytes(wrong_scope_outcome),
+    )
+    with pytest.raises(
+        CreatorRegistryLakeError, match="platform scope does not match"
+    ):
+        admit_youtube_creator_account(
+            data_root=root,
+            packet_id=packet_id,
+            judgment_outcome_path=wrong_scope_path,
+        )
+
     admitted = admit_youtube_creator_account(
         data_root=root,
         packet_id=packet_id,
