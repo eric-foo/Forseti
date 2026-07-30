@@ -124,20 +124,26 @@ the reconciled breadth and selected-product pointers that `CO3` needs for depth.
 Run those four actors through this lean execution protocol:
 
 1. `CO0` validates the commission-stage board once, binds the shared roots and
-   terminal output paths, and dispatches `CO1`-`CO3` together with thin
-   role-specific source capsules. A capsule contains the bound question, the
-   role's jobs and claim ceilings, the few owning-source pointers it needs, its
-   upstream artifact dependencies, and its terminal return contract. Do not
-   copy the controller's full conversation or unrelated source pack into every
-   actor.
+   terminal output paths, and completes or validly reuses the SERP Phase 1
+   competitor scout. It then dispatches `CO1`-`CO3` together with thin
+   role-specific source capsules. `CO1` receives the relevant subject,
+   competitor-identity, and claim questions; `CO2` receives the priced
+   comparator and retail-relevance rows; `CO3` receives the full typed ledger,
+   trigger-thread queue, mediator map, grid-capture queue, and cited-substitute
+   watch list. A capsule also contains the bound question, the role's jobs and
+   claim ceilings, the few owning-source pointers it needs, its upstream
+   artifact dependencies, and its terminal return contract. Do not copy the
+   controller's full conversation or unrelated source pack into every actor.
 2. `CO1` resolves the company core and publishes its official-retailer
    authorization outcome and supporting evidence pointers at the bound terminal
    path; a typed absence or blocked result is a valid published outcome, not a
    probe blocker. `CO2` may prepare its locked retailer job set concurrently
    but does not probe a retailer until that published outcome is available.
-   `CO3` begins its mandatory bounded customer/community scout concurrently;
-   its evidence-selected retailer depth waits for `CO2`'s reconciled breadth
-   and selection pointers.
+   `CO3` begins its mandatory bounded customer/community scout concurrently,
+   consuming the Phase 1 trigger-thread and mediator queues; its
+   evidence-selected retailer depth waits for `CO2`'s reconciled breadth and
+   selection pointers. Reddit/community capture is part of this specialist
+   fan-out, not SERP Phase 2.
 3. Each specialist plans its bounded work once, locks the deterministic job
    list that follows from the evidence, and runs compatible capture/projection
    jobs as a batch or bounded local loop without a model turn between ordinary
@@ -156,10 +162,12 @@ Run those four actors through this lean execution protocol:
    Notify `CO0` early only when an observed blocker requires a controller or
    owner decision that would change the locked work.
 5. `CO0` waits on completion or decision-requiring blocker events, not polling
-   dialogue. After the terminal returns exist, `CO0` reads the load-bearing
-   artifacts themselves once for integration, resolves any actor-local
-   correction in the same actor task, and writes the integrated acquisition
-   record and seal. Only `CO0` owns user-facing run progress.
+   dialogue. After all terminal returns exist, `CO0` reads the load-bearing
+   artifacts themselves once, resolves any actor-local correction in the same
+   actor task, and runs SERP Phase 2 from the combined findings. Phase 2 owns
+   only the targeted SERP return and decision lifecycle; it does not repeat the
+   fan-out's native/community capture. `CO0` then writes the integrated
+   acquisition record and seal. Only `CO0` owns user-facing run progress.
 
 This protocol removes orchestration work, not evidence work. It does not cap
 sources, jobs, tokens, or elapsed time; weaken route-specific failure
@@ -175,9 +183,12 @@ discriminating check has positive expected decision value. Stop on supported,
 contradicted, meaningfully bounded, or honestly blocked/gapped material seams —
 not on a token or compactness target.
 
-This is the default route for the current US consumer-beauty Understanding
-profile. A materially different subject may require an explicit commission-
-specific topology instead of pretending the selected-retailer role applies.
+This is the default route for company Understanding. The detailed company-core,
+retail-breadth, and customer/community role mapping below is the current US
+consumer-beauty mapping. A materially different subject may rebind the
+specialists' subject-specific jobs instead of pretending the selected-retailer
+role applies, but it does not skip the Phase 1 -> fan-out -> Phase 2 ordering or
+the mandatory customer/community job.
 
 1. Bind `cycle_id`, `commission_id`, canonical phase, phase-specific question,
    intended consumer/use, scope, and the six outcome signals below.
@@ -229,8 +240,11 @@ specific topology instead of pretending the selected-retailer role applies.
    material variants, and route failures stay distinct.
    The compositor output is derived acquisition accounting, not a new ledger
    schema or product-role assignment.
-4. Run authorized scanning and capture. Record every selected route, route
-   result, scan/capture receipt, source/provenance locator, and real failure.
+4. Run authorized scanning and capture. For company Understanding, the internal
+   order is mandatory: SERP Phase 1 after the validated board; `CO1`-`CO3`
+   specialist fan-out using Phase 1's typed outputs; all specialist terminal
+   returns; then the targeted SERP Phase 2 return. Record every selected route,
+   route result, scan/capture receipt, source/provenance locator, and real failure.
    Scanning's current MGT operating model owns continuation and closure against
    the bound phase question. Apply its lead-to-angle-to-material-seam rule:
    evidence-revealed, decision-relevant angles receive a discriminating check,
@@ -305,9 +319,17 @@ phase_acquisition_seal:
 The seal is valid for Deliver only when `seal_state:
 SEALED_READY_FOR_DELIVER`, `acquisition_gate: pass`, and `deliver_allowed:
 true`, and when every required route has a supported disposition and receipt or
-an honestly typed blocking result. A required route that was skipped, silently
-substituted, incompletely captured, or described as exhausted without the
-matching route evidence forces the blocked state.
+an honestly typed non-material blocking result. Any material blocking result,
+or a required route that was skipped, silently substituted, incompletely
+captured, or described as exhausted without the matching route evidence,
+forces the blocked state.
+
+For company Understanding, the required route accounting includes SERP Phase 1
+and SERP Phase 2. Phase 2's disposition, decision receipt, consumed specialist
+artifact provenance, and any material block must resolve through the existing
+`resolved_routes`, receipt, `provenance_index`, and
+`material_gaps_and_failures` fields. Phase 1 output or specialist completion
+alone cannot authorize the seal.
 
 For selected-retailer PDP breadth, `incompletely captured` is a materiality
 judgment, not an automatic all-or-nothing denominator rule. Every exact listing
@@ -471,25 +493,37 @@ gate above controls whether Deliver may begin.
    action ceiling, rival assessment, or hold condition and no equal-or-better
    included item performs that job. Use exclusion or `not_applicable` records
    for dominated routes.
-6. For company commissions, run the SERP competitor scout pass before
+6. Generate exactly the selected profile's Sections 1-10. A commission-stage
+   company board uses `COMMISSION_SEALED_PRE_SCAN` and cannot claim acquired
+   evidence; a completed company report later carries the prompt-defined
+   `## Executive Intelligence Brief` preamble before Section 1. Save the exact
+   output to a temporary file or bound durable artifact and run the validator.
+   For an Intelligence Cycle, this is the commission-board input to the phase
+   acquisition seal, not the completed seal itself. If validation fails, repair
+   the output or report its finding codes. Do not run downstream work from a
+   failing board.
+7. For company Understanding, run the SERP competitor scout pass before
    authoring specialist commissions:
    `docs/prompts/handoffs/serp_lane_phase1_scout_execution_handoff_v0.md`
-   (its native return leg is
+   (its post-fan-out targeted return is
    `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`).
    The ordering is load-bearing, not ceremonial: `vs {rival}` cannot run
    without a harvested name, so seeds must land and be harvested before
    fan-out; skipping the pass forces specialists back onto hand-picked
    rivals, which is the confirmation loop the scout exists to kill.
-   Section 8 consumes the resulting typed ledger when one exists. The pass
-   is skippable only when a current scout ledger for this subject already
-   exists — record that reuse — and its absence is a typed gap, never a
-   silent omission.
+   The typed ledger and queues feed the role-specific fan-out capsules. The
+   commission-stage Section 8 carries the information job or typed gap; a
+   completed Section 8 consumes the final Phase 2 ledger and decision receipt,
+   not the interim Phase 1 ledger. The pass is skippable only when a current
+   scout ledger for this subject already exists — record that reuse — and its
+   absence is a typed gap, never a silent omission.
    Temporary Summer Fridays constraint: before authoring any Summer Fridays
    company commission, the dispatcher must read
    `docs/workflows/serp_scout_pass_calibration_predeclaration_v0.md` and bind
    its obligations into the commission handoff; remove this constraint when
    that note's adjudication is appended.
-   Then route retail, customer, and claims research first.
+   Bind the following requirements into the role capsules; their execution
+   begins at step 9. Route retail, customer, and claims research first.
    Before optional deepening, resolve the prompt's small high-yield core through
    the existing ledgers. A material unresolved core job blocks the acquisition
    seal; other remainders stay typed gaps and non-claims. When retail is material,
@@ -525,25 +559,25 @@ gate above controls whether Deliver may begin.
    execution instruction. Commission archives, supply, ads/creators,
    competitors, search trends, and similar deepening only for a named unresolved
    inference job.
-7. For a recurring or actively radarred source family, put a lake-first
+8. For a recurring or actively radarred source family, put a lake-first
    preflight in the downstream request: relevant Silver/current view, then
    packet or catalog inventory, then raw material when necessary. Treat the
    result as reuse/freshness/coverage context, not current-world proof.
-8. Generate exactly the selected profile's Sections 1-10. A completed company
-   report also carries the prompt-defined `## Executive Intelligence Brief`
-   preamble before Section 1.
-9. Save the exact output to a temporary file or bound durable artifact. For an
-   Intelligence Cycle, this is the commission-board input to the phase
-   acquisition seal, not the completed seal itself.
-10. Run the validator. If it fails, repair the output or report its finding
-   codes. Do not run downstream work from a failing report.
-11. Route typed source requests to Scanning or Capture under their own
-    authority. Do not execute retrieval from this playbook. Scanning decides
-    marginal acquisition, dominance, and closure; Capture fulfills the bounded
-    request or returns typed failure/route exhaustion.
-12. For an Intelligence Cycle, assemble the phase acquisition seal only after
-    the owning Scanning/Capture work returns. A typed acquisition failure
-    remains visible and blocks Deliver; it is not converted into completion.
+9. Route the role-specific requests to `CO1`-`CO3`, and route their typed source
+   requests to Scanning or Capture under those lanes' own authority. Do not
+   execute retrieval from this playbook. Scanning decides marginal acquisition,
+   dominance, and closure; Capture fulfills the bounded request or returns typed
+   failure/route exhaustion. Reddit/community acquisition runs inside `CO3`.
+10. After every specialist reaches a terminal return, `CO0` dereferences the
+    load-bearing artifacts and runs the post-fan-out targeted SERP return:
+    `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`.
+    Phase 2 derives each query from a named specialist finding, applies the
+    decision lifecycle, and returns the consolidated ledger, decision receipt,
+    provenance, and material blocks. It does not repeat native capture.
+11. For an Intelligence Cycle, assemble the phase acquisition seal only after
+    the Phase 2 terminal result and all owning Scanning/Capture work return. A
+    typed acquisition failure remains visible and blocks Deliver when material;
+    it is not converted into completion.
 
 ## Validator Command
 

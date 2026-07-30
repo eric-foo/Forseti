@@ -75,15 +75,32 @@ Each phase normally uses two completed operator/model turns:
    acquisition gate, then synthesize and hand off without claiming evidence,
    coverage, provenance, or route exhaustion the seal does not support.
 
+Inside an Understanding Acquire & Seal turn, every company commission uses one
+evidence-acquisition order:
+
+1. bind the question and validate the commission-stage board;
+2. run or validly reuse the SERP Phase 1 competitor scout;
+3. feed its typed outputs into the `CO1`-`CO3` specialist fan-out, where `CO3`
+   owns Reddit/community acquisition;
+4. wait for the specialist terminal returns, then run the targeted SERP Phase 2
+   return from their combined findings;
+5. write the Understanding seal only after the Phase 2 terminal result; a
+   material Phase 2 block forces a blocked seal and forbids Deliver.
+
+`SERP Phase 1` and `SERP Phase 2` are internal lane labels, not additional
+Forseti Intelligence Cycle phases.
+
 Acquire & Seal optimizes for decision-useful completeness under the integrity
 floor; compactness, actor count, and token minimization are not its success
 criteria. Deliver then applies Smallest Complete Intervention to the human
 artifact without dropping decisive evidence or limitations.
 
-For current US consumer-beauty Understanding, the playbook binds the default
-four-evidence-actor route: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`.
-`CO3` always owns customer/community and selected depth; its depth expands
-adaptively, but the actor and customer-understanding job are not optional.
+For company Understanding, the playbook binds the default four-evidence-actor
+route: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. Current US
+consumer-beauty commissions use the playbook's company-core, retail-breadth,
+and customer/community role mapping. `CO3` always owns customer/community and
+selected depth; its depth expands adaptively, but the actor and
+customer-understanding job are not optional.
 
 Two turns are the normal budget, not permission to convert a blocked acquisition
 into apparent completion. The playbook owns the full contract and the six

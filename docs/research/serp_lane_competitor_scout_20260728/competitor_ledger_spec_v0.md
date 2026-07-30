@@ -668,7 +668,8 @@ receipt; “prune” means analysis/egress quarantine, never evidence deletion.
 
 Owner-ratified shape after the Tower 28 trial: this is not a ceremonial
 cycle stage. It is one analysis pass plus one sequencing rule, installed
-at the front of the Understanding cycle before specialist fan-out.
+after the bound question and validated commission-stage board, at the front of
+Understanding evidence acquisition before specialist fan-out.
 
 **The ordering rule (the only step-like thing, and it is load-bearing):**
 `vs {rival}` — the #1-value shape on both lane axes — is unrunnable
@@ -723,8 +724,8 @@ any running campaign — never a parallel stream on the same egress.
 **Phase: PHASE-1 TAIL.** Subject pricing runs the moment the subject
 is bound; competitor pricing runs right after the harvest step (needs
 names, not threads) — never waits on the Reddit lane. Re-run when
-phase 2 promotes a new name (Kulfi-type entrants that only surface in
-complaint bodies).
+the specialist fan-out surfaces and Phase 2 admits a new name (Kulfi-type
+entrants that only surface in complaint bodies).
 
 **Emits per name:** list price · standing floor (per-unit) · the
 response-trap note (the price where the incumbent cannot match without
@@ -809,41 +810,39 @@ the TikTok-Shop-US egress route. Carry the standing non-claim on
 every artifact. Evidence packets: `dogfood2_packets/
 price-surface-test`, `price-surface-shopping-tab`, `pdp_packets/`.
 
-**Two-phase shape (owner framing, 2026-07-28):** Phase 1 = the SERP
-scout pass (doors: typed ledger, thread list, mediator list). Phase 2
-is NOT new machinery: the scout pass ENDS at emitting the trigger-
-thread queue (contrarian-titled, claim-attack, vs threads), and the
-EXISTING Reddit lane's fan-out consumes that queue alongside its other
-discovery inputs — its runner, access gate, cadence, and review
-routing already own native capture. The scout only adds a discovery
-source and a priority tag. Queue entries carry canonical URLs at
-emission (packet provenance); owner-observed items are located
-in-session while the surface is fresh or explicitly marked deferred —
-3 of SF's 13 rotted unlocatable (installed 2026-07-28). A
-mediator-list entry meeting a deep-dive trigger — creator recurs on
-2+ subjects, or their row carries a statement a read would weight,
-or their row is an axis/answer-slot's only occupant, or
-#ad-convergence needs checking — carries a `grid_capture` tag with
-profile URL at emission (same URL-rot rule); the existing social
-capture runners' input queue consumes tagged entries
-(owner-ratified 2026-07-29). Phase 1 itself never visits a platform
-and never weights a raw social count. Outputs per
-captured thread: composition read against the rendered surface (J3),
-complaint-borne names harvested (Channel 3), and — in
-comparison-titled threads — THIRD NAMES flagged (names in comments
-absent from the title; twice the highest-value find: Caliray 35-pt,
-Ole Henriksen x3; installed 2026-07-28). Validated on Tower 28: phase 2 CHANGED the
-competitor answer (community consideration set Kosas/NARS/Haus Labs vs
-SERP's Hourglass/NYX; Haus Labs and Kosas reached finding-grade only
-through phase-2/Channel-4 surface independence). Rendered snippets and
-native verdicts can disagree (vs-hourglass specimen) — the glancer
-absorbs Google's verdict, the clicker meets the community's; the gap is
-the J3 fragility measure. Consolidation states the subject's
-dupe-economy POSITION (dupe-side / anchor-side / both) with cites, and
-flags observed DRIFT — position read as moving in community narrative
-(specimen: SF read as newly duping mass originals, 123-pt). Drift is
-an attack surface: self-image lags it, competitors exploit it
-(installed 2026-07-28).
+**Two-bookend shape (owner correction, 2026-07-30):** Phase 1 is the
+SERP scout pass (doors: typed ledger, thread list, mediator list). It ends by
+emitting the role inputs for specialist fan-out. The existing Reddit lane
+consumes the trigger-thread queue inside `CO3` alongside its other discovery
+inputs; its runner, access gate, cadence, and review routing continue to own
+native capture. Phase 2 begins only after `CO1`, `CO2`, and `CO3` have reached
+terminal returns. It consumes their dereferenced findings, authors targeted
+SERP probes that the seed grammar could not have guessed, applies the decision
+contract and persistent receipt lifecycle, and returns the final consolidated
+ledger. Phase 2 does not perform native Reddit/community capture.
+
+Queue entries carry canonical URLs at emission (packet provenance);
+owner-observed items are located in-session while the surface is fresh or
+explicitly marked deferred — 3 of SF's 13 rotted unlocatable (installed
+2026-07-28). A mediator-list entry meeting a deep-dive trigger — creator recurs
+on 2+ subjects, or their row carries a statement a read would weight, or their
+row is an axis/answer-slot's only occupant, or #ad-convergence needs checking —
+carries a `grid_capture` tag with profile URL at emission (same URL-rot rule);
+the existing social capture runners' input queue consumes tagged entries
+(owner-ratified 2026-07-29). Phase 1 itself never visits a platform and never
+weights a raw social count. `CO3` outputs per captured thread: composition read
+against the rendered surface (J3), complaint-borne names harvested (Channel 3),
+and — in comparison-titled threads — THIRD NAMES flagged (names in comments
+absent from the title; twice the highest-value find: Caliray 35-pt, Ole
+Henriksen x3; installed 2026-07-28).
+
+Historical Tower 28 and Summer Fridays records called that native/community
+work "phase 2." They remain accurate provenance for those revisions. Their
+observed lesson still holds: the community consideration set changed the
+competitor answer, rendered snippets and native verdicts diverged, and
+consolidation exposed dupe-economy position and drift. Current execution assigns
+those native findings to fan-out and reserves Phase 2 for the later targeted
+SERP return.
 
 **Cycle loop schedule (owner framing, 2026-07-28):** Within phase 1:
 seeds are front-loaded (mild ~1/min burst — CLEARED 2026-07-28: 4
@@ -857,10 +856,11 @@ two lanes are complementary, not merely compatible: vs-probe AIOs
 render spec denominators (ml sizes) that price SERPs omit, so the
 per-unit floor needs both lanes (Haus Labs 7ml/$32 = $4.57/ml read
 assembled across b01+b02, burst-test specimen 2026-07-28). The
-Reddit lane starts the moment the trigger-thread queue emits — it
-hits a different host, so it may run concurrently with the Google
-stream (owner-accepted 2026-07-28; block attribution is host-
-specific). Return leg — SERP round 2 after fan-out consolidation:
+`CO3` starts the Reddit/community work when the completed Phase 1
+trigger-thread queue enters specialist fan-out. It hits a different host, so it
+may run concurrently with the other specialist work (owner-accepted
+2026-07-28; block attribution is host-specific). Phase 2 — SERP round 2 after
+all fan-out terminal returns:
 (a) J5 delta on every phase-2 promotion (the Kulfi pattern, 1-2 URLs
 per name); (b) evidence-targeted probes authored FROM fan-out
 findings — narrow queries the seed grammar could not have guessed
@@ -884,6 +884,12 @@ phase-1 handoff before specialist commission authoring, states why the
 seed-harvest-vs ordering is load-bearing, and makes a skipped pass a
 typed gap. Handoffs no longer need to cite this spec to be discovered —
 the cycle's own source names the pass.
+
+**Current cycle binding (owner correction, 2026-07-30):** the initial
+commission-stage Section 8 precedes Phase 1 and carries information jobs or
+typed gaps. Phase 1 then feeds the specialist fan-out. A completed Understanding
+Section 8 consumes the final Phase 2 consolidated ledger and decision receipt,
+not the interim Phase 1 ledger.
 
 **Still open — the D2/D4 chain amendment** (divergence now flagged
 in the proposal itself at its D2 price-value class, 2026-07-28, so an

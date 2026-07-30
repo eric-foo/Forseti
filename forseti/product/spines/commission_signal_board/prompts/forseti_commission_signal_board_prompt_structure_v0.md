@@ -60,7 +60,11 @@ For `company_competitive_intelligence`, this prompt prepares the
 commission-board portion of **Acquire & Seal** in a **Forseti Intelligence
 Cycle**. It does not itself claim that scanning/capture ran or that the phase
 acquisition seal passed. The playbook owns the complete two-phase/two-turn
-contract and the fresh-context Deliver gate.
+contract and the fresh-context Deliver gate. For company Understanding, the
+validated board precedes SERP Phase 1; Phase 1 feeds the `CO1`-`CO3` specialist
+fan-out; Reddit/community acquisition stays inside `CO3`; and the targeted SERP
+Phase 2 return begins only after the specialist terminal returns. These SERP
+labels are internal acquisition steps, not Intelligence Cycle phase names.
 
 Before claiming a full board is mechanically safe for classifier handoff, save
 the exact board output to a temporary or bound artifact file and run:
@@ -1286,18 +1290,23 @@ Chain rules (conclusion-writing guidance; no other durable structure):
 
 Use bounded comparator pointers only where they interpret the subject. Cite
 observation IDs, contradictions, and gaps. State that deep competitor treatment
-requires a separately named follow-up commission. When a SERP scout ledger
-exists for this subject (produced by the phase-1 scout pass the playbook's
-Operating Sequence routes), consume it here rather than re-deriving comparators:
-carry each entry's type, ladder rung, and provenance, and ship rungs below
-finding-grade as `status: gap`. Comparator names must trace to a harvested
-surface or a typed gap — never to an unsourced prior. Collect defensibility raw
-material where visible — comparator claims language, substitution economics,
-price gaps, claims parity — as bounded observations only; the defensibility
-judgment itself belongs to the downstream adjudication layer, never this
-report. Understanding collects that generic raw material once. Problem Framing
-may request fresh evidence only as a decision-specific supplement for the
-decision it is adjudicating, never as a general re-scan.
+requires a separately named follow-up commission. At
+`COMMISSION_SEALED_PRE_SCAN`, record comparator information jobs and typed gaps;
+the board precedes the scout and cannot claim its results. During specialist
+fan-out, consume the SERP Phase 1 ledger rather than re-deriving comparators.
+For a completed Understanding report, consume the final Phase 2 consolidated
+ledger and decision receipt, including the provenance that shows which
+specialist finding caused each targeted query. Do not stop at the Phase 1
+ledger or rerun its discovery from memory. Carry each entry's type, ladder rung,
+and provenance, and ship rungs below finding-grade as `status: gap`. Comparator
+names must trace to a harvested surface or a typed gap — never to an unsourced
+prior. Collect defensibility raw material where visible — comparator claims
+language, substitution economics, price gaps, claims parity — as bounded
+observations only; the defensibility judgment itself belongs to the downstream
+adjudication layer, never this report. Understanding collects that generic raw
+material once. Problem Framing may request fresh evidence only as a
+decision-specific supplement for the decision it is adjudicating, never as a
+general re-scan.
 
 ### 9. Company Surface Candidate Ledger
 
