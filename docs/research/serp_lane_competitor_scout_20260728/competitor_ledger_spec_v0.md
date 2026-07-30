@@ -690,9 +690,10 @@ any running campaign — never a parallel stream on the same egress.
 **Consumers of the ledger:**
 1. The same cycle's `vs {rival}` probes — highest rung first; operator
    seeds tagged `seed:operator` retire on first harvested rival.
-2. Commission board Section 8 (Competitor Context) — currently ships
-   `status: gap` awaiting "a named interpretive job from fresh subject
-   evidence"; the pass is that job. Presence/candidate entries with
+2. Phase 2 consolidation — consumes this interim ledger after the
+   specialist fan-out returns, then supplies completed Understanding
+   Section 8 with the final consolidated ledger and decision receipt
+   (see **Current cycle binding** below). Presence/candidate entries with
    sources, counts-only. Deep competitor treatment stays a separately
    named follow-up per Section 2 doctrine — the ledger just lets the
    follow-up be named precisely.

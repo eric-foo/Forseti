@@ -159,8 +159,9 @@ Phase 1; feed its typed ledger and queues into the `CO1`-`CO3` specialist
 fan-out; wait for their terminal returns; run SERP Phase 2 from the combined
 findings; then seal. Reddit/community capture is `CO3` fan-out work, not a
 Phase 2 responsibility. A missing or materially blocked Phase 2 result remains
-visible in the existing route, receipt, provenance, and gap fields and prevents
-a passing seal when it leaves the bound question unsupported. The SERP phase
+visible in the existing route, receipt, provenance, and gap fields and forces
+the blocked seal state; a non-material typed Phase 2 limitation stays honestly
+recorded without being promoted into a material blocker. The SERP phase
 labels are lane-local and do not replace the canonical Understanding and
 Problem Framing phase names.
 

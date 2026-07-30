@@ -52,8 +52,9 @@ packets + composition reads), and
 Reading order: `serp_lane_v0.md` (entry point / findings ledger) ->
 `megadogfood_stage6_queue_completion_v0.md` (completed queue, pruning,
 future-run corrections) ->
-`br540_phase2_native_return_dogfood_v0.md` (smallest-complete
-one-subject execution of the six-step native-return loop) ->
+`br540_phase2_native_return_dogfood_v0.md` (historical one-subject
+execution of the superseded six-step native-return loop; evidence only,
+not current Phase 2 instructions) ->
 `competitor_ledger_spec_v0.md` (types, ladder, cycle installation,
 J1-J5) -> `tower28_scout_trial_findings_v0.md` +
 `tower28_phase2_native_return_v0.md` +
