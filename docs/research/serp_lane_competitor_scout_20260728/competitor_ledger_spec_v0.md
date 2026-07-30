@@ -450,7 +450,15 @@ A missing, internally inconsistent, mismatched, or merely self-declared
 licence fails closed.
 The live scheduler must retain and attach the actual earlier receipt;
 the seal checks its contract shape and contents, not cryptographic
-authenticity or external store provenance.
+authenticity or external store provenance. The executable lifecycle adapter
+is `forseti-harness/runners/serp_phase2_decision_lifecycle.py`. It retains
+the earlier receipt byte-for-byte, uses an immutable cross-process claim to
+consume the sole automatic-validation attempt before capture, and attaches
+the stored receipt at seal time. Caller-supplied prior receipts are rejected.
+Each sealed outcome persists the exact prior-receipt digest and claim id.
+There is no stale-claim recovery: a claim means the one allowed attempt was
+spent, so a second process or later restart fails immediately rather than
+launching a hot duplicate.
 
 Complaint-body sources additionally require author, thread, venue,
 first-hand posture, stance-bearing status, score (or an unavailable
