@@ -532,3 +532,81 @@ must state the observed sample counts next to each threshold.
   native correction.
 - These success signals are a product acceptance contract, not evidence that
   the native runtime currently passes them.
+
+## TD-2026-07-30-001 — Byte-pinned repo text file breaks only on Windows, invisible to CI
+
+- **Observed:** 2026-07-30, Asia/Singapore.
+- **Affected lane:** PR #1387, `codex/serp-lane-yt-onboarding-20260730`;
+  artifact `forseti-harness/capture_spine/tiktok_creator_discovery_frontier/
+  tiktok_fragrance_creator_promotion_policy_v3_calibration.json`.
+- **State at recording:** corrective `.gitattributes` pin and a self-diagnosing
+  assertion landed; no other byte-pinned artifact audited.
+- **User-visible symptom:** a full local unit run showed
+  `test_promotion_policy_v3_calibration_is_bound_to_admitted_cohort` failing
+  with a bare sha256 mismatch, while the same test passed in CI. The failure
+  reads as "the calibration artifact was tampered with" and was very nearly
+  dismissed as someone else's pre-existing breakage.
+
+### Verified evidence
+
+| Fact | Value |
+| --- | --- |
+| Pinned hash in `_PROMOTION_POLICY` | `14a5a49359a7…f36b388fe` |
+| Working-copy bytes on Windows | `b36a393e8d3e…386638484ee` |
+| Same bytes, CRLF→LF normalised | `14a5a49359a7…f36b388fe` (matches) |
+| CRLF pairs in the working copy | 142 |
+| Bare LF in the working copy | 0 |
+| CI result for the same commit | pass |
+
+### Diagnosis
+
+The test hashes `path.read_bytes()` — deliberately byte-exact, because the
+point is that the artifact has not changed. Git on Windows checks repo text
+out with CRLF (`core.autocrlf`), so the bytes on disk differ from the bytes
+the hash was computed over. The invariant was never violated; the checkout
+representation was.
+
+The dangerous property is the asymmetry: **the failure is Windows-only and CI
+is LF, so CI stays green.** A real integrity failure and a line-ending artifact
+present identically — a hash mismatch with no further signal — so the true
+positive and the false positive are indistinguishable at the point of failure.
+
+### Corrective ownership
+
+1. `.gitattributes` pins the directory's JSON to LF, following the convention
+   already established there for creator-profile source inputs and
+   `docs/review-inputs/*.json`:
+   `forseti-harness/capture_spine/tiktok_creator_discovery_frontier/*.json text eol=lf`.
+   A working copy checked out BEFORE the rule keeps its CRLF; it must be
+   re-checked-out (delete + `git checkout --`, or `git add --renormalize`).
+2. The assertion is now self-diagnosing: on mismatch it re-hashes the
+   LF-normalised bytes, and if THAT matches the pinned value it fails with an
+   explicit line-ending message naming the `.gitattributes` fix and warning
+   not to update the pinned hash (which would break LF platforms).
+
+Correction 2 is the load-bearing one. Detection was never missing — the test
+did fail. What was missing was **interpretation**: the ~20 minutes went to
+deciding whether the artifact or the checkout was wrong.
+
+### Prevention for future byte-pinned artifacts
+
+Any new artifact whose bytes are hash-pinned needs its path pinned to LF in
+`.gitattributes` in the same commit. The generalisable guard is the
+diagnosis-on-mismatch pattern above; copy it rather than emitting a bare hash
+comparison, so the next occurrence explains itself.
+
+### Accepted residuals
+
+- Only the one artifact was pinned and corrected. Other byte-pinned files in
+  the repository were NOT audited for the same exposure; a sweep would need to
+  enumerate every `sha256(...read_bytes())` assertion and check
+  `.gitattributes` coverage for each hashed path.
+- CI cannot see this class at all (Linux checkout is LF), so the guard is
+  local-run only. A Windows CI leg would close that, and is not proposed here.
+
+### Non-claims
+
+- No claim that the calibration artifact's contents were ever wrong; the
+  cohort binding it asserts held throughout.
+- No claim that other line-ending-sensitive checks in the repository are
+  currently correct — only that this one is.

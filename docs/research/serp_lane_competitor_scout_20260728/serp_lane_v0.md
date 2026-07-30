@@ -509,6 +509,18 @@ is **WITHDRAWN**. Controlled on the 45 subjects carrying both door types:
   asking about dupes, reviews and comparisons. A dedicated probe adds
   ~5.4 more creators per subject — breadth, not coverage.
 
+**Sealing correction (2026-07-30), raised by the YouTube onboarding
+pilot:** the feed-absent creator figures (311 TikTok / 301 YouTube / 431
+Instagram) were originally sealed as bare COUNTS with the normalisation
+unstated, so the pilot could not turn them into candidates and its own
+extract disagreed. A count that cannot be reconstructed into the thing it
+counts is a claim, not evidence. `fullbank_suffix_quality.json` now seals
+the **named sets** alongside the counts (each verified to reconstruct
+exactly), and states the normalisation it used — `norm_creator()`:
+collapse internal whitespace, strip, casefold. Membership is decided by
+string equality, so a consumer normalising differently WILL get a
+different total; that function is the reconciliation point.
+
 **How the error happened, because the pattern repeats:** F23 measured
 cards-per-probe and read a volume number as a value number — the same
 failure as the competitor ladder's junk rung, where recurrence-of-
@@ -647,7 +659,24 @@ harvest -> vs; fan-out waits for the ledger), carried in the spec's
 "Cycle installation" section — the separate step doc was collapsed into
 the spec and retired. Emitter v0.1 dogfooded on both stores; candidate
 rung now promotes real names (NYX, Saie, Summer Fridays Lip Butter
-Balm). **v0.2 dogfooded 2026-07-29** (owner-directed): two changes,
+Balm). **v0.4 parent collapse, 2026-07-30 (owner-directed loose end).** A
+`RECOVERABLE` name is EVIDENCE for a parent entity, not an entity of its
+own: "better AG1" is a vote for AG1. The verdicts cache now carries a
+`parent` per RECOVERABLE name (36 of 37 resolved; 1 left `null` with a
+stated reason and it stays at presence — unresolved fails visible rather
+than being guessed). The emitter merges a collapsed name's sources into
+its parent BEFORE rung assignment, so the parent promotes on the evidence
+it actually has, and records `collapsed_from` for auditability. Result on
+the current corpus: **31 names merged, candidate rung 62 → 74, still 0
+pending and 0 junk.** The recovered entries were real rivals hiding
+behind mangled strings — AG1 (9 distinct queries, vs bloom greens
+powder), Trader Joe's (8, vs Supergoop), CeraVe (7, vs Eucerin), plus
+Wholier, Dyson, Cetaphil, Essence, e.l.f., MCoBeauty, Anytype, Haruharu,
+and one self-variant (Hoka Bondi 9). Three contract tests pin it,
+including that an unresolved parent is never silently merged. This closes
+F20's "RECOVERABLE parent-collapse still manual" trigger.
+
+**v0.2 dogfooded 2026-07-29** (owner-directed): two changes,
 both from the full-bank adjudication's root-cause read. (1) Enumeration
 recall — comma-series titles carried no split cue and 70 of 93 yielded
 nothing; a subject-anchored enumeration branch now harvests them
@@ -934,6 +963,19 @@ import for in-run counts.
   failures. The BR540 unnamed-equivalence return leg completed and supplies
   nine rendered named-rival observations for native follow-through. See
   `megadogfood_stage6_queue_completion_v0.md`.
+- BR540 bounded phase-2 native-return dogfood: **COMPLETE 2026-07-30.**
+  The five exact `mq0234` trigger threads captured 5/5 with 513 parsed
+  comments; J3 settled 4 ALIGNED / 1 RENDERED_BETTER / 0 NATIVE_BETTER.
+  The consolidated bounded ledger holds 39 entries (9 finding-grade
+  promotions, 30 complaint-body presence entries). One subject J5,
+  nine promotion J5 reads, and nine evidence-derived head-to-head
+  returns completed through one persistent Chrome tab at the canonical
+  60/hr shape: 19/19 Google packets, 494 typed rows, zero blocks and
+  zero failures. Airplane Mode and Pendora Rouge satisfy the mechanical
+  ladder but remain one-author native cases; EDP/Extrait identity is a
+  load-bearing residual. This is one-subject dogfood, not the full
+  130-subject phase-2 run. See
+  `br540_phase2_native_return_dogfood_v0.md`.
 - Queued behind the bank, both built, validated, and gated (no captures
   taken, processes stopped with the bank): the 10-brand scout dogfood
   (`C:\tmp\forseti-scout-dogfood10-20260728\`) and the 120-job beauty
