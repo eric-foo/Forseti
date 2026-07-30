@@ -978,16 +978,14 @@ def test_boolean_prior_receipt_counts_cannot_license_a_probe() -> None:
         validate_settlement(payload)
 
 
-def test_receipt_projects_only_validated_subject_fields() -> None:
+def test_subject_rejects_unvalidated_recommendation_instead_of_projecting_it() -> None:
     payload = _payload(_entry())
     payload["subject"]["recommended_action"] = "undercut the rival"
 
-    receipt = validate_settlement(payload)
-
-    assert receipt["subject"] == {
-        "name": "Subject",
-        "entity_key": "subject|product|edp",
-    }
+    with pytest.raises(
+        ContractError, match="subject_field_forbidden:recommended_action"
+    ):
+        validate_settlement(payload)
 
 
 def test_unattributed_complaint_body_cannot_enter_a_settlement() -> None:
