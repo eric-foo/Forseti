@@ -83,15 +83,33 @@ output to the lake.
   content record, hash and drop raw. Projection row carries: fullname,
   permalink, title, score, comments, timestamp_utc_ms, stickied,
   flair_or_none; venue envelope carries created_utc.
+- **Never raw-only** (owner direction, 2026-07-31). Every admitted packet
+  carries a content record. There is no operator-selectable raw-only mode on
+  this lane, and no screenshot is captured at all — the projection reads DOM and
+  visible text, the access classifier reads the response, and nothing consumes
+  the image.
 - Two raw-retention rules, no schedule, no decay curve:
-  1. One rotating subreddit per weekly pass keeps raw (audit sample).
+  1. One rotating subreddit per weekly pass keeps raw **in addition to** its
+     content record (audit sample; DOM and visible text only). Raw *instead of*
+     content is what the earlier rule said and is now forbidden: on 2026-07-30
+     the rotating raw-only packet was the single capture in a 91-subreddit pass
+     that banked a Reddit login wall and still exited 0, because with no
+     projection to fail there was nothing to fail. A content-bearing sample
+     cannot do that.
   2. Any packet whose projection returns an anomaly keeps raw (row count
-     mismatch vs things seen, zero timestamps, zero permalinks).
+     mismatch vs things seen, zero timestamps, zero permalinks). This is the
+     fail-loud fallback, not a retention choice, and it stays.
 - Accepted residual: a projection gap not caught by either rule loses at most
   the sub-50-point tail for the affected weeks; the head stays recoverable
   via a one-shot `t=month` capture for a month.
-- Fleet cost basis: at 250 subreddits, raw-always is ~9.1 GB/yr for this lane;
-  project-default with samples is roughly 0.5-0.6 GB/yr.
+- Fleet cost basis, measured on a real 102-row www capture (2026-07-31):
+  content record 48.7 KB; DOM + visible text 2.62 MB; the discarded viewport
+  screenshot was 9.40 MB, 78% of raw bytes, and contributed nothing to a
+  projection audit. At the current 91-subreddit roster that is 0.231 GB/yr for
+  content plus 0.136 GB/yr for the weekly audit sample — 0.367 GB/yr against a
+  0.5-0.6 GB/yr target. Raw-always on this surface would be 56.9 GB/yr.
+- Scope: this never-raw-only rule binds the Reddit lane only. Extending it to
+  other rendered capture surfaces is a separate owner decision.
 
 ### C. Registry coupling (extend materializer)
 
