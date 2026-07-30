@@ -86,6 +86,30 @@ class ContractError(ValueError):
         super().__init__("; ".join(violations))
 
 
+def _json_equal(claimed: Any, expected: Any) -> bool:
+    """Compare a claimed JSON value against a computed one by type and value.
+
+    Python treats ``True`` as ``1`` and ``1`` as ``1.0``, so a plain ``==``
+    lets a settlement claim a JSON boolean or float where this contract
+    computes an integer and still match.  Downstream consumers read the sealed
+    JSON types, so a claim must reproduce the computed type as well as the
+    computed value.
+    """
+
+    if type(claimed) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return set(claimed) == set(expected) and all(
+            _json_equal(claimed[key], expected[key]) for key in expected
+        )
+    if isinstance(expected, list):
+        return len(claimed) == len(expected) and all(
+            _json_equal(claimed_item, expected_item)
+            for claimed_item, expected_item in zip(claimed, expected)
+        )
+    return claimed == expected
+
+
 def _required_text(
     value: Any,
     *,
@@ -224,7 +248,22 @@ def _price_result(
         exact_competitor = (
             values["competitor_floor"] / values["competitor_size"]
         )
-        expected = round(exact_subject / exact_competitor + 1e-12, 2)
+        # Finite positive rows can still divide into a unit price that
+        # underflows to zero or overflows to infinity, so the multiple is
+        # derived only when the division itself stays finite and positive.
+        derived = (
+            exact_subject / exact_competitor
+            if math.isfinite(exact_competitor) and exact_competitor > 0
+            else math.inf
+        )
+        if not math.isfinite(derived) or derived <= 0:
+            violations.append(f"price_multiple_underivable:{entry_name}")
+            return {
+                "currency": currency,
+                "comparison_basis": comparison_basis,
+                "floor_status": floor_status,
+            }
+        expected = round(derived + 1e-12, 2)
         if values["subject_multiple"] != expected:
             violations.append(
                 "price_multiple_mismatch:"
@@ -591,7 +630,7 @@ def _prior_validation_entities(
                 f"prior_decision_receipt_results_invalid:{receipt_id}"
             )
             continue
-        if receipt.get("summary") != expected_summary:
+        if not _json_equal(receipt.get("summary"), expected_summary):
             violations.append(
                 f"prior_decision_receipt_summary_mismatch:{receipt_id}"
             )
@@ -698,7 +737,7 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
             "confidence": result["confidence"],
             "decision_ready": result["decision_ready"],
         }
-        if claimed != expected:
+        if not _json_equal(claimed, expected):
             violations.append(
                 f"decision_mismatch:{result['name']}:"
                 f"claimed={json.dumps(claimed, sort_keys=True)}:"
@@ -706,7 +745,7 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
             )
 
     expected_summary = _expected_summary(results)
-    if payload.get("summary") != expected_summary:
+    if not _json_equal(payload.get("summary"), expected_summary):
         violations.append(
             "summary_mismatch:"
             f"claimed={json.dumps(payload.get('summary'), sort_keys=True)}:"
@@ -788,7 +827,7 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
         if isinstance(accounting, dict)
         else None
     )
-    if claimed_partial != len(partial_ids):
+    if not _json_equal(claimed_partial, len(partial_ids)):
         violations.append(
             "partial_probe_count_mismatch:"
             f"claimed={claimed_partial}:expected={len(partial_ids)}:"
@@ -819,7 +858,7 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
             )
             continue
         claimed_attempts = claimed_entry.get("automatic_validation_attempts")
-        if claimed_attempts != probe_count:
+        if not _json_equal(claimed_attempts, probe_count):
             violations.append(
                 "automatic_validation_attempts_mismatch:"
                 f"{entry_name}:{entry_entity_key}:claimed={claimed_attempts}:"
@@ -852,7 +891,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         payload = json.loads(args.input.read_text(encoding="utf-8"))
         receipt = validate_settlement(payload)
-    except (OSError, json.JSONDecodeError, ContractError) as exc:
+    except (
+        OSError,
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+        ContractError,
+    ) as exc:
         print(f"phase2 decision contract failed: {exc}", file=sys.stderr)
         return 2
 

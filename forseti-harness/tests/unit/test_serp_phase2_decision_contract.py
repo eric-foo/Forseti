@@ -1083,3 +1083,197 @@ def test_cli_writes_a_receipt_and_returns_zero(tmp_path: Path) -> None:
 
     assert completed.returncode == 0, completed.stderr
     assert json.loads(output.read_text(encoding="utf-8"))["valid"] is True
+
+
+def test_boolean_partial_probe_count_is_not_a_zero_count() -> None:
+    payload = _payload(_entry())
+    payload["capture_accounting"]["partial_probes"] = False
+
+    with pytest.raises(ContractError, match="partial_probe_count_mismatch"):
+        validate_settlement(payload)
+
+
+def test_boolean_partial_probe_count_is_not_a_one_count() -> None:
+    payload = _payload(_entry())
+    payload["return_probes"][0]["partial"] = True
+    payload["capture_accounting"]["partial_probes"] = True
+
+    with pytest.raises(ContractError, match="partial_probe_count_mismatch"):
+        validate_settlement(payload)
+
+
+def test_boolean_summary_entry_count_is_not_a_one_count() -> None:
+    payload = _payload(_entry())
+    payload["summary"]["entry_count"] = True
+
+    with pytest.raises(ContractError, match="summary_mismatch"):
+        validate_settlement(payload)
+
+
+def test_float_summary_entry_count_does_not_reproduce_the_computed_count() -> None:
+    payload = _payload(_entry())
+    payload["summary"]["entry_count"] = 1.0
+
+    with pytest.raises(ContractError, match="summary_mismatch"):
+        validate_settlement(payload)
+
+
+@pytest.mark.parametrize("claimed", [1, 1.0])
+def test_numeric_decision_ready_is_not_a_sealed_true(claimed: object) -> None:
+    entry = _entry()
+    entry["decision"]["decision_ready"] = claimed
+
+    with pytest.raises(ContractError, match="decision_mismatch"):
+        validate_settlement(_payload(entry))
+
+
+def test_zero_decision_ready_is_not_a_sealed_false() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=1)],
+        action="validate_once",
+        confidence="weak",
+        decision_ready=False,
+    )
+    entry["decision"]["decision_ready"] = 0
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            validate_once_names=["Example Product"],
+        ),
+    )
+
+    with pytest.raises(ContractError, match="decision_mismatch"):
+        validate_settlement(payload)
+
+
+def test_boolean_prior_receipt_entry_count_cannot_license_a_probe() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=4)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+    prior_receipt = _validate_once_receipt()
+    prior_receipt["summary"]["entry_count"] = True
+    payload["prior_decision_receipts"] = [prior_receipt]
+
+    with pytest.raises(
+        ContractError,
+        match="prior_decision_receipt_summary_mismatch",
+    ):
+        validate_settlement(payload)
+
+
+def _shared_source_id_payload() -> dict:
+    first = _entry(name="Alpha", entity_key="alpha|product|edp")
+    second = _entry(name="Beta", entity_key="beta|product|edp")
+    second["sources"] = deepcopy(first["sources"])
+    for source in second["sources"]:
+        source["entity_key"] = "beta|product|edp"
+    payload = _payload(first)
+    payload["entries"].append(second)
+    payload["return_probes"].append(
+        {
+            "job_id": "return-2",
+            "entry_entity_key": "beta|product|edp",
+            "partial": False,
+            "automatic_validation": False,
+        }
+    )
+    payload["summary"] = _summary(
+        entry_count=2,
+        decision_ready=["Alpha", "Beta"],
+    )
+    return payload
+
+
+def test_shared_evidence_source_ids_remain_scoped_by_result_identity() -> None:
+    receipt = validate_settlement(_shared_source_id_payload())
+
+    assert [
+        (result["entity_key"], result["source_ids"])
+        for result in receipt["results"]
+    ] == [
+        (
+            "alpha|product|edp",
+            ["comment-1", "comment-2", "serp-1"],
+        ),
+        (
+            "beta|product|edp",
+            ["comment-1", "comment-2", "serp-1"],
+        ),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("subject_price", "subject_size", "competitor_floor", "competitor_size"),
+    [
+        (1.0, 1.0, 1e-308, 1e308),
+        (1e308, 1e-308, 1.0, 1.0),
+        (1e-308, 1e308, 1.0, 1.0),
+    ],
+)
+def test_finite_rows_that_cannot_derive_a_finite_multiple_fail_closed(
+    subject_price: float,
+    subject_size: float,
+    competitor_floor: float,
+    competitor_size: float,
+) -> None:
+    entry = _entry(
+        price={
+            "currency": "USD",
+            "subject_price": subject_price,
+            "subject_size": subject_size,
+            "competitor_floor": competitor_floor,
+            "competitor_size": competitor_size,
+            "subject_multiple": 5.25,
+            "comparison_basis": "like_for_like",
+            "floor_status": "cross_retailer_verified",
+        }
+    )
+
+    with pytest.raises(ContractError) as error:
+        validate_settlement(_payload(entry))
+
+    assert any(
+        violation.startswith("price_multiple_underivable:")
+        for violation in error.value.violations
+    )
+    assert not any("inf" in violation for violation in error.value.violations)
+
+
+def test_cli_rejects_an_undecodable_input_without_a_traceback(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "settlement.json"
+    source.write_bytes(b'{"schema_version": "\xff\xfe"}')
+
+    completed = subprocess.run(
+        [sys.executable, str(RUNNER), "--input", str(source)],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+
+    assert completed.returncode == 2, completed.stderr
+    assert "phase2 decision contract failed" in completed.stderr
+    assert "Traceback" not in completed.stderr

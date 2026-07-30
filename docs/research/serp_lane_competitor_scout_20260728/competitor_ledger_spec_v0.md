@@ -330,6 +330,14 @@ missing, unset/not-set, todo, null/none, N/A, and TBD, including
 Unicode compatibility variants; every key component must also contain
 at least one letter or number.
 
+Exact equality is exact in JSON type as well as in value. A claimed
+summary, per-entry decision, attempt count, or partial-probe count must
+reproduce the computed type it is compared against: a JSON boolean is
+not an integer count, a float is not an integer count, and `1` is not
+`true`. Source ids are unique within an entry. The same underlying
+evidence may support more than one competitor, so a receipt result joins
+back to its cited sources by its `entity_key` plus `source_ids`.
+
 Native comments carry two separate reads:
 
 - **corroboration** — distinct first-hand authors; repeated comments by
@@ -359,7 +367,11 @@ contract is pinned by
 It also recomputes every J5 subject multiple from the exact price and
 size values, requires cross-variant/concentration comparisons and weak
 floor provenance to be labelled, names every partial return probe, and
-checks the settlement summary against the computed decisions. Weak
+checks the settlement summary against the computed decisions. Rows can be
+individually finite and positive yet still divide into a unit price that
+underflows to zero or overflows past the float range; the seal then
+reports the multiple as underivable and fails closed, rather than raising
+an arithmetic error or naming a non-finite expected value. Weak
 signals cannot emit a value recommendation. A decision-ready response
 must declare `response_kind: add_or_prove_value` and `price_action: none`.
 Its recommended action is not free text: `value_action` must be the
