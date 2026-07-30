@@ -213,9 +213,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         assessment_path = args.output_dir / "assessment.json"
         assessment_path.write_bytes(assessment_bytes)
         packet_dir = args.output_dir / "source_capture_packet"
+        packet_data_root = (
+            DataLakeRoot.resolve(explicit=args.data_root)
+            if args.data_root is not None
+            else None
+        )
         exit_code, packet = write_youtube_creator_assessment_packet(
             assessment_json=assessment_bytes,
-            output_directory=packet_dir,
+            output_directory=packet_dir if packet_data_root is None else None,
+            data_root=packet_data_root,
             decision_question=args.decision_question,
         )
         if exit_code != 0:

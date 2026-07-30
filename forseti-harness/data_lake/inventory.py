@@ -651,6 +651,12 @@ SILVER_READER_SELECTION_POSTURES: dict[str, dict[str, str]] = {
         "mechanism": "local:_validated_outcomes_for_job",
         "reason": "queue recovery enumerates the named job anchor's Judgment outcomes and accepts only the single validated outcome whose bundle id and hash exactly match the queued bundle; ambiguity fails closed",
     },
+    "runners/run_youtube_creator_audience_triangulation.py": {
+        "detection": "lane_dir",
+        "posture": "selection_rule",
+        "mechanism": "local:_selected_transcript_source",
+        "reason": "explicit packet ids bind caption or ASR evidence directly; the ASR lane walk is then confined to that named packet and accepts exactly one complete transcript record whose video and channel identities match the assessment, otherwise failing closed",
+    },
     "runners/run_transcript_product_extract.py": {
         "detection": "lane_dir",
         "posture": "all_siblings",

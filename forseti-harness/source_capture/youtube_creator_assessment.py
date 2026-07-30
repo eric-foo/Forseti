@@ -110,10 +110,19 @@ def write_youtube_creator_assessment_packet(
     selected = assessment.get("selected_video_pages")
     if not isinstance(selected, list):
         raise ValueError("YouTube assessment selected_video_pages must be a list")
+    selected_video_ids: set[str] = set()
     for index, raw in enumerate(selected):
         row = _mapping(raw, f"selected_video_pages[{index}]")
         if row.get("format") not in expected_formats:
             raise ValueError("selected video page requires format=short|long")
+        video_id = _required_text(row.get("video_id"), "selected video_id")
+        if video_id not in all_video_ids:
+            raise ValueError(
+                "selected YouTube video must be present in the observed same-assessment grids"
+            )
+        if video_id in selected_video_ids:
+            raise ValueError("YouTube assessment selected_video_pages contains a duplicate video_id")
+        selected_video_ids.add(video_id)
         if row.get("engagement") is not None:
             engagement = _mapping(row["engagement"], "selected video engagement")
             for name in ("view_count_or_none", "like_count_or_none", "comment_count_or_none"):

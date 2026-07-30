@@ -376,6 +376,30 @@
       "a2_fork_impact": "none",
       "call": "append_record",
       "count": 1,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "is_record_set_complete",
+      "count": 2,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "lane_dir",
+      "count": 1,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "record_path",
+      "count": 2,
+      "module": "runners/run_youtube_creator_audience_triangulation.py"
+    },
+    {
+      "a2_fork_impact": "none",
+      "call": "append_record",
+      "count": 1,
       "module": "signal_content/lake.py"
     },
     {

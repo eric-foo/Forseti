@@ -28,13 +28,41 @@ def test_youtube_asr_runner_accepts_leading_dash_video_id(monkeypatch, tmp_path:
         assert kwargs["audio_bytes"] == b"audio"
         assert kwargs["audio_ext"] == "webm"
         assert kwargs["data_root"] is resolved_root
+        assert kwargs["identity_extra"] == {
+            "channel_id": "UC" + "A" * 22
+        }
         return 0, "derived/path"
 
     monkeypatch.setattr(root_module, "DataLakeRoot", FakeDataLakeRoot)
     monkeypatch.setattr(runner, "download_audio", fake_download)
     monkeypatch.setattr(runner, "write_asr_transcript", fake_write_asr_transcript)
 
-    assert runner.main(["--video-id", _LEADING_DASH_VIDEO_ID, "--data-root", str(tmp_path / "lake")]) == 0
+    assert runner.main(
+        [
+            "--video-id",
+            _LEADING_DASH_VIDEO_ID,
+            "--channel-id",
+            "UC" + "A" * 22,
+            "--data-root",
+            str(tmp_path / "lake"),
+        ]
+    ) == 0
+
+
+def test_youtube_asr_runner_rejects_noncanonical_channel_id() -> None:
+    with pytest.raises(SystemExit) as exc:
+        runner.main(
+            [
+                "--video-id",
+                _LEADING_DASH_VIDEO_ID,
+                "--channel-id",
+                "not-a-channel",
+                "--data-root",
+                "C:\\unused",
+            ]
+        )
+
+    assert exc.value.code == 2
 
 
 def test_youtube_asr_runner_rejects_data_root_flag_as_missing_video_id(monkeypatch, tmp_path: Path) -> None:

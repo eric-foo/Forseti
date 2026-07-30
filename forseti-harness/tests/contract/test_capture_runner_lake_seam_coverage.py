@@ -86,6 +86,7 @@ EXPECTED_BRONZE_WRITER_RUNNERS = frozenset(
         "run_source_capture_tiktok_video_packet.py",
         "run_source_capture_youtube_asr_packet.py",
         "run_source_capture_youtube_caption_packet.py",
+        "run_source_capture_youtube_creator_onboarding.py",
         "run_source_capture_youtube_rss_monitor.py",
         "run_source_capture_youtube_watch_packet.py",
     }
@@ -193,6 +194,13 @@ EXPECTED_NON_RAW_LAKE_TOUCHPOINTS = Counter(
         ("runners/run_tiktok_creator_audience_triangulation.py", "lane_dir"): 1,
         ("runners/run_tiktok_creator_audience_triangulation.py", "record_path"): 3,
         ("runners/run_tiktok_creator_onboarding_coordinator.py", "lane_dir"): 1,
+        ("runners/run_youtube_creator_audience_triangulation.py", "append_record"): 1,
+        (
+            "runners/run_youtube_creator_audience_triangulation.py",
+            "is_record_set_complete",
+        ): 2,
+        ("runners/run_youtube_creator_audience_triangulation.py", "lane_dir"): 1,
+        ("runners/run_youtube_creator_audience_triangulation.py", "record_path"): 2,
         ("cleaning/transcript_product_lake.py", "append_silver_record_set"): 1,
         ("runners/run_transcript_product_extract.py", "is_record_set_complete"): 1,
         ("runners/run_transcript_product_extract.py", "lane_dir"): 2,

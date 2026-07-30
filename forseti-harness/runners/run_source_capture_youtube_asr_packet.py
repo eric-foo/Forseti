@@ -8,6 +8,7 @@ faster-whisper output + provenance. Public data only; captured/derived data live
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -19,16 +20,30 @@ from source_capture.transcript import write_asr_transcript
 from source_capture.transcript.audio_asr import download_audio, transcribe_audio
 from runners._youtube_cli import normalize_video_id_argv
 
+_CHANNEL_ID = re.compile(r"UC[A-Za-z0-9_-]{22}")
+
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Capture YouTube audio + write an ASR transcript derived record.")
     parser.add_argument("--video-id", required=True)
+    parser.add_argument(
+        "--channel-id",
+        help=(
+            "Expected canonical YouTube channel id. Supply this for creator-audience "
+            "evidence so the audio packet remains bound to the assessed account."
+        ),
+    )
     parser.add_argument("--data-root", default=None, help="Forseti data lake root (or FORSETI_DATA_ROOT (legacy ORCA_DATA_ROOT)). ASR is data-lake-mode.")
     parser.add_argument("--model", default="small")
     raw_argv = sys.argv[1:] if argv is None else argv
     args = parser.parse_args(
         normalize_video_id_argv(raw_argv, option_strings=parser._option_string_actions)
     )
+    if args.channel_id is not None and not _CHANNEL_ID.fullmatch(args.channel_id):
+        parser.exit(
+            status=2,
+            message="--channel-id must be a canonical UC-prefixed YouTube channel id\n",
+        )
 
     from data_lake.root import DataLakeRoot
 
@@ -49,6 +64,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             audio_ext=ext,
             transcribe_fn=lambda path: transcribe_audio(path, model_name=args.model),
             data_root=root,
+            identity_extra=(
+                {"channel_id": args.channel_id}
+                if args.channel_id is not None
+                else None
+            ),
         )
     except Exception as exc:  # noqa: BLE001 - capture/lake errors surface here (incl. re-derive of the SAME audio packet)
         parser.exit(status=3, message=f"asr transcript failed: {type(exc).__name__}: {exc}\n")
