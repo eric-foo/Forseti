@@ -74,6 +74,15 @@ delta, evidence-targeted return probes). An agent starting the
 Understanding cycle is routed to phase 1 by the CSB playbook's
 Operating Sequence, not by being told to read a file.
 
+**Summer Fridays reuse bar (temporary):** an agent running the
+Understanding cycle for Summer Fridays must run phase 1 fresh — do not
+invoke the playbook's reuse clause against this folder's SF ledger, and
+do not read this folder's SF files; stop and report to the dispatcher.
+Terms:
+`docs/workflows/serp_scout_pass_calibration_predeclaration_v0.md`
+(dispatcher/adjudicator-facing). Remove this bar when that note's
+adjudication is appended.
+
 Standing non-claims carried throughout: counts of observed cards only,
 never prevalence/volume/share; US-parameterized is not physically
 US-local; blocks are stop signals; raw data outside Git.

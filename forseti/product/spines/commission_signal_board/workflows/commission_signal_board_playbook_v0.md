@@ -484,6 +484,11 @@ gate above controls whether Deliver may begin.
    is skippable only when a current scout ledger for this subject already
    exists — record that reuse — and its absence is a typed gap, never a
    silent omission.
+   Temporary Summer Fridays constraint: before authoring any Summer Fridays
+   company commission, the dispatcher must read
+   `docs/workflows/serp_scout_pass_calibration_predeclaration_v0.md` and bind
+   its obligations into the commission handoff; remove this constraint when
+   that note's adjudication is appended.
    Then route retail, customer, and claims research first.
    Before optional deepening, resolve the prompt's small high-yield core through
    the existing ledgers. A material unresolved core job blocks the acquisition
