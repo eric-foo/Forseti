@@ -422,7 +422,13 @@ def capture_youtube_creator_assessment(
             }
             selected = _select_video_rows(grids, selected_videos_per_format)
             selected_pages = [
-                _capture_selected_video(page, row, timeout_ms=timeout_ms, settle_seconds=settle_seconds)
+                _capture_selected_video(
+                    page,
+                    row,
+                    channel_id=identity["channel_id"],
+                    timeout_ms=timeout_ms,
+                    settle_seconds=settle_seconds,
+                )
                 for row in selected
             ]
             _assert_logged_out(page)
@@ -665,7 +671,13 @@ def _capture_profile(page: Any, profile_url: str, timeout_ms: int, settle_second
         if (text := _runs_text(metadata.get(field)))
     ]
     return {
-        "subscriber_count_or_none": _parse_count(subscriber_text),
+        # Label-anchored, not first-number: the header fallbacks above return whole
+        # composite strings ("Joined Mar 3, 2019 1.2M subscribers"), where a
+        # first-number parse silently reports 3 subscribers instead of failing or
+        # reading the labelled figure.
+        "subscriber_count_or_none": _parse_labeled_count(
+            subscriber_text, label="subscriber"
+        ),
         "subscriber_count_text_or_none": subscriber_text,
         "description_or_none": max(description_values, key=len) if description_values else None,
         "surface_url": f"{profile_url}/about",
@@ -837,7 +849,12 @@ def _dom_grid_rows(page: Any, *, format_name: str) -> list[dict[str, Any]]:
 
 
 def _capture_selected_video(
-    page: Any, row: Mapping[str, Any], *, timeout_ms: int, settle_seconds: float
+    page: Any,
+    row: Mapping[str, Any],
+    *,
+    channel_id: str,
+    timeout_ms: int,
+    settle_seconds: float,
 ) -> dict[str, Any]:
     page.goto(str(row["video_url"]), wait_until="domcontentloaded", timeout=timeout_ms)
     page.wait_for_timeout(int(settle_seconds * 1000))
@@ -846,6 +863,17 @@ def _capture_selected_video(
     initial = page.evaluate("() => window.ytInitialData || null") or {}
     details = player.get("videoDetails") if isinstance(player, Mapping) else {}
     details = details if isinstance(details, Mapping) else {}
+    # selected_video_pages is the only path into the audience Judgment bundle, so a
+    # page whose own player response does not name the assessed channel must not
+    # become assessment-selected evidence. Grid surfaces also serve cross-channel
+    # anchors (recommendation/featured shelves), and an absent channelId proves
+    # nothing either: both fail closed rather than degrade into a silent pass.
+    observed_channel_id = str(details.get("channelId") or "").strip()
+    if observed_channel_id != channel_id:
+        raise YoutubeCreatorAssessmentError(
+            "selected video page does not bind the assessed channel: video "
+            f"{row['video_id']} reports channel {observed_channel_id!r}, expected {channel_id!r}"
+        )
     title = str(details.get("title") or row.get("title") or "unknown")
     parsed_view_count = _parse_count(str(details.get("viewCount") or ""))
     view_count = (
