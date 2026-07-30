@@ -275,6 +275,71 @@ def test_claim_set_must_exactly_match_automatic_probes(tmp_path: Path) -> None:
         )
 
 
+def test_lifecycle_uses_contract_normalized_entity_keys(tmp_path: Path) -> None:
+    _, digest = _retained_weak_receipt(tmp_path)
+    claim = claim_validation(
+        tmp_path / "store",
+        subject_entity_key=SUBJECT_KEY,
+        entry_entity_key=ENTRY_KEY,
+        prior_receipt_sha256=digest,
+    )
+    settlement = _postprobe_settlement()
+    settlement["subject"]["entity_key"] = f"  {SUBJECT_KEY}  "
+    settlement["return_probes"][0]["entry_entity_key"] = f"  {ENTRY_KEY}  "
+    settlement_path = tmp_path / "postprobe.json"
+    _write_json(settlement_path, settlement)
+
+    receipt, _ = seal_claimed_settlement(
+        tmp_path / "store",
+        settlement_path,
+        claim_ids=[claim["claim_id"]],
+    )
+
+    assert receipt["subject"]["entity_key"] == SUBJECT_KEY
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        pytest.param(lambda claim: claim.pop("prior_receipt_sha256"), id="missing"),
+        pytest.param(
+            lambda claim: claim.__setitem__("prior_receipt_sha256", 12345),
+            id="not_a_string",
+        ),
+    ],
+)
+def test_claim_without_a_usable_prior_receipt_digest_fails_closed(
+    tmp_path: Path, mutate
+) -> None:
+    """A tampered claim must fail closed, not raise an uncaught exception.
+
+    ``claim_id`` derives only from the subject/entry pair, so stripping or
+    retyping ``prior_receipt_sha256`` leaves the id check satisfied and
+    reaches the digest lookup with unusable state.
+    """
+
+    _, digest = _retained_weak_receipt(tmp_path)
+    claim = claim_validation(
+        tmp_path / "store",
+        subject_entity_key=SUBJECT_KEY,
+        entry_entity_key=ENTRY_KEY,
+        prior_receipt_sha256=digest,
+    )
+    claim_path = tmp_path / "store" / "claims" / f"{claim['claim_id']}.json"
+    stored = json.loads(claim_path.read_text(encoding="utf-8"))
+    mutate(stored)
+    _write_json(claim_path, stored)
+    settlement_path = tmp_path / "postprobe.json"
+    _write_json(settlement_path, _postprobe_settlement())
+
+    with pytest.raises(LifecycleError, match="claim_invalid"):
+        seal_claimed_settlement(
+            tmp_path / "store",
+            settlement_path,
+            claim_ids=[claim["claim_id"]],
+        )
+
+
 def test_claim_id_cannot_escape_the_store(tmp_path: Path) -> None:
     settlement_path = tmp_path / "postprobe.json"
     _write_json(settlement_path, _postprobe_settlement())

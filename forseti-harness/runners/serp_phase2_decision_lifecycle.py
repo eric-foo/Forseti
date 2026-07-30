@@ -195,6 +195,7 @@ def _load_claim(store_root: Path, claim_id: str) -> dict[str, Any]:
     if (
         claim.get("schema_version") != CLAIM_VERSION
         or claim.get("claim_id") != claim_id
+        or not isinstance(claim.get("prior_receipt_sha256"), str)
         or _claim_id(
             str(claim.get("subject_entity_key", "")),
             str(claim.get("entry_entity_key", "")),
@@ -226,7 +227,11 @@ def seal_claimed_settlement(
 
     subject = settlement.get("subject")
     subject_entity_key = (
-        subject.get("entity_key") if isinstance(subject, dict) else None
+        subject.get("entity_key").strip()
+        if isinstance(subject, dict)
+        and isinstance(subject.get("entity_key"), str)
+        and subject.get("entity_key").strip()
+        else None
     )
     if any(
         claim["subject_entity_key"] != subject_entity_key for claim in claims
@@ -242,7 +247,7 @@ def seal_claimed_settlement(
                 and probe.get("automatic_validation") is True
                 and isinstance(probe.get("entry_entity_key"), str)
             ):
-                automatic_entities.append(probe["entry_entity_key"])
+                automatic_entities.append(probe["entry_entity_key"].strip())
     claimed_entities = [claim["entry_entity_key"] for claim in claims]
     if sorted(automatic_entities) != sorted(claimed_entities):
         raise LifecycleError(
