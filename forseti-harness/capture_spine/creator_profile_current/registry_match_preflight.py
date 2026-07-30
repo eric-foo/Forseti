@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -191,6 +192,14 @@ def _registry_identity_keys(match: Mapping[str, Any]) -> list[tuple[str, str]]:
         (f"platform_handle:{platform}:{_normalize_handle(match['public_handle'])}", "same_platform_public_handle"),
         (f"profile_url:{_normalize_url(match['public_profile_url'])}", "public_profile_url"),
     ]
+    display_name = _optional_str(match.get("public_display_name_or_none"))
+    if display_name:
+        keys.append(
+            (
+                f"platform_display_name:{platform}:{_normalize_display_name(display_name)}",
+                "same_platform_exact_display_name",
+            )
+        )
     platform_public_id = _optional_str(match.get("platform_public_account_id_or_none"))
     if platform_public_id:
         keys.append((f"platform_public_account_id:{platform}:{platform_public_id}", "platform_public_account_id"))
@@ -320,6 +329,14 @@ def _normalize_candidate(candidate: Mapping[str, Any], index: int) -> dict[str, 
         )
     if platform:
         identity_keys.extend((f"platform_handle:{platform}:{handle}", "same_platform_public_handle") for handle in handles)
+        display_name = _optional_str(candidate.get("display_name_or_none"))
+        if display_name:
+            identity_keys.append(
+                (
+                    f"platform_display_name:{platform}:{_normalize_display_name(display_name)}",
+                    "same_platform_exact_display_name",
+                )
+            )
     elif handles:
         errors.append({"code": "missing_platform_for_handle", "message": "platform is required for handle matching"})
     identity_keys.extend((f"profile_url:{url}", "public_profile_url") for url in urls)
@@ -504,6 +521,13 @@ def _normalize_handle(value: Any) -> str:
     if not handle:
         raise ValueError("handle must be non-empty after normalization")
     return handle.lower()
+
+
+def _normalize_display_name(value: str) -> str:
+    normalized = re.sub(r"[^a-z0-9]+", "", value.casefold())
+    if not normalized:
+        raise ValueError("display_name_or_none must contain a letter or number")
+    return normalized
 
 
 def _looks_like_url(value: str) -> bool:

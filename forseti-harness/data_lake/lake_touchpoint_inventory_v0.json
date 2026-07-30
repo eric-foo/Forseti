@@ -801,6 +801,15 @@
       {
         "a2_fork_impact": "manifest_shape",
         "identity_binding": {
+          "mechanism": "before packet write, the served evidence-video author must match the requested display name, its source-visible channel id and canonical handle must resolve to a served channel page exposing the same immutable channel id, and ambiguous or mismatched identity fails closed",
+          "status": "bound"
+        },
+        "kind": "direct_packet_writer",
+        "runner": "run_source_capture_youtube_creator_onboarding.py"
+      },
+      {
+        "a2_fork_impact": "manifest_shape",
+        "identity_binding": {
           "mechanism": "_validate_parsed_channel_identity runs immediately after parsing: the served feed-level yt:channelId must match the requested roster channel (accepting the observed no-UC-prefix variant), any entry-level yt:channelId differing from the request fails, and missing feed identity fails closed; a mismatch is a visible per-channel failure with no packet write",
           "status": "bound"
         },
@@ -925,6 +934,13 @@
           "source_capture/tiktok/video_packet.py"
         ],
         "function": "write_tiktok_video_packet"
+      },
+      {
+        "a2_fork_impact": "manifest_shape",
+        "defined_in": [
+          "source_capture/youtube_creator_assessment.py"
+        ],
+        "function": "write_youtube_creator_assessment_packet"
       },
       {
         "a2_fork_impact": "manifest_shape",

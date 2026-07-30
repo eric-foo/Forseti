@@ -589,7 +589,18 @@ read would weight, an axis/answer-slot's only occupant, #ad-convergence)
 are read-time judgments a reader adds. Never direct registry insertion. The frontier's scan-receipt register and owner
 disposition batches are NOT written by this lane: a SERP-recurrence
 observation is not a TikTok scan, and dispositions are owner acts.
-YouTube's gap is ROUTED (2026-07-30): `docs/prompts/handoffs/youtube_creator_onboarding_lane_execution_handoff_v0.md` commissions the admission path on the TikTok lane's mechanism with the Shorts/long-form axis typed. Instagram (16) remains an unrouted typed gap.
+YouTube's admission path is IMPLEMENTED, PILOT-ASSESSMENT COMPLETE, AND
+OWNER-REVIEW GATED (2026-07-30):
+`forseti-harness/runners/run_source_capture_youtube_creator_onboarding.py`
+exports all 73 recurring rows as display-name frontier candidates and
+captures public logged-out assessment evidence before the generalized
+candidate → judgment → account registry flow is invoked. No pilot creator
+has been admitted before owner review. The sealed suffix analysis reports
+301 creators outside the 113-row feed, but it preserves only the aggregate;
+the current row extract produces a different named set, so those identities
+remain unwired rather than guessed or truncated. Shorts and long-form remain
+typed, separately baselined axes. Instagram (16) remains an unrouted typed
+gap.
 **Capture-spine dogfood 2026-07-29 (3 creators, `new_capture`
 assessment mode, owner session):** the feed→spine pipe works end to end.
 Per creator the lane returned profile metrics + a 30-video grid with

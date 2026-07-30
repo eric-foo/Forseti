@@ -456,6 +456,15 @@ RUNNER_IDENTITY_BINDINGS: dict[str, dict[str, str]] = {
             "check"
         ),
     },
+    "run_source_capture_youtube_creator_onboarding.py": {
+        "status": "bound",
+        "mechanism": (
+            "before packet write, the served evidence-video author must match the requested "
+            "display name, its source-visible channel id and canonical handle must resolve "
+            "to a served channel page exposing the same immutable channel id, and ambiguous "
+            "or mismatched identity fails closed"
+        ),
+    },
     "run_source_capture_youtube_rss_monitor.py": {
         "status": "bound",
         "mechanism": (

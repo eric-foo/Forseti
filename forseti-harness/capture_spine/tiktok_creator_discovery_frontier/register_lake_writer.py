@@ -345,15 +345,18 @@ def _normalize_disposition_action(
             "invalid_frontier_disposition", "Frontier disposition action must be an object"
         )
     platform = str(raw.get("platform") or "").strip().casefold()
-    if platform != "tiktok":
+    if platform not in {"tiktok", "youtube"}:
         raise TikTokCreatorDiscoveryFrontierError(
-            "unsupported_frontier_platform", "Frontier disposition v1 supports TikTok only"
+            "unsupported_frontier_platform",
+            "Frontier disposition v1 supports TikTok and YouTube",
         )
     handle = str(raw.get("public_handle") or raw.get("handle") or "").strip().lstrip("@").casefold()
-    if not re.fullmatch(r"[a-z0-9._]{2,64}", handle):
+    handle_pattern = r"[a-z0-9._]{2,64}" if platform == "tiktok" else r"[a-z0-9._-]{3,30}"
+    if not re.fullmatch(handle_pattern, handle):
         raise TikTokCreatorDiscoveryFrontierError(
             "invalid_frontier_handle",
-            "Frontier disposition handle must be a TikTok handle without URL syntax",
+            f"Frontier disposition handle must be a canonical {platform.title()} handle "
+            "without URL syntax",
         )
     status = str(raw.get("status") or "").strip().casefold()
     priority_value = raw.get("priority")
@@ -392,7 +395,11 @@ def _normalize_disposition_action(
         "platform": platform,
         "candidate_key": f"{platform}:@{handle}",
         "public_handle": handle,
-        "public_profile_url": f"https://www.tiktok.com/@{handle}",
+        "public_profile_url": (
+            f"https://www.tiktok.com/@{handle}"
+            if platform == "tiktok"
+            else f"https://www.youtube.com/@{handle}"
+        ),
         "status": status,
         "priority_or_none": priority,
         "reason_code": reason,
