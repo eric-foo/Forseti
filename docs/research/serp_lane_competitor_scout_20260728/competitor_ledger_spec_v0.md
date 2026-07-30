@@ -322,7 +322,9 @@ exact competitor product and the same exact subject product (brand,
 product, variant/concentration where material). Unbound identities,
 base/variant mismatches, duplicate aliases for one product identity, and
 surface classes outside the contract allowlist stay visible and cannot
-enter the decision-ready set.
+enter the decision-ready set. The seal checks key shape, known placeholder
+tokens, and exact equality across the settlement; it does not independently
+prove that the normalizer selected the correct real-world product.
 
 Native comments carry two separate reads:
 
@@ -415,11 +417,64 @@ ledger entry schema below. Its boundary fields are:
 }
 ```
 
+An automatic validation probe additionally carries
+`"licensing_action": "validate_once"`, recording the pre-probe decision
+that authorized the attempt. The seal rejects an automatic validation
+probe without that licence, a licence attached to a non-automatic probe,
+or a licence whose current entry is not finding-grade with at least one
+first-hand author. It does not re-derive the historical rank: comment
+rank may change after the probe was authorized.
+
 Complaint-body sources additionally require author, thread, venue,
 first-hand posture, stance-bearing status, score (or an unavailable
 reason), and within-thread rank. Decision-ready entries additionally
 require customer gain, observed sacrifice, proof needed, value lever,
 its matching value action, response kind, and `price_action`.
+
+On success the seal emits `serp_phase2_decision_receipt_v0`:
+
+```json
+{
+  "schema_version": "serp_phase2_decision_receipt_v0",
+  "valid": true,
+  "subject": {
+    "name": "...",
+    "entity_key": "brand|product|variant"
+  },
+  "results": [{
+    "name": "...",
+    "entity_key": "brand|product|variant",
+    "subject_entity_key": "brand|product|variant",
+    "rung": "presence|candidate|finding_grade",
+    "identity_coherent": true,
+    "surface_independent": true,
+    "surface_classes": ["complaint_body", "serp_rendered_snippet"],
+    "first_hand_authors": 2,
+    "threads": 2,
+    "venues": 2,
+    "best_comment_rank": 1,
+    "max_comment_score": 10,
+    "confidence": "corroborated",
+    "action": "use_in_decision",
+    "decision_ready": true
+  }],
+  "summary": {
+    "entry_count": 1,
+    "decision_ready_names": ["..."],
+    "validate_once_names": [],
+    "watch_names": [],
+    "parked_names": [],
+    "identity_correction_names": []
+  },
+  "partial_probe_ids": []
+}
+```
+
+Price-bearing results also carry `currency`, `subject_multiple`,
+`comparison_basis`, and `floor_status`. The receipt projects only the
+validated subject name and entity key; unvalidated input metadata is not
+copied into the sealed consumer boundary. Raw evidence remains in the
+input settlement and its cited sources.
 
 Social-platform engagement (owner-ratified 2026-07-29, **AMENDED
 2026-07-30**): **raw platform counts are RECORDED, never weighted.**

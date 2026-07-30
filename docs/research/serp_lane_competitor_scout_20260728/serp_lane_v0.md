@@ -823,8 +823,9 @@ pool grows substantially every pass that includes them.
    across allowlisted promoted source classes, and aliases cannot duplicate
    one product identity. Native comment engagement is recorded separately
    from independent first-hand corroboration; a weak signal receives at
-   most one automatic validation attempt, named by exact entity key, and no
-   value recommendation. J5 arithmetic is recomputed from exact row values;
+   most one automatic validation attempt, named by exact entity key and
+   licensed by its pre-probe `validate_once` decision, and no value
+   recommendation. J5 arithmetic is recomputed from exact row values;
    every decision-ready competitor emits
    `response_kind: add_or_prove_value`, `price_action: none`, and the
    value-only action paired to its value lever; free-form action fields

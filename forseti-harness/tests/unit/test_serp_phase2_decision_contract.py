@@ -523,12 +523,14 @@ def test_weak_entry_cannot_receive_two_automatic_validation_probes() -> None:
             "entry_entity_key": "brand|product|edp",
             "partial": False,
             "automatic_validation": True,
+            "licensing_action": "validate_once",
         },
         {
             "job_id": "return-2",
             "entry_entity_key": "brand|product|edp",
             "partial": False,
             "automatic_validation": True,
+            "licensing_action": "validate_once",
         },
     ]
 
@@ -578,6 +580,230 @@ def test_aliases_cannot_duplicate_one_product_identity() -> None:
 
     with pytest.raises(ContractError, match="entity_key_duplicate"):
         validate_settlement(payload)
+
+
+def test_missing_entry_entity_key_fails_closed_without_crashing() -> None:
+    entry = _entry()
+    payload = _payload(entry)
+    del entry["entity_key"]
+
+    with pytest.raises(ContractError, match="entity_key_missing"):
+        validate_settlement(payload)
+
+
+def test_padded_entity_key_reconciles_against_its_named_probe() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=1)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    entry["entity_key"] = "  brand|product|edp  "
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+
+    receipt = validate_settlement(payload)
+
+    assert receipt["results"][0]["entity_key"] == "brand|product|edp"
+    assert receipt["results"][0]["action"] == "parked_after_no_confirmation"
+
+
+def test_boolean_comment_score_is_not_a_valid_engagement_count() -> None:
+    entry = _entry()
+    entry["sources"][1]["engagement"]["score"] = True
+
+    with pytest.raises(ContractError, match="comment_score_invalid"):
+        validate_settlement(_payload(entry))
+
+
+def test_automatic_validation_probe_requires_its_pre_probe_license() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=1)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+        }
+    ]
+
+    with pytest.raises(
+        ContractError,
+        match="automatic_validation_license_invalid",
+    ):
+        validate_settlement(payload)
+
+
+def test_candidate_entry_cannot_claim_an_automatic_validation_license() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=1)],
+        attempts=1,
+        action="watch_for_new_source",
+        confidence="weak",
+        decision_ready=False,
+    )
+    entry["rung"] = "candidate"
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            watch_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+
+    with pytest.raises(
+        ContractError,
+        match="automatic_validation_license_incompatible",
+    ):
+        validate_settlement(payload)
+
+
+def test_pre_probe_license_survives_a_later_comment_rank_change() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=4)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+
+    receipt = validate_settlement(payload)
+
+    assert receipt["results"][0]["action"] == "parked_after_no_confirmation"
+
+
+def test_nonautomatic_probe_cannot_claim_a_validation_license() -> None:
+    payload = _payload(_entry())
+    payload["return_probes"][0]["licensing_action"] = "validate_once"
+
+    with pytest.raises(
+        ContractError,
+        match="return_probe_license_forbidden",
+    ):
+        validate_settlement(payload)
+
+
+def test_receipt_projects_only_validated_subject_fields() -> None:
+    payload = _payload(_entry())
+    payload["subject"]["recommended_action"] = "undercut the rival"
+
+    receipt = validate_settlement(payload)
+
+    assert receipt["subject"] == {
+        "name": "Subject",
+        "entity_key": "subject|product|edp",
+    }
+
+
+def test_unattributed_complaint_body_cannot_enter_a_settlement() -> None:
+    entry = _entry()
+    entry["sources"].append(
+        {
+            "source_id": "comment-3",
+            "surface_class": "complaint_body",
+            "entity_key": "brand|product|edp",
+            "subject_entity_key": "subject|product|edp",
+            "posture": "secondhand",
+            "stance_bearing": False,
+            "engagement": {"score": 99, "rank_in_thread": 1},
+        }
+    )
+
+    with pytest.raises(ContractError) as error:
+        validate_settlement(_payload(entry))
+
+    assert any(
+        violation.startswith("comment_author_missing:")
+        for violation in error.value.violations
+    )
+    assert any(
+        violation.startswith("comment_thread_missing:")
+        for violation in error.value.violations
+    )
+    assert any(
+        violation.startswith("comment_venue_missing:")
+        for violation in error.value.violations
+    )
+
+
+def test_null_variant_token_fails_identity_binding() -> None:
+    entry = _entry(entity_key="brand|product|null")
+
+    with pytest.raises(ContractError, match="entity_key_unbound"):
+        validate_settlement(_payload(entry))
+
+
+def test_cli_surfaces_a_contract_failure_and_returns_two(tmp_path: Path) -> None:
+    entry = _entry()
+    payload = _payload(entry)
+    del entry["entity_key"]
+    source = tmp_path / "settlement.json"
+    source.write_text(json.dumps(payload), encoding="utf-8")
+
+    completed = subprocess.run(
+        [sys.executable, str(RUNNER), "--input", str(source)],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+
+    assert completed.returncode == 2, completed.stderr
+    assert "phase2 decision contract failed" in completed.stderr
+    assert "entity_key_missing" in completed.stderr
 
 
 def test_cli_writes_a_receipt_and_returns_zero(tmp_path: Path) -> None:

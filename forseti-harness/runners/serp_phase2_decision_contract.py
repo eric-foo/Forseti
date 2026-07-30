@@ -116,7 +116,7 @@ def _entity_key_is_bound(value: str) -> bool:
                 "tbd",
             )
         )
-        and not normalized_tokens & {"na", "none"}
+        and not normalized_tokens & {"na", "none", "null"}
     )
 
 
@@ -134,21 +134,25 @@ def _engagement(
         return None, None
 
     score = engagement.get("score")
-    if score is not None and not isinstance(score, int):
-        violations.append(f"comment_score_invalid:{prefix}")
-    if score is None and not _required_text(
-        engagement.get("score_unavailable_reason"),
-        code="comment_score_missing",
-        field=prefix,
-        violations=violations,
+    score_declared = score is not None
+    if score_declared and (
+        isinstance(score, bool) or not isinstance(score, int)
     ):
+        violations.append(f"comment_score_invalid:{prefix}")
         score = None
+    if not score_declared:
+        _required_text(
+            engagement.get("score_unavailable_reason"),
+            code="comment_score_missing",
+            field=prefix,
+            violations=violations,
+        )
 
     rank = engagement.get("rank_in_thread")
     if not isinstance(rank, int) or isinstance(rank, bool) or rank < 1:
         violations.append(f"comment_rank_invalid:{prefix}")
         rank = None
-    return score if isinstance(score, int) else None, rank
+    return score, rank
 
 
 def _price_result(
@@ -334,11 +338,6 @@ def _evaluate_entry(
                 f"comment_stance_missing:{name}:{source_id}"
             )
             stance_bearing = False
-        if posture != "first_hand" or not stance_bearing:
-            continue
-        if rank is not None:
-            first_hand_comment_ranks.append(rank)
-
         author_id = _required_text(
             source.get("author_id"),
             code="comment_author_missing",
@@ -357,6 +356,11 @@ def _evaluate_entry(
             field=f"{name}:{source_id}",
             violations=violations,
         )
+
+        if posture != "first_hand" or not stance_bearing:
+            continue
+        if rank is not None:
+            first_hand_comment_ranks.append(rank)
         if author_id:
             first_hand_authors.add(author_id)
         if thread_id:
@@ -521,11 +525,12 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
         violations.append("schema_version_invalid")
 
     subject = payload.get("subject")
+    subject_name = ""
     subject_entity_key = ""
     if not isinstance(subject, dict):
         violations.append("subject_missing")
     else:
-        _required_text(
+        subject_name = _required_text(
             subject.get("name"),
             code="subject_name_missing",
             field="subject",
@@ -608,6 +613,9 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
     automatic_probes_by_entity: dict[str, int] = {
         result["entity_key"]: 0 for result in results
     }
+    result_by_entity = {
+        result["entity_key"]: result for result in results
+    }
     for probe in probes:
         if not isinstance(probe, dict):
             violations.append("return_probe_invalid")
@@ -636,11 +644,25 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
             violations.append(
                 f"return_probe_automatic_validation_missing:{job_id}"
             )
-        elif (
-            automatic_validation
-            and entry_entity_key in automatic_probes_by_entity
-        ):
-            automatic_probes_by_entity[entry_entity_key] += 1
+        elif automatic_validation:
+            licensing_action = probe.get("licensing_action")
+            if licensing_action != "validate_once":
+                violations.append(
+                    f"automatic_validation_license_invalid:{job_id}"
+                )
+            licensed_result = result_by_entity.get(entry_entity_key)
+            if licensed_result is not None and (
+                licensed_result["rung"] != "finding_grade"
+                or licensed_result["first_hand_authors"] < 1
+            ):
+                violations.append(
+                    f"automatic_validation_license_incompatible:{job_id}:"
+                    f"{entry_entity_key}"
+                )
+            if entry_entity_key in automatic_probes_by_entity:
+                automatic_probes_by_entity[entry_entity_key] += 1
+        elif "licensing_action" in probe:
+            violations.append(f"return_probe_license_forbidden:{job_id}")
         if not isinstance(probe.get("partial"), bool):
             violations.append(f"return_probe_partial_missing:{job_id}")
         elif probe["partial"]:
@@ -660,15 +682,13 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
         )
 
     entry_by_entity = {
-        entry.get("entity_key"): entry
+        entry["entity_key"].strip(): entry
         for entry in entries
         if (
             isinstance(entry, dict)
             and isinstance(entry.get("entity_key"), str)
+            and entry["entity_key"].strip()
         )
-    }
-    result_by_entity = {
-        result["entity_key"]: result for result in results
     }
     for entry_entity_key, probe_count in automatic_probes_by_entity.items():
         entry_name = result_by_entity[entry_entity_key]["name"]
@@ -677,9 +697,14 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
                 "automatic_validation_probe_limit_exceeded:"
                 f"{entry_name}:{entry_entity_key}:count={probe_count}"
             )
-        claimed_attempts = entry_by_entity[entry_entity_key].get(
-            "automatic_validation_attempts"
-        )
+        claimed_entry = entry_by_entity.get(entry_entity_key)
+        if claimed_entry is None:
+            violations.append(
+                "automatic_validation_attempts_unresolved:"
+                f"{entry_name}:{entry_entity_key}"
+            )
+            continue
+        claimed_attempts = claimed_entry.get("automatic_validation_attempts")
         if claimed_attempts != probe_count:
             violations.append(
                 "automatic_validation_attempts_mismatch:"
@@ -692,7 +717,10 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
     return {
         "schema_version": RECEIPT_VERSION,
         "valid": True,
-        "subject": payload["subject"],
+        "subject": {
+            "name": subject_name,
+            "entity_key": subject_entity_key,
+        },
         "results": results,
         "summary": expected_summary,
         "partial_probe_ids": sorted(partial_ids),
