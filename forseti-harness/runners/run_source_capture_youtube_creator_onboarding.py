@@ -38,6 +38,9 @@ from source_capture.youtube_creator_assessment import (
 SUMMARY_PREFIX = "youtube_creator_onboarding_summary_json="
 BLOCKER_PREFIX = "youtube_creator_onboarding_blocker_json="
 REGISTRY_PREFLIGHT_JSON_NAME = "creator_registry_match_preflight.json"
+RESOLVED_REGISTRY_PREFLIGHT_JSON_NAME = (
+    "creator_registry_resolved_match_preflight.json"
+)
 FRONTIER_SCHEMA_VERSION = "youtube_creator_frontier_candidates_v0"
 DEFAULT_DECISION_QUESTION = (
     "Does this public YouTube channel warrant owner-reviewed Creator Registry admission?"
@@ -175,6 +178,37 @@ def main(argv: Sequence[str] | None = None) -> int:
             max_grid_rows=args.max_grid_rows,
             selected_videos_per_format=args.selected_videos_per_format,
         )
+        identity = assessment["identity"]
+        resolved_preflight = build_creator_registry_match_preflight_receipt(
+            candidates=[
+                {
+                    "candidate_id": "youtube_resolved_" + identity["channel_id"],
+                    "platform": "youtube",
+                    "display_name_or_none": identity["display_name"],
+                    "public_handle_or_none": identity["handle"],
+                    "public_profile_url_or_none": identity["profile_url"],
+                    "platform_public_account_id_or_none": identity["channel_id"],
+                    "intended_action": "new_capture",
+                }
+            ],
+            registry_document=registry_document,
+            registry_source_pointer=registry_pointer,
+            registry_sha256=registry_hash,
+            generated_at_utc=_utc_now(),
+        )
+        resolved_preflight_path = (
+            args.output_dir / RESOLVED_REGISTRY_PREFLIGHT_JSON_NAME
+        )
+        resolved_preflight_path.write_text(
+            dump_creator_registry_match_preflight_receipt(resolved_preflight),
+            encoding="utf-8",
+        )
+        resolved_result = resolved_preflight[RECEIPT_WRAPPER_KEY]["results"][0]
+        if resolved_result.get("can_start_new_capture") is not True:
+            raise YoutubeCreatorAssessmentError(
+                "Creator Registry resolved-identity preflight blocked packet write: "
+                + json.dumps(resolved_result, sort_keys=True)
+            )
         assessment_bytes = canonical_record_bytes(assessment)
         assessment_path = args.output_dir / "assessment.json"
         assessment_path.write_bytes(assessment_bytes)
@@ -191,6 +225,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             {
                 "mode": "new_capture",
                 "registry_preflight": str(preflight_path),
+                "resolved_registry_preflight": str(resolved_preflight_path),
                 "assessment_json": str(assessment_path),
                 "packet": str(packet),
                 "registry_mutated": False,
@@ -227,7 +262,16 @@ def build_youtube_frontier_candidates(
         if not isinstance(row, Mapping) or str(row.get("platform")).casefold() != "youtube":
             continue
         name = _required_text(row.get("display_name"), "recurring creator display_name")
-        recurring[_normalized_name(name)] = {
+        key = _normalized_name(name)
+        # counts.recurring_feed is quoted as "all N recurring rows" in durable
+        # consumer docs. Overwriting a colliding normalized key would silently
+        # truncate that count instead of surfacing the collision.
+        if key in recurring:
+            raise ValueError(
+                "recurring feed YouTube rows share one normalized display name: "
+                f"{recurring[key]['display_name']!r} and {name!r}"
+            )
+        recurring[key] = {
             "candidate_id": "yt_serp_recurring_" + _stable_token(name),
             "platform": "youtube",
             "display_name": name,
@@ -474,9 +518,7 @@ def _resolve_channel(
             raise YoutubeCreatorAssessmentError(
                 "evidence video and served channel identity disagree"
             )
-        mismatch = _normalized_name(served["display_name"]) != _normalized_name(
-            creator_display_name
-        )
+        mismatch = not _display_name_matches(served["display_name"], creator_display_name)
         if mismatch:
             raise YoutubeCreatorAssessmentError(
                 "evidence video channel display name does not match the requested creator"
@@ -495,9 +537,7 @@ def _resolve_channel(
         page.wait_for_timeout(int(settle_seconds * 1000))
         _assert_logged_out(page)
         candidate = _channel_identity_from_page(page)
-        mismatch = _normalized_name(candidate["display_name"]) != _normalized_name(
-            creator_display_name
-        )
+        mismatch = not _display_name_matches(candidate["display_name"], creator_display_name)
         return candidate, {
             "method": "owner_supplied_profile_url",
             "requested_display_name": creator_display_name,
@@ -534,7 +574,7 @@ def _resolve_channel(
     exact = [
         row
         for row in candidates
-        if _normalized_name(row["display_name"]) == _normalized_name(creator_display_name)
+        if _display_name_matches(row["display_name"], creator_display_name)
     ]
     unique = {row["channel_id"]: row for row in exact}
     if len(unique) != 1:
@@ -644,7 +684,17 @@ def _capture_grid(
         page.wait_for_timeout(750)
     initial = page.evaluate("() => window.ytInitialData || null")
     rows_by_id: dict[str, dict[str, Any]] = {}
-    for key in ("videoRenderer", "gridVideoRenderer", "reelItemRenderer", "shortsLockupViewModel"):
+    # Renderer kind is the format evidence. Reading every renderer kind on both
+    # surfaces would stamp Shorts shelf rows served on /videos as format="long"
+    # (and the reverse), silently contaminating the same-format medians the
+    # Shorts/long-form axis exists to keep separate. The DOM pass below covers
+    # same-format rows independently via the href shape, so restricting the
+    # renderer kinds drops cross-format rows without dropping real ones.
+    for key in (
+        ("reelItemRenderer", "shortsLockupViewModel")
+        if format_name == "short"
+        else ("videoRenderer", "gridVideoRenderer")
+    ):
         for renderer in _find_key(initial, key):
             row = _video_row(renderer, format_name=format_name)
             if row is not None:
@@ -791,7 +841,12 @@ def _capture_selected_video(
     details = player.get("videoDetails") if isinstance(player, Mapping) else {}
     details = details if isinstance(details, Mapping) else {}
     title = str(details.get("title") or row.get("title") or "unknown")
-    view_count = _parse_count(str(details.get("viewCount") or "")) or row.get("view_count_or_none")
+    parsed_view_count = _parse_count(str(details.get("viewCount") or ""))
+    view_count = (
+        parsed_view_count
+        if parsed_view_count is not None
+        else row.get("view_count_or_none")
+    )
     like_text = _first_accessibility_text(initial, contains="like")
     comment_text = _first_accessibility_text(initial, contains="comment")
     description = str(details.get("shortDescription") or "").strip() or None
@@ -1097,6 +1152,16 @@ def _extract_mentions(text: str) -> list[str]:
 
 def _normalized_name(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", value.casefold())
+
+
+def _display_name_matches(observed: str, requested: str) -> bool:
+    """Compare Unicode alphanumerics and fail closed without a comparable form."""
+    observed_key = _identity_display_name_key(observed)
+    return bool(observed_key) and observed_key == _identity_display_name_key(requested)
+
+
+def _identity_display_name_key(value: str) -> str:
+    return "".join(char for char in value.casefold() if char.isalnum())
 
 
 def _stable_token(value: str) -> str:

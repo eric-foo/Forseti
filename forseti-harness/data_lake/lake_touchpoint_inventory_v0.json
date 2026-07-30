@@ -801,7 +801,7 @@
       {
         "a2_fork_impact": "manifest_shape",
         "identity_binding": {
-          "mechanism": "before packet write, the served evidence-video author must match the requested display name, its source-visible channel id and canonical handle must resolve to a served channel page exposing the same immutable channel id, and ambiguous or mismatched identity fails closed",
+          "mechanism": "before packet write, identity comes from a served channel page exposing an immutable UC channel id, canonical handle, and display name; the evidence-video and channel-search routes additionally require a normalized display-name match against the requested creator plus agreement between the discovering surface's channel id and the served channel page's channel id, and fail closed on ambiguity, disagreement, or a display name with no comparable normalized form; the owner-supplied --profile-url route trusts the owner's locator and records display_name_mismatch as evidence instead of failing closed",
           "status": "bound"
         },
         "kind": "direct_packet_writer",

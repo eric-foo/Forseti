@@ -1,15 +1,16 @@
 """Preflight candidate creator/account matches against creator_profile_current.
 
 This module is the deterministic turnstile between discovery and capture. It
-does exact registry checks only; fuzzy identity resolution and cross-platform
-creator linkage remain separate owner-reviewed workflows.
+does exact registry checks on handles, URLs, and native ids, plus case- and
+punctuation-insensitive display-name checks; approximate/fuzzy identity
+resolution and cross-platform creator linkage remain separate owner-reviewed
+workflows.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
-import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -41,6 +42,7 @@ _ALLOWED_CANDIDATE_KEYS = frozenset(
     }
 )
 _ALLOWED_INTENDED_ACTIONS = frozenset({"classify", "new_capture", "update_existing"})
+_DISPLAY_NAME_MATCH_REASON = "same_platform_normalized_display_name"
 _ALLOWED_PLATFORMS = frozenset({"instagram", "tiktok", "youtube"})
 
 
@@ -130,7 +132,11 @@ def build_creator_registry_match_preflight_receipt(
             "summary": summary,
             "results": results,
             "accepted_residuals": [
-                "Exact preflight does not perform fuzzy display-name matching.",
+                (
+                    "Display-name matching compares case-folded alphanumerics only, so it "
+                    "ignores case, spacing, and punctuation; it performs no approximate/fuzzy "
+                    "matching and a display-name-only match is not proof of the same account."
+                ),
                 "Exact preflight does not prove cross-platform creator identity.",
                 "Exact preflight does not prove discovery search quality.",
                 "Exact preflight does not refresh silver metrics or mutate capture outputs.",
@@ -193,11 +199,12 @@ def _registry_identity_keys(match: Mapping[str, Any]) -> list[tuple[str, str]]:
         (f"profile_url:{_normalize_url(match['public_profile_url'])}", "public_profile_url"),
     ]
     display_name = _optional_str(match.get("public_display_name_or_none"))
-    if display_name:
+    normalized_display_name = _normalize_display_name(display_name) if display_name else ""
+    if normalized_display_name:
         keys.append(
             (
-                f"platform_display_name:{platform}:{_normalize_display_name(display_name)}",
-                "same_platform_exact_display_name",
+                f"platform_display_name:{platform}:{normalized_display_name}",
+                _DISPLAY_NAME_MATCH_REASON,
             )
         )
     platform_public_id = _optional_str(match.get("platform_public_account_id_or_none"))
@@ -330,11 +337,12 @@ def _normalize_candidate(candidate: Mapping[str, Any], index: int) -> dict[str, 
     if platform:
         identity_keys.extend((f"platform_handle:{platform}:{handle}", "same_platform_public_handle") for handle in handles)
         display_name = _optional_str(candidate.get("display_name_or_none"))
-        if display_name:
+        normalized_display_name = _normalize_display_name(display_name) if display_name else ""
+        if normalized_display_name:
             identity_keys.append(
                 (
-                    f"platform_display_name:{platform}:{_normalize_display_name(display_name)}",
-                    "same_platform_exact_display_name",
+                    f"platform_display_name:{platform}:{normalized_display_name}",
+                    _DISPLAY_NAME_MATCH_REASON,
                 )
             )
     elif handles:
@@ -426,9 +434,17 @@ def _build_candidate_result(
     else:
         decision = "new_candidate"
 
+    match_reasons = sorted(
+        {
+            str(reason)
+            for match in matches
+            for reason in match.get("match_reasons", [])
+        }
+    )
     action_status, allowed_next_actions, action_blockers = _action_disposition(
         decision=decision,
         intended_action=str(candidate["intended_action"]),
+        match_reasons=match_reasons,
     )
     return {
         "candidate_id": candidate["candidate_id"],
@@ -446,12 +462,23 @@ def _build_candidate_result(
     }
 
 
-def _action_disposition(*, decision: str, intended_action: str) -> tuple[str, list[str], list[str]]:
+def _action_disposition(
+    *,
+    decision: str,
+    intended_action: str,
+    match_reasons: Sequence[str],
+) -> tuple[str, list[str], list[str]]:
+    display_name_only_match = (
+        decision == "existing_match"
+        and set(match_reasons) == {_DISPLAY_NAME_MATCH_REASON}
+    )
     if decision == "invalid_candidate":
         return "blocked", ["fix_candidate_input"], ["invalid_candidate"]
     if decision == "ambiguous_match":
         return "blocked", ["resolve_identity"], ["ambiguous_match"]
     if intended_action == "classify":
+        if display_name_only_match:
+            return "allowed", ["resolve_identity_if_same_display_name"], []
         return "allowed", ["update_existing" if decision == "existing_match" else "new_capture"], []
     if intended_action == "new_capture":
         if decision == "new_candidate":
@@ -459,6 +486,12 @@ def _action_disposition(*, decision: str, intended_action: str) -> tuple[str, li
         return "blocked", ["update_existing", "resolve_identity_if_not_same"], ["new_capture_existing_match"]
     if intended_action == "update_existing":
         if decision == "existing_match":
+            if display_name_only_match:
+                return (
+                    "blocked",
+                    ["resolve_identity"],
+                    ["display_name_only_match_insufficient_for_update"],
+                )
             return "allowed", ["update_existing"], []
         return "blocked", ["new_capture", "resolve_identity"], ["update_existing_without_match"]
     raise ValueError(f"unsupported intended_action: {intended_action}")
@@ -524,10 +557,16 @@ def _normalize_handle(value: Any) -> str:
 
 
 def _normalize_display_name(value: str) -> str:
-    normalized = re.sub(r"[^a-z0-9]+", "", value.casefold())
-    if not normalized:
-        raise ValueError("display_name_or_none must contain a letter or number")
-    return normalized
+    """Case-folded alphanumeric display-name key; empty when the name carries none.
+
+    Unicode-aware deliberately: an ASCII-only character class maps every
+    CJK, Cyrillic, or emoji-only display name to the empty string and shortens
+    accented Latin names into a more collision-prone stem. An empty result
+    means "no display-name identity signal", so the caller omits the key
+    rather than raising: one such registry row must not break the preflight
+    for every candidate on every platform.
+    """
+    return "".join(char for char in value.casefold() if char.isalnum())
 
 
 def _looks_like_url(value: str) -> bool:

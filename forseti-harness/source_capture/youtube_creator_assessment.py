@@ -6,7 +6,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping
-from urllib.parse import urlparse
 
 from source_capture.models import (
     CaptureModeCategory,
@@ -55,12 +54,7 @@ def write_youtube_creator_assessment_packet(
         raise ValueError("YouTube assessment identity.handle is not canonical")
     display_name = _required_text(identity.get("display_name"), "identity.display_name")
     profile_url = _required_text(identity.get("profile_url"), "identity.profile_url")
-    parsed = urlparse(profile_url)
-    if (
-        parsed.scheme != "https"
-        or (parsed.hostname or "").casefold() not in {"youtube.com", "www.youtube.com"}
-        or parsed.path.rstrip("/").casefold() != f"/@{handle}".casefold()
-    ):
+    if profile_url.casefold() != f"https://www.youtube.com/@{handle}".casefold():
         raise ValueError("YouTube assessment identity.profile_url must bind the observed handle")
 
     posture = _mapping(assessment.get("session_posture"), "session_posture")
