@@ -203,8 +203,9 @@ Query shape:
 - On a gate: STOP the sweep, bank everything already gathered, and ping the
   owner to clear the challenge. The agent never solves it.
 
-Admission gate per find (adds are effectively permanent — `--roster` captures
-every tracked subreddit forever, and there is no paused capture state yet):
+Admission gate per find (an add costs one request per weekly pass until it is
+retired; `discovery_state: retired` drops a subreddit from `capture_roster`
+without deleting its history):
 
 - **Add** on clear beauty-topic fit plus a visible band. No follower floor —
   the density finding says small subreddits punch above their size.
@@ -237,10 +238,9 @@ automatically because the runner reads `--roster` from the fold.
 - Roster expansion beyond 100: the owner set the first target at 100
   (reached 2026-07-22, 38 -> 100 across two sweeps). Further growth uses
   section F unchanged; it is owner-paced and bounded, never a crawler.
-- Roster pruning / a paused capture posture: no vocabulary value exists for
-  "tracked but not captured", so a dropped subreddit today means living with
-  its weekly request. Trigger to add one: the first prune pass that wants to
-  keep a subreddit's history while stopping its capture.
+- Roster pruning: no longer deferred. The trigger fired on the 2026-07-22
+  prune, and `discovery_state: retired` plus `capture_roster` landed with it
+  (21 rows retired as of 2026-07-30). See the admission gate in section F.
 
 ## Verification bound to implementation
 

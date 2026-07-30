@@ -294,7 +294,14 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
         # Pin bumped: corrected the retained-copy docstring to distinguish the
         # byte-identical candidate-intake copy from the divergent screening copy
         # (post-merge review W6-1); docstring-only, not output-shaping.
-        "ff04f0767731be27f81ccf1e420fe9d51c7c0b510173e9af73e53d071fd45675",
+        # Pin bumped: added canonical_www_reddit_thread_url for the new-Reddit
+        # listing surface, after old.reddit stopped serving this client
+        # (2026-07-30). Purely additive -- no existing line changed and the new
+        # function has exactly one caller, the new www projection, which carries
+        # its own parser version and has no committed packets. No adopting
+        # surface can emit a different byte for the same committed raw, so their
+        # version tokens are deliberately NOT bumped; not output-shaping.
+        "6a689ccf696712dc28a39009e97eaf3fe31824325d8b5804a79c7a33862a7910",
     ),
     "source_capture/transcript/asr_packet.py": (
         ("transcriber_policy envelope (run_asr_transcript_catchup)", "TRANSCRIPT_ASR_RECORD_SCHEMA_VERSION (record-shape token; weak-envelope residual closed)"),

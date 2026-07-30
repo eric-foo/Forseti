@@ -409,6 +409,51 @@ def test_roster_change_may_upgrade_capture_state_but_not_downgrade(lake: DataLak
 
 
 # --------------------------------------------------------------------------
+# Replay order independence
+#
+# The writer records row effects against the fold as it stood at write time,
+# but the fold replays every roster change before every observation.  A record
+# written later therefore replays earlier, so a replayed effect must not be
+# applied as an absolute assignment.
+# --------------------------------------------------------------------------
+
+
+def test_thread_upgrade_survives_replay_of_an_earlier_observation(lake: DataLakeRoot) -> None:
+    """A deep-dive upgrade written after a grid packet must still fold."""
+    append_roster_change(lake, subreddit="newsub", change_kind="add", actor="operator")
+    _observe(lake, "newsub", pointer="F:/lake/raw/hhh/manifest.json", observed_at="2026-07-23")
+    assert fold_subreddit(lake, "newsub")["capture_state"] == "grid_packets_recorded"
+
+    append_roster_change(
+        lake,
+        subreddit="newsub",
+        changes={"capture_state": "thread_packets_recorded"},
+        actor="operator",
+    )
+    row = fold_subreddit(lake, "newsub")
+    assert row["capture_state"] == "thread_packets_recorded"
+    assert len(row["observations"]) == 1
+
+
+def test_replayed_observation_does_not_revert_a_newer_roster_status(lake: DataLakeRoot) -> None:
+    """An older observation must not walk a roster-authored status backwards."""
+    append_roster_change(lake, subreddit="newsub", change_kind="add", actor="operator")
+    _observe(lake, "newsub", pointer="F:/lake/raw/iii/manifest.json", observed_at="2026-07-01")
+    assert fold_subreddit(lake, "newsub")["status"] == "active"
+
+    append_roster_change(
+        lake,
+        subreddit="newsub",
+        changes={"status": "private", "status_observed_at": "2026-07-20"},
+        actor="operator",
+    )
+    row = fold_subreddit(lake, "newsub")
+    assert row["status"] == "private"
+    assert row["status_observed_at"] == "2026-07-20"
+    assert [entry["field"] for entry in row["descriptive_changes"]] == []
+
+
+# --------------------------------------------------------------------------
 # Integrity
 # --------------------------------------------------------------------------
 

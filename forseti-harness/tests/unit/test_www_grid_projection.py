@@ -1,0 +1,206 @@
+"""New-Reddit (www) listing projection.
+
+The inline fixture reproduces the shapes measured on real captures 2026-07-31,
+each of which broke a naive parser:
+
+- an image post whose ``content-href`` is the MEDIA url while ``permalink``
+  holds the thread (preferring content-href dropped 64 of 102 real rows);
+- an ad element, which carries no thread permalink and must stay out of both
+  the row set and the thing count;
+- the "Stickied post" icon, which new Reddit renders inside EVERY post and
+  hides with a ``hidden`` class, so presence of the token is not the signal;
+- the venue envelope, which is absent from the serialized DOM and read from
+  visible text where the member and online counts abut with no separator.
+"""
+
+from __future__ import annotations
+
+import pytest
+
+from capture_spine.reddit_subreddit_grid.grid_projection import grid_view_from_record
+from capture_spine.reddit_subreddit_grid.www_grid_projection import (
+    WWW_GRID_PROJECTION_PARSER_VERSION,
+    build_www_grid_content_record,
+    project_www_reddit_grid,
+)
+
+LISTING_URL = "https://www.reddit.com/r/testsub/top/?t=week"
+
+# Every post carries the hidden stickied icon, exactly as the real surface does.
+_HIDDEN_STICKY = (
+    '<rpl-tooltip content="Stickied post">'
+    '<svg aria-label="Stickied post" class="hidden stickied-status shrink-0"></svg>'
+    "</rpl-tooltip>"
+)
+_SHOWN_STICKY = (
+    '<rpl-tooltip content="Stickied post">'
+    '<svg aria-label="Stickied post" class="stickied-status shrink-0"></svg>'
+    "</rpl-tooltip>"
+)
+
+
+def _post(
+    *,
+    slug: str,
+    title: str,
+    score: str,
+    comments: str,
+    content_href: str | None = None,
+    flair: str | None = None,
+    sticky: bool = False,
+) -> str:
+    permalink = f"/r/testsub/comments/{slug}/{slug}_title/"
+    href = content_href or f"https://www.reddit.com{permalink}"
+    flair_markup = (
+        f'<shreddit-post-flair><a href="/r/testsub/?f=flair_name%3A%22{flair}%22">'
+        f"<span>{flair}</span></a></shreddit-post-flair>"
+        if flair
+        else ""
+    )
+    return (
+        f'<shreddit-post permalink="{permalink}" content-href="{href}"'
+        f' post-title="{title}" score="{score}" comment-count="{comments}"'
+        f' created-timestamp="2026-07-24T01:11:13.173000+0000"'
+        f' subreddit-prefixed-name="r/testsub" id="t3_{slug}">'
+        f"{_SHOWN_STICKY if sticky else _HIDDEN_STICKY}"
+        f"{flair_markup}"
+        f"<shreddit-post-overflow-menu></shreddit-post-overflow-menu>"
+        f"</shreddit-post>"
+    )
+
+
+DOM = (
+    "<html><body>"
+    + _post(slug="aaa", title="Text post", score="893", comments="285", flair="Layering")
+    + _post(
+        slug="bbb",
+        title="Image post",
+        score="258",
+        comments="173",
+        content_href="https://i.redd.it/m57ff44vggfh1.jpeg",
+    )
+    + _post(
+        slug="ccc",
+        title="Gallery post",
+        score="14",
+        comments="2",
+        content_href="https://www.reddit.com/gallery/1v5nfk2",
+    )
+    + '<shreddit-ad-post content-href="https://samsung.com" post-title="Ad"></shreddit-ad-post>'
+    + "</body></html>"
+)
+
+VISIBLE_TEXT = "Created Mar 3, 2015 Public 701K7.4K R/TESTSUB RULES"
+
+
+def _record():
+    return build_www_grid_content_record(
+        rendered_dom=DOM, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
+    )
+
+
+def test_permalink_wins_over_media_content_href() -> None:
+    rows = _record()["grid_view"]["thread_rows"]
+    urls = [row["thread_url"] for row in rows]
+    assert urls == [
+        "https://www.reddit.com/r/testsub/comments/aaa/aaa_title/",
+        "https://www.reddit.com/r/testsub/comments/bbb/bbb_title/",
+        "https://www.reddit.com/r/testsub/comments/ccc/ccc_title/",
+    ]
+
+
+def test_ads_are_excluded_from_rows_and_thing_count() -> None:
+    """An ad in either count would trip the caller's row-count anomaly guard."""
+    view = _record()["grid_view"]
+    assert view["listing_thing_count_or_none"] == 3
+    assert view["listing_permalink_count_or_none"] == 3
+    assert len(view["thread_rows"]) == 3
+    assert not any(row["promoted"] for row in view["thread_rows"])
+
+
+def test_hidden_sticky_icon_does_not_mark_rows_stickied() -> None:
+    assert not any(row["stickied"] for row in _record()["grid_view"]["thread_rows"])
+
+
+def test_shown_sticky_icon_marks_only_that_row() -> None:
+    dom = (
+        "<html><body>"
+        + _post(slug="aaa", title="Normal", score="10", comments="5")
+        + _post(slug="bbb", title="Pinned", score="1", comments="0", sticky=True)
+        + "</body></html>"
+    )
+    rows = build_www_grid_content_record(
+        rendered_dom=dom, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
+    )["grid_view"]["thread_rows"]
+    assert [row["stickied"] for row in rows] == [False, True]
+
+
+def test_all_rows_stickied_is_treated_as_an_inverted_signal() -> None:
+    """Class-coupled detection failing open would silently empty the dive queue."""
+    dom = (
+        "<html><body>"
+        + _post(slug="aaa", title="One", score="10", comments="5", sticky=True)
+        + _post(slug="bbb", title="Two", score="9", comments="4", sticky=True)
+        + "</body></html>"
+    )
+    rows = build_www_grid_content_record(
+        rendered_dom=dom, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
+    )["grid_view"]["thread_rows"]
+    assert not any(row["stickied"] for row in rows)
+
+
+def test_venue_envelope_reads_abutting_counts_from_visible_text() -> None:
+    view = _record()["grid_view"]
+    assert view["visible_subscriber_count_or_none"] == "701K"
+    assert view["visible_active_user_count_or_none"] == "7.4K"
+    assert view["created_utc_or_none"] == "2015-03-03"
+    assert view["visible_volume_signal_absent_reason_or_none"] is None
+
+
+def test_absent_venue_envelope_carries_an_absent_reason() -> None:
+    view = build_www_grid_content_record(
+        rendered_dom=DOM, visible_text="no envelope here", subreddit="testsub", listing_url=LISTING_URL
+    )["grid_view"]
+    assert view["visible_subscriber_count_or_none"] is None
+    assert (
+        view["visible_volume_signal_absent_reason_or_none"]
+        == "visible_volume_not_present_on_declared_surface"
+    )
+
+
+def test_flair_and_timestamp_are_projected() -> None:
+    rows = _record()["grid_view"]["thread_rows"]
+    assert rows[0]["flair_or_none"] == "Layering"
+    assert rows[1]["flair_or_none"] is None
+    # 2026-07-24T01:11:13.173Z, cross-checked against calendar.timegm rather
+    # than against the parser's own output.
+    assert rows[0]["timestamp_utc_ms_or_none"] == "1784855473173"
+
+
+def test_record_reuses_the_shared_kind_and_folds_through_the_materializer_path() -> None:
+    """A second record kind would force changes down the whole consumer chain."""
+    record = _record()
+    assert record["parser_version"] == WWW_GRID_PROJECTION_PARSER_VERSION
+    view = grid_view_from_record(record)
+    assert view.subreddit == "testsub"
+    assert len(view.thread_rows) == 3
+
+
+def test_zero_rows_without_an_empty_marker_is_not_a_verified_empty_listing() -> None:
+    """A block or unhydrated shell must not read as an authentic empty listing."""
+    view = project_www_reddit_grid(
+        rendered_dom="<html><body>blocked</body></html>",
+        visible_text="You've been blocked by network security.",
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )
+    assert view.thread_rows == ()
+    assert view.verified_empty_listing is False
+
+
+@pytest.mark.parametrize("name", ["", "has space", "../escape"])
+def test_invalid_subreddit_fails_closed(name: str) -> None:
+    with pytest.raises(Exception):
+        project_www_reddit_grid(
+            rendered_dom=DOM, visible_text=VISIBLE_TEXT, subreddit=name, listing_url=LISTING_URL
+        )

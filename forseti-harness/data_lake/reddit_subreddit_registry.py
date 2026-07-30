@@ -277,6 +277,11 @@ def _validate_field_values(field: str, value: Any) -> Any:
 
 
 def _apply_capture_state(row: dict[str, Any], candidate: str) -> None:
+    """Assign capture_state for an operator-authored roster change.
+
+    A roster change naming a lower state is an operator error worth refusing,
+    so this stays strict.  Replayed observation effects use the floor below.
+    """
     current = row.get("capture_state", "no_packet_recorded")
     if CAPTURE_STATE_RANK[candidate] < CAPTURE_STATE_RANK.get(current, 0):
         raise RedditSubredditRegistryLakeError(
@@ -284,6 +289,23 @@ def _apply_capture_state(row: dict[str, Any], candidate: str) -> None:
             f"capture_state may not downgrade {current!r} -> {candidate!r}",
         )
     row["capture_state"] = candidate
+
+
+def _raise_capture_state_floor(row: dict[str, Any], candidate: str) -> None:
+    """Apply an observation's capture_state effect as a floor, never a ceiling.
+
+    The writer records this effect against the fold as it stood at write time,
+    and the fold replays roster changes before observations regardless of which
+    was written first.  A thread-driven roster upgrade written after a packet's
+    observation therefore replays first, and assigning the recorded value would
+    drive the row backwards on a state that is defined monotonic.  The effect
+    only ever asserts "at least this much capture exists for this packet", so a
+    floor is its real meaning; a strict assignment made the fold refuse to read
+    at all (68 backfilled upgrades, 46 subreddits, 2026-07-30).
+    """
+    current = row.get("capture_state", "no_packet_recorded")
+    if CAPTURE_STATE_RANK[candidate] > CAPTURE_STATE_RANK.get(current, 0):
+        row["capture_state"] = candidate
 
 
 def should_apply_status_observation(*, row: Mapping[str, Any], observed_at: str) -> bool:
@@ -441,7 +463,14 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
 
     effects = record.get("row_effects", {})
     status = effects.get("status")
-    if status is not None:
+    # Re-evaluate the two-speed rule at replay time for the same reason the
+    # capture_state floor exists: the recorded decision was made against the
+    # fold at write time, and a roster change written later replays earlier.
+    # Applying it unconditionally would let an older observation revert a newer
+    # roster-authored status and append a spurious descriptive_changes entry.
+    if status is not None and should_apply_status_observation(
+        row=row, observed_at=observation["observed_at"]
+    ):
         if row.get("status") != status.get("status"):
             row.setdefault("descriptive_changes", []).append(
                 {
@@ -453,7 +482,7 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             row["status"] = status["status"]
         row["status_observed_at"] = status["status_observed_at"]
     if effects.get("capture_state") is not None:
-        _apply_capture_state(row, effects["capture_state"])
+        _raise_capture_state_floor(row, effects["capture_state"])
     register_pointers = row.setdefault("register_pointers", [])
     if pointer not in register_pointers:
         register_pointers.append(pointer)
