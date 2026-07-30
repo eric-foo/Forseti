@@ -350,6 +350,31 @@ def test_unknown_variant_suffix_fails_subject_identity_binding() -> None:
         validate_settlement(payload)
 
 
+def test_punctuation_only_identity_token_fails_closed() -> None:
+    entry = _entry(subject_entity_key="subject|product|?")
+    payload = _payload(entry)
+    payload["subject"]["entity_key"] = "subject|product|?"
+
+    with pytest.raises(ContractError, match="subject_entity_key_unbound"):
+        validate_settlement(payload)
+
+
+@pytest.mark.parametrize(
+    "placeholder",
+    ["ｕｎｋｎｏｗｎ", "not-set", "todo"],
+)
+def test_placeholder_identity_variants_fail_closed(
+    placeholder: str,
+) -> None:
+    entity_key = f"subject|product|{placeholder}"
+    entry = _entry(subject_entity_key=entity_key)
+    payload = _payload(entry)
+    payload["subject"]["entity_key"] = entity_key
+
+    with pytest.raises(ContractError, match="subject_entity_key_unbound"):
+        validate_settlement(payload)
+
+
 def test_invented_surface_class_cannot_create_independence() -> None:
     entry = _entry()
     entry["sources"][0]["surface_class"] = "invented_surface"
@@ -429,6 +454,35 @@ def test_receipt_carries_the_value_action_and_exact_price_basis() -> None:
     assert result["subject_size"] == 70.0
     assert result["competitor_floor"] == 49.0
     assert result["competitor_size"] == 50.0
+    assert result["source_ids"] == ["comment-1", "comment-2", "serp-1"]
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "claimed_multiple"),
+    [
+        ("subject_price", float("inf"), float("inf")),
+        ("competitor_size", float("inf"), 1.0),
+    ],
+)
+def test_nonfinite_price_values_fail_closed(
+    field: str,
+    value: float,
+    claimed_multiple: float,
+) -> None:
+    price = {
+        "currency": "USD",
+        "subject_price": 360.0,
+        "subject_size": 70.0,
+        "competitor_floor": 49.0,
+        "competitor_size": 50.0,
+        "subject_multiple": claimed_multiple,
+        "comparison_basis": "like_for_like",
+        "floor_status": "cross_retailer_verified",
+    }
+    price[field] = value
+
+    with pytest.raises(ContractError, match="price_value_invalid"):
+        validate_settlement(_payload(_entry(price=price)))
 
 
 def test_wrong_price_multiple_fails_seal() -> None:
@@ -681,6 +735,38 @@ def test_boolean_comment_score_is_not_a_valid_engagement_count() -> None:
         validate_settlement(_payload(entry))
 
 
+def test_json_safe_integer_engagement_boundaries_seal() -> None:
+    safe_max = 9_007_199_254_740_991
+    entry = _entry()
+    entry["sources"][1]["engagement"]["score"] = -safe_max
+    entry["sources"][2]["engagement"]["score"] = safe_max
+    entry["sources"][2]["engagement"]["rank_in_thread"] = safe_max
+
+    receipt = validate_settlement(_payload(entry))
+
+    assert receipt["results"][0]["max_comment_score"] == safe_max
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "violation"),
+    [
+        ("score", 9_007_199_254_740_992, "comment_score_invalid"),
+        ("score", -9_007_199_254_740_992, "comment_score_invalid"),
+        ("rank_in_thread", 9_007_199_254_740_992, "comment_rank_invalid"),
+    ],
+)
+def test_engagement_beyond_json_safe_integer_fails_closed(
+    field: str,
+    value: int,
+    violation: str,
+) -> None:
+    entry = _entry()
+    entry["sources"][1]["engagement"][field] = value
+
+    with pytest.raises(ContractError, match=violation):
+        validate_settlement(_payload(entry))
+
+
 def test_automatic_validation_probe_requires_its_pre_probe_license() -> None:
     entry = _entry(
         comments=[_source("comment-1", author_id="author-1", rank_in_thread=1)],
@@ -813,6 +899,77 @@ def test_declared_license_without_prior_receipt_fails_closed() -> None:
             "licensing_action": "validate_once",
         }
     ]
+
+    with pytest.raises(
+        ContractError,
+        match="automatic_validation_prior_receipt_missing",
+    ):
+        validate_settlement(payload)
+
+
+def test_tampered_prior_receipt_summary_cannot_license_a_probe() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=4)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+    prior_receipt = _validate_once_receipt()
+    prior_receipt["summary"]["validate_once_names"] = []
+    payload["prior_decision_receipts"] = [prior_receipt]
+
+    with pytest.raises(
+        ContractError,
+        match="prior_decision_receipt_summary_mismatch",
+    ):
+        validate_settlement(payload)
+
+
+def test_boolean_prior_receipt_counts_cannot_license_a_probe() -> None:
+    entry = _entry(
+        comments=[_source("comment-1", author_id="author-1", rank_in_thread=4)],
+        attempts=1,
+        action="parked_after_no_confirmation",
+        confidence="weak",
+        decision_ready=False,
+    )
+    payload = _payload(
+        entry,
+        summary=_summary(
+            decision_ready=[],
+            parked_names=["Example Product"],
+        ),
+    )
+    payload["return_probes"] = [
+        {
+            "job_id": "return-1",
+            "entry_entity_key": "brand|product|edp",
+            "partial": False,
+            "automatic_validation": True,
+            "licensing_action": "validate_once",
+        }
+    ]
+    prior_receipt = _validate_once_receipt()
+    prior_receipt["results"][0]["first_hand_authors"] = True
+    prior_receipt["results"][0]["best_comment_rank"] = True
+    payload["prior_decision_receipts"] = [prior_receipt]
 
     with pytest.raises(
         ContractError,
