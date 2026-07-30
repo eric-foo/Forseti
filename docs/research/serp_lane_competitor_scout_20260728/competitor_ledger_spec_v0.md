@@ -315,6 +315,112 @@ attaches to a finding-grade entry. Specimen: Ole Henriksen promoted at
 3-author/1-venue (r/Sephora), upgraded to author- and venue-diverse by
 the return-leg capture (r/MakeupAddiction + Substack editorial).
 
+**Phase-2 decision contract (owner-ratified 2026-07-30).** A ledger rung
+classifies evidence; it does not by itself license a decision. Before a
+phase-2 settlement can seal, every promoted source binds both the same
+exact competitor product and the same exact subject product (brand,
+product, variant/concentration where material). Unbound identities,
+base/variant mismatches, duplicate aliases for one product identity, and
+surface classes outside the contract allowlist stay visible and cannot
+enter the decision-ready set.
+
+Native comments carry two separate reads:
+
+- **corroboration** — distinct first-hand authors; repeated comments by
+  one author count once. Two authors are the decision-use floor; the
+  STRONG/STRONGEST grades above remain unchanged.
+- **engagement** — raw score plus rank inside its own thread. Engagement
+  prioritises what to validate; it never substitutes for corroboration.
+  A popular non-stance or secondhand comment contributes no first-hand
+  support and cannot lend its rank to a different product comment.
+
+Weak-signal routing is bounded without adding a ledger rung. One
+first-hand author whose product comment ranks first in its thread earns
+`validate_once`; a lower-ranked or secondhand singleton is
+`watch_for_new_source`. If the one automatic validation attempt adds no
+independent support, the entry becomes
+`parked_after_no_confirmation`. Only genuinely new independent evidence
+reopens it. Every return probe names its ledger entry by exact entity key,
+and the seal rejects a second automatic probe or an attempt count that
+does not match the named probes.
+
+The executable seal is
+`forseti-harness/runners/serp_phase2_decision_contract.py`; its focused
+contract is pinned by
+`forseti-harness/tests/unit/test_serp_phase2_decision_contract.py`.
+It also recomputes every J5 subject multiple from the exact price and
+size values, requires cross-variant/concentration comparisons and weak
+floor provenance to be labelled, names every partial return probe, and
+checks the settlement summary against the computed decisions. Weak
+signals cannot emit a value recommendation. A decision-ready response
+must declare `response_kind: add_or_prove_value` and `price_action: none`.
+Its recommended action is not free text: `value_action` must be the
+value-only action paired to its lever (`improve_product`,
+`increase_buying_confidence`, `improve_ownership`, or
+`strengthen_proof`). The seal rejects extra response fields, so arbitrary
+action prose cannot carry a price-cut instruction around that allowlist.
+
+The seal consumes a normalized decision settlement rather than the base
+ledger entry schema below. Its boundary fields are:
+
+```json
+{
+  "schema_version": "serp_phase2_decision_settlement_v0",
+  "subject": {
+    "name": "...",
+    "entity_key": "brand|product|variant"
+  },
+  "entries": [{
+    "name": "...",
+    "entity_key": "brand|product|variant",
+    "subject_entity_key": "brand|product|variant",
+    "rung": "presence|candidate|finding_grade",
+    "sources": [{
+      "source_id": "...",
+      "surface_class": "serp_rendered_snippet|serp_question_layer|serp_result_title|serp_aio|complaint_body|editorial_body|creator_transcript|retail_shelf",
+      "entity_key": "brand|product|variant",
+      "subject_entity_key": "brand|product|variant"
+    }],
+    "automatic_validation_attempts": 0,
+    "decision": {
+      "action": "use_in_decision|validate_once|watch_for_new_source|parked_after_no_confirmation|correct_identity",
+      "confidence": "weak|corroborated|strong|strongest",
+      "decision_ready": true
+    },
+    "value_response": {
+      "response_kind": "add_or_prove_value",
+      "customer_gain": "...",
+      "observed_sacrifice": "...",
+      "value_lever": "product|buying_confidence|ownership|proof",
+      "value_action": "improve_product|increase_buying_confidence|improve_ownership|strengthen_proof",
+      "proof_needed": "...",
+      "price_action": "none"
+    }
+  }],
+  "return_probes": [{
+    "job_id": "...",
+    "entry_entity_key": "brand|product|variant",
+    "automatic_validation": false,
+    "partial": false
+  }],
+  "capture_accounting": {"partial_probes": 0},
+  "summary": {
+    "entry_count": 1,
+    "decision_ready_names": ["..."],
+    "validate_once_names": [],
+    "watch_names": [],
+    "parked_names": [],
+    "identity_correction_names": []
+  }
+}
+```
+
+Complaint-body sources additionally require author, thread, venue,
+first-hand posture, stance-bearing status, score (or an unavailable
+reason), and within-thread rank. Decision-ready entries additionally
+require customer gain, observed sacrifice, proof needed, value lever,
+its matching value action, response kind, and `price_action`.
+
 Social-platform engagement (owner-ratified 2026-07-29, **AMENDED
 2026-07-30**): **raw platform counts are RECORDED, never weighted.**
 The original rule weighted a row against the creator's own recent-grid
@@ -508,9 +614,12 @@ complaint bodies).
 
 **Emits per name:** list price · standing floor (per-unit) · the
 response-trap note (the price where the incumbent cannot match without
-cannibalizing its own bundle/ladder). Entry blueprint: the floor sets
-the entry price; the ranked unmet-value map quantifies the "x more"
-delivered at that price. Two architecture types observed: hidden-floor
+cannibalizing its own bundle/ladder) · customer gain · observed
+sacrifice · proof needed · value lever (product / buying confidence /
+ownership / proof) · its paired value action · `price_action: none`.
+Entry blueprint: the floor sets the entry price;
+the ranked unmet-value map quantifies the "x more" delivered at that
+price. Two architecture types observed: hidden-floor
 (Tower 28: $28 list, refill floor ≈$17/bottle) and ladder (AeroPress:
 $40 -> $200 self-variant spread; attack the middle, not the floor).
 
@@ -642,10 +751,12 @@ specific). Return leg — SERP round 2 after fan-out consolidation:
 per name); (b) evidence-targeted probes authored FROM fan-out
 findings — narrow queries the seed grammar could not have guessed
 (entrant checks like `kulfi vs tower 28`, unmet-value-axis shapes,
-claim-attack follow-ups); every finding-grade rival with NO captured
-head-to-head automatically earns a vs probe here (installed
-2026-07-28; motivating case SF/Ole Henriksen — promoted natively,
-never probed). Targeted probes obey the same typed-ledger
+claim-attack follow-ups). Every **decision-ready** rival with NO
+captured head-to-head automatically earns a vs probe here. A weak
+signal earns an automatic probe only when its decision action is
+`validate_once`, and never after one automatic attempt (tightened
+2026-07-30; the original rule sent every finding-grade rival).
+Targeted probes obey the same typed-ledger
 rules, with one guard: a probed name's own echo in its targeted SERP
 bears no new ladder rung (the query was conditioned on the evidence);
 only third names and the surface's composition are new evidence.

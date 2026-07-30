@@ -818,6 +818,21 @@ pool grows substantially every pass that includes them.
    Trigger to revisit: any extractor defect found that the rolling window
    cannot diagnose.
 
+7. Phase-2 completion is fail-closed on the decision settlement, not on
+   prose completion. Exact subject and competitor identities must agree
+   across allowlisted promoted source classes, and aliases cannot duplicate
+   one product identity. Native comment engagement is recorded separately
+   from independent first-hand corroboration; a weak signal receives at
+   most one automatic validation attempt, named by exact entity key, and no
+   value recommendation. J5 arithmetic is recomputed from exact row values;
+   every decision-ready competitor emits
+   `response_kind: add_or_prove_value`, `price_action: none`, and the
+   value-only action paired to its value lever; free-form action fields
+   are rejected. The settlement summary and named partial probes must
+   reproduce under
+   `forseti-harness/runners/serp_phase2_decision_contract.py` before the
+   durable return may say complete.
+
 ## BLOCKER (partially mitigated 2026-07-28) — read before the next orchestrator run
 
 `megadogfood_orchestrator.py` extracts POST-HOC from `raw/` and must be
