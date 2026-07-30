@@ -153,12 +153,23 @@ that acquisition standard. Deliver applies Smallest Complete Intervention to the
 human artifact after the gate passes, preserving the decisive evidence,
 counter-case, uncertainty, provenance, reversal conditions, and next action.
 
-For current US consumer-beauty Understanding, use the playbook's default
-four-evidence-actor route unless the owner explicitly overrides it: `CO0` plus
-exactly `CO1`, `CO2`, and mandatory `CO3`. The dispatcher is mechanical and is
-not a fifth evidence actor. `CO3` always owns customer/community evidence and
-selected depth; adaptive depth controls how far it continues, never whether the
-actor or customer-understanding job exists.
+Every company Understanding uses this internal Acquire & Seal order: bind the
+question and validate the commission-stage board; run or validly reuse SERP
+Phase 1; feed its typed ledger and queues into the `CO1`-`CO3` specialist
+fan-out; wait for their terminal returns; run SERP Phase 2 from the combined
+findings; then seal. Reddit/community capture is `CO3` fan-out work, not a
+Phase 2 responsibility. A missing or materially blocked Phase 2 result remains
+visible in the existing route, receipt, provenance, and gap fields and forces
+the blocked seal state; a non-material typed Phase 2 limitation stays honestly
+recorded without being promoted into a material blocker. The SERP phase
+labels are lane-local and do not replace the canonical Understanding and
+Problem Framing phase names.
+
+Use the playbook's default four-evidence-actor route unless the owner explicitly
+overrides it: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. The
+dispatcher is mechanical and is not a fifth evidence actor. `CO3` always owns
+customer/community evidence and selected depth; adaptive depth controls how far
+it continues, never whether the actor or customer-understanding job exists.
 
 The normal budget is two turns per phase, not a fake-success cap. A blocked,
 skipped, silently substituted, or incompletely captured required route leaves

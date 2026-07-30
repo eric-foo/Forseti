@@ -26,6 +26,13 @@ intelligence_cycle_contract:
   normal_turns_per_phase: [acquire_and_seal, deliver]
   normal_turn_budget_not_completion_cap: true
   acquisition_gate: sealed_phase_artifact_required_before_deliver
+  company_understanding_acquisition_sequence:
+    - define_question_and_validate_commission_board
+    - serp_phase1_competitor_scout
+    - specialist_fanout_co1_co2_co3
+    - serp_phase2_targeted_return
+    - seal_understanding
+  serp_phase_labels_are_internal_not_cycle_phases: true
   outcome_signals:
     - question_fit
     - evidence_foundation

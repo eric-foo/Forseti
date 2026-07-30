@@ -8,10 +8,10 @@ scope: >
   competitor cycle for a newly bound subject: front-loaded rival-free
   seeds, rolling harvest into a typed competitor ledger, then one merged
   vs+J5 capture queue, ending at a priced ledger plus the trigger-thread
-  queue that phase 2 consumes.
+  and mediator queues that feed the specialist fan-out.
 use_when:
-  - A subject has been bound for the Understanding cycle and the scout
-    pass runs before specialist fan-out.
+  - A company Understanding question and commission-stage board are bound
+    and the scout pass runs before specialist fan-out.
 stale_if:
   - The default boards in serp_lane_v0.md move past v2.2 (2026-07-30,
     tournament + platform-door withdrawal + noise-floor re-judgment)
@@ -49,7 +49,7 @@ price — instead of letting each specialist guess.
 **Done looks like:** a ledger whose names came from captured surfaces
 rather than from anyone's prior, each carrying its ladder rung and
 provenance; a price line for the subject and the selected names; and a
-trigger-thread queue handed to the Reddit lane. This is the executor
+trigger-thread queue handed to the `CO3` Reddit/community job. This is the executor
 target and a review axis-to-attack, not a review pass bar.
 
 ## Required reads (pointer-first; the spec owns the method)
@@ -106,9 +106,9 @@ target and a review axis-to-attack, not a review pass bar.
    Front-load no faster than the current owner cadence, ≤10 captures.
 
    The `vs {rival}` probe is NOT a seed: its rival arrives from this
-   phase's own rolling harvest (Channel 0–2), and again after phase 2 —
-   the Reddit lane's complaint-borne names (Channel 3) refresh the vs
-   queue for the return leg. Two fill moments, both from harvest.
+   phase's own rolling harvest (Channel 0–2), and again in Phase 2 after
+   fan-out — `CO3`'s complaint-borne names (Channel 3) refresh the vs
+   queue for the targeted return. Two fill moments, both from harvest.
 2. **Harvest — rolling, never queued behind captures.** Harvest is local
    compute over extractions and costs no egress; run the emitter as
    packets land so the ledger has names as early as possible.
@@ -124,12 +124,15 @@ target and a review axis-to-attack, not a review pass bar.
    dupe cross; J2 exit-door classification (armed / retention /
    technique-moat); J3 tag where rendered snippets may diverge from
    native verdicts. J4 is owner-named only.
-5. **Emit the handoff to phase 2:** the trigger-thread queue (contrarian-
-   titled, claim-attack, and vs threads, with canonical URLs captured at
-   emission), the mediator list, and the priced ledger. Phase 2 runs via
-   `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`;
-   the Reddit lane hits a different host and may start as soon as the
-   queue exists.
+5. **Emit the specialist fan-out inputs:** the trigger-thread queue
+   (contrarian-titled, claim-attack, and vs threads, with canonical URLs
+   captured at emission), the mediator list, the grid-capture queue, and the
+   priced ledger. `CO3` consumes the Reddit/community queues during fan-out;
+   because Reddit uses a different host, that role may begin as soon as the
+   fan-out is dispatched. Phase 2 does not begin here. After every specialist
+   terminal return, `CO0` invokes
+   `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`
+   with the combined findings.
 
 ## If unsure, proceed like this
 
@@ -191,7 +194,7 @@ target and a review axis-to-attack, not a review pass bar.
   response-trap note, source URL class; `architecture`: hidden-floor or
   ladder.
 - `levers`: J1 cross (live / not observed), J2 exit-door class, J3 tags.
-- `trigger_thread_queue`: URLs handed to the Reddit lane.
+- `trigger_thread_queue`: URLs handed to the `CO3` Reddit/community job.
 - `mediators`: outlets and creators (never ledger entries), each with a
   `class` — `professional_creator` / `affiliate_outlet` / `editorial` /
   `brand_owned` / `pending_classification` (uncached names fail visible;
@@ -211,3 +214,10 @@ target and a review axis-to-attack, not a review pass bar.
   the multiplier, never the evidence.
 - `blocks`: count and detail, or `0 blocks in N captures`.
 - `artifacts`: staging paths written.
+
+The dispatcher maps these existing fields into thin role capsules without a
+new handoff artifact or schema: `CO1` gets the relevant subject,
+competitor-identity, and claim questions; `CO2` gets the priced ledger and
+retail/comparator relevance; `CO3` gets the full ledger,
+`trigger_thread_queue`, `mediators`, `grid_capture_queue`, and cited-substitute
+watch list.
