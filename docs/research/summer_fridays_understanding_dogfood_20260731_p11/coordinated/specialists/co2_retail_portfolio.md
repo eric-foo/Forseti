@@ -117,7 +117,7 @@ jobs_locked:
 evidence_artifacts:
   dependency_inputs:
     - artifact: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-      sha256: 11F501BFEFD51D80B996B31EABD18FCF17057EE550326EF032E0D50E5E2479BB
+      sha256: 42FDF0F8C89FF573B62CE250E94E521A1EAD8B9B6F5142AD0184A63799D0FB80
       observed_state: BLOCKED_TERMINAL; fresh-read company authorization and owned-denominator dependency; CO1-J10 and CO1-J11 are terminal pre-content local-rate-limit blocks with no retailer-authorization delta
     - artifact: "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co1\\owned_authorized_retailers_cloak"
       packet_id: 01KYVYMP9P15VMEWXYTDW226GN
@@ -129,7 +129,7 @@ evidence_artifacts:
       observed_row_count: 52
       limitation: current Shop All rows include bundles, sets, merch, and gift card; this is not a normalized family, inventory, sales, or historical denominator
     - artifact: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/scout_return.md
-      sha256: F61A445CFAD21B8182224128F8AB640C5C02D06122519F189CDC7C2FABE60768
+      sha256: C411B00DF7952A86DE7983F9E3D4138FE249E695719FA31247738AEB73354CE7
       observed_state: COMPLETE; 12 of 12 jobs terminal-complete with comparator, mediator, trigger-grid queue, and three J5 standing-price rows preserved
   retailer_grids:
     - retailer: Sephora

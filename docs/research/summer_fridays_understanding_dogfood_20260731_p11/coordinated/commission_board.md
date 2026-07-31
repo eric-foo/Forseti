@@ -9,6 +9,8 @@ use_when:
 authority_boundary: retrieval_only
 ```
 
+Google search-surface routes in this board are US-parameterized, not physically US-local.
+
 ### 1. Company Commission And Identity Receipt
 
 ```yaml

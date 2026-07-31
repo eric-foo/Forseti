@@ -87,7 +87,7 @@ resume_validation:
     co1_e4_body_sha256: 5e22c42a73c4d7f3496fa891801fe2d03320bd28d3f915576034fa2092ee84b4
     co1_e5_body_sha256: 538ff7b89174cf1eb2f05abb90c87b326a20d3efc33938eb9510f262e113bb1c
     co1_e6_visible_text_sha256: 4eb3138943f2fc4a0eb70bfdf71e5234a6d9a8cc87ae1bdee7cfb21878a7da84
-    co1_e7_phase1_terminal_sha256: f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768
+    co1_e7_phase1_terminal_sha256: c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7
     co1_e8_halted_packet_census: "25 manifests; 10 access_failed; 15 non-access-failed; DuckDuckGo human-verification challenge preserved"
   current_packet_state_after_pending_jobs:
     packet_count: 31
@@ -98,7 +98,7 @@ resume_validation:
     manifest_non_access_failed_count: 21
   dependency_refresh_validation:
     phase1_terminal_status: COMPLETE
-    phase1_terminal_sha256: f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768
+    phase1_terminal_sha256: c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7
     phase1_terminal_bytes: 8033
     phase1_competitor_ledger_sha256: b683b559f33aa4aade4209126e0d10662411aacc99852e79074ef4a949c8255f
     phase1_competitor_ledger_bytes: 13685
@@ -227,7 +227,7 @@ evidence_artifacts:
   - source_id: CO1-E7
     source: P11 Phase 1 terminal return
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/scout_return.md
-    terminal_sha256: f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768
+    terminal_sha256: c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7
     competitor_ledger_sha256: b683b559f33aa4aade4209126e0d10662411aacc99852e79074ef4a949c8255f
     exact_locator: "status COMPLETE; official-door records sourced from p1_02_side_effects and p1_03_bad_for_you"
     limitation: "The official doors are locator-and-snippet discoveries, not captured page bodies or evidence substitutes."
@@ -408,7 +408,7 @@ material_gaps:
   - "Meta Ad Library yielded no source-native cards for the exact page under the captured US-active state; inactive history, other markets, and creator-only branded content remain outside this result."
   - "The final Phase 1 return licensed the Jet Lag Mask Statement and Sustainability official locators, but CO1 captured neither page body; snippet language is not promoted into company finding evidence."
 superseded_block_provenance:
-  - "The interrupted CO1 terminal recorded DISCOVERY_ROUTE_BLOCKED while its Phase 1 dependency was BLOCKED_TERMINAL at SHA f5f5e008a30245b9d5fe63ebd23663cd4f4faf5ff9e4d9b39d3ea4f2fd428299. The final Phase 1 terminal is COMPLETE at SHA f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768; the old dependency block is preserved here but is not a current Phase 1 status."
+  - "The interrupted CO1 terminal recorded DISCOVERY_ROUTE_BLOCKED while its Phase 1 dependency was BLOCKED_TERMINAL at SHA f5f5e008a30245b9d5fe63ebd23663cd4f4faf5ff9e4d9b39d3ea4f2fd428299. The final Phase 1 terminal is COMPLETE at SHA c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7; the old dependency block is preserved here but is not a current Phase 1 status."
 method_and_runtime_source_read_ledger:
   - path: docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
     use: "Amended p11 Acquire & Seal-only commission, resume contract, coldness quarantine, CO1 scope, and terminal contract."

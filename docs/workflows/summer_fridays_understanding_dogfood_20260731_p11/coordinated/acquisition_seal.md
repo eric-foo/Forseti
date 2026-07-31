@@ -55,15 +55,15 @@ phase_acquisition_seal:
   specialist_returns:
     - actor: CO1
       terminal_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-      sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+      sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
       status: BLOCKED_TERMINAL
     - actor: CO2
       terminal_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md
-      sha256: 078e4d96079b0ffe215f91d09a579527de9a9e63b5896832c4ded654b9991aec
+      sha256: b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880
       status: BLOCKED_TERMINAL
     - actor: CO3
       terminal_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
       status: BLOCKED_TERMINAL
   post_phase1_continuation_mode: full
   route_job_accounting:
@@ -104,7 +104,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/scout_return.md
-      terminal_artifact_sha256: f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768
+      terminal_artifact_sha256: c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7
     - route_id: official_retailer_authorization
       phase: co1
       required: true
@@ -118,7 +118,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-      terminal_artifact_sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+      terminal_artifact_sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
     - route_id: google_ads_transparency
       phase: co1
       required: true
@@ -132,7 +132,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-      terminal_artifact_sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+      terminal_artifact_sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
     - route_id: meta_ads_library
       phase: co1
       required: true
@@ -146,7 +146,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-      terminal_artifact_sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+      terminal_artifact_sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
     - route_id: company_core_identity
       phase: co1
       required: true
@@ -160,7 +160,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-      terminal_artifact_sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+      terminal_artifact_sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
     - route_id: retailer_full_pdp
       phase: co2
       required: true
@@ -174,7 +174,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md
-      terminal_artifact_sha256: 078e4d96079b0ffe215f91d09a579527de9a9e63b5896832c4ded654b9991aec
+      terminal_artifact_sha256: b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880
     - route_id: tiktok_shop_trigger_adjudication
       phase: co2
       required: false
@@ -188,7 +188,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md
-      terminal_artifact_sha256: 078e4d96079b0ffe215f91d09a579527de9a9e63b5896832c4ded654b9991aec
+      terminal_artifact_sha256: b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880
     - route_id: reddit_weekly_lake
       phase: co3
       required: true
@@ -202,7 +202,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: reddit_community_scout
       phase: co3
       required: true
@@ -216,7 +216,7 @@ phase_acquisition_seal:
       unrun_job_ids: [J-CO3-02, J-CO3-03]
       unrun_count: 2
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: retailer_review_qa_corpus
       phase: co3
       required: true
@@ -230,7 +230,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: nonreddit_community_adjudication
       phase: co3
       required: false
@@ -244,7 +244,7 @@ phase_acquisition_seal:
       unrun_job_ids: [J-CO3-05]
       unrun_count: 1
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: legacy_phase1_native_trigger_gate
       phase: co3
       required: false
@@ -258,7 +258,7 @@ phase_acquisition_seal:
       unrun_job_ids: [J-CO3-06]
       unrun_count: 1
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: legacy_tiktok_shop_gate
       phase: co3
       required: false
@@ -272,7 +272,7 @@ phase_acquisition_seal:
       unrun_job_ids: [J-CO3-07]
       unrun_count: 1
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: native_tiktok
       phase: co3
       required: true
@@ -296,7 +296,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: native_instagram
       phase: co3
       required: true
@@ -310,7 +310,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: native_youtube
       phase: co3
       required: true
@@ -324,7 +324,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-      terminal_artifact_sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+      terminal_artifact_sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
     - route_id: serp_phase2
       phase: serp_phase2
       required: true
@@ -352,7 +352,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/targeted_return.md
-      terminal_artifact_sha256: dbb56bdee75bdcf9893f3dd402562cb26d4e783c8b3c33900e52fbe00c88a2af
+      terminal_artifact_sha256: e5fc7bb42a96c103328764ca10536fe16fa0fa49f3b1633b556e9313c851d9a7
   serp_phase2_decision_receipt:
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
     sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
@@ -378,22 +378,22 @@ phase_acquisition_seal:
         sha256: 570a540633adf53b199223472614cb56bbcacdd407e9a87affeae436ef0e6128
         invalid_if: [artifact hash changes, authority revision changes, coldness boundary changes]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/commission_board.md
-        sha256: 215557015f18f4914e75a1c31256f621f993bfdc3b03e4395632004ae28135e4
+        sha256: 81a2f3b0a64c5258a2643429f72e4ddbaf4813ae3bc8b0cef60f6fded933ebbf
         invalid_if: [artifact hash changes, bound question changes, commission changes]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/scout_return.md
-        sha256: f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768
+        sha256: c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7
         invalid_if: [artifact hash changes, terminal accounting changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md
-        sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+        sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
         invalid_if: [artifact hash changes, terminal accounting changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md
-        sha256: 078e4d96079b0ffe215f91d09a579527de9a9e63b5896832c4ded654b9991aec
+        sha256: b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880
         invalid_if: [artifact hash changes, authorization set changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md
-        sha256: 0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131
+        sha256: 6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b
         invalid_if: [artifact hash changes, terminal accounting changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/targeted_return.md
-        sha256: dbb56bdee75bdcf9893f3dd402562cb26d4e783c8b3c33900e52fbe00c88a2af
+        sha256: e5fc7bb42a96c103328764ca10536fe16fa0fa49f3b1633b556e9313c851d9a7
         invalid_if: [artifact hash changes, terminal accounting changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
         sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf

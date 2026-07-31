@@ -36,9 +36,9 @@ The bound question remains: “What does current public evidence show about Summ
 
 | Actor | Terminal artifact | SHA256 | Consumed state |
 |---|---|---|---|
-| CO1 | `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md` | `11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb` | `BLOCKED_TERMINAL`; 8 of 11 jobs completed, with legal ownership and the two owned-source doors terminally blocked. |
-| CO2 | `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md` | `078e4d96079b0ffe215f91d09a579527de9a9e63b5896832c4ded654b9991aec` | `BLOCKED_TERMINAL`; all seven planned jobs were already complete and revalidated, with typed retailer-route ceilings preserved. |
-| CO3 | `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md` | `0523946892ee35b516a59d462e48cf37f9bf604ed3cfa2258a94cce42bc63131` | `BLOCKED_TERMINAL`; 7 exhausted Reddit inputs plus 10 native jobs were settled, with 4 native jobs complete and 6 blocked. |
+| CO1 | `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md` | `42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80` | `BLOCKED_TERMINAL`; 8 of 11 jobs completed, with legal ownership and the two owned-source doors terminally blocked. |
+| CO2 | `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md` | `b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880` | `BLOCKED_TERMINAL`; all seven planned jobs were already complete and revalidated, with typed retailer-route ceilings preserved. |
+| CO3 | `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md` | `6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b` | `BLOCKED_TERMINAL`; 7 exhausted Reddit inputs plus 10 native jobs were settled, with 4 native jobs complete and 6 blocked. |
 
 CO0 fresh-read the locators and typed blockers in each return. These specialist artifacts are provenance maps, not substitutes for the preserved source packets.
 

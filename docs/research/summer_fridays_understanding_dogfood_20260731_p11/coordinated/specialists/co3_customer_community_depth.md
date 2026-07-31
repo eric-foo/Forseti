@@ -32,16 +32,16 @@ terminal_reason: >
   route. TikTok Shop did not trigger. Existing retailer/Reddit ceilings remain.
 dependencies_fresh_read:
   phase1_terminal:
-    sha256: f61a445cfad21b8182224128f8ab640c5c02d06122519f189cdc7c2fabe60768
+    sha256: c411b00df7952a86de7983f9e3d4138fe249e695719fa31247738aeb73354ce7
     status: COMPLETE
   phase1_ledger:
     sha256: b683b559f33aa4aade4209126e0d10662411aacc99852e79074ef4a949c8255f
     trigger_thread_queue_count: 7
     grid_capture_queue_count: 10
   co1_terminal:
-    sha256: 11f501bfefd51d80b996b31eabd18fcf17057ee550326ef032e0d50e5e2479bb
+    sha256: 42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80
   co2_terminal:
-    sha256: 078e4d96079b0ffe215f91d09a579527de9a9e63b5896832c4ded654b9991aec
+    sha256: b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880
 preserved_prior_acquisition:
   co3_validation_index_sha256: b9dcafb652e6cba7dde533bfdb3be9178dbfab9f81f35597e16420e3496768e4
   reddit_weekly_read_sha256: 4fe89cd2c0acbc997b132afcb226f0f6c090b27ce789fc233a327ba36b90afc8

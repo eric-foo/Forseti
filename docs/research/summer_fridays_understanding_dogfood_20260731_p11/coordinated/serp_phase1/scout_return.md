@@ -166,7 +166,7 @@ artifacts:
   cost_log: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/cost_log.md
 claim_ceiling:
   - Observed cards are point-in-time rendered surfaces, never prevalence, volume, share, sales, or trend.
-  - US-parameterized Google results are not proof of physical US locality or nationwide availability.
+  - US-parameterized Google results are not physically US-local and do not prove nationwide availability.
   - Reddit and native-social locators are discovery doors only until the authorized specialist preserves native evidence.
   - Google synthesis and snippets are not substitutes for dereferenced owned, retailer, community, or native evidence.
   - Phase 1 performed no native Reddit or social capture and weighted no raw social engagement count.
