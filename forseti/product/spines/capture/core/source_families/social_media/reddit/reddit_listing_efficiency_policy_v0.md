@@ -87,15 +87,36 @@ encode the qualitative gates as keyword weights.
 
 ### 1. Mechanical discussion floor
 
-- Captured listing comments `0–3`: return `no` for the general deep-read queue.
+- Captured listing comments `0–9`: return `no` for the general deep-read queue.
   Preserve the listing for direct commission-specific retrieval.
-- Captured listing comments `4+`: continue to model adjudication.
+- Captured listing comments `10+`: continue to model adjudication.
 - Missing comments: route as missing data; never coerce to zero.
 - Post score—including score `0`—never independently vetoes a thread.
 - Use the freshest available captured counts.
 
 The floor is a budget rule, not a claim that suppressed threads contain no
 useful text. It intentionally accepts occasional poster-only misses.
+
+Raised from `4+` to `10+` by owner decision 2026-08-01, measured against the
+414 already-dived threads rather than argued: dives landing in the 4–9 band
+carried three or more named brands 9% of the time against a 39% corpus
+baseline, and averaged 0.7 brands per thread. A thread that small has not held
+a conversation yet, so a deep read has nothing to read. Applied to a real
+weekly pool the change removes 37% of the review queue and four of 129
+admitted threads, all low priority.
+
+The floor's value is adjudication cost and coverage, not dive quality — the
+ranking already puts admitted threads well above it. Reviewing the top rows per
+venue covers a far larger share of a smaller pool, which shrinks the unseen
+tail that is this policy's real blind spot.
+
+**Do not raise it further without re-measuring.** At `30+` the same corpus loses
+20 of 129 admitted threads including two high-priority ones, and 14 venues fall
+below their dive budget. Underserved-segment problems live in small threads —
+a problem affecting everyone gets 300 comments, a problem affecting an
+overlooked group gets 25 — so a higher floor deletes exactly the niche findings
+this policy exists to surface. Evidence:
+`docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md`.
 
 ### 2. Listing-context sufficiency
 

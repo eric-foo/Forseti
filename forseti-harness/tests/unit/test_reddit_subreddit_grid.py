@@ -734,7 +734,7 @@ def test_weekly_capture_list_output_fails_closed(
     assert not capture_list.exists()
 
 
-def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
+def test_weekly_listing_policy_routes_only_ten_plus_to_model_review() -> None:
     from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
 
     rows = [
@@ -755,8 +755,11 @@ def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
                 ("Opaque head D", 9, 50),
                 ("This product irritated my skin", 3, 40),
                 ("Routine update", 4, 30),
-                ("Opaque tail A", 6, 4),
-                ("Opaque tail B", 7, 3),
+                # 10 is the first admitted count; 9 and below are the floor's
+                # own boundary and must stay out.
+                ("Opaque tail A", 6, 10),
+                ("Opaque tail B", 7, 9),
+                ("Thin thread", 8, 4),
                 ("Zero comments", 200, 0),
             ],
             start=1,
@@ -767,7 +770,7 @@ def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
         rows=rows,
     )
 
-    assert all(row["comments"] >= 4 for row in selected)
+    assert all(row["comments"] >= 10 for row in selected)
     assert len(selected) == 7
     assert all(
         row["selection_reason"] == "comment_floor_cleared" for row in selected
@@ -781,7 +784,7 @@ def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
 
 
 @pytest.mark.parametrize("score", [0, None])
-def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_four_comments(
+def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_ten_comments(
     score: int | None,
 ) -> None:
     from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
@@ -794,13 +797,13 @@ def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_four_commen
             "flair_or_none": None,
             "timestamp_utc_ms_or_none": None,
             "score": score,
-            "comments": 4,
+            "comments": 10,
         }
     ]
 
     (selected,) = _build_listing_review_rows(rows=rows)
     assert selected["score"] == score
-    assert selected["comments"] == 4
+    assert selected["comments"] == 10
     assert selected["listing_context_state"] == "listing_context_present"
 
 

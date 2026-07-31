@@ -35,7 +35,13 @@ from runners._scaffold import exit_on_failure
 
 GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
 LISTING_EFFICIENCY_POLICY_VERSION = "reddit_listing_efficiency_v0"
-GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 3
+# Raised from 3 to 9 (review admits 10+) by owner decision 2026-08-01, on the
+# measured brand-evidence yield of the 414 already-dived threads: of dives that
+# landed in the 4-9 comment band, 9% carried three or more named brands against
+# a 39% corpus baseline, and the band averaged 0.7 brands per thread. A thread
+# that small has not held a conversation yet, so there is nothing to deep-read.
+# See docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md.
+GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 9
 # Page-1 score floor above which a subreddit genuinely overflows one page
 # (top-10 carries 65% of weekly score on the measured distribution; a floor
 # past 50 means real traction ran off the page and the next pass should

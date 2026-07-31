@@ -177,8 +177,10 @@ output to the lake.
   parseable score and comment count. Listing evidence remains preserved whether
   or not a thread is selected.
 - Apply only the stable mechanical floor in code. A fresh visible count of
-  0–3 comments is suppressed from the general deep-dive queue. A fresh visible
-  count of 4+ comments enters model review. A zero or negative score is not a
+  0–9 comments is suppressed from the general deep-dive queue. A fresh visible
+  count of 10+ comments enters model review (raised from 4+ by owner decision
+  2026-08-01 on measured dive yield; the policy owns the rationale and the
+  do-not-raise-further bound). A zero or negative score is not a
   veto, and an absent/unparseable comment or score cell is recorded as
   unparsed, never coerced to zero.
 - Rank review rows within each subreddit by comments descending, then score
@@ -288,8 +290,8 @@ automatically because the runner reads `--roster` from the fold.
   rules (rotating sample selection, anomaly triggers); materializer surface
   stamping for both listings; projection fields (timestamp, stickied, flair)
   against a stored fixture page.
-- Reader policy: verify `0–3` comments are omitted from the model-review queue,
-  exactly four comments enter it, score zero does not veto, listing cues remain
+- Reader policy: verify `0–9` comments are omitted from the model-review queue,
+  exactly ten comments enter it, score zero does not veto, listing cues remain
   non-binding, `capture_slots` stays empty, and `--capture-list-output` fails
   closed before writing.
 - Live dogfood in the implementing session: backfill the six observations via
