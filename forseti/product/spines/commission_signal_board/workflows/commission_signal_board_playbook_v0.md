@@ -211,12 +211,17 @@ the mandatory customer/community job.
    distinct-review-corpus onboarding board -> evidence-selected interpretive and
    Q&A depth. Owned evidence remains canonical identity authority;
     retailer grids are discovery and channel-expression evidence. Resolve
-    Sephora explicitly, then select any officially named, route-admissible
-    retailers that add material evidence; preserve exact typed failure instead
+    Sephora explicitly, then select and attempt at least four
+    company-authorized, target-market, route-admissible third-party retailers
+    when four exist, favoring venues that add distinct material evidence; the
+    company-owned DTC site does not count. When fewer than four qualify, select
+    all that qualify and record `AUTHORIZED_RETAILER_SHORTFALL` with the
+    observed count and reasons; preserve exact typed failure instead
     of inventing a listing or completion credit. Use the common lean baseline,
     preserve full raw material, and retain source-visible retailer-native
-    extensions. When Sephora is officially named and route-complete, include it
-    and make it primary. Keep its typed outcome but use another complete working
+    extensions. When Sephora is officially named and route-complete, include it,
+    count it as one of the four, and make it primary. Keep its typed outcome but
+    use another complete working
     primary when it is blocked, unpinned, or incomplete. A named
    non-duplicative job must justify each expensive interpretive deepening, and
    there is no fixed interpreted-product count. The bounded onboarding board is
@@ -541,7 +546,8 @@ gate above controls whether Deliver may begin.
    evidence remains canonical identity authority. Attempt one common-floor
    baseline PDP for every reconciled exact retailer listing and preserve each
    admitted baseline or typed miss. Apply the prompt's
-    Sephora-primary rule when it is officially named and route-complete, but do
+    Sephora-primary rule when it is officially named and route-complete,
+    counting Sephora as one of the four rather than in addition to them, but do
     not let primary status excuse another selected retailer's baseline. Preserve typed route failures without
    completion credit and retain retailer-native fields when source-visible.
    A typed non-strategic middle-of-curve miss may be sealed as an accepted
