@@ -58,7 +58,7 @@ phase_acquisition_seal:
       status: REUSED_TERMINAL_ALL_PLANNED_JOBS_COMPLETE
     - actor: CO3
       terminal_locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md
-      sha256: 41940832d3e3842044ba36fda5a59ec0710e490f632cf8193d3b1bf5b59493ae
+      sha256: 20e15896e6b147bce06fac3c32bcd37dd32721024d1f0c76e423b4fca392e1d8
       status: BLOCKED_TERMINAL
   post_phase1_continuation_mode: full
   route_job_accounting:
@@ -187,7 +187,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md
-      terminal_artifact_sha256: 41940832d3e3842044ba36fda5a59ec0710e490f632cf8193d3b1bf5b59493ae
+      terminal_artifact_sha256: 20e15896e6b147bce06fac3c32bcd37dd32721024d1f0c76e423b4fca392e1d8
     - route_id: retailer_review_qa_corpus
       phase: co3
       required: true
@@ -215,7 +215,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md
-      terminal_artifact_sha256: 41940832d3e3842044ba36fda5a59ec0710e490f632cf8193d3b1bf5b59493ae
+      terminal_artifact_sha256: 20e15896e6b147bce06fac3c32bcd37dd32721024d1f0c76e423b4fca392e1d8
     - route_id: native_instagram
       phase: co3
       required: true
@@ -278,7 +278,7 @@ phase_acquisition_seal:
         sha256: b76c772fd7227621938516f6ff1b5fa3c94e2f082392d257e7072d6eda23b880
         invalid_if: [artifact hash changes, authorization set changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md
-        sha256: 41940832d3e3842044ba36fda5a59ec0710e490f632cf8193d3b1bf5b59493ae
+        sha256: 20e15896e6b147bce06fac3c32bcd37dd32721024d1f0c76e423b4fca392e1d8
         invalid_if: [artifact hash changes, terminal accounting changes, packet validation fails]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r1/coordinated/serp_phase2/targeted_recovery_return.md
         sha256: f19e295cf58b2457f6fb2b8d93fdffe72dc4056cedb3515e1aee77c45e3a9c74
@@ -287,7 +287,7 @@ phase_acquisition_seal:
         sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
         invalid_if: [artifact hash changes, decision contract fails, lifecycle provenance changes]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/turn_a_acquisition_record.md
-        sha256: 939aa7016fd70c05b2b59e852d89d75ef2fac38f330264b952a1f4716f99dc43
+        sha256: bdc6fd9409e72f2585c6015be66b34b8e15542938136fff9360cd6f6afd31b67
         invalid_if: [artifact hash changes, acquisition adjudication changes, Deliver artifact appears]
 ```
 
@@ -308,4 +308,3 @@ post-seal calibration, comparison to p10, or downstream synthesis.
 - Acquisition record: `docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/turn_a_acquisition_record.md`
 - CO3 recovery return: `docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md`
 - New raw root: `C:\tmp\forseti-summer-fridays-understanding-p11r2-20260801\`
-

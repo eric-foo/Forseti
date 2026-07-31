@@ -120,4 +120,3 @@ global ledger would add a new shared state surface without evidence that it is
 needed. The bounded operating rule is: health-probe one URL, batch same-source
 work so cadence actually applies, stop fan-out on 429 or an access shell, honor
 `Retry-After`, and preserve the block.
-

@@ -125,4 +125,3 @@ item. A passing seal would hide those gaps.
 No company report, synthesis, recommendation, strategy, Problem Framing
 artifact, p10 comparison, Deliver handoff, or other Deliver output was created.
 This acquisition record is not permission to start Deliver.
-
