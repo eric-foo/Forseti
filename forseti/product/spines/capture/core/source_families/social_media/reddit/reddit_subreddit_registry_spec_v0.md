@@ -68,10 +68,37 @@ Each `subreddits[]` row carries:
   `thread_packets_recorded`; grid never downgrades thread).
 - Time series (append-only): `observations[]`, each
   `{ observed_at, subscriber_count_or_none, active_user_count_or_none,
-  source_surface, provenance_pointer, absent_reason_or_none }`.
+  source_surface, provenance_pointer, absent_reason_or_none }`, plus
+  `weekly_visitor_count_or_none` and `weekly_contribution_count_or_none` on the
+  surfaces that state weekly reach. Those two keys are nullable additions with
+  no migration: a surface that does not state weekly reach omits them, and an
+  omitted key equals an explicit null.
 - Provenance: `first_seen_at`, `register_pointers[]`, `source_pointers[]`.
 
 File-level `registry_non_claims` apply to every row; rows do not repeat them.
+
+### Known bad values: www subscriber counts at parser `www-2`
+
+`www.reddit.com` states WEEKLY REACH and never states subscribers. Parser
+`www-2` read the sidebar's two abutting numbers positionally and wrote them into
+`subscriber_count_or_none`. Three observations carry that error and cannot be
+corrected in place, because the lake is append-only and observations dedupe by
+provenance pointer, so a corrected record for the same pointer fails closed:
+
+| subreddit | observed_at | `subscriber_count_or_none` (actually weekly visitors) |
+|---|---|---|
+| `30plusskincare` | 2026-07-31 | `701K` |
+| `fragrance` | 2026-07-31 | `476K` |
+| `newinbeauty` | 2026-07-31 | `34K` |
+
+A reader treating `subscriber_count_or_none` as a subscriber count on a
+`www_reddit_*` surface is off by roughly 3.5x, which matters most for the
+deferred breakout rule that uses the series as its normalizer. Two things limit
+the exposure: those subreddits also carry correct `www-4`+ observations on the
+same date, so the contradiction is visible rather than silent; and from `www-3`
+onward the www projection reports subscriber counts as absent with the reason
+`www_venue_envelope_exposes_weekly_reach_not_subscriber_counts`. The subscriber
+series continues to depend on the `about.json` surface, not on www.
 
 ## Update Semantics (the two-speed rule)
 
