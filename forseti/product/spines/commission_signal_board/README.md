@@ -65,7 +65,13 @@ continue to use the existing standard Sections 1-10 and classifier handoff.
 Future one-company intelligence work is commissioned as a **Forseti
 Intelligence Cycle**, not by an unqualified `Phase 1` or `Phase 2` label. Its
 canonical phases are **Understanding** and **Problem Framing**, in that order.
-Each phase normally uses two completed operator/model turns:
+Each phase has two possible operator/model turns. An owner instruction that
+says **Understanding** or uses historical **Phase A** language without also
+naming **Deliver** commissions **Acquire & Seal only** and stops after the
+seal. Passing the seal makes Deliver eligible but never starts it; Deliver
+requires an explicit current commission or a separately authorized follow-up.
+
+The two possible turns are:
 
 1. **Acquire & Seal** — bind the phase question and intended use, resolve
    canonical source routes before capture, run authorized Scanning/Capture, and
@@ -102,11 +108,11 @@ and customer/community role mapping. `CO3` always owns customer/community and
 selected depth; its depth expands adaptively, but the actor and
 customer-understanding job are not optional.
 
-Two turns are the normal budget, not permission to convert a blocked acquisition
-into apparent completion. The playbook owns the full contract and the six
-non-numeric outcome signals. Historical artifact names containing `phase1` or
-`Phase 1` remain historically accurate provenance and are not executable names
-for a future cycle.
+When both turns are explicitly commissioned, two turns are the normal budget,
+not permission to convert a blocked acquisition into apparent completion. The
+playbook owns the full contract and the six non-numeric outcome signals.
+Historical artifact names containing `phase1` or `Phase 1` remain historically
+accurate provenance and are not executable names for a future cycle.
 
 ## Legacy Non-Controlling Artifacts
 
