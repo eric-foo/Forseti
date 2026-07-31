@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-from harness_utils import hash_file
 from runners.run_phase_acquisition_seal_validation import (
     SEAL_VERSION,
+    _artifact_hash,
     validate_phase_acquisition_seal,
 )
 
@@ -18,7 +18,7 @@ def _artifact(tmp_path: Path, name: str, text: str | None = None) -> dict[str, s
     path = tmp_path / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text or f"artifact:{name}\n", encoding="utf-8")
-    return {"locator": str(path), "sha256": hash_file(path)}
+    return {"locator": str(path), "sha256": _artifact_hash(path)}
 
 
 def _blocked_seal(tmp_path: Path) -> dict:
@@ -271,6 +271,17 @@ def test_specialist_terminal_hash_drift_is_visible(tmp_path: Path) -> None:
     terminal.write_text("controller-edited bytes\n", encoding="utf-8")
 
     assert "specialist_terminal_hash_mismatch" in _validate(tmp_path, seal)
+
+
+def test_text_artifact_line_endings_do_not_forge_hash_drift(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    terminal = Path(seal["specialist_returns"][0]["terminal_locator"])
+    lf_content = terminal.read_bytes().replace(b"\r\n", b"\n")
+    terminal.write_bytes(lf_content.replace(b"\n", b"\r\n"))
+
+    assert _validate(tmp_path, seal) == []
 
 
 def test_specialist_actor_set_cannot_be_relabelled_by_controller(
