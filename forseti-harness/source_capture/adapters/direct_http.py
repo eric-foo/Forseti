@@ -182,6 +182,7 @@ def _capture_response(
         "date": headers.get("Date"),
         "last_modified": headers.get("Last-Modified"),
         "etag": headers.get("ETag"),
+        "retry_after": _safe_response_header(headers.get("Retry-After")),
         "capture_timestamp": utc_now_z(),
         "timeout_seconds": timeout_seconds,
         "byte_count": len(body),
@@ -218,6 +219,15 @@ def _parse_optional_int(value: str | None) -> int | None:
         return int(value)
     except ValueError:
         return None
+
+
+def _safe_response_header(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if not normalized or len(normalized) > 256 or any(character in normalized for character in "\r\n"):
+        return None
+    return normalized
 
 
 def _read_with_cap(response: HTTPResponse | HTTPError, *, max_bytes: int) -> bytes:

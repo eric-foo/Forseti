@@ -437,6 +437,12 @@ source-access intervention, not clean capture. Any `fail_closed_*` outcome or
 admission summary with `fail_closed=true` stops the lane until the typed reason
 is resolved.
 
+The live-probe runner's internal cadence applies only inside that one process.
+When a bounded acquisition uses separate one-creator commands, leave at least
+90 seconds between commands and inspect each summary before starting the next.
+Stop the sequence on a visible block, captcha, or fail-closed outcome; do not
+launch the next creator while the prior result is still unknown.
+
 If any required input is missing, do not invent it. Stop and report the smallest
 missing input.
 
@@ -448,6 +454,7 @@ Use the narrowest runner that matches the supplied input.
 | --- | --- | --- |
 | Already-local raw source files | `run_source_capture_packet.py` | The operator already preserved files and only needs a packet. |
 | One ordinary URL | `run_source_capture_http_packet.py` | A single page/file may be fetched through normal Direct HTTP. |
+| Two or more ordinary URLs on one exact host | `run_source_capture_same_host_http_batch.py` | A small supplied list needs enforced serial pacing and stop-on-first-refusal behavior. |
 | Explicit asset URLs | `run_source_capture_media_packet.py` | The operator supplied image/media/gallery-frame URLs directly. |
 | Original URL plus archive need | `run_source_capture_archive_packet.py` | The operator needs Archive.org availability and maybe snapshot body. |
 | Browser-rendered or screenshot-needed page | `run_source_capture_browser_packet.py` | One supplied URL needs anonymous browser rendering or screenshot preservation. |
@@ -809,6 +816,26 @@ python runners/run_source_capture_http_packet.py `
   --cutoff-posture "<operator-supplied cutoff posture>" `
   --output "<packet directory>"
 ```
+
+The single-URL runner's intended-cadence fields describe operator intent in the
+packet; they do not wait or coordinate separate processes. For two or more
+ordinary URLs on one exact hostname, use the same-host batch runner instead of
+starting independent commands:
+
+```powershell
+python runners/run_source_capture_same_host_http_batch.py `
+  --job-list "<JSON list of job_id, url, and decision_question objects>" `
+  --output-root "<scratch output directory>" `
+  --minimum-gap-seconds 90
+```
+
+The batch runner requires a gap of at least 60 seconds, defaults to 90 seconds,
+and waits after one response completes before issuing the next request. It
+records every attempted and unrun job, preserves `Retry-After` when the source
+returns it, never retries automatically, and stops the remaining queue on the
+first non-2xx response, access shell, or capture failure. A later attempt needs
+separate acquisition authority and must not precede a source-supplied
+`Retry-After` interval.
 
 Media / Asset:
 

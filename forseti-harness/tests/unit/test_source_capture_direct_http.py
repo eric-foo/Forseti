@@ -66,6 +66,14 @@ def http_server():
                 "Content-Type": "text/plain; charset=utf-8",
             },
         ),
+        "/rate-limited": _RouteResponse(
+            status=429,
+            body=b"local_rate_limited\n",
+            headers={
+                "Content-Type": "text/plain; charset=utf-8",
+                "Retry-After": "60",
+            },
+        ),
         "/empty": _RouteResponse(
             status=204,
             body=b"",
@@ -304,6 +312,14 @@ def test_fetch_direct_http_capture_allows_non_2xx_body(http_server: str) -> None
     assert result.status == 404
     assert result.body == b"not found but body present\n"
     assert any("access_failed" in item for item in result.limitation_notes)
+
+
+def test_fetch_direct_http_capture_preserves_safe_retry_after(http_server: str) -> None:
+    result = fetch_direct_http_capture(url=f"{http_server}/rate-limited", timeout_seconds=5, max_bytes=1024)
+
+    assert isinstance(result, DirectHttpCaptureSuccess)
+    assert result.status == 429
+    assert result.metadata["retry_after"] == "60"
 
 
 def test_fetch_direct_http_capture_fails_for_empty_body(http_server: str) -> None:

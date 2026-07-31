@@ -43,12 +43,9 @@ _BODY_BLOCK_SIGNATURES: tuple[tuple[str, str], ...] = (
     ("you have been blocked", "generic_block"),
     ("verify you are human", "captcha_human_check"),
     ("are you a robot", "captcha_human_check"),
-    # Bare reCAPTCHA markup is not a challenge-page signal. Ordinary pages,
-    # including visible old Reddit threads, can embed a dormant reCAPTCHA
-    # widget inside their login/onboarding form. Visible challenge language
-    # above still fails closed, as do the provider-specific shell signatures
-    # below.
-    ("hcaptcha", "hcaptcha"),
+    # Bare CAPTCHA provider names/markup are not challenge-page signals.
+    # Ordinary pages can ship dormant CAPTCHA scripts or widgets. Visible
+    # challenge language above still fails closed.
     ("px-captcha", "perimeterx"),
     ("access to this page has been denied", "perimeterx"),
     ("perimeterx", "perimeterx"),
