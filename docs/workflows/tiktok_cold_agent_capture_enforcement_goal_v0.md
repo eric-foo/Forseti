@@ -62,7 +62,7 @@ Success signal:
   - Boundary: success is not a live capture guarantee, scale proof, account-safety proof, full-network no-proxy proof, CAPTCHA-solving authorization, or creator-registry promotion.
   - Drift cue: the work is drifting if it adds more prose reminders without moving a mechanically checkable blocker or admission rule into code.
 - Secondary success signals:
-  - The first controlled sessioned probe can resolve `chowdakr_sg_tiktok` to its machine-local CloakBrowser session mode and required harness proxy posture, then use named blocker actions and local `--admit-output` before any bronze write.
+  - The first controlled sessioned probe can resolve `chowdakr_sg_tiktok` to its configured retained-session browser and required harness proxy posture, select one usable loopback browser endpoint whose root Chrome process was launched with the configured retained profile when Chrome CDP is selected, then use named blocker actions and local `--admit-output` before any bronze write.
   - A failed close, unsupported subtitle host, missing provenance sidecar, or owner-attention condition stops with a typed reason that future agents can act on.
 
 ```yaml
@@ -76,7 +76,7 @@ goal_handoff:
       boundary: Not live capture guarantee, scale proof, account-safety proof, full-network no-proxy proof, CAPTCHA-solving authorization, or creator-registry promotion.
       drift_cue: The work is drifting if it adds more prose reminders without moving a mechanically checkable blocker or admission rule into code.
     secondary_success_signals:
-      - First controlled sessioned probe can resolve chowdakr_sg_tiktok to its machine-local CloakBrowser session mode and required harness proxy posture, then use named blocker actions and local admit-output before bronze.
+      - First controlled sessioned probe can resolve chowdakr_sg_tiktok to its configured retained-session browser and required harness proxy posture, select one usable loopback browser endpoint whose root Chrome process was launched with the configured retained profile when Chrome CDP is selected, then use named blocker actions and local admit-output before bronze.
       - Failed close, unsupported subtitle host, missing provenance sidecar, or owner-attention condition stops with a typed reason future agents can act on.
   status: user_stated
 thread_operating_target:
@@ -103,7 +103,10 @@ Use the sanctioned one-fixture path:
 1. Use `--session-profile chowdakr_sg_tiktok` with the TikTok
    one-creator live runner. The machine-local profile binds the dedicated
    auth-state label, configured session mode and required harness proxy posture,
-   CloakBrowser, and pre-action owner handoff.
+   retained-session browser backend, and pre-action owner handoff. A profile-bound
+   Chrome CDP route must also prove a nonempty retained profile and exactly one
+   usable loopback endpoint whose root Chrome process was launched with that
+   profile before capture; it is not a diagnostic downgrade.
 2. Run `check_source_capture_session_profile.py --session-profile
    chowdakr_sg_tiktok` when cold-start availability is uncertain. Missing,
    invalid, or provenance-mismatched profile state blocks before browser launch;
@@ -145,7 +148,7 @@ full-network no-proxy proof, CAPTCHA bypass, scale proof, or merge authority.
 
 These belong in deterministic runner, blocker-triage, provenance, receipt, test, or admission code. A cold agent should not need to remember them.
 
-1. **Packet-grade TikTok route posture.** The sanctioned packet-grade route should be explicit and hard to misuse: `--browser-backend cloakbrowser` for TikTok live capture unless a diagnostic path is deliberately selected. `--browser-channel` must remain incompatible with CloakBrowser.
+1. **Packet-grade TikTok route posture.** The sanctioned packet-grade route should be explicit and hard to misuse: logged-out or manually configured live capture defaults to `--browser-backend cloakbrowser`; a validated `--session-profile` may instead bind the retained Chrome CDP backend. Chrome CDP requires a nonempty retained profile and exactly one usable loopback endpoint whose root Chrome process was launched with that profile before capture. Manual non-CloakBrowser selection remains diagnostic-only, and `--browser-channel` remains incompatible with CloakBrowser.
 2. **Session provenance gate.** A sessioned run that requests posture must validate local auth-state sidecar provenance before browser launch. A label containing `noproxy` never clears the gate by itself.
 3. **Harness proxy-posture vocabulary.** Code may require `no_proxy_profile_loaded` or `proxy_profile_loaded`; it must not expose that as full-network no-proxy proof.
 4. **Secret scan.** Sidecars, packets, staging, receipts, docs, and admission payloads must reject raw cookies, storage-state contents, tokens, proxy endpoints, exit IPs, profile paths, device identifiers, and raw signed URLs.
@@ -170,7 +173,7 @@ These remain prose because they explain intent, risk, or interpretation rather t
 2. **No full-network no-proxy claim.** `no_proxy_profile_loaded` means the harness did not load a proxy profile. It does not prove OS, VPN, corporate, ISP, or upstream egress state.
 3. **Owner-attention preference.** If manual CAPTCHA/slider action becomes the only continuation, ping/hand off to the owner when possible; if not possible, fail closed. This is not permission to automate solving.
 4. **Chrome connector boundary.** Owner Chrome may help observe UI and login state, but it is not packet-grade unless it can produce the same durable sanitized response receipts and no-secret guarantees.
-5. **Playwright diagnostic boundary.** Playwright/Chrome can be used for explicit diagnostics, but it should not be the default TikTok capture route while CloakBrowser is the pinned working surface.
+5. **Playwright diagnostic boundary.** A manually selected Playwright/Chrome launch remains diagnostic-only. That is distinct from a profile-bound Chrome CDP engine that attaches to the validated retained session and preserves the packet-grade response and admission path.
 6. **Manual intervention interpretation.** Owner/manual solve can support source-access diagnosis or a clearly labeled intervention receipt; it is not unchallenged clean capture.
 7. **One probe is not scale.** One successful fixture does not prove cross-creator durability, account safety, platform stability, or promotion readiness.
 8. **Transcript interpretation.** TikTok subtitles are source-native subtitle evidence when present; not owner-generated ASR and not platform-wide transcript coverage.

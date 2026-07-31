@@ -65,9 +65,12 @@ For an ordinary sessioned TikTok capture attempt, do not start by re-diagnosing
 Chrome, Playwright, or blocker targetability. Use the runbook command for
 `run_source_capture_tiktok_live_batch_probe.py` with
 `--session-profile chowdakr_sg_tiktok` and local `--admit-output`. The profile
-binds CloakBrowser, the machine-local auth state and required harness proxy
-posture, and owner handoff before scripted pointer actions; it does not enable
-X/Close. Then classify the result from `tiktok_live_probe_summary_json=` before
+binds the retained-session browser backend, machine-local auth state, required
+harness proxy posture, and owner handoff before scripted pointer actions; it
+does not enable X/Close. When the profile selects Chrome CDP, the runner requires
+exactly one usable loopback endpoint whose root Chrome process was launched with
+the configured retained profile; a different live browser endpoint is rejected.
+Then classify the result from `tiktok_live_probe_summary_json=` before
 opening larger JSON files.
 
 Treat these blocker classes as setup or owner-attention states, not generic
@@ -119,8 +122,10 @@ browser surface. The observed surfaces are materially different:
   and no transcript capture because the subtitle host was rejected by the live
   probe allowlist.
 
-Use this pin as routing evidence, not admission evidence. The runner surface is
-`--browser-backend cloakbrowser`; do not combine it with `--browser-channel`.
+Use this historical logged-out pin as routing evidence, not admission evidence.
+That run's surface was `--browser-backend cloakbrowser`; do not combine it with
+`--browser-channel`. A validated session profile may bind the distinct retained
+Chrome CDP surface without making it a diagnostic run.
 For TikTok slider/captcha handoff, `--human-challenge-handoff` fires at
 page load before scripted pointer actions. If the marker remains after the owner
 handoff window, the runner suppresses those actions and fails closed. The
@@ -135,7 +140,10 @@ across creators, account safety at volume, or creator-registry promotion.
 Current owner default: use `--session-profile chowdakr_sg_tiktok`. A visible
 slider/captcha/security marker triggers owner handoff before scripted pointer
 actions; the agent does not close, drag, or solve it, and uncleared markers
-suppress the remaining action sequence.
+suppress the remaining action sequence. Do not add
+`--allow-diagnostic-browser-backend` to make the profile work; a profile-bound
+Chrome CDP route must pass its own retained-profile process-binding and
+loopback-endpoint checks.
 
 The explicit X/Close route remains available only when the current lane
 separately uses `--allow-challenge-close-followthrough`. The runner

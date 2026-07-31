@@ -35,8 +35,10 @@ from runners.run_source_capture_ig_reels_deep_capture import (
     _make_downloader,
     _persist_deep_capture,
     _render,
+    _resolve_optional_data_root,
 )
 from runners.run_source_capture_ig_reels_grid_packet import _detect_ig_block
+from data_lake.root import DataLakeRootError
 from source_capture.ig_reels_deep_capture import ReelDeepCaptureResult, run_reel_deep_capture
 from source_capture.ig_reels_grid import (
     MEDIA_KIND_REEL,
@@ -363,14 +365,17 @@ def run_creator_deep_capture(
     """
     if top_n < 0:
         raise ValueError("top_n must be non-negative")
+    resolved_data_root = _resolve_optional_data_root(data_root)
     ranked, _capture = scan_creator_reels_ranked(
         handle=handle,
         max_rows=max_rows,
         capture_fetcher=capture_fetcher,
     )
     resolved_persist_fn = persist_fn
-    if resolved_persist_fn is None and (data_root is not None or (os.environ.get("FORSETI_DATA_ROOT") or os.environ.get("ORCA_DATA_ROOT"))):
-        resolved_persist_fn = lambda result, _ranked: _persist_deep_capture(result, data_root_arg=data_root)
+    if resolved_persist_fn is None and resolved_data_root is not None:
+        resolved_persist_fn = lambda result, _ranked: _persist_deep_capture(
+            result, data_root=resolved_data_root
+        )
 
     if capture_fn is not None:
         return ranked, select_and_capture_top_reels(
@@ -412,7 +417,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.exit(status=2, message="source capture ig reels creator deep-capture failed: --top-n must be >= 0\n")
 
     try:
+        resolved_data_root = _resolve_optional_data_root(args.data_root)
         ranked, _capture = scan_creator_reels_ranked(handle=args.handle, max_rows=args.max_rows)
+    except DataLakeRootError as exc:
+        parser.exit(
+            status=2,
+            message=(
+                "source capture ig reels creator deep-capture failed: "
+                f"invalid Forseti data lake root: {exc}\n"
+            ),
+        )
+        return 2
     except IgReelsGridCaptureError as exc:
         parser.exit(status=3, message=f"source capture ig reels creator deep-capture failed: grid capture failed: {exc}\n")
         return 3
@@ -421,8 +436,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 2
 
     persist_fn: PersistFn | None = None
-    if args.data_root is not None or (os.environ.get("FORSETI_DATA_ROOT") or os.environ.get("ORCA_DATA_ROOT")):
-        persist_fn = lambda result, _ranked: _persist_deep_capture(result, data_root_arg=args.data_root)
+    if resolved_data_root is not None:
+        persist_fn = lambda result, _ranked: _persist_deep_capture(
+            result, data_root=resolved_data_root
+        )
 
     with tempfile.TemporaryDirectory(prefix="forseti_creator_deepcap_") as scratch:
         captured = select_and_capture_top_reels(

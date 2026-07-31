@@ -10,7 +10,15 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from harness_utils import as_dict
+from source_capture.adapters.browser_session_probe import (
+    probe_local_cdp_endpoints,
+    select_profile_bound_local_cdp_endpoint,
+)
+from source_capture.adapters.browser_snapshot import (
+    ChromeCdpPageObservationSessionEngine,
+)
 from source_capture.auth_state import AuthenticatedSessionMode
+from source_capture.browser_user_data import browser_user_data_path_for_label
 from source_capture.session_profiles import (
     OWNER_HANDOFF_BEFORE_ACTION,
     default_session_profile_auth_state_root,
@@ -22,6 +30,10 @@ from source_capture.tiktok.admission import COMPLETE_LANE_NOTE
 from source_capture.tiktok.batch_packet import write_tiktok_batch_packet
 from source_capture.tiktok.live_batch_probe import (
     TIKTOK_BROWSER_BACKEND_CLOAKBROWSER,
+    TIKTOK_BROWSER_BACKEND_CHROME_CDP,
+    TIKTOK_ACCOUNT_SAFETY_STOP_MARKERS,
+    TIKTOK_CHALLENGE_TEXT_MARKERS,
+    TIKTOK_HUMAN_CHALLENGE_HANDOFF_PROMPT,
     TIKTOK_SUPERVISED_DEFAULT_CADENCE_MAX_GAP_SECONDS,
     TIKTOK_SUPERVISED_DEFAULT_CADENCE_MIN_GAP_SECONDS,
     write_tiktok_live_batch_probe_outputs,
@@ -205,6 +217,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    session_profile = None
     if args.session_profile is not None:
         manual_profile_fields = (
             args.state_label,
@@ -292,10 +305,14 @@ def main(argv: list[str] | None = None) -> int:
         )
     if (
         browser_backend != TIKTOK_BROWSER_BACKEND_CLOAKBROWSER
+        and not (
+            session_profile is not None
+            and browser_backend == TIKTOK_BROWSER_BACKEND_CHROME_CDP
+        )
         and not args.allow_diagnostic_browser_backend
     ):
         parser.error(
-            "--browser-backend playwright is diagnostic-only for TikTok; pass "
+            "manual non-CloakBrowser backends are diagnostic-only for TikTok; pass "
             "--allow-diagnostic-browser-backend to opt in"
         )
     if (
@@ -311,35 +328,49 @@ def main(argv: list[str] | None = None) -> int:
         args.cloakbrowser_humanize
         or browser_backend == TIKTOK_BROWSER_BACKEND_CLOAKBROWSER
     )
-    paths = write_tiktok_live_batch_probe_outputs(
-        creator_handle=args.creator_handle,
-        creator_profile_url=args.creator_profile_url,
-        video_urls=args.video_urls,
-        state_label=state_label,
-        session_mode=session_mode,
-        logged_out=logged_out,
-        auth_state_root=auth_state_root,
-        output_dir=args.output_dir,
-        timeout_seconds=args.timeout_seconds,
-        wait_until=args.wait_until,
-        viewport_width=args.viewport_width,
-        viewport_height=args.viewport_height,
-        max_response_bytes=args.max_response_bytes,
-        settle_seconds=args.settle_seconds,
-        selector_timeout_seconds=args.selector_timeout_seconds,
-        browser_channel=args.browser_channel,
-        browser_backend=browser_backend,
-        required_harness_proxy_profile_posture=required_harness_proxy_profile_posture,
-        cloakbrowser_humanize=cloakbrowser_humanize,
-        human_challenge_handoff=human_challenge_handoff,
-        human_challenge_handoff_timeout_seconds=args.human_challenge_handoff_timeout_seconds,
-        cadence_min_gap_seconds=args.cadence_min_gap_seconds,
-        cadence_max_gap_seconds=args.cadence_max_gap_seconds,
-        cadence_window_seconds=args.cadence_window_seconds,
-        random_seed=args.random_seed,
-        allow_challenge_close_diagnostic=allow_challenge_close_diagnostic,
-        allow_challenge_close_followthrough=allow_challenge_close_followthrough,
-    )
+    owned_engine = None
+    if (
+        session_profile is not None
+        and browser_backend == TIKTOK_BROWSER_BACKEND_CHROME_CDP
+    ):
+        try:
+            owned_engine = _profile_chrome_cdp_engine(session_profile)
+        except ValueError as exc:
+            parser.error(f"BLOCKED_SESSION_PROFILE_UNAVAILABLE: {exc}")
+    try:
+        paths = write_tiktok_live_batch_probe_outputs(
+            creator_handle=args.creator_handle,
+            creator_profile_url=args.creator_profile_url,
+            video_urls=args.video_urls,
+            state_label=state_label,
+            session_mode=session_mode,
+            logged_out=logged_out,
+            auth_state_root=auth_state_root,
+            output_dir=args.output_dir,
+            timeout_seconds=args.timeout_seconds,
+            wait_until=args.wait_until,
+            viewport_width=args.viewport_width,
+            viewport_height=args.viewport_height,
+            max_response_bytes=args.max_response_bytes,
+            settle_seconds=args.settle_seconds,
+            selector_timeout_seconds=args.selector_timeout_seconds,
+            browser_channel=args.browser_channel,
+            browser_backend=browser_backend,
+            required_harness_proxy_profile_posture=required_harness_proxy_profile_posture,
+            cloakbrowser_humanize=cloakbrowser_humanize,
+            human_challenge_handoff=human_challenge_handoff,
+            human_challenge_handoff_timeout_seconds=args.human_challenge_handoff_timeout_seconds,
+            cadence_min_gap_seconds=args.cadence_min_gap_seconds,
+            cadence_max_gap_seconds=args.cadence_max_gap_seconds,
+            cadence_window_seconds=args.cadence_window_seconds,
+            random_seed=args.random_seed,
+            allow_challenge_close_diagnostic=allow_challenge_close_diagnostic,
+            allow_challenge_close_followthrough=allow_challenge_close_followthrough,
+            engine=owned_engine,
+        )
+    finally:
+        if owned_engine is not None:
+            owned_engine.close()
     print(f"grid_result_json={paths.grid_result_json_path}")
     print(f"cadence_result_json={paths.cadence_result_json_path}")
     admission_target = _admission_target_kind(
@@ -443,6 +474,27 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(f"admitted_packet={admitted_path}")
     return 0
+
+
+def _profile_chrome_cdp_engine(session_profile):  # noqa: ANN001
+    user_data_label = session_profile.browser_user_data_label
+    if user_data_label is None:
+        raise ValueError("Chrome CDP session profile requires a retained browser profile")
+    user_data_dir = browser_user_data_path_for_label(user_data_label)
+    if not user_data_dir.is_dir() or not any(user_data_dir.iterdir()):
+        raise ValueError("retained browser profile is missing or empty")
+    probe = probe_local_cdp_endpoints()
+    endpoint = select_profile_bound_local_cdp_endpoint(
+        probe,
+        user_data_dir=user_data_dir,
+    )
+    return ChromeCdpPageObservationSessionEngine(
+        cdp_endpoint=endpoint,
+        pre_action_stop_markers=TIKTOK_ACCOUNT_SAFETY_STOP_MARKERS,
+        human_challenge_handoff_markers=TIKTOK_CHALLENGE_TEXT_MARKERS,
+        human_challenge_handoff_timeout_seconds=180.0,
+        human_challenge_handoff_prompt=TIKTOK_HUMAN_CHALLENGE_HANDOFF_PROMPT,
+    )
 
 
 def _summary_line(payload: dict[str, object]) -> str:
