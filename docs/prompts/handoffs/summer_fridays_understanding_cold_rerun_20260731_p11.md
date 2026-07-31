@@ -222,6 +222,8 @@ Do not proceed from a failing board.
 
 Run the current Phase 1 handoff exactly once for Summer Fridays:
 
+- bind `{s}` to the company subject `Summer Fridays`, not to each product or
+  SKU; do not multiply the Phase 1 query set across the catalog;
 - use every current rival-free Board v2.2 seed and no hand-picked competitor;
 - harvest names from the fresh p11 captures while packets land;
 - adjudicate promotions fail closed;
@@ -249,11 +251,23 @@ return contract.
 - **CO1 — company core:** identity, ownership, current leadership, proposition,
   owned offering/portfolio denominator, official retailer authorization,
   markets/channels, chronology, material events, and one bounded credible
-  outside-in calibration.
+  outside-in calibration. Publish whether company-owned evidence makes Amazon
+  `COMPANY_AUTHORIZED`, with its exact locator. Otherwise publish that company
+  authorization was not established; marketplace presence alone cannot change
+  CO1's result.
 - **CO2 — portfolio and retail:** officially authorized, route-admissible
   retailers; complete admitted brand grids; owned-to-retail reconciliation;
   exact non-bundle PDP baselines; retailer-native facts; corpus/provider
-  identity; prices and comparator relevance. No fixed retailer quota.
+  identity; prices and comparator relevance. Select and attempt at least four
+  company-authorized, US-market, route-admissible third-party retailers when
+  four exist, favoring distinct evidence venues. The brand DTC site does not
+  count; Sephora counts as one and is primary when route-complete. If fewer
+  than four qualify, select all and record `AUTHORIZED_RETAILER_SHORTFALL` with
+  the observed count and reasons. Never use an unauthorized, duplicate, or
+  market-unpinned route as filler. When CO1 does not establish Amazon
+  authorization, CO2 may separately classify an exact observed route as
+  `MARKETPLACE_IDENTITY_VERIFIED_NOT_COMPANY_AUTHORIZED`; otherwise it remains
+  `MARKETPLACE_PRESENCE_UNVERIFIED`. Neither status counts toward the four.
 - **CO3 — customer and community:** the Phase 1 trigger-thread, mediator,
   grid-capture, ledger, and cited-substitute inputs; bounded Reddit and qualified
   community capture; retailer review/Q&A corpus accounting; customer language,
@@ -293,6 +307,10 @@ Only after all three specialist terminal returns exist:
 1. `CO0` dereferences their durable evidence and typed blockers.
 2. Derive each targeted query from a named specialist finding, contradiction,
    competitor, claim, or unmet-value seam that Phase 1 could not have authored.
+   Product-specific queries are licensed here only after exact product identity
+   and a decision-material seam exist. A tail SKU receives no query merely
+   because it is in the portfolio; query it only when the specialist evidence
+   shows that omitting it could change the answer.
 3. Use one shared lifecycle store at the path in `raw_roots`.
 4. Retain the earlier receipt and claim every licensed automatic validation
    before capture. Do not accept another store root, capture-before-claim
