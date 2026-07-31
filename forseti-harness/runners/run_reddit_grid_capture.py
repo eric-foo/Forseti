@@ -62,6 +62,11 @@ GRID_TRANSPORTS = ("old_http", "www_realchrome")
 WWW_VIEWPORT_WIDTH = 1280
 WWW_VIEWPORT_HEIGHT = 20000
 WWW_SETTLE_SECONDS = 15.0
+# One marked tab is reused for the whole pass instead of opening and closing a
+# tab per subreddit.  At roster size that is 91 tab churns in the operator's own
+# browser, and a fresh tab per request is also a less natural session shape than
+# one tab navigating between listings.
+WWW_PERSISTENT_TAB_MARKER = "forseti-reddit-grid"
 DEFAULT_CDP_ENDPOINT = "http://127.0.0.1:9222"
 ALLOWED_LISTINGS = ("hot", "new", "top", "rising")
 ALLOWED_TIME_WINDOWS = ("hour", "day", "week", "month", "year", "all")
@@ -292,6 +297,7 @@ def _capture_www_grid(
             "capture, or self-scheduling"
         ),
         cdp_endpoint=cdp_endpoint,
+        persistent_tab_marker=WWW_PERSISTENT_TAB_MARKER,
         viewport_width=WWW_VIEWPORT_WIDTH,
         viewport_height=WWW_VIEWPORT_HEIGHT,
         settle_seconds=WWW_SETTLE_SECONDS,

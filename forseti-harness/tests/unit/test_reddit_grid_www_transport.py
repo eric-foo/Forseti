@@ -98,6 +98,39 @@ def test_default_transport_is_the_existing_one() -> None:
     assert GRID_TRANSPORTS[0] == "old_http"
 
 
+def test_www_capture_reuses_one_persistent_tab(monkeypatch, tmp_path) -> None:
+    """One marked tab for the whole pass, not 91 open/close cycles."""
+    import runners.run_reddit_grid_capture as module
+
+    seen: list[dict] = []
+
+    def _fake(**kwargs):
+        seen.append(kwargs)
+        return 0, str(tmp_path / "packet")
+
+    monkeypatch.setattr(module, "run_source_capture_realchrome_cdp_packet", _fake, raising=False)
+    monkeypatch.setattr(
+        "runners.run_source_capture_realchrome_cdp_packet."
+        "run_source_capture_realchrome_cdp_packet",
+        _fake,
+    )
+    run_reddit_grid_capture(
+        subreddits=["alpha", "beta"],
+        listing="top",
+        time_window="week",
+        output_root=tmp_path / "out",
+        decision_question="q",
+        transport="www_realchrome",
+        delay_seconds=0,
+    )
+    assert len(seen) == 2
+    markers = {call["persistent_tab_marker"] for call in seen}
+    assert markers == {module.WWW_PERSISTENT_TAB_MARKER}
+    # Same marker for every subreddit is what makes the tab persist; a distinct
+    # marker per capture would silently reintroduce one tab per request.
+    assert len(markers) == 1
+
+
 def test_www_unrecognized_zero_row_shell_fails_projection_validation() -> None:
     with pytest.raises(GridProjectionAnomalyError, match="no_thread_rows"):
         build_validated_www_grid_content_record(
