@@ -31,6 +31,7 @@ from data_lake.reddit_subreddit_registry import (
     migrate_legacy_registry,
 )
 from data_lake.root import DataLakeRoot
+from harness_utils import hash_file
 from source_capture.adapters.direct_http import DirectHttpCaptureSuccess
 from source_capture.content_extraction import ContentExtractionSpec
 
@@ -102,6 +103,7 @@ def _raw_grid_packet(
     *,
     status: int = 200,
     url: str = "https://old.reddit.com/r/makeupaddiction/top/?t=day",
+    html: str = GRID_HTML,
 ) -> Path:
 
     def fake_fetch(**_: object) -> DirectHttpCaptureSuccess:
@@ -116,7 +118,7 @@ def _raw_grid_packet(
                 "final_url": url,
                 "status": status,
             },
-            body=GRID_HTML.encode(),
+            body=html.encode(),
             warning_notes=[],
             limitation_notes=[],
         )
@@ -147,6 +149,136 @@ def _raw_grid_packet(
     )
     assert exit_code == 0
     return packet_dir
+
+
+def _realchrome_grid_packet(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    url: str = "https://www.reddit.com/r/makeupaddiction/top/?t=week",
+    html: str = GRID_HTML,
+) -> Path:
+    packet = _raw_grid_packet(
+        tmp_path,
+        monkeypatch,
+        url="https://old.reddit.com/r/makeupaddiction/top/?t=week",
+        html=html,
+    )
+    raw_dir = packet / "raw"
+    content_path = raw_dir / "03_content_record.json"
+    metadata_path = raw_dir / "04_realchrome_snapshot_metadata.json"
+    content_path.write_text(
+        json.dumps(
+            build_grid_content_record(
+                html_text=html,
+                subreddit="makeupaddiction",
+                listing_url=url,
+            ),
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    metadata_path.write_text(
+        json.dumps(
+            {
+                "access_blocked": False,
+                "final_url": url,
+                "http_response_status": 200,
+                "method_category": "real_browser_cdp",
+                "requested_url": url,
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    manifest_path = packet / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["source_surface"] = "www_reddit_realchrome_cdp"
+    manifest["source_locator"]["value"] = url
+    access = (
+        "real_browser_cdp preserved rendered public page artifacts via an "
+        "operator-provided real Chrome over CDP"
+    )
+    manifest["access_posture"]["value"] = access
+    source_slice = manifest["source_slices"][0]
+    source_slice["locator"]["value"] = url
+    source_slice["access_posture"]["value"] = access
+    new_files = [
+        ("file_03", content_path),
+        ("file_04", metadata_path),
+    ]
+    for file_id, path in new_files:
+        manifest["preserved_files"].append(
+            {
+                "file_id": file_id,
+                "hash_basis": "raw_stored_bytes",
+                "original_path": str(path),
+                "relative_packet_path": path.relative_to(packet).as_posix(),
+                "sha256": hash_file(path),
+                "size_bytes": path.stat().st_size,
+            }
+        )
+        source_slice["preserved_file_ids"].append(file_id)
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+    )
+    return packet
+
+
+def test_materializer_admits_verified_www_realchrome_content_packet(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    packet = _realchrome_grid_packet(tmp_path, monkeypatch)
+
+    read = read_grid_packet(packet_or_manifest_path=packet)
+
+    assert read.subreddit == "makeupaddiction"
+    assert read.grid_view.listing_url == (
+        "https://www.reddit.com/r/makeupaddiction/top/?t=week"
+    )
+    assert len(read.grid_view.thread_rows) == 3
+
+
+def test_materializer_rejects_tampered_www_realchrome_content(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    packet = _realchrome_grid_packet(tmp_path, monkeypatch)
+    content_path = packet / "raw" / "03_content_record.json"
+    content_path.write_text("{}\n", encoding="utf-8")
+
+    with pytest.raises(RegistryRefreshError) as exc:
+        read_grid_packet(packet_or_manifest_path=packet)
+
+    assert exc.value.code == "content_record_hash_mismatch"
+
+
+def test_materializer_rejects_www_realchrome_locator_drift(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    packet = _realchrome_grid_packet(tmp_path, monkeypatch)
+    metadata_path = packet / "raw" / "04_realchrome_snapshot_metadata.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["final_url"] = "https://www.reddit.com/r/fragrance/top/?t=week"
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+    )
+    manifest_path = packet / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for item in manifest["preserved_files"]:
+        if item["file_id"] == "file_04":
+            item["sha256"] = hash_file(metadata_path)
+            item["size_bytes"] = metadata_path.stat().st_size
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+    )
+
+    with pytest.raises(RegistryRefreshError) as exc:
+        read_grid_packet(packet_or_manifest_path=packet)
+
+    assert exc.value.code == "grid_final_locator_mismatch"
 
 
 def test_grid_projection_preserves_titlebox_threads_nested_text_and_dedupes() -> None:
@@ -565,6 +697,28 @@ def test_lake_refresh_stamps_top_week_surface(
     assert row["capture_state"] == "grid_packets_recorded"
 
 
+def test_lake_refresh_stamps_www_realchrome_surface(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An admitted www real-Chrome packet ledgers as its own surface: the
+    observation provenance must not claim the counts came from old Reddit."""
+    registry = _registry(tmp_path)
+    packet = _realchrome_grid_packet(
+        tmp_path,
+        monkeypatch,
+        url="https://www.reddit.com/r/makeupaddiction/top/?t=week",
+    )
+    lake = DataLakeRoot.for_test(tmp_path / "lake")
+    migrate_legacy_registry(lake, registry_path=registry)
+
+    outcome = refresh_lake_registry_from_grid_packets(
+        data_root=lake, packet_paths=[packet]
+    )
+    assert outcome.refreshed_subreddits == ["makeupaddiction"]
+    (observation,) = fold_subreddit(lake, "makeupaddiction")["observations"]
+    assert observation["source_surface"] == "www_reddit_realchrome_cdp"
+
+
 # --------------------------------------------------------------------------
 # Weekly demand read (spec section E)
 # --------------------------------------------------------------------------
@@ -644,6 +798,57 @@ def _lake_grid_packet(
         max_bytes=1_000_000,
     )
     assert exit_code == 0
+
+
+def _publish_packet_to_lake(lake: DataLakeRoot, packet: Path) -> str:
+    manifest = json.loads((packet / "manifest.json").read_text(encoding="utf-8"))
+    packet_id = manifest["packet_id"]
+    staging = lake.stage_raw_packet(packet_id)
+    for child in packet.iterdir():
+        target = staging / child.name
+        if child.is_dir():
+            shutil.copytree(child, target)
+        else:
+            shutil.copy2(child, target)
+    lake.publish_raw_packet(staging, packet_id)
+    lake.record_availability(packet_id)
+    return packet_id
+
+
+def test_weekly_reader_accepts_mixed_old_and_www_realchrome_packets(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import datetime as dt
+
+    from runners.run_reddit_weekly_demand_read import run_weekly_demand_read
+
+    registry = _registry(tmp_path)
+    lake = DataLakeRoot.for_test(tmp_path / "lake")
+    migrate_legacy_registry(lake, registry_path=registry)
+    _lake_grid_packet(
+        lake,
+        monkeypatch,
+        url="https://old.reddit.com/r/makeupaddiction/top/?t=week&limit=100",
+    )
+    realchrome = _realchrome_grid_packet(
+        tmp_path / "realchrome",
+        monkeypatch,
+        url="https://www.reddit.com/r/makeupaddiction/top/?t=week",
+        html=WEEKLY_HTML,
+    )
+    realchrome_id = _publish_packet_to_lake(lake, realchrome)
+
+    payload = run_weekly_demand_read(
+        data_root=lake,
+        as_of=dt.date(2026, 7, 17),
+    )
+
+    assert payload["subs_read"] == 1
+    assert payload["candidates_found"] == 2
+    assert not any(
+        item["packet_id"] == realchrome_id for item in payload["unreadable_packets"]
+    )
+    assert payload["superseded_weekly_packets"]["count"] == 1
 
 
 def test_weekly_demand_read_gates_and_reports(

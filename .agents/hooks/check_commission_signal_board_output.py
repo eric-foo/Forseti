@@ -88,6 +88,7 @@ REQUIRED_ROW_COLUMNS = {
 }
 VALID_HANDOFF_MODES = {"backtest", "forward"}
 VALID_SOURCE_FAMILIES = {
+    "ad_transparency",
     "forums_community",
     "reviews",
     "creator_social_video",
@@ -1402,6 +1403,7 @@ def _scout_status_matches_coverage(
 def _validate_company_completion(
     completion: Any,
     coverage: dict[str, dict[str, Any]],
+    receipt: dict[str, Any],
 ) -> list[Finding]:
     if not isinstance(completion, dict):
         return [Finding("invalid_completion_ledger", "completion_ledger must be a mapping.")]
@@ -1469,6 +1471,74 @@ def _validate_company_completion(
                 )
             )
     commission_stage = run_boundary == COMMISSION_STAGE_RUN_BOUNDARY
+    if commission_stage:
+        if _normalize_vocab(receipt.get("controller_placement")) != "top_level_co0":
+            findings.append(
+                Finding(
+                    "invalid_commission_controller_placement",
+                    "Commission-stage company acquisition requires controller_placement: top_level_co0.",
+                )
+            )
+        if receipt.get("worker_slots_required") != 3:
+            findings.append(
+                Finding(
+                    "invalid_commission_worker_slot_requirement",
+                    "Commission-stage company acquisition requires exactly three CO1-CO3 worker slots.",
+                )
+            )
+        available = receipt.get("worker_slots_available")
+        if not isinstance(available, int) or isinstance(available, bool) or available < 3:
+            findings.append(
+                Finding(
+                    "blocked_controller_capacity",
+                    "CO0 must have three worker slots available before source acquisition starts.",
+                )
+            )
+        required_surfaces = {
+            "google_ads_transparency_center": (
+                "missing_google_ads_transparency_commission",
+                "required",
+            ),
+            "meta_ads_library": (
+                "missing_meta_ads_library_commission",
+                "required",
+            ),
+            "reddit_weekly_data_lake_read": (
+                "missing_reddit_weekly_lake_commission",
+                "required",
+            ),
+            "native_social_trigger_assessment": (
+                "missing_native_social_trigger_assessment",
+                "conditional",
+            ),
+            "tiktok_shop_trigger_assessment": (
+                "missing_tiktok_shop_trigger_assessment",
+                "conditional",
+            ),
+        }
+        for source_surface, (code, expected_requirement) in required_surfaces.items():
+            rows = [
+                row
+                for row in coverage.values()
+                if _normalize_vocab(row.get("source_surface")) == source_surface
+            ]
+            if not rows:
+                findings.append(
+                    Finding(
+                        code,
+                        f"Commission-stage company acquisition must include {source_surface} coverage.",
+                    )
+                )
+            elif not any(
+                _normalize_vocab(row.get("requirement")) == expected_requirement
+                for row in rows
+            ):
+                findings.append(
+                    Finding(
+                        f"invalid_{source_surface}_requirement",
+                        f"{source_surface} must be marked {expected_requirement} at commission stage.",
+                    )
+                )
     if commission_stage and not any(
         _normalize_vocab(row.get("status")) == "not_checked" for row in coverage.values()
     ):
@@ -1555,7 +1625,11 @@ def validate_company_report(text: str) -> list[Finding]:
     findings.extend(observation_findings)
     findings.extend(_validate_company_observation_references(text, observations))
     findings.extend(_validate_company_candidates(parsed["company_surface_candidate_ledger"], observations))
-    findings.extend(_validate_company_completion(parsed["completion_ledger"], coverage))
+    findings.extend(
+        _validate_company_completion(
+            parsed["completion_ledger"], coverage, receipt
+        )
+    )
 
     keys = _walk_mapping_keys(parsed)
     for key in sorted(set(keys) & COMPANY_PROHIBITED_GTM_KEYS):

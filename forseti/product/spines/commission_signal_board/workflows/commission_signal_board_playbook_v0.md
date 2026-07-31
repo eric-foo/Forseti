@@ -89,18 +89,21 @@ The default coordinated route has exactly four evidence actors:
   acquisition-seal owner;
 - `CO1`: owned company and high-yield core — identity, ownership, leadership,
   offering/portfolio architecture, official authorization, chronology,
-  material events, and one bounded current outside-in check of company scale
-  or market/channel position when a credible source can materially calibrate
-  the company core;
+  material events, mandatory Google Ads Transparency Center and Meta Ads
+  Library attempts after exact advertiser identity is bound, and one bounded
+  current outside-in check of company scale or market/channel position when a
+  credible source can materially calibrate the company core;
 - `CO2`: unified official-first portfolio and selected-retailer corpus —
   authorization board, grids, union/reconciliation, exact PDP baselines,
   retailer-native facts, failures, overlap, and provider/corpus identity; never
   split retailers by actor; and
 - `CO3`: mandatory customer/community, complete bounded review-corpus
   acquisition, and selected interpretation — retailer reviews and Q&A, bounded
-  Reddit and qualified community routes, customer language, pain points,
-  objections, complaints, usage contexts, workarounds, response patterns,
-  syndication ceilings, and discriminating depth checks.
+  Reddit and qualified community routes, the current weekly Reddit lake read,
+  conditionally licensed native TikTok/Instagram/YouTube items and TikTok Shop,
+  customer language, pain points, objections, complaints, usage contexts,
+  workarounds, response patterns, syndication ceilings, and discriminating
+  depth checks.
 
 For review depth, keep Sephora on its existing source-specific capture policy.
 For every selected non-Sephora retailer, default to source-labelled `Most
@@ -123,8 +126,21 @@ the reconciled breadth and selected-product pointers that `CO3` needs for depth.
 
 Run those four actors through this lean execution protocol:
 
-1. `CO0` validates the commission-stage board once, binds the shared roots and
-   terminal output paths, and completes or validly reuses the SERP Phase 1
+`CO0` must be the top-level controller with three worker slots available before
+dispatch. If that placement or capacity is absent, stop before capture with
+`BLOCKED_CONTROLLER_CAPACITY`; do not serialize the specialists or accept an
+interim checkpoint as a terminal return. After the question and commission
+board are bound, but before the first network capture, record the route
+capability preflight in the acquisition seal: Google primary plus durable
+cooldown state and any ready persistent fallback; the read-only Reddit weekly
+lake reader; both mandatory ad-transparency routes; and the conditional TikTok
+Shop route. The first real Phase 1 seed is the Google health observation; do
+not spend a separate sacrificial query.
+
+1. `CO0` validates the commission-stage board once, including required Google
+   Ads Transparency Center, Meta Ads Library, and Reddit weekly-lake rows,
+   binds the shared roots and terminal output paths, completes the capability
+   preflight above, and completes or validly reuses the SERP Phase 1
    competitor scout. It then dispatches `CO1`-`CO3` together with thin
    role-specific source capsules. `CO1` receives the relevant subject,
    competitor-identity, and claim questions; `CO2` receives the priced
@@ -134,13 +150,15 @@ Run those four actors through this lean execution protocol:
    claim ceilings, the few owning-source pointers it needs, its upstream
    artifact dependencies, and its terminal return contract. Do not copy the
    controller's full conversation or unrelated source pack into every actor.
-2. `CO1` resolves the company core and publishes its official-retailer
+2. `CO1` resolves the company core and exact paid-advertiser identities,
+   attempts both mandatory public ad-transparency routes, and publishes its official-retailer
    authorization outcome and supporting evidence pointers at the bound terminal
    path; a typed absence or blocked result is a valid published outcome, not a
    probe blocker. `CO2` may prepare its locked retailer job set concurrently
    but does not probe a retailer until that published outcome is available.
-   `CO3` begins its mandatory bounded customer/community scout concurrently,
-   consuming the Phase 1 trigger-thread and mediator queues; its
+   `CO3` begins with the read-only current weekly Reddit lake result, then runs
+   its mandatory bounded customer/community scout, consuming the Phase 1
+   trigger-thread and mediator queues; its
    evidence-selected retailer depth waits for `CO2`'s reconciled breadth and
    selection pointers. Reddit/community capture is part of this specialist
    fan-out, not SERP Phase 2.
@@ -159,6 +177,9 @@ Run those four actors through this lean execution protocol:
    role return that indexes the durable artifacts, completed and unresolved
    jobs, material failures, and follow-ups. They do not paste raw corpora into
    chat or send routine progress, readiness, hash, or release handshakes.
+   A specialist terminal is single-writer: after its hash is returned, `CO0`
+   reads but never edits it. An actor-local correction goes back to that same
+   specialist, which replaces its own terminal and returns the new hash.
    Notify `CO0` early only when an observed blocker requires a controller or
    owner decision that would change the locked work.
 5. `CO0` waits on completion or decision-requiring blocker events, not polling
@@ -168,6 +189,23 @@ Run those four actors through this lean execution protocol:
    only the targeted SERP return and decision lifecycle; it does not repeat the
    fan-out's native/community capture. `CO0` then writes the integrated
    acquisition record and seal. Only `CO0` owns user-facing run progress.
+
+Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
+social listing is ambiguous and opening the native item could change the bound
+answer; a vague title alone is not evidence. TikTok Shop is licensed when the
+subject is creator/influencer-led or acquired evidence makes the shop a
+material commercial venue. A live TikTok Shop attempt must type route failure
+as `EGRESS_COUNTRY_WRONG`, `TTSHOP_ROUTE_BLOCKED`, or
+`EGRESS_SESSION_UNHEALTHY`; proxy availability alone never licenses capture.
+
+Every Phase 1 block selects and records one continuation mode before the
+fan-out spends more acquisition: `full` when completion remains feasible,
+`bounded_salvage` when only reusable evidence should be banked, or `stop`.
+Bounded salvage remains acquisition-blocked. Automated Google queues use
+`run_google_serp_queue.py`: a first block transfers the exact held job to a
+ready persistent route or a durable 60-minute cooldown; there is no hot retry,
+and a second consecutive or third run block writes `OWNER_PING.json` before
+the queue stops.
 
 This protocol removes orchestration work, not evidence work. It does not cap
 sources, jobs, tokens, or elapsed time; weaken route-specific failure
@@ -287,6 +325,7 @@ the mandatory customer/community job.
 
 ```yaml
 phase_acquisition_seal:
+  schema_version: phase_acquisition_seal_v2
   cycle_id:
   commission_id:
   phase: understanding | problem_framing
@@ -296,6 +335,37 @@ phase_acquisition_seal:
   intended_use:
   phase_scope:
   commission_board_locator:
+  controller_placement:
+    controller_actor: CO0
+    placement: top_level
+    worker_slots_required: 3
+    worker_slots_available:
+  route_capability_preflight:
+    checked_before_network_capture: true
+    google_serp:
+      primary_route_ready:
+      queue_state_writable:
+      mode: persistent_fallback | cooldown_only
+      persistent_fallback_ready:
+    reddit_weekly_lake:
+      reader_status: ready | blocked
+    paid_ad_transparency:
+      google_ads_transparency: ready | identity_pending | blocked
+      meta_ads_library: ready | identity_pending | blocked
+    tiktok_shop:
+      trigger: required | not_required | unknown
+      route_status: ready | not_checked_until_trigger | EGRESS_SESSION_UNHEALTHY | TTSHOP_ROUTE_BLOCKED | EGRESS_COUNTRY_WRONG
+    native_social:
+      tiktok:
+        trigger: required | not_required | unknown
+        route_status: ready | not_checked_until_trigger | blocked
+      instagram:
+        trigger: required | not_required | unknown
+        route_status: ready | not_checked_until_trigger | blocked
+      youtube:
+        trigger: required | not_required | unknown
+        route_status: ready | not_checked_until_trigger | blocked
+  post_phase1_continuation_mode: full | bounded_salvage | stop
   outcome_signals:
     - question_fit
     - evidence_foundation
@@ -314,6 +384,36 @@ phase_acquisition_seal:
   scan_receipts: []
   capture_receipts: []
   provenance_index: []
+  specialist_returns:
+    - actor: CO1 | CO2 | CO3
+      terminal_locator:
+      sha256:
+      status:
+  route_job_accounting:
+    - route_id:
+      phase: serp_phase1 | co1 | co2 | co3 | serp_phase2
+      required: true | false
+      material: true | false
+      planned_job_ids: []
+      planned_count:
+      completed_job_ids: []
+      completed_count:
+      blocked_job_ids: []
+      blocked_count:
+      unrun_job_ids: []
+      unrun_count:
+      terminal_artifact_locator:
+      terminal_artifact_sha256:
+  serp_phase2_decision_receipt:
+    locator:
+    sha256:
+    entries:
+  resume_contract:
+    pending_job_ids: []
+    reusable_artifacts:
+      - locator:
+        sha256:
+        invalid_if: []
   material_gaps_and_failures: []
   seal_state: SEALED_READY_FOR_DELIVER | BLOCKED_ACQUISITION_INCOMPLETE
   acquisition_gate: pass | blocked
@@ -328,6 +428,24 @@ an honestly typed non-material blocking result. Any material blocking result,
 or a required route that was skipped, silently substituted, incompletely
 captured, or described as exhausted without the matching route evidence,
 forces the blocked state.
+
+Validate the v2 block with
+`forseti-harness/runners/run_phase_acquisition_seal_validation.py`. The planned
+job set must equal the disjoint completed, blocked, and unrun sets; counts and
+artifact hashes must match. A valid empty Phase 2 decision receipt never gives
+completion credit to licensed-but-unrun Phase 2 queries. Resume re-hashes every
+reusable artifact and runs only pending jobs unless the bound question changes,
+an artifact hash drifts, its source-specific currentness expires, or owning
+authority becomes incompatible.
+
+For company Understanding, non-empty route accounting is required for
+`serp_phase1`, `official_retailer_authorization`,
+`google_ads_transparency`, `meta_ads_library`, `retailer_full_pdp`,
+`reddit_weekly_lake`, `reddit_community_scout`, and `serp_phase2`, with explicit
+`serp_phase1`, `CO1`, `CO2`, `CO3`, and `serp_phase2` phase coverage. A typed
+no-work decision may be the planned job when a route truly has no work; silence
+is not accounting. Triggered TikTok Shop or native TikTok, Instagram, or YouTube
+capture adds its route to the same accounting requirement.
 
 For company Understanding, the required route accounting includes SERP Phase 1
 and SERP Phase 2. Phase 2's disposition, decision receipt, consumed specialist

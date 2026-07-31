@@ -781,6 +781,54 @@ def test_commission_stage_company_board_passes() -> None:
     assert validator.validate_text(text) == []
 
 
+@pytest.mark.parametrize(
+    ("surface", "expected_code"),
+    [
+        (
+            "google_ads_transparency_center",
+            "missing_google_ads_transparency_commission",
+        ),
+        ("meta_ads_library", "missing_meta_ads_library_commission"),
+        (
+            "reddit_weekly_data_lake_read",
+            "missing_reddit_weekly_lake_commission",
+        ),
+        (
+            "native_social_trigger_assessment",
+            "missing_native_social_trigger_assessment",
+        ),
+        (
+            "tiktok_shop_trigger_assessment",
+            "missing_tiktok_shop_trigger_assessment",
+        ),
+    ],
+)
+def test_commission_stage_requires_enhanced_evidence_routes(
+    surface: str, expected_code: str
+) -> None:
+    text = (
+        FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+    ).read_text(encoding="utf-8")
+    text = text.replace(f"source_surface: {surface}", "source_surface: omitted", 1)
+
+    assert expected_code in _company_codes(text)
+
+
+def test_commission_stage_requires_top_level_co0_with_three_worker_slots() -> None:
+    text = (
+        FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+    ).read_text(encoding="utf-8")
+    text = text.replace(
+        "  controller_placement: top_level_co0",
+        "  controller_placement: nested_co0",
+        1,
+    ).replace("  worker_slots_available: 3", "  worker_slots_available: 2", 1)
+
+    codes = _company_codes(text)
+    assert "invalid_commission_controller_placement" in codes
+    assert "blocked_controller_capacity" in codes
+
+
 def test_commission_scout_status_requires_commission_boundary() -> None:
     text = _valid_company_text().replace(
         "  quora_scout_status: experimental_checked_zero_yield",

@@ -120,6 +120,12 @@ Each phase normally uses two completed operator/model turns:
 1. **Acquire & Seal.** Bind the phase-specific question, intended consumer and
    use, scope, and outcome signals. Complete prerequisite and authority checks
    and seal the phase-specific CSB before source-heavy work. Before capture,
+   require `CO0` to be the top-level controller with three worker slots and
+   record a capability preflight for Google recovery state, the Reddit weekly
+   lake reader, both paid-ad transparency routes, and conditional TikTok Shop.
+   `BLOCKED_CONTROLLER_CAPACITY` stops before dispatch; it never licenses a
+   serialized or checkpoint-only substitute. The first real SERP Phase 1 seed,
+   not a sacrificial query, is the Google route-health observation. Then
    resolve every selected source to the current source-family authority and its
    banked recipe-card or recon-index route when one exists. An established
    source-specific route is not replaced by generic fallback browsing: Ulta and
@@ -154,8 +160,9 @@ human artifact after the gate passes, preserving the decisive evidence,
 counter-case, uncertainty, provenance, reversal conditions, and next action.
 
 Every company Understanding uses this internal Acquire & Seal order: bind the
-question and validate the commission-stage board; run or validly reuse SERP
-Phase 1; feed its typed ledger and queues into the `CO1`-`CO3` specialist
+question, validate the commission-stage board, and complete the capability
+preflight; run or validly reuse SERP Phase 1; feed its typed ledger and queues
+into the `CO1`-`CO3` specialist
 fan-out; wait for their terminal returns; run SERP Phase 2 from the combined
 findings; then seal. Reddit/community capture is `CO3` fan-out work, not a
 Phase 2 responsibility. A missing or materially blocked Phase 2 result remains
@@ -165,11 +172,44 @@ recorded without being promoted into a material blocker. The SERP phase
 labels are lane-local and do not replace the canonical Understanding and
 Problem Framing phase names.
 
+The commission-stage coverage ledger always carries required rows for Google
+Ads Transparency Center, Meta Ads Library, and the current Reddit weekly Data
+Lake read. Paid-ad attempts execute after `CO1` binds the exact advertiser
+identity. `CO3` reads the weekly lake before new Reddit discovery. Native
+TikTok, Instagram, and YouTube capture is conditional on an ambiguous listing
+whose native content could change the bound answer. TikTok Shop is conditional
+on a creator-led subject or evidence that the venue is commercially material;
+its route failures remain typed as wrong country, TikTok-specific block, or
+unhealthy egress session.
+
 Use the playbook's default four-evidence-actor route unless the owner explicitly
 overrides it: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. The
 dispatcher is mechanical and is not a fifth evidence actor. `CO3` always owns
 customer/community evidence and selected depth; adaptive depth controls how far
 it continues, never whether the actor or customer-understanding job exists.
+Each specialist terminal is single-writer. `CO0` consumes its returned hash but
+does not edit the file; corrections return to the owning actor, which publishes
+a replacement hash.
+
+The phase acquisition seal uses `phase_acquisition_seal_v2` accounting and is
+validated by `run_phase_acquisition_seal_validation.py`. Every planned job is
+present exactly once in completed, blocked, or unrun state, including every
+licensed SERP Phase 2 query. A valid empty Phase 2 decision receipt does not
+erase unrun acquisition. The seal also carries artifact hashes, pending jobs,
+reusable artifacts and their invalidation conditions, and the Phase 1
+continuation mode (`full`, `bounded_salvage`, or `stop`). Bounded salvage and
+stop remain blocked. Resume re-hashes reusable artifacts and executes only
+pending jobs unless the question, bytes, currentness, or owning authority
+changed.
+
+For company Understanding, the seal must carry non-empty job accounting for
+`serp_phase1`, `official_retailer_authorization`,
+`google_ads_transparency`, `meta_ads_library`, `retailer_full_pdp`,
+`reddit_weekly_lake`, `reddit_community_scout`, and `serp_phase2`, and must
+represent all five execution phases: `serp_phase1`, `CO1`, `CO2`, `CO3`, and
+`serp_phase2`. A typed no-work decision is still a planned job; omission is not.
+Triggered TikTok Shop and native TikTok, Instagram, or YouTube capture inherit
+the same accounting rule.
 
 The normal budget is two turns per phase, not a fake-success cap. A blocked,
 skipped, silently substituted, or incompletely captured required route leaves
@@ -504,6 +544,12 @@ result, never completion. Generic and specialist forums use category-aware
 hidden-venue discovery rather than a universal platform list. Blocked, missing,
 dominated, or non-material coverage becomes a typed gap, exclusion, or
 `not_applicable` record with rationale.
+
+For Reddit, the current weekly Data Lake read is mandatory and precedes new
+external discovery; it is not a substitute for exact thread/comment capture.
+Valid content-mode `www_reddit_realchrome_cdp` packets and admitted old-Reddit
+packets feed the same weekly reader. Capture Spine preserves a source block; it
+does not bypass one.
 
 CSB owns profiles, source-family requirements, time posture, and typed
 gaps/requests. Scanning owns intelligent-walk selection. Capture owns venue
