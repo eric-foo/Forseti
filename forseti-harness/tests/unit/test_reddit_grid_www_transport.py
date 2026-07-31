@@ -83,3 +83,34 @@ def test_unknown_transport_fails_closed(tmp_path) -> None:
 
 def test_default_transport_is_the_existing_one() -> None:
     assert GRID_TRANSPORTS[0] == "old_http"
+
+
+def test_cli_passes_transport_and_endpoint_through(monkeypatch, tmp_path) -> None:
+    """argparse accepting a flag proves nothing about it reaching the function.
+
+    A live pass on 2026-07-31 was invoked with --transport www_realchrome and
+    silently ran the old transport, because the flag was registered but never
+    forwarded. Every function-level test still passed.
+    """
+    import runners.run_reddit_grid_capture as module
+
+    seen: dict[str, object] = {}
+
+    def _fake(**kwargs):
+        seen.update(kwargs)
+        return 0, "ok"
+
+    monkeypatch.setattr(module, "run_reddit_grid_capture", _fake)
+    module.main(
+        [
+            "--subreddit", "testsub",
+            "--listing", "top",
+            "--time-window", "week",
+            "--transport", "www_realchrome",
+            "--cdp-endpoint", "http://127.0.0.1:9223",
+            "--output-root", str(tmp_path / "out"),
+            "--decision-question", "q",
+        ]
+    )
+    assert seen["transport"] == "www_realchrome"
+    assert seen["cdp_endpoint"] == "http://127.0.0.1:9223"

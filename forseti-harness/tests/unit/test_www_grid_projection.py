@@ -170,12 +170,24 @@ def test_all_rows_stickied_remain_source_truth() -> None:
     assert [row["stickied"] for row in rows] == [True, True]
 
 
-def test_venue_envelope_reads_abutting_counts_from_visible_text() -> None:
+def test_venue_envelope_does_not_claim_a_subscriber_count() -> None:
+    """The abutting numbers are WEEKLY VISITORS/CONTRIBUTIONS, not subscribers.
+
+    Measured 2026-07-31: www renders 701K/7.4K for r/30PlusSkinCare, matching the
+    operator community-panel reading of 702K weekly visitors and 7.6K weekly
+    contributions, while about.json put subscribers at 2,420,271. Reading them as
+    subscribers wrote a 3.5x-wrong value into the series the deferred breakout
+    rule uses as its normalizer.
+    """
     view = _record()["grid_view"]
-    assert view["visible_subscriber_count_or_none"] == "701K"
-    assert view["visible_active_user_count_or_none"] == "7.4K"
+    assert view["visible_subscriber_count_or_none"] is None
+    assert view["visible_active_user_count_or_none"] is None
+    assert (
+        view["visible_volume_signal_absent_reason_or_none"]
+        == "www_venue_envelope_exposes_weekly_visitors_not_subscriber_counts"
+    )
+    # The creation date IS a subscriber-independent fact and still projects.
     assert view["created_utc_or_none"] == "2015-03-03"
-    assert view["visible_volume_signal_absent_reason_or_none"] is None
 
 
 def test_absent_venue_envelope_carries_an_absent_reason() -> None:

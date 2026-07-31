@@ -499,7 +499,10 @@ def run_reddit_grid_capture(
 
     summary = {
         "runner": "reddit_grid_capture",
-        "method": GRID_SOURCE_SURFACE,
+        "method": (
+            WWW_GRID_SOURCE_SURFACE if transport == "www_realchrome" else GRID_SOURCE_SURFACE
+        ),
+        "transport": transport,
         "listing": listing,
         "time_window": time_window,
         "limit": limit,
@@ -660,6 +663,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             cadence_max_gap_seconds=args.cadence_max_gap_seconds,
             cadence_random_seed=args.cadence_random_seed,
             requested_retention_mode=args.retention_mode,
+            transport=args.transport,
+            cdp_endpoint=args.cdp_endpoint,
         )
 
     print(message)

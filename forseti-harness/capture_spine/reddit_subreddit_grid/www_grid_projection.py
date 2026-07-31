@@ -53,7 +53,7 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
 # ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-2"
+WWW_GRID_PROJECTION_PARSER_VERSION = "www-3"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a
@@ -253,20 +253,31 @@ def project_www_reddit_grid(
             break
 
     venue = _VENUE_RE.search(visible_text or "")
-    members = venue.group("members") if venue else None
-    online = venue.group("online") if venue else None
     created = _decode_created_date(venue.group("created")) if venue else None
 
-    absent_reason = None
-    if members is None and online is None:
-        absent_reason = "visible_volume_not_present_on_declared_surface"
+    # The two abutting numbers in the www sidebar are WEEKLY VISITORS and
+    # WEEKLY CONTRIBUTIONS, not subscribers and online users.  Measured
+    # 2026-07-31 on r/30PlusSkinCare: www renders 701K/7.4K, which matches the
+    # operator's 2026-07-22 community-panel reading of 702K weekly visitors and
+    # 7.6K weekly contributions, while about.json put subscribers at 2,420,271.
+    # Reading them as a subscriber count writes a metric the surface never
+    # states, off by 3.5x, into the series the deferred breakout rule uses as
+    # its normalizer.  They are therefore carried as absent here, with the
+    # reason naming what the surface does expose; routing the weekly figures to
+    # weekly_visitor_count_or_none / weekly_contribution_count_or_none needs an
+    # observation-shape change and is deliberately not smuggled in here.
+    absent_reason = (
+        "www_venue_envelope_exposes_weekly_visitors_not_subscriber_counts"
+        if venue
+        else "visible_volume_not_present_on_declared_surface"
+    )
 
     lowered = (visible_text or "").lower()
     return GridView(
         subreddit=subreddit.lower(),
         listing_url=listing_url,
-        visible_subscriber_count_or_none=members,
-        visible_active_user_count_or_none=online,
+        visible_subscriber_count_or_none=None,
+        visible_active_user_count_or_none=None,
         visible_volume_signal_absent_reason_or_none=absent_reason,
         thread_rows=tuple(rows),
         created_utc_or_none=created,
