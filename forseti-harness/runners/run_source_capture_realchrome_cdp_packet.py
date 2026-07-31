@@ -172,6 +172,29 @@ class RealChromeCDPUnavailable(RuntimeError):
     pass
 
 
+class RealChromeNavigationHTTPError(RealChromeCDPUnavailable):
+    """The target navigation reached the server and was refused with an HTTP
+    error response. Subclasses RealChromeCDPUnavailable so every existing
+    handler keeps its exit behavior; the distinct type exists because a
+    server-side refusal (throttling burst, 5xx) must never read as local
+    Chrome/CDP unavailability -- that misread hid an 11-slot refusal burst in
+    the 2026-08-01 batch. ``http_status`` is the refused status when the
+    response listener observed it, else None.
+    """
+
+    def __init__(self, message: str, *, http_status: int | None):
+        super().__init__(message)
+        self.http_status = http_status
+
+
+def _is_navigation_http_error(exc: BaseException, observed_status: int | None) -> bool:
+    """A navigation failure is an HTTP refusal when Chromium says so or when
+    the main-frame navigation response itself carried an error status."""
+    if "ERR_HTTP_RESPONSE_CODE_FAILURE" in str(exc):
+        return True
+    return observed_status is not None and observed_status >= 400
+
+
 def _navigate_target(
     *,
     page,
@@ -275,12 +298,46 @@ class _LiveRealChromeCDPEngine:
                 # navigation. A raw Playwright error here must become a clean exit-3, not an
                 # uncaught traceback. page.close() in the finally still runs either way.
                 try:
-                    response = _navigate_target(
-                        page=page,
-                        url=url,
-                        timeout_ms=timeout_ms,
-                        persistent_tab_marker=persistent_tab_marker,
-                    )
+                    navigation_statuses: list[int] = []
+
+                    def _record_navigation_status(resp, _page=page):
+                        # Failure-path listener: when goto raises (e.g.
+                        # net::ERR_HTTP_RESPONSE_CODE_FAILURE) it returns no
+                        # Response object, and this is the only place the
+                        # refused status can still be read.
+                        try:
+                            if (
+                                resp.request.is_navigation_request()
+                                and resp.frame == _page.main_frame
+                            ):
+                                navigation_statuses.append(resp.status)
+                        except Exception:
+                            pass
+
+                    page.on("response", _record_navigation_status)
+                    try:
+                        response = _navigate_target(
+                            page=page,
+                            url=url,
+                            timeout_ms=timeout_ms,
+                            persistent_tab_marker=persistent_tab_marker,
+                        )
+                    except Exception as exc:
+                        observed = (
+                            navigation_statuses[-1] if navigation_statuses else None
+                        )
+                        if _is_navigation_http_error(exc, observed):
+                            raise RealChromeNavigationHTTPError(
+                                f"target navigation for {url} was refused with an "
+                                "HTTP error response "
+                                f"(status={'unknown' if observed is None else observed}); "
+                                "server-side refusal, not CDP unavailability. "
+                                f"Underlying error: {type(exc).__name__}: {exc}",
+                                http_status=observed,
+                            ) from exc
+                        raise
+                    finally:
+                        page.remove_listener("response", _record_navigation_status)
                     http_status = response.status if response is not None else None
                     settle_block_signal = None
                     remaining_settle_ms = int(settle_seconds * 1000)
@@ -427,6 +484,11 @@ class _LiveRealChromeCDPEngine:
                     )
                     final_url = page.url
                     title = page.title()
+                except RealChromeCDPUnavailable:
+                    # Already typed (e.g. RealChromeNavigationHTTPError); the
+                    # blanket wrap below must not relabel it as generic
+                    # CDP failure.
+                    raise
                 except Exception as exc:
                     raise RealChromeCDPUnavailable(
                         f"real Chrome target capture failed for {url}: {type(exc).__name__}: {exc}"

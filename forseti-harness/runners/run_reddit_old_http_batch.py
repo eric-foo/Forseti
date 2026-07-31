@@ -213,6 +213,7 @@ def run_reddit_old_http_batch(
             "capture_finished_at": None,
             "content_extraction_failed": False,
             "content_record_preserved": False,
+            "navigation_http_status": None,
             "access_diagnostic_status": "not_applicable",
             "access_diagnostic_screenshot": None,
             "access_diagnostic_receipt": None,
@@ -305,6 +306,12 @@ def run_reddit_old_http_batch(
         except Exception as exc:
             row["capture_exit"] = 2
             row["capture_message"] = f"{type(exc).__name__}: {exc}"
+            # A navigation HTTP refusal carries the refused status; keeping it
+            # as a row field is what lets a later read distinguish a 429
+            # throttling burst from a 5xx outage without the raw response.
+            navigation_status = getattr(exc, "http_status", None)
+            if isinstance(navigation_status, int):
+                row["navigation_http_status"] = navigation_status
         finally:
             row["capture_finished_at"] = utc_now_z_microseconds()
 
