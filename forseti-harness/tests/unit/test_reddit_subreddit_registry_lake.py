@@ -258,6 +258,22 @@ def test_observation_does_not_downgrade_thread_capture_state(
     assert fold_subreddit(lake, "alpha")["capture_state"] == "thread_packets_recorded"
 
 
+def test_historical_grid_observation_does_not_false_downgrade_later_thread_state(
+    lake: DataLakeRoot, tmp_path: Path
+) -> None:
+    legacy = _legacy(tmp_path, [_row("alpha")])
+    migrate_legacy_registry(lake, registry_path=legacy)
+    _observe(lake, "alpha", pointer="F:/lake/raw/ddd/manifest.json", observed_at="2026-07-17")
+    append_roster_change(
+        lake,
+        subreddit="alpha",
+        changes={"capture_state": "thread_packets_recorded"},
+        actor="operator",
+    )
+
+    assert fold_subreddit(lake, "alpha")["capture_state"] == "thread_packets_recorded"
+
+
 def test_older_observation_does_not_move_status_backwards(
     lake: DataLakeRoot, tmp_path: Path
 ) -> None:
