@@ -397,18 +397,25 @@ create a parallel acquisition checklist or data store.
 When retail expression is material, acquire this substrate breadth-first. Begin
 with enough owned evidence to bind the subject, categories, franchises, known
 parents, and canonical product identity. Use company-owned evidence to establish
-the officially named US retailer board before probing retailer surfaces. Select
-the route-admissible retailers that add material assortment, commercial, or
-customer evidence; there is no fixed retailer quartet or count. Resolve Sephora
-explicitly: when it is officially named and its US grid is route-complete, it
-must be included and is the retail primary. If it is officially named but
-blocked, unpinned, or incomplete, preserve that typed outcome and use the
-strongest complete selected retailer as the working primary rather than
-fabricating Sephora coverage. For every selected retailer, capture its available
-grid surface, deterministically union and reconcile exact listings with the
-owned candidates, then return to owned surfaces to close the complete publicly
-exposed denominator and typed gaps. Owned evidence remains canonical identity
-authority; retailer grids are discovery and channel-expression evidence.
+the officially named US retailer board before probing retailer surfaces. When
+at least four company-authorized, target-market, route-admissible third-party
+retailers exist, select and attempt at least four, favoring venues that add
+distinct assortment, commercial, or customer evidence. The company-owned DTC
+site does not count toward the four. When fewer than four qualify, select all
+that qualify and record `AUTHORIZED_RETAILER_SHORTFALL` with the observed count
+and reasons; never fill the floor with an unauthorized, duplicate, or
+market-unpinned venue. Resolve Sephora explicitly: when it is officially named
+and its US grid is route-complete, it must be included, counts as one selected
+retailer, and is the retail primary. If it is officially named but blocked,
+unpinned, or incomplete, preserve that typed outcome and use the strongest
+complete selected retailer as the working primary rather than fabricating
+Sephora coverage. When another qualified retailer is available, replace a
+blocked selected route to restore four usable venues while preserving the
+blocked outcome. For every selected retailer, capture its available grid
+surface, deterministically union and reconcile exact listings with the owned
+candidates, then return to owned surfaces to close the complete publicly exposed
+denominator and typed gaps. Owned evidence remains canonical identity authority;
+retailer grids are discovery and channel-expression evidence.
 
 Attempt one common-floor baseline PDP for every reconciled exact retailer
 listing and preserve each admitted baseline or typed miss. A miss is
@@ -426,12 +433,22 @@ non-duplicative and category-balanced job. This is not an all-retailer or
 source-count quota and does not require a full historical review crawl or
 complete global SKU graph.
 
-Sephora, Ulta, and Target expose brand or assortment grids. Amazon exposes a
-query-bound ranked-search window that may be complete for its declared query and
-reachable result window, but not as a guaranteed complete or authorized-only
-brand catalog. Projection capability does not prove route admission; every run
-records market pin, reachability, surface boundary, and typed failure. Point-in-
-time retailer metrics are traction proxies, not sales, share, or trend.
+Sephora, Ulta, and Target expose brand or assortment grids. Amazon requires an
+authorization result separate from marketplace presence:
+`COMPANY_AUTHORIZED` means a company-owned source explicitly names or links the
+target-market Amazon store or retailer; `MARKETPLACE_IDENTITY_VERIFIED_NOT_COMPANY_AUTHORIZED`
+means the exact branded storefront or seller/listing identity is verified but
+company-owned evidence does not authorize it; and
+`MARKETPLACE_PRESENCE_UNVERIFIED` means exact seller/storefront identity is not
+proven. Only `COMPANY_AUTHORIZED` counts toward the four-retailer floor. A
+verified-but-not-company-authorized Amazon route may supplement marketplace,
+price, or customer evidence with that limitation attached; an unverified route
+remains a discovery pointer. Amazon exposes a query-bound ranked-search window
+that may be complete for its declared query and reachable result window, never a
+guaranteed complete or authorized-only brand catalog. Projection capability does
+not prove route admission; every run records market pin, reachability, surface
+boundary, and typed failure. Point-in-time retailer metrics are traction
+proxies, not sales, share, or trend.
 
 Officially named, route-complete Sephora must be the retail primary. Otherwise,
 preserve the typed Sephora blocked, unpinned, or incomplete outcome and use

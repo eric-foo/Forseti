@@ -528,8 +528,14 @@ gate above controls whether Deliver may begin.
    the existing ledgers. A material unresolved core job blocks the acquisition
    seal; other remainders stay typed gaps and non-claims. When retail is material,
     commission an owned identity seed, establish the company-owned official
-    retailer board, resolve Sephora explicitly, and select the route-admissible
-    retailers that add material evidence. Acquire each selected grid surface,
+    retailer board, classify Amazon authorization separately from marketplace
+    presence, resolve Sephora explicitly, and select and attempt at least four
+    company-authorized, target-market, route-admissible third-party retailers
+    when four exist. Favor distinct evidence venues; do not count the
+    company-owned DTC site or fill the floor with an unauthorized, duplicate,
+    or market-unpinned venue. If fewer than four qualify, select all and record
+    `AUTHORIZED_RETAILER_SHORTFALL` with the observed count and reasons. Acquire
+    each selected grid surface,
     reconcile its listing union with owned candidates, then return to owned
     evidence to close the denominator. Owned
    evidence remains canonical identity authority. Attempt one common-floor
@@ -548,15 +554,19 @@ gate above controls whether Deliver may begin.
    interpretive and Q&A depth for category-balanced evidence jobs. Each
    interpretive deepening needs a named non-duplicative job, there is no fixed
    interpreted-product count, and retailer counts remain separate rather than
-    becoming sales. Treat Amazon, when selected, as a query-bound ranked-search window, not a
-   guaranteed complete or authorized-only catalog; projection capability never
-   substitutes for route admission. Point-in-time retailer metrics are traction
-   proxies, not sales, share, or trend. Preserve analysis-enablement inputs,
+    becoming sales. Only company-owned authorization lets Amazon count toward
+   the four-retailer floor. A verified-but-not-company-authorized Amazon route
+   may supplement evidence with that limitation attached; an unverified route
+   remains a discovery pointer. Treat Amazon, when selected, as a query-bound
+   ranked-search window, not a guaranteed complete or authorized-only catalog;
+   projection capability never substitutes for route admission. Point-in-time
+   retailer metrics are traction proxies, not sales, share, or trend. Preserve analysis-enablement inputs,
    stop-or-gap rules, review-
    volume claim guards, accepted residuals, non-claims, and upgrade trigger. This
-   orders attention; it is not a source quota, proof hierarchy, full historical
-   review crawl, full-SKU-graph requirement, new ledger schema, or Scanning
-   execution instruction. Commission archives, supply, ads/creators,
+   orders attention; it is a bounded retailer-selection floor, not an
+   all-retailer crawl, proof hierarchy, full historical review crawl,
+   full-SKU-graph requirement, new ledger schema, or Scanning execution
+   instruction. Commission archives, supply, ads/creators,
    competitors, search trends, and similar deepening only for a named unresolved
    inference job.
 8. For a recurring or actively radarred source family, put a lake-first

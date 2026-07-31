@@ -291,14 +291,22 @@ authorize claims about internal management intent, revenue, margin, cash
 generation, sell-through, or undisclosed operations.
 
 Use company-owned evidence to establish the officially named US retailer board
-before probing retailer surfaces. Resolve Sephora explicitly and select any
-route-admissible retailers that add material assortment, commercial, or customer
-evidence; there is no fixed retailer quartet or count. Use the existing
+before probing retailer surfaces. When at least four company-authorized,
+target-market, route-admissible third-party retailers exist, select and attempt
+at least four, favoring venues that add distinct assortment, commercial, or
+customer evidence. The company-owned DTC site does not count. When fewer than
+four qualify, select all that qualify and record
+`AUTHORIZED_RETAILER_SHORTFALL` with the observed count and reasons; never fill
+the floor with an unauthorized, duplicate, or market-unpinned venue. Resolve
+Sephora explicitly. When it is officially named and route-complete, it counts as
+one selected retailer and remains subject to the primary rule below. When
+another qualified retailer is available, replace a blocked selected route to
+restore four usable venues while preserving the block. Use the existing
 coverage-ledger requirement, rationale, status, yield, access, and typed-gap
 fields to preserve each authorization and route test with its exact result.
 Current result types include `NOT_LISTED`, `ROUTE_BLOCKED`, `MARKET_UNPINNED`,
-and `SURFACE_NOT_EXPOSED`; never infer a listing or award completion credit for a
-failed or unobserved route.
+`SURFACE_NOT_EXPOSED`, and `AUTHORIZED_RETAILER_SHORTFALL`; never infer a
+listing or award completion credit for a failed or unobserved route.
 
 For every selected retailer, acquire its available grid surface,
 deterministically union and reconcile exact listings with the owned candidates,
@@ -314,11 +322,21 @@ seller/authenticity, related products, Q&A availability, review provider, and
 native identifiers or metadata. The common baseline does not require a complete
 global franchise -> parent-product -> variant/SKU -> retailer-listing graph.
 
-Sephora, Ulta, and Target expose brand or assortment grids. Amazon exposes a
-query-bound ranked-search window complete only for its declared query and
-reachable result window, never a guaranteed complete or authorized-only catalog.
-Projection capability is not route admission. Point-in-time retailer metrics are
-traction proxies, never sales, share, or trend.
+Sephora, Ulta, and Target expose brand or assortment grids. Before selecting
+Amazon, classify it separately from marketplace presence:
+`COMPANY_AUTHORIZED` requires a company-owned source that explicitly names or
+links the target-market Amazon store or retailer;
+`MARKETPLACE_IDENTITY_VERIFIED_NOT_COMPANY_AUTHORIZED` requires exact branded
+storefront or seller/listing identity but carries no company authorization; and
+`MARKETPLACE_PRESENCE_UNVERIFIED` means exact identity is not proven. Only
+`COMPANY_AUTHORIZED` counts toward the four-retailer floor. A
+verified-but-not-company-authorized route may supplement marketplace, price, or
+customer evidence with that limitation attached; an unverified route remains a
+discovery pointer. Amazon exposes a query-bound ranked-search window complete
+only for its declared query and reachable result window, never a guaranteed
+complete or authorized-only catalog. Projection capability is not route
+admission. Point-in-time retailer metrics are traction proxies, never sales,
+share, or trend.
 
 Only after the qualified-grid and exact-parent PDP baseline may expensive review
 or Q&A depth be selected. Evidence-selected depth may resolve established
