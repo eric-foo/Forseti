@@ -829,13 +829,21 @@ python runners/run_source_capture_same_host_http_batch.py `
   --minimum-gap-seconds 90
 ```
 
-The batch runner requires a gap of at least 60 seconds, defaults to 90 seconds,
-and waits after one response completes before issuing the next request. It
-records every attempted and unrun job, preserves `Retry-After` when the source
-returns it, never retries automatically, and stops the remaining queue on the
-first non-2xx response, access shell, or capture failure. A later attempt needs
-separate acquisition authority and must not precede a source-supplied
-`Retry-After` interval.
+The batch runner requires a finite gap of at least 60 seconds, defaults to 90
+seconds, and waits after one response completes before issuing the next request.
+It records every job it begins and every unrun job, writes that recovery
+accounting before re-raising an unexpected inner-runner failure, preserves HTTP
+status and `Retry-After` from readable responses even when the body is empty or
+over the size cap, never retries automatically, and stops the remaining queue
+on the first non-2xx response, access shell, uninspectable encoded body, or
+capture failure. A later attempt needs separate acquisition authority and must
+not precede a source-supplied `Retry-After` interval.
+
+`content_unverified` is not positive certification that a body is the requested
+source. One accepted detector limit is an hCaptcha-only interstitial without
+recognized visible challenge language or a mitigation header; corroborate the
+expected page title and decision-relevant body signals before sealing such a
+capture.
 
 Media / Asset:
 

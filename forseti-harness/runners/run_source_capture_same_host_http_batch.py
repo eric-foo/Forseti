@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 import time
@@ -14,7 +15,10 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from harness_utils import utc_now_z
-from runners.run_source_capture_http_packet import run_source_capture_http_packet
+from runners.run_source_capture_http_packet import (
+    DirectHttpPacketOutcome,
+    run_source_capture_http_packet,
+)
 from source_capture import CaptureModeCategory
 
 
@@ -74,6 +78,8 @@ def run_same_host_http_batch(
     sleep: Callable[[float], None] = time.sleep,
 ) -> tuple[int, dict[str, object]]:
     _validate_jobs(jobs)
+    if not math.isfinite(minimum_gap_seconds):
+        raise ValueError("minimum_gap_seconds must be finite")
     if minimum_gap_seconds < MINIMUM_ALLOWED_GAP_SECONDS:
         raise ValueError(
             f"minimum_gap_seconds must be at least {MINIMUM_ALLOWED_GAP_SECONDS:g}"
@@ -85,72 +91,110 @@ def run_same_host_http_batch(
     host = _normalized_host(jobs[0].url)
     attempts: list[dict[str, object]] = []
     stop_reason: str | None = None
+    pending_exception: BaseException | None = None
 
     for index, job in enumerate(jobs):
-        if index:
-            sleep(minimum_gap_seconds)
-
         packet_directory = output_root / f"{index + 1:02d}_{job.job_id}_packet"
-        started_at = utc_now_z()
-        exit_code, message = run_source_capture_http_packet(
-            url=job.url,
-            source_family=source_family,
-            source_surface=source_surface,
-            decision_question=job.decision_question,
-            output_directory=packet_directory,
-            data_root=None,
-            capture_context=capture_context,
-            operator_category="same_host_http_batch_operator",
-            capture_mode=CaptureModeCategory.STRUCTURED_ACCESS,
-            session_id=None,
-            actor_audience_context=None,
-            visible_mode_changes=["same_host_serial_pacing_enforced"],
-            source_publication_or_event=None,
-            source_edit_or_version=None,
-            cutoff_posture=None,
-            recapture_time=None,
-            re_capture_relationship=None,
-            warnings=[],
-            limitations=[],
-            timeout_seconds=timeout_seconds,
-            max_bytes=max_bytes,
-            intended_cadence={
-                "mode": "same_host_serial_minimum_gap",
-                "minimum_gap_seconds": minimum_gap_seconds,
-                "enforcement": "runner_sleep_after_previous_response_before_next_request",
-            },
-        )
-        metadata = _read_http_metadata(packet_directory)
-        status = metadata.get("status") if metadata is not None else None
-        retry_after = metadata.get("retry_after") if metadata is not None else None
-        body_classification = (
-            metadata.get("body_classification") if metadata is not None else None
-        )
-        healthy = (
-            exit_code == 0
-            and isinstance(status, int)
-            and 200 <= status < 300
-            and body_classification == "content_unverified"
-        )
-        attempt = {
-            "job_id": job.job_id,
-            "url": job.url,
-            "started_at": started_at,
-            "finished_at": utc_now_z(),
-            "packet_directory": str(packet_directory),
-            "runner_exit_code": exit_code,
-            "http_status": status,
-            "retry_after": retry_after,
-            "body_classification": body_classification,
-            "result": "captured" if healthy else "stopped_on_failure",
-            "message": message,
-        }
-        attempts.append(attempt)
-        if not healthy:
-            stop_reason = (
-                f"job {job.job_id} failed or was refused"
-                + (f" with HTTP {status}" if status is not None else " before a readable HTTP response")
+        started_at: str | None = None
+        try:
+            if index:
+                sleep(minimum_gap_seconds)
+
+            started_at = utc_now_z()
+            observed_outcomes: list[DirectHttpPacketOutcome] = []
+            exit_code, message = run_source_capture_http_packet(
+                url=job.url,
+                source_family=source_family,
+                source_surface=source_surface,
+                decision_question=job.decision_question,
+                output_directory=packet_directory,
+                data_root=None,
+                capture_context=capture_context,
+                operator_category="same_host_http_batch_operator",
+                capture_mode=CaptureModeCategory.STRUCTURED_ACCESS,
+                session_id=None,
+                actor_audience_context=None,
+                visible_mode_changes=["same_host_serial_pacing_enforced"],
+                source_publication_or_event=None,
+                source_edit_or_version=None,
+                cutoff_posture=None,
+                recapture_time=None,
+                re_capture_relationship=None,
+                warnings=[],
+                limitations=[],
+                timeout_seconds=timeout_seconds,
+                max_bytes=max_bytes,
+                intended_cadence={
+                    "mode": "same_host_serial_minimum_gap",
+                    "minimum_gap_seconds": minimum_gap_seconds,
+                    "enforcement": "runner_sleep_after_previous_response_before_next_request",
+                },
+                outcome_observer=observed_outcomes.append,
             )
+            if len(observed_outcomes) != 1:
+                raise RuntimeError(
+                    "packet runner did not publish exactly one authoritative capture outcome"
+                )
+            outcome = observed_outcomes[0]
+            if (exit_code, message) != (outcome.exit_code, outcome.message):
+                raise RuntimeError(
+                    "packet runner return disagreed with its authoritative capture outcome"
+                )
+            healthy = outcome.exit_code == 0 and outcome.content_capture_allowed
+            attempts.append(
+                {
+                    "job_id": job.job_id,
+                    "url": job.url,
+                    "started_at": started_at,
+                    "finished_at": utc_now_z(),
+                    "packet_directory": str(packet_directory),
+                    "runner_exit_code": outcome.exit_code,
+                    "http_status": outcome.http_status,
+                    "retry_after": outcome.retry_after,
+                    "retry_after_disposition": outcome.retry_after_disposition,
+                    "body_classification": outcome.body_classification,
+                    "body_classification_signal": outcome.body_classification_signal,
+                    "login_gate_signal": outcome.login_gate_signal,
+                    "access_block_reason": outcome.access_block_reason,
+                    "content_capture_allowed": outcome.content_capture_allowed,
+                    "result": "captured" if healthy else "stopped_on_failure",
+                    "message": outcome.message,
+                }
+            )
+            if not healthy:
+                stop_reason = (
+                    f"job {job.job_id} failed or was refused"
+                    + (
+                        f" with HTTP {outcome.http_status}"
+                        if outcome.http_status is not None
+                        else " before a readable HTTP response"
+                    )
+                )
+                break
+        except BaseException as exc:
+            if started_at is not None:
+                attempts.append(
+                    {
+                        "job_id": job.job_id,
+                        "url": job.url,
+                        "started_at": started_at,
+                        "finished_at": utc_now_z(),
+                        "packet_directory": str(packet_directory),
+                        "runner_exit_code": None,
+                        "http_status": None,
+                        "retry_after": None,
+                        "retry_after_disposition": "unknown_runner_exception",
+                        "body_classification": None,
+                        "body_classification_signal": None,
+                        "login_gate_signal": None,
+                        "access_block_reason": "runner_exception",
+                        "content_capture_allowed": False,
+                        "result": "runner_exception",
+                        "message": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+            stop_reason = f"batch stopped on {type(exc).__name__}: {exc}"
+            pending_exception = exc
             break
 
     attempted_ids = {str(item["job_id"]) for item in attempts}
@@ -170,6 +214,8 @@ def run_same_host_http_batch(
     (output_root / "same_host_http_batch_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
+    if pending_exception is not None:
+        raise pending_exception.with_traceback(pending_exception.__traceback__)
     return (0 if stop_reason is None else STOPPED_EXIT_CODE), summary
 
 
@@ -200,14 +246,6 @@ def _normalized_host(url: str) -> str:
     if parsed.username is not None or parsed.password is not None:
         raise ValueError("job URLs must not contain credentials")
     return parsed.hostname.lower()
-
-
-def _read_http_metadata(packet_directory: Path) -> dict[str, object] | None:
-    matches = sorted(packet_directory.rglob("*_http_response_metadata.json"))
-    if len(matches) != 1:
-        return None
-    value = json.loads(matches[0].read_text(encoding="utf-8"))
-    return value if isinstance(value, dict) else None
 
 
 def _build_parser() -> argparse.ArgumentParser:

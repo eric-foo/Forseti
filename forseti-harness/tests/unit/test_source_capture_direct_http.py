@@ -320,6 +320,27 @@ def test_fetch_direct_http_capture_preserves_safe_retry_after(http_server: str) 
     assert isinstance(result, DirectHttpCaptureSuccess)
     assert result.status == 429
     assert result.metadata["retry_after"] == "60"
+    assert result.metadata["retry_after_disposition"] == "captured"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected_value", "expected_disposition"),
+    [
+        (None, None, "absent"),
+        ("60", "60", "captured"),
+        (" ", None, "rejected_unsafe"),
+        ("x" * 257, None, "rejected_unsafe"),
+    ],
+)
+def test_retry_after_observation_distinguishes_absent_from_rejected(
+    value: str | None,
+    expected_value: str | None,
+    expected_disposition: str,
+) -> None:
+    assert direct_http_module._response_header_observation(value) == (
+        expected_value,
+        expected_disposition,
+    )
 
 
 def test_fetch_direct_http_capture_fails_for_empty_body(http_server: str) -> None:
