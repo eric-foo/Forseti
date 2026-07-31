@@ -18,9 +18,12 @@ Two source artifacts are required, unlike the old surface:
   elements whose attributes are already typed (score, comment-count,
   created-timestamp, permalink), which is strictly more machine-readable than
   the old-Reddit markup this replaces; and
-- the venue envelope (creation date, weekly visitors, and weekly contributions)
-  is NOT in the serialized DOM -- it renders through shadow DOM -- so it is read
-  from the captured visible text.
+- the venue envelope splits: weekly visitors and weekly contributions ARE in
+  the serialized DOM as typed attributes on ``shreddit-subreddit-header``, in
+  exact integers, while their LABELS render through shadow DOM and so never
+  reach the visible text.  The creation date is text-only and is read from the
+  visible text.  An earlier revision read both counts positionally out of that
+  label-less text and mislabelled them as subscribers.
 
 Measured constraint (2026-07-31): the www feed is VIRTUALIZED.  Scrolling
 unloads the head rather than accumulating it; six scroll passes on r/fragrance
@@ -53,7 +56,7 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
 # ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-3"
+WWW_GRID_PROJECTION_PARSER_VERSION = "www-4"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a
@@ -67,6 +70,16 @@ WWW_MAX_THREAD_ROWS = 250
 _POST_TAG = "shreddit-post"
 _AD_TAG = "shreddit-ad-post"
 _FLAIR_TAG = "shreddit-post-flair"
+# New Reddit states weekly reach as typed attributes on the subreddit header,
+# in EXACT integers, under Reddit's own names.  The rendered sidebar shows the
+# same two values abbreviated ("34K", "616") under the labels "Weekly visitors"
+# and "Weekly contributions", but those labels live in the element's shadow
+# template, so visible text carries the numbers with nothing saying what they
+# are.  Reading them positionally out of that text is what put weekly visitors
+# into a subscriber field; the attributes remove the guess, and are exact.
+_HEADER_TAG = "shreddit-subreddit-header"
+_HEADER_WEEKLY_VISITORS_ATTR = "weekly-active-users"
+_HEADER_WEEKLY_CONTRIBUTIONS_ATTR = "weekly-contributions"
 
 # The venue envelope flattens to e.g. "Created Mar 3, 2015 Public 701K7.4K":
 # weekly visitor and contribution counts abut with no separator, so each is
@@ -143,9 +156,23 @@ class _WwwRedditGridParser(HTMLParser):
         self._open_flair: str | None = None
         self._open_stickied = False
         self._depth = 0
+        self.weekly_visitors: str | None = None
+        self.weekly_contributions: str | None = None
+        self.header_seen = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = {key: (value or "") for key, value in attrs}
+        if tag == _HEADER_TAG:
+            # Exact tag match, so shreddit-subreddit-header-buttons -- which
+            # carries neither count -- cannot satisfy this.
+            self.header_seen = True
+            self.weekly_visitors = (
+                attributes.get(_HEADER_WEEKLY_VISITORS_ATTR) or ""
+            ).strip() or None
+            self.weekly_contributions = (
+                attributes.get(_HEADER_WEEKLY_CONTRIBUTIONS_ATTR) or ""
+            ).strip() or None
+            return
         if tag in (_POST_TAG, _AD_TAG):
             self._finish()
             self._open = attributes
@@ -256,24 +283,15 @@ def project_www_reddit_grid(
     venue = _VENUE_RE.search(visible_text or "")
     created = _decode_created_date(venue.group("created")) if venue else None
 
-    # The two abutting numbers in the www sidebar are WEEKLY VISITORS and
-    # WEEKLY CONTRIBUTIONS, not subscribers and online users.  Measured
-    # 2026-07-31 on r/30PlusSkinCare: www renders 701K/7.4K, which matches the
-    # operator's 2026-07-22 community-panel reading of 702K weekly visitors and
-    # 7.6K weekly contributions, while about.json put subscribers at 2,420,271.
-    # Reading them as a subscriber count writes a metric the surface never
-    # states, off by 3.5x, into the series the deferred breakout rule uses as
-    # its normalizer.  They are therefore carried as absent here, with the
-    # reason naming what the surface does expose; routing the weekly figures to
-    # weekly_visitor_count_or_none / weekly_contribution_count_or_none needs an
-    # observation-shape change and is deliberately not smuggled in here.
+    # www states weekly reach and never states subscribers, so the subscriber
+    # fields stay absent with a reason naming what this surface does expose.
+    # Confirmed by operator screenshot 2026-07-31: the sidebar labels these
+    # "Weekly visitors" and "Weekly contributions"; about.json separately put
+    # r/30PlusSkinCare subscribers at 2,420,271 against 701K weekly visitors, so
+    # the subscriber series cannot resume from this surface.
     absent_reason = (
-        "www_venue_envelope_exposes_weekly_visitors_not_subscriber_counts"
-        if (
-            venue
-            and venue.group("weekly_visitors")
-            and venue.group("weekly_contributions")
-        )
+        "www_venue_envelope_exposes_weekly_reach_not_subscriber_counts"
+        if parser.weekly_visitors or parser.weekly_contributions
         else "visible_volume_not_present_on_declared_surface"
     )
 
@@ -288,6 +306,8 @@ def project_www_reddit_grid(
         created_utc_or_none=created,
         listing_thing_count_or_none=parser.listing_thing_count,
         listing_permalink_count_or_none=parser.listing_permalink_count,
+        weekly_visitor_count_or_none=parser.weekly_visitors,
+        weekly_contribution_count_or_none=parser.weekly_contributions,
         verified_empty_listing=(
             parser.listing_thing_count == 0
             and any(marker in lowered for marker in _EMPTY_LISTING_MARKERS)

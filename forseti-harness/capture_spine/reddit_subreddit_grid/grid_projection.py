@@ -76,6 +76,13 @@ class GridView:
     # v4: source-visible proof that zero rows means an authentic empty listing,
     # not a block/login shell or parser failure.
     verified_empty_listing: bool = False
+    # v5, www surface only: new Reddit states weekly reach on the subreddit
+    # header element, old Reddit has no equivalent.  Kept SEPARATE from
+    # visible_active_user_count_or_none, which on old Reddit means "users here
+    # now" -- collapsing a weekly total into a concurrent gauge is the same
+    # category error that put weekly visitors into a subscriber field.
+    weekly_visitor_count_or_none: str | None = None
+    weekly_contribution_count_or_none: str | None = None
 
 
 def project_old_reddit_grid_html(
@@ -185,6 +192,8 @@ def grid_view_from_record(record: dict) -> GridView:
             listing_thing_count_or_none=payload.get("listing_thing_count_or_none"),
             listing_permalink_count_or_none=payload.get("listing_permalink_count_or_none"),
             verified_empty_listing=payload.get("verified_empty_listing", False),
+            weekly_visitor_count_or_none=payload.get("weekly_visitor_count_or_none"),
+            weekly_contribution_count_or_none=payload.get("weekly_contribution_count_or_none"),
         )
     except (KeyError, TypeError) as exc:
         raise RedditGridProjectionError(

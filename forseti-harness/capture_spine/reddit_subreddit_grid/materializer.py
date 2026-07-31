@@ -256,6 +256,12 @@ def refresh_lake_registry_from_grid_packets(
             source_surface=_observation_surface_for(view.listing_url),
             provenance_pointer=read.manifest_path,
             absent_reason_or_none=view.visible_volume_signal_absent_reason_or_none,
+            # www states weekly reach; old Reddit has no equivalent and leaves
+            # these None, so the same call serves both surfaces.
+            weekly_visitor_count_or_none=_normalized_count(view.weekly_visitor_count_or_none),
+            weekly_contribution_count_or_none=_normalized_count(
+                view.weekly_contribution_count_or_none
+            ),
             dry_run=dry_run,
         )
         if result["status"] == "already_current":

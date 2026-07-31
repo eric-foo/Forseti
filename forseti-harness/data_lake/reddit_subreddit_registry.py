@@ -276,6 +276,19 @@ def _validate_field_values(field: str, value: Any) -> Any:
     return value
 
 
+def _weekly_normalized(observation: Mapping[str, Any]) -> dict[str, Any]:
+    """An omitted weekly key and an explicit null are the same observation.
+
+    The weekly reach fields are nullable additions with no migration, so two
+    observations that differ only in whether those keys are present must
+    compare equal; otherwise a replay of an already-folded packet fails closed.
+    """
+    normalized = dict(observation)
+    normalized.setdefault("weekly_visitor_count_or_none", None)
+    normalized.setdefault("weekly_contribution_count_or_none", None)
+    return normalized
+
+
 def _apply_capture_state(row: dict[str, Any], candidate: str) -> None:
     """Assign capture_state for an operator-authored roster change.
 
@@ -600,6 +613,8 @@ def append_grid_observation(
     source_surface: str,
     provenance_pointer: str,
     absent_reason_or_none: str | None,
+    weekly_visitor_count_or_none: str | None = None,
+    weekly_contribution_count_or_none: str | None = None,
     dry_run: bool = False,
 ) -> dict[str, Any]:
     """Append one grid observation plus the row effects the same packet implies.
@@ -619,13 +634,23 @@ def append_grid_observation(
         "provenance_pointer": provenance_pointer,
         "absent_reason_or_none": absent_reason_or_none,
     }
+    # Only surfaces that actually state weekly reach carry the keys. old Reddit
+    # has no equivalent, so its observations keep the shape they have always
+    # had rather than gaining two permanent nulls.
+    if weekly_visitor_count_or_none is not None or weekly_contribution_count_or_none is not None:
+        observation["weekly_visitor_count_or_none"] = weekly_visitor_count_or_none
+        observation["weekly_contribution_count_or_none"] = weekly_contribution_count_or_none
     for existing in row.get("observations", []):
         if existing.get("provenance_pointer") == provenance_pointer:
             # Same rule as the fold: an exact replay is idempotent, but the same
             # packet yielding different values is a conflict, not a duplicate.
             # Returning already_current here would silently drop the new values
             # and leave the writer laxer than the reader that has to fold them.
-            if existing != observation:
+            # BOTH sides are normalized because the weekly keys are nullable
+            # with no migration: an omitted key and an explicit null are the
+            # same observation, and comparing raw dicts would make re-feeding an
+            # already-folded packet fail closed instead of being idempotent.
+            if _weekly_normalized(existing) != _weekly_normalized(observation):
                 raise RedditSubredditRegistryLakeError(
                     "observation_provenance_conflict",
                     f"provenance pointer {provenance_pointer} is already recorded for "

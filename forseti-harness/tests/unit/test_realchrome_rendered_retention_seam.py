@@ -245,6 +245,8 @@ def test_a_www_content_packet_reads_and_folds_end_to_end(tmp_path: Path) -> None
 
     dom = (
         "<html><body>"
+        "<shreddit-subreddit-header name='testsub' weekly-active-users='34364'"
+        " weekly-contributions='616'></shreddit-subreddit-header>"
         "<shreddit-post permalink='/r/testsub/comments/aaa/t/' post-title='One'"
         " score='10' comment-count='5' subreddit-prefixed-name='r/testsub'"
         " created-timestamp='2026-07-24T01:11:13.173000+0000'></shreddit-post>"
@@ -282,8 +284,11 @@ def test_a_www_content_packet_reads_and_folds_end_to_end(tmp_path: Path) -> None
     assert observation["subscriber_count_or_none"] is None
     assert (
         observation["absent_reason_or_none"]
-        == "www_venue_envelope_exposes_weekly_visitors_not_subscriber_counts"
+        == "www_venue_envelope_exposes_weekly_reach_not_subscriber_counts"
     )
+    # The weekly reach www DOES state now folds into its own fields, exact.
+    assert observation["weekly_visitor_count_or_none"] == "34364"
+    assert observation["weekly_contribution_count_or_none"] == "616"
 
 
 def test_a_blocked_www_capture_does_not_fold(tmp_path: Path) -> None:

@@ -170,6 +170,34 @@ def test_all_rows_stickied_remain_source_truth() -> None:
     assert [row["stickied"] for row in rows] == [True, True]
 
 
+def test_weekly_reach_is_read_from_the_header_attributes_not_the_text() -> None:
+    """Exact integers under Reddit's own names, not positional text guessing.
+
+    Verified against the real preserved capture of r/newinbeauty (2026-07-31):
+    weekly-active-users=34364, weekly-contributions=616, which the sidebar
+    renders as "34K" and "616" under labels that live in shadow DOM and never
+    reach the visible text.
+    """
+    dom = (
+        '<shreddit-subreddit-header name="testsub" weekly-active-users="34364"'
+        ' weekly-contributions="616"></shreddit-subreddit-header>' + DOM
+    )
+    view = build_www_grid_content_record(
+        rendered_dom=dom, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
+    )["grid_view"]
+    assert view["weekly_visitor_count_or_none"] == "34364"
+    assert view["weekly_contribution_count_or_none"] == "616"
+
+
+def test_header_buttons_element_does_not_satisfy_the_header_read() -> None:
+    """shreddit-subreddit-header-buttons carries neither count."""
+    dom = '<shreddit-subreddit-header-buttons name="testsub"></shreddit-subreddit-header-buttons>' + DOM
+    view = build_www_grid_content_record(
+        rendered_dom=dom, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
+    )["grid_view"]
+    assert view["weekly_visitor_count_or_none"] is None
+
+
 def test_venue_envelope_does_not_claim_a_subscriber_count() -> None:
     """The abutting numbers are WEEKLY VISITORS/CONTRIBUTIONS, not subscribers.
 
@@ -179,12 +207,18 @@ def test_venue_envelope_does_not_claim_a_subscriber_count() -> None:
     subscribers wrote a 3.5x-wrong value into the series the deferred breakout
     rule uses as its normalizer.
     """
-    view = _record()["grid_view"]
+    dom = (
+        '<shreddit-subreddit-header name="testsub" weekly-active-users="34364"'
+        ' weekly-contributions="616"></shreddit-subreddit-header>' + DOM
+    )
+    view = build_www_grid_content_record(
+        rendered_dom=dom, visible_text=VISIBLE_TEXT, subreddit="testsub", listing_url=LISTING_URL
+    )["grid_view"]
     assert view["visible_subscriber_count_or_none"] is None
     assert view["visible_active_user_count_or_none"] is None
     assert (
         view["visible_volume_signal_absent_reason_or_none"]
-        == "www_venue_envelope_exposes_weekly_visitors_not_subscriber_counts"
+        == "www_venue_envelope_exposes_weekly_reach_not_subscriber_counts"
     )
     # The creation date IS a subscriber-independent fact and still projects.
     assert view["created_utc_or_none"] == "2015-03-03"
