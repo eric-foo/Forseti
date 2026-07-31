@@ -35,7 +35,12 @@ from capture_spine.reddit_subreddit_grid.grid_projection import (
     build_grid_content_record,
     same_grid_listing_url,
 )
+from capture_spine.reddit_subreddit_grid.www_grid_projection import (
+    WWW_GRID_PROJECTION_PARSER_VERSION,
+    build_www_grid_content_record,
+)
 from runners.run_source_capture_http_packet import run_source_capture_http_packet
+from source_capture.content_extraction import RenderedContentExtractionSpec
 from source_capture import CaptureModeCategory
 from source_capture.cadence import CadenceMode, build_cadence_plan
 from source_capture.content_extraction import (
@@ -49,6 +54,15 @@ if TYPE_CHECKING:
 
 GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
 GRID_SOURCE_SURFACE = "old_reddit_direct_http"
+WWW_GRID_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
+GRID_TRANSPORTS = ("old_http", "www_realchrome")
+# Measured 2026-07-31: the www feed virtualizes, so scrolling UNLOADS the head.
+# A tall viewport renders the head in one window instead (~102 rows, score floor
+# 3), which is why depth comes from viewport height and never from scrolling.
+WWW_VIEWPORT_WIDTH = 1280
+WWW_VIEWPORT_HEIGHT = 20000
+WWW_SETTLE_SECONDS = 15.0
+DEFAULT_CDP_ENDPOINT = "http://127.0.0.1:9222"
 ALLOWED_LISTINGS = ("hot", "new", "top", "rising")
 ALLOWED_TIME_WINDOWS = ("hour", "day", "week", "month", "year", "all")
 DEFAULT_MAX_SUBREDDITS = 10
@@ -142,6 +156,30 @@ SOURCE_POLICY_POSTURE_RECEIPT = (
 )
 
 
+def build_www_grid_listing_url(
+    *, subreddit: str, listing: str, time_window: str | None
+) -> str:
+    """Build one new-Reddit listing URL.
+
+    No ``limit`` parameter exists here on purpose: www ignores it, and the
+    rendered VIEWPORT is what bounds the page (a 1280x20000 window returns ~102
+    rows). Accepting a limit would let an operator believe they had capped depth
+    when nothing read the value.
+    """
+    name = _validate_subreddit(subreddit)
+    if listing not in ALLOWED_LISTINGS:
+        raise ValueError(f"listing must be one of {ALLOWED_LISTINGS}, got {listing!r}")
+    url = f"https://www.reddit.com/r/{name}/{listing}/"
+    if listing == "top":
+        window = time_window or "day"
+        if window not in ALLOWED_TIME_WINDOWS:
+            raise ValueError(f"time window must be one of {ALLOWED_TIME_WINDOWS}, got {window!r}")
+        url += f"?t={window}"
+    elif time_window is not None:
+        raise ValueError("time window applies only to the top listing")
+    return url
+
+
 def build_grid_listing_url(
     *, subreddit: str, listing: str, time_window: str | None, limit: int | None = None
 ) -> str:
@@ -167,6 +205,79 @@ def build_grid_listing_url(
     return url
 
 
+def _capture_www_grid(
+    *,
+    subreddit: str,
+    url: str,
+    decision_question: str,
+    output_directory: Path | None,
+    data_root: "DataLakeRoot | None",
+    cdp_endpoint: str,
+    keep_raw_audit_sample: bool,
+    timeout_seconds: float,
+    listing: str,
+    time_window: str | None,
+    cadence_plan: Any,
+    index: int,
+) -> tuple[int, str]:
+    """Capture one www listing through the operator's real Chrome.
+
+    Deliberately routed through the shared real-Chrome runner rather than a
+    second orchestrator: the roster, cadence, batch summary, and duplicate
+    checks above are transport-agnostic and stay single-homed.
+    """
+    from runners.run_source_capture_realchrome_cdp_packet import (
+        run_source_capture_realchrome_cdp_packet,
+    )
+    from source_capture.rendered_retention import require_content_retention
+
+    def _extract(rendered_dom: bytes, visible_text: bytes, _final_url: str) -> dict:
+        return build_www_grid_content_record(
+            rendered_dom=rendered_dom.decode("utf-8", errors="replace"),
+            visible_text=visible_text.decode("utf-8", errors="replace"),
+            subreddit=subreddit,
+            listing_url=url,
+        )
+
+    spec = require_content_retention(
+        RenderedContentExtractionSpec(
+            requested_retention_mode="content",
+            extractor_version=WWW_GRID_PROJECTION_PARSER_VERSION,
+            extractor=_extract,
+        ),
+        lane="reddit www grid capture",
+    )
+    return run_source_capture_realchrome_cdp_packet(
+        url=url,
+        source_family=GRID_SOURCE_FAMILY,
+        source_surface=WWW_GRID_SOURCE_SURFACE,
+        decision_question=decision_question,
+        output_directory=output_directory,
+        data_root=data_root,
+        capture_context=(
+            "bounded reddit subreddit grid pass over the www listing surface; one declared "
+            "listing page per subreddit; no link following, comment expansion, user/profile "
+            "capture, or self-scheduling"
+        ),
+        cdp_endpoint=cdp_endpoint,
+        viewport_width=WWW_VIEWPORT_WIDTH,
+        viewport_height=WWW_VIEWPORT_HEIGHT,
+        settle_seconds=WWW_SETTLE_SECONDS,
+        timeout_seconds=timeout_seconds,
+        content_extraction=spec,
+        capture_screenshot=False,
+        keep_raw_audit_sample=keep_raw_audit_sample,
+        limitations=[
+            SOURCE_POLICY_POSTURE_RECEIPT,
+            f"grid runner listing={listing} time_window={time_window or 'n/a'} transport=www_realchrome",
+            f"grid runner cadence_mode={cadence_plan.mode}",
+            f"grid runner planned_start_offset_seconds={cadence_plan.planned_offsets_seconds[index]}",
+            "grid runner retry_count=0",
+            "www depth is bounded by the rendered viewport, not by a listing limit",
+        ],
+    )
+
+
 def run_reddit_grid_capture(
     *,
     subreddits: Sequence[str],
@@ -186,12 +297,29 @@ def run_reddit_grid_capture(
     cadence_max_gap_seconds: float | None = None,
     cadence_random_seed: int | None = None,
     requested_retention_mode: str = DEFAULT_RETENTION_MODE,
+    transport: str = "old_http",
+    cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
 ) -> tuple[int, str]:
     if requested_retention_mode not in CAPTURE_RETENTION_MODES:
         raise ValueError(
             f"requested_retention_mode must be one of {CAPTURE_RETENTION_MODES}, "
             f"got {requested_retention_mode!r}"
         )
+    if transport not in GRID_TRANSPORTS:
+        raise ValueError(f"transport must be one of {GRID_TRANSPORTS}, got {transport!r}")
+    if transport == "www_realchrome":
+        # Never raw-only binds this lane, so a raw request is refused here rather
+        # than quietly downgraded (weekly demand radar spec, owner 2026-07-31).
+        if requested_retention_mode != "content":
+            raise ValueError(
+                "the www transport binds never-raw-only; "
+                f"refusing retention mode {requested_retention_mode!r}"
+            )
+        if limit is not None:
+            raise ValueError(
+                "www ignores a listing limit; depth comes from the rendered "
+                "viewport, so a limit here would be a cap that nothing enforces"
+            )
     _validate_grid_inputs(
         subreddits=subreddits,
         output_root=output_root,
@@ -203,10 +331,18 @@ def run_reddit_grid_capture(
     duplicates = sorted({name for name in names if names.count(name) > 1})
     if duplicates:
         raise ValueError(f"duplicate subreddit value(s): {duplicates}")
-    urls = [
-        build_grid_listing_url(subreddit=name, listing=listing, time_window=time_window, limit=limit)
-        for name in names
-    ]
+    if transport == "www_realchrome":
+        urls = [
+            build_www_grid_listing_url(subreddit=name, listing=listing, time_window=time_window)
+            for name in names
+        ]
+    else:
+        urls = [
+            build_grid_listing_url(
+                subreddit=name, listing=listing, time_window=time_window, limit=limit
+            )
+            for name in names
+        ]
 
     # Retention rule 1 (weekly demand radar spec): on a content-mode weekly
     # pass, one rotating subreddit keeps raw as the projection audit sample.
@@ -254,6 +390,46 @@ def run_reddit_grid_capture(
                 subreddit=_name,
                 listing_url=_url,
             )
+
+        if transport == "www_realchrome":
+            # The audit sample keeps raw ALONGSIDE its content record rather
+            # than instead of it.  A raw-only sample is what banked a login wall
+            # and still exited 0 on 2026-07-30, because with no projection to
+            # run there was nothing to fail.
+            row["retention_mode"] = "content"
+            row["raw_audit_sample"] = name == raw_sample_subreddit
+            row["capture_started_at"] = utc_now_z_microseconds()
+            try:
+                capture_exit, capture_message = _capture_www_grid(
+                    subreddit=name,
+                    url=url,
+                    decision_question=decision_question,
+                    output_directory=(
+                        None if data_root is not None else output_root / f"{name}_grid_packet"
+                    ),
+                    data_root=data_root,
+                    cdp_endpoint=cdp_endpoint,
+                    keep_raw_audit_sample=name == raw_sample_subreddit,
+                    timeout_seconds=timeout_seconds,
+                    listing=listing,
+                    time_window=time_window,
+                    cadence_plan=cadence_plan,
+                    index=index,
+                )
+                row["capture_exit"] = capture_exit
+                row["capture_message"] = capture_message
+                if capture_exit == 0:
+                    row["packet_path"] = capture_message
+            except Exception as exc:
+                row["capture_exit"] = 2
+                row["capture_message"] = f"{type(exc).__name__}: {exc}"
+            row["capture_finished_at"] = utc_now_z_microseconds()
+            results.append(row)
+            if index < len(cadence_plan.planned_waits_seconds):
+                wait_seconds = cadence_plan.planned_waits_seconds[index]
+                if wait_seconds > 0:
+                    time.sleep(wait_seconds)
+            continue
 
         row_retention = (
             "raw" if name == raw_sample_subreddit else requested_retention_mode
@@ -403,6 +579,16 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Capture every subreddit the lake registry tracks (requires --data-root).",
     )
     parser.add_argument("--listing", choices=ALLOWED_LISTINGS, default="top")
+    parser.add_argument(
+        "--transport",
+        choices=list(GRID_TRANSPORTS),
+        default="old_http",
+        help=(
+            "old_http: direct HTTP against old.reddit (blocked for this client since "
+            "2026-07-30). www_realchrome: operator real Chrome over CDP against www."
+        ),
+    )
+    parser.add_argument("--cdp-endpoint", default=DEFAULT_CDP_ENDPOINT)
     parser.add_argument("--time-window", choices=ALLOWED_TIME_WINDOWS, default=None)
     parser.add_argument(
         "--limit", type=int, default=None,

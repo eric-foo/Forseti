@@ -168,6 +168,81 @@ def test_extraction_failure_preserves_raw_and_withholds_no_record(tmp_path: Path
     assert "no_thread_rows" in manifest
 
 
+def test_a_www_content_packet_reads_and_folds_end_to_end(tmp_path: Path) -> None:
+    """Capture -> packet -> materializer -> registry, with no network.
+
+    The two transports name their metadata file and success posture differently,
+    so this is the test that would have caught a www packet capturing cleanly and
+    then being unreadable at the fold.
+    """
+    from capture_spine.reddit_subreddit_grid.materializer import (
+        read_grid_packet,
+        refresh_lake_registry_from_grid_packets,
+    )
+    from capture_spine.reddit_subreddit_grid.www_grid_projection import (
+        build_www_grid_content_record,
+    )
+    from data_lake.reddit_subreddit_registry import append_roster_change, fold_subreddit
+    from data_lake.root import DataLakeRoot
+
+    dom = (
+        "<html><body>"
+        "<shreddit-post permalink='/r/testsub/comments/aaa/t/' post-title='One'"
+        " score='10' comment-count='5' subreddit-prefixed-name='r/testsub'"
+        " created-timestamp='2026-07-24T01:11:13.173000+0000'></shreddit-post>"
+        "</body></html>"
+    )
+    engine = _FakeEngine(dom=dom, text="Created Mar 3, 2015 Public 701K7.4K")
+    spec = RenderedContentExtractionSpec(
+        requested_retention_mode="content",
+        extractor_version="www-2",
+        extractor=lambda d, t, u: build_www_grid_content_record(
+            rendered_dom=d.decode("utf-8"),
+            visible_text=t.decode("utf-8"),
+            subreddit="testsub",
+            listing_url=URL,
+        ),
+    )
+    _, packet = _run(tmp_path, engine, content_extraction=spec, capture_screenshot=False)
+
+    read = read_grid_packet(packet_or_manifest_path=packet)
+    assert read.subreddit == "testsub"
+    assert len(read.grid_view.thread_rows) == 1
+
+    lake = DataLakeRoot.for_test(tmp_path / "lake")
+    append_roster_change(lake, subreddit="testsub", change_kind="add", actor="test")
+    outcome = refresh_lake_registry_from_grid_packets(
+        data_root=lake, packet_paths=[packet], dry_run=False
+    )
+    assert outcome.refreshed_subreddits == ["testsub"]
+    assert outcome.unknown_subreddits == []
+
+    observation = fold_subreddit(lake, "testsub")["observations"][0]
+    assert observation["source_surface"] == "www_reddit_top_week_packet"
+    # www renders the member count old.reddit stopped serving, so the subscriber
+    # series resumes from the listing surface itself.
+    assert observation["subscriber_count_or_none"] == "701K"
+
+
+def test_a_blocked_www_capture_does_not_fold(tmp_path: Path) -> None:
+    """Failure evidence must never become registry evidence."""
+    from capture_spine.reddit_subreddit_grid.materializer import (
+        RegistryRefreshError,
+        read_grid_packet,
+    )
+
+    engine = _FakeEngine(
+        dom="<html><body>blocked</body></html>",
+        text="You've been blocked by network security. File a ticket",
+    )
+    _, packet = _run(
+        tmp_path, engine, content_extraction=_spec(), capture_screenshot=False
+    )
+    with pytest.raises(RegistryRefreshError) as excinfo:
+        read_grid_packet(packet_or_manifest_path=packet)
+    assert excinfo.value.code in {"grid_access_unsuccessful", "www_content_record_required"}
+
+
 def test_access_block_withholds_a_clean_record_and_keeps_raw(tmp_path: Path) -> None:
     """A projection of a login wall must not ship as admitted source content."""
     engine = _FakeEngine(
