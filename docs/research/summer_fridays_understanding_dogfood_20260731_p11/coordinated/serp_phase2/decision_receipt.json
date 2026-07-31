@@ -1,0 +1,71 @@
+{
+  "schema_version": "serp_phase2_decision_receipt_v0",
+  "valid": true,
+  "subject": {
+    "name": "Summer Fridays",
+    "entity_key": "summer fridays|company|brand"
+  },
+  "results": [
+    {
+      "name": "e.l.f.",
+      "entity_key": "e.l.f.|Glow Reviver Melting Lip Balm|standard",
+      "subject_entity_key": "summer fridays|company|brand",
+      "rung": "candidate",
+      "identity_coherent": true,
+      "surface_independent": true,
+      "surface_classes": [
+        "creator_transcript",
+        "serp_aio"
+      ],
+      "source_ids": [
+        "instagram_DQLAZt7DSav:01KYWP5J0EETND77EW41JSB88P",
+        "p1_vs_elf:01KYWMN6SF5QAM2QJ1HT9120T9",
+        "youtube_nkKjxEQgBp8:01KYWP724PJ0817618K49VWMAF"
+      ],
+      "first_hand_authors": 0,
+      "threads": 0,
+      "venues": 0,
+      "best_comment_rank": null,
+      "max_comment_score": null,
+      "confidence": "weak",
+      "action": "watch_for_new_source",
+      "decision_ready": false
+    },
+    {
+      "name": "Rhode",
+      "entity_key": "Rhode|Peptide Lip Treatment|standard",
+      "subject_entity_key": "summer fridays|company|brand",
+      "rung": "candidate",
+      "identity_coherent": true,
+      "surface_independent": true,
+      "surface_classes": [
+        "serp_aio",
+        "serp_rendered_snippet"
+      ],
+      "source_ids": [
+        "p1_vs_rhode:rendered_snippet",
+        "p1_vs_rhode:serp_aio"
+      ],
+      "first_hand_authors": 0,
+      "threads": 0,
+      "venues": 0,
+      "best_comment_rank": null,
+      "max_comment_score": null,
+      "confidence": "weak",
+      "action": "watch_for_new_source",
+      "decision_ready": false
+    }
+  ],
+  "summary": {
+    "entry_count": 2,
+    "decision_ready_names": [],
+    "validate_once_names": [],
+    "watch_names": [
+      "Rhode",
+      "e.l.f."
+    ],
+    "parked_names": [],
+    "identity_correction_names": []
+  },
+  "partial_probe_ids": []
+}
