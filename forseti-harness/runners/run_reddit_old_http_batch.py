@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 import time
 from dataclasses import dataclass
@@ -126,6 +127,7 @@ def run_reddit_old_http_batch(
     transport: str = OLD_HTTP_TRANSPORT,
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
     keep_raw_audit_sample: bool = False,
+    resume: bool = False,
 ) -> tuple[int, str]:
     if requested_retention_mode not in CAPTURE_RETENTION_MODES:
         raise ValueError(
@@ -152,14 +154,35 @@ def run_reddit_old_http_batch(
         max_bytes=max_bytes,
         transport=transport,
     )
+    summary_path = output_root / "batch_summary.json"
+    if summary_path.exists():
+        raise ValueError(f"batch summary already exists: {summary_path}")
+
+    # The summary alone is written at end-of-run, so an external kill --
+    # session teardown, machine sleep, operator interrupt -- used to erase
+    # every trace of a run whose packets were already safely in the lake.
+    # Each slot's row is therefore journaled durably the moment the slot
+    # finishes; the journal is also what makes a killed run resumable
+    # without re-requesting threads Reddit already served.
+    progress_path = output_root / "batch_progress.jsonl"
+    carried_rows = _load_resume_rows(
+        progress_path=progress_path, slots=slots, resume=resume
+    )
+    carried_slot_ids = {row["slot_id"] for row in carried_rows}
+    pending_slots = [slot for slot in slots if slot.slot_id not in carried_slot_ids]
+    if resume and not pending_slots:
+        raise ValueError(
+            f"nothing to resume: all {len(slots)} slot(s) already journaled in {progress_path}"
+        )
+
     if cadence_mode == "bounded_jitter" and cadence_window_seconds is None:
         # Derivable from the slot count and the max gap; requiring it by hand
         # only ever produces a launch failure or a silently compressed range.
         cadence_window_seconds = resolve_cadence_window_seconds(
-            slot_count=len(slots), max_gap_seconds=cadence_max_gap_seconds
+            slot_count=len(pending_slots), max_gap_seconds=cadence_max_gap_seconds
         )
     cadence_plan = build_cadence_plan(
-        slot_count=len(slots),
+        slot_count=len(pending_slots),
         mode=cadence_mode,
         delay_seconds=delay_seconds,
         window_seconds=cadence_window_seconds,
@@ -168,12 +191,9 @@ def run_reddit_old_http_batch(
         random_seed=cadence_random_seed,
     )
     output_root.mkdir(parents=True, exist_ok=True)
-    summary_path = output_root / "batch_summary.json"
-    if summary_path.exists():
-        raise ValueError(f"batch summary already exists: {summary_path}")
 
-    results: list[dict[str, Any]] = []
-    for index, slot in enumerate(slots):
+    results: list[dict[str, Any]] = list(carried_rows)
+    for index, slot in enumerate(pending_slots):
         packet_dir = None if data_root is not None else output_root / f"{slot.slot_id}_packet"
         row: dict[str, Any] = {
             "slot_id": slot.slot_id,
@@ -291,6 +311,7 @@ def run_reddit_old_http_batch(
         elapsed = time.monotonic() - capture_started_monotonic
         row["capture_elapsed_seconds"] = round(elapsed, 3)
         results.append(row)
+        _append_progress_row(progress_path=progress_path, row=row)
         if index < len(cadence_plan.planned_waits_seconds):
             wait_seconds, overrun = resolve_paced_wait(
                 planned=cadence_plan.planned_waits_seconds[index],
@@ -336,6 +357,8 @@ def run_reddit_old_http_batch(
         "cadence": cadence_plan.to_dict(),
         "max_urls": max_urls,
         "url_count": len(slots),
+        "resumed": resume,
+        "carried_slot_count": len(carried_rows),
         "capture_success_count": sum(1 for row in results if row["capture_exit"] == 0),
         "access_diagnostic_count": sum(
             1 for row in results if row["access_diagnostic_status"] == "preserved"
@@ -618,6 +641,65 @@ def _preserve_block_shell_diagnostic(
     }
 
 
+def _append_progress_row(*, progress_path: Path, row: dict[str, Any]) -> None:
+    with progress_path.open("a", encoding="utf-8", newline="\n") as handle:
+        handle.write(f"{json.dumps(row, sort_keys=True)}\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
+def _load_resume_rows(
+    *, progress_path: Path, slots: Sequence[BatchSlot], resume: bool
+) -> list[dict[str, Any]]:
+    """Load journaled rows for a resumed run; refuse ambiguous states loudly.
+
+    A journaled slot counts as attempted regardless of its exit code: the
+    batch contract is one request per thread with no retry escalation, so a
+    resume never re-requests a slot that already reached Reddit. Only slots
+    with no journal row at all -- never started, or killed mid-capture before
+    the row was written -- are (re)run.
+    """
+    if not progress_path.exists():
+        if resume:
+            raise ValueError(f"--resume requested but no progress journal at {progress_path}")
+        return []
+    if not resume:
+        raise ValueError(
+            f"progress journal already exists: {progress_path}; a prior run was "
+            "interrupted here. Pass --resume to continue it, or choose a fresh "
+            "--output-root."
+        )
+    url_by_slot_id = {slot.slot_id: slot.url for slot in slots}
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for line_number, line in enumerate(
+        progress_path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        slot_id = row.get("slot_id")
+        if slot_id not in url_by_slot_id:
+            raise ValueError(
+                f"progress journal line {line_number} names slot_id {slot_id!r} "
+                "absent from the supplied URL list; refusing to resume a "
+                "different batch in this output_root"
+            )
+        if row.get("url") != url_by_slot_id[slot_id]:
+            raise ValueError(
+                f"progress journal line {line_number} URL differs from the "
+                f"supplied URL list for slot_id {slot_id!r}; refusing to resume "
+                "a different batch in this output_root"
+            )
+        if slot_id in seen:
+            raise ValueError(
+                f"progress journal repeats slot_id {slot_id!r}; refusing ambiguous resume"
+            )
+        seen.add(slot_id)
+        rows.append(row)
+    return rows
+
+
 def load_slots(path: Path, *, transport: str = OLD_HTTP_TRANSPORT) -> list[BatchSlot]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, list):
@@ -767,6 +849,14 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--cadence-random-seed", type=int, default=None)
     parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "Continue an interrupted run in the same --output-root: slots already "
+            "journaled in batch_progress.jsonl are carried, not re-requested."
+        ),
+    )
+    parser.add_argument(
         "--retention-mode",
         choices=list(CAPTURE_RETENTION_MODES),
         default=DEFAULT_RETENTION_MODE,
@@ -806,6 +896,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             cadence_max_gap_seconds=args.cadence_max_gap_seconds,
             cadence_random_seed=args.cadence_random_seed,
             requested_retention_mode=args.retention_mode,
+            resume=args.resume,
         )
     except ValueError as exc:
         parser.exit(status=2, message=f"reddit old HTTP batch failed: {exc}\n")
