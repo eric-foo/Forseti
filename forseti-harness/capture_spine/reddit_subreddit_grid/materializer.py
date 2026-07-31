@@ -35,6 +35,7 @@ from data_lake.reddit_subreddit_registry import (
 from data_lake.root import DataLakeRoot
 from capture_spine.reddit_subreddit_grid.grid_projection import (
     GRID_LISTING_HOSTS,
+    OLD_REDDIT_LISTING_HOST,
     WWW_REDDIT_LISTING_HOST,
     GridView,
     RedditGridProjectionError,
@@ -76,7 +77,16 @@ WWW_TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "www_reddit_top_week_packet"
 def _observation_surface_for(listing_url: str) -> str:
     parsed = urlparse(listing_url)
     parts = [part for part in parsed.path.split("/") if part]
-    www = parsed.netloc.lower() == WWW_REDDIT_LISTING_HOST
+    host = parsed.netloc.lower()
+    if host == WWW_REDDIT_LISTING_HOST:
+        www = True
+    elif host == OLD_REDDIT_LISTING_HOST:
+        www = False
+    else:
+        raise RegistryRefreshError(
+            "grid_listing_host_unknown",
+            f"cannot assign a grid observation surface to host {host!r}",
+        )
     if parts and parts[-1] == "top" and "t=week" in (parsed.query or "").split("&"):
         return (
             WWW_TOP_WEEK_OBSERVATION_SOURCE_SURFACE
@@ -298,6 +308,7 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
     _verify_successful_grid_response(
         packet=packet,
         metadata_path=metadata_path,
+        expected_locator=locator,
         expected_subreddit=subreddit,
     )
 
@@ -334,7 +345,19 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
                 "content_record_subreddit_mismatch",
                 f"content record names subreddit {grid_view.subreddit!r}, expected {subreddit!r}",
             )
+        if not same_grid_listing_url(grid_view.listing_url, locator):
+            raise RegistryRefreshError(
+                "content_record_listing_url_mismatch",
+                "content record listing URL does not match the packet locator: "
+                f"content={grid_view.listing_url!r} packet={locator!r}",
+            )
     else:
+        if urlparse(locator).netloc.lower() == WWW_REDDIT_LISTING_HOST:
+            raise RegistryRefreshError(
+                "www_content_record_required",
+                "www Reddit grid packets require an admitted content record; "
+                "a raw fallback remains failure evidence, not registry evidence",
+            )
         raw_file = _resolve_preserved_file(packet, file_name="http_response_body.bin")
         raw_path = _resolve_packet_file_path(
             packet_dir=manifest_path.parent,
@@ -380,7 +403,7 @@ def _apply_two_speed_refresh(
             "observed_at": read.observed_at,
             "subscriber_count_or_none": _normalized_count(view.visible_subscriber_count_or_none),
             "active_user_count_or_none": _normalized_count(view.visible_active_user_count_or_none),
-            "source_surface": GRID_OBSERVATION_SOURCE_SURFACE,
+            "source_surface": _observation_surface_for(view.listing_url),
             "provenance_pointer": read.manifest_path,
             "absent_reason_or_none": view.visible_volume_signal_absent_reason_or_none,
         }
@@ -451,6 +474,7 @@ def _verify_successful_grid_response(
     *,
     packet,
     metadata_path: Path,
+    expected_locator: str,
     expected_subreddit: str,
 ) -> None:
     try:
@@ -476,31 +500,27 @@ def _verify_successful_grid_response(
         final_url is not None
         and (
             not isinstance(final_url, str)
-            or _subreddit_from_listing_url(final_url) != expected_subreddit
+            or not same_grid_listing_url(final_url, expected_locator)
         )
     ):
         raise RegistryRefreshError(
             "grid_final_locator_mismatch",
-            f"grid packet final URL does not match subreddit {expected_subreddit!r}: {final_url!r}",
+            "grid packet final URL does not match its declared listing locator: "
+            f"final={final_url!r} declared={expected_locator!r}",
         )
     for source_slice in packet.source_slices:
         locator = source_slice.locator.value
         access_posture = source_slice.access_posture.value or ""
         if (
             isinstance(locator, str)
+            and same_grid_listing_url(locator, expected_locator)
             and _subreddit_from_listing_url(locator) == expected_subreddit
             and access_posture.startswith("direct_http succeeded with HTTP 2")
         ):
-            if final_url is not None and not same_grid_listing_url(final_url, locator):
-                raise RegistryRefreshError(
-                    "grid_final_locator_mismatch",
-                    f"grid packet final URL does not match requested listing: "
-                    f"final={final_url!r} requested={locator!r}",
-                )
             return
     raise RegistryRefreshError(
         "grid_access_unsuccessful",
-        "grid packet carries no successful old-Reddit source slice for the declared subreddit",
+        "grid packet carries no successful source slice for its declared Reddit listing",
     )
 
 
@@ -510,7 +530,7 @@ def _subreddit_from_listing_url(url: str) -> str | None:
     if (
         parsed.scheme == "https"
         and parsed.netloc.lower() in GRID_LISTING_HOSTS
-        and len(parts) >= 3
+        and len(parts) == 3
         and parts[0] == "r"
         and parts[1].isascii()
         and parts[1].replace("_", "").isalnum()

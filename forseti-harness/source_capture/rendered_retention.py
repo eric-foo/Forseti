@@ -98,6 +98,11 @@ def resolve_rendered_retention(
 ) -> RenderedRetentionDecision:
     """Classify one rendered capture's retention outcome and provenance.
 
+    This generic classifier still represents the ``raw`` outcome. A lane that
+    binds never-raw-only must call ``require_content_retention`` at its capture
+    boundary before calling this function; classification alone is not
+    enforcement.
+
     ``admission_failed`` folds every reason the packet must not be admitted as
     clean source content (access block, sufficiency failure). It forces raw
     preservation even when extraction itself succeeded, because a projection

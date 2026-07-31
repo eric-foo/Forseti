@@ -88,6 +88,10 @@ output to the lake.
   this lane, and no screenshot is captured at all — the projection reads DOM and
   visible text, the access classifier reads the response, and nothing consumes
   the image.
+- At this revision the shared decision helper and its matrix tests exist, but no
+  capture runner calls that helper. Never-raw-only is therefore the bound lane
+  behavior, not yet observed runtime enforcement; runner integration is required
+  before claiming the lane enforces it.
 - Two raw-retention rules, no schedule, no decay curve:
   1. One rotating subreddit per weekly pass keeps raw **in addition to** its
      content record (audit sample; DOM and visible text only). Raw *instead of*
@@ -99,6 +103,10 @@ output to the lake.
   2. Any packet whose projection returns an anomaly keeps raw (row count
      mismatch vs things seen, zero timestamps, zero permalinks). This is the
      fail-loud fallback, not a retention choice, and it stays.
+- Extraction or admission failure is not an admitted packet. Exact DOM and
+  visible-text inputs survive; when extraction itself succeeded, the attempted
+  content-record digest also survives, but its bytes are withheld so downstream
+  readers cannot consume a clean projection of a block shell as source content.
 - Accepted residual: a projection gap not caught by either rule loses at most
   the sub-50-point tail for the affected weeks; the head stays recoverable
   via a one-shot `t=month` capture for a month.
@@ -114,11 +122,23 @@ output to the lake.
 ### C. Registry coupling (extend materializer)
 
 - The refresh accepts grid-family packets of either listing and records an
-  observation per packet: `source_surface` is `old_reddit_grid_packet` for hot
-  and `old_reddit_top_week_packet` for top/week, provenance pointer to the
-  packet manifest, capture_state advance per the registry spec.
-- The materializer learns to project raw-preserved grid packets in-read (today
-  it only accepts pre-projected content records).
+  observation per packet. `source_surface` is `old_reddit_grid_packet` or
+  `old_reddit_top_week_packet` on `old.reddit.com`, and
+  `www_reddit_grid_packet` or `www_reddit_top_week_packet` on
+  `www.reddit.com`; the durable label makes the host cutover visible.
+  `source_surface` is provenance, not a grid-observation type discriminator:
+  downstream readers must not use the `old_reddit_` prefix as that proxy.
+  Each observation also carries the packet-manifest provenance pointer and
+  capture-state advance required by the registry spec.
+- The materializer may re-project legacy raw-preserved `old.reddit.com` grid
+  packets in-read. A `www.reddit.com` packet must carry an admitted content
+  record; a raw failure is retained as diagnostic evidence but cannot ledger an
+  observation. The packet locator, successful source slice, response final URL,
+  and content-record listing URL must all name the same host, path, and query.
+- Host-safe projection and ledger parameterization does not itself provide the
+  rendered capture runner. The current packet reader recognizes its existing
+  successful direct-HTTP slice posture; a rendered caller and packet path remain
+  unimplemented at this revision.
 - The five 2026-07-22 experiment packets (family `reddit_subreddit_venue`)
   stay unledgered as an accepted residual; the first real weekly pass
   supersedes them.
