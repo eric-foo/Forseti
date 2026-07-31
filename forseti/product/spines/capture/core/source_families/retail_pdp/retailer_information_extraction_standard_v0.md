@@ -206,8 +206,10 @@ adaptation. Grid projections are separate retailer-specific mechanical views,
 not PDP content, Cleaning, or Silver.
 
 Current admitted projected grid paths include Sephora, Ulta, Target, Amazon,
-and REVOLVE; future company runs select among officially named,
-route-admissible retailers rather than forcing a quartet. Sephora reconciles its retailer-declared count against unique
+and REVOLVE; future company runs select and attempt at least four
+company-authorized, target-market, route-admissible third-party retailers when
+four exist, or preserve `AUTHORIZED_RETAILER_SHORTFALL` when they do not.
+Sephora reconciles its retailer-declared count against unique
 parent rows; Ulta reconciles its retailer-declared and viewed counts against
 anchored placements, so a complete Ulta grid may hold more placements than
 unique parents. Target's admitted search and `/b/<brand>/-/N-...` brand grids
@@ -219,9 +221,13 @@ page's count observation remains preserved because the live assortment can
 change during traversal. An unsupported larger `count` hint is never a
 completeness dependency. Amazon has an admitted query-bound ranked-search
 projection complete only for its declared query and reachable result window,
-never as a guaranteed complete or authorized-only brand denominator. Projection
-capability does not admit a live route; each acquisition still records market
-pin, reachability, surface boundary, and typed failure.
+never as a guaranteed complete or authorized-only brand denominator. It counts
+toward the retailer floor only when a company-owned source explicitly names or
+links the target-market Amazon store or retailer. A verified marketplace
+identity without company authorization may supplement evidence but does not
+count; an unverified presence remains a discovery pointer. Projection capability
+does not admit a live route; each acquisition still records market pin,
+reachability, surface boundary, and typed failure.
 Amazon, Sephora, Ulta, and Target PDP profiles use retailer-local canonical
 content. Amazon and Target PDP captures may omit a local fulfillment ZIP when
 the claim is the US-facing product surface; displayed destination and
