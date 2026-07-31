@@ -256,14 +256,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    data_root = None
-    if args.data_root is not None or (
-        os.environ.get("FORSETI_DATA_ROOT") or os.environ.get("ORCA_DATA_ROOT")
-    ):
-        try:
-            data_root = DataLakeRoot.resolve(explicit=args.data_root)
-        except DataLakeRootError as exc:
-            parser.error(f"invalid Forseti data lake root: {exc}")
+    try:
+        data_root = _resolve_optional_data_root(args.data_root)
+    except DataLakeRootError as exc:
+        parser.error(f"invalid Forseti data lake root: {exc}")
 
     with tempfile.TemporaryDirectory(prefix="forseti_deepcap_") as scratch:
         result = run_reel_deep_capture(
@@ -306,6 +302,14 @@ def _persist_deep_capture(result, *, data_root: DataLakeRoot) -> str:
         f"persisted: packet={written.packet_id} record={written.record_id} "
         f"silver_lanes={','.join(sorted(written))}{exclusions}"
     )
+
+
+def _resolve_optional_data_root(data_root_arg: str | None) -> DataLakeRoot | None:
+    if data_root_arg is None and not (
+        os.environ.get("FORSETI_DATA_ROOT") or os.environ.get("ORCA_DATA_ROOT")
+    ):
+        return None
+    return DataLakeRoot.resolve(explicit=data_root_arg)
 
 
 if __name__ == "__main__":
