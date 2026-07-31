@@ -132,6 +132,7 @@ class RealChromeCDPEngine(Protocol):
         persistent_tab_marker: str | None,
         fit_viewport_to_window: bool,
         capture_screenshot: bool = True,
+        ready_selector: str | None = None,
     ) -> RealChromeCDPCaptureResult: ...
 
 
@@ -171,6 +172,7 @@ class _LiveRealChromeCDPEngine:
         persistent_tab_marker: str | None,
         fit_viewport_to_window: bool,
         capture_screenshot: bool = True,
+        ready_selector: str | None = None,
     ) -> RealChromeCDPCaptureResult:
         try:
             from playwright.sync_api import sync_playwright
@@ -270,6 +272,25 @@ class _LiveRealChromeCDPEngine:
                             "transient_access_block_observed_during_settle: "
                             f"{settle_block_signal}"
                         )
+                    if ready_selector:
+                        # A fixed settle is a guess about render time, and a
+                        # wrong guess is indistinguishable from an empty page:
+                        # 8 of 91 captures on 2026-07-31 snapshotted a rendered
+                        # shell whose feed had not arrived, or rows whose
+                        # attributes had not populated. Waiting on a caller-named
+                        # readiness condition replaces the guess. A timeout is
+                        # recorded and capture continues, so the packet still
+                        # exists as evidence and the projection guard is what
+                        # decides whether it may be admitted.
+                        try:
+                            page.wait_for_selector(
+                                ready_selector, timeout=min(timeout_ms, 60000)
+                            )
+                        except Exception as exc:
+                            warnings.append(
+                                f"ready_selector {ready_selector!r} did not appear "
+                                f"before snapshot: {type(exc).__name__}"
+                            )
                     if scroll_step_px > 0:
                         position = 0
                         for _ in range(_MAX_PROGRESSIVE_SCROLL_STEPS):
@@ -388,6 +409,10 @@ def run_source_capture_realchrome_cdp_packet(
     content_extraction: RenderedContentExtractionSpec | None = None,
     capture_screenshot: bool = True,
     keep_raw_audit_sample: bool = False,
+    # A CSS selector the page must satisfy before the snapshot is taken, so a
+    # caller can name what "rendered" means for its own surface instead of
+    # trusting a fixed settle to have been long enough.
+    ready_selector: str | None = None,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
@@ -423,6 +448,7 @@ def run_source_capture_realchrome_cdp_packet(
         persistent_tab_marker=persistent_tab_marker,
         fit_viewport_to_window=fit_viewport_to_window,
         capture_screenshot=capture_screenshot,
+        ready_selector=ready_selector,
     )
 
     access = classify_rendered_access(
@@ -457,6 +483,7 @@ def run_source_capture_realchrome_cdp_packet(
         "persistent_tab": persistent_tab_marker is not None,
         "persistent_tab_marker": persistent_tab_marker,
         "fit_viewport_to_window": fit_viewport_to_window,
+        "ready_selector": ready_selector,
         # "not_captured" rather than "viewport"/0: a packet that reports a
         # viewport screenshot of zero bytes claims a capture posture it does not
         # have, and a later reader cannot tell suppression from a failed raster.

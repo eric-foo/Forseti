@@ -85,6 +85,12 @@ WWW_SETTLE_SECONDS = 15.0
 # browser, and a fresh tab per request is also a less natural session shape than
 # one tab navigating between listings.
 WWW_PERSISTENT_TAB_MARKER = "forseti-reddit-grid"
+# A row is only usable once it carries the permalink the projection reads, so
+# readiness is "at least one post WITH a permalink", not merely "a post element
+# exists". That single selector covers both ways the 2026-07-31 pass failed:
+# 4 subreddits snapshotted with no posts at all, and 4 with post elements whose
+# attributes had not populated.
+WWW_READY_SELECTOR = "shreddit-post[permalink]"
 DEFAULT_CDP_ENDPOINT = "http://127.0.0.1:9222"
 ALLOWED_LISTINGS = ("hot", "new", "top", "rising")
 ALLOWED_TIME_WINDOWS = ("hour", "day", "week", "month", "year", "all")
@@ -326,6 +332,7 @@ def _capture_www_grid(
         ),
         cdp_endpoint=cdp_endpoint,
         persistent_tab_marker=WWW_PERSISTENT_TAB_MARKER,
+        ready_selector=WWW_READY_SELECTOR,
         viewport_width=WWW_VIEWPORT_WIDTH,
         viewport_height=WWW_VIEWPORT_HEIGHT,
         settle_seconds=WWW_SETTLE_SECONDS,

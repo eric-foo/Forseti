@@ -98,6 +98,36 @@ def test_default_transport_is_the_existing_one() -> None:
     assert GRID_TRANSPORTS[0] == "old_http"
 
 
+def test_www_capture_waits_for_a_row_that_carries_a_permalink(monkeypatch, tmp_path) -> None:
+    """Readiness is a populated row, not merely a post element existing.
+
+    On 2026-07-31, 8 of 91 captures snapshotted before the feed was usable: 4
+    with no posts at all and 4 with post elements whose permalink attribute had
+    not populated. `shreddit-post[permalink]` is the one selector that covers
+    both, because a row without a permalink yields no thread URL and so never
+    becomes a projected row.
+    """
+    import runners.run_reddit_grid_capture as module
+
+    seen: list[dict] = []
+    monkeypatch.setattr(
+        "runners.run_source_capture_realchrome_cdp_packet."
+        "run_source_capture_realchrome_cdp_packet",
+        lambda **kwargs: (seen.append(kwargs), (0, str(tmp_path / "packet")))[1],
+    )
+    run_reddit_grid_capture(
+        subreddits=["alpha"],
+        listing="top",
+        time_window="week",
+        output_root=tmp_path / "out",
+        decision_question="q",
+        transport="www_realchrome",
+        delay_seconds=0,
+    )
+    assert seen[0]["ready_selector"] == module.WWW_READY_SELECTOR
+    assert seen[0]["ready_selector"] == "shreddit-post[permalink]"
+
+
 def test_cycle_basis_subtracts_the_capture_duration() -> None:
     """A target start-to-start interval, not a wait bolted onto the capture."""
     from runners.run_reddit_grid_capture import _paced_wait

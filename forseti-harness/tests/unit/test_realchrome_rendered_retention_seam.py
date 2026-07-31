@@ -43,6 +43,7 @@ class _FakeEngine:
 
     def capture(self, **kwargs) -> RealChromeCDPCaptureResult:
         self.capture_screenshot_seen = kwargs.get("capture_screenshot", True)
+        self.ready_selector_seen = kwargs.get("ready_selector")
         return RealChromeCDPCaptureResult(
             requested_url=kwargs["url"],
             final_url=kwargs["url"],

@@ -298,6 +298,33 @@ def test_record_reuses_the_shared_kind_and_folds_through_the_materializer_path()
     assert len(view.thread_rows) == 3
 
 
+def test_a_quiet_week_projects_as_an_honest_zero_not_an_anomaly() -> None:
+    """Reddit's real empty-feed wording, observed 2026-07-31.
+
+    The marker list was previously three GUESSED phrasings, none of which
+    matched, so four genuinely quiet subreddits were classified as a parser
+    anomaly and refused at the fold. For a weekly demand radar a quiet week is
+    signal, not failure.
+    """
+    view = project_www_reddit_grid(
+        rendered_dom=(
+            '<shreddit-subreddit-header name="testsub" weekly-active-users="12751"'
+            ' weekly-contributions="19"></shreddit-subreddit-header>'
+        ),
+        visible_text=(
+            "r/testsub Create Post This community doesn't have any posts yet "
+            "Make one and get this feed started. Created Mar 17, 2013 Restricted"
+        ),
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )
+    assert view.thread_rows == ()
+    assert view.verified_empty_listing is True
+    assert grid_view_projection_anomaly(view) is None
+    # A quiet week still reports the venue's reach.
+    assert view.weekly_visitor_count_or_none == "12751"
+
+
 def test_zero_rows_without_an_empty_marker_is_not_a_verified_empty_listing() -> None:
     """A block or unhydrated shell must not read as an authentic empty listing."""
     view = project_www_reddit_grid(

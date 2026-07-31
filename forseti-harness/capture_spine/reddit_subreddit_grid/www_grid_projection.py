@@ -56,7 +56,7 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
 # ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-4"
+WWW_GRID_PROJECTION_PARSER_VERSION = "www-5"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a
@@ -106,9 +106,17 @@ _FLAIR_HREF_RE = re.compile(
 # queue, since the selection policy drops stickied rows.
 _STICKIED_CLASS_RE = re.compile(r'class="([^"]*\bstickied-status\b[^"]*)"')
 
+# Observed verbatim on www 2026-07-31 (r/crueltyfree, r/60plusskincare,
+# r/brownbeauty, r/skincareflatlays): a weekly listing with nothing in the
+# window renders "This community doesn't have any posts yet". The earlier
+# entries here were GUESSED phrasings and none of them matched, so four
+# genuinely-quiet subreddits were classified as a parser anomaly, fell back to
+# raw, and were refused at the fold. A quiet week is real signal for a demand
+# radar -- an honest zero -- not a capture failure.
 _EMPTY_LISTING_MARKERS = (
+    "this community doesn't have any posts yet",
+    "this community doesn’t have any posts yet",  # curly apostrophe variant
     "there are no posts in this community",
-    "nothing here",
     "no posts in r/",
 )
 
