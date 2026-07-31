@@ -179,3 +179,49 @@ not captured — capturing them would exceed the standing 2–3 per venue cap an
 is an owner option, not an agent default. The unseen-tail residual above
 shrinks accordingly: after this supplement roughly 1,510 of 2,776 candidates
 remain unreviewed, all below rank 14 and outside the band slice.
+
+## Full-pool supplement, 2026-08-01 (same day)
+
+Owner direction: adjudicate everything. The remaining 1,513 candidates — every
+row below rank 14 and outside the band slice — now carry decision records:
+`reddit_weekly_latent_problem_adjudication_2026_08_01_full_pool_v0.json`.
+**The 2026-07-31 pool is 100% adjudicated: 2,776 rows in three passes (945
+top-14, 318 band slice, 1,513 full pool), 733 total `yes`. The unseen-tail
+residual for this week is closed.** Decision records only; per owner direction
+no capture slots were issued from this pass, and the dive budgets remain as
+already captured.
+
+Full-pool result: **482 `yes` (19 high), 84 `borderline`, 947 `no`** — a 32%
+yes rate, consistent with the band slice's 38% and the same mechanism
+(validation and showcase formats crowd the top of big venues; concrete product
+questions live small). Four venues were adjudicated wholesale under their
+categorical format suppression (`fragranceswap`, `redditlaqueristaswap` as
+WTS/swap administration, `dermatologyquestions` as crowd diagnosis,
+`diyfragrance` as specialist formulation — 132 rows) rather than title by
+title; a stray admissible thread inside them is an accepted residual. In
+`perfumesthatfeellike`, concrete olfactory-profile requests were admitted and
+cultural-reference whimsy suppressed as `low_expected_decision_contribution`
+— a judgment split, named here because the band slice had admitted that
+venue's top rows wholesale.
+
+New high-priority signal concentrated in three places:
+
+- **Quality control as a cross-category cluster** — JPG Le Male "something is
+  off", Skin1004 fill variance, an indie "acceptable variation or QC issue?",
+  a serum "normal color or oxidized?", "do all LynB polishes feel like this?",
+  a blocked spray nozzle, a Sephora pickup order "sitting in someone's
+  shower". Batch/condition doubt is now corroborated across fragrance,
+  K-beauty, indie, polish, and retail fulfillment.
+- **Reformulation anxiety, now five-legged** — IFRA bergamot, Bleu de Chanel
+  "has been reformulated", original Glossier You "undoubtedly better",
+  Givenchy Pi "weaker lately?", plus the JPG batch thread above.
+- **Channel trust** — "Operation Eau de Fraud", a "Luwest Viltton" score,
+  fragrance packaging "supposed to come in a box?", honest reviews "getting
+  removed on Jomashop?", K-beauty reseller ranking (Yami vs YesStyle vs
+  Stylevana), Amazon prescribing finasteride from two photos, a near-scam
+  Dutasteride order, and the mass-channel value wave (Walmart/Costco/Sam's/
+  TJ Maxx/Marshalls threads across three fragrance venues).
+
+Singleton highs worth a future look: disability-friendly polish technique and
+tremor-safe shaving (accessibility in beauty, two independent venues), and
+olfactory changes persisting after a JHAG product (safety signal).
