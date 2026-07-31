@@ -56,6 +56,13 @@ class ParsedThread:
     observable_comment_node_count: int
     warnings: list[str] = field(default_factory=list)
     limitations: list[str] = field(default_factory=list)
+    # Completeness facts the www surface can state and the old surface cannot.
+    # Defaulted to None/0 so the old-Reddit parser is unaffected: on old.reddit
+    # the served page carries the whole exposed tree, so there is no declared
+    # total to reconcile against and no continuation link to leave unfollowed.
+    declared_total_comments: int | None = None
+    continuation_links_not_followed: int = 0
+    max_captured_depth: int | None = None
 
 
 def parse_old_reddit_html(html: str) -> ParsedThread:

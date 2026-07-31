@@ -712,8 +712,16 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
     parser.add_argument("--cadence-mode", choices=["fixed", "bounded_jitter"], default="fixed")
     parser.add_argument("--cadence-window-seconds", type=float, default=None)
-    parser.add_argument("--cadence-min-gap-seconds", type=float, default=None)
-    parser.add_argument("--cadence-max-gap-seconds", type=float, default=None)
+    # Default to the lane constants, NOT None. argparse defaults win over the
+    # function signature, so None here silently discarded the lane's 31-46s
+    # band on every CLI run and made bounded_jitter fail closed for want of a
+    # derivable window.
+    parser.add_argument(
+        "--cadence-min-gap-seconds", type=float, default=REDDIT_CADENCE_MIN_GAP_SECONDS
+    )
+    parser.add_argument(
+        "--cadence-max-gap-seconds", type=float, default=REDDIT_CADENCE_MAX_GAP_SECONDS
+    )
     parser.add_argument("--cadence-random-seed", type=int, default=None)
     parser.add_argument(
         "--retention-mode",

@@ -240,6 +240,15 @@ the decision. A thread is a lead or evidence fragment, not a client conclusion.
 
 ## Accepted residuals and non-claims
 
+- Captured threads are depth-bounded, not exhaustive. On the www surface the
+  in-place comment tree is expanded until no control remains, and the deep tail
+  below that bound sits behind `Continue this thread` anchors that are
+  `rel="nofollow"` links to separate pages, which this lane does not follow.
+  Two measured captures reached 152 of 198 and 174 of 209 declared comments.
+  Every thread record therefore carries `comment_completeness` stating the
+  declared total, the captured count, and the gap. "Deep-read all captured
+  comments" above means exactly that: all comments the record contains, with
+  the shortfall visible rather than assumed away.
 - Some useful poster-only threads below four comments will be missed.
 - Some promising listings will produce no decision-bearing evidence.
 - Opaque titles remain unresolved when no cheap listing context exists.

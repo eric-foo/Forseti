@@ -94,6 +94,24 @@ REALCHROME_CDP_NON_CLAIMS = [
 # scoped to this runner's plain-text metadata/DOM; not a shared helper in harness_utils.
 _SECRET_LIKE = re.compile(r"\b(Set-Cookie|cf_clearance|storage_state|user_data_dir)\b", re.IGNORECASE)
 
+# Click every in-place expansion control whose visible text matches the
+# caller's pattern, and report how many were clicked. Anchors carrying an href
+# are deliberately excluded: those navigate to another page, and following them
+# would turn one bounded capture into a crawl.
+_EXPAND_CONTROLS_JS = """
+(pattern) => {
+  const re = new RegExp(pattern, 'i');
+  const controls = Array.from(document.querySelectorAll('button, a'))
+    .filter(el => !(el.tagName === 'A' && el.getAttribute('href')))
+    .filter(el => re.test(el.textContent || ''));
+  let clicked = 0;
+  for (const control of controls) {
+    try { control.click(); clicked += 1; } catch (err) { /* one dead control must not stop the round */ }
+  }
+  return clicked;
+}
+"""
+
 
 @dataclass(frozen=True)
 class RealChromeCDPCaptureResult:
@@ -114,6 +132,12 @@ class RealChromeCDPCaptureResult:
     viewport_width: int | None = None
     viewport_height: int | None = None
     warning_notes: list[str] = field(default_factory=list)
+    # In-place expansion accounting. ``expansion_exhausted`` is the honest
+    # distinction a later reader needs: False means the round bound stopped the
+    # loop while controls remained, so the DOM is short by an unknown amount.
+    expansion_rounds: int = 0
+    expansion_clicks: int = 0
+    expansion_exhausted: bool | None = None
 
 
 class RealChromeCDPEngine(Protocol):
@@ -133,6 +157,9 @@ class RealChromeCDPEngine(Protocol):
         fit_viewport_to_window: bool,
         capture_screenshot: bool = True,
         ready_selector: str | None = None,
+        expand_control_pattern: str | None = None,
+        expand_max_rounds: int = 0,
+        expand_settle_ms: int = 6000,
     ) -> RealChromeCDPCaptureResult: ...
 
 
@@ -173,6 +200,9 @@ class _LiveRealChromeCDPEngine:
         fit_viewport_to_window: bool,
         capture_screenshot: bool = True,
         ready_selector: str | None = None,
+        expand_control_pattern: str | None = None,
+        expand_max_rounds: int = 0,
+        expand_settle_ms: int = 6000,
     ) -> RealChromeCDPCaptureResult:
         try:
             from playwright.sync_api import sync_playwright
@@ -291,6 +321,43 @@ class _LiveRealChromeCDPEngine:
                                 f"ready_selector {ready_selector!r} did not appear "
                                 f"before snapshot: {type(exc).__name__}"
                             )
+                    expansion_rounds = 0
+                    expansion_clicks = 0
+                    expansion_exhausted: bool | None = None
+                    if expand_control_pattern and expand_max_rounds > 0:
+                        # Some surfaces paint only a fraction of their content
+                        # and hide the rest behind in-place expansion controls
+                        # (a measured Reddit thread served 35 of 198 comments on
+                        # first paint). Click every matching control, settle, and
+                        # repeat until none remain. Only IN-PLACE controls are
+                        # clicked: this never follows a link to another page, so
+                        # it stays one bounded capture rather than a crawl.
+                        expansion_exhausted = False
+                        for _ in range(expand_max_rounds):
+                            try:
+                                clicked = page.evaluate(
+                                    _EXPAND_CONTROLS_JS, expand_control_pattern
+                                )
+                            except Exception as exc:
+                                warnings.append(
+                                    f"expansion round failed (continuing): {type(exc).__name__}: {exc}"
+                                )
+                                break
+                            if not clicked:
+                                expansion_exhausted = True
+                                break
+                            expansion_rounds += 1
+                            expansion_clicks += clicked
+                            page.wait_for_timeout(expand_settle_ms)
+                        if expansion_exhausted is False:
+                            # The bound stopped the loop, not the page. Say so:
+                            # a silent stop here reads downstream as a complete
+                            # tree that simply had nothing more to give.
+                            warnings.append(
+                                f"expansion stopped at the {expand_max_rounds}-round bound "
+                                "with controls still present; captured DOM is short by an "
+                                "unknown amount"
+                            )
                     if scroll_step_px > 0:
                         position = 0
                         for _ in range(_MAX_PROGRESSIVE_SCROLL_STEPS):
@@ -337,6 +404,9 @@ class _LiveRealChromeCDPEngine:
             viewport_width=actual_viewport_width,
             viewport_height=actual_viewport_height,
             warning_notes=warnings,
+            expansion_rounds=expansion_rounds,
+            expansion_clicks=expansion_clicks,
+            expansion_exhausted=expansion_exhausted,
         )
 
 
@@ -413,6 +483,11 @@ def run_source_capture_realchrome_cdp_packet(
     # caller can name what "rendered" means for its own surface instead of
     # trusting a fixed settle to have been long enough.
     ready_selector: str | None = None,
+    # A JS-regex source matched against the visible text of in-place expansion
+    # controls (buttons and href-less anchors). Left None, nothing is clicked.
+    expand_control_pattern: str | None = None,
+    expand_max_rounds: int = 0,
+    expand_settle_ms: int = 6000,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
@@ -449,6 +524,9 @@ def run_source_capture_realchrome_cdp_packet(
         fit_viewport_to_window=fit_viewport_to_window,
         capture_screenshot=capture_screenshot,
         ready_selector=ready_selector,
+        expand_control_pattern=expand_control_pattern,
+        expand_max_rounds=expand_max_rounds,
+        expand_settle_ms=expand_settle_ms,
     )
 
     access = classify_rendered_access(
@@ -484,6 +562,13 @@ def run_source_capture_realchrome_cdp_packet(
         "persistent_tab_marker": persistent_tab_marker,
         "fit_viewport_to_window": fit_viewport_to_window,
         "ready_selector": ready_selector,
+        "expand_control_pattern": expand_control_pattern,
+        "expand_max_rounds": expand_max_rounds,
+        "expansion_rounds": result.expansion_rounds,
+        "expansion_clicks": result.expansion_clicks,
+        # None when no expansion was requested; False is the load-bearing value
+        # -- it means the round bound stopped the loop with controls remaining.
+        "expansion_controls_exhausted": result.expansion_exhausted,
         # "not_captured" rather than "viewport"/0: a packet that reports a
         # viewport screenshot of zero bytes claims a capture posture it does not
         # have, and a later reader cannot tell suppression from a failed raster.
