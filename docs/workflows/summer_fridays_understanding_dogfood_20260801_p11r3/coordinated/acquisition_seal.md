@@ -291,7 +291,7 @@ phase_acquisition_seal:
         sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
         invalid_if: [artifact hash changes, decision contract fails, lifecycle provenance changes]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r3/coordinated/turn_a_acquisition_record.md
-        sha256: 9bca062f5f59bdec8d570cdf084d69d18fdd7f3a41c3828af18184cc89984f53
+        sha256: d4022b04a1078ea5b85e56486370f56de249392ee0daf854da0ea57f7181ff32
         invalid_if: [artifact hash changes, acquisition adjudication changes, Deliver artifact appears]
 ```
 
@@ -306,6 +306,12 @@ and no Deliver artifact exists. Acquisition is therefore sealed
 This seal records eligibility for a separately commissioned Deliver turn. It
 does not start or authorize Deliver in this turn. The p11, p11r1, and p11r2
 blocked seals remain preserved as provenance and receive no completion credit.
+
+On 2026-08-01, a de-correlated implementation review found that the first
+capture-spine hardening overclaimed several reusable runner guarantees. The
+acquisition record was amended to preserve that finding and the pin above was
+refreshed. This post-acquisition correction did not change any captured packet,
+job accounting, raw-closure result, acquisition decision, or Deliver state.
 
 ## Owning Evidence
 
