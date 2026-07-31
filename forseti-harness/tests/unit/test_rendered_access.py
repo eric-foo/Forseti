@@ -14,6 +14,27 @@ def test_classify_rendered_access_flags_cloudflare_interstitial() -> None:
     assert result.signal == "cloudflare_interstitial"
 
 
+def test_classify_rendered_access_flags_exact_local_rate_limit_marker() -> None:
+    result = classify_rendered_access(
+        title=None,
+        visible_text="  local_rate_limited\n",
+        rendered_dom="<html><body>local_rate_limited</body></html>",
+    )
+
+    assert result.classification == RenderedAccessClass.ACCESS_BLOCKED
+    assert result.signal == "local_rate_limited"
+
+
+def test_classify_rendered_access_does_not_flag_source_text_that_mentions_marker() -> None:
+    result = classify_rendered_access(
+        title="Incident report",
+        visible_text="The old capture returned local_rate_limited before recovery.",
+        rendered_dom="<html><body>Incident report</body></html>",
+    )
+
+    assert result.classification == RenderedAccessClass.NO_BLOCK_MARKER
+
+
 def test_classify_rendered_access_flags_akamai_access_denied() -> None:
     result = classify_rendered_access(
         title="Access Denied",

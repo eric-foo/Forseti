@@ -277,15 +277,59 @@ def test_each_capture_mints_a_new_packet_without_rewriting_history(tmp_path: Pat
 
 def test_persist_helper_reports_packet_anchor(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     root = _root(tmp_path)
-    seen: dict[str, object] = {}
-
-    def resolve(*, explicit=None):  # noqa: ANN001
-        seen["explicit"] = explicit
-        return root
-
-    monkeypatch.setattr(deep_capture_runner.DataLakeRoot, "resolve", staticmethod(resolve))
-    status = deep_capture_runner._persist_deep_capture(_result(), data_root_arg=None)
-    assert seen == {"explicit": None}
+    status = deep_capture_runner._persist_deep_capture(_result(), data_root=root)
     assert status.startswith("persisted: packet=")
     packet_id = status.split("packet=", 1)[1].split()[0]
     assert root.find_packet(packet_id) is not None
+
+
+def test_main_rejects_invalid_data_root_before_capture(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    capture_calls = 0
+
+    def reject_root(*, explicit=None):  # noqa: ANN001
+        raise deep_capture_runner.DataLakeRootError("not an initialized lake")
+
+    def unexpected_capture(*_args, **_kwargs):  # noqa: ANN002, ANN003
+        nonlocal capture_calls
+        capture_calls += 1
+        return _result()
+
+    monkeypatch.setattr(deep_capture_runner.DataLakeRoot, "resolve", staticmethod(reject_root))
+    monkeypatch.setattr(deep_capture_runner, "run_reel_deep_capture", unexpected_capture)
+
+    with pytest.raises(SystemExit) as exc:
+        deep_capture_runner.main(
+            ["--shortcode", "DaA8n7EhqTR", "--data-root", str(tmp_path / "invalid")]
+        )
+
+    assert exc.value.code == 2
+    assert capture_calls == 0
+
+
+def test_main_valid_data_root_captures_once_and_persists_once(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = _root(tmp_path)
+    capture_calls = 0
+
+    def resolve(*, explicit=None):  # noqa: ANN001
+        assert explicit == str(root.path)
+        return root
+
+    def capture_once(*_args, **_kwargs):  # noqa: ANN002, ANN003
+        nonlocal capture_calls
+        capture_calls += 1
+        return _result()
+
+    monkeypatch.setattr(deep_capture_runner.DataLakeRoot, "resolve", staticmethod(resolve))
+    monkeypatch.setattr(deep_capture_runner, "run_reel_deep_capture", capture_once)
+
+    assert deep_capture_runner.main(
+        ["--shortcode", "DaA8n7EhqTR", "--data-root", str(root.path)]
+    ) == 0
+    assert capture_calls == 1
+    assert len(root.list_available(source_family="instagram_creator")) == 1

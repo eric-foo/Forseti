@@ -58,6 +58,12 @@ def classify_rendered_access(
     dom_probe = rendered_dom[:20_000].lower()
     visible_probe = f"{title_text}\n{body_text}"
     combined_probe = f"{visible_probe}\n{dom_probe}"
+    if body_text == "local_rate_limited":
+        return RenderedAccessClassification(
+            classification=RenderedAccessClass.ACCESS_BLOCKED,
+            signal="local_rate_limited",
+            detail="rendered visible text is the local rate-limit marker",
+        )
     if any(marker in visible_probe for marker in _VISIBLE_TIKTOK_CHALLENGE_MARKERS):
         return RenderedAccessClassification(
             classification=RenderedAccessClass.ACCESS_BLOCKED,

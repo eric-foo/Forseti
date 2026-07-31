@@ -207,6 +207,15 @@ marker does not clear, scripted actions stay suppressed and capture fails closed
 The agent must not drag or solve the puzzle, and any manual owner action is
 source-access intervention rather than clean capture.
 
+The session profile may select the retained Chrome CDP backend. In that case the
+live runner checks that the retained browser profile is nonempty and selects
+exactly one usable loopback CDP endpoint whose root Chrome process was launched
+with that profile path. A different live Chrome or CloakBrowser endpoint does not
+qualify. The runner then passes the bound engine into the same sanitized staging
+and packet-admission path. Do not add
+`--allow-diagnostic-browser-backend`; that flag is for manually selected
+diagnostic backends, not for a validated retained-session profile.
+
 Before implementing or revising a live-browser route whose correctness depends
 on a new or changed UI transition (selector, control, navigation mode, or
 post-action state), run a bounded retained-session transition probe before

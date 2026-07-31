@@ -27,7 +27,7 @@ from urllib.parse import urljoin, urlparse
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from data_lake.root import DataLakeRoot
+from data_lake.root import DataLakeRoot, DataLakeRootError
 from harness_utils import utc_now_z
 from source_capture.adapters.browser_snapshot import (
     BrowserSnapshotFailure,
@@ -256,6 +256,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    data_root = None
+    if args.data_root is not None or (
+        os.environ.get("FORSETI_DATA_ROOT") or os.environ.get("ORCA_DATA_ROOT")
+    ):
+        try:
+            data_root = DataLakeRoot.resolve(explicit=args.data_root)
+        except DataLakeRootError as exc:
+            parser.error(f"invalid Forseti data lake root: {exc}")
+
     with tempfile.TemporaryDirectory(prefix="forseti_deepcap_") as scratch:
         result = run_reel_deep_capture(
             args.shortcode,
@@ -266,8 +275,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         # transcription happens inside this block, while the temp audio file still exists.
 
         persisted = None
-        if args.data_root is not None or (os.environ.get("FORSETI_DATA_ROOT") or os.environ.get("ORCA_DATA_ROOT")):
-            persisted = _persist_deep_capture(result, data_root_arg=args.data_root)
+        if data_root is not None:
+            persisted = _persist_deep_capture(result, data_root=data_root)
 
     print(
         f"reel={result.reel_shortcode} "
@@ -284,11 +293,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-def _persist_deep_capture(result, *, data_root_arg: str | None) -> str:
+def _persist_deep_capture(result, *, data_root: DataLakeRoot) -> str:
     """Persist a new packet-backed deep-capture observation."""
-    root = DataLakeRoot.resolve(explicit=data_root_arg)
     written = write_reel_deep_capture_into_lake(
-        data_root=root,
+        data_root=data_root,
         result=result,
         generated_at=utc_now_z(),
         record_id=deep_capture_record_id(result),

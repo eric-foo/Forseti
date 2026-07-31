@@ -49,6 +49,8 @@ class _FakeEngineResult:
     visible_text: str
     screenshot_png: bytes
     warning_notes: list[str] = field(default_factory=list)
+    navigation_response_status: int | None = None
+    navigation_retry_after: str | None = None
 
 
 class _FakeCloakBrowserEngine:
@@ -136,6 +138,8 @@ def test_fetch_cloakbrowser_snapshot_capture_with_fake_engine_records_method_pro
     assert result.metadata["screenshot_byte_count"] == len(result.screenshot_png)
     assert result.metadata["access_blocked"] is False
     assert result.metadata["access_block_reason"] is None
+    assert result.metadata["navigation_response_status"] is None
+    assert result.metadata["navigation_retry_after"] is None
     assert result.access_block_reason is None
     assert result.limitation_notes == []
     assert engine.capture_kwargs == {
@@ -157,6 +161,55 @@ def test_fetch_cloakbrowser_snapshot_capture_with_fake_engine_records_method_pro
         "user_data_dir": None,
         "full_page_screenshot": False,
     }
+
+
+def test_fetch_cloakbrowser_snapshot_records_rate_limit_status_and_retry_after() -> None:
+    engine = _FakeCloakBrowserEngine(
+        _FakeEngineResult(
+            final_url="https://example.com/source",
+            title=None,
+            rendered_dom="<html><body>local_rate_limited</body></html>",
+            visible_text="local_rate_limited",
+            screenshot_png=b"\x89PNG\r\n\x1a\nrate-limit",
+            navigation_response_status=429,
+            navigation_retry_after="120",
+        )
+    )
+
+    result = fetch_cloakbrowser_snapshot_capture(
+        url="https://example.com/source",
+        max_artifact_bytes=10_000,
+        engine=engine,
+    )
+
+    assert isinstance(result, CloakBrowserSnapshotSuccess)
+    assert result.access_block_reason == "local_rate_limited"
+    assert result.metadata["access_blocked"] is True
+    assert result.metadata["navigation_response_status"] == 429
+    assert result.metadata["navigation_retry_after"] == "120"
+    assert any(note.startswith("access_failed:") for note in result.limitation_notes)
+
+
+def test_fetch_cloakbrowser_snapshot_treats_http_429_as_rate_limited() -> None:
+    engine = _FakeCloakBrowserEngine(
+        _FakeEngineResult(
+            final_url="https://example.com/source",
+            title="Temporary response",
+            rendered_dom="<html><body>Please retry later</body></html>",
+            visible_text="Please retry later",
+            screenshot_png=b"\x89PNG\r\n\x1a\nrate-limit",
+            navigation_response_status=429,
+        )
+    )
+
+    result = fetch_cloakbrowser_snapshot_capture(
+        url="https://example.com/source",
+        max_artifact_bytes=10_000,
+        engine=engine,
+    )
+
+    assert isinstance(result, CloakBrowserSnapshotSuccess)
+    assert result.access_block_reason == "http_429_rate_limited"
 
 
 def _fake_engine() -> _FakeCloakBrowserEngine:
@@ -253,12 +306,17 @@ def test_live_engine_uses_anonymous_non_persistent_launch(monkeypatch: pytest.Mo
         def inner_text(self, *, timeout: float) -> str:
             return "Visible source text"
 
+    class FakeNavigationResponse:
+        status = 429
+        headers = {"retry-after": "120", "set-cookie": "must-not-be-copied"}
+
     class FakePage:
         url = "https://example.com/rendered"
 
-        def goto(self, url: str, **kwargs: object) -> None:
+        def goto(self, url: str, **kwargs: object) -> FakeNavigationResponse:
             goto_kwargs["url"] = url
             goto_kwargs.update(kwargs)
+            return FakeNavigationResponse()
 
         def content(self) -> str:
             return "<html><body>Visible source text</body></html>"
@@ -315,6 +373,8 @@ def test_live_engine_uses_anonymous_non_persistent_launch(monkeypatch: pytest.Mo
     assert result.rendered_dom == "<html><body>Visible source text</body></html>"
     assert result.visible_text == "Visible source text"
     assert result.screenshot_png == b"\x89PNG\r\n\x1a\ncloakbrowser"
+    assert result.navigation_response_status == 429
+    assert result.navigation_retry_after == "120"
     assert launch_kwargs == {
         "headless": True,
         "proxy": None,
