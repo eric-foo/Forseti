@@ -24,7 +24,7 @@ import json
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlparse
 
 from harness_utils import hash_file
 from data_lake.reddit_subreddit_registry import (
@@ -63,6 +63,7 @@ GRID_OBSERVATION_SOURCE_SURFACE = "old_reddit_grid_packet"
 # Weekly demand-radar listing (top/?t=week): same grid family, distinguishable
 # ledger line so readers can tell a weekly consolidated pass from a live pass.
 TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "old_reddit_top_week_packet"
+WWW_REDDIT_REALCHROME_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 
 
 def _observation_surface_for(listing_url: str) -> str:
@@ -266,11 +267,21 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
         )
 
     locator = packet.source_locator.value or ""
-    subreddit = _subreddit_from_listing_url(locator)
+    expected_host = (
+        "www.reddit.com"
+        if packet.source_surface == WWW_REDDIT_REALCHROME_SOURCE_SURFACE
+        else "old.reddit.com"
+    )
+    subreddit = _subreddit_from_listing_url(locator, expected_host=expected_host)
     if subreddit is None:
         raise RegistryRefreshError("locator_unparseable", f"cannot parse subreddit from locator: {locator!r}")
 
-    metadata_file = _resolve_preserved_file(packet, file_name="http_response_metadata.json")
+    metadata_file_name = (
+        "realchrome_snapshot_metadata.json"
+        if packet.source_surface == WWW_REDDIT_REALCHROME_SOURCE_SURFACE
+        else "http_response_metadata.json"
+    )
+    metadata_file = _resolve_preserved_file(packet, file_name=metadata_file_name)
     metadata_path = _resolve_packet_file_path(
         packet_dir=manifest_path.parent,
         relative_packet_path=metadata_file["relative_packet_path"],
@@ -282,11 +293,19 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
         expected_hash=metadata_file["sha256"],
         error_code="http_metadata_hash_mismatch",
     )
-    _verify_successful_grid_response(
-        packet=packet,
-        metadata_path=metadata_path,
-        expected_subreddit=subreddit,
-    )
+    if packet.source_surface == WWW_REDDIT_REALCHROME_SOURCE_SURFACE:
+        _verify_successful_realchrome_grid_response(
+            packet=packet,
+            metadata_path=metadata_path,
+            expected_subreddit=subreddit,
+            expected_locator=locator,
+        )
+    else:
+        _verify_successful_grid_response(
+            packet=packet,
+            metadata_path=metadata_path,
+            expected_subreddit=subreddit,
+        )
 
     # Content-mode packets preserve the capture-time derived record instead of
     # raw HTML (storage-and-retention doctrine, 2026-07-17); sample packets
@@ -320,6 +339,16 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
             raise RegistryRefreshError(
                 "content_record_subreddit_mismatch",
                 f"content record names subreddit {grid_view.subreddit!r}, expected {subreddit!r}",
+            )
+        if not _same_supported_listing_url(
+            grid_view.listing_url,
+            locator,
+            expected_host=expected_host,
+        ):
+            raise RegistryRefreshError(
+                "content_record_locator_mismatch",
+                "content record listing URL does not match the packet locator: "
+                f"record={grid_view.listing_url!r} locator={locator!r}",
             )
     else:
         raw_file = _resolve_preserved_file(packet, file_name="http_response_body.bin")
@@ -491,12 +520,107 @@ def _verify_successful_grid_response(
     )
 
 
-def _subreddit_from_listing_url(url: str) -> str | None:
+def _verify_successful_realchrome_grid_response(
+    *,
+    packet,
+    metadata_path: Path,
+    expected_subreddit: str,
+    expected_locator: str,
+) -> None:
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise RegistryRefreshError(
+            "realchrome_metadata_unreadable",
+            f"preserved real-Chrome metadata could not be read: {exc}",
+        ) from exc
+    if not isinstance(metadata, dict):
+        raise RegistryRefreshError(
+            "realchrome_metadata_shape",
+            "preserved real-Chrome metadata is not a JSON object",
+        )
+    status = metadata.get("http_response_status")
+    if not isinstance(status, int) or not 200 <= status < 300:
+        raise RegistryRefreshError(
+            "grid_access_unsuccessful",
+            f"real-Chrome grid packet status is not successful: {status!r}",
+        )
+    if metadata.get("access_blocked") is not False:
+        raise RegistryRefreshError(
+            "grid_access_unsuccessful",
+            "real-Chrome grid packet does not prove an unblocked rendered page",
+        )
+    if metadata.get("method_category") != "real_browser_cdp":
+        raise RegistryRefreshError(
+            "grid_access_unsuccessful",
+            "real-Chrome grid packet metadata does not declare real_browser_cdp",
+        )
+    requested_url = metadata.get("requested_url")
+    final_url = metadata.get("final_url")
+    for label, value in (("requested", requested_url), ("final", final_url)):
+        if not isinstance(value, str) or not _same_supported_listing_url(
+            value,
+            expected_locator,
+            expected_host="www.reddit.com",
+        ):
+            raise RegistryRefreshError(
+                "grid_final_locator_mismatch",
+                f"real-Chrome {label} URL does not match the packet locator: {value!r}",
+            )
+    for source_slice in packet.source_slices:
+        slice_locator = source_slice.locator.value
+        access_posture = source_slice.access_posture.value or ""
+        if (
+            isinstance(slice_locator, str)
+            and _subreddit_from_listing_url(
+                slice_locator, expected_host="www.reddit.com"
+            )
+            == expected_subreddit
+            and _same_supported_listing_url(
+                slice_locator,
+                expected_locator,
+                expected_host="www.reddit.com",
+            )
+            and access_posture.startswith("real_browser_cdp preserved")
+        ):
+            return
+    raise RegistryRefreshError(
+        "grid_access_unsuccessful",
+        "grid packet carries no successful real-Chrome source slice for the declared subreddit",
+    )
+
+
+def _same_supported_listing_url(
+    actual_url: str,
+    expected_url: str,
+    *,
+    expected_host: str,
+) -> bool:
+    try:
+        actual = urlparse(actual_url)
+        expected = urlparse(expected_url)
+    except (TypeError, ValueError):
+        return False
+    return (
+        actual.scheme.lower() == expected.scheme.lower() == "https"
+        and actual.netloc.lower() == expected.netloc.lower() == expected_host
+        and actual.path.rstrip("/").casefold()
+        == expected.path.rstrip("/").casefold()
+        and sorted(parse_qsl(actual.query, keep_blank_values=True))
+        == sorted(parse_qsl(expected.query, keep_blank_values=True))
+    )
+
+
+def _subreddit_from_listing_url(
+    url: str,
+    *,
+    expected_host: str = "old.reddit.com",
+) -> str | None:
     parsed = urlparse(url)
     parts = [part for part in parsed.path.split("/") if part]
     if (
         parsed.scheme == "https"
-        and parsed.netloc.lower() == "old.reddit.com"
+        and parsed.netloc.lower() == expected_host
         and len(parts) >= 3
         and parts[0] == "r"
         and parts[1].isascii()

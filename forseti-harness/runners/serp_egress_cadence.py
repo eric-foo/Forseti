@@ -208,6 +208,7 @@ def write_owner_ping(ping_path, *, job_id, reason, counts, timestamp,
                      extra=None):
     """Write the owner-routing ping. Returns the path written."""
     import json
+    import os
     from pathlib import Path as _Path
     payload = {"reason": reason, "at": timestamp, "job_id": job_id,
                "counts": dict(counts),
@@ -219,9 +220,16 @@ def write_owner_ping(ping_path, *, job_id, reason, counts, timestamp,
                              "idle alone does not predict clearance"}
     if extra:
         payload.update(extra)
-    _Path(ping_path).write_text(json.dumps(payload, indent=1),
-                                encoding="utf-8")
-    return str(ping_path)
+    target = _Path(ping_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_name(f".{target.name}.tmp.{os.getpid()}")
+    encoded = (json.dumps(payload, indent=1) + "\n").encode("utf-8")
+    with temporary.open("xb") as handle:
+        handle.write(encoded)
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, target)
+    return str(target)
 
 if __name__ == "__main__":
     for i, c in enumerate(RATE_LADDER):
