@@ -145,3 +145,37 @@ Named residuals:
   are recorded as `yes` so the admitted set is not silently short.
 - Admission is per this frame only and must not be reused as a universal claim
   about any thread.
+
+## Band-slice supplement, 2026-08-01 (same day, after the depth-rule decision)
+
+The owner-directed adjudication-depth rule (top 14 plus the 6 highest-commented
+candidates in the 10–49 band per venue) was applied retroactively to this
+week's pool: 318 additional rows across the 55 venues the flat top-14 cap had
+bound. Full records:
+`reddit_weekly_latent_problem_adjudication_2026_08_01_band_slice_v0.json`.
+
+Result: **122 `yes` (20 high), 31 `borderline` (now enumerated, unlike the main
+pass), 165 `no`.** The 38% yes rate against the main pass's ~14% has a
+mechanism — validation, showcase, and poll formats concentrate in
+high-comment threads, while small threads skew toward concrete product
+questions — but single-adjudicator drift between passes is a live confounder,
+so the rate gap is directional, not calibrated.
+
+High-priority findings that corroborate existing clusters: counterfeit/
+authenticity (fake Cetaphil in r/tressless, a retinol "that doesn't actually
+exist" in r/30PlusSkinCare), dupe-tier demand (Catrice/Pillow Talk, elf vs
+Clinique balm, influencer-dupe regret, a clone that degraded to alcohol),
+foundation defection (a holy-grail foundation "turned cakey" plus a Double
+Wear replacement rant), shade gaps (Dior's missing 2WO olive shade), toddler/
+kids textured-hair care (three independent threads), and product-exhaustion
+fatigue ("tried everything" in three venues). New singletons: the IFRA 52nd
+amendment bergamot restriction (regulatory reformulation risk), minoxidil pet
+toxicity, and a vendor ghosting buyers.
+
+Capture outcome under the standing budget: 8 band `yes` rows fell in venues
+with unused dive budget and were queued; the other 19 high-priority rows sit
+in venues whose budget the main pass already filled, so they are recorded but
+not captured — capturing them would exceed the standing 2–3 per venue cap and
+is an owner option, not an agent default. The unseen-tail residual above
+shrinks accordingly: after this supplement roughly 1,510 of 2,776 candidates
+remain unreviewed, all below rank 14 and outside the band slice.
