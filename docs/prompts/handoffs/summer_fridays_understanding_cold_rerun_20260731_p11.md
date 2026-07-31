@@ -1,17 +1,15 @@
-# Summer Fridays Understanding Confirmation Cycle p11 — Cold Execution Handoff
+# Summer Fridays Understanding Cold Rerun p11 — Acquire & Seal Handoff
 
 ```yaml
 retrieval_header_version: 1
 artifact_role: Execution-ready cold handoff
 scope: >
-  Executes one fresh Summer Fridays Understanding confirmation cycle using the
-  current SERP Phase 1 -> CO1/CO2/CO3 fan-out -> SERP Phase 2 sequence. It
-  preserves Acquire & Seal and Deliver as separate turns, but commissions both:
-  Deliver begins in fresh context only after a valid passing acquisition seal.
+  Executes or validly resumes one Summer Fridays Understanding Acquire & Seal
+  run using the current SERP Phase 1 -> CO1/CO2/CO3 fan-out -> SERP Phase 2
+  sequence, then stops before Deliver.
 use_when:
   - Confirming whether the enhanced Understanding acquisition process produces
-    complete, provenance-bearing, decision-useful competitive intelligence for
-    the same question used in p10, without reading or reusing the p10 answer.
+    a complete, provenance-bearing substrate for the same question used in p10.
 authority_boundary: retrieval_only
 open_next:
   - AGENTS.md
@@ -33,12 +31,16 @@ packet_version: 1
 mode: max
 created_at: 2026-07-31T22:25:52+08:00
 created_by_lane: codex/summer-fridays-confirmation-handoff-20260731
-workspace: Forseti repository at the receiver's clean dedicated worktree
+amended_at: 2026-07-31
+amended_by_lane: codex/summer-fridays-phase-a-handoff-fix-20260731
+workspace: Forseti repository at the receiver's dedicated worktree
 handoff_path: docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
-authoring_baseline: 099eba5fd4b2714d475c39ad91088370abceea3c
+authoring_baseline: 90620c060e80cfd81642eff9afb76e973b580ba1
 expected_branch: receiver-owned branch created from the couriered handoff commit
 expected_head: couriered_handoff_commit
-expected_dirty_state: clean before execution; afterward only the named p11 output roots may be dirty
+expected_dirty_state: >
+  clean for a new run, or on resume dirty only under the named p11 acquisition
+  output roots with no Deliver artifact present
 load_rule: >
   confirm-don't-trust; re-verify the handoff, current authority, branch, HEAD,
   dirty state, capabilities, and every load-bearing source before acting
@@ -49,40 +51,37 @@ load_rule: >
 ```yaml
 goal_handoff:
   long_term_goal: >
-    Make Forseti's Understanding phase consistently produce complete,
-    decision-useful competitive intelligence that earns decisions through
-    evidence rather than description or price-war advice.
+    Make Forseti's Understanding Acquire & Seal turn consistently produce a
+    complete, decision-useful, provenance-bearing evidence substrate.
   anchor_goal: >
     Re-run the same Summer Fridays company-Understanding question cold through
-    the strengthened acquisition process, then produce the complete p11
-    Understanding deliverable from only the sealed p11 evidence.
+    the strengthened acquisition process and stop after the p11 acquisition
+    seal without starting Deliver.
   success_signal: >
-    A cold receiver earns a valid phase_acquisition_seal_v2 after fresh SERP
-    Phase 1, the mandatory CO1/CO2/CO3 fan-out, and targeted SERP Phase 2, then
-    a fresh Deliver context produces an evidence-cited, uncertainty-bounded,
-    commercially useful company report without reusing p10 facts or proposing
-    price competition.
+    The receiver earns a valid phase_acquisition_seal_v2 after fresh SERP Phase
+    1, the mandatory CO1/CO2/CO3 fan-out, and targeted SERP Phase 2, or returns
+    a truthful blocked acquisition state; Deliver is not started.
 ```
 
 ## Open Decision / Fork
 
-None open. The owner has selected a complete confirmation cycle. Acquire & Seal
-remains the hard gate; a passing seal authorizes a fresh Deliver turn, while a
-blocked seal ends the commission without manufacturing a report.
+None open. The owner has selected Acquire & Seal only. A passing seal is the
+successful stop condition for this commission; it does not authorize this task
+to start Deliver.
 
 ## Drift Guard
 
-- Do not stop at the acquisition substrate when the seal validly passes; the
-  commissioned outcome is the complete Understanding deliverable.
-- Do not start Deliver when acquisition is blocked, incomplete, or unvalidated.
+- Stop after Acquire & Seal whether the acquisition gate passes or blocks. Do
+  not start Deliver or write a company-intelligence report in this task.
 - Do not read or reuse p10 Summer Fridays facts, competitors, queries,
-  conclusions, or prose during acquisition or Deliver. A later owner-controlled
-  calibration may compare p11 with p10 only after the p11 report is frozen.
-- Do not turn price evidence into price-cut advice. Forseti competes on
-  observable value: differentiation, experience, confidence, fit, proof, and
-  reasons customers would willingly pay more—not a race to charge less.
-- Do not perform Problem Framing, prescribe a company strategy, add a Phase-A
+  conclusions, or prose during acquisition. A later separately authorized task
+  may consume the sealed p11 substrate.
+- Do not write recommendations, perform Problem Framing, add a Phase-A
   whitespace-opportunity gate, or install new doctrine/runtime during this run.
+- The operator halted an earlier receiving task. Preserve partial acquisition
+  artifacts, re-hash and validate them under current authority, and run only
+  pending acquisition jobs. If any Deliver artifact was created, preserve it,
+  return `BLOCKED_DRIFT`, and do not treat it as an authorized output.
 
 ## Inherited Context (Does Not Flow To A New Lane)
 
@@ -103,7 +102,7 @@ blocked seal ends the commission without manufacturing a report.
 
 - Company Understanding acquisition order is commission board and capability
   preflight -> fresh SERP Phase 1 -> exactly CO1/CO2/CO3 -> targeted SERP Phase
-  2 -> acquisition seal -> fresh-context Deliver.
+  2 -> acquisition seal. This commission stops at that seal.
   - Verify in: `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`.
   - Compare target: the section `Forseti Intelligence Cycle Operating Contract`
     at the couriered handoff commit.
@@ -121,15 +120,17 @@ blocked seal ends the commission without manufacturing a report.
 
 ## Exact Next Authorized Action
 
-1. Bind a clean receiver at the couriered handoff commit and return one load
-   outcome: `REUSE`, `PARTIAL_REUSE`, `STALE_REREAD_REQUIRED`,
+1. Bind the halted receiver or a clean replacement at the couriered handoff
+   commit and return one load outcome: `REUSE`, `PARTIAL_REUSE`,
+   `STALE_REREAD_REQUIRED`,
    `BLOCKED_DRIFT`, `BLOCKED_MISSING_PACKET`, or `BLOCKED_UNVERIFIABLE`.
-2. If reusable, execute Turn A exactly as commissioned below and validate the
+2. On resume, inventory and validate every existing named p11 acquisition
+   artifact and raw packet. Reuse only hash-valid, contract-compatible work;
+   run only pending acquisition jobs.
+3. Execute or resume Turn A exactly as commissioned below and validate the
    resulting `phase_acquisition_seal_v2`.
-3. If and only if Turn A seals ready, start Turn B in fresh context and produce
-   the p11 company Understanding report from the sealed p11 evidence.
-4. Stop after the validated Understanding report; Problem Framing and p10/p11
-   calibration remain separate owner-controlled work.
+4. Stop after the acquisition seal. Deliver, Problem Framing, and p10/p11
+   calibration require separate owner-controlled commissions.
 
 ## Prompt Preflight
 
@@ -142,8 +143,8 @@ prompt_preflight:
     - docs/research/summer_fridays_understanding_dogfood_20260731_p11/
     - docs/workflows/summer_fridays_understanding_dogfood_20260731_p11/
   branch: >
-    one clean receiver-owned branch/worktree at the couriered handoff commit;
-    only the named p11 outputs may become dirty
+    one receiver-owned branch/worktree at the couriered handoff commit; clean
+    for a new run, or dirty only in the named p11 acquisition roots on resume
   input_prompt_source: >
     docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
     at the couriered handoff commit
@@ -151,7 +152,6 @@ prompt_preflight:
     raw_root: C:\tmp\forseti-summer-fridays-understanding-p11-20260731\
     evidence_root: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/
     seal: docs/workflows/summer_fridays_understanding_dogfood_20260731_p11/coordinated/acquisition_seal.md
-    deliverable: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/deliver/company_understanding_report.md
 ```
 
 Shared prompt constants remain owned by
@@ -169,10 +169,12 @@ receiver_binding:
   no_concurrent_writer_state: verify before the first write
 ```
 
-The receiver may select or create any clean dedicated worktree at the couriered
-handoff commit. A different launch checkout, branch name, or manager-prefixed
-path is not a blocker. Stop only for ambiguous target identity, revision
-mismatch, unexpected dirt, another writer, or an observed required-tool or
+The receiver may continue the halted dedicated worktree or select/create a
+clean one at the couriered handoff commit. A different launch checkout, branch
+name, or manager-prefixed path is not a blocker. On resume, dirt is admissible
+only in the named p11 acquisition roots and every partial artifact must be
+revalidated. Stop for ambiguous target identity, revision mismatch, unexpected
+dirt, any Deliver artifact, another writer, or an observed required-tool or
 guard denial.
 
 ## Bound Commission
@@ -186,16 +188,14 @@ commission:
   cycle_id: summer_fridays_understanding_p11_20260731
   commission_id: summer_fridays_understanding_cold_confirmation_p11
   phase: understanding
-  turns:
-    - acquire_and_seal
-    - deliver_if_sealed
+  turn: acquire_and_seal
   bound_question: >
     What does current public evidence show about Summer Fridays as a company
     and brand system—its identity, ownership, leadership, proposition,
     offering architecture, markets and channels, chronology and material
     events, customer and community response, and bounded outside-in
     context—and which observable tensions warrant later Problem Framing?
-  intended_consumer: owner and later Forseti Intelligence Cycle Problem Framing turn
+  intended_consumer: Forseti Intelligence Cycle Deliver turn
   intended_use: >
     Decision-neutral broad company understanding that is
     Problem-Framing-ready.
@@ -209,11 +209,11 @@ query, or conclusion.
 ## Goal And Success Signal
 
 **Goal:** acquire the fullest decision-useful evidence substrate that the
-current bounded process can support, then turn that sealed substrate into a
-complete, readable competitive-intelligence deliverable using the enhanced
-search, official, retail, review, Q&A, community, comment, and paid-ad venues.
+current bounded process can support, using the enhanced search, official,
+retail, review, Q&A, community, comment, and paid-ad venues before any synthesis
+turn chooses what matters most.
 
-**Turn-A success:** `CO0` can truthfully issue `SEALED_READY_FOR_DELIVER` only after:
+**Success:** `CO0` can truthfully issue `SEALED_READY_FOR_DELIVER` only after:
 
 - the validated commission board precedes a fresh SERP Phase 1 scout;
 - Phase 1's typed outputs feed all three mandatory specialists;
@@ -224,13 +224,6 @@ search, official, retail, review, Q&A, community, comment, and paid-ad venues.
 - every material information job is supported, contradicted, meaningfully
   bounded, or honestly blocked/gapped; and
 - the complete cost record and provenance index exist.
-
-**Commission success:** after that gate passes, a fresh Deliver context produces
-the company Understanding report at the bound path, with decisive conclusions,
-competitive structure, observable value and threats to it, customer-choice
-mechanisms, portfolio/retail architecture, uncertainty, counterevidence, and
-next observables all traceable to sealed p11 evidence. It does not recommend a
-price cut, invent strategy, or start Problem Framing.
 
 A truthful `BLOCKED_ACQUISITION_INCOMPLETE` is a valid run result. A passing
 seal obtained by narrowing the question, dropping an evidence family, treating
@@ -266,9 +259,8 @@ comparison, or seal. Record the actual allowed-source reads and p11 evidence
 roots in `coldness_provenance.md`; do not claim proof of unread files that the
 environment cannot observe.
 
-Only a separately authorized post-report calibration adjudicator may read the
-quarantined material. Neither the acquisition actors nor the Deliver context
-compares p11 with p10.
+Only the dispatcher and a separately authorized post-seal adjudicator may read
+the quarantined material. The acquisition actors do not compare p11 with p10.
 
 ## Required Method Reads
 
@@ -306,8 +298,6 @@ durable_outputs:
   run_cost_log: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/run_cost_log.md
   acquisition_record: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/turn_a_acquisition_record.md
   acquisition_seal: docs/workflows/summer_fridays_understanding_dogfood_20260731_p11/coordinated/acquisition_seal.md
-  completed_company_board: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/deliver/completed_company_board.md
-  understanding_deliverable: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/deliver/company_understanding_report.md
 raw_roots:
   phase1: C:\tmp\forseti-summer-fridays-understanding-p11-20260731\serp_phase1\
   specialists: C:\tmp\forseti-summer-fridays-understanding-p11-20260731\specialists\
@@ -462,7 +452,7 @@ Only after all three specialist terminal returns exist:
 A missing or invalid lifecycle record, an unconsumed terminal return, or a
 material Phase 2 block forces the blocked acquisition state.
 
-### 6. Integrate And Seal Turn A
+### 6. Integrate, Seal, And Stop
 
 `CO0` fresh-reads every load-bearing artifact, writes the acquisition record,
 and manually adjudicates the whole acquisition gate. Specialist returns are
@@ -479,51 +469,10 @@ Write exactly one of:
 - `BLOCKED_ACQUISITION_INCOMPLETE`, `acquisition_gate: blocked`,
   `deliver_allowed: false`.
 
-If the seal is blocked, stop without a company report. If the seal passes,
-freeze the Turn-A artifacts and start the separately bounded Deliver turn below.
-
-### Turn B — Fresh-Context Deliver
-
-Start in fresh context from the validated acquisition seal. Re-hash and
-dereference the p11 acquisition record, three specialist terminals, Phase 1 and
-Phase 2 returns, decision receipt, provenance, and material gaps. Do not read
-p10 or rely on the acquiring controller's chat memory.
-
-First settle the commission-stage board into `completed_company_board.md`, with
-every selected venue carrying its observed checked, blocked, zero-yield, or
-typed not-applicable result. Then write `company_understanding_report.md` for
-the owner. It must answer the bound question and make the most decision-useful
-judgments easy to find. Include:
-
-1. an Executive Intelligence Brief of three to seven conclusions, each with
-   claim, evidence bound, commercial consequence, confidence, and next
-   observable;
-2. identity, ownership, leadership, proposition, chronology, and material
-   events;
-3. Portfolio And Retail Architecture: owned denominator, product/claim/price
-   architecture, official-retailer board, complete attempted PDP breadth,
-   review-corpus identity, selected interpretive depth, markets, and channels;
-4. customer/community evidence: choice reasons, delight, complaints, objections,
-   use contexts, workarounds, switching, comment corroboration, and sample or
-   representativeness limits;
-5. competitive structure: named fidelity threats, adjacent alternatives,
-   mechanical-but-weak candidates, and where comparison would be incoherent;
-6. observable value: where customers appear to find value, what strengthens or
-   weakens it, what threatens it, and which evidence would change that view;
-   price evidence may diagnose value pressure but must not become price-cut
-   advice; and
-7. material tensions and next observables that later Problem Framing should
-   evaluate, without selecting a problem or prescribing strategy now.
-
-Every load-bearing claim must cite the sealed p11 evidence. Put uncertainty,
-counterevidence, and reversal conditions beside the judgment they qualify.
-Separate facts, inference, and unknowns. Do not infer sales, share, trend,
-prevalence, representative demand, willingness to pay, internal intent, or
-causality beyond the captured evidence.
-
-Stop after validating the report. Do not perform Problem Framing, recommend a
-strategic response, compare p11 with p10, or turn a value finding into a price
-war. The next owner-controlled act is post-report p10/p11 calibration.
+Then stop. Do not write a company report, recommendation, strategic response,
+Problem Framing artifact, value proposition, pricing response, or Deliver
+handoff. Do not read or compare p10. The next authorized action is a separately
+commissioned Deliver turn or owner-controlled post-seal calibration.
 
 ## Cost-Log Obligation
 
@@ -568,9 +517,9 @@ downstream_waits_caused:
   cleanliness, target ownership, or write capability cannot be established.
 - Stop with `BLOCKED_ACQUISITION_INCOMPLETE` when a material evidence job or
   Phase 2 lifecycle obligation remains unresolved after its permitted route.
-- Stop before Deliver unless the validated seal says
-  `SEALED_READY_FOR_DELIVER`, `acquisition_gate: pass`, and
-  `deliver_allowed: true`.
+- Stop after the acquisition seal regardless of its state. A passing seal makes
+  Deliver eligible under the owning doctrine; it does not commission Deliver in
+  this task.
 
 ## Validation And Return
 
@@ -585,15 +534,13 @@ Run, in order:
    `durable_outputs`;
 5. retrieval-header checks for the new durable Markdown artifacts;
 6. `git diff --check`; and
-7. the completed company board validator plus the final report's
-   citation/provenance checks;
-8. a final clean-scope check showing only the named p11 output roots changed and
+7. a final clean-scope check showing only the named p11 acquisition roots changed and
    raw captures remained outside Git.
 
 Return:
 
 ```yaml
-status: UNDERSTANDING_DELIVERED | BLOCKED_ACQUISITION_INCOMPLETE | BLOCKED_DRIFT
+status: SEALED_READY_FOR_DELIVER | BLOCKED_ACQUISITION_INCOMPLETE | BLOCKED_DRIFT
 bound_question_preserved: true | false
 coldness_attestation: compliant | violated | unverifiable
 commission_board:
@@ -608,17 +555,13 @@ lifecycle_provenance:
 cost_logs:
 acquisition_record:
 acquisition_seal:
-completed_company_board:
-understanding_deliverable:
-deliver_validation:
 material_gaps_or_blocks: []
-problem_framing_started: false
+deliver_started: false
 ```
 
 Report only observed paths, hashes, counts, validation outcomes, and states.
-Do not claim that the cycle is exhaustive or that p11 is better than p10 without
-the later blind calibration. This commission produces the p11 evidence and
-deliverable; comparison remains outside it.
+Do not claim that this run confirms the final Deliver's decision usefulness:
+this commission confirms the acquisition substrate only.
 
 ## Authority And Source Ledger
 
@@ -629,7 +572,7 @@ deliverable; comparison remains outside it.
   - Last checked by sender: 2026-07-31.
   - Reuse rule: never rely on this packet's summary for current instructions.
 - Commission Signal Board playbook and prompt-structure authority named above
-  - Role: sequence, evidence, seal, and Deliver contract.
+  - Role: acquisition sequence, evidence, and seal contract.
   - Load-bearing: yes.
   - Compare target: Git blob at the couriered handoff commit.
   - Last checked by sender: 2026-07-31 at authoring baseline `099eba5f`.
@@ -646,32 +589,34 @@ deliverable; comparison remains outside it.
   - Load-bearing: no for this execution; forbidden input.
   - Compare target: path-pattern quarantine in `Coldness Quarantine`.
   - Last checked by sender: 2026-07-31.
-  - Reuse rule: do not read until separately authorized post-report calibration.
+  - Reuse rule: do not read until separately authorized post-seal calibration.
 
 ## Current Task And Workspace State
 
 - Completed: acquisition-process hardening merged through PR #1403; this packet
-  updated to commission the full confirmation cycle.
-- Partially completed: none of p11 acquisition or Deliver has run.
+  now commissions only the enhanced Acquire & Seal confirmation run.
+- Partially completed: the operator reports that the receiving task was started
+  and halted. Exact p11 artifact state is unverified by this authoring lane and
+  must be inventoried by the receiver before reuse or continuation.
 - Broken or uncertain: live Google/browser, retailer, ads, native-social, and
   TikTok Shop availability remain runtime observations, not predeclared facts.
-- Authoring branch: `codex/summer-fridays-confirmation-handoff-20260731`.
-- Authoring baseline: `099eba5fd4b2714d475c39ad91088370abceea3c`.
+- Authoring branch: `codex/summer-fridays-phase-a-handoff-fix-20260731`.
+- Authoring baseline: `90620c060e80cfd81642eff9afb76e973b580ba1`.
 - Dirty state before handoff edit: clean.
 - Dirty state after handoff edit: only
   `docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md`
   modified.
-- Expected receiver state: clean at the couriered handoff commit; only named
-  p11 output roots may become dirty.
+- Expected receiver state: clean for a new run, or on resume dirty only in the
+  named p11 acquisition roots with no Deliver artifact present.
 
 ## Changed / Inspected / Tested Files
 
 - `docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md`
   - Status: modified by this authoring lane.
-  - Role: sole execution handoff for the p11 confirmation cycle.
-  - Important change: passing acquisition now leads to a separately gated
-    fresh-context Deliver turn; current mandatory route/preflight/accounting
-    requirements are explicit.
+  - Role: sole execution handoff for the p11 Acquire & Seal confirmation run.
+  - Important change: the task stops after the acquisition seal; current
+    mandatory route/preflight/accounting requirements remain explicit, and a
+    halted receiver may resume only after bounded-state validation.
 - `forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md`
   - Status: inspected, unedited.
   - Role: current acquisition and company-report playbook.
@@ -679,9 +624,8 @@ deliverable; comparison remains outside it.
     breadth/depth, native-social/TikTok Shop triggers.
 - `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
   - Status: inspected, unedited.
-  - Role: Intelligence Cycle Acquire/Deliver and completed-report authority.
-  - Sections: Forseti Intelligence Cycle Operating Contract and completed
-    company report shape.
+  - Role: Intelligence Cycle Acquire/Deliver boundary authority.
+  - Section: Forseti Intelligence Cycle Operating Contract.
 - `forseti-harness/runners/run_phase_acquisition_seal_validation.py` and
   `forseti-harness/runners/run_google_serp_queue.py`
   - Status: current merged runtime targets, unedited by this lane.
@@ -699,9 +643,9 @@ deliverable; comparison remains outside it.
   four exist; Sephora is primary when officially named and route-complete.
 - Full baseline PDP breadth remains required for every reconciled exact listing;
   expensive interpretation remains evidence-selected.
-- Deliver is separate and fresh-context, but is part of this commissioned
-  confirmation cycle when—and only when—the acquisition seal passes.
-- No price-war advice and no Problem Framing in this handoff.
+- Deliver is separate and not commissioned by this handoff, even when the
+  acquisition seal passes.
+- No report, recommendation, Problem Framing, or doctrine change in this task.
 
 ## Mutable Questions
 
@@ -710,7 +654,7 @@ deliverable; comparison remains outside it.
 - Which products receive Phase 2 queries or expensive interpretation: determined
   only by named decision-material seams in fresh p11 evidence.
 - Whether the seal passes: determined by observed route/job outcomes and the
-  current validator, never by schedule or desire to reach Deliver.
+  current validator, never by schedule or desire to finish.
 
 ## Commands And Verification Evidence
 
@@ -738,15 +682,13 @@ deliverable; comparison remains outside it.
 - A load-bearing owner-remediable route failure gets one consolidated owner
   unblock request and at most the owning route's permitted recovery. If still
   material and unresolved, acquisition remains blocked.
-- A passing seal does not prove the final report is useful; Deliver must still
-  dereference evidence, answer the bound question, expose uncertainty, and pass
-  its completed-board/citation checks.
+- A passing seal proves acquisition readiness only. It does not prove that a
+  later Deliver report will be useful.
 
 ## Superseded / Dangerous-To-Reuse Context
 
-- The earlier version of this packet stopped after Acquire & Seal. That stop is
-  superseded: a valid passing seal now leads to fresh-context Deliver under this
-  same commission; a blocked seal still stops.
+- The full-cycle wording introduced by PR #1404 is superseded. This commission
+  stops after Acquire & Seal; Deliver requires a separate task.
 - Prior Summer Fridays handoffs and reports remain historical/calibration
   artifacts, not execution authority or evidence input for p11.
 - Any generic-browser fallback that bypasses a current source-specific route is
@@ -754,13 +696,15 @@ deliverable; comparison remains outside it.
 
 ## Confirm-Don't-Trust Load Checklist
 
-Before acting, verify the handoff path, couriered commit, clean receiver state,
-three available worker slots, output-path non-collision, current authority
-blobs, Google queue state writeability, Reddit weekly reader, paid-ad routes,
-and typed conditional-route posture. Return `REUSE` only when every
-load-bearing item matches. Re-derive safe drift as `STALE_REREAD_REQUIRED`;
-stop on authority, ownership, dirty-state, or target conflicts as
-`BLOCKED_DRIFT`; never proceed on sender say-so.
+Before acting, verify the handoff path, couriered commit, receiver state, three
+available worker slots, output ownership, current authority blobs, Google queue
+state writeability, Reddit weekly reader, paid-ad routes, and typed conditional-
+route posture. For a halted run, inventory and re-hash every existing p11
+artifact, confirm no Deliver artifact exists, and run only pending acquisition
+jobs. Return `REUSE` only when every load-bearing item matches. Re-derive safe
+drift as `STALE_REREAD_REQUIRED`; stop on authority, ownership, unexpected
+dirty-state, or target conflicts as `BLOCKED_DRIFT`; never proceed on sender
+say-so.
 
 ## Do Not Forget
 
