@@ -83,15 +83,40 @@ def test_postures_come_from_the_sources_own_markers(record):
     assert by_id["p08z2os"]["comment_posture"] == "present"
 
 
+def test_deleted_author_marker_does_not_erase_a_present_comment_body():
+    html = """
+    <shreddit-post id="t3_abc" subreddit-name="X" post-title="T" permalink="/p">
+    </shreddit-post>
+    <shreddit-comment-tree totalcomments="2">
+      <shreddit-comment thingid="t1_present" author="[deleted]" is-author-deleted>
+        <div id="t1_present-comment-rtjson-content" slot="comment">still visible</div>
+      </shreddit-comment>
+      <shreddit-comment thingid="t1_deleted" author="[deleted]" is-comment-deleted>
+      </shreddit-comment>
+    </shreddit-comment-tree>
+    """
+    comments = build_www_thread_content_record(html_text=html, source_url="u")[
+        "comments"
+    ]
+    assert comments[0]["comment_posture"] == "present"
+    assert comments[0]["body_text"] == "still visible"
+    assert comments[1]["comment_posture"] == "deleted"
+
+
 def test_completeness_states_the_shortfall_rather_than_implying_none(record):
     completeness = record["comment_completeness"]
     assert completeness["basis"] == "shreddit-comment-tree[totalcomments]"
     assert completeness["declared_total_comments"] == 198
     captured = completeness["comments_captured"]
+    # Literal fixture facts, rather than values re-derived from this parser:
+    # the trimmed DOM carries 26 comment elements and 19 unique nofollow
+    # continuation targets (four targets are rendered twice).
+    assert captured == 26
     assert captured == record["counts"]["comments_parsed"]
-    assert completeness["comments_not_captured"] == 198 - captured
+    assert completeness["comments_not_captured"] == 172
+    assert completeness["captured_matches_declared_total"] is False
     assert completeness["capture_is_complete"] is False
-    assert completeness["continuation_links_not_followed"] > 0
+    assert completeness["continuation_links_not_followed"] == 19
     assert completeness["continuation_reason"]
     # The shortfall must also be visible to a reader who only skims warnings.
     assert any("198" in warning for warning in record["warnings"])
@@ -109,9 +134,58 @@ def test_absent_comment_tree_reports_unknown_completeness_not_zero():
     # would assert a completeness the page never stated.
     assert completeness["declared_total_comments"] is None
     assert completeness["comments_not_captured"] is None
+    assert completeness["captured_matches_declared_total"] is None
     assert completeness["capture_is_complete"] is None
     assert completeness["basis"] is None
     assert any("no_comment_tree_total" in item for item in record["limitations"])
+
+
+def test_declared_count_match_is_not_promoted_to_completeness_proof():
+    html = """
+    <shreddit-post id="t3_abc" subreddit-name="X" post-title="T" permalink="/p">
+    </shreddit-post>
+    <shreddit-comment-tree totalcomments="1">
+      <shreddit-comment thingid="t1_one" author="a">
+        <div id="t1_one-comment-rtjson-content" slot="comment">one</div>
+      </shreddit-comment>
+    </shreddit-comment-tree>
+    """
+    record = build_www_thread_content_record(html_text=html, source_url="u")
+    completeness = record["comment_completeness"]
+    assert completeness["comments_not_captured"] == 0
+    assert completeness["captured_matches_declared_total"] is True
+    assert completeness["capture_is_complete"] is None
+    assert any("not_independent_completeness_oracle" in item for item in record["limitations"])
+
+
+def test_captured_count_above_declared_total_is_an_unknown_mismatch_not_zero_gap():
+    html = """
+    <shreddit-post id="t3_abc" subreddit-name="X" post-title="T" permalink="/p">
+    </shreddit-post>
+    <shreddit-comment-tree totalcomments="1">
+      <shreddit-comment thingid="t1_one" author="a"></shreddit-comment>
+      <shreddit-comment thingid="t1_two" author="b"></shreddit-comment>
+    </shreddit-comment-tree>
+    """
+    record = build_www_thread_content_record(html_text=html, source_url="u")
+    completeness = record["comment_completeness"]
+    assert completeness["comments_not_captured"] is None
+    assert completeness["captured_matches_declared_total"] is False
+    assert completeness["capture_is_complete"] is None
+    assert any("exceed" in warning for warning in record["warnings"])
+
+
+def test_comment_count_is_scoped_to_the_declared_comment_tree():
+    html = """
+    <shreddit-post id="t3_abc" subreddit-name="X" post-title="T" permalink="/p">
+    </shreddit-post>
+    <shreddit-comment thingid="t1_unrelated" author="sidebar"></shreddit-comment>
+    <shreddit-comment-tree totalcomments="1">
+      <shreddit-comment thingid="t1_in_tree" author="a"></shreddit-comment>
+    </shreddit-comment-tree>
+    """
+    record = build_www_thread_content_record(html_text=html, source_url="u")
+    assert [comment["comment_id"] for comment in record["comments"]] == ["in_tree"]
 
 
 def test_a_page_without_a_post_envelope_fails_closed():

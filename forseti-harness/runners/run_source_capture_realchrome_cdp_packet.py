@@ -94,21 +94,25 @@ REALCHROME_CDP_NON_CLAIMS = [
 # scoped to this runner's plain-text metadata/DOM; not a shared helper in harness_utils.
 _SECRET_LIKE = re.compile(r"\b(Set-Cookie|cf_clearance|storage_state|user_data_dir)\b", re.IGNORECASE)
 
-# Click every in-place expansion control whose visible text matches the
-# caller's pattern, and report how many were clicked. Anchors carrying an href
-# are deliberately excluded: those navigate to another page, and following them
-# would turn one bounded capture into a crawl.
+# Click every eligible in-place expansion control inside the caller's selector
+# whose visible text matches the caller's pattern, and report how many were
+# clicked. Anchors carrying an href are deliberately excluded: those navigate
+# to another page, and following them would turn one bounded capture into a
+# crawl.
 _EXPAND_CONTROLS_JS = """
-(pattern) => {
-  const re = new RegExp(pattern, 'i');
-  const controls = Array.from(document.querySelectorAll('button, a'))
+(payload) => {
+  const re = new RegExp(payload.pattern, 'i');
+  const controls = Array.from(document.querySelectorAll(payload.selector))
     .filter(el => !(el.tagName === 'A' && el.getAttribute('href')))
+    .filter(el => el.isConnected && el.getClientRects().length > 0)
+    .filter(el => !el.disabled && el.getAttribute('aria-disabled') !== 'true')
     .filter(el => re.test(el.textContent || ''));
+  if (!payload.click) return {eligible: controls.length, clicked: 0};
   let clicked = 0;
   for (const control of controls) {
     try { control.click(); clicked += 1; } catch (err) { /* one dead control must not stop the round */ }
   }
-  return clicked;
+  return {eligible: controls.length, clicked};
 }
 """
 
@@ -158,6 +162,7 @@ class RealChromeCDPEngine(Protocol):
         capture_screenshot: bool = True,
         ready_selector: str | None = None,
         expand_control_pattern: str | None = None,
+        expand_control_selector: str = "button, a",
         expand_max_rounds: int = 0,
         expand_settle_ms: int = 6000,
     ) -> RealChromeCDPCaptureResult: ...
@@ -201,6 +206,7 @@ class _LiveRealChromeCDPEngine:
         capture_screenshot: bool = True,
         ready_selector: str | None = None,
         expand_control_pattern: str | None = None,
+        expand_control_selector: str = "button, a",
         expand_max_rounds: int = 0,
         expand_settle_ms: int = 6000,
     ) -> RealChromeCDPCaptureResult:
@@ -335,29 +341,66 @@ class _LiveRealChromeCDPEngine:
                         expansion_exhausted = False
                         for _ in range(expand_max_rounds):
                             try:
-                                clicked = page.evaluate(
-                                    _EXPAND_CONTROLS_JS, expand_control_pattern
+                                outcome = page.evaluate(
+                                    _EXPAND_CONTROLS_JS,
+                                    {
+                                        "pattern": expand_control_pattern,
+                                        "selector": expand_control_selector,
+                                        "click": True,
+                                    },
                                 )
                             except Exception as exc:
                                 warnings.append(
                                     f"expansion round failed (continuing): {type(exc).__name__}: {exc}"
                                 )
+                                expansion_exhausted = None
+                                break
+                            eligible = int(outcome.get("eligible", 0))
+                            clicked = int(outcome.get("clicked", 0))
+                            if not eligible:
+                                expansion_exhausted = True
                                 break
                             if not clicked:
-                                expansion_exhausted = True
+                                warnings.append(
+                                    f"expansion round found {eligible} eligible control(s) "
+                                    "but clicked none; exhaustion is unknown"
+                                )
+                                expansion_exhausted = None
                                 break
                             expansion_rounds += 1
                             expansion_clicks += clicked
+                            if clicked < eligible:
+                                warnings.append(
+                                    f"expansion round clicked {clicked} of {eligible} eligible control(s)"
+                                )
                             page.wait_for_timeout(expand_settle_ms)
-                        if expansion_exhausted is False:
-                            # The bound stopped the loop, not the page. Say so:
-                            # a silent stop here reads downstream as a complete
-                            # tree that simply had nothing more to give.
-                            warnings.append(
-                                f"expansion stopped at the {expand_max_rounds}-round bound "
-                                "with controls still present; captured DOM is short by an "
-                                "unknown amount"
-                            )
+                        else:
+                            # Probe after the final settle without another click.
+                            # The old loop always reported False when the final
+                            # allowed click actually removed the last control.
+                            try:
+                                remaining = page.evaluate(
+                                    _EXPAND_CONTROLS_JS,
+                                    {
+                                        "pattern": expand_control_pattern,
+                                        "selector": expand_control_selector,
+                                        "click": False,
+                                    },
+                                )
+                                remaining_count = int(remaining.get("eligible", 0))
+                                expansion_exhausted = remaining_count == 0
+                                if remaining_count:
+                                    warnings.append(
+                                        f"expansion stopped at the {expand_max_rounds}-round bound "
+                                        f"with {remaining_count} eligible control(s) still present; "
+                                        "captured DOM is short by an unknown amount"
+                                    )
+                            except Exception as exc:
+                                expansion_exhausted = None
+                                warnings.append(
+                                    "expansion exhaustion probe failed: "
+                                    f"{type(exc).__name__}: {exc}"
+                                )
                     if scroll_step_px > 0:
                         position = 0
                         for _ in range(_MAX_PROGRESSIVE_SCROLL_STEPS):
@@ -486,6 +529,7 @@ def run_source_capture_realchrome_cdp_packet(
     # A JS-regex source matched against the visible text of in-place expansion
     # controls (buttons and href-less anchors). Left None, nothing is clicked.
     expand_control_pattern: str | None = None,
+    expand_control_selector: str = "button, a",
     expand_max_rounds: int = 0,
     expand_settle_ms: int = 6000,
     engine: RealChromeCDPEngine | None = None,
@@ -525,6 +569,7 @@ def run_source_capture_realchrome_cdp_packet(
         capture_screenshot=capture_screenshot,
         ready_selector=ready_selector,
         expand_control_pattern=expand_control_pattern,
+        expand_control_selector=expand_control_selector,
         expand_max_rounds=expand_max_rounds,
         expand_settle_ms=expand_settle_ms,
     )
@@ -563,6 +608,7 @@ def run_source_capture_realchrome_cdp_packet(
         "fit_viewport_to_window": fit_viewport_to_window,
         "ready_selector": ready_selector,
         "expand_control_pattern": expand_control_pattern,
+        "expand_control_selector": expand_control_selector,
         "expand_max_rounds": expand_max_rounds,
         "expansion_rounds": result.expansion_rounds,
         "expansion_clicks": result.expansion_clicks,

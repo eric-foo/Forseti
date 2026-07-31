@@ -131,7 +131,8 @@ def test_a_genuinely_empty_thread_is_not_treated_as_an_anomaly():
         html_text=html, source_url="u"
     )
     assert record["counts"]["comments_parsed"] == 0
-    assert record["comment_completeness"]["capture_is_complete"] is True
+    assert record["comment_completeness"]["captured_matches_declared_total"] is True
+    assert record["comment_completeness"]["capture_is_complete"] is None
 
 
 def test_www_summary_does_not_claim_it_avoided_browser_automation():
@@ -141,3 +142,13 @@ def test_www_summary_does_not_claim_it_avoided_browser_automation():
     assert WWW_REDDIT_THREAD_PARSER_VERSION.startswith("www-")
     assert batch.TRANSPORT_SOURCE_SURFACES["www_realchrome"] == "www_reddit_realchrome_cdp"
     assert batch.TRANSPORT_HOSTS["www_realchrome"] == "www.reddit.com"
+
+
+def test_grid_cli_preserves_the_lane_cadence_defaults():
+    from runners import run_reddit_grid_capture as grid
+
+    args = grid._build_parser().parse_args(
+        ["--subreddit", "Sephora", "--output-root", "out", "--decision-question", "q"]
+    )
+    assert args.cadence_mode == grid.DEFAULT_CADENCE_MODE
+    assert args.cadence_basis == grid.DEFAULT_CADENCE_BASIS

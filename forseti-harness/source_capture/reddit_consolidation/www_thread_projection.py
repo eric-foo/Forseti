@@ -16,24 +16,25 @@ it replaces.  Every field this projection needs is a NAMED attribute on
 is deliberate: an earlier www listing projection read two abutting sidebar
 numbers by position and mislabelled weekly visitors as subscribers.
 
-Measured completeness constraint (r/Sephora thread ``1v87d9j``, 2026-08-01):
+Measured capture constraint (r/Sephora thread ``1v87d9j``, 2026-08-01):
 
 - 35 of 198 comments are present on first paint;
 - clicking every in-place expansion control reaches 152 and leaves zero
   controls, converging in two rounds;
-- the remaining 46 sit below the in-place depth bound (max captured depth 4)
-  behind 90 ``Continue this thread`` anchors, each ``rel="nofollow"`` and each
-  pointing at a SEPARATE per-comment permalink page.
+- the source-declared count remains 46 above the captured count; the rendered
+  tree also carries ``Continue this thread`` anchors below the in-place depth
+  bound (max captured depth 4), each ``rel="nofollow"`` and pointing at a
+  separate per-comment permalink page.
 
 This projection therefore never follows a continuation link: the source marks
 them nofollow, and following them would turn one bounded thread capture into an
 unbounded page crawl, which the runner's non-claims exclude.  The shortfall is
-not hidden.  ``shreddit-comment-tree[totalcomments]`` states the thread's own
-declared total, so every record carries the declared total, what was actually
-captured, the arithmetic gap, and the count of continuation links left
-unfollowed.  A consumer that needs the deep tail can see exactly how much of it
-is missing; a consumer that treats the record as complete is contradicted by
-its own numbers rather than misled by their absence.
+not hidden.  ``shreddit-comment-tree[totalcomments]`` states the source's own
+declared count, so every record carries that count, what was actually captured,
+the non-negative arithmetic gap when the two reconcile, and the count of unique
+continuation targets left unfollowed.  The declared count is not an independent
+completeness oracle: an exact match is recorded as a match, never promoted to a
+claim that the live thread was captured completely.
 """
 from __future__ import annotations
 
@@ -54,7 +55,7 @@ from source_capture.reddit_consolidation.parser import (
 
 # Bump on ANY behavior change to this projection so records written under the
 # old behavior stay distinguishable from re-projections under the new one.
-WWW_REDDIT_THREAD_PARSER_VERSION = "www-1"
+WWW_REDDIT_THREAD_PARSER_VERSION = "www-2"
 
 _POST_TAG = "shreddit-post"
 _POST_BODY_TAG = "shreddit-post-text-body"
@@ -70,6 +71,9 @@ COMPLETENESS_BASIS = "shreddit-comment-tree[totalcomments]"
 COMPLETENESS_BASIS_ABSENT = (
     "www_thread_declares_no_comment_tree_total; captured count stands alone"
 )
+COMPLETENESS_BASIS_LIMITATION = (
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+)
 CONTINUATION_NOT_FOLLOWED_REASON = (
     "www_continuation_links_are_nofollow_separate_pages_and_are_not_followed"
 )
@@ -84,25 +88,39 @@ def parse_www_reddit_html(html: str) -> ParsedThread:
             "could not identify a www-Reddit <shreddit-post> thread envelope",
         )
 
-    comment_nodes = [node for node in root.descendants() if node.tag == _COMMENT_TAG]
+    comment_tree = _first_tag(root, _COMMENT_TREE_TAG)
+    # Keep the counted nodes and the declared-total attribute on the same DOM
+    # envelope. A sidebar/recommendation component may carry another
+    # <shreddit-comment>; including it would inflate the completeness numerator.
+    comment_scope = comment_tree if comment_tree is not None else root
+    comment_nodes = [
+        node for node in comment_scope.descendants() if node.tag == _COMMENT_TAG
+    ]
     comments = [
         _parse_comment(node, row_index=index)
         for index, node in enumerate(comment_nodes, start=1)
     ]
 
-    declared_total = _declared_total_comments(root)
-    continuation_links = _count_continuation_links(root)
+    declared_total = _declared_total_comments(comment_tree)
+    continuation_links = _count_continuation_links(comment_scope)
     captured_depths = [c.depth for c in comments if c.depth is not None]
 
     warnings: list[str] = []
     limitations: list[str] = []
     if declared_total is None:
         limitations.append(COMPLETENESS_BASIS_ABSENT)
-    elif declared_total > len(comments):
-        warnings.append(
-            f"thread declares {declared_total} comments; {len(comments)} captured "
-            f"({declared_total - len(comments)} not captured)"
-        )
+    else:
+        limitations.append(COMPLETENESS_BASIS_LIMITATION)
+        if declared_total > len(comments):
+            warnings.append(
+                f"thread declares {declared_total} comments; {len(comments)} captured "
+                f"({declared_total - len(comments)} not captured)"
+            )
+        elif declared_total < len(comments):
+            warnings.append(
+                f"captured comment count {len(comments)} exceeds the source-declared "
+                f"count {declared_total}; completeness is unknown"
+            )
     if continuation_links:
         limitations.append(
             f"{continuation_links} continuation link(s) left unfollowed: "
@@ -146,6 +164,17 @@ def build_www_thread_content_record(
     posture_counts = Counter(comment.comment_posture for comment in parsed.comments)
     captured = len(parsed.comments)
     declared = parsed.declared_total_comments
+    declared_gap = declared - captured if declared is not None else None
+    captured_matches_declared = declared is not None and captured == declared
+    if declared is None:
+        capture_is_complete: bool | None = None
+    elif captured < declared or parsed.continuation_links_not_followed:
+        # Either signal disproves completeness relative to the rendered source.
+        capture_is_complete = False
+    else:
+        # Equality cannot prove the meaning/exhaustiveness of the source's
+        # declared count; an overcount is a reconciliation failure, not success.
+        capture_is_complete = None
     return {
         "record_kind": THREAD_CONTENT_RECORD_KIND,
         "parser_version": WWW_REDDIT_THREAD_PARSER_VERSION,
@@ -189,11 +218,14 @@ def build_www_thread_content_record(
             "declared_total_comments": declared,
             "comments_captured": captured,
             "comments_not_captured": (
-                max(declared - captured, 0) if declared is not None else None
+                declared_gap
+                if declared_gap is not None and declared_gap >= 0
+                else None
             ),
-            "capture_is_complete": (
-                None if declared is None else captured >= declared
+            "captured_matches_declared_total": (
+                captured_matches_declared if declared is not None else None
             ),
+            "capture_is_complete": capture_is_complete,
             "continuation_links_not_followed": parsed.continuation_links_not_followed,
             "continuation_reason": (
                 CONTINUATION_NOT_FOLLOWED_REASON
@@ -250,10 +282,14 @@ def _comment_posture(node: HtmlNode, *, body_text: str) -> str:
     # served collapsed, and the stronger fact is that it is gone.
     author = (node.attrs.get("author") or "").strip().lower()
     text = body_text.strip().lower()
-    if "is-author-deleted" in node.attrs or author == "[deleted]" or text == "[deleted]":
+    author_deleted = "is-author-deleted" in node.attrs or author == "[deleted]"
+    if "is-comment-deleted" in node.attrs or text == "[deleted]":
         return "deleted"
-    if "is-comment-deleted" in node.attrs or author == "[removed]" or text == "[removed]":
+    if text == "[removed]" or (author == "[removed]" and not text):
         return "removed"
+    # is-author-deleted says who is gone, not that a still-rendered body is.
+    if author_deleted and not text:
+        return "deleted"
     if "collapsed" in node.attrs:
         return "collapsed"
     return "present"
@@ -289,21 +325,28 @@ def _post_body_text(root: HtmlNode, post_node: HtmlNode) -> str:
     return body_tag.text_content()
 
 
-def _declared_total_comments(root: HtmlNode) -> int | None:
-    tree = _first_tag(root, _COMMENT_TREE_TAG)
+def _declared_total_comments(tree: HtmlNode | None) -> int | None:
     if tree is None:
         return None
     return _int_or_none(tree.attrs.get(_COMMENT_TREE_TOTAL_ATTR))
 
 
-def _count_continuation_links(root: HtmlNode) -> int:
-    count = 0
-    for node in root.descendants():
+def _count_continuation_links(comment_scope: HtmlNode) -> int:
+    targets: set[str] = set()
+    for node in comment_scope.descendants():
         if node.tag != "a":
             continue
-        if _CONTINUATION_MARKER in node.text_content().casefold():
-            count += 1
-    return count
+        href = (node.attrs.get("href") or "").strip()
+        rel = (node.attrs.get("rel") or "").casefold().split()
+        if (
+            href
+            and "nofollow" in rel
+            and _CONTINUATION_MARKER in node.text_content().casefold()
+        ):
+            # Reddit can render the same continuation target twice in one
+            # subtree. Count the unfollowed destination, not duplicate chrome.
+            targets.add(href)
+    return len(targets)
 
 
 def _first_tag(root: HtmlNode, tag: str) -> HtmlNode | None:

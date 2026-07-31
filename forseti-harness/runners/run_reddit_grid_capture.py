@@ -688,7 +688,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--cadence-basis",
         choices=list(CADENCE_BASES),
-        default="gap",
+        default=DEFAULT_CADENCE_BASIS,
         help=(
             "gap: cadence numbers are the wait BETWEEN captures, so the real "
             "request interval is the gap plus the capture duration. cycle: they "
@@ -710,7 +710,11 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--delay-seconds", type=float, default=DEFAULT_DELAY_SECONDS)
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
-    parser.add_argument("--cadence-mode", choices=["fixed", "bounded_jitter"], default="fixed")
+    parser.add_argument(
+        "--cadence-mode",
+        choices=["fixed", "bounded_jitter"],
+        default=DEFAULT_CADENCE_MODE,
+    )
     parser.add_argument("--cadence-window-seconds", type=float, default=None)
     # Default to the lane constants, NOT None. argparse defaults win over the
     # function signature, so None here silently discarded the lane's 31-46s

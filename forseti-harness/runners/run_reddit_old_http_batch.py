@@ -67,7 +67,8 @@ TRANSPORT_SOURCE_SURFACES = {
 # convergence so a larger thread is not silently truncated; when the bound
 # does stop the loop the runner records that fact rather than implying the
 # tree was exhausted.
-WWW_EXPAND_CONTROL_PATTERN = r"more repl|more comment|load more|view more"
+WWW_EXPAND_CONTROL_PATTERN = r"more repl(?:y|ies)|more comments?|load more comments?"
+WWW_EXPAND_CONTROL_SELECTOR = "shreddit-comment-tree button, shreddit-comment-tree a"
 WWW_EXPAND_MAX_ROUNDS = 8
 WWW_EXPAND_SETTLE_MS = 6000
 WWW_READY_SELECTOR = "shreddit-comment"
@@ -430,6 +431,7 @@ def _capture_www_thread(
         persistent_tab_marker=WWW_PERSISTENT_TAB_MARKER,
         ready_selector=WWW_READY_SELECTOR,
         expand_control_pattern=WWW_EXPAND_CONTROL_PATTERN,
+        expand_control_selector=WWW_EXPAND_CONTROL_SELECTOR,
         expand_max_rounds=WWW_EXPAND_MAX_ROUNDS,
         expand_settle_ms=WWW_EXPAND_SETTLE_MS,
         viewport_width=WWW_VIEWPORT_WIDTH,
