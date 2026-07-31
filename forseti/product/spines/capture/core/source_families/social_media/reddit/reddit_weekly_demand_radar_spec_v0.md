@@ -187,7 +187,9 @@ output to the lake.
   calculate a numeric title-rescue score or auto-select an engagement head.
 - The model applies the governing policy in
   `reddit_listing_efficiency_policy_v0.md` against a named Decision Frame and
-  records `yes`, `borderline`, or `no` plus reason codes and priority.
+  records `yes`, `borderline`, or `no` plus reason codes and priority. This
+  radar's standing frame is `weekly_latent_problem_gtm_discovery_v0`, defined
+  in that policy; it owns the frame-scoped gate readings and the dive budget.
   Opaque/deictic/image-dependent rows remain `borderline` until a cheap
   listing-level preview resolves the missing context; opacity is a reason, not
   a fourth disposition.

@@ -39,6 +39,47 @@ trying to gain share or position itself against named competitors.
 exact-thread deep read.** Popularity, general usefulness, and information
 volume are not substitutes for that contribution.
 
+### Standing weekly frame: `weekly_latent_problem_gtm_discovery_v0`
+
+Owner-directed, 2026-08-01. The weekly demand radar serves the default
+challenger commission above, seeking **latent problems usable for GTM**: a
+problem the client is uncomfortable with but has not yet articulated, a problem
+that is small now and structurally worsening, or an evident problem already in
+view. All three are in scope.
+
+This frame narrows which evidence counts; it does not replace the default
+customer. Under it:
+
+- **Gate 3 reads forward.** A decision need not already sit on the client's
+  stated agenda; an unvoiced or emerging decision counts as current impact — a
+  problem the client has not named cannot be on their list. Scope still binds:
+  wrong category, customer, or geography remains `no`. This widening is
+  frame-scoped and does not alter gate 3 for a named-client commission, where
+  the narrow reading is what makes the dive budget work.
+- **Gate 4 polarity shifts.** Praise, holy-grail, routine, and collection
+  formats are weak rather than strong under this frame: they evidence what
+  already works, not where the gap is. Failure, disappointment, workaround,
+  substitution, compatibility conflict, and unmet-need questions carry the
+  admission.
+- **Opacity is weak evidence of low value.** A latent problem is by definition
+  unnamed, so it is described in ordinary language rather than product
+  vocabulary; and established community formats carry purchase, acquisition,
+  and disappointment evidence under titles that state nothing. Apply gate 2 to
+  the visible commercial object, including subreddit format convention, not to
+  keyword presence. The weekly reader's `listing_context_insufficient` tag is a
+  non-binding cue known to over-flag this frame's strongest rows; it may
+  support `borderline`, never a `no`.
+- **Corroboration raises priority.** A problem carried by independent voices,
+  repeated across threads, or recurring across subreddits outranks an equally
+  specific single-poster complaint, because a snowballing problem is one that
+  more than one person already has. Corroboration orders `yes` rows; it is not
+  an admission requirement and its absence is not a `no`.
+- **Dive budget: 2 threads per subreddit** among gate-5 survivors, ranked by
+  comments, extended to 3 in the six venues carrying the densest
+  failure/unmet-need signal in that week's read. This frame's commission is a
+  persona rather than a named brand, so gate 3 does not bound spend on its own;
+  the cap substitutes until a named client narrows scope.
+
 ## Required sequence
 
 Apply the following sequence. Do not collapse it into an additive score or
