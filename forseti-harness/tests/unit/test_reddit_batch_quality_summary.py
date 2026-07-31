@@ -57,6 +57,50 @@ def test_quality_summary_marks_clean_consolidated_slot_usable(scratch_dir: Path)
     assert "`slot_a`: yes" in receipt
 
 
+def test_quality_summary_marks_content_retention_slot_usable(scratch_dir: Path) -> None:
+    content_record = _consolidation_fixture(
+        title="A retained thread",
+        comments_parsed=2,
+        observable_comment_nodes=2,
+        comment_postures={"present": 2},
+    )["reddit_thread_consolidation"]
+    content_record["record_kind"] = "reddit_thread_content_v0"
+    batch_summary = _write_batch_fixture(
+        scratch_dir,
+        rows=[
+            {
+                "slot_id": "slot_a",
+                "url": "https://old.reddit.com/r/SaaS/comments/abc/example/",
+                "capture_exit": 0,
+                "consolidation_exit": None,
+                "metadata": {
+                    "status": 200,
+                    "reason": "OK",
+                    "content_type": "text/html",
+                    "byte_count": 123,
+                },
+                "consolidation": None,
+                "content_record": content_record,
+            }
+        ],
+    )
+
+    result = build_reddit_batch_quality_summary(
+        batch_summary_path=batch_summary,
+        output_directory=scratch_dir / "quality",
+    )
+
+    data = json.loads(Path(result["json_path"]).read_text(encoding="utf-8"))[
+        "reddit_batch_quality_summary"
+    ]
+    row = data["results"][0]
+    assert row["usable_for_downstream"] == "yes"
+    assert row["parsed_artifact_kind"] == "reddit_thread_content_v0"
+    assert row["consolidation_exit"] is None
+    assert data["counts"]["consolidation_success_count"] == 0
+    assert data["counts"]["parsed_success_count"] == 1
+
+
 def test_quality_summary_marks_capture_or_consolidation_failures_not_usable(
     scratch_dir: Path,
 ) -> None:
@@ -279,6 +323,12 @@ def _write_batch_fixture(scratch_dir: Path, *, rows: list[dict[str, object]]) ->
         if item["metadata"] is not None:
             (packet_dir / "raw" / "02_http_response_metadata.json").write_text(
                 json.dumps(item["metadata"]),
+                encoding="utf-8",
+            )
+        content_record = item.get("content_record")
+        if content_record is not None:
+            (packet_dir / "raw" / "01_content_record.json").write_text(
+                json.dumps(content_record),
                 encoding="utf-8",
             )
         consolidation_message: object = None
