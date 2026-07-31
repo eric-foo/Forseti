@@ -201,6 +201,20 @@ def test_absent_venue_envelope_carries_an_absent_reason() -> None:
     )
 
 
+def test_creation_date_without_weekly_metrics_does_not_claim_the_metrics() -> None:
+    view = build_www_grid_content_record(
+        rendered_dom=DOM,
+        visible_text="Created Mar 3, 2015 Public",
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )["grid_view"]
+    assert view["created_utc_or_none"] == "2015-03-03"
+    assert (
+        view["visible_volume_signal_absent_reason_or_none"]
+        == "visible_volume_not_present_on_declared_surface"
+    )
+
+
 def test_flair_and_timestamp_are_projected() -> None:
     rows = _record()["grid_view"]["thread_rows"]
     assert rows[0]["flair_or_none"] == "Layering"

@@ -19,6 +19,7 @@ from runners.run_source_capture_realchrome_cdp_packet import (
     run_source_capture_realchrome_cdp_packet,
 )
 from source_capture.content_extraction import (
+    CONTENT_EXTRACTION_FAILED_EXIT_CODE,
     CONTENT_RECORD_FILENAME,
     RenderedContentExtractionSpec,
 )
@@ -32,9 +33,12 @@ PNG = b"\x89PNG\r\n\x1a\n" + b"pixels" * 100
 class _FakeEngine:
     """Returns fixed artifacts and records whether a screenshot was asked for."""
 
-    def __init__(self, *, dom: str = DOM, text: str = TEXT) -> None:
+    def __init__(
+        self, *, dom: str = DOM, text: str = TEXT, http_status: int | None = 200
+    ) -> None:
         self.dom = dom
         self.text = text
+        self.http_status = http_status
         self.capture_screenshot_seen: bool | None = None
 
     def capture(self, **kwargs) -> RealChromeCDPCaptureResult:
@@ -46,7 +50,7 @@ class _FakeEngine:
             rendered_dom=self.dom,
             visible_text=self.text,
             screenshot_png=PNG if self.capture_screenshot_seen else None,
-            http_status=200,
+            http_status=self.http_status,
             warm_hop_url=None,
             warm_hop_blocked=None,
             viewport_width=1280,
@@ -78,6 +82,14 @@ def _has(names: set[str], needle: str) -> bool:
     return any(needle in name for name in names)
 
 
+def _file_id_artifact_map(packet_dir: Path) -> dict[str, str]:
+    manifest = json.loads((packet_dir / "manifest.json").read_text(encoding="utf-8"))
+    return {
+        item["file_id"]: Path(item["relative_packet_path"]).name
+        for item in manifest["preserved_files"]
+    }
+
+
 def _spec(extractor=None, mode: str = "content") -> RenderedContentExtractionSpec:
     return RenderedContentExtractionSpec(
         requested_retention_mode=mode,
@@ -96,7 +108,9 @@ def test_existing_callers_are_unchanged(tmp_path: Path) -> None:
     assert _has(names, "rendered_dom")
     assert _has(names, "visible_text")
     assert _has(names, "screenshot")
+    assert _has(names, "snapshot_metadata")
     assert not _has(names, CONTENT_RECORD_FILENAME)
+    assert len(names) == 4
 
 
 def test_content_retention_publishes_the_record_and_drops_raw(tmp_path: Path) -> None:
@@ -110,6 +124,13 @@ def test_content_retention_publishes_the_record_and_drops_raw(tmp_path: Path) ->
     assert not _has(names, "rendered_dom")
     assert not _has(names, "visible_text")
     assert not _has(names, "screenshot")
+    assert {
+        file_id: artifact.split("_", 1)[1]
+        for file_id, artifact in _file_id_artifact_map(packet).items()
+    } == {
+        "file_01": CONTENT_RECORD_FILENAME,
+        "file_02": "04_realchrome_snapshot_metadata.json",
+    }
 
 
 def test_suppressed_screenshot_is_not_captured_and_says_so(tmp_path: Path) -> None:
@@ -151,6 +172,15 @@ def test_audit_sample_keeps_raw_alongside_the_record(tmp_path: Path) -> None:
     names = _artifact_names(packet)
     assert _has(names, CONTENT_RECORD_FILENAME)
     assert _has(names, "rendered_dom")
+    assert {
+        file_id: artifact.split("_", 1)[1]
+        for file_id, artifact in _file_id_artifact_map(packet).items()
+    } == {
+        "file_01": "01_realchrome_rendered_dom.html",
+        "file_02": "02_realchrome_visible_text.txt",
+        "file_03": CONTENT_RECORD_FILENAME,
+        "file_04": "04_realchrome_snapshot_metadata.json",
+    }
 
 
 def test_extraction_failure_preserves_raw_and_withholds_no_record(tmp_path: Path) -> None:
@@ -158,14 +188,42 @@ def test_extraction_failure_preserves_raw_and_withholds_no_record(tmp_path: Path
         raise ValueError("grid projection anomaly [no_thread_rows]")
 
     engine = _FakeEngine()
-    _, packet = _run(
+    exit_code, packet = _run(
         tmp_path, engine, content_extraction=_spec(_boom), capture_screenshot=False
     )
+    assert exit_code == CONTENT_EXTRACTION_FAILED_EXIT_CODE
     names = _artifact_names(packet)
     assert not _has(names, CONTENT_RECORD_FILENAME)
     assert _has(names, "rendered_dom")
     manifest = (packet / "manifest.json").read_text(encoding="utf-8")
     assert "no_thread_rows" in manifest
+
+
+def test_non_success_http_status_keeps_raw_and_withholds_content(tmp_path: Path) -> None:
+    engine = _FakeEngine(http_status=403)
+    exit_code, packet = _run(
+        tmp_path, engine, content_extraction=_spec(), capture_screenshot=False
+    )
+    assert exit_code == CONTENT_EXTRACTION_FAILED_EXIT_CODE
+    names = _artifact_names(packet)
+    assert not _has(names, CONTENT_RECORD_FILENAME)
+    assert _has(names, "rendered_dom")
+    manifest = json.loads((packet / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["source_slices"][0]["access_posture"]["value"].startswith(
+        "real_browser_cdp access_failed with HTTP 403"
+    )
+
+
+def test_screenshot_suppression_is_truthful_on_the_source_slice(tmp_path: Path) -> None:
+    engine = _FakeEngine()
+    _, packet = _run(
+        tmp_path, engine, content_extraction=_spec(), capture_screenshot=False
+    )
+    manifest = json.loads((packet / "manifest.json").read_text(encoding="utf-8"))
+    assert (
+        manifest["source_slices"][0]["media_modality_posture"]["value"]
+        == "no screenshot captured; linked media files were not independently preserved"
+    )
 
 
 def test_a_www_content_packet_reads_and_folds_end_to_end(tmp_path: Path) -> None:
@@ -239,9 +297,10 @@ def test_a_blocked_www_capture_does_not_fold(tmp_path: Path) -> None:
         dom="<html><body>blocked</body></html>",
         text="You've been blocked by network security. File a ticket",
     )
-    _, packet = _run(
+    exit_code, packet = _run(
         tmp_path, engine, content_extraction=_spec(), capture_screenshot=False
     )
+    assert exit_code == CONTENT_EXTRACTION_FAILED_EXIT_CODE
     with pytest.raises(RegistryRefreshError) as excinfo:
         read_grid_packet(packet_or_manifest_path=packet)
     assert excinfo.value.code in {"grid_access_unsuccessful", "www_content_record_required"}

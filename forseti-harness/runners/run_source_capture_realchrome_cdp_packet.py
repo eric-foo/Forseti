@@ -49,6 +49,7 @@ from source_capture import (
     write_local_source_capture_packet,
 )
 from source_capture.content_extraction import (
+    CONTENT_EXTRACTION_FAILED_EXIT_CODE,
     CONTENT_RECORD_FILENAME,
     RenderedContentExtractionSpec,
 )
@@ -487,6 +488,14 @@ def run_source_capture_realchrome_cdp_packet(
             "access_failed: the real Chrome rendered an access-block/interstitial page instead of "
             f"source content: {access_block_reason}; block artifacts preserved"
         )
+    http_admission_failed = result.http_status is not None and (
+        type(result.http_status) is not int or not 200 <= result.http_status < 300
+    )
+    if http_admission_failed:
+        packet_limitations.append(
+            "access_failed: the real Chrome navigation did not return a successful "
+            f"HTTP status ({result.http_status!r}); raw artifacts preserved"
+        )
 
     sufficiency = evaluate_source_detail_sufficiency(
         requirements=source_detail_sufficiency_requirements,
@@ -519,7 +528,11 @@ def run_source_capture_realchrome_cdp_packet(
         rendered_dom=dom_bytes,
         visible_text=text_bytes,
         final_url=result.final_url,
-        admission_failed=blocked or (sufficiency.enabled and not sufficiency.passed),
+        admission_failed=(
+            blocked
+            or http_admission_failed
+            or (sufficiency.enabled and not sufficiency.passed)
+        ),
         keep_raw_audit_sample=keep_raw_audit_sample,
     )
     if retention.extraction_failure_or_none is not None:
@@ -560,8 +573,13 @@ def run_source_capture_realchrome_cdp_packet(
         f"real_browser_cdp access_failed with access block {access_block_reason}; block artifacts "
         f"preserved via {browser_description} over CDP; content sufficiency is not asserted"
         if blocked
-        else f"real_browser_cdp preserved rendered public page artifacts via {browser_description} "
-        "over CDP; genuine-browser fingerprint; content is retailer/source-owned public page state"
+        else (
+            f"real_browser_cdp access_failed with HTTP {result.http_status!r}; raw artifacts "
+            f"preserved via {browser_description} over CDP; content sufficiency is not asserted"
+            if http_admission_failed
+            else f"real_browser_cdp preserved rendered public page artifacts via {browser_description} "
+            "over CDP; genuine-browser fingerprint; content is retailer/source-owned public page state"
+        )
     )
 
     timing = PacketTiming(
@@ -579,6 +597,8 @@ def run_source_capture_realchrome_cdp_packet(
         archive_history_posture=not_attempted("real_browser_cdp does not query archive or history services"),
         media_modality_posture=known_fact(
             "preserved a viewport screenshot; linked media files were not independently preserved"
+            if result.screenshot_png is not None
+            else "no screenshot captured; linked media files were not independently preserved"
         ),
         re_capture_relationship=not_applicable("no prior source capture packet supplied"),
         limitations=packet_limitations,
@@ -626,12 +646,13 @@ def run_source_capture_realchrome_cdp_packet(
             limitations=packet_limitations,
             receipt_summary=(
                 f"Real-Chrome CDP packet for {source_family}: "
-                f"{'ACCESS BLOCKED' if blocked else 'rendered public page content'} for one URL "
+                f"{'ACCESS BLOCKED' if blocked else 'HTTP RESPONSE NOT SUCCESSFUL' if http_admission_failed else 'rendered public page content'} for one URL "
                 f"(HTTP {result.http_status})."
             ),
             receipt_non_claims=(
-                ["not source-content capture; access-block page artifacts only"] + REALCHROME_CDP_NON_CLAIMS
-                if blocked
+                ["not admitted source-content capture; access-failure artifacts only"]
+                + REALCHROME_CDP_NON_CLAIMS
+                if blocked or http_admission_failed
                 else list(REALCHROME_CDP_NON_CLAIMS)
             ),
         )
@@ -647,6 +668,8 @@ def run_source_capture_realchrome_cdp_packet(
         return SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE, source_detail_sufficiency_failure_message(
             output_directory=write_result.output_directory, result=sufficiency
         )
+    if content_extraction is not None and retention.retention_outcome == "raw_failure":
+        return CONTENT_EXTRACTION_FAILED_EXIT_CODE, write_result.output_directory
     return 0, write_result.output_directory
 
 

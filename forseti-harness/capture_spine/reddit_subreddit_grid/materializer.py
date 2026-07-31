@@ -293,14 +293,10 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
     if subreddit is None:
         raise RegistryRefreshError("locator_unparseable", f"cannot parse subreddit from locator: {locator!r}")
 
-    # Two transports reach a Reddit listing and each names its metadata file
-    # differently: direct HTTP writes http_response_metadata.json, the
-    # real-Chrome CDP rung writes realchrome_snapshot_metadata.json.  Both carry
-    # the final_url this reader verifies against, so the reader accepts either
-    # rather than the capture rung having to fake the other's filename.
-    metadata_file = _resolve_preserved_file(
-        packet, file_name="http_response_metadata.json", required=False
-    ) or _resolve_preserved_file(packet, file_name="realchrome_snapshot_metadata.json")
+    metadata_file = _resolve_grid_metadata_file(
+        packet,
+        expected_locator=locator,
+    )
     metadata_path = _resolve_packet_file_path(
         packet_dir=manifest_path.parent,
         relative_packet_path=metadata_file["relative_packet_path"],
@@ -451,6 +447,41 @@ def _resolve_preserved_file(packet, *, file_name: str, required: bool = True) ->
     return matching_files[0]
 
 
+def _resolve_grid_metadata_file(
+    packet, *, expected_locator: str
+) -> dict[str, str]:
+    """Resolve the one metadata transport the declared listing host requires."""
+    is_www = urlparse(expected_locator).netloc.lower() == WWW_REDDIT_LISTING_HOST
+    expected_name = (
+        "realchrome_snapshot_metadata.json"
+        if is_www
+        else "http_response_metadata.json"
+    )
+    unexpected_name = (
+        "http_response_metadata.json"
+        if is_www
+        else "realchrome_snapshot_metadata.json"
+    )
+    expected = _resolve_preserved_file(
+        packet, file_name=expected_name, required=False
+    )
+    unexpected = _resolve_preserved_file(
+        packet, file_name=unexpected_name, required=False
+    )
+    if unexpected is not None:
+        raise RegistryRefreshError(
+            "grid_metadata_transport_mismatch",
+            f"declared listing requires {expected_name}, but packet also preserves "
+            f"unexpected transport metadata {unexpected_name}",
+        )
+    if expected is None:
+        raise RegistryRefreshError(
+            "preserved_file_unresolved",
+            f"expected exactly one preserved {expected_name}, found 0",
+        )
+    return expected
+
+
 def _resolve_packet_file_path(
     *,
     packet_dir: Path,
@@ -496,23 +527,44 @@ def _verify_successful_grid_response(
             "http_metadata_shape",
             "preserved HTTP metadata is not a JSON object",
         )
-    # "status" is the direct-HTTP key; the real-Chrome rung records the same
-    # fact as "http_response_status".  Reading only the first would let a
-    # non-2xx browser capture through unchecked.
-    status = metadata.get("status")
-    if status is None:
-        status = metadata.get("http_response_status")
-    if status is not None and (not isinstance(status, int) or not 200 <= status < 300):
+    is_www = urlparse(expected_locator).netloc.lower() == WWW_REDDIT_LISTING_HOST
+    status_key = "http_response_status" if is_www else "status"
+    unexpected_status_key = "status" if is_www else "http_response_status"
+    if unexpected_status_key in metadata:
+        raise RegistryRefreshError(
+            "http_metadata_shape",
+            f"grid metadata carries unexpected status key {unexpected_status_key!r} "
+            f"for its declared listing transport",
+        )
+    status = metadata.get(status_key)
+    if type(status) is not int or not 200 <= status < 300:
         raise RegistryRefreshError(
             "grid_access_unsuccessful",
-            f"grid packet HTTP status is not successful: {status!r}",
+            f"grid packet {status_key} is not a successful integer status: {status!r}",
         )
-    if metadata.get("access_blocked") is True:
-        raise RegistryRefreshError(
-            "grid_access_unsuccessful",
-            "grid packet records an access block: "
-            f"{metadata.get('access_block_reason')!r}",
-        )
+    if is_www:
+        access_blocked = metadata.get("access_blocked")
+        classification = metadata.get("rendered_access_classification")
+        if type(access_blocked) is not bool:
+            raise RegistryRefreshError(
+                "http_metadata_shape",
+                "real-Chrome grid metadata must carry a boolean access_blocked value",
+            )
+        if access_blocked or classification == "access_blocked":
+            raise RegistryRefreshError(
+                "grid_access_unsuccessful",
+                "grid packet records an access block: "
+                f"{metadata.get('access_block_reason')!r}",
+            )
+        if classification not in {
+            "no_block_marker",
+            "residual_challenge_marker",
+        }:
+            raise RegistryRefreshError(
+                "http_metadata_shape",
+                "real-Chrome grid metadata carries an unknown rendered access "
+                f"classification: {classification!r}",
+            )
     final_url = metadata.get("final_url")
     if (
         final_url is not None
@@ -529,19 +581,18 @@ def _verify_successful_grid_response(
     for source_slice in packet.source_slices:
         locator = source_slice.locator.value
         access_posture = source_slice.access_posture.value or ""
+        successful_posture = (
+            access_posture.startswith(
+                "real_browser_cdp preserved rendered public page artifacts"
+            )
+            if is_www
+            else access_posture.startswith("direct_http succeeded with HTTP 2")
+        )
         if (
             isinstance(locator, str)
             and same_grid_listing_url(locator, expected_locator)
             and _subreddit_from_listing_url(locator) == expected_subreddit
-            and (
-                access_posture.startswith("direct_http succeeded with HTTP 2")
-                # The real-Chrome rung's success posture.  Its access_failed
-                # wording is deliberately NOT matched, so a block shell still
-                # falls through to grid_access_unsuccessful below.
-                or access_posture.startswith(
-                    "real_browser_cdp preserved rendered public page artifacts"
-                )
-            )
+            and successful_posture
         ):
             return
     raise RegistryRefreshError(

@@ -133,6 +133,37 @@ def build_validated_grid_content_record(
     return record
 
 
+def build_validated_www_grid_content_record(
+    *,
+    rendered_dom: str,
+    visible_text: str,
+    final_url: str,
+    subreddit: str,
+    listing_url: str,
+) -> dict:
+    """Build one www record while preserving anomalous rendered source."""
+    record = build_www_grid_content_record(
+        rendered_dom=rendered_dom,
+        visible_text=visible_text,
+        subreddit=subreddit,
+        listing_url=listing_url,
+    )
+    if (
+        record.get("grid_view", {}).get("verified_empty_listing") is True
+        and not same_grid_listing_url(final_url, listing_url)
+    ):
+        raise GridProjectionAnomalyError(
+            "grid projection anomaly [empty_listing_final_url_mismatch]: "
+            "keeping raw for audit"
+        )
+    anomaly = check_grid_projection_anomaly(record)
+    if anomaly is not None:
+        raise GridProjectionAnomalyError(
+            f"grid projection anomaly [{anomaly}]: keeping raw for audit"
+        )
+    return record
+
+
 def _rotating_raw_sample(names: Sequence[str], *, on_date: _dt.date) -> str:
     """Select one sample with a +1 weekly index across year boundaries."""
     ordered = sorted(names)
@@ -232,9 +263,10 @@ def _capture_www_grid(
     from source_capture.rendered_retention import require_content_retention
 
     def _extract(rendered_dom: bytes, visible_text: bytes, _final_url: str) -> dict:
-        return build_www_grid_content_record(
+        return build_validated_www_grid_content_record(
             rendered_dom=rendered_dom.decode("utf-8", errors="replace"),
             visible_text=visible_text.decode("utf-8", errors="replace"),
+            final_url=_final_url,
             subreddit=subreddit,
             listing_url=url,
         )
@@ -418,8 +450,10 @@ def run_reddit_grid_capture(
                 )
                 row["capture_exit"] = capture_exit
                 row["capture_message"] = capture_message
-                if capture_exit == 0:
+                if capture_exit in (0, CONTENT_EXTRACTION_FAILED_EXIT_CODE):
                     row["packet_path"] = capture_message
+                if capture_exit == CONTENT_EXTRACTION_FAILED_EXIT_CODE:
+                    row["content_extraction_failed"] = True
             except Exception as exc:
                 row["capture_exit"] = 2
                 row["capture_message"] = f"{type(exc).__name__}: {exc}"

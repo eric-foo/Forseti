@@ -6,14 +6,27 @@ and stay single-homed; only URL shape, extraction spec, and capture call differ.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+from types import SimpleNamespace
+
 import pytest
 
+from capture_spine.reddit_subreddit_grid.materializer import (
+    RegistryRefreshError,
+    _resolve_grid_metadata_file,
+    _verify_successful_grid_response,
+)
 from runners.run_reddit_grid_capture import (
+    GridProjectionAnomalyError,
     GRID_TRANSPORTS,
     build_grid_listing_url,
+    build_validated_www_grid_content_record,
     build_www_grid_listing_url,
     run_reddit_grid_capture,
 )
+from source_capture import known_fact
+from source_capture.content_extraction import CONTENT_EXTRACTION_FAILED_EXIT_CODE
 
 
 def test_www_url_carries_no_limit_parameter() -> None:
@@ -83,6 +96,137 @@ def test_unknown_transport_fails_closed(tmp_path) -> None:
 
 def test_default_transport_is_the_existing_one() -> None:
     assert GRID_TRANSPORTS[0] == "old_http"
+
+
+def test_www_unrecognized_zero_row_shell_fails_projection_validation() -> None:
+    with pytest.raises(GridProjectionAnomalyError, match="no_thread_rows"):
+        build_validated_www_grid_content_record(
+            rendered_dom="<html><body>Log in to continue</body></html>",
+            visible_text="Log in to continue",
+            final_url="https://www.reddit.com/r/testsub/top/?t=week",
+            subreddit="testsub",
+            listing_url="https://www.reddit.com/r/testsub/top/?t=week",
+        )
+
+
+def test_www_verified_empty_requires_the_declared_final_url() -> None:
+    with pytest.raises(
+        GridProjectionAnomalyError, match="empty_listing_final_url_mismatch"
+    ):
+        build_validated_www_grid_content_record(
+            rendered_dom="<html><body></body></html>",
+            visible_text="There are no posts in this community",
+            final_url="https://www.reddit.com/r/other/top/?t=week",
+            subreddit="testsub",
+            listing_url="https://www.reddit.com/r/testsub/top/?t=week",
+        )
+
+
+def test_www_batch_exposes_content_extraction_failure(monkeypatch, tmp_path) -> None:
+    import runners.run_reddit_grid_capture as module
+
+    packet_path = tmp_path / "failure_packet"
+    monkeypatch.setattr(
+        module,
+        "_capture_www_grid",
+        lambda **_kwargs: (CONTENT_EXTRACTION_FAILED_EXIT_CODE, str(packet_path)),
+    )
+    output_root = tmp_path / "out"
+    exit_code, summary_path = run_reddit_grid_capture(
+        subreddits=["testsub"],
+        listing="top",
+        time_window="week",
+        output_root=output_root,
+        decision_question="q",
+        transport="www_realchrome",
+        delay_seconds=0,
+    )
+    assert exit_code == 0
+    summary = json.loads(Path(summary_path).read_text(encoding="utf-8"))
+    assert summary["capture_success_count"] == 0
+    assert summary["content_extraction_failure_count"] == 1
+    assert summary["results"][0]["capture_exit"] == CONTENT_EXTRACTION_FAILED_EXIT_CODE
+    assert summary["results"][0]["packet_path"] == str(packet_path)
+
+
+def _packet_with_posture(posture: str, *file_names: str):
+    return SimpleNamespace(
+        preserved_files=[
+            SimpleNamespace(
+                relative_packet_path=f"raw/{index:02d}_{name}", sha256="unused"
+            )
+            for index, name in enumerate(file_names, start=1)
+        ],
+        source_slices=[
+            SimpleNamespace(
+                locator=known_fact("https://www.reddit.com/r/testsub/top/?t=week"),
+                access_posture=known_fact(posture),
+            )
+        ],
+    )
+
+
+def test_www_metadata_filename_must_match_the_transport() -> None:
+    packet = _packet_with_posture(
+        "real_browser_cdp preserved rendered public page artifacts",
+        "http_response_metadata.json",
+    )
+    with pytest.raises(RegistryRefreshError, match="realchrome_snapshot_metadata"):
+        _resolve_grid_metadata_file(
+            packet,
+            expected_locator="https://www.reddit.com/r/testsub/top/?t=week",
+        )
+
+
+def test_www_metadata_rejects_conflicting_status_keys(tmp_path) -> None:
+    metadata_path = tmp_path / "metadata.json"
+    metadata_path.write_text(
+        json.dumps(
+            {
+                "status": 200,
+                "http_response_status": 403,
+                "access_blocked": False,
+                "rendered_access_classification": "no_block_marker",
+                "final_url": "https://www.reddit.com/r/testsub/top/?t=week",
+            }
+        ),
+        encoding="utf-8",
+    )
+    packet = _packet_with_posture(
+        "real_browser_cdp preserved rendered public page artifacts"
+    )
+    with pytest.raises(RegistryRefreshError, match="unexpected status key"):
+        _verify_successful_grid_response(
+            packet=packet,
+            metadata_path=metadata_path,
+            expected_locator="https://www.reddit.com/r/testsub/top/?t=week",
+            expected_subreddit="testsub",
+        )
+
+
+def test_www_access_failed_posture_cannot_match_success(tmp_path) -> None:
+    metadata_path = tmp_path / "metadata.json"
+    metadata_path.write_text(
+        json.dumps(
+            {
+                "http_response_status": 200,
+                "access_blocked": False,
+                "rendered_access_classification": "no_block_marker",
+                "final_url": "https://www.reddit.com/r/testsub/top/?t=week",
+            }
+        ),
+        encoding="utf-8",
+    )
+    packet = _packet_with_posture(
+        "real_browser_cdp access_failed with access block reddit_network_security_block"
+    )
+    with pytest.raises(RegistryRefreshError, match="no successful source slice"):
+        _verify_successful_grid_response(
+            packet=packet,
+            metadata_path=metadata_path,
+            expected_locator="https://www.reddit.com/r/testsub/top/?t=week",
+            expected_subreddit="testsub",
+        )
 
 
 def test_cli_passes_transport_and_endpoint_through(monkeypatch, tmp_path) -> None:

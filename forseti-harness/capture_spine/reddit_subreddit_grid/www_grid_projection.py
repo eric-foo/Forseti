@@ -18,9 +18,9 @@ Two source artifacts are required, unlike the old surface:
   elements whose attributes are already typed (score, comment-count,
   created-timestamp, permalink), which is strictly more machine-readable than
   the old-Reddit markup this replaces; and
-- the venue envelope (creation date, member and online counts) is NOT in the
-  serialized DOM -- it renders through shadow DOM -- so it is read from the
-  captured visible text.
+- the venue envelope (creation date, weekly visitors, and weekly contributions)
+  is NOT in the serialized DOM -- it renders through shadow DOM -- so it is read
+  from the captured visible text.
 
 Measured constraint (2026-07-31): the www feed is VIRTUALIZED.  Scrolling
 unloads the head rather than accumulating it; six scroll passes on r/fragrance
@@ -69,12 +69,13 @@ _AD_TAG = "shreddit-ad-post"
 _FLAIR_TAG = "shreddit-post-flair"
 
 # The venue envelope flattens to e.g. "Created Mar 3, 2015 Public 701K7.4K":
-# members and online counts abut with no separator, so each is matched as one
-# number-plus-magnitude token rather than split on whitespace.
+# weekly visitor and contribution counts abut with no separator, so each is
+# matched as one number-plus-magnitude token rather than split on whitespace.
 _VENUE_RE = re.compile(
     r"Created\s+(?P<created>[A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})\s+"
     r"(?:Public|Private|Restricted)\s*"
-    r"(?P<members>\d[\d.,]*[KMB]?)?(?P<online>\d[\d.,]*[KMB]?)?"
+    r"(?P<weekly_visitors>\d[\d.,]*[KMB]?)?"
+    r"(?P<weekly_contributions>\d[\d.,]*[KMB]?)?"
 )
 
 # Flair name is URL-encoded inside the flair link's href
@@ -268,7 +269,11 @@ def project_www_reddit_grid(
     # observation-shape change and is deliberately not smuggled in here.
     absent_reason = (
         "www_venue_envelope_exposes_weekly_visitors_not_subscriber_counts"
-        if venue
+        if (
+            venue
+            and venue.group("weekly_visitors")
+            and venue.group("weekly_contributions")
+        )
         else "visible_volume_not_present_on_declared_surface"
     )
 
