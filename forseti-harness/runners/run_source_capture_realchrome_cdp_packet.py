@@ -48,7 +48,12 @@ from source_capture import (
     unknown_with_reason,
     write_local_source_capture_packet,
 )
+from source_capture.content_extraction import (
+    CONTENT_RECORD_FILENAME,
+    RenderedContentExtractionSpec,
+)
 from source_capture.rendered_access import RenderedAccessClass, classify_rendered_access
+from source_capture.rendered_retention import resolve_rendered_retention
 from source_capture.source_detail_sufficiency import (
     SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
     SourceDetailSufficiencyRequirements,
@@ -96,7 +101,12 @@ class RealChromeCDPCaptureResult:
     title: str | None
     rendered_dom: str
     visible_text: str
-    screenshot_png: bytes
+    # ``None`` when the caller suppressed the screenshot.  Suppression is not
+    # capture-then-discard: on a tall viewport the raster is the single largest
+    # artifact (9.40 MB of 12.0 MB on a measured Reddit listing) and nothing
+    # reads it -- the projection reads DOM and visible text, and the access
+    # classifier reads the response.
+    screenshot_png: bytes | None
     http_status: int | None
     warm_hop_url: str | None
     warm_hop_blocked: bool | None
@@ -120,6 +130,7 @@ class RealChromeCDPEngine(Protocol):
         viewport_height: int,
         persistent_tab_marker: str | None,
         fit_viewport_to_window: bool,
+        capture_screenshot: bool = True,
     ) -> RealChromeCDPCaptureResult: ...
 
 
@@ -158,6 +169,7 @@ class _LiveRealChromeCDPEngine:
         viewport_height: int,
         persistent_tab_marker: str | None,
         fit_viewport_to_window: bool,
+        capture_screenshot: bool = True,
     ) -> RealChromeCDPCaptureResult:
         try:
             from playwright.sync_api import sync_playwright
@@ -276,7 +288,11 @@ class _LiveRealChromeCDPEngine:
                     except Exception as exc:
                         visible_text = ""
                         warnings.append(f"visible_text extraction failed: {exc}")
-                    screenshot_png = page.screenshot(type="png", full_page=False, timeout=timeout_ms)
+                    screenshot_png = (
+                        page.screenshot(type="png", full_page=False, timeout=timeout_ms)
+                        if capture_screenshot
+                        else None
+                    )
                     final_url = page.url
                     title = page.title()
                 except Exception as exc:
@@ -364,6 +380,13 @@ def run_source_capture_realchrome_cdp_packet(
     persistent_profile_loaded: bool = False,
     persistent_tab_marker: str | None = None,
     fit_viewport_to_window: bool = False,
+    # Both default to today's behavior, so no existing caller changes shape.
+    # Content mode is deliberately reachable only programmatically -- the
+    # extractor is a Python callable, so there is no CLI flag for it and the
+    # command surface other lanes use is untouched.
+    content_extraction: RenderedContentExtractionSpec | None = None,
+    capture_screenshot: bool = True,
+    keep_raw_audit_sample: bool = False,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
@@ -398,6 +421,7 @@ def run_source_capture_realchrome_cdp_packet(
         viewport_height=viewport_height,
         persistent_tab_marker=persistent_tab_marker,
         fit_viewport_to_window=fit_viewport_to_window,
+        capture_screenshot=capture_screenshot,
     )
 
     access = classify_rendered_access(
@@ -432,10 +456,15 @@ def run_source_capture_realchrome_cdp_packet(
         "persistent_tab": persistent_tab_marker is not None,
         "persistent_tab_marker": persistent_tab_marker,
         "fit_viewport_to_window": fit_viewport_to_window,
-        "screenshot_mode": "viewport",
+        # "not_captured" rather than "viewport"/0: a packet that reports a
+        # viewport screenshot of zero bytes claims a capture posture it does not
+        # have, and a later reader cannot tell suppression from a failed raster.
+        "screenshot_mode": "viewport" if result.screenshot_png is not None else "not_captured",
         "rendered_dom_byte_count": len(result.rendered_dom.encode("utf-8")),
         "visible_text_byte_count": len(result.visible_text.encode("utf-8")),
-        "screenshot_byte_count": len(result.screenshot_png),
+        "screenshot_byte_count": (
+            len(result.screenshot_png) if result.screenshot_png is not None else None
+        ),
     }
 
     dom_bytes = result.rendered_dom.encode("utf-8")
@@ -481,16 +510,51 @@ def run_source_capture_realchrome_cdp_packet(
     if sufficiency_mode is not None:
         packet_mode_changes.append(sufficiency_mode)
 
+    # Retention is decided BEFORE staging, because the decision determines which
+    # artifacts exist in the packet at all.  ``admission_failed`` folds every
+    # reason this capture must not be admitted as clean source content, so a
+    # clean projection of a block shell is withheld rather than published.
+    retention = resolve_rendered_retention(
+        spec=content_extraction,
+        rendered_dom=dom_bytes,
+        visible_text=text_bytes,
+        final_url=result.final_url,
+        admission_failed=blocked or (sufficiency.enabled and not sufficiency.passed),
+        keep_raw_audit_sample=keep_raw_audit_sample,
+    )
+    if retention.extraction_failure_or_none is not None:
+        packet_limitations.append(
+            f"content extraction failed in flight; raw response preserved as fallback: "
+            f"{retention.extraction_failure_or_none}"
+        )
+    if content_extraction is not None:
+        packet_limitations.append(
+            "retention_outcome="
+            f"{retention.retention_outcome}; provenance={json.dumps(retention.provenance, sort_keys=True)}"
+        )
+        packet_mode_changes.append(f"rendered_retention_{retention.retention_outcome}")
+
     staged_root = Path(_stage_dir())
     staged_root.mkdir(parents=True, exist_ok=True)
-    f_dom = staged_root / "01_realchrome_rendered_dom.html"
-    f_txt = staged_root / "02_realchrome_visible_text.txt"
-    f_png = staged_root / "03_realchrome_viewport_screenshot.png"
     f_meta = staged_root / "04_realchrome_snapshot_metadata.json"
-    f_dom.write_bytes(dom_bytes)
-    f_txt.write_bytes(text_bytes)
-    f_png.write_bytes(result.screenshot_png)
     f_meta.write_bytes(meta_bytes)
+    staged_files = []
+    f_dom = f_txt = f_png = None
+    if retention.raw_inputs_preserved:
+        f_dom = staged_root / "01_realchrome_rendered_dom.html"
+        f_txt = staged_root / "02_realchrome_visible_text.txt"
+        f_dom.write_bytes(dom_bytes)
+        f_txt.write_bytes(text_bytes)
+        staged_files += [f_dom, f_txt]
+        if result.screenshot_png is not None:
+            f_png = staged_root / "03_realchrome_viewport_screenshot.png"
+            f_png.write_bytes(result.screenshot_png)
+            staged_files.append(f_png)
+    if retention.content_record_bytes is not None:
+        f_content = staged_root / CONTENT_RECORD_FILENAME
+        f_content.write_bytes(retention.content_record_bytes)
+        staged_files.append(f_content)
+    staged_files.append(f_meta)
 
     access_posture_value = (
         f"real_browser_cdp access_failed with access block {access_block_reason}; block artifacts "
@@ -519,14 +583,17 @@ def run_source_capture_realchrome_cdp_packet(
         re_capture_relationship=not_applicable("no prior source capture packet supplied"),
         limitations=packet_limitations,
         warning_notes=list(result.warning_notes),
-        preserved_file_ids=["file_01", "file_02", "file_03", "file_04"],
+        # Derived from what was actually staged: the retention decision changes
+        # how many artifacts exist, and a fixed four-id list would reference
+        # files the packet no longer carries.
+        preserved_file_ids=[f"file_{index:02d}" for index in range(1, len(staged_files) + 1)],
     )
 
     try:
         write_result = write_local_source_capture_packet(
             output_directory=output_directory,
             data_root=data_root,
-            input_files=[f_dom, f_txt, f_png, f_meta],
+            input_files=staged_files,
             source_family=source_family,
             source_surface=source_surface,
             source_locator=known_fact(url),
@@ -550,6 +617,8 @@ def run_source_capture_realchrome_cdp_packet(
             archive_history_posture=not_attempted("real_browser_cdp does not query archive or history services"),
             media_modality_posture=known_fact(
                 "preserved a viewport screenshot; linked media files were not independently preserved"
+                if result.screenshot_png is not None
+                else "no screenshot captured; linked media files were not independently preserved"
             ),
             re_capture_relationship=not_applicable("no prior source capture packet supplied"),
             source_slices=[slice_],
@@ -567,7 +636,7 @@ def run_source_capture_realchrome_cdp_packet(
             ),
         )
     finally:
-        for f in (f_dom, f_txt, f_png, f_meta):
+        for f in staged_files:
             try:
                 f.unlink()
             except FileNotFoundError:
@@ -644,6 +713,14 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Fit the emulated page viewport to the visible Chrome window.",
     )
+    parser.add_argument(
+        "--no-screenshot",
+        action="store_true",
+        help=(
+            "Skip the viewport screenshot entirely -- not captured rather than "
+            "captured and discarded, so the raster cost is not paid at all."
+        ),
+    )
     parser.add_argument("--session-id", default=None)
     parser.add_argument("--warning", action="append", default=[])
     parser.add_argument("--limitation", action="append", default=[])
@@ -700,6 +777,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             viewport_height=args.viewport_height,
             persistent_tab_marker=args.persistent_tab_marker,
             fit_viewport_to_window=args.fit_viewport_to_window,
+            capture_screenshot=not args.no_screenshot,
             warnings=args.warning,
             limitations=args.limitation,
             visible_mode_changes=args.visible_mode_change,
