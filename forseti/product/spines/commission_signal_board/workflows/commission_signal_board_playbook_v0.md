@@ -60,7 +60,12 @@ Cycle**. The phases are **Understanding** followed by **Problem Framing**;
 language for a future commission. Historical artifacts keep their original
 names and phase labels.
 
-Each phase normally consumes two completed operator/model turns:
+Each phase has two possible operator/model turns. Scope does not auto-expand:
+an owner instruction that says **Understanding** or uses historical **Phase A**
+language without also naming **Deliver** commissions **Acquire & Seal only**
+and stops after the seal. A passing seal makes Deliver eligible but does not
+authorize or start it. Deliver requires an explicit current commission or a
+separately authorized follow-up.
 
 ### Turn Objectives
 
@@ -473,6 +478,10 @@ seal.
 
 ### Turn B — Deliver
 
+Use this section only when Deliver is explicitly commissioned. Do not enter it
+from an unqualified Understanding or historical Phase A request merely because
+the acquisition seal passes.
+
 Start in fresh context and load the phase acquisition seal, not the accumulated
 capture chat. Verify its identity, canonical phase, bound question/use, seal
 state, route receipts, provenance, and material gaps before synthesis. If the
@@ -519,9 +528,10 @@ artifact. Problem Framing may acquire only decision-specific supplements to the
 Understanding substrate, never a general re-scan; its eventual human output
 shape remains separately review-bound and is not defined here.
 
-Two turns are the normal operating budget, not a hard completion cap. A blocked
-Acquire & Seal remains blocked and may require another acquisition attempt; it
-does not count as a successful Deliver.
+When both turns are explicitly commissioned, two turns are the normal operating
+budget, not a hard completion cap. A blocked Acquire & Seal remains blocked and
+may require another acquisition attempt; it does not count as a successful
+Deliver.
 
 ### Six Outcome Signals
 
@@ -820,7 +830,9 @@ validating the board.
 
 If an agent sees "Forseti Intelligence Cycle", "Understanding phase", "Problem
 Framing phase", "Acquire & Seal", or "Deliver", it should open this playbook
-before commissioning or executing the phase.
+before commissioning or executing the phase. An unqualified Understanding or
+historical Phase A request follows the acquisition-only default above; it does
+not enter Deliver.
 
 ## Current Non-Goals
 

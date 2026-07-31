@@ -225,6 +225,14 @@ generation is `acquire_and_seal`. Missing required company-cycle fields return
 `NEEDS_COMMISSION_INTAKE`; do not fall back to bare `Phase 1` / `Phase 2`
 language.
 
+Within the Forseti Intelligence Cycle, an owner request for `Understanding` or
+historical `Phase A` that does not explicitly name `Deliver` commissions
+`acquire_and_seal` only and stops after the acquisition seal. Do not infer a
+Deliver turn from the phase name, a passing seal, a request for complete
+competitive-intelligence value, or the availability of a report template.
+Deliver requires an explicit current commission or a separately authorized
+follow-up.
+
 ## Missing-Input Intake Output
 
 When required inputs are missing, return only this intake scaffold. Keep any

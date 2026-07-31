@@ -115,7 +115,15 @@ Do not commission future work with an unqualified `Phase 1` or `Phase 2` label.
 Historical filenames, reports, handoffs, and receipts retain their original
 phase language because changing it would falsify provenance.
 
-Each phase normally uses two completed operator/model turns:
+Each phase has two possible operator/model turns, but a phase name does not
+commission both. Within the Forseti Intelligence Cycle, an owner instruction
+that says **Understanding** or uses historical **Phase A** language without
+also naming **Deliver** commissions **Acquire & Seal only**. The task stops
+after the acquisition seal whether it passes or blocks. A passing seal makes a
+later Deliver turn eligible; it does not authorize or start that turn. Deliver
+requires an explicit current commission or a separately authorized follow-up.
+
+The two possible turns are:
 
 1. **Acquire & Seal.** Bind the phase-specific question, intended consumer and
    use, scope, and outcome signals. Complete prerequisite and authority checks
@@ -211,11 +219,11 @@ represent all five execution phases: `serp_phase1`, `CO1`, `CO2`, `CO3`, and
 Triggered TikTok Shop and native TikTok, Instagram, or YouTube capture inherit
 the same accounting rule.
 
-The normal budget is two turns per phase, not a fake-success cap. A blocked,
-skipped, silently substituted, or incompletely captured required route leaves
-Acquire & Seal blocked. It does not manufacture a Deliver turn. Context growth
-or compaction never excuses losing route choices or evidence: those facts live
-in the durable seal.
+When both turns are explicitly commissioned, two turns are the normal budget,
+not a fake-success cap. A blocked, skipped, silently substituted, or
+incompletely captured required route leaves Acquire & Seal blocked. It does not
+manufacture a Deliver turn. Context growth or compaction never excuses losing
+route choices or evidence: those facts live in the durable seal.
 
 The cycle optimizes toward six outcome signals:
 
@@ -858,6 +866,60 @@ If the owner accepts this option, the next authorized step is a
 prompt-orchestrated durable signal-board prompt that references this packet and
 the current classifier/proof boundaries. If the owner does not accept it, no
 prompt artifact or implementation should be created from the temp file.
+
+## Direction Change Propagation — Understanding Scope Default
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Within the Forseti Intelligence Cycle, an unqualified Understanding or
+    historical Phase A instruction commissions Acquire & Seal only; Deliver
+    must be explicitly commissioned and never starts merely because a seal
+    passes.
+  trigger: lifecycle_boundary
+  related_triggers:
+    - workflow_authority
+    - output_authority
+  controlling_sources_updated:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+  downstream_surfaces_checked:
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/commission_signal_board/README.md
+    - docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
+    - AGENTS.md
+    - .agents/workflow-overlay/source-loading.md
+    - .agents/workflow-overlay/prompt-orchestration.md
+    - docs/workflows/forseti_repo_map_v0.md
+  intentionally_not_updated:
+    - path: AGENTS.md
+      reason: >
+        The root already routes Intelligence Cycle behavior to the owning
+        product authority; repeating this subject-specific default would fork it.
+    - path: .agents/workflow-overlay/source-loading.md
+      reason: >
+        Source selection is unchanged; the amendment changes commission scope
+        after the Commission Signal Board sources are loaded.
+    - path: .agents/workflow-overlay/prompt-orchestration.md
+      reason: >
+        Generic prompt mechanics are unchanged; the canonical Commission Signal
+        Board prompt now carries the scope default.
+    - path: docs/workflows/forseti_repo_map_v0.md
+      reason: >
+        Canonical entry points and paths are unchanged.
+    - path: docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
+      reason: >
+        The live handoff already explicitly commissions Acquire & Seal only and
+        stops after the seal.
+  stale_language_search: >
+    rg -n "Each phase normally (uses|consumes) two|two turns are the normal|passing seal.*Deliver|Understanding.*Deliver"
+    forseti/product/spines/commission_signal_board
+  non_claims:
+    - not validation
+    - not readiness
+    - not authorization to run acquisition or Deliver
+    - not a rename of historical artifacts
+```
 
 ## Non-Claims
 
