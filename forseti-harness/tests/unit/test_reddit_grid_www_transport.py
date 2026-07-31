@@ -98,6 +98,44 @@ def test_default_transport_is_the_existing_one() -> None:
     assert GRID_TRANSPORTS[0] == "old_http"
 
 
+def test_cycle_basis_subtracts_the_capture_duration() -> None:
+    """A target start-to-start interval, not a wait bolted onto the capture."""
+    from runners.run_reddit_grid_capture import _paced_wait
+
+    row: dict = {}
+    assert _paced_wait(planned=40.0, elapsed=25.0, basis="cycle", row=row) == 15.0
+    assert "cadence_overrun_seconds" not in row
+
+
+def test_gap_basis_is_unchanged_by_capture_duration() -> None:
+    """The existing meaning must not move for callers that never asked."""
+    from runners.run_reddit_grid_capture import _paced_wait
+
+    assert _paced_wait(planned=40.0, elapsed=25.0, basis="gap", row={}) == 40.0
+
+
+def test_a_capture_slower_than_its_target_is_reported_not_hidden() -> None:
+    """Otherwise a pass whose captures overrun paces itself by accident."""
+    from runners.run_reddit_grid_capture import _paced_wait
+
+    row: dict = {}
+    assert _paced_wait(planned=31.0, elapsed=42.0, basis="cycle", row=row) == 0.0
+    assert row["cadence_overrun_seconds"] == 11.0
+
+
+def test_unknown_cadence_basis_fails_closed(tmp_path) -> None:
+    with pytest.raises(ValueError) as excinfo:
+        run_reddit_grid_capture(
+            subreddits=["testsub"],
+            listing="top",
+            time_window="week",
+            output_root=tmp_path / "out",
+            decision_question="q",
+            cadence_basis="vibes",
+        )
+    assert "cadence_basis must be one of" in str(excinfo.value)
+
+
 def test_www_capture_reuses_one_persistent_tab(monkeypatch, tmp_path) -> None:
     """One marked tab for the whole pass, not 91 open/close cycles."""
     import runners.run_reddit_grid_capture as module

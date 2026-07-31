@@ -56,6 +56,21 @@ GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
 GRID_SOURCE_SURFACE = "old_reddit_direct_http"
 WWW_GRID_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 GRID_TRANSPORTS = ("old_http", "www_realchrome")
+# What the cadence numbers MEASURE, which is not obvious from the plan alone.
+#
+# ``gap``   the planned wait is time BETWEEN captures. The runner sleeps it
+#           after each capture, so the real request interval is the gap plus
+#           however long the capture took -- measured 21.8-42.1s on www, so a
+#           "30s" pass actually hit the source about every 60s.
+# ``cycle`` the planned wait is the target time from one capture START to the
+#           next. The measured capture duration is subtracted from the wait, so
+#           the interval is what was asked for. A capture slower than the target
+#           yields a zero wait and is reported, never silently compressed.
+#
+# Fixed gaps cannot hold a target cycle when capture duration varies by more
+# than the target window, which is the www case: a 20s spread against a 15s
+# window has no single gap that satisfies both ends.
+CADENCE_BASES = ("gap", "cycle")
 # Measured 2026-07-31: the www feed virtualizes, so scrolling UNLOADS the head.
 # A tall viewport renders the head in one window instead (~102 rows, score floor
 # 3), which is why depth comes from viewport height and never from scrolling.
@@ -167,6 +182,26 @@ def build_validated_www_grid_content_record(
             f"grid projection anomaly [{anomaly}]: keeping raw for audit"
         )
     return record
+
+
+def _paced_wait(
+    *, planned: float, elapsed: float, basis: str, row: dict[str, Any]
+) -> float:
+    """Resolve the sleep for one slot under the declared cadence basis.
+
+    Under ``cycle`` the planned number is a target START-to-START interval, so
+    the capture's own duration is subtracted.  A capture slower than the target
+    leaves no wait at all; that is recorded on the row rather than quietly
+    accepted, because a pass whose captures routinely overrun its target is
+    pacing itself by accident.
+    """
+    if basis != "cycle":
+        return planned
+    remaining = planned - elapsed
+    if remaining <= 0:
+        row["cadence_overrun_seconds"] = round(elapsed - planned, 3)
+        return 0.0
+    return remaining
 
 
 def _rotating_raw_sample(names: Sequence[str], *, on_date: _dt.date) -> str:
@@ -337,12 +372,15 @@ def run_reddit_grid_capture(
     requested_retention_mode: str = DEFAULT_RETENTION_MODE,
     transport: str = "old_http",
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
+    cadence_basis: str = "gap",
 ) -> tuple[int, str]:
     if requested_retention_mode not in CAPTURE_RETENTION_MODES:
         raise ValueError(
             f"requested_retention_mode must be one of {CAPTURE_RETENTION_MODES}, "
             f"got {requested_retention_mode!r}"
         )
+    if cadence_basis not in CADENCE_BASES:
+        raise ValueError(f"cadence_basis must be one of {CADENCE_BASES}, got {cadence_basis!r}")
     if transport not in GRID_TRANSPORTS:
         raise ValueError(f"transport must be one of {GRID_TRANSPORTS}, got {transport!r}")
     if transport == "www_realchrome":
@@ -437,6 +475,7 @@ def run_reddit_grid_capture(
             row["retention_mode"] = "content"
             row["raw_audit_sample"] = name == raw_sample_subreddit
             row["capture_started_at"] = utc_now_z_microseconds()
+            capture_started_monotonic = time.monotonic()
             try:
                 capture_exit, capture_message = _capture_www_grid(
                     subreddit=name,
@@ -464,9 +503,16 @@ def run_reddit_grid_capture(
                 row["capture_exit"] = 2
                 row["capture_message"] = f"{type(exc).__name__}: {exc}"
             row["capture_finished_at"] = utc_now_z_microseconds()
+            elapsed = time.monotonic() - capture_started_monotonic
+            row["capture_elapsed_seconds"] = round(elapsed, 3)
             results.append(row)
             if index < len(cadence_plan.planned_waits_seconds):
-                wait_seconds = cadence_plan.planned_waits_seconds[index]
+                wait_seconds = _paced_wait(
+                    planned=cadence_plan.planned_waits_seconds[index],
+                    elapsed=elapsed,
+                    basis=cadence_basis,
+                    row=row,
+                )
                 if wait_seconds > 0:
                     time.sleep(wait_seconds)
             continue
@@ -543,6 +589,7 @@ def run_reddit_grid_capture(
             WWW_GRID_SOURCE_SURFACE if transport == "www_realchrome" else GRID_SOURCE_SURFACE
         ),
         "transport": transport,
+        "cadence_basis": cadence_basis,
         "listing": listing,
         "time_window": time_window,
         "limit": limit,
@@ -632,6 +679,17 @@ def _build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--cdp-endpoint", default=DEFAULT_CDP_ENDPOINT)
+    parser.add_argument(
+        "--cadence-basis",
+        choices=list(CADENCE_BASES),
+        default="gap",
+        help=(
+            "gap: cadence numbers are the wait BETWEEN captures, so the real "
+            "request interval is the gap plus the capture duration. cycle: they "
+            "are the target start-to-start interval and the capture duration is "
+            "subtracted."
+        ),
+    )
     parser.add_argument("--time-window", choices=ALLOWED_TIME_WINDOWS, default=None)
     parser.add_argument(
         "--limit", type=int, default=None,
@@ -705,6 +763,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             requested_retention_mode=args.retention_mode,
             transport=args.transport,
             cdp_endpoint=args.cdp_endpoint,
+            cadence_basis=args.cadence_basis,
         )
 
     print(message)
