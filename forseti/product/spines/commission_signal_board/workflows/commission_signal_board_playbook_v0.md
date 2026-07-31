@@ -437,8 +437,11 @@ forces the blocked state.
 Validate the v2 block with
 `forseti-harness/runners/run_phase_acquisition_seal_validation.py`. The planned
 job set must equal the disjoint completed, blocked, and unrun sets; counts and
-artifact hashes must match. A valid empty Phase 2 decision receipt never gives
-completion credit to licensed-but-unrun Phase 2 queries. Resume re-hashes every
+artifact hashes must match. Hash comparison canonicalizes line endings for
+Markdown, JSON, and YAML artifacts so an unchanged cross-platform checkout
+does not look like content drift; other artifact types remain exact-byte
+checks. A valid empty Phase 2 decision receipt never gives completion credit to
+licensed-but-unrun Phase 2 queries. Resume re-hashes every
 reusable artifact and runs only pending jobs unless the bound question changes,
 an artifact hash drifts, its source-specific currentness expires, or owning
 authority becomes incompatible.

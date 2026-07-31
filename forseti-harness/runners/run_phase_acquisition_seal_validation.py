@@ -14,7 +14,7 @@ import yaml
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from harness_utils import hash_file  # noqa: E402
+from harness_utils import hash_file, sha256_bytes  # noqa: E402
 
 
 SEAL_VERSION = "phase_acquisition_seal_v2"
@@ -40,6 +40,7 @@ MANDATORY_ROUTE_PHASES = {
 }
 _YAML_FENCE = re.compile(r"```yaml\s*(.*?)```", re.DOTALL | re.IGNORECASE)
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
+_TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
 
 
 def validate_phase_acquisition_seal(
@@ -436,8 +437,16 @@ def _verify_artifact(
     if not path.is_file():
         findings.append(f"missing_{code}_file")
         return
-    if hash_file(path).casefold() != digest.casefold():
+    if _artifact_hash(path).casefold() != digest.casefold():
         findings.append(f"{code}_hash_mismatch")
+
+
+def _artifact_hash(path: Path) -> str:
+    """Hash seal text canonically while retaining exact-byte binary checks."""
+    if path.suffix.lower() not in _TEXT_ARTIFACT_SUFFIXES:
+        return hash_file(path)
+    content = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return sha256_bytes(content)
 
 
 def _parser() -> argparse.ArgumentParser:
