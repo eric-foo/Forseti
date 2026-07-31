@@ -697,6 +697,28 @@ def test_lake_refresh_stamps_top_week_surface(
     assert row["capture_state"] == "grid_packets_recorded"
 
 
+def test_lake_refresh_stamps_www_realchrome_surface(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An admitted www real-Chrome packet ledgers as its own surface: the
+    observation provenance must not claim the counts came from old Reddit."""
+    registry = _registry(tmp_path)
+    packet = _realchrome_grid_packet(
+        tmp_path,
+        monkeypatch,
+        url="https://www.reddit.com/r/makeupaddiction/top/?t=week",
+    )
+    lake = DataLakeRoot.for_test(tmp_path / "lake")
+    migrate_legacy_registry(lake, registry_path=registry)
+
+    outcome = refresh_lake_registry_from_grid_packets(
+        data_root=lake, packet_paths=[packet]
+    )
+    assert outcome.refreshed_subreddits == ["makeupaddiction"]
+    (observation,) = fold_subreddit(lake, "makeupaddiction")["observations"]
+    assert observation["source_surface"] == "www_reddit_realchrome_cdp"
+
+
 # --------------------------------------------------------------------------
 # Weekly demand read (spec section E)
 # --------------------------------------------------------------------------

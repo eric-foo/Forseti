@@ -216,6 +216,42 @@ def test_empty_decision_receipt_cannot_hide_unrun_phase2_jobs_in_passing_seal(
     assert "passing_seal_has_resume_work" in findings
 
 
+def test_passing_seal_accepts_supported_non_material_blocked_route(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    phase2 = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "serp_phase2"
+    )
+    phase2["completed_job_ids"] = list(phase2["planned_job_ids"])
+    phase2["completed_count"] = phase2["planned_count"]
+    phase2["unrun_job_ids"] = []
+    phase2["unrun_count"] = 0
+    weekly = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "reddit_weekly_lake"
+    )
+    weekly["material"] = False
+    weekly["blocked_job_ids"] = list(weekly["completed_job_ids"])
+    weekly["blocked_count"] = weekly["completed_count"]
+    weekly["completed_job_ids"] = []
+    weekly["completed_count"] = 0
+    seal["resume_contract"]["pending_job_ids"] = []
+    seal.update(
+        {
+            "acquisition_gate": "pass",
+            "seal_state": "SEALED_READY_FOR_DELIVER",
+            "deliver_allowed": True,
+            "post_phase1_continuation_mode": "full",
+        }
+    )
+
+    assert _validate(tmp_path, seal) == []
+
+
 def test_missing_phase2_query_id_breaks_exact_accounting(tmp_path: Path) -> None:
     seal = _blocked_seal(tmp_path)
     phase2 = next(

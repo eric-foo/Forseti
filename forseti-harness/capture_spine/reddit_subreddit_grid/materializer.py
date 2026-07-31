@@ -68,6 +68,12 @@ WWW_REDDIT_REALCHROME_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 
 def _observation_surface_for(listing_url: str) -> str:
     parsed = urlparse(listing_url)
+    # Admission pins the content record's listing URL to the packet locator, so
+    # the host faithfully names the surface that produced the counts. A
+    # real-Chrome www capture is not an old-Reddit packet and must not be
+    # recorded in the observation ledger as one.
+    if parsed.netloc.lower() == "www.reddit.com":
+        return WWW_REDDIT_REALCHROME_SOURCE_SURFACE
     parts = [part for part in parsed.path.split("/") if part]
     if parts and parts[-1] == "top" and "t=week" in (parsed.query or "").split("&"):
         return TOP_WEEK_OBSERVATION_SOURCE_SURFACE

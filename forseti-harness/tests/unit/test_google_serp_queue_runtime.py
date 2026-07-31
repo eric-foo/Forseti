@@ -148,6 +148,27 @@ def test_ready_persistent_fallback_gets_exact_held_job_without_hot_primary_retry
     assert fallback["job"] == primary["job"]
 
 
+def test_persistent_transition_holds_for_the_remainder_of_the_run(
+    tmp_path: Path,
+) -> None:
+    """The flag that produced the block is still live after the transition, so
+    the next job must not re-probe the automated route."""
+    state_path = _initialize(
+        tmp_path,
+        queries=("Summer Fridays review", "Summer Fridays price"),
+        fallback_ready=True,
+    )
+    _report(state_path, _claim(state_path), "blocked")
+    fallback = _claim(state_path, now=NOW + timedelta(seconds=1))
+    _report(state_path, fallback, "success", now=NOW + timedelta(seconds=2))
+
+    following = _claim(state_path, now=NOW + timedelta(seconds=3))
+
+    assert following["job"]["job_id"] == "J002"
+    assert following["route"] == runtime.PERSISTENT_ROUTE
+    assert runtime.inspect_queue(state_path=state_path)["cooldown_until"] is None
+
+
 def test_claim_is_durable_and_prevents_duplicate_navigation(tmp_path: Path) -> None:
     state_path = _initialize(tmp_path)
     first = _claim(state_path)

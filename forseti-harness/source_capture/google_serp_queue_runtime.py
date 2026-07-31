@@ -94,6 +94,7 @@ def initialize_queue(
         "held_job_id": None,
         "in_flight": None,
         "pending_route": None,
+        "persistent_route_latched": False,
         "cooldown_until": None,
         "recovery_attempted_job_ids": [],
         "blocks_this_run": 0,
@@ -179,11 +180,15 @@ def next_action(
             state["status"] = "complete"
             _atomic_write_json(state_path, state)
             return _status_action(state, "complete")
+        # A transition to the operator-visible route is latched for the rest of
+        # the run: the flag that produced the block is still live, so the next
+        # job must not re-probe the automated route (serp_egress_cadence, F2b).
+        latched = state.get("persistent_route_latched") is True
         return _claim_action(
             state_path=state_path,
             state=state,
-            route=AUTOMATED_ROUTE,
-            attempt_kind="initial",
+            route=PERSISTENT_ROUTE if latched else AUTOMATED_ROUTE,
+            attempt_kind="persistent_fallback" if latched else "initial",
             now=observed_now,
         )
 
@@ -299,6 +304,7 @@ def report_outcome(
         )
         if in_flight["attempt_kind"] == "initial" and fallback_ready:
             state["pending_route"] = PERSISTENT_ROUTE
+            state["persistent_route_latched"] = True
             state["status"] = "running"
         else:
             state["cooldown_until"] = _timestamp(
