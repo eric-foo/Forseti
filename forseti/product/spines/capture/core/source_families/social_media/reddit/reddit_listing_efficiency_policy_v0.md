@@ -74,11 +74,41 @@ customer. Under it:
   specific single-poster complaint, because a snowballing problem is one that
   more than one person already has. Corroboration orders `yes` rows; it is not
   an admission requirement and its absence is not a `no`.
+- **Adjudication depth: top 14 plus a small-thread band slice.** Per venue,
+  ranked by captured comments, the top 14 candidates are adjudicated, plus the
+  6 highest-commented candidates in the 10–49 comment band not already among
+  them. Owner-directed 2026-08-01: a flat top-14 practice alone silently set
+  the effective floor at 63–177 comments in the largest venues (it, not the
+  10+ floor, was the binding rule in 55 of 82 venues in the 2026-08-01 pool,
+  median effective floor 32), discarding exactly the small-thread band the
+  floor was chosen to protect. The band slice restores guaranteed small-thread
+  coverage at bounded cost (at most 20 rows per venue). It is a sample, not
+  exhaustive review: candidates below rank 14 and outside the slice remain
+  unseen, and that tail stays a named residual of each weekly read.
 - **Dive budget: 2 threads per subreddit** among gate-5 survivors, ranked by
   comments, extended to 3 in the six venues carrying the densest
   failure/unmet-need signal in that week's read. This frame's commission is a
   persona rather than a named brand, so gate 3 does not bound spend on its own;
   the cap substitutes until a named client narrows scope.
+
+### Leaderboard lane: `weekly_category_leaderboard_v0`
+
+Owner-directed, 2026-08-01. A praise or holy-grail thread is weak for the
+problem queue (gate 4's polarity is unchanged), but its top-scored comments
+are crowd-validated who-owns-the-category evidence. That evidence is read
+through a separate shallow lane rather than by bending the problem gates:
+
+- **Selection is mechanical.** Praise/holy-grail-format titles with `100+`
+  captured listing comments; no model adjudication and no gate sequence. The
+  comment floor is what bounds the lane's size (41 threads in the 2026-08-01
+  pool).
+- **Capture cost is identical to a dive.** A leaderboard thread is captured
+  whole-tree at the standard cadence; the lane is cheap in judgment, not in
+  requests, so it queues after the week's problem dives.
+- **The read is shallow.** Top comments by score only, as a competitive map of
+  crowd-validated favourites. Comment score orders the read; it does not
+  establish truth, and a leaderboard read never substitutes for problem-dive
+  evidence or admits a thread to the problem queue.
 
 ## Required sequence
 
@@ -115,8 +145,11 @@ tail that is this policy's real blind spot.
 below their dive budget. Underserved-segment problems live in small threads —
 a problem affecting everyone gets 300 comments, a problem affecting an
 overlooked group gets 25 — so a higher floor deletes exactly the niche findings
-this policy exists to surface. Evidence:
-`docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md`.
+this policy exists to surface. That protection is only as real as adjudication
+depth makes it: a per-venue review cap silently re-raises the effective floor
+in large venues regardless of the floor written here, which is why the
+standing frame's adjudication-depth rule carries a small-thread band slice.
+Evidence: `docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md`.
 
 ### 2. Listing-context sufficiency
 

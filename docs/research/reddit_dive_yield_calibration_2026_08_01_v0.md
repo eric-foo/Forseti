@@ -111,7 +111,39 @@ would steer the weekly back toward popularity lists — precisely what the
 latent-problem frame exists to move away from. The target is a latent problem
 attributable to a named brand, not a census of brands.
 
-## Result 3 — measured and deliberately not adopted
+## Result 3 — the review cap, not the floor, was the binding rule in large venues
+
+Measured after the floor decision, on the same 2026-07-31 pool at floor 10
+(2,776 candidates, 82 venues with candidates): adjudication reviewed the top
+14 candidates per venue by comments — 945 rows, 34% of the pool — leaving
+1,831 candidates unseen. In any venue with more than 14 candidates, the
+rank-14 comment count becomes the *effective* floor for that venue, set
+accidentally by a review-batch size rather than by any decision:
+
+| venue | candidates | effective floor (comments at rank 14) |
+|---|---|---|
+| makeupaddiction | 85 | 177 |
+| colognes | 101 | 157 |
+| malegrooming | 91 | 113 |
+| femfraglab | 95 | 105 |
+| tressless | 102 | 88 |
+| sephora | 88 | 63 |
+
+The cap bound 55 of 82 venues (median effective floor 32); the written 10+
+floor was the binding rule in only the 27 venues with ≤14 candidates. This
+partially undercut the floor decision's own rationale — small-thread niche
+protection — in exactly the venues with the most candidates. Owner decision
+2026-08-01: adjudication depth is now top 14 **plus** the 6 highest-commented
+candidates in the 10–49 band not already included, per venue (see the policy's
+standing-frame adjudication-depth rule). The slice restores guaranteed
+small-thread coverage at a worst case of 20 rows per venue; the tail below
+rank 14 and outside the slice remains unseen and stays a named residual.
+
+Leaderboard-lane sizing measured on the same pool: 331 praise-shaped
+candidates at floor 10; 97 at 50+; 41 at 100+ comments (the adopted lane
+floor).
+
+## Result 4 — measured and deliberately not adopted
 
 - **A brand named in the title predicts nothing.** 36% brand-rich with a brand
   in the title versus 39% without — slightly negative, n=45. Mechanism: a brand
