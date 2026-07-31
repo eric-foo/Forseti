@@ -1,0 +1,2546 @@
+{
+  "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+  "policy_version": "reddit_listing_efficiency_v0",
+  "as_of": "2026-08-01",
+  "adjudicator": "home model (Anthropic), applying the frame's gate readings",
+  "venues_with_candidates": 83,
+  "venues_adjudicated_to_zero_yes": 17,
+  "admitted_yes": 129,
+  "capture_slots": 127,
+  "records": [
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1v602xf/masseter_botox_aged_me_horribly_warning/",
+      "subreddit": "30plusskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 259,
+        "comments": 175
+      },
+      "title_or_none": "Masseter botox aged me horribly. Warning",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_failure_warning"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1v7hfrw/botox_brow_drop_woes_i_miss_my_eyelids/",
+      "subreddit": "30plusskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 91,
+        "comments": 129
+      },
+      "title_or_none": "Botox Brow Drop Woes (I Miss My Eyelids)",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_failure",
+        "corroborates_rank2"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 7
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/40PlusSkinCare/comments/1v6d91z/okay_but_how_are_we_helping_our_eyebrows/",
+      "subreddit": "40plusskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 29,
+        "comments": 74
+      },
+      "title_or_none": "Okay but how are we helping our eyebrows?",
+      "admission": "yes",
+      "reason_codes": [
+        "aging_brow_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 9
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/40PlusSkinCare/comments/1v6amrz/saggy_neck/",
+      "subreddit": "40plusskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 27,
+        "comments": 96
+      },
+      "title_or_none": "Saggy neck",
+      "admission": "yes",
+      "reason_codes": [
+        "body_area_unmet_neck"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 7
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/45PlusSkincare/comments/1v625qn/feels_kind_of_like_this_subreddit_should_be/",
+      "subreddit": "45plusskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 859,
+        "comments": 132
+      },
+      "title_or_none": "Feels kind of like this subreddit should be renamed to 45pluscosmeticsurgery",
+      "admission": "yes",
+      "reason_codes": [
+        "category_displacement_by_procedures",
+        "snowballing"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/45PlusSkincare/comments/1v6aoxh/help_with_skin_on_knees_and_thighs/",
+      "subreddit": "45plusskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 60,
+        "comments": 124
+      },
+      "title_or_none": "Help with skin on knees and thighs",
+      "admission": "yes",
+      "reason_codes": [
+        "body_area_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/acne/comments/1v93ygm/5_years_of_stubborn_hormonal_acne_tried/",
+      "subreddit": "acne",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 10,
+        "comments": 45
+      },
+      "title_or_none": "5 years of stubborn hormonal acne — tried everything including Accutane and it keeps coming back. At my wit’s end. Anyone else?",
+      "admission": "yes",
+      "reason_codes": [
+        "total_treatment_failure"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/acne/comments/1vb3m1s/what_age_does_hormonal_acne_stop/",
+      "subreddit": "acne",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 18,
+        "comments": 74
+      },
+      "title_or_none": "what age does hormonal acne stop?",
+      "admission": "yes",
+      "reason_codes": [
+        "adult_acne_segment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/AcneScars/comments/1v5fd0c/should_i_really_get_cosmetic_surgery/",
+      "subreddit": "acnescars",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 0,
+        "comments": 35
+      },
+      "title_or_none": "Should I really get cosmetic surgery?",
+      "admission": "yes",
+      "reason_codes": [
+        "escalation_to_procedures"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/AcneScars/comments/1v6wxx9/fuc_acne_scars/",
+      "subreddit": "acnescars",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 69,
+        "comments": 35
+      },
+      "title_or_none": "Fuc* Acne Scars",
+      "admission": "yes",
+      "reason_codes": [
+        "unmet_frustration"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/AsianBeauty/comments/1v7eptu/can_we_discuss_strong_waterresistant_sunscreen/",
+      "subreddit": "asianbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 68,
+        "comments": 59
+      },
+      "title_or_none": "Can we Discuss strong Water-Resistant Sunscreen Options?",
+      "admission": "yes",
+      "reason_codes": [
+        "performance_gap_water_resistance"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/AsianBeauty/comments/1v5sqzd/large_bottles_of_sunscreen_is_that_a_thing_for/",
+      "subreddit": "asianbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 49,
+        "comments": 39
+      },
+      "title_or_none": "Large bottles of Sunscreen?? Is that a thing for Asian Sunscreens?",
+      "admission": "yes",
+      "reason_codes": [
+        "format_size_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/beauty/comments/1v7cm76/how_do_you_keep_sunscreen_from_sliding_into_your/",
+      "subreddit": "beauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 78,
+        "comments": 80
+      },
+      "title_or_none": "How do you keep sunscreen from sliding into your eyes?",
+      "admission": "yes",
+      "reason_codes": [
+        "formulation_failure_sunscreen"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/beauty/comments/1v9tulr/press_on_nails_are_there_any_that_actually_last/",
+      "subreddit": "beauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 34,
+        "comments": 54
+      },
+      "title_or_none": "Press on nails - are there any that actually last?!",
+      "admission": "yes",
+      "reason_codes": [
+        "category_efficacy_gap"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/beauty/comments/1v7cpjn/ive_tried_everything_and_my_face_is_still_an_oil/",
+      "subreddit": "beauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 6,
+        "comments": 33
+      },
+      "title_or_none": "I've tried everything and my face is still an oil slick. Please help!!",
+      "admission": "yes",
+      "reason_codes": [
+        "repeated_product_failure"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/BeautyGuruChatter/comments/1v5jmz3/samirah_raheem_apologizes_for_working_with_brand/",
+      "subreddit": "beautyguruchatter",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 579,
+        "comments": 73
+      },
+      "title_or_none": "Samirah Raheem apologizes for working with brand owned by Hila Klein, says she was tricked into it and she doesn't share Hila's opinions about the genocide in Gaza",
+      "admission": "yes",
+      "reason_codes": [
+        "verified_creator_brand_trust_consequence"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/BlackHair/comments/1v5cq54/nj_nyc_recs_for_braided_baldie_done_without_all/",
+      "subreddit": "blackhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 1063,
+        "comments": 53
+      },
+      "title_or_none": "NJ / NYC recs for braided baldie done without all that hard wax & blowdrying ...",
+      "admission": "yes",
+      "reason_codes": [
+        "service_unmet_technique_avoidance"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/blkgrlbeauty/comments/1v6b4ax/8_weeks_before_and_after_minoxidil_on_my_brows/",
+      "subreddit": "blkgrlbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 876,
+        "comments": 106
+      },
+      "title_or_none": "8 weeks before and after Minoxidil on my Brows + why I’m stopping.",
+      "admission": "yes",
+      "reason_codes": [
+        "product_abandonment_with_reason"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/blkgrlbeauty/comments/1vacd2l/affordable_powder_bronzer_thats_actually_dark/",
+      "subreddit": "blkgrlbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 26,
+        "comments": 29
+      },
+      "title_or_none": "affordable powder bronzer that’s actually dark!!!!",
+      "admission": "yes",
+      "reason_codes": [
+        "shade_range_gap_deep_tones"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Colognes/comments/1vau6ig/thoughts_on_influencers/",
+      "subreddit": "colognes",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 434,
+        "comments": 796
+      },
+      "title_or_none": "Thoughts on Influencers",
+      "admission": "yes",
+      "reason_codes": [
+        "channel_trust_influencer"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Colognes/comments/1v9eh2p/blind_buy_regret/",
+      "subreddit": "colognes",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 129,
+        "comments": 177
+      },
+      "title_or_none": "Blind Buy Regret",
+      "admission": "yes",
+      "reason_codes": [
+        "purchase_regret"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 10
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/curlygirl/comments/1vaesuk/curlswaves_are_just_gone/",
+      "subreddit": "curlygirl",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 63,
+        "comments": 53
+      },
+      "title_or_none": "Curls/waves are just… gone.",
+      "admission": "yes",
+      "reason_codes": [
+        "function_loss_unexplained",
+        "corroborated"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/curlygirl/comments/1v6tmzi/disappointed_with_todays_hair_appointment/",
+      "subreddit": "curlygirl",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 106,
+        "comments": 86
+      },
+      "title_or_none": "Disappointed with today's hair appointment",
+      "admission": "yes",
+      "reason_codes": [
+        "service_failure"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/curlyhair/comments/1v942p6/i_am_done_getting_layers_curly_cuts_curl_by_curl/",
+      "subreddit": "curlyhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 1683,
+        "comments": 536
+      },
+      "title_or_none": "I am done getting layers, “curly cuts,” & “curl by curl cuts.” I’m over these scam artists.",
+      "admission": "yes",
+      "reason_codes": [
+        "service_failure",
+        "spend_distrust",
+        "corroborated"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/curlyhair/comments/1vac4xx/curly_friends_what_are_we_doing_for_international/",
+      "subreddit": "curlyhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 48,
+        "comments": 105
+      },
+      "title_or_none": "Curly friends: what are we doing for international travel?",
+      "admission": "yes",
+      "reason_codes": [
+        "format_travel_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/DIYfragrance/comments/1v5p2t3/why_do_so_many_people_start_this_hobby_only_to/",
+      "subreddit": "diyfragrance",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 40,
+        "comments": 52
+      },
+      "title_or_none": "Why do so many people start this hobby only to quit?",
+      "admission": "yes",
+      "reason_codes": [
+        "hobby_churn_abandonment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/DIYfragrance/comments/1v8wqn9/any_ideas_why_this_wont_sell/",
+      "subreddit": "diyfragrance",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 9,
+        "comments": 48
+      },
+      "title_or_none": "Any ideas why this won’t sell?",
+      "admission": "yes",
+      "reason_codes": [
+        "indie_supply_side_sales_problem"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1v9k6x3/what_drugstore_makeup_products_made_you_stop/",
+      "subreddit": "drugstoremua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 412,
+        "comments": 222
+      },
+      "title_or_none": "What drugstore makeup products made you stop buying high-end?",
+      "admission": "yes",
+      "reason_codes": [
+        "trade_down_switching"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1v5jnrd/got2b_using_ai_models_on_their_dye_boxes/",
+      "subreddit": "drugstoremua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 1777,
+        "comments": 69
+      },
+      "title_or_none": "got2b using AI models on their dye boxes",
+      "admission": "yes",
+      "reason_codes": [
+        "brand_authenticity_backlash"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1v8lh7o/ive_tried_so_many_brown_drugstore_mascaras_and/",
+      "subreddit": "drugstoremua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 19,
+        "comments": 56
+      },
+      "title_or_none": "I've tried so many brown drugstore mascaras and haven't landed on one I love. Any brown mascara recommendations?",
+      "admission": "yes",
+      "reason_codes": [
+        "repeated_failure_unmet_need"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/eczema/comments/1v8365s/working_out_vs_eczema_i_am_so_tired_of_choosing/",
+      "subreddit": "eczema",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 97,
+        "comments": 34
+      },
+      "title_or_none": "Working out vs. Eczema: I am so tired of choosing between fitness and calm skin.",
+      "admission": "yes",
+      "reason_codes": [
+        "lifestyle_product_tradeoff",
+        "unvoiced"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 9
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/eczema/comments/1v9k0sk/eczema_products/",
+      "subreddit": "eczema",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 10,
+        "comments": 65
+      },
+      "title_or_none": "Eczema products",
+      "admission": "yes",
+      "reason_codes": [
+        "product_seeking_condition"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Eyebrows/comments/1v8680q/how_long_until_my_eyebrows_look_normal_after/",
+      "subreddit": "eyebrows",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 6,
+        "comments": 13
+      },
+      "title_or_none": "How long until my eyebrows look normal after lamination",
+      "admission": "yes",
+      "reason_codes": [
+        "service_aftermath_uncertainty"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/eyelashextensions/comments/1v8h0h8/better_alternative_to_lash_extensions/",
+      "subreddit": "eyelashextensions",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 28,
+        "comments": 61
+      },
+      "title_or_none": "Better alternative to lash extensions??",
+      "admission": "yes",
+      "reason_codes": [
+        "category_substitution_search"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/eyelashextensions/comments/1v7f1h4/got_lashes_done_for_wedding_disappointed_update/",
+      "subreddit": "eyelashextensions",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 14,
+        "comments": 18
+      },
+      "title_or_none": "Got lashes done for wedding, disappointed (update)",
+      "admission": "yes",
+      "reason_codes": [
+        "service_failure_occasion"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/FancyFollicles/comments/1v8ylm7/covering_lavender/",
+      "subreddit": "fancyfollicles",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 46,
+        "comments": 53
+      },
+      "title_or_none": "Covering lavender?",
+      "admission": "yes",
+      "reason_codes": [
+        "colour_correction_problem"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v5wrru/oral_minox_spiro_1_yr_update_its_way_worse/",
+      "subreddit": "femalehairloss",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 21,
+        "comments": 38
+      },
+      "title_or_none": "Oral minox + spiro 1 yr update, it’s way worse",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_failure_worse"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v8m8qo/this_sub_is_very_informative_but_now_im_scared_of/",
+      "subreddit": "femalehairloss",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 63,
+        "comments": 38
+      },
+      "title_or_none": "This sub is very informative but now I'm scared of minoxidil",
+      "admission": "yes",
+      "reason_codes": [
+        "adoption_barrier_fear"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1v7frre/whats_your_biggest_fragrance_pet_peeve_that_has/",
+      "subreddit": "femfraglab",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 142,
+        "comments": 254
+      },
+      "title_or_none": "What's your biggest fragrance pet peeve that has nothing to do with the scent?",
+      "admission": "yes",
+      "reason_codes": [
+        "non_scent_product_grievance",
+        "unvoiced"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1va7yeo/drop_the_note_that_is_a_lie_for_you_ie_you_can/",
+      "subreddit": "femfraglab",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 50,
+        "comments": 140
+      },
+      "title_or_none": "Drop the note that is a lie for you (i.e. you can never smell it)",
+      "admission": "yes",
+      "reason_codes": [
+        "performance_mismatch"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/fragrance/comments/1vb6i6x/if_you_could_bring_back_one_discontinued/",
+      "subreddit": "fragrance",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 433,
+        "comments": 1983
+      },
+      "title_or_none": "If you could bring back one discontinued fragrance tomorrow, what would it be?",
+      "admission": "yes",
+      "reason_codes": [
+        "discontinued_replacement",
+        "corroborated"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/fragrance/comments/1v5tgrb/how_did_you_break_your_fragrances_shopping/",
+      "subreddit": "fragrance",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 153,
+        "comments": 306
+      },
+      "title_or_none": "How did you break your fragrances shopping addiction ?",
+      "admission": "yes",
+      "reason_codes": [
+        "consumption_regret",
+        "purchase_behaviour"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1v95rid/unpopular_opinion_buying_full_bottles_isnt_a/",
+      "subreddit": "fragranceclones",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 150,
+        "comments": 80
+      },
+      "title_or_none": "Unpopular opinion: buying full bottles isn't a \"waste,\" and I'm tired of the decant-shaming",
+      "admission": "yes",
+      "reason_codes": [
+        "format_norm_conflict"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1v5m2ht/cdnim_edt_not_what_i_was_expecting/",
+      "subreddit": "fragranceclones",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 94,
+        "comments": 70
+      },
+      "title_or_none": "CDNIM EDT not what I was expecting",
+      "admission": "yes",
+      "reason_codes": [
+        "product_disappointment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 7
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Fragrances/comments/1v6be1r/whats_the_biggest_fragrance_ripoff_youve_ever/",
+      "subreddit": "fragrances",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 26,
+        "comments": 71
+      },
+      "title_or_none": "What’s the biggest fragrance rip-off you’ve ever bought?",
+      "admission": "yes",
+      "reason_codes": [
+        "value_failure_regret"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 7
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Fragrances/comments/1v9xg1k/do_you_think_fragrance_influencers_actually_know/",
+      "subreddit": "fragrances",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 31,
+        "comments": 75
+      },
+      "title_or_none": "Do you think fragrance influencers actually know fragrances?",
+      "admission": "yes",
+      "reason_codes": [
+        "channel_trust_influencer",
+        "corroborated"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/GracefulAgingSkincare/comments/1v8rkud/what_supplements_are_you_taking_to_age_well_and/",
+      "subreddit": "gracefulagingskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 70,
+        "comments": 67
+      },
+      "title_or_none": "What supplements are you taking to age well and stay healthy?",
+      "admission": "yes",
+      "reason_codes": [
+        "ingestible_adjacency"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/GracefulAgingSkincare/comments/1va33af/nad_pdrn_retinal_im_so_confused_do_you_use_1_or/",
+      "subreddit": "gracefulagingskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 3,
+        "comments": 7
+      },
+      "title_or_none": "NAD, PDRN, Retinal? I’m so confused. Do you use 1 or all for anti-aging?",
+      "admission": "yes",
+      "reason_codes": [
+        "ingredient_confusion"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Hair/comments/1v8e144/18f_born_with_a_male_receding_hairline_pattern/",
+      "subreddit": "hair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 297,
+        "comments": 191
+      },
+      "title_or_none": "18F born with a male receding hairline pattern",
+      "admission": "yes",
+      "reason_codes": [
+        "underserved_segment_female_pattern"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Hair/comments/1v8z3i6/accordning_to_my_hairdresser_im_too_short_for/",
+      "subreddit": "hair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 198,
+        "comments": 237
+      },
+      "title_or_none": "Accordning to my hairdresser I'm too short for long hair. Is this a thing?",
+      "admission": "yes",
+      "reason_codes": [
+        "service_advice_friction"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Haircare/comments/1vate99/haircare_shopping_has_become_my_version_of/",
+      "subreddit": "haircare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 721,
+        "comments": 165
+      },
+      "title_or_none": "Haircare shopping has become my version of gambling",
+      "admission": "yes",
+      "reason_codes": [
+        "purchase_risk_efficacy_uncertainty"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Haircare/comments/1v9wviz/my_daughters_hair_is_stumping_me_completely/",
+      "subreddit": "haircare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 730,
+        "comments": 520
+      },
+      "title_or_none": "My daughter's hair is stumping me completely",
+      "admission": "yes",
+      "reason_codes": [
+        "caregiver_unmet_need"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Haircare/comments/1v5prkg/how_to_fix_constant_greasy_hair/",
+      "subreddit": "haircare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 33,
+        "comments": 87
+      },
+      "title_or_none": "How to fix constant greasy hair?.",
+      "admission": "yes",
+      "reason_codes": [
+        "recurring_product_failure"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 9
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/HaircareScience/comments/1v6bdm8/can_cysteine_or_glyoxylic_acid_smoothing/",
+      "subreddit": "haircarescience",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 5,
+        "comments": 15
+      },
+      "title_or_none": "Can cysteine or glyoxylic acid smoothing treatments reduce flyaways without substantially relaxing the wave pattern in coarse, high-porosity hair?",
+      "admission": "yes",
+      "reason_codes": [
+        "formulation_tradeoff_post_formaldehyde"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/HaircareScience/comments/1v84hha/why_are_chelating_shampoos_often_also_clarifying/",
+      "subreddit": "haircarescience",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 21,
+        "comments": 15
+      },
+      "title_or_none": "Why are chelating shampoos often also clarifying shampoos?",
+      "admission": "yes",
+      "reason_codes": [
+        "category_confusion"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/haircoloring/comments/1v6s0ar/im_moving_and_my_hair_girl_is_gatekeeping_what/",
+      "subreddit": "haircoloring",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 13,
+        "comments": 35
+      },
+      "title_or_none": "I’m moving and my hair girl is gatekeeping what she used on me plz help",
+      "admission": "yes",
+      "reason_codes": [
+        "service_lock_in_formula_opacity"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/haircoloring/comments/1v85p7k/help_my_hair_looks_terrible_after_a_blonde_box_dye/",
+      "subreddit": "haircoloring",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 6,
+        "comments": 19
+      },
+      "title_or_none": "Help, my hair looks terrible after a blonde box dye",
+      "admission": "yes",
+      "reason_codes": [
+        "product_failure_box_dye"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/HairDye/comments/1v6j2t2/help_with_purple_and_pink_dyes_that_dont_fade/",
+      "subreddit": "hairdye",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 94,
+        "comments": 55
+      },
+      "title_or_none": "Help with purple and pink dyes that don’t fade after like 3 days 🫩",
+      "admission": "yes",
+      "reason_codes": [
+        "performance_failure_fade"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/HairDye/comments/1v6epmk/help_my_fav_hair_dye_got_discontinued/",
+      "subreddit": "hairdye",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 104,
+        "comments": 41
+      },
+      "title_or_none": "HELP! my fav hair dye got discontinued :(",
+      "admission": "yes",
+      "reason_codes": [
+        "discontinued_replacement"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Hairloss/comments/1v68y86/i_genuinely_lost_all_hope_of_getting_a_gf/",
+      "subreddit": "hairloss",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 4,
+        "comments": 45
+      },
+      "title_or_none": "I genuinely lost all hope of getting a gf",
+      "admission": "yes",
+      "reason_codes": [
+        "emotional_cost_driving_purchase"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/HairlossResearch/comments/1vb5503/there_is_nothing_promising_on_the_horizon_for/",
+      "subreddit": "hairlossresearch",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 2,
+        "comments": 38
+      },
+      "title_or_none": "There is nothing promising on the horizon for those with sides [INFORMATIVE RANT]",
+      "admission": "yes",
+      "reason_codes": [
+        "pipeline_abandons_side_effect_intolerant"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/HairlossResearch/comments/1v84xq9/creatine_and_hairloss/",
+      "subreddit": "hairlossresearch",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 0,
+        "comments": 20
+      },
+      "title_or_none": "Creatine and hairloss?",
+      "admission": "yes",
+      "reason_codes": [
+        "adjacent_product_interaction"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v7dsci/pierrot_perfumery_is_closing_indefinitely/",
+      "subreddit": "indiemakeupandmore",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 460,
+        "comments": 95
+      },
+      "title_or_none": "Pierrot Perfumery is closing indefinitely",
+      "admission": "yes",
+      "reason_codes": [
+        "brand_closure_supply_access"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/keratosis/comments/1v87e15/kp_and_hormones_there_has_to_be_a_link_what_is_it/",
+      "subreddit": "keratosis",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 50,
+        "comments": 55
+      },
+      "title_or_none": "KP and hormones. There has to be a link - what is it? Post your thoughts, experiences, theories.",
+      "admission": "yes",
+      "reason_codes": [
+        "unexplained_condition_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/keratosis/comments/1v9x4aq/struggling_with_kp_for_god_knows_how_many_years/",
+      "subreddit": "keratosis",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 78,
+        "comments": 42
+      },
+      "title_or_none": "Struggling with KP for God knows how many years",
+      "admission": "yes",
+      "reason_codes": [
+        "chronic_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/KoreanBeauty/comments/1v7rizt/is_there_any_medical_treatment_youd_actually/",
+      "subreddit": "koreanbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 41,
+        "comments": 65
+      },
+      "title_or_none": "Is there any medical treatment you'd actually travel to Korea for?",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_gap_home_market"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/KoreanBeauty/comments/1v83xqy/how_do_you_tell_if_the_beauty_of_joseon_relief/",
+      "subreddit": "koreanbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 3,
+        "comments": 23
+      },
+      "title_or_none": "How do you tell if the beauty of joseon relief sun rice+probiotics sunscreen is US or International?",
+      "admission": "yes",
+      "reason_codes": [
+        "regional_formulation_authenticity",
+        "corroborates_koreanskincare"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/KoreanBeauty/comments/1varzee/11_year_old_with_acne/",
+      "subreddit": "koreanbeauty",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 17,
+        "comments": 34
+      },
+      "title_or_none": "11 year old with acne?",
+      "admission": "yes",
+      "reason_codes": [
+        "pediatric_segment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/koreanskincare/comments/1v83eiy/my_cosrx_snail_mucin_niacinamide_from_amazon_was/",
+      "subreddit": "koreanskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 178,
+        "comments": 60
+      },
+      "title_or_none": "My “COSRX Snail Mucin + Niacinamide” from Amazon was counterfeit - and it gave me bad acne for months before I figured it out",
+      "admission": "yes",
+      "reason_codes": [
+        "counterfeit_channel_integrity"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/koreanskincare/comments/1v9efdi/been_trying_new_products_skin_is_breaking_out/",
+      "subreddit": "koreanskincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 109,
+        "comments": 70
+      },
+      "title_or_none": "been trying new products, skin is breaking out after months of clear skin",
+      "admission": "yes",
+      "reason_codes": [
+        "product_switch_failure"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/locs/comments/1vasehy/here_to_dispel_the_anti_airdrying_propaganda/",
+      "subreddit": "locs",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 1286,
+        "comments": 138
+      },
+      "title_or_none": "Here to dispel the anti air-drying propaganda",
+      "admission": "yes",
+      "reason_codes": [
+        "practice_dispute_drying"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Makeup/comments/1v693nt/for_people_who_actually_re_apply_sunscreen_every/",
+      "subreddit": "makeup",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 55,
+        "comments": 66
+      },
+      "title_or_none": "For people who actually re apply sunscreen every 2 hours… how???",
+      "admission": "yes",
+      "reason_codes": [
+        "compliance_format_failure",
+        "corroborated_cross_venue"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 7
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Makeup/comments/1v7b6t3/do_spongesbeauty_blenders_really_do_something/",
+      "subreddit": "makeup",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 111,
+        "comments": 145
+      },
+      "title_or_none": "Do sponges/beauty blenders really do something that brushes don’t? (By a brush only user)",
+      "admission": "yes",
+      "reason_codes": [
+        "tool_efficacy_doubt"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v9ktfi/how_do_you_store_your_makeup_so_youre_not/",
+      "subreddit": "makeupaddiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 626,
+        "comments": 277
+      },
+      "title_or_none": "How do you store your makeup so you’re not constantly digging through a bag?",
+      "admission": "yes",
+      "reason_codes": [
+        "unmet_need_storage_format"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 7
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v93u0p/what_products_can_give_me_a_natural_90s_look/",
+      "subreddit": "makeupaddiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 2297,
+        "comments": 739
+      },
+      "title_or_none": "What products can give me a natural 90s look?",
+      "admission": "yes",
+      "reason_codes": [
+        "desired_outcome_product_gap"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/MakeupAddicts/comments/1v8brwk/what_powder_blush_will_give_this_kind_of_neutral/",
+      "subreddit": "makeupaddicts",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 22,
+        "comments": 13
+      },
+      "title_or_none": "What powder blush will give this kind of neutral, muted, dusty rose flush?",
+      "admission": "yes",
+      "reason_codes": [
+        "shade_matching_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/MakeupAddicts/comments/1v6jvfy/best_makeup_brush_set_for_80100_usd/",
+      "subreddit": "makeupaddicts",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 8,
+        "comments": 11
+      },
+      "title_or_none": "Best make-up brush set for $80-$100 USD?",
+      "admission": "yes",
+      "reason_codes": [
+        "price_bounded_need"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1vabusb/whats_the_best_dupe_youve_ever_found_the_one_you/",
+      "subreddit": "makeupdupes",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 156,
+        "comments": 121
+      },
+      "title_or_none": "What’s the best dupe you’ve ever found — the one you still use?",
+      "admission": "yes",
+      "reason_codes": [
+        "substitution_behaviour_at_scale"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v6jq2o/looking_for_a_lipstick_similar_to_my_favorite/",
+      "subreddit": "makeupdupes",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 20,
+        "comments": 9
+      },
+      "title_or_none": "Looking for a lipstick similar to my favorite discontinued lipstick",
+      "admission": "yes",
+      "reason_codes": [
+        "discontinued_replacement"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/MakeupRehab/comments/1v5la87/overconsumption_rules_everything_around_me/",
+      "subreddit": "makeuprehab",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 200,
+        "comments": 59
+      },
+      "title_or_none": "Overconsumption rules everything around me",
+      "admission": "yes",
+      "reason_codes": [
+        "overconsumption_backlash",
+        "snowballing"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/MakeupRehab/comments/1v5y06i/i_bought_literally_every_rhode_blush_on_their/",
+      "subreddit": "makeuprehab",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 31,
+        "comments": 40
+      },
+      "title_or_none": "I bought literally every Rhode blush on their website",
+      "admission": "yes",
+      "reason_codes": [
+        "named_brand_overbuying"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/malegrooming/comments/1v8avt7/i_shaved_my_leg_hair_because_of_the_summer_heat/",
+      "subreddit": "malegrooming",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 1634,
+        "comments": 798
+      },
+      "title_or_none": "I shaved my leg hair because of the summer heat, here is what it looked like halfway done. Better before or after?",
+      "admission": "yes",
+      "reason_codes": [
+        "body_grooming_unmet_segment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Minoxbeards/comments/1v7x4tn/growing_anywhere_but_the_beard_damn/",
+      "subreddit": "minoxbeards",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 80,
+        "comments": 39
+      },
+      "title_or_none": "Growing anywhere but the beard damn",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_not_working_target_area"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Minoxbeards/comments/1v98zum/just_got_minoxidil_but_i_have_some_questions/",
+      "subreddit": "minoxbeards",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 30,
+        "comments": 26
+      },
+      "title_or_none": "Just got minoxidil, but I have some questions",
+      "admission": "yes",
+      "reason_codes": [
+        "onboarding_confusion"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1vbjuqz/not_boringdrugstore_nailpolish_in_europe/",
+      "subreddit": "nailpolish",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 5,
+        "comments": 8
+      },
+      "title_or_none": "„Not boring“drugstore nailpolish in Europe?",
+      "admission": "yes",
+      "reason_codes": [
+        "regional_assortment_gap"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Nails/comments/1v5f4ng/please_help_me_trouble_shoot_why_my_gel_nails/",
+      "subreddit": "nails",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 326,
+        "comments": 197
+      },
+      "title_or_none": "Please help me trouble shoot why my gel nails dont last even an hour",
+      "admission": "yes",
+      "reason_codes": [
+        "system_failure_gel"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Nails/comments/1v9e1ph/is_270a_real_thing/",
+      "subreddit": "nails",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 2624,
+        "comments": 270
+      },
+      "title_or_none": "Is $270…a real thing?",
+      "admission": "yes",
+      "reason_codes": [
+        "service_price_shock"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Naturalhair/comments/1vagikf/cantu_why_did_they_make_me_hate_you/",
+      "subreddit": "naturalhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 731,
+        "comments": 98
+      },
+      "title_or_none": "Cantu, why did they make me hate you??",
+      "admission": "yes",
+      "reason_codes": [
+        "named_brand_reformulation_failure"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Naturalhair/comments/1v5lknn/im_tired_of_my_4c_hair_and_i_feel_guilty/",
+      "subreddit": "naturalhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 886,
+        "comments": 284
+      },
+      "title_or_none": "I’m tired of my 4C hair and I feel guilty admitting it",
+      "admission": "yes",
+      "reason_codes": [
+        "segment_fatigue",
+        "unvoiced"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/OliveMUA/comments/1v6oezg/muted_light_neutral_olives_that_pull_everything/",
+      "subreddit": "olivemua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 25,
+        "comments": 42
+      },
+      "title_or_none": "Muted light neutral olives that pull everything orange, what lipliners do you use?",
+      "admission": "yes",
+      "reason_codes": [
+        "undertone_mismatch_underserved"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/OliveMUA/comments/1v7o3z1/does_anyone_know_any_glossy_lipstick_or_lip_gloss/",
+      "subreddit": "olivemua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 30,
+        "comments": 43
+      },
+      "title_or_none": "Does anyone know any glossy lipstick or lip gloss with these colors? I don't know any brands so anything would help! I'm fair pale cool olive!",
+      "admission": "yes",
+      "reason_codes": [
+        "unmet_need_brand_illiteracy"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/over30skincare/comments/1v8w797/dehydrated_skin/",
+      "subreddit": "over30skincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 15,
+        "comments": 47
+      },
+      "title_or_none": "Dehydrated skin",
+      "admission": "yes",
+      "reason_codes": [
+        "condition_product_seeking"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/over30skincare/comments/1v8827d/little_bumps_wont_go_away/",
+      "subreddit": "over30skincare",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 19,
+        "comments": 34
+      },
+      "title_or_none": "Little bumps won’t go away",
+      "admission": "yes",
+      "reason_codes": [
+        "persistent_unresolved"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/PaleMUA/comments/1v8wwwa/28f_my_holy_grail_foundation_turned_cakey_on_me/",
+      "subreddit": "palemua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 31,
+        "comments": 34
+      },
+      "title_or_none": "28f, my holy grail foundation turned cakey on me and I need a skin-like replacement",
+      "admission": "yes",
+      "reason_codes": [
+        "reformulation_replacement_search"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/PaleMUA/comments/1v6h7im/best_sunscreen_with_white_cast/",
+      "subreddit": "palemua",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 27,
+        "comments": 44
+      },
+      "title_or_none": "Best sunscreen with white cast?",
+      "admission": "yes",
+      "reason_codes": [
+        "underserved_segment_inverted_need"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/PanPorn/comments/1vatoue/youre_joking_flower_knows_strawberry_cupid/",
+      "subreddit": "panporn",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 928,
+        "comments": 76
+      },
+      "title_or_none": "You're joking. (Flower Knows Strawberry Cupid Pressed Powder 01)",
+      "admission": "yes",
+      "reason_codes": [
+        "product_quantity_value_complaint"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/PanPorn/comments/1v6agrs/finally_somewhat_hatepanned_this/",
+      "subreddit": "panporn",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 94,
+        "comments": 20
+      },
+      "title_or_none": "Finally somewhat hate-panned this",
+      "admission": "yes",
+      "reason_codes": [
+        "hate_pan_non_repurchase"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Perfumes/comments/1v890lz/every_single_perfume_should_offer_mini_bottle/",
+      "subreddit": "perfumes",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 907,
+        "comments": 76
+      },
+      "title_or_none": "Every single perfume should offer mini bottle sizes",
+      "admission": "yes",
+      "reason_codes": [
+        "explicit_format_unmet_mini_sizes"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Perfumes/comments/1v6gdwn/are_there_any_women_who_like_to_dabble_in_mens/",
+      "subreddit": "perfumes",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 29,
+        "comments": 81
+      },
+      "title_or_none": "Are there any women who like to dabble in men’s fragrances?",
+      "admission": "yes",
+      "reason_codes": [
+        "gendered_segmentation_friction"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/ProjectPan/comments/1vaf9qk/i_cant_pan_this_its_too_hard_it_smells_like/",
+      "subreddit": "projectpan",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 260,
+        "comments": 91
+      },
+      "title_or_none": "I can't pan this. It's too hard. It smells like literal plastic.",
+      "admission": "yes",
+      "reason_codes": [
+        "product_failure_through_use"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/ProjectPan/comments/1v7mryd/im_genuinely_embarrassed/",
+      "subreddit": "projectpan",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 1542,
+        "comments": 172
+      },
+      "title_or_none": "I’m genuinely embarrassed",
+      "admission": "yes",
+      "reason_codes": [
+        "overconsumption_shame"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/RedditLaqueristas/comments/1vaf1jz/discontinued_polish_that_you_still_think_about/",
+      "subreddit": "redditlaqueristas",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 211,
+        "comments": 350
+      },
+      "title_or_none": "Discontinued polish that you still think about",
+      "admission": "yes",
+      "reason_codes": [
+        "discontinued_replacement"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/RedditLaqueristas/comments/1vb1g4z/the_polish_project_starts_a_burn_book/",
+      "subreddit": "redditlaqueristas",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 651,
+        "comments": 437
+      },
+      "title_or_none": "The polish project starts a burn book",
+      "admission": "yes",
+      "reason_codes": [
+        "brand_controversy",
+        "corroborated"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Rosacea/comments/1v6msjl/need_a_face_cleanser_rec_ive_tried_many_which_one/",
+      "subreddit": "rosacea",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 18,
+        "comments": 119
+      },
+      "title_or_none": "Need a face cleanser rec. I've tried many. Which one is your HG cleanser?",
+      "admission": "yes",
+      "reason_codes": [
+        "repeated_product_failure"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Rosacea/comments/1v9wv2b/5_months_into_my_rosacea_diagnosis_and_im_totally/",
+      "subreddit": "rosacea",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 19,
+        "comments": 55
+      },
+      "title_or_none": "5 months into my Rosacea diagnosis and I'm totally at a loss. Just need to vent / looking for advice.",
+      "admission": "yes",
+      "reason_codes": [
+        "condition_unmet_at_a_loss"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Sephora/comments/1vaeqn7/if_you_had_to_choose_one_foundation_that_lasts/",
+      "subreddit": "sephora",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 168,
+        "comments": 200
+      },
+      "title_or_none": "If you had to choose one foundation that lasts over 8 hours, doesn’t cling to dry patches, and photographs well, which are you choosing?",
+      "admission": "yes",
+      "reason_codes": [
+        "specific_unmet_spec"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Sephora/comments/1vaketq/sephora_is_lying_to_you/",
+      "subreddit": "sephora",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 599,
+        "comments": 133
+      },
+      "title_or_none": "SEPHORA is lying to you",
+      "admission": "yes",
+      "reason_codes": [
+        "retailer_trust"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v9956k/what_ingredients_actuall_help_with_dark_spots_and/",
+      "subreddit": "skincare_addiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 44,
+        "comments": 15
+      },
+      "title_or_none": "What ingredients actuall help with dark spots and melasma?",
+      "admission": "yes",
+      "reason_codes": [
+        "ingredient_efficacy_confusion_melasma"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v85s4m/need_help_with_this_type_of_skin_texture_i_have/",
+      "subreddit": "skincare_addiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 12,
+        "comments": 16
+      },
+      "title_or_none": "Need help with this type of skin texture!! I have dermatillomania and I can barely stop myself from squeezing these out",
+      "admission": "yes",
+      "reason_codes": [
+        "condition_specific_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v7acj3/is_moisturizer_really_necessary/",
+      "subreddit": "skincare_addiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 4,
+        "comments": 13
+      },
+      "title_or_none": "Is moisturizer really necessary",
+      "admission": "yes",
+      "reason_codes": [
+        "routine_necessity_skepticism"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 6
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v9o6xm/i_quit_all_skincare_products_and_my_skin_has/",
+      "subreddit": "skincareaddiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 92,
+        "comments": 35
+      },
+      "title_or_none": "I quit all skincare products and my skin has never been happier [Personal]",
+      "admission": "yes",
+      "reason_codes": [
+        "routine_abandonment_backlash",
+        "snowballing"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 10
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v80gq0/anti_aging_early_20s_with_noticeable_wrinkles/",
+      "subreddit": "skincareaddiction",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 31,
+        "comments": 71
+      },
+      "title_or_none": "[Anti Aging] Early 20’s with noticeable wrinkles, please help",
+      "admission": "yes",
+      "reason_codes": [
+        "early_onset_segment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1vbb4hm/best_vitamin_c_serum_that_doesnt_oxidize/",
+      "subreddit": "skincareaddictionlux",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 10,
+        "comments": 102
+      },
+      "title_or_none": "Best Vitamin C serum that doesn't oxidize",
+      "admission": "yes",
+      "reason_codes": [
+        "category_formulation_failure_oxidation"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1vb0td1/instant_angel_holy_stink_anyone_else/",
+      "subreddit": "skincareaddictionlux",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 32,
+        "comments": 78
+      },
+      "title_or_none": "Instant Angel: Holy Stink. Anyone else?",
+      "admission": "yes",
+      "reason_codes": [
+        "sensory_failure_named_product"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1vagjcq/salicylic_acid_serum_glass_bottle_broke_should_i/",
+      "subreddit": "skincareaddicts",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 30,
+        "comments": 50
+      },
+      "title_or_none": "Salicylic acid serum glass bottle broke, should I stop using?",
+      "admission": "yes",
+      "reason_codes": [
+        "packaging_failure_safety"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1v7hrke/deodorant_to_cover_midday_bo/",
+      "subreddit": "skincareaddicts",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 18,
+        "comments": 38
+      },
+      "title_or_none": "Deodorant to cover mid-day BO?",
+      "admission": "yes",
+      "reason_codes": [
+        "adjacent_category_unmet"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 5
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Sunscreenreddit/comments/1v9bpjm/spf_that_you_can_actually_wear_in_the_recommended/",
+      "subreddit": "sunscreenreddit",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 19,
+        "comments": 66
+      },
+      "title_or_none": "SPF that you can actually wear in the recommended amount 🫠",
+      "admission": "yes",
+      "reason_codes": [
+        "compliance_format_failure",
+        "corroborates_r_makeup"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Sunscreenreddit/comments/1v5nuhu/dupe_for_vacation_crystal_spf_50_invisible_face/",
+      "subreddit": "sunscreenreddit",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 5,
+        "comments": 26
+      },
+      "title_or_none": "dupe for Vacation Crystal SPF 50 invisible face gel????",
+      "admission": "yes",
+      "reason_codes": [
+        "dupe_seek"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/tressless/comments/1v78hs1/the_final_nail_in_the_coffin_pp405_is_confirmed/",
+      "subreddit": "tressless",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 420,
+        "comments": 194
+      },
+      "title_or_none": "The final nail in the coffin. PP405 is confirmed JXL069.",
+      "admission": "yes",
+      "reason_codes": [
+        "pipeline_expectation_letdown"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/tressless/comments/1v5halw/5mg_min_dermaroll_15mm_weekly_ketosalicyclic/",
+      "subreddit": "tressless",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 82,
+        "comments": 141
+      },
+      "title_or_none": "5mg Min + DermaRoll 1.5mm Weekly + Keto/Salicyclic alternative day + 0.5 mg Dut. Norwood 6, should I go to 2.5 mg Dut? 33 Year old",
+      "admission": "yes",
+      "reason_codes": [
+        "regimen_uncertainty"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 8
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/tretinoin/comments/1v9vpkw/6_weeks_on_tretinoin_and_my_skin_is_worse_than/",
+      "subreddit": "tretinoin",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 31,
+        "comments": 130
+      },
+      "title_or_none": "6 weeks on tretinoin and my skin is worse than ever.",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_failure_purge"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/tretinoin/comments/1v9ag6w/tret_is_making_everything_on_my_face_appear_so/",
+      "subreddit": "tretinoin",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 32,
+        "comments": 68
+      },
+      "title_or_none": "Tret is making everything on my face appear so much darker and more notable. Freckles, acne, sun spots, redness. Is this normal?? 😭😭",
+      "admission": "yes",
+      "reason_codes": [
+        "adverse_effect"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 9
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Ulta/comments/1v6k3eb/why_is_bath_and_body_works_in_ulta_now/",
+      "subreddit": "ulta",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 771,
+        "comments": 154
+      },
+      "title_or_none": "Why is Bath and Body Works in Ulta now?",
+      "admission": "yes",
+      "reason_codes": [
+        "channel_assortment_shift"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Wavyhair/comments/1vai5k9/how_to_get_more_volumewave_at_the_at_top_of_head/",
+      "subreddit": "wavyhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 275,
+        "comments": 66
+      },
+      "title_or_none": "How to get more volume/wave at the at top of head?",
+      "admission": "yes",
+      "reason_codes": [
+        "persistent_styling_problem"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Wavyhair/comments/1v97a6z/help_with_wavy_hair_routine_for_post_partum_mom/",
+      "subreddit": "wavyhair",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 29,
+        "comments": 4
+      },
+      "title_or_none": "Help with wavy hair routine for post partum mom",
+      "admission": "yes",
+      "reason_codes": [
+        "postpartum_segment"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 4
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/wicked_edge/comments/1v7j3re/anyone_else_really_dislike_tobs_sandalwood/",
+      "subreddit": "wicked_edge",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 72,
+        "comments": 114
+      },
+      "title_or_none": "Anyone else really dislike TOBS sandalwood shaving cream?",
+      "admission": "yes",
+      "reason_codes": [
+        "named_product_dislike",
+        "seeking_corroboration"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 1
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/wicked_edge/comments/1v5hi0a/had_to_use_a_cartridge_razor_on_a_trip/",
+      "subreddit": "wicked_edge",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 38,
+        "comments": 60
+      },
+      "title_or_none": "Had to use a cartridge razor on a trip",
+      "admission": "yes",
+      "reason_codes": [
+        "travel_format_friction"
+      ],
+      "priority_band": "normal",
+      "subreddit_rank_by_comments": 2
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/Sephora/comments/1v87d9j/this_talcfree_trend_is_terrible_for_me/",
+      "subreddit": "sephora",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 366,
+        "comments": 198
+      },
+      "title_or_none": "This talc-free trend is terrible for me.",
+      "admission": "yes",
+      "reason_codes": [
+        "reformulation_harm",
+        "snowballing",
+        "already_captured_this_session"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 2,
+      "capture_state": "already_captured"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "thread_url": "https://www.reddit.com/r/tressless/comments/1v9bv41/finasteride_has_made_my_hair_loss_worse/",
+      "subreddit": "tressless",
+      "listing_snapshot": {
+        "captured_at": "2026-07-31",
+        "score": 70,
+        "comments": 209
+      },
+      "title_or_none": "Finasteride has made my hair loss worse",
+      "admission": "yes",
+      "reason_codes": [
+        "treatment_failure",
+        "already_captured_this_session"
+      ],
+      "priority_band": "high",
+      "subreddit_rank_by_comments": 3,
+      "capture_state": "already_captured"
+    }
+  ],
+  "venue_level_no": [
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "beautyboxes",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_retailer_promotions_subscription_reveals"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "dermatologyquestions",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_crowd_diagnosis_clinical_outside_commission"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "diybeauty",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_specialist_diy_formulation_outside_commission"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "diygelnails",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_showcase_venue"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "fragrancestories",
+      "admission": "no",
+      "reason_codes": [
+        "gate6_sotd_daily_format_conditional_unmet"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "fragranceswap",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_wts_swap_administration"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "gelnails",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_showcase_venue"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "makeupexchange",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_wts_swap_administration"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "makeupflatlays",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_showcase_venue"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "makeuptips",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_generic_technique_and_appearance_validation"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "muacjdiscussion",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_promotional_chat"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "muaonthecheap",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_retailer_promotions"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "nailart",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_showcase_venue_heavily_suppressed"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "newinbeauty",
+      "admission": "no",
+      "reason_codes": [
+        "gate4_launch_feed_no_problem_evidence"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "perfumesthatfeellike",
+      "admission": "no",
+      "reason_codes": [
+        "gate3_no_commercial_decision_vibe_matching"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "redditlaqueristaswap",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_wts_swap_administration"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    },
+    {
+      "policy_version": "reddit_listing_efficiency_v0",
+      "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+      "subreddit": "whybrows",
+      "admission": "no",
+      "reason_codes": [
+        "gate5_appearance_snark_venue"
+      ],
+      "priority_band": "suppressed",
+      "scope": "whole_venue_working_set"
+    }
+  ]
+}
