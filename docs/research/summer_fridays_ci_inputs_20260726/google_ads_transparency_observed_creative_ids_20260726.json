@@ -24,7 +24,8 @@
     "raw_dom_relative_packet_path": "raw/01_cloakbrowser_rendered_dom.html",
     "raw_dom_sha256": "3c6d8548be0e43ca43b9b07f799dd2f8f1cc62f3f52471d23c9fd31a3c689963",
     "source_header_display": "~500 ads",
-    "source_card_denominator": 456,
+    "rendered_card_position_denominator": 456,
+    "observed_rendered_card_position_count": 456,
     "continuation_actions": 10
   },
   "projection": {
@@ -34,11 +35,11 @@
     "status": "COMPLETE_FOR_BOUND_EVIDENCE_PURPOSE",
     "source_inventory_exhaustion_status": "NOT_PROVEN",
     "currentness": "2026-07-26 capture state",
-    "next_source_fact": "Further source continuation is required to test exhaustion and reconcile the 456-card denominator against the 416 materialized IDs."
+    "next_source_fact": "A source-visible terminal state or further continuation is required before claiming exhaustion. The 456 rendered card positions include 40 repeated uses of already observed creative IDs and are not the source inventory total."
   },
   "non_claims": [
     "not source exhaustion or all Summer Fridays Google ads",
-    "not all 456 source-declared cards",
+    "not all ads represented by the rounded ~500 source header",
     "not per-ad placement evidence",
     "not spend, delivery, targeting, impression, reach, performance, or strategy evidence",
     "not complete creative copy, media, destination, product-family, or offer extraction",
