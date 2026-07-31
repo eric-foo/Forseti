@@ -44,6 +44,48 @@ class CadencePlan:
         }
 
 
+CADENCE_BASES = ("gap", "cycle")
+
+
+def resolve_cadence_window_seconds(
+    *, slot_count: int, max_gap_seconds: float | None
+) -> float | None:
+    """Derive the window a bounded-jitter plan needs, when none was supplied.
+
+    The window is a ceiling on total gap time, so the value that leaves the
+    whole requested range reachable is simply every gap at its maximum.  It is
+    derivable from inputs the caller already gave, and requiring it by hand is a
+    footgun: too small a window silently compresses every gap toward the minimum
+    while still looking like the range that was asked for.
+    """
+    if max_gap_seconds is None:
+        return None
+    return max(0, slot_count - 1) * max_gap_seconds
+
+
+def resolve_paced_wait(*, planned: float, elapsed: float, basis: str) -> tuple[float, float]:
+    """Return (wait_seconds, overrun_seconds) for one slot under ``basis``.
+
+    ``gap``   the planned number is time BETWEEN slots, so it is slept as-is and
+              the real interval is the planned value plus however long the slot
+              itself took.
+    ``cycle`` the planned number is the target START-to-START interval, so the
+              slot's measured duration is subtracted.  A slot slower than its
+              target yields a zero wait and a positive overrun, which the caller
+              is expected to record: a run whose slots routinely overrun is
+              pacing itself by accident and should say so rather than appear
+              compliant.
+    """
+    if basis not in CADENCE_BASES:
+        raise ValueError(f"cadence basis must be one of {CADENCE_BASES}, got {basis!r}")
+    if basis == "gap":
+        return planned, 0.0
+    remaining = planned - elapsed
+    if remaining <= 0:
+        return 0.0, round(elapsed - planned, 3)
+    return remaining, 0.0
+
+
 def build_cadence_plan(
     *,
     slot_count: int,

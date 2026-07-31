@@ -21,7 +21,18 @@ if TYPE_CHECKING:
 from harness_utils import utc_now_z_microseconds
 from runners.run_source_capture_http_packet import run_source_capture_http_packet
 from source_capture import CaptureModeCategory
-from source_capture.cadence import CadenceMode, build_cadence_plan
+from capture_spine.reddit_capture_cadence import (
+    REDDIT_CADENCE_BASIS,
+    REDDIT_CADENCE_MAX_GAP_SECONDS,
+    REDDIT_CADENCE_MIN_GAP_SECONDS,
+    REDDIT_CADENCE_MODE,
+)
+from source_capture.cadence import (
+    CadenceMode,
+    build_cadence_plan,
+    resolve_cadence_window_seconds,
+    resolve_paced_wait,
+)
 from source_capture.content_extraction import (
     CAPTURE_RETENTION_MODES,
     CONTENT_EXTRACTION_FAILED_EXIT_CODE,
@@ -62,11 +73,12 @@ def run_reddit_old_http_batch(
     max_urls: int = DEFAULT_MAX_URLS,
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     max_bytes: int = DEFAULT_MAX_BYTES,
-    cadence_mode: CadenceMode = "fixed",
+    cadence_mode: CadenceMode = REDDIT_CADENCE_MODE,
     cadence_window_seconds: float | None = None,
-    cadence_min_gap_seconds: float | None = None,
-    cadence_max_gap_seconds: float | None = None,
+    cadence_min_gap_seconds: float | None = REDDIT_CADENCE_MIN_GAP_SECONDS,
+    cadence_max_gap_seconds: float | None = REDDIT_CADENCE_MAX_GAP_SECONDS,
     cadence_random_seed: int | None = None,
+    cadence_basis: str = REDDIT_CADENCE_BASIS,
     requested_retention_mode: str = DEFAULT_RETENTION_MODE,
 ) -> tuple[int, str]:
     if requested_retention_mode not in CAPTURE_RETENTION_MODES:
@@ -82,6 +94,12 @@ def run_reddit_old_http_batch(
         timeout_seconds=timeout_seconds,
         max_bytes=max_bytes,
     )
+    if cadence_mode == "bounded_jitter" and cadence_window_seconds is None:
+        # Derivable from the slot count and the max gap; requiring it by hand
+        # only ever produces a launch failure or a silently compressed range.
+        cadence_window_seconds = resolve_cadence_window_seconds(
+            slot_count=len(slots), max_gap_seconds=cadence_max_gap_seconds
+        )
     cadence_plan = build_cadence_plan(
         slot_count=len(slots),
         mode=cadence_mode,
@@ -131,6 +149,7 @@ def run_reddit_old_http_batch(
                 source_url=final_url,
             ),
         )
+        capture_started_monotonic = time.monotonic()
         try:
             row["capture_started_at"] = utc_now_z_microseconds()
             capture_exit, capture_message = run_source_capture_http_packet(
@@ -198,9 +217,17 @@ def run_reddit_old_http_batch(
         finally:
             row["capture_finished_at"] = utc_now_z_microseconds()
 
+        elapsed = time.monotonic() - capture_started_monotonic
+        row["capture_elapsed_seconds"] = round(elapsed, 3)
         results.append(row)
         if index < len(cadence_plan.planned_waits_seconds):
-            wait_seconds = cadence_plan.planned_waits_seconds[index]
+            wait_seconds, overrun = resolve_paced_wait(
+                planned=cadence_plan.planned_waits_seconds[index],
+                elapsed=elapsed,
+                basis=cadence_basis,
+            )
+            if overrun > 0:
+                row["cadence_overrun_seconds"] = overrun
             if wait_seconds > 0:
                 time.sleep(wait_seconds)
 
@@ -508,7 +535,19 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-urls", type=int, default=DEFAULT_MAX_URLS)
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
-    parser.add_argument("--cadence-mode", choices=["fixed", "bounded_jitter"], default="fixed")
+    parser.add_argument(
+        "--cadence-mode", choices=["fixed", "bounded_jitter"], default=REDDIT_CADENCE_MODE
+    )
+    parser.add_argument(
+        "--cadence-basis",
+        choices=list(CADENCE_BASES),
+        default=REDDIT_CADENCE_BASIS,
+        help=(
+            "gap: the cadence numbers are the wait BETWEEN captures. cycle: they "
+            "are the target start-to-start interval and the capture duration is "
+            "subtracted."
+        ),
+    )
     parser.add_argument("--cadence-window-seconds", type=float, default=None)
     parser.add_argument("--cadence-min-gap-seconds", type=float, default=None)
     parser.add_argument("--cadence-max-gap-seconds", type=float, default=None)
@@ -544,6 +583,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             timeout_seconds=args.timeout_seconds,
             max_bytes=args.max_bytes,
             cadence_mode=args.cadence_mode,
+            cadence_basis=args.cadence_basis,
             cadence_window_seconds=args.cadence_window_seconds,
             cadence_min_gap_seconds=args.cadence_min_gap_seconds,
             cadence_max_gap_seconds=args.cadence_max_gap_seconds,

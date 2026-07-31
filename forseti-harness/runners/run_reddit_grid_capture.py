@@ -30,6 +30,12 @@ if __package__ in {None, ""}:
 
 from harness_utils import utc_now_z_microseconds
 from runners._scaffold import exit_on_failure
+from capture_spine.reddit_capture_cadence import (
+    REDDIT_CADENCE_BASIS,
+    REDDIT_CADENCE_MAX_GAP_SECONDS,
+    REDDIT_CADENCE_MIN_GAP_SECONDS,
+    REDDIT_CADENCE_MODE,
+)
 from capture_spine.reddit_subreddit_grid.grid_projection import (
     GRID_PROJECTION_PARSER_VERSION,
     build_grid_content_record,
@@ -42,7 +48,13 @@ from capture_spine.reddit_subreddit_grid.www_grid_projection import (
 from runners.run_source_capture_http_packet import run_source_capture_http_packet
 from source_capture.content_extraction import RenderedContentExtractionSpec
 from source_capture import CaptureModeCategory
-from source_capture.cadence import CadenceMode, build_cadence_plan
+from source_capture.cadence import (
+    CADENCE_BASES,
+    CadenceMode,
+    build_cadence_plan,
+    resolve_cadence_window_seconds,
+    resolve_paced_wait,
+)
 from source_capture.content_extraction import (
     CAPTURE_RETENTION_MODES,
     CONTENT_EXTRACTION_FAILED_EXIT_CODE,
@@ -56,21 +68,12 @@ GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
 GRID_SOURCE_SURFACE = "old_reddit_direct_http"
 WWW_GRID_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 GRID_TRANSPORTS = ("old_http", "www_realchrome")
-# What the cadence numbers MEASURE, which is not obvious from the plan alone.
-#
-# ``gap``   the planned wait is time BETWEEN captures. The runner sleeps it
-#           after each capture, so the real request interval is the gap plus
-#           however long the capture took -- measured 21.8-42.1s on www, so a
-#           "30s" pass actually hit the source about every 60s.
-# ``cycle`` the planned wait is the target time from one capture START to the
-#           next. The measured capture duration is subtracted from the wait, so
-#           the interval is what was asked for. A capture slower than the target
-#           yields a zero wait and is reported, never silently compressed.
-#
-# Fixed gaps cannot hold a target cycle when capture duration varies by more
-# than the target window, which is the www case: a 20s spread against a 15s
-# window has no single gap that satisfies both ends.
-CADENCE_BASES = ("gap", "cycle")
+# Pacing is lane policy shared with the thread-dive runner; see
+# capture_spine/reddit_capture_cadence.py for why cycle-and-jitter.
+DEFAULT_CADENCE_MODE = REDDIT_CADENCE_MODE
+DEFAULT_CADENCE_BASIS = REDDIT_CADENCE_BASIS
+DEFAULT_CADENCE_MIN_GAP_SECONDS = REDDIT_CADENCE_MIN_GAP_SECONDS
+DEFAULT_CADENCE_MAX_GAP_SECONDS = REDDIT_CADENCE_MAX_GAP_SECONDS
 # Measured 2026-07-31: the www feed virtualizes, so scrolling UNLOADS the head.
 # A tall viewport renders the head in one window instead (~102 rows, score floor
 # 3), which is why depth comes from viewport height and never from scrolling.
@@ -187,21 +190,11 @@ def build_validated_www_grid_content_record(
 def _paced_wait(
     *, planned: float, elapsed: float, basis: str, row: dict[str, Any]
 ) -> float:
-    """Resolve the sleep for one slot under the declared cadence basis.
-
-    Under ``cycle`` the planned number is a target START-to-START interval, so
-    the capture's own duration is subtracted.  A capture slower than the target
-    leaves no wait at all; that is recorded on the row rather than quietly
-    accepted, because a pass whose captures routinely overrun its target is
-    pacing itself by accident.
-    """
-    if basis != "cycle":
-        return planned
-    remaining = planned - elapsed
-    if remaining <= 0:
-        row["cadence_overrun_seconds"] = round(elapsed - planned, 3)
-        return 0.0
-    return remaining
+    """Apply the shared cadence basis and record any overrun on the row."""
+    wait, overrun = resolve_paced_wait(planned=planned, elapsed=elapsed, basis=basis)
+    if overrun > 0:
+        row["cadence_overrun_seconds"] = overrun
+    return wait
 
 
 def _rotating_raw_sample(names: Sequence[str], *, on_date: _dt.date) -> str:
@@ -364,15 +357,15 @@ def run_reddit_grid_capture(
     delay_seconds: float = DEFAULT_DELAY_SECONDS,
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     max_bytes: int = DEFAULT_MAX_BYTES,
-    cadence_mode: CadenceMode = "fixed",
+    cadence_mode: CadenceMode = DEFAULT_CADENCE_MODE,
     cadence_window_seconds: float | None = None,
-    cadence_min_gap_seconds: float | None = None,
-    cadence_max_gap_seconds: float | None = None,
+    cadence_min_gap_seconds: float | None = DEFAULT_CADENCE_MIN_GAP_SECONDS,
+    cadence_max_gap_seconds: float | None = DEFAULT_CADENCE_MAX_GAP_SECONDS,
     cadence_random_seed: int | None = None,
     requested_retention_mode: str = DEFAULT_RETENTION_MODE,
     transport: str = "old_http",
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
-    cadence_basis: str = "gap",
+    cadence_basis: str = DEFAULT_CADENCE_BASIS,
 ) -> tuple[int, str]:
     if requested_retention_mode not in CAPTURE_RETENTION_MODES:
         raise ValueError(
@@ -430,6 +423,12 @@ def run_reddit_grid_capture(
             on_date=_dt.datetime.now(_dt.timezone.utc).date(),
         )
 
+    if cadence_mode == "bounded_jitter" and cadence_window_seconds is None:
+        # Derivable; requiring it by hand only produces a launch failure or a
+        # silently compressed range.
+        cadence_window_seconds = resolve_cadence_window_seconds(
+            slot_count=len(names), max_gap_seconds=cadence_max_gap_seconds
+        )
     cadence_plan = build_cadence_plan(
         slot_count=len(names),
         mode=cadence_mode,
