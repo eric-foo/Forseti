@@ -453,7 +453,15 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             row["status"] = status["status"]
         row["status_observed_at"] = status["status_observed_at"]
     if effects.get("capture_state") is not None:
-        _apply_capture_state(row, effects["capture_state"])
+        capture_state = _validate_field_values("capture_state", effects["capture_state"])
+        # Observation effects are historical facts replayed after the current
+        # roster chain. A lower effect may predate a later explicit upgrade, so
+        # merge it monotonically instead of treating cross-lane replay order as
+        # an attempted downgrade.
+        if CAPTURE_STATE_RANK[capture_state] > CAPTURE_STATE_RANK.get(
+            row.get("capture_state"), 0
+        ):
+            _apply_capture_state(row, capture_state)
     register_pointers = row.setdefault("register_pointers", [])
     if pointer not in register_pointers:
         register_pointers.append(pointer)
