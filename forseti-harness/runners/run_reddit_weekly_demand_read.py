@@ -54,6 +54,26 @@ GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 9
 # model adjudication; the pattern gates nothing above the floor and admits
 # nothing by itself. Swap/WTS administration is excluded by title prefix
 # because gate 6 suppresses it regardless.
+# Leaderboard lane, owner decision 2026-08-01 (floor lowered from 100 to 50
+# the same day). Praise/holy-grail threads are weak for the problem queue but
+# their top-scored comments are crowd-validated who-owns-the-category
+# evidence, so they are selected mechanically for a separate shallow-read
+# lane: no model adjudication, no gate sequence. The exclusion pattern exists
+# because appearance polls ("which hair suits me best?") match the praise
+# vocabulary while carrying no product census at all.
+LEADERBOARD_MIN_COMMENTS = 50
+LEADERBOARD_TITLE_PATTERN = re.compile(
+    r"holy grail\b|\bhg\b|top \d|favorite|favourite|\bbest\b|compliment"
+    r"|most (?:worn|complimented|used)|can.?t live without|obsessed"
+    r"|greatest|\bgoat\b|\bgrail\b|staple",
+    re.IGNORECASE,
+)
+LEADERBOARD_EXCLUDE_PATTERN = re.compile(
+    r"suits? me|on me\b|do i look|looks? i.?ve|my favou?rite look"
+    r"|which .*(?:suits|better on)",
+    re.IGNORECASE,
+)
+
 SUB_FLOOR_EXCEPTION_MIN_COMMENTS = 4
 SUB_FLOOR_EXCEPTION_EXCLUDED_PREFIXES = ("[wts", "[wtt", "[iso", "[sell")
 SUB_FLOOR_EXCEPTION_PATTERN = re.compile(
@@ -337,6 +357,28 @@ def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, 
     return review_rows
 
 
+def _build_leaderboard_lane(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    lane = [
+        item
+        for item in candidates
+        if item["comments"] is not None
+        and item["comments"] >= LEADERBOARD_MIN_COMMENTS
+        and LEADERBOARD_TITLE_PATTERN.search(item["title_or_none"] or "")
+        and not LEADERBOARD_EXCLUDE_PATTERN.search(item["title_or_none"] or "")
+    ]
+    lane.sort(key=lambda item: (-item["comments"], item["thread_url"]))
+    return [
+        {
+            "slot_id": f"lb_{position:03d}",
+            "url": item["thread_url"],
+            "subreddit": item["subreddit"],
+            "comments": item["comments"],
+            "title_or_none": item["title_or_none"],
+        }
+        for position, item in enumerate(lane, start=1)
+    ]
+
+
 def run_weekly_demand_read(
     *,
     data_root: DataLakeRoot,
@@ -484,6 +526,7 @@ def run_weekly_demand_read(
     selection_reason_counts = Counter(
         item["selection_reason"] for item in candidates
     )
+    leaderboard_slots = _build_leaderboard_lane(candidates)
     return {
         "reader": "reddit_weekly_demand_read",
         "as_of": as_of.isoformat(),
@@ -533,6 +576,18 @@ def run_weekly_demand_read(
         ),
         "capture_list_status": "blocked_pending_commission_model_adjudication",
         "capture_slots": [],
+        # The leaderboard lane is mechanically selected by policy (no model
+        # adjudication, no gate sequence), so unlike the problem queue its
+        # slots are emitted directly. Selection only: capture still runs at
+        # the standard cadence and queues after the week's problem dives.
+        "leaderboard_lane": {
+            "lane": "weekly_category_leaderboard_v0",
+            "min_comments": LEADERBOARD_MIN_COMMENTS,
+            "title_pattern": LEADERBOARD_TITLE_PATTERN.pattern,
+            "exclude_pattern": LEADERBOARD_EXCLUDE_PATTERN.pattern,
+            "threads_found": len(leaderboard_slots),
+            "slots": leaderboard_slots,
+        },
         "page_overflow_tripwire": floor_tripwire,
         "non_claims": [
             "not metric authority",
@@ -563,6 +618,17 @@ def _build_parser() -> argparse.ArgumentParser:
             "fails closed while the reader output is unadjudicated."
         ),
     )
+    parser.add_argument(
+        "--leaderboard-capture-list-output",
+        type=Path,
+        default=None,
+        help=(
+            "Write the mechanically selected leaderboard lane as a "
+            "run_reddit_old_http_batch.py URL list. Unlike the problem queue "
+            "this lane needs no model adjudication, so emitting it is not a "
+            "capture authorization shortcut for admitted threads."
+        ),
+    )
     return parser
 
 
@@ -585,6 +651,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise ValueError(
                 "--capture-list-output is blocked pending commission-conditioned "
                 "model adjudication; the weekly reader does not authorize capture"
+            )
+        if args.leaderboard_capture_list_output is not None:
+            slots = [
+                {"slot_id": slot["slot_id"], "url": slot["url"]}
+                for slot in payload["leaderboard_lane"]["slots"]
+            ]
+            args.leaderboard_capture_list_output.parent.mkdir(parents=True, exist_ok=True)
+            args.leaderboard_capture_list_output.write_text(
+                json.dumps(slots, indent=2) + "\n", encoding="utf-8"
             )
         if args.output is not None:
             args.output.parent.mkdir(parents=True, exist_ok=True)

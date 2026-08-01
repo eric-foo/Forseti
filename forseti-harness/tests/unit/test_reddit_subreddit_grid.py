@@ -831,6 +831,37 @@ def test_sub_floor_exception_admits_explicit_failure_titles_only() -> None:
         assert by_title[title]["policy_stage"] == "requires_commission_model_adjudication"
 
 
+def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_leaderboard_lane
+
+    def cand(index: int, title: str, comments: int) -> dict:
+        return {
+            "subreddit": "example",
+            "thread_url": f"https://old.reddit.com/r/example/comments/lb{index}/post/",
+            "title_or_none": title,
+            "comments": comments,
+        }
+
+    candidates = [
+        cand(1, "what's your holy grail concealer?", 259),
+        cand(2, "Best cologne for summer?", 120),
+        # Praise vocabulary but an appearance poll: excluded.
+        cand(3, "Which hair suits me the best?", 445),
+        # Praise-shaped but below the lane's 50-comment floor: excluded.
+        cand(4, "favorite drugstore mascara?", 49),
+        # No praise vocabulary: excluded.
+        cand(5, "My serum stopped working", 300),
+    ]
+
+    slots = _build_leaderboard_lane(candidates)
+    assert [s["title_or_none"] for s in slots] == [
+        "what's your holy grail concealer?",
+        "Best cologne for summer?",
+    ]
+    # Ordered by comments, slot ids stable for capture-list use.
+    assert [s["slot_id"] for s in slots] == ["lb_001", "lb_002"]
+
+
 @pytest.mark.parametrize("score", [0, None])
 def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_ten_comments(
     score: int | None,

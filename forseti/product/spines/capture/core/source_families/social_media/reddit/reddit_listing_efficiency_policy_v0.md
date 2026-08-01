@@ -74,17 +74,16 @@ customer. Under it:
   specific single-poster complaint, because a snowballing problem is one that
   more than one person already has. Corroboration orders `yes` rows; it is not
   an admission requirement and its absence is not a `no`.
-- **Adjudication depth: top 14 plus a small-thread band slice.** Per venue,
-  ranked by captured comments, the top 14 candidates are adjudicated, plus the
-  6 highest-commented candidates in the 10–49 comment band not already among
-  them. Owner-directed 2026-08-01: a flat top-14 practice alone silently set
-  the effective floor at 63–177 comments in the largest venues (it, not the
-  10+ floor, was the binding rule in 55 of 82 venues in the 2026-08-01 pool,
-  median effective floor 32), discarding exactly the small-thread band the
-  floor was chosen to protect. The band slice restores guaranteed small-thread
-  coverage at bounded cost (at most 20 rows per venue). It is a sample, not
-  exhaustive review: candidates below rank 14 and outside the slice remain
-  unseen, and that tail stays a named residual of each weekly read.
+- **Adjudication depth: the full floor-cleared pool.** Every candidate that
+  clears gate 1 — including sub-floor exception rows — is adjudicated.
+  Owner decision 2026-08-01, superseding the same-day top-14 + band-slice
+  rule by subtraction: partial depth left 482 admissible threads (32% of its
+  unseen rows) unread in the 2026-07-31 pool while silently setting the
+  effective floor at 63–177 comments in large venues, and full-pool
+  adjudication of that same pool (2,820 rows) proved affordable in one
+  session. Full depth deletes the unseen-tail residual and both depth
+  sub-rules. The dive budget below, not review depth, is the scarcity
+  control.
 - **Dive budget: 2 threads per subreddit** among gate-5 survivors, ranked by
   comments, extended to 3 in the six venues carrying the densest
   failure/unmet-need signal in that week's read. This frame's commission is a
@@ -103,7 +102,10 @@ through a separate shallow lane rather than by bending the problem gates:
   comment floor is what bounds the lane's size. Lowered from `100+` by owner
   decision 2026-08-01: the 50–99 praise band (32 recorded rows that week)
   otherwise falls between this lane and the problem queue by design, and the
-  lane's cost is capture minutes, not judgment.
+  lane's cost is capture minutes, not judgment. The weekly reader emits the
+  lane (`leaderboard_lane` in its output, `--leaderboard-capture-list-output`
+  for a ready URL list, appearance-poll titles excluded); already-captured
+  threads are deduplicated at capture-list build time, not in the reader.
 - **Capture cost is identical to a dive.** A leaderboard thread is captured
   whole-tree at the standard cadence; the lane is cheap in judgment, not in
   requests, so it queues after the week's problem dives.
@@ -147,10 +149,10 @@ a conversation yet, so a deep read has nothing to read. Applied to a real
 weekly pool the change removes 37% of the review queue and four of 129
 admitted threads, all low priority.
 
-The floor's value is adjudication cost and coverage, not dive quality — the
-ranking already puts admitted threads well above it. Reviewing the top rows per
-venue covers a far larger share of a smaller pool, which shrinks the unseen
-tail that is this policy's real blind spot.
+The floor's value is adjudication cost, not dive quality — the ranking
+already puts most admitted threads well above it. At full-pool adjudication
+depth the review queue is exactly the floor-cleared pool, so the floor (with
+its exception) is the single knob that sizes the weekly adjudication.
 
 **Do not raise it further without re-measuring.** At `30+` the same corpus loses
 20 of 129 admitted threads including two high-priority ones, and 14 venues fall
@@ -158,9 +160,9 @@ below their dive budget. Underserved-segment problems live in small threads —
 a problem affecting everyone gets 300 comments, a problem affecting an
 overlooked group gets 25 — so a higher floor deletes exactly the niche findings
 this policy exists to surface. That protection is only as real as adjudication
-depth makes it: a per-venue review cap silently re-raises the effective floor
-in large venues regardless of the floor written here, which is why the
-standing frame's adjudication-depth rule carries a small-thread band slice.
+depth makes it: any per-venue review cap silently re-raises the effective
+floor in large venues regardless of the floor written here, which is why the
+standing frame binds adjudication depth to the full floor-cleared pool.
 Evidence: `docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md`.
 
 ### 2. Listing-context sufficiency
