@@ -225,3 +225,26 @@ New high-priority signal concentrated in three places:
 Singleton highs worth a future look: disability-friendly polish technique and
 tremor-safe shaving (accessibility in beauty, two independent venues), and
 olfactory changes persisting after a JHAG product (safety signal).
+
+### Tail audit (post-pass, same day)
+
+A false-rejection audit over the recorded `no` rows found: the categorical
+wholesale venues spot-check clean (all 8 dermatologyquestions rows are genuine
+crowd diagnosis, all 14 diyfragrance rows genuine formulation; zero flips);
+the praise rejections at 100+ comments are leaderboard-lane inputs, routed not
+lost. Three named softness zones remain, in size order:
+
+1. **The floor, not the adjudication, is the dominant false-rejection
+   reservoir**: 1,654 threads at 4–9 comments were never read, ≈150 of them
+   brand-rich at the measured 9% rate. Deliberate, measured, and recorded in
+   the calibration artifact — but it is where most true positives went.
+2. **~55 image-dependent `no` calls** (39 `crowd_diagnosis_or_clinical`, 16
+   `no_visible_commercial_object`) carry the reader's own
+   insufficient-context flag: the gate-5 objective was inferred from
+   venue+flair with the image unseen. This is the least-grounded decision
+   class in the record; some are statistically wrong. The other ~316
+   context-flagged rejections are format-legible (WTS, FOTD, SOTD, haul)
+   regardless of image.
+3. **32 praise-shaped threads at 50–99 comments** fall between lanes by
+   design: too praise-shaped for this queue, below the leaderboard lane's
+   100+ floor.
