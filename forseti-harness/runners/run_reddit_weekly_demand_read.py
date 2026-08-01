@@ -42,6 +42,29 @@ LISTING_EFFICIENCY_POLICY_VERSION = "reddit_listing_efficiency_v0"
 # that small has not held a conversation yet, so there is nothing to deep-read.
 # See docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md.
 GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 9
+
+# Sub-floor exception, owner decision 2026-08-01. The 10+ floor is a budget
+# rule, and its measured cost concentrates in threads whose titles already
+# state the frame's highest-value signals: explicit failure, adverse reaction,
+# authenticity doubt, discontinuation, or dupe demand. In the 2026-07-31 pool
+# this pattern matched 47 of the 1,654 threads in the 4-9 band and they read
+# as direct extensions of that week's clusters (a Cetaphil "crazy reaction"
+# beside a fake-Cetaphil find, a Beauty of Joseon "weird reaction",
+# discontinued-product dupe requests). Matching sub-floor threads continue to
+# model adjudication; the pattern gates nothing above the floor and admits
+# nothing by itself. Swap/WTS administration is excluded by title prefix
+# because gate 6 suppresses it regardless.
+SUB_FLOOR_EXCEPTION_MIN_COMMENTS = 4
+SUB_FLOOR_EXCEPTION_EXCLUDED_PREFIXES = ("[wts", "[wtt", "[iso", "[sell")
+SUB_FLOOR_EXCEPTION_PATTERN = re.compile(
+    r"fake|counterfeit|authentic|legit|scam|discontinu|reformulat|recall"
+    r"|dupe|clone of|alternative to|replacement for|ruined|broke me out"
+    r"|reaction|allerg|burn(?:ed|s|ing)?\b|irritat|stopped working"
+    r"|doesn'?t work|not working|wasted? (?:of )?money|regret"
+    r"|smells? different|formula changed|no longer (?:available|made|sold)"
+    r"|out of stock everywhere",
+    re.IGNORECASE,
+)
 # Page-1 score floor above which a subreddit genuinely overflows one page
 # (top-10 carries 65% of weekly score on the measured distribution; a floor
 # past 50 means real traction ran off the page and the next pass should
@@ -257,12 +280,25 @@ def _listing_review_sort_key(item: dict[str, Any]) -> tuple[int, bool, int, str]
     )
 
 
+def _sub_floor_exception(item: dict[str, Any]) -> bool:
+    comments = item["comments"]
+    if comments is None or not (
+        SUB_FLOOR_EXCEPTION_MIN_COMMENTS <= comments <= GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
+    ):
+        return False
+    title = (item["title_or_none"] or "").strip()
+    if title.casefold().startswith(SUB_FLOOR_EXCEPTION_EXCLUDED_PREFIXES):
+        return False
+    return SUB_FLOOR_EXCEPTION_PATTERN.search(title) is not None
+
+
 def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ranked = sorted(
         (
             item
             for item in rows
             if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
+            or _sub_floor_exception(item)
         ),
         key=_listing_review_sort_key,
     )
@@ -290,7 +326,11 @@ def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, 
                 "title_signal_reasons": title_reasons,
                 "title_context_reasons": title_context_reasons,
                 "listing_context_state": context_state,
-                "selection_reason": "comment_floor_cleared",
+                "selection_reason": (
+                    "comment_floor_cleared"
+                    if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
+                    else "sub_floor_exception_signal"
+                ),
                 "policy_stage": "requires_commission_model_adjudication",
             }
         )
@@ -452,6 +492,8 @@ def run_weekly_demand_read(
             "policy_version": LISTING_EFFICIENCY_POLICY_VERSION,
             "general_discussion_floor_max_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS,
             "review_min_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS + 1,
+            "sub_floor_exception_min_comments": SUB_FLOOR_EXCEPTION_MIN_COMMENTS,
+            "sub_floor_exception_pattern": SUB_FLOOR_EXCEPTION_PATTERN.pattern,
             "zero_or_negative_score_is_veto": False,
             "missing_counts_are_unparsed": True,
             "engagement_rank_primary": "comments",

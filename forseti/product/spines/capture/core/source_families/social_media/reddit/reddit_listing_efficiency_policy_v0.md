@@ -98,10 +98,12 @@ problem queue (gate 4's polarity is unchanged), but its top-scored comments
 are crowd-validated who-owns-the-category evidence. That evidence is read
 through a separate shallow lane rather than by bending the problem gates:
 
-- **Selection is mechanical.** Praise/holy-grail-format titles with `100+`
+- **Selection is mechanical.** Praise/holy-grail-format titles with `50+`
   captured listing comments; no model adjudication and no gate sequence. The
-  comment floor is what bounds the lane's size (41 threads in the 2026-08-01
-  pool).
+  comment floor is what bounds the lane's size. Lowered from `100+` by owner
+  decision 2026-08-01: the 50–99 praise band (32 recorded rows that week)
+  otherwise falls between this lane and the problem queue by design, and the
+  lane's cost is capture minutes, not judgment.
 - **Capture cost is identical to a dive.** A leaderboard thread is captured
   whole-tree at the standard cadence; the lane is cheap in judgment, not in
   requests, so it queues after the week's problem dives.
@@ -120,6 +122,16 @@ encode the qualitative gates as keyword weights.
 - Captured listing comments `0–9`: return `no` for the general deep-read queue.
   Preserve the listing for direct commission-specific retrieval.
 - Captured listing comments `10+`: continue to model adjudication.
+- **Sub-floor exception (owner decision 2026-08-01):** a thread at `4–9`
+  comments whose title carries an explicit failure, adverse-reaction,
+  authenticity, discontinuation, or dupe/substitution signal continues to
+  model adjudication with `selection_reason: sub_floor_exception_signal`.
+  The pattern lives in the weekly reader; swap/WTS administration is excluded
+  by title prefix. Measured on the 2026-07-31 pool: 47 of 1,654 sub-floor
+  threads matched and read as direct extensions of that week's clusters, so
+  the exception recovers the floor's highest-value losses for ~35 extra
+  adjudication rows a week and zero capture cost. It gates nothing above the
+  floor and admits nothing by itself.
 - Missing comments: route as missing data; never coerce to zero.
 - Post score—including score `0`—never independently vetoes a thread.
 - Use the freshest available captured counts.

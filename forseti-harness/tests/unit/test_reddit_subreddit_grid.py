@@ -783,6 +783,54 @@ def test_weekly_listing_policy_routes_only_ten_plus_to_model_review() -> None:
     assert selected[-1]["listing_context_state"] == "listing_context_insufficient"
 
 
+def test_sub_floor_exception_admits_explicit_failure_titles_only() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
+
+    def row(index: int, title: str, comments: int) -> dict:
+        return {
+            "subreddit": "example",
+            "thread_url": f"https://old.reddit.com/r/example/comments/ex{index}/post/",
+            "title_or_none": title,
+            "flair_or_none": None,
+            "timestamp_utc_ms_or_none": None,
+            "score": 1,
+            "comments": comments,
+        }
+
+    rows = [
+        # Above the floor: admitted regardless, reason stays floor_cleared.
+        row(1, "Best moisturizer?", 25),
+        # Sub-floor with explicit failure/authenticity/dupe/discontinuation
+        # signals: admitted via the exception.
+        row(2, "Cetaphil cleanser crazy reaction... anyone else?", 6),
+        row(3, "Is this minoxidil legit? In Germany", 7),
+        row(4, "Need a dupe for my discontinued lip stain", 5),
+        # Sub-floor without a signal: stays out.
+        row(5, "My everyday routine", 8),
+        # Signal but below the exception's own 4-comment floor: stays out.
+        row(6, "Fake sunscreen warning", 3),
+        # Swap administration is excluded by title prefix even with a match.
+        row(7, "[WTS] Dupe Dump (Bottle)", 8),
+    ]
+
+    selected = _build_listing_review_rows(rows=rows)
+    by_title = {r["title_or_none"]: r for r in selected}
+    assert set(by_title) == {
+        "Best moisturizer?",
+        "Cetaphil cleanser crazy reaction... anyone else?",
+        "Is this minoxidil legit? In Germany",
+        "Need a dupe for my discontinued lip stain",
+    }
+    assert by_title["Best moisturizer?"]["selection_reason"] == "comment_floor_cleared"
+    for title in (
+        "Cetaphil cleanser crazy reaction... anyone else?",
+        "Is this minoxidil legit? In Germany",
+        "Need a dupe for my discontinued lip stain",
+    ):
+        assert by_title[title]["selection_reason"] == "sub_floor_exception_signal"
+        assert by_title[title]["policy_stage"] == "requires_commission_model_adjudication"
+
+
 @pytest.mark.parametrize("score", [0, None])
 def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_ten_comments(
     score: int | None,

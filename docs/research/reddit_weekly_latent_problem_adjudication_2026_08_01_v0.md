@@ -259,13 +259,28 @@ Two follow-ups from the audit, owner-directed:
   verified dupe-demand evidence; the venue's gate-5 suppression otherwise
   stands. Finding: **dupe demand extends below the finished-clone tier to a
   self-make tier with its own supply chain.**
-- **Sub-floor exception rule, measured and proposed.** In the 1,654-thread
-  4–9 band, a title pattern for explicit failure / adverse-reaction /
-  authenticity / discontinuation / dupe language hits 47 threads (~35 after
-  gate-6 WTS suppression), and they read as direct extensions of the week's
-  clusters — a Cetaphil "crazy reaction" beside the fake-Cetaphil find, a
-  Beauty of Joseon "weird reaction", discontinued-product dupe requests.
-  Adopting it would add roughly 35 rows per week to adjudication at zero
-  capture cost. Not yet adopted: it changes gate 1 and needs the reader's
-  floor logic to carry the exception, which is a bounded runtime change
-  awaiting owner authorization.
+- **Sub-floor exception rule: adopted, tuned, applied.** Owner go 2026-08-01.
+  The rule is live in gate 1 and the weekly reader (WTS-prefix exclusion,
+  plus reformulation/availability terms that immediately caught a "VS
+  Midnight Bloom formula changed??" and a "Fenty Midnight no longer
+  available?"). Applied retroactively to this week's 4–9 band it selected 44
+  rows: **37 `yes` (3 high — the Cetaphil "crazy reaction", the Beauty of
+  Joseon "weird reaction", the VS reformulation), 7 `no`.** Records:
+  `reddit_weekly_latent_problem_adjudication_2026_08_01_exception_slice_v0.json`.
+  The three highs corroborate the counterfeit/QC and reformulation clusters
+  from the smallest threads of the week — the floor's blind spot, now with
+  a working exception.
+
+The image-dependent rejection class (audit item 2) was reviewed by the owner
+and closed as not worth pursuing; those rows stand as `no`. The leaderboard
+lane floor was lowered to 50+ (policy updated); mechanical selection with an
+appearance-poll exclusion yields 41 threads this week, queued for capture as
+`reddit_leaderboard_capture_list_2026_08_01_v0.json`.
+
+**Integrated weekly funnel, final:** 6,560 eligible threads → 2,776 cleared
+the 10+ floor and 44 more entered via the sub-floor exception → 2,820
+adjudicated end to end → **771 `yes`** (27%; 129 top-14 + 122 band + 483 full
+pool incl. one capture-verified flip + 37 exception slice), 115 `borderline`,
+1,934 `no` — plus 41 leaderboard-lane threads read shallow, for 812 threads
+flowing to downstream reads. 135 problem dives and 1 verification capture in
+the lake, leaderboard capture in flight.
