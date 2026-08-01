@@ -199,7 +199,33 @@ Each specialist terminal is single-writer. `CO0` consumes its returned hash but
 does not edit the file; corrections return to the owning actor, which publishes
 a replacement hash.
 
-The phase acquisition seal uses `phase_acquisition_seal_v2` accounting and is
+Broad decision-neutral company Understanding uses
+`broad_company_understanding_v1`. It separates evidence-family coverage from
+independent depth within each material family. Before a passing seal, its
+current entry floors are:
+
+- 12 outside-in units from 12 independent origins;
+- 750 deduplicated retailer-review rows across at least two distinct corpora,
+  five product contexts, three categories, and observed low/mid/high rating
+  bands;
+- 20 independent Reddit/forum threads across at least four communities and
+  three topic categories; and
+- 30 source-native social posts from at least 20 creators, at least two
+  platforms, and at least two observed perspectives among positive, neutral,
+  critical, and mixed.
+
+These are anti-token entry floors, not completion quotas, prevalence samples,
+or market-representativeness claims. A passing seal additionally requires
+explicit echo/syndication adjudication, every material seam dispositioned, the
+last two practical acquisition batches to show no material incremental value,
+and every remaining move to be typed as dominated, source-exhausted,
+unsafe/prohibited, blocked with no route, or non-material. Same-family
+independent evidence is welcome when it corroborates, contradicts, sharpens,
+segments, explains, or changes confidence. Specialists may lock a deterministic
+batch for execution efficiency, but they must not freeze the whole adaptive job
+set before evidence reveals the next material frontier.
+
+The phase acquisition seal uses `phase_acquisition_seal_v3` accounting and is
 validated by `run_phase_acquisition_seal_validation.py`. Every planned job is
 present exactly once in completed, blocked, or unrun state, including every
 licensed SERP Phase 2 query. A valid empty Phase 2 decision receipt does not
@@ -209,6 +235,15 @@ continuation mode (`full`, `bounded_salvage`, or `stop`). Bounded salvage and
 stop remain blocked. Resume re-hashes reusable artifacts and executes only
 pending jobs unless the question, bytes, currentness, or owning authority
 changed.
+
+For `broad_company_understanding_v1`, v3 also hash-pins an
+`understanding_evidence_depth_v1` ledger. The validator recomputes the profile's
+family-depth and distribution metrics from that ledger and checks the closure
+receipt. Job completion without that evidence-depth and saturation accounting
+cannot authorize Deliver. Historical `phase_acquisition_seal_v2` artifacts are
+preserved and may be checked only with the validator's explicit
+`--allow-legacy-v2` audit switch; they do not satisfy the current broad-
+Understanding completion contract.
 
 For company Understanding, the seal must carry non-empty job accounting for
 `serp_phase1`, `official_retailer_authorization`,

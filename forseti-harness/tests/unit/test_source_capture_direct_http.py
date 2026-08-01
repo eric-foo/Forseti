@@ -16,7 +16,7 @@ import pytest
 import source_capture.adapters.direct_http as direct_http_module
 from runners import run_source_capture_http_packet as http_runner
 from runners.run_source_capture_http_packet import DIRECT_HTTP_NON_CLAIMS
-from source_capture import CaptureModeCategory
+from source_capture import CaptureModeCategory, known_fact
 from source_capture.adapters.direct_http import (
     DirectHttpCaptureFailure,
     DirectHttpCaptureFailureKind,
@@ -37,6 +37,46 @@ def scratch_dir() -> Path:
         yield path
     finally:
         shutil.rmtree(path, ignore_errors=True)
+
+
+def test_invalid_timing_metadata_is_rejected_before_network(
+    monkeypatch: pytest.MonkeyPatch, scratch_dir: Path
+) -> None:
+    fetch_called = False
+
+    def fake_capture(**_kwargs: object) -> DirectHttpCaptureSuccess:
+        nonlocal fetch_called
+        fetch_called = True
+        raise AssertionError("network capture must not start")
+
+    monkeypatch.setattr(http_runner, "fetch_direct_http_capture", fake_capture)
+
+    with pytest.raises(ValueError, match="cutoff_posture known value must be one of"):
+        http_runner.run_source_capture_http_packet(
+            url="https://example.test/source",
+            source_family="web_page",
+            source_surface="direct_http",
+            decision_question="Does invalid timing touch the network?",
+            output_directory=scratch_dir / "invalid_timing",
+            capture_context="unit test",
+            operator_category="direct_http_cli_operator",
+            capture_mode=CaptureModeCategory.STRUCTURED_ACCESS,
+            session_id=None,
+            actor_audience_context=None,
+            visible_mode_changes=[],
+            source_publication_or_event=None,
+            source_edit_or_version=None,
+            cutoff_posture=known_fact("not-a-closed-value"),
+            recapture_time=None,
+            re_capture_relationship=None,
+            warnings=[],
+            limitations=[],
+            timeout_seconds=5,
+            max_bytes=1024,
+        )
+
+    assert fetch_called is False
+    assert not (scratch_dir / "invalid_timing").exists()
 
 
 @dataclass(frozen=True)

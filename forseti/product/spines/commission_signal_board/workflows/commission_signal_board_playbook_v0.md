@@ -123,6 +123,14 @@ or unresolved identity outcome. Then select category-balanced corpora for
 expensive interpretation; do not make hero selection the boundary of raw
 customer-evidence acquisition.
 
+For broad decision-neutral company Understanding, apply
+`broad_company_understanding_v1` from the prompt-structure authority. Its
+numeric values are anti-token entry floors only. The seal still requires the
+Scanning closure test, independence/echo adjudication, material-seam
+dispositions, and two final practical batches with no material incremental
+value. Do not copy the profile into a run-specific quota or stop when a floor is
+first reached.
+
 Any pair/group dispatcher is mechanical and is not another evidence actor.
 `CO1`-`CO3` use same-root collaboration under `CO0` unless a separately
 authorized independent worktree is genuinely required. They create no further
@@ -167,13 +175,16 @@ not spend a separate sacrificial query.
    evidence-selected retailer depth waits for `CO2`'s reconciled breadth and
    selection pointers. Reddit/community capture is part of this specialist
    fan-out, not SERP Phase 2.
-3. Each specialist plans its bounded work once, locks the deterministic job
-   list that follows from the evidence, and runs compatible capture/projection
-   jobs as a batch or bounded local loop without a model turn between ordinary
-   items. Per-item raw packets, provenance, typed outcomes, and failures remain
-   distinct. Existing commission producers such as retail portfolio onboarding,
-   depth selection, and review linkage should consume the resulting manifests;
-   this protocol creates no parallel evidence schema or orchestration runtime.
+3. Each specialist plans and locks one deterministic batch at a time, then runs
+   compatible capture/projection jobs without a model turn between ordinary
+   items. After each batch, it applies the Scanning continuation test and may
+   add the next bounded batch when acquired evidence exposes a material
+   frontier. Reaching the initially planned list or a numeric floor is not a
+   terminal condition. Per-item raw packets, provenance, typed outcomes, and
+   failures remain distinct. Existing commission producers such as retail
+   portfolio onboarding, depth selection, and review linkage should consume the
+   resulting manifests; this protocol creates no parallel evidence schema or
+   orchestration runtime.
    Before retrying a review/Q&A adaptation failure, apply the grouped-family
    raw-corpus adjudication in the Retailer PDP Information-Extraction Standard;
    do not spend the retry when the preserved raw parents already satisfy that
@@ -330,7 +341,7 @@ the mandatory customer/community job.
 
 ```yaml
 phase_acquisition_seal:
-  schema_version: phase_acquisition_seal_v2
+  schema_version: phase_acquisition_seal_v3
   cycle_id:
   commission_id:
   phase: understanding | problem_framing
@@ -413,6 +424,9 @@ phase_acquisition_seal:
     locator:
     sha256:
     entries:
+  evidence_depth_ledger:
+    locator:
+    sha256:
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -434,7 +448,7 @@ or a required route that was skipped, silently substituted, incompletely
 captured, or described as exhausted without the matching route evidence,
 forces the blocked state.
 
-Validate the v2 block with
+Validate the v3 block with
 `forseti-harness/runners/run_phase_acquisition_seal_validation.py`. The planned
 job set must equal the disjoint completed, blocked, and unrun sets; counts and
 artifact hashes must match. Hash comparison canonicalizes line endings for
@@ -445,6 +459,19 @@ licensed-but-unrun Phase 2 queries. Resume re-hashes every
 reusable artifact and runs only pending jobs unless the bound question changes,
 an artifact hash drifts, its source-specific currentness expires, or owning
 authority becomes incompatible.
+
+The v3 ledger uses schema `understanding_evidence_depth_v1` and profile
+`broad_company_understanding_v1`. It hash-pins the evidence artifacts used for
+depth accounting; enumerates outside-in units, retailer-review corpora,
+Reddit/forum threads, and native-social posts with their independence and
+distribution fields; and carries echo adjudication, material-seam dispositions,
+the acquisition-batch yield sequence, and remaining-move dispositions. The
+validator derives the anti-token floor metrics from those rows. It cannot judge
+whether prose is insightful or whether a semantic independence claim is true;
+`CO0` still owns that evidence judgment and must block rather than fill fields
+with unsupported labels. Historical v2 seals require
+`--allow-legacy-v2` for audit and do not authorize a new broad-Understanding
+Deliver under the current contract.
 
 For company Understanding, non-empty route accounting is required for
 `serp_phase1`, `official_retailer_authorization`,
