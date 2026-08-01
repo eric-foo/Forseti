@@ -3,8 +3,8 @@
  "basis": "owner-directed 2026-08-01 full-coverage adjudication of every 2026-07-31 pool candidate not reviewed by the top-14 pass or the 10-49 band slice; decision records only, no capture slots issued",
  "rows_reviewed": 1513,
  "admission_counts": {
-  "no": 947,
-  "yes": 482,
+  "no": 946,
+  "yes": 483,
   "borderline": 84
  },
  "high_priority_count": 19,
@@ -19276,11 +19276,15 @@
     "score": 2,
     "comments": 13
    },
-   "admission": "no",
+   "admission": "yes",
    "reason_codes": [
-    "specialist_diy_formulation"
+    "dupe_or_substitute_demand",
+    "corroborated_cluster",
+    "flipped_by_owner_directed_capture_verification"
    ],
-   "priority_band": "suppressed"
+   "priority_band": "normal",
+   "capture_state": "already_captured",
+   "amendment_note": "2026-08-01 tail audit: owner directed a comment check; the captured thread (lake packet 01KYXV8MY5TE1BWMBP0HF7PAS6, 13/13 comments) shows the community supplying a full quantitative formula inline plus paid (creative-formulas.com) and free (Fraterworks) formula sources and GCMS services -- a self-make dupe supply chain. Gate-5 DIY suppression stands for the venue; this row is admitted on verified dupe-demand evidence."
   },
   {
    "policy_version": "reddit_listing_efficiency_v0",

@@ -248,3 +248,24 @@ lost. Three named softness zones remain, in size order:
 3. **32 praise-shaped threads at 50–99 comments** fall between lanes by
    design: too praise-shaped for this queue, below the leaderboard lane's
    100+ floor.
+
+Two follow-ups from the audit, owner-directed:
+
+- **One record flipped on captured evidence.** The r/DIYfragrance JPG Le Male
+  Le Parfum formula request (`1v5ewzf`) was captured (one bounded request,
+  13/13 comments) to test whether the community supplies formulas. It does —
+  a full quantitative formula inline, paid and free formula marketplaces, and
+  GCMS reverse-engineering services. The row is amended `no → yes` on
+  verified dupe-demand evidence; the venue's gate-5 suppression otherwise
+  stands. Finding: **dupe demand extends below the finished-clone tier to a
+  self-make tier with its own supply chain.**
+- **Sub-floor exception rule, measured and proposed.** In the 1,654-thread
+  4–9 band, a title pattern for explicit failure / adverse-reaction /
+  authenticity / discontinuation / dupe language hits 47 threads (~35 after
+  gate-6 WTS suppression), and they read as direct extensions of the week's
+  clusters — a Cetaphil "crazy reaction" beside the fake-Cetaphil find, a
+  Beauty of Joseon "weird reaction", discontinued-product dupe requests.
+  Adopting it would add roughly 35 rows per week to adjudication at zero
+  capture cost. Not yet adopted: it changes gate 1 and needs the reader's
+  floor logic to carry the exception, which is a bounded runtime change
+  awaiting owner authorization.
