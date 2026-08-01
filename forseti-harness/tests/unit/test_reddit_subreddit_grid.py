@@ -760,7 +760,9 @@ def test_weekly_listing_policy_routes_only_ten_plus_to_model_review() -> None:
                 ("Opaque tail A", 6, 10),
                 ("Opaque tail B", 7, 9),
                 ("Thin thread", 8, 4),
-                ("Zero comments", 200, 0),
+                # Below the engagement branch's score bar; a sub-floor thread
+                # that clears it is admitted and tested separately.
+                ("Zero comments", 30, 0),
             ],
             start=1,
         )
@@ -829,6 +831,50 @@ def test_sub_floor_exception_admits_explicit_failure_titles_only() -> None:
     ):
         assert by_title[title]["selection_reason"] == "sub_floor_exception_signal"
         assert by_title[title]["policy_stage"] == "requires_commission_model_adjudication"
+
+
+def test_sub_floor_engagement_admits_silent_resonance_in_discussion_venues_only() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
+
+    def row(index: int, subreddit: str, title: str, score, comments: int) -> dict:
+        return {
+            "subreddit": subreddit,
+            "thread_url": f"https://old.reddit.com/r/{subreddit}/comments/en{index}/post/",
+            "title_or_none": title,
+            "flair_or_none": None,
+            "timestamp_utc_ms_or_none": None,
+            "score": score,
+            "comments": comments,
+        }
+
+    rows = [
+        # Silent resonance in a discussion venue: many upvotes, few comments,
+        # ordinary title the title-branch cannot see. Admitted.
+        row(1, "eczema", "eczema in summer sucks (small comic i made :D)", 122, 3),
+        # Same shape in a visual-showcase venue: upvote-and-scroll, excluded.
+        row(2, "nails", "My current manicure :)", 394, 8),
+        # Discussion venue but below the score bar: excluded.
+        row(3, "eczema", "flare update", 39, 3),
+        # Missing score can never clear an engagement bar: excluded.
+        row(4, "eczema", "another ordinary title", None, 3),
+        # Title branch still wins the selection_reason when both match.
+        row(5, "eczema", "LaRoche reaction ruined my week", 90, 6),
+    ]
+
+    selected = _build_listing_review_rows(rows=rows)
+    by_title = {r["title_or_none"]: r for r in selected}
+    assert set(by_title) == {
+        "eczema in summer sucks (small comic i made :D)",
+        "LaRoche reaction ruined my week",
+    }
+    assert (
+        by_title["eczema in summer sucks (small comic i made :D)"]["selection_reason"]
+        == "sub_floor_engagement_signal"
+    )
+    assert (
+        by_title["LaRoche reaction ruined my week"]["selection_reason"]
+        == "sub_floor_exception_signal"
+    )
 
 
 def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls() -> None:

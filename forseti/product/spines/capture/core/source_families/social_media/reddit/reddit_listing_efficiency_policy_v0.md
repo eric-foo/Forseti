@@ -134,6 +134,19 @@ encode the qualitative gates as keyword weights.
   the exception recovers the floor's highest-value losses for ~35 extra
   adjudication rows a week and zero capture cost. It gates nothing above the
   floor and admits nothing by itself.
+- **Engagement branch of the sub-floor exception (owner decision
+  2026-08-01):** a sub-floor thread (`0–9` comments) in a discussion venue
+  with score `40+` continues to model adjudication with `selection_reason:
+  sub_floor_engagement_signal`. High score at low comment count is the
+  silent-resonance shape — many felt it, nobody answered — which the title
+  branch cannot see under an ordinary title. Raw score fails as an
+  instrument (the measured band's top scorers were ~90% visual showcases),
+  so the branch excludes showcase venues; the excluded-venue set lives in
+  the weekly reader and is a named maintenance point that must track roster
+  changes. Measured on the 2026-07-31 pool: 72 rows, ~19% adjudicated `yes`,
+  several invisible to every other selection instrument. The owner accepts
+  the false-positive cost: the price is a title read, and gate 5 does the
+  rest.
 - Missing comments: route as missing data; never coerce to zero.
 - Post score—including score `0`—never independently vetoes a thread.
 - Use the freshest available captured counts.

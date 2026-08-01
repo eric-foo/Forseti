@@ -74,6 +74,24 @@ LEADERBOARD_EXCLUDE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# Engagement branch of the sub-floor exception, owner decision 2026-08-01:
+# high score at low comment count is the silent-resonance shape -- many felt
+# it, nobody had an answer -- which is the latent-problem archetype the title
+# branch cannot see when the title is ordinary. Raw score fails as an
+# instrument (the 2026-07-31 band's top scorers were ~90% visual showcases:
+# upvote-and-scroll), so the branch is scoped to discussion venues; the
+# excluded-venue set is a named maintenance point that must track the roster.
+# Measured at score>=40: 72 rows that week, ~19% adjudicated yes. The owner
+# accepts the false-positive cost: adjudication reads a title, gate 5 does
+# the rest.
+SUB_FLOOR_ENGAGEMENT_MIN_SCORE = 40
+SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES = frozenset((
+    "nails nailart redditlaqueristas redditlaqueristaswap panporn projectpan "
+    "makeupflatlays skincareflatlays blackhair naturalhair curlyhair curlygirl "
+    "locs fancyfollicles hairdye hair makeupaddiction blkgrlbeauty "
+    "malegrooming wicked_edge beautyboxes fragranceswap"
+).split())
+
 SUB_FLOOR_EXCEPTION_MIN_COMMENTS = 4
 SUB_FLOOR_EXCEPTION_EXCLUDED_PREFIXES = ("[wts", "[wtt", "[iso", "[sell")
 SUB_FLOOR_EXCEPTION_PATTERN = re.compile(
@@ -312,6 +330,24 @@ def _sub_floor_exception(item: dict[str, Any]) -> bool:
     return SUB_FLOOR_EXCEPTION_PATTERN.search(title) is not None
 
 
+def _sub_floor_engagement(item: dict[str, Any]) -> bool:
+    comments = item["comments"]
+    if comments is None or comments > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS:
+        return False
+    if item["subreddit"] in SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES:
+        return False
+    score = item["score"]
+    return score is not None and score >= SUB_FLOOR_ENGAGEMENT_MIN_SCORE
+
+
+def _selection_reason(item: dict[str, Any]) -> str:
+    if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS:
+        return "comment_floor_cleared"
+    if _sub_floor_exception(item):
+        return "sub_floor_exception_signal"
+    return "sub_floor_engagement_signal"
+
+
 def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ranked = sorted(
         (
@@ -319,6 +355,7 @@ def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, 
             for item in rows
             if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
             or _sub_floor_exception(item)
+            or _sub_floor_engagement(item)
         ),
         key=_listing_review_sort_key,
     )
@@ -346,11 +383,7 @@ def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, 
                 "title_signal_reasons": title_reasons,
                 "title_context_reasons": title_context_reasons,
                 "listing_context_state": context_state,
-                "selection_reason": (
-                    "comment_floor_cleared"
-                    if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
-                    else "sub_floor_exception_signal"
-                ),
+                "selection_reason": _selection_reason(item),
                 "policy_stage": "requires_commission_model_adjudication",
             }
         )
@@ -537,6 +570,10 @@ def run_weekly_demand_read(
             "review_min_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS + 1,
             "sub_floor_exception_min_comments": SUB_FLOOR_EXCEPTION_MIN_COMMENTS,
             "sub_floor_exception_pattern": SUB_FLOOR_EXCEPTION_PATTERN.pattern,
+            "sub_floor_engagement_min_score": SUB_FLOOR_ENGAGEMENT_MIN_SCORE,
+            "sub_floor_engagement_excluded_venues": sorted(
+                SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES
+            ),
             "zero_or_negative_score_is_veto": False,
             "missing_counts_are_unparsed": True,
             "engagement_rank_primary": "comments",

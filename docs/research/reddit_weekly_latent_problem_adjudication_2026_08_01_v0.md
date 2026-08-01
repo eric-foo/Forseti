@@ -278,9 +278,17 @@ appearance-poll exclusion yields 41 threads this week, queued for capture as
 `reddit_leaderboard_capture_list_2026_08_01_v0.json`.
 
 **Integrated weekly funnel, final:** 6,560 eligible threads → 2,776 cleared
-the 10+ floor and 44 more entered via the sub-floor exception → 2,820
-adjudicated end to end → **771 `yes`** (27%; 129 top-14 + 122 band + 483 full
-pool incl. one capture-verified flip + 37 exception slice), 115 `borderline`,
-1,934 `no` — plus 41 leaderboard-lane threads read shallow, for 812 threads
-flowing to downstream reads. 135 problem dives and 1 verification capture in
-the lake, leaderboard capture in flight.
+the 10+ floor, 44 entered via the sub-floor title exception, and 72 via the
+engagement branch (score 40+ at 0–9 comments, discussion venues; owner
+decision the same day, accepting the false-positive cost for silent-resonance
+coverage — records in
+`reddit_weekly_latent_problem_adjudication_2026_08_01_engagement_slice_v0.json`)
+→ **2,892 adjudicated end to end** → **785 `yes`** (27%; 129 top-14 + 122
+band + 483 full pool incl. one capture-verified flip + 37 title-exception +
+14 engagement, the last including finds invisible to every other instrument:
+an eczema-in-summer comic resonating at score 122 with 3 comments, a
+working-in-beauty overconsumption-struggle thread, a 1-comment "90 days of
+adapalene changed my life"), 119 `borderline`, 1,988 `no` — plus 41
+leaderboard-lane threads read shallow, for **826 threads flowing to
+downstream reads**. 135 problem dives and 1 verification capture in the
+lake, leaderboard capture in flight.
