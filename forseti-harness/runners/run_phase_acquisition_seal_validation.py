@@ -886,9 +886,20 @@ def _load_retailer_axis_coding(
     if coding.get("subject") != ledger.get("subject"):
         findings.append("retailer_axis_coding_subject_mismatch")
         complete = False
-    if coding.get("cycle_id") != ledger.get("cycle_id"):
-        findings.append("retailer_axis_coding_cycle_id_mismatch")
-        complete = False
+    coding_cycle_id = coding.get("cycle_id")
+    ledger_cycle_id = ledger.get("cycle_id")
+    if coding_cycle_id != ledger_cycle_id:
+        reuse = value.get("reuse")
+        if not (
+            isinstance(reuse, dict)
+            and reuse.get("mode") == "pinned_unchanged_reuse"
+            and reuse.get("source_cycle_id") == coding_cycle_id
+            and reuse.get("current_cycle_id") == ledger_cycle_id
+            and isinstance(reuse.get("reason"), str)
+            and reuse.get("reason")
+        ):
+            findings.append("retailer_axis_coding_cycle_id_mismatch")
+            complete = False
 
     boundaries = coding.get("corpora")
     boundary_map: dict[str, int] = {}

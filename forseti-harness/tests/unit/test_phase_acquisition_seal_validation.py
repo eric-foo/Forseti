@@ -1086,6 +1086,65 @@ def test_consumer_brand_v2_keeps_choice_outcomes_on_the_causal_axis(
     assert _validate(tmp_path, _make_passing(seal)) == []
 
 
+def test_consumer_brand_v2_reuses_pinned_unchanged_retailer_coding(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    coding_path = tmp_path / "retailer_product_axis_coding.json"
+    coding = json.loads(coding_path.read_text(encoding="utf-8"))
+    coding["cycle_id"] = "prior-consumer-cycle"
+    coding_path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "retailer-axis-coding"
+    )["sha256"] = _artifact_hash(coding_path)
+    ledger["retailer_axis_coding"]["reuse"] = {
+        "mode": "pinned_unchanged_reuse",
+        "source_cycle_id": coding["cycle_id"],
+        "current_cycle_id": ledger["cycle_id"],
+        "reason": "No retailer corpus or coding rule changed in this continuation.",
+    }
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_consumer_brand_v2_rejects_unreceipted_retailer_coding_reuse(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    coding_path = tmp_path / "retailer_product_axis_coding.json"
+    coding = json.loads(coding_path.read_text(encoding="utf-8"))
+    coding["cycle_id"] = "prior-consumer-cycle"
+    coding_path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "retailer-axis-coding"
+    )["sha256"] = _artifact_hash(coding_path)
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "retailer_axis_coding_cycle_id_mismatch" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
 def test_consumer_brand_v2_rejects_product_context_outside_corpus(
     tmp_path: Path,
 ) -> None:

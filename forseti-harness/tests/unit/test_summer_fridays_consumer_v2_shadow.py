@@ -7,6 +7,8 @@ from pathlib import Path
 import yaml
 
 from runners.run_phase_acquisition_seal_validation import (
+    CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    CONSUMER_DEPTH_LEDGER_VERSION,
     LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     LEGACY_CONSUMER_DEPTH_LEDGER_VERSION,
     _artifact_hash,
@@ -34,6 +36,16 @@ V2_SEAL = REPO_ROOT / (
 V2_LEDGER = REPO_ROOT / (
     "docs/research/"
     "summer_fridays_understanding_dogfood_20260802_p11r5/"
+    "coordinated/evidence_depth_ledger.json"
+)
+V3_SEAL = REPO_ROOT / (
+    "docs/workflows/"
+    "summer_fridays_understanding_dogfood_20260802_p11r6/"
+    "coordinated/acquisition_seal.md"
+)
+V3_LEDGER = REPO_ROOT / (
+    "docs/research/"
+    "summer_fridays_understanding_dogfood_20260802_p11r6/"
     "coordinated/evidence_depth_ledger.json"
 )
 
@@ -172,3 +184,29 @@ def test_summer_fridays_p11r5_requires_explicit_legacy_audit() -> None:
         "application_and_tool_performance": "signal",
         "hype_originality_and_trust": "strong",
     }
+
+
+def test_summer_fridays_p11r6_satisfies_current_consumer_contract() -> None:
+    assert validate_phase_acquisition_seal(
+        seal_path=V3_SEAL,
+        repo_root=REPO_ROOT,
+    ) == []
+
+    ledger = json.loads(V3_LEDGER.read_text(encoding="utf-8"))
+    assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION
+    assert ledger["profile_id"] == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert len(ledger["families"]["reddit_forum"]["threads"]) == 40
+    assert len(ledger["product_axes"]) == 12
+    assert all(
+        len(axis["focused_search_jobs"]) == 3
+        for axis in ledger["product_axes"]
+    )
+    assert all(
+        batch["batch_kind"] == "live_acquisition"
+        and batch["material_incremental_value"] is False
+        and batch["new_customer_segments"] == 0
+        and batch["new_product_conditions"] == 0
+        and batch["new_comparison_choices"] == 0
+        and batch["new_competitor_alternatives"] == 0
+        for batch in ledger["closure"]["batches"][-2:]
+    )

@@ -1,0 +1,23 @@
+{
+  "schema_version": "consumer_brand_axis_inventory_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r6_20260802",
+  "created_at": "2026-08-02T13:09:53+00:00",
+  "authority_revision": "8f64d734ac17a84ba289faac9eaedb351f563de8",
+  "parent_ledger": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/evidence_depth_ledger.json",
+  "parent_ledger_sha256": "04ab8afedec9159789af6ae993b88ccec83f0eae6480cf5c95ed0e1744901536",
+  "axes": [
+    {"axis_id": "reaction_and_breakout", "label": "Reaction, irritation, and breakout risk", "polarity": "pain", "disposition": "material"},
+    {"axis_id": "value_and_quantity", "label": "Value for price and usable quantity", "polarity": "pain", "disposition": "material"},
+    {"axis_id": "packaging_and_dispensing", "label": "Packaging and dispensing reliability", "polarity": "pain", "disposition": "material"},
+    {"axis_id": "wear_and_longevity", "label": "Wear time and longevity", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "hydration_and_moisture", "label": "Hydration and moisture performance", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "texture_and_skin_finish", "label": "Texture, feel, and skin finish", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "coverage_and_pigment", "label": "Coverage and pigment payoff", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "shade_and_color_fit", "label": "Shade range and color fit", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "scent_and_flavor", "label": "Scent and flavor appeal", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "formula_consistency_and_change", "label": "Formula consistency and change", "polarity": "pain", "disposition": "material"},
+    {"axis_id": "application_and_tool_performance", "label": "Application and tool performance", "polarity": "mixed", "disposition": "material"},
+    {"axis_id": "hype_originality_and_trust", "label": "Hype, originality, and product trust", "polarity": "pain", "disposition": "material"}
+  ]
+}
