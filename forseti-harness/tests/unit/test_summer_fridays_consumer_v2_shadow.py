@@ -186,11 +186,30 @@ def test_summer_fridays_p11r5_requires_explicit_legacy_audit() -> None:
     }
 
 
-def test_summer_fridays_p11r6_satisfies_current_consumer_contract() -> None:
-    assert validate_phase_acquisition_seal(
+def test_summer_fridays_p11r6_is_preserved_provenance_not_a_passing_seal() -> None:
+    """The p11r6 dogfood stays pinned as provenance, but it may not pass.
+
+    The expanded current-contract checks require proven Reddit
+    candidate-frontier exhaustion at any thread count, per-batch usable-thread
+    accounting, comment-coding-backed support-ref fields, and
+    checkout-portable repo-internal locators. The p11r6 run predates those
+    obligations, so the validator must reject it until the Chief Architect
+    regenerates the evidence-depth ledger with the missing proofs.
+    """
+    findings = validate_phase_acquisition_seal(
         seal_path=V3_SEAL,
         repo_root=REPO_ROOT,
-    ) == []
+    )
+
+    assert findings != []
+    assert "passing_seal_without_reddit_frontier_exhaustion" in findings
+    assert "missing_reddit_frontier_discovery_jobs" in findings
+    assert "invalid_saturation_batch_new_usable_reddit_threads" in findings
+    # The historical seal must never be waved through as legacy either.
+    assert (
+        "legacy_consumer_v1_requires_explicit_historical_audit"
+        not in findings
+    )
 
     ledger = json.loads(V3_LEDGER.read_text(encoding="utf-8"))
     assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION

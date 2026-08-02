@@ -112,9 +112,14 @@ When product/customer experience is material, consumer brands use the
 playbook's `broad_consumer_brand_understanding_v2` completion profile. Its v3
 depth ledger prevents aggregate family counts from substituting for
 cross-family product-axis evidence, comment- and row-derived customer evidence,
-three-way focused follow-ups, source-native capture, reconciled targets, and
-live axis-aware saturation. The prompt-structure authority owns the exact
-fields, floor/exhaustion rule, and hybrid strength bars.
+three-way focused follow-ups, source-native capture, reconciled targets,
+proven candidate-frontier exhaustion (the 40-thread floor is a minimum, never
+a completion target), and live axis-aware saturation. Frontier exhaustion is
+bounded to two different final discovery sweeps across every material axis,
+with queries, result packets, and surfaced candidates reconciled; unrelated
+search jobs or a prose exhaustion claim do not count. The prompt-structure
+authority owns the exact fields, frontier/exhaustion rule, and hybrid strength
+bars.
 
 When both turns are explicitly commissioned, two turns are the normal budget,
 not permission to convert a blocked acquisition into apparent completion. The

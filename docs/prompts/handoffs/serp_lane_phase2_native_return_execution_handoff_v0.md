@@ -72,7 +72,17 @@ Each job binds the axis-inventory hash and its later planning time. Phase 2 stil
 does not acquire native evidence: every concrete selected source pointer becomes
 a job in the existing owning route accounting and must reconcile to a
 source-native captured body plus ledgered evidence unit, or a typed terminal
-outcome, before the acquisition seal can pass.
+outcome, before the acquisition seal can pass. A SERP artifact never doubles as
+the captured native body. The 40-thread community floor is a minimum, not a
+completion target: the seal passes only with a proven
+`reddit_candidate_frontier` exhaustion block in which every discovered
+candidate thread is terminally accounted and the final two live batches
+declare and prove zero `new_usable_reddit_threads`. Those final batches must
+consist only of completed Reddit frontier-discovery jobs, each covering every
+material axis with a different query and a different hash-pinned result packet.
+Each job lists every candidate it surfaced, and those lists reconcile exactly
+to the terminal candidate ledger. This proves exhaustion of the executed
+routes; it does not claim that the whole internet was searched.
 
 ## Required reads (pointer-first; the spec owns the method)
 

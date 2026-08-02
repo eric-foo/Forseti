@@ -133,10 +133,21 @@ first reached.
 
 For a consumer brand where product/customer experience is material, select
 `broad_consumer_brand_understanding_v2` instead and record that choice in the
-commission receipt before scanning. Its v3 depth ledger applies the same
+commission receipt before scanning, then retain it in the completed company
+record. Its v3 depth ledger applies the same
 aggregate anti-token floors except for a 40-thread Reddit/forum floor, but
-completion is organized around material product pain/delight axes. Fewer than
-40 usable unique threads requires a proven source-exhaustion exception; reaching
+completion is organized around material product pain/delight axes. Forty
+threads are a minimum floor, never a completion target: every passing run
+proves its bounded eligible candidate frontier exhausted in the ledger's
+`reddit_candidate_frontier`, with every discovered candidate terminally
+accounted, and keeps acquiring while any new unique thread corroborates,
+contradicts, compares, or sharpens an axis. The proof is bounded to the
+executed routes: every discovery job pins its axis, query, execution time,
+result artifact, and surfaced candidate IDs. The last two batches are
+different, full-axis frontier sweeps—not unrelated Phase 2 jobs—and both must
+add zero usable threads. Fewer than
+40 usable unique threads additionally requires the proven source-exhaustion
+floor exception; reaching
 40 never stops an axis that remains materially open. `CO3` codes the eligible
 deduplicated retailer rows
 to axis-specific and overall explicit choice outcomes, tags social-source
@@ -524,11 +535,20 @@ and closure accounting while using `external_context` for the human-facing
 External company, editorial and industry context family. It also carries the
 pre-Phase-2 product-axis inventory, the hash-pinned retailer and community
 coding references, per-corpus recomputed incidence, social relationship and
-owned-direction tags, the 40-thread floor or proven exhaustion exception,
+owned-direction tags, the 40-thread minimum floor plus a proven
+`reddit_candidate_frontier` exhaustion block with every discovered candidate
+terminally accounted, its discovery query and captured result packet pinned,
+and two different full-axis final sweeps yielding no usable thread (and the
+additional floor exception when below 40),
+per-thread source-native artifacts, comment-coding-backed support-ref fields,
 three focused Phase 2 jobs per material axis, and target reconciliation from
-search pointer through native body to evidence unit. Its final two batches must
-be live acquisition and add no axis, segment, product condition, comparison
-choice, competitor alternative, strength/incidence change, or material seam.
+search pointer through native body to evidence unit — a SERP artifact never
+doubles as the native body. Its final two batches must be live Reddit-frontier
+acquisitions, each covering every material axis with different queries and
+captured result packets, and add no axis, segment, product condition, comparison
+choice, competitor alternative, strength/incidence change, usable Reddit
+thread (declared per batch as `new_usable_reddit_threads` and recomputed
+against the frontier), or material seam.
 Historical consumer v1/v2 ledgers require
 `--allow-legacy-consumer-v1` and are never upgraded by assertion.
 

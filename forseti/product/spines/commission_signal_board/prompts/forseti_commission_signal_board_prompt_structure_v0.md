@@ -814,16 +814,25 @@ axis-specific choice outcomes; comment-code community support; classify social
 and external relationship before awarding distinct-origin independent support;
 and, after the inventory hash exists, route corroboration/segmentation,
 comparison/switch/value, and disconfirmation/strongest-delight Phase 2 jobs for
-every material axis. Acquire at least 40 usable unique Reddit/forum threads or
-prove source exhaustion. A search result remains a pointer: `captured` requires
-the source-native body and a ledgered evidence unit. Reconcile every selected
+every material axis. Treat 40 usable unique Reddit/forum threads as a minimum
+floor, never a completion target: keep acquiring while any new unique thread
+still corroborates, contradicts, compares, or sharpens an axis, and seal only
+after the bounded eligible candidate frontier is proven exhausted with every
+discovered candidate terminally accounted in the ledger's
+`reddit_candidate_frontier`. Bind each discovery job to one axis, its query and
+execution time, a hash-pinned result packet, and all surfaced candidate IDs.
+The final two batches must be different full-axis Reddit-frontier sweeps, not
+unrelated Phase 2 jobs, and both must add zero usable threads. A search result
+remains a pointer: `captured`
+requires the source-native body and a ledgered evidence unit, and a SERP
+artifact never doubles as a native body. Reconcile every selected
 target and retain same-topic sharpening volume separately from distinct-origin
 spread. Add every material follow-up to existing route accounting and resolve
 it through the owning Scanning/Capture route before sealing. The final two
 batches must be live acquisitions and add no axis, segment, product condition,
-comparison choice, competitor alternative, strength/incidence change, or
-ordinary material seam. Read the authority for the exact schema and hybrid
-strength bars; do not reconstruct them from this prompt.
+comparison choice, competitor alternative, strength/incidence change, usable
+Reddit thread, or ordinary material seam. Read the authority for the exact
+schema and hybrid strength bars; do not reconstruct them from this prompt.
 
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.

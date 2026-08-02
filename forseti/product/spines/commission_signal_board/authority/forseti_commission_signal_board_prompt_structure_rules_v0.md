@@ -224,11 +224,29 @@ distribution counterweight to repeated posts from any one account.
 When the subject is a consumer brand and product/customer experience is
 material, the commission receipt selects
 `broad_consumer_brand_understanding_v2`, and the acquisition seal binds an
-`understanding_evidence_depth_v3` ledger. It retains the aggregate entry floors
-above except that Reddit/forum depth rises to 40 usable unique threads. Fewer
-than 40 can pass only with an explicit `source_exhausted` exception after every
-axis search job and selected target is terminal and the final two live batches
-produce no material change. The profile renames the human-facing outside source
+`understanding_evidence_depth_v3` ledger. The selected completion profile stays
+in the company record through completion; it is not a commission-only field.
+The profile retains the aggregate entry floors
+above except that Reddit/forum depth rises to 40 usable unique threads. Forty
+is a minimum floor, never a completion target. Every passing run must prove
+that its bounded eligible candidate frontier is exhausted in a
+`reddit_candidate_frontier` block: every discovered candidate thread carries a
+terminal disposition and an accounted discovery job, the captured set equals
+the ledgered independent threads, non-captured candidates carry reasons, and
+each independent thread pins its own source-native artifact. Acquisition
+continues while any new unique thread still corroborates, contradicts,
+compares, or sharpens an axis. This is bounded route exhaustion, not a claim
+that the whole internet was searched. Each frontier discovery job names one
+material axis, its executed query and time, its hash-pinned result artifacts,
+and every candidate thread it surfaced. The final two batches consist only of
+completed frontier discovery jobs; each batch covers every material axis, uses
+a different query and result artifact for that axis than the other batch, and
+adds no usable thread. The validator reconciles job, artifact, candidate, and
+batch accounting rather than accepting a prose `source_exhausted` assertion.
+Fewer than 40 additionally requires the explicit
+`source_exhausted` floor exception after every axis search job and selected
+target is terminal and the final two live batches produce no material change.
+The profile renames the human-facing outside source
 family to **External company, editorial and industry context** and adds the
 cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
 audit-only through `--allow-legacy-consumer-v1`; they do not satisfy a new run.
@@ -279,10 +297,17 @@ exact duplicates collapse and do not inflate distinct-origin spread.
 Community support is comment-coded: thread and comment identity, product
 context, axis, contribution, choice, alternative brand when present, explicit
 outcome, source reference, and parser limitation. Every usable independent
-Reddit/forum thread has at least one such row. The final two batches are live
-search/capture batches, not desk rechecks, and must show zero new product axes,
+Reddit/forum thread has at least one such row, and an axis support reference
+into a community thread must be backed by a coding row for that axis and
+thread carrying the same contribution, choice, and alternative brand; a
+support claim no coded comment states is invalid. SERP or search-registry
+artifacts never satisfy a native-body reference. The final two batches are
+live, full-axis Reddit frontier search/capture sweeps, not desk rechecks or
+unrelated search jobs, and must show zero new product axes,
 segments, product conditions, comparison choices, competitor alternatives,
-changed axis strengths, changed axis incidence, or ordinary material seams.
+changed axis strengths, changed axis incidence, new usable Reddit threads, or
+ordinary material seams; each batch declares `new_usable_reddit_threads` and
+the validator recomputes it against the frontier's captured candidates.
 Owned social rows carry a normalized `YYYY-MM-DD` observed date and
 direction-event tags so Deliver can derive a factual direction timeline without
 a separate Phase A artifact. Preserve the source's original date text in the
@@ -323,8 +348,12 @@ Understanding completion contract.
 For `broad_consumer_brand_understanding_v2`, v3 instead hash-pins an
 `understanding_evidence_depth_v3` ledger and applies the product-axis,
 row-derived retailer-incidence, comment-coding, source-native capture,
-target-reconciliation, focused-search, and live axis-aware closure checks above.
-A passing family-count ledger without those checks is invalid.
+target-reconciliation, focused-search, candidate-frontier-exhaustion, and live
+axis-aware closure checks above. A passing family-count ledger without those
+checks is invalid. Repository-tracked evidence artifacts must be pinned with
+repo-relative locators; absolute locators are reserved for machine-local
+raw-lake roots outside the repository, and the validator rejects a
+repo-internal absolute locator as nonportable.
 
 For company Understanding, the seal must carry non-empty job accounting for
 `serp_phase1`, `official_retailer_authorization`,

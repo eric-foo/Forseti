@@ -1475,16 +1475,16 @@ def _validate_company_completion(
                 )
             )
     commission_stage = run_boundary == COMMISSION_STAGE_RUN_BOUNDARY
-    if commission_stage:
-        if _normalize_vocab(receipt.get("understanding_completion_profile")) not in (
-            UNDERSTANDING_COMPLETION_PROFILES
-        ):
-            findings.append(
-                Finding(
-                    "missing_or_invalid_understanding_completion_profile",
-                    "Commission-stage company acquisition must select broad_company_understanding_v1 or broad_consumer_brand_understanding_v2 before scanning.",
-                )
+    if _normalize_vocab(receipt.get("understanding_completion_profile")) not in (
+        UNDERSTANDING_COMPLETION_PROFILES
+    ):
+        findings.append(
+            Finding(
+                "missing_or_invalid_understanding_completion_profile",
+                "Every company Understanding record must carry broad_company_understanding_v1 or broad_consumer_brand_understanding_v2 from commission through completion.",
             )
+        )
+    if commission_stage:
         if _normalize_vocab(receipt.get("controller_placement")) != "top_level_co0":
             findings.append(
                 Finding(

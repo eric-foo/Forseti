@@ -57,6 +57,19 @@ def test_commission_stage_requires_understanding_completion_profile() -> None:
     )
 
 
+def test_completed_company_report_retains_understanding_completion_profile() -> None:
+    text = _valid_company_text().replace(
+        "  understanding_completion_profile: broad_company_understanding_v1\n",
+        "",
+        1,
+    )
+
+    assert (
+        "missing_or_invalid_understanding_completion_profile"
+        in _company_codes(text)
+    )
+
+
 def _valid_company_text() -> str:
     return COMPANY_FIXTURE.read_text(encoding="utf-8")
 
