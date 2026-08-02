@@ -169,7 +169,7 @@ structural driver consumers now openly route around via grey imports.
 addresses both currents at once — and is the opposite of what the distrusted
 influencer economy sells.
 
-## Leaderboard annex — who owns the categories (27 shallow reads)
+## Leaderboard annex — who owns the categories (41 reads; completed 2026-08-03)
 
 Crowd-validated incumbents this week: **LV Imagination, YSL La Nuit de
 l'Homme, Bleu de Chanel** (designer fragrance leaderboards, repeatedly);
@@ -180,6 +180,21 @@ Gross peels** (at-home treatment); **Etude/TOCOBO lip masks** (K-lip);
 **Parfums de Marly Sedley** (fresh niche). Notable mourning: Numbuzin No. 2
 (discontinued, still named as irreplaceable). Full maps per thread in
 `extracts_slice_3.jsonl`.
+
+Amendment (2026-08-03) — the 14 throttled leaderboard threads were recaptured
+and read, completing the lane at 41/41. What they add: the strongest pattern
+is praise-with-a-complaint-underneath. Tom Ford's cologne ranking (1v6n6yy)
+carries a consistent undertow that the flagship line underperforms for its
+price, with Thameen named as substitute; YSL La Nuit de l'Homme's
+compliment-crown (1v6u2hc) is again paired with longevity complaints and a
+Riiffs clone named; Parfums de Marly Blue Talisman (1v8j7qi) is crowned but
+polarizing. Drugstore mascara consolidated hard around tubing formats
+(L'Oreal Panorama/Telescopic, Maybelline Sky High, Essence Lash Princess —
+1v9cg1i). Two mourning entries: DSquared2 Wood (1v6lmgp — the brand's own
+successor rejected, no replacement found) and a discontinued Zara vanilla
+(1v9412s). One clean wound signal rode in this lane: a Haus Labs shade
+sampler failing cool-toned pale users at unusual volume (1v8hcuw) — which the
+cross-thread index below independently confirms as a multi-thread pattern.
 
 ## GTM target cards (added same day under the new deliverable contract)
 
@@ -223,16 +238,89 @@ Dossier, Montagne); salon price revolt into press-ons/DIY gel with a
 retention-failure product gap (1v9e1ph, 1v9tulr, 1v5f4ng); kids' swim-season
 haircare against failed 3-in-1s (1v9wviz — Malibu C, Aqua Guard named).
 
+## Cross-thread corroboration supplement (added 2026-08-03, full-pool extraction)
+
+The remaining 651 admitted threads were captured and extracted (slices 4–17),
+bringing the extract pool to 814 threads — every admitted thread this week
+except one throttled URL (rem_118, HTTP 429). A cross-thread brand index was
+built over the full pool: `brand_cross_thread_index_v0.json` in the extracts
+directory maps 1,353 named brands to the distinct threads and venues they
+appear in, by context. 116 brands carry a negative report (failure,
+counterfeit, reformulation, safety, sensory failure, packaging failure, or
+price) in two or more distinct threads. This is the upgrade the deliverable
+contract asked for: corroboration can now be stated as "N threads across M
+venues," not "one thread, many voices."
+
+What full coverage does to the five wound cards:
+
+- **Armani (card 2) strengthens materially and widens.** The reformulation
+  wound is now visible in 3 distinct threads across 3 venues and two product
+  lines: the Luminous Silk thread (1vaeqn7) plus two independent fragrance
+  threads mourning the original Acqua di Gio against its replacement
+  Profondo (1vb6i6x — current formula called a "crude simulacrum"; 1v6b9np).
+  This is now a brand-practice pattern, not a single-product incident.
+- **Dior — the destination brand in card 2 — has the week's widest negative
+  footprint.** 11 negative threads across 7 venues (of 23 total appearances),
+  including 4 separate reformulation reports (Backstage highlighter, blush
+  shade 001, a fragrance reformulated "without warning") and repeated
+  oxidation/sensory complaints. The card's switch story holds, but a
+  challenger pitch can note the catch-brand is running the same reformulation
+  playbook that is bleeding Armani.
+- **COSRX (card 4) holds and gains channel texture.** The Amazon counterfeit
+  wound stays anchored in 1v83eiy, but the index adds a second channel
+  wound: the propolis toner delisted from Ulta and Yami, pushing loyal buyers
+  to the brand site (1v615jc), and a safety thread naming snail mucin
+  (1v81e0c). 16 threads / 8 venues total presence — the most-discussed
+  K-beauty brand in the pool. Beauty of Joseon's parallel counterfeit pattern
+  is now 3 counterfeit reports across its 6 negative threads.
+- **Dieux (card 1), Rhode (card 3), Cantu (card 5) remain within-thread
+  corroborated.** Full coverage did not surface additional threads for the
+  mildew, buy-despite-failure, or reputation-lag claims specifically (Dieux's
+  other negative threads concern different products; Rhode adds only a price
+  complaint). These cards keep their stated single-thread basis — honest
+  label, unchanged.
+
+New cross-thread patterns the initial 163-thread read could not see (each is
+a candidate card for next week's read; counts are distinct threads with
+negative context / distinct venues):
+
+- **Haus Labs 7/4** — shade-match failure dominates (6 sensory reports):
+  foundation shades reading wrong on pale and cool-toned buyers across
+  makeup venues; corroborates the leaderboard-lane sampler thread.
+- **Vanicream 8/6** — the sensitive-skin default is accumulating sensory
+  complaints (5 threads: texture, pilling, sting reports) — a trust-brand
+  showing cracks, mirror-image of the Cantu reputation-lag story.
+- **CeraVe 9/6** — same shape: recommended everywhere, 5 failure reports
+  (breakouts, barrier complaints) riding alongside the praise.
+- **Kayali 6/4 and Parfums de Marly 7/3** — mid/high fragrance houses with
+  recurring longevity-versus-price complaints; clone houses (Riiffs, Lattafa,
+  Dossier) are named as the destination in the same breath.
+- **Where switchers say they land** (aggregate of the new `where_customers_go`
+  field, 651 threads): Hourglass, Dossier, Vaseline, MAC and NYX lead; clone
+  and drugstore destinations outnumber prestige destinations — consistent
+  with Cluster 7's value-migration read.
+
+Residual on this supplement: extraction workers occasionally used contexts
+outside the schema enum (`performance`, `dupe`, `availability`); those are
+not counted as negative in the index, so cross-thread negative counts are a
+floor, not a ceiling. The index is read-layer only and never feeds admission
+gates, per the policy.
+
 ## Method and residuals
 
-136 problem dives read full-tree and 27 leaderboard threads read
-top-comments-only by worker extraction agents; extracts preserved in the
-repo; synthesis by the home model. Extraction faithfulness was contract-bound
-(verbatim quotes, no invented brands) and spot-verified by the agents
-themselves, but extraction error is a residual — any claim used
-client-facing should be re-read against the cited packet first. 14
-leaderboard threads of 41 were throttled out of the first capture run and
-recapture is in flight; their reads will amend the annex. Comment trees are
+Initial read: 136 problem dives read full-tree and 27 leaderboard threads
+read top-comments-only by worker extraction agents. Full-pool amendment
+(2026-08-03): the remaining 651 admitted threads (including the 14 recaptured
+leaderboard threads) were captured and extracted by 14 worker agents,
+bringing the annex to 814 extracts across slices 0–17; the only capture miss
+this week is one throttled URL (HTTP 429). Extracts preserved in the repo;
+synthesis by the home model. Extraction faithfulness was contract-bound
+(verbatim quotes, no invented brands) and verified by the agents — several
+verification passes caught and fixed truncated or misattributed quotes
+before delivery — but extraction error is a residual — any claim used
+client-facing should be re-read against the cited packet first. Slices 0–3
+predate the deliverable-contract schema and lack the `independent_reporters`
+and `where_customers_go` fields; slices 4–17 carry them. Comment trees are
 depth-bounded per the capture contract (nofollow continuation tails not
 followed). This read serves the default challenger commission; none of it is
 client-specific evidence yet.
