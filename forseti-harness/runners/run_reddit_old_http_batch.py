@@ -100,6 +100,15 @@ ACCESS_DIAGNOSTIC_DIRECTORY = "access_diagnostics"
 # discarded. Raw remains the explicit operator-selected evidence posture.
 DEFAULT_RETENTION_MODE = "content"
 
+# Circuit breaker, owner decision 2026-08-01. When the server refuses this
+# many CONSECUTIVE navigations with an HTTP error (a confirmed refusal, not a
+# timeout or local failure), the batch stops instead of marching the rest of
+# the queue into the same rate-limit window: the 2026-08-01 leaderboard run
+# spent 8 refused requests learning what the first 2 already said. Slots never
+# attempted get no journal row, so a later --resume run picks up exactly
+# there. 0 disables. This is a stop, not a retry: no request is reissued.
+DEFAULT_REFUSAL_CIRCUIT_BREAKER = 3
+
 
 @dataclass(frozen=True)
 class BatchSlot:
@@ -128,6 +137,7 @@ def run_reddit_old_http_batch(
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
     keep_raw_audit_sample: bool = False,
     resume: bool = False,
+    refusal_circuit_breaker: int = DEFAULT_REFUSAL_CIRCUIT_BREAKER,
 ) -> tuple[int, str]:
     if requested_retention_mode not in CAPTURE_RETENTION_MODES:
         raise ValueError(
@@ -156,7 +166,14 @@ def run_reddit_old_http_batch(
     )
     summary_path = output_root / "batch_summary.json"
     if summary_path.exists():
-        raise ValueError(f"batch summary already exists: {summary_path}")
+        if not resume:
+            raise ValueError(f"batch summary already exists: {summary_path}")
+        # A circuit-breaker trip (or any partial run) writes an honest partial
+        # summary; a resume must not be blocked by it, and must not erase it.
+        superseded_count = len(list(output_root.glob("batch_summary.superseded_*.json")))
+        summary_path.rename(
+            output_root / f"batch_summary.superseded_{superseded_count + 1:02d}.json"
+        )
 
     # The summary alone is written at end-of-run, so an external kill --
     # session teardown, machine sleep, operator interrupt -- used to erase
@@ -193,6 +210,9 @@ def run_reddit_old_http_batch(
     output_root.mkdir(parents=True, exist_ok=True)
 
     results: list[dict[str, Any]] = list(carried_rows)
+    consecutive_refusals = 0
+    breaker_tripped_after_slot: str | None = None
+    slots_not_attempted: list[str] = []
     for index, slot in enumerate(pending_slots):
         packet_dir = None if data_root is not None else output_root / f"{slot.slot_id}_packet"
         row: dict[str, Any] = {
@@ -312,6 +332,14 @@ def run_reddit_old_http_batch(
             navigation_status = getattr(exc, "http_status", None)
             if isinstance(navigation_status, int):
                 row["navigation_http_status"] = navigation_status
+            # Only a typed server-side refusal feeds the circuit breaker;
+            # timeouts and local failures never do.
+            if hasattr(exc, "http_status"):
+                consecutive_refusals += 1
+            else:
+                consecutive_refusals = 0
+        else:
+            consecutive_refusals = 0
         finally:
             row["capture_finished_at"] = utc_now_z_microseconds()
 
@@ -319,6 +347,10 @@ def run_reddit_old_http_batch(
         row["capture_elapsed_seconds"] = round(elapsed, 3)
         results.append(row)
         _append_progress_row(progress_path=progress_path, row=row)
+        if refusal_circuit_breaker and consecutive_refusals >= refusal_circuit_breaker:
+            breaker_tripped_after_slot = slot.slot_id
+            slots_not_attempted = [s.slot_id for s in pending_slots[index + 1:]]
+            break
         if index < len(cadence_plan.planned_waits_seconds):
             wait_seconds, overrun = resolve_paced_wait(
                 planned=cadence_plan.planned_waits_seconds[index],
@@ -366,6 +398,12 @@ def run_reddit_old_http_batch(
         "url_count": len(slots),
         "resumed": resume,
         "carried_slot_count": len(carried_rows),
+        "circuit_breaker": {
+            "consecutive_refusal_threshold": refusal_circuit_breaker,
+            "tripped": breaker_tripped_after_slot is not None,
+            "tripped_after_slot": breaker_tripped_after_slot,
+            "slots_not_attempted": slots_not_attempted,
+        },
         "capture_success_count": sum(1 for row in results if row["capture_exit"] == 0),
         "access_diagnostic_count": sum(
             1 for row in results if row["access_diagnostic_status"] == "preserved"
@@ -856,6 +894,16 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--cadence-random-seed", type=int, default=None)
     parser.add_argument(
+        "--refusal-circuit-breaker",
+        type=int,
+        default=DEFAULT_REFUSAL_CIRCUIT_BREAKER,
+        help=(
+            "Stop the batch after this many consecutive server-side HTTP "
+            "refusals instead of marching into the rate-limit window; "
+            "unattempted slots stay resumable. 0 disables."
+        ),
+    )
+    parser.add_argument(
         "--resume",
         action="store_true",
         help=(
@@ -904,6 +952,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             cadence_random_seed=args.cadence_random_seed,
             requested_retention_mode=args.retention_mode,
             resume=args.resume,
+            refusal_circuit_breaker=args.refusal_circuit_breaker,
         )
     except ValueError as exc:
         parser.exit(status=2, message=f"reddit old HTTP batch failed: {exc}\n")
