@@ -166,10 +166,38 @@ it communicates the narrowest package that fully preserves the decisive
 evidence, counter-case, uncertainty, provenance, reversal conditions, and next
 action.
 
+Company Understanding evaluates acquisition on two independent axes:
+
+1. **Evidence-family coverage** — whether the run reached the material kinds of
+   evidence the question calls for, such as owned, outside-in, retail,
+   customer-review, community, native-social, and paid/advertising surfaces.
+2. **Independent depth inside each material family** — whether the acquired
+   units are numerous and distributed enough to corroborate, contradict,
+   sharpen, segment, or bound the answer without treating one token source as
+   representative of the family.
+
+Presence on the first axis never earns credit on the second. One article does
+not make outside-in context deep; one thread does not make community response
+understood; one creator does not make a native-social landscape; and one
+retailer window does not make customer evidence broad. Conversely, another
+source from an already represented family is not repetitive merely because its
+format or topic is similar. It remains valuable when it has an independent
+origin or adds material corroboration, contradiction, detail, mechanism,
+qualification, segmentation, boundary, or confidence change. Syndicated or
+copied evidence counts once.
+
 No numeric source, row, observation, venue, or capture target establishes this
 completeness. Collection targets are search hygiene only. Each included item
 must perform a named decision-material job and must not be substitutable by an
 equal-or-better included item.
+
+A declared broad-Understanding profile may impose numeric **entry floors** to
+prevent a token-source pass. Meeting those floors is necessary for that profile
+but never sufficient for acquisition closure. The run still owes the Scanning
+closure test, including material-seam dispositions, echo/independence
+adjudication, and evidence that the final practical batches stopped adding
+material value. A floor miss blocks that profile; a floor hit does not end the
+walk.
 
 Scanning owns acquisition closure. It continues only while the best remaining
 move has a credible chance of changing the action, action ceiling, rival

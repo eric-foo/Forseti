@@ -175,6 +175,20 @@ def run_source_capture_http_packet(
             )
         validate_credo_us_market_url(url)
 
+    timing = PacketTiming(
+        source_publication_or_event=source_publication_or_event
+        or unknown_with_reason("direct HTTP adapter did not infer source publication or event timing"),
+        source_edit_or_version=source_edit_or_version
+        or unknown_with_reason("direct HTTP adapter did not infer source edit or version timing"),
+        capture_time=unknown_with_reason(
+            "capture has not started; the successful response supplies capture time"
+        ),
+        recapture_time=recapture_time
+        or not_applicable("direct HTTP packet did not model an earlier capture by default"),
+        cutoff_posture=cutoff_posture
+        or unknown_with_reason("direct HTTP runner did not receive cutoff posture metadata"),
+    )
+
     capture_result = fetch_direct_http_capture(
         url=url,
         timeout_seconds=timeout_seconds,
@@ -487,16 +501,10 @@ def run_source_capture_http_packet(
     )
     file_ids = staged_file_id_map(artifacts)
 
-    timing = PacketTiming(
-        source_publication_or_event=source_publication_or_event
-        or unknown_with_reason("direct HTTP adapter did not infer source publication or event timing"),
-        source_edit_or_version=source_edit_or_version
-        or unknown_with_reason("direct HTTP adapter did not infer source edit or version timing"),
-        capture_time=known_fact(str(capture_result.metadata["capture_timestamp"])),
-        recapture_time=recapture_time
-        or not_applicable("direct HTTP packet did not model an earlier capture by default"),
-        cutoff_posture=cutoff_posture
-        or unknown_with_reason("direct HTTP runner did not receive cutoff posture metadata"),
+    timing = timing.model_copy(
+        update={
+            "capture_time": known_fact(str(capture_result.metadata["capture_timestamp"]))
+        }
     )
     archive_posture = not_attempted("direct HTTP adapter does not query archive or history services")
     media_posture = not_attempted(

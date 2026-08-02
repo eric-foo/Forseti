@@ -1,4 +1,4 @@
-"""Validate the machine-accounting block in an Understanding acquisition seal."""
+"""Validate acquisition accounting and evidence depth in an Understanding seal."""
 
 from __future__ import annotations
 
@@ -17,7 +17,25 @@ if __package__ in {None, ""}:
 from harness_utils import hash_file, sha256_bytes  # noqa: E402
 
 
-SEAL_VERSION = "phase_acquisition_seal_v2"
+SEAL_VERSION = "phase_acquisition_seal_v3"
+LEGACY_SEAL_VERSION = "phase_acquisition_seal_v2"
+DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v1"
+BROAD_UNDERSTANDING_PROFILE = "broad_company_understanding_v1"
+BROAD_UNDERSTANDING_FLOORS = {
+    "outside_in_independent_units": 12,
+    "outside_in_independent_origins": 12,
+    "retailer_review_unique_rows": 750,
+    "retailer_review_corpora": 2,
+    "retailer_review_product_contexts": 5,
+    "retailer_review_categories": 3,
+    "reddit_forum_threads": 20,
+    "reddit_forum_communities": 4,
+    "reddit_forum_topic_categories": 3,
+    "native_social_posts": 30,
+    "native_social_creators": 20,
+    "native_social_platforms": 2,
+    "native_social_perspectives": 2,
+}
 MANDATORY_ROUTE_IDS = {
     "serp_phase1",
     "official_retailer_authorization",
@@ -47,10 +65,14 @@ def validate_phase_acquisition_seal(
     *,
     seal_path: Path,
     repo_root: Path,
+    allow_legacy_v2: bool = False,
 ) -> list[str]:
     seal = _load_seal(seal_path)
     findings: list[str] = []
-    if seal.get("schema_version") != SEAL_VERSION:
+    schema_version = seal.get("schema_version")
+    if schema_version == LEGACY_SEAL_VERSION and not allow_legacy_v2:
+        findings.append("legacy_v2_requires_explicit_historical_audit")
+    elif schema_version not in {SEAL_VERSION, LEGACY_SEAL_VERSION}:
         findings.append("invalid_schema_version")
 
     gate = seal.get("acquisition_gate")
@@ -91,12 +113,529 @@ def validate_phase_acquisition_seal(
         valid_pass=valid_pass,
         findings=findings,
     )
+    if schema_version == SEAL_VERSION:
+        _validate_understanding_evidence_depth(
+            seal,
+            repo_root=repo_root,
+            valid_pass=valid_pass,
+            findings=findings,
+        )
     continuation = seal.get("post_phase1_continuation_mode")
     if continuation not in {"full", "bounded_salvage", "stop"}:
         findings.append("invalid_post_phase1_continuation_mode")
     elif valid_pass and continuation != "full":
         findings.append("passing_seal_requires_full_continuation")
     return sorted(set(findings))
+
+
+def _validate_understanding_evidence_depth(
+    seal: Mapping[str, Any],
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    reference = seal.get("evidence_depth_ledger")
+    if not isinstance(reference, dict):
+        findings.append("missing_evidence_depth_ledger")
+        return
+    locator = reference.get("locator")
+    digest = reference.get("sha256")
+    before = len(findings)
+    _verify_artifact(
+        locator,
+        digest,
+        repo_root=repo_root,
+        code="evidence_depth_ledger",
+        findings=findings,
+    )
+    if len(findings) != before:
+        return
+    ledger_path = Path(str(locator))
+    if not ledger_path.is_absolute():
+        ledger_path = repo_root / ledger_path
+    try:
+        ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(
+            f"invalid_evidence_depth_ledger:{type(exc).__name__}"
+        )
+        return
+    if not isinstance(ledger, dict):
+        findings.append("invalid_evidence_depth_ledger_shape")
+        return
+    if ledger.get("schema_version") != DEPTH_LEDGER_VERSION:
+        findings.append("invalid_evidence_depth_ledger_version")
+    if ledger.get("profile_id") != BROAD_UNDERSTANDING_PROFILE:
+        findings.append("invalid_understanding_completion_profile")
+    seal_subject = seal.get("subject")
+    if not isinstance(seal_subject, str) or not seal_subject:
+        findings.append("missing_seal_subject")
+    elif ledger.get("subject") != seal_subject:
+        findings.append("evidence_depth_ledger_subject_mismatch")
+    seal_cycle_id = seal.get("cycle_id")
+    if not isinstance(seal_cycle_id, str) or not seal_cycle_id:
+        findings.append("missing_seal_cycle_id")
+    elif ledger.get("cycle_id") != seal_cycle_id:
+        findings.append("evidence_depth_ledger_cycle_id_mismatch")
+
+    artifacts = _validate_depth_artifacts(
+        ledger.get("artifacts"), repo_root=repo_root, findings=findings
+    )
+    families = ledger.get("families")
+    if not isinstance(families, dict):
+        findings.append("missing_evidence_depth_families")
+        families = {}
+    metrics: dict[str, int] = {}
+    metrics.update(
+        _validate_outside_in_depth(
+            families.get("outside_in"), artifacts=artifacts, findings=findings
+        )
+    )
+    metrics.update(
+        _validate_retailer_review_depth(
+            families.get("retailer_reviews"),
+            artifacts=artifacts,
+            require_complete=valid_pass,
+            findings=findings,
+        )
+    )
+    metrics.update(
+        _validate_reddit_depth(
+            families.get("reddit_forum"), artifacts=artifacts, findings=findings
+        )
+    )
+    metrics.update(
+        _validate_native_social_depth(
+            families.get("native_social"), artifacts=artifacts, findings=findings
+        )
+    )
+    closure_complete = _validate_depth_closure(
+        ledger.get("closure"), require_complete=valid_pass, findings=findings
+    )
+    if valid_pass:
+        for metric, minimum in BROAD_UNDERSTANDING_FLOORS.items():
+            if metrics.get(metric, 0) < minimum:
+                findings.append(f"passing_seal_below_depth_floor:{metric}")
+        if not closure_complete:
+            findings.append("passing_seal_without_saturation_closure")
+
+
+def _validate_depth_artifacts(
+    value: Any,
+    *,
+    repo_root: Path,
+    findings: list[str],
+) -> set[str]:
+    if not isinstance(value, list) or not value:
+        findings.append("missing_evidence_depth_artifacts")
+        return set()
+    artifact_ids: set[str] = set()
+    for row in value:
+        if not isinstance(row, dict):
+            findings.append("invalid_evidence_depth_artifact")
+            continue
+        artifact_id = row.get("artifact_id")
+        if not isinstance(artifact_id, str) or not artifact_id:
+            findings.append("missing_evidence_depth_artifact_id")
+            continue
+        if artifact_id in artifact_ids:
+            findings.append("duplicate_evidence_depth_artifact_id")
+            continue
+        artifact_ids.add(artifact_id)
+        _verify_artifact(
+            row.get("locator"),
+            row.get("sha256"),
+            repo_root=repo_root,
+            code="evidence_depth_source",
+            findings=findings,
+        )
+    return artifact_ids
+
+
+def _valid_depth_rows(
+    value: Any,
+    *,
+    row_name: str,
+    id_field: str,
+    artifacts: set[str],
+    findings: list[str],
+) -> list[Mapping[str, Any]]:
+    if not isinstance(value, list):
+        findings.append(f"missing_{row_name}_rows")
+        return []
+    rows: list[Mapping[str, Any]] = []
+    seen: set[str] = set()
+    for row in value:
+        if not isinstance(row, dict):
+            findings.append(f"invalid_{row_name}_row")
+            continue
+        row_id = row.get(id_field)
+        if not isinstance(row_id, str) or not row_id:
+            findings.append(f"missing_{row_name}_{id_field}")
+            continue
+        if row_id in seen:
+            findings.append(f"duplicate_{row_name}_{id_field}")
+            continue
+        seen.add(row_id)
+        artifact_id = row.get("artifact_id")
+        if not isinstance(artifact_id, str) or artifact_id not in artifacts:
+            findings.append(f"unresolved_{row_name}_artifact")
+        rows.append(row)
+    return rows
+
+
+def _string_set(value: Any, *, code: str, findings: list[str]) -> set[str]:
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item for item in value
+    ):
+        findings.append(code)
+        return set()
+    return set(value)
+
+
+def _validate_outside_in_depth(
+    value: Any, *, artifacts: set[str], findings: list[str]
+) -> dict[str, int]:
+    if not isinstance(value, dict):
+        findings.append("missing_outside_in_depth")
+        return {}
+    rows = _valid_depth_rows(
+        value.get("units"),
+        row_name="outside_in",
+        id_field="unit_id",
+        artifacts=artifacts,
+        findings=findings,
+    )
+    origins: set[str] = set()
+    independent_units = 0
+    for row in rows:
+        origin = row.get("origin_id")
+        if not isinstance(origin, str) or not origin:
+            findings.append("missing_outside_in_origin_id")
+            continue
+        if row.get("independence") not in {
+            "independent_origin",
+            "same_origin",
+            "syndicated_copy",
+        }:
+            findings.append("invalid_outside_in_independence")
+            continue
+        echo_group = row.get("echo_group_id")
+        if not isinstance(echo_group, str) or not echo_group:
+            findings.append("missing_outside_in_echo_group")
+        if row.get("independence") == "independent_origin":
+            independent_units += 1
+            origins.add(origin)
+    return {
+        "outside_in_independent_units": independent_units,
+        "outside_in_independent_origins": len(origins),
+    }
+
+
+def _validate_retailer_review_depth(
+    value: Any,
+    *,
+    artifacts: set[str],
+    require_complete: bool,
+    findings: list[str],
+) -> dict[str, int]:
+    if not isinstance(value, dict):
+        findings.append("missing_retailer_review_depth")
+        return {}
+    rows = _valid_depth_rows(
+        value.get("corpora"),
+        row_name="retailer_review",
+        id_field="corpus_id",
+        artifacts=artifacts,
+        findings=findings,
+    )
+    total = 0
+    product_contexts: set[str] = set()
+    categories: set[str] = set()
+    rating_bands: set[str] = set()
+    for row in rows:
+        unique_count = row.get("unique_review_count")
+        duplicate_count = row.get("cross_corpus_duplicate_count")
+        if (
+            not isinstance(unique_count, int)
+            or isinstance(unique_count, bool)
+            or unique_count < 0
+        ):
+            findings.append("invalid_unique_review_count")
+            unique_count = 0
+        if (
+            not isinstance(duplicate_count, int)
+            or isinstance(duplicate_count, bool)
+            or duplicate_count < 0
+            or duplicate_count > unique_count
+        ):
+            findings.append("invalid_cross_corpus_duplicate_count")
+            duplicate_count = 0
+        total += unique_count - duplicate_count
+        product_contexts.update(
+            _string_set(
+                row.get("product_context_ids"),
+                code="invalid_retailer_review_product_contexts",
+                findings=findings,
+            )
+        )
+        categories.update(
+            _string_set(
+                row.get("category_ids"),
+                code="invalid_retailer_review_categories",
+                findings=findings,
+            )
+        )
+        rating_bands.update(
+            _string_set(
+                row.get("rating_bands"),
+                code="invalid_retailer_review_rating_bands",
+                findings=findings,
+            )
+        )
+    # Band completeness is part of the passing-seal entry floor, not a shape
+    # requirement on an honestly partial blocked seal.
+    if (
+        require_complete
+        and rows
+        and not {"low", "mid", "high"}.issubset(rating_bands)
+    ):
+        findings.append("retailer_review_rating_bands_incomplete")
+    return {
+        "retailer_review_unique_rows": total,
+        "retailer_review_corpora": len(rows),
+        "retailer_review_product_contexts": len(product_contexts),
+        "retailer_review_categories": len(categories),
+    }
+
+
+def _validate_reddit_depth(
+    value: Any, *, artifacts: set[str], findings: list[str]
+) -> dict[str, int]:
+    if not isinstance(value, dict):
+        findings.append("missing_reddit_forum_depth")
+        return {}
+    rows = _valid_depth_rows(
+        value.get("threads"),
+        row_name="reddit_forum",
+        id_field="thread_id",
+        artifacts=artifacts,
+        findings=findings,
+    )
+    communities: set[str] = set()
+    topics: set[str] = set()
+    independent_threads = 0
+    for row in rows:
+        community = row.get("community_id")
+        topic = row.get("topic_category")
+        if not isinstance(community, str) or not community:
+            findings.append("missing_reddit_forum_community")
+        if not isinstance(topic, str) or not topic:
+            findings.append("missing_reddit_forum_topic_category")
+        if row.get("independence") not in {
+            "independent_thread",
+            "duplicate_thread",
+        }:
+            findings.append("invalid_reddit_forum_independence")
+        elif row.get("independence") == "independent_thread":
+            independent_threads += 1
+            if isinstance(community, str) and community:
+                communities.add(community)
+            if isinstance(topic, str) and topic:
+                topics.add(topic)
+    return {
+        "reddit_forum_threads": independent_threads,
+        "reddit_forum_communities": len(communities),
+        "reddit_forum_topic_categories": len(topics),
+    }
+
+
+def _validate_native_social_depth(
+    value: Any, *, artifacts: set[str], findings: list[str]
+) -> dict[str, int]:
+    if not isinstance(value, dict):
+        findings.append("missing_native_social_depth")
+        return {}
+    rows = _valid_depth_rows(
+        value.get("posts"),
+        row_name="native_social",
+        id_field="unit_id",
+        artifacts=artifacts,
+        findings=findings,
+    )
+    creators: set[str] = set()
+    platforms: set[str] = set()
+    perspectives: set[str] = set()
+    independent_posts = 0
+    post_ids: set[tuple[str, str]] = set()
+    for row in rows:
+        platform = row.get("platform")
+        post_id = row.get("post_id")
+        creator_id = row.get("creator_id")
+        perspective = row.get("perspective")
+        if not isinstance(platform, str) or not platform:
+            findings.append("missing_native_social_platform")
+            platform = ""
+        if not isinstance(post_id, str) or not post_id:
+            findings.append("missing_native_social_post_id")
+        elif (platform, post_id) in post_ids:
+            findings.append("duplicate_native_social_post_id")
+        else:
+            post_ids.add((platform, post_id))
+        if not isinstance(creator_id, str) or not creator_id:
+            findings.append("missing_native_social_creator_id")
+        if perspective not in {"positive", "neutral", "critical", "mixed"}:
+            findings.append("invalid_native_social_perspective")
+        if row.get("independence") not in {
+            "independent_post",
+            "same_creator_followup",
+            "syndicated_copy",
+        }:
+            findings.append("invalid_native_social_independence")
+        elif row.get("independence") == "independent_post":
+            independent_posts += 1
+            if platform:
+                platforms.add(platform)
+            if isinstance(creator_id, str) and creator_id:
+                creators.add(creator_id)
+            if perspective in {"positive", "neutral", "critical", "mixed"}:
+                perspectives.add(str(perspective))
+    return {
+        "native_social_posts": independent_posts,
+        "native_social_creators": len(creators),
+        "native_social_platforms": len(platforms),
+        "native_social_perspectives": len(perspectives),
+    }
+
+
+def _validate_depth_closure(
+    value: Any, *, require_complete: bool, findings: list[str]
+) -> bool:
+    if not isinstance(value, dict):
+        findings.append("missing_evidence_depth_closure")
+        return False
+    complete = True
+    echo_state = value.get("echo_groups_adjudicated")
+    if not isinstance(echo_state, bool):
+        findings.append("invalid_echo_group_adjudication_state")
+        complete = False
+    elif echo_state is not True:
+        if require_complete:
+            findings.append("echo_groups_not_adjudicated")
+        complete = False
+    seams = value.get("material_seams")
+    if not isinstance(seams, list) or not seams:
+        findings.append("missing_material_seam_accounting")
+        complete = False
+    else:
+        seam_ids: set[str] = set()
+        for row in seams:
+            if not isinstance(row, dict):
+                findings.append("invalid_material_seam")
+                complete = False
+                continue
+            seam_id = row.get("seam_id")
+            if not isinstance(seam_id, str) or not seam_id or seam_id in seam_ids:
+                findings.append("invalid_material_seam_id")
+                complete = False
+            else:
+                seam_ids.add(seam_id)
+            disposition = row.get("disposition")
+            if disposition not in {
+                "supported",
+                "contradicted",
+                "bounded",
+                "blocked_no_remaining_path",
+                "open",
+                "blocked_route_available",
+            }:
+                findings.append("invalid_material_seam_disposition")
+                complete = False
+            elif disposition in {"open", "blocked_route_available"}:
+                if require_complete:
+                    findings.append("open_material_seam")
+                complete = False
+    batches = value.get("batches")
+    if not isinstance(batches, list):
+        findings.append("invalid_saturation_batches")
+        complete = False
+    elif len(batches) < 2:
+        if require_complete:
+            findings.append("insufficient_saturation_batches")
+        complete = False
+    else:
+        for row in batches[-2:]:
+            if not isinstance(row, dict):
+                findings.append("invalid_saturation_batch")
+                complete = False
+                continue
+            checked = row.get("candidate_moves_checked")
+            if (
+                not isinstance(checked, int)
+                or isinstance(checked, bool)
+                or checked < 1
+            ):
+                findings.append("saturation_batch_checked_no_moves")
+                complete = False
+            material_value = row.get("material_incremental_value")
+            if not isinstance(material_value, bool):
+                findings.append("invalid_saturation_batch_material_value")
+                complete = False
+            elif material_value is not False:
+                if require_complete:
+                    findings.append("saturation_batch_still_material")
+                complete = False
+            for field in ("new_material_seams", "changed_material_dispositions"):
+                metric = row.get(field)
+                if (
+                    not isinstance(metric, int)
+                    or isinstance(metric, bool)
+                    or metric < 0
+                ):
+                    findings.append(f"invalid_saturation_batch_{field}")
+                    complete = False
+                elif metric != 0:
+                    if require_complete:
+                        findings.append(f"saturation_batch_nonzero_{field}")
+                    complete = False
+    remaining = value.get("remaining_moves")
+    if not isinstance(remaining, list):
+        findings.append("missing_remaining_move_accounting")
+        complete = False
+    else:
+        for row in remaining:
+            if not isinstance(row, dict):
+                findings.append("invalid_remaining_move")
+                complete = False
+                continue
+            disposition = row.get("disposition")
+            if disposition not in {
+                "dominated",
+                "source_exhausted",
+                "unsafe_or_prohibited",
+                "blocked_no_route",
+                "deferred_nonmaterial",
+                "material_open",
+                "blocked_route_available",
+            }:
+                findings.append("invalid_remaining_move_disposition")
+                complete = False
+            material = row.get("material")
+            if not isinstance(material, bool):
+                findings.append("invalid_remaining_move_material_flag")
+                complete = False
+            elif material is not False:
+                if require_complete:
+                    findings.append("material_remaining_move")
+                complete = False
+    conclusion = value.get("conclusion")
+    if conclusion not in {"complete", "incomplete"}:
+        findings.append("invalid_evidence_depth_conclusion")
+        complete = False
+    elif conclusion != "complete":
+        complete = False
+    return complete
 
 
 def _load_seal(path: Path) -> dict[str, Any]:
@@ -451,13 +990,21 @@ def _artifact_hash(path: Path) -> str:
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate a phase_acquisition_seal_v2 YAML block and its hashes."
+        description="Validate a phase_acquisition_seal_v3 YAML block and its hashes."
     )
     parser.add_argument("--seal", required=True, type=Path)
     parser.add_argument(
         "--repo-root",
         type=Path,
         default=Path(__file__).resolve().parents[2],
+    )
+    parser.add_argument(
+        "--allow-legacy-v2",
+        action="store_true",
+        help=(
+            "Audit a historical phase_acquisition_seal_v2. Legacy v2 seals "
+            "do not satisfy the current broad-Understanding completion contract."
+        ),
     )
     return parser
 
@@ -466,8 +1013,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        seal_schema_version = _load_seal(args.seal.resolve()).get("schema_version")
         findings = validate_phase_acquisition_seal(
-            seal_path=args.seal.resolve(), repo_root=args.repo_root.resolve()
+            seal_path=args.seal.resolve(),
+            repo_root=args.repo_root.resolve(),
+            allow_legacy_v2=args.allow_legacy_v2,
         )
     except Exception as exc:  # noqa: BLE001 - controlled validator diagnostic
         parser.exit(
@@ -475,7 +1025,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             message=f"phase acquisition seal validation failed: {type(exc).__name__}: {exc}\n",
         )
     payload = {
-        "validator": "phase_acquisition_seal_v2",
+        "validator": SEAL_VERSION,
+        "seal_schema_version": seal_schema_version,
         "status": "PASS" if not findings else "FAIL",
         "findings": findings,
     }

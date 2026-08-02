@@ -8,8 +8,12 @@ import pytest
 import yaml
 
 from runners.run_phase_acquisition_seal_validation import (
+    BROAD_UNDERSTANDING_PROFILE,
+    DEPTH_LEDGER_VERSION,
+    LEGACY_SEAL_VERSION,
     SEAL_VERSION,
     _artifact_hash,
+    main,
     validate_phase_acquisition_seal,
 )
 
@@ -18,6 +22,113 @@ def _artifact(tmp_path: Path, name: str, text: str | None = None) -> dict[str, s
     path = tmp_path / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text or f"artifact:{name}\n", encoding="utf-8")
+    return {"locator": str(path), "sha256": _artifact_hash(path)}
+
+
+def _depth_ledger(tmp_path: Path) -> dict[str, str]:
+    source = _artifact(tmp_path, "depth_source.md")
+    artifact_id = "depth-source"
+    ledger = {
+        "schema_version": DEPTH_LEDGER_VERSION,
+        "profile_id": BROAD_UNDERSTANDING_PROFILE,
+        "subject": "Summer Fridays",
+        "cycle_id": "summer_fridays_confirmation",
+        "artifacts": [{"artifact_id": artifact_id, **source}],
+        "families": {
+            "outside_in": {
+                "units": [
+                    {
+                        "unit_id": f"outside-{index}",
+                        "origin_id": f"publisher-{index}.example",
+                        "artifact_id": artifact_id,
+                        "independence": "independent_origin",
+                        "echo_group_id": f"story-{index // 2}",
+                    }
+                    for index in range(12)
+                ]
+            },
+            "retailer_reviews": {
+                "corpora": [
+                    {
+                        "corpus_id": "retailer-a:provider-a",
+                        "artifact_id": artifact_id,
+                        "unique_review_count": 400,
+                        "cross_corpus_duplicate_count": 0,
+                        "product_context_ids": ["p1", "p2", "p3"],
+                        "category_ids": ["lip", "skincare"],
+                        "rating_bands": ["low", "mid", "high"],
+                    },
+                    {
+                        "corpus_id": "retailer-b:provider-b",
+                        "artifact_id": artifact_id,
+                        "unique_review_count": 400,
+                        "cross_corpus_duplicate_count": 20,
+                        "product_context_ids": ["p4", "p5", "p6"],
+                        "category_ids": ["makeup", "skincare"],
+                        "rating_bands": ["low", "mid", "high"],
+                    },
+                ]
+            },
+            "reddit_forum": {
+                "threads": [
+                    {
+                        "thread_id": f"thread-{index}",
+                        "community_id": f"community-{index % 4}",
+                        "topic_category": f"topic-{index % 3}",
+                        "artifact_id": artifact_id,
+                        "independence": "independent_thread",
+                    }
+                    for index in range(20)
+                ]
+            },
+            "native_social": {
+                "posts": [
+                    {
+                        "unit_id": f"native-{index}",
+                        "platform": "youtube" if index % 2 else "instagram",
+                        "post_id": f"post-{index}",
+                        "creator_id": f"creator-{index}",
+                        "perspective": "positive" if index % 2 else "critical",
+                        "artifact_id": artifact_id,
+                        "independence": "independent_post",
+                    }
+                    for index in range(30)
+                ]
+            },
+        },
+        "closure": {
+            "echo_groups_adjudicated": True,
+            "material_seams": [
+                {"seam_id": "value", "disposition": "bounded"}
+            ],
+            "batches": [
+                {
+                    "batch_id": "batch-1",
+                    "candidate_moves_checked": 3,
+                    "material_incremental_value": False,
+                    "new_material_seams": 0,
+                    "changed_material_dispositions": 0,
+                },
+                {
+                    "batch_id": "batch-2",
+                    "candidate_moves_checked": 2,
+                    "material_incremental_value": False,
+                    "new_material_seams": 0,
+                    "changed_material_dispositions": 0,
+                },
+            ],
+            "remaining_moves": [
+                {
+                    "move_id": "another-same-story",
+                    "disposition": "dominated",
+                    "material": False,
+                }
+            ],
+            "conclusion": "complete",
+        },
+    }
+    path = tmp_path / "evidence_depth_ledger.json"
+    path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     return {"locator": str(path), "sha256": _artifact_hash(path)}
 
 
@@ -79,6 +190,7 @@ def _blocked_seal(tmp_path: Path) -> dict:
     return {
         "schema_version": SEAL_VERSION,
         "cycle_id": "summer_fridays_confirmation",
+        "subject": "Summer Fridays",
         "acquisition_gate": "blocked",
         "seal_state": "BLOCKED_ACQUISITION_INCOMPLETE",
         "deliver_allowed": False,
@@ -154,6 +266,7 @@ def _blocked_seal(tmp_path: Path) -> dict:
             **receipt,
             "entries": 0,
         },
+        "evidence_depth_ledger": _depth_ledger(tmp_path),
         "resume_contract": {
             "pending_job_ids": list(phase2_jobs),
             "reusable_artifacts": [
@@ -315,6 +428,229 @@ def test_fully_completed_seal_passes_with_no_resume_work(tmp_path: Path) -> None
     )
 
     assert _validate(tmp_path, seal) == []
+
+
+def test_completed_jobs_cannot_replace_depth_ledger(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    phase2 = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "serp_phase2"
+    )
+    phase2["completed_job_ids"] = list(phase2["planned_job_ids"])
+    phase2["completed_count"] = phase2["planned_count"]
+    phase2["unrun_job_ids"] = []
+    phase2["unrun_count"] = 0
+    seal["resume_contract"]["pending_job_ids"] = []
+    seal.pop("evidence_depth_ledger")
+    seal.update(
+        {
+            "acquisition_gate": "pass",
+            "seal_state": "SEALED_READY_FOR_DELIVER",
+            "deliver_allowed": True,
+            "post_phase1_continuation_mode": "full",
+        }
+    )
+
+    assert "missing_evidence_depth_ledger" in _validate(tmp_path, seal)
+
+
+def test_passing_seal_rejects_floor_count_without_independent_units(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    phase2 = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "serp_phase2"
+    )
+    phase2["completed_job_ids"] = list(phase2["planned_job_ids"])
+    phase2["completed_count"] = phase2["planned_count"]
+    phase2["unrun_job_ids"] = []
+    phase2["unrun_count"] = 0
+    seal["resume_contract"]["pending_job_ids"] = []
+    ledger_path = Path(seal["evidence_depth_ledger"]["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    for row in ledger["families"]["outside_in"]["units"][1:]:
+        row["independence"] = "syndicated_copy"
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"]["sha256"] = _artifact_hash(ledger_path)
+    seal.update(
+        {
+            "acquisition_gate": "pass",
+            "seal_state": "SEALED_READY_FOR_DELIVER",
+            "deliver_allowed": True,
+            "post_phase1_continuation_mode": "full",
+        }
+    )
+
+    findings = _validate(tmp_path, seal)
+
+    assert (
+        "passing_seal_below_depth_floor:outside_in_independent_units"
+        in findings
+    )
+
+
+def test_passing_seal_requires_two_dry_saturation_batches(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    phase2 = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "serp_phase2"
+    )
+    phase2["completed_job_ids"] = list(phase2["planned_job_ids"])
+    phase2["completed_count"] = phase2["planned_count"]
+    phase2["unrun_job_ids"] = []
+    phase2["unrun_count"] = 0
+    seal["resume_contract"]["pending_job_ids"] = []
+    ledger_path = Path(seal["evidence_depth_ledger"]["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["closure"]["batches"][-1]["material_incremental_value"] = True
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"]["sha256"] = _artifact_hash(ledger_path)
+    seal.update(
+        {
+            "acquisition_gate": "pass",
+            "seal_state": "SEALED_READY_FOR_DELIVER",
+            "deliver_allowed": True,
+            "post_phase1_continuation_mode": "full",
+        }
+    )
+
+    findings = _validate(tmp_path, seal)
+
+    assert "saturation_batch_still_material" in findings
+    assert "passing_seal_without_saturation_closure" in findings
+
+
+def test_blocked_seal_allows_partial_rating_bands(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    ledger_path = Path(seal["evidence_depth_ledger"]["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    for row in ledger["families"]["retailer_reviews"]["corpora"]:
+        row["rating_bands"] = ["high"]
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"]["sha256"] = _artifact_hash(ledger_path)
+
+    assert _validate(tmp_path, seal) == []
+
+
+def test_passing_seal_requires_complete_rating_bands(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    phase2 = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "serp_phase2"
+    )
+    phase2["completed_job_ids"] = list(phase2["planned_job_ids"])
+    phase2["completed_count"] = phase2["planned_count"]
+    phase2["unrun_job_ids"] = []
+    phase2["unrun_count"] = 0
+    seal["resume_contract"]["pending_job_ids"] = []
+    ledger_path = Path(seal["evidence_depth_ledger"]["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    for row in ledger["families"]["retailer_reviews"]["corpora"]:
+        row["rating_bands"] = ["mid", "high"]
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"]["sha256"] = _artifact_hash(ledger_path)
+    seal.update(
+        {
+            "acquisition_gate": "pass",
+            "seal_state": "SEALED_READY_FOR_DELIVER",
+            "deliver_allowed": True,
+            "post_phase1_continuation_mode": "full",
+        }
+    )
+
+    assert "retailer_review_rating_bands_incomplete" in _validate(tmp_path, seal)
+
+
+def test_cli_payload_records_audited_seal_schema_version(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["schema_version"] = LEGACY_SEAL_VERSION
+    seal.pop("evidence_depth_ledger")
+    path = _write_seal(tmp_path, seal)
+
+    exit_code = main(
+        [
+            "--seal",
+            str(path),
+            "--repo-root",
+            str(tmp_path),
+            "--allow-legacy-v2",
+        ]
+    )
+
+    payload = json.loads(capsys.readouterr().out)
+    assert exit_code == 0
+    assert payload["status"] == "PASS"
+    assert payload["seal_schema_version"] == LEGACY_SEAL_VERSION
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement", "expected_finding"),
+    [
+        (
+            "subject",
+            "Another Company",
+            "evidence_depth_ledger_subject_mismatch",
+        ),
+        (
+            "cycle_id",
+            "another_cycle",
+            "evidence_depth_ledger_cycle_id_mismatch",
+        ),
+    ],
+)
+def test_depth_ledger_identity_must_match_seal(
+    tmp_path: Path,
+    field: str,
+    replacement: str,
+    expected_finding: str,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    ledger_path = Path(seal["evidence_depth_ledger"]["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger[field] = replacement
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"]["sha256"] = _artifact_hash(ledger_path)
+
+    assert expected_finding in _validate(tmp_path, seal)
+
+
+@pytest.mark.parametrize(
+    ("field", "expected_finding"),
+    [
+        ("subject", "missing_seal_subject"),
+        ("cycle_id", "missing_seal_cycle_id"),
+    ],
+)
+def test_v3_seal_requires_identity_for_depth_binding(
+    tmp_path: Path, field: str, expected_finding: str
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal.pop(field)
+
+    assert expected_finding in _validate(tmp_path, seal)
+
+
+def test_legacy_v2_requires_explicit_historical_audit(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["schema_version"] = LEGACY_SEAL_VERSION
+    seal.pop("evidence_depth_ledger")
+    path = _write_seal(tmp_path, seal)
+
+    assert "legacy_v2_requires_explicit_historical_audit" in (
+        validate_phase_acquisition_seal(seal_path=path, repo_root=tmp_path)
+    )
+    assert validate_phase_acquisition_seal(
+        seal_path=path,
+        repo_root=tmp_path,
+        allow_legacy_v2=True,
+    ) == []
 
 
 def test_passing_seal_cannot_omit_mandatory_specialist_route(
