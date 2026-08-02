@@ -1,0 +1,326 @@
+{
+  "schema_version": "p11r5_retailer_axis_coding_report_v1",
+  "codebook_sha256": "a532073a12505f40ad6a558f9533c0a5d9e4fd9b72a06745c81ca015f5164c4f",
+  "eligible_review_count": 3200,
+  "coded_review_count": 3200,
+  "qa_row_count": 858,
+  "qa_textual_choice_row_count": 586,
+  "qa_deterministic_sample_row_count": 330,
+  "corpora": {
+    "eligible": {
+      "revolve_native_reviews": 78,
+      "amazon_rendered_reviews": 196,
+      "sephora_product_group_reviews": 2926
+    },
+    "excluded": {
+      "revolve_native_reviews": 498
+    },
+    "contexts": {
+      "revolve_native_reviews": [
+        "SUMR-WU1",
+        "SUMR-WU102",
+        "SUMR-WU11",
+        "SUMR-WU110",
+        "SUMR-WU111",
+        "SUMR-WU117",
+        "SUMR-WU118",
+        "SUMR-WU120",
+        "SUMR-WU121",
+        "SUMR-WU122",
+        "SUMR-WU123",
+        "SUMR-WU14",
+        "SUMR-WU16",
+        "SUMR-WU21",
+        "SUMR-WU23",
+        "SUMR-WU25",
+        "SUMR-WU39",
+        "SUMR-WU4",
+        "SUMR-WU49",
+        "SUMR-WU53",
+        "SUMR-WU59",
+        "SUMR-WU60",
+        "SUMR-WU61",
+        "SUMR-WU71",
+        "SUMR-WU74",
+        "SUMR-WU75",
+        "SUMR-WU76",
+        "SUMR-WU77",
+        "SUMR-WU83",
+        "SUMR-WU84",
+        "SUMR-WU87",
+        "SUMR-WU89",
+        "SUMR-WU90",
+        "SUMR-WU91",
+        "SUMR-WU92",
+        "SUMR-WU93",
+        "SUMR-WU95"
+      ],
+      "amazon_rendered_reviews": [
+        "B08ZH82P7P",
+        "B0935NHG1Q",
+        "B09FYCGF57",
+        "B09FYHDW6P",
+        "B09HRLNSDG",
+        "B09HT3H9DK",
+        "B09S2K1R7X",
+        "B0B3KTFR3D",
+        "B0BSJQTNLQ",
+        "B0C42HJRBF",
+        "B0C5G91P67",
+        "B0C5GF7YT6",
+        "B0CFW622VT",
+        "B0DWG279NF",
+        "B0F19YY96Z",
+        "B0F3LN2QGW",
+        "B0F3M2RG7P",
+        "B0FK6RHRKB",
+        "B0FK72YXWZ",
+        "B0FQWS93RH",
+        "B0G36F4SZX",
+        "B0G36F8QQY",
+        "B0GMRHS9GN",
+        "B0GNWNL359",
+        "B0GSWY3HG3",
+        "B0GW95RP9M"
+      ],
+      "sephora_product_group_reviews": [
+        "P429952",
+        "P449180",
+        "P455936",
+        "P469189",
+        "P471283",
+        "P476028",
+        "P480192",
+        "P480630",
+        "P501777",
+        "P503827",
+        "P506690",
+        "P509439",
+        "P510508",
+        "P511756",
+        "P511987",
+        "P515210",
+        "P517935",
+        "P518147",
+        "P518150",
+        "P520074",
+        "P520734",
+        "P520744",
+        "P520746",
+        "P520759",
+        "P520764",
+        "P520770",
+        "P520793",
+        "P520819",
+        "P521692",
+        "P522685",
+        "P522826",
+        "P522831",
+        "P525593",
+        "P525609",
+        "P525611",
+        "P525613",
+        "P525633",
+        "P525641",
+        "P525642",
+        "P525651",
+        "P525652",
+        "P525659",
+        "P525660",
+        "P525665"
+      ]
+    }
+  },
+  "axis_incidence": {
+    "reaction_and_breakout": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 27,
+        "negative_choice_review_count": 1,
+        "disclosed_incentivized_axis_mention_count": 2
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 2,
+        "negative_choice_review_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 517,
+        "negative_choice_review_count": 138,
+        "positive_choice_review_count": 41
+      }
+    },
+    "value_and_quantity": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 36,
+        "disclosed_incentivized_axis_mention_count": 8
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 9,
+        "positive_choice_review_count": 3,
+        "disclosed_incentivized_axis_mention_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 478,
+        "negative_choice_review_count": 78,
+        "positive_choice_review_count": 29
+      }
+    },
+    "packaging_and_dispensing": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 3,
+        "disclosed_incentivized_axis_mention_count": 3
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 6,
+        "negative_choice_review_count": 3
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 298,
+        "positive_choice_review_count": 28,
+        "negative_choice_review_count": 66
+      }
+    },
+    "wear_and_longevity": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 8
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 6,
+        "disclosed_incentivized_axis_mention_count": 1,
+        "negative_choice_review_count": 1,
+        "positive_choice_review_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 170,
+        "negative_choice_review_count": 16,
+        "positive_choice_review_count": 16
+      }
+    },
+    "hydration_and_moisture": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 66,
+        "positive_choice_review_count": 3,
+        "disclosed_incentivized_axis_mention_count": 5
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 16,
+        "positive_choice_review_count": 5,
+        "disclosed_incentivized_axis_mention_count": 3
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 1097,
+        "negative_choice_review_count": 65,
+        "positive_choice_review_count": 185
+      }
+    },
+    "texture_and_skin_finish": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 93,
+        "disclosed_incentivized_axis_mention_count": 9,
+        "positive_choice_review_count": 3
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 5,
+        "positive_choice_review_count": 2
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 1007,
+        "positive_choice_review_count": 144,
+        "negative_choice_review_count": 50
+      }
+    },
+    "coverage_and_pigment": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 10,
+        "disclosed_incentivized_axis_mention_count": 2
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 5,
+        "disclosed_incentivized_axis_mention_count": 1,
+        "positive_choice_review_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 216,
+        "negative_choice_review_count": 4,
+        "positive_choice_review_count": 21
+      }
+    },
+    "shade_and_color_fit": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 6,
+        "disclosed_incentivized_axis_mention_count": 2
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 161,
+        "positive_choice_review_count": 27,
+        "negative_choice_review_count": 14
+      }
+    },
+    "scent_and_flavor": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 49,
+        "disclosed_incentivized_axis_mention_count": 2
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 10,
+        "positive_choice_review_count": 4,
+        "disclosed_incentivized_axis_mention_count": 2
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 641,
+        "negative_choice_review_count": 97,
+        "positive_choice_review_count": 126
+      }
+    },
+    "formula_consistency_and_change": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 2
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 53,
+        "negative_choice_review_count": 5,
+        "positive_choice_review_count": 1
+      }
+    },
+    "application_and_tool_performance": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 25,
+        "positive_choice_review_count": 1,
+        "disclosed_incentivized_axis_mention_count": 8
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 3,
+        "positive_choice_review_count": 1,
+        "disclosed_incentivized_axis_mention_count": 1
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 187,
+        "negative_choice_review_count": 12,
+        "positive_choice_review_count": 28
+      }
+    },
+    "hype_originality_and_trust": {
+      "amazon_rendered_reviews": {
+        "axis_mention_count": 4
+      },
+      "revolve_native_reviews": {
+        "axis_mention_count": 2
+      },
+      "sephora_product_group_reviews": {
+        "axis_mention_count": 95,
+        "negative_choice_review_count": 6,
+        "positive_choice_review_count": 1
+      }
+    }
+  },
+  "outputs": {
+    "coding": "C:\\tmp\\forseti-summer-fridays-understanding-p11r5-20260802\\evidence\\retailer_product_axis_coding.json",
+    "normalized_rows": "C:\\tmp\\forseti-summer-fridays-understanding-p11r5-20260802\\evidence\\normalized_retailer_review_rows.jsonl",
+    "qa_rows": "C:\\tmp\\forseti-summer-fridays-understanding-p11r5-20260802\\evidence\\retailer_axis_coding_qa_rows.jsonl"
+  }
+}

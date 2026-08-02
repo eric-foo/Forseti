@@ -135,11 +135,16 @@ For a consumer brand where product/customer experience is material, select
 `broad_consumer_brand_understanding_v1` instead. Its v2 depth ledger applies the
 same aggregate anti-token floors, but completion is organized around material
 product pain/delight axes. `CO3` codes the eligible deduplicated retailer rows
-to axis and explicit choice outcomes, tags social-source relationship, and
-returns source IDs rather than prose-only counts. `CO0` integrates those rows
-with independent external, community, and creator support. Do not promote
+to axis-specific and overall explicit choice outcomes, tags social-source
+relationship, and returns source IDs rather than prose-only counts. `CO0`
+integrates those rows with distinct-origin external, community, and creator
+support. Multiple posts from one creator and multiple units from one publisher
+receive one corroboration-strength credit. Do not promote
 official direction, retailer-operated content, disclosed paid/affiliate posts,
-or relationship-unknown posts as independent creator corroboration.
+or relationship-unknown posts as independent creator corroboration. External
+axis support also requires an explicit apparently-independent relationship and
+a consumer-editorial or trade-press source type; company and transaction
+profiles remain context, not customer corroboration.
 
 Any pair/group dispatcher is mechanical and is not another evidence actor.
 `CO1`-`CO3` use same-root collaboration under `CO0` unless a separately
@@ -202,8 +207,9 @@ not spend a separate sacrificial query.
    For the consumer-brand profile, the customer-evidence return also includes
    the hash-pinned row coding view. Its denominator reconciles every admitted
    corpus into eligible text-bearing rows plus excluded no-usable-text rows;
-   its row records carry review identity, product context, incentive state,
-   normalized axis IDs, explicit choice outcomes, and source-row references.
+   its row records carry review identity, a product context declared by that
+   corpus, incentive state, normalized axis codes with axis-specific choice
+   outcomes, overall choice outcomes, and source-row references.
    Same-corpus and cross-corpus deduplication precede incidence. Keep retailer
    results separate unless their boundaries and methods are comparable.
 4. Specialists persist evidence as it is produced, then write one terminal

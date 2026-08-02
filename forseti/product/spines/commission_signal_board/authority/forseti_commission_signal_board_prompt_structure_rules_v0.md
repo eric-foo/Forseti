@@ -232,20 +232,30 @@ own schema; they do not silently acquire v2 product-axis credit.
 The v2 ledger inventories every observed material product-experience axis as
 `pain`, `delight`, or `mixed`, with a terminal disposition. `signal` establishes
 possible existence. `recurring` requires at least three qualifying independent
-units across two non-retailer evidence families. `strong` additionally requires
-axis mentions in two deduplicated retailer corpora, at least six qualifying
-independent non-retailer units across at least two families with at least two
-units in each, and an explicit retailer choice consequence appropriate to the
-axis polarity. These are hybrid entry bars, not stopping quotas. Same-topic
-independent sources remain useful; owned, retailer-operated, disclosed
-paid/affiliate, and relationship-unknown social posts do not satisfy
-independent axis corroboration.
+origins across two non-retailer evidence families. `strong` additionally
+requires axis mentions in two deduplicated retailer corpora, at least six
+qualifying distinct non-retailer origins across at least two families with at
+least two origins in each, and an explicit retailer choice consequence
+appropriate to the axis polarity. Reddit threads are discussion origins;
+social posts deduplicate to creator; external units deduplicate to publisher or
+institution. Same-origin items remain citable but add no
+corroboration-strength credit. These are hybrid entry bars, not stopping
+quotas. Same-topic independent sources remain useful. Owned,
+retailer-operated, disclosed paid/affiliate, and relationship-unknown social
+posts do not satisfy independent axis corroboration. External support must be
+typed as consumer editorial or trade press, carry an explicit
+`apparently_independent` relationship, and come from an independent origin;
+company profiles, corporate/transaction records, paid or affiliate material,
+and relationship-unknown external units do not qualify.
 
 V2 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
 unique text-bearing review in each admitted corpus, reconciles excluded
 no-usable-text rows to the corpus denominator, and preserves native review ID,
-product context, incentive state, axis IDs, explicit choice outcomes, and a
-source-row reference. The validator recomputes per-corpus axis mentions,
+product context, incentive state, axis codes with axis-specific choice outcomes,
+overall choice outcomes, and a source-row reference. Separating the outcomes
+prevents a consequence attributed to one product issue from being copied onto
+every issue mentioned in the review. Every product context must belong to its
+declared retailer corpus. The validator recomputes per-corpus axis mentions,
 negative/positive choice rows, and disclosed-incentive counts. Cross-retailer
 pooling is allowed only when corpus boundaries, selection, and deduplication are
 comparable; otherwise report providers separately. These are captured-sample
@@ -257,8 +267,10 @@ pointers, not evidence. Every material source candidate must resolve through
 existing route-job accounting to captured evidence or a typed terminal
 disposition before a passing seal. The final two practical batches must also
 show zero new product axes, changed axis strengths, and changed axis incidence.
-Owned social rows carry their observed date and direction-event tags so Deliver
-can derive a factual direction timeline without a separate Phase A artifact.
+Owned social rows carry a normalized `YYYY-MM-DD` observed date and
+direction-event tags so Deliver can derive a factual direction timeline without
+a separate Phase A artifact. Preserve the source's original date text in the
+pinned source artifact.
 
 These are anti-token entry floors, not completion quotas, prevalence samples,
 or market-representativeness claims. A passing seal additionally requires

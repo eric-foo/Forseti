@@ -1,0 +1,61 @@
+{
+  "schema_version": "p11r5_confirm_dont_trust_integrity_audit_v1",
+  "roots": [
+    {
+      "root": "C:\\tmp\\forseti-sf-review-corpus-completion-20260725-p07-r3",
+      "manifest_count": 2,
+      "preserved_file_count": 4
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data",
+      "manifest_count": 158,
+      "preserved_file_count": 556
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data",
+      "manifest_count": 33,
+      "preserved_file_count": 98
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-phase2-native-return-20260728",
+      "manifest_count": 11,
+      "preserved_file_count": 24
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-reddit-anchor-20260727",
+      "manifest_count": 1,
+      "preserved_file_count": 2
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731",
+      "manifest_count": 232,
+      "preserved_file_count": 933
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r1-20260801",
+      "manifest_count": 11,
+      "preserved_file_count": 40
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801",
+      "manifest_count": 11,
+      "preserved_file_count": 19
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r3-20260801",
+      "manifest_count": 5,
+      "preserved_file_count": 9
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r4-20260801",
+      "manifest_count": 17,
+      "preserved_file_count": 34
+    }
+  ],
+  "review_corpus_receipt_count": 37,
+  "pointer_parent_count": 75,
+  "sephora_onboarding_packet_count": 44,
+  "error_count": 0,
+  "errors": [],
+  "result": "pass"
+}

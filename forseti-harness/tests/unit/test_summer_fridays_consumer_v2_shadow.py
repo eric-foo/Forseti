@@ -26,6 +26,16 @@ V1_LEDGER = REPO_ROOT / (
     "summer_fridays_understanding_dogfood_20260801_p11r4/"
     "coordinated/evidence_depth_ledger.json"
 )
+V2_SEAL = REPO_ROOT / (
+    "docs/workflows/"
+    "summer_fridays_understanding_dogfood_20260802_p11r5/"
+    "coordinated/acquisition_seal.md"
+)
+V2_LEDGER = REPO_ROOT / (
+    "docs/research/"
+    "summer_fridays_understanding_dogfood_20260802_p11r5/"
+    "coordinated/evidence_depth_ledger.json"
+)
 
 
 def _write_seal(path: Path, seal: dict) -> None:
@@ -69,6 +79,7 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
     external = ledger["families"].pop("outside_in")
     for row in external["units"]:
         row["source_type"] = source_types[row["unit_id"]]
+        row["relationship"] = "relationship_unknown"
     ledger["families"]["external_context"] = external
     for row in ledger["families"]["native_social"]["posts"]:
         row["relationship"] = (
@@ -121,3 +132,32 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
         finding.startswith("passing_seal_below_depth_floor:")
         for finding in findings
     )
+
+
+def test_summer_fridays_p11r5_consumer_brand_dogfood_passes() -> None:
+    assert validate_phase_acquisition_seal(
+        seal_path=V2_SEAL,
+        repo_root=REPO_ROOT,
+    ) == []
+
+    ledger = json.loads(V2_LEDGER.read_text(encoding="utf-8"))
+    assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION
+    assert ledger["profile_id"] == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert len(ledger["product_axes"]) == 12
+    assert {
+        axis["axis_id"]: axis["strength"]
+        for axis in ledger["product_axes"]
+    } == {
+        "reaction_and_breakout": "strong",
+        "value_and_quantity": "strong",
+        "packaging_and_dispensing": "strong",
+        "wear_and_longevity": "signal",
+        "hydration_and_moisture": "strong",
+        "texture_and_skin_finish": "strong",
+        "coverage_and_pigment": "recurring",
+        "shade_and_color_fit": "strong",
+        "scent_and_flavor": "strong",
+        "formula_consistency_and_change": "signal",
+        "application_and_tool_performance": "signal",
+        "hype_originality_and_trust": "strong",
+    }

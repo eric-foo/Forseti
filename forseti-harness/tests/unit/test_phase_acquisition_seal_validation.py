@@ -143,6 +143,7 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
     external = ledger["families"].pop("outside_in")
     for row in external["units"]:
         row["source_type"] = "consumer_editorial"
+        row["relationship"] = "apparently_independent"
     ledger["families"]["external_context"] = external
     for row in ledger["families"]["native_social"]["posts"]:
         row["relationship"] = "apparently_independent"
@@ -176,8 +177,21 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
                     "review_id": f"{corpus_id}-review-{index}",
                     "product_context_id": corpus["product_context_ids"][0],
                     "incentive_state": "not_marked_incentivized",
-                    "axis_ids": ["packaging_reliability"] if has_axis else [],
-                    "choice_outcomes": (
+                    "axis_codes": (
+                        [
+                            {
+                                "axis_id": "packaging_reliability",
+                                "choice_outcomes": (
+                                    ["returned_or_refunded"]
+                                    if index == 0
+                                    else ["none_explicit"]
+                                ),
+                            }
+                        ]
+                        if has_axis
+                        else []
+                    ),
+                    "overall_choice_outcomes": (
                         ["returned_or_refunded"]
                         if index == 0
                         else ["none_explicit"]
@@ -622,6 +636,226 @@ def test_consumer_brand_v2_recomputes_retailer_axis_incidence(
         )
         and finding.endswith(":axis_mention_count")
         for finding in findings
+    )
+
+
+def test_consumer_brand_v2_malformed_axis_codes_break_axis_closure(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    coding_path = tmp_path / "retailer_product_axis_coding.json"
+    coding = json.loads(coding_path.read_text(encoding="utf-8"))
+    coding["rows"][0]["axis_codes"] = {"packaging_reliability": True}
+    coding_path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    for row in ledger["artifacts"]:
+        if row["artifact_id"] == "retailer-axis-coding":
+            row["sha256"] = _artifact_hash(coding_path)
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "invalid_coded_review_axis_codes" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+def test_consumer_brand_v2_keeps_choice_outcomes_on_the_causal_axis(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    coding_path = tmp_path / "retailer_product_axis_coding.json"
+    coding = json.loads(coding_path.read_text(encoding="utf-8"))
+    for corpus in coding["corpora"]:
+        first = next(
+            row
+            for row in coding["rows"]
+            if row["corpus_id"] == corpus["corpus_id"]
+        )
+        first["axis_codes"].append(
+            {
+                "axis_id": "hydration_performance",
+                "choice_outcomes": ["none_explicit"],
+            }
+        )
+    hydration = deepcopy(ledger["product_axes"][0])
+    hydration.update(
+        {
+            "axis_id": "hydration_performance",
+            "label": "Hydration performance",
+            "strength": "recurring",
+            "disposition": "bounded_nonmaterial",
+            "retailer_incidence": [
+                {
+                    "corpus_id": corpus["corpus_id"],
+                    "eligible_text_review_count": (
+                        corpus["unique_review_count"]
+                        - corpus["cross_corpus_duplicate_count"]
+                    ),
+                    "axis_mention_count": 1,
+                    "negative_choice_review_count": 0,
+                    "positive_choice_review_count": 0,
+                    "disclosed_incentivized_axis_mention_count": 0,
+                }
+                for corpus in ledger["families"]["retailer_reviews"]["corpora"]
+            ],
+            "focused_search_jobs": [],
+        }
+    )
+    ledger["product_axes"].append(hydration)
+    coding_path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "retailer-axis-coding"
+    )["sha256"] = _artifact_hash(coding_path)
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_consumer_brand_v2_rejects_product_context_outside_corpus(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    coding_path = tmp_path / "retailer_product_axis_coding.json"
+    coding = json.loads(coding_path.read_text(encoding="utf-8"))
+    coding["rows"][0]["product_context_id"] = "not-in-this-corpus"
+    coding_path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "retailer-axis-coding"
+    )["sha256"] = _artifact_hash(coding_path)
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "coded_review_product_context_outside_corpus" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+def test_consumer_brand_v2_counts_distinct_social_creators_for_strength(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    for row in ledger["families"]["native_social"]["posts"][:3]:
+        row["creator_id"] = "one-creator"
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "product_axis_strength_mismatch:packaging_reliability:recurring" in findings
+
+
+@pytest.mark.parametrize(
+    ("source_type", "relationship"),
+    [
+        ("company_profile", "apparently_independent"),
+        ("consumer_editorial", "relationship_unknown"),
+    ],
+)
+def test_consumer_brand_v2_nonconsumer_external_units_do_not_supply_support(
+    tmp_path: Path,
+    source_type: str,
+    relationship: str,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["support_refs"] = [
+        {"family": "reddit_forum", "unit_id": f"thread-{index}"}
+        for index in range(3)
+    ] + [
+        {"family": "external_context", "unit_id": f"outside-{index}"}
+        for index in range(3)
+    ]
+    for row in ledger["families"]["external_context"]["units"][:3]:
+        row["source_type"] = source_type
+        row["relationship"] = relationship
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "product_axis_strength_mismatch:packaging_reliability:signal" in findings
+
+
+def test_consumer_brand_v2_independent_editorial_origins_supply_support(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["support_refs"] = [
+        {"family": "reddit_forum", "unit_id": f"thread-{index}"}
+        for index in range(3)
+    ] + [
+        {"family": "external_context", "unit_id": f"outside-{index}"}
+        for index in range(3)
+    ]
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_consumer_brand_v2_owned_post_date_must_be_iso_calendar_date(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["families"]["native_social"]["posts"][10].update(
+        {
+            "relationship": "owned",
+            "published_at": "July 41, 2026",
+            "direction_event_tags": ["campaign"],
+        }
+    )
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    assert "missing_owned_social_published_at" in _validate(
+        tmp_path, _make_passing(seal)
     )
 
 

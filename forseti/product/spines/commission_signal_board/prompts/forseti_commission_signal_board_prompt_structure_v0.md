@@ -804,8 +804,9 @@ unresolved inference job.
 For a consumer brand where product/customer experience is material, apply the
 prompt-structure authority's `broad_consumer_brand_understanding_v1` profile.
 Build the v2 product-axis inventory across material pains, strongest delights,
-and mixed axes; produce the hash-pinned eligible-review coding view; classify
-social relationship before awarding independent support; and route one
+and mixed axes; produce the hash-pinned eligible-review coding view with
+axis-specific choice outcomes; classify social and external relationship before
+awarding distinct-origin independent support; and route one
 corroboration/segmentation plus one disconfirmation/comparison Phase 2 job for
 every material axis. A search result remains a pointer. Add every material
 follow-up to existing route accounting and resolve it through the owning
