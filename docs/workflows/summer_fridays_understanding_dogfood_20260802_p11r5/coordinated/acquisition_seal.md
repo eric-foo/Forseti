@@ -19,7 +19,7 @@ phase_acquisition_seal:
   cycle_id: summer_fridays_understanding_p11r5_20260802
   commission_id: summer_fridays_understanding_p11r5_consumer_brand_v2
   subject: Summer Fridays
-  authority_revision: b03b56fc324bceece1777fcfbb5924ff22b7b12d
+  authority_revision: b9e594128b2459a145fed0b37a75717a3367eb31
   parent_authority_revision: 8786371a9439bfaba223806859be2ea0106c43b1
   parent_seal: docs/workflows/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/acquisition_seal.md
   acquisition_gate: pass
