@@ -338,7 +338,10 @@ cluster synthesis compressed to context and the leaderboard annex retained:
 
 Binding rules: **no minimum card count** — a thin week reports two cards or
 zero rather than manufacturing wounds; corroboration is a counted list of
-named independent reporters, never an adjective; this contract changes the
+named independent reporters, never an adjective, and every card separates
+**within-thread reporters** from **cross-thread appearances** (distinct
+captured threads naming the same brand-problem), because the two are
+different strengths of evidence and conflating them overstates a card; this contract changes the
 read layer only and never feeds back into admission gates (brand-attribution
 is not a selection criterion — the calibration artifact records why); any
 card going client-facing is re-read against its cited packets first and
