@@ -14,7 +14,7 @@ use_when:
   - Grounding any claim from this week's Reddit read back to lake evidence.
 authority_boundary: retrieval_only
 open_next:
-  - docs/research/reddit_weekly_read_extracts_2026_08_01/ (per-thread evidence extracts, JSONL)
+  - docs/research/reddit_weekly_read_extracts_2026_08_01/extracts_slice_0.jsonl
   - docs/research/reddit_weekly_latent_problem_adjudication_2026_08_01_v0.md
 stale_if:
   - A later weekly read supersedes these clusters.
