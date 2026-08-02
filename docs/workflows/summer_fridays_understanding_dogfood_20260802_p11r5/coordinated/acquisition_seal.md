@@ -489,7 +489,7 @@ phase_acquisition_seal:
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/evidence_depth_ledger.json
-    sha256: 45d94004de96f244b647f4256c3516e14d204202a0fae36c42c1757977b7e936
+    sha256: 04ab8afedec9159789af6ae993b88ccec83f0eae6480cf5c95ed0e1744901536
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -506,7 +506,7 @@ phase_acquisition_seal:
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/evidence_depth_ledger.json
-      sha256: 45d94004de96f244b647f4256c3516e14d204202a0fae36c42c1757977b7e936
+      sha256: 04ab8afedec9159789af6ae993b88ccec83f0eae6480cf5c95ed0e1744901536
       invalid_if:
       - artifact hash changes
       - axis support or retailer coding changes

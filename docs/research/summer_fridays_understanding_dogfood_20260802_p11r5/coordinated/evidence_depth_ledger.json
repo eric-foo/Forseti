@@ -61,27 +61,27 @@
     },
     {
       "artifact_id": "p11r5_axis_codebook",
-      "locator": "C:/tmp/forseti-understanding-depth-phase-a-20260801/docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/product_axis_codebook.json",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/product_axis_codebook.json",
       "sha256": "a532073a12505f40ad6a558f9533c0a5d9e4fd9b72a06745c81ca015f5164c4f"
     },
     {
       "artifact_id": "p11r5_retailer_axis_coding",
-      "locator": "C:/tmp/forseti-understanding-depth-phase-a-20260801/docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_product_axis_coding.json",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_product_axis_coding.json",
       "sha256": "ed1fca2f3fdcc84ee09db1c0574fad6278a483a4b12194f54b2b21343fca538e"
     },
     {
       "artifact_id": "p11r5_retailer_axis_report",
-      "locator": "C:/tmp/forseti-understanding-depth-phase-a-20260801/docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_axis_coding_report.json",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_axis_coding_report.json",
       "sha256": "d86d0bace3c91dbb0359b3ecf060b5b0e233ca4e4f6a3bf07484bc80b6498ace"
     },
     {
       "artifact_id": "p11r5_integrity_audit",
-      "locator": "C:/tmp/forseti-understanding-depth-phase-a-20260801/docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/confirm_dont_trust_integrity_audit.json",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/confirm_dont_trust_integrity_audit.json",
       "sha256": "a03063c829f673426b8f3ca09d8a4e3a99c49ebe611ec43477b0fbcda462e81f"
     },
     {
       "artifact_id": "p11r5_axis_support",
-      "locator": "C:/tmp/forseti-understanding-depth-phase-a-20260801/docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/axis_support_adjudication.json",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/axis_support_adjudication.json",
       "sha256": "ab517697b137f0966e1a44481fa606946e502f874b541058c1b6c111dd232f66"
     }
   ],
