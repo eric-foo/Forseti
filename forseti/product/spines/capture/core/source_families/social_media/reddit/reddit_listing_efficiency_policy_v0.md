@@ -319,6 +319,36 @@ commissioned company, competitors, products, creators, claims, prices,
 channels, partnerships, and every material outside source that could change
 the decision. A thread is a lead or evidence fragment, not a client conclusion.
 
+### Weekly read deliverable contract (owner decision 2026-08-01)
+
+The weekly read's primary output is **GTM target cards**, in two lanes, with
+cluster synthesis compressed to context and the leaderboard annex retained:
+
+- **Wound card** (a named brand bleeding now): brand and product; the problem
+  in one plain sentence a founder outside this project can read cold — no
+  internal vocabulary; `independent_reporters` (count plus commenter handles,
+  re-readable in the cited packet); thread size(s) and ids; two verbatim
+  quotes; where the customers say they are going instead; one sentence on why
+  the brand would pay to see this; caveats (single-thread, suppression
+  signals, counterfeit-vs-product confusion).
+- **Opportunity card** (an unserved gap with no wounded incumbent): the gap in
+  one plain sentence; who has the demand; which challenger brands the
+  evidence names as positioned to claim it; same corroboration and citation
+  fields.
+
+Binding rules: **no minimum card count** — a thin week reports two cards or
+zero rather than manufacturing wounds; corroboration is a counted list of
+named independent reporters, never an adjective; this contract changes the
+read layer only and never feeds back into admission gates (brand-attribution
+is not a selection criterion — the calibration artifact records why); any
+card going client-facing is re-read against its cited packets first and
+gains at least one non-Reddit corroboration. Extraction workers emit, per
+thread, the fields the cards consume: core problem, named brands in stated
+context, `independent_reporters` (count + handles), `where_customers_go`,
+verbatim quotes, corroboration basis, and commercial signal. Reversal
+condition: if two consecutive weeks yield fewer than two honest cards, the
+card-first shape is overhead and cluster synthesis leads again.
+
 ## Accepted residuals and non-claims
 
 - Captured threads are depth-bounded, not exhaustive. On the www surface the

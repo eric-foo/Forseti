@@ -181,6 +181,48 @@ Gross peels** (at-home treatment); **Etude/TOCOBO lip masks** (K-lip);
 (discontinued, still named as irreplaceable). Full maps per thread in
 `extracts_slice_3.jsonl`.
 
+## GTM target cards (added same day under the new deliverable contract)
+
+Wound cards — brands with a specific, independently corroborated problem this
+week (full basis in the cited packets; counts are separate unrelated
+commenters):
+
+1. **Dieux — Instant Angel smells of mildew to a large share of buyers.**
+   83-comment thread (1vb0td1), fresh tubes from different stores; a second
+   independent camp reports it doing nothing or breaking them out. One
+   commenter reports complaints being downvoted, so visible volume likely
+   understates. *"…full bouquet of mildewed dish sponge, forgotten damp
+   towel."* They'd pay because community trust is their whole moat. Caveat:
+   a genetics-like smeller/non-smeller split is plausible and part of the
+   story, not a defeater.
+2. **Armani Beauty — Luminous Silk reformulation is sending decade-loyal
+   users to Dior.** 192-comment thread (1vaeqn7); multiple separate loyalists
+   report shade discontinuation, finish change, niacinamide irritation; the
+   same thread crowns Dior as the destination. *"They discontinued my shade —
+   bastards! I have the Dior and love it!"*
+3. **Rhode — buyers purchase while stating the product fails.** 40-comment
+   thread (1v5y06i); the buyer bought every blush shade *knowing* they fade
+   in 30 minutes; five independent commenters frame it as compulsion.
+   Chosen for shape, not volume: marketing outrunning product is a
+   leadership-level exposure.
+4. **COSRX — Amazon third-party counterfeits are harming customers under
+   their name.** 58-comment thread (1v83eiy); Amazon itself confirmed a fake
+   batch after months of acne; 6+ independent first-hand fake-K-beauty
+   accounts. A channel wound, not a formula wound. (Beauty of Joseon rides
+   the same pattern on thinner evidence this week: 1v83xqy, 1v75fnh.)
+5. **Cantu — still paying for a formula reputation it may have already
+   fixed.** 104-comment thread (1vagikf); dozens split between boycotting on
+   the decade-old story and reporting the reformulated product works. A
+   reputation-lag wound: they are losing customers to a ghost.
+
+Opportunity cards (unserved gaps the evidence names challengers for): deep-tone
+affordable bronzer (1vacd2l — LYS, Juvia's Place, Black Radiance named
+adequate); lash-service defection to DIY systems (1v8h0h8 — Lashify, Lilac
+St); the trusted-dupe tier rising from influencer distrust (1v6be1r —
+Dossier, Montagne); salon price revolt into press-ons/DIY gel with a
+retention-failure product gap (1v9e1ph, 1v9tulr, 1v5f4ng); kids' swim-season
+haircare against failed 3-in-1s (1v9wviz — Malibu C, Aqua Guard named).
+
 ## Method and residuals
 
 136 problem dives read full-tree and 27 leaderboard threads read
