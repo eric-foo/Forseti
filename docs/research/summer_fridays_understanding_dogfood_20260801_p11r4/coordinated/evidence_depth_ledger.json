@@ -1,6 +1,8 @@
 {
   "schema_version": "understanding_evidence_depth_v1",
   "profile_id": "broad_company_understanding_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r4_20260801",
   "artifacts": [
     {
       "artifact_id": "p07_review_completion",
@@ -55,7 +57,7 @@
     {
       "artifact_id": "p11r4_record",
       "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md",
-      "sha256": "977c73074b17dcfade039936ca23b24090af12e2f410c067a9dcb2754cb6633a"
+      "sha256": "42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4"
     }
   ],
   "families": {

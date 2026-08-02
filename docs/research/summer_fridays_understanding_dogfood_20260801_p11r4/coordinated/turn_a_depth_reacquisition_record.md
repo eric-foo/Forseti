@@ -115,7 +115,7 @@ the metrics rather than trusting these reported totals.
 | --- | --- | --- |
 | Outside-in | 12 units from 12 distinct origins | origin diversity, not a complete press census or proof of publisher neutrality |
 | Retailer reviews | 975 provider-visible unique rows across Revolve, Amazon, and Sephora; more than five product contexts; six categories; low/mid/high ratings present | exact-ID/text dedupe within each corpus; zero exact cross-provider identity collisions observed, but semantic cross-provider duplicates and shared-review-feed linkage remain unresolved |
-| Reddit/forum | 20 distinct thread IDs across six communities and five topic categories | qualitative tension discovery, not sentiment prevalence or a representative Reddit sample |
+| Reddit/forum | 20 distinct thread IDs across six communities and six topic categories | qualitative tension discovery, not sentiment prevalence or a representative Reddit sample |
 | Native social | 36 distinct source-native posts from 23 creators on TikTok, Instagram, and YouTube with positive, mixed, critical, and neutral evidence | discovery was query-selected and tension-seeking; creator-landscape and narrative-prevalence claims remain excluded |
 
 The social count treats separate source-native posts as separate evidence units

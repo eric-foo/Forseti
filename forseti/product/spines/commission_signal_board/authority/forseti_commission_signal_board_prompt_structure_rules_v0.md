@@ -214,6 +214,13 @@ current entry floors are:
   platforms, and at least two observed perspectives among positive, neutral,
   critical, and mixed.
 
+Subject-owned native posts may contribute source-native content-unit depth when
+their relationship to the subject is explicit in the ledger or its pinned
+terminal evidence. They count as one creator after creator-ID deduplication,
+must be reported separately from non-owned posts, and cannot support an
+independent-creator-landscape claim. The creator floor remains the independent
+distribution counterweight to repeated posts from any one account.
+
 These are anti-token entry floors, not completion quotas, prevalence samples,
 or market-representativeness claims. A passing seal additionally requires
 explicit echo/syndication adjudication, every material seam dispositioned, the
@@ -238,9 +245,10 @@ changed.
 
 For `broad_company_understanding_v1`, v3 also hash-pins an
 `understanding_evidence_depth_v1` ledger. The validator recomputes the profile's
-family-depth and distribution metrics from that ledger and checks the closure
-receipt. Job completion without that evidence-depth and saturation accounting
-cannot authorize Deliver. Historical `phase_acquisition_seal_v2` artifacts are
+family-depth and distribution metrics from that ledger, requires its subject
+and cycle identity to match the seal, and checks the closure receipt. Job
+completion without that evidence-depth and saturation accounting cannot
+authorize Deliver. Historical `phase_acquisition_seal_v2` artifacts are
 preserved and may be checked only with the validator's explicit
 `--allow-legacy-v2` audit switch; they do not satisfy the current broad-
 Understanding completion contract.

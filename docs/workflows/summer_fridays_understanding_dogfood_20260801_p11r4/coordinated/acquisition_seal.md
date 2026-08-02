@@ -276,7 +276,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md
-      terminal_artifact_sha256: 977c73074b17dcfade039936ca23b24090af12e2f410c067a9dcb2754cb6633a
+      terminal_artifact_sha256: 42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4
     - route_id: depth_community_legal_continuation
       phase: co3
       required: true
@@ -290,7 +290,7 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md
-      terminal_artifact_sha256: 977c73074b17dcfade039936ca23b24090af12e2f410c067a9dcb2754cb6633a
+      terminal_artifact_sha256: 42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4
     - route_id: depth_saturation_walk
       phase: co3
       required: true
@@ -304,14 +304,14 @@ phase_acquisition_seal:
       unrun_job_ids: []
       unrun_count: 0
       terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md
-      terminal_artifact_sha256: 977c73074b17dcfade039936ca23b24090af12e2f410c067a9dcb2754cb6633a
+      terminal_artifact_sha256: 42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4
   serp_phase2_decision_receipt:
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
     sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/evidence_depth_ledger.json
-    sha256: 412d680c60befca2db71793496ef9421c1f1fe3cdf3a026e48b36988b2496b10
+    sha256: ece07d6cd04553003f01e0935c673ab665b327f0b87dd451caf64aad83bfab0d
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -319,10 +319,10 @@ phase_acquisition_seal:
         sha256: dc584868879d9f6f8a243d3985f3b89e67f82c8d3eccc9c0e4fd87a496f149f6
         invalid_if: [artifact hash changes, parent acquisition provenance changes, Deliver artifact appears]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md
-        sha256: 977c73074b17dcfade039936ca23b24090af12e2f410c067a9dcb2754cb6633a
+        sha256: 42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4
         invalid_if: [artifact hash changes, raw closure changes, depth adjudication changes, Deliver artifact appears]
       - locator: docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/evidence_depth_ledger.json
-        sha256: 412d680c60befca2db71793496ef9421c1f1fe3cdf3a026e48b36988b2496b10
+        sha256: ece07d6cd04553003f01e0935c673ab665b327f0b87dd451caf64aad83bfab0d
         invalid_if: [artifact hash changes, source pin changes, evidence-depth or saturation accounting changes]
 ```
 
@@ -334,6 +334,16 @@ Reddit/forum threads across six communities, and 36 native-social posts from 23
 creators across three platforms. Echo and syndication handling is explicit,
 every material seam has a terminal disposition, and the final two practical
 search batches added no new material seam or changed material disposition.
+
+The native-social total contains 24 non-owned posts from 22 non-owned creators
+and 12 subject-owned posts from the official account. The latter add distinct
+source-native content units but only one creator after deduplication; they do
+not support an independent-creator-landscape claim.
+
+Review-return adjudication on 2026-08-02 corrected the Reddit topic-category
+count from five to six, made the owned/non-owned native-social split explicit,
+and bound the depth ledger to this seal's subject and cycle. It did not add,
+remove, or rerun any acquisition job, and it did not start Deliver.
 
 The refused and fail-closed packets remain preserved as provenance and receive
 no evidence-depth credit. The residual gaps and non-representativeness ceilings

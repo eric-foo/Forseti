@@ -461,15 +461,17 @@ an artifact hash drifts, its source-specific currentness expires, or owning
 authority becomes incompatible.
 
 The v3 ledger uses schema `understanding_evidence_depth_v1` and profile
-`broad_company_understanding_v1`. It hash-pins the evidence artifacts used for
-depth accounting; enumerates outside-in units, retailer-review corpora,
-Reddit/forum threads, and native-social posts with their independence and
-distribution fields; and carries echo adjudication, material-seam dispositions,
-the acquisition-batch yield sequence, and remaining-move dispositions. The
-validator derives the anti-token floor metrics from those rows. It cannot judge
-whether prose is insightful or whether a semantic independence claim is true;
-`CO0` still owns that evidence judgment and must block rather than fill fields
-with unsupported labels. Historical v2 seals require
+`broad_company_understanding_v1`. It repeats the seal's subject and cycle ID;
+the validator requires both identities to match before the ledger can support
+that seal. It hash-pins the evidence artifacts used for depth accounting;
+enumerates outside-in units, retailer-review corpora, Reddit/forum threads, and
+native-social posts with their independence and distribution fields; and
+carries echo adjudication, material-seam dispositions, the acquisition-batch
+yield sequence, and remaining-move dispositions. The validator derives the
+anti-token floor metrics from those rows. It cannot judge whether prose is
+insightful or whether a semantic independence claim is true; `CO0` still owns
+that evidence judgment and must block rather than fill fields with unsupported
+labels. Historical v2 seals require
 `--allow-legacy-v2` for audit and do not authorize a new broad-Understanding
 Deliver under the current contract.
 

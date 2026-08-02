@@ -168,6 +168,16 @@ def _validate_understanding_evidence_depth(
         findings.append("invalid_evidence_depth_ledger_version")
     if ledger.get("profile_id") != BROAD_UNDERSTANDING_PROFILE:
         findings.append("invalid_understanding_completion_profile")
+    seal_subject = seal.get("subject")
+    if not isinstance(seal_subject, str) or not seal_subject:
+        findings.append("missing_seal_subject")
+    elif ledger.get("subject") != seal_subject:
+        findings.append("evidence_depth_ledger_subject_mismatch")
+    seal_cycle_id = seal.get("cycle_id")
+    if not isinstance(seal_cycle_id, str) or not seal_cycle_id:
+        findings.append("missing_seal_cycle_id")
+    elif ledger.get("cycle_id") != seal_cycle_id:
+        findings.append("evidence_depth_ledger_cycle_id_mismatch")
 
     artifacts = _validate_depth_artifacts(
         ledger.get("artifacts"), repo_root=repo_root, findings=findings
@@ -186,6 +196,7 @@ def _validate_understanding_evidence_depth(
         _validate_retailer_review_depth(
             families.get("retailer_reviews"),
             artifacts=artifacts,
+            require_complete=valid_pass,
             findings=findings,
         )
     )
@@ -323,7 +334,11 @@ def _validate_outside_in_depth(
 
 
 def _validate_retailer_review_depth(
-    value: Any, *, artifacts: set[str], findings: list[str]
+    value: Any,
+    *,
+    artifacts: set[str],
+    require_complete: bool,
+    findings: list[str],
 ) -> dict[str, int]:
     if not isinstance(value, dict):
         findings.append("missing_retailer_review_depth")
@@ -379,7 +394,13 @@ def _validate_retailer_review_depth(
                 findings=findings,
             )
         )
-    if rows and not {"low", "mid", "high"}.issubset(rating_bands):
+    # Band completeness is part of the passing-seal entry floor, not a shape
+    # requirement on an honestly partial blocked seal.
+    if (
+        require_complete
+        and rows
+        and not {"low", "mid", "high"}.issubset(rating_bands)
+    ):
         findings.append("retailer_review_rating_bands_incomplete")
     return {
         "retailer_review_unique_rows": total,
@@ -992,6 +1013,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        seal_schema_version = _load_seal(args.seal.resolve()).get("schema_version")
         findings = validate_phase_acquisition_seal(
             seal_path=args.seal.resolve(),
             repo_root=args.repo_root.resolve(),
@@ -1004,6 +1026,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
     payload = {
         "validator": SEAL_VERSION,
+        "seal_schema_version": seal_schema_version,
         "status": "PASS" if not findings else "FAIL",
         "findings": findings,
     }

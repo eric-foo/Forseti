@@ -180,7 +180,9 @@ def run_source_capture_http_packet(
         or unknown_with_reason("direct HTTP adapter did not infer source publication or event timing"),
         source_edit_or_version=source_edit_or_version
         or unknown_with_reason("direct HTTP adapter did not infer source edit or version timing"),
-        capture_time=known_fact("1970-01-01T00:00:00Z"),
+        capture_time=unknown_with_reason(
+            "capture has not started; the successful response supplies capture time"
+        ),
         recapture_time=recapture_time
         or not_applicable("direct HTTP packet did not model an earlier capture by default"),
         cutoff_posture=cutoff_posture
