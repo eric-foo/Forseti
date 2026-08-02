@@ -1,7 +1,7 @@
 {
   "schema_version": "confirm_dont_trust_integrity_audit_v1",
   "cycle_id": "summer_fridays_understanding_p11r6_20260802",
-  "audited_at": "2026-08-02T13:52:41.612934+00:00",
+  "audited_at": "2026-08-02T13:55:08.217056+00:00",
   "method": "Fresh-read every manifest under the named raw roots, then verify every declared preserved file by exact stored-byte size and SHA-256.",
   "roots": [
     {

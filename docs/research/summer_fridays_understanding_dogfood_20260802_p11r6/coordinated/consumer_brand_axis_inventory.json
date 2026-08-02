@@ -3,7 +3,7 @@
   "subject": "Summer Fridays",
   "cycle_id": "summer_fridays_understanding_p11r6_20260802",
   "created_at": "2026-08-02T13:09:53+00:00",
-  "authority_revision": "8f64d734ac17a84ba289faac9eaedb351f563de8",
+  "authority_revision": "9905840c87dd34f15bc60cd4c9de4ef39978686b",
   "parent_ledger": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/evidence_depth_ledger.json",
   "parent_ledger_sha256": "04ab8afedec9159789af6ae993b88ccec83f0eae6480cf5c95ed0e1744901536",
   "axes": [

@@ -7,7 +7,7 @@ scope: Final Phase A accounting for the Summer Fridays p11r6 current-contract co
 use_when:
   - Determining whether a separately commissioned bounded Summer Fridays Deliver may start.
   - Auditing current-contract product-axis search, community coding, reconciliation, or live saturation.
-authority_boundary: retrieval_only_no_deliver_started
+authority_boundary: retrieval_only
 open_next:
   - docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
   - docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/evidence_depth_ledger.json
@@ -19,7 +19,7 @@ phase_acquisition_seal:
   cycle_id: summer_fridays_understanding_p11r6_20260802
   commission_id: summer_fridays_understanding_p11r6_consumer_brand_v3
   subject: Summer Fridays
-  authority_revision: 8f64d734ac17a84ba289faac9eaedb351f563de8
+  authority_revision: 9905840c87dd34f15bc60cd4c9de4ef39978686b
   parent_authority_revision: b9e594128b2459a145fed0b37a75717a3367eb31
   parent_seal: docs/workflows/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/acquisition_seal.md
   acquisition_gate: pass
@@ -566,14 +566,14 @@ phase_acquisition_seal:
     unrun_job_ids: []
     unrun_count: 0
     terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-    terminal_artifact_sha256: 684034de6def6b187934ade46b8b15a58fbca3aa90cc347157b899e459b49975
+    terminal_artifact_sha256: d53bf526dfa197f8f5180617df6279d87f51e5ab0f1affa2d7987e450431849b
   serp_phase2_decision_receipt:
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
     sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/evidence_depth_ledger.json
-    sha256: f53644b5f8735bcd4200a6b3df065b9cc3c962a8fa379c278ffaa65c9bcf81c5
+    sha256: c6b822d9263ec60ad2d7a24584bfb1e111cd04c4d9592e5757b1f110443f8f1d
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -584,13 +584,13 @@ phase_acquisition_seal:
       - parent acquisition provenance changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-      sha256: 684034de6def6b187934ade46b8b15a58fbca3aa90cc347157b899e459b49975
+      sha256: d53bf526dfa197f8f5180617df6279d87f51e5ab0f1affa2d7987e450431849b
       invalid_if:
       - artifact hash changes
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/evidence_depth_ledger.json
-      sha256: f53644b5f8735bcd4200a6b3df065b9cc3c962a8fa379c278ffaa65c9bcf81c5
+      sha256: c6b822d9263ec60ad2d7a24584bfb1e111cd04c4d9592e5757b1f110443f8f1d
       invalid_if:
       - artifact hash changes
       - axis support or source-native coding changes

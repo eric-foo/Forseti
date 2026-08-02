@@ -7,7 +7,7 @@ scope: Current-contract evidence-depth continuation and acquisition seal evidenc
 use_when:
   - Auditing the p11r6 current consumer-brand Phase A dogfood.
   - Inspecting the 40-thread community corpus, axis-led searches, or source-native coding.
-authority_boundary: acquisition_evidence_only_no_deliver
+authority_boundary: retrieval_only
 open_next:
   - docs/research/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/evidence_depth_ledger.json
   - docs/workflows/summer_fridays_understanding_dogfood_20260802_p11r6/coordinated/acquisition_seal.md

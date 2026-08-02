@@ -87,7 +87,7 @@
     {
       "artifact_id": "p11r6_axis_inventory",
       "locator": "C:\\tmp\\forseti-consumer-brand-depth-v3-20260802\\docs\\research\\summer_fridays_understanding_dogfood_20260802_p11r6\\coordinated\\consumer_brand_axis_inventory.json",
-      "sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840"
+      "sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e"
     },
     {
       "artifact_id": "p11r6_community_axis_coding",
@@ -362,7 +362,7 @@
     {
       "artifact_id": "p11r6_integrity_audit",
       "locator": "C:\\tmp\\forseti-consumer-brand-depth-v3-20260802\\docs\\research\\summer_fridays_understanding_dogfood_20260802_p11r6\\coordinated\\confirm_dont_trust_integrity_audit.json",
-      "sha256": "a045af6098487fc70c39f6d1a5f1221c00d7c44e960d2e871f695b5bd0afed8b"
+      "sha256": "e5505c47c8e2d3301a63dd61ed7f3f9a1b7b19cdd6017348f73ca78718dd7f9c"
     }
   ],
   "families": {
@@ -1544,7 +1544,7 @@
           "disposition": "captured",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": [
             "reddit_19eo5it"
@@ -1556,7 +1556,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -1566,7 +1566,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -1782,7 +1782,7 @@
           "disposition": "captured",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": [
             "reddit_19dayj0",
@@ -1797,7 +1797,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -1807,7 +1807,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -2038,7 +2038,7 @@
           "disposition": "captured",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": [
             "reddit_1al8aby",
@@ -2051,7 +2051,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2061,7 +2061,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -2225,7 +2225,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2235,7 +2235,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2245,7 +2245,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -2500,7 +2500,7 @@
           "disposition": "captured",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": [
             "reddit_188rp74",
@@ -2513,7 +2513,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2523,7 +2523,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -2805,7 +2805,7 @@
           "disposition": "captured",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": [
             "reddit_1srjzrl"
@@ -2817,7 +2817,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2827,7 +2827,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -2977,7 +2977,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2987,7 +2987,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -2997,7 +2997,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -3174,7 +3174,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3184,7 +3184,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3194,7 +3194,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -3439,7 +3439,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3449,7 +3449,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3459,7 +3459,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -3533,7 +3533,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3543,7 +3543,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3553,7 +3553,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -3657,7 +3657,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3667,7 +3667,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3677,7 +3677,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
@@ -3857,7 +3857,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3867,7 +3867,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         },
@@ -3877,7 +3877,7 @@
           "disposition": "no_material_yield",
           "workstream": "product_axis",
           "planned_at": "2026-08-02T13:10:20+00:00",
-          "axis_inventory_sha256": "3b3b1a2d0eec656eb1e90f70f7ce1a38ab73c201e2abaa80dd2b77a5cf2e2840",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
           "search_artifact_id": "p11r6_phase2_search",
           "target_ids": []
         }
