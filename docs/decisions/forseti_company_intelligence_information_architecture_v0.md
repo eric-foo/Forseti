@@ -176,6 +176,17 @@ Company Understanding evaluates acquisition on two independent axes:
    sharpen, segment, or bound the answer without treating one token source as
    representative of the family.
 
+For consumer brands where product/customer experience is material, apply both
+measures to each material product axis as well as to the family totals. A large
+review corpus, thread count, or creator count does not prove that the important
+pain and delight axes were independently tested. Preserve a cross-family axis
+inventory, bounded retailer-sample incidence from row-level coding, explicit
+choice consequences, disconfirming/comparison work, and axis-aware saturation.
+Owned or commercially related content remains useful context but cannot be
+relabelled independent customer/creator corroboration. Population prevalence
+still requires transaction data or representative research; public captured-
+sample incidence does not become a market rate.
+
 Presence on the first axis never earns credit on the second. One article does
 not make outside-in context deep; one thread does not make community response
 understood; one creator does not make a native-social landscape; and one

@@ -1,0 +1,123 @@
+from __future__ import annotations
+
+import json
+from copy import deepcopy
+from pathlib import Path
+
+import yaml
+
+from runners.run_phase_acquisition_seal_validation import (
+    CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    CONSUMER_DEPTH_LEDGER_VERSION,
+    _artifact_hash,
+    _load_seal,
+    validate_phase_acquisition_seal,
+)
+
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+V1_SEAL = REPO_ROOT / (
+    "docs/workflows/"
+    "summer_fridays_understanding_dogfood_20260801_p11r4/"
+    "coordinated/acquisition_seal.md"
+)
+V1_LEDGER = REPO_ROOT / (
+    "docs/research/"
+    "summer_fridays_understanding_dogfood_20260801_p11r4/"
+    "coordinated/evidence_depth_ledger.json"
+)
+
+
+def _write_seal(path: Path, seal: dict) -> None:
+    path.write_text(
+        "# Summer Fridays consumer-brand v2 shadow seal\n\n```yaml\n"
+        + yaml.safe_dump(
+            {"phase_acquisition_seal": seal},
+            sort_keys=False,
+            allow_unicode=True,
+        )
+        + "```\n",
+        encoding="utf-8",
+    )
+
+
+def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
+    tmp_path: Path,
+) -> None:
+    assert validate_phase_acquisition_seal(
+        seal_path=V1_SEAL,
+        repo_root=REPO_ROOT,
+    ) == []
+
+    source_types = {
+        "tsg_consumer_investment": "corporate_or_transaction",
+        "cooley_transaction_role": "corporate_or_transaction",
+        "cew_ceo_transition": "trade_press",
+        "moodiedavitt_travel_retail": "trade_press",
+        "beautyscene_fragrance_launch": "trade_press",
+        "whowhatwear_perfume_review": "consumer_editorial",
+        "dailybeast_gap_collaboration": "consumer_editorial",
+        "forbes_brand_profile": "company_profile",
+        "theindustry_beauty_growth": "company_profile",
+        "british_vogue_brand_profile": "company_profile",
+        "femfounded_company_case": "company_profile",
+        "grazia_brand_profile": "company_profile",
+    }
+    ledger = json.loads(V1_LEDGER.read_text(encoding="utf-8"))
+    ledger["schema_version"] = CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    external = ledger["families"].pop("outside_in")
+    for row in external["units"]:
+        row["source_type"] = source_types[row["unit_id"]]
+    ledger["families"]["external_context"] = external
+    for row in ledger["families"]["native_social"]["posts"]:
+        row["relationship"] = (
+            "owned"
+            if row["creator_id"] == "summerfridays"
+            else "relationship_unknown"
+        )
+
+    shadow_ledger = tmp_path / "evidence_depth_ledger_v2_shadow.json"
+    shadow_ledger.write_text(
+        json.dumps(ledger, indent=2) + "\n", encoding="utf-8"
+    )
+    seal = deepcopy(_load_seal(V1_SEAL))
+    seal["evidence_depth_ledger"] = {
+        "locator": str(shadow_ledger),
+        "sha256": _artifact_hash(shadow_ledger),
+    }
+    shadow_seal = tmp_path / "acquisition_seal_v2_shadow.md"
+    _write_seal(shadow_seal, seal)
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=shadow_seal,
+        repo_root=REPO_ROOT,
+    )
+
+    expected = {
+        "missing_consumer_brand_product_axes",
+        "missing_retailer_axis_coding",
+        "missing_owned_social_published_at",
+        "invalid_owned_social_direction_event_tags",
+        "invalid_saturation_batch_new_product_axes",
+        "invalid_saturation_batch_changed_axis_strengths",
+        "invalid_saturation_batch_changed_axis_incidence",
+        "passing_consumer_brand_seal_without_axis_closure",
+        "passing_seal_without_saturation_closure",
+    }
+    print(
+        json.dumps(
+            {
+                "historical_v1": "PASS",
+                "consumer_v2_shadow": "BLOCKED",
+                "findings": findings,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    assert set(findings) == expected
+    assert not any(
+        finding.startswith("passing_seal_below_depth_floor:")
+        for finding in findings
+    )

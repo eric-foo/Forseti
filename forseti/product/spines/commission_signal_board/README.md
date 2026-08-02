@@ -108,6 +108,13 @@ and customer/community role mapping. `CO3` always owns customer/community and
 selected depth; its depth expands adaptively, but the actor and
 customer-understanding job are not optional.
 
+When product/customer experience is material, consumer brands use the
+playbook's `broad_consumer_brand_understanding_v1` completion profile. Its v2
+depth ledger prevents aggregate family counts from substituting for
+cross-family product-axis evidence, row-derived retailer incidence, resolved
+focused follow-ups, and axis-aware saturation. The prompt-structure authority
+owns the exact fields and hybrid strength bars.
+
 When both turns are explicitly commissioned, two turns are the normal budget,
 not permission to convert a blocked acquisition into apparent completion. The
 playbook owns the full contract and the six non-numeric outcome signals.

@@ -131,6 +131,16 @@ dispositions, and two final practical batches with no material incremental
 value. Do not copy the profile into a run-specific quota or stop when a floor is
 first reached.
 
+For a consumer brand where product/customer experience is material, select
+`broad_consumer_brand_understanding_v1` instead. Its v2 depth ledger applies the
+same aggregate anti-token floors, but completion is organized around material
+product pain/delight axes. `CO3` codes the eligible deduplicated retailer rows
+to axis and explicit choice outcomes, tags social-source relationship, and
+returns source IDs rather than prose-only counts. `CO0` integrates those rows
+with independent external, community, and creator support. Do not promote
+official direction, retailer-operated content, disclosed paid/affiliate posts,
+or relationship-unknown posts as independent creator corroboration.
+
 Any pair/group dispatcher is mechanical and is not another evidence actor.
 `CO1`-`CO3` use same-root collaboration under `CO0` unless a separately
 authorized independent worktree is genuinely required. They create no further
@@ -189,6 +199,13 @@ not spend a separate sacrificial query.
    raw-corpus adjudication in the Retailer PDP Information-Extraction Standard;
    do not spend the retry when the preserved raw parents already satisfy that
    acceptance rule.
+   For the consumer-brand profile, the customer-evidence return also includes
+   the hash-pinned row coding view. Its denominator reconciles every admitted
+   corpus into eligible text-bearing rows plus excluded no-usable-text rows;
+   its row records carry review identity, product context, incentive state,
+   normalized axis IDs, explicit choice outcomes, and source-row references.
+   Same-corpus and cross-corpus deduplication precede incidence. Keep retailer
+   results separate unless their boundaries and methods are comparable.
 4. Specialists persist evidence as it is produced, then write one terminal
    role return that indexes the durable artifacts, completed and unresolved
    jobs, material failures, and follow-ups. They do not paste raw corpora into
@@ -203,8 +220,15 @@ not spend a separate sacrificial query.
    artifacts themselves once, resolves any actor-local correction in the same
    actor task, and runs SERP Phase 2 from the combined findings. Phase 2 owns
    only the targeted SERP return and decision lifecycle; it does not repeat the
-   fan-out's native/community capture. `CO0` then writes the integrated
-   acquisition record and seal. Only `CO0` owns user-facing run progress.
+   fan-out's native/community capture. For each material consumer-brand axis,
+   Phase 2 runs one adaptive corroboration/segmentation goal and one adaptive
+   disconfirmation/comparison goal. A concrete material source found by those
+   queries becomes an ordinary job in the existing owning route accounting;
+   the owning specialist or Capture route publishes its separate focused
+   terminal artifact. Phase 2 itself does not acquire native evidence. `CO0`
+   may seal only after every such job is captured or terminally dispositioned,
+   then writes the integrated acquisition record and seal. Only `CO0` owns
+   user-facing run progress.
 
 Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
 social listing is ambiguous and opening the native item could change the bound
@@ -475,6 +499,18 @@ labels. Historical v2 seals require
 `--allow-legacy-v2` for audit and do not authorize a new broad-Understanding
 Deliver under the current contract.
 
+Consumer brands with material product/customer experience use
+`understanding_evidence_depth_v2` and
+`broad_consumer_brand_understanding_v1`. The v2 ledger preserves the v1 family
+and closure accounting while using `external_context` for the human-facing
+External company, editorial and industry context family. It also carries the
+product-axis inventory, the hash-pinned retailer row-coding reference,
+per-corpus recomputed incidence, social relationship and owned-direction tags,
+and the two focused Phase 2 jobs per material axis. Its final two batches add
+`new_product_axes`, `changed_axis_strengths`, and
+`changed_axis_incidence`; each must be zero for a passing seal. Historical v1
+ledgers remain valid under v1 and are never upgraded by assertion.
+
 For company Understanding, non-empty route accounting is required for
 `serp_phase1`, `official_retailer_authorization`,
 `google_ads_transparency`, `meta_ads_library`, `retailer_full_pdp`,
@@ -528,6 +564,13 @@ or framing artifact, validate it under the owning contract, and hand off the
 next phase or step. Every evidence, coverage, provenance, and route-exhaustion
 claim must resolve to the seal. Preserve the final deliverable as the sealed
 phase output before commissioning post-delivery review.
+
+When a consumer-brand v2 substrate is present, Deliver may derive a product
+value battle map from the sealed axis strengths: material pains remain visible,
+while only `strong` delights enter the foreground. Any later defend/avoid-
+attacking or competitive-opening judgment belongs to Deliver; Phase A records
+only evidence strength, captured-sample incidence, choice consequences,
+counterevidence, and claim ceilings.
 
 For company Understanding where offerings or retail are material, Deliver makes
 the breadth-first substrate visible in Section 5, `Portfolio And Retail

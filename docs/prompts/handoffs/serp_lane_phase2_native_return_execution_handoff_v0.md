@@ -64,6 +64,13 @@ through the lifecycle store; and the sealed decision receipt and provenance
 make material blocks visible. This is the executor target and a review
 axis-to-attack, not a review pass bar.
 
+For `broad_consumer_brand_understanding_v1`, the targeted queue also covers
+every material product axis in the v2 depth ledger. Each axis receives one
+`corroborate_or_segment` job and one `disconfirm_or_compare` job. Phase 2 still
+does not acquire native evidence: every concrete material source pointer it
+finds becomes a job in the existing owning route accounting and must reach a
+captured or typed terminal outcome before the acquisition seal can pass.
+
 ## Required reads (pointer-first; the spec owns the method)
 
 1. `docs/research/serp_lane_competitor_scout_20260728/README.md` — reading
@@ -91,6 +98,9 @@ axis-to-attack, not a review pass bar.
 - Dereferenced fan-out evidence: company/claim findings, retail/commercial
   findings, and `CO3`'s Reddit/community composition, Channel-3, J3,
   mediator, and unmet-value results.
+- For the consumer-brand profile, the draft product-axis inventory and the
+  hash-pinned retailer row-coding view, including per-corpus denominators and
+  explicit choice outcomes.
 - The run's one shared lifecycle `--store-root`, plus any earlier decision
   receipt that licenses a `validate_once` probe. Do not accept a caller-supplied
   prior receipt at seal time.
@@ -108,6 +118,10 @@ axis-to-attack, not a review pass bar.
    unmet-value probes. The query must add a discriminating check that Phase 1
    could not have authored before fan-out. Echo guard applies: the probed
    name's own appearance bears no new rung.
+   For each material consumer-brand axis, record exactly the two profile goals
+   above. Query wording is adaptive; do not add a fixed positive/negative/
+   neutral/comparator ritual when the two discriminating goals already cover
+   the evidence need.
 3. **Claim automatic validation before capture.** Before any automatic
    `validate_once` probe, validate and retain its earlier decision receipt
    byte-for-byte in the shared store, then use the lifecycle adapter to claim
@@ -117,7 +131,12 @@ axis-to-attack, not a review pass bar.
     queue at the current owner cadence. For every fan-out promotion, run the
     spec's J5 procedure, 1-2 URLs per name, zero clicks, no proxy. Sponsored
     rows never floor-bearing.
-5. **Seal and consolidate.** Seal through the lifecycle adapter using only the
+5. **Resolve material source pointers.** SERP cards and snippets are discovery
+   only. Put every concrete material source into the existing route-job
+   accounting for its owning Scanning/Capture lane. Phase 2 performs no native
+   capture and does not convert an unrun follow-up into no yield. `CO0` waits
+   for the captured or typed terminal artifact before sealing.
+6. **Seal and consolidate.** Seal through the lifecycle adapter using only the
    persisted claims and store-supplied prior receipts. Persist the decision
    receipt and lifecycle provenance. Update the typed ledger, unmet-value map
    (one-directional evidence weight, provenance-cited, defenses counted), J5
@@ -140,6 +159,11 @@ axis-to-attack, not a review pass bar.
   for each of `CO1`, `CO2`, and `CO3`, including typed blockers.
 - `targeted_probe_derivations`: each query with the specialist finding and
   artifact cite that caused it.
+- `product_axis_probe_derivations`: for the consumer-brand profile, each axis
+  with both goal-labelled jobs and their source findings.
+- `focused_source_jobs`: every material source pointer with owning route, job
+  ID, captured/blocked terminal state, and artifact provenance; `0` only when
+  both searches returned no material source.
 - `ledger`: final consolidated names with type, ladder rung, and provenance.
 - `j5_prices`: per promoted name — list price, standing floor, response-trap
   note, source URL class.

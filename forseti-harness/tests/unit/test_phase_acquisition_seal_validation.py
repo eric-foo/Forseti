@@ -9,6 +9,8 @@ import yaml
 
 from runners.run_phase_acquisition_seal_validation import (
     BROAD_UNDERSTANDING_PROFILE,
+    CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    CONSUMER_DEPTH_LEDGER_VERSION,
     DEPTH_LEDGER_VERSION,
     LEGACY_SEAL_VERSION,
     SEAL_VERSION,
@@ -128,6 +130,120 @@ def _depth_ledger(tmp_path: Path) -> dict[str, str]:
         },
     }
     path = tmp_path / "evidence_depth_ledger.json"
+    path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    return {"locator": str(path), "sha256": _artifact_hash(path)}
+
+
+def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
+    reference = _depth_ledger(tmp_path)
+    path = Path(reference["locator"])
+    ledger = json.loads(path.read_text(encoding="utf-8"))
+    ledger["schema_version"] = CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    external = ledger["families"].pop("outside_in")
+    for row in external["units"]:
+        row["source_type"] = "consumer_editorial"
+    ledger["families"]["external_context"] = external
+    for row in ledger["families"]["native_social"]["posts"]:
+        row["relationship"] = "apparently_independent"
+
+    coding = {
+        "schema_version": "retailer_product_axis_coding_v1",
+        "subject": ledger["subject"],
+        "cycle_id": ledger["cycle_id"],
+        "corpora": [],
+        "rows": [],
+    }
+    incidence = []
+    for corpus in ledger["families"]["retailer_reviews"]["corpora"]:
+        corpus_id = corpus["corpus_id"]
+        eligible = (
+            corpus["unique_review_count"]
+            - corpus["cross_corpus_duplicate_count"]
+        )
+        coding["corpora"].append(
+            {
+                "corpus_id": corpus_id,
+                "eligible_text_review_count": eligible,
+                "excluded_no_usable_text_count": 0,
+            }
+        )
+        for index in range(eligible):
+            has_axis = index < 2
+            coding["rows"].append(
+                {
+                    "corpus_id": corpus_id,
+                    "review_id": f"{corpus_id}-review-{index}",
+                    "product_context_id": corpus["product_context_ids"][0],
+                    "incentive_state": "not_marked_incentivized",
+                    "axis_ids": ["packaging_reliability"] if has_axis else [],
+                    "choice_outcomes": (
+                        ["returned_or_refunded"]
+                        if index == 0
+                        else ["none_explicit"]
+                    ),
+                    "source_row_ref": f"depth-source#{corpus_id}-{index}",
+                }
+            )
+        incidence.append(
+            {
+                "corpus_id": corpus_id,
+                "eligible_text_review_count": eligible,
+                "axis_mention_count": 2,
+                "negative_choice_review_count": 1,
+                "positive_choice_review_count": 0,
+                "disclosed_incentivized_axis_mention_count": 0,
+            }
+        )
+    coding_path = tmp_path / "retailer_product_axis_coding.json"
+    coding_path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    ledger["artifacts"].append(
+        {
+            "artifact_id": "retailer-axis-coding",
+            "locator": str(coding_path),
+            "sha256": _artifact_hash(coding_path),
+        }
+    )
+    ledger["retailer_axis_coding"] = {"artifact_id": "retailer-axis-coding"}
+    ledger["product_axes"] = [
+        {
+            "axis_id": "packaging_reliability",
+            "label": "Packaging reliability",
+            "scope": "brand and product",
+            "polarity": "pain",
+            "strength": "strong",
+            "disposition": "material",
+            "support_refs": [
+                {"family": "reddit_forum", "unit_id": f"thread-{index}"}
+                for index in range(3)
+            ]
+            + [
+                {"family": "native_social", "unit_id": f"native-{index}"}
+                for index in range(3)
+            ],
+            "retailer_incidence": incidence,
+            "focused_search_jobs": [
+                {
+                    "job_id": "P2-001",
+                    "goal": "corroborate_or_segment",
+                    "disposition": "captured",
+                },
+                {
+                    "job_id": "P2-002",
+                    "goal": "disconfirm_or_compare",
+                    "disposition": "no_material_yield",
+                },
+            ],
+        }
+    ]
+    for row in ledger["closure"]["batches"]:
+        row.update(
+            {
+                "new_product_axes": 0,
+                "changed_axis_strengths": 0,
+                "changed_axis_incidence": 0,
+            }
+        )
     path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     return {"locator": str(path), "sha256": _artifact_hash(path)}
 
@@ -304,6 +420,28 @@ def _validate(tmp_path: Path, seal: dict) -> list[str]:
     )
 
 
+def _make_passing(seal: dict) -> dict:
+    phase2 = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "serp_phase2"
+    )
+    phase2["completed_job_ids"] = list(phase2["planned_job_ids"])
+    phase2["completed_count"] = phase2["planned_count"]
+    phase2["unrun_job_ids"] = []
+    phase2["unrun_count"] = 0
+    seal["resume_contract"]["pending_job_ids"] = []
+    seal.update(
+        {
+            "acquisition_gate": "pass",
+            "seal_state": "SEALED_READY_FOR_DELIVER",
+            "deliver_allowed": True,
+            "post_phase1_continuation_mode": "full",
+        }
+    )
+    return seal
+
+
 def test_blocked_seal_accounts_for_five_unrun_phase2_jobs(
     tmp_path: Path,
 ) -> None:
@@ -428,6 +566,157 @@ def test_fully_completed_seal_passes_with_no_resume_work(tmp_path: Path) -> None
     )
 
     assert _validate(tmp_path, seal) == []
+
+
+def test_consumer_brand_v2_passes_with_axis_evidence_and_coding(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["evidence_depth_ledger"] = _consumer_depth_ledger(tmp_path)
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_consumer_brand_v2_rejects_family_counts_without_axes(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger.pop("product_axes")
+    ledger.pop("retailer_axis_coding")
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "missing_consumer_brand_product_axes" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+def test_consumer_brand_v2_recomputes_retailer_axis_incidence(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["retailer_incidence"][0][
+        "axis_mention_count"
+    ] = 200
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert any(
+        finding.startswith(
+            "retailer_axis_incidence_mismatch:packaging_reliability:"
+        )
+        and finding.endswith(":axis_mention_count")
+        for finding in findings
+    )
+
+
+def test_consumer_brand_v2_owned_posts_do_not_supply_independent_support(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    for row in ledger["families"]["native_social"]["posts"][:3]:
+        row.update(
+            {
+                "relationship": "owned",
+                "published_at": "2026-07-01",
+                "direction_event_tags": ["campaign"],
+            }
+        )
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert (
+        "product_axis_strength_mismatch:packaging_reliability:signal"
+        in findings
+    )
+
+
+def test_consumer_brand_v2_requires_terminal_focused_search(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["focused_search_jobs"][0][
+        "disposition"
+    ] = "pending"
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert (
+        "invalid_product_axis_search_disposition:packaging_reliability"
+        in findings
+    )
+
+
+def test_consumer_brand_v2_focused_search_disposition_matches_route_state(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["focused_search_jobs"][0][
+        "disposition"
+    ] = "blocked_no_route"
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "product_axis_search_state_mismatch:packaging_reliability" in findings
+
+
+def test_consumer_brand_v2_final_batches_cannot_change_axis_strength(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = Path(reference["locator"])
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["closure"]["batches"][-1]["changed_axis_strengths"] = 1
+    ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    seal["evidence_depth_ledger"] = {
+        "locator": str(ledger_path),
+        "sha256": _artifact_hash(ledger_path),
+    }
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "saturation_batch_nonzero_changed_axis_strengths" in findings
+    assert "passing_seal_without_saturation_closure" in findings
 
 
 def test_completed_jobs_cannot_replace_depth_ledger(tmp_path: Path) -> None:

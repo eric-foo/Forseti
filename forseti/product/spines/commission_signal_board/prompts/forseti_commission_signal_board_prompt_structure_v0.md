@@ -801,6 +801,19 @@ remainders stay typed gaps and non-claims. Commission archives, supply, ads or
 creators, competitors, search trends, and similar deepening only for a named
 unresolved inference job.
 
+For a consumer brand where product/customer experience is material, apply the
+prompt-structure authority's `broad_consumer_brand_understanding_v1` profile.
+Build the v2 product-axis inventory across material pains, strongest delights,
+and mixed axes; produce the hash-pinned eligible-review coding view; classify
+social relationship before awarding independent support; and route one
+corroboration/segmentation plus one disconfirmation/comparison Phase 2 job for
+every material axis. A search result remains a pointer. Add every material
+follow-up to existing route accounting and resolve it through the owning
+Scanning/Capture route before sealing. The final two batches must be dry for
+new axes, axis-strength changes, and incidence changes as well as ordinary
+material seams. Read the authority for the exact schema and hybrid strength
+bars; do not reconstruct them from this prompt.
+
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.
 Owned surfaces remain canonical for company portfolio and franchise expression.
