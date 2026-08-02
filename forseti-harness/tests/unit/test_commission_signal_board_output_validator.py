@@ -43,6 +43,20 @@ def test_valid_commission_signal_board_outputs_pass(fixture_name: str) -> None:
     assert findings == []
 
 
+def test_commission_stage_requires_understanding_completion_profile() -> None:
+    path = FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+    text = path.read_text(encoding="utf-8").replace(
+        "  understanding_completion_profile: broad_company_understanding_v1\n",
+        "",
+        1,
+    )
+
+    assert (
+        "missing_or_invalid_understanding_completion_profile"
+        in _company_codes(text)
+    )
+
+
 def _valid_company_text() -> str:
     return COMPANY_FIXTURE.read_text(encoding="utf-8")
 

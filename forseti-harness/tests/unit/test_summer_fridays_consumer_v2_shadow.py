@@ -7,8 +7,8 @@ from pathlib import Path
 import yaml
 
 from runners.run_phase_acquisition_seal_validation import (
-    CONSUMER_BRAND_UNDERSTANDING_PROFILE,
-    CONSUMER_DEPTH_LEDGER_VERSION,
+    LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    LEGACY_CONSUMER_DEPTH_LEDGER_VERSION,
     _artifact_hash,
     _load_seal,
     validate_phase_acquisition_seal,
@@ -74,8 +74,8 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
         "grazia_brand_profile": "company_profile",
     }
     ledger = json.loads(V1_LEDGER.read_text(encoding="utf-8"))
-    ledger["schema_version"] = CONSUMER_DEPTH_LEDGER_VERSION
-    ledger["profile_id"] = CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ledger["schema_version"] = LEGACY_CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE
     external = ledger["families"].pop("outside_in")
     for row in external["units"]:
         row["source_type"] = source_types[row["unit_id"]]
@@ -103,6 +103,7 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
     findings = validate_phase_acquisition_seal(
         seal_path=shadow_seal,
         repo_root=REPO_ROOT,
+        allow_legacy_consumer_v1=True,
     )
 
     expected = {
@@ -134,15 +135,25 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
     )
 
 
-def test_summer_fridays_p11r5_consumer_brand_dogfood_passes() -> None:
+def test_summer_fridays_p11r5_requires_explicit_legacy_audit() -> None:
+    assert "legacy_consumer_v1_requires_explicit_historical_audit" in (
+        validate_phase_acquisition_seal(
+            seal_path=V2_SEAL,
+            repo_root=REPO_ROOT,
+        )
+    )
     assert validate_phase_acquisition_seal(
         seal_path=V2_SEAL,
         repo_root=REPO_ROOT,
+        allow_legacy_consumer_v1=True,
     ) == []
 
     ledger = json.loads(V2_LEDGER.read_text(encoding="utf-8"))
-    assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION
-    assert ledger["profile_id"] == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert ledger["schema_version"] == LEGACY_CONSUMER_DEPTH_LEDGER_VERSION
+    assert (
+        ledger["profile_id"]
+        == LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    )
     assert len(ledger["product_axes"]) == 12
     assert {
         axis["axis_id"]: axis["strength"]

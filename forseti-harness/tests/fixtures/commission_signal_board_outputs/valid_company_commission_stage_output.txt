@@ -10,6 +10,7 @@ company_commission_receipt:
   commission_id: fixture_company_example_labs
   mode: forward
   commission_profile: company_competitive_intelligence
+  understanding_completion_profile: broad_company_understanding_v1
   subject_count: 1
   subject_identity:
     raw_name: Example Labs

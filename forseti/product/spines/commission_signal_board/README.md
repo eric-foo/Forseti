@@ -109,11 +109,12 @@ selected depth; its depth expands adaptively, but the actor and
 customer-understanding job are not optional.
 
 When product/customer experience is material, consumer brands use the
-playbook's `broad_consumer_brand_understanding_v1` completion profile. Its v2
+playbook's `broad_consumer_brand_understanding_v2` completion profile. Its v3
 depth ledger prevents aggregate family counts from substituting for
-cross-family product-axis evidence, row-derived retailer incidence, resolved
-focused follow-ups, and axis-aware saturation. The prompt-structure authority
-owns the exact fields and hybrid strength bars.
+cross-family product-axis evidence, comment- and row-derived customer evidence,
+three-way focused follow-ups, source-native capture, reconciled targets, and
+live axis-aware saturation. The prompt-structure authority owns the exact
+fields, floor/exhaustion rule, and hybrid strength bars.
 
 When both turns are explicitly commissioned, two turns are the normal budget,
 not permission to convert a blocked acquisition into apparent completion. The

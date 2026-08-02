@@ -175,6 +175,7 @@ Before producing the board, check whether the dispatcher supplied:
 commission_id:
 mode: backtest | forward | unknown
 commission_profile: standard_signal_board | company_competitive_intelligence | default
+understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v2 | default
 time_posture: recency_first | longitudinal | default
 as_of_date: YYYY-MM-DD
 longitudinal_period: {start: YYYY-MM-DD, end: YYYY-MM-DD} | not_applicable
@@ -220,7 +221,10 @@ output is not a validator target.
 
 For `company_competitive_intelligence`, also require `commission_id`,
 `cycle_id`, the canonical `phase`, `bound_question`, `intended_consumer`,
-`intended_use`, and `phase_scope`. The only valid turn at commission-board
+`intended_use`, `phase_scope`, and `understanding_completion_profile`. Select
+`broad_consumer_brand_understanding_v2` when the subject is a consumer brand and
+product/customer experience is material; otherwise select
+`broad_company_understanding_v1`. The only valid turn at commission-board
 generation is `acquire_and_seal`. Missing required company-cycle fields return
 `NEEDS_COMMISSION_INTAKE`; do not fall back to bare `Phase 1` / `Phase 2`
 language.
@@ -802,18 +806,24 @@ creators, competitors, search trends, and similar deepening only for a named
 unresolved inference job.
 
 For a consumer brand where product/customer experience is material, apply the
-prompt-structure authority's `broad_consumer_brand_understanding_v1` profile.
-Build the v2 product-axis inventory across material pains, strongest delights,
+prompt-structure authority's `broad_consumer_brand_understanding_v2` profile.
+Build and hash-pin the v3 product-axis inventory across material pains,
+strongest delights,
 and mixed axes; produce the hash-pinned eligible-review coding view with
-axis-specific choice outcomes; classify social and external relationship before
-awarding distinct-origin independent support; and route one
-corroboration/segmentation plus one disconfirmation/comparison Phase 2 job for
-every material axis. A search result remains a pointer. Add every material
-follow-up to existing route accounting and resolve it through the owning
-Scanning/Capture route before sealing. The final two batches must be dry for
-new axes, axis-strength changes, and incidence changes as well as ordinary
-material seams. Read the authority for the exact schema and hybrid strength
-bars; do not reconstruct them from this prompt.
+axis-specific choice outcomes; comment-code community support; classify social
+and external relationship before awarding distinct-origin independent support;
+and, after the inventory hash exists, route corroboration/segmentation,
+comparison/switch/value, and disconfirmation/strongest-delight Phase 2 jobs for
+every material axis. Acquire at least 40 usable unique Reddit/forum threads or
+prove source exhaustion. A search result remains a pointer: `captured` requires
+the source-native body and a ledgered evidence unit. Reconcile every selected
+target and retain same-topic sharpening volume separately from distinct-origin
+spread. Add every material follow-up to existing route accounting and resolve
+it through the owning Scanning/Capture route before sealing. The final two
+batches must be live acquisitions and add no axis, segment, product condition,
+comparison choice, competitor alternative, strength/incidence change, or
+ordinary material seam. Read the authority for the exact schema and hybrid
+strength bars; do not reconstruct them from this prompt.
 
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.
@@ -1004,6 +1014,7 @@ company_commission_receipt:
       - communication_efficiency
   mode: backtest | forward
   commission_profile: company_competitive_intelligence
+  understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v2
   subject_count: 1
   subject_identity:
     raw_name:
