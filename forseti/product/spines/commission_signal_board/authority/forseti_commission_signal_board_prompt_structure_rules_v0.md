@@ -222,14 +222,36 @@ independent-creator-landscape claim. The creator floor remains the independent
 distribution counterweight to repeated posts from any one account.
 
 When the subject is a consumer brand and product/customer experience is
-material, use `broad_consumer_brand_understanding_v1` with
-`understanding_evidence_depth_v2`. It retains the aggregate entry floors above,
-renames the human-facing outside source family to **External company,
-editorial and industry context**, and adds a cross-family product-axis contract.
-Historical `broad_company_understanding_v1` ledgers remain valid under their
-own schema; they do not silently acquire v2 product-axis credit.
+material, the commission receipt selects
+`broad_consumer_brand_understanding_v2`, and the acquisition seal binds an
+`understanding_evidence_depth_v3` ledger. The selected completion profile stays
+in the company record through completion; it is not a commission-only field.
+The profile retains the aggregate entry floors
+above except that Reddit/forum depth rises to 40 usable unique threads. Forty
+is a minimum floor, never a completion target. Every passing run must prove
+that its bounded eligible candidate frontier is exhausted in a
+`reddit_candidate_frontier` block: every discovered candidate thread carries a
+terminal disposition and an accounted discovery job, the captured set equals
+the ledgered independent threads, non-captured candidates carry reasons, and
+each independent thread pins its own source-native artifact. Acquisition
+continues while any new unique thread still corroborates, contradicts,
+compares, or sharpens an axis. This is bounded route exhaustion, not a claim
+that the whole internet was searched. Each frontier discovery job names one
+material axis, its executed query and time, its hash-pinned result artifacts,
+and every candidate thread it surfaced. The final two batches consist only of
+completed frontier discovery jobs; each batch covers every material axis, uses
+a different query and result artifact for that axis than the other batch, and
+adds no usable thread. The validator reconciles job, artifact, candidate, and
+batch accounting rather than accepting a prose `source_exhausted` assertion.
+Fewer than 40 additionally requires the explicit
+`source_exhausted` floor exception after every axis search job and selected
+target is terminal and the final two live batches produce no material change.
+The profile renames the human-facing outside source
+family to **External company, editorial and industry context** and adds the
+cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
+audit-only through `--allow-legacy-consumer-v1`; they do not satisfy a new run.
 
-The v2 ledger inventories every observed material product-experience axis as
+The v3 ledger inventories every observed material product-experience axis as
 `pain`, `delight`, or `mixed`, with a terminal disposition. `signal` establishes
 possible existence. `recurring` requires at least three qualifying independent
 origins across two non-retailer evidence families. `strong` additionally
@@ -248,7 +270,7 @@ typed as consumer editorial or trade press, carry an explicit
 company profiles, corporate/transaction records, paid or affiliate material,
 and relationship-unknown external units do not qualify.
 
-V2 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
+V3 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
 unique text-bearing review in each admitted corpus, reconciles excluded
 no-usable-text rows to the corpus denominator, and preserves native review ID,
 product context, incentive state, axis codes with axis-specific choice outcomes,
@@ -261,12 +283,31 @@ pooling is allowed only when corpus boundaries, selection, and deduplication are
 comparable; otherwise report providers separately. These are captured-sample
 incidences, never market return rates or customer-population prevalence.
 
-Every material v2 axis receives two adaptive Phase 2 goals:
-`corroborate_or_segment` and `disconfirm_or_compare`. Search results are route
-pointers, not evidence. Every material source candidate must resolve through
-existing route-job accounting to captured evidence or a typed terminal
-disposition before a passing seal. The final two practical batches must also
-show zero new product axes, changed axis strengths, and changed axis incidence.
+Every material v3 axis receives three adaptive Phase 2 goals after a hash-pinned
+axis inventory exists: `corroborate_or_segment`, `compare_switch_or_value`, and
+`disconfirm_or_strongest_delight`. Search results are discovery pointers, not
+evidence; a `captured` job must resolve to a source-native body and a ledgered
+evidence unit. Every selected target is reconciled as `used`,
+`captured_excluded`, `no_material_yield`, `blocked`, or `unavailable`. Every
+material axis needs at least three usable non-retailer support units, whether
+or not they add a new distinct-origin credit, unless that axis records proven
+source exhaustion. Related same-topic sources remain as sharpening volume;
+exact duplicates collapse and do not inflate distinct-origin spread.
+
+Community support is comment-coded: thread and comment identity, product
+context, axis, contribution, choice, alternative brand when present, explicit
+outcome, source reference, and parser limitation. Every usable independent
+Reddit/forum thread has at least one such row, and an axis support reference
+into a community thread must be backed by a coding row for that axis and
+thread carrying the same contribution, choice, and alternative brand; a
+support claim no coded comment states is invalid. SERP or search-registry
+artifacts never satisfy a native-body reference. The final two batches are
+live, full-axis Reddit frontier search/capture sweeps, not desk rechecks or
+unrelated search jobs, and must show zero new product axes,
+segments, product conditions, comparison choices, competitor alternatives,
+changed axis strengths, changed axis incidence, new usable Reddit threads, or
+ordinary material seams; each batch declares `new_usable_reddit_threads` and
+the validator recomputes it against the frontier's captured candidates.
 Owned social rows carry a normalized `YYYY-MM-DD` observed date and
 direction-event tags so Deliver can derive a factual direction timeline without
 a separate Phase A artifact. Preserve the source's original date text in the
@@ -304,11 +345,15 @@ preserved and may be checked only with the validator's explicit
 `--allow-legacy-v2` audit switch; they do not satisfy the current broad-
 Understanding completion contract.
 
-For `broad_consumer_brand_understanding_v1`, v3 instead hash-pins an
-`understanding_evidence_depth_v2` ledger and applies the product-axis,
-row-derived retailer-incidence, social-relationship, focused-search, and
+For `broad_consumer_brand_understanding_v2`, v3 instead hash-pins an
+`understanding_evidence_depth_v3` ledger and applies the product-axis,
+row-derived retailer-incidence, comment-coding, source-native capture,
+target-reconciliation, focused-search, candidate-frontier-exhaustion, and live
 axis-aware closure checks above. A passing family-count ledger without those
-checks is invalid.
+checks is invalid. Repository-tracked evidence artifacts must be pinned with
+repo-relative locators; absolute locators are reserved for machine-local
+raw-lake roots outside the repository, and the validator rejects a
+repo-internal absolute locator as nonportable.
 
 For company Understanding, the seal must carry non-empty job accounting for
 `serp_phase1`, `official_retailer_authorization`,

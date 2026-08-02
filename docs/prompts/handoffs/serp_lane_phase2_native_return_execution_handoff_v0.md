@@ -64,12 +64,25 @@ through the lifecycle store; and the sealed decision receipt and provenance
 make material blocks visible. This is the executor target and a review
 axis-to-attack, not a review pass bar.
 
-For `broad_consumer_brand_understanding_v1`, the targeted queue also covers
-every material product axis in the v2 depth ledger. Each axis receives one
-`corroborate_or_segment` job and one `disconfirm_or_compare` job. Phase 2 still
-does not acquire native evidence: every concrete material source pointer it
-finds becomes a job in the existing owning route accounting and must reach a
-captured or typed terminal outcome before the acquisition seal can pass.
+For `broad_consumer_brand_understanding_v2`, first hash-pin the complete axis
+inventory in the v3 depth ledger. The targeted queue then covers every material
+product axis with one `corroborate_or_segment` job, one
+`compare_switch_or_value` job, and one `disconfirm_or_strongest_delight` job.
+Each job binds the axis-inventory hash and its later planning time. Phase 2 still
+does not acquire native evidence: every concrete selected source pointer becomes
+a job in the existing owning route accounting and must reconcile to a
+source-native captured body plus ledgered evidence unit, or a typed terminal
+outcome, before the acquisition seal can pass. A SERP artifact never doubles as
+the captured native body. The 40-thread community floor is a minimum, not a
+completion target: the seal passes only with a proven
+`reddit_candidate_frontier` exhaustion block in which every discovered
+candidate thread is terminally accounted and the final two live batches
+declare and prove zero `new_usable_reddit_threads`. Those final batches must
+consist only of completed Reddit frontier-discovery jobs, each covering every
+material axis with a different query and a different hash-pinned result packet.
+Each job lists every candidate it surfaced, and those lists reconcile exactly
+to the terminal candidate ledger. This proves exhaustion of the executed
+routes; it does not claim that the whole internet was searched.
 
 ## Required reads (pointer-first; the spec owns the method)
 
@@ -98,9 +111,10 @@ captured or typed terminal outcome before the acquisition seal can pass.
 - Dereferenced fan-out evidence: company/claim findings, retail/commercial
   findings, and `CO3`'s Reddit/community composition, Channel-3, J3,
   mediator, and unmet-value results.
-- For the consumer-brand profile, the draft product-axis inventory and the
+- For the consumer-brand profile, the hash-pinned product-axis inventory and the
   hash-pinned retailer row-coding view, including per-corpus denominators and
-  explicit choice outcomes.
+  explicit choice outcomes, plus comment-level community coding and the current
+  target-reconciliation ledger.
 - The run's one shared lifecycle `--store-root`, plus any earlier decision
   receipt that licenses a `validate_once` probe. Do not accept a caller-supplied
   prior receipt at seal time.
@@ -118,10 +132,10 @@ captured or typed terminal outcome before the acquisition seal can pass.
    unmet-value probes. The query must add a discriminating check that Phase 1
    could not have authored before fan-out. Echo guard applies: the probed
    name's own appearance bears no new rung.
-   For each material consumer-brand axis, record exactly the two profile goals
-   above. Query wording is adaptive; do not add a fixed positive/negative/
-   neutral/comparator ritual when the two discriminating goals already cover
-   the evidence need.
+   For each material consumer-brand axis, record exactly the three profile goals
+   above and bind the pre-Phase-2 inventory hash. Query wording is adaptive.
+   The three goals deliberately separate recurrence/segments,
+   comparison/switch/value choice, and the strongest counter-case or delight.
 3. **Claim automatic validation before capture.** Before any automatic
    `validate_once` probe, validate and retain its earlier decision receipt
    byte-for-byte in the shared store, then use the lifecycle adapter to claim
@@ -135,7 +149,10 @@ captured or typed terminal outcome before the acquisition seal can pass.
    only. Put every concrete material source into the existing route-job
    accounting for its owning Scanning/Capture lane. Phase 2 performs no native
    capture and does not convert an unrun follow-up into no yield. `CO0` waits
-   for the captured or typed terminal artifact before sealing.
+   for the captured or typed terminal artifact before sealing. Reconcile every
+   selected candidate as `used`, `captured_excluded`, `no_material_yield`,
+   `blocked`, or `unavailable`; `captured` requires a native body and a final
+   evidence-unit reference, never a SERP artifact alone.
 6. **Seal and consolidate.** Seal through the lifecycle adapter using only the
    persisted claims and store-supplied prior receipts. Persist the decision
    receipt and lifecycle provenance. Update the typed ledger, unmet-value map
@@ -160,10 +177,12 @@ captured or typed terminal outcome before the acquisition seal can pass.
 - `targeted_probe_derivations`: each query with the specialist finding and
   artifact cite that caused it.
 - `product_axis_probe_derivations`: for the consumer-brand profile, each axis
-  with both goal-labelled jobs and their source findings.
+  with all three goal-labelled jobs, the bound inventory hash, planning time,
+  search artifact, selected target IDs, and source findings.
 - `focused_source_jobs`: every material source pointer with owning route, job
-  ID, captured/blocked terminal state, and artifact provenance; `0` only when
-  both searches returned no material source.
+  ID, reconciled terminal state, native-body artifact when captured, final
+  evidence-unit references, and artifact provenance; `0` only when all three
+  searches returned no material source.
 - `ledger`: final consolidated names with type, ladder rung, and provenance.
 - `j5_prices`: per promoted name — list price, standing floor, response-trap
   note, source URL class.

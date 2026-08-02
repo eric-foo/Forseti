@@ -6,7 +6,7 @@ import argparse
 import json
 import re
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -22,9 +22,13 @@ SEAL_VERSION = "phase_acquisition_seal_v3"
 LEGACY_SEAL_VERSION = "phase_acquisition_seal_v2"
 DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v1"
 BROAD_UNDERSTANDING_PROFILE = "broad_company_understanding_v1"
-CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v2"
-CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
+LEGACY_CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v2"
+LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
     "broad_consumer_brand_understanding_v1"
+)
+CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v3"
+CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
+    "broad_consumer_brand_understanding_v2"
 )
 BROAD_UNDERSTANDING_FLOORS = {
     "outside_in_independent_units": 12,
@@ -49,6 +53,7 @@ CONSUMER_BRAND_UNDERSTANDING_FLOORS = {
     },
     "external_context_independent_units": 12,
     "external_context_independent_origins": 12,
+    "reddit_forum_threads": 40,
 }
 
 _EXTERNAL_CONTEXT_SOURCE_TYPES = {
@@ -74,15 +79,49 @@ _AXIS_DISPOSITIONS = {
     "merged",
     "blocked_material",
 }
-_FOCUSED_SEARCH_GOALS = {
+_LEGACY_FOCUSED_SEARCH_GOALS = {
     "corroborate_or_segment",
     "disconfirm_or_compare",
+}
+_FOCUSED_SEARCH_GOALS = {
+    "corroborate_or_segment",
+    "compare_switch_or_value",
+    "disconfirm_or_strongest_delight",
 }
 _FOCUSED_SEARCH_TERMINALS = {
     "captured",
     "no_material_yield",
     "dominated",
     "blocked_no_route",
+}
+_AXIS_SUPPORT_CONTRIBUTIONS = {
+    "corroborates",
+    "contradicts",
+    "compares",
+    "sharpens",
+}
+_AXIS_SUPPORT_CHOICES = {
+    "subject",
+    "alternative",
+    "neither",
+    "conditional",
+    "unstated",
+}
+_TARGET_TERMINAL_STATES = {
+    "used",
+    "captured_excluded",
+    "no_material_yield",
+    "blocked",
+    "unavailable",
+}
+_FRONTIER_CANDIDATE_STATES = {
+    "captured_used",
+    "captured_excluded",
+    "duplicate_thread",
+    "no_usable_content",
+    "dominated",
+    "blocked",
+    "unavailable",
 }
 _INCENTIVE_STATES = {
     "disclosed_incentivized",
@@ -140,6 +179,7 @@ def validate_phase_acquisition_seal(
     seal_path: Path,
     repo_root: Path,
     allow_legacy_v2: bool = False,
+    allow_legacy_consumer_v1: bool = False,
 ) -> list[str]:
     seal = _load_seal(seal_path)
     findings: list[str] = []
@@ -192,6 +232,7 @@ def validate_phase_acquisition_seal(
             seal,
             repo_root=repo_root,
             valid_pass=valid_pass,
+            allow_legacy_consumer_v1=allow_legacy_consumer_v1,
             findings=findings,
         )
     continuation = seal.get("post_phase1_continuation_mode")
@@ -207,6 +248,7 @@ def _validate_understanding_evidence_depth(
     *,
     repo_root: Path,
     valid_pass: bool,
+    allow_legacy_consumer_v1: bool,
     findings: list[str],
 ) -> None:
     reference = seal.get("evidence_depth_ledger")
@@ -242,11 +284,13 @@ def _validate_understanding_evidence_depth(
     profile_id = ledger.get("profile_id")
     if ledger_version not in {
         DEPTH_LEDGER_VERSION,
+        LEGACY_CONSUMER_DEPTH_LEDGER_VERSION,
         CONSUMER_DEPTH_LEDGER_VERSION,
     }:
         findings.append("invalid_evidence_depth_ledger_version")
     if profile_id not in {
         BROAD_UNDERSTANDING_PROFILE,
+        LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
         CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     }:
         findings.append("invalid_understanding_completion_profile")
@@ -254,12 +298,25 @@ def _validate_understanding_evidence_depth(
         ledger_version == DEPTH_LEDGER_VERSION
         and profile_id == BROAD_UNDERSTANDING_PROFILE
     ) or (
+        ledger_version == LEGACY_CONSUMER_DEPTH_LEDGER_VERSION
+        and profile_id == LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ) or (
         ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
         and profile_id == CONSUMER_BRAND_UNDERSTANDING_PROFILE
     )
     if not valid_profile_pair:
         findings.append("understanding_profile_schema_mismatch")
-    consumer_brand = ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
+    legacy_consumer_brand = (
+        ledger_version == LEGACY_CONSUMER_DEPTH_LEDGER_VERSION
+        and profile_id == LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    )
+    current_consumer_brand = (
+        ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
+        and profile_id == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    )
+    consumer_brand = legacy_consumer_brand or current_consumer_brand
+    if legacy_consumer_brand and not allow_legacy_consumer_v1:
+        findings.append("legacy_consumer_v1_requires_explicit_historical_audit")
     seal_subject = seal.get("subject")
     if not isinstance(seal_subject, str) or not seal_subject:
         findings.append("missing_seal_subject")
@@ -305,7 +362,10 @@ def _validate_understanding_evidence_depth(
     )
     metrics.update(
         _validate_reddit_depth(
-            families.get("reddit_forum"), artifacts=artifacts, findings=findings
+            families.get("reddit_forum"),
+            artifacts=artifacts,
+            require_distinct_artifacts=current_consumer_brand,
+            findings=findings,
         )
     )
     metrics.update(
@@ -324,22 +384,50 @@ def _validate_understanding_evidence_depth(
             families=families,
             route_jobs=_route_job_states(seal),
             require_complete=valid_pass,
+            current_contract=current_consumer_brand,
             findings=findings,
         )
     closure_complete = _validate_depth_closure(
         ledger.get("closure"),
         require_complete=valid_pass,
         consumer_brand=consumer_brand,
+        current_consumer_contract=current_consumer_brand,
+        route_jobs=_route_job_states(seal),
         findings=findings,
     )
+    if current_consumer_brand:
+        _validate_reddit_candidate_frontier(
+            ledger,
+            artifacts=artifacts,
+            route_jobs=_route_job_states(seal),
+            require_complete=valid_pass,
+            findings=findings,
+        )
     if valid_pass:
         floors = (
             CONSUMER_BRAND_UNDERSTANDING_FLOORS
-            if consumer_brand
+            if current_consumer_brand
+            else {
+                **CONSUMER_BRAND_UNDERSTANDING_FLOORS,
+                "reddit_forum_threads": BROAD_UNDERSTANDING_FLOORS[
+                    "reddit_forum_threads"
+                ],
+            }
+            if legacy_consumer_brand
             else BROAD_UNDERSTANDING_FLOORS
         )
         for metric, minimum in floors.items():
-            if metrics.get(metric, 0) < minimum:
+            below_floor = metrics.get(metric, 0) < minimum
+            reddit_exception = (
+                current_consumer_brand
+                and metric == "reddit_forum_threads"
+                and _valid_reddit_floor_exception(
+                    ledger,
+                    observed=metrics.get(metric, 0),
+                    route_jobs=_route_job_states(seal),
+                )
+            )
+            if below_floor and not reddit_exception:
                 findings.append(f"passing_seal_below_depth_floor:{metric}")
         if not closure_complete:
             findings.append("passing_seal_without_saturation_closure")
@@ -588,7 +676,11 @@ def _validate_retailer_review_depth(
 
 
 def _validate_reddit_depth(
-    value: Any, *, artifacts: Mapping[str, Path], findings: list[str]
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    require_distinct_artifacts: bool = False,
+    findings: list[str],
 ) -> dict[str, int]:
     if not isinstance(value, dict):
         findings.append("missing_reddit_forum_depth")
@@ -603,6 +695,7 @@ def _validate_reddit_depth(
     communities: set[str] = set()
     topics: set[str] = set()
     independent_threads = 0
+    independent_artifacts: set[Path] = set()
     for row in rows:
         community = row.get("community_id")
         topic = row.get("topic_category")
@@ -621,6 +714,13 @@ def _validate_reddit_depth(
                 communities.add(community)
             if isinstance(topic, str) and topic:
                 topics.add(topic)
+            if require_distinct_artifacts:
+                artifact_id = row.get("artifact_id")
+                if isinstance(artifact_id, str) and artifact_id in artifacts:
+                    artifact_path = artifacts[artifact_id].resolve()
+                    if artifact_path in independent_artifacts:
+                        findings.append("shared_reddit_thread_native_artifact")
+                    independent_artifacts.add(artifact_path)
     return {
         "reddit_forum_threads": independent_threads,
         "reddit_forum_communities": len(communities),
@@ -818,9 +918,20 @@ def _load_retailer_axis_coding(
     if coding.get("subject") != ledger.get("subject"):
         findings.append("retailer_axis_coding_subject_mismatch")
         complete = False
-    if coding.get("cycle_id") != ledger.get("cycle_id"):
-        findings.append("retailer_axis_coding_cycle_id_mismatch")
-        complete = False
+    coding_cycle_id = coding.get("cycle_id")
+    ledger_cycle_id = ledger.get("cycle_id")
+    if coding_cycle_id != ledger_cycle_id:
+        reuse = value.get("reuse")
+        if not (
+            isinstance(reuse, dict)
+            and reuse.get("mode") == "pinned_unchanged_reuse"
+            and reuse.get("source_cycle_id") == coding_cycle_id
+            and reuse.get("current_cycle_id") == ledger_cycle_id
+            and isinstance(reuse.get("reason"), str)
+            and reuse.get("reason")
+        ):
+            findings.append("retailer_axis_coding_cycle_id_mismatch")
+            complete = False
 
     boundaries = coding.get("corpora")
     boundary_map: dict[str, int] = {}
@@ -1109,12 +1220,410 @@ def _validate_axis_incidence(
     return corpora_with_mentions, negative_choices, positive_choices
 
 
+def _parse_iso_datetime(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _load_consumer_axis_inventory(
+    value: Any,
+    *,
+    ledger: Mapping[str, Any],
+    artifacts: Mapping[str, Path],
+    axis_rows: Mapping[str, Mapping[str, Any]],
+    findings: list[str],
+) -> tuple[str | None, datetime | None, bool]:
+    if not isinstance(value, dict):
+        findings.append("missing_consumer_axis_inventory")
+        return None, None, False
+    artifact_id = value.get("artifact_id")
+    if not isinstance(artifact_id, str) or artifact_id not in artifacts:
+        findings.append("unresolved_consumer_axis_inventory_artifact")
+        return None, None, False
+    path = artifacts[artifact_id]
+    try:
+        inventory = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"invalid_consumer_axis_inventory:{type(exc).__name__}")
+        return None, None, False
+    if not isinstance(inventory, dict):
+        findings.append("invalid_consumer_axis_inventory_shape")
+        return None, None, False
+    complete = True
+    if inventory.get("schema_version") != "consumer_brand_axis_inventory_v1":
+        findings.append("invalid_consumer_axis_inventory_version")
+        complete = False
+    if inventory.get("subject") != ledger.get("subject"):
+        findings.append("consumer_axis_inventory_subject_mismatch")
+        complete = False
+    if inventory.get("cycle_id") != ledger.get("cycle_id"):
+        findings.append("consumer_axis_inventory_cycle_id_mismatch")
+        complete = False
+    created_at = _parse_iso_datetime(inventory.get("created_at"))
+    if created_at is None:
+        findings.append("invalid_consumer_axis_inventory_created_at")
+        complete = False
+    rows = inventory.get("axes")
+    observed: dict[str, tuple[Any, Any, Any]] = {}
+    if not isinstance(rows, list):
+        findings.append("missing_consumer_axis_inventory_axes")
+        complete = False
+    else:
+        for row in rows:
+            if not isinstance(row, dict):
+                findings.append("invalid_consumer_axis_inventory_axis")
+                complete = False
+                continue
+            axis_id = row.get("axis_id")
+            if (
+                not isinstance(axis_id, str)
+                or not axis_id
+                or axis_id in observed
+            ):
+                findings.append("invalid_or_duplicate_consumer_axis_inventory_id")
+                complete = False
+                continue
+            observed[axis_id] = (
+                row.get("label"),
+                row.get("polarity"),
+                row.get("disposition"),
+            )
+    expected = {
+        axis_id: (
+            row.get("label"),
+            row.get("polarity"),
+            row.get("disposition"),
+        )
+        for axis_id, row in axis_rows.items()
+    }
+    if observed != expected:
+        findings.append("consumer_axis_inventory_drift")
+        complete = False
+    return _artifact_hash(path), created_at, complete
+
+
+def _load_community_axis_coding(
+    value: Any,
+    *,
+    ledger: Mapping[str, Any],
+    artifacts: Mapping[str, Path],
+    families: Mapping[str, Any],
+    axis_ids: set[str],
+    findings: list[str],
+) -> tuple[dict[str, set[str]], dict[tuple[str, str], set[tuple[str, str, str]]], bool]:
+    if not isinstance(value, dict):
+        findings.append("missing_community_axis_coding")
+        return {}, {}, False
+    artifact_id = value.get("artifact_id")
+    if not isinstance(artifact_id, str) or artifact_id not in artifacts:
+        findings.append("unresolved_community_axis_coding_artifact")
+        return {}, {}, False
+    try:
+        coding = json.loads(artifacts[artifact_id].read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"invalid_community_axis_coding:{type(exc).__name__}")
+        return {}, {}, False
+    if not isinstance(coding, dict):
+        findings.append("invalid_community_axis_coding_shape")
+        return {}, {}, False
+    complete = True
+    if coding.get("schema_version") != "community_axis_coding_v1":
+        findings.append("invalid_community_axis_coding_version")
+        complete = False
+    if coding.get("subject") != ledger.get("subject"):
+        findings.append("community_axis_coding_subject_mismatch")
+        complete = False
+    if coding.get("cycle_id") != ledger.get("cycle_id"):
+        findings.append("community_axis_coding_cycle_id_mismatch")
+        complete = False
+    reddit = families.get("reddit_forum")
+    reddit_rows = (
+        reddit.get("threads", [])
+        if isinstance(reddit, dict)
+        and isinstance(reddit.get("threads"), list)
+        else []
+    )
+    thread_ids = {
+        row.get("thread_id")
+        for row in reddit_rows
+        if isinstance(row, dict)
+        and row.get("independence") == "independent_thread"
+        and isinstance(row.get("thread_id"), str)
+    }
+    coded_threads: set[str] = set()
+    axis_threads: dict[str, set[str]] = {}
+    coded_fields: dict[tuple[str, str], set[tuple[str, str, str]]] = {}
+    seen: set[tuple[str, str]] = set()
+    rows = coding.get("rows")
+    if not isinstance(rows, list):
+        findings.append("missing_community_axis_coding_rows")
+        return {}, {}, False
+    for row in rows:
+        if not isinstance(row, dict):
+            findings.append("invalid_community_axis_coding_row")
+            complete = False
+            continue
+        thread_id = row.get("thread_id")
+        comment_id = row.get("comment_id")
+        if (
+            not isinstance(thread_id, str)
+            or thread_id not in thread_ids
+            or not isinstance(comment_id, str)
+            or not comment_id
+            or (thread_id, comment_id) in seen
+        ):
+            findings.append("invalid_or_duplicate_community_comment_id")
+            complete = False
+            continue
+        seen.add((thread_id, comment_id))
+        coded_threads.add(thread_id)
+        product_context = row.get("product_context")
+        if not isinstance(product_context, str) or not product_context:
+            findings.append("missing_community_product_context")
+            complete = False
+        row_axis_ids = _string_set(
+            row.get("axis_ids"),
+            code="invalid_community_axis_ids",
+            findings=findings,
+        )
+        if not row_axis_ids or not row_axis_ids.issubset(axis_ids):
+            findings.append("community_coding_references_unknown_axis")
+            complete = False
+        for axis_id in row_axis_ids & axis_ids:
+            axis_threads.setdefault(axis_id, set()).add(thread_id)
+        contribution = row.get("contribution")
+        if contribution not in _AXIS_SUPPORT_CONTRIBUTIONS:
+            findings.append("invalid_community_contribution")
+            complete = False
+        choice = row.get("choice")
+        if choice not in _AXIS_SUPPORT_CHOICES:
+            findings.append("invalid_community_choice")
+            complete = False
+        if (
+            contribution in _AXIS_SUPPORT_CONTRIBUTIONS
+            and choice in _AXIS_SUPPORT_CHOICES
+        ):
+            row_fields = (
+                str(contribution),
+                str(choice),
+                str(row.get("alternative_brand") or "").strip(),
+            )
+            for axis_id in row_axis_ids & axis_ids:
+                coded_fields.setdefault((axis_id, thread_id), set()).add(
+                    row_fields
+                )
+        if choice == "alternative" and not str(row.get("alternative_brand", "")).strip():
+            findings.append("missing_community_alternative_brand")
+            complete = False
+        if row.get("explicit_outcome") not in _CHOICE_OUTCOMES:
+            findings.append("invalid_community_explicit_outcome")
+            complete = False
+        if not isinstance(row.get("source_ref"), str) or not row.get("source_ref"):
+            findings.append("missing_community_source_ref")
+            complete = False
+        if row.get("parser_limitation") is not None and not isinstance(
+            row.get("parser_limitation"), str
+        ):
+            findings.append("invalid_community_parser_limitation")
+            complete = False
+    missing = thread_ids - coded_threads
+    if missing:
+        findings.append("independent_reddit_threads_without_comment_coding")
+        complete = False
+    return axis_threads, coded_fields, complete
+
+
+def _load_consumer_phase2_searches(
+    *,
+    ledger: Mapping[str, Any],
+    artifacts: Mapping[str, Path],
+    axis_rows: Mapping[str, Mapping[str, Any]],
+    findings: list[str],
+) -> tuple[dict[tuple[str, str], Mapping[str, Any]], bool]:
+    artifact_ids = {
+        job.get("search_artifact_id")
+        for axis in axis_rows.values()
+        for job in axis.get("focused_search_jobs", [])
+        if isinstance(job, dict)
+        and isinstance(job.get("search_artifact_id"), str)
+    }
+    if not artifact_ids:
+        findings.append("missing_consumer_phase2_search_artifacts")
+        return {}, False
+    registry: dict[tuple[str, str], Mapping[str, Any]] = {}
+    complete = True
+    for artifact_id in artifact_ids:
+        if artifact_id not in artifacts:
+            continue
+        try:
+            payload = json.loads(artifacts[artifact_id].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(f"invalid_consumer_phase2_search_artifact:{type(exc).__name__}")
+            complete = False
+            continue
+        if not isinstance(payload, dict):
+            findings.append("invalid_consumer_phase2_search_artifact_shape")
+            complete = False
+            continue
+        if payload.get("schema_version") != "consumer_brand_phase2_search_v1":
+            findings.append("invalid_consumer_phase2_search_artifact_version")
+            complete = False
+        if payload.get("subject") != ledger.get("subject"):
+            findings.append("consumer_phase2_search_subject_mismatch")
+            complete = False
+        if payload.get("cycle_id") != ledger.get("cycle_id"):
+            findings.append("consumer_phase2_search_cycle_id_mismatch")
+            complete = False
+        jobs = payload.get("jobs")
+        if not isinstance(jobs, list) or not jobs:
+            findings.append("missing_consumer_phase2_search_jobs")
+            complete = False
+            continue
+        for row in jobs:
+            if not isinstance(row, dict):
+                findings.append("invalid_consumer_phase2_search_job")
+                complete = False
+                continue
+            job_id = row.get("job_id")
+            key = (str(artifact_id), str(job_id))
+            if not isinstance(job_id, str) or not job_id or key in registry:
+                findings.append("invalid_or_duplicate_consumer_phase2_search_job_id")
+                complete = False
+                continue
+            registry[key] = row
+            if not isinstance(row.get("query"), str) or not row.get("query"):
+                findings.append(f"missing_consumer_phase2_search_query:{job_id}")
+                complete = False
+            if _parse_iso_datetime(row.get("executed_at")) is None:
+                findings.append(f"invalid_consumer_phase2_search_executed_at:{job_id}")
+                complete = False
+            packet_ids = row.get("serp_packet_artifact_ids")
+            if not isinstance(packet_ids, list) or not packet_ids:
+                findings.append(f"missing_consumer_phase2_search_packets:{job_id}")
+                complete = False
+            elif any(
+                not isinstance(packet_id, str) or packet_id not in artifacts
+                for packet_id in packet_ids
+            ):
+                findings.append(f"unresolved_consumer_phase2_search_packet:{job_id}")
+                complete = False
+    return registry, complete
+
+
+def _validate_target_reconciliation(
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    registry: Mapping[tuple[str, str], str | None],
+    axis_ids: set[str],
+    route_jobs: Mapping[str, str],
+    search_artifact_ids: set[str],
+    findings: list[str],
+) -> tuple[dict[str, Mapping[str, Any]], bool]:
+    if not isinstance(value, list) or not value:
+        findings.append("missing_consumer_target_reconciliation")
+        return {}, False
+    search_paths = {
+        artifacts[artifact_id].resolve()
+        for artifact_id in search_artifact_ids
+        if artifact_id in artifacts
+    }
+    targets: dict[str, Mapping[str, Any]] = {}
+    complete = True
+    for row in value:
+        if not isinstance(row, dict):
+            findings.append("invalid_consumer_target_reconciliation")
+            complete = False
+            continue
+        target_id = row.get("target_id")
+        if (
+            not isinstance(target_id, str)
+            or not target_id
+            or target_id in targets
+        ):
+            findings.append("invalid_or_duplicate_consumer_target_id")
+            complete = False
+            continue
+        targets[target_id] = row
+        job_id = row.get("discovered_by_job_id")
+        job_state = (
+            route_jobs.get(job_id) if isinstance(job_id, str) else None
+        )
+        if not isinstance(job_id, str) or job_state is None:
+            findings.append(f"unaccounted_consumer_target_job:{target_id}")
+            complete = False
+        row_axis_ids = _string_set(
+            row.get("axis_ids"),
+            code="invalid_consumer_target_axis_ids",
+            findings=findings,
+        )
+        if not row_axis_ids or not row_axis_ids.issubset(axis_ids):
+            findings.append(f"consumer_target_references_unknown_axis:{target_id}")
+            complete = False
+        if not isinstance(row.get("locator"), str) or not row.get("locator"):
+            findings.append(f"missing_consumer_target_locator:{target_id}")
+            complete = False
+        state = row.get("terminal_state")
+        if state not in _TARGET_TERMINAL_STATES:
+            findings.append(f"invalid_consumer_target_state:{target_id}")
+            complete = False
+            continue
+        capture_artifact_id = row.get("native_artifact_id")
+        if state in {"used", "captured_excluded"}:
+            if job_state is not None and job_state != "completed":
+                findings.append(f"nonterminal_consumer_target_job:{target_id}")
+                complete = False
+            if (
+                not isinstance(capture_artifact_id, str)
+                or capture_artifact_id not in artifacts
+            ):
+                findings.append(f"missing_consumer_target_native_body:{target_id}")
+                complete = False
+            elif (
+                capture_artifact_id in search_artifact_ids
+                or artifacts[capture_artifact_id].resolve() in search_paths
+            ):
+                findings.append(
+                    f"serp_artifact_credited_as_native_body:{target_id}"
+                )
+                complete = False
+        evidence_refs = row.get("evidence_refs")
+        if state == "used":
+            if not isinstance(evidence_refs, list) or not evidence_refs:
+                findings.append(f"missing_consumer_target_evidence_refs:{target_id}")
+                complete = False
+            else:
+                for ref in evidence_refs:
+                    if not isinstance(ref, dict):
+                        findings.append(f"invalid_consumer_target_evidence_ref:{target_id}")
+                        complete = False
+                        continue
+                    key = (str(ref.get("family")), str(ref.get("unit_id")))
+                    if key not in registry:
+                        findings.append(f"unresolved_consumer_target_evidence_ref:{target_id}")
+                        complete = False
+        elif state != "no_material_yield" and not str(row.get("reason", "")).strip():
+            findings.append(f"missing_consumer_target_reason:{target_id}")
+            complete = False
+    return targets, complete
+
+
 def _validate_focused_search_jobs(
     axis: Mapping[str, Any],
     *,
     axis_id: str,
     route_jobs: Mapping[str, str],
     required: bool,
+    current_contract: bool,
+    inventory_digest: str | None,
+    inventory_created_at: datetime | None,
+    artifacts: Mapping[str, Path],
+    search_jobs: Mapping[tuple[str, str], Mapping[str, Any]],
+    targets: Mapping[str, Mapping[str, Any]],
     findings: list[str],
 ) -> bool:
     value = axis.get("focused_search_jobs")
@@ -1122,6 +1631,11 @@ def _validate_focused_search_jobs(
         if required:
             findings.append(f"missing_product_axis_focused_search:{axis_id}")
         return not required
+    expected_goals = (
+        _FOCUSED_SEARCH_GOALS
+        if current_contract
+        else _LEGACY_FOCUSED_SEARCH_GOALS
+    )
     goals: set[str] = set()
     job_ids: set[str] = set()
     complete = True
@@ -1133,7 +1647,7 @@ def _validate_focused_search_jobs(
         goal = row.get("goal")
         job_id = row.get("job_id")
         disposition = row.get("disposition")
-        if goal not in _FOCUSED_SEARCH_GOALS or goal in goals:
+        if goal not in expected_goals or goal in goals:
             findings.append(f"invalid_product_axis_search_goal:{axis_id}")
             complete = False
         else:
@@ -1159,7 +1673,86 @@ def _validate_focused_search_jobs(
         if disposition not in _FOCUSED_SEARCH_TERMINALS:
             findings.append(f"invalid_product_axis_search_disposition:{axis_id}")
             complete = False
-    if required and goals != _FOCUSED_SEARCH_GOALS:
+        if current_contract:
+            if row.get("workstream") != "product_axis":
+                findings.append(f"invalid_product_axis_search_workstream:{axis_id}")
+                complete = False
+            if row.get("axis_inventory_sha256") != inventory_digest:
+                findings.append(f"product_axis_search_inventory_mismatch:{axis_id}")
+                complete = False
+            planned_at = _parse_iso_datetime(row.get("planned_at"))
+            if (
+                planned_at is None
+                or inventory_created_at is None
+                or planned_at <= inventory_created_at
+            ):
+                findings.append(f"product_axis_search_not_planned_after_inventory:{axis_id}")
+                complete = False
+            search_artifact_id = row.get("search_artifact_id")
+            if (
+                not isinstance(search_artifact_id, str)
+                or search_artifact_id not in artifacts
+            ):
+                findings.append(f"missing_product_axis_search_artifact:{axis_id}")
+                complete = False
+            search_record = search_jobs.get(
+                (str(search_artifact_id), str(job_id))
+            )
+            if search_record is None:
+                findings.append(f"unresolved_product_axis_search_record:{axis_id}")
+                complete = False
+            else:
+                if (
+                    search_record.get("axis_id") != axis_id
+                    or search_record.get("goal") != goal
+                ):
+                    findings.append(f"product_axis_search_record_mismatch:{axis_id}")
+                    complete = False
+                executed_at = _parse_iso_datetime(search_record.get("executed_at"))
+                if (
+                    planned_at is None
+                    or executed_at is None
+                    or executed_at < planned_at
+                ):
+                    findings.append(f"product_axis_search_executed_before_plan:{axis_id}")
+                    complete = False
+            target_ids = row.get("target_ids")
+            if not isinstance(target_ids, list):
+                findings.append(f"missing_product_axis_search_targets:{axis_id}")
+                complete = False
+            elif disposition == "captured" and not target_ids:
+                findings.append(f"captured_product_axis_search_without_targets:{axis_id}")
+                complete = False
+            else:
+                if search_record is not None and search_record.get(
+                    "selected_target_ids"
+                ) != target_ids:
+                    findings.append(f"product_axis_search_target_inventory_mismatch:{axis_id}")
+                    complete = False
+                target_states: list[str] = []
+                for target_id in target_ids:
+                    target = targets.get(str(target_id))
+                    if target is None:
+                        findings.append(f"unresolved_product_axis_search_target:{axis_id}")
+                        complete = False
+                        continue
+                    if target.get("discovered_by_job_id") != job_id:
+                        findings.append(f"product_axis_search_target_job_mismatch:{axis_id}")
+                        complete = False
+                    if axis_id not in target.get("axis_ids", []):
+                        findings.append(f"product_axis_search_target_axis_mismatch:{axis_id}")
+                        complete = False
+                    target_states.append(str(target.get("terminal_state")))
+                if disposition == "captured" and "used" not in target_states:
+                    findings.append(f"captured_product_axis_search_without_used_native_body:{axis_id}")
+                    complete = False
+                if disposition == "blocked_no_route" and any(
+                    state not in {"blocked", "unavailable"}
+                    for state in target_states
+                ):
+                    findings.append(f"blocked_product_axis_search_target_mismatch:{axis_id}")
+                    complete = False
+    if required and goals != expected_goals:
         findings.append(f"incomplete_product_axis_search_goals:{axis_id}")
         complete = False
     return complete
@@ -1172,6 +1765,7 @@ def _validate_consumer_brand_product_axes(
     families: Mapping[str, Any],
     route_jobs: Mapping[str, str],
     require_complete: bool,
+    current_contract: bool,
     findings: list[str],
 ) -> bool:
     axes = ledger.get("product_axes")
@@ -1229,6 +1823,65 @@ def _validate_consumer_brand_product_axes(
     )
     complete = complete and coding_complete
     registry = _consumer_support_registry(families)
+    inventory_digest: str | None = None
+    inventory_created_at: datetime | None = None
+    community_axis_threads: dict[str, set[str]] = {}
+    community_coded_fields: dict[tuple[str, str], set[tuple[str, str, str]]] = {}
+    search_jobs: dict[tuple[str, str], Mapping[str, Any]] = {}
+    targets: dict[str, Mapping[str, Any]] = {}
+    if current_contract:
+        inventory_digest, inventory_created_at, inventory_complete = (
+            _load_consumer_axis_inventory(
+                ledger.get("axis_inventory"),
+                ledger=ledger,
+                artifacts=artifacts,
+                axis_rows=axis_rows,
+                findings=findings,
+            )
+        )
+        community_axis_threads, community_coded_fields, community_complete = (
+            _load_community_axis_coding(
+                ledger.get("community_axis_coding"),
+                ledger=ledger,
+                artifacts=artifacts,
+                families=families,
+                axis_ids=set(axis_rows),
+                findings=findings,
+            )
+        )
+        search_jobs, searches_complete = _load_consumer_phase2_searches(
+            ledger=ledger,
+            artifacts=artifacts,
+            axis_rows=axis_rows,
+            findings=findings,
+        )
+        search_artifact_ids = {
+            artifact_id for artifact_id, _job_id in search_jobs
+        }
+        for record in search_jobs.values():
+            packet_ids = record.get("serp_packet_artifact_ids")
+            if isinstance(packet_ids, list):
+                search_artifact_ids.update(
+                    packet_id
+                    for packet_id in packet_ids
+                    if isinstance(packet_id, str)
+                )
+        targets, targets_complete = _validate_target_reconciliation(
+            ledger.get("target_reconciliation"),
+            artifacts=artifacts,
+            registry=registry,
+            axis_ids=set(axis_rows),
+            route_jobs=route_jobs,
+            search_artifact_ids=search_artifact_ids,
+            findings=findings,
+        )
+        complete = (
+            complete
+            and inventory_complete
+            and community_complete
+            and searches_complete
+            and targets_complete
+        )
     for axis_id, axis in axis_rows.items():
         refs = axis.get("support_refs")
         family_origins: dict[str, set[str]] = {}
@@ -1255,6 +1908,19 @@ def _validate_consumer_brand_product_axes(
                 complete = False
                 continue
             seen_refs.add(key)
+            if current_contract:
+                if ref.get("contribution") not in _AXIS_SUPPORT_CONTRIBUTIONS:
+                    findings.append(f"invalid_product_axis_support_contribution:{axis_id}")
+                    complete = False
+                choice = ref.get("choice")
+                if choice not in _AXIS_SUPPORT_CHOICES:
+                    findings.append(f"invalid_product_axis_support_choice:{axis_id}")
+                    complete = False
+                if choice == "alternative" and not str(
+                    ref.get("alternative_brand", "")
+                ).strip():
+                    findings.append(f"missing_product_axis_support_alternative:{axis_id}")
+                    complete = False
             if key not in registry:
                 findings.append(f"unresolved_product_axis_support_ref:{axis_id}")
                 complete = False
@@ -1262,6 +1928,28 @@ def _validate_consumer_brand_product_axes(
                 origin_key = registry[key]
                 if origin_key is not None:
                     family_origins.setdefault(str(family), set()).add(origin_key)
+            if current_contract and family == "reddit_forum":
+                if unit_id not in community_axis_threads.get(axis_id, set()):
+                    findings.append(
+                        f"uncoded_reddit_product_axis_support:{axis_id}"
+                    )
+                    complete = False
+                elif (
+                    ref.get("contribution") in _AXIS_SUPPORT_CONTRIBUTIONS
+                    and ref.get("choice") in _AXIS_SUPPORT_CHOICES
+                    and (
+                        str(ref.get("contribution")),
+                        str(ref.get("choice")),
+                        str(ref.get("alternative_brand") or "").strip(),
+                    )
+                    not in community_coded_fields.get(
+                        (axis_id, unit_id), set()
+                    )
+                ):
+                    findings.append(
+                        f"product_axis_support_not_backed_by_comment_coding:{axis_id}"
+                    )
+                    complete = False
 
         corpora_with_mentions, negative_choices, positive_choices = (
             _validate_axis_incidence(
@@ -1305,14 +1993,345 @@ def _validate_consumer_brand_product_axes(
             "material",
             "blocked_material",
         }
+        if current_contract and search_required and len(seen_refs) < 3:
+            exhaustion = axis.get("source_exhaustion")
+            if not (
+                isinstance(exhaustion, dict)
+                and exhaustion.get("status") == "source_exhausted"
+                and exhaustion.get("expected_minimum") == 3
+                and exhaustion.get("observed_usable_units") == len(seen_refs)
+                and isinstance(exhaustion.get("reason"), str)
+                and exhaustion.get("reason")
+            ):
+                findings.append(f"product_axis_below_nonretailer_support_floor:{axis_id}")
+                complete = False
         if not _validate_focused_search_jobs(
             axis,
             axis_id=axis_id,
             route_jobs=route_jobs,
             required=search_required,
+            current_contract=current_contract,
+            inventory_digest=inventory_digest,
+            inventory_created_at=inventory_created_at,
+            artifacts=artifacts,
+            search_jobs=search_jobs,
+            targets=targets,
             findings=findings,
         ):
             complete = False
+    return complete
+
+
+def _valid_reddit_floor_exception(
+    ledger: Mapping[str, Any],
+    *,
+    observed: int,
+    route_jobs: Mapping[str, str],
+) -> bool:
+    value = ledger.get("reddit_forum_floor_exception")
+    if not (
+        isinstance(value, dict)
+        and value.get("status") == "source_exhausted"
+        and value.get("expected_minimum") == 40
+        and value.get("observed_usable_threads") == observed
+        and isinstance(value.get("reason"), str)
+        and value.get("reason")
+    ):
+        return False
+    targets = ledger.get("target_reconciliation")
+    if not isinstance(targets, list) or not targets:
+        return False
+    if any(
+        not isinstance(row, dict)
+        or row.get("terminal_state") not in _TARGET_TERMINAL_STATES
+        for row in targets
+    ):
+        return False
+    axes = ledger.get("product_axes")
+    if not isinstance(axes, list):
+        return False
+    for axis in axes:
+        if not isinstance(axis, dict) or axis.get("disposition") not in {
+            "material",
+            "blocked_material",
+        }:
+            continue
+        jobs = axis.get("focused_search_jobs")
+        if not isinstance(jobs, list) or len(jobs) < 3:
+            return False
+        for job in jobs:
+            if not isinstance(job, dict):
+                return False
+            state = route_jobs.get(str(job.get("job_id")))
+            if state not in {"completed", "blocked"}:
+                return False
+    closure = ledger.get("closure")
+    batches = closure.get("batches") if isinstance(closure, dict) else None
+    if not isinstance(batches, list) or len(batches) < 2:
+        return False
+    zero_fields = {
+        "new_material_seams",
+        "changed_material_dispositions",
+        "new_product_axes",
+        "changed_axis_strengths",
+        "changed_axis_incidence",
+        "new_customer_segments",
+        "new_product_conditions",
+        "new_comparison_choices",
+        "new_competitor_alternatives",
+        "new_usable_reddit_threads",
+    }
+    return all(
+        isinstance(row, dict)
+        and row.get("batch_kind") == "live_acquisition"
+        and row.get("material_incremental_value") is False
+        and all(row.get(field) == 0 for field in zero_fields)
+        for row in batches[-2:]
+    )
+
+
+def _independent_reddit_thread_ids(ledger: Mapping[str, Any]) -> set[str]:
+    families = ledger.get("families")
+    reddit = families.get("reddit_forum") if isinstance(families, dict) else None
+    rows = (
+        reddit.get("threads")
+        if isinstance(reddit, dict) and isinstance(reddit.get("threads"), list)
+        else []
+    )
+    return {
+        row["thread_id"]
+        for row in rows
+        if isinstance(row, dict)
+        and row.get("independence") == "independent_thread"
+        and isinstance(row.get("thread_id"), str)
+        and row.get("thread_id")
+    }
+
+
+def _validate_reddit_candidate_frontier(
+    ledger: Mapping[str, Any],
+    *,
+    artifacts: Mapping[str, Path],
+    route_jobs: Mapping[str, str],
+    require_complete: bool,
+    findings: list[str],
+) -> bool:
+    """The 40-thread floor is a minimum, never a completion target.
+
+    A passing current-profile seal must prove that the bounded eligible
+    candidate frontier was exhausted: every discovered candidate thread is
+    terminally accounted, every credited ledger thread is a captured frontier
+    candidate, and two varied, axis-complete final discovery sweeps acquired no
+    further usable threads.
+    """
+    value = ledger.get("reddit_candidate_frontier")
+    if not isinstance(value, dict):
+        if require_complete:
+            findings.append("passing_seal_without_reddit_frontier_exhaustion")
+            findings.append("missing_reddit_frontier_discovery_jobs")
+        return False
+    complete = True
+    if (
+        value.get("status") != "source_exhausted"
+        or not isinstance(value.get("reason"), str)
+        or not value.get("reason")
+    ):
+        findings.append("invalid_reddit_frontier_status")
+        complete = False
+    material_axes = {
+        str(row.get("axis_id"))
+        for row in ledger.get("product_axes", [])
+        if isinstance(row, dict)
+        and row.get("disposition") in {"material", "blocked_material"}
+        and isinstance(row.get("axis_id"), str)
+        and row.get("axis_id")
+    }
+    discovery_jobs = value.get("discovery_jobs")
+    discovery_by_id: dict[str, Mapping[str, Any]] = {}
+    discovery_artifacts: dict[str, set[Path]] = {}
+    if not isinstance(discovery_jobs, list) or not discovery_jobs:
+        findings.append("missing_reddit_frontier_discovery_jobs")
+        complete = False
+    else:
+        for row in discovery_jobs:
+            if not isinstance(row, dict):
+                findings.append("invalid_reddit_frontier_discovery_job")
+                complete = False
+                continue
+            job_id = row.get("job_id")
+            if (
+                not isinstance(job_id, str)
+                or not job_id
+                or job_id in discovery_by_id
+            ):
+                findings.append("invalid_or_duplicate_frontier_discovery_job")
+                complete = False
+                continue
+            discovery_by_id[job_id] = row
+            if route_jobs.get(job_id) != "completed":
+                findings.append("frontier_discovery_job_not_completed")
+                complete = False
+            axis_id = row.get("axis_id")
+            if not isinstance(axis_id, str) or axis_id not in material_axes:
+                findings.append("invalid_frontier_discovery_axis")
+                complete = False
+            if not isinstance(row.get("query"), str) or not row.get(
+                "query", ""
+            ).strip():
+                findings.append("missing_frontier_discovery_query")
+                complete = False
+            if _parse_iso_datetime(row.get("executed_at")) is None:
+                findings.append("invalid_frontier_discovery_executed_at")
+                complete = False
+            artifact_ids = row.get("artifact_ids")
+            paths: set[Path] = set()
+            if (
+                not isinstance(artifact_ids, list)
+                or not artifact_ids
+                or any(
+                    not isinstance(item, str) or not item
+                    for item in artifact_ids
+                )
+            ):
+                findings.append("missing_frontier_discovery_artifacts")
+                complete = False
+            else:
+                for artifact_id in artifact_ids:
+                    if artifact_id not in artifacts:
+                        findings.append("unresolved_frontier_discovery_artifact")
+                        complete = False
+                        continue
+                    paths.add(artifacts[artifact_id].resolve())
+                if len(paths) != len(artifact_ids):
+                    findings.append("duplicate_frontier_discovery_artifact_path")
+                    complete = False
+            discovery_artifacts[job_id] = paths
+            candidate_ids = row.get("candidate_thread_ids")
+            if (
+                not isinstance(candidate_ids, list)
+                or any(
+                    not isinstance(item, str) or not item
+                    for item in candidate_ids
+                )
+                or len(set(candidate_ids)) != len(candidate_ids)
+            ):
+                findings.append("invalid_frontier_discovery_candidate_ids")
+                complete = False
+    candidates = value.get("candidates")
+    if not isinstance(candidates, list) or not candidates:
+        findings.append("missing_reddit_frontier_candidates")
+        return False
+    seen: set[str] = set()
+    captured: set[str] = set()
+    candidate_rows: list[Mapping[str, Any]] = []
+    for row in candidates:
+        if not isinstance(row, dict):
+            findings.append("invalid_reddit_frontier_candidate")
+            complete = False
+            continue
+        thread_id = row.get("thread_id")
+        if not isinstance(thread_id, str) or not thread_id or thread_id in seen:
+            findings.append("invalid_or_duplicate_frontier_candidate")
+            complete = False
+            continue
+        seen.add(thread_id)
+        candidate_rows.append(row)
+        state = row.get("terminal_state")
+        if state not in _FRONTIER_CANDIDATE_STATES:
+            findings.append("invalid_frontier_candidate_state")
+            complete = False
+            continue
+        job_id = row.get("discovered_by_job_id")
+        if (
+            not isinstance(job_id, str)
+            or job_id not in discovery_by_id
+            or route_jobs.get(job_id) != "completed"
+        ):
+            findings.append("unaccounted_frontier_candidate_job")
+            complete = False
+        if state == "captured_used":
+            captured.add(thread_id)
+        elif not str(row.get("reason", "")).strip():
+            findings.append("missing_frontier_candidate_reason")
+            complete = False
+    candidates_by_job: dict[str, set[str]] = {}
+    for row in candidate_rows:
+        job_id = row.get("discovered_by_job_id")
+        thread_id = row.get("thread_id")
+        if isinstance(job_id, str) and isinstance(thread_id, str):
+            candidates_by_job.setdefault(job_id, set()).add(thread_id)
+    for job_id, row in discovery_by_id.items():
+        declared_ids = row.get("candidate_thread_ids")
+        if (
+            isinstance(declared_ids, list)
+            and all(isinstance(item, str) and item for item in declared_ids)
+            and set(declared_ids) != candidates_by_job.get(job_id, set())
+        ):
+            findings.append("frontier_discovery_candidate_mismatch")
+            complete = False
+    thread_ids = _independent_reddit_thread_ids(ledger)
+    if thread_ids - captured:
+        findings.append("frontier_missing_ledger_thread")
+        complete = False
+    if captured - thread_ids:
+        findings.append("frontier_captured_thread_not_in_ledger")
+        complete = False
+    closure = ledger.get("closure")
+    batches = closure.get("batches") if isinstance(closure, dict) else None
+    if isinstance(batches, list) and len(batches) >= 2:
+        final_queries: dict[str, set[str]] = {}
+        final_artifact_paths: set[Path] = set()
+        for batch in batches[-2:]:
+            if not isinstance(batch, dict):
+                continue
+            job_ids = batch.get("job_ids")
+            batch_jobs = (
+                {str(job_id) for job_id in job_ids}
+                if isinstance(job_ids, list)
+                else set()
+            )
+            if not batch_jobs or any(
+                job_id not in discovery_by_id for job_id in batch_jobs
+            ):
+                findings.append("saturation_batch_not_reddit_frontier_discovery")
+                complete = False
+            batch_axes = {
+                str(discovery_by_id[job_id].get("axis_id"))
+                for job_id in batch_jobs
+                if job_id in discovery_by_id
+            }
+            if batch_axes != material_axes:
+                findings.append("saturation_batch_missing_reddit_axis_coverage")
+                complete = False
+            for job_id in batch_jobs:
+                discovery = discovery_by_id.get(job_id)
+                if discovery is None:
+                    continue
+                axis_id = str(discovery.get("axis_id"))
+                query = str(discovery.get("query", "")).strip().casefold()
+                if query and query in final_queries.setdefault(axis_id, set()):
+                    findings.append("repeated_final_frontier_query")
+                    complete = False
+                final_queries[axis_id].add(query)
+                paths = discovery_artifacts.get(job_id, set())
+                if paths & final_artifact_paths:
+                    findings.append("shared_final_frontier_discovery_artifact")
+                    complete = False
+                final_artifact_paths.update(paths)
+            observed = sum(
+                1
+                for row in candidate_rows
+                if row.get("terminal_state") == "captured_used"
+                and str(row.get("discovered_by_job_id")) in batch_jobs
+            )
+            declared = batch.get("new_usable_reddit_threads")
+            if (
+                isinstance(declared, int)
+                and not isinstance(declared, bool)
+                and declared != observed
+            ):
+                findings.append("saturation_batch_usable_thread_count_mismatch")
+                complete = False
     return complete
 
 
@@ -1321,6 +2340,8 @@ def _validate_depth_closure(
     *,
     require_complete: bool,
     consumer_brand: bool = False,
+    current_consumer_contract: bool = False,
+    route_jobs: Mapping[str, str] | None = None,
     findings: list[str],
 ) -> bool:
     if not isinstance(value, dict):
@@ -1376,6 +2397,19 @@ def _validate_depth_closure(
             findings.append("insufficient_saturation_batches")
         complete = False
     else:
+        if current_consumer_contract:
+            batch_job_ids: set[str] = set()
+            for row in batches:
+                if not isinstance(row, dict):
+                    continue
+                job_ids = row.get("job_ids")
+                if not isinstance(job_ids, list):
+                    continue
+                for job_id in job_ids:
+                    if str(job_id) in batch_job_ids:
+                        findings.append("duplicate_saturation_batch_job")
+                        complete = False
+                    batch_job_ids.add(str(job_id))
         for row in batches[-2:]:
             if not isinstance(row, dict):
                 findings.append("invalid_saturation_batch")
@@ -1409,6 +2443,29 @@ def _validate_depth_closure(
                         "changed_axis_incidence",
                     ]
                 )
+            if current_consumer_contract:
+                batch_fields.extend(
+                    [
+                        "new_customer_segments",
+                        "new_product_conditions",
+                        "new_comparison_choices",
+                        "new_competitor_alternatives",
+                        "new_usable_reddit_threads",
+                    ]
+                )
+                if row.get("batch_kind") != "live_acquisition":
+                    findings.append("saturation_batch_not_live_acquisition")
+                    complete = False
+                job_ids = row.get("job_ids")
+                if not isinstance(job_ids, list) or not job_ids:
+                    findings.append("saturation_batch_missing_job_ids")
+                    complete = False
+                else:
+                    states = route_jobs or {}
+                    for job_id in job_ids:
+                        if states.get(str(job_id)) not in {"completed", "blocked"}:
+                            findings.append("saturation_batch_job_not_terminal")
+                            complete = False
             for field in batch_fields:
                 metric = row.get(field)
                 if (
@@ -1794,7 +2851,12 @@ def _verify_artifact(
         findings.append(f"invalid_{code}_sha256")
         return
     path = Path(locator)
-    if not path.is_absolute():
+    if path.is_absolute():
+        # Repository-tracked evidence must stay checkout-portable; absolute
+        # locators are for machine-local raw-lake roots outside the repo only.
+        if path.resolve().is_relative_to(Path(repo_root).resolve()):
+            findings.append(f"nonportable_{code}_locator")
+    else:
         path = repo_root / path
     if not path.is_file():
         findings.append(f"missing_{code}_file")
@@ -1829,6 +2891,14 @@ def _parser() -> argparse.ArgumentParser:
             "do not satisfy the current broad-Understanding completion contract."
         ),
     )
+    parser.add_argument(
+        "--allow-legacy-consumer-v1",
+        action="store_true",
+        help=(
+            "Audit a historical broad_consumer_brand_understanding_v1 ledger. "
+            "It does not satisfy the current consumer-brand Phase A contract."
+        ),
+    )
     return parser
 
 
@@ -1841,6 +2911,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             seal_path=args.seal.resolve(),
             repo_root=args.repo_root.resolve(),
             allow_legacy_v2=args.allow_legacy_v2,
+            allow_legacy_consumer_v1=args.allow_legacy_consumer_v1,
         )
     except Exception as exc:  # noqa: BLE001 - controlled validator diagnostic
         parser.exit(

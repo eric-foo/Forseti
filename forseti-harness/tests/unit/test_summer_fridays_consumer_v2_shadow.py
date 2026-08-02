@@ -9,6 +9,8 @@ import yaml
 from runners.run_phase_acquisition_seal_validation import (
     CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     CONSUMER_DEPTH_LEDGER_VERSION,
+    LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    LEGACY_CONSUMER_DEPTH_LEDGER_VERSION,
     _artifact_hash,
     _load_seal,
     validate_phase_acquisition_seal,
@@ -34,6 +36,16 @@ V2_SEAL = REPO_ROOT / (
 V2_LEDGER = REPO_ROOT / (
     "docs/research/"
     "summer_fridays_understanding_dogfood_20260802_p11r5/"
+    "coordinated/evidence_depth_ledger.json"
+)
+V3_SEAL = REPO_ROOT / (
+    "docs/workflows/"
+    "summer_fridays_understanding_dogfood_20260802_p11r6/"
+    "coordinated/acquisition_seal.md"
+)
+V3_LEDGER = REPO_ROOT / (
+    "docs/research/"
+    "summer_fridays_understanding_dogfood_20260802_p11r6/"
     "coordinated/evidence_depth_ledger.json"
 )
 
@@ -74,8 +86,8 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
         "grazia_brand_profile": "company_profile",
     }
     ledger = json.loads(V1_LEDGER.read_text(encoding="utf-8"))
-    ledger["schema_version"] = CONSUMER_DEPTH_LEDGER_VERSION
-    ledger["profile_id"] = CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ledger["schema_version"] = LEGACY_CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE
     external = ledger["families"].pop("outside_in")
     for row in external["units"]:
         row["source_type"] = source_types[row["unit_id"]]
@@ -103,6 +115,7 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
     findings = validate_phase_acquisition_seal(
         seal_path=shadow_seal,
         repo_root=REPO_ROOT,
+        allow_legacy_consumer_v1=True,
     )
 
     expected = {
@@ -134,15 +147,25 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
     )
 
 
-def test_summer_fridays_p11r5_consumer_brand_dogfood_passes() -> None:
+def test_summer_fridays_p11r5_requires_explicit_legacy_audit() -> None:
+    assert "legacy_consumer_v1_requires_explicit_historical_audit" in (
+        validate_phase_acquisition_seal(
+            seal_path=V2_SEAL,
+            repo_root=REPO_ROOT,
+        )
+    )
     assert validate_phase_acquisition_seal(
         seal_path=V2_SEAL,
         repo_root=REPO_ROOT,
+        allow_legacy_consumer_v1=True,
     ) == []
 
     ledger = json.loads(V2_LEDGER.read_text(encoding="utf-8"))
-    assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION
-    assert ledger["profile_id"] == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert ledger["schema_version"] == LEGACY_CONSUMER_DEPTH_LEDGER_VERSION
+    assert (
+        ledger["profile_id"]
+        == LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    )
     assert len(ledger["product_axes"]) == 12
     assert {
         axis["axis_id"]: axis["strength"]
@@ -161,3 +184,48 @@ def test_summer_fridays_p11r5_consumer_brand_dogfood_passes() -> None:
         "application_and_tool_performance": "signal",
         "hype_originality_and_trust": "strong",
     }
+
+
+def test_summer_fridays_p11r6_is_preserved_provenance_not_a_passing_seal() -> None:
+    """The p11r6 dogfood stays pinned as provenance, but it may not pass.
+
+    The expanded current-contract checks require proven Reddit
+    candidate-frontier exhaustion at any thread count, per-batch usable-thread
+    accounting, comment-coding-backed support-ref fields, and
+    checkout-portable repo-internal locators. The p11r6 run predates those
+    obligations, so the validator must reject it until the Chief Architect
+    regenerates the evidence-depth ledger with the missing proofs.
+    """
+    findings = validate_phase_acquisition_seal(
+        seal_path=V3_SEAL,
+        repo_root=REPO_ROOT,
+    )
+
+    assert findings != []
+    assert "passing_seal_without_reddit_frontier_exhaustion" in findings
+    assert "missing_reddit_frontier_discovery_jobs" in findings
+    assert "invalid_saturation_batch_new_usable_reddit_threads" in findings
+    # The historical seal must never be waved through as legacy either.
+    assert (
+        "legacy_consumer_v1_requires_explicit_historical_audit"
+        not in findings
+    )
+
+    ledger = json.loads(V3_LEDGER.read_text(encoding="utf-8"))
+    assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION
+    assert ledger["profile_id"] == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert len(ledger["families"]["reddit_forum"]["threads"]) == 40
+    assert len(ledger["product_axes"]) == 12
+    assert all(
+        len(axis["focused_search_jobs"]) == 3
+        for axis in ledger["product_axes"]
+    )
+    assert all(
+        batch["batch_kind"] == "live_acquisition"
+        and batch["material_incremental_value"] is False
+        and batch["new_customer_segments"] == 0
+        and batch["new_product_conditions"] == 0
+        and batch["new_comparison_choices"] == 0
+        and batch["new_competitor_alternatives"] == 0
+        for batch in ledger["closure"]["batches"][-2:]
+    )

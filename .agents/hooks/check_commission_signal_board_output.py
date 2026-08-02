@@ -264,6 +264,10 @@ COMPANY_RUN_BOUNDARIES = {
 }
 COMMISSION_STAGE_RUN_BOUNDARY = "COMMISSION_SEALED_PRE_SCAN"
 COMMISSION_STAGE_SCOUT_STATUS = "commissioned_not_yet_run"
+UNDERSTANDING_COMPLETION_PROFILES = {
+    "broad_company_understanding_v1",
+    "broad_consumer_brand_understanding_v2",
+}
 NOT_REQUIRED_SCOUT_STATUS = "not_required_no_decision_material_job"
 COMPANY_REDDIT_SCOUT_STATUSES = {
     "checked_positive_yield",
@@ -1471,6 +1475,15 @@ def _validate_company_completion(
                 )
             )
     commission_stage = run_boundary == COMMISSION_STAGE_RUN_BOUNDARY
+    if _normalize_vocab(receipt.get("understanding_completion_profile")) not in (
+        UNDERSTANDING_COMPLETION_PROFILES
+    ):
+        findings.append(
+            Finding(
+                "missing_or_invalid_understanding_completion_profile",
+                "Every company Understanding record must carry broad_company_understanding_v1 or broad_consumer_brand_understanding_v2 from commission through completion.",
+            )
+        )
     if commission_stage:
         if _normalize_vocab(receipt.get("controller_placement")) != "top_level_co0":
             findings.append(

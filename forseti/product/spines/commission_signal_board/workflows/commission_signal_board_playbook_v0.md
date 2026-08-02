@@ -132,9 +132,24 @@ value. Do not copy the profile into a run-specific quota or stop when a floor is
 first reached.
 
 For a consumer brand where product/customer experience is material, select
-`broad_consumer_brand_understanding_v1` instead. Its v2 depth ledger applies the
-same aggregate anti-token floors, but completion is organized around material
-product pain/delight axes. `CO3` codes the eligible deduplicated retailer rows
+`broad_consumer_brand_understanding_v2` instead and record that choice in the
+commission receipt before scanning, then retain it in the completed company
+record. Its v3 depth ledger applies the same
+aggregate anti-token floors except for a 40-thread Reddit/forum floor, but
+completion is organized around material product pain/delight axes. Forty
+threads are a minimum floor, never a completion target: every passing run
+proves its bounded eligible candidate frontier exhausted in the ledger's
+`reddit_candidate_frontier`, with every discovered candidate terminally
+accounted, and keeps acquiring while any new unique thread corroborates,
+contradicts, compares, or sharpens an axis. The proof is bounded to the
+executed routes: every discovery job pins its axis, query, execution time,
+result artifact, and surfaced candidate IDs. The last two batches are
+different, full-axis frontier sweeps—not unrelated Phase 2 jobs—and both must
+add zero usable threads. Fewer than
+40 usable unique threads additionally requires the proven source-exhaustion
+floor exception; reaching
+40 never stops an axis that remains materially open. `CO3` codes the eligible
+deduplicated retailer rows
 to axis-specific and overall explicit choice outcomes, tags social-source
 relationship, and returns source IDs rather than prose-only counts. `CO0`
 integrates those rows with distinct-origin external, community, and creator
@@ -212,6 +227,11 @@ not spend a separate sacrificial query.
    outcomes, overall choice outcomes, and source-row references.
    Same-corpus and cross-corpus deduplication precede incidence. Keep retailer
    results separate unless their boundaries and methods are comparable.
+   The same return comment-codes every usable independent Reddit/forum thread
+   to product context, axes, contribution, choice, alternative, explicit
+   outcome, source reference, and parser limitation. Exact duplicate threads
+   collapse. Related same-topic threads remain visible as corroborating or
+   sharpening volume even when they add no distinct-origin strength credit.
 4. Specialists persist evidence as it is produced, then write one terminal
    role return that indexes the durable artifacts, completed and unresolved
    jobs, material failures, and follow-ups. They do not paste raw corpora into
@@ -226,13 +246,16 @@ not spend a separate sacrificial query.
    artifacts themselves once, resolves any actor-local correction in the same
    actor task, and runs SERP Phase 2 from the combined findings. Phase 2 owns
    only the targeted SERP return and decision lifecycle; it does not repeat the
-   fan-out's native/community capture. For each material consumer-brand axis,
-   Phase 2 runs one adaptive corroboration/segmentation goal and one adaptive
-   disconfirmation/comparison goal. A concrete material source found by those
+   fan-out's native/community capture. First hash-pin the complete axis
+   inventory. For each material consumer-brand axis, Phase 2 then runs one
+   adaptive corroboration/segmentation goal, one comparison/switch/value goal,
+   and one disconfirmation/strongest-delight goal. A concrete material source
+   found by those
    queries becomes an ordinary job in the existing owning route accounting;
    the owning specialist or Capture route publishes its separate focused
    terminal artifact. Phase 2 itself does not acquire native evidence. `CO0`
-   may seal only after every such job is captured or terminally dispositioned,
+   may seal only after every selected target is reconciled and every such job is
+   source-natively captured or terminally dispositioned,
    then writes the integrated acquisition record and seal. Only `CO0` owns
    user-facing run progress.
 
@@ -506,16 +529,28 @@ labels. Historical v2 seals require
 Deliver under the current contract.
 
 Consumer brands with material product/customer experience use
-`understanding_evidence_depth_v2` and
-`broad_consumer_brand_understanding_v1`. The v2 ledger preserves the v1 family
+`understanding_evidence_depth_v3` and
+`broad_consumer_brand_understanding_v2`. The v3 ledger preserves the v1 family
 and closure accounting while using `external_context` for the human-facing
 External company, editorial and industry context family. It also carries the
-product-axis inventory, the hash-pinned retailer row-coding reference,
-per-corpus recomputed incidence, social relationship and owned-direction tags,
-and the two focused Phase 2 jobs per material axis. Its final two batches add
-`new_product_axes`, `changed_axis_strengths`, and
-`changed_axis_incidence`; each must be zero for a passing seal. Historical v1
-ledgers remain valid under v1 and are never upgraded by assertion.
+pre-Phase-2 product-axis inventory, the hash-pinned retailer and community
+coding references, per-corpus recomputed incidence, social relationship and
+owned-direction tags, the 40-thread minimum floor plus a proven
+`reddit_candidate_frontier` exhaustion block with every discovered candidate
+terminally accounted, its discovery query and captured result packet pinned,
+and two different full-axis final sweeps yielding no usable thread (and the
+additional floor exception when below 40),
+per-thread source-native artifacts, comment-coding-backed support-ref fields,
+three focused Phase 2 jobs per material axis, and target reconciliation from
+search pointer through native body to evidence unit — a SERP artifact never
+doubles as the native body. Its final two batches must be live Reddit-frontier
+acquisitions, each covering every material axis with different queries and
+captured result packets, and add no axis, segment, product condition, comparison
+choice, competitor alternative, strength/incidence change, usable Reddit
+thread (declared per batch as `new_usable_reddit_threads` and recomputed
+against the frontier), or material seam.
+Historical consumer v1/v2 ledgers require
+`--allow-legacy-consumer-v1` and are never upgraded by assertion.
 
 For company Understanding, non-empty route accounting is required for
 `serp_phase1`, `official_retailer_authorization`,
