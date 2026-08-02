@@ -6,6 +6,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -21,6 +22,10 @@ SEAL_VERSION = "phase_acquisition_seal_v3"
 LEGACY_SEAL_VERSION = "phase_acquisition_seal_v2"
 DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v1"
 BROAD_UNDERSTANDING_PROFILE = "broad_company_understanding_v1"
+CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v2"
+CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
+    "broad_consumer_brand_understanding_v1"
+)
 BROAD_UNDERSTANDING_FLOORS = {
     "outside_in_independent_units": 12,
     "outside_in_independent_origins": 12,
@@ -35,6 +40,75 @@ BROAD_UNDERSTANDING_FLOORS = {
     "native_social_creators": 20,
     "native_social_platforms": 2,
     "native_social_perspectives": 2,
+}
+CONSUMER_BRAND_UNDERSTANDING_FLOORS = {
+    **{
+        key: value
+        for key, value in BROAD_UNDERSTANDING_FLOORS.items()
+        if not key.startswith("outside_in_")
+    },
+    "external_context_independent_units": 12,
+    "external_context_independent_origins": 12,
+}
+
+_EXTERNAL_CONTEXT_SOURCE_TYPES = {
+    "corporate_or_transaction",
+    "trade_press",
+    "consumer_editorial",
+    "company_profile",
+    "other_external",
+}
+_SOCIAL_RELATIONSHIPS = {
+    "owned",
+    "retailer_operated",
+    "disclosed_paid_or_affiliate",
+    "apparently_independent",
+    "relationship_unknown",
+}
+_QUALIFYING_SOCIAL_RELATIONSHIPS = {"apparently_independent"}
+_AXIS_POLARITIES = {"pain", "delight", "mixed"}
+_AXIS_STRENGTHS = {"signal", "recurring", "strong"}
+_AXIS_DISPOSITIONS = {
+    "material",
+    "bounded_nonmaterial",
+    "merged",
+    "blocked_material",
+}
+_FOCUSED_SEARCH_GOALS = {
+    "corroborate_or_segment",
+    "disconfirm_or_compare",
+}
+_FOCUSED_SEARCH_TERMINALS = {
+    "captured",
+    "no_material_yield",
+    "dominated",
+    "blocked_no_route",
+}
+_INCENTIVE_STATES = {
+    "disclosed_incentivized",
+    "not_marked_incentivized",
+    "unknown",
+}
+_CHOICE_OUTCOMES = {
+    "returned_or_refunded",
+    "return_intended",
+    "stopped_or_discarded",
+    "switched_or_replaced",
+    "reduced_use",
+    "no_future_purchase",
+    "rejected_or_not_recommended",
+    "retained_or_repurchased",
+    "recommended_or_would_purchase",
+    "none_explicit",
+}
+_NEGATIVE_CHOICE_OUTCOMES = _CHOICE_OUTCOMES - {
+    "retained_or_repurchased",
+    "recommended_or_would_purchase",
+    "none_explicit",
+}
+_POSITIVE_CHOICE_OUTCOMES = {
+    "retained_or_repurchased",
+    "recommended_or_would_purchase",
 }
 MANDATORY_ROUTE_IDS = {
     "serp_phase1",
@@ -164,10 +238,28 @@ def _validate_understanding_evidence_depth(
     if not isinstance(ledger, dict):
         findings.append("invalid_evidence_depth_ledger_shape")
         return
-    if ledger.get("schema_version") != DEPTH_LEDGER_VERSION:
+    ledger_version = ledger.get("schema_version")
+    profile_id = ledger.get("profile_id")
+    if ledger_version not in {
+        DEPTH_LEDGER_VERSION,
+        CONSUMER_DEPTH_LEDGER_VERSION,
+    }:
         findings.append("invalid_evidence_depth_ledger_version")
-    if ledger.get("profile_id") != BROAD_UNDERSTANDING_PROFILE:
+    if profile_id not in {
+        BROAD_UNDERSTANDING_PROFILE,
+        CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    }:
         findings.append("invalid_understanding_completion_profile")
+    valid_profile_pair = (
+        ledger_version == DEPTH_LEDGER_VERSION
+        and profile_id == BROAD_UNDERSTANDING_PROFILE
+    ) or (
+        ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
+        and profile_id == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    )
+    if not valid_profile_pair:
+        findings.append("understanding_profile_schema_mismatch")
+    consumer_brand = ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
     seal_subject = seal.get("subject")
     if not isinstance(seal_subject, str) or not seal_subject:
         findings.append("missing_seal_subject")
@@ -187,11 +279,22 @@ def _validate_understanding_evidence_depth(
         findings.append("missing_evidence_depth_families")
         families = {}
     metrics: dict[str, int] = {}
-    metrics.update(
-        _validate_outside_in_depth(
-            families.get("outside_in"), artifacts=artifacts, findings=findings
+    if consumer_brand:
+        metrics.update(
+            _validate_external_context_depth(
+                families.get("external_context"),
+                artifacts=artifacts,
+                findings=findings,
+            )
         )
-    )
+    else:
+        metrics.update(
+            _validate_outside_in_depth(
+                families.get("outside_in"),
+                artifacts=artifacts,
+                findings=findings,
+            )
+        )
     metrics.update(
         _validate_retailer_review_depth(
             families.get("retailer_reviews"),
@@ -207,18 +310,41 @@ def _validate_understanding_evidence_depth(
     )
     metrics.update(
         _validate_native_social_depth(
-            families.get("native_social"), artifacts=artifacts, findings=findings
+            families.get("native_social"),
+            artifacts=artifacts,
+            consumer_brand=consumer_brand,
+            findings=findings,
         )
     )
+    product_axis_complete = True
+    if consumer_brand:
+        product_axis_complete = _validate_consumer_brand_product_axes(
+            ledger,
+            artifacts=artifacts,
+            families=families,
+            route_jobs=_route_job_states(seal),
+            require_complete=valid_pass,
+            findings=findings,
+        )
     closure_complete = _validate_depth_closure(
-        ledger.get("closure"), require_complete=valid_pass, findings=findings
+        ledger.get("closure"),
+        require_complete=valid_pass,
+        consumer_brand=consumer_brand,
+        findings=findings,
     )
     if valid_pass:
-        for metric, minimum in BROAD_UNDERSTANDING_FLOORS.items():
+        floors = (
+            CONSUMER_BRAND_UNDERSTANDING_FLOORS
+            if consumer_brand
+            else BROAD_UNDERSTANDING_FLOORS
+        )
+        for metric, minimum in floors.items():
             if metrics.get(metric, 0) < minimum:
                 findings.append(f"passing_seal_below_depth_floor:{metric}")
         if not closure_complete:
             findings.append("passing_seal_without_saturation_closure")
+        if consumer_brand and not product_axis_complete:
+            findings.append("passing_consumer_brand_seal_without_axis_closure")
 
 
 def _validate_depth_artifacts(
@@ -226,11 +352,11 @@ def _validate_depth_artifacts(
     *,
     repo_root: Path,
     findings: list[str],
-) -> set[str]:
+) -> dict[str, Path]:
     if not isinstance(value, list) or not value:
         findings.append("missing_evidence_depth_artifacts")
-        return set()
-    artifact_ids: set[str] = set()
+        return {}
+    artifacts: dict[str, Path] = {}
     for row in value:
         if not isinstance(row, dict):
             findings.append("invalid_evidence_depth_artifact")
@@ -239,18 +365,22 @@ def _validate_depth_artifacts(
         if not isinstance(artifact_id, str) or not artifact_id:
             findings.append("missing_evidence_depth_artifact_id")
             continue
-        if artifact_id in artifact_ids:
+        if artifact_id in artifacts:
             findings.append("duplicate_evidence_depth_artifact_id")
             continue
-        artifact_ids.add(artifact_id)
+        locator = row.get("locator")
+        path = Path(str(locator))
+        if not path.is_absolute():
+            path = repo_root / path
+        artifacts[artifact_id] = path
         _verify_artifact(
-            row.get("locator"),
+            locator,
             row.get("sha256"),
             repo_root=repo_root,
             code="evidence_depth_source",
             findings=findings,
         )
-    return artifact_ids
+    return artifacts
 
 
 def _valid_depth_rows(
@@ -258,7 +388,7 @@ def _valid_depth_rows(
     *,
     row_name: str,
     id_field: str,
-    artifacts: set[str],
+    artifacts: Mapping[str, Path],
     findings: list[str],
 ) -> list[Mapping[str, Any]]:
     if not isinstance(value, list):
@@ -295,7 +425,7 @@ def _string_set(value: Any, *, code: str, findings: list[str]) -> set[str]:
 
 
 def _validate_outside_in_depth(
-    value: Any, *, artifacts: set[str], findings: list[str]
+    value: Any, *, artifacts: Mapping[str, Path], findings: list[str]
 ) -> dict[str, int]:
     if not isinstance(value, dict):
         findings.append("missing_outside_in_depth")
@@ -333,10 +463,57 @@ def _validate_outside_in_depth(
     }
 
 
+def _validate_external_context_depth(
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    findings: list[str],
+) -> dict[str, int]:
+    if not isinstance(value, dict):
+        findings.append("missing_external_context_depth")
+        return {}
+    rows = _valid_depth_rows(
+        value.get("units"),
+        row_name="external_context",
+        id_field="unit_id",
+        artifacts=artifacts,
+        findings=findings,
+    )
+    origins: set[str] = set()
+    independent_units = 0
+    for row in rows:
+        origin = row.get("origin_id")
+        if not isinstance(origin, str) or not origin:
+            findings.append("missing_external_context_origin_id")
+            continue
+        independence = row.get("independence")
+        if independence not in {
+            "independent_origin",
+            "same_origin",
+            "syndicated_copy",
+        }:
+            findings.append("invalid_external_context_independence")
+            continue
+        echo_group = row.get("echo_group_id")
+        if not isinstance(echo_group, str) or not echo_group:
+            findings.append("missing_external_context_echo_group")
+        if row.get("source_type") not in _EXTERNAL_CONTEXT_SOURCE_TYPES:
+            findings.append("invalid_external_context_source_type")
+        if row.get("relationship") not in _SOCIAL_RELATIONSHIPS:
+            findings.append("invalid_external_context_relationship")
+        if independence == "independent_origin":
+            independent_units += 1
+            origins.add(origin)
+    return {
+        "external_context_independent_units": independent_units,
+        "external_context_independent_origins": len(origins),
+    }
+
+
 def _validate_retailer_review_depth(
     value: Any,
     *,
-    artifacts: set[str],
+    artifacts: Mapping[str, Path],
     require_complete: bool,
     findings: list[str],
 ) -> dict[str, int]:
@@ -411,7 +588,7 @@ def _validate_retailer_review_depth(
 
 
 def _validate_reddit_depth(
-    value: Any, *, artifacts: set[str], findings: list[str]
+    value: Any, *, artifacts: Mapping[str, Path], findings: list[str]
 ) -> dict[str, int]:
     if not isinstance(value, dict):
         findings.append("missing_reddit_forum_depth")
@@ -452,7 +629,11 @@ def _validate_reddit_depth(
 
 
 def _validate_native_social_depth(
-    value: Any, *, artifacts: set[str], findings: list[str]
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    consumer_brand: bool = False,
+    findings: list[str],
 ) -> dict[str, int]:
     if not isinstance(value, dict):
         findings.append("missing_native_social_depth")
@@ -501,6 +682,29 @@ def _validate_native_social_depth(
                 creators.add(creator_id)
             if perspective in {"positive", "neutral", "critical", "mixed"}:
                 perspectives.add(str(perspective))
+        if consumer_brand:
+            relationship = row.get("relationship")
+            if relationship not in _SOCIAL_RELATIONSHIPS:
+                findings.append("invalid_native_social_relationship")
+            if relationship == "owned":
+                published_at = row.get("published_at")
+                try:
+                    normalized_date = (
+                        date.fromisoformat(published_at)
+                        if isinstance(published_at, str)
+                        and re.fullmatch(r"\d{4}-\d{2}-\d{2}", published_at)
+                        else None
+                    )
+                except ValueError:
+                    normalized_date = None
+                if normalized_date is None:
+                    findings.append("missing_owned_social_published_at")
+                direction_tags = row.get("direction_event_tags")
+                if not isinstance(direction_tags, list) or not direction_tags or any(
+                    not isinstance(item, str) or not item
+                    for item in direction_tags
+                ):
+                    findings.append("invalid_owned_social_direction_event_tags")
     return {
         "native_social_posts": independent_posts,
         "native_social_creators": len(creators),
@@ -509,8 +713,615 @@ def _validate_native_social_depth(
     }
 
 
+def _route_job_states(seal: Mapping[str, Any]) -> dict[str, str]:
+    states: dict[str, str] = {}
+    rows = seal.get("route_job_accounting")
+    if not isinstance(rows, list):
+        return states
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        for state in ("completed", "blocked", "unrun"):
+            values = row.get(f"{state}_job_ids")
+            if not isinstance(values, list):
+                continue
+            for job_id in values:
+                if isinstance(job_id, str) and job_id:
+                    states[job_id] = state
+    return states
+
+
+def _consumer_support_registry(
+    families: Mapping[str, Any],
+) -> dict[tuple[str, str], str | None]:
+    registry: dict[tuple[str, str], str | None] = {}
+    external = families.get("external_context")
+    if isinstance(external, dict) and isinstance(external.get("units"), list):
+        for row in external["units"]:
+            if not isinstance(row, dict):
+                continue
+            unit_id = row.get("unit_id")
+            if isinstance(unit_id, str) and unit_id:
+                origin_id = row.get("origin_id")
+                registry[("external_context", unit_id)] = (
+                    str(origin_id)
+                    if row.get("independence") == "independent_origin"
+                    and row.get("source_type")
+                    in {"consumer_editorial", "trade_press"}
+                    and row.get("relationship")
+                    in _QUALIFYING_SOCIAL_RELATIONSHIPS
+                    and isinstance(origin_id, str)
+                    and origin_id
+                    else None
+                )
+    reddit = families.get("reddit_forum")
+    if isinstance(reddit, dict) and isinstance(reddit.get("threads"), list):
+        for row in reddit["threads"]:
+            if not isinstance(row, dict):
+                continue
+            thread_id = row.get("thread_id")
+            if isinstance(thread_id, str) and thread_id:
+                registry[("reddit_forum", thread_id)] = (
+                    thread_id
+                    if row.get("independence") == "independent_thread"
+                    else None
+                )
+    social = families.get("native_social")
+    if isinstance(social, dict) and isinstance(social.get("posts"), list):
+        for row in social["posts"]:
+            if not isinstance(row, dict):
+                continue
+            unit_id = row.get("unit_id")
+            if isinstance(unit_id, str) and unit_id:
+                creator_id = row.get("creator_id")
+                registry[("native_social", unit_id)] = (
+                    str(creator_id)
+                    if row.get("independence") == "independent_post"
+                    and row.get("relationship")
+                    in _QUALIFYING_SOCIAL_RELATIONSHIPS
+                    and isinstance(creator_id, str)
+                    and creator_id
+                    else None
+                )
+    return registry
+
+
+def _load_retailer_axis_coding(
+    value: Any,
+    *,
+    ledger: Mapping[str, Any],
+    artifacts: Mapping[str, Path],
+    retailer_corpora: Mapping[str, int],
+    retailer_product_contexts: Mapping[str, set[str]],
+    axis_ids: set[str],
+    findings: list[str],
+) -> tuple[dict[tuple[str, str], dict[str, int]], bool]:
+    if not isinstance(value, dict):
+        findings.append("missing_retailer_axis_coding")
+        return {}, False
+    artifact_id = value.get("artifact_id")
+    if not isinstance(artifact_id, str) or artifact_id not in artifacts:
+        findings.append("unresolved_retailer_axis_coding_artifact")
+        return {}, False
+    try:
+        coding = json.loads(artifacts[artifact_id].read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"invalid_retailer_axis_coding:{type(exc).__name__}")
+        return {}, False
+    if not isinstance(coding, dict):
+        findings.append("invalid_retailer_axis_coding_shape")
+        return {}, False
+    complete = True
+    if coding.get("schema_version") != "retailer_product_axis_coding_v1":
+        findings.append("invalid_retailer_axis_coding_version")
+        complete = False
+    if coding.get("subject") != ledger.get("subject"):
+        findings.append("retailer_axis_coding_subject_mismatch")
+        complete = False
+    if coding.get("cycle_id") != ledger.get("cycle_id"):
+        findings.append("retailer_axis_coding_cycle_id_mismatch")
+        complete = False
+
+    boundaries = coding.get("corpora")
+    boundary_map: dict[str, int] = {}
+    if not isinstance(boundaries, list):
+        findings.append("missing_retailer_axis_coding_boundaries")
+        complete = False
+    else:
+        for row in boundaries:
+            if not isinstance(row, dict):
+                findings.append("invalid_retailer_axis_coding_boundary")
+                complete = False
+                continue
+            corpus_id = row.get("corpus_id")
+            if (
+                not isinstance(corpus_id, str)
+                or not corpus_id
+                or corpus_id in boundary_map
+            ):
+                findings.append("invalid_retailer_axis_coding_corpus_id")
+                complete = False
+                continue
+            eligible = row.get("eligible_text_review_count")
+            excluded = row.get("excluded_no_usable_text_count")
+            if (
+                not isinstance(eligible, int)
+                or isinstance(eligible, bool)
+                or eligible < 0
+                or not isinstance(excluded, int)
+                or isinstance(excluded, bool)
+                or excluded < 0
+            ):
+                findings.append("invalid_retailer_axis_coding_boundary_counts")
+                complete = False
+                continue
+            boundary_map[corpus_id] = eligible
+            expected = retailer_corpora.get(corpus_id)
+            if expected is None:
+                findings.append("unknown_retailer_axis_coding_corpus")
+                complete = False
+            elif eligible + excluded != expected:
+                findings.append(
+                    f"retailer_axis_coding_boundary_mismatch:{corpus_id}"
+                )
+                complete = False
+    if set(boundary_map) != set(retailer_corpora):
+        findings.append("retailer_axis_coding_corpora_incomplete")
+        complete = False
+
+    rows = coding.get("rows")
+    counts: dict[tuple[str, str], dict[str, int]] = {}
+    row_counts: dict[str, int] = {}
+    seen: set[tuple[str, str]] = set()
+    if not isinstance(rows, list):
+        findings.append("missing_retailer_axis_coding_rows")
+        return counts, False
+    for row in rows:
+        if not isinstance(row, dict):
+            findings.append("invalid_retailer_axis_coding_row")
+            complete = False
+            continue
+        corpus_id = row.get("corpus_id")
+        review_id = row.get("review_id")
+        if not isinstance(corpus_id, str) or corpus_id not in boundary_map:
+            findings.append("invalid_coded_review_corpus")
+            complete = False
+            continue
+        if (
+            not isinstance(review_id, str)
+            or not review_id
+            or (corpus_id, review_id) in seen
+        ):
+            findings.append("invalid_or_duplicate_coded_review_id")
+            complete = False
+            continue
+        seen.add((corpus_id, review_id))
+        row_counts[corpus_id] = row_counts.get(corpus_id, 0) + 1
+        product_context_id = row.get("product_context_id")
+        if not isinstance(product_context_id, str) or not product_context_id:
+            findings.append("missing_coded_review_product_context")
+            complete = False
+        elif product_context_id not in retailer_product_contexts.get(
+            corpus_id, set()
+        ):
+            findings.append("coded_review_product_context_outside_corpus")
+            complete = False
+        if row.get("incentive_state") not in _INCENTIVE_STATES:
+            findings.append("invalid_coded_review_incentive_state")
+            complete = False
+        source_row_ref = row.get("source_row_ref")
+        if not isinstance(source_row_ref, str) or not source_row_ref:
+            findings.append("missing_coded_review_source_row_ref")
+            complete = False
+        outcomes = _string_set(
+            row.get("overall_choice_outcomes"),
+            code="invalid_coded_review_overall_choice_outcomes",
+            findings=findings,
+        )
+        if not outcomes or not outcomes.issubset(_CHOICE_OUTCOMES):
+            findings.append("invalid_coded_review_overall_choice_outcome")
+            complete = False
+        if "none_explicit" in outcomes and len(outcomes) > 1:
+            findings.append("coded_review_overall_none_outcome_conflict")
+            complete = False
+
+        axis_codes = row.get("axis_codes")
+        if not isinstance(axis_codes, list):
+            findings.append("invalid_coded_review_axis_codes")
+            complete = False
+            axis_codes = []
+        seen_axis_codes: set[str] = set()
+        valid_axis_codes: list[tuple[str, set[str]]] = []
+        for axis_code in axis_codes:
+            if not isinstance(axis_code, dict):
+                findings.append("invalid_coded_review_axis_code")
+                complete = False
+                continue
+            axis_id = axis_code.get("axis_id")
+            if (
+                not isinstance(axis_id, str)
+                or not axis_id
+                or axis_id in seen_axis_codes
+            ):
+                findings.append("invalid_or_duplicate_coded_review_axis_id")
+                complete = False
+                continue
+            seen_axis_codes.add(axis_id)
+            if axis_id not in axis_ids:
+                findings.append("coded_review_references_unknown_axis")
+                complete = False
+                continue
+            axis_outcomes = _string_set(
+                axis_code.get("choice_outcomes"),
+                code="invalid_coded_review_axis_choice_outcomes",
+                findings=findings,
+            )
+            if not axis_outcomes or not axis_outcomes.issubset(
+                _CHOICE_OUTCOMES
+            ):
+                findings.append("invalid_coded_review_axis_choice_outcome")
+                complete = False
+                continue
+            if "none_explicit" in axis_outcomes and len(axis_outcomes) > 1:
+                findings.append("coded_review_axis_none_outcome_conflict")
+                complete = False
+                continue
+            explicit_axis_outcomes = axis_outcomes - {"none_explicit"}
+            if explicit_axis_outcomes - outcomes:
+                findings.append("coded_review_axis_outcome_not_in_overall")
+                complete = False
+                continue
+            valid_axis_codes.append((axis_id, axis_outcomes))
+
+        for axis_id, axis_outcomes in valid_axis_codes:
+            key = (axis_id, corpus_id)
+            aggregate = counts.setdefault(
+                key,
+                {
+                    "axis_mention_count": 0,
+                    "negative_choice_review_count": 0,
+                    "positive_choice_review_count": 0,
+                    "disclosed_incentivized_axis_mention_count": 0,
+                },
+            )
+            aggregate["axis_mention_count"] += 1
+            if axis_outcomes & _NEGATIVE_CHOICE_OUTCOMES:
+                aggregate["negative_choice_review_count"] += 1
+            if axis_outcomes & _POSITIVE_CHOICE_OUTCOMES:
+                aggregate["positive_choice_review_count"] += 1
+            if row.get("incentive_state") == "disclosed_incentivized":
+                aggregate["disclosed_incentivized_axis_mention_count"] += 1
+    for corpus_id, eligible in boundary_map.items():
+        if row_counts.get(corpus_id, 0) != eligible:
+            findings.append(f"retailer_axis_coding_row_count_mismatch:{corpus_id}")
+            complete = False
+        for axis_id in axis_ids:
+            counts.setdefault(
+                (axis_id, corpus_id),
+                {
+                    "axis_mention_count": 0,
+                    "negative_choice_review_count": 0,
+                    "positive_choice_review_count": 0,
+                    "disclosed_incentivized_axis_mention_count": 0,
+                },
+            )["eligible_text_review_count"] = eligible
+    return counts, complete
+
+
+def _retailer_corpus_effective_counts(
+    families: Mapping[str, Any],
+) -> dict[str, int]:
+    result: dict[str, int] = {}
+    family = families.get("retailer_reviews")
+    if not isinstance(family, dict) or not isinstance(family.get("corpora"), list):
+        return result
+    for row in family["corpora"]:
+        if not isinstance(row, dict):
+            continue
+        corpus_id = row.get("corpus_id")
+        unique = row.get("unique_review_count")
+        duplicate = row.get("cross_corpus_duplicate_count")
+        if (
+            isinstance(corpus_id, str)
+            and corpus_id
+            and isinstance(unique, int)
+            and not isinstance(unique, bool)
+            and isinstance(duplicate, int)
+            and not isinstance(duplicate, bool)
+            and 0 <= duplicate <= unique
+        ):
+            result[corpus_id] = unique - duplicate
+    return result
+
+
+def _retailer_corpus_product_contexts(
+    families: Mapping[str, Any],
+) -> dict[str, set[str]]:
+    result: dict[str, set[str]] = {}
+    family = families.get("retailer_reviews")
+    if not isinstance(family, dict) or not isinstance(family.get("corpora"), list):
+        return result
+    for row in family["corpora"]:
+        if not isinstance(row, dict):
+            continue
+        corpus_id = row.get("corpus_id")
+        values = row.get("product_context_ids")
+        if (
+            isinstance(corpus_id, str)
+            and corpus_id
+            and isinstance(values, list)
+            and all(isinstance(value, str) and value for value in values)
+        ):
+            result[corpus_id] = set(values)
+    return result
+
+
+def _validate_axis_incidence(
+    axis: Mapping[str, Any],
+    *,
+    axis_id: str,
+    coding_counts: Mapping[tuple[str, str], Mapping[str, int]],
+    corpora: set[str],
+    findings: list[str],
+) -> tuple[int, int, int]:
+    value = axis.get("retailer_incidence")
+    if not isinstance(value, list):
+        findings.append(f"missing_product_axis_incidence:{axis_id}")
+        return 0, 0, 0
+    seen: set[str] = set()
+    corpora_with_mentions = 0
+    negative_choices = 0
+    positive_choices = 0
+    fields = (
+        "eligible_text_review_count",
+        "axis_mention_count",
+        "negative_choice_review_count",
+        "positive_choice_review_count",
+        "disclosed_incentivized_axis_mention_count",
+    )
+    for row in value:
+        if not isinstance(row, dict):
+            findings.append(f"invalid_product_axis_incidence:{axis_id}")
+            continue
+        corpus_id = row.get("corpus_id")
+        if (
+            not isinstance(corpus_id, str)
+            or corpus_id not in corpora
+            or corpus_id in seen
+        ):
+            findings.append(f"invalid_product_axis_incidence_corpus:{axis_id}")
+            continue
+        seen.add(corpus_id)
+        expected = coding_counts.get((axis_id, corpus_id), {})
+        for field in fields:
+            observed = row.get(field)
+            if observed != expected.get(field, 0):
+                findings.append(
+                    f"retailer_axis_incidence_mismatch:{axis_id}:{corpus_id}:{field}"
+                )
+        mentions = expected.get("axis_mention_count", 0)
+        if mentions > 0:
+            corpora_with_mentions += 1
+        negative_choices += expected.get("negative_choice_review_count", 0)
+        positive_choices += expected.get("positive_choice_review_count", 0)
+    if seen != corpora:
+        findings.append(f"product_axis_incidence_corpora_incomplete:{axis_id}")
+    return corpora_with_mentions, negative_choices, positive_choices
+
+
+def _validate_focused_search_jobs(
+    axis: Mapping[str, Any],
+    *,
+    axis_id: str,
+    route_jobs: Mapping[str, str],
+    required: bool,
+    findings: list[str],
+) -> bool:
+    value = axis.get("focused_search_jobs")
+    if not isinstance(value, list):
+        if required:
+            findings.append(f"missing_product_axis_focused_search:{axis_id}")
+        return not required
+    goals: set[str] = set()
+    job_ids: set[str] = set()
+    complete = True
+    for row in value:
+        if not isinstance(row, dict):
+            findings.append(f"invalid_product_axis_focused_search:{axis_id}")
+            complete = False
+            continue
+        goal = row.get("goal")
+        job_id = row.get("job_id")
+        disposition = row.get("disposition")
+        if goal not in _FOCUSED_SEARCH_GOALS or goal in goals:
+            findings.append(f"invalid_product_axis_search_goal:{axis_id}")
+            complete = False
+        else:
+            goals.add(str(goal))
+        if not isinstance(job_id, str) or not job_id or job_id in job_ids:
+            findings.append(f"invalid_product_axis_search_job_id:{axis_id}")
+            complete = False
+        else:
+            job_ids.add(job_id)
+            state = route_jobs.get(job_id)
+            if state is None:
+                findings.append(f"unaccounted_product_axis_search_job:{axis_id}")
+                complete = False
+            elif state == "unrun":
+                findings.append(f"unrun_product_axis_search_job:{axis_id}")
+                complete = False
+            elif disposition == "blocked_no_route" and state != "blocked":
+                findings.append(f"product_axis_search_state_mismatch:{axis_id}")
+                complete = False
+            elif disposition != "blocked_no_route" and state != "completed":
+                findings.append(f"product_axis_search_state_mismatch:{axis_id}")
+                complete = False
+        if disposition not in _FOCUSED_SEARCH_TERMINALS:
+            findings.append(f"invalid_product_axis_search_disposition:{axis_id}")
+            complete = False
+    if required and goals != _FOCUSED_SEARCH_GOALS:
+        findings.append(f"incomplete_product_axis_search_goals:{axis_id}")
+        complete = False
+    return complete
+
+
+def _validate_consumer_brand_product_axes(
+    ledger: Mapping[str, Any],
+    *,
+    artifacts: Mapping[str, Path],
+    families: Mapping[str, Any],
+    route_jobs: Mapping[str, str],
+    require_complete: bool,
+    findings: list[str],
+) -> bool:
+    axes = ledger.get("product_axes")
+    if not isinstance(axes, list) or not axes:
+        findings.append("missing_consumer_brand_product_axes")
+        axes = []
+        complete = False
+    else:
+        complete = True
+    axis_rows: dict[str, Mapping[str, Any]] = {}
+    for row in axes:
+        if not isinstance(row, dict):
+            findings.append("invalid_consumer_brand_product_axis")
+            complete = False
+            continue
+        axis_id = row.get("axis_id")
+        if (
+            not isinstance(axis_id, str)
+            or not axis_id
+            or axis_id in axis_rows
+        ):
+            findings.append("invalid_or_duplicate_product_axis_id")
+            complete = False
+            continue
+        axis_rows[axis_id] = row
+        if not isinstance(row.get("label"), str) or not row.get("label"):
+            findings.append(f"missing_product_axis_label:{axis_id}")
+            complete = False
+        if not isinstance(row.get("scope"), str) or not row.get("scope"):
+            findings.append(f"missing_product_axis_scope:{axis_id}")
+            complete = False
+        if row.get("polarity") not in _AXIS_POLARITIES:
+            findings.append(f"invalid_product_axis_polarity:{axis_id}")
+            complete = False
+        if row.get("strength") not in _AXIS_STRENGTHS:
+            findings.append(f"invalid_product_axis_strength:{axis_id}")
+            complete = False
+        if row.get("disposition") not in _AXIS_DISPOSITIONS:
+            findings.append(f"invalid_product_axis_disposition:{axis_id}")
+            complete = False
+        if require_complete and row.get("disposition") == "blocked_material":
+            findings.append(f"blocked_material_product_axis:{axis_id}")
+            complete = False
+
+    retailer_corpora = _retailer_corpus_effective_counts(families)
+    retailer_product_contexts = _retailer_corpus_product_contexts(families)
+    coding_counts, coding_complete = _load_retailer_axis_coding(
+        ledger.get("retailer_axis_coding"),
+        ledger=ledger,
+        artifacts=artifacts,
+        retailer_corpora=retailer_corpora,
+        retailer_product_contexts=retailer_product_contexts,
+        axis_ids=set(axis_rows),
+        findings=findings,
+    )
+    complete = complete and coding_complete
+    registry = _consumer_support_registry(families)
+    for axis_id, axis in axis_rows.items():
+        refs = axis.get("support_refs")
+        family_origins: dict[str, set[str]] = {}
+        seen_refs: set[tuple[str, str]] = set()
+        if not isinstance(refs, list):
+            findings.append(f"missing_product_axis_support_refs:{axis_id}")
+            refs = []
+            complete = False
+        for ref in refs:
+            if not isinstance(ref, dict):
+                findings.append(f"invalid_product_axis_support_ref:{axis_id}")
+                complete = False
+                continue
+            family = ref.get("family")
+            unit_id = ref.get("unit_id")
+            key = (str(family), str(unit_id))
+            if (
+                family not in {"external_context", "reddit_forum", "native_social"}
+                or not isinstance(unit_id, str)
+                or not unit_id
+                or key in seen_refs
+            ):
+                findings.append(f"invalid_or_duplicate_product_axis_support_ref:{axis_id}")
+                complete = False
+                continue
+            seen_refs.add(key)
+            if key not in registry:
+                findings.append(f"unresolved_product_axis_support_ref:{axis_id}")
+                complete = False
+            else:
+                origin_key = registry[key]
+                if origin_key is not None:
+                    family_origins.setdefault(str(family), set()).add(origin_key)
+
+        corpora_with_mentions, negative_choices, positive_choices = (
+            _validate_axis_incidence(
+                axis,
+                axis_id=axis_id,
+                coding_counts=coding_counts,
+                corpora=set(retailer_corpora),
+                findings=findings,
+            )
+        )
+        family_counts = {
+            family: len(origins) for family, origins in family_origins.items()
+        }
+        independent_support = sum(family_counts.values())
+        recurring = independent_support >= 3 and len(family_counts) >= 2
+        strong_distribution = (
+            independent_support >= 6
+            and len(family_counts) >= 2
+            and sum(value >= 2 for value in family_counts.values()) >= 2
+        )
+        polarity = axis.get("polarity")
+        choice_supported = (
+            negative_choices > 0
+            if polarity == "pain"
+            else positive_choices > 0
+            if polarity == "delight"
+            else negative_choices + positive_choices > 0
+        )
+        strong = (
+            strong_distribution
+            and corpora_with_mentions >= 2
+            and choice_supported
+        )
+        expected_strength = "strong" if strong else "recurring" if recurring else "signal"
+        if axis.get("strength") != expected_strength:
+            findings.append(
+                f"product_axis_strength_mismatch:{axis_id}:{expected_strength}"
+            )
+            complete = False
+        search_required = axis.get("disposition") in {
+            "material",
+            "blocked_material",
+        }
+        if not _validate_focused_search_jobs(
+            axis,
+            axis_id=axis_id,
+            route_jobs=route_jobs,
+            required=search_required,
+            findings=findings,
+        ):
+            complete = False
+    return complete
+
+
 def _validate_depth_closure(
-    value: Any, *, require_complete: bool, findings: list[str]
+    value: Any,
+    *,
+    require_complete: bool,
+    consumer_brand: bool = False,
+    findings: list[str],
 ) -> bool:
     if not isinstance(value, dict):
         findings.append("missing_evidence_depth_closure")
@@ -586,7 +1397,19 @@ def _validate_depth_closure(
                 if require_complete:
                     findings.append("saturation_batch_still_material")
                 complete = False
-            for field in ("new_material_seams", "changed_material_dispositions"):
+            batch_fields = [
+                "new_material_seams",
+                "changed_material_dispositions",
+            ]
+            if consumer_brand:
+                batch_fields.extend(
+                    [
+                        "new_product_axes",
+                        "changed_axis_strengths",
+                        "changed_axis_incidence",
+                    ]
+                )
+            for field in batch_fields:
                 metric = row.get(field)
                 if (
                     not isinstance(metric, int)

@@ -221,6 +221,57 @@ must be reported separately from non-owned posts, and cannot support an
 independent-creator-landscape claim. The creator floor remains the independent
 distribution counterweight to repeated posts from any one account.
 
+When the subject is a consumer brand and product/customer experience is
+material, use `broad_consumer_brand_understanding_v1` with
+`understanding_evidence_depth_v2`. It retains the aggregate entry floors above,
+renames the human-facing outside source family to **External company,
+editorial and industry context**, and adds a cross-family product-axis contract.
+Historical `broad_company_understanding_v1` ledgers remain valid under their
+own schema; they do not silently acquire v2 product-axis credit.
+
+The v2 ledger inventories every observed material product-experience axis as
+`pain`, `delight`, or `mixed`, with a terminal disposition. `signal` establishes
+possible existence. `recurring` requires at least three qualifying independent
+origins across two non-retailer evidence families. `strong` additionally
+requires axis mentions in two deduplicated retailer corpora, at least six
+qualifying distinct non-retailer origins across at least two families with at
+least two origins in each, and an explicit retailer choice consequence
+appropriate to the axis polarity. Reddit threads are discussion origins;
+social posts deduplicate to creator; external units deduplicate to publisher or
+institution. Same-origin items remain citable but add no
+corroboration-strength credit. These are hybrid entry bars, not stopping
+quotas. Same-topic independent sources remain useful. Owned,
+retailer-operated, disclosed paid/affiliate, and relationship-unknown social
+posts do not satisfy independent axis corroboration. External support must be
+typed as consumer editorial or trade press, carry an explicit
+`apparently_independent` relationship, and come from an independent origin;
+company profiles, corporate/transaction records, paid or affiliate material,
+and relationship-unknown external units do not qualify.
+
+V2 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
+unique text-bearing review in each admitted corpus, reconciles excluded
+no-usable-text rows to the corpus denominator, and preserves native review ID,
+product context, incentive state, axis codes with axis-specific choice outcomes,
+overall choice outcomes, and a source-row reference. Separating the outcomes
+prevents a consequence attributed to one product issue from being copied onto
+every issue mentioned in the review. Every product context must belong to its
+declared retailer corpus. The validator recomputes per-corpus axis mentions,
+negative/positive choice rows, and disclosed-incentive counts. Cross-retailer
+pooling is allowed only when corpus boundaries, selection, and deduplication are
+comparable; otherwise report providers separately. These are captured-sample
+incidences, never market return rates or customer-population prevalence.
+
+Every material v2 axis receives two adaptive Phase 2 goals:
+`corroborate_or_segment` and `disconfirm_or_compare`. Search results are route
+pointers, not evidence. Every material source candidate must resolve through
+existing route-job accounting to captured evidence or a typed terminal
+disposition before a passing seal. The final two practical batches must also
+show zero new product axes, changed axis strengths, and changed axis incidence.
+Owned social rows carry a normalized `YYYY-MM-DD` observed date and
+direction-event tags so Deliver can derive a factual direction timeline without
+a separate Phase A artifact. Preserve the source's original date text in the
+pinned source artifact.
+
 These are anti-token entry floors, not completion quotas, prevalence samples,
 or market-representativeness claims. A passing seal additionally requires
 explicit echo/syndication adjudication, every material seam dispositioned, the
@@ -252,6 +303,12 @@ authorize Deliver. Historical `phase_acquisition_seal_v2` artifacts are
 preserved and may be checked only with the validator's explicit
 `--allow-legacy-v2` audit switch; they do not satisfy the current broad-
 Understanding completion contract.
+
+For `broad_consumer_brand_understanding_v1`, v3 instead hash-pins an
+`understanding_evidence_depth_v2` ledger and applies the product-axis,
+row-derived retailer-incidence, social-relationship, focused-search, and
+axis-aware closure checks above. A passing family-count ledger without those
+checks is invalid.
 
 For company Understanding, the seal must carry non-empty job accounting for
 `serp_phase1`, `official_retailer_authorization`,
