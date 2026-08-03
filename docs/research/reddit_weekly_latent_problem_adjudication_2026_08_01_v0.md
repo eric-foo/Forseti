@@ -292,3 +292,55 @@ adapalene changed my life"), 119 `borderline`, 1,988 `no` — plus 41
 leaderboard-lane threads read shallow, for **826 threads flowing to
 downstream reads**. 135 problem dives and 1 verification capture in the
 lake, leaderboard capture in flight.
+
+## Rejection composition audit (added 2026-08-03)
+
+Owner question: what did we reject, and why. Basis: the 1,172 per-row `no`
+records and 119 `borderline` records across the band, full-pool, exception,
+and engagement passes. Honesty note first: the original flat-14 pass recorded
+only its 129 admissions per-row; its ~816 rejections exist as aggregate
+venue-level suppressions in this document, not as per-row reason codes. The
+by-subtraction full-pool practice adopted mid-week records every row, so this
+gap does not recur.
+
+Primary reason distribution over the 1,172 recorded rejections:
+appearance_validation 354 (30%) — rate-my-look photo threads, concentrated in
+r/MakeupAddiction, r/malegrooming, r/Nails; crowd_diagnosis_or_clinical 238
+(20%) — what-is-wrong-with-my-skin/scalp diagnosis asks, concentrated in
+r/tressless and the skin venues; praise_or_sentimental_discussion 230 (20%);
+wts_swap_administration 122 (10%, of which 111 are r/fragranceswap
+marketplace listings); low_expected_decision_contribution 64 (5.5%, all
+r/PerfumesThatFeelLike vibe-matching); retailer promotion, news-release,
+DIY-formulation, megathread, and technique codes make up the tail. Rejected
+comment mass is 29,785 versus 33,110 admitted — the gates declined roughly
+half the conversation volume on the grid.
+
+Venue economics the distribution exposes: r/fragranceswap went 0-for-111 (a
+pure marketplace; delisting it from the weekly problem grid is the obvious
+subtraction candidate — its ISO demand signal already routes via the
+title-exception rule, which excludes [WTS]/[WTT]). r/Nails and r/malegrooming
+reject at 95%, r/MakeupAddiction at 87% — showcase-dominant venues carried
+for their occasional admits. The best-yield venues (r/FemFragLab 47% reject,
+r/fragrance 52%, r/30PlusSkincare 52%) are the discussion venues the
+engagement exception already privileges.
+
+False-reject probe: the 25 highest-engagement rejects were re-read from their
+listing rows; all are genuine (astrology-themed look votes, pub-look
+showcases, collection flexes). Of 230 praise rejections only 5 were
+independently caught by the leaderboard lane — but scanning the 31 praise
+rejects at 50+ comments the lane missed, they are sentiment threads without
+ranking shape (collection tours, milestone manicures, "I love Creed"), which
+the leaderboard title pattern correctly ignores. No new exception rule earns
+its keep from this audit.
+
+The genuine residual is the borderline set: 119 rows recorded and then never
+captured — a silent disposition. 55 are insufficient_listing_context
+(low-information titles like "is it worth", "anything good here" at 65-93
+comments that could hide anything), 17 possible_product_demand, 9
+behavior_shift_signal (no-buy and stopping-collecting threads that are
+exactly Cluster 7's overconsumption counter-current, including "freezing my
+credit card today" at 54 comments). At capture cadence the whole set costs
+about 1.3 hours. Disposition decision deferred to the owner: capture the
+borderline set as a bounded batch under the standing
+false-positive-over-missed-latent preference, or record borderline=drop as
+the standing rule.
