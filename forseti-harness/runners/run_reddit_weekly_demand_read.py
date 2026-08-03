@@ -89,7 +89,7 @@ SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES = frozenset((
     "nails nailart redditlaqueristas redditlaqueristaswap panporn projectpan "
     "makeupflatlays skincareflatlays blackhair naturalhair curlyhair curlygirl "
     "locs fancyfollicles hairdye hair makeupaddiction blkgrlbeauty "
-    "malegrooming wicked_edge beautyboxes fragranceswap"
+    "malegrooming wicked_edge beautyboxes"
 ).split())
 
 SUB_FLOOR_EXCEPTION_MIN_COMMENTS = 4
