@@ -187,6 +187,24 @@ class RealChromeNavigationHTTPError(RealChromeCDPUnavailable):
         self.http_status = http_status
 
 
+class RealChromeWrongPageError(RealChromeCDPUnavailable):
+    """The snapshot was taken on a page other than the requested target.
+
+    A persistent tab lives in the operator's real Chrome, so a human can
+    navigate it while a capture is settling or expanding; the snapshot then
+    honestly preserves the wrong page while the batch row reads success. The
+    2026-08-03 wave committed 21 such packets (old unrelated threads) before
+    this guard existed. Subclasses RealChromeCDPUnavailable so existing
+    handlers keep their exit behavior; carries no ``http_status`` so refusal
+    circuit breakers ignore it (a local race, not a server refusal).
+    """
+
+    def __init__(self, message: str, *, requested_url: str, final_url: str):
+        super().__init__(message)
+        self.requested_url = requested_url
+        self.final_url = final_url
+
+
 def _is_navigation_http_error(exc: BaseException, observed_status: int | None) -> bool:
     """A navigation failure is an HTTP refusal when Chromium says so or when
     the main-frame navigation response itself carried an error status."""
@@ -594,10 +612,19 @@ def run_source_capture_realchrome_cdp_packet(
     expand_control_selector: str = "button, a",
     expand_max_rounds: int = 0,
     expand_settle_ms: int = 6000,
+    # A Python regex the FINAL url must match for the snapshot to count as the
+    # requested target. Left None, nothing is checked (some lanes legitimately
+    # follow redirects whose shape the caller cannot predict). A mismatch is a
+    # typed RealChromeWrongPageError raised before any packet is written --
+    # never a committed packet whose manifest quietly names a different page.
+    target_identity_pattern: str | None = None,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
         raise ValueError("exactly one of output_directory or data_root is required")
+    compiled_target_identity = (
+        re.compile(target_identity_pattern) if target_identity_pattern is not None else None
+    )
     if browser_provisioning not in {"operator_provided", "unattended_xvfb"}:
         raise ValueError("browser_provisioning must be operator_provided or unattended_xvfb")
     if persistent_tab_marker is not None:
@@ -635,6 +662,19 @@ def run_source_capture_realchrome_cdp_packet(
         expand_max_rounds=expand_max_rounds,
         expand_settle_ms=expand_settle_ms,
     )
+
+    if compiled_target_identity is not None and not compiled_target_identity.search(
+        result.final_url or ""
+    ):
+        raise RealChromeWrongPageError(
+            f"snapshot landed on {result.final_url!r}, which does not match the "
+            f"target identity pattern {target_identity_pattern!r} for requested "
+            f"{url!r}; the persistent capture tab was likely navigated away "
+            "mid-capture. No packet was written; recapture in a fresh bounded "
+            "batch.",
+            requested_url=url,
+            final_url=result.final_url or "",
+        )
 
     access = classify_rendered_access(
         title=result.title, rendered_dom=result.rendered_dom, visible_text=result.visible_text

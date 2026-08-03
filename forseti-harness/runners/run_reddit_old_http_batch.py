@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 from dataclasses import dataclass
@@ -483,6 +484,13 @@ def _capture_www_thread(
         ),
         lane="reddit www thread capture",
     )
+    # The persistent capture tab lives in the operator's real Chrome, where a
+    # human can navigate it mid-capture; the snapshot must be provably the
+    # requested thread, not whatever page the tab held (21 wrong-page packets
+    # committed as success on 2026-08-03 before this bind).
+    thread_id_match = re.search(r"/comments/([A-Za-z0-9]+)", slot.url)
+    if thread_id_match is None:  # _validate_thread_url already guarantees this
+        raise ValueError(f"slot url carries no /comments/ thread id: {slot.url}")
     return run_source_capture_realchrome_cdp_packet(
         url=slot.url,
         source_family="reddit_thread",
@@ -509,6 +517,9 @@ def _capture_www_thread(
         content_extraction=spec,
         capture_screenshot=False,
         keep_raw_audit_sample=keep_raw_audit_sample,
+        target_identity_pattern=(
+            rf"/comments/{re.escape(thread_id_match.group(1))}(?:[/?#]|$)"
+        ),
         limitations=[
             f"batch runner accepts exact {TRANSPORT_HOSTS[WWW_REALCHROME_TRANSPORT]} URLs only",
             f"batch runner cadence_mode={cadence_plan.mode}",
