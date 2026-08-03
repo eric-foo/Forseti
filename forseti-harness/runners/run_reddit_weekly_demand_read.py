@@ -627,7 +627,10 @@ def run_weekly_demand_read(
             "engagement_rank_primary": "comments",
             "engagement_rank_tiebreakers": ["score", "thread_url"],
             "title_signals_are_binding": False,
-            "admission_decision": "commission_conditioned_model_yes_borderline_no",
+            # borderline routes to capture since the owner decision of
+            # 2026-08-03: the measured borderline batch (55 correctly captured)
+            # ran ~85% real signal, so only a model "no" suppresses capture.
+            "admission_decision": "commission_conditioned_model_yes_or_borderline",
             "page_overflow_score_floor": PAGE_OVERFLOW_SCORE_FLOOR,
         },
         "roster_count": len(roster),

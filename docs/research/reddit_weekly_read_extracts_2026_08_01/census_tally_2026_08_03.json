@@ -1,0 +1,238 @@
+{
+  "threads": [
+    {
+      "thread_id": "1v5xk5d",
+      "subreddit": "fragrance",
+      "url": "https://www.reddit.com/r/fragrance/comments/1v5xk5d/daily_discussion_advice_post_here_to_follow_rules/",
+      "kind": "daily_discussion",
+      "wear_reports": 2,
+      "distinct_commenters": 2
+    },
+    {
+      "thread_id": "1v8n505",
+      "subreddit": "fragrance",
+      "url": "https://www.reddit.com/r/fragrance/comments/1v8n505/daily_discussion_advice_post_here_to_follow_rules/",
+      "kind": "daily_discussion",
+      "wear_reports": 3,
+      "distinct_commenters": 2
+    },
+    {
+      "thread_id": "1v9uthg",
+      "subreddit": "Indiemakeupandmore",
+      "url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v9uthg/free_talk_wednesday/",
+      "kind": "daily_discussion",
+      "wear_reports": 0,
+      "distinct_commenters": 0
+    },
+    {
+      "thread_id": "1v720ti",
+      "subreddit": "Indiemakeupandmore",
+      "url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v720ti/indies_of_the_day_sunday_july_26_2026/",
+      "kind": "indie_daily",
+      "wear_reports": 35,
+      "distinct_commenters": 23
+    },
+    {
+      "thread_id": "1v918re",
+      "subreddit": "AsianBeauty",
+      "url": "https://www.reddit.com/r/AsianBeauty/comments/1v918re/have_a_question_ask_here_alterdaily_help_and/",
+      "kind": "daily_help",
+      "wear_reports": 8,
+      "distinct_commenters": 5
+    },
+    {
+      "thread_id": "1v5xk5k",
+      "subreddit": "fragrance",
+      "url": "https://www.reddit.com/r/fragrance/comments/1v5xk5k/sotd_scent_of_the_day_july_25_2026/",
+      "kind": "sotd",
+      "wear_reports": 20,
+      "distinct_commenters": 17
+    },
+    {
+      "thread_id": "1v8n50c",
+      "subreddit": "fragrance",
+      "url": "https://www.reddit.com/r/fragrance/comments/1v8n50c/sotd_scent_of_the_day_july_28_2026/",
+      "kind": "sotd",
+      "wear_reports": 20,
+      "distinct_commenters": 19
+    },
+    {
+      "thread_id": "1vaiqye",
+      "subreddit": "fragrance",
+      "url": "https://www.reddit.com/r/fragrance/comments/1vaiqye/sotd_scent_of_the_day_july_30_2026/",
+      "kind": "sotd",
+      "wear_reports": 16,
+      "distinct_commenters": 14
+    },
+    {
+      "thread_id": "1v8wez7",
+      "subreddit": "Indiemakeupandmore",
+      "url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v8wez7/whatcha_haulin/",
+      "kind": "haul",
+      "wear_reports": 0,
+      "distinct_commenters": 0,
+      "data_issue": "content_record at the indexed path (F:\\forseti-data-lake\\raw\\50b\\01KZ3NDKQSJRTZTFJZNNFWGGW9\\raw\\01_content_record.json) is a different Reddit thread entirely: r/boxycharm 'How do you guys use the jet lag mask?' (thread_id lcw4s4, dated 2021), not the indexed Indiemakeupandmore 'whatcha haulin' thread. No wear-census data could be extracted for 1v8wez7; nothing was fabricated or substituted."
+    },
+    {
+      "thread_id": "1v7pjs3",
+      "subreddit": "fragrance",
+      "url": "https://www.reddit.com/r/fragrance/comments/1v7pjs3/daily_discussion_advice_post_here_to_follow_rules/",
+      "kind": "daily_discussion",
+      "wear_reports": 3,
+      "distinct_commenters": 3
+    },
+    {
+      "thread_id": "1vboski",
+      "subreddit": "Indiemakeupandmore",
+      "url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1vboski/indies_of_the_day_friday_july_31_2026/",
+      "kind": "indie_daily",
+      "wear_reports": 0,
+      "distinct_commenters": 0,
+      "data_issue": "content_record at the indexed path (F:\\forseti-data-lake\\raw\\231\\01KZ3NFZH33Z2EK2ACPNTDATWM\\raw\\01_content_record.json) is a different Reddit thread entirely: r/SkincareAddictionLux 'Long-haul flight skincare step-by-step' (thread_id 1qb57ts, dated Jan 2026), not the indexed Indiemakeupandmore 'Indies of the Day - Friday July 31 2026' thread. No wear-census data could be extracted for 1vboski; nothing was fabricated or substituted."
+    }
+  ],
+  "brand_tally": {
+    "bpal": { "wears": 6, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "sucrerie": { "wears": 5, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "arcana wildcraft": { "wears": 3, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "bvlgari": { "wears": 3, "threads": ["1v5xk5k", "1vaiqye", "1v7pjs3"], "venues": ["fragrance"] },
+    "aestura": { "wears": 2, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "alkemia": { "wears": 2, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "briix": { "wears": 2, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "ds and durga": { "wears": 2, "threads": ["1v5xk5k", "1v8n50c"], "venues": ["fragrance"] },
+    "lush": { "wears": 2, "threads": ["1v720ti", "1v7pjs3"], "venues": ["Indiemakeupandmore", "fragrance"] },
+    "phlur": { "wears": 2, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "poesie": { "wears": 2, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "solstice scents": { "wears": 2, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "sorce": { "wears": 2, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "bad boy cobalt": { "wears": 1, "threads": ["1v5xk5d"], "venues": ["fragrance"] },
+    "korres": { "wears": 1, "threads": ["1v5xk5d"], "venues": ["fragrance"] },
+    "dior": { "wears": 1, "threads": ["1v8n505"], "venues": ["fragrance"] },
+    "aesop": { "wears": 1, "threads": ["1v8n505"], "venues": ["fragrance"] },
+    "club de nuit": { "wears": 1, "threads": ["1v8n505"], "venues": ["fragrance"] },
+    "clue": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "area of effect": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "hexennacht": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "fantome": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "zorya p": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "lbe": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "for strange women": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "sugar and spite": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "wave rider": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "pierrot perfumery": { "wears": 1, "threads": ["1v720ti"], "venues": ["Indiemakeupandmore"] },
+    "fation": { "wears": 1, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "kiss me heroine make": { "wears": 1, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "vanicream": { "wears": 1, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "rohto mentholatum": { "wears": 1, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "skin aqua": { "wears": 1, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "heveblue": { "wears": 1, "threads": ["1v918re"], "venues": ["AsianBeauty"] },
+    "mith": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "eshal": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "maison margiela": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "louis vuitton": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "escentric molecules": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "jo malone": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "pineward perfumes": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "parle moi de parfum": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "paris corner": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "pdm": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "basso": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "lavanila": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "acqua di parma": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "trudon": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "aerin": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "yves rocher": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "strangers parfumerie": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "prin": { "wears": 1, "threads": ["1v5xk5k"], "venues": ["fragrance"] },
+    "guerlain": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "tom ford": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "régime des fleurs": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "mfk": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "st. clair scents": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "viktoria minya": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "nasomatto": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "valentino": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "creed": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "mcobeauty": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "kat von d": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "heeley": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "moapc": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "frederic malle": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "serge lutens": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "proad": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "liz claiborne": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "hermès": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "zara": { "wears": 1, "threads": ["1v8n50c"], "venues": ["fragrance"] },
+    "kerosene": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "hiram green": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "byredo": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "love and crime": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "francesca bianchi": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "piper & perro": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "maison alhambra": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "dolce & gabbana": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "mes bisous": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "big muscles": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "prada": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "boucheron": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "amouage": { "wears": 1, "threads": ["1vaiqye"], "venues": ["fragrance"] },
+    "gucci": { "wears": 1, "threads": ["1v7pjs3"], "venues": ["fragrance"] }
+  },
+  "embedded_signals": [
+    {
+      "thread_id": "1v5xk5d",
+      "type": "complaint",
+      "quote": "I wanted to buy a fragrance from Abdul Samad Al Qurashi and the ones I was recommended were Qurashi blend, Safari blend and Viva la rose. I was the most hyped by Qurashi blend but I heard that the composition changed and that it is now less strong, and less durable. Is it still worth to buy it since it's worse than before ?",
+      "brand": "Abdul Samad Al Qurashi (Qurashi blend)"
+    },
+    {
+      "thread_id": "1v8n505",
+      "type": "discontinuation",
+      "quote": "my other was Aesop Eremia but this has tragically been discontinued ....",
+      "brand": "Aesop Eremia"
+    },
+    {
+      "thread_id": "1v8n505",
+      "type": "counterfeit",
+      "quote": "My buddy in another state keeps buying JPGs and Azzaro/YSL from Ebay for incredibly cheap (20-30 usd) and swears to the heavens that they are legit, other than asking him for atomizer pics and bottle pics and making it weird, any other way to just let him know hes buying fakes? I fear he might be trying to sell em to people.",
+      "brand": "JPG / Azzaro / YSL (eBay sellers)"
+    },
+    {
+      "thread_id": "1v9uthg",
+      "type": "discontinuation",
+      "quote": "BRUH. As if the universe wanted to laugh in my face for even making wishlists, right after the Pierrot news, menagerie cosmetics is shutting down too :(((",
+      "brand": "Menagerie Cosmetics"
+    },
+    {
+      "thread_id": "1v918re",
+      "type": "discontinuation",
+      "quote": "Is there any real replacement for the discontinued skin aqua super moisture milk?? I used it for years and loved it so much.",
+      "brand": "Skin Aqua"
+    },
+    {
+      "thread_id": "1v5xk5k",
+      "type": "discontinuation",
+      "quote": "It's a shame that such a beautiful fragrance is being discontinued but it happens all the time.",
+      "brand": "MITH Jade Petals"
+    },
+    {
+      "thread_id": "1v5xk5k",
+      "type": "discontinuation",
+      "quote": "Mortel Noir has been discountinued for a while now. I don't think it is worth chasing down the few elusive bottles at exorbitant prices.",
+      "brand": "Trudon (Mortel Noir)"
+    },
+    {
+      "thread_id": "1v8n50c",
+      "type": "selling",
+      "quote": "I have sold most of my scents from this house, with the exception of a travel oil version of RB.",
+      "brand": "D.S. & Durga"
+    },
+    {
+      "thread_id": "1vaiqye",
+      "type": "discontinuation",
+      "quote": "I am trying to get a hold of Neroli d'Ispahan, Tuberose de Madras and Vanille de Zanzibar, but they seem to have disappeared from the market.",
+      "brand": "Boucheron"
+    }
+  ],
+  "notes": "SOTD threads carry nearly all the census signal: the three r/fragrance SOTD threads and the one Indiemakeupandmore Indies-of-the-Day thread produced 91 of 107 wear reports across a highly fragmented brand list (85 distinct brands, no single brand above 6 wears), with BPAL, Sucrerie, and Arcana Wildcraft leading the indie space and Bvlgari the only designer/niche brand to repeat across multiple SOTD threads. Daily-discussion/advice threads on r/fragrance are almost entirely stated-favorite and recommendation traffic, not wear reports -- across three such threads (68 comments) only 8 comments qualified as an actual current-wear or just-bought statement, confirming these threads have limited standalone census value and mostly function as the comparison population the study wants to contrast against. Two of the eleven indexed threads (1v8wez7 and 1vboski) had content_record files that did not match their declared thread_id/URL at all -- they pointed to unrelated Reddit threads (an r/boxycharm 2021 post and an r/SkincareAddictionLux post) -- so no census data could be extracted for those two and they are reported as zero with an explicit data_issue flag rather than papered over. Faithfulness was prioritized over inference: ambiguous ownership/preference statements ('I like X', 'I have X') were excluded from the wear tally unless they carried an explicit current-wear or recent-purchase marker, so this tally is a conservative lower bound on true wear volume."
+}

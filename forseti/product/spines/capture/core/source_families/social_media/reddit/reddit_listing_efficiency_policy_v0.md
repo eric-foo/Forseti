@@ -322,9 +322,22 @@ reason_codes: [<one or more concise reasons>]
 priority_band: high | normal | suppressed
 ```
 
-`priority_band: suppressed` accompanies `no`. A `borderline` row cannot produce
-an exact-thread capture slot until its bounded uncertainty is resolved. A
-decision record without a decision frame is invalid for reuse.
+`priority_band: suppressed` accompanies `no`. A decision record without a
+decision frame is invalid for reuse.
+
+**Borderline routes to capture (owner decision 2026-08-03).** A `borderline`
+row joins the week's capture list alongside `yes` rows; its bounded
+uncertainty is resolved by the captured thread itself, at extraction time,
+not by leaving the row uncaptured. Measured before adopted: the 2026-08-01
+week's 119 borderline rows had died silently; capturing them (55 correctly
+captured in the test batch) yielded roughly 85% real signal — including a
+second independent thread for an existing wound card and two multi-voice
+findings invisible at listing level. This is the standing
+false-positive-over-missed-latent preference applied at the admission seam:
+only a model `no` suppresses capture. Extraction workers label borderline
+lanes explicitly, and a captured borderline thread that proves empty is
+recorded as `NO_SIGNAL` in its extract line, keeping the yield measurable
+week over week.
 
 ## After admission
 

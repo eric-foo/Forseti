@@ -306,6 +306,42 @@ not counted as negative in the index, so cross-thread negative counts are a
 floor, not a ceiling. The index is read-layer only and never feeds admission
 gates, per the policy.
 
+### Borderline and census amendment (2026-08-03)
+
+The rejection composition audit prompted two owner-approved test batches;
+both changed policy.
+
+**Borderline threads carry signal at ~85%.** Of the 119 borderline rows, 74
+were captured before a throttling burst tripped the breaker; 55 preserved
+the correct thread (19 fell to a capture tab race, fixed the same day by the
+snapshot identity guard). Extraction (slices 18–19) found real signal in
+roughly 85% of the correct captures. Findings that would have died silently:
+the Summer Fridays $300 vault backlash (12+ independent voices demanding
+standalone flavors), a scalp-care cadence gap (washing weekly but needing
+scalp care 3x/week; 8 independent reporters), repeated Tower 28 mold and
+spoilage complaints, and — materially for the cards — **a second independent
+Dieux Instant Angel smell thread with 7 first-hand reporters, upgrading
+wound card 1 from within-thread to cross-thread corroboration.** Borderline
+now routes to capture by standing policy; only a model `no` suppresses.
+
+**The wear census earned a lane.** The 17 rejected daily/mega threads were
+recaptured (9 usable); SOTD and indie-daily shapes carried 91 of 107
+behavioral wear reports plus 9 embedded signals (6 discontinuations), while
+daily discussion/advice threads yielded 8 reports in 68 comments and stay
+rejected. Tally in `census_tally_2026_08_03.json`: indie houses (BPAL,
+Sucrerie, Arcana Wildcraft) top worn-share — brands stated-favorite formats
+never rank, with Arcana Wildcraft independently corroborated as a switching
+destination in the `where_customers_go` aggregate. The reader now emits a
+`weekly_wear_census_v0` lane (SOTD/indie-daily titles, 20+ comments, 3 per
+venue); its first live run found 13 threads including two venues the test
+never covered (r/fragrancestories SOTD, r/wicked_edge shave-of-the-day).
+The census is a community panel, not a market sample, and stays read-layer.
+
+45 borderline slots (41 breaker-skipped, 3 throttled, 1 parse failure) plus
+the 21 wrong-page slots await the reason-tagged recapture list
+(`reddit_recapture_list_2026_08_03_v0.json`); the borderline yield figure is
+measured on the 55 correct captures, not the full 119.
+
 ## Method and residuals
 
 Initial read: 136 problem dives read full-tree and 27 leaderboard threads
