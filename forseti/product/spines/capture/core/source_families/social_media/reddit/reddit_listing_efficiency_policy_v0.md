@@ -114,6 +114,30 @@ through a separate shallow lane rather than by bending the problem gates:
   establish truth, and a leaderboard read never substitutes for problem-dive
   evidence or admits a thread to the problem queue.
 
+### Census lane: `weekly_wear_census_v0`
+
+Owner-directed, 2026-08-03. Daily SOTD-type and indie-daily threads are a
+behavioral worn-share census — commenters report what they actually put on
+that day — the honest counterpart to the leaderboard's stated favorites, and
+the only listing shape that surfaces indie houses stated-favorite formats
+never rank. Adopted on a measured test (17 rejected daily/mega threads
+recaptured; 9 usable): SOTD and indie-daily shapes carried 91 of 107 wear
+reports with 9 embedded signals (6 discontinuation mentions), while daily
+discussion/advice/help threads yielded 8 qualifying reports across 68
+comments and stay rejected.
+
+- **Selection is mechanical.** SOTD/scent-of-the-day/indies-of-the-day titles
+  with `20+` captured listing comments, capped at 3 per venue per week
+  (most-commented days first); no model adjudication. The weekly reader emits
+  the lane (`census_lane` in its output, `--census-capture-list-output` for a
+  ready URL list).
+- **The read is a tally.** Wear/use/bought reports per brand, plus embedded
+  signals (discontinuation, counterfeit, selling-off, reformulation
+  complaints), which route to the read layer. The census orders attention; it
+  never establishes truth, feeds admission gates, or substitutes for
+  problem-dive evidence. It is a community panel, not a market sample, and
+  the weekly read must label it as such.
+
 ## Required sequence
 
 Apply the following sequence. Do not collapse it into an additive score or

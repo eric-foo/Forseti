@@ -74,6 +74,25 @@ LEADERBOARD_EXCLUDE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# Daily wear-census lane, owner decision 2026-08-03: SOTD-type and indie-daily
+# threads are a behavioral worn-share census -- commenters report what they
+# actually put on that day, the honest counterpart to the leaderboard lane's
+# stated favorites, with a steady trickle of embedded signal (6
+# discontinuation mentions in the measured week). Measured on the 2026-08-03
+# test batch (9 usable dailies, 107 wear reports): SOTD and indie-daily
+# shapes carried 91 of 107 reports, while daily discussion/advice/help
+# threads yielded 8 qualifying reports across 68 comments -- so only the
+# census shapes are selected. Tally-only shallow read, read layer only,
+# never adjudication input. The per-venue cap keeps a format that recurs
+# daily from flooding the lane; the most-commented days carry the most
+# census.
+CENSUS_MIN_COMMENTS = 20
+CENSUS_MAX_PER_VENUE = 3
+CENSUS_TITLE_PATTERN = re.compile(
+    r"\bsotd\b|scent of the day|indies of the day",
+    re.IGNORECASE,
+)
+
 # Engagement branch of the sub-floor exception, owner decision 2026-08-01:
 # high score at low comment count is the silent-resonance shape -- many felt
 # it, nobody had an answer -- which is the latent-problem archetype the title
@@ -412,6 +431,34 @@ def _build_leaderboard_lane(candidates: list[dict[str, Any]]) -> list[dict[str, 
     ]
 
 
+def _build_census_lane(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    lane = [
+        item
+        for item in candidates
+        if item["comments"] is not None
+        and item["comments"] >= CENSUS_MIN_COMMENTS
+        and CENSUS_TITLE_PATTERN.search(item["title_or_none"] or "")
+    ]
+    lane.sort(key=lambda item: (-item["comments"], item["thread_url"]))
+    per_venue: Counter[str] = Counter()
+    capped: list[dict[str, Any]] = []
+    for item in lane:
+        if per_venue[item["subreddit"]] >= CENSUS_MAX_PER_VENUE:
+            continue
+        per_venue[item["subreddit"]] += 1
+        capped.append(item)
+    return [
+        {
+            "slot_id": f"cs_{position:03d}",
+            "url": item["thread_url"],
+            "subreddit": item["subreddit"],
+            "comments": item["comments"],
+            "title_or_none": item["title_or_none"],
+        }
+        for position, item in enumerate(capped, start=1)
+    ]
+
+
 def run_weekly_demand_read(
     *,
     data_root: DataLakeRoot,
@@ -560,6 +607,7 @@ def run_weekly_demand_read(
         item["selection_reason"] for item in candidates
     )
     leaderboard_slots = _build_leaderboard_lane(candidates)
+    census_slots = _build_census_lane(candidates)
     return {
         "reader": "reddit_weekly_demand_read",
         "as_of": as_of.isoformat(),
@@ -625,6 +673,19 @@ def run_weekly_demand_read(
             "threads_found": len(leaderboard_slots),
             "slots": leaderboard_slots,
         },
+        # Same mechanics as the leaderboard lane: mechanically selected by
+        # policy, tally-only shallow read, read layer only. The wear census is
+        # behavioral (what commenters put on today), so it complements the
+        # leaderboard's stated favorites and surfaces indie houses stated-
+        # favorite formats never rank.
+        "census_lane": {
+            "lane": "weekly_wear_census_v0",
+            "min_comments": CENSUS_MIN_COMMENTS,
+            "max_per_venue": CENSUS_MAX_PER_VENUE,
+            "title_pattern": CENSUS_TITLE_PATTERN.pattern,
+            "threads_found": len(census_slots),
+            "slots": census_slots,
+        },
         "page_overflow_tripwire": floor_tripwire,
         "non_claims": [
             "not metric authority",
@@ -666,6 +727,16 @@ def _build_parser() -> argparse.ArgumentParser:
             "capture authorization shortcut for admitted threads."
         ),
     )
+    parser.add_argument(
+        "--census-capture-list-output",
+        type=Path,
+        default=None,
+        help=(
+            "Write the mechanically selected daily wear-census lane as a "
+            "run_reddit_old_http_batch.py URL list; same standing as the "
+            "leaderboard list (policy-selected, no adjudication required)."
+        ),
+    )
     return parser
 
 
@@ -696,6 +767,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             ]
             args.leaderboard_capture_list_output.parent.mkdir(parents=True, exist_ok=True)
             args.leaderboard_capture_list_output.write_text(
+                json.dumps(slots, indent=2) + "\n", encoding="utf-8"
+            )
+        if args.census_capture_list_output is not None:
+            slots = [
+                {"slot_id": slot["slot_id"], "url": slot["url"]}
+                for slot in payload["census_lane"]["slots"]
+            ]
+            args.census_capture_list_output.parent.mkdir(parents=True, exist_ok=True)
+            args.census_capture_list_output.write_text(
                 json.dumps(slots, indent=2) + "\n", encoding="utf-8"
             )
         if args.output is not None:

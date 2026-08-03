@@ -908,6 +908,43 @@ def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls()
     assert [s["slot_id"] for s in slots] == ["lb_001", "lb_002"]
 
 
+def test_census_lane_selects_daily_census_formats_with_venue_cap() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_census_lane
+
+    def cand(index: int, subreddit: str, title: str, comments: int) -> dict:
+        return {
+            "subreddit": subreddit,
+            "thread_url": f"https://old.reddit.com/r/{subreddit}/comments/cs{index}/post/",
+            "title_or_none": title,
+            "comments": comments,
+        }
+
+    candidates = [
+        cand(1, "fragrance", "SOTD - Scent of the Day - July 29 2026", 56),
+        cand(2, "fragrance", "SOTD - Scent of the Day - July 28 2026", 52),
+        cand(3, "fragrance", "SOTD - Scent of the Day - July 27 2026", 87),
+        # Fourth same-venue census day: dropped by the per-venue cap (3),
+        # lowest-commented first.
+        cand(4, "fragrance", "SOTD - Scent of the Day - July 26 2026", 48),
+        cand(5, "Indiemakeupandmore", "Indies of the Day - Friday July 31", 46),
+        # Measured near-zero census density: no pattern match, not selected.
+        cand(6, "fragrance", "Daily Discussion & Advice - post here", 68),
+        # Census shape below the lane floor: excluded.
+        cand(7, "Colognes", "Daily SOTD post", 19),
+        # Problem thread with no census shape: untouched by this lane.
+        cand(8, "fragrance", "My serum stopped working", 300),
+    ]
+
+    slots = _build_census_lane(candidates)
+    assert [s["title_or_none"] for s in slots] == [
+        "SOTD - Scent of the Day - July 27 2026",
+        "SOTD - Scent of the Day - July 29 2026",
+        "SOTD - Scent of the Day - July 28 2026",
+        "Indies of the Day - Friday July 31",
+    ]
+    assert [s["slot_id"] for s in slots] == ["cs_001", "cs_002", "cs_003", "cs_004"]
+
+
 @pytest.mark.parametrize("score", [0, None])
 def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_ten_comments(
     score: int | None,
