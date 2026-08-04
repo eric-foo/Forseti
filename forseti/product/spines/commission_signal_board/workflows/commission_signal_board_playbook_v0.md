@@ -566,6 +566,16 @@ present and coherent. Reviewers test the strategic judgment by reading those
 references plus risk-triggered samples; they do not reread the full corpus by
 default. A mismatch expands review only for the affected axis.
 
+At final Phase A closeout, the delegated review-and-patch commission must apply
+the authority's semantic source check before the seal is accepted for Deliver
+or landed. It reads every decision-bearing reference and two independent spot
+checks per material axis, verifies local subject anchoring, axis/role fit,
+competitor-event attribution, and genuine counterevidence, then uses the
+authority's affected-axis-first escalation rule. The delegate patches only the
+bound Phase A target set; the Chief Architect adjudicates the return and reruns
+the acquisition-seal validation. This is a bounded fitness check of the review
+index, not a second full-corpus analysis.
+
 Before each continuation query family starts, the acquisition-view input records
 one short round rationale: why another round is warranted and how its query
 design differs from the prior round. The renderer requires complete job coverage
