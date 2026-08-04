@@ -132,23 +132,21 @@ value. Do not copy the profile into a run-specific quota or stop when a floor is
 first reached.
 
 For a consumer brand where product/customer experience is material, select
-`broad_consumer_brand_understanding_v2` instead and record that choice in the
+`broad_consumer_brand_understanding_v3` instead and record that choice in the
 commission receipt before scanning, then retain it in the completed company
-record. Its v3 depth ledger applies the same
+record. Its v4 depth ledger applies the same
 aggregate anti-token floors except for a 40-thread Reddit/forum floor, but
 completion is organized around material product pain/delight axes. Forty
-threads are a minimum floor, never a completion target: every passing run
-proves its bounded eligible candidate frontier exhausted in the ledger's
-`reddit_candidate_frontier`, with every discovered candidate terminally
-accounted, and keeps acquiring while any new unique thread corroborates,
-contradicts, compares, or sharpens an axis. The proof is bounded to the
-executed routes: every discovery job pins its axis, query, execution time,
-result artifact, and surfaced candidate IDs. The last two batches are
-different, full-axis frontier sweeps—not unrelated Phase 2 jobs—and both must
-add zero usable threads. Fewer than
-40 usable unique threads additionally requires the proven source-exhaustion
-floor exception; reaching
-40 never stops an axis that remains materially open. `CO3` codes the eligible
+threads are a minimum floor, never a completion target. Every passing run
+terminally accounts the bounded candidate set in `reddit_candidate_frontier`.
+Separately, every material axis must be decision-mature through either strong
+evidence or route-bounded source exhaustion. The latter permits only bounded
+observation, never a strong qualitative claim. A usable new thread stays visible
+but does not reopen an axis unless it changes a decision through a typed material
+addition. Each axis closes on two later, genuinely different live continuation
+families with no material addition affecting that axis. Fewer than 40 usable
+unique threads additionally requires the proven floor exception; reaching 40
+never stops an axis that remains materially open. `CO3` codes the eligible
 deduplicated retailer rows
 to axis-specific and overall explicit choice outcomes, tags social-source
 relationship, and returns source IDs rather than prose-only counts. `CO0`
@@ -201,7 +199,14 @@ not spend a separate sacrificial query.
    but does not probe a retailer until that published outcome is available.
    `CO3` begins with the read-only current weekly Reddit lake result, then runs
    its mandatory bounded customer/community scout, consuming the Phase 1
-   trigger-thread and mediator queues; its
+   trigger-thread and mediator queues. Before Phase 2 it runs the proven
+   high-yield Reddit query families in this order: balanced brand-plus-axis;
+   behavior/consequence/displacement; exact hero-product names without the brand;
+   and condition/post-use. Add a community-diversity family only when the
+   admitted evidence is concentrated. SERP discovery and source-native capture
+   may pipeline: a surfaced candidate can enter the owning capture queue without
+   waiting for every family to finish, but each family remains separately
+   accounted. Its
    evidence-selected retailer depth waits for `CO2`'s reconciled breadth and
    selection pointers. Reddit/community capture is part of this specialist
    fan-out, not SERP Phase 2.
@@ -529,28 +534,42 @@ labels. Historical v2 seals require
 Deliver under the current contract.
 
 Consumer brands with material product/customer experience use
-`understanding_evidence_depth_v3` and
-`broad_consumer_brand_understanding_v2`. The v3 ledger preserves the v1 family
+`understanding_evidence_depth_v4` and
+`broad_consumer_brand_understanding_v3`. The v4 ledger preserves the v1 family
 and closure accounting while using `external_context` for the human-facing
 External company, editorial and industry context family. It also carries the
 pre-Phase-2 product-axis inventory, the hash-pinned retailer and community
 coding references, per-corpus recomputed incidence, social relationship and
 owned-direction tags, the 40-thread minimum floor plus a proven
-`reddit_candidate_frontier` exhaustion block with every discovered candidate
+`reddit_candidate_frontier` accounting block with every discovered candidate
 terminally accounted, its discovery query and captured result packet pinned,
-and two different full-axis final sweeps yielding no usable thread (and the
-additional floor exception when below 40),
+the mandatory high-yield query-family set, and the additional floor exception
+when below 40,
 per-thread source-native artifacts, comment-coding-backed support-ref fields,
 three focused Phase 2 jobs per material axis, and target reconciliation from
 search pointer through native body to evidence unit — a SERP artifact never
-doubles as the native body. Its final two batches must be live Reddit-frontier
-acquisitions, each covering every material axis with different queries and
-captured result packets, and add no axis, segment, product condition, comparison
-choice, competitor alternative, strength/incidence change, usable Reddit
-thread (declared per batch as `new_usable_reddit_threads` and recomputed
-against the frontier), or material seam.
-Historical consumer v1/v2 ledgers require
-`--allow-legacy-consumer-v1` and are never upgraded by assertion.
+doubles as the native body. Each material axis declares evidence strength
+separately from decision maturity, closure basis, claim ceiling, and the two
+later live continuation families that form its decision frontier. Those two
+families must differ in kind, query, and result artifact and add no material
+addition affecting that axis. They may add usable Reddit threads; each batch's
+`new_usable_reddit_threads` is recomputed and reported separately from its typed
+material additions.
+
+Before each continuation query family starts, its job manifest records one short
+round rationale: why another round is warranted and how its query design differs
+from the prior round. The completed Phase A acquisition record renders a
+deterministic human view from the evidence-depth ledger and community coding:
+the evidence-family scorecard, per-round funnel and yield, per-axis decision
+support, exact query register, and final decision-frontier observation. Search
+pages receive no usefulness credit without an admitted source-native body and
+coding row; repeated sightings remain visible but never inflate unique-source
+counts. This view is part of the existing acquisition record, not a new evidence
+authority, seal field, or per-run report artifact.
+
+Historical consumer v1 and v2 profiles require
+`--allow-legacy-consumer-v1` and `--allow-legacy-consumer-v2` respectively and
+are never upgraded by assertion.
 
 For company Understanding, non-empty route accounting is required for
 `serp_phase1`, `official_retailer_authorization`,

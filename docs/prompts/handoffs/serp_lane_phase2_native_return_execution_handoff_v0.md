@@ -64,8 +64,11 @@ through the lifecycle store; and the sealed decision receipt and provenance
 make material blocks visible. This is the executor target and a review
 axis-to-attack, not a review pass bar.
 
-For `broad_consumer_brand_understanding_v2`, first hash-pin the complete axis
-inventory in the v3 depth ledger. The targeted queue then covers every material
+For `broad_consumer_brand_understanding_v3`, first hash-pin the complete axis
+inventory in the v4 depth ledger. Before this handoff, `CO3` must have run the
+balanced brand-plus-axis, behavior/consequence/displacement, brand-less exact
+hero-product, and condition/post-use query families, with community-diversity
+probing when concentration justified it. The targeted queue then covers every material
 product axis with one `corroborate_or_segment` job, one
 `compare_switch_or_value` job, and one `disconfirm_or_strongest_delight` job.
 Each job binds the axis-inventory hash and its later planning time. Phase 2 still
@@ -74,14 +77,13 @@ a job in the existing owning route accounting and must reconcile to a
 source-native captured body plus ledgered evidence unit, or a typed terminal
 outcome, before the acquisition seal can pass. A SERP artifact never doubles as
 the captured native body. The 40-thread community floor is a minimum, not a
-completion target: the seal passes only with a proven
-`reddit_candidate_frontier` exhaustion block in which every discovered
-candidate thread is terminally accounted and the final two live batches
-declare and prove zero `new_usable_reddit_threads`. Those final batches must
-consist only of completed Reddit frontier-discovery jobs, each covering every
-material axis with a different query and a different hash-pinned result packet.
-Each job lists every candidate it surfaced, and those lists reconcile exactly
-to the terminal candidate ledger. This proves exhaustion of the executed
+completion target. The seal terminally accounts every discovered candidate in
+`reddit_candidate_frontier`, reports `new_usable_reddit_threads` separately
+from typed material additions, and closes each material axis only after two
+later live continuation families of different kinds, queries, and artifacts add
+no material decision change affecting that axis. A useful thread may therefore
+sharpen the record without reopening it. Source-limited axes may close only with
+a bounded-observation claim ceiling. This proves exhaustion of the executed
 routes; it does not claim that the whole internet was searched.
 
 ## Required reads (pointer-first; the spec owns the method)

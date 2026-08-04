@@ -223,35 +223,50 @@ distribution counterweight to repeated posts from any one account.
 
 When the subject is a consumer brand and product/customer experience is
 material, the commission receipt selects
-`broad_consumer_brand_understanding_v2`, and the acquisition seal binds an
-`understanding_evidence_depth_v3` ledger. The selected completion profile stays
+`broad_consumer_brand_understanding_v3`, and the acquisition seal binds an
+`understanding_evidence_depth_v4` ledger. The selected completion profile stays
 in the company record through completion; it is not a commission-only field.
 The profile retains the aggregate entry floors
 above except that Reddit/forum depth rises to 40 usable unique threads. Forty
-is a minimum floor, never a completion target. Every passing run must prove
-that its bounded eligible candidate frontier is exhausted in a
-`reddit_candidate_frontier` block: every discovered candidate thread carries a
-terminal disposition and an accounted discovery job, the captured set equals
-the ledgered independent threads, non-captured candidates carry reasons, and
-each independent thread pins its own source-native artifact. Acquisition
-continues while any new unique thread still corroborates, contradicts,
-compares, or sharpens an axis. This is bounded route exhaustion, not a claim
-that the whole internet was searched. Each frontier discovery job names one
-material axis, its executed query and time, its hash-pinned result artifacts,
-and every candidate thread it surfaced. The final two batches consist only of
-completed frontier discovery jobs; each batch covers every material axis, uses
-a different query and result artifact for that axis than the other batch, and
-adds no usable thread. The validator reconciles job, artifact, candidate, and
-batch accounting rather than accepting a prose `source_exhausted` assertion.
-Fewer than 40 additionally requires the explicit
-`source_exhausted` floor exception after every axis search job and selected
-target is terminal and the final two live batches produce no material change.
+is a minimum floor, never a completion target. The mechanical
+`reddit_candidate_frontier` remains complete only when every discovered
+candidate thread has a terminal disposition and an accounted discovery job,
+the captured set equals the ledgered independent threads, non-captured
+candidates carry reasons, and each independent thread pins its own source-native
+artifact. This proves bounded route accounting, never that the whole internet
+was searched.
+
+V4 separates evidence strength from decision maturity. `strength` remains
+`signal`, `recurring`, or `strong`; every material axis separately declares
+`decision_maturity`, `closure_basis`, and `claim_ceiling`. A source-rich axis may
+close `decision_mature` with `evidence_supported` and
+`strong_qualitative`. A source-limited axis may also close `decision_mature`
+after `route_bounded_source_exhaustion`, but only with
+`bounded_observation_only`; scarcity never becomes affirmative attack/defend
+authority. Fewer than 40 Reddit/forum threads additionally requires the explicit
+floor exception after every selected target and planned family is terminal.
+Forty never closes a materially open axis.
+
+Call this terminal boundary the **decision frontier**. Do not call it a value
+frontier: `value` remains the customer-facing product proposition (benefit,
+quantity, durability, and performance for price). Do not call it a discovery
+frontier either; more relevant pages can exist after decisions are mature.
+
+Reddit discovery is grouped into named query families. Before Phase 2, `CO3`
+runs the proven high-yield set: balanced brand-plus-axis baseline;
+behavior/consequence/displacement; exact hero-product names without the brand;
+and condition/post-use. Community-diversity probing is conditional on observed
+concentration. Every family records kind, role, axis scope, planned time, jobs,
+and terminal status; every batch records useful-thread yield separately from
+structured material additions. The validator reconciles the family, job,
+artifact, candidate, and batch accounting rather than accepting prose closure.
 The profile renames the human-facing outside source
 family to **External company, editorial and industry context** and adds the
 cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
-audit-only through `--allow-legacy-consumer-v1`; they do not satisfy a new run.
+audit-only through `--allow-legacy-consumer-v1` and
+`--allow-legacy-consumer-v2`; they do not satisfy a new run.
 
-The v3 ledger inventories every observed material product-experience axis as
+The v4 ledger inventories every observed material product-experience axis as
 `pain`, `delight`, or `mixed`, with a terminal disposition. `signal` establishes
 possible existence. `recurring` requires at least three qualifying independent
 origins across two non-retailer evidence families. `strong` additionally
@@ -283,7 +298,7 @@ pooling is allowed only when corpus boundaries, selection, and deduplication are
 comparable; otherwise report providers separately. These are captured-sample
 incidences, never market return rates or customer-population prevalence.
 
-Every material v3 axis receives three adaptive Phase 2 goals after a hash-pinned
+Every material v4 axis receives three adaptive Phase 2 goals after a hash-pinned
 axis inventory exists: `corroborate_or_segment`, `compare_switch_or_value`, and
 `disconfirm_or_strongest_delight`. Search results are discovery pointers, not
 evidence; a `captured` job must resolve to a source-native body and a ledgered
@@ -301,13 +316,18 @@ Reddit/forum thread has at least one such row, and an axis support reference
 into a community thread must be backed by a coding row for that axis and
 thread carrying the same contribution, choice, and alternative brand; a
 support claim no coded comment states is invalid. SERP or search-registry
-artifacts never satisfy a native-body reference. The final two batches are
-live, full-axis Reddit frontier search/capture sweeps, not desk rechecks or
-unrelated search jobs, and must show zero new product axes,
-segments, product conditions, comparison choices, competitor alternatives,
-changed axis strengths, changed axis incidence, new usable Reddit threads, or
-ordinary material seams; each batch declares `new_usable_reddit_threads` and
-the validator recomputes it against the frontier's captured candidates.
+artifacts never satisfy a native-body reference. A useful new thread is
+informational yield, not an automatic reopen. A material addition is limited to
+a new axis, evidence-tier change, mechanism, segment or condition, behavior
+consequence, competitor destination, contradiction, sampling-risk change, or
+competitive-action change, and must name its affected axes, evidence references,
+and decision effect. It reopens only those axes and directly adjacent axes when
+the recorded decision effect justifies adjacency. Each material axis closes on
+two later live continuation families that include it in scope, use different
+family kinds, queries, and artifacts, occur after the mandatory high-yield set,
+and add no material addition affecting that axis. The two families may still add
+usable threads. Each batch declares `new_usable_reddit_threads`, and the
+validator recomputes that count against captured candidates.
 Owned social rows carry a normalized `YYYY-MM-DD` observed date and
 direction-event tags so Deliver can derive a factual direction timeline without
 a separate Phase A artifact. Preserve the source's original date text in the
@@ -315,8 +335,9 @@ pinned source artifact.
 
 These are anti-token entry floors, not completion quotas, prevalence samples,
 or market-representativeness claims. A passing seal additionally requires
-explicit echo/syndication adjudication, every material seam dispositioned, the
-last two practical acquisition batches to show no material incremental value,
+explicit echo/syndication adjudication, every material seam dispositioned,
+every material axis to be `decision_mature` under one of the two truthful
+closure bases, the aggregate Phase A decision frontier to have no open axes,
 and every remaining move to be typed as dominated, source-exhausted,
 unsafe/prohibited, blocked with no route, or non-material. Same-family
 independent evidence is welcome when it corroborates, contradicts, sharpens,
@@ -345,11 +366,12 @@ preserved and may be checked only with the validator's explicit
 `--allow-legacy-v2` audit switch; they do not satisfy the current broad-
 Understanding completion contract.
 
-For `broad_consumer_brand_understanding_v2`, v3 instead hash-pins an
-`understanding_evidence_depth_v3` ledger and applies the product-axis,
+For `broad_consumer_brand_understanding_v3`, v4 instead hash-pins an
+`understanding_evidence_depth_v4` ledger and applies the product-axis,
 row-derived retailer-incidence, comment-coding, source-native capture,
-target-reconciliation, focused-search, candidate-frontier-exhaustion, and live
-axis-aware closure checks above. A passing family-count ledger without those
+target-reconciliation, focused-search, candidate-frontier accounting, proven
+query-family, decision-maturity, and axis-aware closure checks above. A passing
+family-count ledger without those
 checks is invalid. Repository-tracked evidence artifacts must be pinned with
 repo-relative locators; absolute locators are reserved for machine-local
 raw-lake roots outside the repository, and the validator rejects a

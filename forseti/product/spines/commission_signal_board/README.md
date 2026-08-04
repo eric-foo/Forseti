@@ -109,17 +109,18 @@ selected depth; its depth expands adaptively, but the actor and
 customer-understanding job are not optional.
 
 When product/customer experience is material, consumer brands use the
-playbook's `broad_consumer_brand_understanding_v2` completion profile. Its v3
+playbook's `broad_consumer_brand_understanding_v3` completion profile. Its v4
 depth ledger prevents aggregate family counts from substituting for
 cross-family product-axis evidence, comment- and row-derived customer evidence,
 three-way focused follow-ups, source-native capture, reconciled targets,
-proven candidate-frontier exhaustion (the 40-thread floor is a minimum, never
-a completion target), and live axis-aware saturation. Frontier exhaustion is
-bounded to two different final discovery sweeps across every material axis,
-with queries, result packets, and surfaced candidates reconciled; unrelated
-search jobs or a prose exhaustion claim do not count. The prompt-structure
-authority owns the exact fields, frontier/exhaustion rule, and hybrid strength
-bars.
+terminal candidate accounting (the 40-thread floor is a minimum, never a
+completion target), proven high-yield query families, and axis-scoped decision
+maturity. Evidence strength stays separate from maturity: source-limited axes
+may close only with bounded-observation claims. Each material axis closes after
+two later, genuinely different live continuation families add no material
+decision change affecting it; useful threads remain visible and need not be
+zero. The prompt-structure authority owns the exact fields, decision-frontier
+rule, and hybrid strength bars.
 
 When both turns are explicitly commissioned, two turns are the normal budget,
 not permission to convert a blocked acquisition into apparent completion. The
