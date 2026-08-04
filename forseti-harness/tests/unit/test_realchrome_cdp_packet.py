@@ -252,8 +252,14 @@ def test_persistent_target_suppresses_exact_same_url_navigation() -> None:
         url = "https://www.google.com/search?q=held"
         marker = ""
 
+        def __init__(self) -> None:
+            self.load_waits: list[tuple[str, float]] = []
+
         def goto(self, *_args: object, **_kwargs: object) -> object:
             raise AssertionError("same URL must not be navigated again")
+
+        def wait_for_load_state(self, state: str, timeout: float) -> None:
+            self.load_waits.append((state, timeout))
 
         def evaluate(self, script: str, argument: object = None) -> None:
             assert script == "(marker) => { window.name = marker; }"
@@ -269,6 +275,33 @@ def test_persistent_target_suppresses_exact_same_url_navigation() -> None:
 
     assert response is None
     assert page.marker == "forseti.queue"
+    assert page.load_waits == [("load", 10_000)]
+
+
+def test_persistent_same_url_partial_document_fails_instead_of_capturing() -> None:
+    class Page:
+        url = "https://www.google.com/search?q=held"
+        marker = ""
+
+        def goto(self, *_args: object, **_kwargs: object) -> object:
+            raise AssertionError("same URL must not be navigated again")
+
+        def wait_for_load_state(self, state: str, timeout: float) -> None:
+            raise TimeoutError("load event never fired on the reused document")
+
+        def evaluate(self, script: str, argument: object = None) -> None:
+            self.marker = argument
+
+    page = Page()
+    with pytest.raises(TimeoutError):
+        _navigate_target(
+            page=page,
+            url=page.url,
+            timeout_ms=10_000,
+            persistent_tab_marker="forseti.queue",
+        )
+
+    assert page.marker == ""
 
 
 class _FakePage:

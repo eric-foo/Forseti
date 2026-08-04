@@ -98,8 +98,11 @@ Forseti Intelligence Cycle phases.
 
 Acquire & Seal optimizes for decision-useful completeness under the integrity
 floor; compactness, actor count, and token minimization are not its success
-criteria. Deliver then applies Smallest Complete Intervention to the human
-artifact without dropping decisive evidence or limitations.
+criteria. For consumer brands, each material product axis must therefore carry
+a traceable decision-usefulness synthesis in its existing evidence-ledger row;
+source volume or a `strong` label alone cannot close it. Deliver then applies
+Smallest Complete Intervention to the human artifact without dropping decisive
+evidence or limitations.
 
 For company Understanding, the playbook binds the default four-evidence-actor
 route: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. Current US

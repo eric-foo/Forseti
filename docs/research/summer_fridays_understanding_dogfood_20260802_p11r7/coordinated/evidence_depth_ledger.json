@@ -6092,7 +6092,7 @@
     {
       "artifact_id": "p11r7_integrity_audit",
       "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/confirm_dont_trust_integrity_audit.json",
-      "sha256": "1624e2b5fef706cd8af7aa09cde9130a82a7d55e11b7a1f54534d5ac9c9bc9ff"
+      "sha256": "76930f037c8467510bcd60c47c0e8c8a3b6e2d4fa7fa1b1bfbca590e371a3e5a"
     }
   ],
   "families": {
@@ -11779,7 +11779,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "The brand's sensorial appeal and dewy positioning coexist with reports of burning, dermatitis, cracked lips, and breakouts.",
+        "decision_effects": {
+          "segment_or_condition": "Sensitivity, acne-proneness, and delayed reactions after repeated use.",
+          "behavior_or_purchase_consequence": "Customers report stopping use, discarding products, and choosing simpler alternatives after reactions.",
+          "competitor_destination": "Vaseline, Rhode, Rare Beauty, and other tolerance-led substitutes."
+        },
+        "strongest_counterevidence": "Other customers retain and repurchase Summer Fridays complexion products without reporting a reaction.",
+        "competitive_decision": "Prioritize substantiated tolerance and low-irritation performance; reaction risk is a stronger attack surface than generic efficacy.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1mzokbt",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "16b3wt1",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "zcglwe",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Self-reported qualitative evidence does not establish medical causation or prevalence."
+        ]
+      }
     },
     {
       "axis_id": "value_and_quantity",
@@ -13228,7 +13259,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Customers like the scents, colors, and prestige package but question whether usable quantity and performance justify the premium price.",
+        "decision_effects": {
+          "segment_or_condition": "Price-sensitive repeat purchasers and heavy users.",
+          "behavior_or_purchase_consequence": "Price-performance disappointment drives rejection and no-future-purchase decisions.",
+          "competitor_destination": "Laneige, Glossier, e.l.f., and lower-priced staple balms."
+        },
+        "strongest_counterevidence": "Some users willingly repurchase because color, scent, and finish make the premium feel worthwhile.",
+        "competitive_decision": "Compete on demonstrable usable quantity and durable performance per dollar, not on a vague lower-price claim.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1bm9izm",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "15qtzd8",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "wve0sg",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Captured comments establish recurring price-value tension, not willingness-to-pay prevalence."
+        ]
+      }
     },
     {
       "axis_id": "packaging_and_dispensing",
@@ -14278,7 +14340,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Portable, attractive tubes and applicators are a purchase benefit, but dispensing mess or package failure can erase that convenience.",
+        "decision_effects": {
+          "segment_or_condition": "Frequent, on-the-go, and high-reapplication use.",
+          "behavior_or_purchase_consequence": "Package or applicator dissatisfaction contributes to switching and non-repurchase.",
+          "competitor_destination": "Rhode and other easy-application lip formats."
+        },
+        "strongest_counterevidence": "The applicator and tube are themselves reasons some customers retain or repurchase.",
+        "competitive_decision": "Treat verified leak-, cap-, and dispensing-reliability as a product attack surface while preserving portable application.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1j3ne46",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1ahn26w",
+            "role": "customer_tension"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1kq0492",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "The corpus mixes products and package generations; defect rates cannot be inferred."
+        ]
+      }
     },
     {
       "axis_id": "wear_and_longevity",
@@ -15082,7 +15175,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "decision_useful",
+        "customer_tension": "Comfortable glossy or dewy wear is valued, but transfer, sliding, and frequent reapplication reduce perceived performance.",
+        "decision_effects": {
+          "segment_or_condition": "Dry or sensitive skin, everyday wear, and long-wear occasions.",
+          "behavior_or_purchase_consequence": "Short wear contributes to non-repurchase and reduced use.",
+          "competitor_destination": "Longer-wearing Ole Henriksen and lower-cost drugstore formats."
+        },
+        "strongest_counterevidence": "Some users retain the product as an everyday lip color and accept reapplication.",
+        "competitive_decision": "Make product-specific wear gains without sacrificing the comfortable finish customers defend.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1s4ywh5",
+            "role": "segment_or_condition"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1r09924",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "wve0sg",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Wear expectations differ materially by product category and use occasion."
+        ]
+      }
     },
     {
       "axis_id": "hydration_and_moisture",
@@ -17235,7 +17359,43 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Shine, comfort, and day wear are strong delights, while users seeking deep repair sometimes judge the same products insufficiently hydrating.",
+        "decision_effects": {
+          "segment_or_condition": "Severely dry or chronically chapped lips versus cosmetic day wear.",
+          "behavior_or_purchase_consequence": "The seam produces both strong repurchase and rejection depending on the hydration job.",
+          "competitor_destination": "Laneige, Rhode, Aquaphor, and other repair-led balms."
+        },
+        "strongest_counterevidence": "Substantial retained and repurchased evidence supports hydration and comfort for many use cases.",
+        "competitive_decision": "Do not attack hydration broadly; either defend the cosmetic comfort seam or target the narrower deep-repair condition with proof.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1ahn26w",
+            "role": "segment_or_condition"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1bm9izm",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1ep8x4l",
+            "role": "customer_tension"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "18v755c",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Hydration language is subjective and product-specific; the evidence supports a condition boundary, not a universal ranking."
+        ]
+      }
     },
     {
       "axis_id": "texture_and_skin_finish",
@@ -19408,7 +19568,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Smooth, non-sticky, dewy texture is a major brand defense, but wetness, sliding, peeling, or batch texture can become a rejection trigger.",
+        "decision_effects": {
+          "segment_or_condition": "Dry or sensitive lips, layering, and preference for thicker versus glossy textures.",
+          "behavior_or_purchase_consequence": "Texture failures lead to returns, stopping use, and switching.",
+          "competitor_destination": "Ole Henriksen, Laneige, Eadem, and thicker treatment formats."
+        },
+        "strongest_counterevidence": "Texture and finish carry the largest positive-choice balance and sustained loyalty.",
+        "competitive_decision": "Avoid a frontal texture attack; preserve effortless feel and target specific instability or preference mismatches.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "15if5vo",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1pneo7v",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1bwaurz",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Texture preferences are conditional; mixed polarity should not be collapsed into net sentiment."
+        ]
+      }
     },
     {
       "axis_id": "coverage_and_pigment",
@@ -20671,7 +20862,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "decision_useful",
+        "customer_tension": "Sheer, natural-looking payoff fits the intended low-effort aesthetic, but can feel imperceptible or poor value to users expecting visible pigment.",
+        "decision_effects": {
+          "segment_or_condition": "No-makeup makeup users versus customers seeking visible coverage or lip color.",
+          "behavior_or_purchase_consequence": "Insufficient payoff produces returns and product rejection.",
+          "competitor_destination": "Armani, L'Oreal, and more visibly pigmented alternatives."
+        },
+        "strongest_counterevidence": "Customers who want deliberately sheer, buildable results repurchase and recommend the products.",
+        "competitive_decision": "Own the sheer job explicitly or provide clearer payoff choices; do not promise broad coverage from evidence that supports a natural finish.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "175n4ck",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1bey3kh",
+            "role": "customer_tension"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "19ebtuv",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Coverage and pigment expectations vary across skin tint, blush, and lip products."
+        ]
+      }
     },
     {
       "axis_id": "shade_and_color_fit",
@@ -21911,7 +22133,38 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "decision_useful",
+        "customer_tension": "Easy everyday shades delight matched customers, while a narrow range or very sheer payoff excludes some undertones and deeper complexions.",
+        "decision_effects": {
+          "segment_or_condition": "Olive undertones, deeper skin tones, and shoppers unable to shade-match online.",
+          "behavior_or_purchase_consequence": "Poor fit produces returns and intended returns.",
+          "competitor_destination": "Hourglass, Armani, Kosas, and Saie shade alternatives."
+        },
+        "strongest_counterevidence": "Matched customers report close shade equivalence and retain the natural finish.",
+        "competitive_decision": "Treat range and visible payoff as a segment-expansion opportunity, while preserving the low-effort shades existing users defend.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1d1frnd",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "175n4ck",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "zcglwe",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "The qualitative corpus identifies fit failures but cannot quantify population shade coverage."
+        ]
+      }
     },
     {
       "axis_id": "scent_and_flavor",
@@ -23806,7 +24059,43 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Scent and flavor are purchase and repurchase hooks, yet sweetness, taste, or off-smell can independently cause rejection.",
+        "decision_effects": {
+          "segment_or_condition": "Scent-sensitive users, flavor preference, and product age or storage condition.",
+          "behavior_or_purchase_consequence": "Unpleasant taste or odor drives returns and disposal.",
+          "competitor_destination": "Saie, Laneige, Tower 28, and unscented alternatives."
+        },
+        "strongest_counterevidence": "Positive choice and repurchase evidence confirms scent as a defensible signature benefit.",
+        "competitive_decision": "Do not attack scent broadly; defend favored signatures while reducing polarization and off-smell quality failures.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "17qylcs",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1c2h4qp",
+            "role": "segment_or_condition"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1m07jmq",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "13aw1sp",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Flavor preference and product spoilage are distinct mechanisms that should not be pooled as one defect rate."
+        ]
+      }
     },
     {
       "axis_id": "formula_consistency_and_change",
@@ -24230,7 +24519,43 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Customers retain affection for known formulas but report reformulation, batch, separation, and early off-smell concerns that threaten trust.",
+        "decision_effects": {
+          "segment_or_condition": "Long-time repeat buyers, batch variation, storage, and product age.",
+          "behavior_or_purchase_consequence": "Suspected changes or bad batches cause stopping, returns, and threatened switching.",
+          "competitor_destination": "Rhode, Ole Henriksen, Hourglass, and stable staple alternatives."
+        },
+        "strongest_counterevidence": "Some customers prefer and recommend the original or current formula and continue repurchasing.",
+        "competitive_decision": "Compete on batch consistency and transparent formula-change handling; this severe but smaller seam should be monitored rather than generalized.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "v4ioij",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1sahmci",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1c2h4qp",
+            "role": "segment_or_condition"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "17tnj2m",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "The smallest axis corpus supports a serious qualitative seam, not a manufacturing-defect frequency claim."
+        ]
+      }
     },
     {
       "axis_id": "application_and_tool_performance",
@@ -24766,7 +25091,43 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "decision_useful",
+        "customer_tension": "Easy finger blending and simple lip application are defended, while messiness, tool fit, or product-specific handling can narrow use.",
+        "decision_effects": {
+          "segment_or_condition": "On-the-go use, finger application, layering, and tinted-product precision.",
+          "behavior_or_purchase_consequence": "Messiness narrows repurchase to easier variants or reduces use.",
+          "competitor_destination": "Ole Henriksen, Jack Black, and alternative applicator formats."
+        },
+        "strongest_counterevidence": "Customers repeatedly retain products because they are easy to apply and blend.",
+        "competitive_decision": "Preserve low-friction application and improve precision or mess control only where the product context demonstrates a failure.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "1r8e2rk",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1bwaurz",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "v60njh",
+            "role": "segment_or_condition"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1kq0492",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Application findings span unlike tools and categories and should remain product-specific."
+        ]
+      }
     },
     {
       "axis_id": "hype_originality_and_trust",
@@ -25680,7 +26041,43 @@
       "decision_frontier_family_ids": [
         "family_ac_ad",
         "family_ae_af"
-      ]
+      ],
+      "decision_usefulness": {
+        "status": "strategically_material",
+        "customer_tension": "Social cache and aesthetic recognition create trial, but hype, dupe equivalence, and weak differentiation undermine trust and repurchase.",
+        "decision_effects": {
+          "segment_or_condition": "Trend-led younger shoppers versus value-conscious experienced users.",
+          "behavior_or_purchase_consequence": "Underwhelmed buyers decline repurchase or move to cheaper equivalents.",
+          "competitor_destination": "e.l.f., Ole Henriksen, Glossier-style dupes, and category staples."
+        },
+        "strongest_counterevidence": "Some long-time users defend product quality and believe the brand earned its attention.",
+        "competitive_decision": "Ground differentiation in product proof and trustworthy operations; do not rely on generic deinfluencing alone.",
+        "decision_bearing_support_refs": [
+          {
+            "family": "reddit_forum",
+            "unit_id": "188rp74",
+            "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1hf0hhi",
+            "role": "competitor_destination"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1slrvyj",
+            "role": "customer_tension"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1srjzrl",
+            "role": "counterevidence"
+          }
+        ],
+        "limitations": [
+          "Hype discourse is selection-biased and does not measure brand-wide trust prevalence."
+        ]
+      }
     }
   ],
   "closure": {
@@ -65860,6 +66257,14 @@
         "planned_at": "2026-08-02T18:13:21.915473+00:00",
         "status": "completed"
       }
-    ]
+    ],
+    "execution_order_exception": {
+      "exception_type": "pre_contract_historical_run",
+      "cycle_id": "summer_fridays_understanding_p11r7_20260802",
+      "phase2_started_at": "2026-08-02T13:13:11Z",
+      "mandatory_families_completed_at": "2026-08-04T03:30:12Z",
+      "future_runs_covered": false,
+      "reason": "This dogfood run began before the v4 mandatory-family ordering contract was adopted. The actual Phase 2 and family timestamps remain visible; this exception applies only to this exact historical cycle."
+    }
   }
 }

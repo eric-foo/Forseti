@@ -60,6 +60,10 @@ def _fixture() -> tuple[dict, dict, list[dict]]:
                 "decision_maturity": "decision_mature",
                 "closure_basis": "evidence_supported",
                 "claim_ceiling": "strong_qualitative",
+                "decision_usefulness": {
+                    "status": "strategically_material",
+                    "competitive_decision": "Compete on verified package reliability.",
+                },
                 "decision_frontier_family_ids": ["family-a", "family-b"],
                 "support_refs": [
                     {"family": "reddit_forum", "unit_id": "t1"},
@@ -205,6 +209,8 @@ def test_report_recomputes_yield_and_does_not_credit_search_only_rows() -> None:
     assert "| B-1 | packaging | subject packaging alternative | Comparison check |" in report
     assert "returned_or_refunded 1" in report
     assert "Alternative" in report
+    assert "strategically_material" in report
+    assert "Compete on verified package reliability." in report
     assert "Only structured material additions reopen an affected axis" in report
     assert "family-a: usable 1, material 1" in report
     assert "family-b: usable 0, material 0" in report
@@ -219,6 +225,29 @@ def test_report_counts_repeat_sighting_without_inflating_sources() -> None:
 
     assert "| B | Round A added usable evidence | Alternative and comparison language | family-b | 1 jobs / 1 axes | 2 | 1 | 0 | 0 | 1 | 0 | 1 | 0/1 (0.0%) | 0 |" in report
     assert report.count("1/2 (50.0%)") == 1
+
+
+def test_report_scorecard_excludes_declared_duplicate_threads() -> None:
+    ledger, coding, rounds = _fixture()
+    ledger["families"]["reddit_forum"]["threads"] = [
+        {
+            "thread_id": "t1",
+            "community_id": "beauty",
+            "independence": "independent_thread",
+        },
+        {
+            "thread_id": "t1-copy",
+            "community_id": "beauty-duplicate",
+            "independence": "duplicate_thread",
+        },
+    ]
+
+    report = render_phase_a_acquisition_yield(
+        ledger=ledger, community_coding=coding, search_rounds=rounds
+    )
+
+    assert "1 source-native threads; 12 parsed comments | 1 communities" in report
+    assert "beauty-duplicate" not in report
 
 
 def test_report_fails_when_round_membership_is_ambiguous() -> None:

@@ -556,6 +556,16 @@ addition affecting that axis. They may add usable Reddit threads; each batch's
 `new_usable_reddit_threads` is recomputed and reported separately from its typed
 material additions.
 
+The same axis row carries the smallest-complete decision-usefulness synthesis:
+customer tension; segment/condition; behavior or purchase consequence;
+competitor destination; strongest counterevidence; changed competitive
+decision; a small set of already-valid decision-bearing support references;
+and limitations. This is the review index for the axis, not a substitute for
+its evidence. Mechanical validation checks that the fields and references are
+present and coherent. Reviewers test the strategic judgment by reading those
+references plus risk-triggered samples; they do not reread the full corpus by
+default. A mismatch expands review only for the affected axis.
+
 Before each continuation query family starts, the acquisition-view input records
 one short round rationale: why another round is warranted and how its query
 design differs from the prior round. The renderer requires complete job coverage

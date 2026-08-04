@@ -88,10 +88,16 @@ def _family_scorecard(
                 )
 
     reddit = families.get("reddit_forum", {})
-    threads = _objects(
-        reddit.get("threads", []) if isinstance(reddit, Mapping) else [],
-        label="reddit_forum.threads",
-    )
+    threads = [
+        row
+        for row in _objects(
+            reddit.get("threads", []) if isinstance(reddit, Mapping) else [],
+            label="reddit_forum.threads",
+        )
+        # Rows declared duplicate_thread collapse to their independent thread
+        # and must not inflate the source-native thread or community counts.
+        if row.get("independence") != "duplicate_thread"
+    ]
     communities = {str(row.get("community_id")) for row in threads if row.get("community_id")}
     parsed_comments = coding.get("parsed_comment_count", 0)
     if not isinstance(parsed_comments, int) or isinstance(parsed_comments, bool):
@@ -454,6 +460,9 @@ def render_phase_a_acquisition_yield(
         alternatives = sorted(
             {str(row["alternative_brand"]) for row in relevant_coding if row.get("alternative_brand")}
         )
+        usefulness = axis.get("decision_usefulness")
+        if not isinstance(usefulness, Mapping):
+            usefulness = {}
 
         reddit_origins: set[str] = set()
         social_axis_origins: set[str] = set()
@@ -487,6 +496,8 @@ def render_phase_a_acquisition_yield(
                 axis.get("decision_maturity", "unknown"),
                 axis.get("closure_basis", "unknown"),
                 axis.get("claim_ceiling", "unknown"),
+                usefulness.get("status", "not declared"),
+                usefulness.get("competitive_decision", "not declared"),
                 spread,
                 f"{len(reddit_threads)} total; {len(round_added)} added by reported rounds",
                 contributions,
@@ -581,6 +592,8 @@ def render_phase_a_acquisition_yield(
                     "Decision maturity",
                     "Closure basis",
                     "Claim ceiling",
+                    "Decision usefulness",
+                    "Competitive decision",
                     "Qualifying non-retailer spread",
                     "Reddit threads",
                     "Contribution rows",

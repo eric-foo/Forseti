@@ -181,6 +181,11 @@ def _navigate_target(
 ):
     """Navigate if needed and restore the marker after a document swap."""
     if persistent_tab_marker is not None and getattr(page, "url", None) == url:
+        # A matching URL can come from an earlier attempt whose navigation
+        # committed but never finished loading; capture must not silently read
+        # that partial document. Waiting is a no-op on an already-loaded page,
+        # and a load that cannot finish surfaces as the caller's typed failure.
+        page.wait_for_load_state("load", timeout=timeout_ms)
         page.evaluate(
             "(marker) => { window.name = marker; }", persistent_tab_marker
         )

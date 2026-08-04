@@ -246,6 +246,44 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
                 "family-final-a",
                 "family-final-b",
             ],
+            "decision_usefulness": {
+                "status": "strategically_material",
+                "customer_tension": (
+                    "Customers value portable packaging, but failures in dispensing "
+                    "can erase that convenience."
+                ),
+                "decision_effects": {
+                    "segment_or_condition": "Frequent on-the-go use.",
+                    "behavior_or_purchase_consequence": "Returns after packaging failure.",
+                    "competitor_destination": "A more reliable alternative package.",
+                },
+                "strongest_counterevidence": (
+                    "Some customers retain the product because the package is convenient."
+                ),
+                "competitive_decision": (
+                    "Compete on verified dispensing reliability without conceding portability."
+                ),
+                "decision_bearing_support_refs": [
+                    {
+                        "family": "reddit_forum",
+                        "unit_id": "thread-0",
+                        "role": "behavior_or_purchase_consequence",
+                    },
+                    {
+                        "family": "reddit_forum",
+                        "unit_id": "thread-1",
+                        "role": "counterevidence",
+                    },
+                    {
+                        "family": "native_social",
+                        "unit_id": "native-0",
+                        "role": "customer_tension",
+                    },
+                ],
+                "limitations": [
+                    "Qualitative captured-sample evidence; not population prevalence."
+                ],
+            },
             "support_refs": [
                 {
                     "family": "reddit_forum",
@@ -401,7 +439,7 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
                 "axis_id": "packaging_reliability",
                 "goal": job["goal"],
                 "query": f"Summer Fridays {job['goal']}",
-                "executed_at": "2026-08-02T00:04:00+00:00",
+                "executed_at": "2026-08-02T00:09:00+00:00",
                 "serp_packet_artifact_ids": ["serp-packet"],
                 "selected_target_ids": job["target_ids"],
             }
@@ -1479,7 +1517,26 @@ def test_consumer_brand_v2_nonconsumer_external_units_do_not_supply_support(
             "contribution": "sharpens",
             "choice": "conditional",
         }
-        for index in range(3)
+            for index in range(3)
+        ]
+    ledger["product_axes"][0]["decision_usefulness"][
+        "decision_bearing_support_refs"
+    ] = [
+        {
+            "family": "reddit_forum",
+            "unit_id": "thread-0",
+            "role": "behavior_or_purchase_consequence",
+        },
+        {
+            "family": "reddit_forum",
+            "unit_id": "thread-1",
+            "role": "counterevidence",
+        },
+        {
+            "family": "external_context",
+            "unit_id": "outside-0",
+            "role": "customer_tension",
+        },
     ]
     for row in ledger["families"]["external_context"]["units"][:3]:
         row["source_type"] = source_type
@@ -1518,6 +1575,25 @@ def test_consumer_brand_v2_independent_editorial_origins_supply_support(
             "choice": "conditional",
         }
         for index in range(3)
+    ]
+    ledger["product_axes"][0]["decision_usefulness"][
+        "decision_bearing_support_refs"
+    ] = [
+        {
+            "family": "reddit_forum",
+            "unit_id": "thread-0",
+            "role": "behavior_or_purchase_consequence",
+        },
+        {
+            "family": "reddit_forum",
+            "unit_id": "thread-1",
+            "role": "counterevidence",
+        },
+        {
+            "family": "external_context",
+            "unit_id": "outside-0",
+            "role": "customer_tension",
+        },
     ]
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     seal["evidence_depth_ledger"] = {
@@ -2223,16 +2299,122 @@ def test_consumer_brand_requires_high_yield_families_before_phase2(
     reference = _consumer_depth_ledger(tmp_path)
     ledger_path = tmp_path / reference["locator"]
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-    family = next(
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    for job in search["jobs"]:
+        job["executed_at"] = "2026-08-02T00:04:00+00:00"
+    search_path.write_text(json.dumps(search, indent=2) + "\n", encoding="utf-8")
+    next(
         row
-        for row in ledger["reddit_candidate_frontier"]["query_families"]
-        if row["family_id"] == "family-balanced"
-    )
-    family["family_role"] = "phase2"
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "phase2-search"
+    )["sha256"] = _artifact_hash(search_path)
     _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
+    assert "mandatory_high_yield_query_family_not_pre_phase2" in findings
+
+
+def test_consumer_brand_accepts_exact_historical_order_migration_exception(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    for job in search["jobs"]:
+        job["executed_at"] = "2026-08-02T00:04:00+00:00"
+    search_path.write_text(json.dumps(search, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "phase2-search"
+    )["sha256"] = _artifact_hash(search_path)
+    ledger["reddit_candidate_frontier"]["execution_order_exception"] = {
+        "exception_type": "pre_contract_historical_run",
+        "cycle_id": ledger["cycle_id"],
+        "phase2_started_at": "2026-08-02T00:04:00+00:00",
+        "mandatory_families_completed_at": "2026-08-02T00:08:00+00:00",
+        "future_runs_covered": False,
+        "reason": (
+            "This dogfood run began before the mandatory-family ordering "
+            "contract was adopted; the observed order remains explicit."
+        ),
+    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_consumer_brand_rejects_inexact_order_migration_exception(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    for job in search["jobs"]:
+        job["executed_at"] = "2026-08-02T00:04:00+00:00"
+    search_path.write_text(json.dumps(search, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "phase2-search"
+    )["sha256"] = _artifact_hash(search_path)
+    ledger["reddit_candidate_frontier"]["execution_order_exception"] = {
+        "exception_type": "pre_contract_historical_run",
+        "cycle_id": "another-cycle",
+        "phase2_started_at": "2026-08-02T00:04:00+00:00",
+        "mandatory_families_completed_at": "2026-08-02T00:08:00+00:00",
+        "future_runs_covered": False,
+        "reason": "Wrong cycle must not waive actual ordering.",
+    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert "invalid_reddit_execution_order_exception" in _validate(
+        tmp_path, _make_passing(seal)
+    )
+
+
+def test_consumer_brand_rejects_order_exception_after_contract_adoption(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    for job in search["jobs"]:
+        job["executed_at"] = "2026-08-05T00:04:00+00:00"
+    search_path.write_text(json.dumps(search, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "phase2-search"
+    )["sha256"] = _artifact_hash(search_path)
+    for row in ledger["reddit_candidate_frontier"]["discovery_jobs"]:
+        row["executed_at"] = row["executed_at"].replace(
+            "2026-08-02T", "2026-08-05T"
+        )
+    ledger["reddit_candidate_frontier"]["execution_order_exception"] = {
+        "exception_type": "pre_contract_historical_run",
+        "cycle_id": ledger["cycle_id"],
+        "phase2_started_at": "2026-08-05T00:04:00+00:00",
+        "mandatory_families_completed_at": "2026-08-05T00:08:00+00:00",
+        "future_runs_covered": False,
+        "reason": "A run executed after adoption must not reuse the waiver.",
+    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "invalid_reddit_execution_order_exception" in findings
     assert "mandatory_high_yield_query_family_not_pre_phase2" in findings
 
 
@@ -2349,6 +2531,14 @@ def test_consumer_brand_v4_accepts_source_limited_decision_mature_axis(
         "observed_usable_units": 1,
         "reason": "All planned high-yield and frontier families were terminal.",
     }
+    axis["decision_usefulness"]["status"] = "source_exhausted_but_weak"
+    axis["decision_usefulness"]["decision_bearing_support_refs"] = [
+        {
+            "family": "reddit_forum",
+            "unit_id": "thread-0",
+            "role": "customer_tension",
+        }
+    ]
     _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert _validate(tmp_path, _make_passing(seal)) == []
@@ -2372,10 +2562,83 @@ def test_consumer_brand_v4_rejects_source_limited_strong_claim_ceiling(
         "observed_usable_units": 1,
         "reason": "All planned high-yield and frontier families were terminal.",
     }
+    axis["decision_usefulness"]["status"] = "source_exhausted_but_weak"
+    axis["decision_usefulness"]["decision_bearing_support_refs"] = [
+        {
+            "family": "reddit_forum",
+            "unit_id": "thread-0",
+            "role": "customer_tension",
+        }
+    ]
     _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert "source_limited_axis_overclaims:packaging_reliability" in _validate(
         tmp_path, _make_passing(seal)
+    )
+
+
+def test_consumer_brand_decision_mature_axis_requires_decision_usefulness(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0].pop("decision_usefulness")
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert "missing_product_axis_decision_usefulness:packaging_reliability" in (
+        _validate(tmp_path, _make_passing(seal))
+    )
+
+
+def test_consumer_brand_decision_usefulness_requires_competitive_decision(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["decision_usefulness"]["competitive_decision"] = ""
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert "missing_product_axis_competitive_decision:packaging_reliability" in (
+        _validate(tmp_path, _make_passing(seal))
+    )
+
+
+def test_consumer_brand_decision_usefulness_refs_must_resolve_to_axis_support(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    refs = ledger["product_axes"][0]["decision_usefulness"][
+        "decision_bearing_support_refs"
+    ]
+    refs[0]["unit_id"] = "not-axis-support"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert "unresolved_product_axis_decision_support_ref:packaging_reliability" in (
+        _validate(tmp_path, _make_passing(seal))
+    )
+
+
+def test_consumer_brand_evidence_supported_axis_must_be_decision_useful(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["decision_usefulness"]["status"] = (
+        "evidence_covered_but_not_decision_useful"
+    )
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert "evidence_supported_axis_not_decision_useful:packaging_reliability" in (
+        _validate(tmp_path, _make_passing(seal))
     )
 
 
@@ -2467,6 +2730,7 @@ def test_consumer_brand_blocked_seal_reports_open_axis_without_findings(
         "closure_basis",
         "claim_ceiling",
         "decision_frontier_family_ids",
+        "decision_usefulness",
     ):
         axis.pop(field, None)
     ledger["closure"]["decision_frontier"] = {

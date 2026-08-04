@@ -247,6 +247,20 @@ authority. Fewer than 40 Reddit/forum threads additionally requires the explicit
 floor exception after every selected target and planned family is terminal.
 Forty never closes a materially open axis.
 
+Decision maturity also requires a compact `decision_usefulness` block on the
+existing product-axis ledger row; do not create a parallel score or report. The
+block records `status`, the customer tension, segment/condition, behavior or
+purchase consequence, competitor destination, strongest counterevidence, the
+competitive decision that changes, decision-bearing support references, and
+limitations. `evidence_supported` may close only as `decision_useful` or
+`strategically_material`. `route_bounded_source_exhaustion` closes as
+`source_exhausted_but_weak`: it is decision-mature because the selected routes
+are exhausted, not because the sparse evidence licenses a strong attack or
+defend claim. `evidence_covered_but_not_decision_useful` remains open for a
+passing seal. Decision-bearing references must already be valid support
+references for that axis; the validator proves shape and traceability, while
+human review judges whether the synthesis is strategically warranted.
+
 Call this terminal boundary the **decision frontier**. Do not call it a value
 frontier: `value` remains the customer-facing product proposition (benefit,
 quantity, durability, and performance for price). Do not call it a discovery
@@ -258,7 +272,13 @@ behavior/consequence/displacement; exact hero-product names without the brand;
 and condition/post-use. Community-diversity probing is conditional on observed
 concentration. Every family records kind, role, axis scope, planned time, jobs,
 and terminal status; job `executed_at` timestamps prove actual family order,
-while `planned_at` remains planning lineage. Every batch records useful-thread
+while `planned_at` remains planning lineage. The validator compares mandatory
+family completion with the actual hash-pinned Phase 2 search-job timestamps,
+not a self-declared query-family role. A run that predates this ordering rule
+may preserve one exact, run-scoped `pre_contract_historical_run` exception with
+the observed boundary timestamps, matching cycle ID, reason, and
+`future_runs_covered: false`; the exception records the defect and never becomes
+a reusable waiver. Every batch records useful-thread
 yield separately from structured material additions. The validator reconciles
 the family, job, artifact, candidate, and batch accounting rather than accepting
 prose closure.
@@ -1036,6 +1056,60 @@ If the owner accepts this option, the next authorized step is a
 prompt-orchestrated durable signal-board prompt that references this packet and
 the current classifier/proof boundaries. If the owner does not accept it, no
 prompt artifact or implementation should be created from the temp file.
+
+## Direction Change Propagation — Axis Decision Usefulness
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Consumer-brand Phase A decision maturity now requires an axis-local,
+    traceable decision-usefulness synthesis in the existing evidence ledger;
+    evidence strength alone cannot close an axis. Actual Phase 2 timestamps,
+    rather than query-family labels, enforce the mandatory-family ordering,
+    with only an exact run-scoped historical migration exception.
+  trigger: validation_philosophy
+  related_triggers: [workflow_authority, output_authority]
+  controlling_sources_updated:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/commission_signal_board/README.md
+    - forseti-harness/runners/run_phase_acquisition_seal_validation.py
+    - forseti-harness/tests/unit/test_phase_acquisition_seal_validation.py
+  downstream_surfaces_checked:
+    - AGENTS.md
+    - .agents/workflow-overlay/README.md
+    - .agents/workflow-overlay/source-of-truth.md
+    - .agents/workflow-overlay/validation-gates.md
+    - docs/workflows/forseti_repo_map_v0.md
+    - docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
+    - docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
+    - docs/workflows/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/acquisition_seal.md
+  intentionally_not_updated:
+    - path: AGENTS.md and .agents/workflow-overlay/
+      reason: >
+        Project-wide workflow and validation mechanics are unchanged; this is
+        the consumer-brand Phase A domain contract they already route to.
+    - path: docs/workflows/forseti_repo_map_v0.md
+      reason: No canonical path, owner, or retrieval route changed.
+    - path: historical completed consumer-brand runs
+      reason: >
+        The contract is forward-facing. Only the still-unlanded Summer Fridays
+        p11r7 dogfood is regenerated to exercise it.
+  stale_language_search: >
+    rg -n "decision_usefulness|evidence_covered_but_not_decision_useful|source_exhausted_but_weak|mandatory_high_yield_query_family_not_pre_phase2"
+    forseti/product/spines/commission_signal_board forseti-harness
+  stale_language_search_result: >
+    Executed 2026-08-04 after implementation. Hits are the owning authority,
+    canonical prompt, renderer, validator, and focused tests. No checked live
+    surface still treats evidence strength alone as decision maturity, and the
+    Phase 2 ordering finding now comes from actual pinned search timestamps.
+  non_claims:
+    - not proof that an axis synthesis is strategically correct
+    - not population prevalence
+    - not a new evidence family, scoring system, or per-run report
+    - not authorization to acquire sources or start Deliver
+```
 
 ## Direction Change Propagation — Understanding Scope Default
 

@@ -2842,14 +2842,14 @@ phase_acquisition_seal:
     unrun_job_ids: []
     unrun_count: 0
     terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-    terminal_artifact_sha256: 5e99caceca8625218205a3b1e1ca2ed6edca74e1626f0ee2ddbc37979abf3dd3
+    terminal_artifact_sha256: edb172f4732a1098bf8ccfae5cb8494b6e98fb9aade1244e811c22cf233b009d
   serp_phase2_decision_receipt:
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
     sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-    sha256: 4a97e1b15b9e774395e16cab9bc709c2d5c0482d23bd4f473cb2e68f0cfceee1
+    sha256: 4454b0157fbbd47838ef6e55de1ec01e9c0c84364402ffbe4ff719891b223d2f
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -2860,18 +2860,18 @@ phase_acquisition_seal:
       - parent acquisition provenance changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-      sha256: 5e99caceca8625218205a3b1e1ca2ed6edca74e1626f0ee2ddbc37979abf3dd3
+      sha256: edb172f4732a1098bf8ccfae5cb8494b6e98fb9aade1244e811c22cf233b009d
       invalid_if:
       - artifact hash changes
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-      sha256: 4a97e1b15b9e774395e16cab9bc709c2d5c0482d23bd4f473cb2e68f0cfceee1
+      sha256: 4454b0157fbbd47838ef6e55de1ec01e9c0c84364402ffbe4ff719891b223d2f
       invalid_if:
       - artifact hash changes
       - frontier accounting or source-native coding changes
       - Deliver artifact appears
-  sealed_at: '2026-08-04T12:57:05.676769+00:00'
+  sealed_at: '2026-08-04T14:39:26.758724+00:00'
 ```
 
 ## Seal decision

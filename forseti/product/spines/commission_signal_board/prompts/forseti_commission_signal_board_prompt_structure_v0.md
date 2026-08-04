@@ -832,7 +832,14 @@ competitive-action addition; reopen only affected and justified adjacent axes.
 
 Every material axis must be decision-mature through either strong evidence with
 a strong qualitative ceiling or route-bounded source exhaustion with a bounded
-observation ceiling. It names two later live continuation families of different
+observation ceiling. On that same axis row, write the compact
+`decision_usefulness` synthesis required by the authority: customer tension,
+decision effects, strongest counterevidence, competitive decision,
+decision-bearing support references, status, and limitations. Evidence-rich
+closure requires `decision_useful` or `strategically_material`; route-bounded
+sparse closure uses `source_exhausted_but_weak` and may not borrow strong
+attack/defend authority. `evidence_covered_but_not_decision_useful` cannot pass.
+It names two later live continuation families of different
 kinds, queries, and artifacts with no material addition affecting that axis;
 those families may still add useful threads. A search result remains a pointer:
 `captured` requires the source-native body and a ledgered evidence unit, and a
