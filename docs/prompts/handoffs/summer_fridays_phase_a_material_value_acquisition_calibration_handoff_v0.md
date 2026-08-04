@@ -9,8 +9,8 @@ use_when:
   - Forseti needs a calibrated future Phase A acquisition and stopping route grounded in the observed run.
 authority_boundary: retrieval_only
 open_next:
-  - C:\tmp\forseti-summer-fridays-understanding-p11r7-20260802\work\phase_a_acquisition_chronology_and_search_log.md
-  - C:\tmp\forseti-summer-fridays-understanding-p11r7-20260802\work\phase_a_fresh_eyes_evidence_pack.json
+  - C:\tmp\forseti-summer-fridays-understanding-p11r7-20260802\work\phase_a_acquisition_chronology_and_search_log.md # nonresolving: operator-local evidence path outside the repository
+  - C:\tmp\forseti-summer-fridays-understanding-p11r7-20260802\work\phase_a_fresh_eyes_evidence_pack.json # nonresolving: operator-local evidence path outside the repository
 branch_or_commit: codex/sf-p11r7-frontier-acquire-20260802 @ b83c563afa542cda1b7c0eec710720ef7dc122ad
 stale_if: The evidence-pack hashes, target worktree HEAD, allowed dirty-file set, acquisition status, or seal/Deliver state differs from the Load Contract below.
 ```
