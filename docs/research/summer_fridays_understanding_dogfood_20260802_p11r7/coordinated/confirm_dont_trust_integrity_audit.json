@@ -1,0 +1,97 @@
+{
+  "schema_version": "confirm_dont_trust_integrity_audit_v1",
+  "cycle_id": "summer_fridays_understanding_p11r7_20260802",
+  "audited_at": "2026-08-04T12:57:24.542439+00:00",
+  "method": "Fresh-read every manifest under the named raw roots, then verify every declared preserved file by exact stored-byte size and SHA-256.",
+  "roots": [
+    {
+      "root": "C:\\tmp\\forseti-sf-review-corpus-completion-20260725-p07-r3",
+      "exists": true,
+      "manifest_count": 2,
+      "preserved_file_count": 4,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data",
+      "exists": true,
+      "manifest_count": 158,
+      "preserved_file_count": 556,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data",
+      "exists": true,
+      "manifest_count": 33,
+      "preserved_file_count": 98,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-phase2-native-return-20260728",
+      "exists": true,
+      "manifest_count": 11,
+      "preserved_file_count": 24,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-sf-reddit-anchor-20260727",
+      "exists": true,
+      "manifest_count": 1,
+      "preserved_file_count": 2,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731",
+      "exists": true,
+      "manifest_count": 232,
+      "preserved_file_count": 933,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r1-20260801",
+      "exists": true,
+      "manifest_count": 11,
+      "preserved_file_count": 40,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801",
+      "exists": true,
+      "manifest_count": 11,
+      "preserved_file_count": 19,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r3-20260801",
+      "exists": true,
+      "manifest_count": 5,
+      "preserved_file_count": 9,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r4-20260801",
+      "exists": true,
+      "manifest_count": 17,
+      "preserved_file_count": 34,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802",
+      "exists": true,
+      "manifest_count": 27,
+      "preserved_file_count": 80,
+      "errors": []
+    },
+    {
+      "root": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802",
+      "exists": true,
+      "manifest_count": 1224,
+      "preserved_file_count": 3201,
+      "errors": []
+    }
+  ],
+  "total_manifest_count": 1732,
+  "total_preserved_file_count": 5000,
+  "error_count": 0,
+  "errors": [],
+  "result": "PASS"
+}

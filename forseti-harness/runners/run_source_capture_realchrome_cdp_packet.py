@@ -24,6 +24,7 @@ fully unattended.
 from __future__ import annotations
 
 import argparse
+import base64
 import re
 import shutil
 import sys
@@ -127,6 +128,50 @@ class RealChromeCDPUnavailable(RuntimeError):
     pass
 
 
+def _capture_viewport_screenshot(*, page, context, timeout_ms: float, warnings: list[str]) -> bytes:
+    """Capture a real viewport PNG, bypassing Playwright's font wait if needed."""
+
+    try:
+        screenshot = page.screenshot(type="png", full_page=False, timeout=timeout_ms)
+    except Exception as playwright_error:
+        session = None
+        try:
+            session = context.new_cdp_session(page)
+            response = session.send(
+                "Page.captureScreenshot",
+                {
+                    "format": "png",
+                    "fromSurface": True,
+                    "captureBeyondViewport": False,
+                },
+            )
+            encoded = response.get("data") if isinstance(response, dict) else None
+            if not isinstance(encoded, str) or not encoded:
+                raise RuntimeError("raw CDP screenshot returned no data")
+            screenshot = base64.b64decode(encoded, validate=True)
+            if not screenshot.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise RuntimeError("raw CDP screenshot was not a PNG")
+        except Exception as cdp_error:
+            raise RealChromeCDPUnavailable(
+                "Playwright viewport screenshot failed and the raw CDP fallback "
+                f"also failed: {type(playwright_error).__name__}: {playwright_error}; "
+                f"{type(cdp_error).__name__}: {cdp_error}"
+            ) from cdp_error
+        finally:
+            if session is not None:
+                try:
+                    session.detach()
+                except Exception:
+                    pass
+        warnings.append(
+            "playwright_viewport_screenshot_failed_raw_cdp_fallback_used: "
+            f"{type(playwright_error).__name__}"
+        )
+    if not isinstance(screenshot, bytes) or not screenshot:
+        raise RealChromeCDPUnavailable("viewport screenshot returned no bytes")
+    return screenshot
+
+
 def _navigate_target(
     *,
     page,
@@ -134,7 +179,12 @@ def _navigate_target(
     timeout_ms: float,
     persistent_tab_marker: str | None,
 ):
-    """Navigate and restore the marker after a cross-origin document swap."""
+    """Navigate if needed and restore the marker after a document swap."""
+    if persistent_tab_marker is not None and getattr(page, "url", None) == url:
+        page.evaluate(
+            "(marker) => { window.name = marker; }", persistent_tab_marker
+        )
+        return None
     response = page.goto(url, wait_until="load", timeout=timeout_ms)
     if persistent_tab_marker is not None:
         page.evaluate(
@@ -276,7 +326,16 @@ class _LiveRealChromeCDPEngine:
                     except Exception as exc:
                         visible_text = ""
                         warnings.append(f"visible_text extraction failed: {exc}")
-                    screenshot_png = page.screenshot(type="png", full_page=False, timeout=timeout_ms)
+                    screenshot_png = _capture_viewport_screenshot(
+                        page=page,
+                        context=context,
+                        timeout_ms=(
+                            min(timeout_ms, 5_000)
+                            if persistent_tab_marker is not None
+                            else timeout_ms
+                        ),
+                        warnings=warnings,
+                    )
                     final_url = page.url
                     title = page.title()
                 except Exception as exc:
