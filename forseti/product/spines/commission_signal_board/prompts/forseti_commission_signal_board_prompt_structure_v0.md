@@ -849,6 +849,15 @@ resolve every material follow-up through the owning Scanning/Capture route
 before sealing. Read the authority for the exact schema and hybrid strength
 bars; do not reconstruct them from this prompt.
 
+Before accepting the completed Phase A seal for Deliver or landing it, run the
+authority's final delegated semantic review-and-patch. Require the reviewer to
+read every decision-bearing reference in its source-native body and two
+independent spot checks per material axis; verify local subject anchoring,
+axis/role fit, competitor-event attribution, and genuine counterevidence. Use
+the authority's affected-axis-first escalation rule rather than defaulting to a
+full-corpus reread. Revalidate any bounded patch against the seal, and require
+separate Chief Architect adjudication before keeping it.
+
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.
 Owned surfaces remain canonical for company portfolio and franchise expression.

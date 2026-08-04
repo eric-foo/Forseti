@@ -125,6 +125,13 @@ decision change affecting it; useful threads remain visible and need not be
 zero. The prompt-structure authority owns the exact fields, decision-frontier
 rule, and hybrid strength bars.
 
+Before a broad consumer-brand Phase A seal is accepted for Deliver or landed,
+its final delegated review reads every decision-bearing source-native citation
+and two independent spot checks per material axis. It checks local subject
+anchoring, axis/role fit, competitor-event attribution, and counterevidence,
+then expands only the affected axis unless the authority's systemic-failure
+threshold is met; a full-corpus reread is not the default.
+
 When both turns are explicitly commissioned, two turns are the normal budget,
 not permission to convert a blocked acquisition into apparent completion. The
 playbook owns the full contract and the six non-numeric outcome signals.

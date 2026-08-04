@@ -261,6 +261,24 @@ passing seal. Decision-bearing references must already be valid support
 references for that axis; the validator proves shape and traceability, while
 human review judges whether the synthesis is strategically warranted.
 
+Before a broad consumer-brand Phase A seal is accepted for Deliver or landed,
+commission the final delegated review-and-patch under the project-owned
+delegated-review convention. The reviewer reads every
+`decision_bearing_support_ref` in its source-native body and verifies that the
+subject product or brand is locally anchored, the cited body supports the
+assigned axis and role, alternative-product returns/repurchases/preferences are
+not attributed to the subject, and the named counterevidence genuinely tests
+the competitive decision. The reviewer then reads two independent
+source-native spot checks per material axis from outside that axis's cited
+decision-bearing bundle. One load-bearing mismatch expands only the affected
+axis to a stratified ten-reference sample. Expand beyond that axis only when at
+least two of those ten references fail load-bearing checks, the mismatch cannot
+be resolved, or the same defect class appears across at least three axes. Full
+corpus rereading is not the default. Any bounded patch must be revalidated
+against the acquisition seal and separately adjudicated by the Chief Architect.
+This semantic review catches valid-but-misattributed citations that mechanical
+shape and hash checks cannot.
+
 Call this terminal boundary the **decision frontier**. Do not call it a value
 frontier: `value` remains the customer-facing product proposition (benefit,
 quantity, durability, and performance for price). Do not call it a discovery
@@ -1109,6 +1127,55 @@ direction_change_propagation:
     - not population prevalence
     - not a new evidence family, scoring system, or per-run report
     - not authorization to acquire sources or start Deliver
+```
+
+## Direction Change Propagation — Phase A Semantic Source Review
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Broad consumer-brand Phase A now requires a bounded final delegated
+    semantic review of every decision-bearing citation plus two independent
+    source-native spot checks per material axis. The review verifies local
+    subject anchoring, axis/role fit, competitor-event attribution, and genuine
+    counterevidence, with affected-axis-first escalation rather than a default
+    full-corpus reread.
+  trigger: validation_philosophy
+  related_triggers: [workflow_authority, output_authority]
+  controlling_sources_updated:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/commission_signal_board/README.md
+  downstream_surfaces_checked:
+    - .agents/workflow-overlay/delegated-review-patch.md
+    - .agents/workflow-overlay/prompt-orchestration.md
+    - .agents/workflow-overlay/review-lanes.md
+    - docs/prompts/templates/review/delegated_review_return_adjudication_v0.md
+    - forseti-harness/runners/run_phase_acquisition_seal_validation.py
+  intentionally_not_updated:
+    - path: .agents/workflow-overlay/
+      reason: >
+        Generic delegated-review mechanics, vendor separation, patch bounds,
+        and Chief Architect adjudication are unchanged; the new sampling and
+        attribution checks are consumer-brand Phase A domain requirements.
+    - path: forseti-harness/runners/run_phase_acquisition_seal_validation.py
+      reason: >
+        Source-body meaning and competitor attribution require semantic review;
+        the validator continues to enforce shape, hashes, and reference
+        resolution without pretending to judge prose meaning.
+    - path: docs/prompts/templates/review/delegated_review_return_adjudication_v0.md
+      reason: >
+        Return adjudication mechanics are unchanged; the Phase A commission,
+        not the generic return template, owns what evidence the delegate reads.
+  stale_language_search: >
+    rg -n "decision_bearing_support_ref|source-native spot checks|Full corpus rereading|competitor-event attribution"
+    forseti/product/spines/commission_signal_board
+  non_claims:
+    - not a requirement to reread the full captured corpus
+    - not mechanical proof of semantic correctness
+    - not population prevalence or buyer proof
+    - not authorization to start Deliver
 ```
 
 ## Direction Change Propagation — Understanding Scope Default
