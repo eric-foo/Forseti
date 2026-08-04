@@ -812,7 +812,7 @@ strongest delights, and mixed axes; produce the hash-pinned eligible-review
 coding view with axis-specific choice outcomes; comment-code community support;
 and classify social and external relationship before awarding distinct-origin
 independent support. `CO3` first runs the proven high-yield Reddit query
-families: balanced brand-plus-axis, behavior/consequence/displacement,
+families in this order: balanced brand-plus-axis, behavior/consequence/displacement,
 brand-less exact hero-product names, and condition/post-use. Add a
 community-diversity family only when concentration is observed. SERP discovery
 and source-native capture may pipeline, but family and candidate accounting stay

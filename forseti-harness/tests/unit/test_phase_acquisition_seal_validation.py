@@ -17,6 +17,7 @@ from runners.run_phase_acquisition_seal_validation import (
     PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION,
     SEAL_VERSION,
     _artifact_hash,
+    _validate_reddit_candidate_frontier,
     main,
     validate_phase_acquisition_seal,
 )
@@ -2235,6 +2236,26 @@ def test_consumer_brand_requires_high_yield_families_before_phase2(
     assert "mandatory_high_yield_query_family_not_pre_phase2" in findings
 
 
+def test_consumer_brand_requires_high_yield_family_execution_order(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    job = next(
+        row
+        for row in ledger["reddit_candidate_frontier"]["discovery_jobs"]
+        if row["job_id"] == "RFD-M2-001"
+    )
+    job["executed_at"] = "2026-08-02T00:04:00+00:00"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert "mandatory_high_yield_query_family_out_of_order" in _validate(
+        tmp_path, _make_passing(seal)
+    )
+
+
 def test_consumer_brand_decision_frontier_is_chronological(
     tmp_path: Path,
 ) -> None:
@@ -2379,6 +2400,341 @@ def test_consumer_brand_v4_previous_contract_requires_explicit_audit_flag(
         repo_root=tmp_path,
         allow_legacy_consumer_v2=True,
     ) == []
+
+
+def test_consumer_brand_v2_audit_still_enforces_final_sweep_batch_contract(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["schema_version"] = PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    final_batch = ledger["closure"]["batches"][-1]
+    final_batch["new_customer_segments"] = 2
+    final_batch["batch_kind"] = "lake_reuse"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+    seal_path = _write_seal(tmp_path, _make_passing(seal))
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=seal_path,
+        repo_root=tmp_path,
+        allow_legacy_consumer_v2=True,
+    )
+
+    assert "saturation_batch_nonzero_new_customer_segments" in findings
+    assert "saturation_batch_not_live_acquisition" in findings
+
+
+def test_consumer_brand_frontier_family_unknown_job_reports_finding(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    family = next(
+        row
+        for row in ledger["reddit_candidate_frontier"]["query_families"]
+        if row["family_id"] == "family-final-b"
+    )
+    family["job_ids"] = ["RFD-B-001", "RFD-GHOST"]
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "invalid_reddit_query_family_jobs" in findings
+
+
+def test_consumer_brand_blocked_seal_reports_open_axis_without_findings(
+    tmp_path: Path,
+) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+    seal.update(
+        {
+            "acquisition_gate": "blocked",
+            "seal_state": "BLOCKED_ACQUISITION_INCOMPLETE",
+            "deliver_allowed": False,
+        }
+    )
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    axis = ledger["product_axes"][0]
+    axis["decision_maturity"] = "open"
+    for field in (
+        "closure_basis",
+        "claim_ceiling",
+        "decision_frontier_family_ids",
+    ):
+        axis.pop(field, None)
+    ledger["closure"]["decision_frontier"] = {
+        "status": "open",
+        "decision_mature_axis_ids": [],
+        "open_axis_ids": ["packaging_reliability"],
+    }
+    ledger["closure"]["conclusion"] = "incomplete"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert _validate(tmp_path, seal) == []
+
+
+def test_consumer_brand_open_axis_rejects_stale_closure_fields(
+    tmp_path: Path,
+) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+    seal.update(
+        {
+            "acquisition_gate": "blocked",
+            "seal_state": "BLOCKED_ACQUISITION_INCOMPLETE",
+            "deliver_allowed": False,
+        }
+    )
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    axis = ledger["product_axes"][0]
+    axis["decision_maturity"] = "open"
+    ledger["closure"]["decision_frontier"] = {
+        "status": "open",
+        "decision_mature_axis_ids": [],
+        "open_axis_ids": ["packaging_reliability"],
+    }
+    ledger["closure"]["conclusion"] = "incomplete"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, seal)
+
+    assert "open_product_axis_has_closure_claim:packaging_reliability" in findings
+    assert (
+        "open_product_axis_has_decision_frontier:packaging_reliability" in findings
+    )
+
+
+def test_consumer_brand_passing_seal_still_rejects_open_axis(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    axis = ledger["product_axes"][0]
+    axis["decision_maturity"] = "open"
+    for field in (
+        "closure_basis",
+        "claim_ceiling",
+        "decision_frontier_family_ids",
+    ):
+        axis.pop(field, None)
+    ledger["closure"]["decision_frontier"] = {
+        "status": "open",
+        "decision_mature_axis_ids": [],
+        "open_axis_ids": ["packaging_reliability"],
+    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "open_product_axis_decision_frontier:packaging_reliability" in findings
+    assert "phase_a_decision_frontier_not_mature" in findings
+    assert "phase_a_decision_frontier_has_open_axes" in findings
+
+
+def _multi_axis_frontier_fixture(
+    tmp_path: Path,
+) -> tuple[dict, dict[str, Path], dict[str, str]]:
+    plan = [
+        ("m1", "balanced_axis_baseline", "mandatory_high_yield", "01"),
+        ("m2", "behavior_consequence_displacement", "mandatory_high_yield", "02"),
+        ("m3", "brandless_exact_product", "mandatory_high_yield", "03"),
+        ("m4", "condition_post_use", "mandatory_high_yield", "04"),
+        ("c1", "late_pain_stress_test", "continuation", "05"),
+        ("c2", "late_counterevidence_test", "continuation", "06"),
+        ("c3", "late_segment_probe", "continuation", "07"),
+        ("c4", "late_alternative_probe", "continuation", "08"),
+    ]
+    discovery_jobs: list[dict] = []
+    query_families: list[dict] = []
+    batches: list[dict] = []
+    artifacts: dict[str, Path] = {}
+    route_jobs: dict[str, str] = {}
+    for index, (family_id, kind, role, minute) in enumerate(plan):
+        job_id = f"job-{family_id}"
+        artifact_id = f"packet-{family_id}"
+        artifact_path = tmp_path / f"{artifact_id}.json"
+        artifact_path.write_text('{"results": []}\n', encoding="utf-8")
+        artifacts[artifact_id] = artifact_path
+        route_jobs[job_id] = "completed"
+        discovery_jobs.append(
+            {
+                "job_id": job_id,
+                "axis_id": "axis_a" if index % 2 == 0 else "axis_b",
+                "query": f"summer fridays {family_id} query",
+                "executed_at": f"2026-08-02T00:{minute}:00+00:00",
+                "artifact_ids": [artifact_id],
+                "candidate_thread_ids": (
+                    ["thread-seed"] if family_id == "m1" else []
+                ),
+            }
+        )
+        query_families.append(
+            {
+                "family_id": family_id,
+                "family_kind": kind,
+                "family_role": role,
+                "scope_axis_ids": ["axis_a", "axis_b"],
+                "job_ids": [job_id],
+                "planned_at": f"2026-08-02T00:{minute}:00+00:00",
+                "status": "completed",
+            }
+        )
+        batches.append(
+            {
+                "batch_id": f"batch-{family_id}",
+                "query_family_id": family_id,
+                "job_ids": [job_id],
+                "batch_kind": "live_acquisition",
+                "new_usable_reddit_threads": 0,
+                "material_additions": [],
+            }
+        )
+    ledger = {
+        "product_axes": [
+            {
+                "axis_id": "axis_a",
+                "disposition": "material",
+                "decision_frontier_family_ids": ["c1", "c2"],
+            },
+            {
+                "axis_id": "axis_b",
+                "disposition": "material",
+                "decision_frontier_family_ids": ["c3", "c4"],
+            },
+        ],
+        "families": {"reddit_forum": {"threads": []}},
+        "reddit_candidate_frontier": {
+            "status": "source_exhausted",
+            "reason": "all planned families terminal",
+            "discovery_jobs": discovery_jobs,
+            "query_families": query_families,
+            "candidates": [
+                {
+                    "thread_id": "thread-seed",
+                    "discovered_by_job_id": "job-m1",
+                    "terminal_state": "dominated",
+                    "reason": "title-only noise",
+                }
+            ],
+        },
+        "closure": {"batches": batches},
+    }
+    return ledger, artifacts, route_jobs
+
+
+def _frontier_findings(
+    ledger: dict, artifacts: dict[str, Path], route_jobs: dict[str, str]
+) -> list[str]:
+    findings: list[str] = []
+    _validate_reddit_candidate_frontier(
+        ledger,
+        artifacts=artifacts,
+        route_jobs=route_jobs,
+        require_complete=True,
+        decision_contract=True,
+        findings=findings,
+    )
+    return findings
+
+
+def _multi_axis_batch(ledger: dict, family_id: str) -> dict:
+    return next(
+        row
+        for row in ledger["closure"]["batches"]
+        if row["query_family_id"] == family_id
+    )
+
+
+def test_multi_axis_two_axis_frontier_closes_cleanly(tmp_path: Path) -> None:
+    ledger, artifacts, route_jobs = _multi_axis_frontier_fixture(tmp_path)
+
+    assert _frontier_findings(ledger, artifacts, route_jobs) == []
+
+
+def test_multi_axis_early_addition_on_other_axis_does_not_dirty_frontier(
+    tmp_path: Path,
+) -> None:
+    ledger, artifacts, route_jobs = _multi_axis_frontier_fixture(tmp_path)
+    _multi_axis_batch(ledger, "c1")["material_additions"] = [
+        {"addition_id": "b-early", "axis_ids": ["axis_b"]}
+    ]
+
+    assert _frontier_findings(ledger, artifacts, route_jobs) == []
+
+
+def test_multi_axis_late_addition_reopens_only_affected_axis(
+    tmp_path: Path,
+) -> None:
+    ledger, artifacts, route_jobs = _multi_axis_frontier_fixture(tmp_path)
+    _multi_axis_batch(ledger, "c3")["material_additions"] = [
+        {"addition_id": "a-late", "axis_ids": ["axis_a"]}
+    ]
+
+    findings = _frontier_findings(ledger, artifacts, route_jobs)
+
+    assert "decision_frontier_precedes_material_addition:axis_a" in findings
+    assert not [finding for finding in findings if finding.endswith(":axis_b")]
+
+
+def test_multi_axis_reset_uses_execution_time_not_planned_time(
+    tmp_path: Path,
+) -> None:
+    ledger, artifacts, route_jobs = _multi_axis_frontier_fixture(tmp_path)
+    family = next(
+        row
+        for row in ledger["reddit_candidate_frontier"]["query_families"]
+        if row["family_id"] == "c3"
+    )
+    family["planned_at"] = "2026-08-02T00:04:30+00:00"
+    _multi_axis_batch(ledger, "c3")["material_additions"] = [
+        {"addition_id": "a-executed-late", "axis_ids": ["axis_a"]}
+    ]
+
+    findings = _frontier_findings(ledger, artifacts, route_jobs)
+
+    assert "decision_frontier_precedes_material_addition:axis_a" in findings
+    assert not [finding for finding in findings if finding.endswith(":axis_b")]
+
+
+def test_multi_axis_addition_inside_own_frontier_family_is_not_dry(
+    tmp_path: Path,
+) -> None:
+    ledger, artifacts, route_jobs = _multi_axis_frontier_fixture(tmp_path)
+    _multi_axis_batch(ledger, "c2")["material_additions"] = [
+        {"addition_id": "a-inside", "axis_ids": ["axis_a"]}
+    ]
+
+    findings = _frontier_findings(ledger, artifacts, route_jobs)
+
+    assert "decision_frontier_family_not_materially_dry:axis_a" in findings
+    assert not [finding for finding in findings if finding.endswith(":axis_b")]
+
+
+def test_multi_axis_frontier_family_must_scope_the_closing_axis(
+    tmp_path: Path,
+) -> None:
+    ledger, artifacts, route_jobs = _multi_axis_frontier_fixture(tmp_path)
+    family = next(
+        row
+        for row in ledger["reddit_candidate_frontier"]["query_families"]
+        if row["family_id"] == "c3"
+    )
+    family["scope_axis_ids"] = ["axis_a"]
+
+    findings = _frontier_findings(ledger, artifacts, route_jobs)
+
+    assert "decision_frontier_family_missing_axis_scope:axis_b" in findings
+    assert not [finding for finding in findings if finding.endswith(":axis_a")]
 
 
 def test_consumer_brand_final_batches_require_usable_thread_accounting(

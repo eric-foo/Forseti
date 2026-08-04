@@ -556,9 +556,10 @@ addition affecting that axis. They may add usable Reddit threads; each batch's
 `new_usable_reddit_threads` is recomputed and reported separately from its typed
 material additions.
 
-Before each continuation query family starts, its job manifest records one short
-round rationale: why another round is warranted and how its query design differs
-from the prior round. The completed Phase A acquisition record renders a
+Before each continuation query family starts, the acquisition-view input records
+one short round rationale: why another round is warranted and how its query
+design differs from the prior round. The renderer requires complete job coverage
+and refuses a query family split across round records. The completed Phase A acquisition record renders a
 deterministic human view from the evidence-depth ledger and community coding:
 the evidence-family scorecard, per-round funnel and yield, per-axis decision
 support, exact query register, and final decision-frontier observation. Search

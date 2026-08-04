@@ -134,12 +134,13 @@ _FRONTIER_CANDIDATE_STATES = {
     "unavailable",
 }
 _QUERY_FAMILY_ROLES = {"mandatory_high_yield", "phase2", "continuation"}
-_MANDATORY_HIGH_YIELD_FAMILY_KINDS = {
+_MANDATORY_HIGH_YIELD_FAMILY_ORDER = (
     "balanced_axis_baseline",
     "behavior_consequence_displacement",
     "brandless_exact_product",
     "condition_post_use",
-}
+)
+_MANDATORY_HIGH_YIELD_FAMILY_KINDS = set(_MANDATORY_HIGH_YIELD_FAMILY_ORDER)
 _MATERIAL_ADDITION_KINDS = {
     "new_axis",
     "tier_change",
@@ -437,8 +438,9 @@ def _validate_understanding_evidence_depth(
         require_complete=valid_pass,
         consumer_brand=consumer_brand,
         current_consumer_contract=current_consumer_brand,
-        material_axes={
-            str(row.get("axis_id"))
+        previous_consumer_contract=previous_consumer_brand,
+        axis_maturity={
+            str(row.get("axis_id")): row.get("decision_maturity")
             for row in ledger.get("product_axes", [])
             if isinstance(row, dict)
             and row.get("disposition") in {"material", "blocked_material"}
@@ -1877,19 +1879,38 @@ def _validate_consumer_brand_product_axes(
             elif require_complete and maturity != "decision_mature":
                 findings.append(f"open_product_axis_decision_frontier:{axis_id}")
                 complete = False
-            if closure_basis not in _AXIS_CLOSURE_BASES:
-                findings.append(f"invalid_product_axis_closure_basis:{axis_id}")
-                complete = False
-            if claim_ceiling not in _AXIS_CLAIM_CEILINGS:
-                findings.append(f"invalid_product_axis_claim_ceiling:{axis_id}")
-                complete = False
-            if (
-                not isinstance(frontier_ids, list)
-                or len(frontier_ids) != 2
-                or any(not isinstance(item, str) or not item for item in frontier_ids)
-                or len(set(frontier_ids)) != 2
-            ):
-                findings.append(f"invalid_product_axis_decision_frontier:{axis_id}")
+            if maturity == "decision_mature":
+                if closure_basis not in _AXIS_CLOSURE_BASES:
+                    findings.append(f"invalid_product_axis_closure_basis:{axis_id}")
+                    complete = False
+                if claim_ceiling not in _AXIS_CLAIM_CEILINGS:
+                    findings.append(f"invalid_product_axis_claim_ceiling:{axis_id}")
+                    complete = False
+                if (
+                    not isinstance(frontier_ids, list)
+                    or len(frontier_ids) != 2
+                    or any(
+                        not isinstance(item, str) or not item
+                        for item in frontier_ids
+                    )
+                    or len(set(frontier_ids)) != 2
+                ):
+                    findings.append(
+                        f"invalid_product_axis_decision_frontier:{axis_id}"
+                    )
+                    complete = False
+            elif maturity == "open":
+                if closure_basis is not None or claim_ceiling is not None:
+                    findings.append(f"open_product_axis_has_closure_claim:{axis_id}")
+                    complete = False
+                if (
+                    frontier_ids is not None
+                    and frontier_ids != []
+                    and frontier_ids != ()
+                ):
+                    findings.append(f"open_product_axis_has_decision_frontier:{axis_id}")
+                    complete = False
+            else:
                 complete = False
 
     retailer_corpora = _retailer_corpus_effective_counts(families)
@@ -2270,6 +2291,7 @@ def _validate_reddit_candidate_frontier(
     discovery_jobs = value.get("discovery_jobs")
     discovery_by_id: dict[str, Mapping[str, Any]] = {}
     discovery_artifacts: dict[str, set[Path]] = {}
+    discovery_executed_at: dict[str, datetime] = {}
     if not isinstance(discovery_jobs, list) or not discovery_jobs:
         findings.append("missing_reddit_frontier_discovery_jobs")
         complete = False
@@ -2301,9 +2323,12 @@ def _validate_reddit_candidate_frontier(
             ).strip():
                 findings.append("missing_frontier_discovery_query")
                 complete = False
-            if _parse_iso_datetime(row.get("executed_at")) is None:
+            executed_at = _parse_iso_datetime(row.get("executed_at"))
+            if executed_at is None:
                 findings.append("invalid_frontier_discovery_executed_at")
                 complete = False
+            else:
+                discovery_executed_at[job_id] = executed_at
             artifact_ids = row.get("artifact_ids")
             paths: set[Path] = set()
             if (
@@ -2341,10 +2366,11 @@ def _validate_reddit_candidate_frontier(
     query_families: dict[str, Mapping[str, Any]] = {}
     family_jobs: dict[str, set[str]] = {}
     family_artifacts: dict[str, set[Path]] = {}
-    family_planned_at: dict[str, datetime] = {}
+    family_started_at: dict[str, datetime] = {}
+    family_completed_at: dict[str, datetime] = {}
     job_family: dict[str, str] = {}
-    mandatory_planned_at: list[datetime] = []
-    phase2_planned_at: list[datetime] = []
+    mandatory_family_ids_by_kind: dict[str, list[str]] = {}
+    phase2_family_ids: list[str] = []
     if decision_contract:
         family_rows = value.get("query_families")
         if not isinstance(family_rows, list) or not family_rows:
@@ -2381,12 +2407,6 @@ def _validate_reddit_candidate_frontier(
             if planned_at is None:
                 findings.append("invalid_reddit_query_family_planned_at")
                 complete = False
-            else:
-                family_planned_at[family_id] = planned_at
-                if family_role == "mandatory_high_yield":
-                    mandatory_planned_at.append(planned_at)
-                elif family_role == "phase2":
-                    phase2_planned_at.append(planned_at)
             scope_axis_ids = family.get("scope_axis_ids")
             if (
                 not isinstance(scope_axis_ids, list)
@@ -2420,6 +2440,22 @@ def _validate_reddit_candidate_frontier(
             family_artifacts[family_id] = set().union(
                 *(discovery_artifacts.get(job_id, set()) for job_id in jobs)
             )
+            execution_times = [
+                discovery_executed_at[job_id]
+                for job_id in jobs
+                if job_id in discovery_executed_at
+            ]
+            if len(execution_times) == len(jobs) and execution_times:
+                family_started_at[family_id] = min(execution_times)
+                family_completed_at[family_id] = max(execution_times)
+            if family_role == "mandatory_high_yield" and isinstance(
+                family_kind, str
+            ):
+                mandatory_family_ids_by_kind.setdefault(family_kind, []).append(
+                    family_id
+                )
+            elif family_role == "phase2":
+                phase2_family_ids.append(family_id)
         if set(job_family) != set(discovery_by_id):
             findings.append("unassigned_reddit_discovery_job_family")
             complete = False
@@ -2431,13 +2467,44 @@ def _validate_reddit_candidate_frontier(
         if not _MANDATORY_HIGH_YIELD_FAMILY_KINDS <= mandatory_kinds:
             findings.append("missing_mandatory_high_yield_query_family")
             complete = False
-        if (
-            mandatory_planned_at
-            and phase2_planned_at
-            and max(mandatory_planned_at) >= min(phase2_planned_at)
-        ):
+        mandatory_completed_at = [
+            family_completed_at[family_id]
+            for family_ids in mandatory_family_ids_by_kind.values()
+            for family_id in family_ids
+            if family_id in family_completed_at
+        ]
+        phase2_started_at = [
+            family_started_at[family_id]
+            for family_id in phase2_family_ids
+            if family_id in family_started_at
+        ]
+        if mandatory_completed_at and phase2_started_at and max(
+            mandatory_completed_at
+        ) >= min(phase2_started_at):
             findings.append("mandatory_high_yield_query_family_not_pre_phase2")
             complete = False
+        for earlier_kind, later_kind in zip(
+            _MANDATORY_HIGH_YIELD_FAMILY_ORDER[:-1],
+            _MANDATORY_HIGH_YIELD_FAMILY_ORDER[1:],
+            strict=True,
+        ):
+            earlier_completed = [
+                family_completed_at[family_id]
+                for family_id in mandatory_family_ids_by_kind.get(earlier_kind, [])
+                if family_id in family_completed_at
+            ]
+            later_started = [
+                family_started_at[family_id]
+                for family_id in mandatory_family_ids_by_kind.get(later_kind, [])
+                if family_id in family_started_at
+            ]
+            if (
+                earlier_completed
+                and later_started
+                and max(earlier_completed) >= min(later_started)
+            ):
+                findings.append("mandatory_high_yield_query_family_out_of_order")
+                complete = False
 
     candidates = value.get("candidates")
     if not isinstance(candidates, list) or not candidates:
@@ -2551,7 +2618,9 @@ def _validate_reddit_candidate_frontier(
         if set(batch_by_family) != set(query_families):
             findings.append("reddit_query_family_without_saturation_batch")
             complete = False
-        mandatory_cutoff = max(mandatory_planned_at) if mandatory_planned_at else None
+        mandatory_cutoff = (
+            max(mandatory_completed_at) if mandatory_completed_at else None
+        )
         for axis in ledger.get("product_axes", []):
             if (
                 not isinstance(axis, dict)
@@ -2582,11 +2651,11 @@ def _validate_reddit_candidate_frontier(
                         f"decision_frontier_family_not_continuation:{axis_id}"
                     )
                     complete = False
-                planned_at = family_planned_at.get(str(family_id))
+                started_at = family_started_at.get(str(family_id))
                 if (
                     mandatory_cutoff is None
-                    or planned_at is None
-                    or planned_at <= mandatory_cutoff
+                    or started_at is None
+                    or started_at <= mandatory_cutoff
                 ):
                     findings.append(
                         f"decision_frontier_precedes_mandatory_families:{axis_id}"
@@ -2606,21 +2675,28 @@ def _validate_reddit_candidate_frontier(
             if len(selected) != 2:
                 continue
             selected_times = [
-                family_planned_at.get(str(family_id)) for family_id in frontier_ids
+                (
+                    family_started_at.get(str(family_id)),
+                    family_completed_at.get(str(family_id)),
+                )
+                for family_id in frontier_ids
             ]
-            if all(timestamp is not None for timestamp in selected_times):
-                if selected_times[0] >= selected_times[1]:
+            if all(
+                started_at is not None and completed_at is not None
+                for started_at, completed_at in selected_times
+            ):
+                first_started, first_completed = selected_times[0]
+                second_started, _second_completed = selected_times[1]
+                if first_completed >= second_started:
                     findings.append(
                         f"out_of_order_product_axis_decision_frontier:{axis_id}"
                     )
                     complete = False
-                frontier_start = min(
-                    timestamp for timestamp in selected_times if timestamp is not None
-                )
+                frontier_start = min(first_started, second_started)
                 later_addition = any(
                     affected_axis == axis_id
-                    and family_planned_at.get(family_id) is not None
-                    and family_planned_at[family_id] >= frontier_start
+                    and family_completed_at.get(family_id) is not None
+                    and family_completed_at[family_id] >= frontier_start
                     and family_id not in set(map(str, frontier_ids))
                     for (family_id, affected_axis) in additions_by_family_axis
                 )
@@ -2636,10 +2712,12 @@ def _validate_reddit_candidate_frontier(
             first_queries = {
                 str(discovery_by_id[job_id].get("query", "")).strip().casefold()
                 for job_id in family_jobs.get(first_id, set())
+                if job_id in discovery_by_id
             }
             second_queries = {
                 str(discovery_by_id[job_id].get("query", "")).strip().casefold()
                 for job_id in family_jobs.get(second_id, set())
+                if job_id in discovery_by_id
             }
             if first_queries & second_queries:
                 findings.append(f"repeated_decision_frontier_query:{axis_id}")
@@ -2714,13 +2792,15 @@ def _validate_depth_closure(
     require_complete: bool,
     consumer_brand: bool = False,
     current_consumer_contract: bool = False,
-    material_axes: set[str] | None = None,
+    previous_consumer_contract: bool = False,
+    axis_maturity: Mapping[str, Any] | None = None,
     route_jobs: Mapping[str, str] | None = None,
     findings: list[str],
 ) -> bool:
     if not isinstance(value, dict):
         findings.append("missing_evidence_depth_closure")
         return False
+    material_axes = set(axis_maturity) if axis_maturity else set()
     complete = True
     echo_state = value.get("echo_groups_adjudicated")
     if not isinstance(echo_state, bool):
@@ -2764,24 +2844,39 @@ def _validate_depth_closure(
                 complete = False
     if current_consumer_contract:
         frontier = value.get("decision_frontier")
-        expected_axes = material_axes or set()
+        expected_mature = {
+            axis_id
+            for axis_id, maturity in (axis_maturity or {}).items()
+            if maturity == "decision_mature"
+        }
+        expected_open = material_axes - expected_mature
         if not isinstance(frontier, dict):
             findings.append("missing_phase_a_decision_frontier")
             complete = False
         else:
             mature = frontier.get("decision_mature_axis_ids")
             open_axes = frontier.get("open_axis_ids")
-            if frontier.get("status") != "decision_mature":
-                findings.append("phase_a_decision_frontier_not_mature")
+            status = frontier.get("status")
+            if status not in {"decision_mature", "open"}:
+                findings.append("invalid_phase_a_decision_frontier_status")
+                complete = False
+            elif status != "decision_mature":
+                if require_complete:
+                    findings.append("phase_a_decision_frontier_not_mature")
                 complete = False
             if (
                 not isinstance(mature, list)
-                or set(map(str, mature)) != expected_axes
+                or not isinstance(open_axes, list)
+                or set(map(str, mature)) != expected_mature
+                or set(map(str, open_axes)) != expected_open
             ):
                 findings.append("phase_a_decision_frontier_axis_mismatch")
                 complete = False
-            if not isinstance(open_axes, list) or open_axes:
-                findings.append("phase_a_decision_frontier_has_open_axes")
+            if isinstance(open_axes, list) and open_axes:
+                if status == "decision_mature":
+                    findings.append("phase_a_decision_frontier_has_open_axes")
+                elif require_complete:
+                    findings.append("phase_a_decision_frontier_has_open_axes")
                 complete = False
     batches = value.get("batches")
     if not isinstance(batches, list):
@@ -2792,7 +2887,7 @@ def _validate_depth_closure(
             findings.append("insufficient_saturation_batches")
         complete = False
     else:
-        if current_consumer_contract:
+        if current_consumer_contract or previous_consumer_contract:
             batch_job_ids: set[str] = set()
             for row in batches:
                 if not isinstance(row, dict):
@@ -2839,7 +2934,7 @@ def _validate_depth_closure(
                         "changed_axis_incidence",
                     ]
                 )
-            if current_consumer_contract:
+            if current_consumer_contract or previous_consumer_contract:
                 batch_fields.extend(
                     [
                         "new_customer_segments",
@@ -2848,6 +2943,8 @@ def _validate_depth_closure(
                         "new_competitor_alternatives",
                     ]
                 )
+                if previous_consumer_contract:
+                    batch_fields.append("new_usable_reddit_threads")
                 if row.get("batch_kind") != "live_acquisition":
                     findings.append("saturation_batch_not_live_acquisition")
                     complete = False
@@ -2861,6 +2958,7 @@ def _validate_depth_closure(
                         if states.get(str(job_id)) not in {"completed", "blocked"}:
                             findings.append("saturation_batch_job_not_terminal")
                             complete = False
+            if current_consumer_contract:
                 if not isinstance(row.get("query_family_id"), str) or not row.get(
                     "query_family_id"
                 ):

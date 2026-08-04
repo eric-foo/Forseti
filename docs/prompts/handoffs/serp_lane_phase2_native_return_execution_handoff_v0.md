@@ -67,7 +67,7 @@ axis-to-attack, not a review pass bar.
 For `broad_consumer_brand_understanding_v3`, first hash-pin the complete axis
 inventory in the v4 depth ledger. Before this handoff, `CO3` must have run the
 balanced brand-plus-axis, behavior/consequence/displacement, brand-less exact
-hero-product, and condition/post-use query families, with community-diversity
+hero-product, and condition/post-use query families in that order, with community-diversity
 probing when concentration justified it. The targeted queue then covers every material
 product axis with one `corroborate_or_segment` job, one
 `compare_switch_or_value` job, and one `disconfirm_or_strongest_delight` job.

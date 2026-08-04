@@ -215,6 +215,7 @@ def render_phase_a_acquisition_yield(
 
     family_by_job: dict[str, str] = {}
     family_by_id: dict[str, Mapping[str, Any]] = {}
+    family_jobs_by_id: dict[str, set[str]] = {}
     for family in query_families:
         family_id = _text(family.get("family_id"), label="query family_id")
         if family_id in family_by_id:
@@ -229,6 +230,7 @@ def render_phase_a_acquisition_yield(
                     f"search job assigned to multiple query families: {job_id}"
                 )
             family_by_job[job_id] = family_id
+        family_jobs_by_id[family_id] = set(map(str, family_job_ids))
     if set(family_by_job) != set(jobs_by_id):
         raise AcquisitionYieldReportError("discovery jobs are not fully assigned to query families")
 
@@ -275,6 +277,17 @@ def render_phase_a_acquisition_yield(
                 f"search jobs assigned to multiple rounds: {sorted(overlap)}"
             )
         assigned_jobs.update(job_ids)
+        split_families = {
+            family_by_job[job_id]
+            for job_id in job_ids
+            if job_id in family_by_job
+            and not family_jobs_by_id[family_by_job[job_id]] <= set(job_ids)
+        }
+        if split_families:
+            raise AcquisitionYieldReportError(
+                "query family split across search rounds: "
+                f"{sorted(split_families)}"
+            )
         normalized_rounds.append(
             {
                 "round_id": round_id,
@@ -287,6 +300,11 @@ def render_phase_a_acquisition_yield(
                 ),
                 "job_ids": job_ids,
             }
+        )
+    unassigned_jobs = set(jobs_by_id) - assigned_jobs
+    if unassigned_jobs:
+        raise AcquisitionYieldReportError(
+            f"discovery jobs missing from search rounds: {sorted(unassigned_jobs)}"
         )
 
     coding_axes_by_thread: dict[str, set[str]] = defaultdict(set)

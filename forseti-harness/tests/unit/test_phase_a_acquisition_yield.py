@@ -234,6 +234,48 @@ def test_report_fails_when_round_membership_is_ambiguous() -> None:
         )
 
 
+def test_report_fails_when_a_discovery_job_is_missing_from_rounds() -> None:
+    ledger, coding, rounds = _fixture()
+    rounds = [rounds[0]]
+
+    with pytest.raises(
+        AcquisitionYieldReportError,
+        match="discovery jobs missing from search rounds",
+    ):
+        render_phase_a_acquisition_yield(
+            ledger=ledger, community_coding=coding, search_rounds=rounds
+        )
+
+
+def test_report_fails_when_a_query_family_spans_rounds() -> None:
+    ledger, coding, rounds = _fixture()
+    frontier = ledger["reddit_candidate_frontier"]
+    frontier["discovery_jobs"].append(
+        {
+            "job_id": "A-2",
+            "axis_id": "packaging",
+            "query": "subject packaging leak",
+            "artifact_ids": ["serp-a2"],
+            "candidate_thread_ids": [],
+            "surfaced_thread_ids": [],
+        }
+    )
+    next(
+        family
+        for family in frontier["query_families"]
+        if family["family_id"] == "family-a"
+    )["job_ids"].append("A-2")
+    rounds[1]["job_ids"].append("A-2")
+
+    with pytest.raises(
+        AcquisitionYieldReportError,
+        match="query family split across search rounds",
+    ):
+        render_phase_a_acquisition_yield(
+            ledger=ledger, community_coding=coding, search_rounds=rounds
+        )
+
+
 def test_report_fails_on_retailer_denominator_drift() -> None:
     ledger, coding, rounds = _fixture()
     second_axis = dict(ledger["product_axes"][0])

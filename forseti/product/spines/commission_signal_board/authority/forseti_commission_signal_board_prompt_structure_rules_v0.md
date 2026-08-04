@@ -253,13 +253,15 @@ quantity, durability, and performance for price). Do not call it a discovery
 frontier either; more relevant pages can exist after decisions are mature.
 
 Reddit discovery is grouped into named query families. Before Phase 2, `CO3`
-runs the proven high-yield set: balanced brand-plus-axis baseline;
+runs the proven high-yield set in this order: balanced brand-plus-axis baseline;
 behavior/consequence/displacement; exact hero-product names without the brand;
 and condition/post-use. Community-diversity probing is conditional on observed
 concentration. Every family records kind, role, axis scope, planned time, jobs,
-and terminal status; every batch records useful-thread yield separately from
-structured material additions. The validator reconciles the family, job,
-artifact, candidate, and batch accounting rather than accepting prose closure.
+and terminal status; job `executed_at` timestamps prove actual family order,
+while `planned_at` remains planning lineage. Every batch records useful-thread
+yield separately from structured material additions. The validator reconciles
+the family, job, artifact, candidate, and batch accounting rather than accepting
+prose closure.
 The profile renames the human-facing outside source
 family to **External company, editorial and industry context** and adds the
 cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
@@ -327,7 +329,8 @@ two later live continuation families that include it in scope, use different
 family kinds, queries, and artifacts, occur after the mandatory high-yield set,
 and add no material addition affecting that axis. The two families may still add
 usable threads. Each batch declares `new_usable_reddit_threads`, and the
-validator recomputes that count against captured candidates.
+validator recomputes that count against captured candidates. "Later" and reset
+ordering use observed job execution time, not merely when a family was planned.
 Owned social rows carry a normalized `YYYY-MM-DD` observed date and
 direction-event tags so Deliver can derive a factual direction timeline without
 a separate Phase A artifact. Preserve the source's original date text in the
