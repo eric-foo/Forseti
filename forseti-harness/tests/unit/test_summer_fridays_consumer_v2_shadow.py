@@ -11,6 +11,8 @@ from runners.run_phase_acquisition_seal_validation import (
     CONSUMER_DEPTH_LEDGER_VERSION,
     LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     LEGACY_CONSUMER_DEPTH_LEDGER_VERSION,
+    PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION,
     _artifact_hash,
     _load_seal,
     validate_phase_acquisition_seal,
@@ -212,8 +214,10 @@ def test_summer_fridays_p11r6_is_preserved_provenance_not_a_passing_seal() -> No
     )
 
     ledger = json.loads(V3_LEDGER.read_text(encoding="utf-8"))
-    assert ledger["schema_version"] == CONSUMER_DEPTH_LEDGER_VERSION
-    assert ledger["profile_id"] == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert ledger["schema_version"] == PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION
+    assert ledger["schema_version"] != CONSUMER_DEPTH_LEDGER_VERSION
+    assert ledger["profile_id"] == PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    assert ledger["profile_id"] != CONSUMER_BRAND_UNDERSTANDING_PROFILE
     assert len(ledger["families"]["reddit_forum"]["threads"]) == 40
     assert len(ledger["product_axes"]) == 12
     assert all(
