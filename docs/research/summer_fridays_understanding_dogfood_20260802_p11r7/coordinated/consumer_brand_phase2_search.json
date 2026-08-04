@@ -1,0 +1,425 @@
+{
+  "schema_version": "consumer_brand_phase2_search_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r7_20260802",
+  "method": "Twelve live Google result pages were captured after the product-axis inventory. Each combined query checked the three required goals for one axis; no search result alone received evidence credit.",
+  "jobs": [
+    {
+      "job_id": "p11r6_axis_reaction_and_breakout_corroborate",
+      "axis_id": "reaction_and_breakout",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" breakout irritation sensitive acne love review",
+      "executed_at": "2026-08-02T13:13:11Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_reaction_and_breakout"
+      ],
+      "selected_target_ids": [
+        "reddit_19eo5it"
+      ]
+    },
+    {
+      "job_id": "p11r6_axis_reaction_and_breakout_compare",
+      "axis_id": "reaction_and_breakout",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" breakout irritation sensitive acne love review",
+      "executed_at": "2026-08-02T13:13:11Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_reaction_and_breakout"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_reaction_and_breakout_disconfirm_delight",
+      "axis_id": "reaction_and_breakout",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" breakout irritation sensitive acne love review",
+      "executed_at": "2026-08-02T13:13:11Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_reaction_and_breakout"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_value_and_quantity_corroborate",
+      "axis_id": "value_and_quantity",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" lip balm worth value dupe love",
+      "executed_at": "2026-08-02T13:16:16Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_value_and_quantity"
+      ],
+      "selected_target_ids": [
+        "reddit_19dayj0",
+        "reddit_1bm9izm",
+        "reddit_1kq0492",
+        "reddit_1qdk0gq"
+      ]
+    },
+    {
+      "job_id": "p11r6_axis_value_and_quantity_compare",
+      "axis_id": "value_and_quantity",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" lip balm worth value dupe love",
+      "executed_at": "2026-08-02T13:16:16Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_value_and_quantity"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_value_and_quantity_disconfirm_delight",
+      "axis_id": "value_and_quantity",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" lip balm worth value dupe love",
+      "executed_at": "2026-08-02T13:16:16Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_value_and_quantity"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_packaging_and_dispensing_corroborate",
+      "axis_id": "packaging_and_dispensing",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" packaging leaking applicator tube broken love",
+      "executed_at": "2026-08-02T13:19:22Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_packaging_and_dispensing"
+      ],
+      "selected_target_ids": [
+        "reddit_1al8aby",
+        "reddit_1ntik4i"
+      ]
+    },
+    {
+      "job_id": "p11r6_axis_packaging_and_dispensing_compare",
+      "axis_id": "packaging_and_dispensing",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" packaging leaking applicator tube broken love",
+      "executed_at": "2026-08-02T13:19:22Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_packaging_and_dispensing"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_packaging_and_dispensing_disconfirm_delight",
+      "axis_id": "packaging_and_dispensing",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" packaging leaking applicator tube broken love",
+      "executed_at": "2026-08-02T13:19:22Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_packaging_and_dispensing"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_wear_and_longevity_corroborate",
+      "axis_id": "wear_and_longevity",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" wear time longevity lasts reapply comparison",
+      "executed_at": "2026-08-02T13:22:27Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_wear_and_longevity"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_wear_and_longevity_compare",
+      "axis_id": "wear_and_longevity",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" wear time longevity lasts reapply comparison",
+      "executed_at": "2026-08-02T13:22:27Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_wear_and_longevity"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_wear_and_longevity_disconfirm_delight",
+      "axis_id": "wear_and_longevity",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" wear time longevity lasts reapply comparison",
+      "executed_at": "2026-08-02T13:22:27Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_wear_and_longevity"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_hydration_and_moisture_corroborate",
+      "axis_id": "hydration_and_moisture",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" hydrating moisturizing dry lips skin best comparison",
+      "executed_at": "2026-08-02T13:25:34Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_hydration_and_moisture"
+      ],
+      "selected_target_ids": [
+        "reddit_188rp74",
+        "reddit_1oh26y0"
+      ]
+    },
+    {
+      "job_id": "p11r6_axis_hydration_and_moisture_compare",
+      "axis_id": "hydration_and_moisture",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" hydrating moisturizing dry lips skin best comparison",
+      "executed_at": "2026-08-02T13:25:34Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_hydration_and_moisture"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_hydration_and_moisture_disconfirm_delight",
+      "axis_id": "hydration_and_moisture",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" hydrating moisturizing dry lips skin best comparison",
+      "executed_at": "2026-08-02T13:25:34Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_hydration_and_moisture"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_texture_and_skin_finish_corroborate",
+      "axis_id": "texture_and_skin_finish",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" texture oily sticky dewy finish love comparison",
+      "executed_at": "2026-08-02T13:28:40Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_texture_and_skin_finish"
+      ],
+      "selected_target_ids": [
+        "reddit_1srjzrl"
+      ]
+    },
+    {
+      "job_id": "p11r6_axis_texture_and_skin_finish_compare",
+      "axis_id": "texture_and_skin_finish",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" texture oily sticky dewy finish love comparison",
+      "executed_at": "2026-08-02T13:28:40Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_texture_and_skin_finish"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_texture_and_skin_finish_disconfirm_delight",
+      "axis_id": "texture_and_skin_finish",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" texture oily sticky dewy finish love comparison",
+      "executed_at": "2026-08-02T13:28:40Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_texture_and_skin_finish"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_coverage_and_pigment_corroborate",
+      "axis_id": "coverage_and_pigment",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" skin tint coverage pigment sheer buildable comparison",
+      "executed_at": "2026-08-02T13:31:45Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_coverage_and_pigment"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_coverage_and_pigment_compare",
+      "axis_id": "coverage_and_pigment",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" skin tint coverage pigment sheer buildable comparison",
+      "executed_at": "2026-08-02T13:31:45Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_coverage_and_pigment"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_coverage_and_pigment_disconfirm_delight",
+      "axis_id": "coverage_and_pigment",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" skin tint coverage pigment sheer buildable comparison",
+      "executed_at": "2026-08-02T13:31:45Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_coverage_and_pigment"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_shade_and_color_fit_corroborate",
+      "axis_id": "shade_and_color_fit",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" skin tint shade match color range comparison",
+      "executed_at": "2026-08-02T13:34:51Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_shade_and_color_fit"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_shade_and_color_fit_compare",
+      "axis_id": "shade_and_color_fit",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" skin tint shade match color range comparison",
+      "executed_at": "2026-08-02T13:34:51Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_shade_and_color_fit"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_shade_and_color_fit_disconfirm_delight",
+      "axis_id": "shade_and_color_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" skin tint shade match color range comparison",
+      "executed_at": "2026-08-02T13:34:51Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_shade_and_color_fit"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_scent_and_flavor_corroborate",
+      "axis_id": "scent_and_flavor",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" scent flavor smell taste favorite bad comparison",
+      "executed_at": "2026-08-02T13:37:57Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_scent_and_flavor"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_scent_and_flavor_compare",
+      "axis_id": "scent_and_flavor",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" scent flavor smell taste favorite bad comparison",
+      "executed_at": "2026-08-02T13:37:57Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_scent_and_flavor"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_scent_and_flavor_disconfirm_delight",
+      "axis_id": "scent_and_flavor",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" scent flavor smell taste favorite bad comparison",
+      "executed_at": "2026-08-02T13:37:57Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_scent_and_flavor"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_formula_consistency_and_change_corroborate",
+      "axis_id": "formula_consistency_and_change",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" reformulation formula changed consistency old new",
+      "executed_at": "2026-08-02T13:41:03Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_formula_consistency_and_change"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_formula_consistency_and_change_compare",
+      "axis_id": "formula_consistency_and_change",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" reformulation formula changed consistency old new",
+      "executed_at": "2026-08-02T13:41:03Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_formula_consistency_and_change"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_formula_consistency_and_change_disconfirm_delight",
+      "axis_id": "formula_consistency_and_change",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" reformulation formula changed consistency old new",
+      "executed_at": "2026-08-02T13:41:03Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_formula_consistency_and_change"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_application_and_tool_performance_corroborate",
+      "axis_id": "application_and_tool_performance",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" application applicator pilling tool performance",
+      "executed_at": "2026-08-02T13:44:08Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_application_and_tool_performance"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_application_and_tool_performance_compare",
+      "axis_id": "application_and_tool_performance",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" application applicator pilling tool performance",
+      "executed_at": "2026-08-02T13:44:08Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_application_and_tool_performance"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_application_and_tool_performance_disconfirm_delight",
+      "axis_id": "application_and_tool_performance",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" application applicator pilling tool performance",
+      "executed_at": "2026-08-02T13:44:08Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_application_and_tool_performance"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_hype_originality_and_trust_corroborate",
+      "axis_id": "hype_originality_and_trust",
+      "goal": "corroborate_or_segment",
+      "query": "site:reddit.com \"Summer Fridays\" hype overhyped trust influencer original worth",
+      "executed_at": "2026-08-02T13:47:14Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_hype_originality_and_trust"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_hype_originality_and_trust_compare",
+      "axis_id": "hype_originality_and_trust",
+      "goal": "compare_switch_or_value",
+      "query": "site:reddit.com \"Summer Fridays\" hype overhyped trust influencer original worth",
+      "executed_at": "2026-08-02T13:47:14Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_hype_originality_and_trust"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "p11r6_axis_hype_originality_and_trust_disconfirm_delight",
+      "axis_id": "hype_originality_and_trust",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "site:reddit.com \"Summer Fridays\" hype overhyped trust influencer original worth",
+      "executed_at": "2026-08-02T13:47:14Z",
+      "serp_packet_artifact_ids": [
+        "p11r6_serp_packet_hype_originality_and_trust"
+      ],
+      "selected_target_ids": []
+    }
+  ],
+  "reuse": {
+    "mode": "pinned_search_provenance_projection",
+    "source_cycle_id": "summer_fridays_understanding_p11r6_20260802",
+    "current_cycle_id": "summer_fridays_understanding_p11r7_20260802",
+    "reason": "The current cycle preserves the actual executed Phase-2 searches and selected targets."
+  }
+}

@@ -175,7 +175,7 @@ Before producing the board, check whether the dispatcher supplied:
 commission_id:
 mode: backtest | forward | unknown
 commission_profile: standard_signal_board | company_competitive_intelligence | default
-understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v2 | default
+understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v3 | default
 time_posture: recency_first | longitudinal | default
 as_of_date: YYYY-MM-DD
 longitudinal_period: {start: YYYY-MM-DD, end: YYYY-MM-DD} | not_applicable
@@ -222,7 +222,7 @@ output is not a validator target.
 For `company_competitive_intelligence`, also require `commission_id`,
 `cycle_id`, the canonical `phase`, `bound_question`, `intended_consumer`,
 `intended_use`, `phase_scope`, and `understanding_completion_profile`. Select
-`broad_consumer_brand_understanding_v2` when the subject is a consumer brand and
+`broad_consumer_brand_understanding_v3` when the subject is a consumer brand and
 product/customer experience is material; otherwise select
 `broad_company_understanding_v1`. The only valid turn at commission-board
 generation is `acquire_and_seal`. Missing required company-cycle fields return
@@ -806,33 +806,48 @@ creators, competitors, search trends, and similar deepening only for a named
 unresolved inference job.
 
 For a consumer brand where product/customer experience is material, apply the
-prompt-structure authority's `broad_consumer_brand_understanding_v2` profile.
-Build and hash-pin the v3 product-axis inventory across material pains,
-strongest delights,
-and mixed axes; produce the hash-pinned eligible-review coding view with
-axis-specific choice outcomes; comment-code community support; classify social
-and external relationship before awarding distinct-origin independent support;
-and, after the inventory hash exists, route corroboration/segmentation,
+prompt-structure authority's `broad_consumer_brand_understanding_v3` profile.
+Build and hash-pin the v4 product-axis inventory across material pains,
+strongest delights, and mixed axes; produce the hash-pinned eligible-review
+coding view with axis-specific choice outcomes; comment-code community support;
+and classify social and external relationship before awarding distinct-origin
+independent support. `CO3` first runs the proven high-yield Reddit query
+families in this order: balanced brand-plus-axis, behavior/consequence/displacement,
+brand-less exact hero-product names, and condition/post-use. Add a
+community-diversity family only when concentration is observed. SERP discovery
+and source-native capture may pipeline, but family and candidate accounting stay
+separate.
+
+After the inventory hash exists, route corroboration/segmentation,
 comparison/switch/value, and disconfirmation/strongest-delight Phase 2 jobs for
 every material axis. Treat 40 usable unique Reddit/forum threads as a minimum
-floor, never a completion target: keep acquiring while any new unique thread
-still corroborates, contradicts, compares, or sharpens an axis, and seal only
-after the bounded eligible candidate frontier is proven exhausted with every
-discovered candidate terminally accounted in the ledger's
-`reddit_candidate_frontier`. Bind each discovery job to one axis, its query and
-execution time, a hash-pinned result packet, and all surfaced candidate IDs.
-The final two batches must be different full-axis Reddit-frontier sweeps, not
-unrelated Phase 2 jobs, and both must add zero usable threads. A search result
-remains a pointer: `captured`
-requires the source-native body and a ledgered evidence unit, and a SERP
-artifact never doubles as a native body. Reconcile every selected
-target and retain same-topic sharpening volume separately from distinct-origin
-spread. Add every material follow-up to existing route accounting and resolve
-it through the owning Scanning/Capture route before sealing. The final two
-batches must be live acquisitions and add no axis, segment, product condition,
-comparison choice, competitor alternative, strength/incidence change, usable
-Reddit thread, or ordinary material seam. Read the authority for the exact
-schema and hybrid strength bars; do not reconstruct them from this prompt.
+floor, never a completion target. Seal only after the bounded eligible candidate
+frontier is terminally accounted in `reddit_candidate_frontier`. Bind each
+discovery job to one axis, its query and execution time, a hash-pinned result
+packet, and all surfaced candidate IDs. Track useful-thread yield separately
+from material additions. A useful thread reopens an axis only when it changes a
+decision through a typed new axis, tier, mechanism, segment/condition, behavior
+consequence, competitor destination, contradiction, sampling-risk, or
+competitive-action addition; reopen only affected and justified adjacent axes.
+
+Every material axis must be decision-mature through either strong evidence with
+a strong qualitative ceiling or route-bounded source exhaustion with a bounded
+observation ceiling. On that same axis row, write the compact
+`decision_usefulness` synthesis required by the authority: customer tension,
+decision effects, strongest counterevidence, competitive decision,
+decision-bearing support references, status, and limitations. Evidence-rich
+closure requires `decision_useful` or `strategically_material`; route-bounded
+sparse closure uses `source_exhausted_but_weak` and may not borrow strong
+attack/defend authority. `evidence_covered_but_not_decision_useful` cannot pass.
+It names two later live continuation families of different
+kinds, queries, and artifacts with no material addition affecting that axis;
+those families may still add useful threads. A search result remains a pointer:
+`captured` requires the source-native body and a ledgered evidence unit, and a
+SERP artifact never doubles as a native body. Reconcile every selected target,
+retain same-topic sharpening volume separately from distinct-origin spread, and
+resolve every material follow-up through the owning Scanning/Capture route
+before sealing. Read the authority for the exact schema and hybrid strength
+bars; do not reconstruct them from this prompt.
 
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.
@@ -1023,7 +1038,7 @@ company_commission_receipt:
       - communication_efficiency
   mode: backtest | forward
   commission_profile: company_competitive_intelligence
-  understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v2
+  understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v3
   subject_count: 1
   subject_identity:
     raw_name:
