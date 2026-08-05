@@ -31,19 +31,26 @@ cross-template, and future-cadence durability remain unproven.
 
 The cheapest complete route is Direct HTTP for the served collection and PDP
 HTML plus one public, page-owned Okendo `limit=100` response per product. The
-PDPs expose the subscriber ID, provider product ID, first five rows, aggregate,
-source-native review IDs, and their own next-response URL. The same exposed
-route accepted a bounded `limit=100` request and returned each tested product's
-complete declared corpus in one response. No browser, cookie, credential,
-authentication bypass, CAPTCHA handling, or manual interaction was used.
+PDPs expose the subscriber ID, provider product ID, aggregate, source-native
+review IDs, and the first five rows or the full corpus where smaller; the four
+PDPs whose corpora exceed that initial page also expose their own
+next-response URL. The same exposed route accepted a bounded `limit=100`
+request and returned each tested product's complete declared corpus in one
+response. No browser, cookie, credential, authentication bypass, CAPTCHA
+handling, or manual interaction was used.
 
 ## Evidence and currentness
 
 - Frozen oracle: `C:\tmp\forseti-dieux-sokoglam-retailer-corpus-20260805`.
+- Frozen manifest: `manifest.json`, SHA-256
+  `2530f4eb3d85c7afe79ab4afd2bd8abfad351a9f8cfd2693acd01101524f84c1`;
+  22 listed files.
 - Replay root: `C:\tmp\forseti-sokoglam-okendo-lower-rung-calibration-20260805`.
 - Replay observation: Direct HTTP documents were fetched from approximately
-  `2026-08-05T10:42:23Z` through `10:42:28Z`; the six complete Okendo responses
-  were fetched from approximately `10:44:21Z` through `10:44:26Z`.
+  `2026-08-05T10:42:23Z` through `10:42:28Z`; the single-product `limit=100`
+  probe that established response acceptance was fetched at approximately
+  `10:43:02Z`; the six complete Okendo responses were fetched from
+  approximately `10:44:21Z` through `10:44:26Z`.
 - Replay manifest: `manifest.json`, SHA-256
   `97ffa9da5e2c9d591b08d0e1eef1020d95b531c9fe76a3dd516188ec634812eb`;
   57 listed files, all byte counts and hashes re-read successfully.
@@ -71,7 +78,7 @@ post-hoc Capture Projection was retired. The current
 
 | Route | Requests / loads | Status and block posture | Bytes | Wall clock | Manual interactions | Verdict |
 | --- | ---: | --- | ---: | ---: | ---: | --- |
-| Direct HTTP collection + six PDPs | 7 HTTP document fetches, 0 browser loads | Seven `200`; no challenge or block | 3,695,582 | 4.451 s | 0 | `PARTIAL_ALONE`: product/config/aggregate and first five rows; three corpora exceed five. |
+| Direct HTTP collection + six PDPs | 7 HTTP document fetches, 0 browser loads | Seven `200`; no challenge or block | 3,695,582 | 4.451 s | 0 | `PARTIAL_ALONE`: product/config/aggregate plus the first five rows, or the full corpus where smaller; four corpora exceed five. |
 | Public page-owned Okendo response | 6 HTTP API fetches | Six `200`; no auth, challenge, cookie, or next page | 111,896 | 3.148 s | 0 | `COMPLETE`: 77 source-native rows and required fields. |
 | Headless rendered browser | not run | Lower route was complete | — | — | — | stopped before escalation |
 | Headed browser | not run | No mismatch needed a control | — | — | — | stopped before escalation |
@@ -82,20 +89,29 @@ interactions. The frozen rendered-Chrome capture's observed interval was
 180.748 seconds across the collection and six PDPs; its manual-interaction
 count was not recorded, so no fabricated click count is compared.
 
-A preserved diagnostic batch under `okendo_api_failed_pid_collision/` sent six
-wrong product IDs because a local PowerShell `$PID` variable was mistakenly
-reused. Those `200`/40-byte empty responses are a tooling failure, not source
-evidence. The corrected batch was run once and is the only batch used for the
-verdict.
+Those figures count the winning route only. Two diagnostic batches sit outside
+them: one successful single-product `limit=100` probe preserved under
+`okendo_probe/`, which established that the exposed response accepts the
+bounded limit, and the six failed requests below. The preserved replay evidence
+accounts for 20 live requests.
+
+A preserved diagnostic batch under `okendo_api_failed_pid_collision/` reused
+one wrong product ID, `15072`, across all six requests because a local
+PowerShell `$PID` variable was mistakenly interpolated. Those `200`/40-byte
+empty responses are a tooling failure, not source evidence. The corrected batch
+was run once and is the only batch used for the verdict.
 
 ## Frozen recomputation
 
-The frozen oracle's three core hashes and every one of its 22 manifest-listed
-files passed byte/hash verification before use. Recomputed facts were: six
+The frozen oracle's manifest and every one of its 22 manifest-listed files
+passed byte/hash verification before use. Recomputed facts were: six
 products; 77 declared reviews; 77 captured rows; 77 bodies; 58 verified buyers;
 ratings `1★=4, 2★=2, 3★=2, 4★=9, 5★=60`; six explicit "do not recommend"
-rows; zero observed helpful-yes and helpful-no votes; observation interval
-`2026-08-05T09:30:52.532Z` through `2026-08-05T09:33:53.280Z`.
+rows; and zero observed helpful-yes and helpful-no votes. The frozen capture
+receipt declares the observation interval `2026-08-05T09:30:52.532Z` through
+`2026-08-05T09:33:53.280Z`, which is the 180.748-second figure compared above;
+the recomputation's own interval field instead ends at the latest per-product
+`observed_at`, `2026-08-05T09:33:21.532Z`.
 
 Source-native review UUIDs were recovered from the frozen Okendo helpful-vote
 anchors. All 77 were unique; ordinal was used only to bind each UUID back to
@@ -125,8 +141,9 @@ recovered frozen-capture limitation, not edits or extraction losses.
 Each projected row preserves product name and canonical URL; Okendo review UUID;
 rating/scale; verbatim title and body; displayed reviewer; exact source-created
 datetime plus capture timestamp; verified label when exposed; recommendation;
-reviewer skin-type/age attributes; retailer reply; helpful yes/no; provider
-product ID; raw JSON pointer; and typed residuals for absent optional fields.
+reviewer skin-type/age attributes; retailer reply; helpful yes/no;
+incentivization flag; provider product ID; raw JSON pointer; and typed
+residuals for absent optional fields.
 The public response exposes a more precise source datetime than the PDP's
 relative display label. Raw remains canonical.
 
@@ -154,9 +171,9 @@ population prevalence.
 - Review visibility/moderation policy, deletions, edits, and new provider fields
   may change independently of transport success.
 - Re-probe if the subscriber/product IDs disappear or conflict, any response is
-  challenged/non-`200`, `reviewsNextUrl` returns, the response count disagrees
-  with the source aggregate, required fields disappear, or identity/field
-  reconciliation reports unexplained loss.
+  challenged/non-`200`, a `limit=100` response returns a next-page URL, the
+  response count disagrees with the source aggregate, required fields
+  disappear, or identity/field reconciliation reports unexplained loss.
 - Do not infer demand, prevalence, authenticity, sentiment, buyer proof, source-
   wide completeness, or a complete Dieux catalog from this fixture.
 - Future Phase A remains hero-product-first; this six-product replay was the
