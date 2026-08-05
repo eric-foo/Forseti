@@ -288,6 +288,34 @@ not spend a separate sacrificial query.
    adjudication may merge, split, rename, add, or exclude provisional axes and
    then binds their decision-usefulness conclusions for the seal.
 
+   A cold executor follows this order without reconstructing the authoring
+   conversation:
+
+   1. Build the provisional axis inventory from the captured retailer,
+      community, editorial, creator, and owned-source evidence. Use as many or
+      as few axes as the evidence requires; record each axis's pain, delight,
+      or mixed posture, affected segment or condition, observed behavior,
+      competitor destination, counterevidence, and known gap. This inventory
+      is a routing map, not a conclusion.
+   2. Run the lightweight maturity scan over that inventory. For each axis,
+      record whether independent support, behavior or purchase consequence,
+      competitor destination, and strongest counterevidence are present, and
+      name the next source or query that could still change a competitive
+      decision. Mark the axis `open`, `provisionally_covered`, or
+      `source_limited`; do not assign final decision maturity.
+   3. Run only the evidence-floor and targeted material-exhaustion work named
+      by the scan. An ordinary corroboration does not reopen other axes. A
+      typed material addition reopens its affected axis and only a directly
+      adjacent axis when the evidence explains why.
+   4. Recompute the scan after each genuinely different continuation family.
+      Stop acquisition only under the authority's evidence-supported or
+      route-bounded-source-exhaustion rule, never because an axis count, thread
+      count, or elapsed-time target was reached.
+   5. Terminally reconcile every selected target and candidate before treating
+      the corpus as closed.
+   6. Only then perform final semantic adjudication, bind decision usefulness,
+      run the delegated source-native check, and validate the seal.
+
 Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
 social listing is ambiguous and opening the native item could change the bound
 answer; a vague title alone is not evidence. TikTok Shop is licensed when the

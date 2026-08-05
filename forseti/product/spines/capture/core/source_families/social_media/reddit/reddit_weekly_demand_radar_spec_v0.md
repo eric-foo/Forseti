@@ -8,7 +8,8 @@ scope: >
   listing capture per tracked subreddit (project-default, sampled raw), lake
   registry coupling, agent-written reach observations, and the listing-policy-gated
   thread deep-dive that feeds problem briefs. Owns the weekly method's
-  parameters and their empirical basis; does not own analysis or brief format.
+  parameters, empirical basis, and incremental materiality-handoff boundary;
+  does not own competitive conclusions or brief format.
 use_when:
   - Implementing or reviewing the weekly top/week capture runner, its
     materializer coupling, or the observe verb.
@@ -28,15 +29,19 @@ stale_if:
     method projects from.
   - The owner changes the commission frame, universal engagement floor, or
     model-adjudication boundary.
+  - Phase A changes the distinction between ordinary corroboration, material
+    addition, and axis-local follow-up.
 ```
 
 ## Status
 
-`IMPLEMENTED — OWNER-RECALIBRATED 2026-07-28`. The former engagement-head,
+`IMPLEMENTED — OWNER-RECALIBRATED 2026-08-05`. The former engagement-head,
 title-rescue, and rotating-tail rule landed in PR #1319 and was then superseded
 after owner calibration plus a full-corpus application. The reader now produces
 a fail-closed listing-review queue governed by
-`reddit_listing_efficiency_policy_v0.md`; it does not authorize capture.
+`reddit_listing_efficiency_policy_v0.md`; it does not authorize capture. The
+2026-08-05 recalibration adds the incremental weekly materiality handoff without
+turning a weekly batch into Phase A closure or Judgment authority.
 
 ## Goal binding
 
@@ -172,6 +177,40 @@ output to the lake.
 - Bare reCAPTCHA widget markup inside an otherwise visible Reddit login form is
   not a challenge-page signal. Visible human-verification language and the
   existing provider-specific block-shell signals continue to fail closed.
+
+### E.1 Weekly semantic and materiality handoff
+
+The weekly dive is an incremental radar, not a miniature Phase A rerun. Its
+agent/model handoff applies the following procedure after source-native thread
+capture; the result stays outside the neutral lake unless another owning layer
+has separately authorized an analysis artifact.
+
+1. Load the current commission or company axis map as a prior, never as a fixed
+   quota. If a decision-relevant customer tension does not fit, nominate a new
+   provisional axis instead of forcing it into the old map.
+2. For each admitted thread, preserve the listing capture date and available
+   engagement counts, then classify its incremental contribution as
+   `excluded_after_read`, `usable_only`, `ordinary_corroboration`,
+   `heavy_independent_corroboration`, `material_sharpening`,
+   `genuinely_new_axis_or_condition`, `behavior_or_purchase_consequence`,
+   `competitor_destination`, `contradiction`, or
+   `evidence_tier_or_decision_change`. A thread may carry more than one
+   contribution when each is supported by source-native text.
+3. Ordinary corroboration updates recency and support volume but opens no new
+   acquisition. Heavy independent corroboration is material only when it
+   changes confidence enough to alter a competitive decision or evidence tier.
+4. A typed material addition may open a bounded counterpart or source-native
+   follow-up for its affected axis and a directly adjacent axis only when the
+   relationship is stated. Do not restart a full search cycle or duplicate the
+   query across every source.
+5. End the weekly batch with a compact handoff naming: material additions,
+   ordinary corroboration, contradictions, provisional new axes, affected
+   follow-ups, and `none` where no field applies. A zero-material-addition week
+   is a valid radar result; it is not proof of Phase A source exhaustion.
+
+This weekly procedure reuses Phase A's discovery discipline without importing
+its evidence floors, two-family material-exhaustion test, final semantic
+adjudication, delegated seal review, or authority to close/reopen Phase A.
 
 ### F. Roster discovery sweep (SERP), and its pacing contract
 
