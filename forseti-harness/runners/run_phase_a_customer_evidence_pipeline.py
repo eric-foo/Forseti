@@ -18,6 +18,7 @@ from source_capture.phase_a_customer_evidence_pipeline import (  # noqa: E402
     import_decisions,
     initialize_pipeline,
     inspect_pipeline,
+    recover_reddit_host,
     run_pipeline,
 )
 
@@ -57,6 +58,15 @@ def _parser() -> argparse.ArgumentParser:
     family = commands.add_parser("append-family")
     family.add_argument("--run-root", required=True, type=Path)
     family.add_argument("--manifest", required=True, type=Path)
+
+    recovery = commands.add_parser("recover-reddit")
+    recovery.add_argument("--run-root", required=True, type=Path)
+    recovery.add_argument(
+        "--mode",
+        required=True,
+        choices=("operator_changed_egress", "cooldown_elapsed"),
+    )
+    recovery.add_argument("--operator-attested-at")
     return parser
 
 
@@ -72,8 +82,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             payload = inspect_pipeline(run_root=args.run_root)
         elif args.command == "import-decisions":
             payload = import_decisions(run_root=args.run_root, decisions_path=args.decisions)
-        else:
+        elif args.command == "append-family":
             payload = append_family(run_root=args.run_root, manifest_path=args.manifest)
+        else:
+            payload = recover_reddit_host(
+                run_root=args.run_root,
+                recovery_mode=args.mode,
+                operator_attested_at=args.operator_attested_at,
+            )
     except PipelineBlocked as exc:
         parser.exit(status=6, message=f"phase A customer evidence pipeline blocked: {exc}\n")
     except (PipelineError, OSError, ValueError) as exc:
@@ -85,6 +101,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             ),
         )
     print(json.dumps(payload, indent=2, sort_keys=True))
+    if args.command == "recover-reddit":
+        return 0
     return EXIT_BY_STATUS.get(payload.get("status"), 0)
 
 

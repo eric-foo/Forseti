@@ -554,6 +554,16 @@ instead of inheriting a slower discovery/probe default. A faster measured
 cadence never weakens challenge stops, owner handoff, access boundaries, or
 failure visibility.
 
+In a multi-host run, the first confirmed challenge pauses the affected host and
+surfaces an owner handoff immediately; unrelated healthy hosts may finish their
+already-authorized work. A fresh owner-attested egress or route change is a new
+environment and may release that host without spending its fallback cooldown.
+The controller never rotates VPN endpoints automatically and never records an
+endpoint, server, credential, or exit IP. If the owner makes no route change,
+the source-specific cooldown remains the bounded recovery path. Either recovery
+must be an explicit state transition, never a hot retry hidden inside the
+capture loop.
+
 ## Known gaps (honest)
 
 - **No route for mobile/app-only substrate.** If a probe finds the signal lives only in a phone app

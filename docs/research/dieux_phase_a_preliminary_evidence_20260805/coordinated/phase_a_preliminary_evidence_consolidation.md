@@ -8,7 +8,7 @@ Current through: 2026-08-05
 
 Owning evidence: the three coordinated JSON artifacts beside this report
 
-Next source of truth: a validated Phase A acquisition seal after final semantic adjudication and material-exhaustion review
+Next source of truth: a validated Phase A acquisition seal after a provisional maturity scan, the material-exhaustion loop, and final semantic adjudication
 
 ## Decision
 
@@ -71,11 +71,21 @@ not evidence that 31–46 seconds is already safe: the clean observed run suppor
 44–61 seconds. A 31–46-second band is a bounded next dogfood hypothesis and must
 retain the same challenge circuit and truthful-content check.
 
+That 20-minute cooldown describes this historical run. The corrected controller
+now pauses Reddit and pings the owner on the first confirmed challenge while
+healthy Google work may finish. A fresh owner-attested egress change can release
+Reddit early; otherwise the same 20-minute interval remains the fallback. The
+controller neither rotates VPN endpoints nor stores endpoint or exit-IP details.
+
 ## Coding method and ceiling
 
 The two coding files are deterministic nominations, not an LLM's final reading.
-Reddit titles/posts and subject-anchored comments were mapped to the 12 axes with
-explicit patterns; choice and behavior labels require explicit language. Soko
+Reddit titles/posts and subject-anchored comments were mapped to a provisional
+12-axis Dieux taxonomy with explicit patterns; choice and behavior labels
+require explicit language. Twelve is not a profile requirement and was not
+inherited from Summer Fridays: that run also happened to close with 12, but its
+axes are materially different. Final Dieux adjudication may merge, split,
+rename, add, or exclude these nominations. Soko
 titles and review bodies were mapped with the same axis vocabulary, while rating,
 recommendation, verification, relative review date, observation time, and helpful
 counts remain separate fields. A row can map to multiple axes, so the counts below
@@ -138,8 +148,10 @@ effects, medical safety, or final axis strength.
 - Five editorial use tests are useful triangulation but not an independent
   customer sample.
 - Regex nominations have not received final semantic adjudication, including
-  true-switch versus contextual-mention review.
-- No evidence-floor plus material-exhaustion decision has been made for Dieux.
+  true-switch versus contextual-mention review. That final pass follows corpus
+  closure rather than preceding it.
+- No provisional maturity scan or evidence-floor plus material-exhaustion
+  decision has yet been made for Dieux.
 - The live controller adoption verdict remains rejected because its earlier
   ignored-block and shared-controller incidents cannot be repaired after the fact.
 
@@ -166,8 +178,12 @@ cannot bank a held packet that a completed run would have refused. Replaying
 the 124 admitted live packets through the corrected check admits exactly the 95
 body-bearing threads and blocks the 27 login walls and 2 explicit blocks.
 
-The run-root process lock, held-item retry behavior, and block ceiling remain
-fail-closed. The distinct Google/Reddit endpoint check now compares loopback
+The run-root process lock and held-item retry behavior remain fail-closed. The
+first confirmed Reddit challenge now opens a Reddit-only owner handoff rather
+than silently spending the cooldown; healthy Google work may finish. Recovery
+requires either a fresh owner-attested egress change or expiry of the existing
+20-minute fallback cooldown, and is recorded without endpoint or exit-IP data.
+The distinct Google/Reddit endpoint check now compares loopback
 identity rather than endpoint spelling, so `localhost`, `127.0.0.1`, and `::1`
 on one port are correctly rejected as one browser. Deterministic regression
 tests cover the login-redirect false-success case, the wider not-the-requested-

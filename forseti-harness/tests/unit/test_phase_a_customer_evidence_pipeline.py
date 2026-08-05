@@ -902,8 +902,11 @@ def test_resume_refuses_to_bank_a_held_reddit_login_wall_as_captured(
     assert settled["attempts"][-1]["detail"] == "reddit_thread_not_reached"
     assert recovered["circuits"]["reddit"]["total_challenges"] == 1
     assert recovered["circuits"]["reddit"]["consecutive_challenges"] == 1
-    assert recovered["circuits"]["reddit"]["state"] == "cooldown"
+    assert recovered["circuits"]["reddit"]["state"] == "owner_ping"
     assert recovered["circuits"]["reddit"]["cooldown_until"] is not None
+    assert recovered["circuits"]["reddit"]["owner_ping_at"] is not None
+    assert recovered["status"] == "owner_ping"
+    assert recovered["terminal_reason"] == pipeline.REDDIT_OWNER_PING_REASON
     assert recovered["in_flight"]["reddit"] is None
 
 
@@ -928,7 +931,7 @@ def test_resume_still_banks_a_held_reddit_packet_that_reached_its_thread(
     assert recovered["in_flight"]["reddit"] is None
 
 
-def test_resume_reddit_challenge_ceiling_still_opens_the_owner_ping(
+def test_resume_reddit_challenge_opens_owner_ping_with_prior_count_preserved(
     tmp_path: Path,
 ) -> None:
     run_root = _init(tmp_path)
@@ -944,7 +947,8 @@ def test_resume_reddit_challenge_ceiling_still_opens_the_owner_ping(
     recovered = pipeline._load_state(paths)
     assert recovered["circuits"]["reddit"]["state"] == "owner_ping"
     assert recovered["status"] == "owner_ping"
-    assert recovered["terminal_reason"] == "reddit_challenge_ceiling"
+    assert recovered["terminal_reason"] == pipeline.REDDIT_OWNER_PING_REASON
+    assert recovered["circuits"]["reddit"]["total_challenges"] == 2
 
 
 def test_resume_blocks_a_google_queue_claim_missing_from_controller_state(
@@ -1023,7 +1027,7 @@ def test_reddit_transport_interruption_retries_exact_item_once(tmp_path: Path) -
     assert len(result["reddit_queue"][0]["attempts"]) == 2
 
 
-def test_second_reddit_challenge_opens_owner_ping(tmp_path: Path) -> None:
+def test_first_reddit_challenge_opens_host_owner_ping(tmp_path: Path) -> None:
     run_root = _init(tmp_path)
     paths = pipeline.pipeline_paths(run_root)
     state, candidate_id = _candidate_state(run_root)
@@ -1055,8 +1059,174 @@ def test_second_reddit_challenge_opens_owner_ping(tmp_path: Path) -> None:
     result = pipeline.run_pipeline(run_root=run_root, capture=capture, sleep=lambda _seconds: None, now=now)
 
     assert result["status"] == "owner_ping"
-    assert result["terminal_reason"] == "reddit_challenge_ceiling"
-    assert result["circuits"]["reddit"]["total_challenges"] == 2
+    assert result["terminal_reason"] == pipeline.REDDIT_OWNER_PING_REASON
+    assert result["circuits"]["reddit"]["total_challenges"] == 1
+    assert result["circuits"]["reddit"]["owner_ping_reason"] == "CAPTCHA"
+    assert result["circuits"]["reddit"]["cooldown_until"] is not None
+    assert result["reddit_queue"][1]["status"] == "pending"
+
+
+def test_reddit_owner_ping_accepts_fresh_changed_egress_attestation(
+    tmp_path: Path,
+) -> None:
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    state, candidate_id = _candidate_state(run_root)
+    _import_one(run_root, candidate_id)
+    google = pipeline.inspect_queue(state_path=paths.google_state)
+    google["status"] = "complete"
+    google["next_job_index"] = len(google["jobs"])
+    google["completed_job_ids"] = [job["job_id"] for job in google["jobs"]]
+    pipeline._atomic_write_json(paths.google_state, google)
+    current = datetime(2026, 8, 4, 13, 0, tzinfo=UTC)
+
+    def capture(_worker, _action, _config, _output):
+        return pipeline.CaptureResult("challenge", detail="CAPTCHA")
+
+    result = pipeline.run_pipeline(
+        run_root=run_root,
+        capture=capture,
+        sleep=lambda _seconds: None,
+        now=lambda: current,
+    )
+    ping_at = pipeline._parse_time(result["circuits"]["reddit"]["owner_ping_at"])
+    attested_at = ping_at + timedelta(seconds=1)
+
+    recovered = pipeline.recover_reddit_host(
+        run_root=run_root,
+        recovery_mode="operator_changed_egress",
+        operator_attested_at=pipeline._timestamp(attested_at),
+        now=attested_at + timedelta(seconds=1),
+    )
+
+    assert recovered["status"] == "resumable"
+    assert recovered["terminal_reason"] is None
+    assert recovered["circuits"]["reddit"]["state"] == "closed"
+    assert recovered["circuits"]["reddit"]["cooldown_until"] is None
+    assert recovered["circuits"]["reddit"]["last_recovery"]["mode"] == (
+        "operator_changed_egress"
+    )
+
+
+def test_reddit_owner_ping_rejects_stale_attestation_and_early_cooldown(
+    tmp_path: Path,
+) -> None:
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    state = pipeline._load_state(paths)
+    challenged_at = datetime(2026, 8, 4, 13, 0, tzinfo=UTC)
+    pipeline._open_reddit_owner_ping(
+        state=state,
+        detail="CAPTCHA",
+        challenged_at=challenged_at,
+        cooldown_seconds=1200,
+    )
+    pipeline._save_state(paths, state)
+
+    with pytest.raises(
+        pipeline.PipelineError, match="must be at or after the owner ping"
+    ):
+        pipeline.recover_reddit_host(
+            run_root=run_root,
+            recovery_mode="operator_changed_egress",
+            operator_attested_at=pipeline._timestamp(
+                challenged_at - timedelta(seconds=1)
+            ),
+            now=challenged_at + timedelta(seconds=1),
+        )
+
+    with pytest.raises(
+        pipeline.PipelineBlocked, match="BLOCKED_REDDIT_COOLDOWN_ACTIVE"
+    ):
+        pipeline.recover_reddit_host(
+            run_root=run_root,
+            recovery_mode="cooldown_elapsed",
+            now=challenged_at + timedelta(seconds=1199),
+        )
+
+    recovered = pipeline.recover_reddit_host(
+        run_root=run_root,
+        recovery_mode="cooldown_elapsed",
+        now=challenged_at + timedelta(seconds=1200),
+    )
+    assert recovered["status"] == "resumable"
+    assert recovered["circuits"]["reddit"]["last_recovery"]["mode"] == (
+        "cooldown_elapsed"
+    )
+
+
+def test_cli_records_reddit_changed_egress_recovery(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    state = pipeline._load_state(paths)
+    challenged_at = datetime(2026, 8, 4, 13, 0, tzinfo=UTC)
+    pipeline._open_reddit_owner_ping(
+        state=state,
+        detail="CAPTCHA",
+        challenged_at=challenged_at,
+        cooldown_seconds=1200,
+    )
+    pipeline._save_state(paths, state)
+
+    assert pipeline_cli.main(
+        [
+            "recover-reddit",
+            "--run-root",
+            str(run_root),
+            "--mode",
+            "operator_changed_egress",
+            "--operator-attested-at",
+            "2026-08-04T13:00:01Z",
+        ]
+    ) == 0
+
+    output = json.loads(capsys.readouterr().out)
+    assert output["status"] == "resumable"
+    assert output["circuits"]["reddit"]["last_recovery"]["mode"] == (
+        "operator_changed_egress"
+    )
+
+
+def test_google_finishes_after_reddit_host_owner_ping(tmp_path: Path) -> None:
+    run_root = _init(tmp_path)
+    _, candidate_id = _candidate_state(run_root)
+    _import_one(run_root, candidate_id)
+    calls: list[str] = []
+    lock = Lock()
+
+    def capture(worker, action, _config, output):
+        with lock:
+            calls.append(worker)
+        if worker == "reddit":
+            return pipeline.CaptureResult("challenge", detail="CAPTCHA")
+        output.mkdir(parents=True, exist_ok=True)
+        job = action["job"]
+        (output / "content_record.json").write_text(
+            json.dumps(
+                {
+                    "content_record_version": "google_serp_content_v3",
+                    "requested_url": job["url"],
+                    "final_url": job["url"],
+                    "rows": [],
+                }
+            ),
+            encoding="utf-8",
+        )
+        return pipeline.CaptureResult("success", str(output))
+
+    result = pipeline.run_pipeline(
+        run_root=run_root,
+        capture=capture,
+        sleep=lambda _seconds: None,
+    )
+
+    assert result["status"] == "owner_ping"
+    assert result["terminal_reason"] == pipeline.REDDIT_OWNER_PING_REASON
+    assert calls.count("reddit") == 1
+    assert calls.count("google") == 4
+    assert result["google_queue"]["status"] == "complete"
 
 
 def test_reddit_worker_runs_while_google_worker_is_resting(tmp_path: Path) -> None:
