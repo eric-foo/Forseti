@@ -1,0 +1,254 @@
+[
+  {
+    "slot_id": "ts_001",
+    "url": "https://www.reddit.com/r/30PlusSkinCare/comments/1vbcgga/advice_on_bizarre_bruising_around_the_eyes_i_have/",
+    "tail_class": "yes",
+    "reason": "concealment_product_demand"
+  },
+  {
+    "slot_id": "ts_002",
+    "url": "https://www.reddit.com/r/40PlusSkinCare/comments/1v5gakl/the_summer_i_turned_ugly/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_003",
+    "url": "https://www.reddit.com/r/45PlusSkincare/comments/1v6lf64/nasolabial_folds_and_crepey_undereye_wrinkles/",
+    "tail_class": "borderline",
+    "reason": "procedure_vs_product_ambiguous"
+  },
+  {
+    "slot_id": "ts_004",
+    "url": "https://www.reddit.com/r/beauty/comments/1v8ae2n/i_have_never_done_pedicure_at_salon_is_it_worth_it/",
+    "tail_class": "borderline",
+    "reason": "service_value_question"
+  },
+  {
+    "slot_id": "ts_005",
+    "url": "https://www.reddit.com/r/BeautyBoxes/comments/1v9xx59/allure_beauty_boxes_worth_it/",
+    "tail_class": "borderline",
+    "reason": "subscription_value_question"
+  },
+  {
+    "slot_id": "ts_006",
+    "url": "https://www.reddit.com/r/BeautyGuruChatter/comments/1v9xkks/this_is_tacky_af/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_007",
+    "url": "https://www.reddit.com/r/Colognes/comments/1v87f04/i_dont_get_it/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_008",
+    "url": "https://www.reddit.com/r/curlygirl/comments/1v7grkt/i_dont_know_what_to_do_anymore/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_009",
+    "url": "https://www.reddit.com/r/curlyhair/comments/1vaw491/tired_of_the_brush_your_hair_comments_from_my/",
+    "tail_class": "borderline",
+    "reason": "latent_identity_category_tension"
+  },
+  {
+    "slot_id": "ts_010",
+    "url": "https://www.reddit.com/r/drugstoreMUA/comments/1va9363/where_is_all_the_drugstore_eyeshadow_pallets/",
+    "tail_class": "yes",
+    "reason": "assortment_availability_gap"
+  },
+  {
+    "slot_id": "ts_011",
+    "url": "https://www.reddit.com/r/eyelashextensions/comments/1v8l703/should_i_be_worried_about_this/",
+    "tail_class": "borderline",
+    "reason": "service_failure_possible"
+  },
+  {
+    "slot_id": "ts_012",
+    "url": "https://www.reddit.com/r/eyelashextensions/comments/1v8aagm/first_time_getting_extensions_is_this_normal/",
+    "tail_class": "borderline",
+    "reason": "service_quality_question"
+  },
+  {
+    "slot_id": "ts_013",
+    "url": "https://www.reddit.com/r/FancyFollicles/comments/1vb3oxt/please_help_me_understand/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_014",
+    "url": "https://www.reddit.com/r/FemFragLab/comments/1v6q6kp/what_perfume_opinions_get_you_like_this/",
+    "tail_class": "borderline",
+    "reason": "controversial_opinions_brand_sentiment"
+  },
+  {
+    "slot_id": "ts_015",
+    "url": "https://www.reddit.com/r/fragrance/comments/1v86z86/scammed_by_saks_fifth_avenue/",
+    "tail_class": "yes",
+    "reason": "retailer_channel_trust_failure"
+  },
+  {
+    "slot_id": "ts_016",
+    "url": "https://www.reddit.com/r/fragranceclones/comments/1v89z4s/well_well_well/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_017",
+    "url": "https://www.reddit.com/r/FragranceStories/comments/1v8eazi/what_perfume_did_you_buy_this_month/",
+    "tail_class": "borderline",
+    "reason": "purchase_census_format"
+  },
+  {
+    "slot_id": "ts_018",
+    "url": "https://www.reddit.com/r/GracefulAgingSkincare/comments/1v5uak5/stupid_question_apologizes/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_019",
+    "url": "https://www.reddit.com/r/haircoloring/comments/1v83itk/is_my_highlights_super_duper_bad_should_i_cry/",
+    "tail_class": "yes",
+    "reason": "salon_service_failure"
+  },
+  {
+    "slot_id": "ts_020",
+    "url": "https://www.reddit.com/r/HairDye/comments/1v72z3n/dying_brown_hair_blue_no_bleach/",
+    "tail_class": "borderline",
+    "reason": "product_capability_question"
+  },
+  {
+    "slot_id": "ts_021",
+    "url": "https://www.reddit.com/r/keratosis/comments/1v7c2hq/something_thats_worked_for_me/",
+    "tail_class": "borderline",
+    "reason": "treatment_success_product_naming"
+  },
+  {
+    "slot_id": "ts_022",
+    "url": "https://www.reddit.com/r/KoreanBeauty/comments/1v8d2cg/next_sunscreen_move/",
+    "tail_class": "borderline",
+    "reason": "product_choice_ask"
+  },
+  {
+    "slot_id": "ts_023",
+    "url": "https://www.reddit.com/r/koreanskincare/comments/1v7i45s/anyone_here_a_jelly_mist_expert/",
+    "tail_class": "borderline",
+    "reason": "emerging_format_question"
+  },
+  {
+    "slot_id": "ts_024",
+    "url": "https://www.reddit.com/r/makeupdupes/comments/1v8y8ir/my_brother_lost_my_brushes_in_vegas/",
+    "tail_class": "borderline",
+    "reason": "replacement_demand"
+  },
+  {
+    "slot_id": "ts_025",
+    "url": "https://www.reddit.com/r/MakeupRehab/comments/1vaapd9/how_big_is_your_makeup_collection_heres_mine_84/",
+    "tail_class": "borderline",
+    "reason": "overconsumption_behavior_shift"
+  },
+  {
+    "slot_id": "ts_026",
+    "url": "https://www.reddit.com/r/MakeupRehab/comments/1v9ufbh/buying_makeup_as_a_beginner_while_avoiding/",
+    "tail_class": "borderline",
+    "reason": "overconsumption_behavior_shift"
+  },
+  {
+    "slot_id": "ts_027",
+    "url": "https://www.reddit.com/r/makeuptips/comments/1v7hva5/emergencycolor_correcting/",
+    "tail_class": "borderline",
+    "reason": "technique_with_product_demand"
+  },
+  {
+    "slot_id": "ts_028",
+    "url": "https://www.reddit.com/r/Nailpolish/comments/1v80wxm/new_to_regular_nailpolish/",
+    "tail_class": "borderline",
+    "reason": "method_onboarding_friction"
+  },
+  {
+    "slot_id": "ts_029",
+    "url": "https://www.reddit.com/r/OliveMUA/comments/1v7k8ct/what_huda_beauty_easy_bake_shade_are_you_guys/",
+    "tail_class": "borderline",
+    "reason": "shade_match_demand"
+  },
+  {
+    "slot_id": "ts_030",
+    "url": "https://www.reddit.com/r/OliveMUA/comments/1va4wiy/dupe_for_judydoll_lip_cream_shade_n12_toffee_peach/",
+    "tail_class": "yes",
+    "reason": "dupe_substitution_demand"
+  },
+  {
+    "slot_id": "ts_031",
+    "url": "https://www.reddit.com/r/over30skincare/comments/1vblwxa/please_help_ageing_man_skin_wrinkles_for_ever/",
+    "tail_class": "borderline",
+    "reason": "underserved_onboarding_gap"
+  },
+  {
+    "slot_id": "ts_032",
+    "url": "https://www.reddit.com/r/PanPorn/comments/1vb0oxf/almost_there_but_not_able_to_take_off_the_stopper/",
+    "tail_class": "yes",
+    "reason": "packaging_failure"
+  },
+  {
+    "slot_id": "ts_033",
+    "url": "https://www.reddit.com/r/RedditLaqueristas/comments/1v8bdbt/the_polish_project_speaks/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_034",
+    "url": "https://www.reddit.com/r/RedditLaqueristas/comments/1v90z7n/what_happened_devastating_loss_and_psa/",
+    "tail_class": "yes",
+    "reason": "product_failure_psa"
+  },
+  {
+    "slot_id": "ts_035",
+    "url": "https://www.reddit.com/r/RedditLaqueristaSwap/comments/1v9g0rl/sell_buyer_beware/",
+    "tail_class": "borderline",
+    "reason": "p2p_channel_trust_signal"
+  },
+  {
+    "slot_id": "ts_036",
+    "url": "https://www.reddit.com/r/Sephora/comments/1vaklcv/new_charlotte_tilbury_loose_powder/",
+    "tail_class": "borderline",
+    "reason": "release_reception_possible_reformulation"
+  },
+  {
+    "slot_id": "ts_037",
+    "url": "https://www.reddit.com/r/Skincare_Addiction/comments/1vaortl/skincare/",
+    "tail_class": "borderline",
+    "reason": "insufficient_listing_context"
+  },
+  {
+    "slot_id": "ts_038",
+    "url": "https://www.reddit.com/r/SkincareAddiction/comments/1v9jdia/product_request_recommendations_for_9_year_old/",
+    "tail_class": "yes",
+    "reason": "underserved_segment_demand"
+  },
+  {
+    "slot_id": "ts_039",
+    "url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1v61him/what_has_made_the_most_difference_for_crepy/",
+    "tail_class": "borderline",
+    "reason": "product_efficacy_ask"
+  },
+  {
+    "slot_id": "ts_040",
+    "url": "https://www.reddit.com/r/Sunscreenreddit/comments/1va9bx2/good_mineral_sunscreen/",
+    "tail_class": "borderline",
+    "reason": "formulation_specific_demand"
+  },
+  {
+    "slot_id": "ts_041",
+    "url": "https://www.reddit.com/r/Sunscreenreddit/comments/1v6pqk1/moisturizer_with_mineral_sunscreen/",
+    "tail_class": "borderline",
+    "reason": "formulation_specific_demand"
+  },
+  {
+    "slot_id": "ts_042",
+    "url": "https://www.reddit.com/r/wicked_edge/comments/1v77vxb/rust_on_tatara_masamune/",
+    "tail_class": "yes",
+    "reason": "product_defect"
+  }
+]
