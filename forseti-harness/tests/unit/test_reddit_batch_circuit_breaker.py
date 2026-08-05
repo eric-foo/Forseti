@@ -123,6 +123,30 @@ def test_zero_disables_the_breaker(tmp_path, monkeypatch):
     assert len(summary["results"]) == 6
 
 
+def test_normal_non_success_response_also_trips_the_breaker(tmp_path, monkeypatch):
+    """Playwright may return a 429 Response instead of raising from goto."""
+    calls: list[str] = []
+
+    def refused_packet(**kwargs):
+        calls.append(kwargs["slot"].url)
+        packet = kwargs["output_directory"]
+        raw = packet / "raw"
+        raw.mkdir(parents=True)
+        # Real raw-failure packets carry a double numeric prefix from
+        # retention renumbering; the guard must match this production shape.
+        (raw / "03_04_realchrome_snapshot_metadata.json").write_text(
+            json.dumps({"http_response_status": 429}), encoding="utf-8"
+        )
+        return batch.CONTENT_EXTRACTION_FAILED_EXIT_CODE, str(packet)
+
+    monkeypatch.setattr(batch, "_capture_www_thread", refused_packet)
+    _, message = _run(tmp_path)
+    summary = json.loads(Path(message).read_text(encoding="utf-8"))
+    assert calls == URLS[:3]
+    assert summary["circuit_breaker"]["tripped"] is True
+    assert [row["navigation_http_status"] for row in summary["results"]] == [429, 429, 429]
+
+
 def test_main_forwards_the_breaker_threshold(tmp_path, monkeypatch):
     url_list = tmp_path / "urls.json"
     url_list.write_text(json.dumps(["https://old.reddit.com/r/x/comments/aa/p/"]), encoding="utf-8")

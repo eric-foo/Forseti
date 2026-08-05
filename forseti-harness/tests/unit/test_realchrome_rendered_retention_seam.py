@@ -215,6 +215,16 @@ def test_non_success_http_status_keeps_raw_and_withholds_content(tmp_path: Path)
     )
 
 
+def test_non_success_http_status_without_extractor_is_not_success(tmp_path: Path) -> None:
+    """Raw-mode callers must not turn a normal 4xx response into exit zero."""
+    engine = _FakeEngine(http_status=403)
+    exit_code, packet = _run(
+        tmp_path, engine, content_extraction=None, capture_screenshot=False
+    )
+    assert exit_code == 3
+    assert _has(_artifact_names(packet), "rendered_dom")
+
+
 def test_screenshot_suppression_is_truthful_on_the_source_slice(tmp_path: Path) -> None:
     engine = _FakeEngine()
     _, packet = _run(

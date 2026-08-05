@@ -88,10 +88,10 @@ output to the lake.
   this lane, and no screenshot is captured at all — the projection reads DOM and
   visible text, the access classifier reads the response, and nothing consumes
   the image.
-- At this revision the shared decision helper and its matrix tests exist, but no
-  capture runner calls that helper. Never-raw-only is therefore the bound lane
-  behavior, not yet observed runtime enforcement; runner integration is required
-  before claiming the lane enforces it.
+- Both Reddit capture runners call the shared rendered-retention decision helper
+  on the `www_realchrome` transport and refuse a raw-only request at the lane
+  boundary. Admission or extraction failure preserves raw evidence but withholds
+  the content record and returns a non-success capture result.
 - Two raw-retention rules, no schedule, no decay curve:
   1. One rotating subreddit per weekly pass keeps raw **in addition to** its
      content record (audit sample; DOM and visible text only). Raw *instead of*
@@ -135,10 +135,10 @@ output to the lake.
   record; a raw failure is retained as diagnostic evidence but cannot ledger an
   observation. The packet locator, successful source slice, response final URL,
   and content-record listing URL must all name the same host, path, and query.
-- Host-safe projection and ledger parameterization does not itself provide the
-  rendered capture runner. The current packet reader recognizes its existing
-  successful direct-HTTP slice posture; a rendered caller and packet path remain
-  unimplemented at this revision.
+- The grid runner's `www_realchrome` transport supplies the rendered caller and
+  packet path. The packet reader requires the matching real-Chrome metadata,
+  successful access posture, exact final listing identity, and an admitted
+  content record before a www packet may ledger an observation.
 - The five 2026-07-22 experiment packets (family `reddit_subreddit_venue`)
   stay unledgered as an accepted residual; the first real weekly pass
   supersedes them.
@@ -195,12 +195,14 @@ output to the lake.
   Opaque/deictic/image-dependent rows remain `borderline` until a cheap
   listing-level preview resolves the missing context; opacity is a reason, not
   a fourth disposition.
-- Only a recorded `yes` may become a
+- A recorded `yes` or `borderline` may become a
   `run_reddit_old_http_batch.py`-compatible capture slot. The weekly reader
   emits `capture_slots=[]` and
   `capture_list_status=blocked_pending_commission_model_adjudication`.
   Its `--capture-list-output` option fails loudly while that status holds.
-  This prevents a mechanical shortlist from masquerading as authorization.
+  This prevents a mechanical shortlist from masquerading as authorization;
+  after adjudication, only a recorded `no` suppresses capture under the governing
+  listing-efficiency policy.
 - Once selected, capture the complete exposed thread and analyse all captured
   comments. Comment points order evidence for presentation; they are not a
   within-thread stopping rule. Record explicitly named brands, products, and
@@ -274,8 +276,10 @@ automatically because the runner reads `--roster` from the fold.
 - Columnar or compressed serialization: rejected on measurement (1.06x).
 - Daily cadence: trigger-based escalation only (existing radar design
   language), driven by the same activity-anomaly trigger as re-observation.
-- New-Reddit capture rungs: closed. www is bot-gated; the sanctioned path for
-  commercial-grade needs is the licensing track per the lane README.
+- New-Reddit capture is bounded to the operator-provided real-Chrome CDP
+  transports implemented by the grid and exact-thread runners. It is not a
+  headless fallback, crawler, standing schedule, or substitute for the licensing
+  track when commercial-grade access is required.
 - Reddit Data API: dropped 2026-07-22 (approval-gated, no published timeline).
 - Roster expansion beyond 100: the owner set the first target at 100
   (reached 2026-07-22, 38 -> 100 across two sweeps). Further growth uses

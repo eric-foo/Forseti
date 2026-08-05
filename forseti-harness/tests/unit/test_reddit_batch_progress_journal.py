@@ -144,6 +144,25 @@ def test_resume_with_nothing_journaled_is_refused(tmp_path):
         )
 
 
+def test_completed_summary_is_not_moved_when_nothing_remains_to_resume(
+    tmp_path, monkeypatch
+):
+    calls: list[str] = []
+    monkeypatch.setattr(
+        batch, "run_source_capture_http_packet", _fake_capture_factory(calls)
+    )
+    _, message = _run(tmp_path)
+    summary_path = Path(message)
+    original_summary = summary_path.read_bytes()
+
+    with pytest.raises(ValueError, match="nothing to resume"):
+        _run(tmp_path, resume=True)
+
+    assert summary_path.read_bytes() == original_summary
+    assert not list(summary_path.parent.glob("batch_summary.superseded_*.json"))
+    assert calls == URLS
+
+
 def test_main_forwards_resume(tmp_path, monkeypatch):
     url_list = tmp_path / "urls.json"
     url_list.write_text(json.dumps(URLS), encoding="utf-8")

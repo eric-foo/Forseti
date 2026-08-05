@@ -29,7 +29,7 @@ import shutil
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal, Protocol, Sequence
+from typing import Callable, Literal, Protocol, Sequence
 from urllib.parse import urlparse
 
 if __package__ in {None, ""}:
@@ -70,6 +70,7 @@ DEFAULT_CDP_ENDPOINT = "http://localhost:9222"
 DEFAULT_TIMEOUT_SECONDS = 45.0
 DEFAULT_VIEWPORT_WIDTH = 1280
 DEFAULT_VIEWPORT_HEIGHT = 800
+NAVIGATION_HTTP_ERROR_EXIT_CODE = 3
 DEFAULT_WINDOW_CHROME_HEIGHT_PX = 150
 _PROGRESSIVE_SCROLL_PAUSE_MS = 900
 _MAX_PROGRESSIVE_SCROLL_STEPS = 40
@@ -618,6 +619,11 @@ def run_source_capture_realchrome_cdp_packet(
     # typed RealChromeWrongPageError raised before any packet is written --
     # never a committed packet whose manifest quietly names a different page.
     target_identity_pattern: str | None = None,
+    # Predicate form for callers whose identity rule is structural rather than
+    # regex-shaped (for example exact host/path/query equality for a listing).
+    # It composes with target_identity_pattern when both are supplied.
+    target_identity_check: Callable[[str], bool] | None = None,
+    target_identity_description: str | None = None,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
@@ -663,12 +669,26 @@ def run_source_capture_realchrome_cdp_packet(
         expand_settle_ms=expand_settle_ms,
     )
 
-    if compiled_target_identity is not None and not compiled_target_identity.search(
-        result.final_url or ""
-    ):
+    final_url = result.final_url or ""
+    pattern_matches = (
+        compiled_target_identity is None
+        or compiled_target_identity.search(final_url) is not None
+    )
+    predicate_matches = target_identity_check is None or bool(
+        target_identity_check(final_url)
+    )
+    if not pattern_matches or not predicate_matches:
+        identity_description = (
+            target_identity_description
+            or (
+                f"target identity pattern {target_identity_pattern!r}"
+                if target_identity_pattern is not None
+                else "caller-supplied target identity check"
+            )
+        )
         raise RealChromeWrongPageError(
-            f"snapshot landed on {result.final_url!r}, which does not match the "
-            f"target identity pattern {target_identity_pattern!r} for requested "
+            f"snapshot landed on {result.final_url!r}, which does not satisfy the "
+            f"{identity_description} for requested "
             f"{url!r}; the persistent capture tab was likely navigated away "
             "mid-capture. No packet was written; recapture in a fresh bounded "
             "batch.",
@@ -928,6 +948,11 @@ def run_source_capture_realchrome_cdp_packet(
         return SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE, source_detail_sufficiency_failure_message(
             output_directory=write_result.output_directory, result=sufficiency
         )
+    # With no extractor configured, retention_outcome is raw rather than
+    # raw_failure.  The HTTP admission result must still drive the exit status:
+    # preserving a 4xx/5xx packet as evidence is not a successful capture.
+    if content_extraction is None and http_admission_failed:
+        return NAVIGATION_HTTP_ERROR_EXIT_CODE, write_result.output_directory
     if content_extraction is not None and retention.retention_outcome == "raw_failure":
         return CONTENT_EXTRACTION_FAILED_EXIT_CODE, write_result.output_directory
     return 0, write_result.output_directory
