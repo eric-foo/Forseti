@@ -367,6 +367,12 @@ typed as consumer editorial or trade press, carry an explicit
 company profiles, corporate/transaction records, paid or affiliate material,
 and relationship-unknown external units do not qualify.
 
+Axis cardinality is evidence-derived, not fixed. A prior brand's axis count is
+not a template quota for the next brand. Preliminary mechanical or semantic
+coding may nominate a provisional inventory so Phase 2 and continuation work
+know what to test; final adjudication may merge, split, rename, add, or exclude
+those nominations when the source-native evidence warrants it.
+
 V3 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
 unique text-bearing review in each admitted corpus, reconciles excluded
 no-usable-text rows to the corpus denominator, and preserves native review ID,
@@ -411,6 +417,13 @@ and add no material addition affecting that axis. The two families may still add
 usable threads. Each batch declares `new_usable_reddit_threads`, and the
 validator recomputes that count against captured candidates. "Later" and reset
 ordering use observed job execution time, not merely when a family was planned.
+
+Do not perform final semantic adjudication while acquisition is still capable
+of changing the corpus. Use the provisional axis inventory and a lightweight
+maturity scan to identify open axes, run the evidence-floor plus material-
+exhaustion loop (including only targeted follow-ups), terminally account the
+frontier, and only then finalize decision usefulness and run the delegated
+semantic check. The early scan guides acquisition; it is not the final verdict.
 Owned social rows carry a normalized `YYYY-MM-DD` observed date and
 direction-event tags so synthesis can derive a factual direction timeline without
 a separate Phase A artifact. Preserve the source's original date text in the

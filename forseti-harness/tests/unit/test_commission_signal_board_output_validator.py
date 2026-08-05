@@ -63,9 +63,64 @@ def test_completed_company_report_retains_understanding_completion_profile() -> 
         "",
         1,
     )
-
     assert (
         "missing_or_invalid_understanding_completion_profile"
+        in _company_codes(text)
+    )
+
+
+def _consumer_v3_text(*, completed: bool = False) -> str:
+    if completed:
+        text = _valid_company_text()
+    else:
+        text = (
+            FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+        ).read_text(encoding="utf-8")
+    return text.replace(
+        "  understanding_completion_profile: broad_company_understanding_v1",
+        "  understanding_completion_profile: broad_consumer_brand_understanding_v3",
+        1,
+    ).replace(
+        "    subject_kind: brand_or_org_unresolved",
+        "    subject_kind: brand",
+        1,
+    )
+
+
+def test_current_consumer_v3_profile_passes_commission_and_completed_records() -> None:
+    assert _company_codes(_consumer_v3_text()) == set()
+    assert _company_codes(_consumer_v3_text(completed=True)) == set()
+    assert validator.UNDERSTANDING_PROFILE_DEPTH_CONTRACT[
+        "broad_consumer_brand_understanding_v3"
+    ] == "understanding_evidence_depth_v4"
+
+
+@pytest.mark.parametrize(
+    "legacy_profile",
+    [
+        "broad_consumer_brand_understanding_v1",
+        "broad_consumer_brand_understanding_v2",
+    ],
+)
+def test_legacy_consumer_profiles_cannot_satisfy_a_current_record(
+    legacy_profile: str,
+) -> None:
+    text = _consumer_v3_text().replace(
+        "broad_consumer_brand_understanding_v3",
+        legacy_profile,
+        1,
+    )
+    assert "legacy_consumer_understanding_profile_forbidden" in _company_codes(text)
+
+
+def test_consumer_v3_profile_requires_a_brand_subject() -> None:
+    text = _consumer_v3_text().replace(
+        "    subject_kind: brand",
+        "    subject_kind: brand_or_org_unresolved",
+        1,
+    )
+    assert (
+        "consumer_understanding_profile_requires_brand_subject"
         in _company_codes(text)
     )
 

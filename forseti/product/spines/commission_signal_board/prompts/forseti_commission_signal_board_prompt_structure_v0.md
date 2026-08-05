@@ -815,7 +815,10 @@ Build and hash-pin the v4 product-axis inventory across material pains,
 strongest delights, and mixed axes; produce the hash-pinned eligible-review
 coding view with axis-specific choice outcomes; comment-code community support;
 and classify social and external relationship before awarding distinct-origin
-independent support. `CO3` runs two pipelined lanes before Phase 2. Its
+independent support. Axis count is evidence-derived rather than inherited from
+another brand: preliminary coding nominates the inventory, and final
+adjudication may merge, split, rename, add, or exclude axes. `CO3` runs two
+pipelined lanes before Phase 2. Its
 source-neutral lane starts with a bounded unrestricted-domain brand/product
 review baseline, then uses retailer-review coding and other captured evidence
 for claim-directed editorial, specialist, retailer, and comparison checks. A
@@ -869,6 +872,12 @@ retain same-topic sharpening volume separately from distinct-origin spread, and
 resolve every material follow-up through the owning Scanning/Capture route
 before sealing. Read the authority for the exact schema and hybrid strength
 bars; do not reconstruct them from this prompt.
+
+Sequence the judgment correctly: use a lightweight provisional maturity scan
+to direct the evidence-floor and material-exhaustion loop, terminally account
+the resulting corpus, and only then perform final semantic adjudication and its
+delegated source check. The provisional scan is routing input, not a finished
+competitive-intelligence conclusion.
 
 Before accepting the completed Phase A seal for synthesis or landing it, run the
 authority's final delegated semantic review-and-patch. Require the reviewer to

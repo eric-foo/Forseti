@@ -282,6 +282,51 @@ not spend a separate sacrificial query.
    then writes the integrated acquisition record and seal. Only `CO0` owns
    user-facing run progress.
 
+   The inventory at this point is provisional and has no fixed axis count.
+   Use its lightweight maturity scan to choose the material-exhaustion work;
+   do not spend the final semantic adjudication before the corpus is terminal.
+   After the evidence-floor plus material-exhaustion loop closes, final
+   adjudication may merge, split, rename, add, or exclude provisional axes and
+   then binds their decision-usefulness conclusions for the seal.
+
+   A cold executor follows this order without reconstructing the authoring
+   conversation:
+
+   1. Build the provisional axis inventory from the captured retailer,
+      community, editorial, creator, and owned-source evidence, and hash-pin it
+      as the single axis inventory this phase's Phase 2 jobs reference; do not
+      create a second inventory beside it. Use as many or as few axes as the
+      evidence requires; record each axis's pain, delight, or mixed posture,
+      affected segment or condition, observed behavior, competitor destination,
+      counterevidence, and known gap. This inventory is a routing map, not a
+      conclusion.
+   2. Run the lightweight maturity scan as a gap audit over that inventory, not
+      a second transcription of it. Its input is step 1's record; its output is,
+      per axis, which of the authority's support requirements remain unmet —
+      distinct-origin independent support above all — plus the next source or
+      query that could still change a competitive decision, or an explicit
+      `none` with the reason no productive source remains. Mark the axis `open`,
+      `provisionally_covered`, or `source_limited`. These three are scan-local
+      routing labels with no seal or ledger field: they assign no final decision
+      maturity, and `source_limited` does not pre-establish the authority's
+      `route_bounded_source_exhaustion` closure basis, which keeps its own
+      evidence requirement.
+   3. Run only the evidence-floor and targeted material-exhaustion work named
+      by the scan. An ordinary corroboration does not reopen other axes. A
+      typed material addition reopens its affected axis and only a directly
+      adjacent axis when the evidence explains why.
+   4. Recompute the scan after each genuinely different continuation family.
+      Stop acquisition for an axis only when the Prompt Structure Rules
+      authority's closure test is met — two later live continuation families of
+      different kinds, queries, and artifacts that add no material addition
+      affecting that axis — closing on either `evidence_supported` or
+      `route_bounded_source_exhaustion`, never because an axis count, thread
+      count, or elapsed-time target was reached.
+   5. Terminally reconcile every selected target and candidate before treating
+      the corpus as closed.
+   6. Only then perform final semantic adjudication, bind decision usefulness,
+      run the delegated source-native check, and validate the seal.
+
 Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
 social listing is ambiguous and opening the native item could change the bound
 answer; a vague title alone is not evidence. TikTok Shop is licensed when the
@@ -298,6 +343,19 @@ Bounded salvage remains acquisition-blocked. Automated Google queues use
 ready persistent route or a durable 60-minute cooldown; there is no hot retry,
 and a second consecutive or third run block writes `OWNER_PING.json` before
 the queue stops.
+
+For the concurrent Reddit customer-evidence controller, the first confirmed
+challenge immediately pauses Reddit and returns an owner-action-required state;
+healthy Google work may finish. The owner may release Reddit early with a fresh
+changed-egress attestation, or release it after the existing 20-minute fallback
+cooldown. The controller never changes or cycles VPN endpoints itself, and the
+run record stores no server or exit-IP identity. A second capture does not begin
+until that explicit host recovery is recorded.
+
+For the current controller, record early changed-egress recovery with
+`run_phase_a_customer_evidence_pipeline.py recover-reddit --run-root <root>
+--mode operator_changed_egress --operator-attested-at <ISO-8601>`. If no change
+is made, use `--mode cooldown_elapsed` only after the recorded fallback deadline.
 
 This protocol removes orchestration work, not evidence work. It does not cap
 sources, jobs, tokens, or elapsed time; weaken route-specific failure

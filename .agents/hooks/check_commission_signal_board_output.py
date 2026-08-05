@@ -264,9 +264,21 @@ COMPANY_RUN_BOUNDARIES = {
 }
 COMMISSION_STAGE_RUN_BOUNDARY = "COMMISSION_SEALED_PRE_SCAN"
 COMMISSION_STAGE_SCOUT_STATUS = "commissioned_not_yet_run"
-UNDERSTANDING_COMPLETION_PROFILES = {
-    "broad_company_understanding_v1",
+BROAD_COMPANY_UNDERSTANDING_PROFILE = "broad_company_understanding_v1"
+BROAD_CONSUMER_UNDERSTANDING_PROFILE = "broad_consumer_brand_understanding_v3"
+LEGACY_CONSUMER_UNDERSTANDING_PROFILES = {
+    "broad_consumer_brand_understanding_v1",
     "broad_consumer_brand_understanding_v2",
+}
+UNDERSTANDING_COMPLETION_PROFILES = {
+    BROAD_COMPANY_UNDERSTANDING_PROFILE,
+    BROAD_CONSUMER_UNDERSTANDING_PROFILE,
+}
+# The CSB records the current selector. The acquisition-seal validator owns the
+# hash-pinned depth ledger and enforces this selector/schema coupling in full.
+UNDERSTANDING_PROFILE_DEPTH_CONTRACT = {
+    BROAD_COMPANY_UNDERSTANDING_PROFILE: "understanding_evidence_depth_v1",
+    BROAD_CONSUMER_UNDERSTANDING_PROFILE: "understanding_evidence_depth_v4",
 }
 NOT_REQUIRED_SCOUT_STATUS = "not_required_no_decision_material_job"
 COMPANY_REDDIT_SCOUT_STATUSES = {
@@ -1475,15 +1487,37 @@ def _validate_company_completion(
                 )
             )
     commission_stage = run_boundary == COMMISSION_STAGE_RUN_BOUNDARY
-    if _normalize_vocab(receipt.get("understanding_completion_profile")) not in (
-        UNDERSTANDING_COMPLETION_PROFILES
-    ):
+    completion_profile = _normalize_vocab(
+        receipt.get("understanding_completion_profile")
+    )
+    if completion_profile in LEGACY_CONSUMER_UNDERSTANDING_PROFILES:
+        findings.append(
+            Finding(
+                "legacy_consumer_understanding_profile_forbidden",
+                "Historical broad_consumer_brand_understanding_v1/v2 records are audit-only and cannot commission or complete a current company Understanding run.",
+            )
+        )
+    elif completion_profile not in UNDERSTANDING_COMPLETION_PROFILES:
         findings.append(
             Finding(
                 "missing_or_invalid_understanding_completion_profile",
-                "Every company Understanding record must carry broad_company_understanding_v1 or broad_consumer_brand_understanding_v2 from commission through completion.",
+                "Every current company Understanding record must carry broad_company_understanding_v1 or broad_consumer_brand_understanding_v3 from commission through completion.",
             )
         )
+    elif completion_profile == BROAD_CONSUMER_UNDERSTANDING_PROFILE:
+        identity = receipt.get("subject_identity")
+        subject_kind = (
+            _normalize_vocab(identity.get("subject_kind"))
+            if isinstance(identity, dict)
+            else ""
+        )
+        if subject_kind != "brand":
+            findings.append(
+                Finding(
+                    "consumer_understanding_profile_requires_brand_subject",
+                    "broad_consumer_brand_understanding_v3 requires subject_identity.subject_kind: brand; its acquisition seal must bind understanding_evidence_depth_v4.",
+                )
+            )
     if commission_stage:
         if _normalize_vocab(receipt.get("controller_placement")) != "top_level_co0":
             findings.append(
