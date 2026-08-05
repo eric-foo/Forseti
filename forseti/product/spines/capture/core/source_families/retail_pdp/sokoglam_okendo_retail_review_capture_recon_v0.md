@@ -5,11 +5,12 @@ retrieval_header_version: 1
 artifact_role: Bounded Retail/PDP capture recon record
 scope: >
   Records the 2026-08-05 lower-rung replay of the frozen Soko Glam Dieux
-  collection's six Okendo-backed product fixtures, its raw/runtime evidence,
-  parity result, economics, capability boundary, and re-probe triggers.
+  collection plus same-day CHASIN' RABBITS, Acwell, and bestseller-grid
+  expansion probes, their raw/runtime evidence, parity results, economics,
+  monitoring boundary, and re-probe triggers.
 use_when:
-  - Reusing or challenging the tested Soko Glam Dieux/Okendo route.
-  - Distinguishing fixture-level capture proof from retailer-, template-, or brand-wide reliability.
+  - Reusing or challenging the tested Soko Glam public PDP/Okendo or bestseller-grid routes.
+  - Distinguishing capture-proven public surfaces from production admission or retailer-wide reliability.
 authority_boundary: retrieval_only; evidence ledger, not live-capture authorization or a production route contract
 open_next:
   - forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
@@ -17,27 +18,28 @@ open_next:
   - forseti/product/spines/capture/core/source_families/retail_pdp/retail_pdp_content_cleaning_contract_v0.md
 stale_if:
   - A tested PDP no longer exposes the same public Okendo configuration or response shape.
-  - Any of the six provider product IDs, collection membership, response fields, or pagination semantics changes.
-  - A cross-brand or cross-template replay establishes a broader or conflicting capability boundary.
+  - Provider product binding, response fields, the 100-row cap, `nextUrl`, collection membership, section identity, ordering, or pagination semantics changes.
+  - A broader replay or production adapter establishes a broader or conflicting capability boundary.
 ```
 
 ## Decision
 
-`GO_BOUNDED_SOKOGLAM_DIEUX_OKENDO_FIXTURE`.
+`GO_BOUNDED_SOKOGLAM_PUBLIC_STOREFRONT_SURFACES`.
 
-Capture-proven for the public Soko Glam Dieux collection's six Okendo-backed
-product fixtures under the tested route and observation date; cross-brand,
-cross-template, and future-cadence durability remain unproven.
+Capture-proven for the tested public Soko Glam PDP/Okendo surfaces across
+Dieux, CHASIN' RABBITS, and Acwell, plus the exact best-selling collection
+surface under the observation date. This is a current operating pin, not a
+production runner, all-brand guarantee, historical/deleted-catalog claim, or
+future-cadence durability proof.
 
-The cheapest complete route is Direct HTTP for the served collection and PDP
-HTML plus one public, page-owned Okendo `limit=100` response per product. The
-PDPs expose the subscriber ID, provider product ID, aggregate, source-native
-review IDs, and the first five rows or the full corpus where smaller; the four
-PDPs whose corpora exceed that initial page also expose their own
-next-response URL. The same exposed route accepted a bounded `limit=100`
-request and returned each tested product's complete declared corpus in one
-response. No browser, cookie, credential, authentication bypass, CAPTCHA
-handling, or manual interaction was used.
+The narrow routes are compressed Direct HTTP to Shopify's product-grid section
+for bestseller placement and the public page-owned Okendo API for review rows.
+The PDP remains the binding surface for subscriber ID, provider product ID,
+aggregate, and the first-row prefix. Routine review monitoring uses exactly one
+date-desc `limit=100` response and makes no corpus-completeness claim. An
+understanding cycle may follow `nextUrl` until the declared aggregate
+reconciles. No browser, cookie, credential, authentication bypass, CAPTCHA
+handling, or manual interaction was required on the tested routes.
 
 ## Evidence and currentness
 
@@ -162,18 +164,52 @@ availability reveal channel positioning; and provider diversity reduces
 single-platform capture bias. Counts remain fixture observations, never
 population prevalence.
 
+## Same-day expansion evidence and operating posture
+
+- CHASIN' RABBITS: the current public collection exposed eight products; 19
+  winning-route requests captured all eight PDPs and 223/223 declared Okendo
+  rows with 223 unique native IDs and no duplicates. Runtime root:
+  `C:\tmp\forseti-sokoglam-random-brand-dogfood-20260805`; manifest SHA-256
+  `9a173d2c603d40935418d99e8fcfabfab0f1d250b57e1a20fb570132507379b3`.
+- Acwell Licorice Toner: the PDP declared 2,130 reviews. The page-owned API
+  returned at most 100 rows even for requested `limit=5000`; 22 responses
+  (`21 x 100 + 30`) reconciled all 2,130 rows, native IDs, bodies, approved
+  status, and aggregate rating distribution with zero duplicates. Runtime
+  root: `C:\tmp\forseti-sokoglam-acwell-licorice-reviews-20260805`; manifest
+  SHA-256 `3460b88a56730fa77ae175f8827a30532896fc675ec0e58a0f54ac2c2d8058a1`;
+  full-corpus SHA-256
+  `cb84cda5dd0c3e810c85a6e3c2d29a34c6951c988df8f15b14584770eb89e606`.
+- Best-selling collection: six compressed Shopify product-grid section
+  responses cost 139,621 wire/stored bytes and projected 137/137 unique
+  products in exact broad-page order. The one-request `products.json` feed was
+  rejected because adding `sort_by=best-selling` did not change its order and
+  it disagreed with the visible best-selling grid. Runtime root:
+  `C:\tmp\forseti-sokoglam-bestseller-baseline-20260805\section_route_capture`;
+  projection SHA-256
+  `aef0aa36c15dd0787c9184a0f6b9fd2b84196434a7e7fc89f77ec2caa7a65a49`.
+
+For routine PDP review monitoring, retain one latest-100 response and whether
+the prior last-seen ID was found. If a full response omits that watermark,
+record `sokoglam_review_monitoring_window_saturated` and queue an understanding
+cycle; do not silently paginate inside the monitor or call the window complete.
+Understanding cycles rebind the PDP and may follow `nextUrl` to declared-count
+reconciliation.
+
 ## Residuals, non-claims, and re-probe triggers
 
-- The public response's acceptance of `limit=100` is observed only for six
-  corpora whose largest denominator is 32. Pagination beyond 100 is untested.
-- Cross-brand, cross-template, collection-change, and future-cadence durability
-  are unproven. This is not a claim that Soko Glam is reliably capturable.
+- Pagination beyond 100 is capture-proven on one 2,130-row Acwell corpus;
+  durability across other large products, templates, and future responses is
+  unproven.
+- Cross-template, historical/deleted-catalog, collection-change, and
+  future-cadence durability remain unproven. This is not a claim that every
+  Soko Glam product is reliably capturable.
 - Review visibility/moderation policy, deletions, edits, and new provider fields
   may change independently of transport success.
-- Re-probe if the subscriber/product IDs disappear or conflict, any response is
-  challenged/non-`200`, a `limit=100` response returns a next-page URL, the
+- Re-probe if subscriber/product IDs disappear or conflict, any response is
+  challenged/non-`200`, the 100-row cap or `nextUrl` shape changes, the
   response count disagrees with the source aggregate, required fields
-  disappear, or identity/field reconciliation reports unexplained loss.
+  disappear, the Shopify section changes, or identity/order/field
+  reconciliation reports unexplained loss.
 - Do not infer demand, prevalence, authenticity, sentiment, buyer proof, source-
   wide completeness, or a complete Dieux catalog from this fixture.
 - Future Phase A remains hero-product-first; this six-product replay was the
@@ -184,27 +220,30 @@ population prevalence.
 ```yaml
 direction_change_propagation:
   doctrine_changed: >
-    The existing recon ledger now records a fixture-bounded Soko Glam Dieux/Okendo
-    direct-HTTP capability pin; no general capture method or production route changed.
+    The Soko Glam entry is promoted from one Dieux fixture pin to a bounded
+    public-storefront operating pin covering the tested PDP/Okendo and
+    best-selling grid surfaces. Routine review monitoring is one latest-100
+    response; understanding cycles own pagination.
   trigger: product_doctrine
   controlling_sources_updated:
     - forseti/product/spines/capture/core/source_families/retail_pdp/sokoglam_okendo_retail_review_capture_recon_v0.md
     - forseti/product/spines/capture/core/source_capture_toolbox/capture_recon_index_v0.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/retail_storefront_pin_registry_v0.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/README.md
   downstream_surfaces_checked:
     - forseti/product/spines/capture/core/source_families/retail_pdp/README.md
     - forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
     - forseti/product/spines/capture/core/source_families/retail_pdp/fragrance_purchase_review_site_registry_v0.md
   intentionally_not_updated:
-    - path: forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
-      reason: The winning composite is already covered by direct HTTP plus a public page-owned vendor/internal response route.
     - path: forseti/product/spines/capture/core/source_families/retail_pdp/fragrance_purchase_review_site_registry_v0.md
       reason: Soko Glam is outside that fragrance-specific operating set.
   stale_language_search: >
     rg -n -i "Soko Glam|SokoGlam|Okendo|Soko.*captur|Okendo.*captur"
     forseti/product/spines/capture docs .agents
   non_claims:
-    - not production-route validation
+    - not production-runner implementation or admission
     - not retailer-wide reliability
-    - not cross-brand or cross-template proof
+    - not every-brand or cross-template proof
     - not buyer proof or population prevalence
 ```

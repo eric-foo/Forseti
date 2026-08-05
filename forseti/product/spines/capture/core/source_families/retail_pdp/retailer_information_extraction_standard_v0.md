@@ -300,6 +300,27 @@ read-only re-evaluation of their preserved bytes, while their own manifests
 remain immutable failed-pin records; their currency remains unpinned because
 neither exposes an explicit currency code.
 
+## Soko Glam bounded profile
+
+Reference PDP:
+`https://sokoglam.com/products/acwell-licorice-ph-balancing-cleansing-toner`.
+
+This profile applies the shared standard only to the public surfaces proven in
+`sokoglam_okendo_retail_review_capture_recon_v0.md`:
+
+| Area | Bounded behavior |
+| --- | --- |
+| Local preprojection | Prefer the page-owned Okendo response for review rows and Shopify's narrow product-grid `section_id` response for bestseller placements. Request transfer compression and extract locally. The initial route pin must reconcile against the broad PDP/collection surface; a compact source that changes order or coverage is rejected. |
+| PDP binding | Read the public PDP once when a new or changed product needs binding or an understanding cycle is commissioned. Bind the canonical product URL, Shopify product ID, Okendo subscriber ID, provider product ID, aggregate count, and source-visible first-row prefix before accepting companion responses. |
+| Routine review monitoring | Make exactly one date-desc `limit=100` Okendo API request per bound PDP. Retain its source-native IDs and rows as `latest_100` or proven exhaustion, plus the prior last-seen review ID and whether it was found. Routine monitoring requires that prior watermark; without one, label the response a baseline window or commission an understanding cycle. Do not follow `nextUrl` during the routine monitoring observation and do not call the window a complete corpus. |
+| Saturation / gap | When the prior last-seen ID is absent from a full 100-row response, emit `sokoglam_review_monitoring_window_saturated`, preserve the observation, and queue an understanding cycle. This is a visible monitoring gap, not proof of exactly 100 additions, no loss, or route failure. |
+| Understanding cycle | Re-open the public PDP binding and follow the page-owned Okendo `nextUrl` chain at human rate until the declared aggregate reconciles or a typed failure/ceiling stops the run. The Acwell calibration proved a server cap of 100 rows even when `limit=5000` was requested and reconciled 2,130 rows over 22 responses. |
+| Bestseller monitoring | Capture every paginated compressed product-grid section under exact `best-selling` sort, project retailer-native product IDs and positions locally, and reconcile declared count, unique IDs, duplicate placements, rank continuity, and termination. Compare movement only within the Soko series; cross-retailer rank magnitudes are not equivalent. |
+
+The routine one-request rule minimizes monitoring cost; it deliberately trades
+away same-observation corpus completion. An understanding cycle is the explicit
+recovery path, not hidden pagination inside monitoring.
+
 ## Nordstrom reference profile
 
 Reference PDP:
