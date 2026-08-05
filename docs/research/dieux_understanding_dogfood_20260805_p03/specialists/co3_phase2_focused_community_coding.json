@@ -1,0 +1,343 @@
+{
+  "schema_version": "dieux_p03_phase2_focused_community_coding_v1",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "subject": "Dieux Skin",
+  "status": "terminal_five_of_five_reconciled",
+  "scope": "Exactly five owner-supplied Reddit URLs; no search, broad crawl, link following, or adjacent-thread capture.",
+  "base_corpus": {
+    "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/community_axis_coding.json",
+    "sha256": "553451d7359fdb2884e32640b0bdd1ace37d8cdc4f75e2e7c6a8df4fd3478483",
+    "deduplicated_thread_count": 110
+  },
+  "capture_execution": {
+    "route": "persistent real-Chrome Reddit CDP exact-thread capture",
+    "cdp_endpoint": "http://127.0.0.1:9223",
+    "browser_version": "Chrome/150.0.7871.187",
+    "persistent_tab_marker": "DIEUX-PHASE2-CO3-003",
+    "one_tab": true,
+    "requested_url_count": 5,
+    "captured_packet_count": 5,
+    "source_detail_gate_pass_count": 5,
+    "inter_start_gaps_seconds": [49.594344, 49.9444004, 49.8888949, 50.380511],
+    "required_gap_range_seconds": [44, 61],
+    "spacing_compliant": true,
+    "network_capture_started_at": "2026-08-05T16:42:50.0129185Z",
+    "network_capture_last_start_at": "2026-08-05T16:46:09.8210688Z",
+    "limitations": [
+      "Bounded rendered exact-thread windows only.",
+      "No link following, user or profile capture, broad crawl, or prevalence inference.",
+      "Engagement is the source-visible thread score and comment count at capture time, not a stable or complete reach measure."
+    ]
+  },
+  "deduplication": {
+    "canonical_thread_overlap_with_base_count": 0,
+    "canonical_thread_overlap_ids": [],
+    "exact_body_sha256_overlap_with_base_count": 0,
+    "exact_body_sha256_overlap_values": [],
+    "new_used_thread_count": 5,
+    "combined_provisional_thread_count_if_co0_admits": 115,
+    "rule": "Canonical thread ID first, exact body SHA-256 second; this focused artifact does not mutate the base corpus."
+  },
+  "row_accounting": {
+    "requested": 5,
+    "used": 5,
+    "captured_excluded": 0,
+    "blocked": 0,
+    "unavailable": 0,
+    "product_or_portfolio_rows": 4,
+    "service_only_rows": 1
+  },
+  "rows": [
+    {
+      "request_position": 1,
+      "canonical_thread_id": "1l8evw5",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1l8evw5/best_moisturizer_for_dry_sensitive_skin/",
+      "disposition": "used",
+      "dedupe_against_110": "new_canonical_thread_and_new_body_identity",
+      "title": "Best moisturizer for dry, sensitive skin + compromised barrier? Dieux vs. Aestura vs. Dr. Jart",
+      "subreddit": "Sephora",
+      "source_timestamp": "2025-06-11T00:20:54.666Z",
+      "source_timestamp_display": "1y ago",
+      "engagement_at_capture": {
+        "thread_score": 25,
+        "comment_count": 79
+      },
+      "packet": {
+        "locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co3\\phase2_focused_reddit\\01_1l8evw5",
+        "packet_id": "01KZ9CXS33BGDM51DWB9V2PWFN",
+        "capture_time": "2026-08-05T16:43:22Z",
+        "manifest_sha256": "f9359f4e4ebaa4961d04f873baceb2469a38c246f5f3b9537416450a7feb8841",
+        "body_locator": "raw/02_02_realchrome_visible_text.txt",
+        "body_sha256": "48b40227fced4cde67b9989dbf0253355c04d53b8aa6211291f0212b34f7157b",
+        "body_bytes": 15054
+      },
+      "subject_anchor": {
+        "brand": "Dieux Skin",
+        "products": ["Instant Angel", "Deliverance"],
+        "strength": "exact_title_and_multiple_source_native_comments"
+      },
+      "first_hand_posture": "mixed_thread_with_multiple_first_hand_product_uses_reactions_returns_and_switches",
+      "choice_state": ["subject", "alternative", "conditional", "returned"],
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "reaction_irritation_breakout",
+        "texture_weight_finish",
+        "routine_makeup_compatibility",
+        "price_value_hype_trust",
+        "segment_condition_fit",
+        "post_procedure_active_compatibility",
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence"
+      ],
+      "behavior": [
+        {"type": "returned", "product": "Instant Angel", "condition": "reported oily finish"},
+        {"type": "switched_to_subject", "from": "Tatcha night cream", "to": "Instant Angel", "reported_outcome": "helped and changed perceived skin texture"},
+        {"type": "returned_to_prior_preference", "from": "Instant Angel", "to": "Dr. Jart Ceramidin", "reason": "sensorial and texture preference"},
+        {"type": "stopped_or_rejected", "product": "Instant Angel", "reason": "irritation or breakout in individual accounts"},
+        {"type": "retained_or_recommended", "product": "Instant Angel or Deliverance plus Instant Angel", "condition": "dry or sensitive skin in individual accounts"}
+      ],
+      "destinations": [
+        {"name": "Dr. Jart Ceramidin", "status": "executed_return_and_preference"},
+        {"name": "Lions Pose", "status": "executed_routine_after_Instant_Angel_irritation"},
+        {"name": "Alpyn", "status": "executed_routine_and_stated_winter_repurchase"},
+        {"name": "Aestura Atobarrier365", "status": "executed_use_or_recommendation_in_same_condition"},
+        {"name": "Kiehl's Ultra Facial Advanced Barrier Repair", "status": "executed_alternative_routine"},
+        {"name": "Tatcha Indigo", "status": "comparison_or_recommendation"}
+      ],
+      "strongest_counterevidence": "Instant Angel calming, texture improvement, and dry-skin delight coexist with urea-associated irritation attribution, oiliness/return, insufficient winter moisture, breakout, and renewed preference for alternatives.",
+      "service_product_boundary": "product_and_portfolio_evidence_only",
+      "claim_ceiling": "Qualitative existence and conditions within one self-selected thread; no superiority, causation, safety, or prevalence claim."
+    },
+    {
+      "request_position": 2,
+      "canonical_thread_id": "1omfgsp",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/1omfgsp/misc_dieux_shipping_issues_poor_customer_service/",
+      "disposition": "used",
+      "dedupe_against_110": "new_canonical_thread_and_new_body_identity",
+      "title": "Dieux shipping issues - poor customer service experience",
+      "subreddit": "SkincareAddiction",
+      "source_timestamp": "2025-11-02T12:00:41.931Z",
+      "source_timestamp_display": "9mo ago",
+      "engagement_at_capture": {
+        "thread_score": 3,
+        "comment_count": 22
+      },
+      "packet": {
+        "locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co3\\phase2_focused_reddit\\02_1omfgsp",
+        "packet_id": "01KZ9CZ50J26DWFK01B4CYDZYP",
+        "capture_time": "2026-08-05T16:44:07Z",
+        "manifest_sha256": "4ad2a86299c77785a329af0449ff2224374435315101e8779de76c7f8999090e",
+        "body_locator": "raw/02_02_realchrome_visible_text.txt",
+        "body_sha256": "3f2e7e8a773c206a78730b4291f0104e08394d479fa3b6db5f22cb978eb546c4",
+        "body_bytes": 11528
+      },
+      "subject_anchor": {
+        "brand": "Dieux Skin DTC",
+        "products": [],
+        "strength": "exact_title_post_and_multiple_source_native_transaction_comments"
+      },
+      "first_hand_posture": "multiple_first_hand_order_shipping_and_support_experiences",
+      "choice_state": ["direct_purchase", "future_channel_switch", "cancel_considered", "support_followup"],
+      "axis_ids": [
+        "fulfillment_shipping",
+        "support_responsiveness",
+        "promotional_fairness_and_follow_through",
+        "buying_confidence_trust",
+        "channel_switching"
+      ],
+      "behavior": [
+        {"type": "eventual_fulfillment_after_delay", "channel": "Dieux DTC", "condition": "multiple revised ship estimates and support follow-up"},
+        {"type": "no_future_direct_purchase", "channel": "Dieux DTC"},
+        {"type": "future_channel_switch", "to": "Sephora"},
+        {"type": "cancel_or_refund_intent", "condition": "express order remained in order-received state"},
+        {"type": "support_followup", "outcomes": ["discount extension", "$10 credit in one account", "shipping after contact in individual accounts"]}
+      ],
+      "destinations": [
+        {"name": "Sephora", "status": "stated_future_repurchase_channel_not_competitor_brand"}
+      ],
+      "strongest_counterevidence": "The lead order and some commenters ultimately received shipment or a credit/extension, but the thread retains repeated delay, changing estimates, communication gaps, and dissatisfaction with promotional timing or follow-through.",
+      "service_product_boundary": "service_only_no_product_performance_credit",
+      "product_performance_admission": false,
+      "claim_ceiling": "Self-selected transaction and service observations only; no fulfillment prevalence, policy compliance rate, product efficacy, or product-quality inference."
+    },
+    {
+      "request_position": 3,
+      "canonical_thread_id": "o28gng",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/o28gng/product_question_thoughts_on_deliverance_serum/",
+      "disposition": "used",
+      "dedupe_against_110": "new_canonical_thread_and_new_body_identity",
+      "title": "Thoughts on Deliverance serum?",
+      "subreddit": "SkincareAddiction",
+      "source_timestamp": "2021-06-17T21:32:22.605Z",
+      "source_timestamp_display": "5y ago",
+      "engagement_at_capture": {
+        "thread_score": 24,
+        "comment_count": 39
+      },
+      "packet": {
+        "locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co3\\phase2_focused_reddit\\03_o28gng",
+        "packet_id": "01KZ9D0NR3MWYPSKHFT2AF29ZD",
+        "capture_time": "2026-08-05T16:44:56Z",
+        "manifest_sha256": "1d614a21dbadc3fd6551e3aa691f41595b19e0fb3e73f332fb998d39631673be",
+        "body_locator": "raw/02_02_realchrome_visible_text.txt",
+        "body_sha256": "f71f6988bd1395b0d0151ec36cb310cd8e659b3b99f15b102f48d4d2a116cefb",
+        "body_bytes": 22345
+      },
+      "subject_anchor": {
+        "brand": "Dieux Skin",
+        "products": ["Deliverance", "Instant Angel", "Air Angel"],
+        "strength": "exact_title_post_formula_and_multiple_source_native_use_comments"
+      },
+      "first_hand_posture": "mixed_thread_with_first_hand_purchase_longitudinal_use_rechallenge_refund_and_repurchase",
+      "choice_state": ["subject", "conditional", "stopped", "retried", "refunded", "retained_or_repurchased"],
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "reaction_irritation_breakout",
+        "texture_weight_finish",
+        "routine_makeup_compatibility",
+        "price_value_hype_trust",
+        "segment_condition_fit",
+        "post_procedure_active_compatibility",
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence"
+      ],
+      "behavior": [
+        {"type": "purchased_on_launch_or_restock", "driver": "influencer marketing and formula interest"},
+        {"type": "stopped_and_rechallenged", "product": "Deliverance", "reported_outcome": "initial breakouts followed by later tolerated use without early visible benefit"},
+        {"type": "stopped_and_refunded", "product": "Deliverance", "reported_outcome": "severe prolonged breakout and scarring account"},
+        {"type": "repurchased_or_kept_on_hand", "product": "Deliverance", "reported_outcome": "redness, marks, tone, texture, or brightness benefit in individual accounts"},
+        {"type": "alternative_use", "product": "Deliverance", "use": "under-eye and neck after facial breakout concern"}
+      ],
+      "destinations": [
+        {"name": "Chuda Healing Hydrating Cream", "status": "routine_comparison_not_deliverance_switch"},
+        {"name": "Eucerin Baby Eczema Relief Cream", "status": "routine_composition_not_deliverance_switch"}
+      ],
+      "strongest_counterevidence": "Reports of reduced redness, marks, or barrier distress and repeat purchase coexist with whiteheads, cystic acne, irritation, perioral dermatitis, discontinuation, refund, no early visible difference, and trust concern about influencer marketing or review moderation.",
+      "service_product_boundary": "product_performance_and_refund_behavior_separated; refund existence does not establish service quality",
+      "claim_ceiling": "Qualitative first-hand Deliverance outcomes and behaviors in one self-selected thread; no ingredient causation, safety, efficacy rate, review-censorship finding, or prevalence claim."
+    },
+    {
+      "request_position": 4,
+      "canonical_thread_id": "1f9ys6t",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1f9ys6t/ordered_dieux_instant_angel_finally/",
+      "disposition": "used",
+      "dedupe_against_110": "new_canonical_thread_and_new_body_identity",
+      "title": "Ordered Dieux Instant Angel finally",
+      "subreddit": "SkincareAddictionLux",
+      "source_timestamp": "2024-09-05T22:00:49.294Z",
+      "source_timestamp_display": "2y ago",
+      "engagement_at_capture": {
+        "thread_score": 49,
+        "comment_count": 81
+      },
+      "packet": {
+        "locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co3\\phase2_focused_reddit\\04_1f9ys6t",
+        "packet_id": "01KZ9D27XYFXAA5CTCG9YM6N4V",
+        "capture_time": "2026-08-05T16:45:48Z",
+        "manifest_sha256": "48686385da11a3245d91164a30270ce5ca13bc46d9fb9a3ea97394a5d71e0ee1",
+        "body_locator": "raw/02_02_realchrome_visible_text.txt",
+        "body_sha256": "b2eba861c7e000cb770e5ad61619e14239bdd21a3ada09c66abc27889eabebdf",
+        "body_bytes": 12115
+      },
+      "subject_anchor": {
+        "brand": "Dieux Skin",
+        "products": ["Instant Angel", "Air Angel", "Baptism"],
+        "strength": "exact_title_post_and_multiple_source_native_use_comments"
+      },
+      "first_hand_posture": "mixed_thread_with_first_hand_order_use_repurchase_breakout_and_alternative_use",
+      "choice_state": ["ordered", "subject", "conditional", "retained_or_repurchased", "stopped"],
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "reaction_irritation_breakout",
+        "texture_weight_finish",
+        "routine_makeup_compatibility",
+        "packaging_dispensing_usability",
+        "price_value_hype_trust",
+        "segment_condition_fit",
+        "post_procedure_active_compatibility",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence"
+      ],
+      "behavior": [
+        {"type": "ordered_after_extended_consideration", "product": "Instant Angel"},
+        {"type": "retained_or_repurchased", "product": "Instant Angel", "detail": "including stated jumbo-size intent and prior repurchase"},
+        {"type": "stopped_or_left_unused", "product": "Instant Angel", "reason": "individual intolerance or breakout"},
+        {"type": "alternative_use", "product": "Instant Angel", "use": "hands after facial breakout"},
+        {"type": "retried_after_prior_breakout", "product": "Instant Angel", "reported_outcome": "later tolerated and loved in one account"}
+      ],
+      "destinations": [
+        {"name": "Instant Angel", "status": "executed_switch_from_SkinCeuticals_Triple_Lipid_in_one_account"},
+        {"name": "Stratia Lipid Gold", "status": "executed_complementary_routine_and_comparison"},
+        {"name": "Avène Cicalfate", "status": "executed_complementary_routine"},
+        {"name": "SkinCeuticals Triple Lipid", "status": "comparison_and_price_reference"}
+      ],
+      "strongest_counterevidence": "Staple, holy-grail, repurchase, easy-dispensing, non-greasy, and no-burning accounts coexist with insufficient deep-winter hydration, breakout, an almost-full unused tube, hand-only fallback, marketing distrust, and perceived texture differences across purchases.",
+      "service_product_boundary": "product_and_brand_trust_evidence_only",
+      "claim_ceiling": "Qualitative existence and conditions within one self-selected thread; no formula-change finding, retailer-difference finding, efficacy rate, or prevalence claim."
+    },
+    {
+      "request_position": 5,
+      "canonical_thread_id": "1gzqa62",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1gzqa62/usspecific_products/",
+      "disposition": "used",
+      "dedupe_against_110": "new_canonical_thread_and_new_body_identity",
+      "title": "US-Specific Products?",
+      "subreddit": "SkincareAddictionLux",
+      "source_timestamp": "2024-11-25T18:41:36.626Z",
+      "source_timestamp_display": "2y ago",
+      "engagement_at_capture": {
+        "thread_score": 4,
+        "comment_count": 9
+      },
+      "packet": {
+        "locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co3\\phase2_focused_reddit\\05_1gzqa62",
+        "packet_id": "01KZ9D3PK593CJQZENM39RC3EH",
+        "capture_time": "2026-08-05T16:46:36Z",
+        "manifest_sha256": "65f69ecdcb85839af8b0d4b8c972b2941fe6bfc50842fe36b3f4dfe7b8fcd8ae",
+        "body_locator": "raw/02_02_realchrome_visible_text.txt",
+        "body_sha256": "8ebb56151aaa0a56c67420be2c08eb352758d098d6be2eacfc338633a1c868f3",
+        "body_bytes": 8926
+      },
+      "subject_anchor": {
+        "brand": "Dieux Skin",
+        "products": ["Air Angel", "Baptism", "Instant Angel", "Deliverance"],
+        "strength": "exact_post_purchase-intent anchor plus one source-native first-hand product recommendation exchange"
+      },
+      "first_hand_posture": "thin_mixed_thread_with_first_hand_Air_Angel_use_and_broader_purchase_intent",
+      "choice_state": ["planned_purchase", "subject", "internal_product_choice", "channel_or_availability_constraint"],
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "reaction_irritation_breakout",
+        "texture_weight_finish",
+        "price_value_hype_trust",
+        "segment_condition_fit",
+        "post_procedure_active_compatibility",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "international_availability_and_channel"
+      ],
+      "behavior": [
+        {"type": "planned_cross_border_purchase", "channel": "US mail forwarder"},
+        {"type": "recommended_and_used", "product": "Air Angel", "condition": "daytime for combo-oily, dehydrated, acne-prone skin"},
+        {"type": "recommended", "product": "Baptism fragrance-free cleanser"},
+        {"type": "planned_purchase_when_available", "product": "Instant Angel", "condition": "reported out of stock"}
+      ],
+      "destinations": [
+        {"name": "Le Mieux Sheer Hydration", "status": "executed_night_or_cold-day_complement_to_Air_Angel"},
+        {"name": "Soko Glam", "status": "availability_channel_mention_with_free-shipping_threshold"},
+        {"name": "US mail forwarder", "status": "planned_access_route_not_retailer_preference"}
+      ],
+      "strongest_counterevidence": "The direct Air Angel/Baptism recommendation is condition-specific and thin; Instant Angel breakout language is conditional rather than a clearly anchored first-hand adverse event, while product availability, CBD shipping, and cross-border cost constrain the choice.",
+      "service_product_boundary": "product_selection_and_access_constraints_only; no first-hand shipping-service complaint",
+      "claim_ceiling": "One thin condition-specific product-selection exchange plus purchase intent and access constraints; no product ranking, shipping performance, authorization, or prevalence claim."
+    }
+  ],
+  "phase_wide_closure_claimed": false,
+  "deliver_started": false
+}

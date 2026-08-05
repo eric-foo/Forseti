@@ -1,0 +1,124 @@
+{
+  "schema_version": "dieux_serp_phase1_ledger_v1",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "phase": "serp_phase1",
+  "created_at": "2026-08-05T23:27:16+08:00",
+  "status": "terminal",
+  "capability_preflight_locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/route_capability_preflight.json",
+  "route_health": {
+    "first_real_seed_job_id": "G001",
+    "lower_route_result": "blocked_google_unusual_traffic",
+    "lower_route_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G001_dieux_skin_review",
+    "lower_route_manifest_sha256": "dcbb4f6baca8faeb5480ead2dea9c77bacc25b234897f0659a0e17c082c71c37",
+    "lower_route_retried": false,
+    "fallback_transition": "exact held G001 job and all remaining jobs moved to one preflighted persistent real-Chrome tab",
+    "persistent_tab_marker": "DIEUX-PHASE1-003",
+    "accepted_packet_count": 8,
+    "block_count": 1,
+    "limitation": "The block packet remains raw external evidence. No exit-network detail is reproduced in this ledger."
+  },
+  "jobs": [
+    {"job_id":"G001","query":"Dieux Skin review","shape":"seed_review","packet_id":"01KZ97Z5N132AMSFQJJ1E00YQW","captured_at":"2026-08-05T15:16:44Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G001_realchrome\\manifest.json","manifest_sha256":"c5cd0f66e06a2fee2966324e7f69f7bb1601e2e2a93ce08938daac45bd2d001c","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G001_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"64f655df52768391608d89b4145c186fd65949adf27cc578919f3fb44821d56c","visible_text_bytes":8389,"disposition":"captured_body_verified"},
+    {"job_id":"G002","query":"Dieux Skin side effects","shape":"seed_side_effects","packet_id":"01KZ981YT89GQ6EVNN6HNX5AQX","captured_at":"2026-08-05T15:18:16Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G002_realchrome\\manifest.json","manifest_sha256":"d9fc870023e17595aaa8e973b69c6c995f56e3ec0799c5cd80941217553e5372","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G002_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"cb39c70fb124ce01fd944b8b272af1ab85a46b5eaf26ef50f027dd91c1e62e0d","visible_text_bytes":5851,"disposition":"captured_body_verified"},
+    {"job_id":"G003","query":"is Dieux Skin bad for you","shape":"seed_safety_worry","packet_id":"01KZ9859KRVVKMS2XJQZ2VYBKV","captured_at":"2026-08-05T15:20:05Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G003_realchrome\\manifest.json","manifest_sha256":"8420563003c048e4fb64ea977c1ea029228a6d91cd0dad7baa01f5793eb66653","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G003_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"c172b0c20f10c0add7d8a3cf657836f01440b4f38c1072457744aa3ea8d05990","visible_text_bytes":5238,"disposition":"captured_body_verified"},
+    {"job_id":"G004","query":"Dieux Skin made it worse","shape":"seed_backfire","packet_id":"01KZ987M9RJ3CJ2Y1H22Q2DHW1","captured_at":"2026-08-05T15:21:21Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G004_realchrome\\manifest.json","manifest_sha256":"4d9e72f5f1ce9967aa88fee8ea2cd5138f09db6fbd371bf710c5dbdb7e49c521","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G004_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"35174bed9d95e06ef4f8641763586e787f16f07de4a41a9f3821817f86742fac","visible_text_bytes":6107,"disposition":"captured_body_verified"},
+    {"job_id":"G005","query":"Dieux Skin not working","shape":"seed_failure_to_deliver","packet_id":"01KZ989WXYA50XWPJ8ASH84KM2","captured_at":"2026-08-05T15:22:36Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G005_realchrome\\manifest.json","manifest_sha256":"fe02375fd32f9482a8b051b44c29a70ed1dcba6c3cf6be8862e24f5d2fdfd9ed","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G005_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"8503acc6ea0f0d5514c33003298e3023fe5de2cba3dec631135b7d9ff3ed8cef","visible_text_bytes":5007,"disposition":"captured_body_verified"},
+    {"job_id":"G006","query":"Dieux Skin reddit","shape":"seed_community","packet_id":"01KZ98C5H1QY6XNP1VBPRC8X5H","captured_at":"2026-08-05T15:23:50Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G006_realchrome\\manifest.json","manifest_sha256":"c1a0312578881574d18ef90e55958041ef2620877bf278a90fc5e3f750d38232","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G006_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"b41469a40d59a5c200bf9f1a272b01d98aa77a9035da3c41ecf1fbe68c7e6689","visible_text_bytes":3628,"disposition":"captured_body_verified"},
+    {"job_id":"G007","query":"Dieux Skin dupe","shape":"seed_dupe","packet_id":"01KZ98EXT1BHGBM7C0G5N50VW3","captured_at":"2026-08-05T15:25:21Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G007_realchrome\\manifest.json","manifest_sha256":"7ea5f14fe2ff1b6dadda05e2de6f717195483af8428ab0ed3324d442f430c781","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G007_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"19af702d6a85a466f24239adbf4d3756e128e724435cd1aa1acac96a62123aa4","visible_text_bytes":9033,"disposition":"captured_body_verified"},
+    {"job_id":"G008","query":"Dieux Skin price","shape":"j5_subject_price","packet_id":"01KZ98H9WGCHS61PDY0CQ8EMRW","captured_at":"2026-08-05T15:26:38Z","manifest_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G008_realchrome\\manifest.json","manifest_sha256":"3fa0f4cc737bfafdba96c4fc3b7a80aa4ab34d9d66b414d2fc60f5ac915e7242","visible_text_locator":"C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase1\\G008_realchrome\\raw\\02_02_realchrome_visible_text.txt","visible_text_sha256":"57bcdc489d5b06b584ffd71babf8da4c78120d2675349de45ad59490bb016c0e","visible_text_bytes":5688,"disposition":"captured_body_verified","queue_gate":{"eligible":true,"reason":null}}
+  ],
+  "competitor_ledger": [
+    {"name":"COSRX Ceramide Skin Barrier Moisturizer","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer"},
+    {"name":"Skinfix Barrier+ Triple Lipid-Peptide Cream","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer"},
+    {"name":"Regimen Lab Cream","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer"},
+    {"name":"Experiment Beauty","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer; exact product unresolved"},
+    {"name":"Naturium","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer; exact product unresolved"},
+    {"name":"SkinCeuticals Triple Lipid Restore","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer"},
+    {"name":"Aestura","type":"rival","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only related-search pointer; exact product unresolved"},
+    {"name":"Illiyoon Ceramide","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer"},
+    {"name":"Remedy Rich Cream Moisturizer","type":"dupe_association","rung":"presence","distinct_queries":1,"provenance_job_ids":["G007"],"claim_ceiling":"cite-only discovery pointer"}
+  ],
+  "selected_for_vs": {
+    "names": [],
+    "reason": "No typed entry recurred across two independent query strings; the normative merged-queue rule forbids automatic selection from the presence rung."
+  },
+  "j5_prices": {
+    "subject_job_id": "G008",
+    "currency": "USD",
+    "observed_rendered_price_lines": [
+      {"product":"Air Angel Gel Cream","sizes_and_prices":["25 mL $22","50 mL $34"]},
+      {"product":"Instant Angel Moisturizer","sizes_and_prices":["mini $25","50 mL $45","large $78"]},
+      {"product":"Baptism Gentle Cleanser","sizes_and_prices":["6.76 oz $34"]},
+      {"product":"Ethereal Cleansing Oil","sizes_and_prices":["3.38 oz $28"]},
+      {"product":"Deliverance Serum","sizes_and_prices":["1 oz $62","2 oz $89"]},
+      {"product":"Skin Mercy Recovery Cream","sizes_and_prices":["$38"]},
+      {"product":"Auracle Eye Serum","sizes_and_prices":["$44"]},
+      {"product":"Forever Eye Mask","sizes_and_prices":["$25"]}
+    ],
+    "claim_ceiling": "Rendered SERP price observations and source pointers only; CO1 must verify current official product and price architecture before conclusion."
+  },
+  "typed_ledger": {
+    "owned_source_pointers": ["Dieux official site","Dieux official collections","Dieux FAQ","Dieux product and price-transparency pages"],
+    "retailer_pointers": ["Sephora","Soko Glam from commissioned prior corpus; fresh official authorization still required","TikTok Shop only if fresh official authorization triggers it"],
+    "customer_surface_pointers": ["Reddit","Trustpilot"],
+    "editorial_pointers": ["Byrdie","The Heather Report","The Strategist","other source-native counterparts to adjudicate"],
+    "product_pointers": ["Instant Angel","Air Angel","Deliverance","Skin Mercy","Forever Eye Mask"],
+    "candidate_axis_terms": ["hydration","weight and texture","packaging","pilling and makeup fit","irritation and reaction","breakouts and congestion","sensitive-skin fit","price and value","fulfillment and shipping","support responsiveness","returns and refunds","buying confidence and trust"],
+    "limitations": [
+      "Google AI text and snippets are timestamped discovery pointers, not source-native evidence.",
+      "No presence-rung competitor is eligible for a current competitive conclusion or automatic vs capture.",
+      "Trustpilot service reviews cannot corroborate product efficacy, tolerability, texture, or formulation axes."
+    ]
+  },
+  "trigger_thread_queue": [
+    {"url":"https://www.reddit.com/r/SkincareAddiction/comments/181lihq/thoughts_on_dieux_skin_product_request/","source_jobs":["G001","G002","G003","G005","G006","G008"],"purpose":"balanced brand and product experience"},
+    {"url":"https://www.reddit.com/r/Sephora/comments/1ax6ivq/thoughts_on_dieux_skin/","source_jobs":["G001","G003","G004","G005","G006"],"purpose":"retailer-seeded brand and product experience"},
+    {"url":"https://www.reddit.com/r/SkincareAddictionLux/comments/1ovsqzr/dieuxspecific_irritation/","source_jobs":["G002","G004"],"purpose":"reaction and tolerability"},
+    {"url":"https://www.reddit.com/r/SkincareAddiction/comments/tah4ez/product_question_anyone_else_having_issues_with/","source_jobs":["G002","G004"],"purpose":"adverse reaction and condition"},
+    {"url":"https://www.reddit.com/r/SkincareAddiction/comments/1ovsype/product_question_dieux_adverse_reactions/","source_jobs":["G002"],"purpose":"adverse reaction and condition"},
+    {"url":"https://www.reddit.com/r/SkincareAddictionLux/comments/1mw43hu/instant_angel_breakout/","source_jobs":["G004"],"purpose":"Instant Angel breakout"},
+    {"url":"https://www.reddit.com/r/SkincareAddictionLux/comments/vc7kso/good_dupe_for_dieux_instant_angel/","source_jobs":["G007"],"purpose":"dupe and substitute watch"},
+    {"url":"https://www.reddit.com/r/SkincareAddictionLux/comments/1hpp7we/suggested_alternative_to_dieux_instant_angel/","source_jobs":["G007"],"purpose":"alternative and substitution"},
+    {"url":"https://www.reddit.com/r/SkincareAddictionLux/comments/1abr0vm/dieux_instant_angel_replacement/","source_jobs":["G007"],"purpose":"replacement and executed-choice candidate"}
+  ],
+  "mediators": [
+    {"name":"Dieux official social accounts","class":"brand_owned","attachment_status":"presence_only_single_day","source_jobs":["G001","G002","G003","G004","G008"]},
+    {"name":"Charlotte Palermino / charlotteparler","class":"pending_classification","attachment_status":"presence_only_single_day","source_jobs":["G003","G004","G005","G007"]},
+    {"name":"alex greyson","class":"pending_classification","attachment_status":"presence_only_single_day","source_jobs":["G001","G004"]},
+    {"name":"AliceintheRabbitHole","class":"pending_classification","attachment_status":"presence_only_single_day","source_jobs":["G003"]}
+  ],
+  "grid_capture_queue": [],
+  "specialist_queues": {
+    "co1": {
+      "jobs": ["fresh official US portfolio and price architecture","fresh official retailer authorization","exact paid-advertiser identity","Google and Meta ad-route outcomes","official shipping, returns, refund, and customer-support policy counterpart for the Trustpilot service lane","bounded editorial counterpart capture"],
+      "claim_ceiling": "official facts and apparently-independent source-native context; no customer prevalence"
+    },
+    "co2": {
+      "retailer_targets": ["Sephora","Soko Glam"],
+      "conditional_targets": ["TikTok Shop only if fresh official source confirms authorization","all other qualifying US retailers from CO1 authorization"],
+      "jobs": ["grid and listing reconciliation","bounded review-corpus onboarding","provider tenant grouping, syndication, and overlap"],
+      "claim_ceiling": "retailer snapshot and corpus-specific observations; no independent-spread credit before overlap adjudication"
+    },
+    "co3": {
+      "weekly_reader_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\preflight\\reddit_weekly_read.json",
+      "trigger_thread_queue_ref": "$.trigger_thread_queue",
+      "mediator_map_ref": "$.mediators",
+      "grid_capture_queue_ref": "$.grid_capture_queue",
+      "cited_substitute_watch_list_ref": "$.competitor_ledger",
+      "query_family_order": ["balanced brand-plus-axis","behavior/consequence/displacement","bounded brandless hero","condition/post-use"],
+      "source_neutral_jobs": ["bounded unrestricted-domain brand and product review baseline","claim-directed counterpart checks","Trustpilot brand-level transaction and service review window"],
+      "trustpilot_job": {
+        "url": "https://www.trustpilot.com/review/dieuxskin.com",
+        "source_family": "reviews",
+        "source_surface": "brand_transaction_and_service_review_platform",
+        "harvested_from_jobs": ["G002","G003","G004","G005"],
+        "capture_fields": ["review date","transaction or order anchor","complaint type","company response","resolution","duplicate or near-duplicate status"],
+        "service_axes": ["fulfillment and shipping","order accuracy","support responsiveness","returns and refunds","buying confidence and trust"],
+        "claim_ceiling": "self-selected Trustpilot corpus observations only; no prevalence; no product-performance support unless a source-native first-hand review anchors the exact product and use outcome"
+      },
+      "claim_ceiling": "source-native qualitative existence and conditions only; no prevalence"
+    }
+  },
+  "deliver_started": false
+}

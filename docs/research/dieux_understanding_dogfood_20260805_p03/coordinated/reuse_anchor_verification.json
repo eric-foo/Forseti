@@ -1,0 +1,19 @@
+{
+  "schema_version": "dieux_phase_a_reuse_anchor_verification_v1",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "verified_at": "2026-08-05T23:32:18+08:00",
+  "admission_ceiling": "Hash and provenance verification only. Current-cycle evidence credit requires the owning specialist to re-admit and code the source-native bodies.",
+  "anchors": [
+    {"path":"docs/research/dieux_phase_a_preliminary_evidence_20260805/coordinated/phase_a_preliminary_evidence_consolidation.md","sha256":"85149c82d9d4925a67db81da70ca6dce582c3e0d731dbbb7d3dca0026decd4b3","hash_match":true,"role":"orientation and open-gap map","admission_status":"orientation_only"},
+    {"path":"docs/research/dieux_phase_a_preliminary_evidence_20260805/coordinated/community_axis_coding.json","sha256":"13f82e459319f9e3e50602e72f6031d40f5d90e303246bd98ce9cd83682fcf47","hash_match":true,"role":"Reddit candidate recovery and packet locators","admission_status":"pending_co3_recode"},
+    {"path":"docs/research/dieux_phase_a_preliminary_evidence_20260805/coordinated/retailer_axis_coding.json","sha256":"03e3a4370b459ea54c2eb55445a98c5310960cb234a9a90fa277ddce0839564f","hash_match":true,"role":"Soko Glam candidate recovery and locators","admission_status":"pending_co2_recode"},
+    {"path":"docs/research/dieux_phase_a_preliminary_evidence_20260805/coordinated/cross_source_evidence_ledger.json","sha256":"4177e6189d173a22960c9b0f69079197496f546fea05a26f7aa5c4bd8d08471c","hash_match":true,"role":"editorial and owned-source candidate locators","admission_status":"pending_source_native_body_check"},
+    {"path":"docs/research/phase_a_customer_evidence_pipeline_first_live_dogfood_v0.md","sha256":"9adce2384fc027a5e9c017d1054d0ed3c21884750fa0ca191e58964c0a340cb3","hash_match":true,"role":"rejected-run accounting and incidents","admission_status":"pipeline_context_only_not_seal_evidence"},
+    {"path":"C:\\tmp\\forseti-dieux-phase-a-pipeline-dogfood-20260804\\work\\phase_a_customer_evidence_pipeline_live_completion_receipt_v2.json","sha256":"0c229d3e0392c87b49ae0799529e239aa10e5ac01c1f66571b248007ed1bb22a","hash_match":true,"role":"raw-root pointer and prior run accounting","admission_status":"accounting_only_pending_primary_packet_reconciliation"},
+    {"path":"C:\\tmp\\forseti-dieux-sokoglam-retailer-corpus-20260805\\corpus.json","sha256":"40618a42445188bf9c87aef02dfd9351be49a22e22f6231a8b64e76f294d2922","hash_match":true,"role":"77 source-visible Soko Glam review bodies","admission_status":"pending_co2_current_authorization_and_recode"},
+    {"path":"C:\\tmp\\forseti-dieux-sokoglam-retailer-corpus-20260805\\manifest.json","sha256":"2530f4eb3d85c7afe79ab4afd2bd8abfad351a9f8cfd2693acd01101524f84c1","hash_match":true,"role":"Soko Glam capture manifest","admission_status":"pending_co2_current_authorization_and_identity_check"}
+  ],
+  "all_hashes_match": true,
+  "deliver_started": false
+}

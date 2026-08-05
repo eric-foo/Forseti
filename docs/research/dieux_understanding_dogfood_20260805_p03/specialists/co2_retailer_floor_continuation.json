@@ -1,0 +1,376 @@
+{
+  "retrieval_header_version": 1,
+  "artifact_role": "CO2 retailer hard-floor continuation ledger",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "authority_boundary": "evidence_only_no_phase_a_closure_no_deliver",
+  "status": "terminal_floor_met_source_exhausted",
+  "scope": {
+    "authorized_retailers_only": [
+      "Sephora",
+      "Soko Glam"
+    ],
+    "continued_surface": "Sephora Bazaarvoice Instant Angel product group P510288",
+    "filter": "ContextDataValue_IncentivizedReview:eq:False",
+    "sort": "SubmissionTime:desc",
+    "page_limit": 100,
+    "terminal_condition": "source_exhausted at TotalResults=915",
+    "phase_a_closed": false,
+    "deliver_started": false
+  },
+  "baseline": {
+    "effective_unique_text_reviews": 260,
+    "sephora_distinct_non_incentivized_text_review_ids": 183,
+    "soko_glam_unique_text_bodies": 77,
+    "sephora_baseline_packet_id": "01KZ99M6NETJD7TD68HR6CBVZ4",
+    "sephora_baseline_manifest_sha256": "30bae6cc30d9a0ba7365a8882c3e0a116931818d1b615557962a1fb8d04f795c",
+    "soko_corpus_sha256": "40618a42445188bf9c87aef02dfd9351be49a22e22f6231a8b64e76f294d2922",
+    "soko_manifest_sha256": "2530f4eb3d85c7afe79ab4afd2bd8abfad351a9f8cfd2693acd01101524f84c1"
+  },
+  "capture_attempts": [
+    {
+      "attempt": 1,
+      "status": "failed_closed_raw_preserved",
+      "packet_id": "01KZ9DQ7XC63VSX5VXRE5QDTWN",
+      "packet_root": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN",
+      "manifest_sha256": "69d27b05bae2fe509d101c489c1013f5c281e6ce88c3334ea2bbb0c85454bddc",
+      "receipt_sha256": "9ec277581df64c451223fb4bff28db1e1077587d15b341efa1ee2e6ab66490f0",
+      "preserved_response_count": 11,
+      "expected_response_count": 12,
+      "failure": {
+        "artifact_name": "reviews_non_incentivized_most_recent_offset_00900.json",
+        "error_type": "IncompleteRead",
+        "error": "IncompleteRead(15654 bytes read)"
+      },
+      "evidence_credit": "none; superseded by successful retry",
+      "preserved_response_hashes": [
+        {
+          "artifact_name": "questions_most_answers_offset_000.json",
+          "bytes": 8574,
+          "sha256": "7d901f74be4ec73e4fffdd18ef672806669d1800072bb7da44b632e931aa5a94"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_helpful_offset_000.json",
+          "bytes": 284718,
+          "sha256": "2bda53fb1bf9089803b68712021d87ffc90c2aacfa9d74e5d1c2a9ff0caddee2"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00000.json",
+          "bytes": 234923,
+          "sha256": "91be34d13aaa39af50a651a457a2c733d0ab6d33e1c2aae26eb725bd7e260804"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00100.json",
+          "bytes": 218906,
+          "sha256": "fa9183f6f4403e5849a12c1fe94408d6c24d0085b1cb5064b55648f6c15e91a9"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00200.json",
+          "bytes": 234706,
+          "sha256": "5453e7bc8420f63e3c801f01c253d2fd6bc65d618b058f439ac61c6996d37e89"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00300.json",
+          "bytes": 258235,
+          "sha256": "96677910cb7c2a42d917bd64b73827f449587d4dd30c699d85b206c09da6c209"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00400.json",
+          "bytes": 256875,
+          "sha256": "3f40f2fafbce0d33b48af00feff4d38b944a457b3f590269c94ae9a116cab346"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00500.json",
+          "bytes": 259764,
+          "sha256": "99bf33e3a0f4aa34619a81ab939512346a2232cdc2798689cf7214be81afcd63"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00600.json",
+          "bytes": 260348,
+          "sha256": "bbb5ce36255ff0885779d7074ee197dd21f6438441754bbc036fed2307a5ef77"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00700.json",
+          "bytes": 257171,
+          "sha256": "d07fea31691b651816b2bc7705c18ebb4e9c1b7ddf62f9a17c370a336d8fbc95"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00800.json",
+          "bytes": 257484,
+          "sha256": "ae98f1f64ce605d3e3ad003df07952fe506f851a0149a68d820faedea9386f94"
+        }
+      ],
+      "request_manifest_sha256": "a0f3fcaad1fea8883b9acc65a2efacc001dd1f8ecb69ab850a66e8ce46f6c300",
+      "failure_record_sha256": "dd692e868c75c7b422e89becfa96ba2a3db6385090edb5422c0f2471d8217081"
+    },
+    {
+      "attempt": 2,
+      "status": "complete_source_exhausted",
+      "packet_id": "01KZ9DS86EQDMDZM0NCED14YQ4",
+      "packet_root": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\62b\\01KZ9DS86EQDMDZM0NCED14YQ4",
+      "captured_at": "2026-08-05T16:58:22Z",
+      "parent_packet_id": "01KZ99GS7BYP0ZC7MQ4AY8260N",
+      "manifest_sha256": "934742be480fb423acfc9cd44e89021af7b76f54eb3786268293e62a6c2c894c",
+      "receipt_sha256": "9b7f848011e6f1719aeb51e513559c0878831c857b9c4b04c7f4b91af2955587",
+      "manifest_file_integrity": "all 14 preserved files match declared bytes and SHA-256",
+      "preserved_response_hashes": [
+        {
+          "artifact_name": "questions_most_answers_offset_000.json",
+          "bytes": 8574,
+          "sha256": "7d901f74be4ec73e4fffdd18ef672806669d1800072bb7da44b632e931aa5a94"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_helpful_offset_000.json",
+          "bytes": 284718,
+          "sha256": "2bda53fb1bf9089803b68712021d87ffc90c2aacfa9d74e5d1c2a9ff0caddee2"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00000.json",
+          "offset": 0,
+          "rows": 100,
+          "bytes": 234923,
+          "sha256": "91be34d13aaa39af50a651a457a2c733d0ab6d33e1c2aae26eb725bd7e260804"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00100.json",
+          "offset": 100,
+          "rows": 100,
+          "bytes": 218906,
+          "sha256": "fa9183f6f4403e5849a12c1fe94408d6c24d0085b1cb5064b55648f6c15e91a9"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00200.json",
+          "offset": 200,
+          "rows": 100,
+          "bytes": 234706,
+          "sha256": "5453e7bc8420f63e3c801f01c253d2fd6bc65d618b058f439ac61c6996d37e89"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00300.json",
+          "offset": 300,
+          "rows": 100,
+          "bytes": 258235,
+          "sha256": "96677910cb7c2a42d917bd64b73827f449587d4dd30c699d85b206c09da6c209"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00400.json",
+          "offset": 400,
+          "rows": 100,
+          "bytes": 256875,
+          "sha256": "3f40f2fafbce0d33b48af00feff4d38b944a457b3f590269c94ae9a116cab346"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00500.json",
+          "offset": 500,
+          "rows": 100,
+          "bytes": 259764,
+          "sha256": "99bf33e3a0f4aa34619a81ab939512346a2232cdc2798689cf7214be81afcd63"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00600.json",
+          "offset": 600,
+          "rows": 100,
+          "bytes": 260348,
+          "sha256": "bbb5ce36255ff0885779d7074ee197dd21f6438441754bbc036fed2307a5ef77"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00700.json",
+          "offset": 700,
+          "rows": 100,
+          "bytes": 257171,
+          "sha256": "d07fea31691b651816b2bc7705c18ebb4e9c1b7ddf62f9a17c370a336d8fbc95"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00800.json",
+          "offset": 800,
+          "rows": 100,
+          "bytes": 257484,
+          "sha256": "ae98f1f64ce605d3e3ad003df07952fe506f851a0149a68d820faedea9386f94"
+        },
+        {
+          "artifact_name": "reviews_non_incentivized_most_recent_offset_00900.json",
+          "offset": 900,
+          "rows": 15,
+          "bytes": 39611,
+          "sha256": "f56d2f84f64ed7009964046a2cbc5ff486d581499815f95a1a3b254a0f21a3cc"
+        }
+      ],
+      "request_manifest": {
+        "bytes": 12154,
+        "sha256": "64de7ad6fe8d044c3acb39e2c51931a92489784615181ed2e45471e28b97bd8c"
+      },
+      "onboarding_summary": {
+        "bytes": 4368559,
+        "sha256": "99cc80cf9667c1e929c03357e1b44df580673519a8ebf789c8f589be68c77af4"
+      }
+    }
+  ],
+  "sephora_terminal_walk": {
+    "provider_total_non_incentivized_rows": 915,
+    "captured_recent_order_rows": 915,
+    "captured_recent_order_unique_native_ids": 915,
+    "captured_text_rows": 913,
+    "captured_text_unique_native_ids": 913,
+    "captured_unique_whitespace_normalized_bodies": 913,
+    "duplicate_body_groups": 0,
+    "ratings_only_excluded_from_text_floor": 2,
+    "ratings_only_native_ids": [
+      "328608204",
+      "303942650"
+    ],
+    "newest_submission_time": "2026-08-04T15:34:47Z",
+    "oldest_submission_time": "2024-02-07T05:24:41Z",
+    "page_count": 10,
+    "source_exhausted": true,
+    "old_window_union_unique_native_ids": 183,
+    "old_window_ids_found_in_terminal_walk": 183,
+    "old_window_text_ids_found_in_terminal_walk": 183,
+    "additional_distinct_non_incentivized_text_review_ids": 730,
+    "incentive_state": {
+      "query_filter": "ContextDataValue_IncentivizedReview:eq:False",
+      "rows_with_raw_IncentivizedReview_False": 915,
+      "other_or_missing_values": 0
+    },
+    "syndication_state": {
+      "IsSyndicated_false": 915,
+      "IsSyndicated_true": 0,
+      "SourceClient_sephora": 915
+    },
+    "product_group_reconciliation": [
+      {
+        "provider_product_id": "P510288",
+        "source_visible_name": "Instant Angel Lipid-Rich Firming Moisturizer",
+        "all_rows": 880,
+        "text_rows": 878,
+        "ratings_only_rows": 2,
+        "unique_native_ids": 880,
+        "context_posture": "current parent product"
+      },
+      {
+        "provider_product_id": "P517955",
+        "source_visible_name": "Mini Instant Angel Lipid-Rich Firming Moisturizer",
+        "all_rows": 35,
+        "text_rows": 35,
+        "ratings_only_rows": 0,
+        "unique_native_ids": 35,
+        "context_posture": "historical or unlisted provider-group member; not a current SKU claim"
+      }
+    ],
+    "text_rating_distribution": {
+      "1": 82,
+      "2": 64,
+      "3": 53,
+      "4": 58,
+      "5": 656
+    },
+    "text_rating_bands": {
+      "low_1_to_2": 146,
+      "mid_3": 53,
+      "high_4_to_5": 714
+    }
+  },
+  "product_category_profile": {
+    "requirement": {
+      "minimum_product_contexts": 5,
+      "minimum_categories": 3
+    },
+    "observed_product_contexts": 6,
+    "observed_source_visible_categories": 5,
+    "status": "pass",
+    "category_authority": "fresh p03 Soko Shopify collection product type; Sephora did not expose a category field and adds no category credit",
+    "contexts": [
+      {
+        "product": "Baptism Gel Cleanser (Fragrance Free)",
+        "provider_product_id": "shopify-7605350400069",
+        "category": "Water Cleanser",
+        "soko_text_rows": 4
+      },
+      {
+        "product": "Air Angel Peptide Plumping Gel Cream",
+        "provider_product_id": "shopify-7605360787525",
+        "category": "Facial Moisturizer",
+        "soko_text_rows": 3
+      },
+      {
+        "product": "Instant Angel Lipid-Rich Firming Moisturizer",
+        "provider_product_id": "shopify-6897431216197",
+        "category": "Facial Moisturizer",
+        "soko_text_rows": 32,
+        "sephora_text_rows_in_provider_group": 913,
+        "cross_retailer_context_counting": "one product context; retailer corpora remain separate"
+      },
+      {
+        "product": "Forever Eye Masks",
+        "provider_product_id": "shopify-6897431117893",
+        "category": "Eye Mask",
+        "soko_text_rows": 15
+      },
+      {
+        "product": "Auracle Eye Serum",
+        "provider_product_id": "shopify-6897431085125",
+        "category": "Eye cream",
+        "soko_text_rows": 13
+      },
+      {
+        "product": "Deliverance 3-in-1 Repair Serum",
+        "provider_product_id": "shopify-6905276989509",
+        "category": "Serum/Ampoule",
+        "soko_text_rows": 10
+      }
+    ],
+    "sephora_category_ceiling": "Instant Angel and Mini Instant Angel are moisturizer names in the product group, but the Sephora grid category field was unobserved; no extra category or canonical product-context credit is assigned"
+  },
+  "cross_retailer_reconciliation": {
+    "sephora_effective_text_reviews": 913,
+    "soko_effective_text_reviews": 77,
+    "combined_effective_unique_reviews": 990,
+    "exact_whitespace_normalized_body_overlaps": 0,
+    "native_id_namespace_posture": "retailer/provider-specific; no cross-retailer native-ID equivalence asserted",
+    "soko_incentive_state": {
+      "fresh_instant_angel_incentivized": 16,
+      "fresh_instant_angel_non_incentivized": 16,
+      "other_pinned_product_rows_incentive_unknown": 45
+    },
+    "soko_origin_state": {
+      "fresh_instant_angel_externalProvider_shopify_shop": 4,
+      "fresh_instant_angel_without_externalProvider": 28,
+      "other_pinned_product_rows_without_origin_field": 45
+    },
+    "combined_text_rating_distribution": {
+      "1": 86,
+      "2": 66,
+      "3": 55,
+      "4": 67,
+      "5": 716
+    },
+    "combined_text_rating_bands": {
+      "low_1_to_2": 152,
+      "mid_3": 55,
+      "high_4_to_5": 783
+    },
+    "claim_ceiling": "separate retailer-specific observations; no author-population independence, prevalence, consensus, or cross-retailer recurrence claim"
+  },
+  "hard_floor": {
+    "required_effective_unique_reviews": 750,
+    "baseline_effective_unique_reviews": 260,
+    "additional_distinct_non_incentivized_sephora_text_reviews": 730,
+    "terminal_effective_unique_reviews": 990,
+    "margin_above_floor": 240,
+    "status": "passed"
+  },
+  "residuals": [
+    "Two source-exhausted Sephora rows are ratings-only and excluded from the text-review floor.",
+    "The first terminal-walk attempt failed on offset 900 with IncompleteRead; all prior response bytes remain preserved and receive no additive evidence credit.",
+    "P517955 is a historical or unlisted Mini Instant Angel provider-group member, not a current-SKU or new-category claim.",
+    "Soko incentive and origin fields remain incomplete outside the fresh 32-row Instant Angel response.",
+    "Category-profile credit comes from source-visible Soko product types; Sephora adds no category credit because its grid category field was unobserved."
+  ],
+  "stop_state": {
+    "retailer_hard_floor_closed": true,
+    "phase_a_closed": false,
+    "deliver_started": false,
+    "commit_created": false,
+    "push_performed": false,
+    "pull_request_created": false
+  }
+}
