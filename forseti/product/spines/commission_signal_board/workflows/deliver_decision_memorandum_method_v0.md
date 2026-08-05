@@ -35,15 +35,20 @@ stale_if:
 
 ## Entry Gate
 
-Enter only from the playbook's Turn B with its acquisition gate passed: sealed
-phase artifact verified in fresh context. This method never reopens, edits, or
-reinterprets the sealed corpus; new evidence is acquired only through a
-separately authorized, bounded, claim-scoped supplement (e.g., a one-shot
+This method is the Deliver phase's synthesis method for decision-bearing
+artifacts. Enter only as a Synthesize turn under the playbook, with the
+Understanding acquisition gate passed: sealed phase artifact verified in fresh
+context. This method never reopens, edits, or reinterprets the sealed corpus;
+new evidence is acquired only through the Deliver phase's bounded Acquire &
+Seal turn — decision-specific, claim-scoped supplements (e.g., a one-shot
 search-interest capture), never a general re-scan.
 
 ## Run Sequence
 
-1. Verify the seal gate (Turn B contract).
+Steps 2–4 are the Deliver phase's problem-framing step: they bind the decision
+frame before any drafting.
+
+1. Verify the seal gate (playbook Synthesize-turn contract).
 2. Target screen (Rule 1) — select the anchor product.
 3. Claims register and claims-to-complaints join (Rule 2).
 4. Product-slice recomputation (Rule 12) — re-derive axis support at the

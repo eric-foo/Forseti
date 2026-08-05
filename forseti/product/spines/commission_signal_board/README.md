@@ -6,7 +6,7 @@ artifact_role: Spine README
 scope: Entry point for the live Commission Signal Board spine and the Forseti Intelligence Cycle operating contract.
 use_when:
   - Starting Commission Signal Board prompt, playbook, validator, or migration work.
-  - Commissioning an Understanding or Problem Framing phase of a Forseti Intelligence Cycle.
+  - Commissioning an Understanding or Deliver phase of a Forseti Intelligence Cycle.
   - Checking which CSB artifacts are canonical after the spine-first pilot authorization.
   - Distinguishing the live CSB pilot from the staged global docs migration.
 authority_boundary: retrieval_only
@@ -38,6 +38,7 @@ stale_if:
 | Validator pointer | `forseti/product/spines/commission_signal_board/harness/validator.md` |
 | Test pointer | `forseti/product/spines/commission_signal_board/tests/validator_tests.md` |
 | Moved-path index | `forseti/product/spines/commission_signal_board/migrations/moved_paths_index.md` |
+| Phase-vocabulary migration note | `forseti/product/spines/commission_signal_board/migrations/intelligence_cycle_phase_vocabulary_migration_v0.md` |
 
 Naming note: **Prompt Structure** is the runnable CSB prompt/template. **Prompt Structure Rules** is the durable authority/rules doc for that prompt structure. File paths now use role-aligned names.
 
@@ -65,22 +66,30 @@ continue to use the existing standard Sections 1-10 and classifier handoff.
 
 Future one-company intelligence work is commissioned as a **Forseti
 Intelligence Cycle**, not by an unqualified `Phase 1` or `Phase 2` label. Its
-canonical phases are **Understanding** and **Problem Framing**, in that order.
-Each phase has two possible operator/model turns. An owner instruction that
-says **Understanding** or uses historical **Phase A** language without also
-naming **Deliver** commissions **Acquire & Seal only** and stops after the
-seal. Passing the seal makes Deliver eligible but never starts it; Deliver
-requires an explicit current commission or a separately authorized follow-up.
+canonical phases are **Understanding** and **Deliver**, in that order.
+`Problem Framing` is the Deliver phase's historical name; historical artifacts
+keep it, and problem framing survives as the Deliver phase's first synthesis
+step (decision frame and target screen). Each phase has two possible
+operator/model turns. An owner instruction that says **Understanding** or uses
+historical **Phase A** language without also naming a synthesis deliverable
+commissions **Acquire & Seal only** and stops after the seal. Passing the seal
+makes the Synthesize turn eligible but never starts it; synthesis requires an
+explicit current commission or a separately authorized follow-up.
 
 The two possible turns are:
 
 1. **Acquire & Seal** — bind the phase question and intended use, resolve
    canonical source routes before capture, run authorized Scanning/Capture, and
    preserve the resulting route receipts, provenance, failures, and seal state
-   in a durable phase artifact.
-2. **Deliver** — start in fresh context from that artifact, verify its
+   in a durable phase artifact. In the Deliver phase this turn is bounded to
+   decision-specific supplements to the Understanding substrate, never a
+   general re-scan.
+2. **Synthesize** — start in fresh context from that artifact, verify its
    acquisition gate, then synthesize and hand off without claiming evidence,
    coverage, provenance, or route exhaustion the seal does not support.
+   Understanding synthesis produces the decision-neutral company-intelligence
+   substrate; Deliver synthesis produces the explicitly commissioned
+   decision-bearing artifact under the Deliver decision-memorandum method.
 
 Inside an Understanding Acquire & Seal turn, every company commission uses one
 evidence-acquisition order:
@@ -101,9 +110,9 @@ Acquire & Seal optimizes for decision-useful completeness under the integrity
 floor; compactness, actor count, and token minimization are not its success
 criteria. For consumer brands, each material product axis must therefore carry
 a traceable decision-usefulness synthesis in its existing evidence-ledger row;
-source volume or a `strong` label alone cannot close it. Deliver then applies
-Smallest Complete Intervention to the human artifact without dropping decisive
-evidence or limitations.
+source volume or a `strong` label alone cannot close it. The Synthesize turn
+then applies Smallest Complete Intervention to the human artifact without
+dropping decisive evidence or limitations.
 
 For company Understanding, the playbook binds the default four-evidence-actor
 route: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. Current US
@@ -126,7 +135,7 @@ decision change affecting it; useful threads remain visible and need not be
 zero. The prompt-structure authority owns the exact fields, decision-frontier
 rule, and hybrid strength bars.
 
-Before a broad consumer-brand Phase A seal is accepted for Deliver or landed,
+Before a broad consumer-brand Phase A seal is accepted for synthesis or landed,
 its final delegated review reads every decision-bearing source-native citation
 and two independent spot checks per material axis. It checks local subject
 anchoring, axis/role fit, competitor-event attribution, and counterevidence,

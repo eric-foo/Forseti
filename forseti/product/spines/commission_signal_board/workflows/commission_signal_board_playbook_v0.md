@@ -10,7 +10,7 @@ scope: >
   classification, or proof.
 use_when:
   - Dispatching or rerunning the Commission Signal Board prompt.
-  - Commissioning or executing an Understanding or Problem Framing phase.
+  - Commissioning or executing an Understanding or Deliver phase.
   - Deciding whether a standard board is ready for classifier-handoff routing or a company report is mechanically complete.
   - Diagnosing validator failures on Commission Signal Board outputs.
 authority_boundary: retrieval_only
@@ -42,7 +42,7 @@ This playbook keeps these objects distinct:
 | Commission-stage company board | Conditional company Sections 1-10 sealed before scanning: `run_boundary: COMMISSION_SEALED_PRE_SCAN`, `not_checked` coverage rows as the commissioned scan routes, scout statuses may be `commissioned_not_yet_run` | Yes |
 | Company competitive-intelligence report | Conditional company Sections 1-10 with typed ledgers, earned scout statuses, and no classifier handoff | Yes |
 | Phase acquisition seal | Durable fresh-context handoff for one Intelligence Cycle phase; binds routes, receipts, provenance, failures, and acquisition-gate state | No |
-| Phase deliverable | Understanding or Problem Framing synthesis produced only from a passing phase acquisition seal | Profile-dependent |
+| Phase deliverable | Understanding or Deliver synthesis produced only from a passing phase acquisition seal | Profile-dependent |
 | Scanning, Capture, or classifier work | Downstream execution under its owning spine | No |
 
 CSB owns the commission profile, source-family requirements, time posture, and
@@ -55,17 +55,18 @@ acquisition complete.
 ## Forseti Intelligence Cycle
 
 Commission future one-company intelligence work as a **Forseti Intelligence
-Cycle**. The phases are **Understanding** followed by **Problem Framing**;
-`Problem` is informal shorthand only. Do not use bare `Phase 1` / `Phase 2`
-language for a future commission. Historical artifacts keep their original
-names and phase labels.
+Cycle**. The phases are **Understanding** followed by **Deliver**. `Problem
+Framing` is the Deliver phase's historical name (`Problem` was its informal
+shorthand); problem framing survives as the Deliver phase's first synthesis
+step. Do not use bare `Phase 1` / `Phase 2` language for a future commission.
+Historical artifacts keep their original names and phase labels.
 
 Each phase has two possible operator/model turns. Scope does not auto-expand:
 an owner instruction that says **Understanding** or uses historical **Phase A**
-language without also naming **Deliver** commissions **Acquire & Seal only**
-and stops after the seal. A passing seal makes Deliver eligible but does not
-authorize or start it. Deliver requires an explicit current commission or a
-separately authorized follow-up.
+language without also naming a synthesis deliverable commissions **Acquire &
+Seal only** and stops after the seal. A passing seal makes the Synthesize turn
+eligible but does not authorize or start it. Synthesis requires an explicit
+current commission or a separately authorized follow-up.
 
 ### Turn Objectives
 
@@ -75,14 +76,14 @@ The turns optimize different things:
   integrity floor. Continue until every material information job is supported,
   contradicted, meaningfully bounded, or honestly blocked/gapped. Compactness,
   actor count, and token minimization are not acquisition success criteria.
-- **Turn B — Deliver:** after the acquisition gate passes, apply Smallest
+- **Turn B — Synthesize:** after the acquisition gate passes, apply Smallest
   Complete Intervention to the human artifact. Preserve decisive evidence,
   counterevidence, uncertainty, provenance, reversal conditions, and the next
   action while removing repetition and audit detail that does not belong in the
   decision surface.
 
 Turn A/Turn B are turns inside each canonical phase; they do not rename
-Understanding and Problem Framing as unqualified Phase A/Phase B.
+Understanding and Deliver as unqualified Phase A/Phase B.
 
 ### Turn A — Acquire & Seal
 
@@ -402,7 +403,7 @@ phase_acquisition_seal:
   schema_version: phase_acquisition_seal_v3
   cycle_id:
   commission_id:
-  phase: understanding | problem_framing
+  phase: understanding | deliver
   turn: acquire_and_seal
   bound_question:
   intended_consumer:
@@ -498,9 +499,10 @@ phase_acquisition_seal:
   sealed_at:
 ```
 
-The seal is valid for Deliver only when `seal_state:
+The seal is valid for the Synthesize turn only when `seal_state:
 SEALED_READY_FOR_DELIVER`, `acquisition_gate: pass`, and `deliver_allowed:
-true`, and when every required route has a supported disposition and receipt or
+true` (the seal-state and field spellings are stable vocabulary; they read as
+"ready for the Deliver phase / synthesis"), and when every required route has a supported disposition and receipt or
 an honestly typed non-material blocking result. Any material blocking result,
 or a required route that was skipped, silently substituted, incompletely
 captured, or described as exhausted without the matching route evidence,
@@ -531,7 +533,7 @@ insightful or whether a semantic independence claim is true; `CO0` still owns
 that evidence judgment and must block rather than fill fields with unsupported
 labels. Historical v2 seals require
 `--allow-legacy-v2` for audit and do not authorize a new broad-Understanding
-Deliver under the current contract.
+synthesis under the current contract.
 
 Consumer brands with material product/customer experience use
 `understanding_evidence_depth_v4` and
@@ -567,8 +569,8 @@ references plus risk-triggered samples; they do not reread the full corpus by
 default. A mismatch expands review only for the affected axis.
 
 At final Phase A closeout, the delegated review-and-patch commission must apply
-the authority's semantic source check before the seal is accepted for Deliver
-or landed. It reads every decision-bearing reference and two independent spot
+the authority's semantic source check before the seal is accepted for
+synthesis or landed. It reads every decision-bearing reference and two independent spot
 checks per material axis, verifies local subject anchoring, axis/role fit,
 competitor-event attribution, and genuine counterevidence, then uses the
 authority's affected-axis-first escalation rule. The delegate patches only the
@@ -619,17 +621,17 @@ corpus-identity-bearing, or route-systemic misses remain blocking.
 
 Route disposition is necessary but not sufficient. A touched lens, zero-yield
 route, exhausted route list, or absence of a promotable candidate cannot
-authorize Deliver. If a material seam remains unresolved because a commission
+authorize the Synthesize turn. If a material seam remains unresolved because a commission
 limit or source boundary stops acquisition, or if the assembled evidence cannot
 support a decision-useful answer to the bound question, use
 `BLOCKED_ACQUISITION_INCOMPLETE`; do not lower the answer standard to pass the
 seal.
 
-### Turn B — Deliver
+### Turn B — Synthesize
 
-Use this section only when Deliver is explicitly commissioned. Do not enter it
-from an unqualified Understanding or historical Phase A request merely because
-the acquisition seal passes.
+Use this section only when a synthesis deliverable is explicitly commissioned.
+Do not enter it from an unqualified Understanding or historical Phase A request
+merely because the acquisition seal passes.
 
 Start in fresh context and load the phase acquisition seal, not the accumulated
 capture chat. Verify its identity, canonical phase, bound question/use, seal
@@ -637,8 +639,9 @@ state, route receipts, provenance, and material gaps before synthesis. If the
 gate is blocked or the artifact is incomplete, stop and return to Acquire &
 Seal; do not issue a nominal deliverable.
 
-Deliver compresses and communicates the acquired evidence. Its succinctness
-discipline is never grounds to under-acquire during Acquire & Seal.
+The Synthesize turn compresses and communicates the acquired evidence. Its
+succinctness discipline is never grounds to under-acquire during Acquire &
+Seal.
 
 When the gate passes, synthesize the phase deliverable, craft the human report
 or framing artifact, validate it under the owning contract, and hand off the
@@ -646,16 +649,16 @@ next phase or step. Every evidence, coverage, provenance, and route-exhaustion
 claim must resolve to the seal. Preserve the final deliverable as the sealed
 phase output before commissioning post-delivery review.
 
-When a consumer-brand v2 substrate is present, Deliver may derive a product
-value battle map from the sealed axis strengths: material pains remain visible,
-while only `strong` delights enter the foreground. Any later defend/avoid-
-attacking or competitive-opening judgment belongs to Deliver; Phase A records
-only evidence strength, captured-sample incidence, choice consequences,
-counterevidence, and claim ceilings.
+When a consumer-brand v2 substrate is present, Understanding synthesis may
+derive a product value battle map from the sealed axis strengths: material
+pains remain visible, while only `strong` delights enter the foreground. Any
+later defend/avoid-attacking or competitive-opening judgment belongs to the
+Deliver phase; Phase A records only evidence strength, captured-sample
+incidence, choice consequences, counterevidence, and claim ceilings.
 
-For company Understanding where offerings or retail are material, Deliver makes
-the breadth-first substrate visible in Section 5, `Portfolio And Retail
-Architecture`. Its ordered subsections and compact matrices show the owned
+For company Understanding where offerings or retail are material, the
+Understanding synthesis makes the breadth-first substrate visible in Section 5,
+`Portfolio And Retail Architecture`. Its ordered subsections and compact matrices show the owned
 denominator, product/claim/price structure, selected-retailer corpus,
 evidence-selected depth, outside-in portfolio interpretation, and strategic
 positioning/markets/channels. The section synthesizes the sealed ledgers; it does
@@ -679,22 +682,23 @@ attribute-reporting denominators, missingness or coverage, selection/filter
 basis, and visible incentive posture. It describes the reporting subgroup only;
 sample size does not convert that subgroup into a customer-population estimate.
 
-Understanding Deliver produces the decision-neutral company-intelligence
-artifact as the substrate deliverable. When a decision-bearing deliverable is
-explicitly commissioned — a competitive decision memorandum for a named or
-declared-proxy decision owner, in challenger or defender framing — Deliver
-produces it from the sealed substrate under
-`forseti/product/spines/commission_signal_board/workflows/deliver_decision_memorandum_method_v0.md`;
-the substrate artifact's neutrality does not cap an explicitly commissioned
-decision artifact. Problem Framing may acquire only decision-specific
-supplements to the Understanding substrate, never a general re-scan; its
-eventual human output shape remains separately review-bound and is not defined
-here.
+Understanding synthesis produces the decision-neutral company-intelligence
+artifact as the substrate deliverable. The Deliver phase then produces the
+explicitly commissioned decision-bearing artifact — a competitive decision
+memorandum for a named or declared-proxy decision owner, in challenger or
+defender framing — from that sealed substrate under
+`forseti/product/spines/commission_signal_board/workflows/deliver_decision_memorandum_method_v0.md`,
+opening with the problem-framing step (decision frame and target screen). The
+Deliver phase's Acquire & Seal turn is bounded to decision-specific
+supplements to the Understanding substrate, never a general re-scan; a
+supplement lands as a bounded capture return that the memorandum cites, and a
+full phase seal is required only when supplements materially change claim
+ceilings.
 
 When both turns are explicitly commissioned, two turns are the normal operating
 budget, not a hard completion cap. A blocked Acquire & Seal remains blocked and
 may require another acquisition attempt; it does not count as a successful
-Deliver.
+synthesis.
 
 ### Six Outcome Signals
 
@@ -724,7 +728,7 @@ Production priority:
 1. **Non-negotiable foundations:** question fit, trustworthy evidence, and
    honest uncertainty. Do not trade them for prose, apparent decisiveness,
    speed, or implications. A real acquisition or evidence failure stays
-   visible and may block Deliver.
+   visible and may block synthesis.
 2. **Primary value focus:** once the foundations hold, spend the largest
    analytical effort on sound reasoning and useful meaning/implications.
 3. **Delivery discipline:** only then compress and clarify. Communication
@@ -773,7 +777,7 @@ reviewer to patch, or change the report layout.
 ## Operating Sequence
 
 Use this sequence to create the CSB inside Acquire & Seal. The broader cycle
-gate above controls whether Deliver may begin.
+gate above controls whether the Synthesize turn may begin.
 
 1. Read the prompt and this playbook.
 2. Preserve `mode: backtest | forward`. Determine `commission_profile`:
@@ -883,7 +887,7 @@ gate above controls whether Deliver may begin.
     provenance, and material blocks. It does not repeat native capture.
 11. For an Intelligence Cycle, assemble the phase acquisition seal only after
     the Phase 2 terminal result and all owning Scanning/Capture work return. A
-    typed acquisition failure remains visible and blocks Deliver when material;
+    typed acquisition failure remains visible and blocks synthesis when material;
     it is not converted into completion.
 
 ## Validator Command
@@ -991,11 +995,11 @@ If an agent sees "Commission Signal Board", "commissioning board", or
 "commission board output", it should open this playbook before running or
 validating the board.
 
-If an agent sees "Forseti Intelligence Cycle", "Understanding phase", "Problem
-Framing phase", "Acquire & Seal", or "Deliver", it should open this playbook
-before commissioning or executing the phase. An unqualified Understanding or
-historical Phase A request follows the acquisition-only default above; it does
-not enter Deliver.
+If an agent sees "Forseti Intelligence Cycle", "Understanding phase", "Deliver
+phase", historical "Problem Framing phase", "Acquire & Seal", or "Synthesize",
+it should open this playbook before commissioning or executing the phase. An
+unqualified Understanding or historical Phase A request follows the
+acquisition-only default above; it does not enter the Synthesize turn.
 
 ## Current Non-Goals
 

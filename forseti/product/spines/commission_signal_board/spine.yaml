@@ -21,11 +21,12 @@ commission_contract:
 
 intelligence_cycle_contract:
   canonical_name: Forseti Intelligence Cycle
-  phases: [understanding, problem_framing]
-  informal_phase_shorthand: {problem: problem_framing}
-  normal_turns_per_phase: [acquire_and_seal, deliver]
+  phases: [understanding, deliver]
+  historical_phase_vocabulary: {problem_framing: deliver, problem: deliver}
+  normal_turns_per_phase: [acquire_and_seal, synthesize]
+  historical_turn_vocabulary: {deliver_as_turn_name: synthesize}
   normal_turn_budget_not_completion_cap: true
-  acquisition_gate: sealed_phase_artifact_required_before_deliver
+  acquisition_gate: sealed_phase_artifact_required_before_synthesize
   company_understanding_acquisition_sequence:
     - define_question_and_validate_commission_board
     - serp_phase1_competitor_scout

@@ -60,7 +60,7 @@ For `company_competitive_intelligence`, this prompt prepares the
 commission-board portion of **Acquire & Seal** in a **Forseti Intelligence
 Cycle**. It does not itself claim that scanning/capture ran or that the phase
 acquisition seal passed. The playbook owns the complete two-phase/two-turn
-contract and the fresh-context Deliver gate. For company Understanding, the
+contract and the fresh-context synthesis gate. For company Understanding, the
 validated board precedes SERP Phase 1; Phase 1 feeds the `CO1`-`CO3` specialist
 fan-out; Reddit/community acquisition stays inside `CO3`; and the targeted SERP
 Phase 2 return begins only after the specialist terminal returns. These SERP
@@ -198,7 +198,7 @@ known_unknowns:
 dispatcher_non_goals:
 intelligence_cycle:
   cycle_id:
-  phase: understanding | problem_framing
+  phase: understanding | deliver
   turn: acquire_and_seal
   bound_question:
   intended_consumer:
@@ -230,12 +230,12 @@ generation is `acquire_and_seal`. Missing required company-cycle fields return
 language.
 
 Within the Forseti Intelligence Cycle, an owner request for `Understanding` or
-historical `Phase A` that does not explicitly name `Deliver` commissions
-`acquire_and_seal` only and stops after the acquisition seal. Do not infer a
-Deliver turn from the phase name, a passing seal, a request for complete
-competitive-intelligence value, or the availability of a report template.
-Deliver requires an explicit current commission or a separately authorized
-follow-up.
+historical `Phase A` that does not explicitly name a synthesis deliverable
+commissions `acquire_and_seal` only and stops after the acquisition seal. Do
+not infer a Synthesize turn from the phase name, a passing seal, a request for
+complete competitive-intelligence value, or the availability of a report
+template. Synthesis requires an explicit current commission or a separately
+authorized follow-up.
 
 ## Missing-Input Intake Output
 
@@ -258,7 +258,7 @@ commission_inputs_needed:
   known_unknowns: []
   intelligence_cycle:
     cycle_id: required_for_company_profile
-    phase: understanding | problem_framing | required_for_company_profile
+    phase: understanding | deliver | required_for_company_profile
     turn: acquire_and_seal
     bound_question: required_for_company_profile
     intended_consumer: required_for_company_profile
@@ -849,7 +849,7 @@ resolve every material follow-up through the owning Scanning/Capture route
 before sealing. Read the authority for the exact schema and hybrid strength
 bars; do not reconstruct them from this prompt.
 
-Before accepting the completed Phase A seal for Deliver or landing it, run the
+Before accepting the completed Phase A seal for synthesis or landing it, run the
 authority's final delegated semantic review-and-patch. Require the reviewer to
 read every decision-bearing reference in its source-native body and two
 independent spot checks per material axis; verify local subject anchoring,
@@ -1032,7 +1032,7 @@ company_commission_receipt:
   commission_id:
   intelligence_cycle:
     cycle_id:
-    phase: understanding | problem_framing
+    phase: understanding | deliver
     turn: acquire_and_seal
     bound_question:
     intended_consumer:
@@ -1388,7 +1388,7 @@ prior. Collect defensibility raw material where visible — comparator claims
 language, substitution economics, price gaps, claims parity — as bounded
 observations only; the defensibility judgment itself belongs to the downstream
 adjudication layer, never this report. Understanding collects that generic raw
-material once. Problem Framing may request fresh evidence only as a
+material once. The Deliver phase may request fresh evidence only as a
 decision-specific supplement for the decision it is adjudicating, never as a
 general re-scan.
 
