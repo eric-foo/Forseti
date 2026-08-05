@@ -157,10 +157,14 @@ The two possible turns are:
    receipt. An unresolved one leaves acquisition blocked unless the owner
    explicitly narrows the commission; it is never carried forward merely as a
    final-report caveat, silent omission, or inferred absence.
-2. **Synthesize.** Start in fresh context from the phase acquisition seal.
-   Verify the acquisition gate before synthesis. Then craft, validate, and hand
-   off the phase deliverable without making an evidence, route-exhaustion,
-   provenance, or coverage claim that the seal does not support.
+2. **Synthesize.** Start in fresh context from the phase's governing
+   acquisition gate: Understanding synthesis requires its own passing phase
+   seal; Deliver synthesis requires the passing Understanding seal plus a
+   typed capture return for every consumed supplement (a supplement that would
+   change a sealed claim ceiling requires a Deliver-phase seal first). Verify
+   that gate before synthesis. Then craft, validate, and hand off the phase
+   deliverable without making an evidence, route-exhaustion, provenance, or
+   coverage claim that the governing seal and returns do not support.
 
 The two turns optimize differently. Acquire & Seal maximizes decision-useful
 completeness under the integrity floor: every material information job is

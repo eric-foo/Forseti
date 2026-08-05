@@ -42,7 +42,7 @@ This playbook keeps these objects distinct:
 | Commission-stage company board | Conditional company Sections 1-10 sealed before scanning: `run_boundary: COMMISSION_SEALED_PRE_SCAN`, `not_checked` coverage rows as the commissioned scan routes, scout statuses may be `commissioned_not_yet_run` | Yes |
 | Company competitive-intelligence report | Conditional company Sections 1-10 with typed ledgers, earned scout statuses, and no classifier handoff | Yes |
 | Phase acquisition seal | Durable fresh-context handoff for one Intelligence Cycle phase; binds routes, receipts, provenance, failures, and acquisition-gate state | No |
-| Phase deliverable | Understanding or Deliver synthesis produced only from a passing phase acquisition seal | Profile-dependent |
+| Phase deliverable | Understanding or Deliver synthesis produced only from its governing acquisition gate: Understanding requires its own passing phase seal; Deliver requires the passing Understanding seal plus a typed capture return for every consumed supplement | Profile-dependent |
 | Scanning, Capture, or classifier work | Downstream execution under its owning spine | No |
 
 CSB owns the commission profile, source-family requirements, time posture, and
@@ -711,10 +711,12 @@ defender framing — from that sealed substrate under
 `forseti/product/spines/commission_signal_board/workflows/deliver_decision_memorandum_method_v0.md`,
 opening with the problem-framing step (decision frame and target screen). The
 Deliver phase's Acquire & Seal turn is bounded to decision-specific
-supplements to the Understanding substrate, never a general re-scan; a
-supplement lands as a bounded capture return that the memorandum cites, and a
-full phase seal is required only when supplements materially change claim
-ceilings.
+supplements to the Understanding substrate, never a general re-scan. The
+Deliver phase's governing acquisition gate is the passing Understanding seal
+plus a durable, bounded capture-return artifact for every supplement the
+synthesis consumes; supplements never alter sealed claim ceilings. A
+supplement that would change a sealed claim ceiling requires a full
+Deliver-phase Acquire & Seal with its own phase seal before synthesis.
 
 When both turns are explicitly commissioned, two turns are the normal operating
 budget, not a hard completion cap. A blocked Acquire & Seal remains blocked and
