@@ -64,8 +64,8 @@ through the lifecycle store; and the sealed decision receipt and provenance
 make material blocks visible. This is the executor target and a review
 axis-to-attack, not a review pass bar.
 
-For `broad_consumer_brand_understanding_v3`, first hash-pin the complete axis
-inventory in the v4 depth ledger. Before this handoff, `CO3` must have run the
+For `broad_consumer_brand_understanding_v4`, first hash-pin the provisional axis
+inventory in the v5 depth ledger. Before this handoff, `CO3` must have run the
 balanced brand-plus-axis, behavior/consequence/displacement, bounded
 consumer-native product-name/shorthand without-brand, and condition/post-use
 query families in that order. The without-brand family covers hero products by
@@ -87,7 +87,11 @@ from typed material additions, and closes each material axis only after two
 later live continuation families of different kinds, queries, and artifacts add
 no material decision change affecting that axis. A useful thread may therefore
 sharpen the record without reopening it. Source-limited axes may close only with
-a bounded-observation claim ceiling. This proves exhaustion of the executed
+a bounded-observation claim ceiling. Before final adjudication, the v5 Material
+Axis Discovery Closure must open-code every admitted source-native unit,
+terminally disposition every residual candidate, and run two later diverse dry
+open-taxonomy probes; Phase 2 may consume the provisional inventory but cannot
+convert it into a closed vocabulary. This proves exhaustion of the executed
 routes; it does not claim that the whole internet was searched.
 
 ## Required reads (pointer-first; the spec owns the method)

@@ -122,7 +122,7 @@ selected depth; its depth expands adaptively, but the actor and
 customer-understanding job are not optional.
 
 When product/customer experience is material, consumer brands use the
-playbook's `broad_consumer_brand_understanding_v3` completion profile. Its v4
+playbook's `broad_consumer_brand_understanding_v4` completion profile. Its v5
 depth ledger prevents aggregate family counts from substituting for
 cross-family product-axis evidence, comment- and row-derived customer evidence,
 three-way focused follow-ups, source-native capture, reconciled targets,
@@ -132,7 +132,10 @@ maturity. Evidence strength stays separate from maturity: source-limited axes
 may close only with bounded-observation claims. Each material axis closes after
 two later, genuinely different live continuation families add no material
 decision change affecting it; useful threads remain visible and need not be
-zero. The prompt-structure authority owns the exact fields, decision-frontier
+zero. V5 additionally requires Material Axis Discovery Closure: an open-taxonomy
+audit of every admitted source-native unit, terminal candidate dispositions,
+and two later diverse dry probes, so a fixed axis list cannot manufacture
+completeness. The prompt-structure authority owns the exact fields, decision-frontier
 rule, and hybrid strength bars.
 
 The same profile gives `CO3` two pipelined discovery lanes: a bounded

@@ -243,8 +243,8 @@ distribution counterweight to repeated posts from any one account.
 
 When the subject is a consumer brand and product/customer experience is
 material, the commission receipt selects
-`broad_consumer_brand_understanding_v3`, and the acquisition seal binds an
-`understanding_evidence_depth_v4` ledger. The selected completion profile stays
+`broad_consumer_brand_understanding_v4`, and the acquisition seal binds an
+`understanding_evidence_depth_v5` ledger. The selected completion profile stays
 in the company record through completion; it is not a commission-only field.
 The profile retains the aggregate entry floors
 above except that Reddit/forum depth rises to 40 usable unique threads. Forty
@@ -256,7 +256,8 @@ candidates carry reasons, and each independent thread pins its own source-native
 artifact. This proves bounded route accounting, never that the whole internet
 was searched.
 
-V4 separates evidence strength from decision maturity. `strength` remains
+V5 retains the separation between evidence strength and decision maturity.
+`strength` remains
 `signal`, `recurring`, or `strong`; every material axis separately declares
 `decision_maturity`, `closure_basis`, and `claim_ceiling`. A source-rich axis may
 close `decision_mature` with `evidence_supported` and
@@ -298,6 +299,13 @@ corpus rereading is not the default. Any bounded patch must be revalidated
 against the acquisition seal and separately adjudicated by the Chief Architect.
 This semantic review catches valid-but-misattributed citations that mechanical
 shape and hash checks cannot.
+For the v5 Material Axis Discovery Closure, that same review also reads every
+material candidate's decisive native references and two residual-negative
+source-native units per admitted family. One missed material theme expands only
+that family to ten units; two misses or the same omission across multiple
+families blocks acceptance and expands the affected audit. The validator proves
+accounting, chronology, and reconciliation, never the semantic truth of a
+`nonmaterial` or no-residual judgment.
 
 Call this terminal boundary the **decision frontier**. Do not call it a value
 frontier: `value` remains the customer-facing product proposition (benefit,
@@ -360,7 +368,7 @@ cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
 audit-only through `--allow-legacy-consumer-v1` and
 `--allow-legacy-consumer-v2`; they do not satisfy a new run.
 
-The v4 ledger inventories every observed material product-experience axis as
+The v5 ledger inventories every observed material product-experience axis as
 `pain`, `delight`, or `mixed`, with a terminal disposition. `signal` establishes
 possible existence. `recurring` requires at least three qualifying independent
 origins across two non-retailer evidence families. `strong` additionally
@@ -385,7 +393,35 @@ coding may nominate a provisional inventory so Phase 2 and continuation work
 know what to test; final adjudication may merge, split, rename, add, or exclude
 those nominations when the source-native evidence warrants it.
 
-V3 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
+The v5 profile adds **Material Axis Discovery Closure**. Known-axis support and
+source exhaustion do not prove that the axis inventory itself is complete. The
+ledger therefore hash-pins one `material_axis_discovery_audit_v1` artifact and
+one `material_axis_discovery_closure_v1` block. The audit uses
+`open_taxonomy_residual`, terminally accounting every admitted source-native
+unit in external context, native social, Reddit/forum, and retailer reviews as
+either audited or non-axis-bearing with a reason. Every source-native theme
+that could change a segment/condition, behavior or purchase consequence,
+competitor destination, contradiction, sampling-risk judgment, or competitive
+action becomes a candidate even when only one unit exposes it. Recurrence is a
+corroboration question after discovery, never a prerequisite for candidate
+admission.
+
+Each candidate terminates as `material_new_axis`,
+`material_merge_or_scope_expansion`, `nonmaterial`, or `blocked`, with native
+evidence, a decision effect, and rationale. A material candidate must reconcile
+to the final material-axis inventory. A merge is valid only when the owning
+axis's scope is explicitly expanded; silently assigning the source to the
+nearest fixed label is invalid. A blocked candidate prevents a passing seal.
+After the last material addition, two later dry open-taxonomy probes must add no
+candidate or material axis and must differ in source family, family kind, and
+artifact. Existing targeted continuation work may satisfy this pair only when
+it performs the same open-taxonomy residual check and meets those diversity
+rules; do not run duplicate ceremony. Passing means
+`route_bounded_saturated`: all material axes present in the admitted corpus were
+discoverable and adjudicated. It never claims universal internet absence or
+that an unselected source contains no additional axis.
+
+V5 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
 unique text-bearing review in each admitted corpus, reconciles excluded
 no-usable-text rows to the corpus denominator, and preserves native review ID,
 product context, incentive state, axis codes with axis-specific choice outcomes,
@@ -398,7 +434,7 @@ pooling is allowed only when corpus boundaries, selection, and deduplication are
 comparable; otherwise report providers separately. These are captured-sample
 incidences, never market return rates or customer-population prevalence.
 
-Every material v4 axis receives three adaptive Phase 2 goals after a hash-pinned
+Every material v5 axis receives three adaptive Phase 2 goals after a hash-pinned
 axis inventory exists: `corroborate_or_segment`, `compare_switch_or_value`, and
 `disconfirm_or_strongest_delight`. Search results are discovery pointers, not
 evidence; a `captured` job must resolve to a source-native body and a ledgered
@@ -474,8 +510,8 @@ preserved and may be checked only with the validator's explicit
 `--allow-legacy-v2` audit switch; they do not satisfy the current broad-
 Understanding completion contract.
 
-For `broad_consumer_brand_understanding_v3`, v4 instead hash-pins an
-`understanding_evidence_depth_v4` ledger and applies the product-axis,
+For `broad_consumer_brand_understanding_v4`, v5 instead hash-pins an
+`understanding_evidence_depth_v5` ledger and applies the product-axis,
 row-derived retailer-incidence, comment-coding, source-native capture,
 target-reconciliation, focused-search, candidate-frontier accounting, proven
 query-family, decision-maturity, and axis-aware closure checks above. A passing

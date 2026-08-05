@@ -133,9 +133,9 @@ value. Do not copy the profile into a run-specific quota or stop when a floor is
 first reached.
 
 For a consumer brand where product/customer experience is material, select
-`broad_consumer_brand_understanding_v3` instead and record that choice in the
+`broad_consumer_brand_understanding_v4` instead and record that choice in the
 commission receipt before scanning, then retain it in the completed company
-record. Its v4 depth ledger applies the same
+record. Its v5 depth ledger applies the same
 aggregate anti-token floors except for a 40-thread Reddit/forum floor, but
 completion is organized around material product pain/delight axes. Forty
 threads are a minimum floor, never a completion target. Every passing run
@@ -618,8 +618,8 @@ labels. Historical v2 seals require
 synthesis under the current contract.
 
 Consumer brands with material product/customer experience use
-`understanding_evidence_depth_v4` and
-`broad_consumer_brand_understanding_v3`. The v4 ledger preserves the v1 family
+`understanding_evidence_depth_v5` and
+`broad_consumer_brand_understanding_v4`. The v5 ledger preserves the v1 family
 and closure accounting while using `external_context` for the human-facing
 External company, editorial and industry context family. It also carries the
 pre-Phase-2 product-axis inventory, the hash-pinned retailer and community
@@ -640,6 +640,19 @@ addition affecting that axis. They may add usable Reddit threads; each batch's
 `new_usable_reddit_threads` is recomputed and reported separately from its typed
 material additions.
 
+V5 also requires **Material Axis Discovery Closure** before final
+adjudication. `CO0` open-codes residual themes across every admitted external,
+social, Reddit/forum, and retailer source-native unit instead of treating the
+provisional axis list as a closed vocabulary. The audit terminally accounts
+each unit, carries every candidate through add, explicit scope expansion,
+nonmaterial rejection, or block, and reconciles material dispositions to the
+same owning axis inventory. A single native counterexample can nominate a
+candidate; do not demand recurrence before admitting it for adjudication. After
+the last material addition, run two open-taxonomy dry probes from different
+source families and family kinds. Reuse qualifying targeted continuation work
+instead of creating a duplicate round. A blocked candidate or a new theme in a
+dry probe keeps Acquire & Seal open.
+
 The same axis row carries the smallest-complete decision-usefulness synthesis:
 customer tension; segment/condition; behavior or purchase consequence;
 competitor destination; strongest counterevidence; changed competitive
@@ -652,13 +665,16 @@ default. A mismatch expands review only for the affected axis.
 
 At final Phase A closeout, the delegated review-and-patch commission must apply
 the authority's semantic source check before the seal is accepted for
-synthesis or landed. It reads every decision-bearing reference and two independent spot
-checks per material axis, verifies local subject anchoring, axis/role fit,
+synthesis or landed. It reads every decision-bearing reference and two
+independent spot checks per material axis, verifies local subject anchoring, axis/role fit,
 competitor-event attribution, and genuine counterevidence, then uses the
 authority's affected-axis-first escalation rule. The delegate patches only the
 bound Phase A target set; the Chief Architect adjudicates the return and reruns
 the acquisition-seal validation. This is a bounded fitness check of the review
-index, not a second full-corpus analysis.
+index, not a second full-corpus analysis. For v5, it additionally reads every
+material discovery candidate's decisive references and two residual-negative
+units per source family, expanding only the failing family first under the
+authority's rule.
 
 Before each continuation query family starts, the acquisition-view input records
 one short round rationale: why another round is warranted and how its query
@@ -678,7 +694,9 @@ artifact.
 
 Historical consumer v1 and v2 profiles require
 `--allow-legacy-consumer-v1` and `--allow-legacy-consumer-v2` respectively and
-are never upgraded by assertion.
+are never upgraded by assertion. Consumer v3 is likewise audit-only for new
+runs after v4 becomes current; preserving its validation meaning does not make
+it a selectable current profile.
 
 For company Understanding, non-empty route accounting is required for
 `serp_phase1`, `official_retailer_authorization`,

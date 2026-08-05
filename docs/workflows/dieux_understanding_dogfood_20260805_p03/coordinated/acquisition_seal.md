@@ -14,7 +14,7 @@ open_next:
   - docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/different_vendor_semantic_review_return.md
 ```
 
-The commissioned different-vendor semantic review returned `PASS_WITH_PATCHES`; Chief Architect adjudication accepted F-01 through F-08, ratified F-09 as nonmaterial sharpening, and retained F-10 and F-11 as bounded residuals. Dieux Deliver has not started.
+The profile-v3 different-vendor semantic review returned `PASS_WITH_PATCHES`; Chief Architect adjudication accepted F-01 through F-08, ratified F-09 as nonmaterial sharpening, and retained F-10 and F-11 as bounded residuals. Material Axis Discovery Closure subsequently reopened the seal, expanded three existing axis scopes from source-native counterexamples, and is pending a new different-vendor review. Dieux Deliver has not started.
 
 ```yaml
 phase_acquisition_seal:
@@ -23,13 +23,13 @@ phase_acquisition_seal:
   commission_id: BEAUTY-DIEUX-PHASEA-COMPLETION-003
   subject: Dieux Skin
   authority_revision: 3e0ade5f0dadb690b2209ee7b527cfdad42b3a2b
-  acquisition_gate: pass
-  seal_state: SEALED_READY_FOR_DELIVER
-  deliver_allowed: true
+  acquisition_gate: blocked
+  seal_state: BLOCKED_ACQUISITION_INCOMPLETE
+  deliver_allowed: false
   deliver_started: false
   bound_question_preserved: true
   coldness_attestation: compliant
-  acceptance_status: accepted_after_required_cross_vendor_semantic_review_and_chief_architect_adjudication
+  acceptance_status: pending_required_cross_vendor_review_of_material_axis_discovery_closure
   controller_placement:
     controller_actor: CO0
     placement: top_level
@@ -301,6 +301,24 @@ phase_acquisition_seal:
     unrun_count: 0
     terminal_artifact_locator: docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co1_native_social_floor_return.md
     terminal_artifact_sha256: d4c002808477836e2a04dac21308ec9b53009431d26620d00ee589d9f9a4a8e8
+  - route_id: material_axis_discovery
+    phase: co0
+    required: true
+    material: true
+    planned_job_ids:
+    - MADC-COMMUNITY-DRY-01
+    - MADC-RETAILER-DRY-01
+    planned_count: 2
+    completed_job_ids:
+    - MADC-COMMUNITY-DRY-01
+    - MADC-RETAILER-DRY-01
+    completed_count: 2
+    blocked_job_ids: []
+    blocked_count: 0
+    unrun_job_ids: []
+    unrun_count: 0
+    terminal_artifact_locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/material_axis_discovery_audit.json
+    terminal_artifact_sha256: a056e4e16f294442af2e06e255f4ab58996ada4bdd14905e4af021393da0bb5b
   serp_phase2_decision_receipt:
     locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/serp_phase2_decision_receipt.json
     sha256: ef80b209356f53dced7b2957d01cb42a1a19d056ec27b603e7ec99dd1636503a
@@ -309,7 +327,7 @@ phase_acquisition_seal:
     pending_job_ids: []
     reusable_artifacts:
     - locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/evidence_depth_ledger.json
-      sha256: c615276abeaf68542615810ad201b7e1d61bc059bd587f6cbfd4fd73a3d80a8a
+      sha256: 6360dd31bbfdc2c9cdf06efd781748d1babf5031be67b0596e43dd34874eb8bd
       invalid_if:
       - Any pinned evidence body or coding artifact changes bytes.
     - locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/serp_phase2_lifecycle_sealed_receipt.json
@@ -318,9 +336,10 @@ phase_acquisition_seal:
       - The Phase 2 settlement or lifecycle store changes.
   evidence_depth_ledger:
     locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/evidence_depth_ledger.json
-    sha256: c615276abeaf68542615810ad201b7e1d61bc059bd587f6cbfd4fd73a3d80a8a
+    sha256: 6360dd31bbfdc2c9cdf06efd781748d1babf5031be67b0596e43dd34874eb8bd
   independent_semantic_review:
-    status: complete_and_chief_architect_adjudicated
+    status: historical_profile_v3_complete_and_chief_architect_adjudicated
+    scope: pre_material_axis_discovery_profile_v3
     required_before_acceptance: true
     reviewer_vendor_model_family: Anthropic / Claude (Claude Fable 5)
     report_locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/different_vendor_semantic_review_return.md
@@ -365,5 +384,19 @@ phase_acquisition_seal:
         The delegate authored the patched lines, so those lines are not an
         independent post-patch review sliver; Chief Architect mechanical
         class-level and byte/scope verification closes the known finding classes.
-  blocker: null
+  material_axis_discovery_review:
+    status: pending_different_vendor_review
+    required_before_acceptance: true
+    target_profile: broad_consumer_brand_understanding_v4
+    target_ledger_schema: understanding_evidence_depth_v5
+    scope:
+    - material_axis_discovery_audit.json
+    - material_axis_discovery_probe_community.json
+    - material_axis_discovery_probe_retailer.json
+    - consumer_brand_axis_inventory.json
+    - retailer_product_axis_coding.json
+    - community_axis_coding_v4.json
+    - evidence_depth_ledger.json
+    - acquisition_seal.md
+  blocker: required_different_vendor_material_axis_discovery_review_pending
 ```
