@@ -130,9 +130,11 @@ source-neutral corroboration lane and a candid Reddit/community lane. Retailer
 review coding seeds claim-directed checks across the lanes; a material finding
 triggers only its bounded counterpart check, not wholesale query duplication.
 Consumer-native product-name/shorthand probing remains a bounded sampling-bias
-test rather than a full-catalog crawl. Search summaries are pointers, DTC pages
-are official-claim evidence rather than independent customer corroboration, and
-engagement snapshots retain dated working provenance even when the final human
+test: hero products by default, with a non-hero product admitted only when
+already captured evidence exposes a material question. It never becomes a
+full-catalog crawl. Search summaries are pointers, DTC pages are official-claim
+evidence rather than independent customer corroboration, and engagement
+snapshots retain dated working provenance even when the final human
 deliverable does not display the date.
 
 Before a broad consumer-brand Phase A seal is accepted for Deliver or landed,

@@ -828,12 +828,16 @@ In parallel, `CO3` runs the proven high-yield Reddit families in this order:
 balanced brand-plus-axis; behavior/consequence/displacement; a bounded
 consumer-native product-name or shorthand probe without the brand where the
 identity remains unambiguous; and condition/post-use. Qualify generic names with
-the category or use case, and do not search every catalog item merely to satisfy
-the family. Add a community-diversity family only when concentration is
-observed. A material signal in either lane launches only a bounded counterpart
-check for the same claim or affected axis; do not mirror every query or wait for
-the whole discovery cycle. SERP discovery and source-native capture may
-pipeline, but family and candidate accounting stay separate.
+the category or use case. Run the brandless probe for a bounded set of hero
+products by default; add a non-hero product only when already captured evidence
+exposes a material axis, condition, behavior consequence, competitor
+destination, contradiction, or sampling-risk question for it. Never turn the
+family into a catalog-wide crawl. Add a community-diversity family only when
+concentration is observed. A material signal in either lane launches only a
+bounded counterpart check for the same claim or affected axis; do not mirror
+every query or wait for the whole discovery cycle. SERP discovery and
+source-native capture may pipeline, but family and candidate accounting stay
+separate.
 
 After the inventory hash exists, route corroboration/segmentation,
 comparison/switch/value, and disconfirmation/strongest-delight Phase 2 jobs for

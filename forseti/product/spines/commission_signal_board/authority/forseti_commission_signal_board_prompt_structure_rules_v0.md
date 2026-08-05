@@ -300,9 +300,15 @@ baseline; behavior/consequence/displacement; a bounded consumer-native
 product-name or shorthand probe without the brand where the identity remains
 unambiguous; and condition/post-use. Qualify generic product names with the
 category or use case rather than issuing ambiguous or blindly copied long-title
-queries. This probe tests whether brand-term search missed insider language; it
-does not require every catalog product. Community-diversity probing is
-conditional on observed concentration.
+queries. This probe tests whether brand-term search missed insider language. By
+default, it covers only a bounded set of hero products. Admit a non-hero product
+only when already captured evidence exposes a material axis, condition, behavior
+consequence, competitor destination, contradiction, or sampling-risk question
+for it; never turn the family into a catalog-wide crawl. It remains the third
+mandatory family and is still recorded under the existing
+`brandless_exact_product` family kind; that kind name is historical slot
+identity, not a demand for exact official product titles. Community-diversity
+probing is conditional on observed concentration.
 
 The two lanes may run concurrently. A material signal in either lane launches
 only a bounded counterpart check for the same axis, segment, condition,
@@ -319,6 +325,15 @@ boundary timestamps, matching cycle ID, reason, and
 a reusable waiver. Every batch records useful-thread yield separately from
 structured material additions. The validator reconciles the family, job,
 artifact, candidate, and batch accounting rather than accepting prose closure.
+That family, candidate, and batch reconciliation covers the community lane
+only. Source-neutral lane work carries no separate query-family or candidate
+frontier: its selected pointers stay inside the existing planned-job and owning
+route accounting, and its admitted units stay inside the existing evidence-unit,
+relationship-typing, and family-depth rules. No mechanical check proves the
+source-neutral lane ran, so its coverage and gaps stay honestly stated in the
+existing route, receipt, and gap fields rather than inferred from a passing
+seal.
+
 The profile renames the human-facing outside source
 family to **External company, editorial and industry context** and adds the
 cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
@@ -501,9 +516,9 @@ construction or analysis preserves its observation date at minimum and an ISO
 8601 `observed_at` timestamp when available, together with the source locator;
 relative source labels remain in the pinned body. The final human deliverable
 may omit the displayed date when it is not decision-relevant, but its working
-provenance may not. CSB must not turn those facts into demand proof, Commit/Scale
-support, credibility, independence, graph weight, classifier mapping, final
-resonance weight, or Action Ceiling.
+provenance may not. CSB must not turn those engagement facts into demand proof,
+Commit/Scale support, credibility, independence, graph weight, classifier
+mapping, final resonance weight, or Action Ceiling.
 
 The temporary prompt is too high-lock-in to adopt wholesale because it mixes
 five different objects in one artifact: commission intake, venue playbook,

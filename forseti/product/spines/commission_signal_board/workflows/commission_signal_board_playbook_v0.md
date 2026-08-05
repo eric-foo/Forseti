@@ -208,14 +208,19 @@ not spend a separate sacrificial query.
    families in this order: balanced brand-plus-axis;
    behavior/consequence/displacement; a bounded consumer-native product-name or
    shorthand probe without the brand where identity is unambiguous; and
-   condition/post-use. Generic names receive a category or use-case qualifier;
-   the probe does not require every catalog product. Add a community-diversity
-   family only when the admitted evidence is concentrated.
+   condition/post-use. Generic names receive a category or use-case qualifier.
+   Run the brandless probe for a bounded set of hero products by default; admit
+   a non-hero product only when already captured evidence exposes a material
+   axis, condition, behavior consequence, competitor destination,
+   contradiction, or sampling-risk question for it. Never turn the family into
+   a catalog-wide crawl. Add a community-diversity family only when the admitted
+   evidence is concentrated.
 
-   `CO3` uses its retailer-review coding to seed claim-directed checks as soon as
-   its evidence-selected retailer depth is available from `CO2`'s reconciled
-   breadth and selection pointers. A material signal in either discovery lane
-   launches only a bounded counterpart check for the same axis, segment,
+   `CO3` may begin its unrestricted source-neutral baseline immediately. It
+   begins retailer-review-seeded claim-directed checks only after `CO2`
+   publishes reconciled breadth and selection pointers. A material signal in
+   either discovery lane launches only a bounded counterpart check for the same
+   axis, segment,
    condition, consequence, or competitor destination. It never mirrors every
    query across sources or waits for a whole lane to finish before queueing a
    qualified source-native capture. Each family and candidate remains separately
