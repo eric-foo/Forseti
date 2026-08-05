@@ -374,3 +374,42 @@ value of the rules added since. Disposition of the ~46+169 recoverable
 threads is an owner decision: backfill this closed week with a bounded
 recapture, or let the shapes recur naturally under the corrected policy in
 future weeks.
+
+## Tail-audit capture outcome and rule assessment (added 2026-08-05)
+
+The 42 sampled admits (9 yes-grade, 33 borderline-grade) were captured
+42/42 across four bounded waves (two throttle-breaker trips and two local
+Chrome failures along the way, every one recovered) and extracted with
+per-thread audit verdicts (slices 22-24). Result: **39 of 42 listing-level
+calls confirmed (93%)**. All 9 yes-grade calls confirmed, several at high
+evidence (the Tatara razor thread is a real steel-grade/rust defect
+discussion; the preteen-skincare request is real underserved demand; the
+Sephora counterfeit-scam, polish-failure PSA, and packaging-failure threads
+all held). Of the 33 borderline calls, 30 confirmed and 3 refuted — one in
+the admit direction (1v6lf64 proved product-dominated, not procedural) and
+two as true false positives (influencer gossip, generic lifestyle chat) —
+a 91% precision that re-validates the borderline-capture rule's
+false-positive budget.
+
+Rule assessment, per the owner's refine-or-not question: **no new gate or
+pattern earns its keep from this audit.** Every one of the 9 confirmed
+yes-grade misses sat above the comment floor with a legible title; they
+were lost to the flat-14 depth cap, not to any gate — and that cap is
+already subtracted. Under the standing full-pool-by-subtraction practice,
+each of these rows reaches per-row adjudication, and this audit is direct
+evidence the adjudication calls them correctly when it sees them. The
+praise-shaped tail was already fully covered by the leaderboard lane (8/8
+captured before the audit), and the uncertain tail is covered by
+borderline-capture at measured precision. Two watch-shapes are noted
+below the adoption bar (one observation each, per the
+measured-before-adopted discipline): monthly purchase-census titles
+("what did you buy this month") as a census-lane pattern candidate, and
+availability interrogatives ("where is all the X") as an exception-pattern
+candidate.
+
+Disposition of the unsampled tail (~650 rows, extrapolated ~37 yes-grade
+and ~135 borderline-grade): recommend **no backfill**. The week is closed,
+the sampled value is banked, and the gap cannot recur under per-row
+recording. Reversal condition: if this week's clusters are used
+client-facing, re-adjudicate the remaining tail first so the evidence base
+is complete.
