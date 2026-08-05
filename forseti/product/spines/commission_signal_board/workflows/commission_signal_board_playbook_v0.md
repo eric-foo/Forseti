@@ -292,24 +292,34 @@ not spend a separate sacrificial query.
    conversation:
 
    1. Build the provisional axis inventory from the captured retailer,
-      community, editorial, creator, and owned-source evidence. Use as many or
-      as few axes as the evidence requires; record each axis's pain, delight,
-      or mixed posture, affected segment or condition, observed behavior,
-      competitor destination, counterevidence, and known gap. This inventory
-      is a routing map, not a conclusion.
-   2. Run the lightweight maturity scan over that inventory. For each axis,
-      record whether independent support, behavior or purchase consequence,
-      competitor destination, and strongest counterevidence are present, and
-      name the next source or query that could still change a competitive
-      decision. Mark the axis `open`, `provisionally_covered`, or
-      `source_limited`; do not assign final decision maturity.
+      community, editorial, creator, and owned-source evidence, and hash-pin it
+      as the single axis inventory this phase's Phase 2 jobs reference; do not
+      create a second inventory beside it. Use as many or as few axes as the
+      evidence requires; record each axis's pain, delight, or mixed posture,
+      affected segment or condition, observed behavior, competitor destination,
+      counterevidence, and known gap. This inventory is a routing map, not a
+      conclusion.
+   2. Run the lightweight maturity scan as a gap audit over that inventory, not
+      a second transcription of it. Its input is step 1's record; its output is,
+      per axis, which of the authority's support requirements remain unmet —
+      distinct-origin independent support above all — plus the next source or
+      query that could still change a competitive decision, or an explicit
+      `none` with the reason no productive source remains. Mark the axis `open`,
+      `provisionally_covered`, or `source_limited`. These three are scan-local
+      routing labels with no seal or ledger field: they assign no final decision
+      maturity, and `source_limited` does not pre-establish the authority's
+      `route_bounded_source_exhaustion` closure basis, which keeps its own
+      evidence requirement.
    3. Run only the evidence-floor and targeted material-exhaustion work named
       by the scan. An ordinary corroboration does not reopen other axes. A
       typed material addition reopens its affected axis and only a directly
       adjacent axis when the evidence explains why.
    4. Recompute the scan after each genuinely different continuation family.
-      Stop acquisition only under the authority's evidence-supported or
-      route-bounded-source-exhaustion rule, never because an axis count, thread
+      Stop acquisition for an axis only when the Prompt Structure Rules
+      authority's closure test is met — two later live continuation families of
+      different kinds, queries, and artifacts that add no material addition
+      affecting that axis — closing on either `evidence_supported` or
+      `route_bounded_source_exhaustion`, never because an axis count, thread
       count, or elapsed-time target was reached.
    5. Terminally reconcile every selected target and candidate before treating
       the corpus as closed.
