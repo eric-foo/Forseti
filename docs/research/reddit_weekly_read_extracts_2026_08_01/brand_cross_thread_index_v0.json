@@ -1,6 +1,6 @@
 {
- "built_from_slices": 18,
- "extract_count": 814,
+ "built_from_slices": 22,
+ "extract_count": 940,
  "brands": {
   "&honey": {
    "threads": [
@@ -205,13 +205,15 @@
   },
   "acqua di gio": {
    "threads": [
-    "1vapr0i"
+    "1vapr0i",
+    "1vb20hg"
    ],
    "venues": [
+    "Colognes",
     "Fragrances"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 2
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -429,12 +431,14 @@
     "1v6lxuk",
     "1v6ofne",
     "1v76lff",
+    "1v86jo2",
     "1v8ryng",
     "1v9f1ma",
     "1v9vvlh",
     "1vb0uts"
    ],
    "venues": [
+    "Colognes",
     "FemFragLab",
     "Fragrances",
     "fragrance",
@@ -443,7 +447,7 @@
    "contexts": {
     "dupe": 1,
     "sensory_failure": 4,
-    "substitute": 1,
+    "substitute": 2,
     "safety": 1,
     "praise": 1,
     "reformulation": 1,
@@ -656,6 +660,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "al haramain aqua dubai": {
+   "threads": [
+    "1vad075"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "al maleki": {
    "threads": [
     "1v6kr35"
@@ -712,14 +730,15 @@
   "alexandria": {
    "threads": [
     "1v5iyxv",
-    "1v7ov99"
+    "1v7ov99",
+    "1v8lvjl"
    ],
    "venues": [
     "Colognes",
     "fragranceclones"
    ],
    "contexts": {
-    "substitute": 1,
+    "substitute": 2,
     "sensory_failure": 1
    },
    "neg_threads": [
@@ -1033,9 +1052,11 @@
     "1v7d5oy",
     "1v83eiy",
     "1v9e1ph",
-    "1vaketq"
+    "1vaketq",
+    "1vb20hg"
    ],
    "venues": [
+    "Colognes",
     "FemFragLab",
     "Nails",
     "Sephora",
@@ -1044,15 +1065,17 @@
    ],
    "contexts": {
     "other": 1,
-    "counterfeit": 2,
+    "counterfeit": 3,
     "dupe": 1,
     "recommendation": 1
    },
    "neg_threads": [
     "1v5fy3i",
-    "1v83eiy"
+    "1v83eiy",
+    "1vb20hg"
    ],
    "neg_venues": [
+    "Colognes",
     "FemFragLab",
     "koreanskincare"
    ],
@@ -1068,6 +1091,12 @@
      "FemFragLab",
      "counterfeit",
      "general concern that Amazon sells fakes, mitigated by buying 'shipped and sold by Amazon' listings"
+    ],
+    [
+     "1vb20hg",
+     "Colognes",
+     "counterfeit",
+     "Three separate commenters warn that Amazon (including 'sold by Amazon' listings) circulates counterfeit or swapped-fake fragrances via return fraud."
     ]
    ]
   },
@@ -1087,13 +1116,44 @@
   },
   "amazon pharmacy": {
    "threads": [
+    "1v6a6g6",
     "1v7llyg"
    ],
    "venues": [
+    "40PlusSkinCare",
     "tretinoin"
    ],
    "contexts": {
+    "substitute": 1,
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "amazonliss": {
+   "threads": [
+    "1v7410j"
+   ],
+   "venues": [
+    "Haircare"
+   ],
+   "contexts": {
     "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "american creator": {
+   "threads": [
+    "1v7etew"
+   ],
+   "venues": [
+    "DIYGelNails"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -1152,6 +1212,7 @@
    "threads": [
     "1v6aoxh",
     "1v6nesi",
+    "1v79ijj",
     "1v9x4aq"
    ],
    "venues": [
@@ -1161,11 +1222,23 @@
    ],
    "contexts": {
     "praise": 2,
-    "recommendation": 1
+    "recommendation": 1,
+    "sensory_failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v79ijj"
+   ],
+   "neg_venues": [
+    "beauty"
+   ],
+   "neg_details": [
+    [
+     "1v79ijj",
+     "beauty",
+     "sensory_failure",
+     "awakeagain3am: works well but leaves 'a kind of lingering sulfury smell' on skin, clothes, towels, and bedsheets."
+    ]
+   ]
   },
   "amorepacific": {
    "threads": [
@@ -1183,11 +1256,14 @@
   },
   "amouage": {
    "threads": [
+    "1v5j1hf",
     "1v6p6z4",
     "1v7k960",
-    "1v8byly"
+    "1v8byly",
+    "1vb20hg"
    ],
    "venues": [
+    "Colognes",
     "FragranceStories",
     "fragrance",
     "fragranceclones"
@@ -1195,7 +1271,9 @@
    "contexts": {
     "safety": 1,
     "price": 1,
-    "other": 1
+    "other": 1,
+    "recommendation": 1,
+    "substitute": 1
    },
    "neg_threads": [
     "1v6p6z4",
@@ -1226,6 +1304,7 @@
     "1v9v1k8",
     "1vahqt2",
     "1vb2m14",
+    "1vb9l84",
     "1vbjp6l"
    ],
    "venues": [
@@ -1235,15 +1314,17 @@
    ],
    "contexts": {
     "praise": 2,
-    "price": 1,
+    "price": 2,
     "recommendation": 1,
     "other": 1
    },
    "neg_threads": [
-    "1v9v1k8"
+    "1v9v1k8",
+    "1vb9l84"
    ],
    "neg_venues": [
-    "Makeup"
+    "Makeup",
+    "Sephora"
    ],
    "neg_details": [
     [
@@ -1251,6 +1332,12 @@
      "Makeup",
      "price",
      "OP regrets having to throw away her ABH eyeshadow palettes despite their cost, following the community's discard recommendation."
+    ],
+    [
+     "1vb9l84",
+     "Sephora",
+     "price",
+     "Kiss Theory lip balm criticized repeatedly as $18 for only 1 gram of product ('highway robbery')."
     ]
    ]
   },
@@ -1395,6 +1482,34 @@
    ],
    "contexts": {
     "recommendation": 2
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "apotecari": {
+   "threads": [
+    "1v8phwa"
+   ],
+   "venues": [
+    "FemaleHairLoss"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "apres": {
+   "threads": [
+    "1v9csjm"
+   ],
+   "venues": [
+    "NailArt"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -1644,6 +1759,7 @@
     "1v6j2t2",
     "1v8j926",
     "1v91jhm",
+    "1v93zes",
     "1v99k7a",
     "1va2n7v",
     "1vazjsp"
@@ -1656,7 +1772,7 @@
     "performance": 2,
     "price": 1,
     "recommendation": 2,
-    "other": 1,
+    "other": 2,
     "failure": 1
    },
    "neg_threads": [
@@ -1722,13 +1838,16 @@
   },
   "ariana grande": {
    "threads": [
-    "1v7ci5y"
+    "1v7ci5y",
+    "1v87uci"
    ],
    "venues": [
+    "FemFragLab",
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "other": 1
    },
    "neg_threads": [
     "1v7ci5y"
@@ -1789,6 +1908,20 @@
     ]
    ]
   },
+  "armaf aura fresh": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "armani": {
    "threads": [
     "1v6lkqn",
@@ -1796,20 +1929,25 @@
     "1v95gws",
     "1v9ep9i",
     "1v9gf96",
+    "1vb20hg",
     "1vbe2l4"
    ],
    "venues": [
+    "Colognes",
     "Perfumes",
     "Sephora"
    ],
    "contexts": {
     "praise": 5,
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "counterfeit": 1
    },
    "neg_threads": [
-    "1v95gws"
+    "1v95gws",
+    "1vb20hg"
    ],
    "neg_venues": [
+    "Colognes",
     "Sephora"
    ],
    "neg_details": [
@@ -1818,6 +1956,12 @@
      "Sephora",
      "sensory_failure",
      "one commenter reports it as 'super glittery' in store, contradicting its general reputation; another says it 'dries out a bit'"
+    ],
+    [
+     "1vb20hg",
+     "Colognes",
+     "counterfeit",
+     "Named alongside Rayhaan as a brand where Amazon buyers get told their purchase is fake 'even if you bought it directly from Rayhaan and Armani.'"
     ]
    ]
   },
@@ -1834,6 +1978,31 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "aromatix (naughty dates)": {
+   "threads": [
+    "1va50sb"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "price": 1
+   },
+   "neg_threads": [
+    "1va50sb"
+   ],
+   "neg_venues": [
+    "fragranceclones"
+   ],
+   "neg_details": [
+    [
+     "1va50sb",
+     "fragranceclones",
+     "price",
+     "praised as an amazing date scent but \"the price of it keeps rising!!!!!!!\""
+    ]
+   ]
   },
   "arquiste": {
    "threads": [
@@ -1921,6 +2090,7 @@
   },
   "aunt jackie's": {
    "threads": [
+    "1v6hmbt",
     "1v8kmyt",
     "1v9e9hz",
     "1vak6ul"
@@ -1931,7 +2101,7 @@
    ],
    "contexts": {
     "substitute": 1,
-    "other": 1,
+    "other": 2,
     "sensory_failure": 1
    },
    "neg_threads": [
@@ -2010,21 +2180,25 @@
   },
   "aussie": {
    "threads": [
+    "1v6j6yf",
     "1v8zyhh",
     "1vagikf"
    ],
    "venues": [
+    "Haircare",
     "Naturalhair",
     "curlyhair"
    ],
    "contexts": {
     "praise": 1,
-    "sensory_failure": 1
+    "sensory_failure": 2
    },
    "neg_threads": [
+    "1v6j6yf",
     "1v8zyhh"
    ],
    "neg_venues": [
+    "Haircare",
     "curlyhair"
    ],
    "neg_details": [
@@ -2033,6 +2207,12 @@
      "curlyhair",
      "sensory_failure",
      "OP's moist shampoo/conditioner and miracle-moist leave-in used but still no cast achieved."
+    ],
+    [
+     "1v6j6yf",
+     "Haircare",
+     "sensory_failure",
+     "Instant Freeze gel too strong-hold for a commenter's own fine hair, offered as a cautionary contrast."
     ]
    ]
   },
@@ -2164,6 +2344,20 @@
     ]
    ]
   },
+  "avene (retinaldehyde eye cream)": {
+   "threads": [
+    "1v7orzv"
+   ],
+   "venues": [
+    "tretinoin"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "azclear": {
    "threads": [
     "1v6agrs"
@@ -2220,6 +2414,31 @@
      "Colognes",
      "price",
      "Chrome found for $10, called 'a steal' and 'S Tier', though one user notes only 3-4 hours of longevity on skin"
+    ]
+   ]
+  },
+  "azzaro chrome": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vaeovt"
+   ],
+   "neg_venues": [
+    "fragranceclones"
+   ],
+   "neg_details": [
+    [
+     "1vaeovt",
+     "fragranceclones",
+     "sensory_failure",
+     "cited alongside Eau Fraiche as another classic that smells great but doesn't last"
     ]
    ]
   },
@@ -2320,6 +2539,20 @@
    ],
    "contexts": {
     "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "baldy": {
+   "threads": [
+    "1v5g45l"
+   ],
+   "venues": [
+    "tressless"
+   ],
+   "contexts": {
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -2548,14 +2781,17 @@
     "1v78jm7",
     "1v7amh7",
     "1v7xy5r",
+    "1v8g7fg",
     "1v9eqwb",
     "1v9xg1k",
-    "1va00tr"
+    "1va00tr",
+    "1va3vur"
    ],
    "venues": [
     "FemFragLab",
     "Fragrances",
     "Perfumes",
+    "Ulta",
     "fragrance",
     "perfumesthatfeellike"
    ],
@@ -2564,16 +2800,20 @@
     "praise": 2,
     "price": 1,
     "packaging_failure": 1,
-    "reformulation": 1
+    "reformulation": 1,
+    "recommendation": 1,
+    "sensory_failure": 1
    },
    "neg_threads": [
     "1v78jm7",
     "1v7amh7",
-    "1va00tr"
+    "1va00tr",
+    "1va3vur"
    ],
    "neg_venues": [
     "FemFragLab",
     "Perfumes",
+    "Ulta",
     "perfumesthatfeellike"
    ],
    "neg_details": [
@@ -2594,6 +2834,12 @@
      "perfumesthatfeellike",
      "reformulation",
      "True Blue Spa Raspberry cited as the closest match but discontinued; Sparkling Green Apple body splash recalled with nostalgia from the late 90s."
+    ],
+    [
+     "1va3vur",
+     "Ulta",
+     "sensory_failure",
+     "criticized for 'harmful ingredients', drying lotion (\"my hands feel drier after using the lotions\"), and body mists that 'last for 2 seconds'; also perceived as"
     ]
    ]
   },
@@ -2887,6 +3133,20 @@
     ]
    ]
   },
+  "beauty of joseon (retinaldehyde eye cream)": {
+   "threads": [
+    "1v7orzv"
+   ],
+   "venues": [
+    "tretinoin"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "beauty pie": {
    "threads": [
     "1vbp3o2"
@@ -3037,6 +3297,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "benefit hoola": {
+   "threads": [
+    "1v9c1ym"
+   ],
+   "venues": [
+    "Sephora"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "benton": {
    "threads": [
     "1v7kr3m"
@@ -3138,27 +3412,42 @@
   "biodance": {
    "threads": [
     "1v71odr",
+    "1v78ddu",
     "1v8y8qi",
     "1v9ks0v"
    ],
    "venues": [
     "Sephora",
     "SkincareAddictionLux",
+    "SkincareAddicts",
     "koreanskincare"
    ],
    "contexts": {
     "recommendation": 2,
-    "praise": 1
+    "praise": 1,
+    "price": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v78ddu"
+   ],
+   "neg_venues": [
+    "SkincareAddicts"
+   ],
+   "neg_details": [
+    [
+     "1v78ddu",
+     "SkincareAddicts",
+     "price",
+     "AngelLK16 buys the Caviar PDRN line at steep discounts via the brand's official TikTok Shop rather than at Sephora full price."
+    ]
+   ]
   },
   "bioderma": {
    "threads": [
     "1v5olhu",
     "1v6jih5",
     "1v6msjl",
+    "1v76srj",
     "1v906ca",
     "1v99bax",
     "1vbb7ay"
@@ -3168,11 +3457,12 @@
     "Makeup",
     "Rosacea",
     "SkincareAddiction",
+    "eczema",
     "tretinoin"
    ],
    "contexts": {
     "praise": 3,
-    "recommendation": 3
+    "recommendation": 4
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -3273,6 +3563,20 @@
    ],
    "contexts": {
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "bk beauty": {
+   "threads": [
+    "1v89l26"
+   ],
+   "venues": [
+    "Sephora"
+   ],
+   "contexts": {
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -3399,18 +3703,21 @@
   },
   "bleu de chanel": {
    "threads": [
+    "1v6jkl1",
     "1v78z11",
     "1v93imo",
     "1v9eh2p",
     "1vb1d0s"
    ],
    "venues": [
-    "Colognes"
+    "Colognes",
+    "Fragrances"
    ],
    "contexts": {
     "performance": 1,
     "recommendation": 1,
-    "sensory_failure": 2
+    "sensory_failure": 2,
+    "other": 1
    },
    "neg_threads": [
     "1v93imo",
@@ -4111,13 +4418,15 @@
   },
   "burberry her": {
    "threads": [
+    "1v87uci",
     "1v8mpmh"
    ],
    "venues": [
     "FemFragLab"
    ],
    "contexts": {
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "recommendation": 1
    },
    "neg_threads": [
     "1v8mpmh"
@@ -4240,6 +4549,7 @@
   "byredo": {
    "threads": [
     "1v5fy3i",
+    "1v5wbaj",
     "1v8crj4",
     "1v90iao",
     "1vaaezb",
@@ -4252,12 +4562,13 @@
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "counterfeit": 1,
+    "counterfeit": 2,
     "praise": 3,
     "sensory_failure": 1
    },
    "neg_threads": [
     "1v5fy3i",
+    "1v5wbaj",
     "1vazzet"
    ],
    "neg_venues": [
@@ -4276,6 +4587,12 @@
      "fragranceclones",
      "sensory_failure",
      "the original Mojave Ghost (EDP and Absolu) barely detectable in-store even with nose pressed to skin, per two commenters"
+    ],
+    [
+     "1v5wbaj",
+     "FemFragLab",
+     "counterfeit",
+     "named as commonly faked on resale sites"
     ]
    ]
   },
@@ -4441,14 +4758,16 @@
     "1v5lknn",
     "1v8ile2",
     "1v9eht0",
+    "1vabi6i",
     "1vagikf"
    ],
    "venues": [
+    "BlackHair",
     "Naturalhair"
    ],
    "contexts": {
     "praise": 3,
-    "recommendation": 1
+    "recommendation": 2
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -4490,6 +4809,7 @@
   },
   "cantu": {
    "threads": [
+    "1v6hmbt",
     "1v70nlb",
     "1v8zyhh",
     "1v9eht0",
@@ -4503,7 +4823,8 @@
    "contexts": {
     "mixed": 1,
     "sensory_failure": 1,
-    "recommendation": 2
+    "recommendation": 2,
+    "other": 1
    },
    "neg_threads": [
     "1v8zyhh"
@@ -4552,14 +4873,15 @@
   "carolina herrera": {
    "threads": [
     "1v8bmjq",
-    "1vb7d10"
+    "1vb7d10",
+    "1vb8o19"
    ],
    "venues": [
     "FemFragLab",
     "Sephora"
    ],
    "contexts": {
-    "praise": 2
+    "praise": 3
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -4627,6 +4949,7 @@
   "catrice": {
    "threads": [
     "1v5j4re",
+    "1v5njyr",
     "1v60lpy",
     "1v72uj4",
     "1v769i4",
@@ -4649,13 +4972,16 @@
     "reformulation": 1,
     "recommendation": 4,
     "sensory_failure": 1,
-    "praise": 3
+    "praise": 3,
+    "failure": 1
    },
    "neg_threads": [
+    "1v5njyr",
     "1v90ovr",
     "1vbjuqz"
    ],
    "neg_venues": [
+    "Makeup",
     "Nailpolish",
     "drugstoreMUA"
    ],
@@ -4671,6 +4997,12 @@
      "drugstoreMUA",
      "sensory_failure",
      "Colour&Fix brow gel mascara was 'definitely better than the Maybelline' but had similar clumping/heaviness issues to some extent."
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Tried and failed to hold on OP's nose."
     ]
    ]
   },
@@ -4790,16 +5122,19 @@
     "1v6b4ax",
     "1v79gl9",
     "1v9wm7v",
+    "1vabi6i",
+    "1vabqbi",
     "1vanprx"
    ],
    "venues": [
+    "BlackHair",
     "Naturalhair",
     "blkgrlbeauty"
    ],
    "contexts": {
     "other": 1,
     "recommendation": 1,
-    "praise": 2
+    "praise": 4
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -4861,10 +5196,13 @@
    "threads": [
     "1v5fnzb",
     "1v6f6r2",
+    "1v6iwlu",
     "1v6jih5",
     "1v6qm9t",
     "1v6ravx",
     "1v75j6p",
+    "1v76srj",
+    "1v7bop3",
     "1v7cm76",
     "1v7cpjn",
     "1v7nkyd",
@@ -4912,9 +5250,9 @@
     "switching": 1,
     "performance": 1,
     "praise": 10,
-    "other": 3,
+    "other": 5,
     "safety": 3,
-    "recommendation": 5,
+    "recommendation": 6,
     "counterfeit": 1,
     "substitute": 1,
     "sensory_failure": 1
@@ -5031,6 +5369,7 @@
     "1v6h7im",
     "1v6msjl",
     "1v70th9",
+    "1v7ni7l",
     "1v97wc8",
     "1v9lq59",
     "1v9o6xm",
@@ -5044,14 +5383,15 @@
     "PaleMUA",
     "Rosacea",
     "SkincareAddiction",
-    "tressless"
+    "tressless",
+    "tretinoin"
    ],
    "contexts": {
     "praise": 2,
     "failure": 2,
     "counterfeit": 1,
     "reformulation": 1,
-    "substitute": 1,
+    "substitute": 2,
     "sensory_failure": 1
    },
    "neg_threads": [
@@ -5252,6 +5592,7 @@
   },
   "charlotte tilbury": {
    "threads": [
+    "1v5uugo",
     "1v5vk7m",
     "1v6i0fg",
     "1v6oezg",
@@ -5260,6 +5601,7 @@
     "1v7n6ds",
     "1v7o3z1",
     "1v95gws",
+    "1v9c1ym",
     "1vaeqn7",
     "1vamoie",
     "1vatoue",
@@ -5281,12 +5623,16 @@
     "other": 1,
     "reformulation": 1,
     "sensory_failure": 3,
-    "recommendation": 1
+    "recommendation": 1,
+    "packaging_failure": 1,
+    "failure": 1
    },
    "neg_threads": [
+    "1v5uugo",
     "1v5vk7m",
     "1v6i0fg",
     "1v95gws",
+    "1v9c1ym",
     "1vamoie"
    ],
    "neg_venues": [
@@ -5318,6 +5664,43 @@
      "Ulta",
      "sensory_failure",
      "complexion products at Ulta run yellow across the shade range, even 'neutral' shades"
+    ],
+    [
+     "1v9c1ym",
+     "Sephora",
+     "packaging_failure",
+     "Current-Resolve8660: 'The product spins around in the compact when trying to load your brush... hit pan super fast... It's all hype.'"
+    ],
+    [
+     "1v5uugo",
+     "Sephora",
+     "failure",
+     "Cited as hitting pan even faster than Givenchy, 'and there's talc in it.'"
+    ]
+   ]
+  },
+  "charlotte tilbury (matte setting spray / flawless setting spray)": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v9qfdg"
+   ],
+   "neg_venues": [
+    "Makeup"
+   ],
+   "neg_details": [
+    [
+     "1v9qfdg",
+     "Makeup",
+     "sensory_failure",
+     "DemonCopperhead1: 'Zero difference on days I\u2019ve worn it or did not wear it', still trying to use it up"
     ]
    ]
   },
@@ -5439,6 +5822,20 @@
    ],
    "venues": [
     "Perfumes"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "chrome sport": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
    ],
    "contexts": {
     "other": 1
@@ -5669,6 +6066,7 @@
     "1v6xr63",
     "1v7gqip",
     "1v8diqt",
+    "1v8n0e8",
     "1v8wued",
     "1v93u0p",
     "1v9filw",
@@ -5677,6 +6075,7 @@
    "venues": [
     "40PlusSkinCare",
     "45PlusSkincare",
+    "FemFragLab",
     "Makeup",
     "MakeupAddiction",
     "Sephora",
@@ -5692,7 +6091,7 @@
     "dupe": 1,
     "failure": 2,
     "recommendation": 5,
-    "other": 3,
+    "other": 4,
     "price": 1
    },
    "neg_threads": [
@@ -5819,6 +6218,45 @@
      "Colognes",
      "failure",
      "Called out for a 'heavy synthetic vibe' typical of cheap fragrances."
+    ]
+   ]
+  },
+  "clue perfumery (dandelion butter)": {
+   "threads": [
+    "1v8cv74"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "coach": {
+   "threads": [
+    "1v8bzzx"
+   ],
+   "venues": [
+    "Perfumes"
+   ],
+   "contexts": {
+    "packaging_failure": 1
+   },
+   "neg_threads": [
+    "1v8bzzx"
+   ],
+   "neg_venues": [
+    "Perfumes"
+   ],
+   "neg_details": [
+    [
+     "1v8bzzx",
+     "Perfumes",
+     "packaging_failure",
+     "Poppy and Dream/Love bottles have sealed spray tops that trap the last bit of unusable product."
     ]
    ]
   },
@@ -5956,6 +6394,7 @@
    "threads": [
     "1v7ci5y",
     "1v88pdf",
+    "1v8g7fg",
     "1v95lb8",
     "1vadn3e",
     "1vb5gf7"
@@ -5966,12 +6405,37 @@
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "recommendation": 4,
+    "recommendation": 5,
     "praise": 1
    },
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "commodity (milk)": {
+   "threads": [
+    "1valhjk"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1valhjk"
+   ],
+   "neg_venues": [
+    "fragrance"
+   ],
+   "neg_details": [
+    [
+     "1valhjk",
+     "fragrance",
+     "sensory_failure",
+     "described by one commenter as smelling like 'pure rubbing alcohol' due to a lactonic note reaction"
+    ]
+   ]
   },
   "comptoir sud pacifique": {
    "threads": [
@@ -6162,6 +6626,31 @@
     ]
    ]
   },
+  "cost plus drug company": {
+   "threads": [
+    "1v6a6g6"
+   ],
+   "venues": [
+    "40PlusSkinCare"
+   ],
+   "contexts": {
+    "price": 1
+   },
+   "neg_threads": [
+    "1v6a6g6"
+   ],
+   "neg_venues": [
+    "40PlusSkinCare"
+   ],
+   "neg_details": [
+    [
+     "1v6a6g6",
+     "40PlusSkinCare",
+     "price",
+     "Mark Cuban's mail-order pharmacy cited as cheap source (~$45+shipping for 45g tube lasting 6+ months)."
+    ]
+   ]
+  },
   "costco": {
    "threads": [
     "1v5fy3i",
@@ -6254,6 +6743,7 @@
   },
   "covergirl": {
    "threads": [
+    "1v5jrlb",
     "1v7qcnx",
     "1v8lh7o",
     "1v93u0p",
@@ -6271,7 +6761,8 @@
     "failure": 2,
     "praise": 2,
     "substitute": 1,
-    "recommendation": 2
+    "recommendation": 2,
+    "other": 1
    },
    "neg_threads": [
     "1v8lh7o",
@@ -6426,6 +6917,31 @@
      "fragrance",
      "sensory_failure",
      "Erolfa praised for scent but repeatedly criticized for weak projection/longevity, with one commenter saying it's been 'stripped of ambergris and a few other thi"
+    ]
+   ]
+  },
+  "creed (green irish tweed)": {
+   "threads": [
+    "1v9je6w"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "price": 1
+   },
+   "neg_threads": [
+    "1v9je6w"
+   ],
+   "neg_venues": [
+    "Colognes"
+   ],
+   "neg_details": [
+    [
+     "1v9je6w",
+     "Colognes",
+     "price",
+     "referenced as the one fragrance a commenter is willing to pay close to full retail for, given cheaper Turkish-market alternatives exist"
     ]
    ]
   },
@@ -6715,6 +7231,34 @@
     ]
    ]
   },
+  "d'annam": {
+   "threads": [
+    "1v8g7fg",
+    "1valhjk"
+   ],
+   "venues": [
+    "FemFragLab",
+    "fragrance"
+   ],
+   "contexts": {
+    "substitute": 1,
+    "reformulation": 1
+   },
+   "neg_threads": [
+    "1valhjk"
+   ],
+   "neg_venues": [
+    "fragrance"
+   ],
+   "neg_details": [
+    [
+     "1valhjk",
+     "fragrance",
+     "reformulation",
+     "multiple commenters report nearly the entire catalog carries a strong 'screamwood'/alcoholic opening note, one calling it part of the 'house signature'"
+    ]
+   ]
+  },
   "d.r. harris": {
    "threads": [
     "1v7j3re"
@@ -6768,6 +7312,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "danessa myrick": {
+   "threads": [
+    "1v6wala"
+   ],
+   "venues": [
+    "Sephora"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "danessa myricks": {
    "threads": [
     "1v7lhil",
@@ -6787,6 +7345,20 @@
     "praise": 2,
     "recommendation": 2,
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "danessa myricks yummy skin blurring balm": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "praise": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -6837,6 +7409,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "davidoff cool water": {
+   "threads": [
+    "1vamkej"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "davines": {
    "threads": [
     "1vai5k9"
@@ -6874,6 +7460,20 @@
    ],
    "contexts": {
     "availability": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "ddg": {
+   "threads": [
+    "1v5mjcs"
+   ],
+   "venues": [
+    "SkincareAddictionLux"
+   ],
+   "contexts": {
+    "praise": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -7052,13 +7652,16 @@
   },
   "demeter": {
    "threads": [
+    "1v8n0e8",
     "1vakmhi"
    ],
    "venues": [
+    "FemFragLab",
     "Perfumes"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 1,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -7116,6 +7719,31 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "denman brush": {
+   "threads": [
+    "1vbbjsy"
+   ],
+   "venues": [
+    "curlyhair"
+   ],
+   "contexts": {
+    "packaging_failure": 1
+   },
+   "neg_threads": [
+    "1vbbjsy"
+   ],
+   "neg_venues": [
+    "curlyhair"
+   ],
+   "neg_details": [
+    [
+     "1vbbjsy",
+     "curlyhair",
+     "packaging_failure",
+     "one commenter 'could never get the hang of' using it, preferring the Bounce Curl brush instead"
+    ]
+   ]
   },
   "dennis gross": {
    "threads": [
@@ -7344,6 +7972,45 @@
     ]
    ]
   },
+  "dieux air angel": {
+   "threads": [
+    "1vb0kdz"
+   ],
+   "venues": [
+    "SkincareAddiction"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "dieux instant angel": {
+   "threads": [
+    "1vb0kdz"
+   ],
+   "venues": [
+    "SkincareAddiction"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vb0kdz"
+   ],
+   "neg_venues": [
+    "SkincareAddiction"
+   ],
+   "neg_details": [
+    [
+     "1vb0kdz",
+     "SkincareAddiction",
+     "sensory_failure",
+     "Multiple users independently describe mildew/damp-towel/paint/glue smells persisting across different stores and fresh bottles, unrelated to batch."
+    ]
+   ]
+  },
   "differin": {
    "threads": [
     "1v84cku",
@@ -7408,10 +8075,12 @@
   "dior": {
    "threads": [
     "1v5lat2",
+    "1v5njyr",
     "1v5vk7m",
     "1v64qaz",
     "1v6i0fg",
     "1v6kzzr",
+    "1v6wala",
     "1v7aqwy",
     "1v7frre",
     "1v7m6t2",
@@ -7429,12 +8098,14 @@
     "1vb2m14",
     "1vb5nc0",
     "1vb946g",
+    "1vba24t",
     "1vbe2l4"
    ],
    "venues": [
     "AsianBeauty",
     "FemFragLab",
     "FragranceStories",
+    "Makeup",
     "OliveMUA",
     "PaleMUA",
     "Perfumes",
@@ -7451,10 +8122,13 @@
     "dupe": 1,
     "price": 2,
     "sensory_failure": 5,
-    "substitute": 1
+    "substitute": 2,
+    "failure": 2
    },
    "neg_threads": [
+    "1v5njyr",
     "1v6kzzr",
+    "1v6wala",
     "1v7aqwy",
     "1v7frre",
     "1v7m6t2",
@@ -7469,6 +8143,7 @@
    "neg_venues": [
     "AsianBeauty",
     "FemFragLab",
+    "Makeup",
     "OliveMUA",
     "PaleMUA",
     "Perfumes",
@@ -7541,8 +8216,49 @@
      "fragrance",
      "price",
      "\"I got a sampler of it and really liked it but its very expensive and I can't seem to find a good dupe under 50 dollars\""
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Tried and failed to hold on OP's nose."
+    ],
+    [
+     "1v6wala",
+     "Sephora",
+     "failure",
+     "Backstage foundation didn't work for an oily-skin user on two separate attempts a year apart; another user's oily-skin friend finds it not long-wearing."
     ]
    ]
+  },
+  "dior (forever skin correct)": {
+   "threads": [
+    "1v952pw"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "dior homme parfum": {
+   "threads": [
+    "1v80fk0",
+    "1vb20hg"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "other": 2
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "dior sauvage": {
    "threads": [
@@ -7583,10 +8299,26 @@
     ]
    ]
   },
+  "dior sauvage parfum": {
+   "threads": [
+    "1vamkej"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "diptyque": {
    "threads": [
     "1v5tgrb",
+    "1v5wbaj",
     "1v5zwh3",
+    "1v75q33",
     "1v890lz",
     "1v8crj4",
     "1vahn4p",
@@ -7603,10 +8335,13 @@
     "praise": 2,
     "price": 1,
     "sensory_failure": 2,
-    "recommendation": 1
+    "recommendation": 1,
+    "other": 1,
+    "counterfeit": 1
    },
    "neg_threads": [
     "1v5tgrb",
+    "1v5wbaj",
     "1v5zwh3",
     "1vaoiuw"
    ],
@@ -7633,8 +8368,28 @@
      "FemFragLab",
      "sensory_failure",
      "repeated 'brand DNA mismatch' complaints: 'I was SO excited to try Philosykos and was so disappointed when I finally got a decant'; 'It's funny because I love m"
+    ],
+    [
+     "1v5wbaj",
+     "FemFragLab",
+     "counterfeit",
+     "named as commonly faked on resale sites"
     ]
    ]
+  },
+  "diptyque (eau duelle)": {
+   "threads": [
+    "1v8cv74"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "diptyque eau duelle": {
    "threads": [
@@ -7974,6 +8729,7 @@
    "threads": [
     "1v7amh7",
     "1v7hrke",
+    "1v8g7fg",
     "1v94plg"
    ],
    "venues": [
@@ -7982,7 +8738,8 @@
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "praise": 3
+    "praise": 3,
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -8258,6 +9015,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "dries van noten (vanille camouflage)": {
+   "threads": [
+    "1v8cv74"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "drk nails (seal glaze, glitch lock & key, magic effect)": {
    "threads": [
     "1v6hadq"
@@ -8276,21 +9047,26 @@
    "threads": [
     "1v7b6t3",
     "1v8txeu",
-    "1v9o6xm"
+    "1v9o6xm",
+    "1vbbcwu"
    ],
    "venues": [
     "Makeup",
+    "Sephora",
     "SkincareAddiction"
    ],
    "contexts": {
     "failure": 1,
     "switching": 1,
-    "other": 1
+    "other": 1,
+    "safety": 1
    },
    "neg_threads": [
-    "1v9o6xm"
+    "1v9o6xm",
+    "1vbbcwu"
    ],
    "neg_venues": [
+    "Sephora",
     "SkincareAddiction"
    ],
    "neg_details": [
@@ -8299,6 +9075,12 @@
      "SkincareAddiction",
      "failure",
      "One user regrets using actives like this at 17, saying it damaged their skin barrier"
+    ],
+    [
+     "1vbbcwu",
+     "Sephora",
+     "safety",
+     "Retinol sample mis-sent to a pregnant customer who explicitly cannot use retinol."
     ]
    ]
   },
@@ -8418,13 +9200,18 @@
   },
   "dupixent": {
    "threads": [
+    "1v76srj",
+    "1v8phwa",
     "1v9k0sk"
    ],
    "venues": [
+    "FemaleHairLoss",
     "eczema"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 1,
+    "other": 1,
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -8525,6 +9312,7 @@
   "e.l.f.": {
    "threads": [
     "1v5ha2o",
+    "1v5njyr",
     "1v6cxcg",
     "1v7b6t3",
     "1v7n6ds",
@@ -8555,13 +9343,15 @@
     "praise": 4,
     "sensory_failure": 1,
     "recommendation": 5,
-    "failure": 1
+    "failure": 2
    },
    "neg_threads": [
+    "1v5njyr",
     "1v9gi4m",
     "1vat3ol"
    ],
    "neg_venues": [
+    "Makeup",
     "MakeupAddiction",
     "drugstoreMUA"
    ],
@@ -8577,6 +9367,12 @@
      "drugstoreMUA",
      "failure",
      "Dewy setting spray caused eyeliner smudging, foundation melting, and brow fading on oily skin; OP calls out the green tea seed oil ingredient as the likely culp"
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Primer broke out a commenter's skin."
     ]
    ]
   },
@@ -8757,6 +9553,7 @@
     "1v7cm76",
     "1v7mryd",
     "1v7o3z1",
+    "1v89l26",
     "1v8d96i",
     "1v8lh7o",
     "1v9filw",
@@ -8770,6 +9567,7 @@
     "OliveMUA",
     "PanPorn",
     "ProjectPan",
+    "Sephora",
     "Ulta",
     "beauty",
     "drugstoreMUA",
@@ -8781,7 +9579,8 @@
     "price": 1,
     "other": 1,
     "failure": 1,
-    "recommendation": 3
+    "recommendation": 3,
+    "substitute": 1
    },
    "neg_threads": [
     "1v8lh7o",
@@ -8837,6 +9636,7 @@
   "ellis brooklyn": {
    "threads": [
     "1v8ead8",
+    "1v8g7fg",
     "1v9eqwb",
     "1va00tr",
     "1va7686",
@@ -8856,7 +9656,7 @@
    ],
    "contexts": {
     "other": 2,
-    "recommendation": 1,
+    "recommendation": 2,
     "praise": 4,
     "sensory_failure": 1,
     "substitute": 1
@@ -8954,6 +9754,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "emily de molly (sunset over the bay)": {
+   "threads": [
+    "1v91ayk"
+   ],
+   "venues": [
+    "RedditLaqueristas"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "emir": {
    "threads": [
     "1v8kk8f"
@@ -9037,6 +9851,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "epiduo": {
+   "threads": [
+    "1vatw1o"
+   ],
+   "venues": [
+    "SkincareAddiction"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "epii": {
    "threads": [
     "1vbfixn"
@@ -9069,6 +9897,7 @@
    "threads": [
     "1v7ngdg",
     "1v8827d",
+    "1v8f9tk",
     "1v8hcuw"
    ],
    "venues": [
@@ -9077,7 +9906,7 @@
     "over30skincare"
    ],
    "contexts": {
-    "praise": 2,
+    "praise": 3,
     "recommendation": 1
    },
    "neg_threads": [],
@@ -9115,6 +9944,7 @@
   "essence": {
    "threads": [
     "1v5j4re",
+    "1v5njyr",
     "1v5xs0k",
     "1v6u5cv",
     "1v8lh7o",
@@ -9137,11 +9967,12 @@
     "praise": 4,
     "recommendation": 2,
     "packaging_failure": 1,
-    "failure": 1,
+    "failure": 2,
     "sensory_failure": 1,
     "substitute": 1
    },
    "neg_threads": [
+    "1v5njyr",
     "1v90ovr",
     "1v99bax",
     "1v9v6wk",
@@ -9176,6 +10007,12 @@
      "Makeup",
      "sensory_failure",
      "\"I hated silky blur it was so drying and creased so bad\""
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Tried and failed to hold on OP's nose."
     ]
    ]
   },
@@ -9208,6 +10045,34 @@
     "praise": 1,
     "recommendation": 1,
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "essie gel couture": {
+   "threads": [
+    "1vb2dn4"
+   ],
+   "venues": [
+    "RedditLaqueristas"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "essie gel setter": {
+   "threads": [
+    "1vbfpkk"
+   ],
+   "venues": [
+    "Nails"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -9283,6 +10148,20 @@
    ],
    "contexts": {
     "dupe": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "estee lauder double wear": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -9588,21 +10467,25 @@
    "threads": [
     "1v6empn",
     "1v91aej",
-    "1v9filw"
+    "1v9filw",
+    "1vd5lxt"
    ],
    "venues": [
     "30PlusSkinCare",
+    "Sephora",
     "SkincareAddiction",
     "Ulta"
    ],
    "contexts": {
-    "price": 1,
+    "price": 2,
     "praise": 2
    },
    "neg_threads": [
-    "1v9filw"
+    "1v9filw",
+    "1vd5lxt"
    ],
    "neg_venues": [
+    "Sephora",
     "Ulta"
    ],
    "neg_details": [
@@ -9611,6 +10494,12 @@
      "Ulta",
      "price",
      "Well liked but considered too expensive by one price-conscious user"
+    ],
+    [
+     "1vd5lxt",
+     "Sephora",
+     "price",
+     "trippinbasil notes the lip masks are 'always' discounted at TJ Maxx as a cheaper alternative to full-price Sephora."
     ]
    ]
   },
@@ -9633,6 +10522,7 @@
     "1v5pzdi",
     "1v6eap5",
     "1v6raiy",
+    "1v6wala",
     "1v78jm7",
     "1v7lhil",
     "1v7o3z1",
@@ -9644,6 +10534,7 @@
     "1vahoxv",
     "1vahqt2",
     "1valysd",
+    "1vb4020",
     "1vb7mtv",
     "1vbd0z8"
    ],
@@ -9664,9 +10555,9 @@
     "dupe": 1,
     "praise": 3,
     "reformulation": 2,
-    "sensory_failure": 2,
+    "sensory_failure": 3,
     "recommendation": 3,
-    "other": 1,
+    "other": 2,
     "price": 2,
     "packaging_failure": 1
    },
@@ -9677,9 +10568,11 @@
     "1v8ythh",
     "1v96pal",
     "1vahoxv",
-    "1valysd"
+    "1valysd",
+    "1vb4020"
    ],
    "neg_venues": [
+    "FemFragLab",
     "Makeup",
     "Sephora",
     "Ulta",
@@ -9728,6 +10621,12 @@
      "Makeup",
      "price",
      "\"I'm looking for alternative before buying it, because I'm uni student who works at bar and cannot spend money on stuff that I could get for cheaper.\""
+    ],
+    [
+     "1vb4020",
+     "FemFragLab",
+     "sensory_failure",
+     "Argueswithchildren: smelled like heaven on paper but 'stale piss diapers' on her skin."
     ]
    ]
   },
@@ -9818,6 +10717,7 @@
     "1v6drnp",
     "1v6lfww",
     "1v7llyg",
+    "1v8bvbf",
     "1vbqyg9"
    ],
    "venues": [
@@ -9830,11 +10730,23 @@
    "contexts": {
     "praise": 1,
     "substitute": 2,
-    "other": 2
+    "other": 2,
+    "failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v8bvbf"
+   ],
+   "neg_venues": [
+    "Rosacea"
+   ],
+   "neg_details": [
+    [
+     "1v8bvbf",
+     "Rosacea",
+     "failure",
+     "Prescribed azelaic acid product; dermatologist herself said it probably wouldn't work and there was nothing else she could offer."
+    ]
+   ]
   },
   "finasteride": {
    "threads": [
@@ -10335,15 +11247,19 @@
   "frederic malle": {
    "threads": [
     "1v5ewf1",
+    "1v5j1hf",
+    "1v5zt77",
     "1vahn4p"
    ],
    "venues": [
     "Perfumes",
+    "fragranceclones",
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "recommendation": 1,
-    "praise": 1
+    "recommendation": 2,
+    "praise": 1,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -10404,6 +11320,20 @@
      "Liquid Brun positioned as budget dupe of Althair; opinions split from great to smelling like chemical attack"
     ]
    ]
+  },
+  "french avenue (nabatiah, grow, 8th wonder)": {
+   "threads": [
+    "1va50sb"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "fresh": {
    "threads": [
@@ -10509,17 +11439,31 @@
   },
   "gap": {
    "threads": [
-    "1v8ewg0"
+    "1v8ewg0",
+    "1v8n0e8"
    ],
    "venues": [
+    "FemFragLab",
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "availability": 1
+    "availability": 1,
+    "reformulation": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v8n0e8"
+   ],
+   "neg_venues": [
+    "FemFragLab"
+   ],
+   "neg_details": [
+    [
+     "1v8n0e8",
+     "FemFragLab",
+     "reformulation",
+     "Grass, Heaven, Dream, and Om relaunched as reformulated EDPs; Grass singled out as the biggest departure from the original scent (green tea vs. original grass/c"
+    ]
+   ]
   },
   "garnier": {
    "threads": [
@@ -10685,6 +11629,7 @@
     "1v6ja6l",
     "1v7b6t3",
     "1v9jvju",
+    "1v9utog",
     "1vaeqn7",
     "1vamoie",
     "1vb6i6x"
@@ -10692,6 +11637,7 @@
    "venues": [
     "Colognes",
     "Makeup",
+    "MakeupAddiction",
     "Perfumes",
     "Sephora",
     "fragrance"
@@ -10701,7 +11647,8 @@
     "performance": 1,
     "sensory_failure": 1,
     "price": 1,
-    "praise": 1
+    "praise": 1,
+    "recommendation": 1
    },
    "neg_threads": [
     "1v6b9np",
@@ -10794,21 +11741,30 @@
   "gisou": {
    "threads": [
     "1v6ze0y",
-    "1v8zl64"
+    "1v8zl64",
+    "1vacsi9",
+    "1vd3rrh"
    ],
    "venues": [
+    "LipBalm",
     "ProjectPan",
     "Sephora"
    ],
    "contexts": {
     "price": 1,
-    "other": 1
+    "other": 2,
+    "sensory_failure": 1,
+    "packaging_failure": 1
    },
    "neg_threads": [
-    "1v8zl64"
+    "1v8zl64",
+    "1vacsi9",
+    "1vd3rrh"
    ],
    "neg_venues": [
-    "ProjectPan"
+    "LipBalm",
+    "ProjectPan",
+    "Sephora"
    ],
    "neg_details": [
     [
@@ -10816,6 +11772,18 @@
      "ProjectPan",
      "price",
      "Hair mask described as underwhelming 'for the price'"
+    ],
+    [
+     "1vd3rrh",
+     "LipBalm",
+     "sensory_failure",
+     "OP: the lip oils are 'very thick and once they are off your lips there is almost no difference in hydration on your lips,' better used as a topper than a standa"
+    ],
+    [
+     "1vacsi9",
+     "Sephora",
+     "packaging_failure",
+     "Commenter's Gisou hair oil arrived with the internal glass dropper broken."
     ]
    ]
   },
@@ -10835,6 +11803,7 @@
   },
   "givenchy": {
    "threads": [
+    "1v5uugo",
     "1v6ys4n",
     "1v8sy1r",
     "1v967w4",
@@ -10848,9 +11817,11 @@
     "reformulation": 1,
     "sensory_failure": 1,
     "praise": 1,
-    "substitute": 1
+    "substitute": 1,
+    "failure": 1
    },
    "neg_threads": [
+    "1v5uugo",
     "1v8sy1r",
     "1v967w4"
    ],
@@ -10870,6 +11841,12 @@
      "Sephora",
      "sensory_failure",
      "concealer 'in a category all on its own' but repeatedly reported to separate/expire in 3-6 months; can be shaken or mixed by hand to remix"
+    ],
+    [
+     "1v5uugo",
+     "Sephora",
+     "failure",
+     "\"I splurged on the Givenchy powder too, and sad to say I'm going back to Mac mineralised skin finish. Hit pan on the givenchy too quickly.\" Same commenter separ"
     ]
    ]
   },
@@ -10919,6 +11896,7 @@
   },
   "glossier": {
    "threads": [
+    "18zsubw",
     "1v5fape",
     "1v75ioe",
     "1v7e4zg",
@@ -10937,6 +11915,7 @@
     "Makeup",
     "MakeupAddiction",
     "Perfumes",
+    "Sephora",
     "SkincareAddiction",
     "drugstoreMUA",
     "fragrance"
@@ -10947,7 +11926,7 @@
     "reformulation": 1,
     "praise": 3,
     "sensory_failure": 1,
-    "recommendation": 2,
+    "recommendation": 3,
     "other": 1,
     "failure": 1
    },
@@ -10981,6 +11960,20 @@
      "Listed among sunscreens that broke OP out."
     ]
    ]
+  },
+  "glossier (you reve)": {
+   "threads": [
+    "1v5lxc7"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "glossier you": {
    "threads": [
@@ -11032,6 +12025,31 @@
      "tretinoin",
      "failure",
      "New salicylic-acid cleanser: \"went too hard with it when I switched from CeraVe. My skin got really dry and sensitive\""
+    ]
+   ]
+  },
+  "go-to skincare": {
+   "threads": [
+    "1v7u24l"
+   ],
+   "venues": [
+    "AustralianMakeup"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1v7u24l"
+   ],
+   "neg_venues": [
+    "AustralianMakeup"
+   ],
+   "neg_details": [
+    [
+     "1v7u24l",
+     "AustralianMakeup",
+     "failure",
+     "OP: the 'Powder Room' shopping-centre tour was 'lacklustre,' staff lacking energy and stingy with freebies."
     ]
    ]
   },
@@ -11270,6 +12288,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "grandelash": {
+   "threads": [
+    "1vazno8"
+   ],
+   "venues": [
+    "beauty"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "graniular": {
    "threads": [
     "1v9eht0"
@@ -11362,30 +12394,40 @@
     "1v60muk",
     "1v6b9np",
     "1v6xpia",
+    "1v75q33",
     "1v7aqwy",
     "1v7k960",
-    "1v8zp4z"
+    "1v8zp4z",
+    "1vbbcwu"
    ],
    "venues": [
+    "FemFragLab",
     "FragranceStories",
     "Fragrances",
     "Perfumes",
+    "Sephora",
     "fragrance"
    ],
    "contexts": {
     "praise": 2,
     "reformulation": 2,
     "sensory_failure": 2,
-    "other": 1
+    "other": 1,
+    "price": 1,
+    "safety": 1
    },
    "neg_threads": [
     "1v6b9np",
+    "1v75q33",
     "1v7aqwy",
     "1v7k960",
-    "1v8zp4z"
+    "1v8zp4z",
+    "1vbbcwu"
    ],
    "neg_venues": [
+    "FemFragLab",
     "Perfumes",
+    "Sephora",
     "fragrance"
    ],
    "neg_details": [
@@ -11412,6 +12454,18 @@
      "fragrance",
      "reformulation",
      "Shalimar EdC discontinued; commenter believes its prized drydown \"reincarnated into one of the modern flankers\" but hasn't confirmed which"
+    ],
+    [
+     "1v75q33",
+     "FemFragLab",
+     "price",
+     "a commenter complained a 1ml sample cost $30: \"omg some samples are outrageous too. $30 for guerlain 1ml? i'm SORRY??\""
+    ],
+    [
+     "1vbbcwu",
+     "Sephora",
+     "safety",
+     "Sample kept being sent to a user and broke her out."
     ]
    ]
   },
@@ -11446,14 +12500,17 @@
   "gulf orchid": {
    "threads": [
     "1v6m4ne",
+    "1v8g7fg",
     "1v94plg"
    ],
    "venues": [
+    "FemFragLab",
     "fragrance",
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "recommendation": 2
+    "recommendation": 2,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -11982,6 +13039,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "herbal essence": {
+   "threads": [
+    "1v6j6yf"
+   ],
+   "venues": [
+    "Haircare"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "herbivore": {
    "threads": [
     "1varzee"
@@ -12161,6 +13232,34 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "hg professionals (opal chrome powder 002)": {
+   "threads": [
+    "1vbfpkk"
+   ],
+   "venues": [
+    "Nails"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "hibiclens": {
+   "threads": [
+    "1vabfrn"
+   ],
+   "venues": [
+    "beauty"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "highline": {
    "threads": [
     "1v5e1al"
@@ -12190,15 +13289,19 @@
    "threads": [
     "1v7lccf",
     "1v9m8db",
+    "1vabi6i",
+    "1vaxywg",
     "1vbpj55"
    ],
    "venues": [
+    "BlackHair",
     "tressless"
    ],
    "contexts": {
     "other": 1,
     "safety": 1,
-    "substitute": 1
+    "substitute": 2,
+    "praise": 1
    },
    "neg_threads": [
     "1v9m8db"
@@ -12255,6 +13358,20 @@
    "contexts": {
     "availability": 1,
     "praise": 2
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "holo taco (peely base)": {
+   "threads": [
+    "1vbfpkk"
+   ],
+   "venues": [
+    "Nails"
+   ],
+   "contexts": {
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -12319,10 +13436,12 @@
   "hourglass": {
    "threads": [
     "1v5fcb0",
+    "1v5njyr",
     "1v7vcu8",
     "1v85w1i",
     "1v95gws",
     "1v9b76d",
+    "1v9c1ym",
     "1v9gf96",
     "1v9ks0v",
     "1v9zbb9",
@@ -12336,13 +13455,16 @@
    ],
    "contexts": {
     "praise": 5,
-    "recommendation": 3,
-    "reformulation": 1
+    "recommendation": 4,
+    "reformulation": 1,
+    "sensory_failure": 1
    },
    "neg_threads": [
+    "1v9c1ym",
     "1v9ks0v"
    ],
    "neg_venues": [
+    "Sephora",
     "SkincareAddictionLux"
    ],
    "neg_details": [
@@ -12351,6 +13473,12 @@
      "SkincareAddictionLux",
      "reformulation",
      "Veil Mineral Primer praised for blurring, but flagged that its key ingredient D5/cyclopentasiloxane is being removed from popular cosmetics due to environmental"
+    ],
+    [
+     "1v9c1ym",
+     "Sephora",
+     "sensory_failure",
+     "PatsyStonesBun: swatched all three Ambient Light Bronzer shades and they 'all disappeared on my skin,' medium/tan complexion; corroborated by another commenter "
     ]
    ]
   },
@@ -12359,23 +13487,28 @@
     "1v5h5rj",
     "1v6be1r",
     "1v890in",
-    "1va7686"
+    "1va7686",
+    "1valhjk"
    ],
    "venues": [
     "Fragrances",
     "Perfumes",
+    "fragrance",
     "perfumesthatfeellike"
    ],
    "contexts": {
     "price": 1,
     "recommendation": 2,
-    "other": 1
+    "other": 1,
+    "reformulation": 1
    },
    "neg_threads": [
-    "1v6be1r"
+    "1v6be1r",
+    "1valhjk"
    ],
    "neg_venues": [
-    "Fragrances"
+    "Fragrances",
+    "fragrance"
    ],
    "neg_details": [
     [
@@ -12383,6 +13516,37 @@
      "Fragrances",
      "price",
      "$300 fragrance that 'lasts as long as a fart'; generic vs. cheaper alternatives like Beach Walk."
+    ],
+    [
+     "1valhjk",
+     "fragrance",
+     "reformulation",
+     "added to a commenter's personal 'no' list for the same issue"
+    ]
+   ]
+  },
+  "house of cosmo": {
+   "threads": [
+    "1valhjk"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "reformulation": 1
+   },
+   "neg_threads": [
+    "1valhjk"
+   ],
+   "neg_venues": [
+    "fragrance"
+   ],
+   "neg_details": [
+    [
+     "1valhjk",
+     "fragrance",
+     "reformulation",
+     "added to a commenter's personal 'no' list for the same issue"
     ]
    ]
   },
@@ -12460,6 +13624,20 @@
      "user's existing mattifying powder doesn't last all day for T-zone oil control"
     ]
    ]
+  },
+  "huda beauty (faux filter concealer)": {
+   "threads": [
+    "1v952pw"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "hugo boss": {
    "threads": [
@@ -12611,6 +13789,7 @@
    "threads": [
     "1v6d8w6",
     "1v6n55k",
+    "1v76srj",
     "1v7q14p",
     "1v88nhp",
     "1vamlc4",
@@ -12619,12 +13798,13 @@
    "venues": [
     "Haircare",
     "SkincareAddiction",
+    "eczema",
     "koreanskincare",
     "tretinoin"
    ],
    "contexts": {
     "failure": 1,
-    "praise": 3,
+    "praise": 4,
     "substitute": 1,
     "recommendation": 1
    },
@@ -12655,6 +13835,20 @@
    "contexts": {
     "other": 1,
     "praise": 2
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "ilnp starlight": {
+   "threads": [
+    "1vb2dn4"
+   ],
+   "venues": [
+    "RedditLaqueristas"
+   ],
+   "contexts": {
+    "praise": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -12774,6 +13968,7 @@
   },
   "initio": {
    "threads": [
+    "1v5j1hf",
     "1vadrlj",
     "1vaeyhf",
     "1vaoiuw"
@@ -12786,7 +13981,8 @@
    "contexts": {
     "praise": 1,
     "other": 1,
-    "recommendation": 1
+    "recommendation": 1,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -12966,6 +14162,31 @@
     ]
    ]
   },
+  "irrespective me": {
+   "threads": [
+    "1vaas1q"
+   ],
+   "venues": [
+    "FemaleHairLoss"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1vaas1q"
+   ],
+   "neg_venues": [
+    "FemaleHairLoss"
+   ],
+   "neg_details": [
+    [
+     "1vaas1q",
+     "FemaleHairLoss",
+     "failure",
+     "Real-hair topper had a lace base that looked like visible netting/mesh, color options both looked wrong (too copper or almost black), required extra paid stylis"
+    ]
+   ]
+  },
   "is clinical": {
    "threads": [
     "1v8bxcd"
@@ -13137,15 +14358,18 @@
   },
   "issey miyake l'eau d'issey pour homme": {
    "threads": [
+    "1v8qjvo",
     "1v9903h"
    ],
    "venues": [
     "Colognes"
    ],
    "contexts": {
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "reformulation": 1
    },
    "neg_threads": [
+    "1v8qjvo",
     "1v9903h"
    ],
    "neg_venues": [
@@ -13157,6 +14381,12 @@
      "Colognes",
      "sensory_failure",
      "'reminded me some sort of old lady perfume'; 'smells like bathroom air freshener'; 'performance sucks on skin, like it literally stayed for a total of 1.5hrs ev"
+    ],
+    [
+     "1v8qjvo",
+     "Colognes",
+     "reformulation",
+     "Multiple users report the modern formulation fades within 1-5 hours, some citing reformulations as having weakened potency compared to decades ago."
     ]
    ]
   },
@@ -13203,20 +14433,35 @@
    "threads": [
     "1v60lpy",
     "1v7b6t3",
+    "1v8f9tk",
     "1v8hw3k",
-    "1v9zbb9"
+    "1v9zbb9",
+    "1vbbcwu"
    ],
    "venues": [
     "Makeup",
+    "Sephora",
     "Ulta"
    ],
    "contexts": {
-    "praise": 1,
-    "recommendation": 3
+    "praise": 2,
+    "recommendation": 3,
+    "packaging_failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1vbbcwu"
+   ],
+   "neg_venues": [
+    "Sephora"
+   ],
+   "neg_details": [
+    [
+     "1vbbcwu",
+     "Sephora",
+     "packaging_failure",
+     "Foundation sampler oversaturating sample pools; multiple users tired of receiving it repeatedly regardless of selection."
+    ]
+   ]
   },
   "it's a 10": {
    "threads": [
@@ -13480,6 +14725,20 @@
    ],
    "contexts": {
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "jhag": {
+   "threads": [
+    "1v5zt77"
+   ],
+   "venues": [
+    "Perfumes"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -14073,9 +15332,11 @@
   "kayali": {
    "threads": [
     "1v7gwie",
+    "1v87uci",
     "1v890lz",
     "1v8ead8",
     "1v936w6",
+    "1v9a9jq",
     "1v9eqwb",
     "1v9qfyy",
     "1va7yeo",
@@ -14091,15 +15352,16 @@
    ],
    "contexts": {
     "performance": 2,
-    "sensory_failure": 5,
+    "sensory_failure": 6,
     "other": 1,
-    "praise": 1,
+    "praise": 2,
     "price": 1
    },
    "neg_threads": [
     "1v7gwie",
     "1v8ead8",
     "1v936w6",
+    "1v9a9jq",
     "1v9eqwb",
     "1v9qfyy",
     "1vbd0z8"
@@ -14146,6 +15408,12 @@
      "Perfumes",
      "sensory_failure",
      "Lemon Capri liked but \"has so much marshmallow vanilla and is just too gourmand for me\""
+    ],
+    [
+     "1v9a9jq",
+     "FemFragLab",
+     "sensory_failure",
+     "Multiple commenters say fragrances 'smell cheap' and overpriced given ingredients; several independently report an unwanted buttery-popcorn dominance in the new"
     ]
    ]
   },
@@ -14188,6 +15456,48 @@
     ]
    ]
   },
+  "kbshimmer (clearly on top)": {
+   "threads": [
+    "1vbfpkk"
+   ],
+   "venues": [
+    "Nails"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "kbshimmer stay put hydrating base coat": {
+   "threads": [
+    "1vb2dn4"
+   ],
+   "venues": [
+    "RedditLaqueristas"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "kenneth cole blue": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "kenra": {
    "threads": [
     "1vb85zo"
@@ -14219,10 +15529,12 @@
   "kerastase": {
    "threads": [
     "1v6ze0y",
+    "1v8phwa",
     "1vate99",
     "1vavw44"
    ],
    "venues": [
+    "FemaleHairLoss",
     "Haircare",
     "Sephora",
     "curlyhair"
@@ -14230,7 +15542,8 @@
    "contexts": {
     "praise": 1,
     "sensory_failure": 1,
-    "other": 1
+    "other": 1,
+    "substitute": 1
    },
    "neg_threads": [
     "1v6ze0y"
@@ -14536,6 +15849,20 @@
     ]
    ]
   },
+  "kilian bianco latte": {
+   "threads": [
+    "1v9a9jq"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "kilian love don't be shy": {
    "threads": [
     "1v8j1e8"
@@ -14691,17 +16018,31 @@
   },
   "kokoist": {
    "threads": [
-    "1v5f4ng"
+    "1v5f4ng",
+    "1v7etew"
    ],
    "venues": [
+    "DIYGelNails",
     "Nails"
    ],
    "contexts": {
-    "mixed": 1
+    "mixed": 1,
+    "sensory_failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v7etew"
+   ],
+   "neg_venues": [
+    "DIYGelNails"
+   ],
+   "neg_details": [
+    [
+     "1v7etew",
+     "DIYGelNails",
+     "sensory_failure",
+     "Nail Thoughts Clear Builder Base identified as the product used; a separate commenter reports this specific builder consistently lifts within ~10 days on her na"
+    ]
+   ]
   },
   "kopari": {
    "threads": [
@@ -14825,6 +16166,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "kouros": {
+   "threads": [
+    "1vbd48o"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "krave beauty": {
    "threads": [
     "1v6d8w6",
@@ -14845,18 +16200,31 @@
   "kristen ess": {
    "threads": [
     "1v5j1x8",
-    "1v5prkg"
+    "1v5prkg",
+    "1v6j6yf"
    ],
    "venues": [
     "Haircare",
     "curlyhair"
    ],
    "contexts": {
-    "praise": 2
+    "praise": 2,
+    "sensory_failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v6j6yf"
+   ],
+   "neg_venues": [
+    "Haircare"
+   ],
+   "neg_details": [
+    [
+     "1v6j6yf",
+     "Haircare",
+     "sensory_failure",
+     "Air dry cream noted to have made no noticeable difference; other line products used without clear improvement."
+    ]
+   ]
   },
   "kuumba made": {
    "threads": [
@@ -14876,14 +16244,16 @@
    "threads": [
     "1v6mqtw",
     "1v71umz",
-    "1v7m6t2"
+    "1v7m6t2",
+    "1v89l26"
    ],
    "venues": [
     "Sephora"
    ],
    "contexts": {
     "praise": 1,
-    "other": 2
+    "other": 2,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -14944,17 +16314,30 @@
   },
   "kylie skin": {
    "threads": [
-    "1v7ngdg"
+    "1v7ngdg",
+    "1v8f9tk"
    ],
    "venues": [
     "Makeup"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 1,
+    "failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v8f9tk"
+   ],
+   "neg_venues": [
+    "Makeup"
+   ],
+   "neg_details": [
+    [
+     "1v8f9tk",
+     "Makeup",
+     "failure",
+     "OP's skin tint 'does not really cover the redness of my nose.'"
+    ]
+   ]
   },
   "kylie skin tint": {
    "threads": [
@@ -15081,12 +16464,40 @@
     ]
    ]
   },
+  "l'oreal (telescopic)": {
+   "threads": [
+    "1va8cei"
+   ],
+   "venues": [
+    "makeuptips"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "l'oreal elvive": {
    "threads": [
     "1va6ln2"
    ],
    "venues": [
     "Haircare"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "l'oreal infallible": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
    ],
    "contexts": {
     "praise": 1
@@ -15182,6 +16593,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "la girl (yellow color corrector)": {
+   "threads": [
+    "1v952pw"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "la looks": {
    "threads": [
     "1v5govm",
@@ -15218,6 +16643,20 @@
      "OP: \"LA Looks gels makes my hair rattty, has protein\"; confirmed by another commenter: \"Do you use the LA sports gel?\" \"Yep hair hates it\""
     ]
    ]
+  },
+  "la looks sport gel": {
+   "threads": [
+    "1v6hmbt"
+   ],
+   "venues": [
+    "curlyhair"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "la mer": {
    "threads": [
@@ -15311,6 +16750,7 @@
     "1v5csrt",
     "1v5fnzb",
     "1v6msjl",
+    "1v79itt",
     "1v7cpjn",
     "1v7q14p",
     "1v873wb",
@@ -15323,6 +16763,7 @@
     "1v9wv2b",
     "1vamlc4",
     "1varbtq",
+    "1vb0kdz",
     "1vb98m7",
     "1vbb7ay",
     "1vbn3a5"
@@ -15340,12 +16781,12 @@
    "contexts": {
     "praise": 6,
     "performance": 2,
-    "other": 1,
+    "other": 2,
     "failure": 3,
     "recommendation": 2,
     "packaging_failure": 1,
     "sensory_failure": 2,
-    "substitute": 1
+    "substitute": 2
    },
    "neg_threads": [
     "1v5csrt",
@@ -15396,6 +16837,31 @@
      "SkincareAddiction",
      "failure",
      "Anthelios Oil Control listed among sunscreens that broke OP out."
+    ]
+   ]
+  },
+  "la roche-posay (effaclar micropeeling gel cleanser)": {
+   "threads": [
+    "1v7ni7l"
+   ],
+   "venues": [
+    "tretinoin"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v7ni7l"
+   ],
+   "neg_venues": [
+    "tretinoin"
+   ],
+   "neg_details": [
+    [
+     "1v7ni7l",
+     "tretinoin",
+     "sensory_failure",
+     "flagged by a commenter as unsuitable for use with tretinoin: \"this is not suitable for skin on tret...It has exfoliating ingredients and is quite harsh which mi"
     ]
    ]
   },
@@ -15550,17 +17016,20 @@
     "1v8wued",
     "1v8wwwa",
     "1v9738i",
-    "1vabsc8"
+    "1vabsc8",
+    "1vba24t"
    ],
    "venues": [
     "Makeup",
     "PaleMUA",
-    "Perfumes"
+    "Perfumes",
+    "Sephora"
    ],
    "contexts": {
     "failure": 1,
     "reformulation": 2,
-    "recommendation": 1
+    "recommendation": 1,
+    "praise": 1
    },
    "neg_threads": [
     "1v8wued",
@@ -15593,6 +17062,20 @@
     ]
    ]
   },
+  "lancome (cils booster)": {
+   "threads": [
+    "1vazxku"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "land of aahs": {
    "threads": [
     "1v6vjb9"
@@ -15618,10 +17101,13 @@
     "1v9zpxv",
     "1vaq0d9",
     "1vbcghw",
-    "1vbfixn"
+    "1vbfixn",
+    "1vd3rrh",
+    "1vd5lxt"
    ],
    "venues": [
     "30PlusSkinCare",
+    "LipBalm",
     "Makeup",
     "ProjectPan",
     "Sephora",
@@ -15632,13 +17118,16 @@
    "contexts": {
     "failure": 2,
     "recommendation": 1,
-    "praise": 7
+    "praise": 8,
+    "price": 1
    },
    "neg_threads": [
     "1v7q14p",
-    "1v7v6bb"
+    "1v7v6bb",
+    "1vd5lxt"
    ],
    "neg_venues": [
+    "Sephora",
     "SkincareAddiction",
     "koreanskincare"
    ],
@@ -15654,6 +17143,12 @@
      "koreanskincare",
      "failure",
      "Nice texture and scent but stopped hydrating and felt drying after only a few hours."
+    ],
+    [
+     "1vd5lxt",
+     "Sephora",
+     "price",
+     "Same TJ Maxx discount-availability note applies."
     ]
    ]
   },
@@ -15733,16 +17228,19 @@
    "threads": [
     "1v6d91z",
     "1v7kr3m",
-    "1v8h0h8"
+    "1v8h0h8",
+    "1vazno8"
    ],
    "venues": [
     "40PlusSkinCare",
+    "beauty",
     "eyelashextensions"
    ],
    "contexts": {
     "praise": 1,
     "performance": 1,
-    "safety": 1
+    "safety": 1,
+    "recommendation": 1
    },
    "neg_threads": [
     "1v7kr3m"
@@ -15768,6 +17266,8 @@
     "1v6m4ne",
     "1v6rcoc",
     "1v768fd",
+    "1v86jo2",
+    "1v87uci",
     "1v8jauc",
     "1v8pgq9",
     "1v8ryng",
@@ -15787,6 +17287,7 @@
    ],
    "venues": [
     "Colognes",
+    "FemFragLab",
     "Fragrances",
     "Perfumes",
     "Ulta",
@@ -15798,19 +17299,24 @@
     "other": 6,
     "praise": 5,
     "substitute": 1,
-    "price": 3,
+    "price": 4,
     "recommendation": 5,
-    "sensory_failure": 2
+    "sensory_failure": 2,
+    "safety": 1
    },
    "neg_threads": [
     "1v5oyif",
     "1v6be1r",
     "1v6m4ne",
+    "1v86jo2",
+    "1v87uci",
     "1v9ep9i",
     "1vaq3mg",
     "1vbiejb"
    ],
    "neg_venues": [
+    "Colognes",
+    "FemFragLab",
     "Fragrances",
     "Perfumes",
     "fragrance",
@@ -15852,8 +17358,34 @@
      "fragranceclones",
      "sensory_failure",
      "Khamrah implied disliked (\"fuhh lattafa khamrah\")"
+    ],
+    [
+     "1v86jo2",
+     "Colognes",
+     "price",
+     "Screenshot-sourced rumor of an imminent price increase draws mixed reactions; no official confirmation cited in thread."
+    ],
+    [
+     "1v87uci",
+     "FemFragLab",
+     "safety",
+     "OP explicitly excludes it from consideration: \"not chemical (like lattafa it gives headache, or any Arabic perfumes tbh)\"."
     ]
    ]
+  },
+  "lattafa (ajwaa)": {
+   "threads": [
+    "1va50sb"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "lattafa cheirosa 71": {
    "threads": [
@@ -15875,6 +17407,20 @@
    ],
    "venues": [
     "FemFragLab"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "lattafa platin": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
    ],
    "contexts": {
     "substitute": 1
@@ -15967,17 +17513,31 @@
   "le labo santal 33": {
    "threads": [
     "1v98cpn",
-    "1v9eh2p"
+    "1v9eh2p",
+    "1vb4020"
    ],
    "venues": [
-    "Colognes"
+    "Colognes",
+    "FemFragLab"
    ],
    "contexts": {
-    "other": 2
+    "other": 2,
+    "sensory_failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1vb4020"
+   ],
+   "neg_venues": [
+    "FemFragLab"
+   ],
+   "neg_details": [
+    [
+     "1vb4020",
+     "FemFragLab",
+     "sensory_failure",
+     "OP and multiple commenters report it smells like urine or pickles on their own skin despite smelling good on others; OP realized mid-commute she was the source "
+    ]
+   ]
   },
   "le monde gourmand": {
    "threads": [
@@ -16003,6 +17563,20 @@
      "Limoncello Sorbet praised as a photorealistic lemon scent, works well layered over lotion, though it doesn't last long"
     ]
    ]
+  },
+  "le sel d'issey": {
+   "threads": [
+    "1v8qjvo"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "leaf": {
    "threads": [
@@ -16197,6 +17771,7 @@
   "louis vuitton": {
    "threads": [
     "1v5iyxv",
+    "1v5j1hf",
     "1v6be1r",
     "1v6pjg7",
     "1v76lff",
@@ -16218,7 +17793,8 @@
     "other": 4,
     "praise": 1,
     "reformulation": 1,
-    "packaging_failure": 1
+    "packaging_failure": 1,
+    "substitute": 1
    },
    "neg_threads": [
     "1v5iyxv",
@@ -16254,13 +17830,16 @@
    "threads": [
     "1v78z11",
     "1v98cpn",
+    "1vad075",
     "1vbaupm"
    ],
    "venues": [
-    "Colognes"
+    "Colognes",
+    "fragranceclones"
    ],
    "contexts": {
-    "recommendation": 3
+    "recommendation": 3,
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -16275,6 +17854,20 @@
    ],
    "contexts": {
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "love ur curls": {
+   "threads": [
+    "1vbbjsy"
+   ],
+   "venues": [
+    "curlyhair"
+   ],
+   "contexts": {
+    "praise": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -16444,6 +18037,31 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "lvl": {
+   "threads": [
+    "1vazno8"
+   ],
+   "venues": [
+    "beauty"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vazno8"
+   ],
+   "neg_venues": [
+    "beauty"
+   ],
+   "neg_details": [
+    [
+     "1vazno8",
+     "beauty",
+     "sensory_failure",
+     "Commenter always gets LVL lash lifts but results are inconsistent and she can't identify what changed."
+    ]
+   ]
+  },
   "lvnea": {
    "threads": [
     "1vaecq6"
@@ -16569,8 +18187,11 @@
   },
   "mac": {
    "threads": [
+    "1v5njyr",
     "1v5pzdi",
+    "1v5uugo",
     "1v5xhkw",
+    "1v69u4u",
     "1v6jq2o",
     "1v6jtej",
     "1v6kati",
@@ -16582,6 +18203,8 @@
     "1v7gqip",
     "1v7mryd",
     "1v7o3z1",
+    "1v7t2zw",
+    "1v8816j",
     "1v89f0a",
     "1v8brwk",
     "1v8diqt",
@@ -16608,11 +18231,40 @@
     "praise": 7,
     "other": 6,
     "dupe": 4,
-    "recommendation": 8
+    "recommendation": 9,
+    "substitute": 1,
+    "reformulation": 2,
+    "sensory_failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v5njyr",
+    "1v69u4u",
+    "1v8816j"
+   ],
+   "neg_venues": [
+    "Makeup",
+    "Sephora"
+   ],
+   "neg_details": [
+    [
+     "1v69u4u",
+     "Makeup",
+     "reformulation",
+     "TeufelRRS reports the Lustreglass line was reformulated warmer with added sparkle in shade Alone Time; distinguishable only by the 3g (original) vs 3.5g (reform"
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "sensory_failure",
+     "Studio Fix powder foundation gave a patchy finish for a commenter with similar issues."
+    ],
+    [
+     "1v8816j",
+     "Sephora",
+     "reformulation",
+     "Alone Time blush reformulated from a cool-muted 3g shade to a warmer, shimmery 3.5g version; community actively seeking to identify and acquire remaining old-fo"
+    ]
+   ]
   },
   "macy's": {
    "threads": [
@@ -16730,6 +18382,31 @@
     ]
    ]
   },
+  "maison crivelli": {
+   "threads": [
+    "1valhjk"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "reformulation": 1
+   },
+   "neg_threads": [
+    "1valhjk"
+   ],
+   "neg_venues": [
+    "fragrance"
+   ],
+   "neg_details": [
+    [
+     "1valhjk",
+     "fragrance",
+     "reformulation",
+     "added to a commenter's personal 'no' list for the same issue"
+    ]
+   ]
+  },
   "maison du soir": {
    "threads": [
     "1v9zxam"
@@ -16792,6 +18469,7 @@
   },
   "maison margiela": {
    "threads": [
+    "1v5zt77",
     "1v890in",
     "1v90iao",
     "1valjo5",
@@ -16799,11 +18477,77 @@
    ],
    "venues": [
     "Fragrances",
+    "Perfumes",
     "perfumesthatfeellike"
    ],
    "contexts": {
     "praise": 3,
-    "recommendation": 1
+    "recommendation": 1,
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "maison margiela replica": {
+   "threads": [
+    "1v5wbaj"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "counterfeit": 1
+   },
+   "neg_threads": [
+    "1v5wbaj"
+   ],
+   "neg_venues": [
+    "FemFragLab"
+   ],
+   "neg_details": [
+    [
+     "1v5wbaj",
+     "FemFragLab",
+     "counterfeit",
+     "flagged (with Diptyque, Byredo) as one of the most commonly faked lines on resale sites: \"This has happened to me so many times and it's always Replica, Diptyqu"
+    ]
+   ]
+  },
+  "maison margiela replica (bubble bath)": {
+   "threads": [
+    "1v5wbaj"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v5wbaj"
+   ],
+   "neg_venues": [
+    "FemFragLab"
+   ],
+   "neg_details": [
+    [
+     "1v5wbaj",
+     "FemFragLab",
+     "sensory_failure",
+     "described as smelling 'putrid' when oversprayed - \"stunk to high h*ll\""
+    ]
+   ]
+  },
+  "majesty fragrances": {
+   "threads": [
+    "1v8lvjl"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -16832,6 +18576,7 @@
     "1v692d8",
     "1v6jvfy",
     "1v7o3z1",
+    "1v89l26",
     "1v9tgvn",
     "1va877i",
     "1vbjp6l"
@@ -16848,13 +18593,16 @@
     "availability": 1,
     "dupe": 3,
     "sensory_failure": 1,
-    "recommendation": 1
+    "recommendation": 1,
+    "price": 1
    },
    "neg_threads": [
+    "1v89l26",
     "1v9tgvn"
    ],
    "neg_venues": [
-    "MakeupAddiction"
+    "MakeupAddiction",
+    "Sephora"
    ],
    "neg_details": [
     [
@@ -16862,6 +18610,12 @@
      "MakeupAddiction",
      "sensory_failure",
      "commenter's Revlon pencils never sharpen smoothly even with this sharpener"
+    ],
+    [
+     "1v89l26",
+     "Sephora",
+     "price",
+     "Several buyers now question whether the F4 brush's premium price is justified versus cheaper alternatives; one says 'I fell for the hype.'"
     ]
    ]
   },
@@ -17008,13 +18762,48 @@
   },
   "mancera": {
    "threads": [
-    "1v5edhe"
+    "1v5edhe",
+    "1v60bvg",
+    "1valhjk",
+    "1vb8o19",
+    "1vbd48o"
    ],
    "venues": [
+    "Colognes",
+    "FemFragLab",
+    "fragrance",
     "perfumesthatfeellike"
    ],
    "contexts": {
-    "recommendation": 1
+    "recommendation": 1,
+    "praise": 2,
+    "substitute": 1,
+    "reformulation": 1
+   },
+   "neg_threads": [
+    "1valhjk"
+   ],
+   "neg_venues": [
+    "fragrance"
+   ],
+   "neg_details": [
+    [
+     "1valhjk",
+     "fragrance",
+     "reformulation",
+     "added to a commenter's personal 'no' list for the same woody-amber overload issue"
+    ]
+   ]
+  },
+  "mancera red tobacco": {
+   "threads": [
+    "1v60bvg"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "praise": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -17039,7 +18828,9 @@
     "1v6epmk",
     "1v6j2t2",
     "1v91jhm",
+    "1v93zes",
     "1v99k7a",
+    "1v9xo9k",
     "1va2n7v",
     "1vazjsp"
    ],
@@ -17052,7 +18843,7 @@
     "performance": 1,
     "substitute": 1,
     "praise": 1,
-    "recommendation": 1
+    "recommendation": 3
    },
    "neg_threads": [
     "1v6epmk",
@@ -17117,6 +18908,20 @@
      "\"They're definitely not the usual scent profiles, though a bit short-lived.\""
     ]
    ]
+  },
+  "marc jacobs": {
+   "threads": [
+    "1v9c1ym"
+   ],
+   "venues": [
+    "Sephora"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "mario badescu": {
    "threads": [
@@ -17271,17 +19076,20 @@
   "matrix": {
    "threads": [
     "1v6epmk",
+    "1v7410j",
     "1vagikf",
     "1vavxcx"
    ],
    "venues": [
     "HairDye",
+    "Haircare",
     "Naturalhair"
    ],
    "contexts": {
     "price": 1,
     "availability": 1,
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "recommendation": 1
    },
    "neg_threads": [
     "1vagikf",
@@ -17320,6 +19128,31 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "maui moisture": {
+   "threads": [
+    "1v5n3cm"
+   ],
+   "venues": [
+    "curlyhair"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v5n3cm"
+   ],
+   "neg_venues": [
+    "curlyhair"
+   ],
+   "neg_details": [
+    [
+     "1v5n3cm",
+     "curlyhair",
+     "sensory_failure",
+     "Multiple low-porosity/fine-hair users report severe drying/stripping within 1-2 uses; other users with different porosity praise it highly."
+    ]
+   ]
+  },
   "mavala": {
    "threads": [
     "1v8irfh"
@@ -17350,6 +19183,7 @@
   },
   "maybelline": {
    "threads": [
+    "1v5njyr",
     "1v5pzdi",
     "1v6b58r",
     "1v6ifwe",
@@ -17387,12 +19221,13 @@
     "praise": 8,
     "dupe": 4,
     "sensory_failure": 2,
-    "failure": 1,
+    "failure": 2,
     "substitute": 2,
     "recommendation": 8,
     "other": 1
    },
    "neg_threads": [
+    "1v5njyr",
     "1v8xh4l",
     "1v90ovr",
     "1vat3ol"
@@ -17420,6 +19255,37 @@
      "Makeup",
      "failure",
      "Sky High mascara independently reported by two users to cause significant eyelash loss/breakage."
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Tried and failed to hold on OP's nose."
+    ]
+   ]
+  },
+  "maybelline fit me matte": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1v9qfdg"
+   ],
+   "neg_venues": [
+    "Makeup"
+   ],
+   "neg_details": [
+    [
+     "1v9qfdg",
+     "Makeup",
+     "failure",
+     "Its_Vixenoire says it 'transfers a lot and gets cakey fast'; needs to be applied sparingly"
     ]
    ]
   },
@@ -17432,6 +19298,20 @@
    ],
    "contexts": {
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "maybelline sky high (primer)": {
+   "threads": [
+    "1vazxku"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -17497,6 +19377,31 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "mecca": {
+   "threads": [
+    "1v7u24l"
+   ],
+   "venues": [
+    "AustralianMakeup"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1v7u24l"
+   ],
+   "neg_venues": [
+    "AustralianMakeup"
+   ],
+   "neg_details": [
+    [
+     "1v7u24l",
+     "AustralianMakeup",
+     "failure",
+     "OP and a corroborating commenter call the 'Library of Knowledge' activation disappointing and note Mecca's events are consistently Melbourne-centric, treating S"
+    ]
+   ]
   },
   "medicube": {
    "threads": [
@@ -17608,6 +19513,31 @@
     ]
    ]
   },
+  "medik8 (retinal level 3)": {
+   "threads": [
+    "1v9xob6"
+   ],
+   "venues": [
+    "40PlusSkinCare"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v9xob6"
+   ],
+   "neg_venues": [
+    "40PlusSkinCare"
+   ],
+   "neg_details": [
+    [
+     "1v9xob6",
+     "40PlusSkinCare",
+     "sensory_failure",
+     "OP reports skin gets 'so tight it hurts' if used two days in a row; another commenter suggests dropping to level 1 or using level 3 every other day instead"
+    ]
+   ]
+  },
   "megababe": {
    "threads": [
     "1v8365s"
@@ -17699,6 +19629,7 @@
     "1v7ngdg",
     "1v9zbb9",
     "1va877i",
+    "1vacsi9",
     "1vau4pt"
    ],
    "venues": [
@@ -17709,7 +19640,7 @@
    "contexts": {
     "sensory_failure": 1,
     "praise": 3,
-    "substitute": 1,
+    "substitute": 2,
     "failure": 1
    },
    "neg_threads": [
@@ -17746,6 +19677,45 @@
    "contexts": {
     "performance": 1,
     "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "messy mansion": {
+   "threads": [
+    "1v91ayk"
+   ],
+   "venues": [
+    "RedditLaqueristas"
+   ],
+   "contexts": {
+    "price": 1
+   },
+   "neg_threads": [
+    "1v91ayk"
+   ],
+   "neg_venues": [
+    "RedditLaqueristas"
+   ],
+   "neg_details": [
+    [
+     "1v91ayk",
+     "RedditLaqueristas",
+     "price",
+     "a commenter clicked instantly on a 50%-off restock email for this brand's stock"
+    ]
+   ]
+  },
+  "method": {
+   "threads": [
+    "1v8g7fg"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -17807,6 +19777,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "michael malul oxford row": {
+   "threads": [
+    "1v9fhp9"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "microperfumes": {
    "threads": [
     "1v890lz"
@@ -17860,13 +19844,16 @@
   },
   "miiskin": {
    "threads": [
+    "1v6a6g6",
     "1v7d5oy"
    ],
    "venues": [
+    "40PlusSkinCare",
     "tressless"
    ],
    "contexts": {
-    "recommendation": 1
+    "recommendation": 1,
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -17894,6 +19881,7 @@
     "1v7cpjn",
     "1v7n6ds",
     "1v7o3z1",
+    "1v7u24l",
     "1v83grr",
     "1v8lh7o",
     "1v8ythh",
@@ -17909,6 +19897,7 @@
     "1valysd"
    ],
    "venues": [
+    "AustralianMakeup",
     "Makeup",
     "OliveMUA",
     "beauty",
@@ -17917,7 +19906,7 @@
     "makeupdupes"
    ],
    "contexts": {
-    "praise": 9,
+    "praise": 10,
     "dupe": 2,
     "sensory_failure": 1,
     "recommendation": 3,
@@ -17958,17 +19947,31 @@
   },
   "milk": {
    "threads": [
+    "1v5njyr",
     "1v7o3z1"
    ],
    "venues": [
+    "Makeup",
     "OliveMUA"
    ],
    "contexts": {
-    "dupe": 1
+    "dupe": 1,
+    "failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v5njyr"
+   ],
+   "neg_venues": [
+    "Makeup"
+   ],
+   "neg_details": [
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Primer broke out a commenter's skin."
+    ]
+   ]
   },
   "milk makeup": {
    "threads": [
@@ -18271,13 +20274,18 @@
   },
   "miu miu": {
    "threads": [
-    "1v902rq"
+    "1v8hcwa",
+    "1v902rq",
+    "1vbbcwu"
    ],
    "venues": [
+    "Sephora",
+    "Ulta",
     "fragrance"
    ],
    "contexts": {
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "other": 2
    },
    "neg_threads": [
     "1v902rq"
@@ -18343,6 +20351,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "mob beauty": {
+   "threads": [
+    "1v6v727"
+   ],
+   "venues": [
+    "drugstoreMUA"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "moda": {
    "threads": [
     "1v6jvfy"
@@ -18352,6 +20374,20 @@
    ],
    "contexts": {
     "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "modelones": {
+   "threads": [
+    "1v9csjm"
+   ],
+   "venues": [
+    "NailArt"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -18466,6 +20502,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "mommy makeup (clear mascara)": {
+   "threads": [
+    "1va8cei"
+   ],
+   "venues": [
+    "makeuptips"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "monarch lacquer": {
    "threads": [
     "1v7l4fe"
@@ -18526,6 +20576,7 @@
     "1v6m4ne",
     "1v76lff",
     "1v80836",
+    "1v8lvjl",
     "1v9u7mx"
    ],
    "venues": [
@@ -18537,11 +20588,23 @@
     "dupe": 1,
     "praise": 2,
     "recommendation": 2,
-    "substitute": 1
+    "substitute": 1,
+    "failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v8lvjl"
+   ],
+   "neg_venues": [
+    "fragranceclones"
+   ],
+   "neg_details": [
+    [
+     "1v8lvjl",
+     "fragranceclones",
+     "failure",
+     "Immensity called the worst/only unpleasant Montagne fragrance owned; harsh and BO-like per multiple independent commenters."
+    ]
+   ]
   },
   "montagne parfums": {
    "threads": [
@@ -18598,6 +20661,20 @@
      "Legend Spirit found on Walmart clearance for $17"
     ]
    ]
+  },
+  "montblanc (legend red / explorer platinum)": {
+   "threads": [
+    "1v9fhp9"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "montblanc explorer": {
    "threads": [
@@ -18760,6 +20837,7 @@
     "1v668jb",
     "1v6fed4",
     "1v6jvfy",
+    "1v6v727",
     "1v7o3z1",
     "1vacd2l",
     "1vay5lz"
@@ -18770,13 +20848,14 @@
     "ProjectPan",
     "Sephora",
     "Ulta",
-    "blkgrlbeauty"
+    "blkgrlbeauty",
+    "drugstoreMUA"
    ],
    "contexts": {
     "other": 1,
     "praise": 3,
     "dupe": 2,
-    "recommendation": 1,
+    "recommendation": 2,
     "safety": 1
    },
    "neg_threads": [
@@ -18935,22 +21014,36 @@
   },
   "musely": {
    "threads": [
+    "1v6a6g6",
     "1v8rkud",
     "1v98p5z",
     "1v9ag6w"
    ],
    "venues": [
     "30PlusSkinCare",
+    "40PlusSkinCare",
     "GracefulAgingSkincare",
     "tretinoin"
    ],
    "contexts": {
     "praise": 2,
-    "recommendation": 1
+    "recommendation": 1,
+    "price": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v6a6g6"
+   ],
+   "neg_venues": [
+    "40PlusSkinCare"
+   ],
+   "neg_details": [
+    [
+     "1v6a6g6",
+     "40PlusSkinCare",
+     "price",
+     "Called a 'total scam' for marking up compounded tretinoin with a short ~3 month beyond-use date versus buying base ingredients directly."
+    ]
+   ]
   },
   "mykonos perfumes": {
    "threads": [
@@ -19148,6 +21241,7 @@
   "nars": {
    "threads": [
     "1v5hhdj",
+    "1v5uugo",
     "1v6mqtw",
     "1v75j6p",
     "1v769i4",
@@ -19182,9 +21276,11 @@
     "other": 1,
     "recommendation": 4,
     "substitute": 1,
-    "failure": 1
+    "failure": 1,
+    "packaging_failure": 1
    },
    "neg_threads": [
+    "1v5uugo",
     "1v6mqtw",
     "1vat3ol"
    ],
@@ -19204,14 +21300,36 @@
      "Sephora",
      "failure",
      "\"I used NARS before KVD and it never stayed \ud83d\udc94 I wanted to love it so bad\""
+    ],
+    [
+     "1v5uugo",
+     "Sephora",
+     "packaging_failure",
+     "OP says she stopped repurchasing the liquid concealer because 'you have to dip into the tube so much to get the product out.'"
     ]
    ]
   },
+  "nars (complete matte concealer)": {
+   "threads": [
+    "1v952pw"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "natasha denona": {
    "threads": [
+    "1v5uugo",
     "1v66ma2",
     "1v6af8o",
     "1v6fed4",
+    "1v6wala",
     "1v7h0fr",
     "1v82juf",
     "1v85w1i",
@@ -19226,13 +21344,16 @@
    "contexts": {
     "praise": 6,
     "sensory_failure": 1,
-    "other": 1,
-    "recommendation": 1
+    "other": 2,
+    "recommendation": 1,
+    "packaging_failure": 1
    },
    "neg_threads": [
+    "1v5uugo",
     "1v6af8o"
    ],
    "neg_venues": [
+    "Sephora",
     "Ulta"
    ],
    "neg_details": [
@@ -19241,6 +21362,12 @@
      "Ulta",
      "sensory_failure",
      "called a 'huge miss' for dry skin with zero coverage by one user who returned it"
+    ],
+    [
+     "1v5uugo",
+     "Sephora",
+     "packaging_failure",
+     "\"Do yourself a favor and de-pot the Natasha Denona powder into another sifter! Beautiful product but the packaging is terrible.\" OP separately notes the ND brig"
     ]
    ]
   },
@@ -19493,13 +21620,16 @@
   },
   "nexxus": {
    "threads": [
+    "1v8j81j",
     "1vbeefs"
    ],
    "venues": [
-    "Haircare"
+    "Haircare",
+    "curlygirl"
    ],
    "contexts": {
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "other": 1
    },
    "neg_threads": [
     "1vbeefs"
@@ -19618,7 +21748,9 @@
     "1v7o1hb",
     "1v84cj5",
     "1v8m8qo",
-    "1va1zy0"
+    "1v8phwa",
+    "1va1zy0",
+    "1vabqbi"
    ],
    "venues": [
     "FemaleHairLoss",
@@ -19629,7 +21761,7 @@
     "other": 2,
     "praise": 1,
     "sensory_failure": 1,
-    "recommendation": 2
+    "recommendation": 4
    },
    "neg_threads": [
     "1v6b6gq"
@@ -19705,34 +21837,50 @@
   "nordstrom": {
    "threads": [
     "1v79mzn",
-    "1v7j8fb"
+    "1v7j8fb",
+    "1v80fk0"
    ],
    "venues": [
     "Colognes",
     "FemFragLab"
    ],
    "contexts": {
-    "other": 2
+    "other": 2,
+    "failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v80fk0"
+   ],
+   "neg_venues": [
+    "Colognes"
+   ],
+   "neg_details": [
+    [
+     "1v80fk0",
+     "Colognes",
+     "failure",
+     "Per the linked news account, sales associates only caught the tampering after repeated returns; commenters note refunds were issued for years before detection."
+    ]
+   ]
   },
   "not your mother's": {
    "threads": [
     "1v5yk42",
+    "1v6j6yf",
     "1v6tmzi",
     "1v92glc",
     "1vaelpz"
    ],
    "venues": [
+    "Haircare",
     "curlygirl",
     "curlyhair"
    ],
    "contexts": {
     "other": 2,
     "failure": 1,
-    "recommendation": 1
+    "recommendation": 1,
+    "praise": 1
    },
    "neg_threads": [
     "1v5yk42"
@@ -19899,6 +22047,20 @@
     ]
    ]
   },
+  "nutrafol": {
+   "threads": [
+    "1v8phwa"
+   ],
+   "venues": [
+    "FemaleHairLoss"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "nuxe": {
    "threads": [
     "1v8oyxl"
@@ -19934,6 +22096,7 @@
     "1v5pzdi",
     "1v65spi",
     "1v6i0fg",
+    "1v6v727",
     "1v71umz",
     "1v7f1h4",
     "1v7lhil",
@@ -19970,7 +22133,7 @@
     "other": 2,
     "dupe": 2,
     "praise": 5,
-    "recommendation": 7,
+    "recommendation": 8,
     "failure": 3,
     "sensory_failure": 4,
     "counterfeit": 1
@@ -20375,6 +22538,20 @@
      "also tried and didn't solve all-day oil control"
     ]
    ]
+  },
+  "one size 24 hour waterproof setting spray": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "one/size": {
    "threads": [
@@ -20975,6 +23152,7 @@
   },
   "paris corner": {
    "threads": [
+    "1v87uci",
     "1v9eqwb",
     "1v9zgzo",
     "1va36ev",
@@ -20982,6 +23160,7 @@
     "1vakmhi"
    ],
    "venues": [
+    "FemFragLab",
     "Perfumes",
     "fragrance",
     "fragranceclones"
@@ -20989,7 +23168,8 @@
    "contexts": {
     "sensory_failure": 2,
     "praise": 2,
-    "other": 1
+    "other": 1,
+    "substitute": 1
    },
    "neg_threads": [
     "1v9eqwb",
@@ -21121,6 +23301,7 @@
    "threads": [
     "1v5prkg",
     "1v6s0ar",
+    "1v7410j",
     "1v9j92i",
     "1v9lqiu",
     "1v9wviz"
@@ -21134,7 +23315,7 @@
     "praise": 1,
     "other": 1,
     "performance": 1,
-    "recommendation": 2
+    "recommendation": 3
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -21144,16 +23325,19 @@
    "threads": [
     "1v667wp",
     "1v693nt",
+    "1v79itt",
     "1v7xrz8",
     "1v8q9bn",
     "1v91aej",
     "1v9ukwh",
+    "1vabfrn",
     "1vbd1f7"
    ],
    "venues": [
     "45PlusSkincare",
     "Makeup",
     "SkincareAddiction",
+    "beauty",
     "koreanskincare",
     "tretinoin"
    ],
@@ -21161,7 +23345,7 @@
     "praise": 2,
     "price": 1,
     "other": 3,
-    "recommendation": 1
+    "recommendation": 3
    },
    "neg_threads": [
     "1v7xrz8"
@@ -21621,19 +23805,46 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "pictura fragrans": {
+   "threads": [
+    "1v7l66t"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "pierrot": {
    "threads": [
-    "1v9gbtn"
+    "1v9gbtn",
+    "1v9z7u9"
    ],
    "venues": [
     "Indiemakeupandmore"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 1,
+    "reformulation": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v9z7u9"
+   ],
+   "neg_venues": [
+    "Indiemakeupandmore"
+   ],
+   "neg_details": [
+    [
+     "1v9z7u9",
+     "Indiemakeupandmore",
+     "reformulation",
+     "multiple users confirm a recurring 'soapy' base/underlying scent across much of the catalog (worst in Person Suit, Only A Paper Moon, Courting Rose), deterring "
+    ]
+   ]
   },
   "pierrot perfumery": {
    "threads": [
@@ -21697,13 +23908,14 @@
   },
   "pineward": {
    "threads": [
-    "1v6a9es"
+    "1v6a9es",
+    "1vb0knx"
    ],
    "venues": [
     "Indiemakeupandmore"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 2
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -21777,6 +23989,31 @@
      "perfumesthatfeellike",
      "sensory_failure",
      "Village Bakery water-based mist 'literally smells like nothing'"
+    ]
+   ]
+  },
+  "polo red": {
+   "threads": [
+    "1v9fhp9"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "price": 1
+   },
+   "neg_threads": [
+    "1v9fhp9"
+   ],
+   "neg_venues": [
+    "Colognes"
+   ],
+   "neg_details": [
+    [
+     "1v9fhp9",
+     "Colognes",
+     "price",
+     "price complaint - $70 for 2.5oz at this store vs $45 for 4.2oz elsewhere, or $65 for 4.2oz at Sam's"
     ]
    ]
   },
@@ -21952,14 +24189,17 @@
   "pravana": {
    "threads": [
     "1v6epmk",
+    "1v7410j",
     "1v7ljmi"
    ],
    "venues": [
-    "HairDye"
+    "HairDye",
+    "Haircare"
    ],
    "contexts": {
     "availability": 1,
-    "reformulation": 1
+    "reformulation": 1,
+    "recommendation": 1
    },
    "neg_threads": [
     "1v7ljmi"
@@ -22124,6 +24364,53 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "prose": {
+   "threads": [
+    "1v8j81j"
+   ],
+   "venues": [
+    "curlygirl"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "protopic": {
+   "threads": [
+    "1vafkxw"
+   ],
+   "venues": [
+    "eczema"
+   ],
+   "contexts": {
+    "praise": 1,
+    "sensory_failure": 1,
+    "safety": 1
+   },
+   "neg_threads": [
+    "1vafkxw"
+   ],
+   "neg_venues": [
+    "eczema"
+   ],
+   "neg_details": [
+    [
+     "1vafkxw",
+     "eczema",
+     "sensory_failure",
+     "phmstella: made skin sensitive to the sun even when not using it, and efficacy seemed to fade with repeated use on the same area."
+    ],
+    [
+     "1vafkxw",
+     "eczema",
+     "safety",
+     "Meller20011972 says they were told it increases sun sensitivity and skin cancer risk, creating a 'fear of the sun.'"
+    ]
+   ]
   },
   "ps (oil sucker spray)": {
    "threads": [
@@ -22309,6 +24596,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "p\u00fcr": {
+   "threads": [
+    "1v5njyr"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "qhemet biologics": {
    "threads": [
     "1v9eht0"
@@ -22336,6 +24637,31 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "rabanne": {
+   "threads": [
+    "1v8iu6j"
+   ],
+   "venues": [
+    "Ulta"
+   ],
+   "contexts": {
+    "safety": 1
+   },
+   "neg_threads": [
+    "1v8iu6j"
+   ],
+   "neg_venues": [
+    "Ulta"
+   ],
+   "neg_details": [
+    [
+     "1v8iu6j",
+     "Ulta",
+     "safety",
+     "Fame in Love fragrance caused a bad skin reaction for a self-described very sensitive-skinned user, despite her loving the scent."
+    ]
+   ]
   },
   "rabdan": {
    "threads": [
@@ -22517,16 +24843,20 @@
     "1v692d8",
     "1v6mqtw",
     "1v75j6p",
+    "1v7u24l",
     "1v85w1i",
     "1v890lz",
     "1v8y8qi",
     "1v93u0p",
     "1v95gws",
+    "1v9leiz",
     "1v9ttcd",
     "1v9zbb9",
-    "1vacd2l"
+    "1vacd2l",
+    "1vb9l84"
    ],
    "venues": [
+    "AustralianMakeup",
     "Makeup",
     "MakeupAddiction",
     "Perfumes",
@@ -22534,11 +24864,12 @@
     "blkgrlbeauty"
    ],
    "contexts": {
-    "praise": 5,
+    "praise": 6,
     "dupe": 1,
-    "substitute": 1,
+    "substitute": 2,
     "sensory_failure": 2,
-    "recommendation": 2
+    "recommendation": 2,
+    "other": 1
    },
    "neg_threads": [
     "1v75j6p",
@@ -22617,6 +24948,20 @@
     ]
    ]
   },
+  "rasasi hawas kobra": {
+   "threads": [
+    "1vad075"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "rave": {
    "threads": [
     "1v8zyhh"
@@ -22639,7 +24984,8 @@
     "1v70yi6",
     "1v8kk8f",
     "1vau6ig",
-    "1vazzet"
+    "1vazzet",
+    "1vb20hg"
    ],
    "venues": [
     "Colognes",
@@ -22650,7 +24996,8 @@
     "dupe": 1,
     "praise": 5,
     "failure": 1,
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "substitute": 1
    },
    "neg_threads": [
     "1v5ekvc",
@@ -23206,16 +25553,19 @@
    "threads": [
     "1v5sr53",
     "1v9v6wk",
-    "1vabusb"
+    "1vabusb",
+    "1vba24t"
    ],
    "venues": [
     "Makeup",
+    "Sephora",
     "makeupdupes"
    ],
    "contexts": {
     "dupe": 1,
     "praise": 1,
-    "recommendation": 1
+    "recommendation": 1,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -23400,13 +25750,16 @@
   },
   "rimmel": {
    "threads": [
-    "1v6oezg"
+    "1v6oezg",
+    "1v7t2zw"
    ],
    "venues": [
-    "OliveMUA"
+    "OliveMUA",
+    "PaleMUA"
    ],
    "contexts": {
-    "praise": 1
+    "praise": 1,
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -23581,7 +25934,8 @@
     "1v6d91z",
     "1v6klvm",
     "1v8e144",
-    "1v98zum"
+    "1v98zum",
+    "1vbdxw1"
    ],
    "venues": [
     "40PlusSkinCare",
@@ -23593,7 +25947,7 @@
    "contexts": {
     "performance": 1,
     "praise": 2,
-    "other": 2
+    "other": 3
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -23626,16 +25980,19 @@
   },
   "roja": {
    "threads": [
+    "1v5j1hf",
     "1v8ox8p",
     "1vaeyhf",
     "1valjo5"
    ],
    "venues": [
+    "fragranceclones",
     "perfumesthatfeellike"
    ],
    "contexts": {
     "praise": 2,
-    "recommendation": 1
+    "recommendation": 1,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -23801,7 +26158,9 @@
   "saie": {
    "threads": [
     "1v692d8",
+    "1v89l26",
     "1v8kkv5",
+    "1v9leiz",
     "1vayxnp"
    ],
    "venues": [
@@ -23810,11 +26169,24 @@
    ],
    "contexts": {
     "substitute": 1,
-    "recommendation": 2
+    "recommendation": 2,
+    "other": 1,
+    "reformulation": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v9leiz"
+   ],
+   "neg_venues": [
+    "Sephora"
+   ],
+   "neg_details": [
+    [
+     "1v9leiz",
+     "Sephora",
+     "reformulation",
+     "Liquid blush and cream highlight reported to separate, turn oily/runny, or smell different (though not harmful) after 6 months to a year; powder products report"
+    ]
+   ]
   },
   "saint laurent": {
    "threads": [
@@ -23864,6 +26236,20 @@
    ],
    "contexts": {
     "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "sally hansen insta-dri": {
+   "threads": [
+    "1vbfpkk"
+   ],
+   "venues": [
+    "Nails"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -23934,6 +26320,20 @@
    ],
    "contexts": {
     "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "sand + fog (soft skin)": {
+   "threads": [
+    "1v5lxc7"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -24232,15 +26632,18 @@
   "sculptra": {
    "threads": [
     "1v602xf",
-    "1v6wxx9"
+    "1v6wxx9",
+    "1v9xob6"
    ],
    "venues": [
     "30PlusSkinCare",
+    "40PlusSkinCare",
     "AcneScars"
    ],
    "contexts": {
     "dupe": 1,
-    "performance": 1
+    "performance": 1,
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -24387,16 +26790,19 @@
   },
   "serge lutens": {
    "threads": [
+    "1v5j1hf",
     "1v7frre",
     "1v93jcz"
    ],
    "venues": [
     "FemFragLab",
-    "Perfumes"
+    "Perfumes",
+    "fragranceclones"
    ],
    "contexts": {
     "availability": 1,
-    "sensory_failure": 1
+    "sensory_failure": 1,
+    "substitute": 1
    },
    "neg_threads": [
     "1v93jcz"
@@ -24431,6 +26837,7 @@
    "threads": [
     "1v7o6o9",
     "1v7ppa7",
+    "1v94dyp",
     "1v982n4",
     "1v9dxll"
    ],
@@ -24441,7 +26848,7 @@
    "contexts": {
     "substitute": 2,
     "other": 1,
-    "praise": 1
+    "praise": 2
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -24449,6 +26856,7 @@
   },
   "shea moisture": {
    "threads": [
+    "1v5n3cm",
     "1v5r9p9",
     "1v6tmzi",
     "1v7aghp",
@@ -24467,7 +26875,8 @@
     "reformulation": 1,
     "other": 1,
     "praise": 3,
-    "sensory_failure": 3
+    "sensory_failure": 3,
+    "substitute": 1
    },
    "neg_threads": [
     "1v7aghp",
@@ -24686,6 +27095,20 @@
   "sk-ii": {
    "threads": [
     "1v8bxcd"
+   ],
+   "venues": [
+    "SkincareAddictionLux"
+   ],
+   "contexts": {
+    "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "sk-ii facial treatment clear lotion": {
+   "threads": [
+    "1v5mjcs"
    ],
    "venues": [
     "SkincareAddictionLux"
@@ -25298,6 +27721,31 @@
     ]
    ]
   },
+  "softwave": {
+   "threads": [
+    "1va31vr"
+   ],
+   "venues": [
+    "30PlusSkinCare"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1va31vr"
+   ],
+   "neg_venues": [
+    "30PlusSkinCare"
+   ],
+   "neg_details": [
+    [
+     "1va31vr",
+     "30PlusSkinCare",
+     "failure",
+     "OP: one of several treatments that 'haven\u2019t met my expectations.'"
+    ]
+   ]
+  },
   "softymo": {
    "threads": [
     "1varzee"
@@ -25314,6 +27762,7 @@
   },
   "sol de janeiro": {
    "threads": [
+    "1nptue6",
     "1v5yk42",
     "1v7aqwy",
     "1v7gwie",
@@ -25324,6 +27773,7 @@
     "FemFragLab",
     "Perfumes",
     "ProjectPan",
+    "Sephora",
     "curlyhair",
     "perfumesthatfeellike"
    ],
@@ -25331,7 +27781,7 @@
     "failure": 1,
     "other": 1,
     "sensory_failure": 2,
-    "praise": 1,
+    "praise": 2,
     "recommendation": 1
    },
    "neg_threads": [
@@ -25362,6 +27812,31 @@
      "Perfumes",
      "sensory_failure",
      "Cheirosa '91 hair product line became unusable to the OP as a side effect of the same synthetic-note oversensitivity, despite being unrelated to the original tr"
+    ]
+   ]
+  },
+  "sol de janeiro cheirosa 71": {
+   "threads": [
+    "1vb4020"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vb4020"
+   ],
+   "neg_venues": [
+    "FemFragLab"
+   ],
+   "neg_details": [
+    [
+     "1vb4020",
+     "FemFragLab",
+     "sensory_failure",
+     "Saturniqa: turns to 'old urine and public restroom' on her skin within an hour."
     ]
    ]
   },
@@ -25479,7 +27954,8 @@
     "1v6np41",
     "1v7atnc",
     "1v7xy5r",
-    "1v9htg1"
+    "1v9htg1",
+    "1va00by"
    ],
    "venues": [
     "FemFragLab",
@@ -25487,7 +27963,7 @@
    ],
    "contexts": {
     "praise": 3,
-    "other": 1
+    "other": 2
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -25598,6 +28074,31 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "spicebomb extreme": {
+   "threads": [
+    "1vbd48o"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vbd48o"
+   ],
+   "neg_venues": [
+    "Colognes"
+   ],
+   "neg_details": [
+    [
+     "1vbd48o",
+     "Colognes",
+     "sensory_failure",
+     "Multiple wearers say its cumin note reads as curry, chili, or body-odor-like, and the scent is 'overpowering' when worn in summer heat."
+    ]
+   ]
   },
   "splat": {
    "threads": [
@@ -25724,7 +28225,8 @@
     "1v71umz",
     "1v7m6t2",
     "1v7xaum",
-    "1v93u0p"
+    "1v93u0p",
+    "1v9utog"
    ],
    "venues": [
     "Makeup",
@@ -25734,7 +28236,8 @@
    "contexts": {
     "praise": 2,
     "sensory_failure": 1,
-    "other": 1
+    "other": 1,
+    "recommendation": 1
    },
    "neg_threads": [
     "1v7m6t2"
@@ -25963,6 +28466,9 @@
   },
   "summer fridays": {
    "threads": [
+    "18zsubw",
+    "1nptue6",
+    "1o5p5de",
     "1v5xs0k",
     "1vawlib",
     "1vbd1f7"
@@ -25970,17 +28476,22 @@
    "venues": [
     "FemFragLab",
     "Makeup",
-    "ProjectPan"
+    "ProjectPan",
+    "Sephora"
    ],
    "contexts": {
     "recommendation": 2,
-    "price": 1
+    "price": 3,
+    "praise": 1
    },
    "neg_threads": [
+    "1nptue6",
+    "1o5p5de",
     "1v5xs0k"
    ],
    "neg_venues": [
-    "ProjectPan"
+    "ProjectPan",
+    "Sephora"
    ],
    "neg_details": [
     [
@@ -25988,6 +28499,18 @@
      "ProjectPan",
      "price",
      "cherry lip balm used 3 years then \"Never buying again... I don't need to be paying $32 for 15g of product\""
+    ],
+    [
+     "1o5p5de",
+     "Sephora",
+     "price",
+     "Dozens of commenters mock the $300 vault as bad value and repeatedly request 'Toasted Marshmallow' and other flavors be sold standalone instead."
+    ],
+    [
+     "1nptue6",
+     "Sephora",
+     "price",
+     "smartsimple2015: 'The summer fridays mini\u2019s are tini btw. Smaller than the free birthday gift one. IMO, not worth it at all.'"
     ]
    ]
   },
@@ -26112,6 +28635,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "supremacy (dupe fragrance, house unspecified)": {
+   "threads": [
+    "1v9ps4p"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "substitute": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "supwee": {
    "threads": [
     "1v7i77q"
@@ -26125,6 +28662,59 @@
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "surface": {
+   "threads": [
+    "1v7410j"
+   ],
+   "venues": [
+    "Haircare"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "surrender to chance": {
+   "threads": [
+    "1v7l66t"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "swy (parfum)": {
+   "threads": [
+    "1vamkej"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vamkej"
+   ],
+   "neg_venues": [
+    "fragrance"
+   ],
+   "neg_details": [
+    [
+     "1vamkej",
+     "fragrance",
+     "sensory_failure",
+     "described as extremely strong/overpowering - \"even just having my decant sit on the shelf was enough to project at least 3-4 feet with the cap on. 3 sprays is e"
+    ]
+   ]
   },
   "sylvanclaw": {
    "threads": [
@@ -26237,6 +28827,7 @@
   },
   "tarte": {
    "threads": [
+    "1v5njyr",
     "1v6fed4",
     "1v6i34e",
     "1v7b6t3",
@@ -26254,11 +28845,23 @@
     "switching": 1,
     "substitute": 2,
     "praise": 1,
-    "recommendation": 2
+    "recommendation": 2,
+    "failure": 1
    },
-   "neg_threads": [],
-   "neg_venues": [],
-   "neg_details": []
+   "neg_threads": [
+    "1v5njyr"
+   ],
+   "neg_venues": [
+    "Makeup"
+   ],
+   "neg_details": [
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Tried and failed to hold on OP's nose."
+    ]
+   ]
   },
   "tatcha": {
    "threads": [
@@ -26353,6 +28956,20 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "telyrx": {
+   "threads": [
+    "1v6a6g6"
+   ],
+   "venues": [
+    "40PlusSkinCare"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "temu": {
    "threads": [
     "1v7w488",
@@ -26396,13 +29013,15 @@
   },
   "tend skin": {
    "threads": [
-    "1v5qe8z"
+    "1v5qe8z",
+    "1vabfrn"
    ],
    "venues": [
+    "beauty",
     "malegrooming"
    ],
    "contexts": {
-    "recommendation": 1
+    "recommendation": 2
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -26536,6 +29155,20 @@
     ]
    ]
   },
+  "the fragrance group (tfg)": {
+   "threads": [
+    "1v8n0e8"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
   "the merchant of venice": {
    "threads": [
     "1vb2v6o"
@@ -26560,6 +29193,7 @@
     "1v6j8ow",
     "1v6jih5",
     "1v6nesi",
+    "1v79itt",
     "1v7hrke",
     "1v7ll5b",
     "1v7ngdg",
@@ -26567,6 +29201,7 @@
     "1v7qk4k",
     "1v873wb",
     "1v8k0oh",
+    "1v8phwa",
     "1v8w797",
     "1v8xgr8",
     "1v8zl64",
@@ -26578,9 +29213,11 @@
     "1v9vpkw",
     "1v9wm7v",
     "1v9wv2b",
+    "1vabfrn",
     "1vagjcq",
     "1val7zh",
     "1vanprx",
+    "1vatw1o",
     "1vbd1f7",
     "1vbo9ol"
    ],
@@ -26607,15 +29244,16 @@
    "contexts": {
     "praise": 15,
     "failure": 3,
-    "other": 2,
+    "other": 3,
     "packaging_failure": 1,
     "performance": 1,
-    "recommendation": 7,
-    "sensory_failure": 2,
+    "recommendation": 9,
+    "sensory_failure": 3,
     "substitute": 1
    },
    "neg_threads": [
     "1v6agrs",
+    "1v79itt",
     "1v8zl64",
     "1v9vpkw",
     "1vagjcq",
@@ -26666,8 +29304,67 @@
      "SkincareAddiction",
      "sensory_failure",
      "\"I hated ordinary AA.\" / user asks \"Do you know if there's a gentler formulation than the Ordinary?\""
+    ],
+    [
+     "1v79itt",
+     "SkincareAddiction",
+     "sensory_failure",
+     "Azelaic Acid Suspension 10%, Salicylic Acid 2%, and Retinal 0.2% Emulsion used but comedones persisted."
     ]
    ]
+  },
+  "the ordinary (volufiline-containing product)": {
+   "threads": [
+    "1v9rcel"
+   ],
+   "venues": [
+    "koreanskincare"
+   ],
+   "contexts": {
+    "safety": 1
+   },
+   "neg_threads": [
+    "1v9rcel"
+   ],
+   "neg_venues": [
+    "koreanskincare"
+   ],
+   "neg_details": [
+    [
+     "1v9rcel",
+     "koreanskincare",
+     "safety",
+     "one user reports a 'catastrophic allergic reaction' on the lips after use, with the reaction spreading to the whole lip area and taking 3+ months to partially r"
+    ]
+   ]
+  },
+  "the outset": {
+   "threads": [
+    "1v78ddu"
+   ],
+   "venues": [
+    "SkincareAddicts"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "the perfumed court": {
+   "threads": [
+    "1v7l66t"
+   ],
+   "venues": [
+    "fragrance"
+   ],
+   "contexts": {
+    "other": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "the polish project": {
    "threads": [
@@ -26858,23 +29555,28 @@
    "threads": [
     "1v8wued",
     "1vaufy6",
+    "1vba24t",
     "1vbqyg9"
    ],
    "venues": [
     "AsianBeauty",
     "Makeup",
-    "OliveMUA"
+    "OliveMUA",
+    "Sephora"
    ],
    "contexts": {
     "sensory_failure": 1,
     "recommendation": 1,
-    "praise": 1
+    "praise": 1,
+    "failure": 1
    },
    "neg_threads": [
-    "1v8wued"
+    "1v8wued",
+    "1vba24t"
    ],
    "neg_venues": [
-    "Makeup"
+    "Makeup",
+    "Sephora"
    ],
    "neg_details": [
     [
@@ -26882,6 +29584,12 @@
      "Makeup",
      "sensory_failure",
      "One user found it cakey when rushed/applied poorly, but got a much better result with proper skin prep and technique; a second user seconds it as consistently g"
+    ],
+    [
+     "1vba24t",
+     "Sephora",
+     "failure",
+     "AdBig9489 tried Tirtir first and found it 'dry and sticky'."
     ]
    ]
   },
@@ -27018,6 +29726,31 @@
     ]
    ]
   },
+  "tom ford (grey vetiver)": {
+   "threads": [
+    "1v9je6w"
+   ],
+   "venues": [
+    "Colognes"
+   ],
+   "contexts": {
+    "counterfeit": 1
+   },
+   "neg_threads": [
+    "1v9je6w"
+   ],
+   "neg_venues": [
+    "Colognes"
+   ],
+   "neg_details": [
+    [
+     "1v9je6w",
+     "Colognes",
+     "counterfeit",
+     "buyer worried about legitimacy of a sealed 100ml bottle at a consignment shop known to also carry counterfeit sneakers; several advised sampling first, several "
+    ]
+   ]
+  },
   "tom ford black orchid": {
    "threads": [
     "1v8ahoi"
@@ -27068,6 +29801,31 @@
     ]
    ]
   },
+  "tomicca": {
+   "threads": [
+    "1v9csjm"
+   ],
+   "venues": [
+    "NailArt"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v9csjm"
+   ],
+   "neg_venues": [
+    "NailArt"
+   ],
+   "neg_details": [
+    [
+     "1v9csjm",
+     "NailArt",
+     "sensory_failure",
+     "Unique_Ad_5187: 'I stopped using tomicca tips because they always looked wide on me.'"
+    ]
+   ]
+  },
   "tommy hilfiger": {
    "threads": [
     "1vanihd"
@@ -27109,24 +29867,30 @@
   },
   "too faced": {
    "threads": [
+    "1v5njyr",
     "1v71umz",
     "1v85w1i",
-    "1vat3ol"
+    "1vat3ol",
+    "1vd5lxt"
    ],
    "venues": [
+    "Makeup",
     "MakeupAddiction",
     "Sephora"
    ],
    "contexts": {
-    "sensory_failure": 1,
+    "sensory_failure": 2,
     "praise": 1,
-    "failure": 1
+    "failure": 2
    },
    "neg_threads": [
+    "1v5njyr",
     "1v85w1i",
-    "1vat3ol"
+    "1vat3ol",
+    "1vd5lxt"
    ],
    "neg_venues": [
+    "Makeup",
     "MakeupAddiction",
     "Sephora"
    ],
@@ -27142,6 +29906,18 @@
      "Sephora",
      "failure",
      "\"they run so yellow and it throws off my makeup\""
+    ],
+    [
+     "1vd5lxt",
+     "Sephora",
+     "sensory_failure",
+     "letstalkaboutbras corroborates OP's description that the lip oils/pillow balm are heavily fragranced with a lingering scent, 'a little too strong and lingering "
+    ],
+    [
+     "1v5njyr",
+     "Makeup",
+     "failure",
+     "Tried and failed to hold on OP's nose."
     ]
    ]
   },
@@ -27226,6 +30002,9 @@
   },
   "tower 28": {
    "threads": [
+    "18zsubw",
+    "1nptue6",
+    "1o5p5de",
     "1v6ifwe",
     "1v7ngdg",
     "1v7o3z1",
@@ -27233,7 +30012,8 @@
     "1v85w1i",
     "1v8sy1r",
     "1v9bpjm",
-    "1vab41t"
+    "1vab41t",
+    "1vb9l84"
    ],
    "venues": [
     "Makeup",
@@ -27246,9 +30026,15 @@
     "praise": 5,
     "dupe": 3,
     "packaging_failure": 1,
-    "sensory_failure": 1
+    "sensory_failure": 2,
+    "failure": 1,
+    "safety": 1,
+    "substitute": 1
    },
    "neg_threads": [
+    "18zsubw",
+    "1nptue6",
+    "1o5p5de",
     "1v6ifwe",
     "1v85w1i"
    ],
@@ -27267,27 +30053,50 @@
      "Sephora",
      "sensory_failure",
      "OP: \"i've tried tower 28 but by the end of the day it separates\""
+    ],
+    [
+     "1o5p5de",
+     "Sephora",
+     "failure",
+     "Referenced as a prior poor-value bundle experience from previous years, with applicator complaints."
+    ],
+    [
+     "1nptue6",
+     "Sephora",
+     "safety",
+     "Myrathrowawayacc: 'they don\u2019t use any preservatives, their blushes grew mold in 4 months (according to them it has 12-months shelf life)'; multiple others repor"
+    ],
+    [
+     "18zsubw",
+     "Sephora",
+     "sensory_failure",
+     "One user: 'I loved the formula of my Tower 28 gloss, but noticed after about 6 months it had a strange playdoh smell and I tasted it in my mouth too so I threw "
     ]
    ]
   },
   "tower28": {
    "threads": [
+    "1v5uugo",
     "1vabusb",
     "1vb4njp"
    ],
    "venues": [
     "Rosacea",
+    "Sephora",
     "makeupdupes"
    ],
    "contexts": {
     "dupe": 1,
-    "failure": 1
+    "failure": 1,
+    "sensory_failure": 1
    },
    "neg_threads": [
+    "1v5uugo",
     "1vb4njp"
    ],
    "neg_venues": [
-    "Rosacea"
+    "Rosacea",
+    "Sephora"
    ],
    "neg_details": [
     [
@@ -27295,6 +30104,12 @@
      "Rosacea",
      "failure",
      "formula suspected to rely more heavily on irritating sodium chloride than Briotech's electrolyzed-water formulation"
+    ],
+    [
+     "1v5uugo",
+     "Sephora",
+     "sensory_failure",
+     "Commenter says the concealer/tint 'takes way too much layering and time' due to low coverage, despite liking the formula and applicator."
     ]
    ]
   },
@@ -27412,6 +30227,31 @@
     ]
    ]
   },
+  "treluxe": {
+   "threads": [
+    "1v8j81j"
+   ],
+   "venues": [
+    "curlygirl"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v8j81j"
+   ],
+   "neg_venues": [
+    "curlygirl"
+   ],
+   "neg_details": [
+    [
+     "1v8j81j",
+     "curlygirl",
+     "sensory_failure",
+     "Curly Style and Refresh 3-product set possibly too heavy/over-applied for her hair length and looseness of curl."
+    ]
+   ]
+  },
   "trepadora": {
    "threads": [
     "1v9eht0"
@@ -27439,6 +30279,7 @@
   },
   "tresemme": {
    "threads": [
+    "1v5n3cm",
     "1v82px1",
     "1v8zyhh"
    ],
@@ -27447,11 +30288,37 @@
    ],
    "contexts": {
     "praise": 1,
-    "recommendation": 1
+    "recommendation": 1,
+    "other": 1
    },
    "neg_threads": [],
    "neg_venues": [],
    "neg_details": []
+  },
+  "tresluxe": {
+   "threads": [
+    "1vbbjsy"
+   ],
+   "venues": [
+    "curlyhair"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1vbbjsy"
+   ],
+   "neg_venues": [
+    "curlyhair"
+   ],
+   "neg_details": [
+    [
+     "1vbbjsy",
+     "curlyhair",
+     "failure",
+     "tried recently with 'no luck' by the same commenter who found Love Ur Curls worked"
+    ]
+   ]
   },
   "tretinoin": {
    "threads": [
@@ -27556,6 +30423,31 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "tritri setting spray": {
+   "threads": [
+    "1v9qfdg"
+   ],
+   "venues": [
+    "Makeup"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1v9qfdg"
+   ],
+   "neg_venues": [
+    "Makeup"
+   ],
+   "neg_details": [
+    [
+     "1v9qfdg",
+     "Makeup",
+     "sensory_failure",
+     "OP's current product; multiple commenters say it's a nice dewy finish but explicitly 'not oil control at all'"
+    ]
+   ]
+  },
   "trixie": {
    "threads": [
     "1v9ikaz"
@@ -27590,6 +30482,20 @@
    ],
    "contexts": {
     "praise": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
+  },
+  "tru fragrance blue reserve": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "recommendation": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -27981,6 +30887,7 @@
     "1v8i4vv",
     "1v8ofrd",
     "1v9tgvn",
+    "1v9utog",
     "1va0ejt",
     "1vat3ol",
     "1vb1eva",
@@ -27998,7 +30905,7 @@
    ],
    "contexts": {
     "praise": 7,
-    "recommendation": 3,
+    "recommendation": 4,
     "sensory_failure": 2,
     "other": 3,
     "failure": 1
@@ -28131,10 +31038,13 @@
     "1v5olhu",
     "1v625qn",
     "1v6f6r2",
+    "1v6iwlu",
     "1v6jih5",
     "1v6k7g1",
     "1v6qm9t",
     "1v79geb",
+    "1v79ijj",
+    "1v7bop3",
     "1v7nkyd",
     "1v7q14p",
     "1v8kmpc",
@@ -28154,14 +31064,15 @@
     "AsianBeauty",
     "Rosacea",
     "SkincareAddiction",
+    "beauty",
     "eczema",
     "tretinoin"
    ],
    "contexts": {
-    "praise": 5,
+    "praise": 6,
     "failure": 3,
-    "recommendation": 2,
-    "other": 3,
+    "recommendation": 3,
+    "other": 4,
     "sensory_failure": 5
    },
    "neg_threads": [
@@ -28329,6 +31240,31 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "versace eau fraiche": {
+   "threads": [
+    "1vaeovt"
+   ],
+   "venues": [
+    "fragranceclones"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vaeovt"
+   ],
+   "neg_venues": [
+    "fragranceclones"
+   ],
+   "neg_details": [
+    [
+     "1vaeovt",
+     "fragranceclones",
+     "sensory_failure",
+     "repeatedly cited as a beloved scent that 'lacks performance' (fades fast); OP wants a long-lasting clone of it"
+    ]
+   ]
+  },
   "versace pour homme": {
    "threads": [
     "1v5mskg"
@@ -28384,13 +31320,16 @@
   },
   "vichy dercos": {
    "threads": [
-    "1v65ctr"
+    "1v65ctr",
+    "1v8phwa"
    ],
    "venues": [
+    "FemaleHairLoss",
     "tressless"
    ],
    "contexts": {
-    "other": 1
+    "other": 1,
+    "substitute": 1
    },
    "neg_threads": [],
    "neg_venues": [],
@@ -28713,6 +31652,7 @@
   "wet n wild": {
    "threads": [
     "1v5ha2o",
+    "1v5jrlb",
     "1v6jq2o",
     "1v6jvfy",
     "1v71umz",
@@ -28734,13 +31674,15 @@
    "contexts": {
     "praise": 4,
     "dupe": 2,
-    "sensory_failure": 1,
+    "sensory_failure": 2,
     "recommendation": 3
    },
    "neg_threads": [
+    "1v5jrlb",
     "1v71umz"
    ],
    "neg_venues": [
+    "MakeupAddiction",
     "Sephora"
    ],
    "neg_details": [
@@ -28749,6 +31691,12 @@
      "Sephora",
      "sensory_failure",
      "originally cited as smudging fast, though the Breakup-Proof liner is separately praised for never smudging"
+    ],
+    [
+     "1v5jrlb",
+     "MakeupAddiction",
+     "sensory_failure",
+     "Commenter says the Silk Finish frost lipsticks 'are kind of drying and smell like crayons'."
     ]
    ]
   },
@@ -28866,6 +31814,31 @@
    "neg_venues": [],
    "neg_details": []
   },
+  "xerf": {
+   "threads": [
+    "1va31vr"
+   ],
+   "venues": [
+    "30PlusSkinCare"
+   ],
+   "contexts": {
+    "failure": 1
+   },
+   "neg_threads": [
+    "1va31vr"
+   ],
+   "neg_venues": [
+    "30PlusSkinCare"
+   ],
+   "neg_details": [
+    [
+     "1va31vr",
+     "30PlusSkinCare",
+     "failure",
+     "Same underwhelming-outcome pattern as Softwave, per OP."
+    ]
+   ]
+  },
   "xmondo": {
    "threads": [
     "1v91jhm",
@@ -28962,16 +31935,20 @@
     "1v6lkqn",
     "1v7o3z1",
     "1v7pf62",
+    "1v7t2zw",
     "1v9f0qz",
     "1v9fbyx",
     "1vaeqn7",
-    "1vaeyhf"
+    "1vaeyhf",
+    "1vb8o19",
+    "1vba24t"
    ],
    "venues": [
     "FemFragLab",
     "FragranceStories",
     "Makeup",
     "OliveMUA",
+    "PaleMUA",
     "Perfumes",
     "Sephora",
     "fragrance",
@@ -28980,18 +31957,20 @@
    ],
    "contexts": {
     "availability": 1,
-    "other": 2,
+    "other": 3,
     "dupe": 1,
     "praise": 2,
-    "recommendation": 3,
-    "sensory_failure": 5
+    "recommendation": 4,
+    "sensory_failure": 5,
+    "packaging_failure": 1
    },
    "neg_threads": [
     "1v5fcb0",
     "1v5hhdj",
     "1v5ikm8",
     "1v6b9np",
-    "1v6lkqn"
+    "1v6lkqn",
+    "1vba24t"
    ],
    "neg_venues": [
     "Makeup",
@@ -29029,6 +32008,37 @@
      "Makeup",
      "sensory_failure",
      "\"some brands allege to be neutral and they aren't! Like YSL cushion foundation\""
+    ],
+    [
+     "1vba24t",
+     "Sephora",
+     "packaging_failure",
+     "Multiple commenters discuss a YSL cushion foundation running low/drying out fast; fix is storing the compact face-down to redistribute pooled product."
+    ]
+   ]
+  },
+  "ysl libre": {
+   "threads": [
+    "1vb4020"
+   ],
+   "venues": [
+    "FemFragLab"
+   ],
+   "contexts": {
+    "sensory_failure": 1
+   },
+   "neg_threads": [
+    "1vb4020"
+   ],
+   "neg_venues": [
+    "FemFragLab"
+   ],
+   "neg_details": [
+    [
+     "1vb4020",
+     "FemFragLab",
+     "sensory_failure",
+     "Unusual-Profit4997: smells like a musty public toilet air freshener on her skin."
     ]
    ]
   },
@@ -29056,6 +32066,20 @@
      "Described as smelling like 'sour flower' and physically unpleasant to wear."
     ]
    ]
+  },
+  "ysl y": {
+   "threads": [
+    "1v6jkl1"
+   ],
+   "venues": [
+    "Fragrances"
+   ],
+   "contexts": {
+    "recommendation": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   },
   "yves rocher": {
    "threads": [
@@ -29293,6 +32317,20 @@
      "Bee called a favorite by one commenter but 'super animalic' by another"
     ]
    ]
+  },
+  "zyrtec": {
+   "threads": [
+    "1v9j5gl"
+   ],
+   "venues": [
+    "tretinoin"
+   ],
+   "contexts": {
+    "workaround": 1
+   },
+   "neg_threads": [],
+   "neg_venues": [],
+   "neg_details": []
   }
  }
 }

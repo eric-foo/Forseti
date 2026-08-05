@@ -342,6 +342,40 @@ the 21 wrong-page slots await the reason-tagged recapture list
 (`reddit_recapture_list_2026_08_03_v0.json`); the borderline yield figure is
 measured on the 55 correct captures, not the full 119.
 
+### Completion (2026-08-05)
+
+The 73-slot recapture wave ran 73/73 committed with zero failures — the
+first live run of the snapshot identity guard, no wrong-page rejections.
+**The 2026-08-01 weekly is now capture-complete in the lake**: every
+admitted thread (785), every borderline (119), the full leaderboard lane
+(41), and the census dailies (17) — 951 unique threads after
+leaderboard/admission overlap — each as a Bronze packet with verified
+thread identity.
+
+The read layer is complete with it: slices 0–21 hold 940 extract lines
+(including 6 wrong-page extras kept under their real identities with
+mismatch flags; the 13 superseded RECORD_UNREADABLE placeholders in slice
+19 were replaced by real extractions in slices 20–21), and the census tally
+covers all 17 dailies at 349 wear reports across 177 brands. The
+recaptured-borderline extraction independently reproduced the yield
+measurement: 55 of 65 threads (85%) carried real signal, matching the
+test-batch figure that set the borderline-capture rule.
+
+What the recovered threads add: Sephora sample-fulfillment complaints (10
+independent reporters, including a retinol sample sent to a pregnant
+customer), an aromachemical-intolerance thread naming five niche houses, an
+AI-imagery backlash against fragrance decant retailers, the Gap fragrance
+relaunch thread (the week's one 429 casualty, now read: licensing, pricing,
+and "Grass" reformulation backlash), and Pierrot Perfumery's closure
+corroborated across two instruments — a problem thread and the census haul
+comments. The rebuilt cross-thread index (22 slices, 940 extracts, 1,474
+brands) now shows 132 brands negative in 2+ threads; Dior widens to 13
+negative threads across 8 venues, and Tower 28 reaches 5 negative threads
+(mold/spoilage) in its home venue. Index residual: brand keys are the
+literal strings workers recorded, so product-qualified names ("Dieux
+Instant Angel", thread 1vb0kdz) key separately from house names — counted
+corroboration is a floor until a future alias pass.
+
 ## Method and residuals
 
 Initial read: 136 problem dives read full-tree and 27 leaderboard threads
