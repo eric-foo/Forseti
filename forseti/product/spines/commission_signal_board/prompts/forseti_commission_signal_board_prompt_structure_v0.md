@@ -66,6 +66,14 @@ fan-out; Reddit/community acquisition stays inside `CO3`; and the targeted SERP
 Phase 2 return begins only after the specialist terminal returns. These SERP
 labels are internal acquisition steps, not Intelligence Cycle phase names.
 
+The Phase 1-to-fan-out boundary is a hard dispatch lock. Before any `CO1`-`CO3`
+task starts, the dispatcher must fresh-read same-cycle durable artifacts showing
+that capability preflight preceded the first network capture, SERP Phase 1 is
+terminal or validly reused, and the typed ledger plus required role queues are
+present. Role-task sections describe later work; they never authorize early
+dispatch. Apply the incident and seal consequences in the playbook when this
+lock is violated.
+
 Before claiming a full board is mechanically safe for classifier handoff, save
 the exact board output to a temporary or bound artifact file and run:
 

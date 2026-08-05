@@ -192,6 +192,13 @@ not spend a separate sacrificial query.
    claim ceilings, the few owning-source pointers it needs, its upstream
    artifact dependencies, and its terminal return contract. Do not copy the
    controller's full conversation or unrelated source pack into every actor.
+   This is a mechanical dispatch gate, not a narrative ordering preference.
+   Immediately before dispatch, fresh-read the same-cycle capability-preflight
+   and Phase 1 artifacts and verify `checked_before_network_capture: true`, a
+   terminal or validly reused Phase 1 receipt, and non-empty typed ledger and
+   role queues. Without all three, do not start any specialist. If one already
+   started, interrupt it and quarantine its output; exclusion does not repair
+   preflight chronology or authorize a passing seal for that cycle.
 2. `CO1` resolves the company core and exact paid-advertiser identities,
    attempts both mandatory public ad-transparency routes, and publishes its official-retailer
    authorization outcome and supporting evidence pointers at the bound terminal

@@ -1,0 +1,288 @@
+{
+  "schema_version": "consumer_brand_phase2_search_v1",
+  "subject": "Dieux Skin",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "jobs": [
+    {
+      "job_id": "P2-A01-C",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Instant Angel\" dry dehydrated not moisturizing barrier review",
+      "executed_at": "2026-08-05T16:16:06Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A01-C"
+      ],
+      "selected_target_ids": [
+        "target_editorial_oprah_instant_angel",
+        "target_editorial_alittlebit_instant_angel"
+      ]
+    },
+    {
+      "job_id": "P2-A01-V",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" switched to Aestura Skinfix COSRX moisturizer",
+      "executed_at": "2026-08-05T16:17:06Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A01-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A01-D",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Instant Angel\" best moisturizer holy grail repurchase",
+      "executed_at": "2026-08-05T16:18:07Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A01-D"
+      ],
+      "selected_target_ids": [
+        "target_editorial_whowhatwear_best_moisturizers"
+      ]
+    },
+    {
+      "job_id": "P2-A02-C",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Deliverance\" irritation breakout niacinamide sensitive rosacea",
+      "executed_at": "2026-08-05T16:19:07Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A02-C"
+      ],
+      "selected_target_ids": [
+        "target_reddit_o28gng"
+      ]
+    },
+    {
+      "job_id": "P2-A02-V",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Deliverance\" stopped switched alternative serum redness",
+      "executed_at": "2026-08-05T16:20:11Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A02-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A02-D",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Deliverance\" redness calm sensitive skin love review",
+      "executed_at": "2026-08-05T16:21:07Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A02-D"
+      ],
+      "selected_target_ids": [
+        "target_editorial_zoe_deliverance"
+      ]
+    },
+    {
+      "job_id": "P2-A03-C",
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Instant Angel\" pilling makeup greasy heavy sunscreen",
+      "executed_at": "2026-08-05T16:22:09Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A03-C"
+      ],
+      "selected_target_ids": [
+        "target_reddit_1f9ys6t"
+      ]
+    },
+    {
+      "job_id": "P2-A03-V",
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Air Angel\" vs \"Instant Angel\" makeup oily dry skin",
+      "executed_at": "2026-08-05T16:23:10Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A03-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A03-D",
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Instant Angel\" makeup primer texture elegant review",
+      "executed_at": "2026-08-05T16:24:10Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A03-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A04-C",
+      "axis_id": "packaging_dispensing_usability",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin\" pump packaging broken leaking hard to empty",
+      "executed_at": "2026-08-05T16:25:09Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A04-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A04-V",
+      "axis_id": "packaging_dispensing_usability",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" packaging switched moisturizer",
+      "executed_at": "2026-08-05T16:26:14Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A04-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A04-D",
+      "axis_id": "packaging_dispensing_usability",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" packaging easy pump customer service replacement",
+      "executed_at": "2026-08-05T16:27:11Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A04-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A05-C",
+      "axis_id": "price_value_hype_product_trust",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Instant Angel\" worth it overpriced value",
+      "executed_at": "2026-08-05T16:28:12Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A05-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A05-V",
+      "axis_id": "price_value_hype_product_trust",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" COSRX Aestura dupe cheaper switched",
+      "executed_at": "2026-08-05T16:29:12Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A05-V"
+      ],
+      "selected_target_ids": [
+        "target_reddit_1l8evw5"
+      ]
+    },
+    {
+      "job_id": "P2-A05-D",
+      "axis_id": "price_value_hype_product_trust",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Instant Angel\" worth price repurchase luxurious",
+      "executed_at": "2026-08-05T16:30:13Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A05-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A06-C",
+      "axis_id": "segment_portfolio_product_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin Mercy\" vs \"Instant Angel\" dry sensitive",
+      "executed_at": "2026-08-05T16:31:13Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A06-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A06-V",
+      "axis_id": "segment_portfolio_product_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Air Angel\" vs \"Instant Angel\" vs \"Skin Mercy\"",
+      "executed_at": "2026-08-05T16:32:14Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A06-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A06-D",
+      "axis_id": "segment_portfolio_product_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" moisturizer which one skin type",
+      "executed_at": "2026-08-05T16:33:14Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A06-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A07-C",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin\" stopped using switched moisturizer repurchase",
+      "executed_at": "2026-08-05T16:34:15Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A07-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A07-V",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" switched to Aestura Skinfix COSRX",
+      "executed_at": "2026-08-05T16:35:16Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A07-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A07-D",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" holy grail repurchased years",
+      "executed_at": "2026-08-05T16:36:16Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A07-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A08-C",
+      "axis_id": "service_fulfillment_support_trust",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin\" shipping customer service refund order",
+      "executed_at": "2026-08-05T16:37:16Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A08-C"
+      ],
+      "selected_target_ids": [
+        "target_reddit_1omfgsp"
+      ]
+    },
+    {
+      "job_id": "P2-A08-V",
+      "axis_id": "service_fulfillment_support_trust",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Skin\" shipping service compared Sephora Soko Glam",
+      "executed_at": "2026-08-05T16:38:16Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A08-V"
+      ],
+      "selected_target_ids": [
+        "target_reddit_1gzqa62"
+      ]
+    },
+    {
+      "job_id": "P2-A08-D",
+      "axis_id": "service_fulfillment_support_trust",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" customer service resolved shipping positive",
+      "executed_at": "2026-08-05T16:39:16Z",
+      "serp_packet_artifact_ids": [
+        "serp2_P2-A08-D"
+      ],
+      "selected_target_ids": []
+    }
+  ]
+}

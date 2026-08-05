@@ -1,0 +1,178 @@
+{
+  "schema_version": "consumer_brand_axis_inventory_v1",
+  "subject": "Dieux Skin",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "created_at": "2026-08-05T16:11:36.6919187Z",
+  "authority_revision": "3e0ade5f0dadb690b2209ee7b527cfdad42b3a2b",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "method": "CO0 final pre-Phase-2 consolidation of the terminal CO1, CO2, and CO3 returns. Closely overlapping provisional community axes were merged only where they described the same decision tension; service evidence was added as a separate material axis because it changes buying confidence but cannot support product-performance claims.",
+  "source_artifacts": [
+    {
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co1_official_and_source_neutral.md",
+      "sha256": "a6467a463a061936b5bd04a90b58e1ed967af58832fdacd81f4d0c4b137bd73b"
+    },
+    {
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co2_retailer_breadth.md",
+      "sha256": "164da94e99578bdd38cff1528a17ca73ff26d40f913a5efec9a16825f061cd71"
+    },
+    {
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co3_community_terminal.md",
+      "sha256": "c6794a4386fc11f31884460dbf13519ae132f1227b3ca0d07aaf5a35d1aeb50b"
+    },
+    {
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/community_axis_coding.json",
+      "sha256": "553451d7359fdb2884e32640b0bdd1ace37d8cdc4f75e2e7c6a8df4fd3478483"
+    }
+  ],
+  "axes": [
+    {
+      "axis_id": "hydration_barrier_visible_results",
+      "label": "Hydration, barrier support, and visible results",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Instant Angel, Air Angel, Skin Mercy, Deliverance, and brand-level performance",
+      "source_axis_ids": ["hydration_barrier_performance", "efficacy_visible_results"],
+      "customer_tension": "Customers report durable hydration and barrier comfort, but also insufficient moisture or unclear visible effect under some conditions.",
+      "segment_or_condition": "Dry or dehydrated skin, seasonal dryness, damaged barriers, and users seeking redness or visible-change benefits.",
+      "observed_behavior": ["retained_or_repurchased", "stopped_or_discarded", "replacement_search"],
+      "competitor_destinations": ["Aestura", "Skinfix", "Vanicream", "La Roche-Posay", "COSRX"],
+      "strongest_counterevidence": "Repeated repurchase and editorial use tests describe sustained hydration, comfort, and reduced redness in bounded individual conditions.",
+      "known_gap": "Search must test whether favorable and unfavorable outcomes segment by product, skin state, climate, or routine rather than treating hydration as one brand-wide effect.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "label": "Irritation, breakout, and active/post-procedure fit",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Reaction risk and condition-dependent compatibility across Deliverance and moisturizers",
+      "source_axis_ids": ["reaction_irritation_breakout", "post_procedure_active_compatibility"],
+      "customer_tension": "Some users describe irritation, breakouts, or niacinamide intolerance while others report calm, redness reduction, or post-active compatibility.",
+      "segment_or_condition": "Sensitive, acne-prone, rosacea-prone, retinoid-using, post-procedure, and niacinamide-sensitive users.",
+      "observed_behavior": ["stopped_or_discarded", "returned_or_refunded", "retained_or_repurchased", "switched_or_replaced"],
+      "competitor_destinations": ["Aestura", "Avène", "Skinfix", "Prequel", "La Roche-Posay"],
+      "strongest_counterevidence": "Source-native editorial and community accounts report reduced redness and comfortable use when the person tolerates the formula and matches it to condition.",
+      "known_gap": "Search must test condition and ingredient-tolerance segmentation without converting anecdotes into medical-safety or efficacy claims.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "label": "Texture, finish, makeup, and routine compatibility",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Weight, richness, pilling, layering, makeup wear, and day/night or seasonal fit",
+      "source_axis_ids": ["texture_weight_finish", "routine_makeup_compatibility"],
+      "customer_tension": "The same richness that reads as cushioning or luxurious can feel greasy, heavy, occlusive, pill under makeup, or fit only one season or routine slot.",
+      "segment_or_condition": "Oily versus dry skin, humid versus cold climates, makeup wearers, sunscreen layering, and day/night routines.",
+      "observed_behavior": ["internal_product_switch", "retained_or_repurchased", "gave_away", "switched_or_replaced"],
+      "competitor_destinations": ["Embryolisse", "Dr Sam's", "Experiment", "Stratia", "Skinfix"],
+      "strongest_counterevidence": "Air Angel and Instant Angel are repeatedly differentiated as lighter and richer internal choices, and favorable accounts describe elegant sunscreen or makeup compatibility.",
+      "known_gap": "Search must separate product-specific and condition-specific fit from generic brand texture judgments.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "packaging_dispensing_usability",
+      "label": "Packaging and dispensing usability",
+      "polarity": "pain",
+      "disposition": "material",
+      "scope": "Pumps, tubes, caps, leakage, access to remaining product, and packaging-related product loss",
+      "source_axis_ids": ["packaging_dispensing_usability"],
+      "customer_tension": "Packaging can make an otherwise liked product frustrating, wasteful, difficult to empty, or unreliable.",
+      "segment_or_condition": "Repeat purchasers, travelers, and users judging usable quantity rather than nominal fill.",
+      "observed_behavior": ["no_future_purchase", "returned_or_refunded", "retained_or_repurchased"],
+      "competitor_destinations": ["Skinfix", "Prequel", "Vanicream"],
+      "strongest_counterevidence": "Many product-positive accounts do not mention packaging failure, so the observed problem is real but not a prevalence estimate.",
+      "known_gap": "Search must test recurrence, product/version specificity, and whether service remediation changes the purchase consequence.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "price_value_hype_product_trust",
+      "label": "Price, value, hype, and product trust",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Prestige price, usable quantity, repeat-purchase economics, dupe/replacement logic, and confidence in product claims",
+      "source_axis_ids": ["price_value_hype_trust"],
+      "customer_tension": "Customers can value formula feel and results while still rejecting the price, quantity, or hype-to-difference gap.",
+      "segment_or_condition": "Budget-sensitive repeat buyers, prestige switchers, and customers comparing adequate lower-cost substitutes.",
+      "observed_behavior": ["switched_or_replaced", "no_future_purchase", "retained_or_repurchased", "replacement_search"],
+      "competitor_destinations": ["COSRX", "Aestura", "Vanicream", "Prequel", "CeraVe"],
+      "strongest_counterevidence": "Some repeat buyers explicitly accept the premium for texture, luxury, or reliable personal fit; the Strategist account also says Instant Angel felt more luxurious even after switching for price.",
+      "known_gap": "Search must distinguish generic price complaint, actual executed switching, and cases where premium experience remains defensible.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "segment_portfolio_product_fit",
+      "label": "Segment, condition, and portfolio product fit",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Choosing among Dieux products by skin state, climate, routine slot, and desired intensity",
+      "source_axis_ids": ["segment_condition_fit", "product_selection_portfolio_fit"],
+      "customer_tension": "The portfolio offers meaningful internal fit choices, but unclear boundaries can produce mismatch, over-richness, under-moisturizing, or selection confusion.",
+      "segment_or_condition": "Dry, oily, acne-prone, sensitive, mature, rosacea-prone, seasonal, and active-using customers.",
+      "observed_behavior": ["internal_product_switch", "recommended_or_would_purchase", "rejected_or_not_purchased"],
+      "competitor_destinations": ["Air Angel", "Instant Angel", "Skin Mercy", "Aestura", "Skinfix"],
+      "strongest_counterevidence": "Community and editorial bodies repeatedly articulate a coherent internal ladder from lighter Air Angel through Instant Angel to repair-focused Skin Mercy.",
+      "known_gap": "Search must test whether the internal ladder is legible and sufficient versus customers leaving the portfolio for a more condition-specific alternative.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "repeat_purchase_switching_destinations",
+      "label": "Repeat purchase, rejection, and switching destinations",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Executed customer behavior and named external or internal destinations",
+      "source_axis_ids": ["repeat_purchase_switching_destinations"],
+      "customer_tension": "Dieux earns real repeat purchase and recommendation, yet price, fit, reactions, or routine performance can drive replacement and switch-back behavior.",
+      "segment_or_condition": "Experienced users with direct comparative use and a stated purchase or routine consequence.",
+      "observed_behavior": ["retained_or_repurchased", "switched_or_replaced", "stopped_or_discarded", "no_future_purchase"],
+      "competitor_destinations": ["Aestura", "Avène", "COSRX", "Experiment", "Farmacy", "La Roche-Posay", "Skinfix", "Zerafite"],
+      "strongest_counterevidence": "The coded community set contains substantially more retained/repurchased rows than explicit switch rows, but those are qualitative row counts, not population incidence.",
+      "known_gap": "Search must distinguish true executed destinations from comparison mentions and identify which tension actually caused the move.",
+      "maturity_scan": "open"
+    },
+    {
+      "axis_id": "service_fulfillment_support_trust",
+      "label": "Fulfillment, support, returns, and buying confidence",
+      "polarity": "pain",
+      "disposition": "material",
+      "scope": "DTC order fulfillment, shipping, order accuracy, customer support, returns/refunds, and transaction trust",
+      "source_axis_ids": ["trustpilot_service_window", "official_service_policy"],
+      "customer_tension": "A customer can like or never reach the product yet lose confidence because of shipping, order, support, or refund handling.",
+      "segment_or_condition": "DTC purchasers encountering delayed/missing delivery, wrong orders, support contact, or return/refund friction.",
+      "observed_behavior": ["returned_or_refunded", "no_future_purchase", "buying_confidence_reduced"],
+      "competitor_destinations": [],
+      "strongest_counterevidence": "The official policy states support and missing-package pathways; the captured Trustpilot window is self-selected and cannot establish service prevalence or a product-performance defect.",
+      "known_gap": "Search must test independent recurrence and favorable resolution while keeping service evidence separate from product experience.",
+      "maturity_scan": "open"
+    }
+  ],
+  "excluded_or_merged_provisional_axes": [
+    {
+      "axis_id": "strongest_delight_counterevidence",
+      "disposition": "merged_as_required_counterevidence_field",
+      "reason": "Strongest delight is a required counterweight for every material axis, not a separate customer tension."
+    },
+    {
+      "axis_id": "efficacy_visible_results",
+      "disposition": "merged",
+      "into": "hydration_barrier_visible_results"
+    },
+    {
+      "axis_id": "post_procedure_active_compatibility",
+      "disposition": "merged",
+      "into": "irritation_breakout_active_condition_fit"
+    },
+    {
+      "axis_id": "routine_makeup_compatibility",
+      "disposition": "merged",
+      "into": "texture_finish_makeup_routine_fit"
+    },
+    {
+      "axis_id": "product_selection_portfolio_fit",
+      "disposition": "merged",
+      "into": "segment_portfolio_product_fit"
+    }
+  ],
+  "claim_ceiling": "This inventory routes Phase 2. It is not prevalence, causation, medical-safety, market-consensus, or final axis-closure authority.",
+  "deliver_started": false
+}

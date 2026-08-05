@@ -188,6 +188,18 @@ recorded without being promoted into a material blocker. The SERP phase
 labels are lane-local and do not replace the canonical Understanding and
 Deliver phase names.
 
+Treat the Phase 1-to-fan-out boundary as a hard dispatch lock. `CO1`-`CO3` work
+must not be dispatched or started until `CO0` fresh-reads durable artifacts for
+the same commission and cycle and verifies all of the following: the capability
+preflight says it preceded the first network capture; SERP Phase 1 is terminal
+or has a validly adjudicated reuse receipt; and its typed ledger plus every
+required role queue are present and non-empty. Role descriptions elsewhere in a
+commission or handoff are future work, not authority to bypass this lock. If
+specialist work starts early, interrupt it, quarantine its outputs, and record
+the sequencing incident. Excluding those outputs prevents their admission but
+does not make the preflight chronologically prior; that cycle cannot receive a
+passing seal under a false pre-capture claim.
+
 The commission-stage coverage ledger always carries required rows for Google
 Ads Transparency Center, Meta Ads Library, and the current Reddit weekly Data
 Lake read. Paid-ad attempts execute after `CO1` binds the exact advertiser
