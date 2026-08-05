@@ -95,11 +95,17 @@ Derive the exact term lists from freshly read Phase A artifacts — do not treat
 this handoff's prose as the term authority:
 
 1. Product names and hero candidates:
-   `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md`
-   (product-axis table and product contexts).
+   `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md`.
+   Minimum candidate set: Lip Butter Balm, Sheer Skin Tint, Jet Lag Mask. Add
+   any further product the record's "Product-axis decision support" section
+   names as carrying decision-bearing evidence; do not expand beyond products
+   that section names.
 2. Named switching destinations per axis:
    `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json`
-   (`product_axes[].decision_usefulness` named alternatives).
+   at JSON path `product_axes[].decision_usefulness.decision_effects.competitor_destination`.
+   Collect the deduplicated union across axes and keep each destination tagged
+   with the axis it came from; that axis tag decides which head-to-head family
+   (lip vs. tint) the term joins.
 
 ## Bounded Query Families
 

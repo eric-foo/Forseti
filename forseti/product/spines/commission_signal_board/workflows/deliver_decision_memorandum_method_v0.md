@@ -35,23 +35,36 @@ stale_if:
 
 ## Entry Gate
 
-Enter only from the playbook's Turn B with its acquisition gate passed: sealed
-phase artifact verified in fresh context. This method never reopens, edits, or
-reinterprets the sealed corpus; new evidence is acquired only through a
-separately authorized, bounded, claim-scoped supplement (e.g., a one-shot
-search-interest capture), never a general re-scan.
+This method is the Deliver phase's synthesis method for decision-bearing
+artifacts. Enter only as a Synthesize turn under the playbook, with the
+Deliver phase's governing acquisition gate passed: a passing Understanding
+phase seal verified in fresh context, plus a durable bounded capture-return
+artifact for every supplement the memorandum consumes.
+
+Analysis of the preserved evidence — the joins, recomputations, and syntheses
+Rules 2 and 12 require — is this method's job. What is prohibited is
+modifying the sealed record or asserting any claim above its sealed ceilings.
+New evidence is acquired only through the Deliver phase's bounded Acquire &
+Seal turn — decision-specific, claim-scoped supplements (e.g., a one-shot
+search-interest capture), never a general re-scan. A supplement that would
+change a sealed claim ceiling requires a full Deliver-phase Acquire & Seal
+with its own phase seal before synthesis.
 
 ## Run Sequence
 
-1. Verify the seal gate (Turn B contract).
+Steps 2–4 are the Deliver phase's problem-framing step: they bind the decision
+frame before any drafting.
+
+1. Verify the seal gate (playbook Synthesize-turn contract).
 2. Target screen (Rule 1) — select the anchor product.
 3. Claims register and claims-to-complaints join (Rule 2).
 4. Product-slice recomputation (Rule 12) — re-derive axis support at the
    anchor-product grain before any slice-level claim.
 5. Draft the memorandum (Rules 3–10).
 6. Cold adversarial read (Rule 9).
-7. Defender-framing derivative when commissioned (same evidence, flipped
-   recommendation section).
+7. Defender-framing derivative when commissioned, produced under the Framing
+   Variants contract below — exposure map, moat identification, defector
+   destinations — never a mechanical flip of the challenger recommendation.
 8. Outreach only under a separate authorization; this method ends at
    ready-to-show.
 
@@ -124,10 +137,14 @@ search-interest capture), never a general re-scan.
     acquisition-volume organization, no twelve-axis narrative — only
     decision-bearing axes appear in the body; the rest stay in the appendix.
 11. **Machine-consistent outputs.** The target screen, axis map, destination
-    map, and claims join are also emitted in a schema-consistent
-    machine-readable form so successive runs in one category stack into a
-    cross-brand defection map without rework. Silent format drift between runs
-    is a defect.
+    map, and claims join are also emitted in machine-readable form so
+    successive runs in one category stack into a cross-brand defection map
+    without rework. Each emitted structure carries a `schema_version` field.
+    The first run under this method files the schema definition (field names
+    and meanings) beside its outputs; every later run consumes that versioned
+    schema, and any format change bumps the version with a short migration
+    note beside the schema. Emitting a structure that neither matches the
+    current schema version nor bumps it is a defect.
 12. **Slice honesty and closed research.** Axis support computed at portfolio
     grain is re-derived at the anchor-product grain before any slice-level
     claim; a slice that falls below the sealed evidence floor degrades to a
