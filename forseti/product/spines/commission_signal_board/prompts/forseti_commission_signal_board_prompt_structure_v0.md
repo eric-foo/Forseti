@@ -124,6 +124,10 @@ Public-reaction engagement handling:
   views, shares, comment counts, reply counts, source-native score state, sort
   order, and pinned/hearted/official-response markers when supplied or
   source-backed;
+- bind every engagement snapshot used during acquisition-record construction or
+  analysis to its observation date, an ISO 8601 `observed_at` timestamp when
+  available, and the source locator; preserve relative source labels in the
+  pinned body even when the final human deliverable does not display the date;
 - use those facts as qualitative resonance context by default, preserving
   direction, visible audience-fit basis, baseline context, objection,
   distribution, manipulation-risk, or social-proof context when supplied or
@@ -811,12 +815,25 @@ Build and hash-pin the v4 product-axis inventory across material pains,
 strongest delights, and mixed axes; produce the hash-pinned eligible-review
 coding view with axis-specific choice outcomes; comment-code community support;
 and classify social and external relationship before awarding distinct-origin
-independent support. `CO3` first runs the proven high-yield Reddit query
-families in this order: balanced brand-plus-axis, behavior/consequence/displacement,
-brand-less exact hero-product names, and condition/post-use. Add a
-community-diversity family only when concentration is observed. SERP discovery
-and source-native capture may pipeline, but family and candidate accounting stay
-separate.
+independent support. `CO3` runs two pipelined lanes before Phase 2. Its
+source-neutral lane starts with a bounded unrestricted-domain brand/product
+review baseline, then uses retailer-review coding and other captured evidence
+for claim-directed editorial, specialist, retailer, and comparison checks. A
+search result, featured snippet, or AI-generated search summary is a discovery
+pointer only; admit evidence only from the source-native body. Company-owned and
+DTC pages establish official product facts and claims but never independently
+corroborate customer outcomes.
+
+In parallel, `CO3` runs the proven high-yield Reddit families in this order:
+balanced brand-plus-axis; behavior/consequence/displacement; a bounded
+consumer-native product-name or shorthand probe without the brand where the
+identity remains unambiguous; and condition/post-use. Qualify generic names with
+the category or use case, and do not search every catalog item merely to satisfy
+the family. Add a community-diversity family only when concentration is
+observed. A material signal in either lane launches only a bounded counterpart
+check for the same claim or affected axis; do not mirror every query or wait for
+the whole discovery cycle. SERP discovery and source-native capture may
+pipeline, but family and candidate accounting stay separate.
 
 After the inventory hash exists, route corroboration/segmentation,
 comparison/switch/value, and disconfirmation/strongest-delight Phase 2 jobs for
