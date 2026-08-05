@@ -180,6 +180,16 @@ owner-authorized bronze/data-lake admission. The live runner chains the existing
 TikTok batch admission gate rather than duplicating lake logic, and it does not
 read ambient `ORCA_DATA_ROOT`.
 
+When the named session profile selects Chrome CDP, this runner *reuses* an
+already-bound visible retained Chrome profile and verifies the exact loopback
+process binding before navigation; it does not cold-start Chrome itself. If no
+bound endpoint is live, start one first with
+`runners/ensure_source_capture_retained_chrome.py --session-profile <alias>`
+rather than asking the owner to launch the browser by hand. The harness never
+closes operator Chrome; an already-open profile without CDP fails visibly with
+`BLOCKED_RETAINED_PROFILE_OPEN_WITHOUT_CDP`, and a CAPTCHA remains an owner
+handoff.
+
 ```powershell
 python runners/run_source_capture_tiktok_live_batch_probe.py `
   --creator-handle "funmimonet" `

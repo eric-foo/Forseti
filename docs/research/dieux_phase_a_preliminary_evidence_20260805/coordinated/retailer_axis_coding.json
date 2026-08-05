@@ -1,0 +1,2733 @@
+{
+  "schema_version": "dieux_preliminary_retailer_axis_coding_v1",
+  "subject": "Dieux Skin",
+  "retailer": "Soko Glam",
+  "status": "preliminary_unsealed",
+  "source_locator": "C:\\tmp\\forseti-dieux-sokoglam-retailer-corpus-20260805\\corpus.json",
+  "source_sha256": "40618a42445188bf9c87aef02dfd9351be49a22e22f6231a8b64e76f294d2922",
+  "method": "Deterministic axis nomination over every captured review title and body. Product-selection is the conservative fallback for otherwise unmatched product-specific reviews. Recommendation is modeled separately as choice, rating supplies polarity, and behavior requires explicit body text. This is not final semantic adjudication.",
+  "ceiling": "One retailer corpus; no population prevalence, retailer-independence, final decision maturity, or Phase A seal.",
+  "metrics": {
+    "products": 6,
+    "declared_reviews": 77,
+    "captured_rows": 77,
+    "rows_with_body": 77,
+    "verified_buyers": 58,
+    "rating_distribution": {
+      "1": 4,
+      "2": 2,
+      "3": 2,
+      "4": 9,
+      "5": 60
+    },
+    "do_not_recommend": 6,
+    "helpful_yes_sum": 0,
+    "helpful_no_sum": 0,
+    "rows_with_nonzero_helpful_votes": 0,
+    "observed_at_start": "2026-08-05T09:30:52.532Z",
+    "observed_at_end": "2026-08-05T09:33:53.280Z"
+  },
+  "collection": {
+    "observed_at": "2026-08-05T09:33:53.280Z",
+    "products": [
+      {
+        "title": "Baptism Gel Cleanser (Fragrance Free)",
+        "url": "https://sokoglam.com/products/dieux-baptism-gel-cleanser-fragrance-free",
+        "rating": 5,
+        "review_count": 4,
+        "status": "sold_out",
+        "price_usd": null
+      },
+      {
+        "title": "Air Angel Peptide Plumping Gel Cream",
+        "url": "https://sokoglam.com/products/dieux-air-angel-peptide-plumping-gel-cream",
+        "rating": 5,
+        "review_count": 3,
+        "status": "sold_out",
+        "price_usd": null
+      },
+      {
+        "title": "Instant Angel Lipid-Rich Firming Moisturizer",
+        "url": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+        "rating": 4.3,
+        "review_count": 32,
+        "status": "available",
+        "price_usd": 45
+      },
+      {
+        "title": "Forever Eye Masks",
+        "url": "https://sokoglam.com/products/dieux-forever-eye-masks",
+        "rating": 4.7,
+        "review_count": 15,
+        "status": "sold_out",
+        "price_usd": null
+      },
+      {
+        "title": "Auracle Eye Serum",
+        "url": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+        "rating": 4.8,
+        "review_count": 13,
+        "status": "available",
+        "price_usd": 44
+      },
+      {
+        "title": "Deliverance 3-in-1 Repair Serum",
+        "url": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+        "rating": 4.6,
+        "review_count": 10,
+        "status": "available",
+        "price_usd": 69
+      }
+    ],
+    "title": "Dieux",
+    "url": "https://sokoglam.com/collections/dieux"
+  },
+  "axis_row_counts": {
+    "hydration_barrier_performance": 40,
+    "reaction_irritation_breakout": 17,
+    "texture_weight_finish": 29,
+    "routine_makeup_compatibility": 18,
+    "packaging_dispensing_usability": 9,
+    "price_value_hype_trust": 9,
+    "segment_condition_fit": 21,
+    "post_procedure_active_compatibility": 4,
+    "efficacy_visible_results": 37,
+    "product_selection_portfolio_fit": 77,
+    "repeat_purchase_switching_destinations": 16,
+    "strongest_delight_counterevidence": 57
+  },
+  "rows": [
+    {
+      "review_id": "sokoglam:instant_angel:1",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Great moisturizer",
+      "evidence_text": "It’s a nice luxurious moisturizer. It smelled like medicine to me at first but I got used to it. I really like it but dropped one star because it might not be the best moisturizer for me. I’m thinking of trying Dieux Air Angel next time.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "45-55",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:2",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "4 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "The texture of this moisturizer",
+      "evidence_text": "The texture of this moisturizer is creamy and very hydrating. I have had no issues with breakouts thus far (I'm sensitive to that) and it does not leave my skin feeling oily, just well hydrated. Knocking off one star because the scent is gross to me - kinda chemically?",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:3",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit"
+      ],
+      "polarity": "negative",
+      "choice": "subject_rejected",
+      "explicit_outcome": "none_explicit",
+      "rating": 1,
+      "verified_buyer": true,
+      "recommendation": "I do not recommend this product",
+      "source_date_label": "4 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Not good for reactive/sensitive skin",
+      "evidence_text": "This burned my face and turned red.",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": "Hi Sabrina,Thanks for your feedback! We understand that skincare is all about trial and error, and I’m sorry that this product did not work for you. Please know that our team is always available to offer alternative recommendations, suitable to your skin type & preferences."
+    },
+    {
+      "review_id": "sokoglam:instant_angel:4",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "repeat_purchase_switching_destinations",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "6 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Instant glow!",
+      "evidence_text": "I am obsessed with this, I use it every morning and night, it sits beautifully under make up but most days I just wear it under sunscreen, have noticed a difference in how smooth my sensitive skin is - not a dry patch in sight. Also pregnant and it has been great at soothing redness. HIGHLY recommend!",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:5",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "negative",
+      "choice": "subject_rejected",
+      "explicit_outcome": "none_explicit",
+      "rating": 1,
+      "verified_buyer": true,
+      "recommendation": "I do not recommend this product",
+      "source_date_label": "6 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Caused my skin to have an allergic reaction",
+      "evidence_text": "After a day or two of using, my skin started to become really red, have rough texture, and break out into little bumps. Unfortunate since so many people love it, but as with all skincare YMMV!",
+      "attributes": [],
+      "retailer_reply": "Hi Ali,Thanks for your feedback! We understand that skincare is all about trial and error, and I’m sorry that this product caused you an allergic reaction. Please know that our team is always available to offer alternative recommendations, suitable to your skin type & preferences."
+    },
+    {
+      "review_id": "sokoglam:instant_angel:6",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "7 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Love it",
+      "evidence_text": "The first product I tried from Dieux and I was hooked!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:7",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "7 months ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "5 Stars",
+      "evidence_text": "Very nice under makeup",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:8",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Holy Grail Product",
+      "evidence_text": "This moisturizer is one of the best products I have ever used on my skin. The texture goes on beautifully. It's rich without being overly thick and leaves a beautiful glow behind. I have used it on my face, neck and hands. Can already see a difference!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:9",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "5 Stars",
+      "evidence_text": "Once i tried this, it quickly became a holy grail moisturizer for me. It is perfectly rich for my dry skin, but not so much that I cannot wear it in summer, especially at night. It is unscented, but utterly soothing and a perfect moisturizer if you have drier skin.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:10",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "My holy grail",
+      "evidence_text": "Leaves my skin feeling nourished and hydrated! In the winter I do layer an extra layer, but instant angel is still my holy grail moisturizer",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:11",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "5 Stars",
+      "evidence_text": "Beautiful rich moisturizer that wears very well under makeup.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:12",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "My new super moiusurizer",
+      "evidence_text": "This stuff is the holy grail. Melts into my skin and leaves it feeling soft and smooth.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:13",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Holy Grail Moisturizer",
+      "evidence_text": "Instant Angel is a peptide-packed, ceramide-infused powerhouse that is light and feels lovely on the skin. It also offers long-lasting hydration. This is evidence-based skin care at its best. Love this product and Soko Glam!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:14",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "New favorite moisturizer",
+      "evidence_text": "Love this moisturizer! So nourishing and rich, especially for dry skin!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:15",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Love it",
+      "evidence_text": "My partner took this from me so I had to order 3 new ones. It's so moisturizing but still lighweight and the skin gets a healthy glow.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:16",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "packaging_dispensing_usability",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "HG",
+      "evidence_text": "Obsessed. I’ve purchased twice now. I will say that Sephora has this in a bottle twice the size. I use this every night. I don’t care the time of year, the weather. It’s amazing. It sticks on my face even when I sleep on my side and it gives me a beautiful glow that lasts through the night to the next morning. It’s hydrating but doesn’t feel greasy. It’s just lovely. It’s a little pricey for the amount you get, but it’s a splurge I’m willing to make. I have skin on the drier side, and I’m 38. Not acne prone, but am prone to blackheads and this doesn’t clog anything. My main concern is adding plumpness to my skin and mostly reducing wrinkles or preventing them.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:17",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "packaging_dispensing_usability",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "mixed",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "rating": 3,
+      "verified_buyer": true,
+      "recommendation": null,
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Amazing product, terrible packaging",
+      "evidence_text": "The best moisturizer in my rotation ; the worst packaging! That’s it, that’s the review.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:18",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Love it!",
+      "evidence_text": "Love this lotion - it's great for the wintertime!",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:19",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "5 Stars",
+      "evidence_text": "Product is great, so 5 stars. Delivery was horrible - took almost 3 weeks to be delivered.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:20",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "packaging_dispensing_usability",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "a new staple",
+      "evidence_text": "one of my favorite parts of this moisturizer is the product comes in an aluminum tube, so when you squeeze the product out it doesn’t suck air back into the tube. this is good at preventing the degradation of ingredients. i use such a small amount for my face and neck and it’s just so nice. sits well under makeup. the tube is going to last me a long time. i could go on about this forever. the way it makes my skin look and feel is also worth every pretty little penny i spent. i will never not have this product",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:21",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "repeat_purchase_switching_destinations",
+        "segment_condition_fit"
+      ],
+      "polarity": "negative",
+      "choice": "subject_rejected",
+      "explicit_outcome": "stopped_or_discarded",
+      "rating": 2,
+      "verified_buyer": true,
+      "recommendation": "I do not recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Don’t recommend if acne prone",
+      "evidence_text": "Used twice and broke me out really badly. Disappointed this didn’t work for me as have been wanting to try it for ages and will unfortunately have to give away!",
+      "attributes": [],
+      "retailer_reply": "Hi Casey, We are sorry to hear that this product did not work for you. Please reach out to us via e-mail at hello@sokoglam.com with your order number and we will be happy to get you all sorted! :)"
+    },
+    {
+      "review_id": "sokoglam:instant_angel:22",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "negative",
+      "choice": "subject_rejected",
+      "explicit_outcome": "none_explicit",
+      "rating": 1,
+      "verified_buyer": true,
+      "recommendation": "I do not recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Made my skin worse",
+      "evidence_text": "I really wanted to enjoy this product but I just didn’t deliver the way I thought it would left my skin with a terrible rash I’m still struggling to get rid of, still love Charlotte this product just didn’t agree with my skin at all",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "18-24",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": "Hi Dan, We are sorry to hear that this product did not work for you. Please reach out to us via e-mail at hello@sokoglam.com with your order number and we will be happy to get you all sorted! :)"
+    },
+    {
+      "review_id": "sokoglam:instant_angel:23",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "post_procedure_active_compatibility",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Amazing cream",
+      "evidence_text": "I have only been using this a few weeks and I have to say this is a beautiful cream. It works perfectly on my combo skin in the daytime and at night to layer under my tretinoin. Thank you for this!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:24",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "packaging_dispensing_usability",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "retained_or_repurchased",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Loved!",
+      "evidence_text": "Just finished up my tube and I loved this moisturizer! My dry skin drank up the hydration and looked glowy and plump in the morning! Will definitely repurchase, especially with winter around the corner!",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:25",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Angel skin",
+      "evidence_text": "It’s my first time trying this brand and I love it ! My skin feels amazing! I used to buy the Tatcha moisturiser and this one is way better for half the price! I’m very happy with my purchase.",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:26",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Holy Grail Moisturizer",
+      "evidence_text": "Beyond thrilled to see Dieux stocked on Soko Glam! Love love love this moisturizer, it never feels oily on the skin even after a long day, it just leaves a nice dewy finish on the skin.Would be awesome if the 100ml is available too!",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:27",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "post_procedure_active_compatibility",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Works well for damaged, dry skin barrier",
+      "evidence_text": "I've struggled with type 2 rosacea for years, where virtually every moisturizer would burn my skin. I also had a damaged skin barrier from using actives before my rosacea diagnosis, which put my skin in a bad spot, along with seb derm on the chin. I finally decided to cave and buy Dieux's instant angel since the ingredient list was so simple. Low and behold, my skin is the best it's looked in a really long time. I apply on damp skin and this stuff just locks all my serums in. It works great for slugging - add aquaphor on top of instant angel and BAM your skin is so soft and healthy the next day. Idk how this works for oily skin but on dry, sensitivity skin, it lives up to the name of \"angel\"",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:28",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Excellent moisturiser",
+      "evidence_text": "Really lovely comforting moisturiser. Don’t need much at all, if I use too much (right now in summer) can feel a little heavy but with the right amount and products underneath feels great and gives great glow !!",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:29",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "3 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Bright & Happy",
+      "evidence_text": "I love this so much that I'm buying another to gift. A little goes a long way so it lasts for ages, and I've noticed my skin looks bright and plump all day. My skin is easily dehydrated and sensitive (prone to redness), and this has been perfect.",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:30",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "packaging_dispensing_usability",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "repeat_purchase_switching_destinations",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "negative",
+      "choice": "subject_rejected",
+      "explicit_outcome": "stopped_or_discarded",
+      "rating": 2,
+      "verified_buyer": true,
+      "recommendation": "I do not recommend this product",
+      "source_date_label": "3 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "I wanted to love this so bad",
+      "evidence_text": "I have been interested in Dieux skin for as long as I've been following one of the founders on Instagram. I always saw glowing reviews for Instant Angel on their site. A few \"influencers\" and makeup artists I love have also raved about it. I finally decided to give in when Soko Glam was having a sale.I'm mid 30s and have oily skin that I would consider pretty tough. I can pretty much put anything on my face and not have any kind of adverse reaction. I used this for maybe a week and started to notice all these little bumps and pimples crop up. I haven't broken out this bad since my early 20s. I didn't change anything else in my routine so I knew it was coming from the moisturizer. I was so so bummed and had to stop using it. I wish I saw more people talking about it potentially clogging their skin.I'm giving it 2 stars because it was a really beautiful light cream texture and I appreciate the aluminum packaging. I no longer use it on my face but it does make a lovely hand cream.",
+      "attributes": [
+        {
+          "answer": "Oily",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": "Hi Sam. We are sorry to hear that about your Instant Angel Skin Restoring Moisturizer. Please reach out to us via email at hello@sokoglam.com with your order number and we will be happy to get you all sorted!"
+    },
+    {
+      "review_id": "sokoglam:instant_angel:31",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "post_procedure_active_compatibility",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "3 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "A HOLY GRAIL",
+      "evidence_text": "As someone with combination skin, I am a big fan of this moisturizer. I prefer to use it at night for soft, plump skin in the morning. (I can definitely tell the difference the next morning!)Also, wonderful if you're on tretinoin or alongside it!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "18-24",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:instant_angel:32",
+      "product_slug": "instant_angel",
+      "product_title": "Instant Angel Lipid-Rich Firming Moisturizer",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "routine_makeup_compatibility",
+        "texture_weight_finish"
+      ],
+      "polarity": "mixed",
+      "choice": "unstated",
+      "explicit_outcome": "no_future_purchase",
+      "rating": 3,
+      "verified_buyer": false,
+      "recommendation": null,
+      "source_date_label": "3 years ago",
+      "observed_at": "2026-08-05T09:30:52.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-instant-angel-lipid-rich-firming-moisturizer",
+      "title": "Thank you, next",
+      "evidence_text": "I have to admit, I fell for all the marketing and hype around this product. Why is everybody raving about this product? After reading so many glorious reviews I expected something miraculous, alas, there's nothing special about this product. It's a good thick night cream (not suitable for day wear, especially under makeup, in my opinion), but that's about it. I haven't used it long enough to see any long term benefits, but my initial experience was just blah... The packaging also feels a bit cheap. Would not repurchase.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": "Hi there! We are sorry to hear that the Instant Angel Skin Restoring Moisturizer didn't work as well as you expected. Please reach out to us via email at hello@sokoglam.com with your order number and we will be happy to get you all sorted!"
+    },
+    {
+      "review_id": "sokoglam:baptism:1",
+      "product_slug": "baptism",
+      "product_title": "Baptism Gel Cleanser (Fragrance Free)",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "7 months ago",
+      "observed_at": "2026-08-05T09:30:54.639Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-baptism-gel-cleanser-fragrance-free",
+      "title": "Best cleanser",
+      "evidence_text": "This is the one-step gentle yet effective cleanser I had been looking for. My skin feels soft and moisturized after cleansing, with no makeup residue. I’ve tried different 2-step cleansers and as much as I liked them, they never fully got all the bb cream off (I usually would see quite a bit when I applied toner with a cotton pad). I prefer a more minimalist skincare routine and this cleanser is perfect.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:baptism:2",
+      "product_slug": "baptism",
+      "product_title": "Baptism Gel Cleanser (Fragrance Free)",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "11 months ago",
+      "observed_at": "2026-08-05T09:30:54.639Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-baptism-gel-cleanser-fragrance-free",
+      "title": "loved this cleanser",
+      "evidence_text": "I loved the texture of this cleanser and how it left my skin so soft and hydrated",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:baptism:3",
+      "product_slug": "baptism",
+      "product_title": "Baptism Gel Cleanser (Fragrance Free)",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:54.639Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-baptism-gel-cleanser-fragrance-free",
+      "title": "Dieux Love",
+      "evidence_text": "Love! Dieux' products will always be delightful. Would love to see the fragranced version on Soko Glam someday!",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:baptism:4",
+      "product_slug": "baptism",
+      "product_title": "Baptism Gel Cleanser (Fragrance Free)",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:54.639Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-baptism-gel-cleanser-fragrance-free",
+      "title": "Not stripping",
+      "evidence_text": "Love this cleanser, leaves my skin feeling clean but not stripped at all!",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:1",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 month ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "love that it's re-useable",
+      "evidence_text": "I love how these are re-useable and you can use them with whatever serum or toner, no waste just what you need.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:2",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "9 months ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "I like the commitment to sustainability.",
+      "evidence_text": "However, I need to be more committed to using them! I’m happy I bought them because they can be returned to again and again with different serums. Good addition to your skin care “tools”.",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:3",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "10 months ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Absolutely Love these! Well worth the Money",
+      "evidence_text": "Absolutely Love these! Really helps to turn my skincare into a somewhat luxury experience. i noticed a difference in the first month of having these with my under eyes looking noticeably less puffy. I've now been using them coming up a year and they are still looking good as new!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:4",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Sustainable, cute and Convenient",
+      "evidence_text": "Love These! So easy to use and wash + even better that they make use of skincare that is already apart of your routine! So comfortable on with no slipping, sometimes I forget I’m wearing them",
+      "attributes": [
+        {
+          "answer": "Oily",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:5",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Neat and green!",
+      "evidence_text": "I've always wanted to try this brand. Glad SG started carrying it. Neat idea and more green for the environment.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:6",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Buying for my friends!",
+      "evidence_text": "I take these camping with me for helping with morning puffiness. They’re super easy, can use any serum (i like the time stop collagen ampule), and clean off with a quick rinse",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "45-55",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:7",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Neat Idea but...",
+      "evidence_text": "I was intrigued to try these reusable eye masks. Really neat idea but I'm not sure how effective it is. I notice that my eye serum seems to absorb a bit better after using these eye masks but I also wonder if the mask is absorbing the product too. I like the case it comes in, as it's a good size. The eye mask silicone is quite thin so I wonder how it'll truly hold after multiple uses.",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:8",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "So far so good!",
+      "evidence_text": "These are great - very easy care just lightly cleanse/rinse with warm water after using. I only really use soap or cleanser if the serum/cream I put on was more oil-based/thick. Otherwise most of my products are water-based and wash right off with just water! Would love to see some kind of drying pad or something added to the carrying case, but I've been propping it open with a pen or something small to allow the eye masks to air dry. I do pat them dry with a towel before placing them back in the tin they came in. Would also love to see a more ergonomic case/space-efficient carrying case. Otherwise no issues, love having a more sustainable option to keep products soaking into my skin for longer!",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:9",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "5 Stars",
+      "evidence_text": "A worthy investment.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:10",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "It's...fine",
+      "evidence_text": "I've had these for awhile now thanks to social media (been influenced by the influencers). I like patches but need something economical and sustainable. I don't see a difference to the under eye and sometimes wonder if it takes up product? Because i feel like it does if you put more than a little. But I like that it lasts and cleanser easily.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:11",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "The best ones--just get 'em",
+      "evidence_text": "One of those few, rare things where it's worth the hype--and a completely reasonable price. No more disposable undereye masks. Don't bother with the knock-offs. For $25, this is absolutely worth getting. Pop 'em in the fridge or freezer, use your own cream, let them sit on your face while in a camera-off zoom meeting or watching bravo and or when you're halfway down the street walking the dog and realize you forgot to take them off. They stick like you wouldn't believe and a quick rinse afterwards will clean any residue from serums/creams. By far one of the best skincare purchases I've made this year.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:12",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "The OG",
+      "evidence_text": "So many brands have copied this idea, but these masks are still the best on the market! They sit nicely on the face, don't feel weird and obviously the sustainability factor is the biggest selling point! (and they are so easy to clean!) I pair them with everything: eye cream, serums or just a thick moisturizer!",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:13",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Just great! I put mine",
+      "evidence_text": "Just great! I put mine in the fridge and my eyes look amazing!",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:14",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "I use these everyday -",
+      "evidence_text": "I use these everyday - so easy to use",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:forever_eye_masks:15",
+      "product_slug": "forever_eye_masks",
+      "product_title": "Forever Eye Masks",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:30:59.052Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-forever-eye-masks",
+      "title": "Just what I needed!",
+      "evidence_text": "I love these! They are perfect for just after applying your eye cream. These go on on top and ensures better penetration of your eye cream. I also love using them when taking a cat nap before going out to help wake up my eyes and get some deep absorption of my favourite eye product.",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:air_angel:1",
+      "product_slug": "air_angel",
+      "product_title": "Air Angel Peptide Plumping Gel Cream",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "4 months ago",
+      "observed_at": "2026-08-05T09:33:21.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-air-angel-peptide-plumping-gel-cream",
+      "title": "One of my favorite moisturizers!",
+      "evidence_text": "It’s light, absorbs easily and doesn’t clog my pores. I love to layer with instant angel and looks amazing under makeup.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:air_angel:2",
+      "product_slug": "air_angel",
+      "product_title": "Air Angel Peptide Plumping Gel Cream",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:33:21.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-air-angel-peptide-plumping-gel-cream",
+      "title": "Can’t Live Without It",
+      "evidence_text": "I have combo/oily skin and live in a dry climate (AZ). I have gone through almost 4 of these and it’s my absolutely favorite moisturizer. I’ve never noticed such an immediate difference in how soft and supple my skin feels in the morning. And that feeling seems to last all day! (I often skip my morning routine lol).",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:air_angel:3",
+      "product_slug": "air_angel",
+      "product_title": "Air Angel Peptide Plumping Gel Cream",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "packaging_dispensing_usability",
+        "product_selection_portfolio_fit",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:33:21.532Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-air-angel-peptide-plumping-gel-cream",
+      "title": "Hydrating but light",
+      "evidence_text": "I use this as a hydrating serum, this serum alone is nog enough for my combination dry skin. I love it in this capacity though, it’s light but still very hydrating.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:1",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "5 months ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Love this serum",
+      "evidence_text": "Paired with the eye patches this serum is very effective.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": ">55",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:2",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Great product, just know your eye skin",
+      "evidence_text": "So, i got this product for the reviews and for the ingredients listed and for what I needed for my eye skin. My eyes have been super dry and skin will peel, along with that i had some pretty bad dark circles and fine lines, and i patch tested this product on the wrist on my right forearm and the first time i thought it stung a little but it went away and every other time i used it i had no issue on my arm, it looked like it was doing exactly what i bought it for. So yesterday i put it on my eyelids, and it burned. And after a bit the burning went away. Same thing with last night and this morning. And i’m not sure if it’s the product or if it’s my eyelids. My guess is my eyelids are too dry or the skin barrier on them is too compromised so even this gentle eye cream is affecting my eye skin. I’m not sure but i feel like it isn’t the product if it did so well on my forearm. Like i think maybe i have eye eczema genuinely because my eyes have been so dry for months and i never thought anything of it. So my review for this product is that it is good, but if you might have eye eczema, maybe talk to your dermatologist first. My only problem is the temporary burning sensation so i am gonna keep using for a couple more days and see if it negatively affects, or positively affects my skin regardless of the burning. The reason i make that choice is because, when my hands are bone dry and i put lotion on they burn like hell, but i stick it out because my hand genuinely needs the moisture…",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:3",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "packaging_dispensing_usability",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Best eye gel",
+      "evidence_text": "I love this eye gel. Light but super effective, it has softened my smile lines and brightened the area under my eyes. I also like that it comes with a pump so the cream feels fresh each time. I use it morning and night.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:4",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Hydrating and plumping",
+      "evidence_text": "Good on its own, but even better paired with the eye masks",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:5",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Amazing eye serum",
+      "evidence_text": "I have very sensitive eyes, and have been on the hunt for an eye cream that both works and doesn’t make my eyes sting. The search is over! I absolutely love the Dieux Auracle eye serum. It’s soothing and goes on smoothly, and makes my eyes look and feel great.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:6",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Hydrating",
+      "evidence_text": "I like how it feels on my eyes and it feels and looks hydrating every time I use it.",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:7",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Hydrating and Lightweight",
+      "evidence_text": "This eye serum is very hydrating and doesn't irritate my sensitive skin. I love using it with the Dieux eye mask when I have time, but it works perfectly well on its own.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:8",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "5 Stars",
+      "evidence_text": "I’ve only been using this a short time and cannot see much of a difference in hydration or texture, but I will say that this did not irritate my sensitive skin and it sits well under my makeup.To me, it’s so far, so good!",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:9",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "retained_or_repurchased",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Great eye cream!",
+      "evidence_text": "Leaves my eyes feeling smooth and hydrated. I use this on the smile lines as well. This pairs perfectly with their eye mask! Would definitely repurchase!",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:10",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "retained_or_repurchased",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Plumped my fine lines",
+      "evidence_text": "This product is light but really packs a punch. I have noticed the skin around my eyes is much plumper than before and the skin feels so soft. Will definitely repurchase.",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:11",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "I really love this product",
+      "evidence_text": "I really love this product with the reusable eyes mask !",
+      "attributes": [
+        {
+          "answer": "Normal",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:12",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Really hydrating and gentle",
+      "evidence_text": "Really hydrating and gentle",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:auracle:13",
+      "product_slug": "auracle",
+      "product_title": "Auracle Eye Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 4,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "3 years ago",
+      "observed_at": "2026-08-05T09:32:15.860Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-auracle-eye-serum",
+      "title": "Light and effective",
+      "evidence_text": "I really like this eye product, especially when I first tried it. It had a cooling effect on my skin and it felt nice into the following morning. It has smoothed my smile lines which is what I was looking for.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:1",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 months ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Favorite serum",
+      "evidence_text": "I’ve used this for about a month and my sun spots have gotten lighter. Nothing else has worked as well for me. I love how easy it is to apply. Light yet effective.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "45-55",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:2",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "segment_condition_fit"
+      ],
+      "polarity": "negative",
+      "choice": "subject_rejected",
+      "explicit_outcome": "stopped_or_discarded",
+      "rating": 1,
+      "verified_buyer": true,
+      "recommendation": "I do not recommend this product",
+      "source_date_label": "4 months ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Not good for reactive skin",
+      "evidence_text": "Burning and stinging upon application which lead to redness within an hour. Had to wash off.",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": "Hi Sabrina,Thanks for your feedback! We understand that skincare is all about trial and error, and I’m sorry that this product did not work for you. Please know that our team is always available to offer alternative recommendations, suitable to your skin type & preferences."
+    },
+    {
+      "review_id": "sokoglam:deliverance:3",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "price_value_hype_trust",
+        "product_selection_portfolio_fit",
+        "segment_condition_fit",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "5 months ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Effective & Lightweight Serum",
+      "evidence_text": "I have dry, sensitive skin, so I was highly impressed by how well it worked. I'd apply this after my essence, and sometimes I'd mix it with my moisturizer. I'm not happy with the price, but after using it, I understand its price point. The good news is- a little goes a long way, so I'm willing to buy this again.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:4",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence",
+        "texture_weight_finish"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "An absolute must have!",
+      "evidence_text": "I love this Serum so much! The texture feels so light yet soothing on my skin. The benefits really are like a holy trinity to add to your skincare lineup! I cannot wait to see results. This is definitely a must have in your routine.",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:5",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "post_procedure_active_compatibility",
+        "product_selection_portfolio_fit",
+        "repeat_purchase_switching_destinations",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "retained_or_repurchased",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "5 Stars",
+      "evidence_text": "I don’t always love niacinamide products, but this one seems to be the perfect amount. This has become one of my best serums and an automatic repurchase. I usually use it in the morning, but have used it both morning and evening without issue.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:6",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Love",
+      "evidence_text": "Calming, brightening and hydrating",
+      "attributes": [
+        {
+          "answer": "Combination",
+          "question": "Which best describes your skin type?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:7",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "packaging_dispensing_usability",
+        "product_selection_portfolio_fit",
+        "routine_makeup_compatibility",
+        "segment_condition_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": false,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "5 Stars",
+      "evidence_text": "Second bottle, and I officially can’t live without it. I’m newly 40. I have sensitive, combination skin, and large pores. I started using this product to nourish my skin and delay the signs of aging. By adding this to my routine, it compliments Murad’s glycolic-vitamin c, and the fine lines have stopped in their tracks. Love love love—customer for life.",
+      "attributes": [],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:8",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "hydration_barrier_performance",
+        "product_selection_portfolio_fit",
+        "reaction_irritation_breakout",
+        "routine_makeup_compatibility",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "1 year ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Great product",
+      "evidence_text": "This serum really helps if you are using a lot of irritating actives such as tretinoid, hydroquinone, vit C, etc. It help sooth the skin and tolerate these other ingredients.",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:9",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "efficacy_visible_results",
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Excellent Serum",
+      "evidence_text": "I've been using the Dieux Deliverance serum nightly for 2 weeks now and I really like it! I haven't had any reactions to it; it goes on very smoothly and blends in well. I noticed some of my dark spots weren't quite as dark (though still noticeable) so that's progress. And it's nice to use only 1 serum vs the 3 I had been using.",
+      "attributes": [
+        {
+          "answer": "Dry",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    },
+    {
+      "review_id": "sokoglam:deliverance:10",
+      "product_slug": "deliverance",
+      "product_title": "Deliverance 3-in-1 Repair Serum",
+      "axis_ids": [
+        "product_selection_portfolio_fit",
+        "strongest_delight_counterevidence"
+      ],
+      "polarity": "positive",
+      "choice": "subject_chosen",
+      "explicit_outcome": "none_explicit",
+      "rating": 5,
+      "verified_buyer": true,
+      "recommendation": "I recommend this product",
+      "source_date_label": "2 years ago",
+      "observed_at": "2026-08-05T09:32:35.430Z",
+      "engagement": {
+        "helpful_yes": 0,
+        "helpful_no": 0
+      },
+      "source_ref": "https://sokoglam.com/products/dieux-deliverance-3-in-1-repair-serum",
+      "title": "Love this serum!",
+      "evidence_text": "Love this serum!",
+      "attributes": [
+        {
+          "answer": "Sensitive",
+          "question": "Which best describes your skin type?"
+        },
+        {
+          "answer": "35-44",
+          "question": "How old are you?"
+        }
+      ],
+      "retailer_reply": null
+    }
+  ]
+}
