@@ -48,6 +48,8 @@ EVENT_VERSION = "phase_a_customer_evidence_pipeline_event_v1"
 DECISIONS_VERSION = "phase_a_customer_evidence_pipeline_decisions_v1"
 FAMILY_MANIFEST_VERSION = "phase_a_customer_evidence_query_family_v1"
 POLICY_VERSION = "reddit_listing_efficiency_v0"
+REDDIT_OWNER_PING_REASON = "reddit_host_challenge_owner_action_required"
+REDDIT_RECOVERY_MODES = {"operator_changed_egress", "cooldown_elapsed"}
 
 MANDATORY_FAMILY_KINDS = (
     "balanced_axis_baseline",
@@ -184,6 +186,9 @@ def initialize_pipeline(*, config_path: Path, run_root: Path) -> dict[str, Any]:
                 "cooldown_until": None,
                 "total_challenges": 0,
                 "consecutive_challenges": 0,
+                "owner_ping_at": None,
+                "owner_ping_reason": None,
+                "last_recovery": None,
             },
         },
         "timing": {
@@ -321,6 +326,90 @@ def run_pipeline(
             now=now,
             random_source=random_source,
         )
+
+
+def recover_reddit_host(
+    *,
+    run_root: Path,
+    recovery_mode: str,
+    operator_attested_at: str | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Release a Reddit-only owner ping after a changed-egress attestation or cooldown.
+
+    The controller never changes VPN state itself and never records an endpoint,
+    server, or exit IP.  Recovery is a separate operator action so a challenge
+    cannot silently become a hot retry.
+    """
+    if recovery_mode not in REDDIT_RECOVERY_MODES:
+        raise PipelineError(
+            f"recovery_mode must be one of {sorted(REDDIT_RECOVERY_MODES)}"
+        )
+    observed_now = (now or datetime.now(UTC)).astimezone(UTC)
+    paths = pipeline_paths(run_root)
+    with _process_run_guard(paths):
+        with _state_guard(paths):
+            state = _load_state(paths)
+            circuit = state["circuits"]["reddit"]
+            if (
+                state.get("status") != "owner_ping"
+                or state.get("terminal_reason") != REDDIT_OWNER_PING_REASON
+                or circuit.get("state") != "owner_ping"
+            ):
+                raise PipelineError("Reddit host is not awaiting owner recovery")
+            owner_ping_at = _parse_time(
+                _required_text(circuit, "owner_ping_at")
+            )
+            cooldown_until = _parse_time(
+                _required_text(circuit, "cooldown_until")
+            )
+            attested_at: str | None = None
+            if recovery_mode == "operator_changed_egress":
+                if operator_attested_at is None:
+                    raise PipelineError(
+                        "operator_attested_at is required after an egress change"
+                    )
+                attested = _parse_time(operator_attested_at)
+                if attested < owner_ping_at:
+                    raise PipelineError(
+                        "operator_attested_at must be at or after the owner ping"
+                    )
+                if attested > observed_now + timedelta(minutes=5):
+                    raise PipelineError("operator_attested_at is implausibly in the future")
+                attested_at = _timestamp(attested)
+            else:
+                if operator_attested_at is not None:
+                    raise PipelineError(
+                        "operator_attested_at is only valid for operator_changed_egress"
+                    )
+                if observed_now < cooldown_until:
+                    raise PipelineBlocked("BLOCKED_REDDIT_COOLDOWN_ACTIVE")
+
+            recovered_at = _timestamp(observed_now)
+            circuit["state"] = "closed"
+            circuit["cooldown_until"] = None
+            circuit["owner_ping_at"] = None
+            circuit["owner_ping_reason"] = None
+            circuit["consecutive_challenges"] = 0
+            circuit["last_recovery"] = {
+                "mode": recovery_mode,
+                "recovered_at": recovered_at,
+                "operator_attested_at": attested_at,
+            }
+            state["status"] = "resumable"
+            state["terminal_reason"] = None
+            _save_state(paths, state)
+            _append_event(
+                paths,
+                state,
+                "reddit_host_recovered",
+                {
+                    "mode": recovery_mode,
+                    "recovered_at": recovered_at,
+                    "operator_attested_at": attested_at,
+                },
+            )
+    return inspect_pipeline(run_root=run_root)
 
 
 def _run_pipeline_locked(
@@ -645,7 +734,6 @@ def _run_reddit_worker(
             state = _load_state(paths)
             circuit = state["circuits"]["reddit"]
             if circuit["state"] == "owner_ping":
-                stop.set()
                 return
             cooldown = circuit.get("cooldown_until")
             if isinstance(cooldown, str) and clock() < _parse_time(cooldown):
@@ -699,18 +787,12 @@ def _run_reddit_worker(
                 live_job["status"] = "capture_blocked"
                 candidate["status"] = "capture_blocked"
                 candidate["terminal_reason"] = result.detail or "reddit_challenge"
-                circuit["total_challenges"] += 1
-                circuit["consecutive_challenges"] += 1
-                if circuit["consecutive_challenges"] >= 2 or circuit["total_challenges"] >= 3:
-                    circuit["state"] = "owner_ping"
-                    state["status"] = "owner_ping"
-                    state["terminal_reason"] = "reddit_challenge_ceiling"
-                    stop.set()
-                else:
-                    circuit["state"] = "cooldown"
-                    circuit["cooldown_until"] = _timestamp(
-                        finished + timedelta(seconds=config["reddit_route"]["first_cooldown_seconds"])
-                    )
+                _open_reddit_owner_ping(
+                    state=state,
+                    detail=candidate["terminal_reason"],
+                    challenged_at=finished,
+                    cooldown_seconds=config["reddit_route"]["first_cooldown_seconds"],
+                )
             else:
                 live_job["status"] = "capture_failed"
                 candidate["status"] = "capture_failed"
@@ -1048,26 +1130,14 @@ def _reconcile_in_flight(paths: PipelinePaths) -> None:
                     )
                     candidate["status"] = "capture_blocked"
                     candidate["terminal_reason"] = access_block_reason
-                    circuit = state["circuits"]["reddit"]
-                    circuit["total_challenges"] += 1
-                    circuit["consecutive_challenges"] += 1
-                    if (
-                        circuit["consecutive_challenges"] >= 2
-                        or circuit["total_challenges"] >= 3
-                    ):
-                        circuit["state"] = "owner_ping"
-                        state["status"] = "owner_ping"
-                        state["terminal_reason"] = "reddit_challenge_ceiling"
-                    else:
-                        circuit["state"] = "cooldown"
-                        circuit["cooldown_until"] = _timestamp(
-                            _parse_time(settled_at)
-                            + timedelta(
-                                seconds=config["reddit_route"][
-                                    "first_cooldown_seconds"
-                                ]
-                            )
-                        )
+                    _open_reddit_owner_ping(
+                        state=state,
+                        detail=access_block_reason,
+                        challenged_at=_parse_time(settled_at),
+                        cooldown_seconds=config["reddit_route"][
+                            "first_cooldown_seconds"
+                        ],
+                    )
             else:
                 block_unknown(worker=worker, claim_id=claim_id)
             state["in_flight"][worker] = None
@@ -1270,6 +1340,27 @@ def _packet_terminal(path: Path) -> bool:
     if not path.exists():
         return False
     return any(path.rglob("manifest.json")) or any(path.rglob("content_record.json"))
+
+
+def _open_reddit_owner_ping(
+    *,
+    state: dict[str, Any],
+    detail: str,
+    challenged_at: datetime,
+    cooldown_seconds: int | float,
+) -> None:
+    """Pause only Reddit and expose an owner recovery decision immediately."""
+    circuit = state["circuits"]["reddit"]
+    circuit["total_challenges"] += 1
+    circuit["consecutive_challenges"] += 1
+    circuit["state"] = "owner_ping"
+    circuit["owner_ping_at"] = _timestamp(challenged_at)
+    circuit["owner_ping_reason"] = detail
+    circuit["cooldown_until"] = _timestamp(
+        challenged_at + timedelta(seconds=cooldown_seconds)
+    )
+    state["status"] = "owner_ping"
+    state["terminal_reason"] = REDDIT_OWNER_PING_REASON
 
 
 def _packet_access_block_reason(path: Path, *, worker: str = "reddit") -> str | None:

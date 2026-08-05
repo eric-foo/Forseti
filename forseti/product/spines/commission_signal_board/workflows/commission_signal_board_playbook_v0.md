@@ -281,6 +281,13 @@ not spend a separate sacrificial query.
    then writes the integrated acquisition record and seal. Only `CO0` owns
    user-facing run progress.
 
+   The inventory at this point is provisional and has no fixed axis count.
+   Use its lightweight maturity scan to choose the material-exhaustion work;
+   do not spend the final semantic adjudication before the corpus is terminal.
+   After the evidence-floor plus material-exhaustion loop closes, final
+   adjudication may merge, split, rename, add, or exclude provisional axes and
+   then binds their decision-usefulness conclusions for the seal.
+
 Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
 social listing is ambiguous and opening the native item could change the bound
 answer; a vague title alone is not evidence. TikTok Shop is licensed when the
@@ -297,6 +304,19 @@ Bounded salvage remains acquisition-blocked. Automated Google queues use
 ready persistent route or a durable 60-minute cooldown; there is no hot retry,
 and a second consecutive or third run block writes `OWNER_PING.json` before
 the queue stops.
+
+For the concurrent Reddit customer-evidence controller, the first confirmed
+challenge immediately pauses Reddit and returns an owner-action-required state;
+healthy Google work may finish. The owner may release Reddit early with a fresh
+changed-egress attestation, or release it after the existing 20-minute fallback
+cooldown. The controller never changes or cycles VPN endpoints itself, and the
+run record stores no server or exit-IP identity. A second capture does not begin
+until that explicit host recovery is recorded.
+
+For the current controller, record early changed-egress recovery with
+`run_phase_a_customer_evidence_pipeline.py recover-reddit --run-root <root>
+--mode operator_changed_egress --operator-attested-at <ISO-8601>`. If no change
+is made, use `--mode cooldown_elapsed` only after the recorded fallback deadline.
 
 This protocol removes orchestration work, not evidence work. It does not cap
 sources, jobs, tokens, or elapsed time; weaken route-specific failure

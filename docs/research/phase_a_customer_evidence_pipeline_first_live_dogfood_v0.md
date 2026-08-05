@@ -196,8 +196,8 @@ reach truthful maturity merely because 110 candidates were queued.
   success; no endpoint cycling
 - Reddit: seven refused-CDP transport attempts, exact held-item retry once
 - Reddit challenges: 2 total and 2 consecutive network-security blocks
-- required response: 20-minute cooldown at the first challenge and owner ping at
-  the second consecutive challenge
+- commissioned response during this historical run: 20-minute cooldown at the
+  first challenge and owner ping at the second consecutive challenge
 - observed defect: the RealChrome subprocess returned zero for a block packet,
   so the controller did not inspect its access-block metadata and continued
 - correction: zero-exit block metadata is now treated as a challenge and opens
@@ -211,6 +211,11 @@ reach truthful maturity merely because 110 candidates were queued.
   packets through the corrected check admits exactly the 95 body-bearing
   threads and blocks the 27 login walls and 2 explicit blocks; deterministic
   regression coverage was added for each defect
+- current recovery posture: the first confirmed Reddit challenge now pauses
+  Reddit and immediately returns an owner-action-required state while healthy
+  Google work may finish. A fresh owner-attested egress change can release the
+  host before the unchanged 20-minute fallback cooldown; the controller does
+  not rotate VPN endpoints or persist endpoint/exit-IP details
 - process isolation defect: a tool interruption left one controller child
   alive; an attempted reconciliation started a second. Both were stopped, and
   the new run-root process lock prevents recurrence.
