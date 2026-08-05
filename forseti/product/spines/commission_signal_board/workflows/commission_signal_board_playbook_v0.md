@@ -680,9 +680,16 @@ basis, and visible incentive posture. It describes the reporting subgroup only;
 sample size does not convert that subgroup into a customer-population estimate.
 
 Understanding Deliver produces the decision-neutral company-intelligence
-artifact. Problem Framing may acquire only decision-specific supplements to the
-Understanding substrate, never a general re-scan; its eventual human output
-shape remains separately review-bound and is not defined here.
+artifact as the substrate deliverable. When a decision-bearing deliverable is
+explicitly commissioned — a competitive decision memorandum for a named or
+declared-proxy decision owner, in challenger or defender framing — Deliver
+produces it from the sealed substrate under
+`forseti/product/spines/commission_signal_board/workflows/deliver_decision_memorandum_method_v0.md`;
+the substrate artifact's neutrality does not cap an explicitly commissioned
+decision artifact. Problem Framing may acquire only decision-specific
+supplements to the Understanding substrate, never a general re-scan; its
+eventual human output shape remains separately review-bound and is not defined
+here.
 
 When both turns are explicitly commissioned, two turns are the normal operating
 budget, not a hard completion cap. A blocked Acquire & Seal remains blocked and

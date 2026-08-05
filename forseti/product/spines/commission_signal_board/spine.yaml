@@ -47,6 +47,7 @@ canonical_artifacts:
   prompt_structure_rules: forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
   prompt_structure: forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
   playbook: forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+  deliver_decision_memorandum_method: forseti/product/spines/commission_signal_board/workflows/deliver_decision_memorandum_method_v0.md
   validator_pointer: forseti/product/spines/commission_signal_board/harness/validator.md
   tests_pointer: forseti/product/spines/commission_signal_board/tests/validator_tests.md
   moved_paths_index: forseti/product/spines/commission_signal_board/migrations/moved_paths_index.md

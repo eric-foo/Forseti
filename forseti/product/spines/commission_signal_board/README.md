@@ -34,6 +34,7 @@ stale_if:
 | Prompt Structure Rules | `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md` |
 | Prompt Structure | `forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md` |
 | Playbook / Forseti Intelligence Cycle contract | `forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md` |
+| Deliver decision-memorandum method | `forseti/product/spines/commission_signal_board/workflows/deliver_decision_memorandum_method_v0.md` |
 | Validator pointer | `forseti/product/spines/commission_signal_board/harness/validator.md` |
 | Test pointer | `forseti/product/spines/commission_signal_board/tests/validator_tests.md` |
 | Moved-path index | `forseti/product/spines/commission_signal_board/migrations/moved_paths_index.md` |
