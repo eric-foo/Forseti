@@ -1,0 +1,207 @@
+{
+  "schema_version": "understanding_evidence_depth_v1",
+  "profile_id": "broad_company_understanding_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r4_20260801",
+  "artifacts": [
+    {
+      "artifact_id": "p07_review_completion",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260725_p07/evidence_layer_completion.md",
+      "sha256": "1844c2c66e008dcfa7e7b9b8332037f30f8416cc568a5aca6d015f95ff3ed123"
+    },
+    {
+      "artifact_id": "p10_acquisition",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/turn_a_acquisition_record.md",
+      "sha256": "b31bf5c8fcc2d1ec66c2667c2c87d4f40d830fd512f33cb77928df7d28db3b51"
+    },
+    {
+      "artifact_id": "p10_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/specialists/co3_customer_community_depth.md",
+      "sha256": "f7b3c5e960922385990e37f1c9df0438a1a47b00cc60aba3b97355b30bd42453"
+    },
+    {
+      "artifact_id": "phase2_native_return",
+      "locator": "docs/research/serp_lane_competitor_scout_20260728/summer_fridays_phase2_native_return_v0.md",
+      "sha256": "b0700cc2a858240b0c84995d48c96490b6095e1e7773cebe1f4611f8fde7ef9a"
+    },
+    {
+      "artifact_id": "social_composition",
+      "locator": "docs/research/summer_fridays_ci_inputs_20260726/serp_social_composition_capture_return.md",
+      "sha256": "65fba8a9f6040e6b83f7389097fd86e453ab52951fce21955dee526cf663ff5f"
+    },
+    {
+      "artifact_id": "p11_company_core",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md",
+      "sha256": "42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80"
+    },
+    {
+      "artifact_id": "p11_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md",
+      "sha256": "6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b"
+    },
+    {
+      "artifact_id": "p11r1_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r1/coordinated/specialists/co3_customer_community_recovery.md",
+      "sha256": "d3be3ceccbb5fe389ff384abde8352b663a0044960b3957454493dd677024de0"
+    },
+    {
+      "artifact_id": "p11r2_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md",
+      "sha256": "20e15896e6b147bce06fac3c32bcd37dd32721024d1f0c76e423b4fca392e1d8"
+    },
+    {
+      "artifact_id": "p11r3_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r3/coordinated/specialists/co3_customer_community_final_recovery.md",
+      "sha256": "27ac0fdc72ac4a52e531ab91da97289f57e4ae0c27dee79b16c4441f580c45dc"
+    },
+    {
+      "artifact_id": "p11r4_record",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md",
+      "sha256": "42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4"
+    }
+  ],
+  "families": {
+    "outside_in": {
+      "units": [
+        {"unit_id": "tsg_consumer_investment", "origin_id": "tsg_consumer", "artifact_id": "p07_review_completion", "independence": "independent_origin", "echo_group_id": "tsg_consumer_investment"},
+        {"unit_id": "theindustry_beauty_growth", "origin_id": "theindustry_beauty", "artifact_id": "p10_acquisition", "independence": "independent_origin", "echo_group_id": "theindustry_growth"},
+        {"unit_id": "forbes_brand_profile", "origin_id": "forbes", "artifact_id": "p10_acquisition", "independence": "independent_origin", "echo_group_id": "forbes_profile"},
+        {"unit_id": "cooley_transaction_role", "origin_id": "cooley", "artifact_id": "p10_acquisition", "independence": "independent_origin", "echo_group_id": "cooley_transaction"},
+        {"unit_id": "british_vogue_brand_profile", "origin_id": "british_vogue", "artifact_id": "p11_company_core", "independence": "independent_origin", "echo_group_id": "british_vogue_profile"},
+        {"unit_id": "femfounded_company_case", "origin_id": "femfounded", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "femfounded_case"},
+        {"unit_id": "whowhatwear_perfume_review", "origin_id": "who_what_wear", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "whowhatwear_perfume"},
+        {"unit_id": "dailybeast_gap_collaboration", "origin_id": "daily_beast", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "dailybeast_gap"},
+        {"unit_id": "cew_ceo_transition", "origin_id": "cew", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "cew_ceo"},
+        {"unit_id": "moodiedavitt_travel_retail", "origin_id": "moodie_davitt_report", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "moodiedavitt_travel"},
+        {"unit_id": "beautyscene_fragrance_launch", "origin_id": "beautyscene", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "beautyscene_fragrance"},
+        {"unit_id": "grazia_brand_profile", "origin_id": "grazia_france", "artifact_id": "p11r4_record", "independence": "independent_origin", "echo_group_id": "grazia_profile"}
+      ]
+    },
+    "retailer_reviews": {
+      "corpora": [
+        {
+          "corpus_id": "revolve_native_reviews",
+          "artifact_id": "p07_review_completion",
+          "unique_review_count": 576,
+          "cross_corpus_duplicate_count": 0,
+          "product_context_ids": ["revolve_lip_butter_balm", "revolve_jet_lag_mask", "revolve_cloud_dew"],
+          "category_ids": ["lip", "skincare"],
+          "rating_bands": ["low", "mid", "high"]
+        },
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "artifact_id": "p11_customer_community",
+          "unique_review_count": 196,
+          "cross_corpus_duplicate_count": 0,
+          "product_context_ids": ["amazon_lip_butter_balm", "amazon_jet_lag_mask", "amazon_shade_drops_spf", "amazon_sheer_skin_tint"],
+          "category_ids": ["lip", "skincare", "sun", "makeup"],
+          "rating_bands": ["low", "mid", "high"]
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "artifact_id": "p11_customer_community",
+          "unique_review_count": 203,
+          "cross_corpus_duplicate_count": 0,
+          "product_context_ids": ["sephora_lip_butter_balm", "sephora_jet_lag_mask", "sephora_sunlit_vanilla", "sephora_body_collection"],
+          "category_ids": ["lip", "skincare", "fragrance", "body"],
+          "rating_bands": ["low", "mid", "high"]
+        }
+      ]
+    },
+    "reddit_forum": {
+      "threads": [
+        {"thread_id": "1fvevie", "community_id": "beauty", "topic_category": "trust_safety", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1obnfys", "community_id": "beauty", "topic_category": "product_experience", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1mzokbt", "community_id": "beauty", "topic_category": "trust_safety", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "kaikx3", "community_id": "beauty", "topic_category": "value_dupes", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1pf427h", "community_id": "Sephora", "topic_category": "trust_safety", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1h0wfao", "community_id": "Sephora", "topic_category": "value_dupes", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1gvs36d", "community_id": "Sephora", "topic_category": "product_experience", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "11uym2u", "community_id": "Sephora", "topic_category": "product_experience", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1plfk6p", "community_id": "SkincareAddiction", "topic_category": "product_experience", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1inusa1", "community_id": "SkincareAddiction", "topic_category": "value_dupes", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "1cx0kf6", "community_id": "SkincareAddiction", "topic_category": "product_experience", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "165xa4x", "community_id": "SkincareAddiction", "topic_category": "trust_safety", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "l0stms", "community_id": "SkincareAddiction", "topic_category": "formula_authenticity", "artifact_id": "p10_customer_community", "independence": "independent_thread"},
+        {"thread_id": "166j6zu", "community_id": "MakeupAddiction", "topic_category": "trust_safety", "artifact_id": "phase2_native_return", "independence": "independent_thread"},
+        {"thread_id": "1nv3pda", "community_id": "AustralianMakeup", "topic_category": "channel_authenticity", "artifact_id": "phase2_native_return", "independence": "independent_thread"},
+        {"thread_id": "1arhbj9", "community_id": "Sephora", "topic_category": "product_experience", "artifact_id": "phase2_native_return", "independence": "independent_thread"},
+        {"thread_id": "1qiwlyp", "community_id": "newinbeauty", "topic_category": "category_launch", "artifact_id": "phase2_native_return", "independence": "independent_thread"},
+        {"thread_id": "1rzd5vw", "community_id": "Sephora", "topic_category": "category_launch", "artifact_id": "phase2_native_return", "independence": "independent_thread"},
+        {"thread_id": "1qrcg5i", "community_id": "Sephora", "topic_category": "category_launch", "artifact_id": "phase2_native_return", "independence": "independent_thread"},
+        {"thread_id": "1r9vw38", "community_id": "MakeupAddiction", "topic_category": "value_dupes", "artifact_id": "phase2_native_return", "independence": "independent_thread"}
+      ]
+    },
+    "native_social": {
+      "posts": [
+        {"unit_id": "yt_aJNT3Mo6hHg", "platform": "youtube", "post_id": "aJNT3Mo6hHg", "creator_id": "holly_ward", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "yt_qf--43DCmxI", "platform": "youtube", "post_id": "qf--43DCmxI", "creator_id": "natalie_santini", "perspective": "critical", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "yt_5s1fZlH22dM", "platform": "youtube", "post_id": "5s1fZlH22dM", "creator_id": "space_nk", "perspective": "positive", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "yt_mPjJwVDTrjE", "platform": "youtube", "post_id": "mPjJwVDTrjE", "creator_id": "gorgeously_aging", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "yt_18h0qZjEb24", "platform": "youtube", "post_id": "18h0qZjEb24", "creator_id": "hannah_fosbenner", "perspective": "positive", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "yt_PW6fITp2D6M", "platform": "youtube", "post_id": "PW6fITp2D6M", "creator_id": "monica_villegas", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "ig_DXXkXRUErYL", "platform": "instagram", "post_id": "DXXkXRUErYL", "creator_id": "painted_by_james_cha", "perspective": "critical", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "ig_DaWFSnghjDh", "platform": "instagram", "post_id": "DaWFSnghjDh", "creator_id": "katerina", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "ig_DbJdfWwShRw", "platform": "instagram", "post_id": "DbJdfWwShRw", "creator_id": "theresa_krug", "perspective": "neutral", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "ig_DatAlIDvo83", "platform": "instagram", "post_id": "DatAlIDvo83", "creator_id": "theresa_krug", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "ig_DY5pIkozIVx", "platform": "instagram", "post_id": "DY5pIkozIVx", "creator_id": "ek_blair", "perspective": "positive", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "tt_7381649202134207786", "platform": "tiktok", "post_id": "7381649202134207786", "creator_id": "marinabarnoo", "perspective": "critical", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "tt_7537429735865978125", "platform": "tiktok", "post_id": "7537429735865978125", "creator_id": "melisdoesmakeup", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "tt_7482167773292989727", "platform": "tiktok", "post_id": "7482167773292989727", "creator_id": "marewiththehair", "perspective": "mixed", "artifact_id": "social_composition", "independence": "independent_post"},
+        {"unit_id": "ig_official_DbONTyYSmTS", "platform": "instagram", "post_id": "DbONTyYSmTS", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DbMHFSlkl3x", "platform": "instagram", "post_id": "DbMHFSlkl3x", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DbJDdz6FL_P", "platform": "instagram", "post_id": "DbJDdz6FL_P", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DYkQGiSFJVQ", "platform": "instagram", "post_id": "DYkQGiSFJVQ", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DbGgXb7ynHH", "platform": "instagram", "post_id": "DbGgXb7ynHH", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DbLnqyuFD67", "platform": "instagram", "post_id": "DbLnqyuFD67", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DXwwFV1FI7h", "platform": "instagram", "post_id": "DXwwFV1FI7h", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DYr-dtXy3XE", "platform": "instagram", "post_id": "DYr-dtXy3XE", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DZsWUUJS9vn", "platform": "instagram", "post_id": "DZsWUUJS9vn", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_Dav6X6ckua9", "platform": "instagram", "post_id": "Dav6X6ckua9", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_DZ8QMCwEpGw", "platform": "instagram", "post_id": "DZ8QMCwEpGw", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "ig_official_Da8LUpMFN5X", "platform": "instagram", "post_id": "Da8LUpMFN5X", "creator_id": "summerfridays", "perspective": "positive", "artifact_id": "p11r4_record", "independence": "independent_post"},
+        {"unit_id": "tt_7232313070897483051", "platform": "tiktok", "post_id": "7232313070897483051", "creator_id": "karly_alane", "perspective": "critical", "artifact_id": "p11r1_customer_community", "independence": "independent_post"},
+        {"unit_id": "tt_7527741844298435895", "platform": "tiktok", "post_id": "7527741844298435895", "creator_id": "by_erinmarie", "perspective": "mixed", "artifact_id": "p11r3_customer_community", "independence": "independent_post"},
+        {"unit_id": "tt_7379382940272217386", "platform": "tiktok", "post_id": "7379382940272217386", "creator_id": "makeup2themaxx", "perspective": "neutral", "artifact_id": "p11r2_customer_community", "independence": "independent_post"},
+        {"unit_id": "tt_7354686188327832833", "platform": "tiktok", "post_id": "7354686188327832833", "creator_id": "walkingtower", "perspective": "critical", "artifact_id": "p11r2_customer_community", "independence": "independent_post"},
+        {"unit_id": "tt_7496318205502246190", "platform": "tiktok", "post_id": "7496318205502246190", "creator_id": "micahlambeth", "perspective": "critical", "artifact_id": "p11r2_customer_community", "independence": "independent_post"},
+        {"unit_id": "ig_DWE8EFkDHes", "platform": "instagram", "post_id": "DWE8EFkDHes", "creator_id": "eli_leimer", "perspective": "critical", "artifact_id": "p11r1_customer_community", "independence": "independent_post"},
+        {"unit_id": "ig_DPrnH9Cj6qI", "platform": "instagram", "post_id": "DPrnH9Cj6qI", "creator_id": "eli_leimer", "perspective": "critical", "artifact_id": "p11_customer_community", "independence": "independent_post"},
+        {"unit_id": "ig_DXb1FcNhdXP", "platform": "instagram", "post_id": "DXb1FcNhdXP", "creator_id": "michael_park_md", "perspective": "mixed", "artifact_id": "p11_customer_community", "independence": "independent_post"},
+        {"unit_id": "ig_DQLAZt7DSav", "platform": "instagram", "post_id": "DQLAZt7DSav", "creator_id": "goforthandgrow", "perspective": "mixed", "artifact_id": "p11_customer_community", "independence": "independent_post"},
+        {"unit_id": "yt_nkKjxEQgBp8", "platform": "youtube", "post_id": "nkKjxEQgBp8", "creator_id": "christi_rose", "perspective": "mixed", "artifact_id": "p11_customer_community", "independence": "independent_post"}
+      ]
+    }
+  },
+  "closure": {
+    "echo_groups_adjudicated": true,
+    "material_seams": [
+      {"seam_id": "company_identity_and_ownership", "disposition": "bounded"},
+      {"seam_id": "portfolio_and_category", "disposition": "supported"},
+      {"seam_id": "retail_and_channel", "disposition": "supported"},
+      {"seam_id": "customer_product_experience", "disposition": "supported"},
+      {"seam_id": "value_and_dupes", "disposition": "supported"},
+      {"seam_id": "formula_and_packaging", "disposition": "supported"},
+      {"seam_id": "safety_reaction_and_trust", "disposition": "bounded"},
+      {"seam_id": "creator_mediation", "disposition": "supported"},
+      {"seam_id": "dtc_service_and_fulfillment", "disposition": "bounded"},
+      {"seam_id": "legal_and_regulatory_records", "disposition": "bounded"},
+      {"seam_id": "counterfeit_and_authorization", "disposition": "bounded"}
+    ],
+    "batches": [
+      {"batch_id": "depth_batch_1", "candidate_moves_checked": 4, "material_incremental_value": true, "new_material_seams": 1, "changed_material_dispositions": 0},
+      {"batch_id": "depth_batch_2", "candidate_moves_checked": 4, "material_incremental_value": true, "new_material_seams": 2, "changed_material_dispositions": 0},
+      {"batch_id": "depth_batch_3", "candidate_moves_checked": 4, "material_incremental_value": true, "new_material_seams": 1, "changed_material_dispositions": 1},
+      {"batch_id": "depth_batch_4", "candidate_moves_checked": 4, "material_incremental_value": false, "new_material_seams": 0, "changed_material_dispositions": 0},
+      {"batch_id": "depth_batch_5", "candidate_moves_checked": 4, "material_incremental_value": false, "new_material_seams": 0, "changed_material_dispositions": 0}
+    ],
+    "remaining_moves": [
+      {"move_id": "trustpilot_service_page", "disposition": "blocked_no_route", "material": false},
+      {"move_id": "korean_consumer_agency_item", "disposition": "blocked_no_route", "material": false},
+      {"move_id": "allure_marieclaire_yahoo_false_positive_recovery", "disposition": "dominated", "material": false},
+      {"move_id": "four_missing_amazon_exact_pdp_baselines", "disposition": "deferred_nonmaterial", "material": false},
+      {"move_id": "comprehensive_space_nk_us", "disposition": "deferred_nonmaterial", "material": false}
+    ],
+    "conclusion": "complete"
+  }
+}

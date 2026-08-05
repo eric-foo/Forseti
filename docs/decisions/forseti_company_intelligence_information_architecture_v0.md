@@ -166,10 +166,49 @@ it communicates the narrowest package that fully preserves the decisive
 evidence, counter-case, uncertainty, provenance, reversal conditions, and next
 action.
 
+Company Understanding evaluates acquisition on two independent axes:
+
+1. **Evidence-family coverage** — whether the run reached the material kinds of
+   evidence the question calls for, such as owned, outside-in, retail,
+   customer-review, community, native-social, and paid/advertising surfaces.
+2. **Independent depth inside each material family** — whether the acquired
+   units are numerous and distributed enough to corroborate, contradict,
+   sharpen, segment, or bound the answer without treating one token source as
+   representative of the family.
+
+For consumer brands where product/customer experience is material, apply both
+measures to each material product axis as well as to the family totals. A large
+review corpus, thread count, or creator count does not prove that the important
+pain and delight axes were independently tested. Preserve a cross-family axis
+inventory, bounded retailer-sample incidence from row-level coding, explicit
+choice consequences, disconfirming/comparison work, and axis-aware saturation.
+Owned or commercially related content remains useful context but cannot be
+relabelled independent customer/creator corroboration. Population prevalence
+still requires transaction data or representative research; public captured-
+sample incidence does not become a market rate.
+
+Presence on the first axis never earns credit on the second. One article does
+not make outside-in context deep; one thread does not make community response
+understood; one creator does not make a native-social landscape; and one
+retailer window does not make customer evidence broad. Conversely, another
+source from an already represented family is not repetitive merely because its
+format or topic is similar. It remains valuable when it has an independent
+origin or adds material corroboration, contradiction, detail, mechanism,
+qualification, segmentation, boundary, or confidence change. Syndicated or
+copied evidence counts once.
+
 No numeric source, row, observation, venue, or capture target establishes this
 completeness. Collection targets are search hygiene only. Each included item
 must perform a named decision-material job and must not be substitutable by an
 equal-or-better included item.
+
+A declared broad-Understanding profile may impose numeric **entry floors** to
+prevent a token-source pass. Meeting those floors is necessary for that profile
+but never sufficient for acquisition closure. The run still owes the Scanning
+closure test, including material-seam dispositions, echo/independence
+adjudication, and evidence that the final practical batches stopped adding
+material value. A floor miss blocks that profile; a floor hit does not end the
+walk.
 
 Scanning owns acquisition closure. It continues only while the best remaining
 move has a credible chance of changing the action, action ceiling, rival
@@ -397,18 +436,25 @@ create a parallel acquisition checklist or data store.
 When retail expression is material, acquire this substrate breadth-first. Begin
 with enough owned evidence to bind the subject, categories, franchises, known
 parents, and canonical product identity. Use company-owned evidence to establish
-the officially named US retailer board before probing retailer surfaces. Select
-the route-admissible retailers that add material assortment, commercial, or
-customer evidence; there is no fixed retailer quartet or count. Resolve Sephora
-explicitly: when it is officially named and its US grid is route-complete, it
-must be included and is the retail primary. If it is officially named but
-blocked, unpinned, or incomplete, preserve that typed outcome and use the
-strongest complete selected retailer as the working primary rather than
-fabricating Sephora coverage. For every selected retailer, capture its available
-grid surface, deterministically union and reconcile exact listings with the
-owned candidates, then return to owned surfaces to close the complete publicly
-exposed denominator and typed gaps. Owned evidence remains canonical identity
-authority; retailer grids are discovery and channel-expression evidence.
+the officially named US retailer board before probing retailer surfaces. When
+at least four company-authorized, target-market, route-admissible third-party
+retailers exist, select and attempt at least four, favoring venues that add
+distinct assortment, commercial, or customer evidence. The company-owned DTC
+site does not count toward the four. When fewer than four qualify, select all
+that qualify and record `AUTHORIZED_RETAILER_SHORTFALL` with the observed count
+and reasons; never fill the floor with an unauthorized, duplicate, or
+market-unpinned venue. Resolve Sephora explicitly: when it is officially named
+and its US grid is route-complete, it must be included, counts as one selected
+retailer, and is the retail primary. If it is officially named but blocked,
+unpinned, or incomplete, preserve that typed outcome and use the strongest
+complete selected retailer as the working primary rather than fabricating
+Sephora coverage. When another qualified retailer is available, replace a
+blocked selected route to restore four usable venues while preserving the
+blocked outcome. For every selected retailer, capture its available grid
+surface, deterministically union and reconcile exact listings with the owned
+candidates, then return to owned surfaces to close the complete publicly exposed
+denominator and typed gaps. Owned evidence remains canonical identity authority;
+retailer grids are discovery and channel-expression evidence.
 
 Attempt one common-floor baseline PDP for every reconciled exact retailer
 listing and preserve each admitted baseline or typed miss. A miss is
@@ -426,12 +472,22 @@ non-duplicative and category-balanced job. This is not an all-retailer or
 source-count quota and does not require a full historical review crawl or
 complete global SKU graph.
 
-Sephora, Ulta, and Target expose brand or assortment grids. Amazon exposes a
-query-bound ranked-search window that may be complete for its declared query and
-reachable result window, but not as a guaranteed complete or authorized-only
-brand catalog. Projection capability does not prove route admission; every run
-records market pin, reachability, surface boundary, and typed failure. Point-in-
-time retailer metrics are traction proxies, not sales, share, or trend.
+Sephora, Ulta, and Target expose brand or assortment grids. Amazon requires an
+authorization result separate from marketplace presence:
+`COMPANY_AUTHORIZED` means a company-owned source explicitly names or links the
+target-market Amazon store or retailer; `MARKETPLACE_IDENTITY_VERIFIED_NOT_COMPANY_AUTHORIZED`
+means the exact branded storefront or seller/listing identity is verified but
+company-owned evidence does not authorize it; and
+`MARKETPLACE_PRESENCE_UNVERIFIED` means exact seller/storefront identity is not
+proven. Only `COMPANY_AUTHORIZED` counts toward the four-retailer floor. A
+verified-but-not-company-authorized Amazon route may supplement marketplace,
+price, or customer evidence with that limitation attached; an unverified route
+remains a discovery pointer. Amazon exposes a query-bound ranked-search window
+that may be complete for its declared query and reachable result window, never a
+guaranteed complete or authorized-only brand catalog. Projection capability does
+not prove route admission; every run records market pin, reachability, surface
+boundary, and typed failure. Point-in-time retailer metrics are traction
+proxies, not sales, share, or trend.
 
 Officially named, route-complete Sephora must be the retail primary. Otherwise,
 preserve the typed Sephora blocked, unpinned, or incomplete outcome and use

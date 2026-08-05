@@ -370,6 +370,8 @@ def test_www_access_failed_posture_cannot_match_success(tmp_path) -> None:
                 "http_response_status": 200,
                 "access_blocked": False,
                 "rendered_access_classification": "no_block_marker",
+                "method_category": "real_browser_cdp",
+                "requested_url": "https://www.reddit.com/r/testsub/top/?t=week",
                 "final_url": "https://www.reddit.com/r/testsub/top/?t=week",
             }
         ),

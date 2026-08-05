@@ -32,6 +32,16 @@ from source_capture.rendered_access import (
     RenderedAccessClass,
     classify_rendered_access,
 )
+from source_capture.browser_user_data import browser_user_data_path_for_label
+from source_capture.retained_chrome_session import (
+    DEFAULT_RETAINED_CHROME_STARTUP_TIMEOUT_SECONDS,
+    ensure_retained_chrome_session,
+)
+from source_capture.session_profiles import (
+    default_session_profile_auth_state_root,
+    resolve_session_profile,
+    validate_session_profile_auth_state,
+)
 from source_capture.source_detail_sufficiency import (
     SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
     SourceDetailSufficiencyRequirements,
@@ -232,6 +242,20 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--block-archive", required=True, type=Path)
     parser.add_argument("--cdp-endpoint", default=DEFAULT_CDP_ENDPOINT)
+    parser.add_argument(
+        "--session-profile",
+        help=(
+            "Resolve, validate, and automatically launch or reuse the configured "
+            "retained Chrome profile at --cdp-endpoint."
+        ),
+    )
+    parser.add_argument("--session-profile-config", type=Path)
+    parser.add_argument("--auth-state-root", type=Path)
+    parser.add_argument(
+        "--chrome-startup-timeout-seconds",
+        type=float,
+        default=DEFAULT_RETAINED_CHROME_STARTUP_TIMEOUT_SECONDS,
+    )
     parser.add_argument("--persistent-tab-marker", required=True)
     parser.add_argument("--decision-question", required=True)
     parser.add_argument("--capture-context")
@@ -240,17 +264,49 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _resolve_cdp_endpoint(args: argparse.Namespace) -> str:
+    if args.session_profile is None:
+        if args.session_profile_config is not None or args.auth_state_root is not None:
+            raise ValueError(
+                "--session-profile-config/--auth-state-root require --session-profile"
+            )
+        return args.cdp_endpoint
+    profile = resolve_session_profile(
+        args.session_profile,
+        config_path=args.session_profile_config,
+    )
+    validate_session_profile_auth_state(
+        profile,
+        auth_state_root=(
+            args.auth_state_root or default_session_profile_auth_state_root()
+        ),
+    )
+    if profile.browser_backend != "chrome_cdp":
+        raise ValueError("session profile does not select the Chrome CDP backend")
+    if profile.browser_user_data_label is None:
+        raise ValueError("Chrome CDP session profile requires retained browser data")
+    session = ensure_retained_chrome_session(
+        user_data_dir=browser_user_data_path_for_label(
+            profile.browser_user_data_label
+        ),
+        cdp_endpoint=args.cdp_endpoint,
+        startup_timeout_seconds=args.chrome_startup_timeout_seconds,
+    )
+    return session.cdp_endpoint
+
+
 def main() -> int:
     parser = _build_parser()
     args = parser.parse_args()
     try:
+        cdp_endpoint = _resolve_cdp_endpoint(args)
         code, message = run_google_serp_persistent_fallback(
             url=args.url,
             query=args.query,
             job_id=args.job_id,
             output=args.output,
             block_archive=args.block_archive,
-            cdp_endpoint=args.cdp_endpoint,
+            cdp_endpoint=cdp_endpoint,
             marker=args.persistent_tab_marker,
             decision_question=args.decision_question,
             capture_context=args.capture_context,

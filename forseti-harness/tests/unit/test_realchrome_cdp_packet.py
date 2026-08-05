@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 from pathlib import Path
 
@@ -7,10 +8,48 @@ import pytest
 
 from runners.run_source_capture_realchrome_cdp_packet import (
     RealChromeCDPCaptureResult,
+    _capture_viewport_screenshot,
     _navigate_target,
     _select_or_create_page,
     run_source_capture_realchrome_cdp_packet,
 )
+
+
+def test_viewport_screenshot_falls_back_to_raw_cdp_after_playwright_timeout() -> None:
+    png = b"\x89PNG\r\n\x1a\nraw-cdp"
+
+    class Page:
+        def screenshot(self, **_kwargs: object) -> bytes:
+            raise TimeoutError("font wait did not finish")
+
+    class Session:
+        detached = False
+
+        def send(self, method: str, params: dict[str, object]) -> dict[str, str]:
+            assert method == "Page.captureScreenshot"
+            assert params["captureBeyondViewport"] is False
+            return {"data": base64.b64encode(png).decode("ascii")}
+
+        def detach(self) -> None:
+            self.detached = True
+
+    session = Session()
+
+    class Context:
+        def new_cdp_session(self, page: object) -> Session:
+            assert isinstance(page, Page)
+            return session
+
+    warnings: list[str] = []
+    result = _capture_viewport_screenshot(
+        page=Page(), context=Context(), timeout_ms=45_000, warnings=warnings
+    )
+
+    assert result == png
+    assert session.detached is True
+    assert warnings == [
+        "playwright_viewport_screenshot_failed_raw_cdp_fallback_used: TimeoutError"
+    ]
 from source_capture.source_detail_sufficiency import (
     SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
     SourceDetailSufficiencyRequirements,
@@ -206,6 +245,63 @@ def test_target_navigation_restores_marker_after_document_swap() -> None:
 
     assert response == "response"
     assert page.marker == "forseti.queue"
+
+
+def test_persistent_target_suppresses_exact_same_url_navigation() -> None:
+    class Page:
+        url = "https://www.google.com/search?q=held"
+        marker = ""
+
+        def __init__(self) -> None:
+            self.load_waits: list[tuple[str, float]] = []
+
+        def goto(self, *_args: object, **_kwargs: object) -> object:
+            raise AssertionError("same URL must not be navigated again")
+
+        def wait_for_load_state(self, state: str, timeout: float) -> None:
+            self.load_waits.append((state, timeout))
+
+        def evaluate(self, script: str, argument: object = None) -> None:
+            assert script == "(marker) => { window.name = marker; }"
+            self.marker = argument
+
+    page = Page()
+    response = _navigate_target(
+        page=page,
+        url=page.url,
+        timeout_ms=10_000,
+        persistent_tab_marker="forseti.queue",
+    )
+
+    assert response is None
+    assert page.marker == "forseti.queue"
+    assert page.load_waits == [("load", 10_000)]
+
+
+def test_persistent_same_url_partial_document_fails_instead_of_capturing() -> None:
+    class Page:
+        url = "https://www.google.com/search?q=held"
+        marker = ""
+
+        def goto(self, *_args: object, **_kwargs: object) -> object:
+            raise AssertionError("same URL must not be navigated again")
+
+        def wait_for_load_state(self, state: str, timeout: float) -> None:
+            raise TimeoutError("load event never fired on the reused document")
+
+        def evaluate(self, script: str, argument: object = None) -> None:
+            self.marker = argument
+
+    page = Page()
+    with pytest.raises(TimeoutError):
+        _navigate_target(
+            page=page,
+            url=page.url,
+            timeout_ms=10_000,
+            persistent_tab_marker="forseti.queue",
+        )
+
+    assert page.marker == ""
 
 
 class _FakePage:

@@ -1,6 +1,9 @@
 import sys
 import types
 from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
 
 from runners import run_google_serp_persistent_fallback_packet as fallback_runner
 from runners.run_google_serp_persistent_fallback_packet import (
@@ -11,6 +14,63 @@ from runners.run_google_serp_persistent_fallback_packet import (
 from source_capture.source_detail_sufficiency import (
     SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
 )
+
+
+def test_session_profile_launches_or_reuses_exact_requested_endpoint(
+    tmp_path: Path, monkeypatch
+) -> None:
+    profile_dir = tmp_path / "retained-profile"
+    profile = SimpleNamespace(
+        browser_backend="chrome_cdp",
+        browser_user_data_label="retained",
+    )
+    captured: dict[str, object] = {}
+    args = SimpleNamespace(
+        session_profile="chowdakr_sg_tiktok",
+        session_profile_config=None,
+        auth_state_root=tmp_path / "auth",
+        cdp_endpoint="http://127.0.0.1:9223",
+        chrome_startup_timeout_seconds=9.0,
+    )
+
+    monkeypatch.setattr(
+        fallback_runner, "resolve_session_profile", lambda *_a, **_k: profile
+    )
+    monkeypatch.setattr(
+        fallback_runner,
+        "validate_session_profile_auth_state",
+        lambda *_a, **_k: None,
+    )
+    monkeypatch.setattr(
+        fallback_runner,
+        "browser_user_data_path_for_label",
+        lambda *_a, **_k: profile_dir,
+    )
+
+    def ensure(**kwargs):
+        captured.update(kwargs)
+        return SimpleNamespace(cdp_endpoint="http://127.0.0.1:9223")
+
+    monkeypatch.setattr(fallback_runner, "ensure_retained_chrome_session", ensure)
+
+    assert fallback_runner._resolve_cdp_endpoint(args) == "http://127.0.0.1:9223"
+    assert captured == {
+        "user_data_dir": profile_dir,
+        "cdp_endpoint": "http://127.0.0.1:9223",
+        "startup_timeout_seconds": 9.0,
+    }
+
+
+def test_profile_sidecar_flags_without_profile_fail_before_capture() -> None:
+    args = SimpleNamespace(
+        session_profile=None,
+        session_profile_config=Path("profiles.json"),
+        auth_state_root=None,
+        cdp_endpoint="http://127.0.0.1:9222",
+    )
+
+    with pytest.raises(ValueError, match="require --session-profile"):
+        fallback_runner._resolve_cdp_endpoint(args)
 
 
 def test_block_is_preserved_notified_once_and_exact_job_resumes(tmp_path: Path) -> None:

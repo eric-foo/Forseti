@@ -261,6 +261,31 @@ route (under the Guardrail 4 bound, human-rate). If **no row matches**, stop as 
 (record the missing-route candidate) — *unless* it's behind an access-control gate you can't pass,
 which is NO-GO. Reach NO-GO only after the matching routes are exhausted, with the receipt.
 
+### Local preprojection economy (owner direction, 2026-08-05)
+
+For a public route whose signal can be narrowed before broad-page acquisition,
+the local default is to **preproject the transport**: request the smallest
+source-native section, embedded-state object, or page-owned API response that
+still preserves the commissioned identity, order, fields, and coverage bound;
+request transfer compression; then perform deterministic local extraction
+before retention. Do not download a full storefront shell merely because it is
+the easiest document to locate.
+
+The first pin for a new or materially changed narrow route pays one calibration
+cost: compare it with the broader source surface and prove that subject binding,
+ordering, field fidelity, and the declared denominator agree. Bank the narrow
+route only after that parity check. Routine captures then go directly to the
+pin; they do not repay broad-page capture or parity calibration unless a route,
+template, denominator, required field, or reconciliation check drifts.
+
+"Preprojection" here is transport economy plus local mechanical extraction. It
+does not create a Capture Projection packet, authorize Cleaning or Judgment,
+or permit a compact feed that silently changes order or coverage. Preserve the
+compressed source response or admitted canonical content under the retention
+contract. If narrowing or extraction cannot prove the commissioned bound,
+preserve diagnostic raw evidence, report the typed residual, and use the
+broader matching route only as the explicit fallback.
+
 **Route maturity (faithful to the recon index).** Progressive-scroll is *capture-proven* (Sephora
 reviews; worktree-pending). CloakBrowser persistent-profile capture has one source-specific
 end-to-end success for a Quora B2B search packet after lower-rung pressure, with a local ignored
@@ -529,6 +554,16 @@ instead of inheriting a slower discovery/probe default. A faster measured
 cadence never weakens challenge stops, owner handoff, access boundaries, or
 failure visibility.
 
+In a multi-host run, the first confirmed challenge pauses the affected host and
+surfaces an owner handoff immediately; unrelated healthy hosts may finish their
+already-authorized work. A fresh owner-attested egress or route change is a new
+environment and may release that host without spending its fallback cooldown.
+The controller never rotates VPN endpoints automatically and never records an
+endpoint, server, credential, or exit IP. If the owner makes no route change,
+the source-specific cooldown remains the bounded recovery path. Either recovery
+must be an explicit state transition, never a hot retry hidden inside the
+capture loop.
+
 ## Known gaps (honest)
 
 - **No route for mobile/app-only substrate.** If a probe finds the signal lives only in a phone app
@@ -550,6 +585,43 @@ failure visibility.
 - **Recipe cards are not yet authored.** This MVP is the method only.
 
 ## Direction Change Propagation
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    New capture routes now default to source-native narrowing plus deterministic
+    local extraction before retention, with one broad-surface parity calibration
+    per new or materially changed pin and direct narrow-route reuse thereafter.
+  trigger: product_doctrine
+  related_triggers:
+    - architecture_doctrine
+    - validation_philosophy
+  controlling_sources_updated:
+    - forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/retailer_information_extraction_standard_v0.md
+  downstream_surfaces_checked:
+    - .agents/workflow-overlay/source-loading.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/README.md
+    - forseti/product/spines/capture/core/source_families/retail_pdp/retail_pdp_content_cleaning_contract_v0.md
+  intentionally_not_updated:
+    - path: .agents/workflow-overlay/source-loading.md
+      reason: It already routes Capture work to this playbook; source ownership did not move.
+    - path: forseti/product/spines/capture/core/source_families/retail_pdp/retail_pdp_content_cleaning_contract_v0.md
+      reason: >
+        Its canonical-content, raw-fallback, and no-current-PDP-Projection rules
+        already match the new transport economy; no schema or runtime changed.
+  recurring_cost: >
+    One parity calibration for each new or materially changed narrow route;
+    routine captures pay no broad-page or repeated-calibration cost while the pin holds.
+  defect_class_caught: >
+    Compact feeds or sections that silently alter subject binding, order,
+    fields, or coverage, as observed when Soko Glam products.json ignored the
+    requested best-selling order.
+  non_claims:
+    - not runtime implementation
+    - not validation or readiness
+    - not permission to discard failure evidence
+```
 
 ```yaml
 direction_change_propagation:

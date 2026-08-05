@@ -13,10 +13,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import subprocess
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any, Callable, Sequence
+from urllib.parse import urlparse
 
 DEFAULT_CDP_PROBE_PORTS: tuple[int, ...] = (9222, 9223)
 _LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
@@ -84,6 +88,132 @@ def probe_local_cdp_endpoints(
         "live_endpoints": live_endpoints,
         "browser_available": bool(live_endpoints),
     }
+
+
+def select_profile_bound_local_cdp_endpoint(
+    report: dict[str, Any],
+    *,
+    user_data_dir: Path,
+    bound_port_reader: Callable[[Path], Sequence[int]] | None = None,
+) -> str:
+    """Select the one live endpoint owned by the retained Chrome profile.
+
+    Endpoint reachability alone is not identity. On Windows the default reader
+    checks the browser process command line and returns only the CDP ports whose
+    root Chrome process was launched with the exact retained user-data path.
+    Raw process command lines and profile paths never enter the returned report.
+    """
+    live_endpoints = report.get("live_endpoints")
+    if not isinstance(live_endpoints, list):
+        raise ValueError("Chrome CDP probe returned invalid live endpoint data")
+    read_bound_ports = bound_port_reader or _windows_profile_bound_cdp_ports
+    bound_ports = set(read_bound_ports(user_data_dir.resolve()))
+    matching: list[str] = []
+    for endpoint in live_endpoints:
+        if not isinstance(endpoint, str):
+            raise ValueError("Chrome CDP probe returned an invalid loopback endpoint")
+        parsed = urlparse(endpoint)
+        if parsed.scheme != "http" or parsed.hostname not in _LOCAL_HOSTS:
+            raise ValueError("Chrome CDP probe returned a non-loopback endpoint")
+        try:
+            port = parsed.port
+        except ValueError:
+            raise ValueError("Chrome CDP probe returned an invalid loopback port") from None
+        if port in bound_ports:
+            matching.append(endpoint)
+    if len(matching) != 1:
+        raise ValueError(
+            "Chrome CDP requires exactly one live endpoint bound to the retained "
+            f"browser profile; observed {len(matching)}"
+        )
+    return matching[0]
+
+
+def _windows_profile_bound_cdp_ports(user_data_dir: Path) -> tuple[int, ...]:
+    """Return sanitized CDP ports for root Chrome processes using ``user_data_dir``."""
+    if os.name != "nt":
+        raise ValueError(
+            "retained Chrome profile process binding is currently supported on Windows only"
+        )
+    env = os.environ.copy()
+    env["FORSETI_EXPECTED_CDP_USER_DATA_DIR"] = str(user_data_dir)
+    script = r"""
+$ErrorActionPreference = 'Stop'
+$expected = [System.IO.Path]::GetFullPath(
+  $env:FORSETI_EXPECTED_CDP_USER_DATA_DIR
+).TrimEnd([char[]]@(
+  [System.IO.Path]::DirectorySeparatorChar,
+  [System.IO.Path]::AltDirectorySeparatorChar
+))
+$ports = @(
+  Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" |
+    Where-Object {
+      $_.CommandLine -and $_.CommandLine -notmatch '(?i)(?:^|\s)--type='
+    } |
+    ForEach-Object {
+      $commandLine = $_.CommandLine
+      if ($commandLine -notmatch '(?i)(?:^|\s)--user-data-dir=(?:"([^"]+)"|(\S+))') {
+        return
+      }
+      $profileArgument = if ($Matches[1]) { $Matches[1] } else { $Matches[2] }
+      try {
+        $profilePath = [System.IO.Path]::GetFullPath($profileArgument).TrimEnd(
+          [char[]]@(
+            [System.IO.Path]::DirectorySeparatorChar,
+            [System.IO.Path]::AltDirectorySeparatorChar
+          )
+        )
+      } catch {
+        return
+      }
+      if (-not $profilePath.Equals(
+        $expected,
+        [System.StringComparison]::OrdinalIgnoreCase
+      )) {
+        return
+      }
+      if ($commandLine -match '(?i)(?:^|\s)--remote-debugging-port=(\d{1,5})(?:\s|$)') {
+        [int]$Matches[1]
+      }
+    } |
+    Sort-Object -Unique
+)
+@($ports) | ConvertTo-Json -Compress
+"""
+    try:
+        completed = subprocess.run(
+            [
+                "powershell.exe",
+                "-NoLogo",
+                "-NoProfile",
+                "-NonInteractive",
+                "-Command",
+                script,
+            ],
+            capture_output=True,
+            check=False,
+            env=env,
+            text=True,
+            timeout=5.0,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        raise ValueError("unable to verify retained Chrome profile process binding") from None
+    if completed.returncode != 0:
+        raise ValueError("unable to verify retained Chrome profile process binding")
+    try:
+        payload = json.loads(completed.stdout or "[]")
+    except json.JSONDecodeError:
+        raise ValueError("retained Chrome profile process binding returned invalid data") from None
+    if isinstance(payload, int):
+        payload = [payload]
+    if not isinstance(payload, list) or any(
+        not isinstance(port, int)
+        or isinstance(port, bool)
+        or not 1 <= port <= 65535
+        for port in payload
+    ):
+        raise ValueError("retained Chrome profile process binding returned invalid ports")
+    return tuple(payload)
 
 
 def _http_get(url: str, timeout_seconds: float) -> str:

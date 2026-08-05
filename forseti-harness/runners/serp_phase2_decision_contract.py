@@ -656,6 +656,47 @@ def _prior_validation_entities(
     return licensed_entities
 
 
+def validation_licenses_from_receipt(
+    receipt: Any,
+) -> tuple[dict[str, str], set[str]]:
+    """Return the subject and one-shot validation licences in a receipt."""
+
+    if not isinstance(receipt, dict):
+        raise ContractError("prior_decision_receipt_invalid:prior_receipt_0")
+    subject = receipt.get("subject")
+    if not isinstance(subject, dict):
+        raise ContractError("prior_decision_receipt_subject_invalid")
+    violations: list[str] = []
+    subject_name = _required_text(
+        subject.get("name"),
+        code="prior_decision_receipt_subject_name_missing",
+        field="prior_receipt_0",
+        violations=violations,
+    )
+    subject_entity_key = _required_text(
+        subject.get("entity_key"),
+        code="prior_decision_receipt_subject_entity_key_missing",
+        field="prior_receipt_0",
+        violations=violations,
+    )
+    if subject_entity_key and not _entity_key_is_bound(subject_entity_key):
+        violations.append(
+            "prior_decision_receipt_subject_entity_key_unbound:prior_receipt_0"
+        )
+    licensed_entities = _prior_validation_entities(
+        {"prior_decision_receipts": [receipt]},
+        subject_name=subject_name,
+        subject_entity_key=subject_entity_key,
+        violations=violations,
+    )
+    if violations:
+        raise ContractError(violations)
+    return {
+        "name": subject_name,
+        "entity_key": subject_entity_key,
+    }, licensed_entities
+
+
 def validate_settlement(payload: Any) -> dict[str, Any]:
     """Validate a normalized Phase-2 settlement and return its receipt."""
 
@@ -671,6 +712,11 @@ def validate_settlement(payload: Any) -> dict[str, Any]:
     if not isinstance(subject, dict):
         violations.append("subject_missing")
     else:
+        forbidden_subject_fields = sorted(
+            set(subject) - {"name", "entity_key"}
+        )
+        for field in forbidden_subject_fields:
+            violations.append(f"subject_field_forbidden:{field}")
         subject_name = _required_text(
             subject.get("name"),
             code="subject_name_missing",

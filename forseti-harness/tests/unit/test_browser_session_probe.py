@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
 from source_capture.adapters.browser_session_probe import (
     DEFAULT_CDP_PROBE_PORTS,
     probe_local_cdp_endpoints,
+    select_profile_bound_local_cdp_endpoint,
 )
 
 
@@ -87,3 +89,47 @@ def test_probe_brackets_ipv6_host_in_endpoint() -> None:
 
 def test_default_ports_cover_the_cloakbrowser_endpoint() -> None:
     assert 9223 in DEFAULT_CDP_PROBE_PORTS
+
+
+def test_profile_bound_endpoint_requires_live_port_owned_by_expected_profile() -> None:
+    report = {
+        "live_endpoints": [
+            "http://127.0.0.1:9222",
+            "http://127.0.0.1:9223",
+        ]
+    }
+
+    endpoint = select_profile_bound_local_cdp_endpoint(
+        report,
+        user_data_dir=Path("retained-profile"),
+        bound_port_reader=lambda path: (9222,),
+    )
+
+    assert endpoint == "http://127.0.0.1:9222"
+
+
+def test_profile_bound_endpoint_rejects_reachable_wrong_profile() -> None:
+    report = {"live_endpoints": ["http://127.0.0.1:9223"]}
+
+    with pytest.raises(ValueError, match="bound to the retained browser profile"):
+        select_profile_bound_local_cdp_endpoint(
+            report,
+            user_data_dir=Path("retained-profile"),
+            bound_port_reader=lambda path: (9222,),
+        )
+
+
+def test_profile_bound_endpoint_rejects_two_matching_live_endpoints() -> None:
+    report = {
+        "live_endpoints": [
+            "http://127.0.0.1:9222",
+            "http://127.0.0.1:9223",
+        ]
+    }
+
+    with pytest.raises(ValueError, match="observed 2"):
+        select_profile_bound_local_cdp_endpoint(
+            report,
+            user_data_dir=Path("retained-profile"),
+            bound_port_reader=lambda path: (9222, 9223),
+        )

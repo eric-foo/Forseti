@@ -207,6 +207,39 @@ marker does not clear, scripted actions stay suppressed and capture fails closed
 The agent must not drag or solve the puzzle, and any manual owner action is
 source-access intervention rather than clean capture.
 
+The session profile may select the retained Chrome CDP backend. Every such route
+checks that the retained browser profile is nonempty and binds exactly one
+usable loopback CDP endpoint whose root Chrome process was launched with that
+profile path. A different live Chrome or CloakBrowser endpoint does not qualify.
+If the exact retained profile is already open without CDP, the harness stops
+with `BLOCKED_RETAINED_PROFILE_OPEN_WITHOUT_CDP`; it never closes operator
+Chrome. The runner then passes the bound engine into the same sanitized staging
+and packet-admission path. Do not add
+`--allow-diagnostic-browser-backend`; that flag is for manually selected
+diagnostic backends, not for a validated retained-session profile.
+
+Cold start is not yet universal. Only routes that call
+`ensure_retained_chrome_session` — today `ensure_source_capture_retained_chrome.py`
+and `run_google_serp_persistent_fallback_packet.py --session-profile` — launch
+the retained profile in a visible Chrome window and prove the same binding
+before navigation. Other `--session-profile` runners, including
+`run_source_capture_tiktok_live_batch_probe.py`, only reuse an endpoint that is
+already live and fail closed when none is.
+
+So for any route that does not itself cold-start, run the bounded launcher
+first and consume only its sanitized loopback endpoint. Either way, do not
+prompt the owner to launch Chrome by hand:
+
+```powershell
+python runners/ensure_source_capture_retained_chrome.py `
+  --session-profile "chowdakr_sg_tiktok" `
+  --cdp-port 9223
+```
+
+The launcher never navigates an existing tab, reads profile contents, closes a
+browser, or solves a challenge. A visible CAPTCHA remains open and triggers the
+route's owner-handoff behavior.
+
 Before implementing or revising a live-browser route whose correctness depends
 on a new or changed UI transition (selector, control, navigation mode, or
 post-action state), run a bounded retained-session transition probe before
@@ -428,6 +461,12 @@ source-access intervention, not clean capture. Any `fail_closed_*` outcome or
 admission summary with `fail_closed=true` stops the lane until the typed reason
 is resolved.
 
+The live-probe runner's internal cadence applies only inside that one process.
+When a bounded acquisition uses separate one-creator commands, leave at least
+90 seconds between commands and inspect each summary before starting the next.
+Stop the sequence on a visible block, captcha, or fail-closed outcome; do not
+launch the next creator while the prior result is still unknown.
+
 If any required input is missing, do not invent it. Stop and report the smallest
 missing input.
 
@@ -439,6 +478,7 @@ Use the narrowest runner that matches the supplied input.
 | --- | --- | --- |
 | Already-local raw source files | `run_source_capture_packet.py` | The operator already preserved files and only needs a packet. |
 | One ordinary URL | `run_source_capture_http_packet.py` | A single page/file may be fetched through normal Direct HTTP. |
+| Two or more ordinary URLs on one exact host | `run_source_capture_same_host_http_batch.py` | A small supplied list needs enforced serial pacing and stop-on-first-refusal behavior. |
 | Explicit asset URLs | `run_source_capture_media_packet.py` | The operator supplied image/media/gallery-frame URLs directly. |
 | Original URL plus archive need | `run_source_capture_archive_packet.py` | The operator needs Archive.org availability and maybe snapshot body. |
 | Browser-rendered or screenshot-needed page | `run_source_capture_browser_packet.py` | One supplied URL needs anonymous browser rendering or screenshot preservation. |
@@ -800,6 +840,34 @@ python runners/run_source_capture_http_packet.py `
   --cutoff-posture "<operator-supplied cutoff posture>" `
   --output "<packet directory>"
 ```
+
+The single-URL runner's intended-cadence fields describe operator intent in the
+packet; they do not wait or coordinate separate processes. For two or more
+ordinary URLs on one exact hostname, use the same-host batch runner instead of
+starting independent commands:
+
+```powershell
+python runners/run_source_capture_same_host_http_batch.py `
+  --job-list "<JSON list of job_id, url, and decision_question objects>" `
+  --output-root "<scratch output directory>" `
+  --minimum-gap-seconds 90
+```
+
+The batch runner requires a finite gap of at least 60 seconds, defaults to 90
+seconds, and waits after one response completes before issuing the next request.
+It records every job it begins and every unrun job, writes that recovery
+accounting before re-raising an unexpected inner-runner failure, preserves HTTP
+status and `Retry-After` from readable responses even when the body is empty or
+over the size cap, never retries automatically, and stops the remaining queue
+on the first non-2xx response, access shell, uninspectable encoded body, or
+capture failure. A later attempt needs separate acquisition authority and must
+not precede a source-supplied `Retry-After` interval.
+
+`content_unverified` is not positive certification that a body is the requested
+source. One accepted detector limit is an hCaptcha-only interstitial without
+recognized visible challenge language or a mitigation header; corroborate the
+expected page title and decision-relevant body signals before sealing such a
+capture.
 
 Media / Asset:
 

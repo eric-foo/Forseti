@@ -1,0 +1,844 @@
+{
+  "schema_version": "consumer_brand_axis_support_adjudication_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r5_20260802",
+  "source_audit_sha256": "7bd6af988d5b425370a4bed11da1f4de60028f5e7fbd7858654ba84a91435ae8",
+  "method": "Preserved-packet fresh read. Reddit uses visible old-Reddit thread text. Social support uses creator-authored title, description, caption, or transcript fields only; audience comments are excluded from creator credit.",
+  "credit_rule": "Reddit credits distinct thread IDs. Native social credits distinct creator IDs only when relationship=apparently_independent. Owned, retailer-operated, disclosed paid/affiliate, and unknown rows remain visible but provide no independent-axis strength credit.",
+  "reddit": [
+    {
+      "unit_id": "1fvevie",
+      "axis_ids": [
+        "formula_consistency_and_change",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_claim_challenge_001_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1obnfys",
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_replacement_002_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1mzokbt",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_burning_003_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "kaikx3",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_value_004_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1pf427h",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_reaction_005_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1h0wfao",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_vs_laneige_006_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1gvs36d",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_discoloration_007_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "11uym2u",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_balm_review_008_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1plfk6p",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "packaging_and_dispensing",
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_seal_009_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1inusa1",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "reaction_and_breakout",
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_substitute_010_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1cx0kf6",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_usage_011_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "165xa4x",
+      "axis_ids": [
+        "reaction_and_breakout",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_irritation_012_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "l0stms",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_response_013_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "166j6zu",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q02_allergy_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1nv3pda",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q04_amazon_legit_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1arhbj9",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q06_balm_vs_oil_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1qiwlyp",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q07_newinbeauty_lipstains_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1rzd5vw",
+      "axis_ids": [
+        "scent_and_flavor",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q08_sunlit_vanilla_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1qrcg5i",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q09_perfume_new_packet\\manifest.json"
+      ]
+    },
+    {
+      "unit_id": "1r9vw38",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\return_leg\\r01_vs_ole_henriksen_packet\\manifest.json"
+      ]
+    }
+  ],
+  "native_social": [
+    {
+      "unit_id": "yt_aJNT3Mo6hHg",
+      "creator_id": "holly_ward",
+      "relationship": "disclosed_paid_or_affiliate",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\940\\01KYF16WDMEJK6KFTV0C7NVX0X\\manifest.json",
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\cab\\01KYF0S4G76GFXC2NB7PQBKCJK\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "yt_qf--43DCmxI",
+      "creator_id": "natalie_santini",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "shade_and_color_fit",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\81b\\01KYF1774WDMJ8ER987MRZB4VC\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "yt_5s1fZlH22dM",
+      "creator_id": "space_nk",
+      "relationship": "retailer_operated",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\712\\01KYF0SJBF7V8WCXH1BYG446SF\\manifest.json",
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\d52\\01KYF17HSKSESTVKF96SS59DBC\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "yt_mPjJwVDTrjE",
+      "creator_id": "gorgeously_aging",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\4d6\\01KYF17X8Y4QF40FN0C0491V5W\\manifest.json",
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\642\\01KYF0SNVTX99FKCFGBPW3DMZV\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "yt_18h0qZjEb24",
+      "creator_id": "hannah_fosbenner",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\af0\\01KYF18848KKB7CNDN73VWH9BV\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "yt_PW6fITp2D6M",
+      "creator_id": "monica_villegas",
+      "relationship": "apparently_independent",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\626\\01KYF18JDY5HPVB6SQ8ZBCTFBW\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DXXkXRUErYL",
+      "creator_id": "painted_by_james_cha",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "reaction_and_breakout",
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\2eb\\01KYF36Y3SH7N5C5NQBSB0DREA\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\derived\\2eb\\01KYF36Y3SH7N5C5NQBSB0DREA\\silver__capture__reel_transcript\\deepcap_DXXkXRUErYL__ac6a95da9f139c3e.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DaWFSnghjDh",
+      "creator_id": "katerina",
+      "relationship": "apparently_independent",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\1f0\\01KYF39053AMFJXPBGXYHKJCVG\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DbJdfWwShRw",
+      "creator_id": "theresa_krug",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\5b3\\01KYF37MS7JQKKWTMQW1VZFVJ6\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\derived\\5b3\\01KYF37MS7JQKKWTMQW1VZFVJ6\\silver__capture__reel_transcript\\deepcap_DbJdfWwShRw__83224043ec3add61.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DatAlIDvo83",
+      "creator_id": "theresa_krug",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\fde\\01KYF38BCE86XHP7X3XX3G6NR1\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\derived\\fde\\01KYF38BCE86XHP7X3XX3G6NR1\\silver__capture__reel_transcript\\deepcap_DatAlIDvo83__8e86e98d96f68fd1.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DY5pIkozIVx",
+      "creator_id": "ek_blair",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\bf8\\01KYF39N481AYFF49H9AMW0Y9X\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\derived\\bf8\\01KYF39N481AYFF49H9AMW0Y9X\\silver__capture__reel_transcript\\deepcap_DY5pIkozIVx__14b81097ba4d7190.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7381649202134207786",
+      "creator_id": "marinabarnoo",
+      "relationship": "apparently_independent",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\178\\01KYF1X0V8TTNZ9KH718V1CTJ8\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7537429735865978125",
+      "creator_id": "melisdoesmakeup",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "shade_and_color_fit"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\353\\01KYF20WYRDWHNYT7A5R34KBR3\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7482167773292989727",
+      "creator_id": "marewiththehair",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\3f3\\01KYF1ZSXCM9QBVRABM3SKV0KN\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_official_DbONTyYSmTS",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-25",
+      "direction_event_tags": [
+        "body_category_expansion",
+        "fragrance_expansion",
+        "retail_launch_timing"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DbMHFSlkl3x",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-24",
+      "direction_event_tags": [
+        "body_category_expansion",
+        "fragrance_expansion",
+        "retail_launch_timing",
+        "hydration_platform"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DbJDdz6FL_P",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-23",
+      "direction_event_tags": [
+        "body_category_expansion",
+        "fragrance_expansion",
+        "retail_launch_timing",
+        "hydration_platform"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DYkQGiSFJVQ",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "hydration_and_moisture"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-05-20",
+      "direction_event_tags": [
+        "fragrance_expansion",
+        "hydration_platform",
+        "lip_franchise",
+        "award_or_social_proof",
+        "giveaway_or_community_activation"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DbGgXb7ynHH",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-22",
+      "direction_event_tags": [
+        "retail_launch_timing"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DbLnqyuFD67",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-24",
+      "direction_event_tags": [
+        "body_category_expansion",
+        "fragrance_expansion",
+        "hydration_platform"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DXwwFV1FI7h",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-04-30",
+      "direction_event_tags": [
+        "retail_launch_timing"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DYr-dtXy3XE",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor",
+        "shade_and_color_fit"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-05-23",
+      "direction_event_tags": [
+        "retail_launch_timing",
+        "hydration_platform"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DZsWUUJS9vn",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-06-17",
+      "direction_event_tags": [
+        "product_marketing"
+      ]
+    },
+    {
+      "unit_id": "ig_official_Dav6X6ckua9",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-13",
+      "direction_event_tags": [
+        "product_marketing"
+      ]
+    },
+    {
+      "unit_id": "ig_official_DZ8QMCwEpGw",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-06-23",
+      "direction_event_tags": [
+        "product_marketing"
+      ]
+    },
+    {
+      "unit_id": "ig_official_Da8LUpMFN5X",
+      "creator_id": "summerfridays",
+      "relationship": "owned",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\c42\\01KYF1RQRX0M3KM2K2BKGDNV6G\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": "2026-07-18",
+      "direction_event_tags": [
+        "product_marketing"
+      ]
+    },
+    {
+      "unit_id": "tt_7232313070897483051",
+      "creator_id": "karly_alane",
+      "relationship": "apparently_independent",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r1-20260801\\specialists\\co3\\native_social\\tiktok\\7232313070897483051_packet\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7527741844298435895",
+      "creator_id": "by_erinmarie",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r3-20260801\\specialists\\co3\\tiktok\\7527741844298435895_packet_final\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7379382940272217386",
+      "creator_id": "makeup2themaxx",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\tiktok\\7379382940272217386_packet_retry2\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7354686188327832833",
+      "creator_id": "walkingtower",
+      "relationship": "apparently_independent",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\tiktok\\7354686188327832833_packet\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "tt_7496318205502246190",
+      "creator_id": "micahlambeth",
+      "relationship": "apparently_independent",
+      "axis_ids": [],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\tiktok\\7496318205502246190_packet\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DWE8EFkDHes",
+      "creator_id": "eli_leimer",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r1-20260801\\specialists\\co3\\retailer_onboarding_lake\\raw\\302\\01KYWVZWQAAB9R56X6H92699D4\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11r1-20260801\\specialists\\co3\\retailer_onboarding_lake\\derived\\302\\01KYWVZWQAAB9R56X6H92699D4\\silver__capture__reel_transcript\\deepcap_DWE8EFkDHes__2fbbba72d6ec3626.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DPrnH9Cj6qI",
+      "creator_id": "eli_leimer",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\raw\\971\\01KYWP3BKAZ89SSFRB6AR76EYE\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\derived\\971\\01KYWP3BKAZ89SSFRB6AR76EYE\\silver__capture__reel_transcript\\deepcap_DPrnH9Cj6qI__c158d2521effb6ad.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DXb1FcNhdXP",
+      "creator_id": "michael_park_md",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\raw\\7a4\\01KYWP4NR92J4J3YY7G22TD6Y4\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\derived\\7a4\\01KYWP4NR92J4J3YY7G22TD6Y4\\silver__capture__reel_transcript\\deepcap_DXb1FcNhdXP__9f5ba8bed4ae5d60.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "ig_DQLAZt7DSav",
+      "creator_id": "goforthandgrow",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\raw\\598\\01KYWP5J0EETND77EW41JSB88P\\manifest.json"
+      ],
+      "verified_derived_records": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\derived\\598\\01KYWP5J0EETND77EW41JSB88P\\silver__capture__reel_transcript\\deepcap_DQLAZt7DSav__3da858ec75ebf227.json"
+      ],
+      "published_at": null,
+      "direction_event_tags": []
+    },
+    {
+      "unit_id": "yt_nkKjxEQgBp8",
+      "creator_id": "christi_rose",
+      "relationship": "apparently_independent",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "packet_manifests": [
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\native_social\\youtube\\nkKjxEQgBp8_caption_packet\\manifest.json",
+        "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\native_social\\youtube\\nkKjxEQgBp8_watch_packet\\manifest.json"
+      ],
+      "verified_derived_records": [],
+      "published_at": null,
+      "direction_event_tags": []
+    }
+  ],
+  "ceiling": "Keyword candidates were fresh-read from hash-validated source-native packets and self-hash-verified transcript records. They establish qualitative corroboration, not prevalence or creator-market share."
+}

@@ -108,18 +108,35 @@ The future-facing operating name is **Forseti Intelligence Cycle**. Its
 canonical phases are:
 
 1. **Understanding** — produce a decision-neutral understanding of the subject.
-2. **Problem Framing** — use that understanding to frame the consequential
-   problem or decision; `Problem` is acceptable only as informal shorthand.
+2. **Deliver** — frame the consequential problem or decision from that
+   understanding and produce the commissioned decision-bearing artifact.
+   `Problem Framing` is this phase's historical name (`Problem` its informal
+   shorthand); problem framing survives as the phase's first synthesis step.
 
 Do not commission future work with an unqualified `Phase 1` or `Phase 2` label.
 Historical filenames, reports, handoffs, and receipts retain their original
 phase language because changing it would falsify provenance.
 
-Each phase normally uses two completed operator/model turns:
+Each phase has two possible operator/model turns, but a phase name does not
+commission both. Within the Forseti Intelligence Cycle, an owner instruction
+that says **Understanding** or uses historical **Phase A** language without
+also naming a synthesis deliverable commissions **Acquire & Seal only**. The
+task stops after the acquisition seal whether it passes or blocks. A passing
+seal makes a later Synthesize turn eligible; it does not authorize or start
+that turn. Synthesis requires an explicit current commission or a separately
+authorized follow-up.
+
+The two possible turns are:
 
 1. **Acquire & Seal.** Bind the phase-specific question, intended consumer and
    use, scope, and outcome signals. Complete prerequisite and authority checks
    and seal the phase-specific CSB before source-heavy work. Before capture,
+   require `CO0` to be the top-level controller with three worker slots and
+   record a capability preflight for Google recovery state, the Reddit weekly
+   lake reader, both paid-ad transparency routes, and conditional TikTok Shop.
+   `BLOCKED_CONTROLLER_CAPACITY` stops before dispatch; it never licenses a
+   serialized or checkpoint-only substitute. The first real SERP Phase 1 seed,
+   not a sacrificial query, is the Google route-health observation. Then
    resolve every selected source to the current source-family authority and its
    banked recipe-card or recon-index route when one exists. An established
    source-specific route is not replaced by generic fallback browsing: Ulta and
@@ -140,31 +157,336 @@ Each phase normally uses two completed operator/model turns:
    receipt. An unresolved one leaves acquisition blocked unless the owner
    explicitly narrows the commission; it is never carried forward merely as a
    final-report caveat, silent omission, or inferred absence.
-2. **Deliver.** Start in fresh context from the phase acquisition seal. Verify
-   the acquisition gate before synthesis. Then craft, validate, and hand off the
-   phase deliverable without making an evidence, route-exhaustion, provenance,
-   or coverage claim that the seal does not support.
+2. **Synthesize.** Start in fresh context from the phase's governing
+   acquisition gate: Understanding synthesis requires its own passing phase
+   seal; Deliver synthesis requires the passing Understanding seal plus a
+   typed capture return for every consumed supplement (a supplement that would
+   change a sealed claim ceiling requires a Deliver-phase seal first). Verify
+   that gate before synthesis. Then craft, validate, and hand off the phase
+   deliverable without making an evidence, route-exhaustion, provenance, or
+   coverage claim that the governing seal and returns do not support.
 
 The two turns optimize differently. Acquire & Seal maximizes decision-useful
 completeness under the integrity floor: every material information job is
 supported, contradicted, meaningfully bounded, or honestly blocked/gapped before
 the seal can pass. Compactness, actor count, and token minimization do not lower
-that acquisition standard. Deliver applies Smallest Complete Intervention to the
-human artifact after the gate passes, preserving the decisive evidence,
-counter-case, uncertainty, provenance, reversal conditions, and next action.
+that acquisition standard. The Synthesize turn applies Smallest Complete
+Intervention to the human artifact after the gate passes, preserving the
+decisive evidence, counter-case, uncertainty, provenance, reversal conditions,
+and next action.
 
-For current US consumer-beauty Understanding, use the playbook's default
-four-evidence-actor route unless the owner explicitly overrides it: `CO0` plus
-exactly `CO1`, `CO2`, and mandatory `CO3`. The dispatcher is mechanical and is
-not a fifth evidence actor. `CO3` always owns customer/community evidence and
-selected depth; adaptive depth controls how far it continues, never whether the
-actor or customer-understanding job exists.
+Every company Understanding uses this internal Acquire & Seal order: bind the
+question, validate the commission-stage board, and complete the capability
+preflight; run or validly reuse SERP Phase 1; feed its typed ledger and queues
+into the `CO1`-`CO3` specialist
+fan-out; wait for their terminal returns; run SERP Phase 2 from the combined
+findings; then seal. Reddit/community capture is `CO3` fan-out work, not a
+Phase 2 responsibility. A missing or materially blocked Phase 2 result remains
+visible in the existing route, receipt, provenance, and gap fields and forces
+the blocked seal state; a non-material typed Phase 2 limitation stays honestly
+recorded without being promoted into a material blocker. The SERP phase
+labels are lane-local and do not replace the canonical Understanding and
+Deliver phase names.
 
-The normal budget is two turns per phase, not a fake-success cap. A blocked,
-skipped, silently substituted, or incompletely captured required route leaves
-Acquire & Seal blocked. It does not manufacture a Deliver turn. Context growth
-or compaction never excuses losing route choices or evidence: those facts live
-in the durable seal.
+The commission-stage coverage ledger always carries required rows for Google
+Ads Transparency Center, Meta Ads Library, and the current Reddit weekly Data
+Lake read. Paid-ad attempts execute after `CO1` binds the exact advertiser
+identity. `CO3` reads the weekly lake before new Reddit discovery. Native
+TikTok, Instagram, and YouTube capture is conditional on an ambiguous listing
+whose native content could change the bound answer. TikTok Shop is conditional
+on a creator-led subject or evidence that the venue is commercially material;
+its route failures remain typed as wrong country, TikTok-specific block, or
+unhealthy egress session.
+
+Use the playbook's default four-evidence-actor route unless the owner explicitly
+overrides it: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. The
+dispatcher is mechanical and is not a fifth evidence actor. `CO3` always owns
+customer/community evidence and selected depth; adaptive depth controls how far
+it continues, never whether the actor or customer-understanding job exists.
+Each specialist terminal is single-writer. `CO0` consumes its returned hash but
+does not edit the file; corrections return to the owning actor, which publishes
+a replacement hash.
+
+Broad decision-neutral company Understanding uses
+`broad_company_understanding_v1`. It separates evidence-family coverage from
+independent depth within each material family. Before a passing seal, its
+current entry floors are:
+
+- 12 outside-in units from 12 independent origins;
+- 750 deduplicated retailer-review rows across at least two distinct corpora,
+  five product contexts, three categories, and observed low/mid/high rating
+  bands;
+- 20 independent Reddit/forum threads across at least four communities and
+  three topic categories; and
+- 30 source-native social posts from at least 20 creators, at least two
+  platforms, and at least two observed perspectives among positive, neutral,
+  critical, and mixed.
+
+Subject-owned native posts may contribute source-native content-unit depth when
+their relationship to the subject is explicit in the ledger or its pinned
+terminal evidence. They count as one creator after creator-ID deduplication,
+must be reported separately from non-owned posts, and cannot support an
+independent-creator-landscape claim. The creator floor remains the independent
+distribution counterweight to repeated posts from any one account.
+
+When the subject is a consumer brand and product/customer experience is
+material, the commission receipt selects
+`broad_consumer_brand_understanding_v3`, and the acquisition seal binds an
+`understanding_evidence_depth_v4` ledger. The selected completion profile stays
+in the company record through completion; it is not a commission-only field.
+The profile retains the aggregate entry floors
+above except that Reddit/forum depth rises to 40 usable unique threads. Forty
+is a minimum floor, never a completion target. The mechanical
+`reddit_candidate_frontier` remains complete only when every discovered
+candidate thread has a terminal disposition and an accounted discovery job,
+the captured set equals the ledgered independent threads, non-captured
+candidates carry reasons, and each independent thread pins its own source-native
+artifact. This proves bounded route accounting, never that the whole internet
+was searched.
+
+V4 separates evidence strength from decision maturity. `strength` remains
+`signal`, `recurring`, or `strong`; every material axis separately declares
+`decision_maturity`, `closure_basis`, and `claim_ceiling`. A source-rich axis may
+close `decision_mature` with `evidence_supported` and
+`strong_qualitative`. A source-limited axis may also close `decision_mature`
+after `route_bounded_source_exhaustion`, but only with
+`bounded_observation_only`; scarcity never becomes affirmative attack/defend
+authority. Fewer than 40 Reddit/forum threads additionally requires the explicit
+floor exception after every selected target and planned family is terminal.
+Forty never closes a materially open axis.
+
+Decision maturity also requires a compact `decision_usefulness` block on the
+existing product-axis ledger row; do not create a parallel score or report. The
+block records `status`, the customer tension, segment/condition, behavior or
+purchase consequence, competitor destination, strongest counterevidence, the
+competitive decision that changes, decision-bearing support references, and
+limitations. `evidence_supported` may close only as `decision_useful` or
+`strategically_material`. `route_bounded_source_exhaustion` closes as
+`source_exhausted_but_weak`: it is decision-mature because the selected routes
+are exhausted, not because the sparse evidence licenses a strong attack or
+defend claim. `evidence_covered_but_not_decision_useful` remains open for a
+passing seal. Decision-bearing references must already be valid support
+references for that axis; the validator proves shape and traceability, while
+human review judges whether the synthesis is strategically warranted.
+
+Before a broad consumer-brand Phase A seal is accepted for synthesis or landed,
+commission the final delegated review-and-patch under the project-owned
+delegated-review convention. The reviewer reads every
+`decision_bearing_support_ref` in its source-native body and verifies that the
+subject product or brand is locally anchored, the cited body supports the
+assigned axis and role, alternative-product returns/repurchases/preferences are
+not attributed to the subject, and the named counterevidence genuinely tests
+the competitive decision. The reviewer then reads two independent
+source-native spot checks per material axis from outside that axis's cited
+decision-bearing bundle. One load-bearing mismatch expands only the affected
+axis to a stratified ten-reference sample. Expand beyond that axis only when at
+least two of those ten references fail load-bearing checks, the mismatch cannot
+be resolved, or the same defect class appears across at least three axes. Full
+corpus rereading is not the default. Any bounded patch must be revalidated
+against the acquisition seal and separately adjudicated by the Chief Architect.
+This semantic review catches valid-but-misattributed citations that mechanical
+shape and hash checks cannot.
+
+Call this terminal boundary the **decision frontier**. Do not call it a value
+frontier: `value` remains the customer-facing product proposition (benefit,
+quantity, durability, and performance for price). Do not call it a discovery
+frontier either; more relevant pages can exist after decisions are mature.
+
+Before Phase 2, `CO3` runs two pipelined customer-discovery lanes. The
+**source-neutral corroboration lane** starts with a bounded unrestricted-domain
+brand/product review baseline, then uses retailer-review coding and other
+captured evidence to run claim-directed editorial, specialist, retailer, and
+comparison checks. A search result, featured snippet, or AI-generated search
+summary is a discovery pointer only; evidence credit requires the source-native
+body, relationship classification, and an admitted evidence unit. Company-owned
+and DTC pages establish product identity, availability, price, ingredients, and
+official claims, but never independently corroborate customer outcomes.
+
+The **candid community lane** groups Reddit discovery into named query families
+and runs the proven high-yield set in this order: balanced brand-plus-axis
+baseline; behavior/consequence/displacement; a bounded consumer-native
+product-name or shorthand probe without the brand where the identity remains
+unambiguous; and condition/post-use. Qualify generic product names with the
+category or use case rather than issuing ambiguous or blindly copied long-title
+queries. This probe tests whether brand-term search missed insider language. By
+default, it covers only a bounded set of hero products. Admit a non-hero product
+only when already captured evidence exposes a material axis, condition, behavior
+consequence, competitor destination, contradiction, or sampling-risk question
+for it; never turn the family into a catalog-wide crawl. It remains the third
+mandatory family and is still recorded under the existing
+`brandless_exact_product` family kind; that kind name is historical slot
+identity, not a demand for exact official product titles. Community-diversity
+probing is conditional on observed concentration.
+
+The two lanes may run concurrently. A material signal in either lane launches
+only a bounded counterpart check for the same axis, segment, condition,
+consequence, or competitor destination; it does not duplicate every query
+across sources or wait for a whole discovery cycle to finish. Every community
+family records kind, role, axis scope, planned time, jobs, and terminal status;
+job `executed_at` timestamps prove actual family order, while `planned_at`
+remains planning lineage. The validator compares mandatory family completion
+with the actual hash-pinned Phase 2 search-job timestamps, not a self-declared
+query-family role. A run that predates this ordering rule may preserve one
+exact, run-scoped `pre_contract_historical_run` exception with the observed
+boundary timestamps, matching cycle ID, reason, and
+`future_runs_covered: false`; the exception records the defect and never becomes
+a reusable waiver. Every batch records useful-thread yield separately from
+structured material additions. The validator reconciles the family, job,
+artifact, candidate, and batch accounting rather than accepting prose closure.
+That family, candidate, and batch reconciliation covers the community lane
+only. Source-neutral lane work carries no separate query-family or candidate
+frontier: its selected pointers stay inside the existing planned-job and owning
+route accounting, and its admitted units stay inside the existing evidence-unit,
+relationship-typing, and family-depth rules. No mechanical check proves the
+source-neutral lane ran, so its coverage and gaps stay honestly stated in the
+existing route, receipt, and gap fields rather than inferred from a passing
+seal.
+
+The profile renames the human-facing outside source
+family to **External company, editorial and industry context** and adds the
+cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
+audit-only through `--allow-legacy-consumer-v1` and
+`--allow-legacy-consumer-v2`; they do not satisfy a new run.
+
+The v4 ledger inventories every observed material product-experience axis as
+`pain`, `delight`, or `mixed`, with a terminal disposition. `signal` establishes
+possible existence. `recurring` requires at least three qualifying independent
+origins across two non-retailer evidence families. `strong` additionally
+requires axis mentions in two deduplicated retailer corpora, at least six
+qualifying distinct non-retailer origins across at least two families with at
+least two origins in each, and an explicit retailer choice consequence
+appropriate to the axis polarity. Reddit threads are discussion origins;
+social posts deduplicate to creator; external units deduplicate to publisher or
+institution. Same-origin items remain citable but add no
+corroboration-strength credit. These are hybrid entry bars, not stopping
+quotas. Same-topic independent sources remain useful. Owned,
+retailer-operated, disclosed paid/affiliate, and relationship-unknown social
+posts do not satisfy independent axis corroboration. External support must be
+typed as consumer editorial or trade press, carry an explicit
+`apparently_independent` relationship, and come from an independent origin;
+company profiles, corporate/transaction records, paid or affiliate material,
+and relationship-unknown external units do not qualify.
+
+Axis cardinality is evidence-derived, not fixed. A prior brand's axis count is
+not a template quota for the next brand. Preliminary mechanical or semantic
+coding may nominate a provisional inventory so Phase 2 and continuation work
+know what to test; final adjudication may merge, split, rename, add, or exclude
+those nominations when the source-native evidence warrants it.
+
+V3 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
+unique text-bearing review in each admitted corpus, reconciles excluded
+no-usable-text rows to the corpus denominator, and preserves native review ID,
+product context, incentive state, axis codes with axis-specific choice outcomes,
+overall choice outcomes, and a source-row reference. Separating the outcomes
+prevents a consequence attributed to one product issue from being copied onto
+every issue mentioned in the review. Every product context must belong to its
+declared retailer corpus. The validator recomputes per-corpus axis mentions,
+negative/positive choice rows, and disclosed-incentive counts. Cross-retailer
+pooling is allowed only when corpus boundaries, selection, and deduplication are
+comparable; otherwise report providers separately. These are captured-sample
+incidences, never market return rates or customer-population prevalence.
+
+Every material v4 axis receives three adaptive Phase 2 goals after a hash-pinned
+axis inventory exists: `corroborate_or_segment`, `compare_switch_or_value`, and
+`disconfirm_or_strongest_delight`. Search results are discovery pointers, not
+evidence; a `captured` job must resolve to a source-native body and a ledgered
+evidence unit. Every selected target is reconciled as `used`,
+`captured_excluded`, `no_material_yield`, `blocked`, or `unavailable`. Every
+material axis needs at least three usable non-retailer support units, whether
+or not they add a new distinct-origin credit, unless that axis records proven
+source exhaustion. Related same-topic sources remain as sharpening volume;
+exact duplicates collapse and do not inflate distinct-origin spread.
+
+Community support is comment-coded: thread and comment identity, product
+context, axis, contribution, choice, alternative brand when present, explicit
+outcome, source reference, and parser limitation. Every usable independent
+Reddit/forum thread has at least one such row, and an axis support reference
+into a community thread must be backed by a coding row for that axis and
+thread carrying the same contribution, choice, and alternative brand; a
+support claim no coded comment states is invalid. SERP or search-registry
+artifacts never satisfy a native-body reference. A useful new thread is
+informational yield, not an automatic reopen. A material addition is limited to
+a new axis, evidence-tier change, mechanism, segment or condition, behavior
+consequence, competitor destination, contradiction, sampling-risk change, or
+competitive-action change, and must name its affected axes, evidence references,
+and decision effect. It reopens only those axes and directly adjacent axes when
+the recorded decision effect justifies adjacency. Each material axis closes on
+two later live continuation families that include it in scope, use different
+family kinds, queries, and artifacts, occur after the mandatory high-yield set,
+and add no material addition affecting that axis. The two families may still add
+usable threads. Each batch declares `new_usable_reddit_threads`, and the
+validator recomputes that count against captured candidates. "Later" and reset
+ordering use observed job execution time, not merely when a family was planned.
+
+Do not perform final semantic adjudication while acquisition is still capable
+of changing the corpus. Use the provisional axis inventory and a lightweight
+maturity scan to identify open axes, run the evidence-floor plus material-
+exhaustion loop (including only targeted follow-ups), terminally account the
+frontier, and only then finalize decision usefulness and run the delegated
+semantic check. The early scan guides acquisition; it is not the final verdict.
+Owned social rows carry a normalized `YYYY-MM-DD` observed date and
+direction-event tags so synthesis can derive a factual direction timeline without
+a separate Phase A artifact. Preserve the source's original date text in the
+pinned source artifact.
+
+These are anti-token entry floors, not completion quotas, prevalence samples,
+or market-representativeness claims. A passing seal additionally requires
+explicit echo/syndication adjudication, every material seam dispositioned,
+every material axis to be `decision_mature` under one of the two truthful
+closure bases, the aggregate Phase A decision frontier to have no open axes,
+and every remaining move to be typed as dominated, source-exhausted,
+unsafe/prohibited, blocked with no route, or non-material. Same-family
+independent evidence is welcome when it corroborates, contradicts, sharpens,
+segments, explains, or changes confidence. Specialists may lock a deterministic
+batch for execution efficiency, but they must not freeze the whole adaptive job
+set before evidence reveals the next material frontier.
+
+The phase acquisition seal uses `phase_acquisition_seal_v3` accounting and is
+validated by `run_phase_acquisition_seal_validation.py`. Every planned job is
+present exactly once in completed, blocked, or unrun state, including every
+licensed SERP Phase 2 query. A valid empty Phase 2 decision receipt does not
+erase unrun acquisition. The seal also carries artifact hashes, pending jobs,
+reusable artifacts and their invalidation conditions, and the Phase 1
+continuation mode (`full`, `bounded_salvage`, or `stop`). Bounded salvage and
+stop remain blocked. Resume re-hashes reusable artifacts and executes only
+pending jobs unless the question, bytes, currentness, or owning authority
+changed.
+
+For `broad_company_understanding_v1`, v3 also hash-pins an
+`understanding_evidence_depth_v1` ledger. The validator recomputes the profile's
+family-depth and distribution metrics from that ledger, requires its subject
+and cycle identity to match the seal, and checks the closure receipt. Job
+completion without that evidence-depth and saturation accounting cannot
+authorize synthesis. Historical `phase_acquisition_seal_v2` artifacts are
+preserved and may be checked only with the validator's explicit
+`--allow-legacy-v2` audit switch; they do not satisfy the current broad-
+Understanding completion contract.
+
+For `broad_consumer_brand_understanding_v3`, v4 instead hash-pins an
+`understanding_evidence_depth_v4` ledger and applies the product-axis,
+row-derived retailer-incidence, comment-coding, source-native capture,
+target-reconciliation, focused-search, candidate-frontier accounting, proven
+query-family, decision-maturity, and axis-aware closure checks above. A passing
+family-count ledger without those
+checks is invalid. Repository-tracked evidence artifacts must be pinned with
+repo-relative locators; absolute locators are reserved for machine-local
+raw-lake roots outside the repository, and the validator rejects a
+repo-internal absolute locator as nonportable.
+
+For company Understanding, the seal must carry non-empty job accounting for
+`serp_phase1`, `official_retailer_authorization`,
+`google_ads_transparency`, `meta_ads_library`, `retailer_full_pdp`,
+`reddit_weekly_lake`, `reddit_community_scout`, and `serp_phase2`, and must
+represent all five execution phases: `serp_phase1`, `CO1`, `CO2`, `CO3`, and
+`serp_phase2`. A typed no-work decision is still a planned job; omission is not.
+Triggered TikTok Shop and native TikTok, Instagram, or YouTube capture inherit
+the same accounting rule.
+
+When both turns are explicitly commissioned, two turns are the normal budget,
+not a fake-success cap. A blocked, skipped, silently substituted, or
+incompletely captured required route leaves Acquire & Seal blocked. It does not
+manufacture a Synthesize turn. Context growth or compaction never excuses losing
+route choices or evidence: those facts live in the durable seal.
 
 The cycle optimizes toward six outcome signals:
 
@@ -210,9 +532,14 @@ judgment. CSB may ask rows to preserve source-visible upvotes, helpful votes,
 likes, views, shares, comment counts, reply counts, score state, visible
 sort/rank/order, pinned/hearted/official-response markers, direction, visible
 audience-fit basis, baseline context, and discount reasons when supplied or
-source-backed. CSB must not turn those facts into demand proof, Commit/Scale
-support, credibility, independence, graph weight, classifier mapping, final
-resonance weight, or Action Ceiling.
+source-backed. Every engagement snapshot used during acquisition-record
+construction or analysis preserves its observation date at minimum and an ISO
+8601 `observed_at` timestamp when available, together with the source locator;
+relative source labels remain in the pinned body. The final human deliverable
+may omit the displayed date when it is not decision-relevant, but its working
+provenance may not. CSB must not turn those engagement facts into demand proof,
+Commit/Scale support, credibility, independence, graph weight, classifier
+mapping, final resonance weight, or Action Ceiling.
 
 The temporary prompt is too high-lock-in to adopt wholesale because it mixes
 five different objects in one artifact: commission intake, venue playbook,
@@ -280,14 +607,22 @@ authorize claims about internal management intent, revenue, margin, cash
 generation, sell-through, or undisclosed operations.
 
 Use company-owned evidence to establish the officially named US retailer board
-before probing retailer surfaces. Resolve Sephora explicitly and select any
-route-admissible retailers that add material assortment, commercial, or customer
-evidence; there is no fixed retailer quartet or count. Use the existing
+before probing retailer surfaces. When at least four company-authorized,
+target-market, route-admissible third-party retailers exist, select and attempt
+at least four, favoring venues that add distinct assortment, commercial, or
+customer evidence. The company-owned DTC site does not count. When fewer than
+four qualify, select all that qualify and record
+`AUTHORIZED_RETAILER_SHORTFALL` with the observed count and reasons; never fill
+the floor with an unauthorized, duplicate, or market-unpinned venue. Resolve
+Sephora explicitly. When it is officially named and route-complete, it counts as
+one selected retailer and remains subject to the primary rule below. When
+another qualified retailer is available, replace a blocked selected route to
+restore four usable venues while preserving the block. Use the existing
 coverage-ledger requirement, rationale, status, yield, access, and typed-gap
 fields to preserve each authorization and route test with its exact result.
 Current result types include `NOT_LISTED`, `ROUTE_BLOCKED`, `MARKET_UNPINNED`,
-and `SURFACE_NOT_EXPOSED`; never infer a listing or award completion credit for a
-failed or unobserved route.
+`SURFACE_NOT_EXPOSED`, and `AUTHORIZED_RETAILER_SHORTFALL`; never infer a
+listing or award completion credit for a failed or unobserved route.
 
 For every selected retailer, acquire its available grid surface,
 deterministically union and reconcile exact listings with the owned candidates,
@@ -303,11 +638,21 @@ seller/authenticity, related products, Q&A availability, review provider, and
 native identifiers or metadata. The common baseline does not require a complete
 global franchise -> parent-product -> variant/SKU -> retailer-listing graph.
 
-Sephora, Ulta, and Target expose brand or assortment grids. Amazon exposes a
-query-bound ranked-search window complete only for its declared query and
-reachable result window, never a guaranteed complete or authorized-only catalog.
-Projection capability is not route admission. Point-in-time retailer metrics are
-traction proxies, never sales, share, or trend.
+Sephora, Ulta, and Target expose brand or assortment grids. Before selecting
+Amazon, classify it separately from marketplace presence:
+`COMPANY_AUTHORIZED` requires a company-owned source that explicitly names or
+links the target-market Amazon store or retailer;
+`MARKETPLACE_IDENTITY_VERIFIED_NOT_COMPANY_AUTHORIZED` requires exact branded
+storefront or seller/listing identity but carries no company authorization; and
+`MARKETPLACE_PRESENCE_UNVERIFIED` means exact identity is not proven. Only
+`COMPANY_AUTHORIZED` counts toward the four-retailer floor. A
+verified-but-not-company-authorized route may supplement marketplace, price, or
+customer evidence with that limitation attached; an unverified route remains a
+discovery pointer. Amazon exposes a query-bound ranked-search window complete
+only for its declared query and reachable result window, never a guaranteed
+complete or authorized-only catalog. Projection capability is not route
+admission. Point-in-time retailer metrics are traction proxies, never sales,
+share, or trend.
 
 Only after the qualified-grid and exact-parent PDP baseline may expensive review
 or Q&A depth be selected. Evidence-selected depth may resolve established
@@ -441,7 +786,7 @@ the five-way complaint classification and stated-sample proportionality rules
 appears in the community lens; and defensibility raw material (collected,
 never judged) in the
 comparator lens. Understanding collects generic defensibility raw material once;
-Problem Framing may request only decision-specific fresh supplements, never a
+the Deliver phase may request only decision-specific fresh supplements, never a
 general re-scan. Retail, customer, and claims research routes receive first attention,
 subject to the named-job and substitution rules rather than quotas. The
 linked-commercial-claim admission principle governs what the narrative
@@ -475,6 +820,12 @@ result, never completion. Generic and specialist forums use category-aware
 hidden-venue discovery rather than a universal platform list. Blocked, missing,
 dominated, or non-material coverage becomes a typed gap, exclusion, or
 `not_applicable` record with rationale.
+
+For Reddit, the current weekly Data Lake read is mandatory and precedes new
+external discovery; it is not a substitute for exact thread/comment capture.
+Valid content-mode `www_reddit_realchrome_cdp` packets and admitted old-Reddit
+packets feed the same weekly reader. Capture Spine preserves a source block; it
+does not bypass one.
 
 CSB owns profiles, source-family requirements, time posture, and typed
 gaps/requests. Scanning owns intelligent-walk selection. Capture owns venue
@@ -783,6 +1134,163 @@ If the owner accepts this option, the next authorized step is a
 prompt-orchestrated durable signal-board prompt that references this packet and
 the current classifier/proof boundaries. If the owner does not accept it, no
 prompt artifact or implementation should be created from the temp file.
+
+## Direction Change Propagation — Axis Decision Usefulness
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Consumer-brand Phase A decision maturity now requires an axis-local,
+    traceable decision-usefulness synthesis in the existing evidence ledger;
+    evidence strength alone cannot close an axis. Actual Phase 2 timestamps,
+    rather than query-family labels, enforce the mandatory-family ordering,
+    with only an exact run-scoped historical migration exception.
+  trigger: validation_philosophy
+  related_triggers: [workflow_authority, output_authority]
+  controlling_sources_updated:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/commission_signal_board/README.md
+    - forseti-harness/runners/run_phase_acquisition_seal_validation.py
+    - forseti-harness/tests/unit/test_phase_acquisition_seal_validation.py
+  downstream_surfaces_checked:
+    - AGENTS.md
+    - .agents/workflow-overlay/README.md
+    - .agents/workflow-overlay/source-of-truth.md
+    - .agents/workflow-overlay/validation-gates.md
+    - docs/workflows/forseti_repo_map_v0.md
+    - docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
+    - docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
+    - docs/workflows/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/acquisition_seal.md
+  intentionally_not_updated:
+    - path: AGENTS.md and .agents/workflow-overlay/
+      reason: >
+        Project-wide workflow and validation mechanics are unchanged; this is
+        the consumer-brand Phase A domain contract they already route to.
+    - path: docs/workflows/forseti_repo_map_v0.md
+      reason: No canonical path, owner, or retrieval route changed.
+    - path: historical completed consumer-brand runs
+      reason: >
+        The contract is forward-facing. Only the still-unlanded Summer Fridays
+        p11r7 dogfood is regenerated to exercise it.
+  stale_language_search: >
+    rg -n "decision_usefulness|evidence_covered_but_not_decision_useful|source_exhausted_but_weak|mandatory_high_yield_query_family_not_pre_phase2"
+    forseti/product/spines/commission_signal_board forseti-harness
+  stale_language_search_result: >
+    Executed 2026-08-04 after implementation. Hits are the owning authority,
+    canonical prompt, renderer, validator, and focused tests. No checked live
+    surface still treats evidence strength alone as decision maturity, and the
+    Phase 2 ordering finding now comes from actual pinned search timestamps.
+  non_claims:
+    - not proof that an axis synthesis is strategically correct
+    - not population prevalence
+    - not a new evidence family, scoring system, or per-run report
+    - not authorization to acquire sources or start Deliver
+```
+
+## Direction Change Propagation — Phase A Semantic Source Review
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Broad consumer-brand Phase A now requires a bounded final delegated
+    semantic review of every decision-bearing citation plus two independent
+    source-native spot checks per material axis. The review verifies local
+    subject anchoring, axis/role fit, competitor-event attribution, and genuine
+    counterevidence, with affected-axis-first escalation rather than a default
+    full-corpus reread.
+  trigger: validation_philosophy
+  related_triggers: [workflow_authority, output_authority]
+  controlling_sources_updated:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/commission_signal_board/README.md
+  downstream_surfaces_checked:
+    - .agents/workflow-overlay/delegated-review-patch.md
+    - .agents/workflow-overlay/prompt-orchestration.md
+    - .agents/workflow-overlay/review-lanes.md
+    - docs/prompts/templates/review/delegated_review_return_adjudication_v0.md
+    - forseti-harness/runners/run_phase_acquisition_seal_validation.py
+  intentionally_not_updated:
+    - path: .agents/workflow-overlay/
+      reason: >
+        Generic delegated-review mechanics, vendor separation, patch bounds,
+        and Chief Architect adjudication are unchanged; the new sampling and
+        attribution checks are consumer-brand Phase A domain requirements.
+    - path: forseti-harness/runners/run_phase_acquisition_seal_validation.py
+      reason: >
+        Source-body meaning and competitor attribution require semantic review;
+        the validator continues to enforce shape, hashes, and reference
+        resolution without pretending to judge prose meaning.
+    - path: docs/prompts/templates/review/delegated_review_return_adjudication_v0.md
+      reason: >
+        Return adjudication mechanics are unchanged; the Phase A commission,
+        not the generic return template, owns what evidence the delegate reads.
+  stale_language_search: >
+    rg -n "decision_bearing_support_ref|source-native spot checks|Full corpus rereading|competitor-event attribution"
+    forseti/product/spines/commission_signal_board
+  non_claims:
+    - not a requirement to reread the full captured corpus
+    - not mechanical proof of semantic correctness
+    - not population prevalence or buyer proof
+    - not authorization to start Deliver
+```
+
+## Direction Change Propagation — Understanding Scope Default
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: >
+    Within the Forseti Intelligence Cycle, an unqualified Understanding or
+    historical Phase A instruction commissions Acquire & Seal only; Deliver
+    must be explicitly commissioned and never starts merely because a seal
+    passes.
+  trigger: lifecycle_boundary
+  related_triggers:
+    - workflow_authority
+    - output_authority
+  controlling_sources_updated:
+    - forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md
+  downstream_surfaces_checked:
+    - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
+    - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+    - forseti/product/spines/commission_signal_board/README.md
+    - docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
+    - AGENTS.md
+    - .agents/workflow-overlay/source-loading.md
+    - .agents/workflow-overlay/prompt-orchestration.md
+    - docs/workflows/forseti_repo_map_v0.md
+  intentionally_not_updated:
+    - path: AGENTS.md
+      reason: >
+        The root already routes Intelligence Cycle behavior to the owning
+        product authority; repeating this subject-specific default would fork it.
+    - path: .agents/workflow-overlay/source-loading.md
+      reason: >
+        Source selection is unchanged; the amendment changes commission scope
+        after the Commission Signal Board sources are loaded.
+    - path: .agents/workflow-overlay/prompt-orchestration.md
+      reason: >
+        Generic prompt mechanics are unchanged; the canonical Commission Signal
+        Board prompt now carries the scope default.
+    - path: docs/workflows/forseti_repo_map_v0.md
+      reason: >
+        Canonical entry points and paths are unchanged.
+    - path: docs/prompts/handoffs/summer_fridays_understanding_cold_rerun_20260731_p11.md
+      reason: >
+        The live handoff already explicitly commissions Acquire & Seal only and
+        stops after the seal.
+  stale_language_search: >
+    rg -n "Turn B — Deliver|Deliver turn|makes Deliver eligible|naming \*\*Deliver\*\*|phases are \*\*Understanding\*\* and \*\*Problem Framing\*\*"
+    forseti/product/spines/commission_signal_board
+  non_claims:
+    - not validation
+    - not readiness
+    - not authorization to run acquisition or Deliver
+    - not a rename of historical artifacts
+```
 
 ## Non-Claims
 

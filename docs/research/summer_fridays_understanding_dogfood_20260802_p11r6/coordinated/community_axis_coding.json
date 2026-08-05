@@ -1,0 +1,1894 @@
+{
+  "schema_version": "community_axis_coding_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r6_20260802",
+  "method": "Fresh deterministic read of source-native old Reddit bodies. Rows retain the exact post/comment identifier and a bounded evidence excerpt; regexes nominate axis candidates, while choice and outcome fields require explicit text.",
+  "ceiling": "Captured-thread qualitative evidence, not population prevalence or sentiment measurement.",
+  "rows": [
+    {
+      "thread_id": "11uym2u",
+      "comment_id": "jcqk29a",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/11uym2u/all_summer_fridays_lip_butter_balms_review/",
+      "parser_limitation": null,
+      "evidence_text": "id thought i review all for anyone curious and i swatched them with the applicator twice on my hand Brown Sugar is a sugary vanilla extract scent. It is a muted plum on me, can get darker if i build it up. I said it somewhere, but if youve watched Wednesday, her lip color is pretty similar to what this looks like on me Vanilla is a warm vanilla scent and clear Vanilla Beige is the same as Vanilla. The color is more of a caramel brown when I wear it. Very noticeable on the lips, a great brown lip to have. Poppy smells like those candy orange slices. It is the most natural looking one on me, more of a sheer orange red. Cherry is the most pigmented on me, even when sheered out. It can look like a natural flush to the lips if i use the tiniest bit, but at that point i may as well not be wearin"
+    },
+    {
+      "thread_id": "11uym2u",
+      "comment_id": "k9ojaho",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/11uym2u/all_summer_fridays_lip_butter_balms_review/",
+      "parser_limitation": null,
+      "evidence_text": "On the thinner/ slippery side. Not sticky at all"
+    },
+    {
+      "thread_id": "165xa4x",
+      "comment_id": "post",
+      "product_context": "Jet Lag Mask",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/165xa4x/product_question_does_anyone_else_experience/",
+      "parser_limitation": null,
+      "evidence_text": "I just recently purchased it and have only used it three times. I don’t remember anything out of the ordinary the first time. The second time was yesterday and I noticed it was tingling but it could’ve been another product I was using. Tonight I only used the Jet Lag mask and had the same thing happen. It goes away after about 10 minutes and my skin still feels smooth in the morning just looking to see if anyone else has noticed it? Just curious knowing that they had an issue a few years ago"
+    },
+    {
+      "thread_id": "165xa4x",
+      "comment_id": "m7xwofs",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/165xa4x/product_question_does_anyone_else_experience/",
+      "parser_limitation": null,
+      "evidence_text": "i have it burns after a couple times of using it idk if it's my skin barrier but i use a fan to help with it and it goes away after 30-45 seconds"
+    },
+    {
+      "thread_id": "166j6zu",
+      "comment_id": "ojd9437",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "scent_and_flavor"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/166j6zu",
+      "parser_limitation": null,
+      "evidence_text": "I've experienced the same with vanilla beige! Every other flavoured Summer Fridays lip balm doesn't give me the same reaction as I do with this one. Like the moment I put it on my lips start burning, hot itchy sensation! And even after a whole day of wear on my lips my lips don't feel any hydrated or better. I'm very disappointed with this one, and it'll be a waste to just stop using or discard."
+    },
+    {
+      "thread_id": "166j6zu",
+      "comment_id": "ls1ck3r",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Vaseline",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/166j6zu",
+      "parser_limitation": null,
+      "evidence_text": "I break out in eczema/contact dermatitis on my lips. They get really dry and scaly and red. I get like a dry ashy ring around my mouth. I use steroid cream to help manage it and vaseline and it will clear up in a few days. The nudestix reaction is similar to what happens when i use a product with bees wax. I suspect it might have beeswax because i have seen folks say that they have had an allergic reaction and hace a sensitivity to bees/beeswax. These comments are on the Sephora site. I may have seen one youtuber mention that the nudestix was drying. I’m now finding I’m also sensitive to the naturium ones so I’m considering trying Summer Friday to see if i have better luck with that. Naturium one takes a few days before my lips start to react so i have been able to use it here and there. I"
+    },
+    {
+      "thread_id": "166j6zu",
+      "comment_id": "lmtwxkl",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Merit",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/166j6zu",
+      "parser_limitation": null,
+      "evidence_text": "i just bought the merit lip oil in au naturel and i love the shade sooo much, but i think it caused my lips to get bumpy and itchy too :( im so sad to return it but i own summer fridays lip balms in vanilla beige and pink sugar and was fine"
+    },
+    {
+      "thread_id": "166j6zu",
+      "comment_id": "kxv8l8z",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Merit",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/166j6zu",
+      "parser_limitation": null,
+      "evidence_text": "i recently purchased the vanilla brown sugar one. My lips got super itchy and bumpy and the only time this has happened before was with the merit lip oil. I swapped the summer friday balm out for ole henricksen pout preserving peptide lip treatment. which is a nice gloss with good staying power :)"
+    },
+    {
+      "thread_id": "166j6zu",
+      "comment_id": "kx3lgs0",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/166j6zu",
+      "parser_limitation": null,
+      "evidence_text": "I haven’t tried Summer Friday Butter balm but i want to try it but worried i might have an allergic reaction (which is how I ended up here). I have sensitive skin and have found that i am sensitive to lip products that have beeswax. So maybe summer friday has beeswax? Or perhaps its best to use it sparingly? I actually tried the nudestix lip balm because its vegan but still had a reaction even though it doesn’t have beeswax but the reaction took a while to happen so maybe these lip balms aren’t meant to be used everyday? Does summer Friday have HA? I wonder if using HA on lips regular can cause sensitivity/rash reaction. I also noticed that other folks have reacted to nudestix too. I’m sure there are other folks who have been allergic to SF but maybe haven’t realized it was SF that caused "
+    },
+    {
+      "thread_id": "175n4ck",
+      "comment_id": "k4iirk2",
+      "product_context": "Sheer Skin Tint / ShadeDrops",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "shade_and_color_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Armani",
+      "explicit_outcome": "returned_or_refunded",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/175n4ck/",
+      "parser_limitation": null,
+      "evidence_text": "I returned summer fridays skin tint. I knew the coverage was light but the shade selection was terrible for me. If they expand the range, I’d like it for no makeup makeup days. I prefer Armani. One of my favorite I’ve tried. Perfect shade match for me. I like the natural finish and how it sets down. SF doesn’t set down at all. Armani is also light to medium buildable coverage. They’re two different products so it’s kind of hard to compare them."
+    },
+    {
+      "thread_id": "175n4ck",
+      "comment_id": "k4hkiov",
+      "product_context": "Sheer Skin Tint / ShadeDrops",
+      "axis_ids": [
+        "hydration_and_moisture"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Armani",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/175n4ck/",
+      "parser_limitation": null,
+      "evidence_text": "Armani LS foundation, hands down my favorite. SF skin tint is a tint and hence the pigments are less in it as opposed to a foundation. Armani is medium coverage though but you can definitely build it. I have dry skin and I love it.."
+    },
+    {
+      "thread_id": "175n4ck",
+      "comment_id": "k4gvzg0",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/175n4ck/",
+      "parser_limitation": null,
+      "evidence_text": "I’ve used the SF and I don’t typically shave any of my facial hair (I’m brunette too, but my facial hairs aren’t very thick) and I don’t find it emphasizes the hair. It is pretty light coverage though, so unsure if this holds true if you try to build up the coverage."
+    },
+    {
+      "thread_id": "17avity",
+      "comment_id": "post",
+      "product_context": "Sheer Skin Tint / ShadeDrops",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/17avity/",
+      "parser_limitation": null,
+      "evidence_text": "I own the glossier skin tint and love it for mixing with other foundations the most and wearing on its own. It has virtually no coverage, which I like but I want something with just a more coverage on certain days. boost The summer Fridays one I’ve heard is sheer too, is it sheer as in glossier skin tint no coverage sheer or does it have some coverage?? Let me know! Skin type: dry"
+    },
+    {
+      "thread_id": "17avity",
+      "comment_id": "k5fio3h",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/17avity/",
+      "parser_limitation": null,
+      "evidence_text": "The Summer Fridays definitely has more coverage than the Glossier. I found that Glossier is like water and doesn't really do much, while the Summer Fridays has the same lightweight feel with more coverage."
+    },
+    {
+      "thread_id": "188rp74",
+      "comment_id": "kbp4a2e",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "scent_and_flavor",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Aquaphor",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "parser_limitation": null,
+      "evidence_text": "Not worth it. It's overhyped. To me it's like a lip gloss, and is not hydrating. I've tried dozens of lip treatments from Sephora and tbh nothing has beaten the actual hydrating power of aquaphor. So alas, hundreds of dollars spent and I still stick with Aquaphor when my lips are dry and I use it as an overnight treatment. Summer Fridays does smells nice though and is like vanilla cake. But I never reach for it when my lips are dry."
+    },
+    {
+      "thread_id": "188rp74",
+      "comment_id": "kbnahr0",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "parser_limitation": null,
+      "evidence_text": "It’s good but I like the c.o. Bigelow favorite nighttime lip balm better and that’s only 7.50. I wait for the lip care to go on sale and stock up when they are $3.25-$3.75. I keep making myself use the summer Fridays one but it doesn’t last as long and I don’t like it’s texture as much."
+    },
+    {
+      "thread_id": "188rp74",
+      "comment_id": "kbu75u9",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "parser_limitation": null,
+      "evidence_text": "Honestly I have every single shade and I love them. Only thing that works for my dry lips. My favorites are the brown sugar color and pink sugar"
+    },
+    {
+      "thread_id": "188rp74",
+      "comment_id": "kbqulyk",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "coverage_and_pigment"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "parser_limitation": null,
+      "evidence_text": "i have pink sugar and it smells so yummy there’s not much of a color payoff on me but it still looks glossy and feels good on the lips i’ve been using it somewhat sparingly for a couple months and i still have a ton left i can’t decide which one to get next!!!"
+    },
+    {
+      "thread_id": "188rp74",
+      "comment_id": "kbn4ha1",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "parser_limitation": null,
+      "evidence_text": "For me, it dried out my lips extremely badly so I would say no. It makes a good lip gloss but definitely not a hydrating balm."
+    },
+    {
+      "thread_id": "188rp74",
+      "comment_id": "kbmyngq",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "application_and_tool_performance"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Aquaphor",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "parser_limitation": null,
+      "evidence_text": "Yes! I didn’t like it at first but now I love it makes my lips so soft. Worked better than aquaphor for me. Picked up another one today!"
+    },
+    {
+      "thread_id": "188u1av",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/188u1av/",
+      "parser_limitation": null,
+      "evidence_text": "Has anyone else has an issue with their summer Friday’s lip balm packaging breaking? Mine has a hole in the tube less than a month after purchase ): The hole is near the applicator on the threads if that matters to anyone lol I will be putting the product in a different container but is this something I could get a refund for or is this a reoccurring issue with the product?"
+    },
+    {
+      "thread_id": "18dqncn",
+      "comment_id": "kclgirr",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "reaction_and_breakout",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/18dqncn/",
+      "parser_limitation": null,
+      "evidence_text": "I received a sample and I'm currently wearing it! It claims to be sheer light coverage, but I was surprised to see it covered my redness quite nicely. It looks very dewy and skin-like. Didn't use any primer or setting spray and it's staying on pretty well. I'm strongly considering buying the full-size!"
+    },
+    {
+      "thread_id": "18dqncn",
+      "comment_id": "kcl3yq0",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/18dqncn/",
+      "parser_limitation": null,
+      "evidence_text": "I liked the finish but there’s not a good shade match for me in this range."
+    },
+    {
+      "thread_id": "18dqncn",
+      "comment_id": "kcj7lwj",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hydration_and_moisture"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/18dqncn/",
+      "parser_limitation": null,
+      "evidence_text": "I love it, I have dry skin and I like that it looks dewy and doesn’t dry me out. It’s light to sheer coverage. I can build it up a bit. I think it’s very user friendly. The one thing I would love to see them improve on is the color range."
+    },
+    {
+      "thread_id": "18dqncn",
+      "comment_id": "kcis8et",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/18dqncn/",
+      "parser_limitation": null,
+      "evidence_text": "I personally love it. I have oily skin and it manages to stay on my face all day. The coverage is decent and the product feels lightweight. I love it for no-makeup makeup days."
+    },
+    {
+      "thread_id": "19dayj0",
+      "comment_id": "kj4l35t",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Lanolips",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/19dayj0/",
+      "parser_limitation": null,
+      "evidence_text": "I personally love them! I own a couple and find that they’re hydrating without it being sticky, also the scent is nice, the tinted ones are nice enough to use everyday. However, there are much better ones out there that are more than half the price because I find that you have to keep reapplying the Summer Fridays one. I also use Lanolips which are about $14.95 each and I think they’re comparable. The formula is just a bit thicker than Summer Fridays."
+    },
+    {
+      "thread_id": "19dayj0",
+      "comment_id": "m96iha2",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/19dayj0/",
+      "parser_limitation": null,
+      "evidence_text": "I have two now! I also have a few summer Fridays! overall I think I love the hey bud applicator more actually but have a slightly less slippery texture which I prefer. I don’t love the shade of tint on the nude for my skin tone but I do like the pink and clear!"
+    },
+    {
+      "thread_id": "19dayj0",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Lanolips",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/19dayj0/",
+      "parser_limitation": null,
+      "evidence_text": "i saw they’re back in mecca and i want one they’re so cute but 38 DOLLARS for a lip balm?? on tiktok all the influencers swear it’s worth it but like ok easy for you to say when you can post a 15 second video and make 15 grand, i need someone who is working an ordinary shitty job to tell me if it’s worth the hour of work it will cost me xx edit: i have read and appreciate all the responses thank you!! i happen to be a die hard lanolips girlie so every time someone recommends lanolin i feel very seen"
+    },
+    {
+      "thread_id": "19dayj0",
+      "comment_id": "kj6ctk6",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Lanolips",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/19dayj0/",
+      "parser_limitation": null,
+      "evidence_text": "I like it, it stays on when I’m out exercising but I wouldn’t say it was the best lip balm ever. Lanolips is better at fixing dry lips for me."
+    },
+    {
+      "thread_id": "19dayj0",
+      "comment_id": "kj52ujv",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "application_and_tool_performance"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/19dayj0/",
+      "parser_limitation": null,
+      "evidence_text": "I think a lot of the price comes from the perceived value of the packaging and summer fridays as a brand. The formula is bomb though, it’s quite versatile so I can use it as a lip treatment or as a gloss to blend my lip liner with"
+    },
+    {
+      "thread_id": "19eo5it",
+      "comment_id": "kjfhvbe",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/19eo5it/can_we_all_just_admit_that_summer_fridays_isnt/",
+      "parser_limitation": null,
+      "evidence_text": "I agree. I STRONGLY disagree with OP. I have a ton of lip oils from cheap and expensive brands, but this was the most smooth, non-sticky, hydrating formula. It did rub off during meals, but that's what's supposed to happen with a lip oil? When I don't touch it except for sips of water, it stays on forever. I'm already planning to buy another shade once it's back in stock"
+    },
+    {
+      "thread_id": "19eo5it",
+      "comment_id": "kjey7rn",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "coverage_and_pigment",
+        "reaction_and_breakout"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/19eo5it/can_we_all_just_admit_that_summer_fridays_isnt/",
+      "parser_limitation": null,
+      "evidence_text": "While I enjoy the lip balms for a sheer tint of color and some hydration...they aren't the most hydrating product. I find that if my lips are dry or patchy to the point where they burn, it won't do anything for them. Yet my Too Faced RX pillow balm will have my lips recovered in a single night. Summer Fridays is good, but its not great."
+    },
+    {
+      "thread_id": "19eo5it",
+      "comment_id": "kjeq8h4",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "scent_and_flavor"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/19eo5it/can_we_all_just_admit_that_summer_fridays_isnt/",
+      "parser_limitation": null,
+      "evidence_text": "I like the pink sugar lip balm but the packaging is too big and it doesn’t really hydrate my lips much. The smell is amazing though"
+    },
+    {
+      "thread_id": "19eo5it",
+      "comment_id": "kjianwf",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/19eo5it/can_we_all_just_admit_that_summer_fridays_isnt/",
+      "parser_limitation": null,
+      "evidence_text": "I don’t follow makeup influencer world almost at all so I don’t know what brands are hyped or not but their mineral sunscreen is the only one I’ve ever used in my life that doesn’t pill on my skin or make me look like I’m auditioning for mime school. Never tried any of their other products but I would just based on how dramatically better their sunscreen is than anything else I’ve ever tried."
+    },
+    {
+      "thread_id": "1ahn26w",
+      "comment_id": "kop6fk8",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Aquaphor",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "parser_limitation": null,
+      "evidence_text": "I really like it, I have almost all the colors. I enjoy the texture, scents, and the shades. So glossy and they smell so good! I don’t think it’s a “need”, definitely more of a “want”. I do find that the hydration lasts, but it’s not like Aquaphor. I use it mostly as a standalone lip gloss rather than a lip balm for dry lips. I do think it’s a tad overhyped, like most products are, but I think it’s a fun splurge for me and I love applying them."
+    },
+    {
+      "thread_id": "1ahn26w",
+      "comment_id": "koxqg55",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "parser_limitation": null,
+      "evidence_text": "Interesting! Im obsessed with the squishy applicator, it almost makes the 24$ worth it 😅 but i wish the mini sizes came with it but thank you so much for taking the time to answer me!"
+    },
+    {
+      "thread_id": "1ahn26w",
+      "comment_id": "kop20wj",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "parser_limitation": null,
+      "evidence_text": "i love them! use vanilla before bed, other colors w/ a nice tint on them whenever. not too opaque of color so i can heavily use them without looking. quite moisturizing, just reapply every few hours like every other lip balm"
+    },
+    {
+      "thread_id": "1ahn26w",
+      "comment_id": "koysl2z",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "parser_limitation": null,
+      "evidence_text": "I mean sure if youre deathly allergic to petroleum, my huge condolences"
+    },
+    {
+      "thread_id": "1ahn26w",
+      "comment_id": "kot3ktp",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "parser_limitation": null,
+      "evidence_text": "I have the lingonberry (favorite), strawberry, original, and cocoa crème. I may order the blood orange one just out of curiosity. I love them all!"
+    },
+    {
+      "thread_id": "1al8aby",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1al8aby/summer_fridays_applicator_clogged/",
+      "parser_limitation": null,
+      "evidence_text": "I have multiple Summer Fridays lip balms and the applicator has clogged on two of them 😅🥲 Does anyone know why this happens and how to fix it?"
+    },
+    {
+      "thread_id": "1arhbj9",
+      "comment_id": "kqlh5hn",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1arhbj9",
+      "parser_limitation": null,
+      "evidence_text": "Summer Fridays always rubbed me the wrong way considering how heavy their influencer marketing is. I personally don’t think it’s a good look to be paying for expensive dinners and trips in return for good reviews. The lip butter is the one product I liked from them but everything else was underwhelming."
+    },
+    {
+      "thread_id": "1arhbj9",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1arhbj9",
+      "parser_limitation": null,
+      "evidence_text": "I like the balm so I figured I’d give the oil a shot because I tend to prefer oils. It’s…ok. It doesn’t last long and I don’t feel it’s any more hydrating than the balm. It was a lot smaller than I expected. It’s a thinner consistency than the balm so if you don’t like the thicker consistency of the balm, this might be worth a try but honestly I’ve used better oils so probably not. I gotta be honest…I’ve tried a few Summer Fridays products and none of them wow me that much."
+    },
+    {
+      "thread_id": "1bm9izm",
+      "comment_id": "kwapzrw",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1bm9izm/",
+      "parser_limitation": null,
+      "evidence_text": "It’s not bad, but it’s got way more synthetic emollients than it does any of the touted “ultra-hydrating seed butters and botanical extracts” or hyaluronic acid - which is last in the ingredients except for pigments. Note that synthetic emollients aren’t bad, I just think you should know what you’re getting. I do think there are better products out there for hydrating/moisturizing - but if you like the scents/colors of this product, it does a good job, and the tube is a pretty good size for that $24. I personally do not like the Vanilla / Vanilla Beige scents - the so-called “natural vanilla flavor” is actually vanillin, the main component of pure vanilla extract. Vanilla beans are expensive and vanilla extract is even more expensive (as you will know if you’ve purchased any in the last ye"
+    },
+    {
+      "thread_id": "1bm9izm",
+      "comment_id": "kwb9kxt",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1bm9izm/",
+      "parser_limitation": null,
+      "evidence_text": "yup! just was gonna say, summer fridays dried up my lips and felt like i had to reapply an hour later, ole has helped my dry ass lips"
+    },
+    {
+      "thread_id": "1bm9izm",
+      "comment_id": "kwcqpdm",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "formula_consistency_and_change"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1bm9izm/",
+      "parser_limitation": null,
+      "evidence_text": "The ole one has replaced my glossier balm dot com. (The new formula is awful.) I'm honestly so pleasantly surprised by the OH one - I LOVE it."
+    },
+    {
+      "thread_id": "1c2ybui",
+      "comment_id": "kzdvw37",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1c2ybui/",
+      "parser_limitation": null,
+      "evidence_text": "I agree there should be air but not nearly that much. I have other balms in that packaging and especially new there is never that much air. If you weigh it you need a baker’s scale so it can be sensitive to the small size."
+    },
+    {
+      "thread_id": "1cx0kf6",
+      "comment_id": "l4zgayv",
+      "product_context": "Jet Lag Mask",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1cx0kf6/product_question_summer_fridays_jet_lag_mask_how/",
+      "parser_limitation": null,
+      "evidence_text": "if you are leaving it on for a while, you could try taking out the TO niacinamide serum, since there's already niacinamide in the mask and the 10% that's already in the serum is pretty high. the excess of niacinamide could be causing dryness. it could also just be a reaction to something in the ingredients. for ex., avene cicalfate which is supposed to be a gentle and moisturizing last step makes my skin feel dry and after a few days it turns red and itchy. the pilling might be from the xantham gum in jet lag and TO's niacinamide?"
+    },
+    {
+      "thread_id": "1cx0kf6",
+      "comment_id": "l50exb1",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "scent_and_flavor",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Tatcha",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1cx0kf6/product_question_summer_fridays_jet_lag_mask_how/",
+      "parser_limitation": null,
+      "evidence_text": "Those are all good moisturizers but honestly the tatcha one is overpriced even though it feels and smells heavenly 😂 I use the cosrx propolis light cream (from ulta or their website), it’s my all time fave but I’ve also used the purito deep sea water cream and the skinrx lab made cera cream (both on Amazon) https://a.co/d/7X2VlEx https://a.co/d/6qsBOWK"
+    },
+    {
+      "thread_id": "1d18sp0",
+      "comment_id": "l5x4pah",
+      "product_context": "Sheer Skin Tint / ShadeDrops",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "packaging_and_dispensing",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1d18sp0/",
+      "parser_limitation": null,
+      "evidence_text": "I use the Dr Jarts Every Sun Day (?) spf 50 sunscreen (comes w a blue cap), then the ELF power grip primer, and either the Lancôme skin tint (forgot the full name) or I just spot conceal, then loose setting powder. I’ve been looking into other primers since I feel the power grip primer is a bit much for everyday wear but I have very oily skin and most makeup just slides off my face throughout the day haha"
+    },
+    {
+      "thread_id": "1d18sp0",
+      "comment_id": "l5tvqnu",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1d18sp0/",
+      "parser_limitation": null,
+      "evidence_text": "You can wear it alone but please don't use it as your primary spf. You would have to use an ungodly amount to get the full spf 30 in it."
+    },
+    {
+      "thread_id": "1d18sp0",
+      "comment_id": "l5trz1y",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1d18sp0/",
+      "parser_limitation": null,
+      "evidence_text": "I find it doesn’t unless im really putting pressure on it like falling asleep on my arm for example but it doesn’t transfer onto my sunglasses or shirts"
+    },
+    {
+      "thread_id": "1d18sp0",
+      "comment_id": "l5tcj3m",
+      "product_context": "Sheer Skin Tint / ShadeDrops",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1d18sp0/",
+      "parser_limitation": null,
+      "evidence_text": "It’s not new. It’s pretty sheer and has more of a natural finish than a glow. It doesn’t need primer but I would set with powder. The skin tint doesn’t have spf by the way. I didn’t have a good shade match in this product. I got the Caliray skin tint instead and it has some coverage and glow."
+    },
+    {
+      "thread_id": "1fvevie",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "scent_and_flavor",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Rhode",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "parser_limitation": null,
+      "evidence_text": "So I developed angular cheilitis after applying Summer Fridays lip balm twice. I’ve been using these products for years and have never found them to be really hydrating. There’s an ingredient on Summer Fridays’ website that lists they use BHT in all of their lip balms (regardless of flavor). BHT can cause infertility and is an endocrine disrupter. It’s super harmful for your health. What’s ridiculous is Summer Fridays is labeled “Clean at Sephora” and the brand themselves claim to be “clean and gentle on the skin.” An ingredient that causes harm to your health is anything but clean. Also for my sensitive girlies, there’s fragrance in each product (as expected) so do be aware. I had to let the girlies know after finding this out at 5 in the morning due to the pain on the side of my lip bein"
+    },
+    {
+      "thread_id": "1fvevie",
+      "comment_id": "lq9cc6w",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "reaction_and_breakout",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "parser_limitation": null,
+      "evidence_text": "Clean at Sephora is a unique set of rules that means products in the category are free of parabens, sulfates, phthalates, and mineral oil. Clean is not an overarching category that is the same for every retailer or brand, so be aware of this when purchasing products with a clean label. Also, clean does not always mean better, and something I think influencers and posts like this always forget to mention is that everyone’s skin is DIFFERENT. What works for one person may not work for another. I have a saying when I speak with clients who ask for the “best” in a category like foundation or lipstick. There is no best - it’s what’s best for YOU. If we all could use the same products there wouldn’t be a million beauty brands on the market. I would say do your own research, make your own informe"
+    },
+    {
+      "thread_id": "1fvevie",
+      "comment_id": "lq89zvh",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "parser_limitation": null,
+      "evidence_text": "Not one bit surprised how many times is this going to happen ??? Clean doesn’t mean anything unless it’s labeled certified organic . I think any brand can be “clean” as long as they check a couple boxes . Clean what? One clean ingredient ??? Clean packaging ??? It’s vague. Why is it that most products have cancer causing ingredients in them ? It’s a lip balm tell Me why a lip balm needs to have ingredients I can’t pronounce ? Idk it’s just a shady world"
+    },
+    {
+      "thread_id": "1fvevie",
+      "comment_id": "lq81su3",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "parser_limitation": null,
+      "evidence_text": "I also got a weird pimple on my lip line. This also doesn't work unless I reapply constantly as it dissapears really quickly."
+    },
+    {
+      "thread_id": "1fvevie",
+      "comment_id": "lq7dqv3",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "parser_limitation": null,
+      "evidence_text": "I think this post is just influencer BS. Check out the profile. Apologies in advance if I'm wrong, but the knock one product and casually ask about another very specific product post is a little suss."
+    },
+    {
+      "thread_id": "1fvevie",
+      "comment_id": "lq6y6rr",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "formula_consistency_and_change"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "parser_limitation": null,
+      "evidence_text": "Do you know when it was reformulated? I have some tubes from last year that I still use (gross, I know)"
+    },
+    {
+      "thread_id": "1gvs36d",
+      "comment_id": "ly4edr5",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1gvs36d/summer_friday_lip_butter_balm_discolorationbrown/",
+      "parser_limitation": null,
+      "evidence_text": "Something happened to my pink sugar balm, where it started to taste awful and extremely bitter. The oils were starting to separate despite it being brand new and unopened."
+    },
+    {
+      "thread_id": "1gvs36d",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1gvs36d/summer_friday_lip_butter_balm_discolorationbrown/",
+      "parser_limitation": null,
+      "evidence_text": "Just received this balm from the sale yesterday. Took it in with me to work and as I was applying it (for the second time), I noticed a brown “chunk” inside the tube… now, I just received this product yesterday and haven’t had it exposed to extreme weathers or left out without a cap for long times…. Is this a common issue? I’m afraid and grossed out :("
+    },
+    {
+      "thread_id": "1h0wfao",
+      "comment_id": "lzcjn4i",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Laneige",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/",
+      "parser_limitation": null,
+      "evidence_text": "I've owned both. Summer Fridays works better to actually moisturize my lips. I wish I liked Laneige better because it's less expensive, but I don't find it works as well. It FEELS and looks great on the lips, for sure. Summer Fridays just performs better in the end"
+    },
+    {
+      "thread_id": "1h0wfao",
+      "comment_id": "lzadl8l",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Laneige",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/",
+      "parser_limitation": null,
+      "evidence_text": "I prefer SF. I like the consistency and the scents better. I don't feel like the Laneige Lip Glowy Balms do much for my lips, and the tint is virtually non-existent. For reference, I have the Laneige LGB in Sweet Candy as well as the Blueberry, and for SF, I have Pink Sugar, Brown Sugar, Birthday Cake, Iced Coffee, and Hot Cocoa. The Blueberry is nice because it's unique, not much blueberry out there. But SF Pink Sugar and Brown Sugar are delightful."
+    },
+    {
+      "thread_id": "1h0wfao",
+      "comment_id": "lzbk3fb",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Laneige",
+      "explicit_outcome": "no_future_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/",
+      "parser_limitation": null,
+      "evidence_text": "Summer Fridays. The tubed Laneige dried out my lips immediately and you have to keep reapplying. Won’t purchase it again. I loved the one in the tub though."
+    },
+    {
+      "thread_id": "1h0wfao",
+      "comment_id": "lz7zjg9",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Laneige",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/",
+      "parser_limitation": null,
+      "evidence_text": "laneige for sure. no offense to anyone that loves it, but i don’t understand the hype or summer fridays."
+    },
+    {
+      "thread_id": "1h0wfao",
+      "comment_id": "lz75gqx",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Laneige",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/",
+      "parser_limitation": null,
+      "evidence_text": "Laneige!!!! It's my daily driver! It's buttery smooth and not to thick or thin and lasts longer than summer Fridays imo. SF didn't do anything for me and felt like it had to constantly reapply."
+    },
+    {
+      "thread_id": "1i0e6fh",
+      "comment_id": "m703mvo",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Hourglass",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1i0e6fh/",
+      "parser_limitation": null,
+      "evidence_text": "Dry skin have both love both. Summer is lighter and a bit more sheer hourglass is a bit more creamy and more coverage (still light though) both have always played will with other products."
+    },
+    {
+      "thread_id": "1i0e6fh",
+      "comment_id": "m777gh3",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Hourglass",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1i0e6fh/",
+      "parser_limitation": null,
+      "evidence_text": "Hourglass! Pricey but soo good."
+    },
+    {
+      "thread_id": "1i0e6fh",
+      "comment_id": "m71j691",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Hourglass",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1i0e6fh/",
+      "parser_limitation": null,
+      "evidence_text": "I love the summer fridays one for everyday light coverage. The hourglass one is a bit thicker and creamier like another commenter mentioned too but I couldn’t find a good shade match. I wear shade 5 in the summer fridays and it’s perfect"
+    },
+    {
+      "thread_id": "1inusa1",
+      "comment_id": "post",
+      "product_context": "Jet Lag Mask",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1inusa1/product_request_anything_like_summer_fridays_jet/",
+      "parser_limitation": null,
+      "evidence_text": "Hi everyone! Since I got the Summer Fridays set for my Sephora birthday set, I began using the jet lag mask as moisturizer to see how it is. Needless to say, I LOVED it. My acne cleared up pretty fast. I didn’t use any other products with it because it didn’t mix too well with what I have, but I was thoroughly impressed with it. My only complaint was after putting it on my skin felt tight in some areas, but overall good. Unfortunately, I can’t buy it due to financial issues… anyone have anything from ulta that would be a good substitute? For reference, I have dry, acne prone skin. I’d appreciate any help I can get!!!"
+    },
+    {
+      "thread_id": "1inusa1",
+      "comment_id": "op59ojv",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1inusa1/product_request_anything_like_summer_fridays_jet/",
+      "parser_limitation": null,
+      "evidence_text": "did you ever find a replacement for this? i got it as a gift and dont want to rebuy for that price 😭"
+    },
+    {
+      "thread_id": "1inusa1",
+      "comment_id": "n1xknvh",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1inusa1/product_request_anything_like_summer_fridays_jet/",
+      "parser_limitation": null,
+      "evidence_text": "I think there’s an elf dupe for this now! Holy Hydration Sleeping Mask. (I haven’t tried but I’ve seen a couple of videos saying this)"
+    },
+    {
+      "thread_id": "1kq0492",
+      "comment_id": "mt2uibs",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1kq0492/",
+      "parser_limitation": null,
+      "evidence_text": "Lol I was so confused with self 💀 The elf is more pigmented but it sheers out (only 2 shades of SF are, the cherry and orange one). Imo elf is more moisturizing. The hydration with SF is a hit or miss- sometimes it works, sometimes it dries out my lips even more. I prefer the elf rn, it’s more worth the money imo. Also I find the scents of SF are a bit too strong which stops me from using them at times. If you will push through with SF, find a scent that you will consistently want to smell. Most of their scents imo are scents that you “have to be in the mood for.” I recommend pink sugar! But honestly if you’re looking for most hydration, I’d go for Ole! Edit: Also the elf is more slippy and SF is thicker!"
+    },
+    {
+      "thread_id": "1kq0492",
+      "comment_id": "mt3wk72",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "packaging_and_dispensing",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "alternative_brand": null,
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1kq0492/",
+      "parser_limitation": null,
+      "evidence_text": "I'm just getting back into lip products and love Summer Fridays because they're easy to apply, not too sticky, and have just a faint color or you can build it out more. I love both the dream lip oil in the tube with wand (it also has a little plumping agent) and the tube lip butter balm! Have gotten compliments when wearing/using both and would repurchase 🙂"
+    },
+    {
+      "thread_id": "1kq0492",
+      "comment_id": "mt4gqnh",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1kq0492/",
+      "parser_limitation": null,
+      "evidence_text": "elf has better color payoff but as a lip balm summer fridays feels better on my lips, although i will say i still found the elf one pretty hydrating so overall it’s a solid dupe"
+    },
+    {
+      "thread_id": "1kq0492",
+      "comment_id": "mt21uxw",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1kq0492/",
+      "parser_limitation": null,
+      "evidence_text": "I honestly really like Summer Fridays! I’m allergic to many lip products and SF isn’t one of them. I find it to be hydrating but as someone else said, it isn’t super pigmented. Elf unfortunately gave me an allergic reaction but other than that it was ok! I would pick Summer Fridays of the two though"
+    },
+    {
+      "thread_id": "1mzokbt",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Vaseline",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1mzokbt/dry_flaky_burning_lips_after_using_summer_fridays/",
+      "parser_limitation": null,
+      "evidence_text": "I need help! In Feb of this year, I started using summer Fridays mint lip balm, and after a few weeks noticed my lips were burning and dry and flaky I stopped using it within a few weeks but since then, I feel like my lip barrier is broken. Every time I use any lip product other than Vaseline, my lips are dry and flaky and burning again! I’ve never experienced chapped lips before and it’s annoying because I used to love wearing tinted lip balms etc but now I can’t cause everything irritates it Has anyone experienced anything like this before? Please help a girl out xxx"
+    },
+    {
+      "thread_id": "1ntik4i",
+      "comment_id": "nh3yytm",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ntik4i/",
+      "parser_limitation": null,
+      "evidence_text": "Yeah same here. So frustrating. Its leaking everwhere in my purse and its leaving greasy spot that doesnt come off. I think i will finish the two tube i have and go get something else"
+    },
+    {
+      "thread_id": "1ntik4i",
+      "comment_id": "ngwompd",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ntik4i/",
+      "parser_limitation": null,
+      "evidence_text": "Bahaha. It’s nice but lowkey I might stop using it soon. It’s lowkey a little too expensive. My brain just keeps telling me “surely you can find something nice that doesn’t cost that much.” Do I think it’s worth the price tag?? In my opinion? No. However, there are certain ingredients in the cream and a patent that you cannot find within any other product."
+    },
+    {
+      "thread_id": "1nv3pda",
+      "comment_id": "nh5rg6e",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/1nv3pda",
+      "parser_limitation": null,
+      "evidence_text": "I've only bought makeup/skincare from Amazon twice, but both time they were fakes, so I probably wouldn't risk it. (Also, that's probably in US dollars, because I see the same price in NZ when looking them up on Amazon US, but if you look at the top of the page, that's $24 USD, so would be closer to $40 AUD, plus almost $10 USD in shipping. It would end up more expensive than buying from Mecca, I think.) ETA: Yes, I put it in my cart and it became NZD $69 at the checkout."
+    },
+    {
+      "thread_id": "1obnfys",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1obnfys/summer_fridays_replacement/",
+      "parser_limitation": null,
+      "evidence_text": "Hi!! I’m obsessed with sweet mint lip products and I love the smell and feel of the mint Summer Fridays lip balm, but it dries my lips out like NO OTHER. Genuinely it’s one of the worst products for my lips I’ve ever felt. Anyone know of some other lip balm/oil/gloss that smells like this??"
+    },
+    {
+      "thread_id": "1oh26y0",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "parser_limitation": null,
+      "evidence_text": "I'm on a low buy and a minimalist. So I only have one lip balm open at any given time. I recently panned my other lip balm I was using. I was gifted a Summer Fridays lip balm a few months ago, so I picked it from my stash (new and unopened). Shade: Iced Coffee Love that they are vegan and cruelty free. However I am extremely disappointed in the product. My initial reaction was: \"that.....that's it?\" Why is this product so hyped? The lip balm is so underwhelming. It's not cushiony at all. . It rubs off after 30 seconds and I have to reapply. It smells okay, but imo too much fragrance and smells too much like a waxy candle. It doesn't hit the right balance. Other lip balm brands don't make their scent so overwhelming. It's so THIN The shade is whatever. I'm not mad at it. It's barely there. "
+    },
+    {
+      "thread_id": "1oh26y0",
+      "comment_id": "nlodr9i",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "parser_limitation": null,
+      "evidence_text": "I think if your lip balm is goopy and dripping off your lips you've applied too much product. Thick formulas suck, I agree. It feels like applying dried up sugar wax on your lips. It tugs so hard on the lips and they tend to be extremely sticky. I think there is a good balance between a thing foundation-like lip balm, and a thin cushiony hydrating formula. Unfortunately SF formula is more foundation-like and not cushiony at all."
+    },
+    {
+      "thread_id": "1oh26y0",
+      "comment_id": "nlmv05k",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "parser_limitation": null,
+      "evidence_text": "I don’t like thick balms at all. If I want something thicker I use a stick balm. I like the SF balm and just panned one, I just won’t pay $25+ for lip balm. I prefer the Glossier for the price point."
+    },
+    {
+      "thread_id": "1oh26y0",
+      "comment_id": "nlkycbl",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "formula_consistency_and_change"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "parser_limitation": null,
+      "evidence_text": "I suspect they have changed the formula, the most recent one I purchased was totally different from the ones I used in the past."
+    },
+    {
+      "thread_id": "1pf427h",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1pf427h/summer_fridays_lip_butter_balm_reaction/",
+      "parser_limitation": null,
+      "evidence_text": "I absolutely love the SF Lip Butter Balm. But recently I’ve started to get contact dermatitis all over my face around my mouth. The only thing I can think of is it’s the Summer Fridays. Has anyone else experienced this? If you have what other lip balm do you use that is thick and hydrating. I work a job where I have to talk a lot and live where it’s cold in the winters so having something that’s a bit weighted when you put it on but not super goopy is preferred."
+    },
+    {
+      "thread_id": "1plfk6p",
+      "comment_id": "ny2tfyh",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1plfk6p/product_question_is_the_summer_fridays_jet_lag/",
+      "parser_limitation": null,
+      "evidence_text": "Nope I never got an answer. After 3 tubes coming with no seal, I just figured at this point that this is how metal tubes come. I bought another moisturizer from Experiment that came in the aluminum tube and it also did not have a seal. What I noticed on both is that the cap has a kind of inner tube that makes the seal airtight."
+    },
+    {
+      "thread_id": "1plfk6p",
+      "comment_id": "ntxa1yx",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1plfk6p/product_question_is_the_summer_fridays_jet_lag/",
+      "parser_limitation": null,
+      "evidence_text": "If thats just how it is, im ending up with 3 tubes for the price of one so fingers crossed 😂 I was thinking to write to Summer Fridays customer support and asking how its supposed to be."
+    },
+    {
+      "thread_id": "1qdk0gq",
+      "comment_id": "o0hcg47",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "parser_limitation": null,
+      "evidence_text": "I am OBSESSED with the vitamasques lip masks! I have the crème brûlée scent. It’s such a nice thick consistency but not sticky at all and stays on really well. Hands down my favorite lippie I’ve ever used and it’s $5"
+    },
+    {
+      "thread_id": "1qdk0gq",
+      "comment_id": "nzw1ca9",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "parser_limitation": null,
+      "evidence_text": "Vitamasques has an amazing formula at an amazing price. But if you really want a silicon tip, elf makes a dupe, though the ball itself is just ok. The colourpop fresh kiss balms have a great formula as well as the silicon tip, however it’s not squishy/soft like the SF ones. Mcobeauty also makes a dupe with the silicon applicator, but personally, I didn’t find it comparable formula-wise."
+    },
+    {
+      "thread_id": "1qdk0gq",
+      "comment_id": "nzsh7a2",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "hydration_and_moisture"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "parser_limitation": null,
+      "evidence_text": "I just picked up the Hanalei lip treatment…the same applicator, and the balm is super nourishing and healing."
+    },
+    {
+      "thread_id": "1qdk0gq",
+      "comment_id": "nzy70n2",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "parser_limitation": null,
+      "evidence_text": "Rimmel butter me up gloss shade vanilla"
+    },
+    {
+      "thread_id": "1qdk0gq",
+      "comment_id": "nzwmpl3",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Lanolips",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "parser_limitation": null,
+      "evidence_text": "Lanolips saved my lips!!! I get contact dermatitis from anything with minty flavor or too strong scents but lanolips contain lanolin which hydrates my lips within minutes of application. Its also very thick so i dont need to re apply all the time. I have SF lipbalms but i can attest lanolips beettterr"
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o4azxkf",
+      "product_context": "Sheer Skin Tint / ShadeDrops",
+      "axis_ids": [
+        "reaction_and_breakout",
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "<image> I was so excited for these. I ordered Almond and it arrived last Thursday. Initial application was great, but the longevity was questionable. I went to apply to my hand to test it a day later and it’s GREEN. I reached out to SF via Instagram DM but haven’t heard back. I’m sure they’ll just want me to work with Sephora for a return/exchange instead. This is my second fail with SF. I loved their skin tint but it broke me out (isolated all my products to single it out as the culprit). I never break out so I looked up the ingredients and found out it has Avocado Oil, Soybean Oil, AND Hydrogenated Vegetable Oil in it. 🫠 I really did have high hopes for the stain tho. Super bummed. Maybe SF just isn’t for me."
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o0y4szc",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "A dupe is a duplicate of a product no matter the price. Covergirl did it first, then Huda, then Nyx, then Summer Fridays apparently"
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o1izjre",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "personally, this drop did'nt resonate with me. it felt less innovative than past releases and more of a cash grab. They're also releasing a fragrance soon and brining marshmallow back as a permanent lip butter balm flavor, which I'm looking forward to."
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o0ykz0v",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "I had one that dried out my lips and the product itself dried up so fast. I couldn’t imagine people enjoying it that much based on my own experience."
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o0wd18l",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hydration_and_moisture"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "I hope they won't dry up the same 😅"
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o0wcm9k",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "shade_and_color_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "Boring and uninclusive shade range"
+    },
+    {
+      "thread_id": "1qiwlyp",
+      "comment_id": "o0vepko",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/newinbeauty/comments/1qiwlyp",
+      "parser_limitation": null,
+      "evidence_text": "tbh i would be surprised if these last at all, their famous lip balm is thin and constantly needs to be reapplied and the brand gives “clean girl” vibes so they’ll probably prioritize clean over longevity but that my opinion"
+    },
+    {
+      "thread_id": "1qrcg5i",
+      "comment_id": "o2pvvzx",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1qrcg5i",
+      "parser_limitation": null,
+      "evidence_text": "Wait, that is an insane find! Summer Fridays has been teasing an expansion, but a full Eau de Parfum is a massive move. \"Sunlit Vanilla\" sounds exactly like their aesthetic - likely that creamy, salt-air vanilla they use in their body milk. Usually, when Sephora starts slipping unannounced samples into orders, the official launch is only a week or two away. You definitely scored an early leak! How’s the projection? Is it a heavy gourmand or more of a light skin scent?"
+    },
+    {
+      "thread_id": "1qrcg5i",
+      "comment_id": "o9ryvru",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1qrcg5i",
+      "parser_limitation": null,
+      "evidence_text": "Ofc you’re not! It’s a dupe for sure"
+    },
+    {
+      "thread_id": "1r9vw38",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Ole Henriksen",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/1r9vw38/summer_fridays_vs_ole_henriksen/",
+      "parser_limitation": null,
+      "evidence_text": "I'm currently in the market for a new lip balm, and was debating between purchasing the Ole Henriksen Pout preserve lip treatment and the Summer Fridays Lip balm. I've heard positive reviews about the Ole lip treatment but I've noticed that's it's a comparably smaller tube for a similar price to the summer fridays. They're also almost priced the same, so I'd love some help on picking out which one. For context, I was previously using the ordinary and laneige lip glowy balms, and still have dry, chapped lips. Also, I'd love if you guys could help me pick out a shade! I'm a neutral olive tone, and would love shimmery pinks or nude rose shades UPDATE: I just received the OH lip balm in creme brûlée glimmer, and it is stunning! It IS a bit stickier than I thought but I love how moisturising it"
+    },
+    {
+      "thread_id": "1r9vw38",
+      "comment_id": "o6jgh4n",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/1r9vw38/summer_fridays_vs_ole_henriksen/",
+      "parser_limitation": null,
+      "evidence_text": "I’ve been using Ole for the last year and just received Vanilla by SF for Xmas. I love the scents, how glossy SF looks, and the colors but it does absolutely nothing to moisturize my lips. It even dries them out a little! I love Ole for both bedtime and daytime, and I think you’d love Creme Brulee Glimmer! It’s my favorite."
+    },
+    {
+      "thread_id": "1r9vw38",
+      "comment_id": "o6fy42r",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/1r9vw38/summer_fridays_vs_ole_henriksen/",
+      "parser_limitation": null,
+      "evidence_text": "Ole! I love a thick balm that lasts. Summer Fridays is too thin for me, doesn’t last long on my lips, and doesn’t moisturize my lips as well as Ole does 😭 I also end up using less of Ole than Summer Fridays, so that would make up for the difference in price."
+    },
+    {
+      "thread_id": "1rzd5vw",
+      "comment_id": "obmcq5m",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "scent_and_flavor",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1rzd5vw",
+      "parser_limitation": null,
+      "evidence_text": "It’s so fire imo. I just bought the travel size today after stretching out the sample size I was given weeks ago lol. It’s the perfect spring/summer scent for me, as I prefer the warm + spicy gourmand scents over fresh/florals. You get the warm vanilla and caramel with a dash of coconut and it’s perfection! I’ve been layering it w/ Ouai Ibiza and I’ve been getting so many compliments everyday 🫶🏼🥥🍨 Hope you enjoy it as much as I do!"
+    },
+    {
+      "thread_id": "1rzd5vw",
+      "comment_id": "oblk2y4",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1rzd5vw",
+      "parser_limitation": null,
+      "evidence_text": "It’s Bianco Latte Lite. Like, BL went on vacation. It also bears some resemblance to Bare Sueded Vanilla and Plush Vanilla. Longevity was non existent on me"
+    },
+    {
+      "thread_id": "1slrvyj",
+      "comment_id": "ogatog5",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "formula_consistency_and_change",
+        "hydration_and_moisture",
+        "packaging_and_dispensing",
+        "scent_and_flavor"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1slrvyj/summer_fridays/",
+      "parser_limitation": null,
+      "evidence_text": "Wait, when did they start changing the formula and packaging? And what changes did they make to it specifically? I got a birthday sample of the pink sugar flavor 2 years ago, and it became my travel holy grail lippie on a 3-week trip abroad to Japan and the Philippines because of how hydrating the formula was. I recently bought the birthday cake and strawberry duo because I just ran out, but I'll be heartbroken if they changed the formula and don't bring back the og one (like Glossier tried to do a while back)."
+    },
+    {
+      "thread_id": "1slrvyj",
+      "comment_id": "post",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "alternative_brand": null,
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1slrvyj/summer_fridays/",
+      "parser_limitation": null,
+      "evidence_text": "Anyone else completely over the summer Fridays hype? I have to admit, I was a complete over consumer for the brand for a WHILE. My SF collection is extensive. What happened to them though? The formula is awful now. It’s so watery and… oily? They don’t last long on my lips anymore and honestly dry them out. It did not used to be like this. I ran out of pink sugar again and don’t even care to repurchase at this point. Anyone else feel this way too?"
+    },
+    {
+      "thread_id": "1slrvyj",
+      "comment_id": "ogdh06e",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1slrvyj/summer_fridays/",
+      "parser_limitation": null,
+      "evidence_text": "Yes! Dries my lips out. Not worth it."
+    },
+    {
+      "thread_id": "1slrvyj",
+      "comment_id": "og9a4c8",
+      "product_context": "Lip Butter Balm",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1slrvyj/summer_fridays/",
+      "parser_limitation": null,
+      "evidence_text": "It’s more like a candy than a lip balm. DELICIOUS. Lasts 5 minutes, tops. The Trader Joe’s Jellybean dupe is $6.99 for a balm and matching lip mask which is slightly thicker and in a pot. Just as good imo, just has a crappy applicator."
+    },
+    {
+      "thread_id": "1srjzrl",
+      "comment_id": "ohhszpt",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1srjzrl/",
+      "parser_limitation": null,
+      "evidence_text": "I actually picked up these two during the sale, OP. I love them both. I go for very lightweight coverage, luminous, glowy, my skin but better finishes and a skincare-like feel (I hate drying/tight or tacky/sticky textures.) These two are definitely in the same family. I've only used them a couple of times, so my experience is very limited, but, I'd say that they're both very sheer coverage, but the Glossier is especially sheer. If you want a more coverage I'd go with the Summer Fridays. I also want to say the Summer Fridays is slightly more buildable and has a little more polish and the slightest blurring. touch Neither is going to be mistaken for a medium coverage foundation, so if you don't like light coverage that still lets some of your natural color come through, neither is for you. I"
+    },
+    {
+      "thread_id": "1srjzrl",
+      "comment_id": "ol5t0dj",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Glossier",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1srjzrl/",
+      "parser_limitation": null,
+      "evidence_text": "it feels very similar to glossier, more five whe and a dewy finish. i find it lasts longer on the skin too."
+    },
+    {
+      "thread_id": "1srjzrl",
+      "comment_id": "oikh5ol",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1srjzrl/",
+      "parser_limitation": null,
+      "evidence_text": "Actually the pump is probably one of the best parts of it. It’s pretty mess free actually and easy!"
+    },
+    {
+      "thread_id": "1srjzrl",
+      "comment_id": "ohuj3vl",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1srjzrl/",
+      "parser_limitation": null,
+      "evidence_text": "Is the summer Fridays ok for sensitive or acne prone skin? I’ve been looking for an everyday tint! 😭"
+    },
+    {
+      "thread_id": "1srjzrl",
+      "comment_id": "ohghqdu",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hype_originality_and_trust"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "alternative_brand": "Elf",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1srjzrl/",
+      "parser_limitation": null,
+      "evidence_text": "SF was my go to for a long time, it's very good and I feel like didn't get the proper hype it deserved. in the last year I've been solely using CT flawless filter (and every dupe, like the ELF and MCoBeauty). I can definitely recommend those if you want something glowy for summer"
+    },
+    {
+      "thread_id": "1thd71q",
+      "comment_id": "onvsx5q",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "hydration_and_moisture"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1thd71q/",
+      "parser_limitation": null,
+      "evidence_text": "My friend and I were just talking about this!!! It does not moisturize the same as it used too. Sad because it’s been my go to for 5 years. No reports of them changing it in the years I’ve used it (it was changed in 2021 from its 2018 launch version)"
+    },
+    {
+      "thread_id": "kaikx3",
+      "comment_id": "gfba2qy",
+      "product_context": "Jet Lag Mask",
+      "axis_ids": [
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "texture_and_skin_finish"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/kaikx3/is_summer_fridays_worth_the_hype/",
+      "parser_limitation": null,
+      "evidence_text": "Aww I really like the jet lag mask. Idk if it works any better than cerave but it has a nice smell lol. I have normal skin (not dry, not oily) and get the occasional mask/hormonal breakout."
+    },
+    {
+      "thread_id": "kaikx3",
+      "comment_id": "gfb4lse",
+      "product_context": "Jet Lag Mask",
+      "axis_ids": [
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "value_and_quantity"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/kaikx3/is_summer_fridays_worth_the_hype/",
+      "parser_limitation": null,
+      "evidence_text": "I’ve tried both their Jet Lag & R+R (I believe it was called that, packaging is pink-ish) and honestly, wasn’t impressed at all. I didn’t get the gamechanging miraculous effects the brand and it’s influencers tout. Highly disappointing for its price point. Are they decent masks? Sure. But are they hugely overhyped and underwhelming? 1000%."
+    },
+    {
+      "thread_id": "l0stms",
+      "comment_id": "gjw0hae",
+      "product_context": "Summer Fridays products / brand",
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "alternative_brand": null,
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/l0stms/psa_summer_fridays_released_a_statement_on_their/",
+      "parser_limitation": null,
+      "evidence_text": "Oh wow. I tried this mask about 2 years ago and it immediately irritated my skin and I had red blotches all over my face. I never touched it again and just assumed I have super sensitive skin. Glad to know it probably was the essential oils."
+    }
+  ]
+}

@@ -60,7 +60,11 @@ For `company_competitive_intelligence`, this prompt prepares the
 commission-board portion of **Acquire & Seal** in a **Forseti Intelligence
 Cycle**. It does not itself claim that scanning/capture ran or that the phase
 acquisition seal passed. The playbook owns the complete two-phase/two-turn
-contract and the fresh-context Deliver gate.
+contract and the fresh-context synthesis gate. For company Understanding, the
+validated board precedes SERP Phase 1; Phase 1 feeds the `CO1`-`CO3` specialist
+fan-out; Reddit/community acquisition stays inside `CO3`; and the targeted SERP
+Phase 2 return begins only after the specialist terminal returns. These SERP
+labels are internal acquisition steps, not Intelligence Cycle phase names.
 
 Before claiming a full board is mechanically safe for classifier handoff, save
 the exact board output to a temporary or bound artifact file and run:
@@ -120,6 +124,10 @@ Public-reaction engagement handling:
   views, shares, comment counts, reply counts, source-native score state, sort
   order, and pinned/hearted/official-response markers when supplied or
   source-backed;
+- bind every engagement snapshot used during acquisition-record construction or
+  analysis to its observation date, an ISO 8601 `observed_at` timestamp when
+  available, and the source locator; preserve relative source labels in the
+  pinned body even when the final human deliverable does not display the date;
 - use those facts as qualitative resonance context by default, preserving
   direction, visible audience-fit basis, baseline context, objection,
   distribution, manipulation-risk, or social-proof context when supplied or
@@ -171,6 +179,7 @@ Before producing the board, check whether the dispatcher supplied:
 commission_id:
 mode: backtest | forward | unknown
 commission_profile: standard_signal_board | company_competitive_intelligence | default
+understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v3 | default
 time_posture: recency_first | longitudinal | default
 as_of_date: YYYY-MM-DD
 longitudinal_period: {start: YYYY-MM-DD, end: YYYY-MM-DD} | not_applicable
@@ -193,7 +202,7 @@ known_unknowns:
 dispatcher_non_goals:
 intelligence_cycle:
   cycle_id:
-  phase: understanding | problem_framing
+  phase: understanding | deliver
   turn: acquire_and_seal
   bound_question:
   intended_consumer:
@@ -216,10 +225,21 @@ output is not a validator target.
 
 For `company_competitive_intelligence`, also require `commission_id`,
 `cycle_id`, the canonical `phase`, `bound_question`, `intended_consumer`,
-`intended_use`, and `phase_scope`. The only valid turn at commission-board
+`intended_use`, `phase_scope`, and `understanding_completion_profile`. Select
+`broad_consumer_brand_understanding_v3` when the subject is a consumer brand and
+product/customer experience is material; otherwise select
+`broad_company_understanding_v1`. The only valid turn at commission-board
 generation is `acquire_and_seal`. Missing required company-cycle fields return
 `NEEDS_COMMISSION_INTAKE`; do not fall back to bare `Phase 1` / `Phase 2`
 language.
+
+Within the Forseti Intelligence Cycle, an owner request for `Understanding` or
+historical `Phase A` that does not explicitly name a synthesis deliverable
+commissions `acquire_and_seal` only and stops after the acquisition seal. Do
+not infer a Synthesize turn from the phase name, a passing seal, a request for
+complete competitive-intelligence value, or the availability of a report
+template. Synthesis requires an explicit current commission or a separately
+authorized follow-up.
 
 ## Missing-Input Intake Output
 
@@ -242,7 +262,7 @@ commission_inputs_needed:
   known_unknowns: []
   intelligence_cycle:
     cycle_id: required_for_company_profile
-    phase: understanding | problem_framing | required_for_company_profile
+    phase: understanding | deliver | required_for_company_profile
     turn: acquire_and_seal
     bound_question: required_for_company_profile
     intended_consumer: required_for_company_profile
@@ -789,6 +809,85 @@ remainders stay typed gaps and non-claims. Commission archives, supply, ads or
 creators, competitors, search trends, and similar deepening only for a named
 unresolved inference job.
 
+For a consumer brand where product/customer experience is material, apply the
+prompt-structure authority's `broad_consumer_brand_understanding_v3` profile.
+Build and hash-pin the v4 product-axis inventory across material pains,
+strongest delights, and mixed axes; produce the hash-pinned eligible-review
+coding view with axis-specific choice outcomes; comment-code community support;
+and classify social and external relationship before awarding distinct-origin
+independent support. Axis count is evidence-derived rather than inherited from
+another brand: preliminary coding nominates the inventory, and final
+adjudication may merge, split, rename, add, or exclude axes. `CO3` runs two
+pipelined lanes before Phase 2. Its
+source-neutral lane starts with a bounded unrestricted-domain brand/product
+review baseline, then uses retailer-review coding and other captured evidence
+for claim-directed editorial, specialist, retailer, and comparison checks. A
+search result, featured snippet, or AI-generated search summary is a discovery
+pointer only; admit evidence only from the source-native body. Company-owned and
+DTC pages establish official product facts and claims but never independently
+corroborate customer outcomes.
+
+In parallel, `CO3` runs the proven high-yield Reddit families in this order:
+balanced brand-plus-axis; behavior/consequence/displacement; a bounded
+consumer-native product-name or shorthand probe without the brand where the
+identity remains unambiguous; and condition/post-use. Qualify generic names with
+the category or use case. Run the brandless probe for a bounded set of hero
+products by default; add a non-hero product only when already captured evidence
+exposes a material axis, condition, behavior consequence, competitor
+destination, contradiction, or sampling-risk question for it. Never turn the
+family into a catalog-wide crawl. Add a community-diversity family only when
+concentration is observed. A material signal in either lane launches only a
+bounded counterpart check for the same claim or affected axis; do not mirror
+every query or wait for the whole discovery cycle. SERP discovery and
+source-native capture may pipeline, but family and candidate accounting stay
+separate.
+
+After the inventory hash exists, route corroboration/segmentation,
+comparison/switch/value, and disconfirmation/strongest-delight Phase 2 jobs for
+every material axis. Treat 40 usable unique Reddit/forum threads as a minimum
+floor, never a completion target. Seal only after the bounded eligible candidate
+frontier is terminally accounted in `reddit_candidate_frontier`. Bind each
+discovery job to one axis, its query and execution time, a hash-pinned result
+packet, and all surfaced candidate IDs. Track useful-thread yield separately
+from material additions. A useful thread reopens an axis only when it changes a
+decision through a typed new axis, tier, mechanism, segment/condition, behavior
+consequence, competitor destination, contradiction, sampling-risk, or
+competitive-action addition; reopen only affected and justified adjacent axes.
+
+Every material axis must be decision-mature through either strong evidence with
+a strong qualitative ceiling or route-bounded source exhaustion with a bounded
+observation ceiling. On that same axis row, write the compact
+`decision_usefulness` synthesis required by the authority: customer tension,
+decision effects, strongest counterevidence, competitive decision,
+decision-bearing support references, status, and limitations. Evidence-rich
+closure requires `decision_useful` or `strategically_material`; route-bounded
+sparse closure uses `source_exhausted_but_weak` and may not borrow strong
+attack/defend authority. `evidence_covered_but_not_decision_useful` cannot pass.
+It names two later live continuation families of different
+kinds, queries, and artifacts with no material addition affecting that axis;
+those families may still add useful threads. A search result remains a pointer:
+`captured` requires the source-native body and a ledgered evidence unit, and a
+SERP artifact never doubles as a native body. Reconcile every selected target,
+retain same-topic sharpening volume separately from distinct-origin spread, and
+resolve every material follow-up through the owning Scanning/Capture route
+before sealing. Read the authority for the exact schema and hybrid strength
+bars; do not reconstruct them from this prompt.
+
+Sequence the judgment correctly: use a lightweight provisional maturity scan
+to direct the evidence-floor and material-exhaustion loop, terminally account
+the resulting corpus, and only then perform final semantic adjudication and its
+delegated source check. The provisional scan is routing input, not a finished
+competitive-intelligence conclusion.
+
+Before accepting the completed Phase A seal for synthesis or landing it, run the
+authority's final delegated semantic review-and-patch. Require the reviewer to
+read every decision-bearing reference in its source-native body and two
+independent spot checks per material axis; verify local subject anchoring,
+axis/role fit, competitor-event attribution, and genuine counterevidence. Use
+the authority's affected-axis-first escalation rule rather than defaulting to a
+full-corpus reread. Revalidate any bounded patch against the seal, and require
+separate Chief Architect adjudication before keeping it.
+
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.
 Owned surfaces remain canonical for company portfolio and franchise expression.
@@ -805,13 +904,21 @@ authorize claims about internal management intent, revenue, margin, cash
 generation, sell-through, or undisclosed operations.
 
 Use company-owned evidence to establish the officially named US retailer board
-before probing retailer surfaces. Resolve Sephora explicitly and select any
-route-admissible retailers that add material assortment, commercial, or customer
-evidence; there is no fixed retailer quartet or count. Use existing
+before probing retailer surfaces. When at least four company-authorized,
+target-market, route-admissible third-party retailers exist, select and attempt
+at least four, favoring venues that add distinct assortment, commercial, or
+customer evidence. The company-owned DTC site does not count. When fewer than
+four qualify, select all that qualify and record
+`AUTHORIZED_RETAILER_SHORTFALL` with the observed count and reasons; never fill
+the floor with an unauthorized, duplicate, or market-unpinned venue. Resolve
+Sephora explicitly. When it is officially named and route-complete, it counts as
+one selected retailer and remains subject to the primary rule below. When
+another qualified retailer is available, replace a blocked selected route to
+restore four usable venues while preserving the block. Use existing
 coverage-ledger fields to preserve each authorization and route test with its
-exact result, including `NOT_LISTED`, `ROUTE_BLOCKED`, `MARKET_UNPINNED`, or
-`SURFACE_NOT_EXPOSED`; never infer a listing or award completion credit for a
-failed or unobserved route.
+exact result, including `NOT_LISTED`, `ROUTE_BLOCKED`, `MARKET_UNPINNED`,
+`SURFACE_NOT_EXPOSED`, or `AUTHORIZED_RETAILER_SHORTFALL`; never infer a listing
+or award completion credit for a failed or unobserved route.
 
 For every selected retailer, acquire its available grid surface,
 deterministically union and reconcile exact listings with the owned candidates,
@@ -825,11 +932,21 @@ such as merchandising, badges, fulfilment, seller/authenticity, related products
 Q&A availability, review provider, and native identifiers or metadata. Do not
 require a complete global parent-product -> variant/SKU -> retailer-listing graph.
 
-Treat Sephora, Ulta, and Target as brand or assortment grids. Treat Amazon as a
-query-bound ranked-search window complete only for its declared query and
-reachable result window, never a guaranteed complete or authorized-only catalog.
-Projection capability is not route admission. Point-in-time retailer metrics are
-traction proxies, not sales, share, or trend.
+Treat Sephora, Ulta, and Target as brand or assortment grids. Before selecting
+Amazon, classify it separately from marketplace presence:
+`COMPANY_AUTHORIZED` requires a company-owned source that explicitly names or
+links the target-market Amazon store or retailer;
+`MARKETPLACE_IDENTITY_VERIFIED_NOT_COMPANY_AUTHORIZED` requires exact branded
+storefront or seller/listing identity but carries no company authorization; and
+`MARKETPLACE_PRESENCE_UNVERIFIED` means exact identity is not proven. Only
+`COMPANY_AUTHORIZED` counts toward the four-retailer floor. A
+verified-but-not-company-authorized route may supplement marketplace, price, or
+customer evidence with that limitation attached; an unverified route remains a
+discovery pointer. Treat Amazon as a query-bound ranked-search window complete
+only for its declared query and reachable result window, never a guaranteed
+complete or authorized-only catalog. Projection capability is not route
+admission. Point-in-time retailer metrics are traction proxies, not sales,
+share, or trend.
 
 Only after this breadth baseline, select products for expensive review or Q&A
 depth based on evidence. A named non-duplicative job must justify each deepening:
@@ -945,7 +1062,7 @@ company_commission_receipt:
   commission_id:
   intelligence_cycle:
     cycle_id:
-    phase: understanding | problem_framing
+    phase: understanding | deliver
     turn: acquire_and_seal
     bound_question:
     intended_consumer:
@@ -960,6 +1077,7 @@ company_commission_receipt:
       - communication_efficiency
   mode: backtest | forward
   commission_profile: company_competitive_intelligence
+  understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v3
   subject_count: 1
   subject_identity:
     raw_name:
@@ -1286,18 +1404,23 @@ Chain rules (conclusion-writing guidance; no other durable structure):
 
 Use bounded comparator pointers only where they interpret the subject. Cite
 observation IDs, contradictions, and gaps. State that deep competitor treatment
-requires a separately named follow-up commission. When a SERP scout ledger
-exists for this subject (produced by the phase-1 scout pass the playbook's
-Operating Sequence routes), consume it here rather than re-deriving comparators:
-carry each entry's type, ladder rung, and provenance, and ship rungs below
-finding-grade as `status: gap`. Comparator names must trace to a harvested
-surface or a typed gap — never to an unsourced prior. Collect defensibility raw
-material where visible — comparator claims language, substitution economics,
-price gaps, claims parity — as bounded observations only; the defensibility
-judgment itself belongs to the downstream adjudication layer, never this
-report. Understanding collects that generic raw material once. Problem Framing
-may request fresh evidence only as a decision-specific supplement for the
-decision it is adjudicating, never as a general re-scan.
+requires a separately named follow-up commission. At
+`COMMISSION_SEALED_PRE_SCAN`, record comparator information jobs and typed gaps;
+the board precedes the scout and cannot claim its results. During specialist
+fan-out, consume the SERP Phase 1 ledger rather than re-deriving comparators.
+For a completed Understanding report, consume the final Phase 2 consolidated
+ledger and decision receipt, including the provenance that shows which
+specialist finding caused each targeted query. Do not stop at the Phase 1
+ledger or rerun its discovery from memory. Carry each entry's type, ladder rung,
+and provenance, and ship rungs below finding-grade as `status: gap`. Comparator
+names must trace to a harvested surface or a typed gap — never to an unsourced
+prior. Collect defensibility raw material where visible — comparator claims
+language, substitution economics, price gaps, claims parity — as bounded
+observations only; the defensibility judgment itself belongs to the downstream
+adjudication layer, never this report. Understanding collects that generic raw
+material once. The Deliver phase may request fresh evidence only as a
+decision-specific supplement for the decision it is adjudicating, never as a
+general re-scan.
 
 ### 9. Company Surface Candidate Ledger
 

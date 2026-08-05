@@ -206,8 +206,10 @@ adaptation. Grid projections are separate retailer-specific mechanical views,
 not PDP content, Cleaning, or Silver.
 
 Current admitted projected grid paths include Sephora, Ulta, Target, Amazon,
-and REVOLVE; future company runs select among officially named,
-route-admissible retailers rather than forcing a quartet. Sephora reconciles its retailer-declared count against unique
+and REVOLVE; future company runs select and attempt at least four
+company-authorized, target-market, route-admissible third-party retailers when
+four exist, or preserve `AUTHORIZED_RETAILER_SHORTFALL` when they do not.
+Sephora reconciles its retailer-declared count against unique
 parent rows; Ulta reconciles its retailer-declared and viewed counts against
 anchored placements, so a complete Ulta grid may hold more placements than
 unique parents. Target's admitted search and `/b/<brand>/-/N-...` brand grids
@@ -219,9 +221,13 @@ page's count observation remains preserved because the live assortment can
 change during traversal. An unsupported larger `count` hint is never a
 completeness dependency. Amazon has an admitted query-bound ranked-search
 projection complete only for its declared query and reachable result window,
-never as a guaranteed complete or authorized-only brand denominator. Projection
-capability does not admit a live route; each acquisition still records market
-pin, reachability, surface boundary, and typed failure.
+never as a guaranteed complete or authorized-only brand denominator. It counts
+toward the retailer floor only when a company-owned source explicitly names or
+links the target-market Amazon store or retailer. A verified marketplace
+identity without company authorization may supplement evidence but does not
+count; an unverified presence remains a discovery pointer. Projection capability
+does not admit a live route; each acquisition still records market pin,
+reachability, surface boundary, and typed failure.
 Amazon, Sephora, Ulta, and Target PDP profiles use retailer-local canonical
 content. Amazon and Target PDP captures may omit a local fulfillment ZIP when
 the claim is the US-facing product surface; displayed destination and
@@ -293,6 +299,27 @@ marker. The later warmed Clinique page states satisfy the US route under
 read-only re-evaluation of their preserved bytes, while their own manifests
 remain immutable failed-pin records; their currency remains unpinned because
 neither exposes an explicit currency code.
+
+## Soko Glam bounded profile
+
+Reference PDP:
+`https://sokoglam.com/products/acwell-licorice-ph-balancing-cleansing-toner`.
+
+This profile applies the shared standard only to the public surfaces proven in
+`sokoglam_okendo_retail_review_capture_recon_v0.md`:
+
+| Area | Bounded behavior |
+| --- | --- |
+| Local preprojection | Prefer the page-owned Okendo response for review rows and Shopify's narrow product-grid `section_id` response for bestseller placements. Request transfer compression and extract locally. The initial route pin must reconcile against the broad PDP/collection surface; a compact source that changes order or coverage is rejected. |
+| PDP binding | Read the public PDP once when a new or changed product needs binding or an understanding cycle is commissioned. Bind the canonical product URL, Shopify product ID, Okendo subscriber ID, provider product ID, aggregate count, and source-visible first-row prefix before accepting companion responses. |
+| Routine review monitoring | Make exactly one date-desc `limit=100` Okendo API request per bound PDP. Retain its source-native IDs and rows as `latest_100` or proven exhaustion, plus the prior last-seen review ID and whether it was found. Routine monitoring requires that prior watermark; without one, label the response a baseline window or commission an understanding cycle. Do not follow `nextUrl` during the routine monitoring observation and do not call the window a complete corpus. |
+| Saturation / gap | When the prior last-seen ID is absent from a full 100-row response, emit `sokoglam_review_monitoring_window_saturated`, preserve the observation, and queue an understanding cycle. This is a visible monitoring gap, not proof of exactly 100 additions, no loss, or route failure. |
+| Understanding cycle | Re-open the public PDP binding and follow the page-owned Okendo `nextUrl` chain at human rate until the declared aggregate reconciles or a typed failure/ceiling stops the run. The Acwell calibration proved a server cap of 100 rows even when `limit=5000` was requested and reconciled 2,130 rows over 22 responses. |
+| Bestseller monitoring | Capture every paginated compressed product-grid section under exact `best-selling` sort, project retailer-native product IDs and positions locally, and reconcile declared count, unique IDs, duplicate placements, rank continuity, and termination. Compare movement only within the Soko series; cross-retailer rank magnitudes are not equivalent. |
+
+The routine one-request rule minimizes monitoring cost; it deliberately trades
+away same-observation corpus completion. An understanding cycle is the explicit
+recovery path, not hidden pagination inside monitoring.
 
 ## Nordstrom reference profile
 

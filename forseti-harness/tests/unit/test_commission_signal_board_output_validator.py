@@ -43,6 +43,88 @@ def test_valid_commission_signal_board_outputs_pass(fixture_name: str) -> None:
     assert findings == []
 
 
+def test_commission_stage_requires_understanding_completion_profile() -> None:
+    path = FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+    text = path.read_text(encoding="utf-8").replace(
+        "  understanding_completion_profile: broad_company_understanding_v1\n",
+        "",
+        1,
+    )
+
+    assert (
+        "missing_or_invalid_understanding_completion_profile"
+        in _company_codes(text)
+    )
+
+
+def test_completed_company_report_retains_understanding_completion_profile() -> None:
+    text = _valid_company_text().replace(
+        "  understanding_completion_profile: broad_company_understanding_v1\n",
+        "",
+        1,
+    )
+    assert (
+        "missing_or_invalid_understanding_completion_profile"
+        in _company_codes(text)
+    )
+
+
+def _consumer_v3_text(*, completed: bool = False) -> str:
+    if completed:
+        text = _valid_company_text()
+    else:
+        text = (
+            FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+        ).read_text(encoding="utf-8")
+    return text.replace(
+        "  understanding_completion_profile: broad_company_understanding_v1",
+        "  understanding_completion_profile: broad_consumer_brand_understanding_v3",
+        1,
+    ).replace(
+        "    subject_kind: brand_or_org_unresolved",
+        "    subject_kind: brand",
+        1,
+    )
+
+
+def test_current_consumer_v3_profile_passes_commission_and_completed_records() -> None:
+    assert _company_codes(_consumer_v3_text()) == set()
+    assert _company_codes(_consumer_v3_text(completed=True)) == set()
+    assert validator.UNDERSTANDING_PROFILE_DEPTH_CONTRACT[
+        "broad_consumer_brand_understanding_v3"
+    ] == "understanding_evidence_depth_v4"
+
+
+@pytest.mark.parametrize(
+    "legacy_profile",
+    [
+        "broad_consumer_brand_understanding_v1",
+        "broad_consumer_brand_understanding_v2",
+    ],
+)
+def test_legacy_consumer_profiles_cannot_satisfy_a_current_record(
+    legacy_profile: str,
+) -> None:
+    text = _consumer_v3_text().replace(
+        "broad_consumer_brand_understanding_v3",
+        legacy_profile,
+        1,
+    )
+    assert "legacy_consumer_understanding_profile_forbidden" in _company_codes(text)
+
+
+def test_consumer_v3_profile_requires_a_brand_subject() -> None:
+    text = _consumer_v3_text().replace(
+        "    subject_kind: brand",
+        "    subject_kind: brand_or_org_unresolved",
+        1,
+    )
+    assert (
+        "consumer_understanding_profile_requires_brand_subject"
+        in _company_codes(text)
+    )
+
+
 def _valid_company_text() -> str:
     return COMPANY_FIXTURE.read_text(encoding="utf-8")
 
@@ -779,6 +861,54 @@ def test_board_status_values_are_constrained() -> None:
 def test_commission_stage_company_board_passes() -> None:
     text = (FIXTURE_DIR / "valid_company_commission_stage_output.txt").read_text(encoding="utf-8")
     assert validator.validate_text(text) == []
+
+
+@pytest.mark.parametrize(
+    ("surface", "expected_code"),
+    [
+        (
+            "google_ads_transparency_center",
+            "missing_google_ads_transparency_commission",
+        ),
+        ("meta_ads_library", "missing_meta_ads_library_commission"),
+        (
+            "reddit_weekly_data_lake_read",
+            "missing_reddit_weekly_lake_commission",
+        ),
+        (
+            "native_social_trigger_assessment",
+            "missing_native_social_trigger_assessment",
+        ),
+        (
+            "tiktok_shop_trigger_assessment",
+            "missing_tiktok_shop_trigger_assessment",
+        ),
+    ],
+)
+def test_commission_stage_requires_enhanced_evidence_routes(
+    surface: str, expected_code: str
+) -> None:
+    text = (
+        FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+    ).read_text(encoding="utf-8")
+    text = text.replace(f"source_surface: {surface}", "source_surface: omitted", 1)
+
+    assert expected_code in _company_codes(text)
+
+
+def test_commission_stage_requires_top_level_co0_with_three_worker_slots() -> None:
+    text = (
+        FIXTURE_DIR / "valid_company_commission_stage_output.txt"
+    ).read_text(encoding="utf-8")
+    text = text.replace(
+        "  controller_placement: top_level_co0",
+        "  controller_placement: nested_co0",
+        1,
+    ).replace("  worker_slots_available: 3", "  worker_slots_available: 2", 1)
+
+    codes = _company_codes(text)
+    assert "invalid_commission_controller_placement" in codes
+    assert "blocked_controller_capacity" in codes
 
 
 def test_commission_scout_status_requires_commission_boundary() -> None:

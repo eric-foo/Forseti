@@ -1,0 +1,4532 @@
+{
+  "schema_version": "understanding_evidence_depth_v3",
+  "profile_id": "broad_consumer_brand_understanding_v2",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r6_20260802",
+  "artifacts": [
+    {
+      "artifact_id": "p07_review_completion",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260725_p07/evidence_layer_completion.md",
+      "sha256": "1844c2c66e008dcfa7e7b9b8332037f30f8416cc568a5aca6d015f95ff3ed123"
+    },
+    {
+      "artifact_id": "p10_acquisition",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/turn_a_acquisition_record.md",
+      "sha256": "b31bf5c8fcc2d1ec66c2667c2c87d4f40d830fd512f33cb77928df7d28db3b51"
+    },
+    {
+      "artifact_id": "p10_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260725_p10/coordinated/specialists/co3_customer_community_depth.md",
+      "sha256": "f7b3c5e960922385990e37f1c9df0438a1a47b00cc60aba3b97355b30bd42453"
+    },
+    {
+      "artifact_id": "phase2_native_return",
+      "locator": "docs/research/serp_lane_competitor_scout_20260728/summer_fridays_phase2_native_return_v0.md",
+      "sha256": "b0700cc2a858240b0c84995d48c96490b6095e1e7773cebe1f4611f8fde7ef9a"
+    },
+    {
+      "artifact_id": "social_composition",
+      "locator": "docs/research/summer_fridays_ci_inputs_20260726/serp_social_composition_capture_return.md",
+      "sha256": "65fba8a9f6040e6b83f7389097fd86e453ab52951fce21955dee526cf663ff5f"
+    },
+    {
+      "artifact_id": "p11_company_core",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co1_company_core_identity.md",
+      "sha256": "42fdf0f8c89ff573b62ce250e94e521a1ead8b9b6f5142ad0184a63799d0fb80"
+    },
+    {
+      "artifact_id": "p11_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co3_customer_community_depth.md",
+      "sha256": "6fa6f693e30f2a7c1fb11ba2e848d4d6cbaf04e42ae48918f83ed6bec862847b"
+    },
+    {
+      "artifact_id": "p11r1_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r1/coordinated/specialists/co3_customer_community_recovery.md",
+      "sha256": "d3be3ceccbb5fe389ff384abde8352b663a0044960b3957454493dd677024de0"
+    },
+    {
+      "artifact_id": "p11r2_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r2/coordinated/specialists/co3_customer_community_recovery.md",
+      "sha256": "20e15896e6b147bce06fac3c32bcd37dd32721024d1f0c76e423b4fca392e1d8"
+    },
+    {
+      "artifact_id": "p11r3_customer_community",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r3/coordinated/specialists/co3_customer_community_final_recovery.md",
+      "sha256": "27ac0fdc72ac4a52e531ab91da97289f57e4ae0c27dee79b16c4441f580c45dc"
+    },
+    {
+      "artifact_id": "p11r4_record",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260801_p11r4/coordinated/turn_a_depth_reacquisition_record.md",
+      "sha256": "42dd5a1d3c8bc2ff6f4a856ded0876d37812703c78daa1bdfd524957a675d7a4"
+    },
+    {
+      "artifact_id": "p11r5_axis_codebook",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/product_axis_codebook.json",
+      "sha256": "a532073a12505f40ad6a558f9533c0a5d9e4fd9b72a06745c81ca015f5164c4f"
+    },
+    {
+      "artifact_id": "p11r5_retailer_axis_coding",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_product_axis_coding.json",
+      "sha256": "ed1fca2f3fdcc84ee09db1c0574fad6278a483a4b12194f54b2b21343fca538e"
+    },
+    {
+      "artifact_id": "p11r5_retailer_axis_report",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_axis_coding_report.json",
+      "sha256": "d86d0bace3c91dbb0359b3ecf060b5b0e233ca4e4f6a3bf07484bc80b6498ace"
+    },
+    {
+      "artifact_id": "p11r5_integrity_audit",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/confirm_dont_trust_integrity_audit.json",
+      "sha256": "a03063c829f673426b8f3ca09d8a4e3a99c49ebe611ec43477b0fbcda462e81f"
+    },
+    {
+      "artifact_id": "p11r5_axis_support",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/axis_support_adjudication.json",
+      "sha256": "ab517697b137f0966e1a44481fa606946e502f874b541058c1b6c111dd232f66"
+    },
+    {
+      "artifact_id": "p11r6_axis_inventory",
+      "locator": "C:\\tmp\\forseti-consumer-brand-depth-v3-20260802\\docs\\research\\summer_fridays_understanding_dogfood_20260802_p11r6\\coordinated\\consumer_brand_axis_inventory.json",
+      "sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e"
+    },
+    {
+      "artifact_id": "p11r6_community_axis_coding",
+      "locator": "C:\\tmp\\forseti-consumer-brand-depth-v3-20260802\\docs\\research\\summer_fridays_understanding_dogfood_20260802_p11r6\\coordinated\\community_axis_coding.json",
+      "sha256": "84e81c09c2b572a739430ca483b8755ef5162fe36c2ba8dadf4c6d6ad1936350"
+    },
+    {
+      "artifact_id": "reddit_manifest_11uym2u",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_balm_review_008_packet\\manifest.json",
+      "sha256": "6ecf3030ab2e0b5889e8294d17fa157eca41cc3b8768e66bd2609f0da7202198"
+    },
+    {
+      "artifact_id": "reddit_manifest_165xa4x",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_irritation_012_packet\\manifest.json",
+      "sha256": "1347a6e45e0364fbc00a983b51f7e33ed1df9e61cad3533e66dc95573e83cf29"
+    },
+    {
+      "artifact_id": "reddit_manifest_166j6zu",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q02_allergy_packet\\manifest.json",
+      "sha256": "6d983cc7c76f502d35777d3df504862590572da05c2e640243a564be0d68ea21"
+    },
+    {
+      "artifact_id": "reddit_manifest_175n4ck",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\175n4ck_packet\\manifest.json",
+      "sha256": "691d35524ff012580748bae4da46fd774b4a844d7c6356d1904b92703918685d"
+    },
+    {
+      "artifact_id": "reddit_manifest_17avity",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\17avity_packet\\manifest.json",
+      "sha256": "9853b422d99f153fed1f56ca378b747205b2207af0f5898685e64be2ed64d055"
+    },
+    {
+      "artifact_id": "reddit_manifest_188rp74",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\188rp74_packet\\manifest.json",
+      "sha256": "29300b17ecd8f6c9078dbf73448102b2b0b146413e94247d0b4cfc9d81e85393"
+    },
+    {
+      "artifact_id": "reddit_manifest_188u1av",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\188u1av_packet\\manifest.json",
+      "sha256": "43c233dc18f3bc27e72fe8c4fc575d652530dbb0674b88c30631671847284722"
+    },
+    {
+      "artifact_id": "reddit_manifest_18dqncn",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\18dqncn_packet\\manifest.json",
+      "sha256": "6be968fa7fe38dbc989285b9a7e7a180db08a4f67ce9df77228b95551d2861a0"
+    },
+    {
+      "artifact_id": "reddit_manifest_19dayj0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\19dayj0_packet\\manifest.json",
+      "sha256": "94c6abb1dc7c1ffdc94be8b5fd3f47b015fcfc33123691f122b275eee338a48a"
+    },
+    {
+      "artifact_id": "reddit_manifest_19eo5it",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\probe_19eo5it\\19eo5it_packet\\manifest.json",
+      "sha256": "17f8dfc5e6cacf7a7f6a6dfb4b9c14da3174a8fff09ce949f5f17939e3ed3ed9"
+    },
+    {
+      "artifact_id": "reddit_manifest_1ahn26w",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1ahn26w_packet\\manifest.json",
+      "sha256": "74ab90a469621abcbe02db497a1aebf38f39bbe40784f1c6833ca50e1ae8cf98"
+    },
+    {
+      "artifact_id": "reddit_manifest_1al8aby",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1al8aby_packet\\manifest.json",
+      "sha256": "4ba8a5c70d6517e5e395b9a2499c751da0262cd1339d5c2c65f374566515e30e"
+    },
+    {
+      "artifact_id": "reddit_manifest_1arhbj9",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q06_balm_vs_oil_packet\\manifest.json",
+      "sha256": "82b3927c8392b56441639b37d58bbe6ae40cdb456f10c4b738709603bba9164e"
+    },
+    {
+      "artifact_id": "reddit_manifest_1bm9izm",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\1bm9izm_packet\\manifest.json",
+      "sha256": "3f8c43dd9776618b2780b22ab8b8a100c4b325ab8d67b52df4a32e80719bf833"
+    },
+    {
+      "artifact_id": "reddit_manifest_1c2ybui",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\1c2ybui_packet\\manifest.json",
+      "sha256": "c74a27472c8e10bb6b1017532aa18caad7963f5f0e6bc77c8d6521a15cd2e7fc"
+    },
+    {
+      "artifact_id": "reddit_manifest_1cx0kf6",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_usage_011_packet\\manifest.json",
+      "sha256": "345393d6476e481c373b8fce6db5d199216a3a0ac2e3ebecb8219ae0e2dda9d7"
+    },
+    {
+      "artifact_id": "reddit_manifest_1d18sp0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\1d18sp0_packet\\manifest.json",
+      "sha256": "75f433cc32c9d37f1889ca4304ddde2ea89ca8dc82b141be1a315deb0efaf1a4"
+    },
+    {
+      "artifact_id": "reddit_manifest_1fvevie",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_claim_challenge_001_packet\\manifest.json",
+      "sha256": "99dc170e6d3bc685840bb10e6eaf251794d7726bc692b37b50ca625659020784"
+    },
+    {
+      "artifact_id": "reddit_manifest_1gvs36d",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_discoloration_007_packet\\manifest.json",
+      "sha256": "94e0a91fc71b084d164af65c98d8c7c0aae32c91e23cd5e4b00db360ed007a9d"
+    },
+    {
+      "artifact_id": "reddit_manifest_1h0wfao",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_vs_laneige_006_packet\\manifest.json",
+      "sha256": "b334c3aebdd1bdd55277277bec51688cd9be1313d4818f8fccc65c12c0441147"
+    },
+    {
+      "artifact_id": "reddit_manifest_1i0e6fh",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\1i0e6fh_packet\\manifest.json",
+      "sha256": "e5414dcbacf30f7210e54ef1d5db424e0d470a48da4bfdc5a98ec98a97db03a1"
+    },
+    {
+      "artifact_id": "reddit_manifest_1inusa1",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_substitute_010_packet\\manifest.json",
+      "sha256": "ed569bc10e9cd7294401bb897a2c3617f349d1133e35777762a565e363974e47"
+    },
+    {
+      "artifact_id": "reddit_manifest_1kq0492",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\1kq0492_packet\\manifest.json",
+      "sha256": "1db401c9e984caeaacaa70fa0d7b96b334bf6ff1ff0be03b18f96447547d6272"
+    },
+    {
+      "artifact_id": "reddit_manifest_1mzokbt",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_burning_003_packet\\manifest.json",
+      "sha256": "796a601a664fbf6e08674337c0579d0ed2ad064e30dc029f6e2c39f7909d8225"
+    },
+    {
+      "artifact_id": "reddit_manifest_1ntik4i",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\1ntik4i_packet\\manifest.json",
+      "sha256": "5cdc54ec30794d0c3f6b732f99bb1b9fda51d019cb69b10437f97a119c9138bd"
+    },
+    {
+      "artifact_id": "reddit_manifest_1nv3pda",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q04_amazon_legit_packet\\manifest.json",
+      "sha256": "335633f1006a9afd87f8143854f474e26a9c9e549bc0d352fad719abd87bc051"
+    },
+    {
+      "artifact_id": "reddit_manifest_1obnfys",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_replacement_002_packet\\manifest.json",
+      "sha256": "8d4e7eeaa3a45ae793ced0283b67b2078c592e22a2614f50d9e99bbda3358256"
+    },
+    {
+      "artifact_id": "reddit_manifest_1oh26y0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1oh26y0_packet\\manifest.json",
+      "sha256": "35d5c785e19411d37b28806e8f229da060779035386960ef3e451109a053b4ec"
+    },
+    {
+      "artifact_id": "reddit_manifest_1pf427h",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_reaction_005_packet\\manifest.json",
+      "sha256": "bb95692eed794878c82934d6b07ad1425edec1639e30a07e5edd589e7d271f1c"
+    },
+    {
+      "artifact_id": "reddit_manifest_1plfk6p",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_seal_009_packet\\manifest.json",
+      "sha256": "c1954d25e8a1a7b07fdfb2b7ae918300912ddece9bb850f65e6b0e5ec9aca66e"
+    },
+    {
+      "artifact_id": "reddit_manifest_1qdk0gq",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1qdk0gq_packet\\manifest.json",
+      "sha256": "1b6ca85c76c37aaaa6ccbc00313a414cf8d66d1670177f738b8d100d377a1b81"
+    },
+    {
+      "artifact_id": "reddit_manifest_1qiwlyp",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q07_newinbeauty_lipstains_packet\\manifest.json",
+      "sha256": "d88f03fdcbc5d055049ee06608561835f59a9bb46f3ee05cc25d6f54e6a1f546"
+    },
+    {
+      "artifact_id": "reddit_manifest_1qrcg5i",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q09_perfume_new_packet\\manifest.json",
+      "sha256": "546a23d2b79bf03ec0e331957c3a5a58814984580780ef0b827dd40a97b43d74"
+    },
+    {
+      "artifact_id": "reddit_manifest_1r9vw38",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\return_leg\\r01_vs_ole_henriksen_packet\\manifest.json",
+      "sha256": "724a9b7173bdc6fc2658c831a8727112d688285ff24622bafccddfa35326ca91"
+    },
+    {
+      "artifact_id": "reddit_manifest_1rzd5vw",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q08_sunlit_vanilla_packet\\manifest.json",
+      "sha256": "bf4b0242a72ed580258f146d4aba8f543345881dc8879ba8df307ba84a4b2f59"
+    },
+    {
+      "artifact_id": "reddit_manifest_1slrvyj",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1slrvyj_packet\\manifest.json",
+      "sha256": "1f4d096505b02b4f13914ac3eab3367e796c59eb3a2ad9fa1f346afa8124a693"
+    },
+    {
+      "artifact_id": "reddit_manifest_1srjzrl",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\1srjzrl_packet\\manifest.json",
+      "sha256": "22ed269e9a3ee2f1cb7f37bca16323a18af3085cb7b0357707abe0187f7426a5"
+    },
+    {
+      "artifact_id": "reddit_manifest_1thd71q",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_a\\1thd71q_packet\\manifest.json",
+      "sha256": "9262accb2b51b44df16aaa2da8b9a5f4083a93a2cbbfaafad6f7bcea81375acd"
+    },
+    {
+      "artifact_id": "reddit_manifest_kaikx3",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_value_004_packet\\manifest.json",
+      "sha256": "fcbe8bf6026492f97906b90dbf1bfe070104bcc790d3334bc21f8da868072a20"
+    },
+    {
+      "artifact_id": "reddit_manifest_l0stms",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\jet_lag_response_013_packet\\manifest.json",
+      "sha256": "e3680c4281dbc9065418e654a2ed443ebdd746542fe17ddbeabae6507ab562d3"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_application_and_tool_performance",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-at\\manifest.json",
+      "sha256": "63039770598ab07691304d448f5867cc118906f7c40504c1d460571804feab66"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_coverage_and_pigment",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-cp\\manifest.json",
+      "sha256": "5dcae8cb8cefbe19df626b8085c5faa4a2173785bf80fc5df12da19695e4d1f8"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_formula_consistency_and_change",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-fc\\manifest.json",
+      "sha256": "2d838bf29e6273c8318c3015854bd6398d2de9a7f79e4dfbe4369929ce73755b"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_hydration_and_moisture",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-hm\\manifest.json",
+      "sha256": "72269b286fb39a38eb37783f320526d26a3cb35096f99a4cea07ab94a6e49b78"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_hype_originality_and_trust",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-ht\\manifest.json",
+      "sha256": "675fb9f8f36538e90c279fcf7d0ccc2f006720221e2375a6735c64f973c1a745"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_packaging_and_dispensing",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-pd\\manifest.json",
+      "sha256": "e010bfb8a01555a51ff8267fd8855de5a48eee021f279187bdc2ebe38c4080c7"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_reaction_and_breakout",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-rb\\manifest.json",
+      "sha256": "45b6cb29fc78d66a91e0d81e84c7a5e4e3068e9a23f6cc0ebdf2d9fe48938b36"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_shade_and_color_fit",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-sc\\manifest.json",
+      "sha256": "6f780643a9881d85889e5cf46bc7ae8336623bdc1f9bee220f2a0587d0db7c5c"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_scent_and_flavor",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-sf\\manifest.json",
+      "sha256": "c1f09c28ea186631b193c2539456a52926c6aa840d048831d56e8290ca2e1690"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_texture_and_skin_finish",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-ts\\manifest.json",
+      "sha256": "a4991a5ce93cf2dac7f473edb01849a85d792b93909a412838f2e2ba8d67bb3d"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_value_and_quantity",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-vq\\manifest.json",
+      "sha256": "ba11b926889c7fac7520cc49918ad42951451dd7601aa2d1fc76317b10a31c35"
+    },
+    {
+      "artifact_id": "p11r6_serp_packet_wear_and_longevity",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\serp\\packets\\serp-wl\\manifest.json",
+      "sha256": "42602bf1a069e2131f5a3ff138a2cae985c73487e51cc8131350c043eb594155"
+    },
+    {
+      "artifact_id": "p11r6_phase2_search",
+      "locator": "C:\\tmp\\forseti-consumer-brand-depth-v3-20260802\\docs\\research\\summer_fridays_understanding_dogfood_20260802_p11r6\\coordinated\\consumer_brand_phase2_search.json",
+      "sha256": "3d80ca1192616c4ef3fe9d1a99f2e32e7407bd791b219bdceec167a17f3220c6"
+    },
+    {
+      "artifact_id": "p11r6_integrity_audit",
+      "locator": "C:\\tmp\\forseti-consumer-brand-depth-v3-20260802\\docs\\research\\summer_fridays_understanding_dogfood_20260802_p11r6\\coordinated\\confirm_dont_trust_integrity_audit.json",
+      "sha256": "e5505c47c8e2d3301a63dd61ed7f3f9a1b7b19cdd6017348f73ca78718dd7f9c"
+    }
+  ],
+  "families": {
+    "external_context": {
+      "units": [
+        {
+          "unit_id": "tsg_consumer_investment",
+          "origin_id": "tsg_consumer",
+          "artifact_id": "p07_review_completion",
+          "independence": "independent_origin",
+          "echo_group_id": "tsg_consumer_investment",
+          "source_type": "corporate_or_transaction",
+          "relationship": "relationship_unknown"
+        },
+        {
+          "unit_id": "theindustry_beauty_growth",
+          "origin_id": "theindustry_beauty",
+          "artifact_id": "p10_acquisition",
+          "independence": "independent_origin",
+          "echo_group_id": "theindustry_growth",
+          "source_type": "company_profile",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "forbes_brand_profile",
+          "origin_id": "forbes",
+          "artifact_id": "p10_acquisition",
+          "independence": "independent_origin",
+          "echo_group_id": "forbes_profile",
+          "source_type": "company_profile",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "cooley_transaction_role",
+          "origin_id": "cooley",
+          "artifact_id": "p10_acquisition",
+          "independence": "independent_origin",
+          "echo_group_id": "cooley_transaction",
+          "source_type": "corporate_or_transaction",
+          "relationship": "relationship_unknown"
+        },
+        {
+          "unit_id": "british_vogue_brand_profile",
+          "origin_id": "british_vogue",
+          "artifact_id": "p11_company_core",
+          "independence": "independent_origin",
+          "echo_group_id": "british_vogue_profile",
+          "source_type": "company_profile",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "femfounded_company_case",
+          "origin_id": "femfounded",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "femfounded_case",
+          "source_type": "company_profile",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "whowhatwear_perfume_review",
+          "origin_id": "who_what_wear",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "whowhatwear_perfume",
+          "source_type": "consumer_editorial",
+          "relationship": "disclosed_paid_or_affiliate"
+        },
+        {
+          "unit_id": "dailybeast_gap_collaboration",
+          "origin_id": "daily_beast",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "dailybeast_gap",
+          "source_type": "consumer_editorial",
+          "relationship": "relationship_unknown"
+        },
+        {
+          "unit_id": "cew_ceo_transition",
+          "origin_id": "cew",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "cew_ceo",
+          "source_type": "trade_press",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "moodiedavitt_travel_retail",
+          "origin_id": "moodie_davitt_report",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "moodiedavitt_travel",
+          "source_type": "trade_press",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "beautyscene_fragrance_launch",
+          "origin_id": "beautyscene",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "beautyscene_fragrance",
+          "source_type": "trade_press",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "grazia_brand_profile",
+          "origin_id": "grazia_france",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_origin",
+          "echo_group_id": "grazia_profile",
+          "source_type": "company_profile",
+          "relationship": "apparently_independent"
+        }
+      ]
+    },
+    "retailer_reviews": {
+      "corpora": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "artifact_id": "p11r5_retailer_axis_coding",
+          "unique_review_count": 196,
+          "cross_corpus_duplicate_count": 0,
+          "product_context_ids": [
+            "B08ZH82P7P",
+            "B0935NHG1Q",
+            "B09FYCGF57",
+            "B09FYHDW6P",
+            "B09HRLNSDG",
+            "B09HT3H9DK",
+            "B09S2K1R7X",
+            "B0B3KTFR3D",
+            "B0BSJQTNLQ",
+            "B0C42HJRBF",
+            "B0C5G91P67",
+            "B0C5GF7YT6",
+            "B0CFW622VT",
+            "B0DWG279NF",
+            "B0F19YY96Z",
+            "B0F3LN2QGW",
+            "B0F3M2RG7P",
+            "B0FK6RHRKB",
+            "B0FK72YXWZ",
+            "B0FQWS93RH",
+            "B0G36F4SZX",
+            "B0G36F8QQY",
+            "B0GMRHS9GN",
+            "B0GNWNL359",
+            "B0GSWY3HG3",
+            "B0GW95RP9M"
+          ],
+          "category_ids": [
+            "lip",
+            "skincare",
+            "sun",
+            "makeup"
+          ],
+          "rating_bands": [
+            "low",
+            "mid",
+            "high"
+          ]
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "artifact_id": "p11r5_retailer_axis_coding",
+          "unique_review_count": 576,
+          "cross_corpus_duplicate_count": 0,
+          "product_context_ids": [
+            "SUMR-WU1",
+            "SUMR-WU102",
+            "SUMR-WU11",
+            "SUMR-WU110",
+            "SUMR-WU111",
+            "SUMR-WU117",
+            "SUMR-WU118",
+            "SUMR-WU120",
+            "SUMR-WU121",
+            "SUMR-WU122",
+            "SUMR-WU123",
+            "SUMR-WU14",
+            "SUMR-WU16",
+            "SUMR-WU21",
+            "SUMR-WU23",
+            "SUMR-WU25",
+            "SUMR-WU39",
+            "SUMR-WU4",
+            "SUMR-WU49",
+            "SUMR-WU53",
+            "SUMR-WU59",
+            "SUMR-WU60",
+            "SUMR-WU61",
+            "SUMR-WU71",
+            "SUMR-WU74",
+            "SUMR-WU75",
+            "SUMR-WU76",
+            "SUMR-WU77",
+            "SUMR-WU83",
+            "SUMR-WU84",
+            "SUMR-WU87",
+            "SUMR-WU89",
+            "SUMR-WU90",
+            "SUMR-WU91",
+            "SUMR-WU92",
+            "SUMR-WU93",
+            "SUMR-WU95"
+          ],
+          "category_ids": [
+            "lip",
+            "skincare"
+          ],
+          "rating_bands": [
+            "low",
+            "mid",
+            "high"
+          ]
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "artifact_id": "p11r5_retailer_axis_coding",
+          "unique_review_count": 2926,
+          "cross_corpus_duplicate_count": 0,
+          "product_context_ids": [
+            "P429952",
+            "P449180",
+            "P455936",
+            "P469189",
+            "P471283",
+            "P476028",
+            "P480192",
+            "P480630",
+            "P501777",
+            "P503827",
+            "P506690",
+            "P509439",
+            "P510508",
+            "P511756",
+            "P511987",
+            "P515210",
+            "P517935",
+            "P518147",
+            "P518150",
+            "P520074",
+            "P520734",
+            "P520744",
+            "P520746",
+            "P520759",
+            "P520764",
+            "P520770",
+            "P520793",
+            "P520819",
+            "P521692",
+            "P522685",
+            "P522826",
+            "P522831",
+            "P525593",
+            "P525609",
+            "P525611",
+            "P525613",
+            "P525633",
+            "P525641",
+            "P525642",
+            "P525651",
+            "P525652",
+            "P525659",
+            "P525660",
+            "P525665"
+          ],
+          "category_ids": [
+            "lip",
+            "skincare",
+            "sun",
+            "makeup",
+            "fragrance",
+            "body"
+          ],
+          "rating_bands": [
+            "low",
+            "mid",
+            "high"
+          ]
+        }
+      ]
+    },
+    "reddit_forum": {
+      "threads": [
+        {
+          "thread_id": "11uym2u",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_11uym2u",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "165xa4x",
+          "community_id": "SkincareAddiction",
+          "topic_category": "reaction_and_safety",
+          "artifact_id": "reddit_manifest_165xa4x",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "166j6zu",
+          "community_id": "MakeupAddiction",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_166j6zu",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "175n4ck",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_175n4ck",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "17avity",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_17avity",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "188rp74",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_188rp74",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "188u1av",
+          "community_id": "Sephora",
+          "topic_category": "packaging_and_dispensing",
+          "artifact_id": "reddit_manifest_188u1av",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "18dqncn",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_18dqncn",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "19dayj0",
+          "community_id": "AustralianMakeup",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_19dayj0",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "19eo5it",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_19eo5it",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1ahn26w",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1ahn26w",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1al8aby",
+          "community_id": "Sephora",
+          "topic_category": "packaging_and_dispensing",
+          "artifact_id": "reddit_manifest_1al8aby",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1arhbj9",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1arhbj9",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1bm9izm",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1bm9izm",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1c2ybui",
+          "community_id": "Sephora",
+          "topic_category": "packaging_and_dispensing",
+          "artifact_id": "reddit_manifest_1c2ybui",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1cx0kf6",
+          "community_id": "SkincareAddiction",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1cx0kf6",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1d18sp0",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1d18sp0",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1fvevie",
+          "community_id": "beauty",
+          "topic_category": "formula_change",
+          "artifact_id": "reddit_manifest_1fvevie",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1gvs36d",
+          "community_id": "Sephora",
+          "topic_category": "packaging_and_dispensing",
+          "artifact_id": "reddit_manifest_1gvs36d",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1h0wfao",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1h0wfao",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1i0e6fh",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1i0e6fh",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1inusa1",
+          "community_id": "SkincareAddiction",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1inusa1",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1kq0492",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1kq0492",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1mzokbt",
+          "community_id": "beauty",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1mzokbt",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1ntik4i",
+          "community_id": "Sephora",
+          "topic_category": "packaging_and_dispensing",
+          "artifact_id": "reddit_manifest_1ntik4i",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1nv3pda",
+          "community_id": "AustralianMakeup",
+          "topic_category": "value_and_comparison",
+          "artifact_id": "reddit_manifest_1nv3pda",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1obnfys",
+          "community_id": "beauty",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1obnfys",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1oh26y0",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1oh26y0",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1pf427h",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1pf427h",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1plfk6p",
+          "community_id": "SkincareAddiction",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1plfk6p",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1qdk0gq",
+          "community_id": "LipBalm",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1qdk0gq",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1qiwlyp",
+          "community_id": "newinbeauty",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1qiwlyp",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1qrcg5i",
+          "community_id": "Sephora",
+          "topic_category": "hype_and_trust",
+          "artifact_id": "reddit_manifest_1qrcg5i",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1r9vw38",
+          "community_id": "MakeupAddiction",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1r9vw38",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1rzd5vw",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1rzd5vw",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1slrvyj",
+          "community_id": "LipBalm",
+          "topic_category": "formula_change",
+          "artifact_id": "reddit_manifest_1slrvyj",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1srjzrl",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1srjzrl",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "1thd71q",
+          "community_id": "Sephora",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_1thd71q",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "kaikx3",
+          "community_id": "beauty",
+          "topic_category": "product_experience",
+          "artifact_id": "reddit_manifest_kaikx3",
+          "independence": "independent_thread"
+        },
+        {
+          "thread_id": "l0stms",
+          "community_id": "SkincareAddiction",
+          "topic_category": "reaction_and_safety",
+          "artifact_id": "reddit_manifest_l0stms",
+          "independence": "independent_thread"
+        }
+      ]
+    },
+    "native_social": {
+      "posts": [
+        {
+          "unit_id": "yt_aJNT3Mo6hHg",
+          "platform": "youtube",
+          "post_id": "aJNT3Mo6hHg",
+          "creator_id": "holly_ward",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "disclosed_paid_or_affiliate"
+        },
+        {
+          "unit_id": "yt_qf--43DCmxI",
+          "platform": "youtube",
+          "post_id": "qf--43DCmxI",
+          "creator_id": "natalie_santini",
+          "perspective": "critical",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "yt_5s1fZlH22dM",
+          "platform": "youtube",
+          "post_id": "5s1fZlH22dM",
+          "creator_id": "space_nk",
+          "perspective": "positive",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "retailer_operated"
+        },
+        {
+          "unit_id": "yt_mPjJwVDTrjE",
+          "platform": "youtube",
+          "post_id": "mPjJwVDTrjE",
+          "creator_id": "gorgeously_aging",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "yt_18h0qZjEb24",
+          "platform": "youtube",
+          "post_id": "18h0qZjEb24",
+          "creator_id": "hannah_fosbenner",
+          "perspective": "positive",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "yt_PW6fITp2D6M",
+          "platform": "youtube",
+          "post_id": "PW6fITp2D6M",
+          "creator_id": "monica_villegas",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DXXkXRUErYL",
+          "platform": "instagram",
+          "post_id": "DXXkXRUErYL",
+          "creator_id": "painted_by_james_cha",
+          "perspective": "critical",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DaWFSnghjDh",
+          "platform": "instagram",
+          "post_id": "DaWFSnghjDh",
+          "creator_id": "katerina",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DbJdfWwShRw",
+          "platform": "instagram",
+          "post_id": "DbJdfWwShRw",
+          "creator_id": "theresa_krug",
+          "perspective": "neutral",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DatAlIDvo83",
+          "platform": "instagram",
+          "post_id": "DatAlIDvo83",
+          "creator_id": "theresa_krug",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DY5pIkozIVx",
+          "platform": "instagram",
+          "post_id": "DY5pIkozIVx",
+          "creator_id": "ek_blair",
+          "perspective": "positive",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7381649202134207786",
+          "platform": "tiktok",
+          "post_id": "7381649202134207786",
+          "creator_id": "marinabarnoo",
+          "perspective": "critical",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7537429735865978125",
+          "platform": "tiktok",
+          "post_id": "7537429735865978125",
+          "creator_id": "melisdoesmakeup",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7482167773292989727",
+          "platform": "tiktok",
+          "post_id": "7482167773292989727",
+          "creator_id": "marewiththehair",
+          "perspective": "mixed",
+          "artifact_id": "social_composition",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_official_DbONTyYSmTS",
+          "platform": "instagram",
+          "post_id": "DbONTyYSmTS",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-25",
+          "direction_event_tags": [
+            "body_category_expansion",
+            "fragrance_expansion",
+            "retail_launch_timing"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DbMHFSlkl3x",
+          "platform": "instagram",
+          "post_id": "DbMHFSlkl3x",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-24",
+          "direction_event_tags": [
+            "body_category_expansion",
+            "fragrance_expansion",
+            "retail_launch_timing",
+            "hydration_platform"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DbJDdz6FL_P",
+          "platform": "instagram",
+          "post_id": "DbJDdz6FL_P",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-23",
+          "direction_event_tags": [
+            "body_category_expansion",
+            "fragrance_expansion",
+            "retail_launch_timing",
+            "hydration_platform"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DYkQGiSFJVQ",
+          "platform": "instagram",
+          "post_id": "DYkQGiSFJVQ",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-05-20",
+          "direction_event_tags": [
+            "fragrance_expansion",
+            "hydration_platform",
+            "lip_franchise",
+            "award_or_social_proof",
+            "giveaway_or_community_activation"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DbGgXb7ynHH",
+          "platform": "instagram",
+          "post_id": "DbGgXb7ynHH",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-22",
+          "direction_event_tags": [
+            "retail_launch_timing"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DbLnqyuFD67",
+          "platform": "instagram",
+          "post_id": "DbLnqyuFD67",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-24",
+          "direction_event_tags": [
+            "body_category_expansion",
+            "fragrance_expansion",
+            "hydration_platform"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DXwwFV1FI7h",
+          "platform": "instagram",
+          "post_id": "DXwwFV1FI7h",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-04-30",
+          "direction_event_tags": [
+            "retail_launch_timing"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DYr-dtXy3XE",
+          "platform": "instagram",
+          "post_id": "DYr-dtXy3XE",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-05-23",
+          "direction_event_tags": [
+            "retail_launch_timing",
+            "hydration_platform"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DZsWUUJS9vn",
+          "platform": "instagram",
+          "post_id": "DZsWUUJS9vn",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-06-17",
+          "direction_event_tags": [
+            "product_marketing"
+          ]
+        },
+        {
+          "unit_id": "ig_official_Dav6X6ckua9",
+          "platform": "instagram",
+          "post_id": "Dav6X6ckua9",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-13",
+          "direction_event_tags": [
+            "product_marketing"
+          ]
+        },
+        {
+          "unit_id": "ig_official_DZ8QMCwEpGw",
+          "platform": "instagram",
+          "post_id": "DZ8QMCwEpGw",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-06-23",
+          "direction_event_tags": [
+            "product_marketing"
+          ]
+        },
+        {
+          "unit_id": "ig_official_Da8LUpMFN5X",
+          "platform": "instagram",
+          "post_id": "Da8LUpMFN5X",
+          "creator_id": "summerfridays",
+          "perspective": "positive",
+          "artifact_id": "p11r4_record",
+          "independence": "independent_post",
+          "relationship": "owned",
+          "published_at": "2026-07-18",
+          "direction_event_tags": [
+            "product_marketing"
+          ]
+        },
+        {
+          "unit_id": "tt_7232313070897483051",
+          "platform": "tiktok",
+          "post_id": "7232313070897483051",
+          "creator_id": "karly_alane",
+          "perspective": "critical",
+          "artifact_id": "p11r1_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7527741844298435895",
+          "platform": "tiktok",
+          "post_id": "7527741844298435895",
+          "creator_id": "by_erinmarie",
+          "perspective": "mixed",
+          "artifact_id": "p11r3_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7379382940272217386",
+          "platform": "tiktok",
+          "post_id": "7379382940272217386",
+          "creator_id": "makeup2themaxx",
+          "perspective": "neutral",
+          "artifact_id": "p11r2_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7354686188327832833",
+          "platform": "tiktok",
+          "post_id": "7354686188327832833",
+          "creator_id": "walkingtower",
+          "perspective": "critical",
+          "artifact_id": "p11r2_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "tt_7496318205502246190",
+          "platform": "tiktok",
+          "post_id": "7496318205502246190",
+          "creator_id": "micahlambeth",
+          "perspective": "critical",
+          "artifact_id": "p11r2_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DWE8EFkDHes",
+          "platform": "instagram",
+          "post_id": "DWE8EFkDHes",
+          "creator_id": "eli_leimer",
+          "perspective": "critical",
+          "artifact_id": "p11r1_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DPrnH9Cj6qI",
+          "platform": "instagram",
+          "post_id": "DPrnH9Cj6qI",
+          "creator_id": "eli_leimer",
+          "perspective": "critical",
+          "artifact_id": "p11_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DXb1FcNhdXP",
+          "platform": "instagram",
+          "post_id": "DXb1FcNhdXP",
+          "creator_id": "michael_park_md",
+          "perspective": "mixed",
+          "artifact_id": "p11_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "ig_DQLAZt7DSav",
+          "platform": "instagram",
+          "post_id": "DQLAZt7DSav",
+          "creator_id": "goforthandgrow",
+          "perspective": "mixed",
+          "artifact_id": "p11_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        },
+        {
+          "unit_id": "yt_nkKjxEQgBp8",
+          "platform": "youtube",
+          "post_id": "nkKjxEQgBp8",
+          "creator_id": "christi_rose",
+          "perspective": "mixed",
+          "artifact_id": "p11_customer_community",
+          "independence": "independent_post",
+          "relationship": "apparently_independent"
+        }
+      ]
+    }
+  },
+  "retailer_axis_coding": {
+    "artifact_id": "p11r5_retailer_axis_coding",
+    "reuse": {
+      "mode": "pinned_unchanged_reuse",
+      "source_cycle_id": "summer_fridays_understanding_p11r5_20260802",
+      "current_cycle_id": "summer_fridays_understanding_p11r6_20260802",
+      "reason": "No retailer corpus or coding rule changed in this continuation; the validator rechecks the pinned artifact against the current corpus counts and product contexts."
+    }
+  },
+  "product_axes": [
+    {
+      "axis_id": "reaction_and_breakout",
+      "label": "Reaction, irritation, and breakout risk",
+      "scope": "product and formula",
+      "polarity": "pain",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1mzokbt",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1pf427h",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1inusa1",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1cx0kf6",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "165xa4x",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "l0stms",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXXkXRUErYL",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7527741844298435895",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DWE8EFkDHes",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DPrnH9Cj6qI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 27,
+          "negative_choice_review_count": 1,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 2
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 2,
+          "negative_choice_review_count": 1,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 517,
+          "negative_choice_review_count": 138,
+          "positive_choice_review_count": 41,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_reaction_and_breakout_corroborate",
+          "disposition": "captured",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": [
+            "reddit_19eo5it"
+          ]
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_reaction_and_breakout_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_reaction_and_breakout_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "value_and_quantity",
+      "label": "Value for price and usable quantity",
+      "scope": "product and price",
+      "polarity": "pain",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1plfk6p",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1inusa1",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1cx0kf6",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1nv3pda",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1arhbj9",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1rzd5vw",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1r9vw38",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DQLAZt7DSav",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1c2ybui",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1i0e6fh",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Hourglass"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ntik4i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 36,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 8
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 9,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 3,
+          "disclosed_incentivized_axis_mention_count": 1
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 478,
+          "negative_choice_review_count": 78,
+          "positive_choice_review_count": 29,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_value_and_quantity_corroborate",
+          "disposition": "captured",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": [
+            "reddit_19dayj0",
+            "reddit_1bm9izm",
+            "reddit_1kq0492",
+            "reddit_1qdk0gq"
+          ]
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_value_and_quantity_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_value_and_quantity_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "packaging_and_dispensing",
+      "label": "Packaging and dispensing reliability",
+      "scope": "product packaging",
+      "polarity": "pain",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1gvs36d",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1plfk6p",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qrcg5i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DbJdfWwShRw",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DatAlIDvo83",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7482167773292989727",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7379382940272217386",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DPrnH9Cj6qI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188u1av",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1al8aby",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1c2ybui",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "sharpens",
+          "choice": "subject"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ntik4i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 3,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 3
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 6,
+          "negative_choice_review_count": 3,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 298,
+          "negative_choice_review_count": 66,
+          "positive_choice_review_count": 28,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_packaging_and_dispensing_corroborate",
+          "disposition": "captured",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": [
+            "reddit_1al8aby",
+            "reddit_1ntik4i"
+          ]
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_packaging_and_dispensing_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_packaging_and_dispensing_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "wear_and_longevity",
+      "label": "Wear time and longevity",
+      "scope": "product performance",
+      "polarity": "mixed",
+      "strength": "signal",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1arhbj9",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1rzd5vw",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1r9vw38",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 8,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 6,
+          "negative_choice_review_count": 1,
+          "positive_choice_review_count": 1,
+          "disclosed_incentivized_axis_mention_count": 1
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 170,
+          "negative_choice_review_count": 16,
+          "positive_choice_review_count": 16,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_wear_and_longevity_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_wear_and_longevity_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_wear_and_longevity_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "hydration_and_moisture",
+      "label": "Hydration and moisture performance",
+      "scope": "product performance",
+      "polarity": "mixed",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1mzokbt",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1pf427h",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1plfk6p",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1inusa1",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1cx0kf6",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1arhbj9",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1r9vw38",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_qf--43DCmxI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_mPjJwVDTrjE",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7527741844298435895",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "175n4ck",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Armani"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "17avity",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1i0e6fh",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Hourglass"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1thd71q",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 66,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 3,
+          "disclosed_incentivized_axis_mention_count": 5
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 16,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 5,
+          "disclosed_incentivized_axis_mention_count": 3
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 1097,
+          "negative_choice_review_count": 65,
+          "positive_choice_review_count": 185,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_hydration_and_moisture_corroborate",
+          "disposition": "captured",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": [
+            "reddit_188rp74",
+            "reddit_1oh26y0"
+          ]
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_hydration_and_moisture_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_hydration_and_moisture_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "texture_and_skin_finish",
+      "label": "Texture, feel, and skin finish",
+      "scope": "product experience",
+      "polarity": "mixed",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1pf427h",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1gvs36d",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1cx0kf6",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "165xa4x",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1arhbj9",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qrcg5i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1r9vw38",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_qf--43DCmxI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_mPjJwVDTrjE",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7482167773292989727",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7527741844298435895",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7379382940272217386",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DPrnH9Cj6qI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DQLAZt7DSav",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "175n4ck",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "17avity",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1i0e6fh",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Hourglass"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "sharpens",
+          "choice": "subject"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ntik4i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "sharpens",
+          "choice": "subject"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 93,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 3,
+          "disclosed_incentivized_axis_mention_count": 9
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 5,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 2,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 1007,
+          "negative_choice_review_count": 50,
+          "positive_choice_review_count": 144,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_texture_and_skin_finish_corroborate",
+          "disposition": "captured",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": [
+            "reddit_1srjzrl"
+          ]
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_texture_and_skin_finish_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_texture_and_skin_finish_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "coverage_and_pigment",
+      "label": "Coverage and pigment payoff",
+      "scope": "color product performance",
+      "polarity": "mixed",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_mPjJwVDTrjE",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7537429735865978125",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7527741844298435895",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "175n4ck",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Armani"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "17avity",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1i0e6fh",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Hourglass"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 10,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 2
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 5,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 1,
+          "disclosed_incentivized_axis_mention_count": 1
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 216,
+          "negative_choice_review_count": 4,
+          "positive_choice_review_count": 21,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_coverage_and_pigment_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_coverage_and_pigment_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_coverage_and_pigment_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "shade_and_color_fit",
+      "label": "Shade range and color fit",
+      "scope": "color product fit",
+      "polarity": "mixed",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1r9vw38",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_qf--43DCmxI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7537429735865978125",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7482167773292989727",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "175n4ck",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Armani"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1i0e6fh",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Hourglass"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 6,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 2
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 1,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 161,
+          "negative_choice_review_count": 14,
+          "positive_choice_review_count": 27,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_shade_and_color_fit_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_shade_and_color_fit_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_shade_and_color_fit_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "scent_and_flavor",
+      "label": "Scent and flavor appeal",
+      "scope": "sensory product experience",
+      "polarity": "mixed",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1obnfys",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1gvs36d",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "11uym2u",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1cx0kf6",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "166j6zu",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1rzd5vw",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qrcg5i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1r9vw38",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_18h0qZjEb24",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXXkXRUErYL",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DbJdfWwShRw",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DatAlIDvo83",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DY5pIkozIVx",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7482167773292989727",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7527741844298435895",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7379382940272217386",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DPrnH9Cj6qI",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 49,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 2
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 10,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 4,
+          "disclosed_incentivized_axis_mention_count": 2
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 641,
+          "negative_choice_review_count": 97,
+          "positive_choice_review_count": 126,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_scent_and_flavor_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_scent_and_flavor_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_scent_and_flavor_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "formula_consistency_and_change",
+      "label": "Formula consistency and change",
+      "scope": "formula and batch consistency",
+      "polarity": "pain",
+      "strength": "signal",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 2,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 1,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 53,
+          "negative_choice_review_count": 5,
+          "positive_choice_review_count": 1,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_formula_consistency_and_change_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_formula_consistency_and_change_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_formula_consistency_and_change_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "application_and_tool_performance",
+      "label": "Application and tool performance",
+      "scope": "product use and tools",
+      "polarity": "mixed",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "native_social",
+          "unit_id": "tt_7482167773292989727",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7379382940272217386",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "sharpens",
+          "choice": "subject"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 25,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 1,
+          "disclosed_incentivized_axis_mention_count": 8
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 3,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 1,
+          "disclosed_incentivized_axis_mention_count": 1
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 187,
+          "negative_choice_review_count": 12,
+          "positive_choice_review_count": 28,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_application_and_tool_performance_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_application_and_tool_performance_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_application_and_tool_performance_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    },
+    {
+      "axis_id": "hype_originality_and_trust",
+      "label": "Hype, originality, and product trust",
+      "scope": "product proposition and trust",
+      "polarity": "pain",
+      "strength": "strong",
+      "disposition": "material",
+      "support_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1fvevie",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "kaikx3",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1h0wfao",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1inusa1",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1arhbj9",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qiwlyp",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qrcg5i",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DatAlIDvo83",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "tt_7527741844298435895",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "ig_DXb1FcNhdXP",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "native_social",
+          "unit_id": "yt_nkKjxEQgBp8",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Aquaphor"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0",
+          "contribution": "sharpens",
+          "choice": "unstated"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj",
+          "contribution": "sharpens",
+          "choice": "subject"
+        },
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl",
+          "contribution": "compares",
+          "choice": "alternative",
+          "alternative_brand": "Elf"
+        }
+      ],
+      "retailer_incidence": [
+        {
+          "corpus_id": "amazon_rendered_reviews",
+          "eligible_text_review_count": 196,
+          "axis_mention_count": 4,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "revolve_native_reviews",
+          "eligible_text_review_count": 78,
+          "axis_mention_count": 2,
+          "negative_choice_review_count": 0,
+          "positive_choice_review_count": 0,
+          "disclosed_incentivized_axis_mention_count": 0
+        },
+        {
+          "corpus_id": "sephora_product_group_reviews",
+          "eligible_text_review_count": 2926,
+          "axis_mention_count": 95,
+          "negative_choice_review_count": 6,
+          "positive_choice_review_count": 1,
+          "disclosed_incentivized_axis_mention_count": 0
+        }
+      ],
+      "focused_search_jobs": [
+        {
+          "goal": "corroborate_or_segment",
+          "job_id": "p11r6_axis_hype_originality_and_trust_corroborate",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "compare_switch_or_value",
+          "job_id": "p11r6_axis_hype_originality_and_trust_compare",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        },
+        {
+          "goal": "disconfirm_or_strongest_delight",
+          "job_id": "p11r6_axis_hype_originality_and_trust_disconfirm_delight",
+          "disposition": "no_material_yield",
+          "workstream": "product_axis",
+          "planned_at": "2026-08-02T13:10:20+00:00",
+          "axis_inventory_sha256": "5ef42a4429f1d3a569f5307dc7946869c517733dd0d25504d41379a9e8bd1b8e",
+          "search_artifact_id": "p11r6_phase2_search",
+          "target_ids": []
+        }
+      ]
+    }
+  ],
+  "closure": {
+    "echo_groups_adjudicated": true,
+    "material_seams": [
+      {
+        "seam_id": "company_identity_and_ownership",
+        "disposition": "bounded"
+      },
+      {
+        "seam_id": "portfolio_and_category",
+        "disposition": "supported"
+      },
+      {
+        "seam_id": "retail_and_channel",
+        "disposition": "supported"
+      },
+      {
+        "seam_id": "customer_product_experience",
+        "disposition": "supported"
+      },
+      {
+        "seam_id": "value_and_dupes",
+        "disposition": "supported"
+      },
+      {
+        "seam_id": "formula_and_packaging",
+        "disposition": "supported"
+      },
+      {
+        "seam_id": "safety_reaction_and_trust",
+        "disposition": "bounded"
+      },
+      {
+        "seam_id": "creator_mediation",
+        "disposition": "supported"
+      },
+      {
+        "seam_id": "dtc_service_and_fulfillment",
+        "disposition": "bounded"
+      },
+      {
+        "seam_id": "legal_and_regulatory_records",
+        "disposition": "bounded"
+      },
+      {
+        "seam_id": "counterfeit_and_authorization",
+        "disposition": "bounded"
+      },
+      {
+        "seam_id": "product_experience_axes",
+        "disposition": "supported"
+      }
+    ],
+    "batches": [
+      {
+        "batch_id": "p11r5_integrity_and_retailer_census",
+        "candidate_moves_checked": 3,
+        "material_incremental_value": true,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 1
+      },
+      {
+        "batch_id": "p11r5_source_native_axis_join",
+        "candidate_moves_checked": 56,
+        "material_incremental_value": true,
+        "new_material_seams": 1,
+        "changed_material_dispositions": 1
+      },
+      {
+        "batch_id": "p11r5_focused_job_reconciliation",
+        "candidate_moves_checked": 24,
+        "material_incremental_value": true,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 1
+      },
+      {
+        "batch_id": "p11r5_final_dry_batch_1",
+        "candidate_moves_checked": 12,
+        "material_incremental_value": false,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 0,
+        "new_product_axes": 0,
+        "changed_axis_strengths": 0,
+        "changed_axis_incidence": 0
+      },
+      {
+        "batch_id": "p11r5_final_dry_batch_2",
+        "candidate_moves_checked": 12,
+        "material_incremental_value": false,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 0,
+        "new_product_axes": 0,
+        "changed_axis_strengths": 0,
+        "changed_axis_incidence": 0
+      },
+      {
+        "batch_id": "p11r6_reddit_native_continuation",
+        "batch_kind": "live_acquisition",
+        "job_ids": [
+          "p11r6_reddit_capture_175n4ck",
+          "p11r6_reddit_capture_17avity",
+          "p11r6_reddit_capture_188rp74",
+          "p11r6_reddit_capture_188u1av",
+          "p11r6_reddit_capture_18dqncn",
+          "p11r6_reddit_capture_19dayj0",
+          "p11r6_reddit_capture_1bm9izm",
+          "p11r6_reddit_capture_1c2ybui",
+          "p11r6_reddit_capture_1d18sp0",
+          "p11r6_reddit_capture_1i0e6fh",
+          "p11r6_reddit_capture_1kq0492",
+          "p11r6_reddit_capture_1ntik4i",
+          "p11r6_reddit_capture_1srjzrl",
+          "p11r6_reddit_capture_1thd71q"
+        ],
+        "candidate_moves_checked": 14,
+        "material_incremental_value": true,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 0,
+        "new_product_axes": 0,
+        "changed_axis_strengths": 2,
+        "changed_axis_incidence": 0,
+        "new_customer_segments": 0,
+        "new_product_conditions": 0,
+        "new_comparison_choices": 21,
+        "new_competitor_alternatives": 6
+      },
+      {
+        "batch_id": "p11r6_final_live_axis_batch_1",
+        "batch_kind": "live_acquisition",
+        "job_ids": [
+          "p11r6_serp_capture_application_and_tool_performance",
+          "p11r6_axis_application_and_tool_performance_corroborate",
+          "p11r6_axis_application_and_tool_performance_compare",
+          "p11r6_axis_application_and_tool_performance_disconfirm_delight"
+        ],
+        "candidate_moves_checked": 3,
+        "material_incremental_value": false,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 0,
+        "new_product_axes": 0,
+        "changed_axis_strengths": 0,
+        "changed_axis_incidence": 0,
+        "new_customer_segments": 0,
+        "new_product_conditions": 0,
+        "new_comparison_choices": 0,
+        "new_competitor_alternatives": 0
+      },
+      {
+        "batch_id": "p11r6_final_live_axis_batch_2",
+        "batch_kind": "live_acquisition",
+        "job_ids": [
+          "p11r6_serp_capture_hype_originality_and_trust",
+          "p11r6_axis_hype_originality_and_trust_corroborate",
+          "p11r6_axis_hype_originality_and_trust_compare",
+          "p11r6_axis_hype_originality_and_trust_disconfirm_delight"
+        ],
+        "candidate_moves_checked": 3,
+        "material_incremental_value": false,
+        "new_material_seams": 0,
+        "changed_material_dispositions": 0,
+        "new_product_axes": 0,
+        "changed_axis_strengths": 0,
+        "changed_axis_incidence": 0,
+        "new_customer_segments": 0,
+        "new_product_conditions": 0,
+        "new_comparison_choices": 0,
+        "new_competitor_alternatives": 0
+      }
+    ],
+    "remaining_moves": [
+      {
+        "move_id": "market_prevalence_sampling",
+        "disposition": "deferred_nonmaterial",
+        "material": false
+      },
+      {
+        "move_id": "additional_same_family_volume_without_axis_change",
+        "disposition": "dominated",
+        "material": false
+      },
+      {
+        "move_id": "four_missing_amazon_exact_pdp_baselines",
+        "disposition": "deferred_nonmaterial",
+        "material": false
+      }
+    ],
+    "conclusion": "complete"
+  },
+  "axis_inventory": {
+    "artifact_id": "p11r6_axis_inventory"
+  },
+  "community_axis_coding": {
+    "artifact_id": "p11r6_community_axis_coding"
+  },
+  "target_reconciliation": [
+    {
+      "target_id": "reddit_175n4ck",
+      "discovered_by_job_id": "p11r6_reddit_capture_175n4ck",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "shade_and_color_fit",
+        "texture_and_skin_finish"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/175n4ck/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_175n4ck",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "175n4ck"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_17avity",
+      "discovered_by_job_id": "p11r6_reddit_capture_17avity",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "texture_and_skin_finish"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/17avity/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_17avity",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "17avity"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_188rp74",
+      "discovered_by_job_id": "p11r6_axis_hydration_and_moisture_corroborate",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/188rp74/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_188rp74",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "188rp74"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_188u1av",
+      "discovered_by_job_id": "p11r6_reddit_capture_188u1av",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/188u1av/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_188u1av",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "188u1av"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_18dqncn",
+      "discovered_by_job_id": "p11r6_reddit_capture_18dqncn",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "reaction_and_breakout",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/18dqncn/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_18dqncn",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "18dqncn"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_19dayj0",
+      "discovered_by_job_id": "p11r6_axis_value_and_quantity_corroborate",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/AustralianMakeup/comments/19dayj0/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_19dayj0",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "19dayj0"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_19eo5it",
+      "discovered_by_job_id": "p11r6_axis_reaction_and_breakout_corroborate",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/19eo5it/can_we_all_just_admit_that_summer_fridays_isnt/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_19eo5it",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "19eo5it"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1ahn26w",
+      "discovered_by_job_id": "p11r6_reddit_import_1ahn26w",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1ahn26w",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ahn26w"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1al8aby",
+      "discovered_by_job_id": "p11r6_axis_packaging_and_dispensing_corroborate",
+      "axis_ids": [
+        "packaging_and_dispensing"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1al8aby/summer_fridays_applicator_clogged/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1al8aby",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1al8aby"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1bm9izm",
+      "discovered_by_job_id": "p11r6_axis_value_and_quantity_corroborate",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "formula_consistency_and_change",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1bm9izm/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1bm9izm",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1bm9izm"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1c2ybui",
+      "discovered_by_job_id": "p11r6_reddit_capture_1c2ybui",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "value_and_quantity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1c2ybui/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1c2ybui",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1c2ybui"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1d18sp0",
+      "discovered_by_job_id": "p11r6_reddit_capture_1d18sp0",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "packaging_and_dispensing",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1d18sp0/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1d18sp0",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1d18sp0"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1i0e6fh",
+      "discovered_by_job_id": "p11r6_reddit_capture_1i0e6fh",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1i0e6fh/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1i0e6fh",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1i0e6fh"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1kq0492",
+      "discovered_by_job_id": "p11r6_axis_value_and_quantity_corroborate",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1kq0492/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1kq0492",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1kq0492"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1ntik4i",
+      "discovered_by_job_id": "p11r6_axis_packaging_and_dispensing_corroborate",
+      "axis_ids": [
+        "packaging_and_dispensing",
+        "texture_and_skin_finish",
+        "value_and_quantity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1ntik4i/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1ntik4i",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1ntik4i"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1oh26y0",
+      "discovered_by_job_id": "p11r6_axis_hydration_and_moisture_corroborate",
+      "axis_ids": [
+        "coverage_and_pigment",
+        "formula_consistency_and_change",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1oh26y0",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1oh26y0"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1qdk0gq",
+      "discovered_by_job_id": "p11r6_axis_value_and_quantity_corroborate",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "scent_and_flavor",
+        "shade_and_color_fit",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1qdk0gq",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1qdk0gq"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1slrvyj",
+      "discovered_by_job_id": "p11r6_reddit_import_1slrvyj",
+      "axis_ids": [
+        "formula_consistency_and_change",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "value_and_quantity",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/LipBalm/comments/1slrvyj/summer_fridays/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1slrvyj",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1slrvyj"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1srjzrl",
+      "discovered_by_job_id": "p11r6_axis_texture_and_skin_finish_corroborate",
+      "axis_ids": [
+        "application_and_tool_performance",
+        "coverage_and_pigment",
+        "hydration_and_moisture",
+        "hype_originality_and_trust",
+        "packaging_and_dispensing",
+        "reaction_and_breakout",
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1srjzrl/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1srjzrl",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1srjzrl"
+        }
+      ]
+    },
+    {
+      "target_id": "reddit_1thd71q",
+      "discovered_by_job_id": "p11r6_reddit_capture_1thd71q",
+      "axis_ids": [
+        "hydration_and_moisture"
+      ],
+      "locator": "https://old.reddit.com/r/Sephora/comments/1thd71q/",
+      "source_family": "reddit_forum",
+      "terminal_state": "used",
+      "native_artifact_id": "reddit_manifest_1thd71q",
+      "evidence_refs": [
+        {
+          "family": "reddit_forum",
+          "unit_id": "1thd71q"
+        }
+      ]
+    }
+  ]
+}

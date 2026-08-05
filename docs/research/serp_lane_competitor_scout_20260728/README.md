@@ -2,8 +2,8 @@
 
 The SERP capture lane's competitor-scout work unit: typed competitor
 ledger (spec + promotion ladder + channels), Understanding-cycle
-installation (scout pass + ordering rule; two-phase shape with the
-Reddit lane), journey levers J1-J5, the Tower 28 and Summer Fridays
+installation (Phase 1 scout, specialist fan-out, then Phase 2 targeted
+return), journey levers J1-J5, the Tower 28 and Summer Fridays
 live trials including their phase-2 native returns, the completed
 megadogfood Stage 6 queue and pruned analysis slice, the bounded BR540
 native-return dogfood, egress-shape evidence,
@@ -36,6 +36,9 @@ pre-egress query gate and lower-route block transition.
 `forseti-harness/runners/run_google_serp_persistent_fallback_packet.py`
 executes the held-job persistent-tab route, preserves block packets, and
 waits for manual operator clearance without challenge interaction.
+`forseti-harness/runners/serp_phase2_decision_contract.py` and
+`forseti-harness/runners/serp_phase2_decision_lifecycle.py` own the targeted
+return's fail-closed settlement and persistent one-attempt receipt lifecycle.
 
 **Raw capture data stays outside Git**, on the operator drive:
 `C:\tmp\forseti-serp-megadogfood-20260727\` (query bank, run ledger,
@@ -49,8 +52,9 @@ packets + composition reads), and
 Reading order: `serp_lane_v0.md` (entry point / findings ledger) ->
 `megadogfood_stage6_queue_completion_v0.md` (completed queue, pruning,
 future-run corrections) ->
-`br540_phase2_native_return_dogfood_v0.md` (smallest-complete
-one-subject execution of the six-step native-return loop) ->
+`br540_phase2_native_return_dogfood_v0.md` (historical one-subject
+execution of the superseded six-step native-return loop; evidence only,
+not current Phase 2 instructions) ->
 `competitor_ledger_spec_v0.md` (types, ladder, cycle installation,
 J1-J5) -> `tower28_scout_trial_findings_v0.md` +
 `tower28_phase2_native_return_v0.md` +
@@ -64,13 +68,19 @@ Re-judging the findings ledger against the full capture store (analysis
 only, no captures) is commissioned via
 `docs/prompts/handoffs/serp_lane_fullbank_analysis_execution_handoff_v0.md`.
 
-Capture execution is commissioned via two handoffs, in order:
+Current Understanding execution uses two SERP handoffs as bookends around the
+specialist fan-out:
 `docs/prompts/handoffs/serp_lane_phase1_scout_execution_handoff_v0.md`
 (seeds -> rolling harvest -> merged vs+J5 queue -> priced ledger +
-trigger-thread queue), then
+trigger-thread and mediator queues) runs after the question and validated
+commission board. Its outputs feed `CO1`-`CO3`; `CO3` performs Reddit/community
+capture, Channel 3, and J3 inside that fan-out. After all specialist terminal
+returns,
 `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`
-(native return: Reddit-lane consumption, Channel 3, J3 settlement, J5
-delta, evidence-targeted return probes). An agent starting the
+(targeted SERP/J5 return, decision receipt, and lifecycle provenance) consumes
+their combined findings. The Phase 2 filename retains `native_return` only for
+stable routing; historical native-return dogfoods remain historical evidence,
+not the current execution order. An agent starting the
 Understanding cycle is routed to phase 1 by the CSB playbook's
 Operating Sequence, not by being told to read a file.
 

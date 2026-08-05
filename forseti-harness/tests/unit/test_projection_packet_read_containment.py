@@ -16,6 +16,7 @@ import pytest
 
 import source_capture.basenotes_projection as basenotes_projection
 import source_capture.fragrantica_projection as fragrantica_projection
+import source_capture.google_ads_transparency_projection as google_ads_transparency_projection
 import source_capture.ig_projection as ig_projection
 import source_capture.parfumo_projection as parfumo_projection
 from source_capture import projection_shared
@@ -59,8 +60,14 @@ def test_contained_but_missing_preserved_path_raises_not_found(tmp_path: Path) -
 
 @pytest.mark.parametrize(
     "surface",
-    [basenotes_projection, parfumo_projection, fragrantica_projection, ig_projection],
-    ids=["basenotes", "parfumo", "fragrantica", "ig"],
+    [
+        basenotes_projection,
+        parfumo_projection,
+        fragrantica_projection,
+        google_ads_transparency_projection,
+        ig_projection,
+    ],
+    ids=["basenotes", "parfumo", "fragrantica", "google_ads", "ig"],
 )
 def test_every_projection_surface_uses_the_contained_reader(surface) -> None:
     assert surface._read_packet_directory is projection_shared.read_packet_directory

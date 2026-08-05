@@ -24,7 +24,7 @@ import json
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlparse
 
 from harness_utils import hash_file
 from data_lake.reddit_subreddit_registry import (
@@ -66,34 +66,27 @@ GRID_OBSERVATION_SOURCE_SURFACE = "old_reddit_grid_packet"
 # Weekly demand-radar listing (top/?t=week): same grid family, distinguishable
 # ledger line so readers can tell a weekly consolidated pass from a live pass.
 TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "old_reddit_top_week_packet"
-# The www host is a different capture surface reached by a different transport,
-# so its observations carry their own ledger lines.  A reader comparing a series
-# across the 2026-07-30 host cutover must be able to SEE where it happened
-# rather than infer it from dates.
-WWW_GRID_OBSERVATION_SOURCE_SURFACE = "www_reddit_grid_packet"
-WWW_TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "www_reddit_top_week_packet"
+# A real-Chrome www capture is a different surface reached by a different
+# transport; its observation ledger line names that surface directly (trunk
+# vocabulary, PR #1424). The weekly-vs-live distinction for www packets lives
+# in the packet's admitted listing URL, which admission pins to the locator.
+WWW_REDDIT_REALCHROME_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 
 
 def _observation_surface_for(listing_url: str) -> str:
     parsed = urlparse(listing_url)
-    parts = [part for part in parsed.path.split("/") if part]
     host = parsed.netloc.lower()
     if host == WWW_REDDIT_LISTING_HOST:
-        www = True
-    elif host == OLD_REDDIT_LISTING_HOST:
-        www = False
-    else:
+        return WWW_REDDIT_REALCHROME_SOURCE_SURFACE
+    if host != OLD_REDDIT_LISTING_HOST:
         raise RegistryRefreshError(
             "grid_listing_host_unknown",
             f"cannot assign a grid observation surface to host {host!r}",
         )
+    parts = [part for part in parsed.path.split("/") if part]
     if parts and parts[-1] == "top" and "t=week" in (parsed.query or "").split("&"):
-        return (
-            WWW_TOP_WEEK_OBSERVATION_SOURCE_SURFACE
-            if www
-            else TOP_WEEK_OBSERVATION_SOURCE_SURFACE
-        )
-    return WWW_GRID_OBSERVATION_SOURCE_SURFACE if www else GRID_OBSERVATION_SOURCE_SURFACE
+        return TOP_WEEK_OBSERVATION_SOURCE_SURFACE
+    return GRID_OBSERVATION_SOURCE_SURFACE
 
 
 class RegistryRefreshError(ValueError):
@@ -295,7 +288,12 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
         )
 
     locator = packet.source_locator.value or ""
-    subreddit = _subreddit_from_listing_url(locator)
+    expected_host = (
+        "www.reddit.com"
+        if packet.source_surface == WWW_REDDIT_REALCHROME_SOURCE_SURFACE
+        else "old.reddit.com"
+    )
+    subreddit = _subreddit_from_listing_url(locator, expected_host=expected_host)
     if subreddit is None:
         raise RegistryRefreshError("locator_unparseable", f"cannot parse subreddit from locator: {locator!r}")
 
@@ -456,30 +454,21 @@ def _resolve_preserved_file(packet, *, file_name: str, required: bool = True) ->
 def _resolve_grid_metadata_file(
     packet, *, expected_locator: str
 ) -> dict[str, str]:
-    """Resolve the one metadata transport the declared listing host requires."""
+    """Resolve the metadata transport the declared listing host requires.
+
+    A packet may preserve additional transport metadata alongside the required
+    one (trunk runner shape, PR #1424); only the declared host's metadata is
+    load-bearing here, so extras are ignored rather than refused.
+    """
     is_www = urlparse(expected_locator).netloc.lower() == WWW_REDDIT_LISTING_HOST
     expected_name = (
         "realchrome_snapshot_metadata.json"
         if is_www
         else "http_response_metadata.json"
     )
-    unexpected_name = (
-        "http_response_metadata.json"
-        if is_www
-        else "realchrome_snapshot_metadata.json"
-    )
     expected = _resolve_preserved_file(
         packet, file_name=expected_name, required=False
     )
-    unexpected = _resolve_preserved_file(
-        packet, file_name=unexpected_name, required=False
-    )
-    if unexpected is not None:
-        raise RegistryRefreshError(
-            "grid_metadata_transport_mismatch",
-            f"declared listing requires {expected_name}, but packet also preserves "
-            f"unexpected transport metadata {unexpected_name}",
-        )
     if expected is None:
         raise RegistryRefreshError(
             "preserved_file_unresolved",
@@ -556,13 +545,33 @@ def _verify_successful_grid_response(
                 "http_metadata_shape",
                 "real-Chrome grid metadata must carry a boolean access_blocked value",
             )
+        # Grafted from the trunk verifier (PR #1424): the packet must declare
+        # its capture method, and the REQUESTED url must match the locator too
+        # -- a redirect-to-lookalike would otherwise pass on final_url alone.
+        if metadata.get("method_category") != "real_browser_cdp":
+            raise RegistryRefreshError(
+                "grid_access_unsuccessful",
+                "real-Chrome grid packet metadata does not declare real_browser_cdp",
+            )
+        requested_url = metadata.get("requested_url")
+        if not isinstance(requested_url, str) or not same_grid_listing_url(
+            requested_url, expected_locator
+        ):
+            raise RegistryRefreshError(
+                "grid_final_locator_mismatch",
+                "real-Chrome requested URL does not match the packet locator: "
+                f"{requested_url!r}",
+            )
         if access_blocked or classification == "access_blocked":
             raise RegistryRefreshError(
                 "grid_access_unsuccessful",
                 "grid packet records an access block: "
                 f"{metadata.get('access_block_reason')!r}",
             )
+        # Absent classification is the trunk metadata shape (five keys); only
+        # an unknown *string* is refused.
         if classification not in {
+            None,
             "no_block_marker",
             "residual_challenge_marker",
         }:
@@ -597,7 +606,13 @@ def _verify_successful_grid_response(
         if (
             isinstance(locator, str)
             and same_grid_listing_url(locator, expected_locator)
-            and _subreddit_from_listing_url(locator) == expected_subreddit
+            and _subreddit_from_listing_url(
+                locator,
+                expected_host=(
+                    WWW_REDDIT_LISTING_HOST if is_www else OLD_REDDIT_LISTING_HOST
+                ),
+            )
+            == expected_subreddit
             and successful_posture
         ):
             return
@@ -607,13 +622,108 @@ def _verify_successful_grid_response(
     )
 
 
-def _subreddit_from_listing_url(url: str) -> str | None:
+def _verify_successful_realchrome_grid_response(
+    *,
+    packet,
+    metadata_path: Path,
+    expected_subreddit: str,
+    expected_locator: str,
+) -> None:
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise RegistryRefreshError(
+            "realchrome_metadata_unreadable",
+            f"preserved real-Chrome metadata could not be read: {exc}",
+        ) from exc
+    if not isinstance(metadata, dict):
+        raise RegistryRefreshError(
+            "realchrome_metadata_shape",
+            "preserved real-Chrome metadata is not a JSON object",
+        )
+    status = metadata.get("http_response_status")
+    if not isinstance(status, int) or not 200 <= status < 300:
+        raise RegistryRefreshError(
+            "grid_access_unsuccessful",
+            f"real-Chrome grid packet status is not successful: {status!r}",
+        )
+    if metadata.get("access_blocked") is not False:
+        raise RegistryRefreshError(
+            "grid_access_unsuccessful",
+            "real-Chrome grid packet does not prove an unblocked rendered page",
+        )
+    if metadata.get("method_category") != "real_browser_cdp":
+        raise RegistryRefreshError(
+            "grid_access_unsuccessful",
+            "real-Chrome grid packet metadata does not declare real_browser_cdp",
+        )
+    requested_url = metadata.get("requested_url")
+    final_url = metadata.get("final_url")
+    for label, value in (("requested", requested_url), ("final", final_url)):
+        if not isinstance(value, str) or not _same_supported_listing_url(
+            value,
+            expected_locator,
+            expected_host="www.reddit.com",
+        ):
+            raise RegistryRefreshError(
+                "grid_final_locator_mismatch",
+                f"real-Chrome {label} URL does not match the packet locator: {value!r}",
+            )
+    for source_slice in packet.source_slices:
+        slice_locator = source_slice.locator.value
+        access_posture = source_slice.access_posture.value or ""
+        if (
+            isinstance(slice_locator, str)
+            and _subreddit_from_listing_url(
+                slice_locator, expected_host="www.reddit.com"
+            )
+            == expected_subreddit
+            and _same_supported_listing_url(
+                slice_locator,
+                expected_locator,
+                expected_host="www.reddit.com",
+            )
+            and access_posture.startswith("real_browser_cdp preserved")
+        ):
+            return
+    raise RegistryRefreshError(
+        "grid_access_unsuccessful",
+        "grid packet carries no successful real-Chrome source slice for the declared subreddit",
+    )
+
+
+def _same_supported_listing_url(
+    actual_url: str,
+    expected_url: str,
+    *,
+    expected_host: str,
+) -> bool:
+    try:
+        actual = urlparse(actual_url)
+        expected = urlparse(expected_url)
+    except (TypeError, ValueError):
+        return False
+    return (
+        actual.scheme.lower() == expected.scheme.lower() == "https"
+        and actual.netloc.lower() == expected.netloc.lower() == expected_host
+        and actual.path.rstrip("/").casefold()
+        == expected.path.rstrip("/").casefold()
+        and sorted(parse_qsl(actual.query, keep_blank_values=True))
+        == sorted(parse_qsl(expected.query, keep_blank_values=True))
+    )
+
+
+def _subreddit_from_listing_url(
+    url: str,
+    *,
+    expected_host: str = "old.reddit.com",
+) -> str | None:
     parsed = urlparse(url)
     parts = [part for part in parsed.path.split("/") if part]
     if (
         parsed.scheme == "https"
-        and parsed.netloc.lower() in GRID_LISTING_HOSTS
-        and len(parts) == 3
+        and parsed.netloc.lower() == expected_host
+        and len(parts) >= 3
         and parts[0] == "r"
         and parts[1].isascii()
         and parts[1].replace("_", "").isalnum()

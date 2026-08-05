@@ -196,6 +196,8 @@ class CloakBrowserSnapshotEngineResult(Protocol):
     visible_text: str
     screenshot_png: bytes
     warning_notes: list[str]
+    navigation_response_status: int | None
+    navigation_retry_after: str | None
     capture_phase_timing: dict[str, object]
     # Recorded by the engine when a pre-capture plugin ran ``before`` the main goto; None
     # when no plugin was supplied. ``fetch_...`` reads it via getattr so engines that predate
@@ -381,6 +383,12 @@ def fetch_cloakbrowser_snapshot_capture(
         if rendered_access.classification == RenderedAccessClass.ACCESS_BLOCKED
         else None
     )
+    navigation_response_status = getattr(
+        engine_result, "navigation_response_status", None
+    )
+    navigation_retry_after = getattr(engine_result, "navigation_retry_after", None)
+    if access_block_reason is None and navigation_response_status == 429:
+        access_block_reason = "http_429_rate_limited"
     limitation_notes: list[str] = []
     if access_block_reason is not None:
         limitation_notes.append(
@@ -492,6 +500,8 @@ def fetch_cloakbrowser_snapshot_capture(
         "capture_phase_timing": capture_phase_timing,
         "access_blocked": access_block_reason is not None,
         "access_block_reason": access_block_reason,
+        "navigation_response_status": navigation_response_status,
+        "navigation_retry_after": navigation_retry_after,
         "rendered_access_classification": rendered_access.classification.value,
         "rendered_access_signal": rendered_access.signal,
         "rendered_access_detail": rendered_access.detail,
@@ -774,7 +784,15 @@ class _CloakBrowserSnapshotEngine:
                     warning_notes.extend(pre_capture_outcome.warning_notes)
                 phase_ms["pre_capture_plugin"] = elapsed_ms(pre_capture_started_ns)
                 navigation_started_ns = clock_ns()
-                page.goto(url, wait_until=wait_until, timeout=timeout_ms)
+                navigation_response = page.goto(
+                    url, wait_until=wait_until, timeout=timeout_ms
+                )
+                navigation_response_status = _navigation_response_status(
+                    navigation_response
+                )
+                navigation_retry_after = _navigation_response_retry_after(
+                    navigation_response
+                )
                 phase_ms["navigation_wait_until"] = elapsed_ms(navigation_started_ns)
                 settle_started_ns = clock_ns()
                 if settle_seconds > 0:
@@ -944,6 +962,8 @@ class _CloakBrowserSnapshotEngine:
                     visible_text=visible_text,
                     screenshot_png=screenshot_png,
                     warning_notes=warning_notes,
+                    navigation_response_status=navigation_response_status,
+                    navigation_retry_after=navigation_retry_after,
                     pre_capture_outcome=pre_capture_outcome,
                     before_scroll_outcome=before_scroll_outcome,
                     before_snapshot_outcome=before_snapshot_outcome,
@@ -997,6 +1017,8 @@ class _LiveEngineResult:
     visible_text: str
     screenshot_png: bytes
     warning_notes: list[str] = field(default_factory=list)
+    navigation_response_status: int | None = None
+    navigation_retry_after: str | None = None
     pre_capture_outcome: PreCaptureOutcome | None = None
     before_scroll_outcome: PreCaptureOutcome | None = None
     before_snapshot_outcome: PreCaptureOutcome | None = None
@@ -1007,6 +1029,28 @@ class _LiveEngineResult:
 
 class _CloakBrowserSnapshotDependencyUnavailable(RuntimeError):
     pass
+
+
+def _navigation_response_status(response: object | None) -> int | None:
+    status = getattr(response, "status", None)
+    if isinstance(status, int) and not isinstance(status, bool):
+        return status
+    return None
+
+
+def _navigation_response_retry_after(response: object | None) -> str | None:
+    if response is None:
+        return None
+    headers = getattr(response, "headers", None)
+    value = headers.get("retry-after") if isinstance(headers, dict) else None
+    if not isinstance(value, str):
+        return None
+    normalized = value.strip()
+    if not normalized or len(normalized) > 256 or any(
+        character in normalized for character in "\r\n"
+    ):
+        return None
+    return normalized
 
 
 def _validate_http_url(url: str) -> str:

@@ -85,22 +85,22 @@ def _summarize_result_row(*, row: dict[str, Any], batch_summary_path: Path) -> d
     derived_dir = _resolve_maybe_relative_path(row.get("derived_dir"), base=batch_summary_path.parent)
     metadata = _read_optional_json(_packet_metadata_path(packet_dir))
     consolidation = _read_optional_json(_consolidation_path(row=row, derived_dir=derived_dir))
-    consolidated = (
-        consolidation.get("reddit_thread_consolidation", {})
-        if isinstance(consolidation, dict)
-        else {}
+    content_record = _read_optional_json(_content_record_path(packet_dir))
+    parsed_content, parsed_artifact_kind = _resolve_parsed_content(
+        consolidation=consolidation,
+        content_record=content_record,
     )
-    counts = consolidated.get("counts", {}) if isinstance(consolidated, dict) else {}
-    thread = consolidated.get("thread", {}) if isinstance(consolidated, dict) else {}
-    warnings = consolidated.get("warnings", []) if isinstance(consolidated, dict) else []
-    limitations = consolidated.get("limitations", []) if isinstance(consolidated, dict) else []
-    comments = consolidated.get("comments", []) if isinstance(consolidated, dict) else []
+    counts = parsed_content.get("counts", {}) if isinstance(parsed_content, dict) else {}
+    thread = parsed_content.get("thread", {}) if isinstance(parsed_content, dict) else {}
+    warnings = parsed_content.get("warnings", []) if isinstance(parsed_content, dict) else []
+    limitations = parsed_content.get("limitations", []) if isinstance(parsed_content, dict) else []
+    comments = parsed_content.get("comments", []) if isinstance(parsed_content, dict) else []
     parser_warning_count = _parser_warning_count(comments)
 
     quality_flags = _quality_flags(
         capture_exit=row.get("capture_exit"),
         consolidation_exit=row.get("consolidation_exit"),
-        consolidation_content=consolidation,
+        parsed_artifact_kind=parsed_artifact_kind,
         metadata=metadata,
         title=thread.get("title") if isinstance(thread, dict) else None,
         counts=counts if isinstance(counts, dict) else {},
@@ -112,6 +112,8 @@ def _summarize_result_row(*, row: dict[str, Any], batch_summary_path: Path) -> d
         "url": row.get("url"),
         "capture_exit": row.get("capture_exit"),
         "consolidation_exit": row.get("consolidation_exit"),
+        "parsed_artifact_kind": parsed_artifact_kind,
+        "parse_success": parsed_artifact_kind is not None,
         "http_status": metadata.get("status") if isinstance(metadata, dict) else None,
         "http_reason": metadata.get("reason") if isinstance(metadata, dict) else None,
         "content_type": metadata.get("content_type") if isinstance(metadata, dict) else None,
@@ -138,7 +140,7 @@ def _quality_flags(
     *,
     capture_exit: object,
     consolidation_exit: object,
-    consolidation_content: dict[str, Any] | None,
+    parsed_artifact_kind: str | None,
     metadata: dict[str, Any] | None,
     title: object,
     counts: dict[str, Any],
@@ -148,10 +150,13 @@ def _quality_flags(
     flags: list[str] = []
     if capture_exit != 0:
         flags.append("capture_failed")
-    if consolidation_exit != 0:
-        flags.append("consolidation_failed")
-    elif consolidation_content is None:
-        flags.append("consolidation_content_missing")
+    if parsed_artifact_kind is None:
+        if consolidation_exit not in {None, 0}:
+            flags.append("consolidation_failed")
+        elif consolidation_exit == 0:
+            flags.append("consolidation_content_missing")
+        else:
+            flags.append("content_record_missing")
     if metadata is None:
         flags.append("http_metadata_missing")
     else:
@@ -180,6 +185,7 @@ def _usable_for_downstream(flags: list[str]) -> str:
         "capture_failed",
         "consolidation_failed",
         "consolidation_content_missing",
+        "content_record_missing",
         "http_metadata_missing",
         "http_non_2xx",
         "comment_reconciliation_mismatch",
@@ -197,6 +203,7 @@ def _summarize_counts(rows: list[dict[str, Any]]) -> dict[str, int]:
         "slot_count": len(rows),
         "capture_success_count": sum(1 for row in rows if row["capture_exit"] == 0),
         "consolidation_success_count": sum(1 for row in rows if row["consolidation_exit"] == 0),
+        "parsed_success_count": sum(1 for row in rows if row["parse_success"] is True),
         "usable_yes_count": sum(1 for row in rows if row["usable_for_downstream"] == "yes"),
         "usable_needs_review_count": sum(
             1 for row in rows if row["usable_for_downstream"] == "needs_review"
@@ -222,6 +229,37 @@ def _consolidation_path(*, row: dict[str, Any], derived_dir: Path | None) -> Pat
         return None
     candidate = derived_dir / "reddit_thread_consolidation.json"
     return candidate if candidate.exists() else None
+
+
+def _content_record_path(packet_dir: Path | None) -> Path | None:
+    if packet_dir is None:
+        return None
+    candidates = [
+        packet_dir / "raw" / "01_content_record.json",
+        packet_dir / "content_record.json",
+    ]
+    existing = [path for path in candidates if path.exists()]
+    return existing[0] if len(existing) == 1 else None
+
+
+def _resolve_parsed_content(
+    *,
+    consolidation: dict[str, Any] | None,
+    content_record: dict[str, Any] | None,
+) -> tuple[dict[str, Any], str | None]:
+    if isinstance(consolidation, dict):
+        parsed = consolidation.get("reddit_thread_consolidation")
+        if isinstance(parsed, dict):
+            return parsed, "reddit_thread_consolidation"
+    if (
+        isinstance(content_record, dict)
+        and content_record.get("record_kind") == "reddit_thread_content_v0"
+        and isinstance(content_record.get("thread"), dict)
+        and isinstance(content_record.get("counts"), dict)
+        and isinstance(content_record.get("comments"), list)
+    ):
+        return content_record, "reddit_thread_content_v0"
+    return {}, None
 
 
 def _parser_warning_count(comments: object) -> int:
@@ -268,6 +306,7 @@ def _render_receipt(artifact: dict[str, Any]) -> str:
         f"- Slots: {counts['slot_count']}",
         f"- Capture success: {counts['capture_success_count']}",
         f"- Consolidation success: {counts['consolidation_success_count']}",
+        f"- Parsed content success: {counts['parsed_success_count']}",
         f"- Usable yes: {counts['usable_yes_count']}",
         f"- Usable needs_review: {counts['usable_needs_review_count']}",
         f"- Usable no: {counts['usable_no_count']}",

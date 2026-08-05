@@ -61,8 +61,10 @@ may read this note and the quarantined material.
 ## Blind success criterion (fixed now, judged after seal)
 
 The calibrated unit is the phase-1 scout pass and its typed ledger; a
-phase-2 native-return leg, if dispatched, is logged as its own unit and does
-not enter the phase-1 cost share or this criterion.
+phase-2 post-fan-out targeted return is logged as its own mandatory cycle unit
+and does not enter the phase-1 cost share or this criterion. Reddit/community
+capture belongs to the specialist fan-out and is likewise costed outside the
+phase-1 unit.
 
 The scout pass earns its mandatory seat if its fresh ledger surfaces at least
 one competitor, substitute, or comparison angle that is absent from the p10

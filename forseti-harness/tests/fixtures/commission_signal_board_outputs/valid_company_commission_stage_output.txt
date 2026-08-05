@@ -10,6 +10,7 @@ company_commission_receipt:
   commission_id: fixture_company_example_labs
   mode: forward
   commission_profile: company_competitive_intelligence
+  understanding_completion_profile: broad_company_understanding_v1
   subject_count: 1
   subject_identity:
     raw_name: Example Labs
@@ -20,6 +21,9 @@ company_commission_receipt:
   longitudinal_period: null
   longitudinal_rationale: not_applicable
   initial_proving_run: true
+  controller_placement: top_level_co0
+  worker_slots_required: 3
+  worker_slots_available: 3
 ```
 
 ### 2. Decision-Neutral Boundary
@@ -134,6 +138,71 @@ coverage_ledger:
     access: blocked
     relevance: relevant
     gap_id: GAP-001
+  - coverage_id: COV-009
+    source_family: ad_transparency
+    source_surface: google_ads_transparency_center
+    venue: Google Ads Transparency Center
+    relevance_rationale: Mandatory paid-creative inventory attempt after exact advertiser identity binding.
+    route_or_query: advertiser identity pending CO1 resolution
+    requirement: required
+    status: not_checked
+    yield: unknown
+    recency: current
+    access: accessible
+    relevance: relevant
+    gap_id: null
+  - coverage_id: COV-010
+    source_family: ad_transparency
+    source_surface: meta_ads_library
+    venue: Meta Ads Library
+    relevance_rationale: Mandatory paid-creative inventory attempt after exact advertiser identity binding.
+    route_or_query: advertiser identity pending CO1 resolution
+    requirement: required
+    status: not_checked
+    yield: unknown
+    recency: current
+    access: accessible
+    relevance: relevant
+    gap_id: null
+  - coverage_id: COV-011
+    source_family: forums_community
+    source_surface: reddit_weekly_data_lake_read
+    venue: Reddit weekly lake
+    relevance_rationale: Mandatory read of the current weekly roster before new Reddit discovery.
+    route_or_query: run_reddit_weekly_demand_read.py
+    requirement: required
+    status: not_checked
+    yield: unknown
+    recency: current
+    access: accessible
+    relevance: relevant
+    gap_id: null
+  - coverage_id: COV-012
+    source_family: creator_social_video
+    source_surface: native_social_trigger_assessment
+    venue: Native TikTok Instagram YouTube trigger assessment
+    relevance_rationale: Decide from Phase 1 evidence whether an ambiguous or material native item requires deep capture.
+    route_or_query: assess after SERP Phase 1
+    requirement: conditional
+    status: not_checked
+    yield: unknown
+    recency: current
+    access: accessible
+    relevance: relevant
+    gap_id: null
+  - coverage_id: COV-013
+    source_family: retail_pdp
+    source_surface: tiktok_shop_trigger_assessment
+    venue: TikTok Shop trigger assessment
+    relevance_rationale: Decide whether the subject is creator-led or TikTok Shop is commercially material before licensing the US-egress route.
+    route_or_query: assess after SERP Phase 1
+    requirement: conditional
+    status: not_checked
+    yield: unknown
+    recency: current
+    access: accessible
+    relevance: relevant
+    gap_id: null
 ```
 
 ### 4. Observation Ledger

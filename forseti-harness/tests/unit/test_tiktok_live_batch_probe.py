@@ -22,6 +22,8 @@ from source_capture.auth_state import (
     auth_state_path_for_label,
     write_auth_state_metadata,
 )
+from source_capture.session_profiles import SourceCaptureSessionProfile
+from source_capture.source_access_provenance import HarnessProxyProfilePosture
 from source_capture.tiktok.admission import COMPLETE_LANE_NOTE
 from source_capture.tiktok.batch_packet import write_tiktok_batch_packet
 import source_capture.tiktok.live_batch_probe as live_batch_probe
@@ -205,6 +207,180 @@ def test_live_probe_runner_help_surfaces_sessioned_cold_agent_command(capsys) ->
     assert "Recommended sessioned cold-agent command" in captured.out
     assert "--session-profile \"chowdakr_sg_tiktok\"" in captured.out
     assert "--admit-output" in captured.out
+
+
+def _chrome_session_profile() -> SourceCaptureSessionProfile:
+    return SourceCaptureSessionProfile(
+        alias="chowdakr_sg_tiktok",
+        platform="tiktok",
+        state_label="test-session",
+        session_mode=AuthenticatedSessionMode.FREE_ACCOUNT_CREATED,
+        required_harness_proxy_profile_posture=(
+            HarnessProxyProfilePosture.NO_PROXY_PROFILE_LOADED
+        ),
+        browser_backend="chrome_cdp",
+        challenge_policy="owner_handoff_before_action",
+        browser_user_data_label="test-tiktok-browser",
+    )
+
+
+def test_live_probe_runner_uses_profile_chrome_cdp_without_diagnostic_downgrade(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    profile_dir = tmp_path / "browser-profile"
+    profile_dir.mkdir()
+    (profile_dir / "marker").write_text("retained", encoding="utf-8")
+    captured: dict[str, object] = {}
+
+    class FakeChromeEngine:
+        def __init__(self, **kwargs: object) -> None:
+            captured["engine_kwargs"] = kwargs
+            captured["engine"] = self
+            self.closed = False
+
+        def close(self) -> None:
+            self.closed = True
+
+    class Paths:
+        grid_result_json_path = tmp_path / "grid.json"
+        cadence_result_json_path = tmp_path / "cadence.json"
+
+    Paths.grid_result_json_path.write_text("{}", encoding="utf-8")
+    Paths.cadence_result_json_path.write_text(
+        json.dumps(
+            {
+                "requested_video_count": 1,
+                "attempted_count": 1,
+                "completed_count": 1,
+                "challenge_count": 0,
+                "results": [],
+                "failures": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(runner, "resolve_session_profile", lambda *_a, **_k: _chrome_session_profile())
+    monkeypatch.setattr(runner, "validate_session_profile_auth_state", lambda *_a, **_k: None)
+    monkeypatch.setattr(runner, "browser_user_data_path_for_label", lambda *_a, **_k: profile_dir)
+    monkeypatch.setattr(
+        runner,
+        "probe_local_cdp_endpoints",
+        lambda: {"live_endpoints": ["http://127.0.0.1:9223"]},
+    )
+    monkeypatch.setattr(
+        runner,
+        "select_profile_bound_local_cdp_endpoint",
+        lambda report, *, user_data_dir: "http://127.0.0.1:9223",
+    )
+    monkeypatch.setattr(runner, "ChromeCdpPageObservationSessionEngine", FakeChromeEngine)
+
+    def fake_write(**kwargs: object):
+        captured["write_kwargs"] = kwargs
+        return Paths()
+
+    monkeypatch.setattr(runner, "write_tiktok_live_batch_probe_outputs", fake_write)
+
+    assert runner.main(
+        [
+            "--creator-handle",
+            "funmi",
+            "--creator-profile-url",
+            "https://www.tiktok.com/@funmi",
+            "--video-url",
+            "https://www.tiktok.com/@funmi/video/7390000000000000001",
+            "--session-profile",
+            "chowdakr_sg_tiktok",
+            "--output-dir",
+            str(tmp_path / "out"),
+        ]
+    ) == 0
+
+    write_kwargs = captured["write_kwargs"]
+    assert isinstance(write_kwargs, dict)
+    assert write_kwargs["browser_backend"] == "chrome_cdp"
+    assert write_kwargs["engine"] is captured["engine"]
+    assert captured["engine_kwargs"]["cdp_endpoint"] == "http://127.0.0.1:9223"
+    assert captured["engine"].closed is True
+
+
+def test_live_probe_runner_stops_before_capture_without_one_profile_cdp_endpoint(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    profile_dir = tmp_path / "browser-profile"
+    profile_dir.mkdir()
+    (profile_dir / "marker").write_text("retained", encoding="utf-8")
+    capture_called = False
+
+    monkeypatch.setattr(runner, "resolve_session_profile", lambda *_a, **_k: _chrome_session_profile())
+    monkeypatch.setattr(runner, "validate_session_profile_auth_state", lambda *_a, **_k: None)
+    monkeypatch.setattr(runner, "browser_user_data_path_for_label", lambda *_a, **_k: profile_dir)
+    monkeypatch.setattr(runner, "probe_local_cdp_endpoints", lambda: {"live_endpoints": []})
+    monkeypatch.setattr(
+        runner,
+        "select_profile_bound_local_cdp_endpoint",
+        lambda report, *, user_data_dir: (_ for _ in ()).throw(
+            ValueError(
+                "Chrome CDP requires exactly one live endpoint bound to the retained "
+                "browser profile; observed 0"
+            )
+        ),
+    )
+
+    def unexpected_write(**_kwargs: object):
+        nonlocal capture_called
+        capture_called = True
+
+    monkeypatch.setattr(runner, "write_tiktok_live_batch_probe_outputs", unexpected_write)
+
+    with pytest.raises(SystemExit) as exc:
+        runner.main(
+            [
+                "--creator-handle",
+                "funmi",
+                "--creator-profile-url",
+                "https://www.tiktok.com/@funmi",
+                "--video-url",
+                "https://www.tiktok.com/@funmi/video/7390000000000000001",
+                "--session-profile",
+                "chowdakr_sg_tiktok",
+                "--output-dir",
+                str(tmp_path / "out"),
+            ]
+        )
+
+    assert exc.value.code == 2
+    assert capture_called is False
+
+
+def test_profile_chrome_cdp_engine_rejects_live_wrong_profile(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    profile_dir = tmp_path / "browser-profile"
+    profile_dir.mkdir()
+    (profile_dir / "marker").write_text("retained", encoding="utf-8")
+    monkeypatch.setattr(runner, "browser_user_data_path_for_label", lambda *_a, **_k: profile_dir)
+    monkeypatch.setattr(
+        runner,
+        "probe_local_cdp_endpoints",
+        lambda: {"live_endpoints": ["http://127.0.0.1:9223"]},
+    )
+    monkeypatch.setattr(
+        runner,
+        "select_profile_bound_local_cdp_endpoint",
+        lambda report, *, user_data_dir: (_ for _ in ()).throw(
+            ValueError(
+                "Chrome CDP requires exactly one live endpoint bound to the retained "
+                "browser profile; observed 0"
+            )
+        ),
+    )
+
+    with pytest.raises(ValueError, match="bound to the retained browser profile"):
+        runner._profile_chrome_cdp_engine(_chrome_session_profile())
 
 
 

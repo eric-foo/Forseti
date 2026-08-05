@@ -171,6 +171,14 @@ when it adds an independent origin, substantive detail, another angle or
 attribute, mechanism, qualification, segmentation, corroboration, or
 contradiction.
 
+Source-family membership is not a redundancy test. Two independently reported
+articles, threads, review corpora, or creator posts may sharpen or corroborate
+the same seam even though they belong to the same family. Treat a move as
+repetitive only after checking origin, syndication/echo, substance, and likely
+effect on the material-seam disposition. A copied wire story, syndicated review
+feed, repost, or same-origin restatement counts once; an independent origin does
+not become duplicative merely because it points in the same direction.
+
 High-value reasons include:
 
 - likely value of a CSB-nominated venue for this decision;

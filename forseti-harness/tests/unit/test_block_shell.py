@@ -78,6 +78,19 @@ def test_embedded_recaptcha_login_widget_is_not_a_challenge_page_signal():
     assert result.signal is None
 
 
+def test_dormant_hcaptcha_script_on_full_page_is_not_a_challenge_page_signal():
+    body = b"""\
+    <html><head><title>Company sustainability</title>
+      <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    </head><body>
+      <main><h1>Sustainability</h1><p>Our complete company statement is here.</p></main>
+    </body></html>
+    """
+    result = classify_capture_body(status=200, headers={}, body=body)
+    assert result.classification is CaptureBodyClass.CONTENT_UNVERIFIED
+    assert result.signal is None
+
+
 def test_encoded_body_is_content_unverified_with_limitation_signal():
     result = classify_capture_body(
         status=200,

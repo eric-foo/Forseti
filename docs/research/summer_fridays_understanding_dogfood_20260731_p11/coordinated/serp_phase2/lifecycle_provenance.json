@@ -1,0 +1,8 @@
+{
+  "schema_version": "serp_phase2_settlement_provenance_v0",
+  "subject_entity_key": "summer fridays|company|brand",
+  "settlement_sha256": "bf51a2b4af26605c0f34a9f992d3a12cc156bd9bf8b2f47d71e24d5de8bed754",
+  "receipt_sha256": "3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf",
+  "claim_ids": [],
+  "prior_receipt_sha256s": []
+}

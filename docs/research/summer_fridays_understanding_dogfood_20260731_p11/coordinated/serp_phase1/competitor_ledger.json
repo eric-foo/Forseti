@@ -1,0 +1,364 @@
+{
+  "schema_version": "serp_competitor_ledger_p11_phase1_v0",
+  "subject": "Summer Fridays",
+  "state": "complete",
+  "run_boundary": "fresh_p11_phase1_only",
+  "position": "Fresh rendered surfaces position Summer Fridays as the premium anchor against e.l.f. and as a same-category rival to Rhode; this is a counts-only surface observation, not a market-share or customer-prevalence claim.",
+  "entries": [
+    {
+      "name": "e.l.f.",
+      "product_scope": "Glow Reviver Melting Lip Balm",
+      "type": "dupe_association",
+      "rung": "candidate",
+      "distinct_queries": 2,
+      "source_jobs": [
+        "p1_06_reddit",
+        "p1_07_dupe"
+      ],
+      "surface_classes": [
+        "serp_result_title",
+        "serp_rendered_snippet"
+      ],
+      "provenance": {
+        "job_id": "p1_07_dupe",
+        "packet_id": "01KYWM7XY53QM3GSSWPFY0DZYM",
+        "manifest_sha256": "7d12aa235fe5ff69cbb79e077f0a0bdf28ff494fce1b60dc6b42c726c26599ec"
+      },
+      "promotion_basis": "The exact e.l.f. lip-balm comparison appeared on two distinct fresh subject queries and resolved to an exact product in the licensed versus and product-scoped price probes.",
+      "claim_ceiling": "Candidate-rung rendered-surface association only; no native verdict, switching, demand, prevalence, or sales claim."
+    },
+    {
+      "name": "Rhode",
+      "product_scope": "Peptide Lip Treatment",
+      "type": "rival",
+      "rung": "candidate",
+      "distinct_queries": 2,
+      "source_jobs": [
+        "p1_01_review",
+        "p1_07_dupe"
+      ],
+      "surface_classes": [
+        "serp_aio",
+        "serp_rendered_snippet"
+      ],
+      "provenance": {
+        "job_id": "p1_01_review",
+        "packet_id": "01KYWFX88DZVED4HB7BEYSN7Z7",
+        "manifest_sha256": "5ee1d7885aa024963d04d01a9ad8a95d7ca3a764c6f86e0b4d303a0318f2c148"
+      },
+      "promotion_basis": "Rhode appeared in two distinct fresh subject queries and resolved to the exact Peptide Lip Treatment in the licensed versus and product-scoped price probes.",
+      "claim_ceiling": "Candidate-rung rendered-surface association only; no native verdict, switching, demand, prevalence, or sales claim."
+    }
+  ],
+  "presence_only_debris": [
+    {
+      "token": "Cheaper",
+      "disposition": "excluded_parser_debris"
+    },
+    {
+      "token": "some",
+      "disposition": "excluded_parser_debris"
+    },
+    {
+      "token": "viral lip butter balm dupe Covergirl",
+      "disposition": "excluded_unbound_phrase"
+    }
+  ],
+  "mediators": {
+    "Ale Jay": [
+      "Summer Fridays"
+    ],
+    "Carly Rivlin": [
+      "Summer Fridays"
+    ],
+    "Christi Rose": [
+      "Summer Fridays"
+    ],
+    "Eli Leimer": [
+      "Summer Fridays"
+    ],
+    "Karly Alane": [
+      "Summer Fridays"
+    ],
+    "Michael Park MD": [
+      "Summer Fridays"
+    ],
+    "Mursal | Toronto": [
+      "Summer Fridays"
+    ],
+    "by.erinmarie": [
+      "Summer Fridays"
+    ],
+    "goforthandgrow": [
+      "Summer Fridays"
+    ]
+  },
+  "mediator_classes": {
+    "Ale Jay": "pending_classification",
+    "Carly Rivlin": "pending_classification",
+    "Christi Rose": "pending_classification",
+    "Eli Leimer": "pending_classification",
+    "Karly Alane": "pending_classification",
+    "Michael Park MD": "professional_creator",
+    "Mursal | Toronto": "pending_classification",
+    "by.erinmarie": "pending_classification",
+    "goforthandgrow": "pending_classification"
+  },
+  "trigger_thread_queue": [
+    {
+      "url": "https://www.reddit.com/r/Sephora/comments/19eo5it/can_we_all_just_admit_that_summer_fridays_isnt/",
+      "trigger": "contrarian_title",
+      "source_job": "p1_06_reddit"
+    },
+    {
+      "url": "https://www.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "trigger": "review_title",
+      "source_job": "p1_01_review"
+    },
+    {
+      "url": "https://www.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/",
+      "trigger": "claim_attack",
+      "source_job": "p1_03_bad_for_you"
+    },
+    {
+      "url": "https://www.reddit.com/r/Sephora/comments/1al8aby/summer_fridays_applicator_clogged/",
+      "trigger": "product_failure",
+      "source_job": "p1_05_not_working"
+    },
+    {
+      "url": "https://www.reddit.com/r/LipBalm/comments/1slrvyj/summer_fridays/",
+      "trigger": "community_subject_thread",
+      "source_job": "p1_06_reddit"
+    },
+    {
+      "url": "https://www.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/",
+      "trigger": "customer_verdict",
+      "source_job": "p1_06_reddit"
+    },
+    {
+      "url": "https://www.reddit.com/r/LipBalm/comments/1qdk0gq/cheaper_dupes_for_summer_fridays_type_balms/",
+      "trigger": "dupe_and_switching",
+      "source_job": "p1_07_dupe"
+    }
+  ],
+  "reddit_watchlist": [
+    "https://www.reddit.com/r/Sephora/comments/18tzyie/incoming_summer_fridays_dream_lip_oil/",
+    "https://www.reddit.com/r/Sephora/comments/1rk7azd/whats_the_best_summer_fridays_lip_balm/",
+    "https://www.reddit.com/r/Sephora/comments/x9paxn/is_summer_fridays_worth_the_splurge/"
+  ],
+  "grid_capture_queue": [
+    {
+      "platform": "tiktok",
+      "mediator": "Karly Alane",
+      "item_url": "https://www.tiktok.com/@karlyalane_/video/7232313070897483051",
+      "profile_url_or_none": "https://www.tiktok.com/@karlyalane_",
+      "locator_status": "source_visible",
+      "trigger": "safety_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "tiktok",
+      "mediator": "by.erinmarie",
+      "item_url": "https://www.tiktok.com/@by.erinmarie/video/7527741844298435895",
+      "profile_url_or_none": "https://www.tiktok.com/@by.erinmarie",
+      "locator_status": "source_visible",
+      "trigger": "clean_brand_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "instagram",
+      "mediator": "Eli Leimer",
+      "item_url": "https://www.instagram.com/reel/DWE8EFkDHes/",
+      "profile_url_or_none": null,
+      "locator_status": "item_only_profile_not_source_visible",
+      "trigger": "clean_or_non_toxic_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "instagram",
+      "mediator": "Eli Leimer",
+      "item_url": "https://www.instagram.com/reel/DPrnH9Cj6qI/?hl=en",
+      "profile_url_or_none": null,
+      "locator_status": "item_only_profile_not_source_visible",
+      "trigger": "clean_at_sephora_challenge_could_change_bound_answer"
+    },
+    {
+      "platform": "instagram",
+      "mediator": "Michael Park MD",
+      "item_url": "https://www.instagram.com/reel/DXb1FcNhdXP/?hl=en",
+      "profile_url_or_none": null,
+      "locator_status": "item_only_profile_not_source_visible",
+      "trigger": "professional_worth_hype_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "tiktok",
+      "mediator": "makeup2themaxx",
+      "item_url": "https://www.tiktok.com/@makeup2themaxx/video/7379382940272217386?lang=en",
+      "profile_url_or_none": "https://www.tiktok.com/@makeup2themaxx",
+      "locator_status": "source_visible",
+      "trigger": "discontinued_product_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "tiktok",
+      "mediator": "walkingtower",
+      "item_url": "https://www.tiktok.com/@walkingtower/video/7354686188327832833",
+      "profile_url_or_none": "https://www.tiktok.com/@walkingtower",
+      "locator_status": "source_visible",
+      "trigger": "packaging_or_applicator_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "tiktok",
+      "mediator": "micahlambeth",
+      "item_url": "https://www.tiktok.com/@micahlambeth/video/7496318205502246190",
+      "profile_url_or_none": "https://www.tiktok.com/@micahlambeth",
+      "locator_status": "source_visible",
+      "trigger": "packaging_or_applicator_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "instagram",
+      "mediator": "goforthandgrow",
+      "item_url": "https://www.instagram.com/reel/DQLAZt7DSav/?hl=en",
+      "profile_url_or_none": null,
+      "locator_status": "item_only_profile_not_source_visible",
+      "trigger": "exact_elf_dupe_statement_could_change_bound_answer"
+    },
+    {
+      "platform": "youtube",
+      "mediator": "Christi Rose",
+      "item_url": "https://www.youtube.com/watch?v=nkKjxEQgBp8",
+      "profile_url_or_none": null,
+      "locator_status": "item_only_channel_not_source_visible",
+      "trigger": "exact_elf_head_to_head_could_change_bound_answer"
+    }
+  ],
+  "selected_for_vs": [
+    {
+      "name": "e.l.f.",
+      "product_scope": "Glow Reviver Melting Lip Balm",
+      "reason": "candidate-rung dupe association supported by two distinct fresh seed queries"
+    },
+    {
+      "name": "Rhode",
+      "product_scope": "Peptide Lip Treatment",
+      "reason": "candidate-rung same-category rival supported by two distinct fresh seed queries"
+    }
+  ],
+  "j5_prices": [
+    {
+      "name": "Summer Fridays",
+      "product_scope": "Lip Butter Balm, 15 g",
+      "list_price_usd": 24.0,
+      "standing_floor_usd": 24.0,
+      "source_url_class": "brand_official_product_and_authorized_retailer_serp",
+      "source_job": "p1_j5_subject_price",
+      "source_packet_id": "01KYWMC8ZSWS6K6ZRZR3VVERWA",
+      "architecture": "premium_anchor",
+      "response_trap_note": "Point-in-time rendered price only; not a portfolio-wide floor, physical-US-local result, or price-action recommendation."
+    },
+    {
+      "name": "e.l.f.",
+      "product_scope": "Glow Reviver Melting Lip Balm, 0.52 oz",
+      "list_price_usd": 9.0,
+      "standing_floor_usd": 9.0,
+      "subject_multiple": 2.6666666667,
+      "source_url_class": "brand_official_product_and_major_retailer_serp",
+      "source_job": "p1_j5_elf_lip_balm",
+      "source_packet_id": "01KYWMN6SF5QAM2QJ1HT9120T9",
+      "architecture": "hidden_floor",
+      "response_trap_note": "The $8 rows were visibly promotional; the $9 standing price is retained. The observed price gap is value pressure, not evidence to cut price."
+    },
+    {
+      "name": "Rhode",
+      "product_scope": "Peptide Lip Treatment, 10 ml",
+      "list_price_usd": 20.0,
+      "standing_floor_usd": 20.0,
+      "subject_multiple": 1.2,
+      "source_url_class": "brand_official_product_serp",
+      "source_job": "p1_j5_rhode_lip_balm",
+      "source_packet_id": "01KYWMZN86YHEG430NA3FH6KV5",
+      "architecture": "ladder",
+      "response_trap_note": "Cross-unit comparison is not normalized because the source reports grams for Summer Fridays and millilitres for Rhode; no price-action recommendation is licensed."
+    }
+  ],
+  "levers": {
+    "j1_cross": "live: e.l.f. occupies the lower-price dupe surface for the Lip Butter Balm; rendered surfaces alone do not prove customer switching",
+    "j2_exit_door_class": "retention_or_value_proof: current Phase 1 surfaces raise worth-it, duration, texture, and cheaper-equivalent questions; native evidence is still required",
+    "j3_tags": [
+      "clean_or_non_toxic_claim",
+      "temporary_irritation_or_redness",
+      "packaging_or_applicator_failure",
+      "discontinued_or_reformulated_product",
+      "lip_balm_value_and_duration",
+      "elf_dupe_comparison",
+      "rhode_texture_and_hydration_comparison"
+    ]
+  },
+  "official_source_doors": [
+    {
+      "url": "https://summerfridays.com/pages/jet-lag-mask-statement",
+      "source_job": "p1_02_side_effects",
+      "status": "google_locator_and_snippet_only",
+      "claim_ceiling": "Not owned-page proof until separately captured by the authorized specialist."
+    },
+    {
+      "url": "https://summerfridays.com/pages/sustainability",
+      "source_job": "p1_03_bad_for_you",
+      "status": "google_locator_and_snippet_only",
+      "claim_ceiling": "Not owned-page proof until separately captured by the authorized specialist."
+    }
+  ],
+  "jobs": {
+    "planned": [
+      "p1_01_review",
+      "p1_02_side_effects",
+      "p1_03_bad_for_you",
+      "p1_04_made_worse",
+      "p1_05_not_working",
+      "p1_06_reddit",
+      "p1_07_dupe",
+      "p1_j5_subject_price",
+      "p1_vs_elf",
+      "p1_j5_elf_lip_balm",
+      "p1_vs_rhode",
+      "p1_j5_rhode_lip_balm"
+    ],
+    "completed": [
+      "p1_01_review",
+      "p1_02_side_effects",
+      "p1_03_bad_for_you",
+      "p1_04_made_worse",
+      "p1_05_not_working",
+      "p1_06_reddit",
+      "p1_07_dupe",
+      "p1_j5_subject_price",
+      "p1_vs_elf",
+      "p1_j5_elf_lip_balm",
+      "p1_vs_rhode",
+      "p1_j5_rhode_lip_balm"
+    ],
+    "blocked": [],
+    "unrun": [],
+    "pending": []
+  },
+  "block_attempts": [
+    {
+      "job_id": "p1_01_review",
+      "packet_id": "01KYVY835H2M9T6NQBKCVFPWF0",
+      "disposition": "preserved_interrupted_run_block; final job later completed"
+    },
+    {
+      "job_id": "p1_01_review",
+      "packet_id": "01KYWCE84EVSV7B1QY6KRW6NR5",
+      "disposition": "preserved_resume_block; one cooldown recovery completed the job"
+    },
+    {
+      "job_id": "p1_03_bad_for_you",
+      "packet_id": "01KYWG6CYRCSM233P3VJY6SF63",
+      "disposition": "preserved_resume_block; one cooldown recovery completed the job"
+    }
+  ],
+  "claim_ceiling": [
+    "Observed cards and exact captured rows are point-in-time rendered surfaces, never prevalence, volume, share, sales, or trend.",
+    "US-parameterized Google results are not proof of physical US locality or nationwide availability.",
+    "Reddit and native-social URLs are discovery doors only until the authorized specialist preserves native evidence.",
+    "Google synthesis and snippets are not substitutes for dereferenced owned, retailer, community, or native evidence.",
+    "Phase 1 performs no native Reddit or social capture and weights no raw social engagement count."
+  ]
+}

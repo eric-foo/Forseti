@@ -63,7 +63,7 @@ def _run(tmp_path: Path, engine: _FakeEngine, **overrides):
     kwargs = {
         "url": URL,
         "source_family": "reddit_subreddit_grid",
-        "source_surface": "www_reddit_realchrome",
+        "source_surface": "www_reddit_realchrome_cdp",
         "decision_question": "what is breaking out this week?",
         "output_directory": tmp_path / "packet",
         "engine": engine,
@@ -289,7 +289,7 @@ def test_a_www_content_packet_reads_and_folds_end_to_end(tmp_path: Path) -> None
     assert outcome.unknown_subreddits == []
 
     observation = fold_subreddit(lake, "testsub")["observations"][0]
-    assert observation["source_surface"] == "www_reddit_top_week_packet"
+    assert observation["source_surface"] == "www_reddit_realchrome_cdp"
     # The www sidebar exposes weekly visitors/contributions, not subscribers, so
     # the observation carries an honest absence rather than a mislabelled count.
     assert observation["subscriber_count_or_none"] is None

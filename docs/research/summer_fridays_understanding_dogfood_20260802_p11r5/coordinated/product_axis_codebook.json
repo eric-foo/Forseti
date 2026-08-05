@@ -1,0 +1,104 @@
+{
+  "schema_version": "consumer_brand_axis_codebook_v1",
+  "subject": "Summer Fridays",
+  "cycle_id": "summer_fridays_understanding_p11r5_20260802",
+  "method": "case-insensitive regular-expression candidate coding over every eligible deduplicated retailer review; direct structured recommendation fields remain direct outcomes; textual choice outcomes attach to an axis only when the outcome and axis occur in the same sentence, or when the review contains exactly one coded axis",
+  "ceiling": "deterministic high-recall coding for captured-sample incidence; not population prevalence, sentiment scoring, or proof that every implicit mention was recovered",
+  "axes": [
+    {
+      "axis_id": "reaction_and_breakout",
+      "label": "Reaction, irritation, and breakout risk",
+      "scope": "product and formula",
+      "polarity": "pain",
+      "pattern": "\\b(allerg(?:y|ic)|reaction|irritat(?:e|ed|ion)|burn(?:ing|ed|s)?|sting(?:ing|s)?|rash|hives?|break[ -]?out|acne|pimples?|eczema|itch(?:y|ing)?|redness|swollen|contact dermatitis)\\b"
+    },
+    {
+      "axis_id": "value_and_quantity",
+      "label": "Value for price and usable quantity",
+      "scope": "product and price",
+      "polarity": "pain",
+      "pattern": "\\b(overpriced|overprice|expensive|pricey|not worth|worth (?:the|it)|waste of money|save your money|price|too tiny|tiny (?:tube|bottle|jar|size|amount|product)|too small|small size|barely any|little product|amount|quantity|sample size|rip[ -]?off)\\b"
+    },
+    {
+      "axis_id": "packaging_and_dispensing",
+      "label": "Packaging and dispensing reliability",
+      "scope": "product packaging",
+      "polarity": "pain",
+      "pattern": "\\b(packaging|applicator|wand|pump|cap|lid|leak(?:s|ed|ing)?|(?:applicator|tube|pump) (?:clog(?:s|ged|ging)?)|clogged (?:applicator|tube|pump)|bottle broke|tube split|stopped working|stop working|doesn.?t come out|won.?t come out|dried (?:up|out)|empty tube|air[ -]?filled|barely full|tip went in|product stuck)\\b"
+    },
+    {
+      "axis_id": "wear_and_longevity",
+      "label": "Wear time and longevity",
+      "scope": "product performance",
+      "polarity": "mixed",
+      "pattern": "\\b(doesn.?t last|didn.?t last|lasts? (?:all day|longer|only|[0-9]+ (?:minute|minutes|hour|hours))|lasted (?:all day|only|[0-9]+ (?:minute|minutes|hour|hours))|long[ -]?wear|wear[ -]?time|longevity|wears? off|(?:color|colour|pigment|scent|fragrance) fades?|fad(?:e|ed) (?:quickly|fast|within)|rub(?:s|bed)? off|wipes? off|slip(?:s|ped)? off|transfers?|reapply|reapplication|staying power|stays? on)\\b"
+    },
+    {
+      "axis_id": "hydration_and_moisture",
+      "label": "Hydration and moisture performance",
+      "scope": "product performance",
+      "polarity": "mixed",
+      "pattern": "\\b(hydrat(?:e|ed|ing|ion)|moistur(?:e|ize|ized|izer|izing)|dry(?:ing|ness)?|dehydrat(?:e|ed|ing)|parched|nourish(?:ed|ing)?|chapped|flaky|flakes?)\\b"
+    },
+    {
+      "axis_id": "texture_and_skin_finish",
+      "label": "Texture, feel, and skin finish",
+      "scope": "product experience",
+      "polarity": "mixed",
+      "pattern": "\\b(sticky|tacky|greasy|oily|heavy|lightweight|weightless|thick|thin|watery|waxy|smooth|silky|creamy|texture|pilling|pills?|peels?|cakey|separat(?:e|ed|ing)|absorbs?|dewy|matte|shiny|glow(?:y|ing)?)\\b"
+    },
+    {
+      "axis_id": "coverage_and_pigment",
+      "label": "Coverage and pigment payoff",
+      "scope": "color product performance",
+      "polarity": "mixed",
+      "pattern": "\\b(coverage|pigment(?:ed|ation)?|sheer|opaque|buildable|color payoff|colour payoff|payoff|barely shows|doesn.?t show|no tint|zero coverage|conceal(?:s|ed|er)?)\\b"
+    },
+    {
+      "axis_id": "shade_and_color_fit",
+      "label": "Shade range and color fit",
+      "scope": "color product fit",
+      "polarity": "mixed",
+      "pattern": "\\b(shade range|shade|undertone|too warm|too cool|orange|color match|colour match|match(?:ed|es)? my skin|pigment color|pigment colour)\\b"
+    },
+    {
+      "axis_id": "scent_and_flavor",
+      "label": "Scent and flavor appeal",
+      "scope": "sensory product experience",
+      "polarity": "mixed",
+      "pattern": "\\b(scent|smell(?:s|ed|ing)?|fragrance|perfume|flavo(?:u)?r|taste|tastes|playdough|play dough|vanilla|cocoa|caramel|minty)\\b"
+    },
+    {
+      "axis_id": "formula_consistency_and_change",
+      "label": "Formula consistency and change",
+      "scope": "formula and batch consistency",
+      "polarity": "pain",
+      "pattern": "\\b(new formula|old formula|reformulat(?:e|ed|ion)|formula changed|changed (?:the )?formula|inconsistent|batch issue|bad batch|expired|old product|moldy|mouldy|oxidized|oxidised|separated|separation|watery now)\\b"
+    },
+    {
+      "axis_id": "application_and_tool_performance",
+      "label": "Application and tool performance",
+      "scope": "product use and tools",
+      "polarity": "mixed",
+      "pattern": "\\b(blend(?:s|ed|ing)?|(?:easy|hard|difficult|tricky|messy) to apply|applies (?:smoothly|evenly|beautifully|patchy|streaky)|patchy|streaky|makeup brush|brush applicator|with (?:a|the) brush|using (?:a|the) brush|applicator (?:glides|slides|works|feels)|pick(?:s|ed)? up|adhere|adhesion|fall(?:s|ing)? off|hard to use|easy to use|messy|precise|precision)\\b"
+    },
+    {
+      "axis_id": "hype_originality_and_trust",
+      "label": "Hype, originality, and product trust",
+      "scope": "product proposition and trust",
+      "polarity": "pain",
+      "pattern": "\\b(overhyped|hype|influencer|tiktok|carbon copy|copied|copying|stealing|unoriginal|dupe|rip[ -]?off|fake|counterfeit|duplicate item|rave reviews)\\b"
+    }
+  ],
+  "text_choice_outcomes": [
+    {"outcome": "returned_or_refunded", "pattern": "\\b(returned|got a refund|was refunded|sent it back)\\b"},
+    {"outcome": "return_intended", "pattern": "\\b(will return|going to return|gonna return|plan to return|returning this)\\b"},
+    {"outcome": "stopped_or_discarded", "pattern": "\\b(i(?:.ve| have)? stopped using|we(?:.ve| have)? stopped using|stopped using (?:it|this)|had to stop using|threw (?:it )?away|throwing (?:it )?away|in the trash|discarded)\\b"},
+    {"outcome": "switched_or_replaced", "pattern": "\\b(switched (?:from this|away from this|to another|to a different)|switching (?:from this|away from this|to another|to a different)|replaced it with|went back to|instead I use|instead i use)\\b"},
+    {"outcome": "reduced_use", "pattern": "\\b(use it less|only use it|barely use|won.?t use it often|not use it often)\\b"},
+    {"outcome": "no_future_purchase", "pattern": "\\b(won.?t (?:re)?purchase|wouldn.?t (?:re)?purchase|will not (?:re)?purchase|never (?:re)?purchase|won.?t buy|wouldn.?t buy|will not buy|never buy|not buying again|would not buy again|won.?t order again|wouldn.?t order again)\\b"},
+    {"outcome": "rejected_or_not_recommended", "pattern": "\\b(do not buy|don.?t buy|not recommend|wouldn.?t recommend|would not recommend|cannot recommend(?! (?:enough|more))|can.?t recommend(?! (?:enough|more))|save your money|it.?s a pass|skip this)\\b"},
+    {"outcome": "retained_or_repurchased", "pattern": "\\b(will (?:always |definitely )?repurchase|would repurchase|have repurchased|has repurchased|had repurchased|repurchased|buy again|bought again|keep buying|will keep buying|stocked up)\\b"},
+    {"outcome": "recommended_or_would_purchase", "pattern": "\\b(highly recommend|definitely recommend|would recommend|must have|worth buying|can.?t recommend (?:enough|more)|cannot recommend (?:enough|more)|couldn.?t recommend (?:enough|more))\\b"}
+  ]
+}

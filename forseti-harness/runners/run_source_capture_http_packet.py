@@ -5,8 +5,9 @@ import hashlib
 import json
 import os
 import sys
+from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Callable, Sequence
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -78,6 +79,20 @@ WALMART_MARKET_PIN_FAILURE_MODE_CHANGE = "walmart_market_pin_failed"
 CREDO_MARKET_PIN_FAILURE_MODE_CHANGE = "credo_market_pin_failed"
 
 
+@dataclass(frozen=True)
+class DirectHttpPacketOutcome:
+    exit_code: int
+    message: str
+    http_status: int | None
+    retry_after: str | None
+    retry_after_disposition: str
+    content_capture_allowed: bool
+    body_classification: str | None
+    body_classification_signal: str | None
+    login_gate_signal: str | None
+    access_block_reason: str | None
+
+
 def run_source_capture_http_packet(
     *,
     url: str,
@@ -113,6 +128,7 @@ def run_source_capture_http_packet(
     content_extraction: ContentExtractionSpec | None = None,
     walmart_market: str | None = None,
     credo_market: str | None = None,
+    outcome_observer: Callable[[DirectHttpPacketOutcome], None] | None = None,
 ) -> tuple[int, str]:
     if walmart_market is not None and credo_market is not None:
         raise ValueError("--credo-market and --walmart-market are mutually exclusive")
@@ -159,13 +175,41 @@ def run_source_capture_http_packet(
             )
         validate_credo_us_market_url(url)
 
+    timing = PacketTiming(
+        source_publication_or_event=source_publication_or_event
+        or unknown_with_reason("direct HTTP adapter did not infer source publication or event timing"),
+        source_edit_or_version=source_edit_or_version
+        or unknown_with_reason("direct HTTP adapter did not infer source edit or version timing"),
+        capture_time=unknown_with_reason(
+            "capture has not started; the successful response supplies capture time"
+        ),
+        recapture_time=recapture_time
+        or not_applicable("direct HTTP packet did not model an earlier capture by default"),
+        cutoff_posture=cutoff_posture
+        or unknown_with_reason("direct HTTP runner did not receive cutoff posture metadata"),
+    )
+
     capture_result = fetch_direct_http_capture(
         url=url,
         timeout_seconds=timeout_seconds,
         max_bytes=max_bytes,
     )
     if isinstance(capture_result, DirectHttpCaptureFailure):
-        return 3, capture_result.message
+        return _report_outcome(
+            outcome_observer,
+            DirectHttpPacketOutcome(
+                exit_code=3,
+                message=capture_result.message,
+                http_status=capture_result.status,
+                retry_after=capture_result.retry_after,
+                retry_after_disposition=capture_result.retry_after_disposition,
+                content_capture_allowed=False,
+                body_classification=None,
+                body_classification_signal=None,
+                login_gate_signal=None,
+                access_block_reason=capture_result.failure_kind.value,
+            ),
+        )
 
     if retail_capture_profile is not None:
         capture_result.metadata["retail_capture_profile"] = retail_capture_profile.metadata()
@@ -178,6 +222,14 @@ def run_source_capture_http_packet(
     content_type = capture_result.metadata.get("content_type")
     if content_type is not None:
         classification_headers["Content-Type"] = str(content_type)
+    content_encoding = capture_result.metadata.get("content_encoding")
+    if content_encoding is not None:
+        classification_headers["Content-Encoding"] = str(content_encoding)
+    block_signal_header_names = capture_result.metadata.get("block_signal_header_names")
+    if isinstance(block_signal_header_names, list):
+        for header_name in block_signal_header_names:
+            if isinstance(header_name, str):
+                classification_headers[header_name] = "present"
     body_classification = classify_capture_body(
         status=capture_result.status,
         headers=classification_headers,
@@ -207,10 +259,21 @@ def run_source_capture_http_packet(
         )
     elif body_classification.classification == CaptureBodyClass.EMPTY:
         access_block_reason = "empty_body"
+    elif body_classification.signal is not None:
+        access_block_reason = (
+            f"body_inspection_limited: {body_classification.signal}: "
+            f"{body_classification.detail}"
+        )
     elif not status_ok:
         access_block_reason = f"HTTP {capture_result.status}"
     else:
         access_block_reason = None
+    capture_result.metadata.update(
+        {
+            "content_capture_allowed": content_capture_allowed,
+            "access_block_reason": access_block_reason,
+        }
+    )
 
     walmart_pin_failure: str | None = None
     credo_pin_failure: str | None = None
@@ -264,6 +327,11 @@ def run_source_capture_http_packet(
             "visible_capture_limitation: direct_http preserved an empty/whitespace-only body, "
             "not source content"
         )
+    elif body_classification.signal is not None:
+        posture_limitations.append(
+            "visible_capture_limitation: direct_http preserved a body that could not be "
+            f"safely inspected ({body_classification.signal}); capture not admitted as source content"
+        )
     packet_limitations = (
         list(limitations) + capture_result.limitation_notes + posture_limitations
     )
@@ -312,6 +380,12 @@ def run_source_capture_http_packet(
         access_posture = known_fact(
             f"direct_http access_failed with HTTP {capture_result.status}: "
             "empty/whitespace-only body preserved, not source content"
+        )
+    elif body_classification.signal is not None:
+        access_posture = known_fact(
+            f"direct_http received HTTP {capture_result.status} "
+            f"{capture_result.reason or 'without reason'}, but body inspection was limited "
+            f"({body_classification.signal}); capture not admitted as source content"
         )
     elif not status_ok:
         access_posture = known_fact(
@@ -427,16 +501,10 @@ def run_source_capture_http_packet(
     )
     file_ids = staged_file_id_map(artifacts)
 
-    timing = PacketTiming(
-        source_publication_or_event=source_publication_or_event
-        or unknown_with_reason("direct HTTP adapter did not infer source publication or event timing"),
-        source_edit_or_version=source_edit_or_version
-        or unknown_with_reason("direct HTTP adapter did not infer source edit or version timing"),
-        capture_time=known_fact(str(capture_result.metadata["capture_timestamp"])),
-        recapture_time=recapture_time
-        or not_applicable("direct HTTP packet did not model an earlier capture by default"),
-        cutoff_posture=cutoff_posture
-        or unknown_with_reason("direct HTTP runner did not receive cutoff posture metadata"),
+    timing = timing.model_copy(
+        update={
+            "capture_time": known_fact(str(capture_result.metadata["capture_timestamp"]))
+        }
     )
     archive_posture = not_attempted("direct HTTP adapter does not query archive or history services")
     media_posture = not_attempted(
@@ -506,29 +574,78 @@ def run_source_capture_http_packet(
         ),
         receipt_non_claims=DIRECT_HTTP_NON_CLAIMS,
     )
+    authoritative_outcome = DirectHttpPacketOutcome(
+        exit_code=0,
+        message=result.output_directory,
+        http_status=capture_result.status,
+        retry_after=capture_result.metadata.get("retry_after"),
+        retry_after_disposition=str(
+            capture_result.metadata.get("retry_after_disposition", "absent")
+        ),
+        content_capture_allowed=content_capture_allowed,
+        body_classification=body_classification.classification.value,
+        body_classification_signal=body_classification.signal,
+        login_gate_signal=login_gate.signal if login_gate is not None else None,
+        access_block_reason=access_block_reason,
+    )
     if sufficiency_result.enabled and not sufficiency_result.passed:
-        return SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE, source_detail_sufficiency_failure_message(
-            output_directory=result.output_directory,
-            result=sufficiency_result,
+        return _report_outcome(
+            outcome_observer,
+            replace(
+                authoritative_outcome,
+                exit_code=SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
+                message=source_detail_sufficiency_failure_message(
+                    output_directory=result.output_directory,
+                    result=sufficiency_result,
+                ),
+            ),
         )
     if walmart_pin_failure is not None:
-        return (
-            SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
-            f"{WALMART_MARKET_PIN_FAILURE_MODE_CHANGE}: packet preserved at "
-            f"{result.output_directory}: {walmart_pin_failure}",
+        return _report_outcome(
+            outcome_observer,
+            replace(
+                authoritative_outcome,
+                exit_code=SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
+                message=(
+                    f"{WALMART_MARKET_PIN_FAILURE_MODE_CHANGE}: packet preserved at "
+                    f"{result.output_directory}: {walmart_pin_failure}"
+                ),
+            ),
         )
     if credo_pin_failure is not None:
-        return (
-            SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
-            f"{CREDO_MARKET_PIN_FAILURE_MODE_CHANGE}: packet preserved at "
-            f"{result.output_directory}: {credo_pin_failure}",
+        return _report_outcome(
+            outcome_observer,
+            replace(
+                authoritative_outcome,
+                exit_code=SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
+                message=(
+                    f"{CREDO_MARKET_PIN_FAILURE_MODE_CHANGE}: packet preserved at "
+                    f"{result.output_directory}: {credo_pin_failure}"
+                ),
+            ),
         )
     if extraction_failure is not None:
         # The raw fallback packet was written; the failure detail lives in the
         # packet limitations and HTTP metadata. Message stays the packet path
         # so callers can still locate the preserved evidence.
-        return CONTENT_EXTRACTION_FAILED_EXIT_CODE, result.output_directory
-    return 0, result.output_directory
+        return _report_outcome(
+            outcome_observer,
+            replace(
+                authoritative_outcome,
+                exit_code=CONTENT_EXTRACTION_FAILED_EXIT_CODE,
+                message=result.output_directory,
+            ),
+        )
+    return _report_outcome(outcome_observer, authoritative_outcome)
+
+
+def _report_outcome(
+    outcome_observer: Callable[[DirectHttpPacketOutcome], None] | None,
+    outcome: DirectHttpPacketOutcome,
+) -> tuple[int, str]:
+    if outcome_observer is not None:
+        outcome_observer(outcome)
+    return outcome.exit_code, outcome.message
 
 
 def _build_parser() -> argparse.ArgumentParser:

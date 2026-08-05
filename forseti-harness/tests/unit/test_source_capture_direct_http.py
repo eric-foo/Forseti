@@ -16,7 +16,7 @@ import pytest
 import source_capture.adapters.direct_http as direct_http_module
 from runners import run_source_capture_http_packet as http_runner
 from runners.run_source_capture_http_packet import DIRECT_HTTP_NON_CLAIMS
-from source_capture import CaptureModeCategory
+from source_capture import CaptureModeCategory, known_fact
 from source_capture.adapters.direct_http import (
     DirectHttpCaptureFailure,
     DirectHttpCaptureFailureKind,
@@ -37,6 +37,46 @@ def scratch_dir() -> Path:
         yield path
     finally:
         shutil.rmtree(path, ignore_errors=True)
+
+
+def test_invalid_timing_metadata_is_rejected_before_network(
+    monkeypatch: pytest.MonkeyPatch, scratch_dir: Path
+) -> None:
+    fetch_called = False
+
+    def fake_capture(**_kwargs: object) -> DirectHttpCaptureSuccess:
+        nonlocal fetch_called
+        fetch_called = True
+        raise AssertionError("network capture must not start")
+
+    monkeypatch.setattr(http_runner, "fetch_direct_http_capture", fake_capture)
+
+    with pytest.raises(ValueError, match="cutoff_posture known value must be one of"):
+        http_runner.run_source_capture_http_packet(
+            url="https://example.test/source",
+            source_family="web_page",
+            source_surface="direct_http",
+            decision_question="Does invalid timing touch the network?",
+            output_directory=scratch_dir / "invalid_timing",
+            capture_context="unit test",
+            operator_category="direct_http_cli_operator",
+            capture_mode=CaptureModeCategory.STRUCTURED_ACCESS,
+            session_id=None,
+            actor_audience_context=None,
+            visible_mode_changes=[],
+            source_publication_or_event=None,
+            source_edit_or_version=None,
+            cutoff_posture=known_fact("not-a-closed-value"),
+            recapture_time=None,
+            re_capture_relationship=None,
+            warnings=[],
+            limitations=[],
+            timeout_seconds=5,
+            max_bytes=1024,
+        )
+
+    assert fetch_called is False
+    assert not (scratch_dir / "invalid_timing").exists()
 
 
 @dataclass(frozen=True)
@@ -64,6 +104,14 @@ def http_server():
             body=b"not found but body present\n",
             headers={
                 "Content-Type": "text/plain; charset=utf-8",
+            },
+        ),
+        "/rate-limited": _RouteResponse(
+            status=429,
+            body=b"local_rate_limited\n",
+            headers={
+                "Content-Type": "text/plain; charset=utf-8",
+                "Retry-After": "60",
             },
         ),
         "/empty": _RouteResponse(
@@ -304,6 +352,35 @@ def test_fetch_direct_http_capture_allows_non_2xx_body(http_server: str) -> None
     assert result.status == 404
     assert result.body == b"not found but body present\n"
     assert any("access_failed" in item for item in result.limitation_notes)
+
+
+def test_fetch_direct_http_capture_preserves_safe_retry_after(http_server: str) -> None:
+    result = fetch_direct_http_capture(url=f"{http_server}/rate-limited", timeout_seconds=5, max_bytes=1024)
+
+    assert isinstance(result, DirectHttpCaptureSuccess)
+    assert result.status == 429
+    assert result.metadata["retry_after"] == "60"
+    assert result.metadata["retry_after_disposition"] == "captured"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected_value", "expected_disposition"),
+    [
+        (None, None, "absent"),
+        ("60", "60", "captured"),
+        (" ", None, "rejected_unsafe"),
+        ("x" * 257, None, "rejected_unsafe"),
+    ],
+)
+def test_retry_after_observation_distinguishes_absent_from_rejected(
+    value: str | None,
+    expected_value: str | None,
+    expected_disposition: str,
+) -> None:
+    assert direct_http_module._response_header_observation(value) == (
+        expected_value,
+        expected_disposition,
+    )
 
 
 def test_fetch_direct_http_capture_fails_for_empty_body(http_server: str) -> None:

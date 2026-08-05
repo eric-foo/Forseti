@@ -34,8 +34,9 @@ The public Google Ads Transparency Center resolved a **verified**
 `Summer Fridays, LLC` advertiser based in the United States, advertiser ID
 `AR00430838150965755905`. Under `Ads in United States` / `Any time` /
 `All platforms` / `All formats`, the source header displayed `~500 ads`; its
-card labels declared a 456-ad result set. Ten bounded scroll continuations
-materialized **416 distinct source creative IDs** in the retained DOM.
+card labels reached 456 rendered positions. Ten bounded scroll continuations
+materialized **416 distinct source creative IDs** in the retained DOM; 40 card
+positions reused an already observed creative ID.
 
 The original handoff enumerated the **first 60 distinct IDs in source DOM
 order**. A 2026-07-27 continuation now preserves all **416** materialized IDs
@@ -43,10 +44,11 @@ and their direct detail locators in
 `google_ads_transparency_observed_creative_ids_20260726.json`. The result
 is **COMPLETE_FOR_BOUND_EVIDENCE_PURPOSE**: it provides a materially sufficient
 verified-advertiser inventory for later Summer Fridays paid-message review.
-Source exhaustion remains **NOT_PROVEN** because the source declared 456 cards
-and no exhaustion signal was reached. Direct-detail metadata remains resolved
-only for the first 60: **39 Text, 16 Image, and 5 Video**. Ten were last shown
-`26 Jul 2026`; 50 were last shown `25 Jul 2026`.
+Source exhaustion remains **NOT_PROVEN** because the rounded `~500 ads` header
+exceeded the 456 rendered card positions and no exhaustion signal was reached.
+Direct-detail metadata remains resolved only for the first 60: **39 Text, 16
+Image, and 5 Video**. Ten were last shown `26 Jul 2026`; 50 were last shown `25
+Jul 2026`.
 
 Google rendered most creative content through either an archive-image asset or
 a Google preview script. The public page did not expose stable machine-readable
@@ -121,14 +123,17 @@ destination domain is not company identity authority.
 - **Capture/extraction window:** `2026-07-26T11:22:43Z` through
   `2026-07-26T11:55:19Z`.
 - **Source header:** `~500 ads`.
-- **Source card denominator:** 456.
+- **Rendered card-position denominator/count:** 456.
 - **Distinct IDs materialized after ten continuations:** 416.
 - **Enumerated here:** first 60 distinct IDs in source DOM order.
 - **Status:** `PARTIAL`; neither the 60-ID cap nor the ten-continuation cap
   represents source exhaustion.
 
-The rounded header count, card denominator, and materialized-ID count are
-different source states, not interchangeable measurements.
+The rounded header count, rendered card-position count, and distinct
+creative-ID count are different measurements, not interchangeable source
+totals. A 2026-07-31 two-continuation dogfood rendered 160 card positions and
+120 distinct IDs while the header remained `~500 ads`, confirming that the
+card-label denominator grows with captured render depth.
 
 ## 5. Unique-ad inventory
 
@@ -291,8 +296,8 @@ media records are actually resolved.
     resolver handle, while every row carries its exact public detail pointer.
     The two completed packets remain admitted and are listed below.
 11. No source exhaustion signal was reached. IDs 61–416 materialized in the
-    retained DOM but are intentionally not enumerated here; the source card
-    denominator was 456.
+    retained DOM but are intentionally not enumerated here; the retained DOM
+    carried 456 rendered card positions.
 
 ## 9. Source evidence bundle
 
@@ -368,28 +373,30 @@ request. It:
   `3c6d8548be0e43ca43b9b07f799dd2f8f1cc62f3f52471d23c9fd31a3c689963`;
 - extracts `creative/(CR\d+)`, retains first DOM occurrence, and projects 416
   ordered creative IDs with exact public detail URLs; and
-- preserves the 456-card denominator and unresolved source-exhaustion gap.
+- preserves the 456 rendered card positions and unresolved source-exhaustion
+  posture.
 
 The projected JSON SHA-256 is
-`c8667be75c45217f3a2e7b1a3a7d22ad1a886b6e3f3012f2f6fe7b5b8405f408`.
+`5dcb4ad3a9a17ba94377185145ea340bb4f6703eacfbb1d4bf38f8ea174e8729`.
 
 This closes the durable-ID projection gap. It does **not** close creative-media
 interpretation: copy, product family, offer, destination, placement, visual
 deduplication, or performance remain unresolved outside the bounded first-60
 metadata and the one screenshot-preserved offer.
 
-The 40-ID difference between the 456-card denominator and 416 materialized IDs
-has no observed source-specific explanation. The capture stopped after ten
-continuations before an exhaustion signal. More continuation, source
-virtualization, unavailable or restricted rows, or duplicate/collapsed source
-states are possible explanations, but none was proven. The supported fact is
-only that 416 unique IDs materialized before the bounded stop.
+The 40-position difference between 456 rendered card positions and 416
+distinct creative IDs is directly observable reuse: 40 positions point to an
+ID already seen at an earlier position. That does not prove missing data or
+source exhaustion. The capture stopped after ten continuations without a
+terminal signal, so the supported facts remain 456 rendered positions and 416
+unique IDs before the bounded stop.
 
 Google describes the Ads Transparency Center as a searchable hub of ads served
 from verified advertisers across Search, YouTube, and Display:
 <https://safety.google/safety/ads-data/>. That makes it the appropriate public
 Google-ad evidence surface for the verified Summer Fridays advertiser. It does
-not make this local projection exhaustive: 416 IDs materialized against a
-456-card denominator, no source-exhaustion signal was reached, and brand-related
-ads paid for by a retailer, partner, agency, affiliate, or another verified
-advertiser would not necessarily appear under this advertiser identity.
+not make this local projection exhaustive: 416 IDs materialized across 456
+rendered card positions while the rounded header displayed `~500 ads`, no
+source-exhaustion signal was reached, and brand-related ads paid for by a
+retailer, partner, agency, affiliate, or another verified advertiser would not
+necessarily appear under this advertiser identity.

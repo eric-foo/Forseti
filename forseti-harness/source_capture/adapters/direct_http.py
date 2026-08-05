@@ -44,9 +44,22 @@ class DirectHttpCaptureFailure:
     final_url: str | None = None
     status: int | None = None
     reason: str | None = None
+    retry_after: str | None = None
+    retry_after_disposition: str = "unavailable_no_response"
 
 
 DirectHttpCaptureResult: TypeAlias = DirectHttpCaptureSuccess | DirectHttpCaptureFailure
+
+
+_CLASSIFICATION_SIGNAL_HEADERS = (
+    "CF-Mitigated",
+    "X-DataDome",
+    "X-DataDome-CID",
+    "X-Amzn-Waf-Action",
+    "X-IInfo",
+    "X-Sucuri-ID",
+    "X-Sucuri-Cache",
+)
 
 
 def fetch_direct_http_capture(
@@ -125,6 +138,9 @@ def _capture_response(
     reason = str(getattr(response, "reason", "") or "")
     final_url = response.geturl()
     headers = response.headers
+    retry_after, retry_after_disposition = _response_header_observation(
+        headers.get("Retry-After")
+    )
 
     content_length = _parse_optional_int(headers.get("Content-Length"))
     if content_length is not None and content_length > max_bytes:
@@ -133,6 +149,8 @@ def _capture_response(
             final_url=final_url,
             status=status,
             reason=reason,
+            retry_after=retry_after,
+            retry_after_disposition=retry_after_disposition,
             failure_kind=DirectHttpCaptureFailureKind.SIZE_CAP_EXCEEDED,
             message=(
                 f"Direct HTTP response exceeded max-bytes cap before body read: "
@@ -148,6 +166,8 @@ def _capture_response(
             final_url=final_url,
             status=status,
             reason=reason,
+            retry_after=retry_after,
+            retry_after_disposition=retry_after_disposition,
             failure_kind=DirectHttpCaptureFailureKind.SIZE_CAP_EXCEEDED,
             message=str(exc),
         )
@@ -158,6 +178,8 @@ def _capture_response(
             final_url=final_url,
             status=status,
             reason=reason,
+            retry_after=retry_after,
+            retry_after_disposition=retry_after_disposition,
             failure_kind=DirectHttpCaptureFailureKind.NO_BODY,
             message=f"Direct HTTP response returned HTTP {status} {reason or 'without reason'} with an empty body",
         )
@@ -182,6 +204,14 @@ def _capture_response(
         "date": headers.get("Date"),
         "last_modified": headers.get("Last-Modified"),
         "etag": headers.get("ETag"),
+        "retry_after": retry_after,
+        "retry_after_disposition": retry_after_disposition,
+        "content_encoding": _safe_response_header(headers.get("Content-Encoding")),
+        "block_signal_header_names": [
+            name.lower()
+            for name in _CLASSIFICATION_SIGNAL_HEADERS
+            if headers.get(name) is not None
+        ],
         "capture_timestamp": utc_now_z(),
         "timeout_seconds": timeout_seconds,
         "byte_count": len(body),
@@ -218,6 +248,24 @@ def _parse_optional_int(value: str | None) -> int | None:
         return int(value)
     except ValueError:
         return None
+
+
+def _safe_response_header(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if not normalized or len(normalized) > 256 or any(character in normalized for character in "\r\n"):
+        return None
+    return normalized
+
+
+def _response_header_observation(value: str | None) -> tuple[str | None, str]:
+    if value is None:
+        return None, "absent"
+    safe_value = _safe_response_header(value)
+    if safe_value is None:
+        return None, "rejected_unsafe"
+    return safe_value, "captured"
 
 
 def _read_with_cap(response: HTTPResponse | HTTPError, *, max_bytes: int) -> bytes:
