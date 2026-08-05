@@ -8,8 +8,9 @@ scope: >
   listing capture per tracked subreddit (project-default, sampled raw), lake
   registry coupling, agent-written reach observations, and the listing-policy-gated
   thread deep-dive that feeds problem briefs. Owns the weekly method's
-  parameters, empirical basis, and incremental materiality-handoff boundary;
-  does not own competitive conclusions or brief format.
+  parameters, empirical basis, and the boundary on what a weekly batch may
+  trigger; does not own axis semantics, material-addition typing, competitive
+  conclusions, or brief format.
 use_when:
   - Implementing or reviewing the weekly top/week capture runner, its
     materializer coupling, or the observe verb.
@@ -29,8 +30,8 @@ stale_if:
     method projects from.
   - The owner changes the commission frame, universal engagement floor, or
     model-adjudication boundary.
-  - Phase A changes the distinction between ordinary corroboration, material
-    addition, and axis-local follow-up.
+  - Phase A changes what a typed material addition may trigger, or retires the
+    axis-map prior this handoff reads.
 ```
 
 ## Status
@@ -40,8 +41,9 @@ title-rescue, and rotating-tail rule landed in PR #1319 and was then superseded
 after owner calibration plus a full-corpus application. The reader now produces
 a fail-closed listing-review queue governed by
 `reddit_listing_efficiency_policy_v0.md`; it does not authorize capture. The
-2026-08-05 recalibration adds the incremental weekly materiality handoff without
-turning a weekly batch into Phase A closure or Judgment authority.
+2026-08-05 recalibration adds the incremental weekly materiality handoff as an
+agent/model procedure, not runner behavior, and without turning a weekly batch
+into Phase A closure or Judgment authority.
 
 ## Goal binding
 
@@ -190,27 +192,38 @@ has separately authorized an analysis artifact.
    provisional axis instead of forcing it into the old map.
 2. For each admitted thread, preserve the listing capture date and available
    engagement counts, then classify its incremental contribution as
-   `excluded_after_read`, `usable_only`, `ordinary_corroboration`,
-   `heavy_independent_corroboration`, `material_sharpening`,
-   `genuinely_new_axis_or_condition`, `behavior_or_purchase_consequence`,
-   `competitor_destination`, `contradiction`, or
-   `evidence_tier_or_decision_change`. A thread may carry more than one
-   contribution when each is supported by source-native text.
-3. Ordinary corroboration updates recency and support volume but opens no new
-   acquisition. Heavy independent corroboration is material only when it
-   changes confidence enough to alter a competitive decision or evidence tier.
+   `excluded_after_read`, `usable_only`, `ordinary_corroboration`, or
+   `material_addition`. A `material_addition` imports the contract beginning "A
+   material addition is limited to" from
+   `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`;
+   that owning contract determines both the allowed kind and the mandatory
+   affected-axis, evidence-reference, and decision-effect fields. Do not restate
+   or extend its list here. Content that merely repeats something the current
+   axis map already carries is `ordinary_corroboration`, not a material
+   addition. A thread may carry more than one contribution when each is
+   supported by source-native text.
+3. Ordinary corroboration updates the radar's recency and support volume but
+   opens no new acquisition. Corroboration becomes a material addition only
+   when it changes confidence enough to alter a competitive decision or
+   evidence tier; volume alone never does, and same-origin items add no
+   independent credit. A weekly contribution is radar state: it does not become
+   Phase A axis support until it satisfies that authority's applicable
+   source-native coding and independent-origin rules.
 4. A typed material addition may open a bounded counterpart or source-native
    follow-up for its affected axis and a directly adjacent axis only when the
    relationship is stated. Do not restart a full search cycle or duplicate the
    query across every source.
-5. End the weekly batch with a compact handoff naming: material additions,
-   ordinary corroboration, contradictions, provisional new axes, affected
-   follow-ups, and `none` where no field applies. A zero-material-addition week
-   is a valid radar result; it is not proof of Phase A source exhaustion.
+5. End the weekly batch with a compact handoff naming: material additions with
+   their typed kind, affected axes, and decision effect; ordinary
+   corroboration; provisional new axes; affected follow-ups; and `none` where
+   no field applies. A zero-material-addition week is a valid radar result; it
+   is not proof of Phase A source exhaustion.
 
 This weekly procedure reuses Phase A's discovery discipline without importing
 its evidence floors, two-family material-exhaustion test, final semantic
 adjudication, delegated seal review, or authority to close/reopen Phase A.
+Weekly counts are captured-sample observations, never customer-population
+prevalence.
 
 ### F. Roster discovery sweep (SERP), and its pacing contract
 
@@ -263,10 +276,11 @@ automatically because the runner reads `--roster` from the fold.
 
 ## Explicitly out of scope / deferred, with triggers
 
-- Weekly digest / condensed judgment pack: later layer; trigger is the
-  evidence layer running for real. Nothing analysis-shaped persists to the
-  lake (candidates are pure functions of packets; recompute beats persist
-  until cross-week recurrence work makes recomputation materially expensive).
+- Cross-week digest or persisted condensed judgment pack: later layer. E.1's
+  non-persisted per-batch handoff is not that artifact. Nothing analysis-shaped
+  persists to the lake (candidates are pure functions of packets; recompute
+  beats persist until cross-week recurrence work makes recomputation materially
+  expensive).
 - Columnar or compressed serialization: rejected on measurement (1.06x).
 - Daily cadence: trigger-based escalation only (existing radar design
   language), driven by the same activity-anomaly trigger as re-observation.
