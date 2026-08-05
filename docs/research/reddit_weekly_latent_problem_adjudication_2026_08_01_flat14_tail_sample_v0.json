@@ -1,0 +1,2683 @@
+{
+ "review_pass": "flat14_tail_sample_v0",
+ "basis": "Owner-requested tail audit of the retired flat-14 pass, whose ~806 rejections carry no per-row reason codes. Population reconstructed as the 2026-07-31 reader rows at subreddit_rank_by_comments <= 14 absent from every recorded adjudication pass (806 rows). Deterministic stratified sample: per venue the highest-comment and median unrecorded rows, plus the top 15 overall by comments (157 rows, 19%). Re-adjudicated 2026-08-05 under CURRENT policy: borderline routes to capture; leaderboard and census lanes exist. admission=lane_covered means the thread is not a problem-queue admit but today's mechanical lanes would capture it.",
+ "population_size": 806,
+ "rows_reviewed": 157,
+ "admission_counts": {
+  "yes": 9,
+  "no": 107,
+  "borderline": 33,
+  "lane_covered": 8
+ },
+ "records": [
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1vbcgga/advice_on_bizarre_bruising_around_the_eyes_i_have/",
+   "subreddit": "30plusskincare",
+   "listing_snapshot": {
+    "score": 1638,
+    "comments": 257,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "concealment_product_demand"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1v8iiza/weird_cut_on_thumb_reoccurring/",
+   "subreddit": "30plusskincare",
+   "listing_snapshot": {
+    "score": 71,
+    "comments": 109,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/40PlusSkinCare/comments/1v5gakl/the_summer_i_turned_ugly/",
+   "subreddit": "40plusskincare",
+   "listing_snapshot": {
+    "score": 188,
+    "comments": 212,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/40PlusSkinCare/comments/1vad4s4/42_and_my_skin_looks_better_now_than_my_mid30s/",
+   "subreddit": "40plusskincare",
+   "listing_snapshot": {
+    "score": 823,
+    "comments": 75,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/45PlusSkincare/comments/1v8mgvb/lip_filler_54yo_female/",
+   "subreddit": "45plusskincare",
+   "listing_snapshot": {
+    "score": 931,
+    "comments": 174,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/45PlusSkincare/comments/1v6lf64/nasolabial_folds_and_crepey_undereye_wrinkles/",
+   "subreddit": "45plusskincare",
+   "listing_snapshot": {
+    "score": 14,
+    "comments": 49,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "procedure_vs_product_ambiguous"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/acne/comments/1v7kb7j/can_anyone_help_please_im_severely_insecure_due/",
+   "subreddit": "acne",
+   "listing_snapshot": {
+    "score": 58,
+    "comments": 69,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/acne/comments/1v6axz2/kinda_mad_at_my_friends_for_having_clear_skin/",
+   "subreddit": "acne",
+   "listing_snapshot": {
+    "score": 12,
+    "comments": 15,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/AcneScars/comments/1v8okyc/my_scars_are_all_i_think_about_every_day/",
+   "subreddit": "acnescars",
+   "listing_snapshot": {
+    "score": 130,
+    "comments": 32,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/AcneScars/comments/1v872wz/how_severe_are_my_scars/",
+   "subreddit": "acnescars",
+   "listing_snapshot": {
+    "score": 12,
+    "comments": 20,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/AsianBeauty/comments/1vamj2o/what_is_that_one_skincare_product_yall_cant_live/",
+   "subreddit": "asianbeauty",
+   "listing_snapshot": {
+    "score": 183,
+    "comments": 213,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/AsianBeauty/comments/1v76hb6/have_a_question_ask_here_alterdaily_help_and/",
+   "subreddit": "asianbeauty",
+   "listing_snapshot": {
+    "score": 5,
+    "comments": 36,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "daily_or_mega_thread"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/beauty/comments/1v5ow9j/should_i_thin_out_my_eyebrows/",
+   "subreddit": "beauty",
+   "listing_snapshot": {
+    "score": 601,
+    "comments": 345,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/beauty/comments/1v8ae2n/i_have_never_done_pedicure_at_salon_is_it_worth_it/",
+   "subreddit": "beauty",
+   "listing_snapshot": {
+    "score": 17,
+    "comments": 33,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "service_value_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/BeautyBoxes/comments/1v7hxvc/allure_august_reveal/",
+   "subreddit": "beautyboxes",
+   "listing_snapshot": {
+    "score": 91,
+    "comments": 82,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/BeautyBoxes/comments/1v9xx59/allure_beauty_boxes_worth_it/",
+   "subreddit": "beautyboxes",
+   "listing_snapshot": {
+    "score": 10,
+    "comments": 18,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "subscription_value_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/BeautyGuruChatter/comments/1v9xkks/this_is_tacky_af/",
+   "subreddit": "beautyguruchatter",
+   "listing_snapshot": {
+    "score": 1387,
+    "comments": 526,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/BeautyGuruChatter/comments/1v6k0kk/blair_fowlers_daughters_name_is_georgia_kate/",
+   "subreddit": "beautyguruchatter",
+   "listing_snapshot": {
+    "score": 97,
+    "comments": 50,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "no_visible_commercial_object"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/BlackHair/comments/1vb2mta/i_tried_two_different_wig_styles/",
+   "subreddit": "blackhair",
+   "listing_snapshot": {
+    "score": 294,
+    "comments": 218,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/BlackHair/comments/1va0k38/my_first_time_wearing_a_braided_wig/",
+   "subreddit": "blackhair",
+   "listing_snapshot": {
+    "score": 798,
+    "comments": 53,
+    "subreddit_rank_by_comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/blkgrlbeauty/comments/1v6y1z1/which_hair_suits_me_the_best/",
+   "subreddit": "blkgrlbeauty",
+   "listing_snapshot": {
+    "score": 2175,
+    "comments": 445,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/blkgrlbeauty/comments/1v66d7a/trying_to_switch_up_my_current_routine_how_can_i/",
+   "subreddit": "blkgrlbeauty",
+   "listing_snapshot": {
+    "score": 127,
+    "comments": 33,
+    "subreddit_rank_by_comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Colognes/comments/1v87f04/i_dont_get_it/",
+   "subreddit": "colognes",
+   "listing_snapshot": {
+    "score": 213,
+    "comments": 385,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Colognes/comments/1v7paa3/whats_the_best_cologne_for_summertime_when_youre/",
+   "subreddit": "colognes",
+   "listing_snapshot": {
+    "score": 440,
+    "comments": 232,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/curlygirl/comments/1v7jrxb/is_it_as_bad_as_i_think_it_is/",
+   "subreddit": "curlygirl",
+   "listing_snapshot": {
+    "score": 379,
+    "comments": 108,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/curlygirl/comments/1v7grkt/i_dont_know_what_to_do_anymore/",
+   "subreddit": "curlygirl",
+   "listing_snapshot": {
+    "score": 8,
+    "comments": 29,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/curlyhair/comments/1v7jfa1/is_it_really_as_bad_as_i_think_it_is/",
+   "subreddit": "curlyhair",
+   "listing_snapshot": {
+    "score": 489,
+    "comments": 181,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/curlyhair/comments/1vaw491/tired_of_the_brush_your_hair_comments_from_my/",
+   "subreddit": "curlyhair",
+   "listing_snapshot": {
+    "score": 266,
+    "comments": 56,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "latent_identity_category_tension"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DermatologyQuestions/comments/1v6n8xp/what_is_happening_to_my_lips_white_bump_sore/",
+   "subreddit": "dermatologyquestions",
+   "listing_snapshot": {
+    "score": 225,
+    "comments": 199,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DermatologyQuestions/comments/1v720it/what_is_this_please_let_me_know_im_18f/",
+   "subreddit": "dermatologyquestions",
+   "listing_snapshot": {
+    "score": 4,
+    "comments": 42,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DIYBeauty/comments/1vapeap/which_preservative_to_use_for_scalp_serums_seb/",
+   "subreddit": "diybeauty",
+   "listing_snapshot": {
+    "score": 1,
+    "comments": 20,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "specialist_diy_formulation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DIYBeauty/comments/1v9w5wz/is_there_a_way_to_fix_a_lotion_batch_that_has/",
+   "subreddit": "diybeauty",
+   "listing_snapshot": {
+    "score": 2,
+    "comments": 13,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "specialist_diy_formulation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DIYfragrance/comments/1v7lyyr/methyl_laitone_keeps_me_up_at_night/",
+   "subreddit": "diyfragrance",
+   "listing_snapshot": {
+    "score": 28,
+    "comments": 44,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "specialist_diy_formulation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DIYfragrance/comments/1v83dg2/molecule_04_help/",
+   "subreddit": "diyfragrance",
+   "listing_snapshot": {
+    "score": 4,
+    "comments": 24,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "specialist_diy_formulation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DIYGelNails/comments/1v6o5p7/current_manicure/",
+   "subreddit": "diygelnails",
+   "listing_snapshot": {
+    "score": 451,
+    "comments": 65,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/DIYGelNails/comments/1v9ukuq/fairy_core/",
+   "subreddit": "diygelnails",
+   "listing_snapshot": {
+    "score": 113,
+    "comments": 14,
+    "subreddit_rank_by_comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1v88ltj/can_someone_help_me_identify_this_lipstick_please/",
+   "subreddit": "drugstoremua",
+   "listing_snapshot": {
+    "score": 69,
+    "comments": 86,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "image_dependent_identification"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1va9363/where_is_all_the_drugstore_eyeshadow_pallets/",
+   "subreddit": "drugstoremua",
+   "listing_snapshot": {
+    "score": 160,
+    "comments": 55,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "assortment_availability_gap"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/eczema/comments/1v9r5gw/eczema_gone_away_after_10_years/",
+   "subreddit": "eczema",
+   "listing_snapshot": {
+    "score": 49,
+    "comments": 55,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/eczema/comments/1v6zx3m/very_hot_water_help/",
+   "subreddit": "eczema",
+   "listing_snapshot": {
+    "score": 26,
+    "comments": 35,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Eyebrows/comments/1vbin2u/is_this_realisticdoable/",
+   "subreddit": "eyebrows",
+   "listing_snapshot": {
+    "score": 0,
+    "comments": 47,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Eyebrows/comments/1v5yl4s/how_i_draw_my_brows/",
+   "subreddit": "eyebrows",
+   "listing_snapshot": {
+    "score": 33,
+    "comments": 23,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "technique_no_product_implication"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/eyelashextensions/comments/1v8l703/should_i_be_worried_about_this/",
+   "subreddit": "eyelashextensions",
+   "listing_snapshot": {
+    "score": 43,
+    "comments": 97,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "service_failure_possible"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/eyelashextensions/comments/1v8aagm/first_time_getting_extensions_is_this_normal/",
+   "subreddit": "eyelashextensions",
+   "listing_snapshot": {
+    "score": 6,
+    "comments": 16,
+    "subreddit_rank_by_comments": 6
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "service_quality_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FancyFollicles/comments/1vb3oxt/please_help_me_understand/",
+   "subreddit": "fancyfollicles",
+   "listing_snapshot": {
+    "score": 154,
+    "comments": 46,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FancyFollicles/comments/1v62e7u/can_you_see_any_difference_between_these_two_red/",
+   "subreddit": "fancyfollicles",
+   "listing_snapshot": {
+    "score": 0,
+    "comments": 24,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "image_dependent_identification"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v64wmz/one_year_after_starting_oral_minoxidil/",
+   "subreddit": "femalehairloss",
+   "listing_snapshot": {
+    "score": 356,
+    "comments": 50,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v82ub9/im_losing_my_hair_and_i_dont_know_what_to_do/",
+   "subreddit": "femalehairloss",
+   "listing_snapshot": {
+    "score": 19,
+    "comments": 34,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1v6q6kp/what_perfume_opinions_get_you_like_this/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "score": 224,
+    "comments": 1202,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "controversial_opinions_brand_sentiment"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1vb2co6/which_one_would_you_pick_for_an_academic_girly/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "score": 48,
+    "comments": 127,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/fragrance/comments/1v76sxh/what_is_your_best_blind_buy_ever/",
+   "subreddit": "fragrance",
+   "listing_snapshot": {
+    "score": 105,
+    "comments": 274,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/fragrance/comments/1v86z86/scammed_by_saks_fifth_avenue/",
+   "subreddit": "fragrance",
+   "listing_snapshot": {
+    "score": 216,
+    "comments": 84,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "retailer_channel_trust_failure"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1v89z4s/well_well_well/",
+   "subreddit": "fragranceclones",
+   "listing_snapshot": {
+    "score": 477,
+    "comments": 214,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1vabfxr/9pm_rebel_by_afnan/",
+   "subreddit": "fragranceclones",
+   "listing_snapshot": {
+    "score": 296,
+    "comments": 67,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Fragrances/comments/1v80t0h/whats_your_comfort_fragrance/",
+   "subreddit": "fragrances",
+   "listing_snapshot": {
+    "score": 123,
+    "comments": 313,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Fragrances/comments/1v75l3w/whats_your_definition_of_a_beast_mode_fragrance/",
+   "subreddit": "fragrances",
+   "listing_snapshot": {
+    "score": 3,
+    "comments": 60,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FragranceStories/comments/1v8eazi/what_perfume_did_you_buy_this_month/",
+   "subreddit": "fragrancestories",
+   "listing_snapshot": {
+    "score": 40,
+    "comments": 247,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "purchase_census_format"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/FragranceStories/comments/1v672q3/best_everyday_fragrance/",
+   "subreddit": "fragrancestories",
+   "listing_snapshot": {
+    "score": 13,
+    "comments": 60,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/GelNails/comments/1v5ds85/freehand_blue_botanicals_by_me_on_me/",
+   "subreddit": "gelnails",
+   "listing_snapshot": {
+    "score": 626,
+    "comments": 38,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/GracefulAgingSkincare/comments/1v5uak5/stupid_question_apologizes/",
+   "subreddit": "gracefulagingskincare",
+   "listing_snapshot": {
+    "score": 1,
+    "comments": 16,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Hair/comments/1v9m8cm/which_hair_suits_me_more/",
+   "subreddit": "hair",
+   "listing_snapshot": {
+    "score": 767,
+    "comments": 638,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Hair/comments/1vamj2r/got_a_pixie_cut_do_i_look_too_much_like_a_boy_now/",
+   "subreddit": "hair",
+   "listing_snapshot": {
+    "score": 175,
+    "comments": 92,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Haircare/comments/1v8bjrd/why_does_my_hair_do_this_can_anyone_explain/",
+   "subreddit": "haircare",
+   "listing_snapshot": {
+    "score": 256,
+    "comments": 158,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Haircare/comments/1v65xdi/am_i_actually_wavy_or_just_styling_straight_hair/",
+   "subreddit": "haircare",
+   "listing_snapshot": {
+    "score": 479,
+    "comments": 95,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/haircoloring/comments/1vblbfd/which_hair_color_do_you_think_actually_suits_me/",
+   "subreddit": "haircoloring",
+   "listing_snapshot": {
+    "score": 9,
+    "comments": 25,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/haircoloring/comments/1v83itk/is_my_highlights_super_duper_bad_should_i_cry/",
+   "subreddit": "haircoloring",
+   "listing_snapshot": {
+    "score": 1,
+    "comments": 11,
+    "subreddit_rank_by_comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "salon_service_failure"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/HairDye/comments/1v65n5b/ultimate_man_repellent_pink_hair/",
+   "subreddit": "hairdye",
+   "listing_snapshot": {
+    "score": 2191,
+    "comments": 215,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/HairDye/comments/1v72z3n/dying_brown_hair_blue_no_bleach/",
+   "subreddit": "hairdye",
+   "listing_snapshot": {
+    "score": 47,
+    "comments": 36,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "product_capability_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/HairlossResearch/comments/1v7ztdx/unlocking_the_scalp_tension_inflammation_and_my/",
+   "subreddit": "hairlossresearch",
+   "listing_snapshot": {
+    "score": 15,
+    "comments": 40,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "specialist_diy_formulation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/HairlossResearch/comments/1v82wcu/topical_dutasteride_trick/",
+   "subreddit": "hairlossresearch",
+   "listing_snapshot": {
+    "score": 5,
+    "comments": 21,
+    "subreddit_rank_by_comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v71xma/sunday_swaps_destash_listings/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "score": 10,
+    "comments": 241,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "wts_swap_administration"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v6jy6t/favorite_blackberry_perfumes/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "score": 35,
+    "comments": 46,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_below_leaderboard_floor"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/keratosis/comments/1v6cmqe/before_and_after_sun_exposure/",
+   "subreddit": "keratosis",
+   "listing_snapshot": {
+    "score": 234,
+    "comments": 55,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/keratosis/comments/1v7c2hq/something_thats_worked_for_me/",
+   "subreddit": "keratosis",
+   "listing_snapshot": {
+    "score": 12,
+    "comments": 15,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "treatment_success_product_naming"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/KoreanBeauty/comments/1v8d2cg/next_sunscreen_move/",
+   "subreddit": "koreanbeauty",
+   "listing_snapshot": {
+    "score": 10,
+    "comments": 42,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "product_choice_ask"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/KoreanBeauty/comments/1v916ks/best_eye_cream_for_dark_circles_is_there_a_korean/",
+   "subreddit": "koreanbeauty",
+   "listing_snapshot": {
+    "score": 16,
+    "comments": 19,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "recommendation_traffic"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/koreanskincare/comments/1v9qbkw/best_korean_lip_balm_for_wrinky_and_dry_lips/",
+   "subreddit": "koreanskincare",
+   "listing_snapshot": {
+    "score": 29,
+    "comments": 68,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/koreanskincare/comments/1v7i45s/anyone_here_a_jelly_mist_expert/",
+   "subreddit": "koreanskincare",
+   "listing_snapshot": {
+    "score": 48,
+    "comments": 38,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "emerging_format_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/locs/comments/1vb3895/was_told_that_my_locs_are_aging_me_in_front_of/",
+   "subreddit": "locs",
+   "listing_snapshot": {
+    "score": 357,
+    "comments": 325,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/locs/comments/1v63clo/new_level_unlocked/",
+   "subreddit": "locs",
+   "listing_snapshot": {
+    "score": 430,
+    "comments": 32,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Makeup/comments/1v5v2od/whats_the_makeup_style_you_dislike_the_most_and/",
+   "subreddit": "makeup",
+   "listing_snapshot": {
+    "score": 203,
+    "comments": 449,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Makeup/comments/1varjo2/are_we_putting_foundation_on_our_neck/",
+   "subreddit": "makeup",
+   "listing_snapshot": {
+    "score": 19,
+    "comments": 49,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "technique_no_product_implication"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v7ugcc/11_months_into_my_transition_and_working_on/",
+   "subreddit": "makeupaddiction",
+   "listing_snapshot": {
+    "score": 11465,
+    "comments": 2002,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v693xx/some_of_my_favourite_looks_ive_created/",
+   "subreddit": "makeupaddiction",
+   "listing_snapshot": {
+    "score": 2032,
+    "comments": 262,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddicts/comments/1v7x38a/best_combo_ever/",
+   "subreddit": "makeupaddicts",
+   "listing_snapshot": {
+    "score": 8,
+    "comments": 11,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v8y8ir/my_brother_lost_my_brushes_in_vegas/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "score": 66,
+    "comments": 31,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "replacement_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/makeupexchange/comments/1v7rbsp/luxury_indie_affordable_makeup_for_sale_chanel/",
+   "subreddit": "makeupexchange",
+   "listing_snapshot": {
+    "score": 2,
+    "comments": 46,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "wts_swap_administration"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/makeupexchange/comments/1v6frgx/sellusa_westman_atelier_ysl_nars_mac_abh_more/",
+   "subreddit": "makeupexchange",
+   "listing_snapshot": {
+    "score": 3,
+    "comments": 13,
+    "subreddit_rank_by_comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "wts_swap_administration"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupRehab/comments/1vaapd9/how_big_is_your_makeup_collection_heres_mine_84/",
+   "subreddit": "makeuprehab",
+   "listing_snapshot": {
+    "score": 51,
+    "comments": 61,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "overconsumption_behavior_shift"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupRehab/comments/1v9ufbh/buying_makeup_as_a_beginner_while_avoiding/",
+   "subreddit": "makeuprehab",
+   "listing_snapshot": {
+    "score": 6,
+    "comments": 19,
+    "subreddit_rank_by_comments": 6
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "overconsumption_behavior_shift"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/makeuptips/comments/1v7hva5/emergencycolor_correcting/",
+   "subreddit": "makeuptips",
+   "listing_snapshot": {
+    "score": 1051,
+    "comments": 335,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "technique_with_product_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/makeuptips/comments/1va25ir/what_should_i_add_to_my_makeup_look/",
+   "subreddit": "makeuptips",
+   "listing_snapshot": {
+    "score": 125,
+    "comments": 101,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/malegrooming/comments/1v9b2l9/clean_beard_or_mustache/",
+   "subreddit": "malegrooming",
+   "listing_snapshot": {
+    "score": 632,
+    "comments": 1035,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/malegrooming/comments/1v6wy7n/which_facial_hair_style_suits_me_best/",
+   "subreddit": "malegrooming",
+   "listing_snapshot": {
+    "score": 79,
+    "comments": 197,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Minoxbeards/comments/1vb9ved/ultimate_guide_why_including_tretinoin_in_your/",
+   "subreddit": "minoxbeards",
+   "listing_snapshot": {
+    "score": 60,
+    "comments": 45,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "specialist_diy_formulation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Minoxbeards/comments/1v8ezi7/vellus_hairs_or_just_peach_fuzz/",
+   "subreddit": "minoxbeards",
+   "listing_snapshot": {
+    "score": 40,
+    "comments": 21,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/muacjdiscussion/comments/1v9yi0f/its_lipstick_day_lets_talk_lipstick/",
+   "subreddit": "muacjdiscussion",
+   "listing_snapshot": {
+    "score": 49,
+    "comments": 55,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MUAontheCheap/comments/1v6sov9/about_face_sale_40_off_most_items_no_code_needed/",
+   "subreddit": "muaonthecheap",
+   "listing_snapshot": {
+    "score": 53,
+    "comments": 14,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/NailArt/comments/1v6auo6/some_art_ive_done_on_my_clients_recently/",
+   "subreddit": "nailart",
+   "listing_snapshot": {
+    "score": 7073,
+    "comments": 354,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/NailArt/comments/1v6buph/recent_set_on_myself/",
+   "subreddit": "nailart",
+   "listing_snapshot": {
+    "score": 725,
+    "comments": 51,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v80wxm/new_to_regular_nailpolish/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "score": 319,
+    "comments": 35,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "method_onboarding_friction"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v7g3i8/collection_swatches/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "score": 54,
+    "comments": 19,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "collection_or_haul_format"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Nails/comments/1v7zjru/molten_sunset/",
+   "subreddit": "nails",
+   "listing_snapshot": {
+    "score": 1887,
+    "comments": 137,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Nails/comments/1vad8h4/bought_this_nail_set_on_etsy_and_just_glued_them/",
+   "subreddit": "nails",
+   "listing_snapshot": {
+    "score": 914,
+    "comments": 102,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Naturalhair/comments/1v9dgvq/natural_afro_i_have_for_a_year_and_a_half_my_mom/",
+   "subreddit": "naturalhair",
+   "listing_snapshot": {
+    "score": 1112,
+    "comments": 432,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Naturalhair/comments/1v5rdcr/did_my_first_pageant/",
+   "subreddit": "naturalhair",
+   "listing_snapshot": {
+    "score": 2541,
+    "comments": 58,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v9qyxi/prada_beauty_wisteria_collection/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "score": 358,
+    "comments": 60,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v6o9px/kayali_boujee_kitty_caramel_milk_eau_de_parfum/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "score": 94,
+    "comments": 23,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/OliveMUA/comments/1v7k8ct/what_huda_beauty_easy_bake_shade_are_you_guys/",
+   "subreddit": "olivemua",
+   "listing_snapshot": {
+    "score": 132,
+    "comments": 93,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "shade_match_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/OliveMUA/comments/1va4wiy/dupe_for_judydoll_lip_cream_shade_n12_toffee_peach/",
+   "subreddit": "olivemua",
+   "listing_snapshot": {
+    "score": 9,
+    "comments": 25,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_substitution_demand"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/over30skincare/comments/1v8yl87/what_will_help_this/",
+   "subreddit": "over30skincare",
+   "listing_snapshot": {
+    "score": 16,
+    "comments": 54,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/over30skincare/comments/1vblwxa/please_help_ageing_man_skin_wrinkles_for_ever/",
+   "subreddit": "over30skincare",
+   "listing_snapshot": {
+    "score": 2,
+    "comments": 12,
+    "subreddit_rank_by_comments": 5
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "underserved_onboarding_gap"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/PaleMUA/comments/1vau4pt/favorite_everyday_blush/",
+   "subreddit": "palemua",
+   "listing_snapshot": {
+    "score": 43,
+    "comments": 140,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_captured"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/PaleMUA/comments/1v7je8e/lipstick_swatches_pale_cool_olive/",
+   "subreddit": "palemua",
+   "listing_snapshot": {
+    "score": 45,
+    "comments": 24,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/PanPorn/comments/1vb0oxf/almost_there_but_not_able_to_take_off_the_stopper/",
+   "subreddit": "panporn",
+   "listing_snapshot": {
+    "score": 123,
+    "comments": 45,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "packaging_failure"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/PanPorn/comments/1v5w89d/your_quarterly_eyeshadow_update/",
+   "subreddit": "panporn",
+   "listing_snapshot": {
+    "score": 349,
+    "comments": 16,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Perfumes/comments/1v63sdn/which_perfume_gets_you_alot_of_compliments/",
+   "subreddit": "perfumes",
+   "listing_snapshot": {
+    "score": 35,
+    "comments": 210,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Perfumes/comments/1v97bem/a_discovery_set_curated_for_my_dad/",
+   "subreddit": "perfumes",
+   "listing_snapshot": {
+    "score": 31,
+    "comments": 55,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v5fea3/what_would_she_wear/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "score": 128,
+    "comments": 127,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v9eyqe/the_feeling_of_emptiness_and_relief_after_a_poo/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "score": 359,
+    "comments": 67,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/ProjectPan/comments/1v69x1l/im_ready/",
+   "subreddit": "projectpan",
+   "listing_snapshot": {
+    "score": 1060,
+    "comments": 90,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/ProjectPan/comments/1v6bmt3/thats_all_ive_been_using_for_the_past_10_years/",
+   "subreddit": "projectpan",
+   "listing_snapshot": {
+    "score": 211,
+    "comments": 31,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/RedditLaqueristas/comments/1v8bdbt/the_polish_project_speaks/",
+   "subreddit": "redditlaqueristas",
+   "listing_snapshot": {
+    "score": 170,
+    "comments": 344,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/RedditLaqueristas/comments/1v90z7n/what_happened_devastating_loss_and_psa/",
+   "subreddit": "redditlaqueristas",
+   "listing_snapshot": {
+    "score": 318,
+    "comments": 117,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_failure_psa"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/RedditLaqueristaSwap/comments/1v9g0rl/sell_buyer_beware/",
+   "subreddit": "redditlaqueristaswap",
+   "listing_snapshot": {
+    "score": 327,
+    "comments": 101,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "p2p_channel_trust_signal"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/RedditLaqueristaSwap/comments/1vab47k/sellusa_polish_destash/",
+   "subreddit": "redditlaqueristaswap",
+   "listing_snapshot": {
+    "score": 11,
+    "comments": 33,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "wts_swap_administration"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Rosacea/comments/1v7pp1i/been_struggling_with_this_inflammation_or_rosacea/",
+   "subreddit": "rosacea",
+   "listing_snapshot": {
+    "score": 92,
+    "comments": 96,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Rosacea/comments/1v70vqp/can_you_still_use_ivermectin_if_your_skin_barrier/",
+   "subreddit": "rosacea",
+   "listing_snapshot": {
+    "score": 10,
+    "comments": 21,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Sephora/comments/1v5ka9x/westman_atelier_is_amazing/",
+   "subreddit": "sephora",
+   "listing_snapshot": {
+    "score": 490,
+    "comments": 177,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Sephora/comments/1vaklcv/new_charlotte_tilbury_loose_powder/",
+   "subreddit": "sephora",
+   "listing_snapshot": {
+    "score": 161,
+    "comments": 104,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "release_reception_possible_reformulation"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v8zpcg/what_will_help_this/",
+   "subreddit": "skincare_addiction",
+   "listing_snapshot": {
+    "score": 14,
+    "comments": 36,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1vaortl/skincare/",
+   "subreddit": "skincare_addiction",
+   "listing_snapshot": {
+    "score": 3,
+    "comments": 12,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1vanjhr/6_years_of_extreme_sun_protection_ba/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "score": 669,
+    "comments": 348,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v9jdia/product_request_recommendations_for_9_year_old/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "score": 15,
+    "comments": 39,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "underserved_segment_demand"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1va63pf/favorite_luxury_body_bath_products_body_washes/",
+   "subreddit": "skincareaddictionlux",
+   "listing_snapshot": {
+    "score": 42,
+    "comments": 75,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "lane_covered",
+   "reason_codes": [
+    "leaderboard_lane_shape"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1v61him/what_has_made_the_most_difference_for_crepy/",
+   "subreddit": "skincareaddictionlux",
+   "listing_snapshot": {
+    "score": 18,
+    "comments": 36,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "product_efficacy_ask"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1v74uae/any_tips_how_to_treat_my_acne/",
+   "subreddit": "skincareaddicts",
+   "listing_snapshot": {
+    "score": 29,
+    "comments": 98,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1v987ca/weird_breakouts/",
+   "subreddit": "skincareaddicts",
+   "listing_snapshot": {
+    "score": 9,
+    "comments": 17,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Sunscreenreddit/comments/1va9bx2/good_mineral_sunscreen/",
+   "subreddit": "sunscreenreddit",
+   "listing_snapshot": {
+    "score": 0,
+    "comments": 45,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "formulation_specific_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Sunscreenreddit/comments/1v6pqk1/moisturizer_with_mineral_sunscreen/",
+   "subreddit": "sunscreenreddit",
+   "listing_snapshot": {
+    "score": 5,
+    "comments": 13,
+    "subreddit_rank_by_comments": 8
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "formulation_specific_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/tressless/comments/1v5h7q2/we_need_to_know_beckhams_routine/",
+   "subreddit": "tressless",
+   "listing_snapshot": {
+    "score": 811,
+    "comments": 261,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "no_visible_commercial_object"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/tressless/comments/1v8v2x7/is_there_anyone_here_on_minoxidil_only/",
+   "subreddit": "tressless",
+   "listing_snapshot": {
+    "score": 71,
+    "comments": 134,
+    "subreddit_rank_by_comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/tretinoin/comments/1v79lc1/tretinoin_and_azelaic_acid_are_a_magical/",
+   "subreddit": "tretinoin",
+   "listing_snapshot": {
+    "score": 1312,
+    "comments": 130,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/tretinoin/comments/1vbd2f7/my_skin_after_using_tretinoin_for_two_years/",
+   "subreddit": "tretinoin",
+   "listing_snapshot": {
+    "score": 639,
+    "comments": 80,
+    "subreddit_rank_by_comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1v9ab1b/what_would_you_put_in_it_tatcha_gift_w_purchase/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "score": 423,
+    "comments": 219,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1v9foy7/new_ulta_catalog_august_2_through_august_22/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "score": 375,
+    "comments": 40,
+    "subreddit_rank_by_comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Wavyhair/comments/1v96jyk/help_improve_wavy_routine/",
+   "subreddit": "wavyhair",
+   "listing_snapshot": {
+    "score": 110,
+    "comments": 23,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "recommendation_traffic"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/whybrows/comments/1v5uraa/she_uses_eyeliner_and_it_stayed_on_for_a_10_hour/",
+   "subreddit": "whybrows",
+   "listing_snapshot": {
+    "score": 475,
+    "comments": 82,
+    "subreddit_rank_by_comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/whybrows/comments/1v5hc9q/an_ad_from_facebook/",
+   "subreddit": "whybrows",
+   "listing_snapshot": {
+    "score": 220,
+    "comments": 28,
+    "subreddit_rank_by_comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "no_visible_commercial_object"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/wicked_edge/comments/1v77vxb/rust_on_tatara_masamune/",
+   "subreddit": "wicked_edge",
+   "listing_snapshot": {
+    "score": 49,
+    "comments": 55,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_defect"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/wicked_edge/comments/1v62fa5/cella_but_for_drinking/",
+   "subreddit": "wicked_edge",
+   "listing_snapshot": {
+    "score": 51,
+    "comments": 35,
+    "subreddit_rank_by_comments": 10
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v7f1wj/is_there_anything_i_should_change_about_my_makeup/",
+   "subreddit": "makeupaddiction",
+   "listing_snapshot": {
+    "score": 1145,
+    "comments": 772,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/malegrooming/comments/1v7io3z/is_my_facial_hair_office_appropriate/",
+   "subreddit": "malegrooming",
+   "listing_snapshot": {
+    "score": 1056,
+    "comments": 583,
+    "subreddit_rank_by_comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v85uuq/is_there_anything_i_could_do_differently/",
+   "subreddit": "makeupaddiction",
+   "listing_snapshot": {
+    "score": 1042,
+    "comments": 487,
+    "subreddit_rank_by_comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddiction/comments/1v79wf7/new_to_makeup_howd_i_do/",
+   "subreddit": "makeupaddiction",
+   "listing_snapshot": {
+    "score": 1894,
+    "comments": 429,
+    "subreddit_rank_by_comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/Makeup/comments/1vagdlw/tell_me_whats_the_most_controversial_makeup_tip/",
+   "subreddit": "makeup",
+   "listing_snapshot": {
+    "score": 170,
+    "comments": 404,
+    "subreddit_rank_by_comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "technique_no_product_implication"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "flat14_tail_sample_v0",
+   "thread_url": "https://www.reddit.com/r/malegrooming/comments/1va986p/first_time_trying_a_mustache_hows_it_look/",
+   "subreddit": "malegrooming",
+   "listing_snapshot": {
+    "score": 2918,
+    "comments": 394,
+    "subreddit_rank_by_comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  }
+ ]
+}

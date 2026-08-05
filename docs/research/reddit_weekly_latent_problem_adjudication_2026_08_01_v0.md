@@ -344,3 +344,33 @@ about 1.3 hours. Disposition decision deferred to the owner: capture the
 borderline set as a bounded batch under the standing
 false-positive-over-missed-latent preference, or record borderline=drop as
 the standing rule.
+
+## Flat-14 tail-audit sample (added 2026-08-05)
+
+Owner-requested audit of the one unrecorded rejection set: the retired
+flat-14 pass's ~806 per-row-codeless rejections. Population reconstructed
+(reader rows at rank <= 14 absent from every recorded pass), then a
+deterministic stratified sample of 157 rows (19%) re-adjudicated under
+current policy. Records in
+`reddit_weekly_latent_problem_adjudication_2026_08_01_flat14_tail_sample_v0.json`.
+
+Result: 107 rows (68%) reject again — the pass's bulk judgment holds. But
+9 rows (5.7%) are clear yes-grade misses even under the era's own rules:
+a Saks Fifth Avenue counterfeit-scam thread, a premium razor rust-defect
+thread, a nail-polish failure PSA at 117 comments, a can't-open-the-packaging
+thread, a kids-skincare product request, a drugstore-palette availability
+gap, a dupe request, a botched-highlights service failure, and a
+concealment-demand thread at 257 comments. Extrapolated: roughly 46
+yes-grade threads in the 806. A further 33 rows (21%) are borderline-grade
+and 8 (5%) are leaderboard-shaped — categories that did not route to capture
+when the pass ran but do now, so they measure policy improvement, not error.
+
+Two conclusions. First, the flat-14 pass's real miss rate on its own terms
+was ~6%, concentrated in exactly the shapes the later exception rules were
+built for (failure, availability, channel trust, underserved demand) — the
+subtraction of that pass is re-validated. Second, under current policy the
+same tail would send ~32% of its rows to capture, which is the measured
+value of the rules added since. Disposition of the ~46+169 recoverable
+threads is an owner decision: backfill this closed week with a bounded
+recapture, or let the shapes recur naturally under the corrected policy in
+future weeks.
