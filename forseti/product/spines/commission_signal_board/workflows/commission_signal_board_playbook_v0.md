@@ -199,17 +199,34 @@ not spend a separate sacrificial query.
    but does not probe a retailer until that published outcome is available.
    `CO3` begins with the read-only current weekly Reddit lake result, then runs
    its mandatory bounded customer/community scout, consuming the Phase 1
-   trigger-thread and mediator queues. Before Phase 2 it runs the proven
-   high-yield Reddit query families in this order: balanced brand-plus-axis;
-   behavior/consequence/displacement; exact hero-product names without the brand;
-   and condition/post-use. Add a community-diversity family only when the
-   admitted evidence is concentrated. SERP discovery and source-native capture
-   may pipeline: a surfaced candidate can enter the owning capture queue without
-   waiting for every family to finish, but each family remains separately
-   accounted. Its
-   evidence-selected retailer depth waits for `CO2`'s reconciled breadth and
-   selection pointers. Reddit/community capture is part of this specialist
-   fan-out, not SERP Phase 2.
+   trigger-thread and mediator queues. Before Phase 2 it pipelines two discovery
+   lanes. The source-neutral lane runs a bounded unrestricted-domain
+   brand/product review baseline and then claim-directed editorial, specialist,
+   retailer, and comparison checks. Search results and AI-generated search
+   summaries remain pointers until their source-native bodies are captured and
+   admitted. The candid community lane runs the proven high-yield Reddit query
+   families in this order: balanced brand-plus-axis;
+   behavior/consequence/displacement; a bounded consumer-native product-name or
+   shorthand probe without the brand where identity is unambiguous; and
+   condition/post-use. Generic names receive a category or use-case qualifier.
+   Run the brandless probe for a bounded set of hero products by default; admit
+   a non-hero product only when already captured evidence exposes a material
+   axis, condition, behavior consequence, competitor destination,
+   contradiction, or sampling-risk question for it. Never turn the family into
+   a catalog-wide crawl. Add a community-diversity family only when the admitted
+   evidence is concentrated.
+
+   `CO3` may begin its unrestricted source-neutral baseline immediately. It
+   begins retailer-review-seeded claim-directed checks only after `CO2`
+   publishes reconciled breadth and selection pointers. A material signal in
+   either discovery lane launches only a bounded counterpart check for the same
+   axis, segment,
+   condition, consequence, or competitor destination. It never mirrors every
+   query across sources or waits for a whole lane to finish before queueing a
+   qualified source-native capture. Each family and candidate remains separately
+   accounted. Company-owned and DTC pages provide official facts and claims, not
+   independent customer corroboration. Reddit/community and source-neutral
+   customer capture are part of this specialist fan-out, not SERP Phase 2.
 3. Each specialist plans and locks one deterministic batch at a time, then runs
    compatible capture/projection jobs without a model turn between ordinary
    items. After each batch, it applies the Scanning continuation test and may
@@ -585,8 +602,12 @@ the evidence-family scorecard, per-round funnel and yield, per-axis decision
 support, exact query register, and final decision-frontier observation. Search
 pages receive no usefulness credit without an admitted source-native body and
 coding row; repeated sightings remain visible but never inflate unique-source
-counts. This view is part of the existing acquisition record, not a new evidence
-authority, seal field, or per-run report artifact.
+counts. Any engagement snapshot used to construct or analyze this record retains
+its observation date, ISO 8601 `observed_at` timestamp when available, and source
+locator in working provenance; the final human deliverable need not display the
+date when it is not decision-relevant. This view is part of the existing
+acquisition record, not a new evidence authority, seal field, or per-run report
+artifact.
 
 Historical consumer v1 and v2 profiles require
 `--allow-legacy-consumer-v1` and `--allow-legacy-consumer-v2` respectively and

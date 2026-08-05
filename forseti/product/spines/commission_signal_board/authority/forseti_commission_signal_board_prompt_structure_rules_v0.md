@@ -284,22 +284,56 @@ frontier: `value` remains the customer-facing product proposition (benefit,
 quantity, durability, and performance for price). Do not call it a discovery
 frontier either; more relevant pages can exist after decisions are mature.
 
-Reddit discovery is grouped into named query families. Before Phase 2, `CO3`
-runs the proven high-yield set in this order: balanced brand-plus-axis baseline;
-behavior/consequence/displacement; exact hero-product names without the brand;
-and condition/post-use. Community-diversity probing is conditional on observed
-concentration. Every family records kind, role, axis scope, planned time, jobs,
-and terminal status; job `executed_at` timestamps prove actual family order,
-while `planned_at` remains planning lineage. The validator compares mandatory
-family completion with the actual hash-pinned Phase 2 search-job timestamps,
-not a self-declared query-family role. A run that predates this ordering rule
-may preserve one exact, run-scoped `pre_contract_historical_run` exception with
-the observed boundary timestamps, matching cycle ID, reason, and
+Before Phase 2, `CO3` runs two pipelined customer-discovery lanes. The
+**source-neutral corroboration lane** starts with a bounded unrestricted-domain
+brand/product review baseline, then uses retailer-review coding and other
+captured evidence to run claim-directed editorial, specialist, retailer, and
+comparison checks. A search result, featured snippet, or AI-generated search
+summary is a discovery pointer only; evidence credit requires the source-native
+body, relationship classification, and an admitted evidence unit. Company-owned
+and DTC pages establish product identity, availability, price, ingredients, and
+official claims, but never independently corroborate customer outcomes.
+
+The **candid community lane** groups Reddit discovery into named query families
+and runs the proven high-yield set in this order: balanced brand-plus-axis
+baseline; behavior/consequence/displacement; a bounded consumer-native
+product-name or shorthand probe without the brand where the identity remains
+unambiguous; and condition/post-use. Qualify generic product names with the
+category or use case rather than issuing ambiguous or blindly copied long-title
+queries. This probe tests whether brand-term search missed insider language. By
+default, it covers only a bounded set of hero products. Admit a non-hero product
+only when already captured evidence exposes a material axis, condition, behavior
+consequence, competitor destination, contradiction, or sampling-risk question
+for it; never turn the family into a catalog-wide crawl. It remains the third
+mandatory family and is still recorded under the existing
+`brandless_exact_product` family kind; that kind name is historical slot
+identity, not a demand for exact official product titles. Community-diversity
+probing is conditional on observed concentration.
+
+The two lanes may run concurrently. A material signal in either lane launches
+only a bounded counterpart check for the same axis, segment, condition,
+consequence, or competitor destination; it does not duplicate every query
+across sources or wait for a whole discovery cycle to finish. Every community
+family records kind, role, axis scope, planned time, jobs, and terminal status;
+job `executed_at` timestamps prove actual family order, while `planned_at`
+remains planning lineage. The validator compares mandatory family completion
+with the actual hash-pinned Phase 2 search-job timestamps, not a self-declared
+query-family role. A run that predates this ordering rule may preserve one
+exact, run-scoped `pre_contract_historical_run` exception with the observed
+boundary timestamps, matching cycle ID, reason, and
 `future_runs_covered: false`; the exception records the defect and never becomes
-a reusable waiver. Every batch records useful-thread
-yield separately from structured material additions. The validator reconciles
-the family, job, artifact, candidate, and batch accounting rather than accepting
-prose closure.
+a reusable waiver. Every batch records useful-thread yield separately from
+structured material additions. The validator reconciles the family, job,
+artifact, candidate, and batch accounting rather than accepting prose closure.
+That family, candidate, and batch reconciliation covers the community lane
+only. Source-neutral lane work carries no separate query-family or candidate
+frontier: its selected pointers stay inside the existing planned-job and owning
+route accounting, and its admitted units stay inside the existing evidence-unit,
+relationship-typing, and family-depth rules. No mechanical check proves the
+source-neutral lane ran, so its coverage and gaps stay honestly stated in the
+existing route, receipt, and gap fields rather than inferred from a passing
+seal.
+
 The profile renames the human-facing outside source
 family to **External company, editorial and industry context** and adds the
 cross-family product-axis contract below. Historical consumer v1/v2 ledgers are
@@ -477,9 +511,14 @@ judgment. CSB may ask rows to preserve source-visible upvotes, helpful votes,
 likes, views, shares, comment counts, reply counts, score state, visible
 sort/rank/order, pinned/hearted/official-response markers, direction, visible
 audience-fit basis, baseline context, and discount reasons when supplied or
-source-backed. CSB must not turn those facts into demand proof, Commit/Scale
-support, credibility, independence, graph weight, classifier mapping, final
-resonance weight, or Action Ceiling.
+source-backed. Every engagement snapshot used during acquisition-record
+construction or analysis preserves its observation date at minimum and an ISO
+8601 `observed_at` timestamp when available, together with the source locator;
+relative source labels remain in the pinned body. The final human deliverable
+may omit the displayed date when it is not decision-relevant, but its working
+provenance may not. CSB must not turn those engagement facts into demand proof,
+Commit/Scale support, credibility, independence, graph weight, classifier
+mapping, final resonance weight, or Action Ceiling.
 
 The temporary prompt is too high-lock-in to adopt wholesale because it mixes
 five different objects in one artifact: commission intake, venue playbook,

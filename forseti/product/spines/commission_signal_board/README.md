@@ -126,6 +126,18 @@ decision change affecting it; useful threads remain visible and need not be
 zero. The prompt-structure authority owns the exact fields, decision-frontier
 rule, and hybrid strength bars.
 
+The same profile gives `CO3` two pipelined discovery lanes: a bounded
+source-neutral corroboration lane and a candid Reddit/community lane. Retailer
+review coding seeds claim-directed checks across the lanes; a material finding
+triggers only its bounded counterpart check, not wholesale query duplication.
+Consumer-native product-name/shorthand probing remains a bounded sampling-bias
+test: hero products by default, with a non-hero product admitted only when
+already captured evidence exposes a material question. It never becomes a
+full-catalog crawl. Search summaries are pointers, DTC pages are official-claim
+evidence rather than independent customer corroboration, and engagement
+snapshots retain dated working provenance even when the final human
+deliverable does not display the date.
+
 Before a broad consumer-brand Phase A seal is accepted for Deliver or landed,
 its final delegated review reads every decision-bearing source-native citation
 and two independent spot checks per material axis. It checks local subject
