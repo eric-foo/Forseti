@@ -767,7 +767,7 @@ def _execute_capture(
     completed = subprocess.run(command, capture_output=True, text=True, creationflags=flags, check=False)
     detail = (completed.stderr or completed.stdout).strip()[-2000:]
     if completed.returncode == 0:
-        access_block_reason = _packet_access_block_reason(output)
+        access_block_reason = _packet_access_block_reason(output, worker=worker)
         if access_block_reason is not None:
             return CaptureResult(
                 "blocked" if worker == "google" else "challenge",
@@ -916,6 +916,7 @@ def _live_attestation_valid(config: Mapping[str, Any]) -> bool:
 
 
 def _reconcile_in_flight(paths: PipelinePaths) -> None:
+    config = load_config(paths.config)
     with _state_guard(paths):
         state = _load_state(paths)
         reconciled_any = False
@@ -931,6 +932,19 @@ def _reconcile_in_flight(paths: PipelinePaths) -> None:
                 {"worker": worker, "claim_id": claim_id},
             )
             raise PipelineBlocked("BLOCKED_IN_FLIGHT_OUTCOME_UNKNOWN")
+
+        queue_claim = inspect_queue(state_path=paths.google_state).get("in_flight")
+        controller_claim = state.get("in_flight", {}).get("google")
+        if isinstance(queue_claim, dict) and (
+            not isinstance(controller_claim, dict)
+            or controller_claim.get("job_id") != queue_claim.get("job_id")
+        ):
+            # A crash between the queue claim and the controller-state write
+            # otherwise leaves Google waiting for a report while Reddit spins.
+            block_unknown(
+                worker="google",
+                claim_id=str(queue_claim.get("job_id") or "unknown_google_claim"),
+            )
 
         for worker, claim in state.get("in_flight", {}).items():
             if not isinstance(claim, dict):
@@ -1000,17 +1014,60 @@ def _reconcile_in_flight(paths: PipelinePaths) -> None:
                 )
                 if not isinstance(live_job, dict) or not any(output.rglob("manifest.json")):
                     block_unknown(worker=worker, claim_id=claim_id)
-                live_job["status"] = "captured"
                 candidate = state["candidates"].get(live_job["candidate_id"])
                 if not isinstance(candidate, dict):
                     block_unknown(worker=worker, claim_id=claim_id)
-                candidate["status"] = "captured"
-                candidate["capture"] = {
-                    "capture_id": claim_id,
-                    "packet_locator": str(output.resolve()),
-                    "captured_at": utc_now_z_microseconds(),
-                    "resume_inspected": True,
-                }
+                settled_at = utc_now_z_microseconds()
+                access_block_reason = _packet_access_block_reason(
+                    output, worker="reddit"
+                )
+                if access_block_reason is None:
+                    live_job["status"] = "captured"
+                    candidate["status"] = "captured"
+                    candidate["capture"] = {
+                        "capture_id": claim_id,
+                        "packet_locator": str(output.resolve()),
+                        "captured_at": settled_at,
+                        "resume_inspected": True,
+                    }
+                else:
+                    # A held packet that never reached its thread is a challenge,
+                    # not evidence.  Resume applies the same verdict the live
+                    # worker applies, so an interrupted run cannot bank what a
+                    # completed run would have refused.
+                    live_job["status"] = "capture_blocked"
+                    live_job["attempts"].append(
+                        {
+                            "started_at": _required_text(claim, "started_at"),
+                            "finished_at": settled_at,
+                            "outcome": "challenge",
+                            "detail": access_block_reason,
+                            "packet_locator": str(output.resolve()),
+                            "resume_inspected": True,
+                        }
+                    )
+                    candidate["status"] = "capture_blocked"
+                    candidate["terminal_reason"] = access_block_reason
+                    circuit = state["circuits"]["reddit"]
+                    circuit["total_challenges"] += 1
+                    circuit["consecutive_challenges"] += 1
+                    if (
+                        circuit["consecutive_challenges"] >= 2
+                        or circuit["total_challenges"] >= 3
+                    ):
+                        circuit["state"] = "owner_ping"
+                        state["status"] = "owner_ping"
+                        state["terminal_reason"] = "reddit_challenge_ceiling"
+                    else:
+                        circuit["state"] = "cooldown"
+                        circuit["cooldown_until"] = _timestamp(
+                            _parse_time(settled_at)
+                            + timedelta(
+                                seconds=config["reddit_route"][
+                                    "first_cooldown_seconds"
+                                ]
+                            )
+                        )
             else:
                 block_unknown(worker=worker, claim_id=claim_id)
             state["in_flight"][worker] = None
@@ -1215,38 +1272,70 @@ def _packet_terminal(path: Path) -> bool:
     return any(path.rglob("manifest.json")) or any(path.rglob("content_record.json"))
 
 
-def _packet_access_block_reason(path: Path) -> str | None:
-    """Read the runner's source-visible access verdict before banking success."""
+def _packet_access_block_reason(path: Path, *, worker: str = "reddit") -> str | None:
+    """Read the runner's source-visible access verdict before banking success.
+
+    A Reddit packet only earns capture-success credit when its own snapshot
+    metadata proves the capture came to rest on the exact requested thread.  An
+    absent, ambiguous, or unreadable access verdict is a block, never a silent
+    success: the login wall that produced 27 false successes in the first live
+    run reported ``access_blocked: false`` on a zero exit.
+    """
+    reddit_worker = worker == "reddit"
     if not path.is_dir():
-        return None
+        return "reddit_access_verdict_unavailable" if reddit_worker else None
     matches = list(path.rglob("*_realchrome_snapshot_metadata.json"))
     if len(matches) != 1:
-        return None
+        if not reddit_worker:
+            return None
+        return (
+            "reddit_access_verdict_unavailable"
+            if not matches
+            else "reddit_access_verdict_ambiguous"
+        )
     metadata = _read_json(matches[0], label="RealChrome snapshot metadata")
+    if metadata.get("access_blocked") is True:
+        # The runner's own explicit verdict is the most specific reason.
+        reason = metadata.get("access_block_reason")
+        return (
+            reason
+            if isinstance(reason, str) and reason.strip()
+            else "realchrome_access_blocked"
+        )
+    if not reddit_worker:
+        return None
     requested_url = metadata.get("requested_url")
     final_url = metadata.get("final_url")
-    if isinstance(requested_url, str) and isinstance(final_url, str):
-        requested = urlsplit(requested_url)
-        final = urlsplit(final_url)
-        if (
-            (requested.hostname or "").casefold() in REDDIT_HOSTS
-            and (final.hostname or "").casefold() in REDDIT_HOSTS
-            and final.path.rstrip("/") == "/login"
-        ):
-            return "reddit_login_wall_redirect"
-    if metadata.get("access_blocked") is not True:
-        return None
-    reason = metadata.get("access_block_reason")
-    return reason if isinstance(reason, str) and reason.strip() else "realchrome_access_blocked"
+    requested_thread = (
+        canonical_reddit_thread(requested_url)
+        if isinstance(requested_url, str)
+        else None
+    )
+    if requested_thread is None or not isinstance(final_url, str):
+        return "reddit_access_verdict_unavailable"
+    final_thread = canonical_reddit_thread(final_url)
+    if (
+        final_thread is None
+        or final_thread["canonical_thread_id"]
+        != requested_thread["canonical_thread_id"]
+    ):
+        return "reddit_thread_not_reached"
+    return None
 
 
 def _loopback_cdp_endpoint(value: str) -> str:
+    """Return the concurrency identity of a loopback CDP endpoint.
+
+    ``localhost``, ``127.0.0.1``, and ``::1`` name one listener, and the scheme
+    does not change which browser answers, so the identity is the port alone.
+    Comparing raw text instead would let two workers drive one Chrome.
+    """
     parsed = urlsplit(value)
     if parsed.scheme not in {"http", "https"} or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}:
         raise PipelineError("browser CDP endpoints must be loopback-only")
     if parsed.port is None:
         raise PipelineError("browser CDP endpoint must declare a port")
-    return f"{parsed.scheme}://{parsed.hostname}:{parsed.port}"
+    return f"loopback:{parsed.port}"
 
 
 def _reject_secrets(value: Any, path: str = "config") -> None:

@@ -42,7 +42,7 @@ Pinned inputs:
 
 - authenticated completion receipt: `0c229d3e0392c87b49ae0799529e239aa10e5ac01c1f66571b248007ed1bb22a`
 - Soko Glam raw corpus: `40618a42445188bf9c87aef02dfd9351be49a22e22f6231a8b64e76f294d2922`
-- community coding: `8d4cdf212fa59933a6f8b1c74e93785b4e59434371ea1a5a9a1793055d625471`
+- community coding: `13f82e459319f9e3e50602e72f6031d40f5d90e303246bd98ce9cd83682fcf47`
 - retailer coding: `03e3a4370b459ea54c2eb55445a98c5310960cb234a9a90fa277ddce0839564f`
 - cross-source ledger: `9698c472b2a25591f452273972ac1ad4827f6af876360a0c8736942674c8f10d`
 
@@ -148,15 +148,29 @@ open; no acquisition seal**.
 
 ## Implemented controller correction
 
-The controller now treats either of these as a challenge even if the capture
+A Reddit packet now earns capture-success credit only when its own snapshot
+metadata proves the capture came to rest on the exact requested thread. The
+controller treats all of the following as a challenge even if the capture
 subprocess exits zero:
 
-1. packet metadata reports an access block; or
-2. a Reddit request resolves on the same host to a final `/login/` URL, including
-   the observed `reason=lor2` redirect with `access_blocked: false`.
+1. packet metadata reports an access block;
+2. the final URL is not the requested thread — which covers the observed
+   `/login/?reason=lor2` redirect with `access_blocked: false`, any other
+   `/login` spelling or host, and any redirect to a different thread, a
+   subreddit root, or an off-site page; or
+3. the access verdict cannot be read at all, because the snapshot metadata is
+   absent, duplicated, or missing its requested/final URL.
 
-The run-root process lock, held-item retry behavior, block ceiling, and distinct
-Google/Reddit endpoint checks remain fail-closed. Deterministic regression tests
-cover the login-redirect false-success case. The correction prevents capture
-volume from impersonating evidence; it does not retroactively validate the live
-dogfood or grant research-use credit.
+The same verdict is applied on the resume path, so an interrupted controller
+cannot bank a held packet that a completed run would have refused. Replaying
+the 124 admitted live packets through the corrected check admits exactly the 95
+body-bearing threads and blocks the 27 login walls and 2 explicit blocks.
+
+The run-root process lock, held-item retry behavior, and block ceiling remain
+fail-closed. The distinct Google/Reddit endpoint check now compares loopback
+identity rather than endpoint spelling, so `localhost`, `127.0.0.1`, and `::1`
+on one port are correctly rejected as one browser. Deterministic regression
+tests cover the login-redirect false-success case, the wider not-the-requested-
+thread class, the unreadable-verdict cases, and the resume path. The correction
+prevents capture volume from impersonating evidence; it does not retroactively
+validate the live dogfood or grant research-use credit.

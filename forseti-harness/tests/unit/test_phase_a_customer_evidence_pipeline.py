@@ -240,14 +240,42 @@ def test_missing_attestation_allows_offline_init_but_blocks_before_capture(
     assert result["terminal_reason"] == "BLOCKED_ROTATING_IP_ATTESTATION_MISSING"
 
 
-def test_config_requires_distinct_browser_endpoints(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "google_endpoint,reddit_endpoint",
+    [
+        # Byte-identical spellings.
+        ("http://localhost:9222", "http://localhost:9222"),
+        # One loopback listener reached under three equivalent spellings and
+        # two schemes: still one Chrome, so still shared concurrency.
+        ("http://localhost:9222", "http://127.0.0.1:9222"),
+        ("http://127.0.0.1:9222", "http://localhost:9222"),
+        ("http://127.0.0.1:9222", "http://[::1]:9222"),
+        ("http://127.0.0.1:9222", "https://127.0.0.1:9222"),
+    ],
+)
+def test_config_requires_distinct_browser_endpoints(
+    tmp_path: Path, google_endpoint: str, reddit_endpoint: str
+) -> None:
     config = _config()
-    config["reddit_route"]["cdp_endpoint"] = "http://localhost:9222"
+    config["google_route"]["persistent_cdp_endpoint"] = google_endpoint
+    config["reddit_route"]["cdp_endpoint"] = reddit_endpoint
     path = tmp_path / "bad.json"
     path.write_text(json.dumps(config), encoding="utf-8")
 
     with pytest.raises(pipeline.PipelineError, match="BLOCKED_SHARED_CDP_CONCURRENCY"):
         pipeline.load_config(path)
+
+
+def test_config_admits_distinct_loopback_ports(tmp_path: Path) -> None:
+    config = _config()
+    config["google_route"]["persistent_cdp_endpoint"] = "http://localhost:9222"
+    config["reddit_route"]["cdp_endpoint"] = "http://127.0.0.1:9333"
+    path = tmp_path / "good.json"
+    path.write_text(json.dumps(config), encoding="utf-8")
+
+    assert pipeline.load_config(path)["reddit_route"]["cdp_endpoint"] == (
+        "http://127.0.0.1:9333"
+    )
 
 
 def test_persistent_google_route_passes_session_profile_to_cold_start_runner(
@@ -378,8 +406,125 @@ def test_reddit_zero_exit_login_redirect_opens_challenge_even_when_flag_is_false
     )
 
     assert result.outcome == "challenge"
-    assert result.detail == "reddit_login_wall_redirect"
+    assert result.detail == "reddit_thread_not_reached"
     assert result.packet_locator == str(output.resolve())
+
+
+def _reddit_metadata_packet(output: Path, metadata: dict) -> Path:
+    raw = output / "raw"
+    raw.mkdir(parents=True, exist_ok=True)
+    (output / "manifest.json").write_text("{}", encoding="utf-8")
+    (raw / "04_04_realchrome_snapshot_metadata.json").write_text(
+        json.dumps(metadata), encoding="utf-8"
+    )
+    return output
+
+
+THREAD_URL = "https://old.reddit.com/r/Test/comments/abc123/a/"
+
+
+@pytest.mark.parametrize(
+    "final_url,expected",
+    [
+        # Login wall across every permitted host and slash/query variant.
+        ("https://old.reddit.com/login", "reddit_thread_not_reached"),
+        ("https://old.reddit.com/login/", "reddit_thread_not_reached"),
+        ("https://www.reddit.com/login/?dest=%2Fr%2FTest", "reddit_thread_not_reached"),
+        ("https://reddit.com/Login", "reddit_thread_not_reached"),
+        ("https://new.reddit.com/login?reason=lor2", "reddit_thread_not_reached"),
+        # Any other page that is not the requested thread.
+        ("https://old.reddit.com/r/Test/", "reddit_thread_not_reached"),
+        ("https://old.reddit.com/", "reddit_thread_not_reached"),
+        ("https://old.reddit.com/r/Test/comments/zzz999/other/", "reddit_thread_not_reached"),
+        ("https://example.com/anything", "reddit_thread_not_reached"),
+        # The requested thread itself, including host and slug drift, is admitted.
+        (THREAD_URL, None),
+        ("https://www.reddit.com/r/Test/comments/abc123/renamed_slug/", None),
+    ],
+)
+def test_reddit_success_credit_requires_landing_on_the_requested_thread(
+    tmp_path: Path, final_url: str, expected: str | None
+) -> None:
+    packet = _reddit_metadata_packet(
+        tmp_path / "packet",
+        {
+            "access_blocked": False,
+            "access_block_reason": None,
+            "requested_url": THREAD_URL,
+            "final_url": final_url,
+        },
+    )
+
+    assert pipeline._packet_access_block_reason(packet, worker="reddit") == expected
+
+
+@pytest.mark.parametrize(
+    "metadata,expected",
+    [
+        ({"requested_url": THREAD_URL}, "reddit_access_verdict_unavailable"),
+        ({"final_url": THREAD_URL}, "reddit_access_verdict_unavailable"),
+        (
+            {"requested_url": None, "final_url": THREAD_URL},
+            "reddit_access_verdict_unavailable",
+        ),
+        (
+            {"requested_url": "not-a-thread", "final_url": THREAD_URL},
+            "reddit_access_verdict_unavailable",
+        ),
+    ],
+)
+def test_reddit_unreadable_access_verdict_never_earns_success_credit(
+    tmp_path: Path, metadata: dict, expected: str
+) -> None:
+    packet = _reddit_metadata_packet(tmp_path / "packet", metadata)
+
+    assert pipeline._packet_access_block_reason(packet, worker="reddit") == expected
+
+
+def test_reddit_packet_without_snapshot_metadata_is_blocked(tmp_path: Path) -> None:
+    packet = tmp_path / "packet"
+    (packet / "raw").mkdir(parents=True)
+    (packet / "manifest.json").write_text("{}", encoding="utf-8")
+
+    assert pipeline._packet_access_block_reason(packet, worker="reddit") == (
+        "reddit_access_verdict_unavailable"
+    )
+
+
+def test_reddit_packet_with_ambiguous_snapshot_metadata_is_blocked(
+    tmp_path: Path,
+) -> None:
+    packet = tmp_path / "packet"
+    raw = packet / "raw"
+    raw.mkdir(parents=True)
+    for name in (
+        "04_04_realchrome_snapshot_metadata.json",
+        "05_05_realchrome_snapshot_metadata.json",
+    ):
+        (raw / name).write_text(
+            json.dumps(
+                {
+                    "access_blocked": True,
+                    "access_block_reason": "reddit_network_security_block",
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    assert pipeline._packet_access_block_reason(packet, worker="reddit") == (
+        "reddit_access_verdict_ambiguous"
+    )
+
+
+def test_google_packet_without_realchrome_metadata_stays_admissible(
+    tmp_path: Path,
+) -> None:
+    """The automated Google route writes no RealChrome metadata; it must not block."""
+    packet = tmp_path / "packet"
+    packet.mkdir()
+    (packet / "content_record.json").write_text("{}", encoding="utf-8")
+
+    assert pipeline._packet_access_block_reason(packet, worker="google") is None
 
 
 def test_persistent_realchrome_packet_is_normalized_offline_for_ingestion(
@@ -702,6 +847,122 @@ def test_resume_reconciles_google_packet_already_settled_by_queue(
             "job_id": job["job_id"],
         }
     ]
+
+
+def _held_reddit_capture(run_root: Path, final_url: str) -> tuple[Path, str, str]:
+    """Park one admitted Reddit item in flight with a terminal packet on disk."""
+    paths = pipeline.pipeline_paths(run_root)
+    _, candidate_id = _candidate_state(run_root)
+    _import_one(run_root, candidate_id)
+    state = pipeline._load_state(paths)
+    job = state["reddit_queue"][0]
+    job["status"] = "in_flight"
+    output = paths.reddit_packets / job["capture_id"]
+    _reddit_metadata_packet(
+        output,
+        {
+            "access_blocked": False,
+            "access_block_reason": None,
+            "requested_url": state["candidates"][candidate_id]["canonical_url"],
+            "final_url": final_url,
+        },
+    )
+    state["in_flight"]["reddit"] = {
+        "capture_id": job["capture_id"],
+        "candidate_id": candidate_id,
+        "output": str(output),
+        "started_at": ATTESTED_AT,
+    }
+    pipeline._save_state(paths, state)
+    return paths.root, candidate_id, job["capture_id"]
+
+
+def test_resume_refuses_to_bank_a_held_reddit_login_wall_as_captured(
+    tmp_path: Path,
+) -> None:
+    run_root = _init(tmp_path)
+    _, candidate_id, capture_id = _held_reddit_capture(
+        run_root,
+        "https://old.reddit.com/login/?reason=lor2&dest=%2Fr%2FSkincareAddictionLux",
+    )
+    paths = pipeline.pipeline_paths(run_root)
+
+    pipeline._reconcile_in_flight(paths)
+
+    recovered = pipeline._load_state(paths)
+    candidate = recovered["candidates"][candidate_id]
+    settled = next(
+        item for item in recovered["reddit_queue"] if item["capture_id"] == capture_id
+    )
+    assert candidate["status"] == "capture_blocked"
+    assert candidate["capture"] is None
+    assert candidate["terminal_reason"] == "reddit_thread_not_reached"
+    assert settled["status"] == "capture_blocked"
+    assert settled["attempts"][-1]["outcome"] == "challenge"
+    assert settled["attempts"][-1]["detail"] == "reddit_thread_not_reached"
+    assert recovered["circuits"]["reddit"]["total_challenges"] == 1
+    assert recovered["circuits"]["reddit"]["consecutive_challenges"] == 1
+    assert recovered["circuits"]["reddit"]["state"] == "cooldown"
+    assert recovered["circuits"]["reddit"]["cooldown_until"] is not None
+    assert recovered["in_flight"]["reddit"] is None
+
+
+def test_resume_still_banks_a_held_reddit_packet_that_reached_its_thread(
+    tmp_path: Path,
+) -> None:
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    state = pipeline._load_state(paths)
+    _, candidate_id, capture_id = _held_reddit_capture(
+        run_root,
+        "https://old.reddit.com/r/SkincareAddictionLux/comments/1ovsqzr/dieuxspecific_irritation/",
+    )
+
+    pipeline._reconcile_in_flight(paths)
+
+    recovered = pipeline._load_state(paths)
+    candidate = recovered["candidates"][candidate_id]
+    assert candidate["status"] == "captured"
+    assert candidate["capture"]["resume_inspected"] is True
+    assert recovered["circuits"]["reddit"]["total_challenges"] == 0
+    assert recovered["in_flight"]["reddit"] is None
+
+
+def test_resume_reddit_challenge_ceiling_still_opens_the_owner_ping(
+    tmp_path: Path,
+) -> None:
+    run_root = _init(tmp_path)
+    _held_reddit_capture(run_root, "https://old.reddit.com/login/")
+    paths = pipeline.pipeline_paths(run_root)
+    state = pipeline._load_state(paths)
+    state["circuits"]["reddit"]["consecutive_challenges"] = 1
+    state["circuits"]["reddit"]["total_challenges"] = 1
+    pipeline._save_state(paths, state)
+
+    pipeline._reconcile_in_flight(paths)
+
+    recovered = pipeline._load_state(paths)
+    assert recovered["circuits"]["reddit"]["state"] == "owner_ping"
+    assert recovered["status"] == "owner_ping"
+    assert recovered["terminal_reason"] == "reddit_challenge_ceiling"
+
+
+def test_resume_blocks_a_google_queue_claim_missing_from_controller_state(
+    tmp_path: Path,
+) -> None:
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    action = pipeline.next_action(state_path=paths.google_state)
+    assert action["status"] == "capture_ready"
+
+    with pytest.raises(
+        pipeline.PipelineBlocked, match="BLOCKED_IN_FLIGHT_OUTCOME_UNKNOWN"
+    ):
+        pipeline._reconcile_in_flight(paths)
+
+    recovered = pipeline._load_state(paths)
+    assert recovered["status"] == "blocked"
+    assert recovered["terminal_reason"] == "BLOCKED_IN_FLIGHT_OUTCOME_UNKNOWN"
 
 
 def test_terminal_in_flight_with_unproved_binding_is_inspected_once(tmp_path: Path) -> None:

@@ -3,7 +3,7 @@
   "subject": "Dieux Skin",
   "cycle_id": "dieux_phase_a_preliminary_evidence_20260805",
   "status": "preliminary_unsealed",
-  "method": "Deterministic fresh parse of 122 controller-banked Reddit successes. Only 95 contained source-native old Reddit thread bodies; 27 resolved to preserved login walls. Titles/posts and only subject/product-anchored comments were regex-nominated for axes; explicit behavior and choice labels require explicit text. Up to the post plus three strongest anchored comments are retained per thread. This is a conservative coding pass for consolidation, not final semantic adjudication.",
+  "method": "Deterministic fresh parse of 122 controller-banked Reddit successes. Only 95 contained source-native old Reddit thread bodies; 27 resolved to preserved login walls. Titles/posts and only subject/product-anchored comments were regex-nominated for axes; explicit behavior and choice labels require explicit text. Up to the post plus three strongest anchored comments are retained per thread. This is a conservative coding pass for consolidation, not final semantic adjudication. Every evidence_text is a fixed-width excerpt window, so it may begin or end mid-token and does not preserve inline link text; 20 of 274 rows are therefore not byte-locatable in their preserved visible text and carry an explicit parser_limitation. Every row remains dereferenceable by comment_id inside its packet_locator.",
   "ceiling": "Captured-thread qualitative evidence only; not population prevalence, sentiment measurement, final decision maturity, or a Phase A seal.",
   "admitted_unique_thread_count": 124,
   "controller_banked_success_count": 122,
@@ -2553,7 +2553,7 @@
         "comment_score": "2 points"
       },
       "capture_time": "2026-08-04T17:01:11.335925Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "second dieux instant Angel (charlotte10 for ten percent off) my other fave is build [skincare] - code newbuilder for ten percent off. b-cream it's lightweight but so hydrating.. keeps my 45 y/o skin comfortable. can also add a cpl drops squalane oil to beef up the hydration factor. [. also edit to add: adding a bit of avène cicalfate or LRP cicaplast baume b5 to your pm moisturiser (just a squidge) is another great way to beef up your moisturiser - or you can use them to occlude over the top. as ever, ymmv, watch for pore clogging in some skin types... also urea - moisturisers with this (also a NMF - Natural Moisturising Factor - found in skin) are great hydrators. ] basically my whole routine is built out of peptides and layers of hydration and my skin is very happy as a result."
     },
     {
@@ -3645,7 +3645,7 @@
         "comment_score": "1 point"
       },
       "capture_time": "2026-08-04T15:52:42.442806Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "Zeroid has a multi-lamellar emulsion (MLE) formulation, which is, AFAIK, pretty different than the ceramide/lipid/sterol formulation Dieux and Triple Lipid use. MLE forms a that most closely mimics that found in the skin barrier. Other brands that use MLE are Zerafite, Atopalm, Real Barrier, and Medature. \"Maltese cross pattern\""
     },
     {
@@ -4152,7 +4152,7 @@
         "comment_score": "2 points"
       },
       "capture_time": "2026-08-04T17:02:44.070518Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "Dieux instant angel is so good for daytime, but at night I like to either use the Nivea crème in the blue jar, or weleda skin food with a few drops of whatever oil I feel like (currently marula for me) topped with Vaseline where/if necessary. If my skin is really hurting and my barrier actually needs help I use Stratia lipid gold. It when I started using it, I barely ever get actually flakey anymore. changed my skin My credentials include my dry, flaky skin that has been able to survive dry Colorado winters."
     },
     {
@@ -4207,7 +4207,7 @@
         "comment_score": "2 points"
       },
       "capture_time": "2026-08-04T17:02:44.070518Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "I'm here to also recommend . I haven't found any product that's more hydrating and it's also fantastically non-comedogenic. But, we can't really call it a barrier cream because it doesn't have too many occlusives. But, occlusives are what can trigger pimples in those who are prone. If needed, just put a tiny bit of a barrier cream on top. If non-comedogenic is a concern, then maybe the . This is a much less pore-clogging option than the often mentioned LRP B5 Balm/Baume. Dieux Skin Air Angel First Aid Beauty Ultra Repair Rescue Barrier Balm with Dimethicone"
     },
     {
@@ -5069,7 +5069,7 @@
         "comment_score": "0 points"
       },
       "capture_time": "2026-08-04T16:11:14.411374Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "I also love SkinFix and Dieux and the best drugstore dupe i have found is the cerave night cream"
     },
     {
@@ -5186,7 +5186,7 @@
         "comment_score": "0 points"
       },
       "capture_time": "2026-08-04T16:15:15.680088Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "and moving onto the next, but these are still \"flash\" reviews -- so that initial look/feel is going to dominate my thoughts here. They're roughly ordered from least favorite to most favorite. several Sephora ~~~~~THE \"NO SCRUBS\"~~~~~ I couldn't get past a sticky/tacky texture that felt like it would be in competition with (rather than in concert with) Instant Angel's velvety texture and subtle glow Dr. Jart Vital Hydra Solution (LEAST FAVORITE): Decently hydrating, but was a little too sticky for my taste -- not as tacky as Dr. Jart, but it didn't have that ideal texture/feel. Sephora Hydrate Dewy Bubble Serum : This was a 7/10 for me. It had a very pleasing luxurious feel, but felt greasy to me and gave more glow/luminosity than I was looking for. May be a good one for those who don't min"
     },
     {
@@ -5215,7 +5215,7 @@
         "comment_score": "0 points"
       },
       "capture_time": "2026-08-04T16:15:15.680088Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "rdone. That said, this product seemed to be more about brightening and glow than about hydration, so, we're passing for now. If I ever am trying to dial up that glow while hydrating, it would be on the list. Glow Recipe Watermelon Glow Niacinamide Dew Drops Serum : Not \"just\" a hydrating serum, but, since a few of you mentioned it and since I already love Dieux Instant Angel, I figured I'd try it. Just like with Instant Angel, the touch/feel/finish are lovely -- I can see that it would \"play nicely\" with Instant Angel. But, again, with so many actives in my PM routine, I don't need this hydration step to be so \"fully loaded\". Dieux Deliverance 3-in-1 Repair Serum : Beautiful, luxurious, velvety texture. Melted into the skin and left just the right amount of \"cushion\". I just didn't feel th"
     },
     {
@@ -5246,7 +5246,7 @@
         "comment_score": "8"
       },
       "capture_time": "2026-08-04T16:15:15.680088Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "Would love recommendations on a hydrating / moisturizing serum that I could add to my A.M. routine (pasted below.) I was recently introduced to Dieux Instant Angel. Yeah, I know... I'm somehow both a total cliche and way behind the times. But, hey, this one is living up to the hype for me -- I love how rich Instant Angel feels but without leaving my skin looking or feeling greasy. It's ideal for that deep, daytime-friendly moisturizing and seems to be SPF and makeup friendly. But, I'm discovering that my skin is thirsty for a touch more hydration during the day. So I want to find a daytime-friendly hydrating serum I can use Instant Angel to boost up that all-day hydrated feel while not disrupting Instant Angel's luxurious textural appeal and subtle glowing-from-within appearance. before My"
     },
     {
@@ -5472,7 +5472,7 @@
         "comment_score": "0 points"
       },
       "capture_time": "2026-08-04T15:50:09.323156Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "I also just finished my big one and opened a new box to find it’s so much smaller . I really don’t use this much so it does last a long time. I think aestura 365 barrier cream is actually better than the butter. Don’t get me wrong I love rhode and I stand with the glazing milk being one of the best products ever but aestura is wonderful . Dr althea and dieux instant angel are really great as well. Innbeauty extreme cream is a thick moisturizer that is very hydrating and of course tatcha dewy skin . I buy way too many products lol. Aestura is a good price point and really surprisingly amazing ."
     },
     {
@@ -5756,7 +5756,7 @@
         "comment_score": "24"
       },
       "capture_time": "2026-08-04T16:36:23.673581Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "hi guys so i think i seriously messed up my skin barrier and i need some help with my routine. my skin is super oily right now but it also feels very tight and uncomfortable. i have these tiny bumps under the skin (congestion maybe?) and my pores look huge. whenever i try to use a moisturizer to fix the dehydration it feels like it just sits on top of my skin and makes me look even greasier but if i skip it my face feels way too dry. it’s like my skin is thirsty but also drowning in oil at the same time lol. current routine: a simple foaming one but i think it's making my skin feel too tight cleanser: a basic drugstore cream but it feels way too thick and heavy for my oily skin moisturizer: none because i haven't found one that feels lightweight enough sunscreen: does anyone with oily/dehy"
     },
     {
@@ -5868,7 +5868,7 @@
         "comment_score": "0 points"
       },
       "capture_time": "2026-08-04T15:30:04.954929Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "Oh shoot, I just saw a comment you left elsewhere that says you have oily leaning skin normally. So maybe the Dieux Skin Mercy is not ideal for you in that case. the First Aid Beauty Ultra Repair Rescue Barrier Balm would be a good option as a last layer. It has oat extract in it but doesn't have pore-cloggers like some of the other thicker creams have in them. But Acne-prone skin should avoid ingredients that have \"wax\" anywhere in the name, shea butter (which is in lots of products), cocoa butter and coconut oils. A good oil for acne-prone skin is jojoba oil, so if you see that on an ingredient list it's okay."
     },
     {
@@ -5985,7 +5985,7 @@
         "comment_score": "2 points"
       },
       "capture_time": "2026-08-04T16:16:41.010968Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "esn't feel heavy or cause closed comedones. It has the encapsulated ceramides and peptides you need without the grease factor. Stratia Interface: This is the lighter, angel version of their famous barrier cream. It’s a gel-cream specifically formulated for oily/combination skin that needs barrier support. It’s fragrance-free and very focused on hydration. Dieux Air Angel: Note the Hydro version it’s a gel-cream that contains those tiny ceramide capsules that melt into the skin. It’s much lighter than their regular cream but still hits that ceramide/cholesterol/fatty acid requirement. Aestura Atobarrier 365 Hydro Soothing Cream: Their biggest advice would probably be: and look for these advanced gel-barrier formulas. They provide the \"bricks and mortar\" your skin needs to heal without the h"
     },
     {
@@ -6567,7 +6567,7 @@
         "comment_score": "1 point"
       },
       "capture_time": "2026-08-04T15:56:25.432854Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "erving as a kind of bridge between the thinnest toners and the thicker milky essence from Farmacy. Farmacy Honey Milk: This is one of the products I already used. I started using it last year when North Florida was still hot and humid and it seemed pretty humidity-friendly. I guess the full summer heat will be the real test! Cosmetic elegance is something Dieux really nails. Thankfully, I've never experienced any pilling of the Skin Mercy... whether with or without makeup. I actually think its cosmetically elegant than their Instant Angel cream. You noted the redundancy with the It Cosmetics serum, but that's somewhat intentional. The Skin Mercy is my daytime barrier cream with the added benefit of its soothing ingredients. But I use a small amount of the Skin Mercy... I don't slather it o"
     },
     {
@@ -6595,7 +6595,7 @@
         "comment_score": "0"
       },
       "capture_time": "2026-08-04T15:56:25.432854Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "n Ampoule Hydration density and plumping layer IT Cosmetics Bye Bye Redness Serum Soothing and redness-reducing hydration binder I’m From Mugwort Essence Smoothing bridge to milky layer and calming *Farmacy Honey Milk Hydrating Essence Milky essence for locking in hydration, offering barrier support and leaving a glow *Vanicream Daily Facial Moisturizer Barrier reinforcement and hydration lock via ultra-thin lotion *Dieux Skin Mercy Recovery Cream Soothing recovery cushion, moisture retainer and barrier repair Round Lab Birch Juice Moisturizing Sun Cream SPF50+ PA++++ Korean version Product already in my current routine* \\ Should also note my other AM products: Pre-Cleanse Oil: Dermalogica Gentle Daily Cleanser: Remedy Farmacy Gentle Daily Exfoliator Foam Vitamin C: Medik8 C-Tetra Advanced"
     },
     {
@@ -6813,7 +6813,7 @@
         "comment_score": "83"
       },
       "capture_time": "2026-08-04T16:58:26.147749Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "l of the ceramide-rich and lipid-rich barrier creams that also contained colloidal oatmeal (my favorite soothing ingredient.) There were more on the market than I realized! But, the Prequel, by far, offered the best value per oz. I mean, I got these two massive tubes for a total of $31 via the TikTok shop. I pay more than that for my one little tube of Skin Mercy! 😭 So, hats off to Prequel for formulating what, on paper, looks like a good quality barrier cream, with that key soothing ingredient, at a fantastic price. Regretfully, I won't be reordering. I sampled the regular cream and then fully used the Rich cream 2 days in a row. The regular cream is so light and airy, it's approaching gel-cream territory. But, in my estimation, the Rich cream wasn't much richer. To me it's bordering on a"
     },
     {
@@ -7573,7 +7573,7 @@
         "comment_score": "43 points"
       },
       "capture_time": "2026-08-04T15:17:51.546566Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "Normal/dry skin, born in the 1900s. DAYTIME: Melts into the skin, while leaving a subtle, velvety cushion and a lovely lit-from-within glow. Has soothing, barrier repairing and moisturizing ingredients. I actually prefer it to their Instant Angel Dieux Skin Mercy: This is brand new to me. Literally got it this week, so it's an early, qualified recommendation. But, although early days, this one really lives up to the hype as an incredible skin prep before makeup. Feels rich and luxurious and, yeah, thus far, my makeup has looked fantastic with it. (Bonus: I feel the same way about their Extreme Cream Eye... helps my concealer apply so beautifully) InnBeauty Project Extreme Cream: EVENING: Gold standard in Korean dermatology for lipid and ceramide-rich barrier repairing moisturizers. Definit"
     },
     {
@@ -7994,7 +7994,7 @@
         "comment_score": "16"
       },
       "capture_time": "2026-08-04T15:35:00.006879Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "on an active search for a good gel/gel cream moisturizer ive tried a few which i will put below. im looking for opinions from others I think my skin type is closest to combination. I struggle with clogged pores more than anything Cerave SA Cleanser Cleanser: Paulas Choice 1% BHA Gel Toner Exfoliator: ----- Ive tried just a few: 1. C erave Moisturizing Gel My first ever gel moisturizer. I tried it around when it first came out. I liked it, but wasnt anything special compared to the other 2 ive tried 2. Neutrogena Hydro Boost Gel Cream This was my go to for awhile. I like how my skin felt by itself but it sometimes remained tacky feeling after fully absorbed. Not a huge issue at the end of the day 3. Clinique Moisture Surge This one is my most recent buy. Really love how it makes my skin fee"
     },
     {
@@ -8101,7 +8101,7 @@
         "comment_score": "66"
       },
       "capture_time": "2026-08-04T17:13:59.130190Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "I’m 31. I have really bad hormonal acne. My skin is very reactive and sensitive. I went to the dermatologist and she prescribed clindamyacin, topical spironolactane, and tret .05. My routine rn is: Benzoyl peroxide wash Clindamycin The Ordinary NMF + Beta Glucan Gel Purito SPF AM Inkey List Oat Cleansing Balm (if wearing sunscreen/makeup) Vanicream Gentle Cleanser Topical spironolactone Tretinoin every other night 😭 or any advice you’d give!!!! I tried a richer K-beauty barrier cream and my skin got itchy and I broke out, so now I’m back to square one. PM Need a nighttime moisturizer that won’t clog my pores"
     },
     {
@@ -8131,7 +8131,7 @@
         "comment_score": "0 points"
       },
       "capture_time": "2026-08-04T16:17:59.432683Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "Medik8 to the InnBeauty Project Pro C. Has a blend of 3 vitamin Cs, a mix of proven hyperpigmentation ingredients and some peptides. It's very cosmetically elegant (has an ultra-thin lotion texture.) Yes, it has that classic hot dog water scent from the Ferulic Acid, but I find that it fades very quickly. Serum: I use two, a thin facial lotion, followed by a richer moisturizer, but I'll play by the rules and only list the final moisturizer: Dieux Skin Mercy. Melts into the skin. Leaves a lovely velvety cushioned skin feel, a beautiful glow and it soothes with colloidal oatmeal and other soothing ingredients. Moisturizer: Always a Korean SPF50+ PA++++. These days, gravitating toward Isntree Hyaluronic Acid Watery Sun Gel. Gives a lot of glow and hydrates nicely. SPF: I have normal/dry skin."
     },
     {
@@ -8312,7 +8312,7 @@
         "comment_score": "4 points"
       },
       "capture_time": "2026-08-04T16:49:24.578940Z",
-      "parser_limitation": null,
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
       "evidence_text": "t Aid Beauty Niacinamide Dark Spot Serum (5%) Good Molecules Discoloration Correcting Serum (4% + also has tranexamic acid which helps with hyperpigmentation) ROVECTIN Skin Essentials Activating Treatment Lotion (haven't found a percent but it's effective, kinda sticky so I prefer it for night use) Purito Unscented Recovery Cream and Purito Deep Sea Pure Water Cream (both have 2%, this is a gentle option if you want to try a moisturizer with niacinamide. the second one is better for oily skin) Best of luck!! PS - If you are in US, I you to try out Dieux Skin's new Deliverance Serum (if you have the money for it, she pricy). It has niacinamide and one of the only clinically backed cannabinoid complexes. So so good for sensitive skin. I wish I wasn't in Canada so I could snag it lol. implore"
     },
     {

@@ -201,9 +201,16 @@ reach truthful maturity merely because 110 candidates were queued.
 - observed defect: the RealChrome subprocess returned zero for a block packet,
   so the controller did not inspect its access-block metadata and continued
 - correction: zero-exit block metadata is now treated as a challenge and opens
-  the circuit; a same-host final URL under Reddit's `/login/` route is likewise
-  treated as a challenge even when metadata says `access_blocked: false`;
-  deterministic regression coverage was added for both defects
+  the circuit; beyond that, a Reddit packet earns success credit only when its
+  snapshot metadata proves the capture came to rest on the exact requested
+  thread, so the observed `/login/` redirect with `access_blocked: false` is
+  blocked as one instance of a wider not-the-requested-thread class, and an
+  absent, duplicated, or URL-less access verdict blocks rather than passing
+  silently. The same verdict now runs on the resume path, which previously
+  banked held packets without any access check. Replaying the 124 admitted live
+  packets through the corrected check admits exactly the 95 body-bearing
+  threads and blocks the 27 login walls and 2 explicit blocks; deterministic
+  regression coverage was added for each defect
 - process isolation defect: a tool interruption left one controller child
   alive; an attempted reconciliation started a second. Both were stopped, and
   the new run-root process lock prevents recurrence.
@@ -280,6 +287,8 @@ any research-use credit; the 27 login-wall packets are excluded because they
 contain no usable thread content; the first G002 retry-start time
 was reconstructed from runner timing rather than independently observed; the
 process lock held throughout the authenticated continuation but has not yet
-been proven in a second clean dogfood; and cold-start enforcement covers the bound
-profile-aware Google/TikTok routes plus an explicit endpoint launcher, not every
-historical Chrome consumer in the repository.
+been proven in a second clean dogfood; and cold-start enforcement covers only
+the explicit endpoint launcher and the profile-aware Google persistent-fallback
+route. The TikTok live-batch route accepts `--session-profile` but still only
+reuses an already-live endpoint, so it is not cold-start-enforced, and neither
+is any other historical Chrome consumer in the repository.
