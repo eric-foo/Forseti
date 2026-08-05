@@ -208,13 +208,31 @@ The agent must not drag or solve the puzzle, and any manual owner action is
 source-access intervention rather than clean capture.
 
 The session profile may select the retained Chrome CDP backend. In that case the
-live runner checks that the retained browser profile is nonempty and selects
-exactly one usable loopback CDP endpoint whose root Chrome process was launched
-with that profile path. A different live Chrome or CloakBrowser endpoint does not
-qualify. The runner then passes the bound engine into the same sanitized staging
-and packet-admission path. Do not add
+session-profile runner owns cold start: it checks that the retained browser
+profile is nonempty, reuses exactly one usable loopback CDP endpoint whose root
+Chrome process was launched with that profile path, or launches that profile in
+a visible Chrome window with the requested loopback endpoint and proves the
+same binding before navigation. Do not prompt the owner to launch Chrome first.
+A different live Chrome or CloakBrowser endpoint does not qualify. If the exact
+retained profile is already open without CDP, the harness stops with
+`BLOCKED_RETAINED_PROFILE_OPEN_WITHOUT_CDP`; it never closes operator Chrome.
+The runner then passes the bound engine into the same sanitized staging and
+packet-admission path. Do not add
 `--allow-diagnostic-browser-backend`; that flag is for manually selected
 diagnostic backends, not for a validated retained-session profile.
+
+For an endpoint-oriented runner that cannot yet accept `--session-profile`, run
+the bounded launcher first and consume only its sanitized loopback endpoint:
+
+```powershell
+python runners/ensure_source_capture_retained_chrome.py `
+  --session-profile "chowdakr_sg_tiktok" `
+  --cdp-port 9223
+```
+
+The launcher never navigates an existing tab, reads profile contents, closes a
+browser, or solves a challenge. A visible CAPTCHA remains open and triggers the
+route's owner-handoff behavior.
 
 Before implementing or revising a live-browser route whose correctness depends
 on a new or changed UI transition (selector, control, navigation mode, or
