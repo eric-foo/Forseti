@@ -26,6 +26,7 @@ open_next:
   - forseti/product/spines/capture/core/source_families/retail_pdp/fragrance_purchase_review_widget_expansion_probe_v0.md
   - forseti/product/spines/capture/core/source_families/retail_pdp/fragrance_purchase_review_focused_coverage_mgt_v0.md
   - forseti/product/spines/capture/core/source_families/retail_pdp/fragrance_purchase_review_rendered_companion_probe_v0.md
+  - forseti/product/spines/capture/core/source_families/retail_pdp/sokoglam_okendo_retail_review_capture_recon_v0.md
   - forseti/product/spines/data_lake/README.md
   - docs/workflows/data_capture_spine_consolidation_map_v0.md
 ```
@@ -50,6 +51,7 @@ cross-pointer here and in the Scanning family entrypoint.
 | Review-corpus breadth | `retailer_information_extraction_standard_v0.md`; `run_revolve_review_corpus_completion.py`; `source_capture/revolve_review_corpus_completion.py` | After baseline PDP coverage, bind every listing to provider tenant/store plus collection context, collapse only proven shared corpora, and acquire one bounded onboarding window or typed terminal outcome for every distinct corpus. The REVOLVE implementation uses Yotpo `Most Recent`, the shared 30-day/30-row onboarding bound, native-ID accounting, and no environment proxy. Complete bounded acquisition does not imply a full historical corpus or require interpretation of every row. |
 | Retail/PDP Silver | `retail_pdp_silver_producer_contract_v0.md`; `run_retail_pdp_silver_producer.py`; `source_capture/retail_pdp_silver.py` | Cleaning-owned source anchors, retailer-local identity, and source-visible offer/review observations only. |
 | Fragrance purchase-review row capture | `fragrance_purchase_review_*` docs in this folder; `run_fragrance_review_coverage.py`; `run_fragrance_review_discovery.py`; `run_fragrance_review_lake_packet.py`; `forseti-harness/source_capture/fragrance_review_lake.py` | Retailer review-positive PDP discovery, rendered/widget companion preservation, focused coverage, and preserved-body lake tee boundaries. |
+| Soko Glam / Okendo fixture recon | `sokoglam_okendo_retail_review_capture_recon_v0.md` | Bounded direct-HTTP route proof for the public Dieux collection's six tested Okendo-backed PDPs; not Soko Glam-, Okendo-, brand-, or template-wide reliability. |
 | Data Lake authority | `forseti/product/spines/data_lake/README.md` -> `authority/` | Raw admission, path grammar, derived layout, and Silver semantics. The family index does not own them. |
 
 ## Portfolio Breadth Composition
