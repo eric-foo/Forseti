@@ -188,18 +188,27 @@ frame before any drafting.
     `schema_version` field and the first-run filing obligation — there is
     deliberately no speculative schema to conform to.
 12. **Defense tiers and cap.** The memorandum classifies every assessed axis
-    into exactly three tiers, and the default is the middle one:
-    - *Attack candidates* — behavior-backed weaknesses.
-    - *Contested ground* — the default for everything else, including
-      above-average performance. Compete on merits; no warning label. Most
-      axes belong here.
-    - *Defended — capped at the one or two strongest.* An axis enters this
-      tier only with top-tier proof: repeat-purchase or recommendation
-      *behavior* (never adjectives alone), consistent across independent
-      channels, and surviving the current corrected counterweight (after any
-      re-derivation of outcome codings). If more than two axes clear the bar,
-      the memo names only the two strongest and places the rest in contested
-      ground. Above-average is never, by itself, "do not attack."
+    into exactly one of three tiers. Start every axis in the middle tier and
+    move it only when it satisfies one of the other definitions:
+    - *Attack candidates* — behavior-backed weaknesses whose negative reading
+      remains decision-bearing after Rule 1's same-product defended-strength
+      penalty. Adjective-only or merely below-average performance does not
+      qualify.
+    - *Contested ground* — the final tier for everything not moved to attack
+      or defended, including mixed evidence and above-average performance.
+      Compete on merits; no warning label. Most axes belong here.
+    - *Defended — zero, one, or two strongest only.* Eligibility requires a
+      positive-side Rule 6 strong claim: documented positive-choice behavior
+      such as repeat purchase or a concrete recommendation act (never ratings
+      or adjectives alone), consistent across independent channel types under
+      Rule 7. That reading must remain the stronger behavior-backed reading
+      after same-axis negative behavior evidence and any corrected or
+      re-derived outcome codings are applied. Rank every eligible axis by the
+      strength of that evidence, label at most two as defended even when more
+      are tied, and leave every unselected qualifier in contested ground.
+    In a challenger memorandum, the do-not-attack list is exactly the defended
+    tier; it is empty when no axis qualifies. Above-average performance is
+    never, by itself, "do not attack."
     The cap forces ranking instead of thresholding; it exists because
     positive-counterweight evidence has empirically inflated (p11r7 semantic
     review) and because threshold-thinking over-shrinks the attack surface.
