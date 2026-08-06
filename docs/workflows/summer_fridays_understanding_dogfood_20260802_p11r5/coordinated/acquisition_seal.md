@@ -489,7 +489,7 @@ phase_acquisition_seal:
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/evidence_depth_ledger.json
-    sha256: 04ab8afedec9159789af6ae993b88ccec83f0eae6480cf5c95ed0e1744901536
+    sha256: 8d6741eada70d127f161c7395959e5ba727f3314f873da051f8a1a5dd0d0f9b5
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -506,7 +506,7 @@ phase_acquisition_seal:
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/evidence_depth_ledger.json
-      sha256: 04ab8afedec9159789af6ae993b88ccec83f0eae6480cf5c95ed0e1744901536
+      sha256: 8d6741eada70d127f161c7395959e5ba727f3314f873da051f8a1a5dd0d0f9b5
       invalid_if:
       - artifact hash changes
       - axis support or retailer coding changes
@@ -520,3 +520,13 @@ ledger and coding artifact. This record declares `SEALED_READY_FOR_DELIVER`
 only for a separately commissioned bounded qualitative Deliver. It does not
 start Deliver and does not authorize prevalence, medical, or market-census
 claims.
+
+## Seal re-cut 2026-08-06 (shared retailer-coding correction)
+
+The ledger pin was re-cut after the 2026-08-06 confirming re-check (p11r7
+remediation chain, finding AR-04) removed two false axis bindings from the
+shared `retailer_product_axis_coding.json` (Sephora reaction +41 -> +40,
+Revolve hydration +5 -> +4). This ledger's recomputed retailer incidence and
+its retailer-coding pin were updated to match; nothing else in this
+historical run is amended. Adjudication record:
+`docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/p11r7_choice_outcome_rederivation_disposition_v0.md`.
