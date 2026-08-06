@@ -25,6 +25,14 @@ stale_if:
     method section superseding the 2026-08-05 lessons.
 ```
 
+> **COMPLETED (2026-08-06, same lane):** this commission produced its return.
+> The browser-route method is banked as the Google Trends recipe card in
+> `forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md`
+> and the capture-semantics facts in
+> `forseti/product/spines/capture/core/demand_durability_indicators/search_interest/demand_durability_indicator_search_interest_capture_profile_v0.md`
+> ("Observed Source Facts — Google Trends Browser Route"). Retained for
+> provenance; do not re-execute.
+
 **Goal:** future Trends pulls should succeed in under an hour by following a
 documented method, not by rediscovering quota behavior.
 **Done looks like:** the owning capture sources carry the browser-route method
