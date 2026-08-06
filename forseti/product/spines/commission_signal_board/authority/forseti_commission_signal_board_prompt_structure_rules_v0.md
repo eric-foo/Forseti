@@ -1048,9 +1048,31 @@ Owner decision (2026-08-06): every future broad consumer-brand Phase A run
 includes one bounded category-benchmark search-interest read, so Deliver can
 separate brand-specific attention decline from category-wide decline instead
 of assuming the difference. Shape: one one-shot pull in the run's primary geo
-plus a worldwide check, 5-year window, comparing the subject brand term
-against the head terms of each product category the subject competes in
-(category terms derived from the run's product-axis inventory, not invented).
+plus a worldwide check, 5-year window, **web-search property**, comparing the
+subject brand term against the head terms of each product category the
+subject competes in.
+
+Category terms must be bound from the run's own artifacts before capture; this
+card does not authorize the operator to coin a head term. In the run's
+`coordinated/` directory, use the acquisition record's product-specific search
+coverage rows for hero and secondary product names, `community_axis_coding.json`
+`product_context` values when present, and
+`evidence_depth_ledger.json` `product_axes[].decision_usefulness` for named
+alternatives and the product conditions they serve. The hash-pinned
+`consumer_brand_axis_inventory.json` `axes[]` is a customer pain/delight-axis
+inventory, not a product or category-term source.
+
+Before the pull, record in the run commission or capture handoff a
+term-derivation table with product family, exact candidate term, the source
+phrase that supports it, and artifact locator. A term is usable only when that
+exact generic category phrase appears in a run artifact or the run's explicit
+commission binds it; a product name or alternative brand name alone is not
+permission to invent an adjacent synonym. If any material product family lacks
+a bound head term, record the read as `unresolved — category terms unbound` and
+do not pull. The founding commission bound lip balm / lip mask / lip butter /
+lip oil and skin tint / tinted sunscreen / tinted moisturizer; those examples
+are not a reusable derivation rule.
+
 Record the verdict explicitly against this decision rule: subject curve
 declining while its category curves rise or hold → brand-specific decline;
 category curves deflating alongside the subject → category-wide decline;
@@ -1066,9 +1088,18 @@ follow
 values are the source's 0–100 relative index only (no sales, share,
 prevalence, or population claims; below-threshold rows use the exact phrase
 "below the Google Trends reporting threshold under the recorded geo/window").
-Shopping-property purchase-leaning checks are not relied upon for this read
-until a run demonstrates above-threshold coverage (2026-08-06 outcome:
+Shopping-property purchase-leaning checks are not part of this read (it is
+web-search property, above) and are not relied upon until a run demonstrates
+above-threshold coverage (2026-08-06 outcome:
 inconclusive-below-threshold).
+
+Before capture, the run commission or term-derivation table must bind one exact
+subject-plus-hero-product query as the anchor and cite the source product name;
+the operator does not choose it ad hoc. Carry that exact query in every batch
+so cross-batch comparison is bridgeable. If it is unbound, record the read as
+`unresolved — anchor unbound` and do not pull. The founding anchor was "summer
+fridays lip butter balm"; it sat near the reporting threshold against category
+head terms, so the resulting bridge was weak.
 
 ## Graph-Light Contract
 
