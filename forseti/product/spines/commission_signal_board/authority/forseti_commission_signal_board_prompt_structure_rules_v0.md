@@ -611,12 +611,17 @@ type, a campaign object contract, or a coordination/manufactured-demand
 judgment, which the data-lake Silver Vault contract reserves for
 Gold/Judgment.
 
+The route-accounting row is required and material. A passing seal requires its
+planned integration job set to be fully completed, not merely named alongside
+a completed-looking view block.
+
 Each view unit carries: `unit_id`; `source_role` from
 `owned_post | paid_ad | creator_authored | audience_comment | retailer_review
 | retailer_qa | community_post` — creator-authored content and audience or
 customer evidence never merge into one role, and a post's engagement never
 transfers to its comments; publisher/creator/account identity; the brand
-binding plus product/SKU and claim bindings where observed; source surface
+binding plus product/SKU and claim bindings as string lists (empty when none
+were observed); source surface
 and raw source references; `published_at`, `observed_at`, and `captured_at`
 (`captured_at` required; unknown source timestamps stay null, never
 invented); `relationship_posture` from
@@ -637,7 +642,8 @@ become evidence weight.
 Clusters: do not force a durable `campaign_id` that public evidence cannot
 establish. A message/episode cluster is `basis: direct` only when every
 member unit's linkage posture is `direct`; otherwise it is `basis: inferred`
-and must carry explicit provenance and a reversal condition.
+and must carry explicit provenance and a reversal condition. Each cluster's
+member list contains unique unit IDs.
 
 The integrator may emit targeted capture requests for exact posts, ads,
 landing pages, or dates that would resolve a material link; each request is
@@ -743,7 +749,8 @@ no new schema for terminology alone:
 - two observations with stable retailer/product/market/scope identity —
   stable retailer-local product identity plus confirmed storefront, currency,
   and variant pins under the retail-PDP capture authorities — may derive a
-  `retailer_state_change` carrying old and new evidence references;
+  `retailer_state_change` carrying distinct old and new evidence references
+  plus a non-empty change summary;
 - no prior comparable observation = `movement_unresolved_baseline_only`;
 - stockout, review velocity, assortment presence, and promotion remain
   proxies, never sales or productivity;
@@ -766,11 +773,17 @@ linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
 per-material-candidate product/franchise role, source-local observed-position
 or explicit-gap accounting, and separately sourced retailer-review and
-Reddit/community lane evidence; verification triggers and terminal statuses; and the
-two-observation movement rule. A seal sealed before route versioning began
+Reddit/community lane evidence; verification triggers and terminal statuses;
+and distinct old/new retailer-observation references plus a non-empty change
+summary. Stable retailer/product/market/scope comparability remains
+evidence-backed judgment over the cited CO2 observations; the validator does
+not prove it from opaque reference strings. A seal sealed before route
+versioning began
 (2026-08-07) has no stamped version and is audited with
 `--allow-preversion-route`; recording `1.0.0` retrospectively never claims it
-was historically stamped.
+was historically stamped. A seal stamped with a known older route version (a
+recorded route retention) is likewise audit-only under the same switch and
+never satisfies the current route contract.
 
 ## Company Competitive-Intelligence Extension
 

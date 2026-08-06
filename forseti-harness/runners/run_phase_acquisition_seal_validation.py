@@ -216,6 +216,10 @@ MANDATORY_ROUTE_PHASES = {
     "reddit_weekly_lake": "co3",
     "reddit_community_scout": "co3",
     "serp_phase2": "serp_phase2",
+    # Required only when the seal records route version 1.1.0 or later; it
+    # joins the required set via the conditional-route mechanism, not
+    # MANDATORY_ROUTE_IDS.
+    "campaign_evidence_integration": "campaign_integration",
 }
 # Understanding Acquire & Seal route versioning (owning authority: CSB
 # playbook `understanding_acquire_seal_route`). Versioning started
@@ -225,7 +229,6 @@ UNDERSTANDING_ROUTE_VERSIONS = {"1.0.0", "1.1.0"}
 CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.1.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 _CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
-_CAMPAIGN_INTEGRATION_PHASE = "campaign_integration"
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -351,6 +354,18 @@ def validate_phase_acquisition_seal(
     conditional_routes = _validate_capability_preflight(
         seal, valid_pass=valid_pass, findings=findings
     )
+    route_block = seal.get("understanding_route")
+    if (
+        schema_version == SEAL_VERSION
+        and isinstance(route_block, dict)
+        and route_block.get("route_version")
+        == CURRENT_UNDERSTANDING_ROUTE_VERSION
+    ):
+        # Under route 1.1.0 the campaign-evidence integration job joins the
+        # required route set with full mandatory-route accounting semantics.
+        conditional_routes = conditional_routes | {
+            _CAMPAIGN_INTEGRATION_ROUTE_ID
+        }
     _validate_specialist_returns(
         seal, repo_root=repo_root, findings=findings
     )
@@ -3773,9 +3788,31 @@ def _validate_understanding_route(
         return
     if version != CURRENT_UNDERSTANDING_ROUTE_VERSION:
         # An older recorded route carries only its own obligations; the
-        # current obligations below must not be back-claimed onto it.
+        # current obligations below must not be back-claimed onto it. Like
+        # the legacy seal and ledger switches, reading such a seal is an
+        # explicit historical audit, never a flag-free current-contract pass.
+        if not allow_preversion_route:
+            findings.append(
+                "noncurrent_route_version_requires_explicit_historical_audit"
+            )
         return
-    _validate_campaign_integration_route_row(seal, findings=findings)
+    rows = seal.get("route_job_accounting")
+    if isinstance(rows, list):
+        campaign_row = next(
+            (
+                item
+                for item in rows
+                if isinstance(item, dict)
+                and item.get("route_id") == _CAMPAIGN_INTEGRATION_ROUTE_ID
+            ),
+            None,
+        )
+        # Presence, phase, required-flag, and completion accounting flow
+        # through the mandatory-route machinery via conditional_routes; the
+        # integration row must additionally be material so blocked jobs
+        # cannot ride a non-material waiver into a passing seal.
+        if campaign_row is not None and campaign_row.get("material") is not True:
+            findings.append("campaign_integration_route_not_material")
     _validate_comparator_closure(
         route.get("comparator_closure"),
         repo_root=repo_root,
@@ -3800,31 +3837,29 @@ def _validate_understanding_route(
     )
 
 
-def _validate_campaign_integration_route_row(
-    seal: Mapping[str, Any], *, findings: list[str]
-) -> None:
-    rows = seal.get("route_job_accounting")
-    if not isinstance(rows, list):
-        return  # missing_route_job_accounting already reported
-    row = next(
-        (
-            item
-            for item in rows
-            if isinstance(item, dict)
-            and item.get("route_id") == _CAMPAIGN_INTEGRATION_ROUTE_ID
-        ),
-        None,
-    )
-    if row is None:
-        findings.append("missing_campaign_integration_route_accounting")
-        return
-    if row.get("phase") != _CAMPAIGN_INTEGRATION_PHASE:
-        findings.append("campaign_integration_phase_mismatch")
-    if row.get("required") is not True:
-        findings.append("campaign_integration_route_not_required")
-    planned = row.get("planned_job_ids")
-    if not isinstance(planned, list) or not planned:
-        findings.append("campaign_integration_route_has_no_accounting_job")
+def _forbidden_synthetic_keys(
+    value: Any, *, exempt: frozenset[str] = frozenset()
+) -> set[str]:
+    """Recursively collect forbidden synthetic-conclusion field names.
+
+    ``exempt`` names are permitted at the top level of ``value`` only (the
+    source-local ``rank`` inside one observed position); nested shapes never
+    inherit the exemption, so a renested rank/share field cannot bypass the
+    source-local limitation.
+    """
+    found: set[str] = set()
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            if (
+                key in _COMPARATOR_FORBIDDEN_SYNTHETIC_FIELDS
+                and key not in exempt
+            ):
+                found.add(key)
+            found |= _forbidden_synthetic_keys(nested)
+    elif isinstance(value, list):
+        for item in value:
+            found |= _forbidden_synthetic_keys(item)
+    return found
 
 
 def _validate_comparator_closure(
@@ -3857,11 +3892,18 @@ def _validate_comparator_closure(
             code=code,
             findings=findings,
         )
+    raw_frame_ids = closure.get("frame_candidate_ids")
     frame_ids = _string_set(
-        closure.get("frame_candidate_ids"),
+        raw_frame_ids,
         code="invalid_comparator_frame_candidate_ids",
         findings=findings,
     )
+    if (
+        isinstance(raw_frame_ids, list)
+        and all(isinstance(item, str) for item in raw_frame_ids)
+        and len(raw_frame_ids) != len(frame_ids)
+    ):
+        findings.append("duplicate_comparator_frame_candidate_ids")
     candidates = closure.get("candidates")
     if not isinstance(candidates, list):
         findings.append("invalid_comparator_candidates")
@@ -3915,16 +3957,32 @@ def _validate_comparator_closure(
         ceiling = row.get("claim_ceiling")
         if not isinstance(ceiling, str) or not ceiling:
             findings.append(f"missing_comparator_claim_ceiling:{candidate_id}")
-        if material:
-            forbidden_fields = sorted(
-                _COMPARATOR_FORBIDDEN_SYNTHETIC_FIELDS.intersection(row)
+        if (disposition == "promoted" or decision_ready) and not material:
+            # A promoted/decision-ready direct competitor cannot waive the
+            # material-candidate evidence obligations by self-declaring
+            # non-materiality.
+            findings.append(
+                f"promoted_comparator_not_material:{candidate_id}"
             )
-            if forbidden_fields:
-                findings.append(
-                    "forbidden_synthetic_comparator_field:"
-                    + f"{candidate_id}:{','.join(forbidden_fields)}"
-                )
-
+        # The synthetic-conclusion ban is doctrine-wide: it applies to every
+        # candidate row and every nested shape, not only material ones. The
+        # observed_positions subtree is scanned separately with its
+        # source-local rank exemption.
+        forbidden_fields = sorted(
+            _forbidden_synthetic_keys(
+                {
+                    key: nested
+                    for key, nested in row.items()
+                    if key != "observed_positions"
+                }
+            )
+        )
+        if forbidden_fields:
+            findings.append(
+                "forbidden_synthetic_comparator_field:"
+                + f"{candidate_id}:{','.join(forbidden_fields)}"
+            )
+        if material:
             portfolio_role = row.get("portfolio_role")
             if not isinstance(portfolio_role, dict):
                 findings.append(f"missing_comparator_portfolio_role:{candidate_id}")
@@ -4044,6 +4102,18 @@ def _validate_comparator_closure(
                                 "missing_comparator_position_context:"
                                 + f"{candidate_id}:{field}"
                             )
+                    observed_at = position.get("observed_at")
+                    if (
+                        isinstance(observed_at, str)
+                        and observed_at
+                        and _parse_iso_datetime(observed_at) is None
+                    ):
+                        # A malformed observation time must not earn
+                        # source-local position credit.
+                        findings.append(
+                            "invalid_comparator_position_observed_at:"
+                            + candidate_id
+                        )
                     position_refs = position.get("evidence_refs")
                     if (
                         not isinstance(position_refs, list)
@@ -4079,13 +4149,9 @@ def _validate_comparator_closure(
                             f"comparator_position_without_rank_or_label:{candidate_id}"
                         )
                     forbidden_position_fields = sorted(
-                        {
-                            "overall_rank",
-                            "sales_rank",
-                            "market_share",
-                            "sentiment_score",
-                            "reddit_sentiment",
-                        }.intersection(position)
+                        _forbidden_synthetic_keys(
+                            position, exempt=frozenset({"rank"})
+                        )
                     )
                     if forbidden_position_fields:
                         findings.append(
@@ -4279,6 +4345,30 @@ def _validate_campaign_view(
             value = row.get(key)
             if not isinstance(value, str) or not value:
                 findings.append(f"missing_campaign_unit_{code}:{unit_id}")
+        for key in ("published_at", "observed_at"):
+            value = row.get(key)
+            if value is None:
+                # Unknown source timestamps stay null, never invented.
+                continue
+            if (
+                not isinstance(value, str)
+                or not value
+                or _parse_iso_datetime(value) is None
+            ):
+                findings.append(f"invalid_campaign_unit_{key}:{unit_id}")
+        captured_at = row.get("captured_at")
+        if (
+            isinstance(captured_at, str)
+            and captured_at
+            and _parse_iso_datetime(captured_at) is None
+        ):
+            findings.append(f"invalid_campaign_unit_captured_at:{unit_id}")
+        for key in ("product_bindings", "claim_bindings"):
+            bindings = row.get(key)
+            if not isinstance(bindings, list) or any(
+                not isinstance(item, str) or not item for item in bindings
+            ):
+                findings.append(f"invalid_campaign_unit_{key}:{unit_id}")
         refs = row.get("source_refs")
         if not isinstance(refs, list) or not refs or any(
             not isinstance(item, str) or not item for item in refs
@@ -4335,6 +4425,8 @@ def _validate_campaign_view(
         ):
             findings.append(f"invalid_campaign_cluster_members:{cluster_id}")
             members = []
+        elif len(members) != len(set(members)):
+            findings.append(f"duplicate_campaign_cluster_member:{cluster_id}")
         unresolved = [item for item in members if item not in unit_ids]
         if unresolved:
             findings.append(f"unresolved_campaign_cluster_member:{cluster_id}")
@@ -4350,7 +4442,7 @@ def _validate_campaign_view(
                 findings.append(
                     f"campaign_cluster_overstated_linkage:{cluster_id}"
                 )
-        else:
+        elif basis == "inferred":
             for key in ("provenance", "reversal_condition"):
                 value = cluster.get(key)
                 if not isinstance(value, str) or not value:
@@ -4480,8 +4572,16 @@ def _validate_retailer_state_accounting(
                 findings.append(
                     f"retailer_state_change_without_two_observations:{claim_id}"
                 )
+            change_summary = row.get("change_summary")
+            if not isinstance(change_summary, str) or not change_summary:
+                findings.append(
+                    f"retailer_state_change_without_summary:{claim_id}"
+                )
         else:
-            if prior_ref or row.get("change_summary"):
+            if prior_ref not in (None, "") or row.get("change_summary") not in (
+                None,
+                "",
+            ):
                 findings.append(
                     f"movement_claim_from_single_snapshot:{claim_id}"
                 )
@@ -4563,8 +4663,9 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help=(
             "Audit a seal sealed before Understanding route versioning began "
-            "(2026-08-07). Such seals carry no stamped route version; this "
-            "switch never satisfies the current route contract."
+            "(2026-08-07) - such seals carry no stamped route version - or a "
+            "seal stamped with a known older route version. This switch "
+            "never satisfies the current route contract."
         ),
     )
     return parser

@@ -3688,13 +3688,31 @@ def test_unknown_route_version_is_invalid(tmp_path: Path) -> None:
     assert "invalid_understanding_route_version" in _validate(tmp_path, seal)
 
 
-def test_older_recorded_route_carries_no_current_obligations(
+def test_stamped_older_route_requires_explicit_historical_audit(
     tmp_path: Path,
 ) -> None:
     seal = _blocked_seal(tmp_path)
     seal["understanding_route"] = {"route_version": "1.0.0"}
 
-    assert _validate(tmp_path, seal) == []
+    assert (
+        "noncurrent_route_version_requires_explicit_historical_audit"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_audited_older_route_carries_no_current_obligations(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"] = {"route_version": "1.0.0"}
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert findings == []
 
 
 def test_current_route_requires_campaign_integration_accounting(
@@ -3707,8 +3725,9 @@ def test_current_route_requires_campaign_integration_accounting(
         if row["route_id"] != "campaign_evidence_integration"
     ]
 
-    assert "missing_campaign_integration_route_accounting" in _validate(
-        tmp_path, seal
+    assert (
+        "missing_required_route_accounting:campaign_evidence_integration"
+        in _validate(tmp_path, seal)
     )
 
 
@@ -3721,7 +3740,10 @@ def test_campaign_integration_route_phase_is_bound(tmp_path: Path) -> None:
     )
     row["phase"] = "co1"
 
-    assert "campaign_integration_phase_mismatch" in _validate(tmp_path, seal)
+    assert (
+        "route_phase_mismatch:campaign_evidence_integration:"
+        "campaign_integration" in _validate(tmp_path, seal)
+    )
 
 
 def test_comparator_candidate_cannot_silently_disappear(
@@ -4059,5 +4081,199 @@ def test_single_snapshot_cannot_emit_movement(tmp_path: Path) -> None:
     snapshot["change_summary"] = "stock trend inferred from one observation"
 
     assert "movement_claim_from_single_snapshot:RSA-001" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_passing_seal_cannot_carry_unrun_campaign_integration_job(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    row = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "campaign_evidence_integration"
+    )
+    row["completed_job_ids"] = []
+    row["completed_count"] = 0
+    row["unrun_job_ids"] = ["CEI-001"]
+    row["unrun_count"] = 1
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert (
+        "passing_mandatory_route_has_unrun_jobs:campaign_evidence_integration"
+        in findings
+    )
+
+
+def test_nonmaterial_candidate_cannot_carry_synthetic_rank(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    closure = seal["understanding_route"]["comparator_closure"]
+    rejected = next(
+        row
+        for row in closure["candidates"]
+        if row["candidate_id"] == "cand-generic"
+    )
+    assert rejected["material"] is False
+    rejected["sales_rank"] = 7
+
+    assert (
+        "forbidden_synthetic_comparator_field:cand-generic:sales_rank"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_nested_synthetic_comparator_field_is_forbidden(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["portfolio_role"]["market_share"] = "12% of lip category"
+
+    assert (
+        "forbidden_synthetic_comparator_field:cand-elf:market_share"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_nested_position_rank_field_is_forbidden_outside_top_level(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["observed_positions"][0]["context"] = {"rank": 1}
+
+    assert (
+        "forbidden_synthetic_comparator_position_field:cand-elf:rank"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_promoted_candidate_cannot_waive_materiality(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["material"] = False
+
+    assert "promoted_comparator_not_material:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_malformed_position_observed_at_gets_no_credit(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["observed_positions"][0]["observed_at"] = "sometime last week"
+
+    assert "invalid_comparator_position_observed_at:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_malformed_campaign_unit_captured_at_is_invalid(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        unit = next(
+            row for row in view["units"] if row["unit_id"] == "cv-owned-1"
+        )
+        unit["captured_at"] = "early August"
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert "invalid_campaign_unit_captured_at:cv-owned-1" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_malformed_campaign_unit_published_at_is_invalid(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        unit = next(
+            row for row in view["units"] if row["unit_id"] == "cv-owned-1"
+        )
+        unit["published_at"] = "recently"
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert "invalid_campaign_unit_published_at:cv-owned-1" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_campaign_integration_route_must_be_material(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    row = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "campaign_evidence_integration"
+    )
+    row["material"] = False
+
+    assert "campaign_integration_route_not_material" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_comparator_frame_candidate_ids_must_be_unique(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    closure = seal["understanding_route"]["comparator_closure"]
+    closure["frame_candidate_ids"].append(closure["frame_candidate_ids"][0])
+
+    assert "duplicate_comparator_frame_candidate_ids" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_campaign_unit_bindings_require_string_lists(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        unit = next(
+            row for row in view["units"] if row["unit_id"] == "cv-owned-1"
+        )
+        unit["product_bindings"] = True
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert "invalid_campaign_unit_product_bindings:cv-owned-1" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_campaign_cluster_member_ids_must_be_unique(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        cluster = next(
+            row
+            for row in view["clusters"]
+            if row["cluster_id"] == "cl-direct-1"
+        )
+        cluster["member_unit_ids"].append(cluster["member_unit_ids"][0])
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert "duplicate_campaign_cluster_member:cl-direct-1" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_retailer_state_change_requires_change_summary(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    claims = seal["understanding_route"]["retailer_state_accounting"]["claims"]
+    change = next(row for row in claims if row["claim_id"] == "RSA-002")
+    del change["change_summary"]
+
+    assert "retailer_state_change_without_summary:RSA-002" in _validate(
         tmp_path, seal
     )

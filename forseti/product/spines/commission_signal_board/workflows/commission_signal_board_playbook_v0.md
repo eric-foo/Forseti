@@ -715,7 +715,10 @@ with exact-identity binding for promoted candidates and
 per-material-candidate lane evidence, verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
-and is audited with `--allow-preversion-route`.
+and is audited with `--allow-preversion-route`. A seal stamped with a known
+older route version (a recorded route retention) is likewise
+historical-audit-only under the same switch; neither case satisfies the
+current route contract.
 
 The v3 ledger uses schema `understanding_evidence_depth_v1` and profile
 `broad_company_understanding_v1`. It repeats the seal's subject and cycle ID;
@@ -843,7 +846,9 @@ Contracts"). Operating rules:
   Phase 2. It joins existing CO1 owned/ad, CO3 creator/audience, and CO2
   identity evidence into one hash-pinned `campaign_evidence_view_v1` artifact
   and may emit targeted capture requests that run as ordinary jobs in the
-  owning routes and are terminally dispositioned before a passing seal. It is
+  owning routes and are terminally dispositioned before a passing seal. Its
+  route-accounting row is required and material; a passing seal requires every
+  planned integration job to be completed. Campaign integration is
   acquisition-control synthesis: no standing `CO4`, no creator crawl, no
   standing monitor, no spend/conversion inference, no market conclusion, and
   no merging of creator-authored and audience/customer evidence roles.
@@ -887,7 +892,10 @@ Contracts"). Operating rules:
 - **Retailer state and movement**: one comparable CO2 observation is a
   `retailer_state_snapshot`; a `retailer_state_change` requires two
   observations with stable retailer/product/market/scope identity and old/new
-  evidence references; otherwise `movement_unresolved_baseline_only`. Proxies
+  evidence references plus a non-empty change summary; otherwise
+  `movement_unresolved_baseline_only`. The validator proves distinct reference
+  and summary shape; stable comparability remains an evidence-backed review of
+  the cited CO2 observations. Proxies
   (stockout, review velocity, assortment, promotion) never become sales or
   productivity, and refresh is event-commissioned, never a standing monitor.
 
