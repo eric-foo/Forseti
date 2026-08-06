@@ -59,7 +59,10 @@ Cycle**. The phases are **Understanding** followed by **Deliver**. `Problem
 Framing` is the Deliver phase's historical name (`Problem` was its informal
 shorthand); problem framing survives as the Deliver phase's first synthesis
 step. Do not use bare `Phase 1` / `Phase 2` language for a future commission.
-Historical artifacts keep their original names and phase labels.
+Reading rule for this document set: a bare `Phase 2` always denotes the
+internal SERP Phase 2 lane, never the Deliver phase; `Phase A` appears only in
+historical names and glosses, never as a live phase. Historical artifacts keep
+their original names and phase labels.
 
 Each phase has two possible operator/model turns. Scope does not auto-expand:
 an owner instruction that says **Understanding** or uses historical **Phase A**
@@ -382,8 +385,14 @@ This is the default route for company Understanding. The detailed company-core,
 retail-breadth, and customer/community role mapping below is the current US
 consumer-beauty mapping. A materially different subject may rebind the
 specialists' subject-specific jobs instead of pretending the selected-retailer
-role applies, but it does not skip the Phase 1 -> fan-out -> Phase 2 ordering or
-the mandatory customer/community job.
+role applies, but it does not skip the SERP Phase 1 -> fan-out -> SERP Phase 2
+ordering or the mandatory customer/community job. Rebinding is a
+commissioning-time decision: the commissioning Chief Architect proposes the
+rebound job set and the owner accepts it in the commission, and the rebound
+route still satisfies the same completion-profile discipline (every material
+information job supported, contradicted, bounded, or honestly blocked). A
+dedicated completion profile for a new subject class is authored only when
+that class recurs, not speculatively.
 
 1. Bind `cycle_id`, `commission_id`, canonical phase, phase-specific question,
    intended consumer/use, scope, and the six outcome signals below.
@@ -596,8 +605,8 @@ job set must equal the disjoint completed, blocked, and unrun sets; counts and
 artifact hashes must match. Hash comparison canonicalizes line endings for
 Markdown, JSON, and YAML artifacts so an unchanged cross-platform checkout
 does not look like content drift; other artifact types remain exact-byte
-checks. A valid empty Phase 2 decision receipt never gives completion credit to
-licensed-but-unrun Phase 2 queries. Resume re-hashes every
+checks. A valid empty SERP Phase 2 decision receipt never gives completion
+credit to licensed-but-unrun SERP Phase 2 queries. Resume re-hashes every
 reusable artifact and runs only pending jobs unless the bound question changes,
 an artifact hash drifts, its source-specific currentness expires, or owning
 authority becomes incompatible.
@@ -650,7 +659,8 @@ present and coherent. Reviewers test the strategic judgment by reading those
 references plus risk-triggered samples; they do not reread the full corpus by
 default. A mismatch expands review only for the affected axis.
 
-At final Phase A closeout, the delegated review-and-patch commission must apply
+At the final broad consumer-brand Understanding Acquire & Seal closeout
+(historically "Phase A"), the delegated review-and-patch commission must apply
 the authority's semantic source check before the seal is accepted for
 synthesis or landed. It reads every decision-bearing reference and two independent spot
 checks per material axis, verifies local subject anchoring, axis/role fit,
@@ -721,9 +731,14 @@ merely because the acquisition seal passes.
 
 Start in fresh context and load the phase acquisition seal, not the accumulated
 capture chat. Verify its identity, canonical phase, bound question/use, seal
-state, route receipts, provenance, and material gaps before synthesis. If the
-gate is blocked or the artifact is incomplete, stop and return to Acquire &
-Seal; do not issue a nominal deliverable.
+state, route receipts, provenance, and material gaps before synthesis. Where
+the completion profile requires a semantic source review (currently the broad
+consumer-brand profile), also verify that a durable semantic-review
+disposition — the adjudicated review return or a dated adjudication note —
+exists and is cited by the synthesis commission; a mechanically passing seal
+without that disposition is a blocked gate for those profiles. If the gate is
+blocked or the artifact is incomplete, stop and return to Acquire & Seal; do
+not issue a nominal deliverable.
 
 The Synthesize turn compresses and communicates the acquired evidence. Its
 succinctness discipline is never grounds to under-acquire during Acquire &
@@ -781,7 +796,12 @@ Deliver phase's governing acquisition gate is the passing Understanding seal
 plus a durable, bounded capture-return artifact for every supplement the
 synthesis consumes; supplements never alter sealed claim ceilings. A
 supplement that would change a sealed claim ceiling requires a full
-Deliver-phase Acquire & Seal with its own phase seal before synthesis.
+Deliver-phase Acquire & Seal with its own phase seal before synthesis; that
+Deliver seal **augments** the Understanding seal — synthesis then requires
+both, the Deliver seal's re-adjudicated ceilings govern the claims it names,
+and every other claim stays under the Understanding ceilings. The supplement
+production chain itself is owned by the Deliver method doc's Supplement Chain
+section.
 
 When both turns are explicitly commissioned, two turns are the normal operating
 budget, not a hard completion cap. A blocked Acquire & Seal remains blocked and
@@ -833,11 +853,14 @@ never numerical weights, bands, caps, or score-optimization instructions.
 
 ## Post-Delivery Adversarial Review Handoff
 
-After a phase deliverable is sealed, commission an independent adversarial
-review against the accepted post-delivery six-dimension rubric and its
-applicable hard caps. The rubric authority is deferred until separately
-adopted; do not reconstruct it from this production contract or create a
-duplicate rubric here.
+This seam is **dormant until the post-delivery six-dimension rubric authority
+is separately adopted**. While dormant, post-delivery review routes through
+the bound review lanes instead — the Deliver method's cold adversarial read
+for decision memoranda, and the ordinary review lanes for other phase
+deliverables — with findings-first output and no numeric rubric return. Once
+the rubric authority is adopted, commission an independent adversarial review
+against it and its applicable hard caps; do not reconstruct the rubric from
+this production contract or create a duplicate rubric here.
 
 The review package must include:
 
@@ -855,8 +878,9 @@ skipped or silently substituted is flagged as rubric gaming rather than scored
 as a clean report. Any resulting numeric cap is applied only by the separately
 adopted post-delivery rubric; no cap value belongs in this production contract.
 
-Return the total number, the six-dimension profile, and all triggered flags or
-caps; never return a lone number. Weights, bands, and caps remain provisional
+Under the adopted rubric, return the total number, the six-dimension profile,
+and all triggered flags or caps; never return a lone number; while the seam is
+dormant no numeric return is required or permitted. Weights, bands, and caps remain provisional
 working evaluation authority, not production instructions or a permanent
 readiness gate unless separately adopted. This handoff defines only the seam
 and required inputs; it does not create the numerical rubric, authorize the

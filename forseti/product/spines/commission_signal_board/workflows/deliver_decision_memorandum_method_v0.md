@@ -48,7 +48,37 @@ New evidence is acquired only through the Deliver phase's bounded Acquire &
 Seal turn — decision-specific, claim-scoped supplements (e.g., a one-shot
 search-interest capture), never a general re-scan. A supplement that would
 change a sealed claim ceiling requires a full Deliver-phase Acquire & Seal
-with its own phase seal before synthesis.
+with its own phase seal before synthesis; that Deliver seal augments the
+Understanding seal — synthesis then requires both, the Deliver seal's
+re-adjudicated ceilings govern the claims it names, and every other claim
+stays under the Understanding ceilings.
+
+## Supplement Chain
+
+Every supplement the memorandum consumes travels this chain; a supplement
+missing any link is not consumable:
+
+1. **Owner authorization** — bounded, current-turn or accepted-handoff, scoped
+   to the decision (recorded in the capture handoff's sourcing-authorization
+   section).
+2. **Capture handoff** — a durable packet under `docs/prompts/handoffs/`,
+   authored under the prompt-orchestration contract, binding query scope,
+   caps, output paths, and claim limits. Capture mechanics resolve through the
+   capture spine's own authority.
+3. **Typed capture return** — a durable return artifact plus machine-readable
+   series in a dated `docs/research/` directory, carrying capture parameters,
+   threshold/null ledger, failure ledger, and its own non-claims section.
+4. **Evidence-input packet** (when the return crosses lanes) — a routing
+   handoff carrying confirm-don't-trust hashes for the return artifacts and a
+   short orientation digest; the return, not the digest, is the evidence of
+   record.
+5. **Synthesis citation** — the memorandum cites the return by
+   repository path and sha256 and stays inside the return's own non-claims.
+
+Worked instances of links 2–5:
+`docs/prompts/handoffs/summer_fridays_search_interest_capture_handoff_20260805_v0.md`,
+`docs/research/summer_fridays_ci_inputs_20260805/search_interest_capture_return.md`,
+`docs/prompts/handoffs/summer_fridays_deliver_search_interest_input_handoff_20260806_v0.md`.
 
 ## Run Sequence
 
@@ -127,9 +157,16 @@ frame before any drafting.
    "what would change this answer" paragraph. No recurring hedge sections.
 9. **Cold adversarial read.** Before any outreach, a fresh-context reader with
    no authoring involvement attacks the memorandum, explicitly hunting grain
-   conflations (Rule 3 violations), claim-ladder violations (Rule 6), and
-   ungrounded product-role assertions (Rule 4). The cold read gates
-   ready-to-show; it never proves value, demand, or willingness to pay.
+   conflations (Rule 3 violations), claim-ladder violations (Rule 6),
+   ungrounded product-role assertions (Rule 4), and — by dereferencing a
+   sample of load-bearing claims to their cited evidence — synthesis-layer
+   misparaphrase (prose that drifts from what the cited evidence says). The
+   read returns a written disposition: findings plus a ready / not-ready
+   verdict, kept with the run outputs. Material findings must be closed and
+   the closure re-checked (by the same or a fresh cold reader) before
+   ready-to-show; an asserted-but-unrecorded cold read does not satisfy this
+   rule. The cold read gates ready-to-show; it never proves value, demand, or
+   willingness to pay.
 10. **Artifact shape.** A concise decision memorandum plus an inspectable
     evidence appendix in which every claim resolves to preserved-source
     locators. No deck (a deck is at most a later derivative for a live buyer's
@@ -141,10 +178,14 @@ frame before any drafting.
     successive runs in one category stack into a cross-brand defection map
     without rework. Each emitted structure carries a `schema_version` field.
     The first run under this method files the schema definition (field names
-    and meanings) beside its outputs; every later run consumes that versioned
-    schema, and any format change bumps the version with a short migration
-    note beside the schema. Emitting a structure that neither matches the
-    current schema version nor bumps it is a defect.
+    and meanings) as `deliver_output_schema_v1.json` beside its own outputs,
+    and its closeout adds a pointer to that file in this method doc's
+    `open_next` in the same work unit — after which this doc names the schema
+    authority and every later run consumes it. A format change bumps the
+    version; version-migration ceremony is deferred until a v2 actually
+    exists. Until the first run lands, this rule binds only the
+    `schema_version` field and the first-run filing obligation — there is
+    deliberately no speculative schema to conform to.
 12. **Slice honesty and closed research.** Axis support computed at portfolio
     grain is re-derived at the anchor-product grain before any slice-level
     claim; a slice that falls below the sealed evidence floor degrades to a

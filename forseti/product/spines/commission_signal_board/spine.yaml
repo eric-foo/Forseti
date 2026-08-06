@@ -30,6 +30,7 @@ intelligence_cycle_contract:
     understanding_synthesize: passing_understanding_phase_seal
     deliver_synthesize: passing_understanding_seal_plus_typed_supplement_capture_returns
     supplement_ceiling_rule: supplement_that_would_change_a_sealed_claim_ceiling_requires_deliver_phase_acquire_and_seal_with_own_seal
+    ceiling_seal_composition: deliver_seal_augments_understanding_seal_both_required; deliver_seal_ceilings_govern_named_claims_only; all_other_claims_stay_under_understanding_ceilings
   company_understanding_acquisition_sequence:
     - define_question_and_validate_commission_board
     - serp_phase1_competitor_scout
