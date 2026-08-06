@@ -41,8 +41,9 @@ permits, and mark every below-threshold term with the exact required phrase.
   return artifact and series file are the evidence of record. Re-verify
   hashes, then fresh-read §1–§10 of the return artifact before any
   Deliver-phase claim.
-- `output_mode`: consumer-defined by the Deliver commission; this packet
-  routes inputs and binds claim limits only.
+- output_mode: `chat-only` — this packet routes evidence inputs and binds
+  claim limits; the receiving Deliver commission binds its own output modes
+  and artifacts.
 - `edit_permission`: `read-only` with respect to everything this packet names.
   The capture artifacts, the sealed Phase A corpus, and its seal are not to be
   edited, reopened, or reinterpreted from this lane.

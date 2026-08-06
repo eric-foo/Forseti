@@ -39,7 +39,7 @@ or sourcing authorization implied.
 - `load_rule`: **confirm-don't-trust** — every load-bearing fact below carries
   a compare target; re-verify before strict or actionable claims. This packet
   orients; it is not authority.
-- `output_mode`: `file-write` — targets are the two owning capture sources in
+- output_mode: `file-write` — targets are the two owning capture sources in
   `open_next` above (update in place; do not create a parallel method doc).
 - `edit_permission`: `docs-write` for those two sources only. No runtime code,
   no new pulls, no skill or overlay edits.
