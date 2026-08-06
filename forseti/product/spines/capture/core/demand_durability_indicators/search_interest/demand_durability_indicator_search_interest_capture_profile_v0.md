@@ -87,6 +87,17 @@ Reading this document does not authorize sourcing, implementation, contract
 hardening, vendor selection, API access, or any runtime. Those decisions are
 owner-gated and out of scope for this profile.
 
+**Bounded per-run exception (owner decision, 2026-08-06):** one one-shot
+category-benchmark search-interest pull per commissioned broad consumer-brand
+Phase A run is authorized as a run input; the requirement, decision rule, and
+claim limits are owned by
+`forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
+("Category-Benchmark Search-Interest Read"). This exception does not source
+the standing series, any cadence, or a vendor, and AR-04 otherwise remains
+open. This profile's limits-visibility obligations (relative-index semantics,
+entity/topic and pull-date pins, threshold discipline) apply to what such a
+pull records.
+
 ---
 
 ## What This Profile Adds (Cited Extension, Not New Authority)
@@ -180,6 +191,31 @@ A search-interest series should declare its intended cadence using the existing
 observation via `capture_time`, and record cadence deviations and gaps as
 visible limitations. Because the source re-normalizes per pull, cadence gaps
 affect not just coverage but re-normalization baseline consistency.
+
+### Observed Source Facts — Google Trends Browser Route (2026-08-05/06 bounded pulls)
+
+The first authorized pulls (Summer Fridays one-shot + addendum) empirically
+confirmed and sharpened three of this profile's obligations for the Google
+Trends web surface. Operational route mechanics are owned by the playbook's
+Google Trends recipe card
+(`forseti/product/spines/capture/core/source_capture_toolbox/source_capture_playbook_v0.md`);
+recorded here are only the capture-semantics facts:
+
+- **`entity_topic_id_pin` is `unavailable_by_source` on this route.** The web
+  endpoints accept freeform query strings only; no stable topic/entity ID was
+  obtainable. Every record in the founding series carries this marker, and
+  cross-pull re-anchoring therefore rests on query-string identity plus the
+  shared anchor term.
+- **Per-pull re-normalization is concrete, not theoretical.** Same-day batches
+  from separate sessions carry distinct normalization peaks; the founding
+  artifacts treat within-batch comparison as primary and cross-batch/-pull
+  comparison as anchor-bridged and approximate.
+- **Property is a first-class capture parameter.** The Shopping property
+  (`froogle`) returns far sparser series than web search, with an apparent
+  trailing ~5–7-week reporting lag (right-truncation) observed 2026-08-06 —
+  trailing Shopping zeros are a fidelity limitation to record, never a decline
+  read. The founding series schema carries a per-record `property` field for
+  this reason.
 
 ### Series-Diff for Re-normalization Detection (Consumed from Lane 1 §Element 3)
 

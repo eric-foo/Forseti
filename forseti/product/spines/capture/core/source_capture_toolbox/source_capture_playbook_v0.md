@@ -509,6 +509,59 @@ adapter shape, access posture, request-rate ceiling, known false-diagnoses}`. Ca
 method stays stable. TikTok is the first *intended* probe target — its card (or NO-GO / PARTIAL /
 CATALOG_GAP) is authored by that probe, not here.
 
+### Recipe card — Google Trends search-interest, browser route (banked 2026-08-06)
+
+Probe-authored card from the 2026-08-05/06 Summer Fridays bounded one-shot pulls (13/13 + 6/6
+COMPLETE). This subsection is a probe-banked catalog amendment; it is outside the original
+de-correlated review's scope. Semantics and limits (relative index, pins, thresholds) are owned by
+`forseti/product/spines/capture/core/demand_durability_indicators/search_interest/demand_durability_indicator_search_interest_capture_profile_v0.md`
+and are not restated here.
+
+- **source:** Google Trends web UI (`trends.google.com`), web-search and Shopping properties.
+- **substrate:** the page's own internal API — `POST /trends/api/explore` mints per-widget tokens
+  (cheap; never rate-limited across ~25 same-day calls); `GET /trends/api/widgetdata/multiline|relatedsearches?req=…&token=…`
+  returns the data (aggressively quota'd; the scarce resource). Responses carry an XSSI prefix
+  (`)]}'`) to strip. Multi-term explores emit indexed related-query widget ids
+  (`RELATED_QUERIES_0..N` with `keywordName`); single-term explores emit unsuffixed ids. Shopping
+  property (`froogle`) rides the same endpoints, token scheme, and quota pool.
+- **route that worked:** embedded-state / internal-API extract via an in-page browser session —
+  homepage-first to establish the session (direct `/trends/explore` navigation without one 429s),
+  then in-page `fetch()` of explore + widgetdata with session cookies, driven by an injected
+  sequential runner.
+- **access posture:** publicly-viewable-but-ToS-restricted; human-rate under the Risk posture.
+  Google stamps `userType: USER_TYPE_SCRAPER` into its own tokens by **IP reputation, not browser
+  environment** — an automation pane, the owner's real signed-in Chrome, and a datacenter VPN
+  egress all received the same flag same-day. Datacenter/VPN ranges (observed: AS60068) are
+  pre-flagged; a residential IP is the meaningful variable, not the browser.
+- **request-rate ceiling (observed 2026-08-05/06, one machine — engineering priors, not stable
+  Google behavior):** a fresh day grants the first 1–2 `widgetdata` pulls instantly, then drip
+  recovery with successes ~20 min–2.5 h apart. 55–75s pacing ran too hot; the working pattern was
+  paced first attempts, one 120–150s-cooloff retry, then escalating patient rounds (7–45 min).
+  One observed case: an owner-instructed 1/min burst landed on round 3 after ~10-min rounds had
+  failed for ~40 min — recovery windows may be short enough for slow polling to miss; single case,
+  not yet method.
+- **content-anchor:** `default.timelineData[].value[i]` per term (weekly points; `isPartial` on the
+  trailing week), keyword order pinned by the paired explore receipt; related panels under
+  `default.rankedList[]`.
+- **extraction paths by surface:** app-embedded browser pane → POST raw bodies to a localhost
+  receiver (works; append-only sha256 manifest). Real Chrome via extension → localhost is gated
+  behind the local-network permission (fetch hangs) and the extension blocks base64 tool returns
+  (exfiltration guard); the working path is bundling all captures into **one** JSON blob-download
+  per session — Chrome silently blocks a tab's second programmatic download until the operator
+  allows multiple downloads.
+- **known false-diagnoses:** an undisplayed automation pane never fires the page's own chart
+  requests (lazy rendering) — absent widget traffic is not a block; `pytrends` 429-on-first-probe
+  is a dead route symptom, not source absence; a mostly-zero Shopping series is threshold sparsity
+  plus an apparent trailing ~5–7-week reporting lag (right-truncation) — never read trailing
+  Shopping zeros as decline; below-threshold rows are threshold artifacts, never "no interest."
+- **provenance:** `docs/research/summer_fridays_ci_inputs_20260805/search_interest_capture_return.md`
+  (§2 receipts, §9 ledger) and
+  `docs/research/summer_fridays_ci_inputs_20260806/search_interest_addendum_return.md` (§7 method
+  lessons); verbatim raw bodies with sha256 manifests at the machine-local raw roots named there.
+- **authorization note:** this card is method, not sourcing authority — Trends pulls run only under
+  a bounded owner authorization (the per-run Phase A category-benchmark class, or an explicit
+  one-shot commission); the standing series remains unsourced (AR-04).
+
 ## Reuse the pin: probe once, then go direct (capture economy)
 
 The banked recipe card / recon-index entry **is the pin**. Once a probe finds the working route for a
@@ -582,7 +635,8 @@ capture loop.
   at human-rate is an engineering question a probe answers.
 - **Rate-limited / commercial / entitled APIs** are entitlement / API-contract routes, not anti-bot
   routes; use your own entitled access, don't defeat the auth.
-- **Recipe cards are not yet authored.** This MVP is the method only.
+- **Recipe cards: one banked.** The Google Trends browser-route card above (2026-08-06) is the
+  first; the tail is otherwise still unauthored.
 
 ## Direction Change Propagation
 
