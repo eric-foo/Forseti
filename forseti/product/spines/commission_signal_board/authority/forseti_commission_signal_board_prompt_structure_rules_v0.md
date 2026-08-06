@@ -114,8 +114,10 @@ canonical phases are:
    shorthand); problem framing survives as the phase's first synthesis step.
 
 Do not commission future work with an unqualified `Phase 1` or `Phase 2` label.
-Historical filenames, reports, handoffs, and receipts retain their original
-phase language because changing it would falsify provenance.
+Reading rule for this document: a bare `Phase 2` always denotes the internal
+SERP Phase 2 lane, never the Deliver phase. Historical filenames, reports,
+handoffs, and receipts retain their original phase language because changing
+it would falsify provenance.
 
 Each phase has two possible operator/model turns, but a phase name does not
 commission both. Within the Forseti Intelligence Cycle, an owner instruction
@@ -181,7 +183,7 @@ preflight; run or validly reuse SERP Phase 1; feed its typed ledger and queues
 into the `CO1`-`CO3` specialist
 fan-out; wait for their terminal returns; run SERP Phase 2 from the combined
 findings; then seal. Reddit/community capture is `CO3` fan-out work, not a
-Phase 2 responsibility. A missing or materially blocked Phase 2 result remains
+SERP Phase 2 responsibility. A missing or materially blocked SERP Phase 2 result remains
 visible in the existing route, receipt, provenance, and gap fields and forces
 the blocked seal state; a non-material typed Phase 2 limitation stays honestly
 recorded without being promoted into a material blocker. The SERP phase
@@ -281,9 +283,13 @@ passing seal. Decision-bearing references must already be valid support
 references for that axis; the validator proves shape and traceability, while
 human review judges whether the synthesis is strategically warranted.
 
-Before a broad consumer-brand Phase A seal is accepted for synthesis or landed,
+Before a broad consumer-brand Understanding Acquire & Seal artifact
+(historically a "Phase A seal") is accepted for synthesis or landed,
 commission the final delegated review-and-patch under the project-owned
-delegated-review convention. The reviewer reads every
+delegated-review convention. This requirement is deliberately bound to the
+broad consumer-brand completion profile, whose citation surface motivated it;
+extending it to another completion profile is an owner decision taken when
+that profile first carries decision-bearing source-native citations. The reviewer reads every
 `decision_bearing_support_ref` in its source-native body and verifies that the
 subject product or brand is locally anchored, the cited body supports the
 assigned axis and role, alternative-product returns/repurchases/preferences are
