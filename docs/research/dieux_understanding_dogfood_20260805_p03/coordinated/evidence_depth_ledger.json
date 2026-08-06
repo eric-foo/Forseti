@@ -1,28 +1,28 @@
 {
-  "schema_version": "understanding_evidence_depth_v4",
-  "profile_id": "broad_consumer_brand_understanding_v3",
+  "schema_version": "understanding_evidence_depth_v5",
+  "profile_id": "broad_consumer_brand_understanding_v4",
   "subject": "Dieux Skin",
   "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
   "artifacts": [
     {
       "artifact_id": "axis_inventory",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/consumer_brand_axis_inventory.json",
-      "sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9"
+      "sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04"
     },
     {
       "artifact_id": "retailer_axis_coding",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/retailer_product_axis_coding.json",
-      "sha256": "8d33d2903bb5be687c76f5f8c990ed52a94223cb6758b3042c4d48642838bcc3"
+      "sha256": "604fbb99aa26fb52349460f9fb8464e5a70fe41afecc40ae3160804ed58152f0"
     },
     {
       "artifact_id": "community_axis_coding",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/community_axis_coding_v4.json",
-      "sha256": "e812ba4a46f790c2ac147fc5660ac36f633bccadfe43383f4042ce5f5539e805"
+      "sha256": "b2ce1b262cf010b5557809b8862089d2a2c18247d6bf6310d05376c748c96153"
     },
     {
       "artifact_id": "native_social_composition",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co1_native_social_floor_composition.json",
-      "sha256": "f04f5ac5ac86ef12a12cbe52310a370bd7895755e12d43de489a2eb733970b7b"
+      "sha256": "3ef8cb30f5c06db9fa925574887e5f0cb625d609e26b18d49e610e510921790b"
     },
     {
       "artifact_id": "co1_terminal",
@@ -843,6 +843,21 @@
       "artifact_id": "frontier_f4_artifact",
       "locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co3\\community_queries\\F4\\manifest.json",
       "sha256": "28ca784c2f6001feab0f6f783fa8af2ba0b6293decd9911139fa85b8ef66fbb9"
+    },
+    {
+      "artifact_id": "material_axis_discovery_audit",
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/material_axis_discovery_audit.json",
+      "sha256": "f7a842bdb52f72381556f723f47b9536acf5375082818c4b9db388a3bb2d8205"
+    },
+    {
+      "artifact_id": "material_axis_probe_community",
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/material_axis_discovery_probe_community.json",
+      "sha256": "e09c3953e428b6c9275c4c0231a71297b8be4af340b1e926e6231900b9e9203a"
+    },
+    {
+      "artifact_id": "material_axis_probe_retailer",
+      "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/material_axis_discovery_probe_retailer.json",
+      "sha256": "744293bc7013c59f0b1ef3517ea2418633e2699a146f84bce7fe96c831a4d54f"
     }
   ],
   "families": {
@@ -972,7 +987,7 @@
         {
           "corpus_id": "sephora_non_incentivized",
           "artifact_id": "retailer_axis_coding",
-          "unique_review_count": 913,
+          "unique_review_count": 915,
           "cross_corpus_duplicate_count": 0,
           "product_context_ids": [
             "P510288",
@@ -2169,7 +2184,7 @@
           "eligible_text_review_count": 913,
           "axis_mention_count": 748,
           "negative_choice_review_count": 54,
-          "positive_choice_review_count": 354,
+          "positive_choice_review_count": 347,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
@@ -2186,7 +2201,7 @@
           "job_id": "P2-A01-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2199,7 +2214,7 @@
           "job_id": "P2-A01-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2209,7 +2224,7 @@
           "job_id": "P2-A01-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2298,7 +2313,7 @@
           "job_id": "P2-A02-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2310,7 +2325,7 @@
           "job_id": "P2-A02-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2320,7 +2335,7 @@
           "job_id": "P2-A02-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2361,8 +2376,8 @@
     },
     {
       "axis_id": "texture_finish_makeup_routine_fit",
-      "label": "Texture, finish, makeup, and routine compatibility",
-      "scope": "Weight, richness, pilling, layering, makeup wear, and day/night or seasonal fit",
+      "label": "Texture, finish, sensory acceptability, makeup, and routine compatibility",
+      "scope": "Weight, richness, pilling, layering, odor or scent acceptability, perceived product integrity, makeup wear, and day/night or seasonal fit",
       "polarity": "mixed",
       "strength": "recurring",
       "disposition": "material",
@@ -2390,17 +2405,17 @@
         {
           "corpus_id": "sephora_non_incentivized",
           "eligible_text_review_count": 913,
-          "axis_mention_count": 343,
-          "negative_choice_review_count": 19,
-          "positive_choice_review_count": 162,
+          "axis_mention_count": 414,
+          "negative_choice_review_count": 37,
+          "positive_choice_review_count": 142,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
           "corpus_id": "soko_glam_verified_window",
           "eligible_text_review_count": 77,
-          "axis_mention_count": 27,
+          "axis_mention_count": 29,
           "negative_choice_review_count": 3,
-          "positive_choice_review_count": 27,
+          "positive_choice_review_count": 26,
           "disclosed_incentivized_axis_mention_count": 0
         }
       ],
@@ -2409,7 +2424,7 @@
           "job_id": "P2-A03-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2421,7 +2436,7 @@
           "job_id": "P2-A03-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2431,7 +2446,7 @@
           "job_id": "P2-A03-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2447,12 +2462,12 @@
       ],
       "decision_usefulness": {
         "status": "source_exhausted_but_weak",
-        "customer_tension": "The same richness that reads as cushioning or luxurious can feel greasy, heavy, occlusive, pill under makeup, or fit only one season or routine slot.",
-        "strongest_counterevidence": "Air Angel and Instant Angel are repeatedly differentiated as lighter and richer internal choices, and favorable accounts describe elegant sunscreen or makeup compatibility.",
-        "competitive_decision": "Treat texture, finish, makeup, and routine compatibility as a bounded qualitative decision input, not a prevalence or superiority claim.",
+        "customer_tension": "The same richness and unfragranced formula that can read as cushioning or gentle can feel greasy, heavy, pill under makeup, or carry a musty, sour, glue-like, or otherwise unacceptable odor that changes use, return, or repurchase behavior.",
+        "strongest_counterevidence": "Some customers describe the formula as neutral or pleasantly unscented, while others explicitly accept a transient odor because the hydration or finish is valuable.",
+        "competitive_decision": "Treat texture, finish, sensory acceptability, makeup, and routine compatibility as a bounded qualitative decision input; distinguish expected unfragranced odor from product-integrity concern without asserting contamination or prevalence.",
         "decision_effects": {
-          "segment_or_condition": "Oily versus dry skin, humid versus cold climates, makeup wearers, sunscreen layering, and day/night routines.",
-          "behavior_or_purchase_consequence": "internal_product_switch, retained_or_repurchased, gave_away, switched_or_replaced",
+          "segment_or_condition": "Oily versus dry skin, humid versus cold climates, makeup wearers, scent-sensitive users, and people distinguishing expected unfragranced odor from suspected spoilage.",
+          "behavior_or_purchase_consequence": "internal_product_switch, retained_or_repurchased, returned_or_refunded, no_future_purchase, stopped_or_discarded, switched_or_replaced",
           "competitor_destination": "Executed texture- or sensory-driven moves in admitted accounts: Dr. Jart Ceramidin (return preference), Dr Sam's, Experiment, Skinfix; Embryolisse and Stratia remain comparison or recommendation mentions only."
         },
         "decision_bearing_support_refs": [
@@ -2464,15 +2479,16 @@
         ],
         "limitations": [
           "Self-selected qualitative evidence; no prevalence, causation, medical-safety, market-share, or universal-fit inference.",
-          "Service/transaction evidence is excluded from product-performance support."
+          "Service/transaction evidence is excluded from product-performance support.",
+          "Keep product, batch, sensory tolerance, climate, and routine fit separate; odor reports do not establish contamination, spoilage, or population prevalence."
         ]
       }
     },
     {
       "axis_id": "packaging_dispensing_usability",
-      "label": "Packaging and dispensing usability",
-      "scope": "Pumps, tubes, caps, leakage, access to remaining product, and packaging-related product loss",
-      "polarity": "pain",
+      "label": "Packaging, dispensing, and reusable use-cycle usability",
+      "scope": "Pumps, tubes, caps, leakage, access to remaining product, product loss, and reusable accessory adhesion, serum compatibility, cleaning, drying, storage, durability, and waste reduction",
+      "polarity": "mixed",
       "strength": "recurring",
       "disposition": "material",
       "support_refs": [
@@ -2508,9 +2524,9 @@
         {
           "corpus_id": "soko_glam_verified_window",
           "eligible_text_review_count": 77,
-          "axis_mention_count": 8,
+          "axis_mention_count": 22,
           "negative_choice_review_count": 2,
-          "positive_choice_review_count": 7,
+          "positive_choice_review_count": 20,
           "disclosed_incentivized_axis_mention_count": 0
         }
       ],
@@ -2519,7 +2535,7 @@
           "job_id": "P2-A04-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2529,7 +2545,7 @@
           "job_id": "P2-A04-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2539,7 +2555,7 @@
           "job_id": "P2-A04-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2555,12 +2571,12 @@
       ],
       "decision_usefulness": {
         "status": "source_exhausted_but_weak",
-        "customer_tension": "Packaging can make an otherwise liked product frustrating, wasteful, difficult to empty, or unreliable.",
-        "strongest_counterevidence": "Many product-positive accounts do not mention packaging failure, so the observed problem is real but not a prevalence estimate.",
-        "competitive_decision": "Treat packaging and dispensing usability as a bounded qualitative decision input, not a prevalence or superiority claim.",
+        "customer_tension": "A package can waste or obstruct an otherwise liked formula, while a reusable accessory can create real utility through adhesion, serum flexibility, easy cleaning, and reduced waste—or lose value through drying, storage, durability, or repeated-use friction.",
+        "strongest_counterevidence": "Many product-positive accounts do not mention package failure, and multiple Forever Eye Mask reviews describe secure adhesion, easy rinsing, flexible serum pairing, and reduced disposable waste.",
+        "competitive_decision": "Treat packaging failure and reusable use-cycle utility as one usability decision surface while keeping their mechanisms explicit.",
         "decision_effects": {
-          "segment_or_condition": "Repeat purchasers, travelers, and users judging usable quantity rather than nominal fill.",
-          "behavior_or_purchase_consequence": "no_future_purchase, returned_or_refunded, retained_or_repurchased",
+          "segment_or_condition": "Repeat purchasers, travelers, users judging usable quantity, and reusable-eye-mask buyers evaluating adhesion, cleaning, drying, storage, durability, and serum compatibility.",
+          "behavior_or_purchase_consequence": "no_future_purchase, returned_or_refunded, retained_or_repurchased, recommended_or_would_purchase, repeated_use, reduced_waste",
           "competitor_destination": "No packaging-driven competitor destination is established; observed packaging consequences are returns, stated nonrepurchase, and tube or pump complaints without a named external move."
         },
         "decision_bearing_support_refs": [
@@ -2572,7 +2588,8 @@
         ],
         "limitations": [
           "Self-selected qualitative evidence; no prevalence, causation, medical-safety, market-share, or universal-fit inference.",
-          "Service/transaction evidence is excluded from product-performance support."
+          "Service/transaction evidence is excluded from product-performance support.",
+          "Keep container failure separate from reusable-accessory utility and test product/version specificity without treating captured review incidence as prevalence."
         ]
       }
     },
@@ -2610,7 +2627,7 @@
           "eligible_text_review_count": 913,
           "axis_mention_count": 225,
           "negative_choice_review_count": 31,
-          "positive_choice_review_count": 88,
+          "positive_choice_review_count": 78,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
@@ -2627,7 +2644,7 @@
           "job_id": "P2-A05-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2637,7 +2654,7 @@
           "job_id": "P2-A05-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2649,7 +2666,7 @@
           "job_id": "P2-A05-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2719,7 +2736,7 @@
           "eligible_text_review_count": 913,
           "axis_mention_count": 450,
           "negative_choice_review_count": 28,
-          "positive_choice_review_count": 212,
+          "positive_choice_review_count": 210,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
@@ -2736,7 +2753,7 @@
           "job_id": "P2-A06-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2746,7 +2763,7 @@
           "job_id": "P2-A06-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2756,7 +2773,7 @@
           "job_id": "P2-A06-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2826,15 +2843,15 @@
           "eligible_text_review_count": 913,
           "axis_mention_count": 299,
           "negative_choice_review_count": 64,
-          "positive_choice_review_count": 269,
+          "positive_choice_review_count": 261,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
           "corpus_id": "soko_glam_verified_window",
           "eligible_text_review_count": 77,
-          "axis_mention_count": 76,
-          "negative_choice_review_count": 8,
-          "positive_choice_review_count": 76,
+          "axis_mention_count": 75,
+          "negative_choice_review_count": 7,
+          "positive_choice_review_count": 75,
           "disclosed_incentivized_axis_mention_count": 0
         }
       ],
@@ -2843,7 +2860,7 @@
           "job_id": "P2-A07-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2853,7 +2870,7 @@
           "job_id": "P2-A07-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2863,7 +2880,7 @@
           "job_id": "P2-A07-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2902,8 +2919,8 @@
     },
     {
       "axis_id": "service_fulfillment_support_trust",
-      "label": "Fulfillment, support, returns, and buying confidence",
-      "scope": "DTC order fulfillment, shipping, order accuracy, customer support, returns/refunds, and transaction trust",
+      "label": "Availability, fulfillment, support, returns, and buying confidence",
+      "scope": "Stock and geographic access, including ingredient- or regulation-driven SKU market exclusions; retailer-channel and format availability; DTC order fulfillment; shipping; order accuracy; customer support; returns/refunds; and transaction trust",
       "polarity": "pain",
       "strength": "signal",
       "disposition": "material",
@@ -2932,17 +2949,17 @@
         {
           "corpus_id": "sephora_non_incentivized",
           "eligible_text_review_count": 913,
-          "axis_mention_count": 18,
-          "negative_choice_review_count": 1,
-          "positive_choice_review_count": 7,
+          "axis_mention_count": 35,
+          "negative_choice_review_count": 2,
+          "positive_choice_review_count": 15,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
           "corpus_id": "soko_glam_verified_window",
           "eligible_text_review_count": 77,
-          "axis_mention_count": 2,
+          "axis_mention_count": 4,
           "negative_choice_review_count": 0,
-          "positive_choice_review_count": 2,
+          "positive_choice_review_count": 4,
           "disclosed_incentivized_axis_mention_count": 0
         }
       ],
@@ -2951,7 +2968,7 @@
           "job_id": "P2-A08-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2963,7 +2980,7 @@
           "job_id": "P2-A08-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2975,7 +2992,7 @@
           "job_id": "P2-A08-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2991,13 +3008,13 @@
       ],
       "decision_usefulness": {
         "status": "source_exhausted_but_weak",
-        "customer_tension": "A customer can like or never reach the product yet lose confidence because of shipping, order, support, or refund handling.",
-        "strongest_counterevidence": "The official policy states support and missing-package pathways; the captured Trustpilot window is self-selected and cannot establish service prevalence or a product-performance defect.",
-        "competitive_decision": "Treat fulfillment, support, returns, and buying confidence as a bounded qualitative decision input, not a prevalence or superiority claim.",
+        "customer_tension": "A customer can like or never reach the product yet lose confidence because it is unavailable in their market, repeatedly out of stock, delayed, mis-shipped, or poorly resolved through support or refunds.",
+        "strongest_counterevidence": "The official policy provides support and missing-package pathways, and retailer access can bypass some DTC friction; the captured service and availability accounts are self-selected and do not establish prevalence.",
+        "competitive_decision": "Treat availability, fulfillment, support, returns, and buying confidence as a bounded transaction-access input, never as product-performance evidence.",
         "decision_effects": {
-          "segment_or_condition": "DTC purchasers encountering delayed/missing delivery, wrong orders, support contact, or return/refund friction.",
-          "behavior_or_purchase_consequence": "returned_or_refunded, no_future_purchase, buying_confidence_reduced",
-          "competitor_destination": "No named product-performance destination established"
+          "segment_or_condition": "DTC purchasers, international or channel-constrained shoppers, and customers encountering stockouts, delayed or missing delivery, wrong orders, support contact, or return/refund friction.",
+          "behavior_or_purchase_consequence": "returned_or_refunded, no_future_purchase, buying_confidence_reduced, deferred_or_abandoned_purchase",
+          "competitor_destination": "Retailer or mail-forwarding routes can substitute for unavailable DTC access; no product-performance destination is established by service evidence."
         },
         "decision_bearing_support_refs": [
           {
@@ -3013,7 +3030,8 @@
         ],
         "limitations": [
           "Self-selected qualitative evidence; no prevalence, causation, medical-safety, market-share, or universal-fit inference.",
-          "Service/transaction evidence is excluded from product-performance support."
+          "Service/transaction evidence is excluded from product-performance support.",
+          "Test recurrence by channel and geography while keeping access and service evidence separate from product-performance claims."
         ]
       }
     }
@@ -5451,5 +5469,49 @@
         ]
       }
     ]
+  },
+  "material_axis_discovery_closure": {
+    "schema_version": "material_axis_discovery_closure_v1",
+    "taxonomy_mode": "open_taxonomy",
+    "audit_artifact_id": "material_axis_discovery_audit",
+    "candidate_ids": [
+      "sensory-product-integrity",
+      "reusable-accessory-use-cycle",
+      "availability-channel-access",
+      "competitive-destination-instantiation"
+    ],
+    "last_material_addition_at": "2026-08-05T19:16:00Z",
+    "dry_probe_batches": [
+      {
+        "batch_id": "axis-discovery-dry-community",
+        "executed_at": "2026-08-05T19:17:00Z",
+        "source_family": "reddit_forum",
+        "family_kind": "source_native_open_behavior_residual",
+        "job_ids": [
+          "MADC-COMMUNITY-DRY-01"
+        ],
+        "artifact_ids": [
+          "material_axis_probe_community"
+        ],
+        "new_candidate_ids": [],
+        "new_material_axis_ids": []
+      },
+      {
+        "batch_id": "axis-discovery-dry-retailer",
+        "executed_at": "2026-08-05T19:18:00Z",
+        "source_family": "retailer_reviews",
+        "family_kind": "source_native_open_choice_residual",
+        "job_ids": [
+          "MADC-RETAILER-DRY-01"
+        ],
+        "artifact_ids": [
+          "material_axis_probe_retailer"
+        ],
+        "new_candidate_ids": [],
+        "new_material_axis_ids": []
+      }
+    ],
+    "status": "route_bounded_saturated",
+    "claim_boundary": "All admitted source-native units were accounted for and two later diverse probes were dry; this does not claim universal internet exhaustion."
   }
 }

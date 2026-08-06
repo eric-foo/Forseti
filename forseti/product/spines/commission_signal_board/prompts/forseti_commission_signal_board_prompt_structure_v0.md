@@ -187,7 +187,7 @@ Before producing the board, check whether the dispatcher supplied:
 commission_id:
 mode: backtest | forward | unknown
 commission_profile: standard_signal_board | company_competitive_intelligence | default
-understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v3 | default
+understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v4 | default
 time_posture: recency_first | longitudinal | default
 as_of_date: YYYY-MM-DD
 longitudinal_period: {start: YYYY-MM-DD, end: YYYY-MM-DD} | not_applicable
@@ -234,7 +234,7 @@ output is not a validator target.
 For `company_competitive_intelligence`, also require `commission_id`,
 `cycle_id`, the canonical `phase`, `bound_question`, `intended_consumer`,
 `intended_use`, `phase_scope`, and `understanding_completion_profile`. Select
-`broad_consumer_brand_understanding_v3` when the subject is a consumer brand and
+`broad_consumer_brand_understanding_v4` when the subject is a consumer brand and
 product/customer experience is material; otherwise select
 `broad_company_understanding_v1`. The only valid turn at commission-board
 generation is `acquire_and_seal`. Missing required company-cycle fields return
@@ -818,13 +818,22 @@ creators, competitors, search trends, and similar deepening only for a named
 unresolved inference job.
 
 For a consumer brand where product/customer experience is material, apply the
-prompt-structure authority's `broad_consumer_brand_understanding_v3` profile.
-Build and hash-pin the v4 product-axis inventory across material pains,
+prompt-structure authority's `broad_consumer_brand_understanding_v4` profile.
+Build and hash-pin the v5 product-axis inventory across material pains,
 strongest delights, and mixed axes; produce the hash-pinned eligible-review
 coding view with axis-specific choice outcomes; comment-code community support;
 and classify social and external relationship before awarding distinct-origin
 independent support. Axis count is evidence-derived rather than inherited from
-another brand: preliminary coding nominates the inventory, and final
+another brand. During ordinary source-native coding, every specialist must put
+a decision-changing theme that does not fit the current axes cleanly into a
+compact `open_axis_nominations` section in the existing terminal return. Record
+a stable candidate label or ID, native evidence references, and the decision
+effect; one unit is enough to nominate, and an empty section is not an axis-
+completeness claim. Do not add a per-row candidate field or parallel artifact.
+Before Phase 2, `CO0` must carry every nomination into the one provisional
+inventory as a provisional axis, an explicit proposed merge or scope expansion,
+or an unresolved candidate. Silent dropping and nearest-label force-fitting are
+invalid; Phase 2 cannot start while a nomination remains uncarried. Final
 adjudication may merge, split, rename, add, or exclude axes. `CO3` runs two
 pipelined lanes before Phase 2. Its
 source-neutral lane starts with a bounded unrestricted-domain brand/product
@@ -862,6 +871,20 @@ decision through a typed new axis, tier, mechanism, segment/condition, behavior
 consequence, competitor destination, contradiction, sampling-risk, or
 competitive-action addition; reopen only affected and justified adjacent axes.
 
+Before final adjudication, run the authority's **Material Axis Discovery
+Closure**. Hash-pin one open-taxonomy residual audit that terminally accounts
+every admitted external, native-social, Reddit/forum, and retailer source-native
+unit. Do not treat the provisional axis IDs as the only available labels. Carry
+every source-native candidate through material new axis, explicit merge/scope
+expansion, nonmaterial rejection, or block; one native counterexample is enough
+to require adjudication even when it is not yet corroborated. Reconcile every
+material candidate to the final owning inventory. After the last material
+addition, require two dry open-taxonomy probes that differ in source family,
+family kind, and artifact. Reuse qualifying continuation work, but never count a
+fixed-enumeration recode as a dry discovery probe.
+This full tail audit remains the sole axis-completeness guarantee and must not
+be sampled, shortened, or skipped because the earlier nomination route ran.
+
 Every material axis must be decision-mature through either strong evidence with
 a strong qualitative ceiling or route-bounded source exhaustion with a bounded
 observation ceiling. On that same axis row, write the compact
@@ -894,7 +917,10 @@ independent spot checks per material axis; verify local subject anchoring,
 axis/role fit, competitor-event attribution, and genuine counterevidence. Use
 the authority's affected-axis-first escalation rule rather than defaulting to a
 full-corpus reread. Revalidate any bounded patch against the seal, and require
-separate Chief Architect adjudication before keeping it.
+separate Chief Architect adjudication before keeping it. For the consumer-brand
+profile, also cross-check every specialist `open_axis_nominations` section
+against the provisional inventory and final audit so no nomination disappears
+between fan-out and closure.
 
 When offerings, retail presentation, or customer experience are material to a
 company commission, acquire bounded portfolio breadth before product depth.
@@ -1085,7 +1111,7 @@ company_commission_receipt:
       - communication_efficiency
   mode: backtest | forward
   commission_profile: company_competitive_intelligence
-  understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v3
+  understanding_completion_profile: broad_company_understanding_v1 | broad_consumer_brand_understanding_v4
   subject_count: 1
   subject_identity:
     raw_name:

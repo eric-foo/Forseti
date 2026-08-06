@@ -6,7 +6,7 @@
     {
       "corpus_id": "sephora_non_incentivized",
       "eligible_text_review_count": 913,
-      "excluded_no_usable_text_count": 0
+      "excluded_no_usable_text_count": 2
     },
     {
       "corpus_id": "soko_glam_verified_window",
@@ -72,6 +72,12 @@
           "choice_outcomes": [
             "returned_or_refunded"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded"
+          ]
         }
       ]
     },
@@ -105,6 +111,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -194,7 +206,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -314,7 +326,7 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json#Results[8]",
       "overall_choice_outcomes": [
-        "none_explicit"
+        "stopped_or_discarded"
       ],
       "axis_codes": [
         {
@@ -326,7 +338,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "none_explicit"
+            "stopped_or_discarded"
           ]
         },
         {
@@ -596,6 +608,12 @@
           "choice_outcomes": [
             "returned_or_refunded"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded"
+          ]
         }
       ]
     },
@@ -617,6 +635,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -785,6 +809,12 @@
         },
         {
           "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -962,6 +992,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -1127,6 +1163,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -1520,6 +1562,12 @@
           "choice_outcomes": [
             "returned_or_refunded"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded"
+          ]
         }
       ]
     },
@@ -1554,22 +1602,25 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json#Results[51]",
       "overall_choice_outcomes": [
-        "returned_or_refunded",
-        "recommended_or_would_purchase"
+        "returned_or_refunded"
       ],
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded"
           ]
         }
       ]
@@ -2079,6 +2130,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -2112,6 +2169,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -2181,6 +2244,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -2204,6 +2273,12 @@
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
             "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -2229,6 +2304,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -2239,35 +2320,36 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json#Results[76]",
       "overall_choice_outcomes": [
-        "returned_or_refunded",
         "no_future_purchase"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "returned_or_refunded",
             "no_future_purchase"
           ]
         },
         {
           "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
-            "returned_or_refunded",
             "no_future_purchase"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "returned_or_refunded",
             "no_future_purchase"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
-            "returned_or_refunded",
+            "no_future_purchase"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
             "no_future_purchase"
           ]
         }
@@ -2445,28 +2527,32 @@
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json#Results[82]",
       "overall_choice_outcomes": [
         "returned_or_refunded",
-        "recommended_or_would_purchase"
+        "no_future_purchase"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
+            "returned_or_refunded"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
             "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "no_future_purchase"
           ]
         }
       ]
@@ -2520,7 +2606,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -2864,6 +2950,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -2910,13 +3002,19 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json#Results[97]",
       "overall_choice_outcomes": [
-        "none_explicit"
+        "stopped_or_discarded"
       ],
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
             "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "stopped_or_discarded"
           ]
         }
       ]
@@ -2928,13 +3026,19 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json#Results[98]",
       "overall_choice_outcomes": [
-        "none_explicit"
+        "stopped_or_discarded"
       ],
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
             "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "stopped_or_discarded"
           ]
         }
       ]
@@ -2959,6 +3063,12 @@
           "axis_id": "irritation_breakout_active_condition_fit",
           "choice_outcomes": [
             "stopped_or_discarded"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -3098,6 +3208,12 @@
           "choice_outcomes": [
             "switched_or_replaced"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -3149,6 +3265,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -3243,8 +3365,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased",
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -3521,8 +3642,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased",
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -3598,25 +3718,31 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\03_reviews_non_incentivized_most_recent_offset_00000.json#Results[18]",
       "overall_choice_outcomes": [
-        "retained_or_repurchased"
+        "no_future_purchase"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "no_future_purchase"
           ]
         }
       ]
@@ -3851,6 +3977,12 @@
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
             "switched_or_replaced"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -4168,6 +4300,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -4279,6 +4417,12 @@
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -5246,6 +5390,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -5632,6 +5782,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -5982,7 +6138,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -6018,31 +6174,37 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\04_reviews_non_incentivized_most_recent_offset_00100.json#Results[16]",
       "overall_choice_outcomes": [
-        "retained_or_repurchased"
+        "no_future_purchase"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "segment_portfolio_product_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "no_future_purchase"
           ]
         }
       ]
@@ -6125,6 +6287,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -6371,6 +6539,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -6681,6 +6855,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -6852,6 +7032,12 @@
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -7231,6 +7417,12 @@
           "choice_outcomes": [
             "stopped_or_discarded"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -7242,24 +7434,28 @@
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\04_reviews_non_incentivized_most_recent_offset_00100.json#Results[65]",
       "overall_choice_outcomes": [
         "returned_or_refunded",
-        "rejected_or_not_recommended",
-        "recommended_or_would_purchase"
+        "rejected_or_not_recommended"
       ],
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
             "returned_or_refunded",
-            "rejected_or_not_recommended",
-            "recommended_or_would_purchase"
+            "rejected_or_not_recommended"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
             "returned_or_refunded",
-            "rejected_or_not_recommended",
-            "recommended_or_would_purchase"
+            "rejected_or_not_recommended"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded",
+            "rejected_or_not_recommended"
           ]
         }
       ]
@@ -7289,7 +7485,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -7318,6 +7514,18 @@
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "returned_or_refunded"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "returned_or_refunded"
           ]
@@ -7495,6 +7703,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -7546,6 +7760,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -7680,6 +7900,12 @@
           "choice_outcomes": [
             "returned_or_refunded",
             "rejected_or_not_recommended"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -7891,6 +8117,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -7918,6 +8150,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -8124,6 +8362,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -8772,6 +9016,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -8964,6 +9214,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -8992,7 +9248,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -9114,6 +9370,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -9230,6 +9492,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -9409,7 +9677,14 @@
       "overall_choice_outcomes": [
         "none_explicit"
       ],
-      "axis_codes": []
+      "axis_codes": [
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        }
+      ]
     },
     {
       "corpus_id": "sephora_non_incentivized",
@@ -9600,6 +9875,12 @@
           "choice_outcomes": [
             "rejected_or_not_recommended"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -9669,6 +9950,12 @@
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -9801,19 +10088,25 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\05_reviews_non_incentivized_most_recent_offset_00200.json#Results[77]",
       "overall_choice_outcomes": [
-        "recommended_or_would_purchase"
+        "rejected_or_not_recommended"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "rejected_or_not_recommended"
           ]
         }
       ]
@@ -10752,6 +11045,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -11597,6 +11896,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -12172,6 +12477,12 @@
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -12506,7 +12817,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -12685,7 +12996,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -12837,6 +13148,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -12961,7 +13278,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -12978,6 +13295,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "retained_or_repurchased"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
@@ -13370,6 +13693,12 @@
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
             "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -17254,7 +17583,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -17370,6 +17699,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -17401,8 +17736,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "switched_or_replaced",
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -17454,6 +17788,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -17495,6 +17835,12 @@
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
             "retained_or_repurchased"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -17830,7 +18176,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -17854,19 +18200,19 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\08_reviews_non_incentivized_most_recent_offset_00500.json#Results[94]",
       "overall_choice_outcomes": [
-        "recommended_or_would_purchase"
+        "stopped_or_discarded"
       ],
       "axis_codes": [
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "stopped_or_discarded"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         }
       ]
@@ -18400,6 +18746,12 @@
           "choice_outcomes": [
             "no_future_purchase"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "no_future_purchase"
+          ]
         }
       ]
     },
@@ -18460,6 +18812,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -18481,6 +18839,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -18763,6 +19127,12 @@
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -19123,28 +19493,32 @@
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\09_reviews_non_incentivized_most_recent_offset_00600.json#Results[38]",
       "overall_choice_outcomes": [
         "reduced_use",
-        "retained_or_repurchased"
+        "no_future_purchase"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "reduced_use",
-            "retained_or_repurchased"
+            "reduced_use"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "reduced_use",
-            "retained_or_repurchased"
+            "reduced_use"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
+            "reduced_use"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
             "reduced_use",
-            "retained_or_repurchased"
+            "no_future_purchase"
           ]
         }
       ]
@@ -19462,37 +19836,37 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\09_reviews_non_incentivized_most_recent_offset_00600.json#Results[50]",
       "overall_choice_outcomes": [
-        "retained_or_repurchased"
+        "no_future_purchase"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "no_future_purchase"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "segment_portfolio_product_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         }
       ]
@@ -20287,6 +20661,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -20580,8 +20960,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased",
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -20792,6 +21171,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -21017,6 +21402,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -21098,6 +21489,12 @@
       "axis_codes": [
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -21742,6 +22139,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -21776,7 +22179,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -21847,6 +22250,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -21983,6 +22392,12 @@
         },
         {
           "axis_id": "price_value_hype_product_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -22635,6 +23050,12 @@
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased"
+          ]
         }
       ]
     },
@@ -22761,6 +23182,12 @@
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased"
+          ]
         }
       ]
     },
@@ -22809,6 +23236,13 @@
             "retained_or_repurchased",
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased",
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -22819,29 +23253,31 @@
       "incentive_state": "not_marked_incentivized",
       "source_row_ref": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co2\\lake\\raw\\3c7\\01KZ9DQ7XC63VSX5VXRE5QDTWN\\raw\\10_reviews_non_incentivized_most_recent_offset_00700.json#Results[84]",
       "overall_choice_outcomes": [
-        "returned_or_refunded",
-        "recommended_or_would_purchase"
+        "returned_or_refunded"
       ],
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
           ]
         },
         {
           "axis_id": "price_value_hype_product_trust",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
           ]
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "returned_or_refunded"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "returned_or_refunded"
           ]
         }
       ]
@@ -22858,6 +23294,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -23196,6 +23638,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -23225,6 +23673,12 @@
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
             "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -23310,6 +23764,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -23325,6 +23785,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -23710,6 +24176,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -23767,6 +24239,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -23836,6 +24314,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -23858,7 +24342,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -23936,7 +24420,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -24638,7 +25122,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "retained_or_repurchased"
+            "none_explicit"
           ]
         },
         {
@@ -25213,6 +25697,12 @@
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -25421,6 +25911,12 @@
           "axis_id": "repeat_purchase_switching_destinations",
           "choice_outcomes": [
             "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -25697,6 +26193,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -25874,6 +26376,12 @@
           "axis_id": "segment_portfolio_product_fit",
           "choice_outcomes": [
             "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
           ]
         }
       ]
@@ -26504,6 +27012,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -26532,7 +27046,7 @@
         {
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         },
         {
@@ -27350,6 +27864,13 @@
             "retained_or_repurchased",
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased",
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27706,6 +28227,18 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "texture_finish_makeup_routine_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27758,15 +28291,13 @@
       "incentive_state": "unknown",
       "source_row_ref": "C:\\tmp\\forseti-dieux-sokoglam-retailer-corpus-20260805\\corpus.json#reviews[37]",
       "overall_choice_outcomes": [
-        "returned_or_refunded",
-        "recommended_or_would_purchase"
+        "none_explicit"
       ],
       "axis_codes": [
         {
-          "axis_id": "repeat_purchase_switching_destinations",
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
-            "returned_or_refunded",
-            "recommended_or_would_purchase"
+            "none_explicit"
           ]
         }
       ]
@@ -27792,6 +28323,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27807,6 +28344,12 @@
       "axis_codes": [
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -27828,6 +28371,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27843,6 +28392,12 @@
       "axis_codes": [
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -27870,6 +28425,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27891,6 +28452,12 @@
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -27918,6 +28485,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27933,6 +28506,12 @@
       "axis_codes": [
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -27966,6 +28545,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27990,6 +28575,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -28005,6 +28596,12 @@
       "axis_codes": [
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -28032,6 +28629,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -28047,6 +28650,12 @@
       "axis_codes": [
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "packaging_dispensing_usability",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]

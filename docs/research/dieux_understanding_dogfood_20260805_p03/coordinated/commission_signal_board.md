@@ -21,7 +21,7 @@ company_commission_receipt:
   commission_id: BEAUTY-DIEUX-PHASEA-COMPLETION-003
   mode: forward
   commission_profile: company_competitive_intelligence
-  understanding_completion_profile: broad_consumer_brand_understanding_v3
+  understanding_completion_profile: broad_consumer_brand_understanding_v4
   subject_count: 1
   subject_identity:
     raw_name: Dieux Skin

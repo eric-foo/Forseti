@@ -1,0 +1,42 @@
+{
+  "schema_version": "material_axis_discovery_probe_v1",
+  "subject": "Dieux Skin",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "probe_id": "axis-discovery-dry-retailer",
+  "executed_at": "2026-08-05T19:18:00Z",
+  "source_family": "retailer_reviews",
+  "family_kind": "source_native_open_choice_residual",
+  "job_ids": [
+    "MADC-RETAILER-DRY-01"
+  ],
+  "unit_ids": [
+    "sephora_non_incentivized:272918894",
+    "sephora_non_incentivized:336474602",
+    "sephora_non_incentivized:382882110",
+    "sephora_non_incentivized:377155540",
+    "sephora_non_incentivized:398161694",
+    "sephora_non_incentivized:397049402",
+    "sephora_non_incentivized:326188452",
+    "sephora_non_incentivized:317092852",
+    "soko_glam_verified_window:soko-forever_eye_masks-003",
+    "soko_glam_verified_window:soko-forever_eye_masks-005",
+    "soko_glam_verified_window:soko-forever_eye_masks-006",
+    "soko_glam_verified_window:soko-forever_eye_masks-009",
+    "soko_glam_verified_window:soko-forever_eye_masks-010",
+    "soko_glam_verified_window:soko-forever_eye_masks-013",
+    "soko_glam_verified_window:soko-forever_eye_masks-014",
+    "soko_glam_verified_window:soko-forever_eye_masks-015"
+  ],
+  "existing_candidate_ids_observed": [
+    "sensory-product-integrity",
+    "reusable-accessory-use-cycle"
+  ],
+  "new_candidate_ids": [],
+  "new_material_axis_ids": [],
+  "observations": [
+    "The stratified residual set crossed positive and negative Sephora moisturizer experiences plus the remaining Soko Glam Forever Eye Mask use-cycle window.",
+    "Observed sensory and reuse signals were already terminally merged; hydration, reaction, value, routine, packaging, and switching content remained inside the revised inventory."
+  ],
+  "conclusion": "no_new_material_axis",
+  "claim_boundary": "Sixteen admitted retailer bodies were re-read as a diverse residual probe; no prevalence or universal retailer-exhaustion claim is made."
+}

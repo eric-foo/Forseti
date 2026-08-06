@@ -296,7 +296,8 @@
         "irritation_breakout_active_condition_fit",
         "price_value_hype_product_trust",
         "segment_portfolio_product_fit",
-        "texture_finish_makeup_routine_fit"
+        "texture_finish_makeup_routine_fit",
+        "service_fulfillment_support_trust"
       ],
       "contribution": "corroborates",
       "choice": "subject",
@@ -767,7 +768,8 @@
       "product_context": "Dieux Skin brand / products",
       "axis_ids": [
         "hydration_barrier_visible_results",
-        "repeat_purchase_switching_destinations"
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
       ],
       "contribution": "corroborates",
       "choice": "subject",
@@ -1228,7 +1230,8 @@
         "irritation_breakout_active_condition_fit",
         "segment_portfolio_product_fit",
         "repeat_purchase_switching_destinations",
-        "texture_finish_makeup_routine_fit"
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability"
       ],
       "contribution": "sharpens",
       "choice": "conditional",
@@ -1320,7 +1323,8 @@
       "comment_id": "post",
       "product_context": "Forever Eye Masks",
       "axis_ids": [
-        "segment_portfolio_product_fit"
+        "segment_portfolio_product_fit",
+        "packaging_dispensing_usability"
       ],
       "contribution": "sharpens",
       "choice": "conditional",
@@ -1427,7 +1431,8 @@
       "comment_id": "itpr18s",
       "product_context": "Forever Eye Masks",
       "axis_ids": [
-        "segment_portfolio_product_fit"
+        "segment_portfolio_product_fit",
+        "packaging_dispensing_usability"
       ],
       "contribution": "sharpens",
       "choice": "unstated",
@@ -1493,7 +1498,8 @@
         "price_value_hype_product_trust",
         "segment_portfolio_product_fit",
         "repeat_purchase_switching_destinations",
-        "texture_finish_makeup_routine_fit"
+        "texture_finish_makeup_routine_fit",
+        "service_fulfillment_support_trust"
       ],
       "contribution": "sharpens",
       "choice": "subject",
@@ -1651,7 +1657,8 @@
         "price_value_hype_product_trust",
         "segment_portfolio_product_fit",
         "repeat_purchase_switching_destinations",
-        "texture_finish_makeup_routine_fit"
+        "texture_finish_makeup_routine_fit",
+        "service_fulfillment_support_trust"
       ],
       "contribution": "sharpens",
       "choice": "subject",
@@ -1774,7 +1781,8 @@
         "price_value_hype_product_trust",
         "segment_portfolio_product_fit",
         "repeat_purchase_switching_destinations",
-        "texture_finish_makeup_routine_fit"
+        "texture_finish_makeup_routine_fit",
+        "service_fulfillment_support_trust"
       ],
       "contribution": "sharpens",
       "choice": "subject",
@@ -1864,7 +1872,8 @@
         "texture_finish_makeup_routine_fit",
         "price_value_hype_product_trust",
         "segment_portfolio_product_fit",
-        "repeat_purchase_switching_destinations"
+        "repeat_purchase_switching_destinations",
+        "service_fulfillment_support_trust"
       ],
       "contribution": "sharpens",
       "choice": "alternative",

@@ -428,7 +428,8 @@
         "packaging_dispensing_usability",
         "price_value_hype_product_trust",
         "segment_portfolio_product_fit",
-        "repeat_purchase_switching_destinations"
+        "repeat_purchase_switching_destinations",
+        "service_fulfillment_support_trust"
       ],
       "independence_group": "youtube:channel:UCPeEnRT-g4d7IdL1MpVLOtg",
       "dedupe_key": "youtube:video:8uZKNMnXImI",
@@ -868,7 +869,8 @@
         "irritation_breakout_active_condition_fit",
         "texture_finish_makeup_routine_fit",
         "packaging_dispensing_usability",
-        "segment_portfolio_product_fit"
+        "segment_portfolio_product_fit",
+        "service_fulfillment_support_trust"
       ],
       "independence_group": "youtube:channel:UCFJwBW5wKB-3xzqJa9_6JMA",
       "dedupe_key": "youtube:video:eejwDCxfZgE",
@@ -1111,7 +1113,8 @@
         "irritation_breakout_active_condition_fit",
         "texture_finish_makeup_routine_fit",
         "price_value_hype_product_trust",
-        "repeat_purchase_switching_destinations"
+        "repeat_purchase_switching_destinations",
+        "service_fulfillment_support_trust"
       ],
       "independence_group": "youtube:channel:UCR4417UtFsN5U24RXhb7Fjw",
       "dedupe_key": "youtube:video:qYPdISwPJyQ",

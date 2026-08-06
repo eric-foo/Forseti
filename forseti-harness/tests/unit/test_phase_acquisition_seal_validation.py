@@ -11,6 +11,8 @@ from runners.run_phase_acquisition_seal_validation import (
     BROAD_UNDERSTANDING_PROFILE,
     CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     CONSUMER_DEPTH_LEDGER_VERSION,
+    DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+    DECISION_CONSUMER_DEPTH_LEDGER_VERSION,
     DEPTH_LEDGER_VERSION,
     LEGACY_SEAL_VERSION,
     PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
@@ -666,6 +668,159 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
         "decision_mature_axis_ids": ["packaging_reliability"],
         "open_axis_ids": [],
     }
+    retailer_unit_ids = sorted(
+        f"{row['corpus_id']}:{row['review_id']}" for row in coding["rows"]
+    )
+    discovery_audit = {
+        "schema_version": "material_axis_discovery_audit_v1",
+        "subject": ledger["subject"],
+        "cycle_id": ledger["cycle_id"],
+        "audit_method": "open_taxonomy_residual",
+        "source_family_accounting": [
+            {
+                "family_id": "external_context",
+                "ledger_unit_count": 12,
+                "audited_unit_count": 12,
+                "audited_unit_ids": [f"outside-{index}" for index in range(12)],
+                "non_axis_bearing_units": [],
+                "candidate_unit_ids": [],
+            },
+            {
+                "family_id": "native_social",
+                "ledger_unit_count": 30,
+                "audited_unit_count": 30,
+                "audited_unit_ids": [f"native-{index}" for index in range(30)],
+                "non_axis_bearing_units": [],
+                "candidate_unit_ids": [],
+            },
+            {
+                "family_id": "reddit_forum",
+                "ledger_unit_count": 40,
+                "audited_unit_count": 40,
+                "audited_unit_ids": [f"thread-{index}" for index in range(40)],
+                "non_axis_bearing_units": [],
+                "candidate_unit_ids": ["thread-0"],
+            },
+            {
+                "family_id": "retailer_reviews",
+                "ledger_unit_count": len(retailer_unit_ids),
+                "audited_unit_count": len(retailer_unit_ids),
+                "audited_unit_ids": retailer_unit_ids,
+                "non_axis_bearing_units": [],
+                "candidate_unit_ids": [retailer_unit_ids[0]],
+            },
+        ],
+        "candidate_themes": [
+            {
+                "candidate_id": "packaging-use-cycle",
+                "label": "Packaging use-cycle reliability",
+                "disposition": "material_merge_or_scope_expansion",
+                "target_axis_ids": ["packaging_reliability"],
+                "evidence_refs": [
+                    {"family_id": "reddit_forum", "unit_id": "thread-0"},
+                    {
+                        "family_id": "retailer_reviews",
+                        "unit_id": retailer_unit_ids[0],
+                    },
+                ],
+                "scope_change": (
+                    "Make repeated-use reliability explicit in the existing "
+                    "packaging axis."
+                ),
+                "decision_effect": (
+                    "Customers can reject an otherwise effective product when "
+                    "the package fails during repeated use."
+                ),
+                "rationale": (
+                    "The theme changes the packaging decision but does not require "
+                    "a separate competitive axis."
+                ),
+            }
+        ],
+    }
+    discovery_path = tmp_path / "material_axis_discovery_audit.json"
+    discovery_path.write_text(
+        json.dumps(discovery_audit, indent=2) + "\n", encoding="utf-8"
+    )
+    ledger["artifacts"].append(
+        {
+            "artifact_id": "material-axis-discovery-audit",
+            "locator": discovery_path.name,
+            "sha256": _artifact_hash(discovery_path),
+        }
+    )
+    probe_specs = [
+        {
+            "artifact_id": "material-axis-probe-community",
+            "probe_id": "axis-discovery-dry-community",
+            "executed_at": "2026-08-02T00:10:00+00:00",
+            "source_family": "reddit_forum",
+            "family_kind": "open_behavior_residual",
+            "job_ids": ["RFD-A-001"],
+            "unit_ids": ["thread-2"],
+            "existing_candidate_ids_observed": [],
+        },
+        {
+            "artifact_id": "material-axis-probe-retailer",
+            "probe_id": "axis-discovery-dry-retailer",
+            "executed_at": "2026-08-02T00:11:00+00:00",
+            "source_family": "retailer_reviews",
+            "family_kind": "open_choice_residual",
+            "job_ids": ["RFD-B-001"],
+            "unit_ids": [retailer_unit_ids[1]],
+            "existing_candidate_ids_observed": [],
+        },
+    ]
+    for spec in probe_specs:
+        probe = {
+            "schema_version": "material_axis_discovery_probe_v1",
+            "subject": ledger["subject"],
+            "cycle_id": ledger["cycle_id"],
+            **{key: value for key, value in spec.items() if key != "artifact_id"},
+            "new_candidate_ids": [],
+            "new_material_axis_ids": [],
+            "conclusion": "no_new_material_axis",
+            "claim_boundary": "Fixture-bounded source-native residual probe.",
+        }
+        probe_path = tmp_path / f"{spec['artifact_id']}.json"
+        probe_path.write_text(json.dumps(probe, indent=2) + "\n", encoding="utf-8")
+        ledger["artifacts"].append(
+            {
+                "artifact_id": spec["artifact_id"],
+                "locator": probe_path.name,
+                "sha256": _artifact_hash(probe_path),
+            }
+        )
+    ledger["material_axis_discovery_closure"] = {
+        "schema_version": "material_axis_discovery_closure_v1",
+        "taxonomy_mode": "open_taxonomy",
+        "audit_artifact_id": "material-axis-discovery-audit",
+        "candidate_ids": ["packaging-use-cycle"],
+        "last_material_addition_at": "2026-08-02T00:09:00+00:00",
+        "dry_probe_batches": [
+            {
+                "batch_id": "axis-discovery-dry-community",
+                "executed_at": "2026-08-02T00:10:00+00:00",
+                "source_family": "reddit_forum",
+                "family_kind": "open_behavior_residual",
+                "job_ids": ["RFD-A-001"],
+                "artifact_ids": ["material-axis-probe-community"],
+                "new_candidate_ids": [],
+                "new_material_axis_ids": [],
+            },
+            {
+                "batch_id": "axis-discovery-dry-retailer",
+                "executed_at": "2026-08-02T00:11:00+00:00",
+                "source_family": "retailer_reviews",
+                "family_kind": "open_choice_residual",
+                "job_ids": ["RFD-B-001"],
+                "artifact_ids": ["material-axis-probe-retailer"],
+                "new_candidate_ids": [],
+                "new_material_axis_ids": [],
+            },
+        ],
+        "status": "route_bounded_saturated",
+    }
     path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     return {"locator": "evidence_depth_ledger.json", "sha256": _artifact_hash(path)}
 
@@ -868,6 +1023,42 @@ def _rewrite_depth_reference(
         "locator": ledger_path.name,
         "sha256": _artifact_hash(ledger_path),
     }
+
+
+def _rewrite_axis_discovery_audit(
+    tmp_path: Path,
+    seal: dict,
+    ledger_path: Path,
+    ledger: dict,
+    audit: dict,
+) -> None:
+    artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "material-axis-discovery-audit"
+    )
+    audit_path = tmp_path / artifact["locator"]
+    audit_path.write_text(json.dumps(audit, indent=2) + "\n", encoding="utf-8")
+    artifact["sha256"] = _artifact_hash(audit_path)
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+
+def _rewrite_axis_discovery_probe(
+    tmp_path: Path,
+    seal: dict,
+    ledger_path: Path,
+    ledger: dict,
+    *,
+    artifact_id: str,
+    probe: dict,
+) -> None:
+    artifact = next(
+        row for row in ledger["artifacts"] if row["artifact_id"] == artifact_id
+    )
+    probe_path = tmp_path / artifact["locator"]
+    probe_path.write_text(json.dumps(probe, indent=2) + "\n", encoding="utf-8")
+    artifact["sha256"] = _artifact_hash(probe_path)
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
 
 def _make_passing(seal: dict) -> dict:
@@ -1104,6 +1295,9 @@ def test_consumer_brand_v3_reddit_floor_needs_explicit_exhaustion(
     reference = _consumer_depth_ledger(tmp_path)
     ledger_path = tmp_path / reference["locator"]
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["schema_version"] = DECISION_CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ledger.pop("material_axis_discovery_closure")
     ledger["families"]["reddit_forum"]["threads"] = ledger["families"][
         "reddit_forum"
     ]["threads"][:20]
@@ -1132,6 +1326,9 @@ def test_consumer_brand_v3_accepts_proven_reddit_source_exhaustion(
     reference = _consumer_depth_ledger(tmp_path)
     ledger_path = tmp_path / reference["locator"]
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["schema_version"] = DECISION_CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ledger.pop("material_axis_discovery_closure")
     ledger["families"]["reddit_forum"]["threads"] = ledger["families"][
         "reddit_forum"
     ]["threads"][:20]
@@ -3278,3 +3475,180 @@ def test_route_job_counts_require_exact_integers(
 
     assert findings.count("invalid_planned_count_type") == 1
     assert findings.count("invalid_completed_count_type") == 1
+
+
+def test_consumer_brand_v4_requires_material_axis_discovery_closure(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger.pop("material_axis_discovery_closure")
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "missing_material_axis_discovery_closure" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+def test_material_axis_discovery_rejects_fixed_taxonomy_audit(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["material_axis_discovery_closure"]["taxonomy_mode"] = "fixed_enumeration"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_discovery_not_open_taxonomy" in findings
+
+
+def test_material_axis_discovery_reconciles_every_admitted_unit(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "material-axis-discovery-audit"
+    )
+    audit = json.loads((tmp_path / artifact["locator"]).read_text(encoding="utf-8"))
+    reddit = next(
+        row
+        for row in audit["source_family_accounting"]
+        if row["family_id"] == "reddit_forum"
+    )
+    reddit["audited_unit_ids"].remove("thread-39")
+    reddit["audited_unit_count"] -= 1
+    _rewrite_axis_discovery_audit(tmp_path, seal, ledger_path, ledger, audit)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_source_unit_accounting_mismatch:reddit_forum" in findings
+
+
+def test_material_axis_candidate_must_reconcile_to_final_inventory(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "material-axis-discovery-audit"
+    )
+    audit = json.loads((tmp_path / artifact["locator"]).read_text(encoding="utf-8"))
+    audit["candidate_themes"][0]["target_axis_ids"] = ["ghost-axis"]
+    _rewrite_axis_discovery_audit(tmp_path, seal, ledger_path, ledger, audit)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_candidate_inventory_mismatch:packaging-use-cycle" in findings
+
+
+def test_material_axis_dry_probes_must_follow_last_addition_and_diversify(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    closure = ledger["material_axis_discovery_closure"]
+    closure["dry_probe_batches"][0]["executed_at"] = "2026-08-02T00:08:00+00:00"
+    closure["dry_probe_batches"][1]["source_family"] = "reddit_forum"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_dry_probe_precedes_last_addition" in findings
+    assert "repeated_material_axis_dry_probe_source_family" in findings
+
+
+def test_material_axis_dry_probe_claim_must_be_backed_by_probe_artifact(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "material-axis-probe-community"
+    )
+    probe = json.loads((tmp_path / artifact["locator"]).read_text(encoding="utf-8"))
+    probe["source_family"] = "retailer_reviews"
+    _rewrite_axis_discovery_probe(
+        tmp_path,
+        seal,
+        ledger_path,
+        ledger,
+        artifact_id="material-axis-probe-community",
+        probe=probe,
+    )
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_dry_probe_artifact_mismatch:source_family" in findings
+
+
+def test_material_axis_dry_probes_must_differ_in_family_kind(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    closure = ledger["material_axis_discovery_closure"]
+    closure["dry_probe_batches"][1]["family_kind"] = "open_behavior_residual"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "repeated_material_axis_dry_probe_family_kind" in findings
+
+
+def test_material_axis_discovery_audit_method_must_be_open_taxonomy_residual(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "material-axis-discovery-audit"
+    )
+    audit = json.loads((tmp_path / artifact["locator"]).read_text(encoding="utf-8"))
+    audit["audit_method"] = "fixed_axis_recode"
+    _rewrite_axis_discovery_audit(tmp_path, seal, ledger_path, ledger, audit)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_discovery_audit_fixed_taxonomy" in findings
+
+
+def test_historical_consumer_v3_retains_prior_validation_meaning(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["schema_version"] = DECISION_CONSUMER_DEPTH_LEDGER_VERSION
+    ledger["profile_id"] = DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ledger.pop("material_axis_discovery_closure")
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert _validate(tmp_path, _make_passing(seal)) == []

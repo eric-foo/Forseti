@@ -1,0 +1,34 @@
+{
+  "schema_version": "material_axis_discovery_probe_v1",
+  "subject": "Dieux Skin",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "probe_id": "axis-discovery-dry-community",
+  "executed_at": "2026-08-05T19:17:00Z",
+  "source_family": "reddit_forum",
+  "family_kind": "source_native_open_behavior_residual",
+  "job_ids": [
+    "MADC-COMMUNITY-DRY-01"
+  ],
+  "unit_ids": [
+    "11naqw4",
+    "129uppa",
+    "17yyp96",
+    "1omfgsp",
+    "o28gng",
+    "1f9ys6t",
+    "1l8evw5",
+    "1gzqa62"
+  ],
+  "existing_candidate_ids_observed": [
+    "availability-channel-access",
+    "competitive-destination-instantiation"
+  ],
+  "new_candidate_ids": [],
+  "new_material_axis_ids": [],
+  "observations": [
+    "The residual set exercised condition fit, product experience, service failure, influencer/hype, portfolio enthusiasm, comparative destinations, and geographic access.",
+    "The two candidate sightings were already terminally merged or rejected before this probe; no decision-changing theme remained unclassified."
+  ],
+  "conclusion": "no_new_material_axis",
+  "claim_boundary": "Eight admitted source-native Reddit threads were re-read as a diverse residual probe; this is not a claim about all Reddit or the open web."
+}

@@ -30,9 +30,13 @@ PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v3"
 PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
     "broad_consumer_brand_understanding_v2"
 )
-CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v4"
-CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
+DECISION_CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v4"
+DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
     "broad_consumer_brand_understanding_v3"
+)
+CONSUMER_DEPTH_LEDGER_VERSION = "understanding_evidence_depth_v5"
+CONSUMER_BRAND_UNDERSTANDING_PROFILE = (
+    "broad_consumer_brand_understanding_v4"
 )
 BROAD_UNDERSTANDING_FLOORS = {
     "outside_in_independent_units": 12,
@@ -101,6 +105,18 @@ _AXIS_DISPOSITIONS = {
     "bounded_nonmaterial",
     "merged",
     "blocked_material",
+}
+_MATERIAL_AXIS_DISCOVERY_DISPOSITIONS = {
+    "material_new_axis",
+    "material_merge_or_scope_expansion",
+    "nonmaterial",
+    "blocked",
+}
+_MATERIAL_AXIS_DISCOVERY_FAMILIES = {
+    "external_context",
+    "native_social",
+    "reddit_forum",
+    "retailer_reviews",
 }
 _LEGACY_FOCUSED_SEARCH_GOALS = {
     "corroborate_or_segment",
@@ -337,6 +353,7 @@ def _validate_understanding_evidence_depth(
         DEPTH_LEDGER_VERSION,
         LEGACY_CONSUMER_DEPTH_LEDGER_VERSION,
         PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION,
+        DECISION_CONSUMER_DEPTH_LEDGER_VERSION,
         CONSUMER_DEPTH_LEDGER_VERSION,
     }:
         findings.append("invalid_evidence_depth_ledger_version")
@@ -344,6 +361,7 @@ def _validate_understanding_evidence_depth(
         BROAD_UNDERSTANDING_PROFILE,
         LEGACY_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
         PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+        DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
         CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     }:
         findings.append("invalid_understanding_completion_profile")
@@ -356,6 +374,9 @@ def _validate_understanding_evidence_depth(
     ) or (
         ledger_version == PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION
         and profile_id == PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ) or (
+        ledger_version == DECISION_CONSUMER_DEPTH_LEDGER_VERSION
+        and profile_id == DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE
     ) or (
         ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
         and profile_id == CONSUMER_BRAND_UNDERSTANDING_PROFILE
@@ -370,12 +391,19 @@ def _validate_understanding_evidence_depth(
         ledger_version == PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION
         and profile_id == PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE
     )
+    decision_consumer_brand = (
+        ledger_version == DECISION_CONSUMER_DEPTH_LEDGER_VERSION
+        and profile_id == DECISION_CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    )
     current_consumer_brand = (
         ledger_version == CONSUMER_DEPTH_LEDGER_VERSION
         and profile_id == CONSUMER_BRAND_UNDERSTANDING_PROFILE
     )
     consumer_brand = (
-        legacy_consumer_brand or previous_consumer_brand or current_consumer_brand
+        legacy_consumer_brand
+        or previous_consumer_brand
+        or decision_consumer_brand
+        or current_consumer_brand
     )
     if legacy_consumer_brand and not allow_legacy_consumer_v1:
         findings.append("legacy_consumer_v1_requires_explicit_historical_audit")
@@ -428,7 +456,11 @@ def _validate_understanding_evidence_depth(
         _validate_reddit_depth(
             families.get("reddit_forum"),
             artifacts=artifacts,
-            require_distinct_artifacts=(previous_consumer_brand or current_consumer_brand),
+            require_distinct_artifacts=(
+                previous_consumer_brand
+                or decision_consumer_brand
+                or current_consumer_brand
+            ),
             findings=findings,
         )
     )
@@ -448,15 +480,30 @@ def _validate_understanding_evidence_depth(
             families=families,
             route_jobs=_route_job_states(seal),
             require_complete=valid_pass,
-            current_contract=(previous_consumer_brand or current_consumer_brand),
-            decision_contract=current_consumer_brand,
+            current_contract=(
+                previous_consumer_brand
+                or decision_consumer_brand
+                or current_consumer_brand
+            ),
+            decision_contract=(decision_consumer_brand or current_consumer_brand),
             findings=findings,
         )
+    discovery_complete = True
+    if current_consumer_brand:
+        discovery_complete = _validate_material_axis_discovery_closure(
+            ledger,
+            artifacts=artifacts,
+            families=families,
+            route_jobs=_route_job_states(seal),
+            require_complete=valid_pass,
+            findings=findings,
+        )
+        product_axis_complete = product_axis_complete and discovery_complete
     closure_complete = _validate_depth_closure(
         ledger.get("closure"),
         require_complete=valid_pass,
         consumer_brand=consumer_brand,
-        current_consumer_contract=current_consumer_brand,
+        current_consumer_contract=(decision_consumer_brand or current_consumer_brand),
         previous_consumer_contract=previous_consumer_brand,
         axis_maturity={
             str(row.get("axis_id")): row.get("decision_maturity")
@@ -467,19 +514,23 @@ def _validate_understanding_evidence_depth(
         route_jobs=_route_job_states(seal),
         findings=findings,
     )
-    if previous_consumer_brand or current_consumer_brand:
+    if previous_consumer_brand or decision_consumer_brand or current_consumer_brand:
         _validate_reddit_candidate_frontier(
             ledger,
             artifacts=artifacts,
             route_jobs=_route_job_states(seal),
             require_complete=valid_pass,
-            decision_contract=current_consumer_brand,
+            decision_contract=(decision_consumer_brand or current_consumer_brand),
             findings=findings,
         )
     if valid_pass:
         floors = (
             CONSUMER_BRAND_UNDERSTANDING_FLOORS
-            if (previous_consumer_brand or current_consumer_brand)
+            if (
+                previous_consumer_brand
+                or decision_consumer_brand
+                or current_consumer_brand
+            )
             else {
                 **CONSUMER_BRAND_UNDERSTANDING_FLOORS,
                 "reddit_forum_threads": BROAD_UNDERSTANDING_FLOORS[
@@ -492,13 +543,17 @@ def _validate_understanding_evidence_depth(
         for metric, minimum in floors.items():
             below_floor = metrics.get(metric, 0) < minimum
             reddit_exception = (
-                (previous_consumer_brand or current_consumer_brand)
+                (
+                    previous_consumer_brand
+                    or decision_consumer_brand
+                    or current_consumer_brand
+                )
                 and metric == "reddit_forum_threads"
                 and _valid_reddit_floor_exception(
                     ledger,
                     observed=metrics.get(metric, 0),
                     route_jobs=_route_job_states(seal),
-                    decision_contract=current_consumer_brand,
+                    decision_contract=(decision_consumer_brand or current_consumer_brand),
                 )
             )
             if below_floor and not reddit_exception:
@@ -3015,6 +3070,500 @@ def _validate_reddit_candidate_frontier(
             ):
                 findings.append("saturation_batch_usable_thread_count_mismatch")
                 complete = False
+    return complete
+
+
+def _material_axis_discovery_expected_units(
+    ledger: Mapping[str, Any],
+    *,
+    artifacts: Mapping[str, Path],
+    families: Mapping[str, Any],
+    findings: list[str],
+) -> tuple[dict[str, set[str]], bool]:
+    expected: dict[str, set[str]] = {
+        family_id: set() for family_id in _MATERIAL_AXIS_DISCOVERY_FAMILIES
+    }
+    complete = True
+
+    retailer_ref = ledger.get("retailer_axis_coding")
+    retailer_artifact_id = (
+        retailer_ref.get("artifact_id") if isinstance(retailer_ref, dict) else None
+    )
+    if (
+        not isinstance(retailer_artifact_id, str)
+        or retailer_artifact_id not in artifacts
+    ):
+        findings.append("unresolved_axis_discovery_retailer_coding")
+        complete = False
+    else:
+        try:
+            retailer_coding = json.loads(
+                artifacts[retailer_artifact_id].read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                f"invalid_axis_discovery_retailer_coding:{type(exc).__name__}"
+            )
+            retailer_coding = {}
+            complete = False
+        rows = retailer_coding.get("rows") if isinstance(retailer_coding, dict) else None
+        if not isinstance(rows, list):
+            findings.append("missing_axis_discovery_retailer_units")
+            complete = False
+        else:
+            for row in rows:
+                if not isinstance(row, dict):
+                    complete = False
+                    findings.append("invalid_axis_discovery_retailer_unit")
+                    continue
+                corpus_id = row.get("corpus_id")
+                review_id = row.get("review_id")
+                if not isinstance(corpus_id, str) or not isinstance(review_id, str):
+                    complete = False
+                    findings.append("invalid_axis_discovery_retailer_unit_id")
+                    continue
+                unit_id = f"{corpus_id}:{review_id}"
+                if unit_id in expected["retailer_reviews"]:
+                    findings.append("duplicate_axis_discovery_retailer_unit_id")
+                    complete = False
+                expected["retailer_reviews"].add(unit_id)
+
+    family_specs = {
+        "external_context": ("units", "unit_id", None),
+        "native_social": ("posts", "unit_id", None),
+        "reddit_forum": ("threads", "thread_id", "independent_thread"),
+    }
+    for family_id, (rows_field, id_field, independence) in family_specs.items():
+        family = families.get(family_id)
+        rows = family.get(rows_field) if isinstance(family, dict) else None
+        if not isinstance(rows, list):
+            findings.append(f"missing_axis_discovery_{family_id}_units")
+            complete = False
+            continue
+        for row in rows:
+            if not isinstance(row, dict):
+                findings.append(f"invalid_axis_discovery_{family_id}_unit")
+                complete = False
+                continue
+            if independence is not None and row.get("independence") != independence:
+                continue
+            unit_id = row.get(id_field)
+            if not isinstance(unit_id, str) or not unit_id:
+                findings.append(f"invalid_axis_discovery_{family_id}_unit_id")
+                complete = False
+                continue
+            if unit_id in expected[family_id]:
+                findings.append(f"duplicate_axis_discovery_{family_id}_unit_id")
+                complete = False
+            expected[family_id].add(unit_id)
+    return expected, complete
+
+
+def _validate_material_axis_discovery_closure(
+    ledger: Mapping[str, Any],
+    *,
+    artifacts: Mapping[str, Path],
+    families: Mapping[str, Any],
+    route_jobs: Mapping[str, str],
+    require_complete: bool,
+    findings: list[str],
+) -> bool:
+    value = ledger.get("material_axis_discovery_closure")
+    if not isinstance(value, dict):
+        findings.append("missing_material_axis_discovery_closure")
+        return False
+    complete = True
+    if value.get("schema_version") != "material_axis_discovery_closure_v1":
+        findings.append("invalid_material_axis_discovery_closure_version")
+        complete = False
+    if value.get("taxonomy_mode") != "open_taxonomy":
+        findings.append("material_axis_discovery_not_open_taxonomy")
+        complete = False
+
+    audit_artifact_id = value.get("audit_artifact_id")
+    if not isinstance(audit_artifact_id, str) or audit_artifact_id not in artifacts:
+        findings.append("unresolved_material_axis_discovery_audit")
+        return False
+    try:
+        audit = json.loads(artifacts[audit_artifact_id].read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"invalid_material_axis_discovery_audit:{type(exc).__name__}")
+        return False
+    if not isinstance(audit, dict):
+        findings.append("invalid_material_axis_discovery_audit_shape")
+        return False
+    if audit.get("schema_version") != "material_axis_discovery_audit_v1":
+        findings.append("invalid_material_axis_discovery_audit_version")
+        complete = False
+    if audit.get("subject") != ledger.get("subject"):
+        findings.append("material_axis_discovery_audit_subject_mismatch")
+        complete = False
+    if audit.get("cycle_id") != ledger.get("cycle_id"):
+        findings.append("material_axis_discovery_audit_cycle_mismatch")
+        complete = False
+    if audit.get("audit_method") != "open_taxonomy_residual":
+        findings.append("material_axis_discovery_audit_fixed_taxonomy")
+        complete = False
+
+    expected_units, units_complete = _material_axis_discovery_expected_units(
+        ledger,
+        artifacts=artifacts,
+        families=families,
+        findings=findings,
+    )
+    complete = complete and units_complete
+    accounting = audit.get("source_family_accounting")
+    accounting_by_family: dict[str, Mapping[str, Any]] = {}
+    accounted_candidate_units: dict[str, set[str]] = {
+        family_id: set() for family_id in _MATERIAL_AXIS_DISCOVERY_FAMILIES
+    }
+    if not isinstance(accounting, list):
+        findings.append("missing_material_axis_source_family_accounting")
+        complete = False
+    else:
+        for row in accounting:
+            if not isinstance(row, dict):
+                findings.append("invalid_material_axis_source_family_accounting")
+                complete = False
+                continue
+            family_id = row.get("family_id")
+            if (
+                not isinstance(family_id, str)
+                or family_id not in _MATERIAL_AXIS_DISCOVERY_FAMILIES
+                or family_id in accounting_by_family
+            ):
+                findings.append("invalid_or_duplicate_material_axis_source_family")
+                complete = False
+                continue
+            accounting_by_family[family_id] = row
+            audited = _string_set(
+                row.get("audited_unit_ids"),
+                code=f"invalid_material_axis_audited_units:{family_id}",
+                findings=findings,
+            )
+            non_axis_rows = row.get("non_axis_bearing_units")
+            non_axis_ids: set[str] = set()
+            if not isinstance(non_axis_rows, list):
+                findings.append(f"invalid_non_axis_bearing_units:{family_id}")
+                complete = False
+            else:
+                for excluded in non_axis_rows:
+                    if not isinstance(excluded, dict):
+                        findings.append(f"invalid_non_axis_bearing_unit:{family_id}")
+                        complete = False
+                        continue
+                    unit_id = excluded.get("unit_id")
+                    reason = excluded.get("reason")
+                    if (
+                        not isinstance(unit_id, str)
+                        or not unit_id
+                        or unit_id in non_axis_ids
+                        or not isinstance(reason, str)
+                        or not reason.strip()
+                    ):
+                        findings.append(f"invalid_non_axis_bearing_unit:{family_id}")
+                        complete = False
+                        continue
+                    non_axis_ids.add(unit_id)
+            candidate_units = _string_set(
+                row.get("candidate_unit_ids"),
+                code=f"invalid_material_axis_candidate_units:{family_id}",
+                findings=findings,
+            )
+            accounted_candidate_units[family_id] = candidate_units
+            expected = expected_units.get(family_id, set())
+            if audited & non_axis_ids or audited | non_axis_ids != expected:
+                findings.append(f"material_axis_source_unit_accounting_mismatch:{family_id}")
+                complete = False
+            if candidate_units - audited:
+                findings.append(f"material_axis_candidate_unit_not_audited:{family_id}")
+                complete = False
+            if row.get("ledger_unit_count") != len(expected):
+                findings.append(f"material_axis_ledger_unit_count_mismatch:{family_id}")
+                complete = False
+            if row.get("audited_unit_count") != len(audited):
+                findings.append(f"material_axis_audited_unit_count_mismatch:{family_id}")
+                complete = False
+    if set(accounting_by_family) != _MATERIAL_AXIS_DISCOVERY_FAMILIES:
+        findings.append("material_axis_source_family_accounting_incomplete")
+        complete = False
+
+    material_axis_ids = {
+        str(row.get("axis_id"))
+        for row in ledger.get("product_axes", [])
+        if isinstance(row, dict)
+        and row.get("disposition") in {"material", "blocked_material"}
+    }
+    candidates = audit.get("candidate_themes")
+    candidate_ids: set[str] = set()
+    observed_candidate_units: dict[str, set[str]] = {
+        family_id: set() for family_id in _MATERIAL_AXIS_DISCOVERY_FAMILIES
+    }
+    material_candidates = 0
+    if not isinstance(candidates, list):
+        findings.append("missing_material_axis_candidate_themes")
+        complete = False
+        candidates = []
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            findings.append("invalid_material_axis_candidate_theme")
+            complete = False
+            continue
+        candidate_id = candidate.get("candidate_id")
+        if (
+            not isinstance(candidate_id, str)
+            or not candidate_id
+            or candidate_id in candidate_ids
+        ):
+            findings.append("invalid_or_duplicate_material_axis_candidate_id")
+            complete = False
+            continue
+        candidate_ids.add(candidate_id)
+        disposition = candidate.get("disposition")
+        if disposition not in _MATERIAL_AXIS_DISCOVERY_DISPOSITIONS:
+            findings.append(f"invalid_material_axis_candidate_disposition:{candidate_id}")
+            complete = False
+        if disposition == "blocked":
+            if require_complete:
+                findings.append(f"blocked_material_axis_candidate:{candidate_id}")
+            complete = False
+        if not isinstance(candidate.get("decision_effect"), str) or not candidate.get(
+            "decision_effect"
+        ):
+            findings.append(f"missing_material_axis_candidate_decision_effect:{candidate_id}")
+            complete = False
+        if not isinstance(candidate.get("rationale"), str) or not candidate.get(
+            "rationale"
+        ):
+            findings.append(f"missing_material_axis_candidate_rationale:{candidate_id}")
+            complete = False
+        evidence_refs = candidate.get("evidence_refs")
+        if not isinstance(evidence_refs, list) or not evidence_refs:
+            findings.append(f"missing_material_axis_candidate_evidence:{candidate_id}")
+            complete = False
+        else:
+            seen_refs: set[tuple[str, str]] = set()
+            for ref in evidence_refs:
+                if not isinstance(ref, dict):
+                    findings.append(f"invalid_material_axis_candidate_evidence:{candidate_id}")
+                    complete = False
+                    continue
+                family_id = ref.get("family_id")
+                unit_id = ref.get("unit_id")
+                key = (str(family_id), str(unit_id))
+                if (
+                    family_id not in _MATERIAL_AXIS_DISCOVERY_FAMILIES
+                    or not isinstance(unit_id, str)
+                    or unit_id not in expected_units.get(str(family_id), set())
+                    or key in seen_refs
+                ):
+                    findings.append(f"invalid_material_axis_candidate_evidence:{candidate_id}")
+                    complete = False
+                    continue
+                seen_refs.add(key)
+                observed_candidate_units[str(family_id)].add(unit_id)
+        target_axes = _string_set(
+            candidate.get("target_axis_ids"),
+            code=f"invalid_material_axis_candidate_targets:{candidate_id}",
+            findings=findings,
+        )
+        if disposition in {
+            "material_new_axis",
+            "material_merge_or_scope_expansion",
+        }:
+            material_candidates += 1
+            if not target_axes or target_axes - material_axis_ids:
+                findings.append(f"material_axis_candidate_inventory_mismatch:{candidate_id}")
+                complete = False
+            if disposition == "material_new_axis" and not str(
+                candidate.get("new_axis_definition", "")
+            ).strip():
+                findings.append(f"missing_material_axis_candidate_definition:{candidate_id}")
+                complete = False
+            if disposition == "material_merge_or_scope_expansion" and not str(
+                candidate.get("scope_change", "")
+            ).strip():
+                findings.append(f"missing_material_axis_scope_change:{candidate_id}")
+                complete = False
+        elif target_axes:
+            findings.append(f"nonmaterial_axis_candidate_has_targets:{candidate_id}")
+            complete = False
+    if observed_candidate_units != accounted_candidate_units:
+        findings.append("material_axis_candidate_unit_accounting_mismatch")
+        complete = False
+    declared_candidate_ids = _string_set(
+        value.get("candidate_ids"),
+        code="invalid_material_axis_discovery_candidate_ids",
+        findings=findings,
+    )
+    if declared_candidate_ids != candidate_ids:
+        findings.append("material_axis_discovery_candidate_id_mismatch")
+        complete = False
+
+    last_addition = _parse_iso_datetime(value.get("last_material_addition_at"))
+    if material_candidates and last_addition is None:
+        findings.append("missing_material_axis_last_addition_time")
+        complete = False
+    if not material_candidates and value.get("last_material_addition_at") is not None:
+        findings.append("unnecessary_material_axis_last_addition_time")
+        complete = False
+    dry_batches = value.get("dry_probe_batches")
+    selected_batches: list[Mapping[str, Any]] = []
+    if not isinstance(dry_batches, list) or len(dry_batches) != 2:
+        findings.append("material_axis_discovery_requires_two_dry_probes")
+        complete = False
+    else:
+        seen_batch_ids: set[str] = set()
+        used_artifact_paths: set[Path] = set()
+        for batch in dry_batches:
+            if not isinstance(batch, dict):
+                findings.append("invalid_material_axis_discovery_dry_probe")
+                complete = False
+                continue
+            selected_batches.append(batch)
+            batch_id = batch.get("batch_id")
+            if (
+                not isinstance(batch_id, str)
+                or not batch_id
+                or batch_id in seen_batch_ids
+            ):
+                findings.append("invalid_or_duplicate_material_axis_dry_probe_id")
+                complete = False
+            else:
+                seen_batch_ids.add(batch_id)
+            executed_at = _parse_iso_datetime(batch.get("executed_at"))
+            if executed_at is None:
+                findings.append("invalid_material_axis_dry_probe_executed_at")
+                complete = False
+            elif last_addition is not None and executed_at <= last_addition:
+                findings.append("material_axis_dry_probe_precedes_last_addition")
+                complete = False
+            if batch.get("source_family") not in _MATERIAL_AXIS_DISCOVERY_FAMILIES:
+                findings.append("invalid_material_axis_dry_probe_source_family")
+                complete = False
+            if not str(batch.get("family_kind", "")).strip():
+                findings.append("missing_material_axis_dry_probe_family_kind")
+                complete = False
+            job_ids = _string_set(
+                batch.get("job_ids"),
+                code="invalid_material_axis_dry_probe_jobs",
+                findings=findings,
+            )
+            if not job_ids or any(route_jobs.get(job_id) != "completed" for job_id in job_ids):
+                findings.append("material_axis_dry_probe_job_not_completed")
+                complete = False
+            artifact_ids = _string_set(
+                batch.get("artifact_ids"),
+                code="invalid_material_axis_dry_probe_artifacts",
+                findings=findings,
+            )
+            if len(artifact_ids) != 1 or any(
+                artifact_id not in artifacts for artifact_id in artifact_ids
+            ):
+                findings.append("unresolved_material_axis_dry_probe_artifact")
+                complete = False
+            else:
+                paths = {artifacts[artifact_id].resolve() for artifact_id in artifact_ids}
+                if paths & used_artifact_paths:
+                    findings.append("shared_material_axis_dry_probe_artifact")
+                    complete = False
+                used_artifact_paths.update(paths)
+                artifact_id = next(iter(artifact_ids))
+                try:
+                    probe = json.loads(
+                        artifacts[artifact_id].read_text(encoding="utf-8")
+                    )
+                except (OSError, json.JSONDecodeError) as exc:
+                    findings.append(
+                        f"invalid_material_axis_dry_probe_artifact:{type(exc).__name__}"
+                    )
+                    probe = {}
+                    complete = False
+                if not isinstance(probe, dict):
+                    findings.append("invalid_material_axis_dry_probe_artifact_shape")
+                    probe = {}
+                    complete = False
+                expected_probe_fields = {
+                    "schema_version": "material_axis_discovery_probe_v1",
+                    "subject": ledger.get("subject"),
+                    "cycle_id": ledger.get("cycle_id"),
+                    "probe_id": batch_id,
+                    "source_family": batch.get("source_family"),
+                    "family_kind": batch.get("family_kind"),
+                    "executed_at": batch.get("executed_at"),
+                }
+                for field, expected_value in expected_probe_fields.items():
+                    if probe.get(field) != expected_value:
+                        findings.append(
+                            f"material_axis_dry_probe_artifact_mismatch:{field}"
+                        )
+                        complete = False
+                probe_job_ids = _string_set(
+                    probe.get("job_ids"),
+                    code="invalid_material_axis_dry_probe_artifact_jobs",
+                    findings=findings,
+                )
+                if probe_job_ids != job_ids:
+                    findings.append("material_axis_dry_probe_artifact_mismatch:job_ids")
+                    complete = False
+                probed_units = _string_set(
+                    probe.get("unit_ids"),
+                    code="invalid_material_axis_dry_probe_units",
+                    findings=findings,
+                )
+                source_family = batch.get("source_family")
+                if (
+                    not probed_units
+                    or probed_units
+                    - expected_units.get(str(source_family), set())
+                ):
+                    findings.append("material_axis_dry_probe_units_outside_family")
+                    complete = False
+                existing_candidates = _string_set(
+                    probe.get("existing_candidate_ids_observed"),
+                    code="invalid_material_axis_probe_existing_candidates",
+                    findings=findings,
+                )
+                if existing_candidates - candidate_ids:
+                    findings.append("material_axis_probe_unknown_existing_candidate")
+                    complete = False
+                for field in ("new_candidate_ids", "new_material_axis_ids"):
+                    if probe.get(field) != batch.get(field):
+                        findings.append(
+                            f"material_axis_dry_probe_artifact_mismatch:{field}"
+                        )
+                        complete = False
+                if probe.get("conclusion") != "no_new_material_axis":
+                    findings.append("material_axis_dry_probe_not_dry")
+                    complete = False
+                if not str(probe.get("claim_boundary", "")).strip():
+                    findings.append("missing_material_axis_dry_probe_claim_boundary")
+                    complete = False
+            if batch.get("new_candidate_ids") != []:
+                findings.append("material_axis_dry_probe_found_new_candidate")
+                complete = False
+            if batch.get("new_material_axis_ids") != []:
+                findings.append("material_axis_dry_probe_found_new_material_axis")
+                complete = False
+    if len(selected_batches) == 2:
+        if selected_batches[0].get("source_family") == selected_batches[1].get(
+            "source_family"
+        ):
+            findings.append("repeated_material_axis_dry_probe_source_family")
+            complete = False
+        if selected_batches[0].get("family_kind") == selected_batches[1].get(
+            "family_kind"
+        ):
+            findings.append("repeated_material_axis_dry_probe_family_kind")
+            complete = False
+    status = value.get("status")
+    if status not in {"open", "blocked", "route_bounded_saturated"}:
+        findings.append("invalid_material_axis_discovery_status")
+        complete = False
+    elif status != "route_bounded_saturated":
+        if require_complete:
+            findings.append("material_axis_discovery_not_saturated")
+        complete = False
     return complete
 
 
