@@ -2842,14 +2842,14 @@ phase_acquisition_seal:
     unrun_job_ids: []
     unrun_count: 0
     terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-    terminal_artifact_sha256: edb172f4732a1098bf8ccfae5cb8494b6e98fb9aade1244e811c22cf233b009d
+    terminal_artifact_sha256: 193ca252eedeb80a9b7e7dcd6d344a696a9234ddc145fecd8d2e07e19966ceff
   serp_phase2_decision_receipt:
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
     sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-    sha256: 4454b0157fbbd47838ef6e55de1ec01e9c0c84364402ffbe4ff719891b223d2f
+    sha256: dda91e3ec6f9ec391ad41555fade14d90879ed1fc45f98eb93a512603990eb39
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -2860,13 +2860,13 @@ phase_acquisition_seal:
       - parent acquisition provenance changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-      sha256: edb172f4732a1098bf8ccfae5cb8494b6e98fb9aade1244e811c22cf233b009d
+      sha256: 193ca252eedeb80a9b7e7dcd6d344a696a9234ddc145fecd8d2e07e19966ceff
       invalid_if:
       - artifact hash changes
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-      sha256: 4454b0157fbbd47838ef6e55de1ec01e9c0c84364402ffbe4ff719891b223d2f
+      sha256: dda91e3ec6f9ec391ad41555fade14d90879ed1fc45f98eb93a512603990eb39
       invalid_if:
       - artifact hash changes
       - frontier accounting or source-native coding changes
@@ -2879,3 +2879,28 @@ phase_acquisition_seal:
 This seal closes Acquire & Seal only. It does not start Deliver. Any Deliver
 remains a separate commission and inherits the ledger's qualitative—not
 population-prevalence—claim ceiling.
+
+## Seal re-cut 2026-08-06 (semantic remediation)
+
+The hash pins for `turn_a_consumer_brand_v3_acquisition_record.md`
+(`edb172f4…` → `a8aeb4b9…` → `193ca252…`) and `evidence_depth_ledger.json`
+(`4454b015…` → `9410fb08…` → `dda91e3e…`) were re-cut by the commissioning
+Chief Architect after an adjudicated remediation chain (second re-cut
+2026-08-06: four adjudicated corrections from the cross-vendor confirming
+re-check, AR-01..04, including two retailer axis-binding removals): a delegated semantic source review
+(cross-vendor, 2026-08-06) returned `NEEDS_ARCHITECTURE_PASS` for systemic
+`choice`/`explicit_outcome` misattribution in the community coding; a
+commissioned re-derivation re-coded all 355 outcome-bearing rows against raw
+preserved bodies under a referent-binding rule and backfilled
+`comment_created_utc` on touched rows; the Chief Architect adjudicated and
+accepted the return. The durable disposition and per-row log live beside the
+coding as
+`p11r7_choice_outcome_rederivation_disposition_v0.md` and
+`p11r7_disposition_log.csv`. Raw preserved sources, route receipts, job
+accounting, and the qualitative claim ceiling are unchanged; corrected
+counterweight totals are stated in the acquisition record's re-derivation
+section. This re-cut amends hash pins only; it does not reopen acquisition. Two axes
+(reaction, wear) carry the contract's `counterevidence_absent_verified`
+marker (owner-authorized contract amendment, 2026-08-06): their positive
+counterweight is verified absent, recorded rather than fabricated; formula
+consistency re-anchored to its one surviving subject-owned event.

@@ -305,6 +305,16 @@ against the acquisition seal and separately adjudicated by the Chief Architect.
 This semantic review catches valid-but-misattributed citations that mechanical
 shape and hash checks cannot.
 
+When an adjudicated re-derivation or semantic remediation proves that no
+subject-owned counterevidence survives on an axis, that axis records
+`counterevidence_absent_verified: true` in its decision usefulness beside
+prose naming the disposition; the counterevidence-role reference requirement
+is waived for exactly that axis, which otherwise keeps its evidence-supported
+closure and true strength. Fabricating a counterevidence reference, or
+downgrading a strong axis to `source_exhausted_but_weak` solely to evade the
+requirement, are both defects; carrying the marker while also citing a
+counterevidence-role reference is a contradiction the validator rejects.
+
 Call this terminal boundary the **decision frontier**. Do not call it a value
 frontier: `value` remains the customer-facing product proposition (benefit,
 quantity, durability, and performance for price). Do not call it a discovery

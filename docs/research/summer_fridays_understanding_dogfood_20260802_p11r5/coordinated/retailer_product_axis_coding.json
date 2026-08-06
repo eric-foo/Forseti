@@ -892,14 +892,8 @@
       "review_id": "843798065",
       "product_context_id": "SUMR-WU23",
       "incentive_state": "not_marked_incentivized",
-      "axis_codes": [
-        {
-          "axis_id": "hydration_and_moisture",
-          "choice_outcomes": [
-            "recommended_or_would_purchase"
-          ]
-        }
-      ],
+      "axis_codes": [],
+      "axis_binding_note": "hydration_and_moisture removed 2026-08-06 confirming re-check AR-04: 'looks like a moisturizer' is an appearance comparison, not hydration performance.",
       "overall_choice_outcomes": [
         "recommended_or_would_purchase"
       ],
@@ -8932,14 +8926,8 @@
       "review_id": "382051472",
       "product_context_id": "P429952",
       "incentive_state": "not_marked_incentivized",
-      "axis_codes": [
-        {
-          "axis_id": "reaction_and_breakout",
-          "choice_outcomes": [
-            "recommended_or_would_purchase"
-          ]
-        }
-      ],
+      "axis_codes": [],
+      "axis_binding_note": "reaction_and_breakout removed 2026-08-06 confirming re-check AR-04: 'I don't burn I shrivel' describes climate exposure, not a product-caused reaction.",
       "overall_choice_outcomes": [
         "recommended_or_would_purchase"
       ],
