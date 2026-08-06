@@ -948,6 +948,34 @@ CSB source-route row
 -> Capture P1 direct-source acquisition when concrete URLs or surfaces exist
 ```
 
+### Category-Benchmark Search-Interest Read (Consumer-Brand Phase A)
+
+Owner decision (2026-08-06): every future broad consumer-brand Phase A run
+includes one bounded category-benchmark search-interest read, so Deliver can
+separate brand-specific attention decline from category-wide decline instead
+of assuming the difference. Shape: one one-shot pull in the run's primary geo
+plus a worldwide check, 5-year window, comparing the subject brand term
+against the head terms of each product category the subject competes in
+(category terms derived from the run's product-axis inventory, not invented).
+Record the verdict explicitly against this decision rule: subject curve
+declining while its category curves rise or hold → brand-specific decline;
+category curves deflating alongside the subject → category-wide decline;
+mixed or below-threshold → unresolved, never forced. Founding instance,
+decision rule, and report shape:
+`docs/research/summer_fridays_ci_inputs_20260806/search_interest_addendum_return.md`.
+
+Boundaries: this is a bounded per-run one-shot authorization class only — the
+standing search-interest series, cadence machinery, and vendor selection
+remain unsourced (AR-04 open); capture obligations and limits-visibility
+follow
+`forseti/product/spines/capture/core/demand_durability_indicators/search_interest/demand_durability_indicator_search_interest_capture_profile_v0.md`;
+values are the source's 0–100 relative index only (no sales, share,
+prevalence, or population claims; below-threshold rows use the exact phrase
+"below the Google Trends reporting threshold under the recorded geo/window").
+Shopping-property purchase-leaning checks are not relied upon for this read
+until a run demonstrates above-threshold coverage (2026-08-06 outcome:
+inconclusive-below-threshold).
+
 ## Graph-Light Contract
 
 Graphing belongs in the commission ecosystem, but the signal board should carry

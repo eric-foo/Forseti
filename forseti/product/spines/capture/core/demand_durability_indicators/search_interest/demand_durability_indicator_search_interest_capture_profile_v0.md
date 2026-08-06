@@ -87,6 +87,17 @@ Reading this document does not authorize sourcing, implementation, contract
 hardening, vendor selection, API access, or any runtime. Those decisions are
 owner-gated and out of scope for this profile.
 
+**Bounded per-run exception (owner decision, 2026-08-06):** one one-shot
+category-benchmark search-interest pull per commissioned broad consumer-brand
+Phase A run is authorized as a run input; the requirement, decision rule, and
+claim limits are owned by
+`forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
+("Category-Benchmark Search-Interest Read"). This exception does not source
+the standing series, any cadence, or a vendor, and AR-04 otherwise remains
+open. This profile's limits-visibility obligations (relative-index semantics,
+entity/topic and pull-date pins, threshold discipline) apply to what such a
+pull records.
+
 ---
 
 ## What This Profile Adds (Cited Extension, Not New Authority)
