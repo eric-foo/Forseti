@@ -42,7 +42,7 @@ phase seal verified in fresh context, plus a durable bounded capture-return
 artifact for every supplement the memorandum consumes.
 
 Analysis of the preserved evidence — the joins, recomputations, and syntheses
-Rules 2 and 12 require — is this method's job. What is prohibited is
+Rules 2 and 13 require — is this method's job. What is prohibited is
 modifying the sealed record or asserting any claim above its sealed ceilings.
 New evidence is acquired only through the Deliver phase's bounded Acquire &
 Seal turn — decision-specific, claim-scoped supplements (e.g., a one-shot
@@ -89,9 +89,9 @@ frame before any drafting.
 1. Verify the seal gate (playbook Synthesize-turn contract).
 2. Target screen (Rule 1) — select the anchor product.
 3. Claims register and claims-to-complaints join (Rule 2).
-4. Product-slice recomputation (Rule 12) — re-derive axis support at the
+4. Product-slice recomputation (Rule 13) — re-derive axis support at the
    anchor-product grain before any slice-level claim.
-5. Draft the memorandum (Rules 3–10).
+5. Draft the memorandum (Rules 3–10, 12).
 6. Cold adversarial read (Rule 9).
 7. Defender-framing derivative when commissioned, produced under the Framing
    Variants contract below — exposure map, moat identification, defector
@@ -187,7 +187,25 @@ frame before any drafting.
     exists. Until the first run lands, this rule binds only the
     `schema_version` field and the first-run filing obligation — there is
     deliberately no speculative schema to conform to.
-12. **Slice honesty and closed research.** Axis support computed at portfolio
+12. **Defense tiers and cap.** The memorandum classifies every assessed axis
+    into exactly three tiers, and the default is the middle one:
+    - *Attack candidates* — behavior-backed weaknesses.
+    - *Contested ground* — the default for everything else, including
+      above-average performance. Compete on merits; no warning label. Most
+      axes belong here.
+    - *Defended — capped at the one or two strongest.* An axis enters this
+      tier only with top-tier proof: repeat-purchase or recommendation
+      *behavior* (never adjectives alone), consistent across independent
+      channels, and surviving the current corrected counterweight (after any
+      re-derivation of outcome codings). If more than two axes clear the bar,
+      the memo names only the two strongest and places the rest in contested
+      ground. Above-average is never, by itself, "do not attack."
+    The cap forces ranking instead of thresholding; it exists because
+    positive-counterweight evidence has empirically inflated (p11r7 semantic
+    review) and because threshold-thinking over-shrinks the attack surface.
+    Revisit posture: first-run evidence may revise the cap's size, never
+    silently per-run.
+13. **Slice honesty and closed research.** Axis support computed at portfolio
     grain is re-derived at the anchor-product grain before any slice-level
     claim; a slice that falls below the sealed evidence floor degrades to a
     bounded-signal claim rather than being rounded up. The sealed corpus stays
