@@ -264,10 +264,38 @@ _COMPARATOR_DISPOSITIONS = {
 _COMPARATOR_LANE_KEYS = (
     "co1_owned_ad_positioning",
     "co2_retailer_product",
-    "co3_customer_comparison",
+    "co3_retailer_review",
+    "co3_reddit_community",
     "campaign_creator_comparison",
 )
 _COMPARATOR_LANE_STATES = {"observed", "none_found", "blocked"}
+_COMPARATOR_PORTFOLIO_ROLES = {
+    "explicit_hero",
+    "likely_major",
+    "supporting",
+    "unclear",
+}
+_COMPARATOR_PORTFOLIO_ROLE_SCOPES = {"product", "franchise"}
+_COMPARATOR_PORTFOLIO_ROLE_BASES = {
+    "explicit_source",
+    "multi_source_inference",
+    "observed_position",
+    "unresolved",
+}
+_COMPARATOR_POSITION_SCOPES = {
+    "brand_portfolio",
+    "retailer_category",
+    "retailer_collection",
+    "market_list",
+}
+_COMPARATOR_FORBIDDEN_SYNTHETIC_FIELDS = {
+    "rank",
+    "overall_rank",
+    "sales_rank",
+    "market_share",
+    "sentiment_score",
+    "reddit_sentiment",
+}
 _VERIFICATION_TRIGGER_KINDS = {
     "material_axis",
     "contradiction",
@@ -3888,16 +3916,246 @@ def _validate_comparator_closure(
         if not isinstance(ceiling, str) or not ceiling:
             findings.append(f"missing_comparator_claim_ceiling:{candidate_id}")
         if material:
+            forbidden_fields = sorted(
+                _COMPARATOR_FORBIDDEN_SYNTHETIC_FIELDS.intersection(row)
+            )
+            if forbidden_fields:
+                findings.append(
+                    "forbidden_synthetic_comparator_field:"
+                    + f"{candidate_id}:{','.join(forbidden_fields)}"
+                )
+
+            portfolio_role = row.get("portfolio_role")
+            if not isinstance(portfolio_role, dict):
+                findings.append(f"missing_comparator_portfolio_role:{candidate_id}")
+            else:
+                role_scope = portfolio_role.get("scope")
+                role_status = portfolio_role.get("status")
+                role_basis = portfolio_role.get("basis")
+                assessed_identity = portfolio_role.get("assessed_identity")
+                role_refs = portfolio_role.get("evidence_refs")
+                valid_role_refs = (
+                    isinstance(role_refs, list)
+                    and bool(role_refs)
+                    and all(isinstance(ref, str) and ref for ref in role_refs)
+                )
+                if role_scope not in _COMPARATOR_PORTFOLIO_ROLE_SCOPES:
+                    findings.append(
+                        f"invalid_comparator_portfolio_role_scope:{candidate_id}"
+                    )
+                if role_status not in _COMPARATOR_PORTFOLIO_ROLES:
+                    findings.append(
+                        f"invalid_comparator_portfolio_role_status:{candidate_id}"
+                    )
+                if role_basis not in _COMPARATOR_PORTFOLIO_ROLE_BASES:
+                    findings.append(
+                        f"invalid_comparator_portfolio_role_basis:{candidate_id}"
+                    )
+                if not isinstance(assessed_identity, str) or not assessed_identity:
+                    findings.append(
+                        f"missing_comparator_portfolio_role_identity:{candidate_id}"
+                    )
+                elif (
+                    role_scope == "product"
+                    and isinstance(row.get("competitor_product_identity"), str)
+                    and assessed_identity != row.get("competitor_product_identity")
+                ):
+                    findings.append(
+                        f"comparator_portfolio_product_identity_mismatch:{candidate_id}"
+                    )
+                if role_status == "explicit_hero" and (
+                    role_basis != "explicit_source" or not valid_role_refs
+                ):
+                    findings.append(
+                        f"comparator_explicit_hero_without_explicit_evidence:{candidate_id}"
+                    )
+                elif role_status == "likely_major" and (
+                    role_basis != "multi_source_inference"
+                    or not valid_role_refs
+                    or len(set(role_refs)) < 2
+                ):
+                    findings.append(
+                        f"comparator_likely_major_without_multisource_evidence:{candidate_id}"
+                    )
+                elif role_status == "supporting" and (
+                    role_basis
+                    not in {
+                        "explicit_source",
+                        "multi_source_inference",
+                        "observed_position",
+                    }
+                    or not valid_role_refs
+                ):
+                    findings.append(
+                        f"comparator_supporting_role_without_positive_evidence:{candidate_id}"
+                    )
+                elif role_status == "unclear" and (
+                    role_basis != "unresolved"
+                    or not isinstance(portfolio_role.get("gap_reason"), str)
+                    or not portfolio_role.get("gap_reason")
+                ):
+                    findings.append(
+                        f"comparator_unclear_role_without_gap_reason:{candidate_id}"
+                    )
+
+            positions = row.get("observed_positions")
+            if not isinstance(positions, list):
+                findings.append(f"invalid_comparator_observed_positions:{candidate_id}")
+            else:
+                if not positions and (
+                    not isinstance(row.get("position_gap_reason"), str)
+                    or not row.get("position_gap_reason")
+                ):
+                    findings.append(
+                        f"comparator_position_gap_without_reason:{candidate_id}"
+                    )
+                position_ids: set[str] = set()
+                for position in positions:
+                    if not isinstance(position, dict):
+                        findings.append(
+                            f"invalid_comparator_observed_position:{candidate_id}"
+                        )
+                        continue
+                    position_id = position.get("position_id")
+                    if (
+                        not isinstance(position_id, str)
+                        or not position_id
+                        or position_id in position_ids
+                    ):
+                        findings.append(
+                            f"invalid_comparator_position_id:{candidate_id}"
+                        )
+                    else:
+                        position_ids.add(position_id)
+                    if position.get("scope_kind") not in _COMPARATOR_POSITION_SCOPES:
+                        findings.append(
+                            f"invalid_comparator_position_scope:{candidate_id}"
+                        )
+                    for field in (
+                        "source_or_retailer",
+                        "market_scope",
+                        "observed_at",
+                    ):
+                        if (
+                            not isinstance(position.get(field), str)
+                            or not position.get(field)
+                        ):
+                            findings.append(
+                                "missing_comparator_position_context:"
+                                + f"{candidate_id}:{field}"
+                            )
+                    position_refs = position.get("evidence_refs")
+                    if (
+                        not isinstance(position_refs, list)
+                        or not position_refs
+                        or any(
+                            not isinstance(ref, str) or not ref
+                            for ref in position_refs
+                        )
+                    ):
+                        findings.append(
+                            f"missing_comparator_position_evidence:{candidate_id}"
+                        )
+                    rank = position.get("rank")
+                    list_size = position.get("list_size")
+                    label = position.get("label")
+                    has_numeric_position = rank is not None or list_size is not None
+                    if has_numeric_position and (
+                        not isinstance(rank, int)
+                        or isinstance(rank, bool)
+                        or not isinstance(list_size, int)
+                        or isinstance(list_size, bool)
+                        or rank < 1
+                        or list_size < 1
+                        or rank > list_size
+                    ):
+                        findings.append(
+                            f"invalid_comparator_source_local_rank:{candidate_id}"
+                        )
+                    if not has_numeric_position and (
+                        not isinstance(label, str) or not label
+                    ):
+                        findings.append(
+                            f"comparator_position_without_rank_or_label:{candidate_id}"
+                        )
+                    forbidden_position_fields = sorted(
+                        {
+                            "overall_rank",
+                            "sales_rank",
+                            "market_share",
+                            "sentiment_score",
+                            "reddit_sentiment",
+                        }.intersection(position)
+                    )
+                    if forbidden_position_fields:
+                        findings.append(
+                            "forbidden_synthetic_comparator_position_field:"
+                            + f"{candidate_id}:{','.join(forbidden_position_fields)}"
+                        )
+
+            shared_axis_ids = row.get("shared_axis_ids")
+            if disposition == "promoted" or decision_ready:
+                if (
+                    not isinstance(shared_axis_ids, list)
+                    or not shared_axis_ids
+                    or any(
+                        not isinstance(axis_id, str) or not axis_id
+                        for axis_id in shared_axis_ids
+                    )
+                ):
+                    findings.append(
+                        f"promoted_comparator_without_shared_axes:{candidate_id}"
+                    )
+            elif shared_axis_ids is not None and (
+                not isinstance(shared_axis_ids, list)
+                or any(
+                    not isinstance(axis_id, str) or not axis_id
+                    for axis_id in shared_axis_ids
+                )
+            ):
+                findings.append(f"invalid_comparator_shared_axes:{candidate_id}")
+
             lanes = row.get("lane_evidence")
             if not isinstance(lanes, dict):
                 findings.append(
                     f"missing_comparator_lane_evidence:{candidate_id}"
                 )
             else:
+                if "co3_customer_comparison" in lanes:
+                    findings.append(
+                        f"combined_comparator_customer_lane_not_allowed:{candidate_id}"
+                    )
                 for lane in _COMPARATOR_LANE_KEYS:
-                    if lanes.get(lane) not in _COMPARATOR_LANE_STATES:
+                    lane_row = lanes.get(lane)
+                    if (
+                        not isinstance(lane_row, dict)
+                        or lane_row.get("status") not in _COMPARATOR_LANE_STATES
+                    ):
                         findings.append(
                             "invalid_comparator_lane_evidence:"
+                            + f"{candidate_id}:{lane}"
+                        )
+                        continue
+                    lane_status = lane_row.get("status")
+                    lane_refs = lane_row.get("evidence_refs")
+                    if lane_status == "observed" and (
+                        not isinstance(lane_refs, list)
+                        or not lane_refs
+                        or any(
+                            not isinstance(ref, str) or not ref
+                            for ref in lane_refs
+                        )
+                    ):
+                        findings.append(
+                            "observed_comparator_lane_without_evidence:"
+                            + f"{candidate_id}:{lane}"
+                        )
+                    elif lane_status in {"none_found", "blocked"} and (
+                        not isinstance(lane_row.get("gap_reason"), str)
+                        or not lane_row.get("gap_reason")
+                    ):
+                        findings.append(
+                            "comparator_lane_gap_without_reason:"
                             + f"{candidate_id}:{lane}"
                         )
     dropped = sorted(frame_ids - seen)

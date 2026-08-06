@@ -803,11 +803,50 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "claim_ceiling": (
                         "observed comparison context; not market share"
                     ),
+                    "portfolio_role": {
+                        "scope": "product",
+                        "assessed_identity": (
+                            "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                        ),
+                        "status": "likely_major",
+                        "basis": "multi_source_inference",
+                        "evidence_refs": ["elf-owned-range", "elf-ulta-list"],
+                    },
+                    "observed_positions": [
+                        {
+                            "position_id": "elf-ulta-lip-oil-2026-08-06",
+                            "scope_kind": "retailer_category",
+                            "source_or_retailer": "Ulta",
+                            "market_scope": "US / lip oil category page",
+                            "observed_at": "2026-08-06T12:00:00Z",
+                            "rank": 2,
+                            "list_size": 24,
+                            "label": "second item in the observed list",
+                            "evidence_refs": ["elf-ulta-list"],
+                        }
+                    ],
+                    "shared_axis_ids": ["format", "price", "claim_language"],
                     "lane_evidence": {
-                        "co1_owned_ad_positioning": "observed",
-                        "co2_retailer_product": "observed",
-                        "co3_customer_comparison": "observed",
-                        "campaign_creator_comparison": "observed",
+                        "co1_owned_ad_positioning": {
+                            "status": "observed",
+                            "evidence_refs": ["elf-owned-range"],
+                        },
+                        "co2_retailer_product": {
+                            "status": "observed",
+                            "evidence_refs": ["elf-ulta-list"],
+                        },
+                        "co3_retailer_review": {
+                            "status": "observed",
+                            "evidence_refs": ["elf-ulta-reviews"],
+                        },
+                        "co3_reddit_community": {
+                            "status": "observed",
+                            "evidence_refs": ["elf-reddit-thread-1"],
+                        },
+                        "campaign_creator_comparison": {
+                            "status": "observed",
+                            "evidence_refs": ["elf-creator-post-1"],
+                        },
                     },
                 },
                 {
@@ -824,11 +863,43 @@ def _understanding_route(tmp_path: Path) -> dict:
                         "Rhode Peptide Lip Treatment 10 ml"
                     ),
                     "claim_ceiling": "watch-only; no decision licence",
+                    "portfolio_role": {
+                        "scope": "product",
+                        "assessed_identity": (
+                            "Rhode Peptide Lip Treatment 10 ml"
+                        ),
+                        "status": "unclear",
+                        "basis": "unresolved",
+                        "evidence_refs": [],
+                        "gap_reason": (
+                            "sampled public sources did not establish portfolio role"
+                        ),
+                    },
+                    "observed_positions": [],
+                    "position_gap_reason": (
+                        "sampled sources exposed no stable ordered list"
+                    ),
                     "lane_evidence": {
-                        "co1_owned_ad_positioning": "none_found",
-                        "co2_retailer_product": "observed",
-                        "co3_customer_comparison": "none_found",
-                        "campaign_creator_comparison": "blocked",
+                        "co1_owned_ad_positioning": {
+                            "status": "none_found",
+                            "gap_reason": "no material owned/ad comparison found",
+                        },
+                        "co2_retailer_product": {
+                            "status": "observed",
+                            "evidence_refs": ["rhode-pdp"],
+                        },
+                        "co3_retailer_review": {
+                            "status": "none_found",
+                            "gap_reason": "no retailer review corpus was exposed",
+                        },
+                        "co3_reddit_community": {
+                            "status": "none_found",
+                            "gap_reason": "no material sampled comparison found",
+                        },
+                        "campaign_creator_comparison": {
+                            "status": "blocked",
+                            "gap_reason": "creator post was not retrievable",
+                        },
                     },
                 },
                 {
@@ -3701,6 +3772,110 @@ def test_material_candidate_requires_every_lane_evidence_state(
     assert (
         "invalid_comparator_lane_evidence:cand-rhode:co2_retailer_product"
         in _validate(tmp_path, seal)
+    )
+
+
+def test_material_candidate_requires_portfolio_role(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del promoted["portfolio_role"]
+
+    assert "missing_comparator_portfolio_role:cand-elf" in _validate(tmp_path, seal)
+
+
+def test_explicit_hero_requires_explicit_source_evidence(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["portfolio_role"].update(
+        {"status": "explicit_hero", "basis": "observed_position", "evidence_refs": []}
+    )
+
+    assert (
+        "comparator_explicit_hero_without_explicit_evidence:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_likely_major_requires_multiple_evidence_refs(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["portfolio_role"]["evidence_refs"] = ["one-source"]
+
+    assert (
+        "comparator_likely_major_without_multisource_evidence:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_unclear_portfolio_role_requires_gap_reason(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    watch = seal["understanding_route"]["comparator_closure"]["candidates"][1]
+    del watch["portfolio_role"]["gap_reason"]
+
+    assert "comparator_unclear_role_without_gap_reason:cand-rhode" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_source_local_rank_requires_complete_context(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del promoted["observed_positions"][0]["market_scope"]
+
+    assert "missing_comparator_position_context:cand-elf:market_scope" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_source_local_rank_cannot_exceed_list_size(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["observed_positions"][0]["rank"] = 25
+
+    assert "invalid_comparator_source_local_rank:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_universal_comparator_rank_is_forbidden(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["sales_rank"] = 1
+
+    assert "forbidden_synthetic_comparator_field:cand-elf:sales_rank" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_observed_lane_requires_evidence_refs(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del promoted["lane_evidence"]["co3_reddit_community"]["evidence_refs"]
+
+    assert (
+        "observed_comparator_lane_without_evidence:cand-elf:co3_reddit_community"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_empty_lane_requires_gap_reason(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    watch = seal["understanding_route"]["comparator_closure"]["candidates"][1]
+    del watch["lane_evidence"]["co3_retailer_review"]["gap_reason"]
+
+    assert (
+        "comparator_lane_gap_without_reason:cand-rhode:co3_retailer_review"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_promoted_comparator_requires_shared_axes(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    promoted = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    promoted["shared_axis_ids"] = []
+
+    assert "promoted_comparator_without_shared_axes:cand-elf" in _validate(
+        tmp_path, seal
     )
 
 

@@ -667,12 +667,32 @@ competitor lane is created:
 For every material candidate, the existing lanes owe comparator evidence or a
 typed gap — never silence: `CO2` retailer/category adjacency and exact
 product identity (retailer co-placement alone is never directness proof);
-`CO3` retailer-review and Reddit/customer comparison evidence — explicit
-comparisons, substitutes, switch/return/repurchase destinations, and
-complaint-borne alternatives; campaign-integration creator comparison
+`CO3` retailer-review and Reddit/community comparison evidence, kept as two
+separate evidence roles — explicit comparisons, substitutes,
+switch/return/repurchase destinations, and complaint-borne alternatives;
+campaign-integration creator comparison
 evidence — head-to-heads, dupe claims, and repeated claim propagation,
 relationship-typed; and `CO1` owned/advertiser positioning and named
 comparisons as actor-strategy evidence, never independent customer proof.
+An `observed` lane points to its evidence references. `None_found` and
+`blocked` are valid bounded outcomes only with a gap reason. Retailer reviews
+and Reddit/community observations are public customer-language samples, not
+representative sentiment or population polling.
+
+Each material candidate also binds an evidence-backed local portfolio-role
+assessment for the exact competitor product or named franchise:
+`explicit_hero | likely_major | supporting | unclear`. `Explicit_hero`
+requires an explicit source; `likely_major` requires a multi-source inference;
+`supporting` requires positive evidence rather than absence; and `unclear`
+preserves the unresolved gap. Where a source exposes an ordered position, the
+seal records the source or retailer, list/category scope, market, observation
+time, evidence references, and either the numeric rank plus list size or the
+source-visible relative label. An empty observation set carries its gap reason.
+No source-local observation may be promoted into a universal product rank,
+sales rank, market share, or cross-retailer league table. Review volume alone
+does not establish portfolio role. A promoted direct competitor binds at least
+one shared axis so its stronger evidence is decision-comparable to the subject
+product rather than merely voluminous.
 
 SERP Phase 2 consolidates those lane emissions, runs only material
 targeted/J5 delta probes, and adjudicates the direct-competitor set from the
@@ -743,8 +763,10 @@ version; the `campaign_evidence_integration` route accounting and
 `campaign_integration` phase at route 1.1.0; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
-identity binding for `promoted` candidates and per-material-candidate lane
-evidence; verification triggers and terminal statuses; and the
+identity binding and shared axes for `promoted` candidates;
+per-material-candidate product/franchise role, source-local observed-position
+or explicit-gap accounting, and separately sourced retailer-review and
+Reddit/community lane evidence; verification triggers and terminal statuses; and the
 two-observation movement rule. A seal sealed before route versioning began
 (2026-08-07) has no stamped version and is audited with
 `--allow-preversion-route`; recording `1.0.0` retrospectively never claims it

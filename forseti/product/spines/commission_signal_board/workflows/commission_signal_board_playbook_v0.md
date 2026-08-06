@@ -606,11 +606,46 @@ phase_acquisition_seal:
           subject_product_identity:
           competitor_product_identity:
           claim_ceiling:
+          portfolio_role:
+            scope: product | franchise
+            assessed_identity:
+            status: explicit_hero | likely_major | supporting | unclear
+            basis: explicit_source | multi_source_inference | observed_position | unresolved
+            evidence_refs: []
+            gap_reason:
+          observed_positions:
+            - position_id:
+              scope_kind: brand_portfolio | retailer_category | retailer_collection | market_list
+              source_or_retailer:
+              market_scope:
+              observed_at:
+              rank:
+              list_size:
+              label:
+              evidence_refs: []
+          position_gap_reason:
+          shared_axis_ids: []
           lane_evidence:
-            co1_owned_ad_positioning: observed | none_found | blocked
-            co2_retailer_product: observed | none_found | blocked
-            co3_customer_comparison: observed | none_found | blocked
-            campaign_creator_comparison: observed | none_found | blocked
+            co1_owned_ad_positioning:
+              status: observed | none_found | blocked
+              evidence_refs: []
+              gap_reason:
+            co2_retailer_product:
+              status: observed | none_found | blocked
+              evidence_refs: []
+              gap_reason:
+            co3_retailer_review:
+              status: observed | none_found | blocked
+              evidence_refs: []
+              gap_reason:
+            co3_reddit_community:
+              status: observed | none_found | blocked
+              evidence_refs: []
+              gap_reason:
+            campaign_creator_comparison:
+              status: observed | none_found | blocked
+              evidence_refs: []
+              gap_reason:
     campaign_evidence_integration:
       status: completed | blocked
       view:
@@ -827,6 +862,21 @@ Contracts"). Operating rules:
   subject and competitor product identities. Phase A closes decision-usable
   comparator context only — never an exhaustive-direct-competitor claim,
   representative market sentiment, or a standing competitor lane.
+  Every material candidate also records the observed competitor product or
+  franchise's portfolio role as `explicit_hero | likely_major | supporting |
+  unclear`, with the evidence basis and exact assessed identity. `Likely_major`
+  requires a multi-source inference; `supporting` requires positive evidence;
+  `unclear` records the unresolved gap rather than forcing a role. Ordered
+  source positions are recorded only as source-local observations with the
+  retailer/list scope, market, observation time, and evidence reference. A
+  numeric position carries both rank and list size; otherwise a source-visible
+  relative label may be recorded. These observations never become a universal
+  brand rank, sales rank, market share, or cross-retailer league table. A
+  promoted direct competitor names at least one shared comparison axis.
+  Retailer-review evidence and Reddit/community evidence remain separate:
+  both are public customer-language samples, not representative sentiment or
+  population polling. Each observed lane points to evidence; `none_found` or
+  `blocked` records why.
 - **Conditional product/claim verification** triggers only on
   reconciled product identity × material axis or contradiction × publicly
   verifiable unresolved claim. It is a conditional adjustment job, never
@@ -882,7 +932,10 @@ understanding_acquire_seal_route:
         job and campaign_evidence_view_v1; three-state competitor closure with
         the Phase 1 frame scoping the fan-out, per-material-candidate lane
         comparator evidence, and pre-seal SERP Phase 2 direct-competitor
-        adjudication; conditional product/claim verification accounting;
+        adjudication; evidence-backed product/franchise portfolio role,
+        source-local observed positions, separate retailer-review and
+        Reddit/community customer-language lanes, and shared axes for promoted
+        competitors; conditional product/claim verification accounting;
         retailer snapshot/change/baseline-only movement semantics; and the
         seal-recorded route version with this append-only changelog.
       affected_gate: >
