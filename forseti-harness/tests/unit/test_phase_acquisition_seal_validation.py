@@ -3602,6 +3602,43 @@ def test_material_axis_dry_probe_claim_must_be_backed_by_probe_artifact(
     assert "material_axis_dry_probe_artifact_mismatch:source_family" in findings
 
 
+def test_material_axis_dry_probes_must_differ_in_family_kind(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    closure = ledger["material_axis_discovery_closure"]
+    closure["dry_probe_batches"][1]["family_kind"] = "open_behavior_residual"
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "repeated_material_axis_dry_probe_family_kind" in findings
+
+
+def test_material_axis_discovery_audit_method_must_be_open_taxonomy_residual(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "material-axis-discovery-audit"
+    )
+    audit = json.loads((tmp_path / artifact["locator"]).read_text(encoding="utf-8"))
+    audit["audit_method"] = "fixed_axis_recode"
+    _rewrite_axis_discovery_audit(tmp_path, seal, ledger_path, ledger, audit)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "material_axis_discovery_audit_fixed_taxonomy" in findings
+
+
 def test_historical_consumer_v3_retains_prior_validation_meaning(
     tmp_path: Path,
 ) -> None:
