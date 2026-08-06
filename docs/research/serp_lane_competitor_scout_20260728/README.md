@@ -74,8 +74,12 @@ specialist fan-out:
 (seeds -> rolling harvest -> merged vs+J5 queue -> priced ledger +
 trigger-thread and mediator queues) runs after the question and validated
 commission board. Its outputs feed `CO1`-`CO3`; `CO3` performs Reddit/community
-capture, Channel 3, and J3 inside that fan-out. After all specialist terminal
-returns,
+capture, Channel 3, and J3 inside that fan-out. Each specialist terminal records
+decision-changing axis misfits in `open_axis_nominations`; after all specialist
+returns, `CO0` must carry every nomination into the provisional inventory before
+Phase 2 as a provisional axis, proposed merge or scope expansion, or unresolved
+candidate. The full tail Material Axis Discovery Closure and different-vendor
+review still run after Phase 2 and remain the only axis-completeness gate.
 `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`
 (targeted SERP/J5 return, decision receipt, and lifecycle provenance) consumes
 their combined findings. The Phase 2 filename retains `native_return` only for

@@ -266,6 +266,13 @@ not spend a separate sacrificial query.
    role return that indexes the durable artifacts, completed and unresolved
    jobs, material failures, and follow-ups. They do not paste raw corpora into
    chat or send routine progress, readiness, hash, or release handshakes.
+   For a consumer-brand run, that same terminal includes a compact
+   `open_axis_nominations` section. A specialist must record any source-native
+   theme that does not fit the current axes cleanly and could change a decision,
+   using a stable candidate label or ID, native evidence references, and its
+   decision effect. One unit is enough to nominate; an empty section is not an
+   axis-completeness claim. Do not add a per-row candidate field or a parallel
+   nomination artifact.
    A specialist terminal is single-writer: after its hash is returned, `CO0`
    reads but never edits it. An actor-local correction goes back to that same
    specialist, which replaces its own terminal and returns the new hash.
@@ -274,7 +281,12 @@ not spend a separate sacrificial query.
 5. `CO0` waits on completion or decision-requiring blocker events, not polling
    dialogue. After all terminal returns exist, `CO0` reads the load-bearing
    artifacts themselves once, resolves any actor-local correction in the same
-   actor task, and runs SERP Phase 2 from the combined findings. Phase 2 owns
+   actor task, and reconciles every `open_axis_nominations` entry into the one
+   provisional inventory as a provisional axis, an explicit proposed merge or
+   scope expansion, or an unresolved candidate. Silent dropping and nearest-
+   label force-fitting are invalid, and Phase 2 cannot start while a nomination
+   remains uncarried. `CO0` then runs SERP Phase 2 from the combined findings.
+   Phase 2 owns
    only the targeted SERP return and decision lifecycle; it does not repeat the
    fan-out's native/community capture. First hash-pin the complete axis
    inventory. For each material consumer-brand axis, Phase 2 then runs one
@@ -306,7 +318,10 @@ not spend a separate sacrificial query.
       evidence requires; record each axis's pain, delight, or mixed posture,
       affected segment or condition, observed behavior, competitor destination,
       counterevidence, and known gap. This inventory is a routing map, not a
-      conclusion.
+      conclusion. Consume every specialist terminal's `open_axis_nominations`
+      section and record each nomination as a provisional axis, an explicit
+      proposed merge or scope expansion, or an unresolved candidate. Do not
+      dispatch Phase 2 with an uncarried nomination.
    2. Run the lightweight maturity scan as a gap audit over that inventory, not
       a second transcription of it. Its input is step 1's record; its output is,
       per axis, which of the authority's support requirements remain unmet —
@@ -652,6 +667,8 @@ the last material addition, run two open-taxonomy dry probes from different
 source families and family kinds. Reuse qualifying targeted continuation work
 instead of creating a duplicate round. A blocked candidate or a new theme in a
 dry probe keeps Acquire & Seal open.
+This remains the full tail audit and the sole axis-completeness guarantee. Do
+not sample, shorten, or skip it because specialist nominations ran earlier.
 
 The same axis row carries the smallest-complete decision-usefulness synthesis:
 customer tension; segment/condition; behavior or purchase consequence;
@@ -674,7 +691,9 @@ the acquisition-seal validation. This is a bounded fitness check of the review
 index, not a second full-corpus analysis. For v5, it additionally reads every
 material discovery candidate's decisive references and two residual-negative
 units per source family, expanding only the failing family first under the
-authority's rule.
+authority's rule. It also cross-checks the specialist
+`open_axis_nominations` sections against the provisional inventory and final
+audit so that no nomination disappears between fan-out and closure.
 
 Before each continuation query family starts, the acquisition-view input records
 one short round rationale: why another round is warranted and how its query

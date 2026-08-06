@@ -388,10 +388,23 @@ company profiles, corporate/transaction records, paid or affiliate material,
 and relationship-unknown external units do not qualify.
 
 Axis cardinality is evidence-derived, not fixed. A prior brand's axis count is
-not a template quota for the next brand. Preliminary mechanical or semantic
-coding may nominate a provisional inventory so Phase 2 and continuation work
-know what to test; final adjudication may merge, split, rename, add, or exclude
-those nominations when the source-native evidence warrants it.
+not a template quota for the next brand. During ordinary source-native coding
+for a consumer brand, the current axes remain provisional. When a unit exposes
+a theme that does not fit cleanly and could change a segment or condition,
+behavior or purchase consequence, competitor destination, contradiction,
+sampling risk, or competitive action, the specialist **must** add it to a
+compact `open_axis_nominations` section in that specialist's existing terminal
+return. Each nomination records a stable candidate label or ID, native evidence
+references, and the decision effect; one unit is enough to nominate, while
+later work tests recurrence. An empty section is not an axis-completeness claim.
+
+Before Phase 2, `CO0` must carry every nomination into the one provisional axis
+inventory as a provisional axis, an explicit proposed merge or scope expansion,
+or an unresolved candidate. Silent dropping and force-fitting a nomination to
+the nearest existing label are invalid. This first-layer nomination route is an
+accelerator and routing input, never a certificate. Final adjudication may
+merge, split, rename, add, or exclude axes when the source-native evidence
+warrants it.
 
 The v5 profile adds **Material Axis Discovery Closure**. Known-axis support and
 source exhaustion do not prove that the axis inventory itself is complete. The
@@ -420,6 +433,8 @@ rules; do not run duplicate ceremony. Passing means
 `route_bounded_saturated`: all material axes present in the admitted corpus were
 discoverable and adjudicated. It never claims universal internet absence or
 that an unselected source contains no additional axis.
+This full tail audit remains the sole axis-completeness guarantee and must not
+be sampled, shortened, or skipped because specialist nominations ran earlier.
 
 V5 hash-pins a `retailer_product_axis_coding_v1` view. It covers every eligible
 unique text-bearing review in each admitted corpus, reconciles excluded

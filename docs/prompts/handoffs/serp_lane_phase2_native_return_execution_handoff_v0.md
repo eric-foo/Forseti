@@ -72,7 +72,12 @@ query families in that order. The without-brand family covers hero products by
 default and admits a non-hero product only when already captured evidence
 exposes a material question; it remains recorded under the historical
 `brandless_exact_product` family kind. Community-diversity probing follows only
-when concentration justifies it. The targeted queue then covers every material
+when concentration justifies it. Before Phase 2, consume each `CO1`, `CO2`, and
+`CO3` terminal's `open_axis_nominations` section. Carry every nomination into
+the one provisional inventory as a provisional axis, an explicit proposed merge
+or scope expansion, or an unresolved candidate. An empty section is not an
+axis-completeness claim; a missing disposition blocks Phase 2 dispatch. The
+targeted queue then covers every material
 product axis with one `corroborate_or_segment` job, one
 `compare_switch_or_value` job, and one `disconfirm_or_strongest_delight` job.
 Each job binds the axis-inventory hash and its later planning time. Phase 2 still
@@ -117,7 +122,7 @@ routes; it does not claim that the whole internet was searched.
 - Phase-1 scout folder path (typed ledger JSON, extractions, scout ledger).
 - Phase-1 J5 price lines for the subject and harvest-set names.
 - `CO1`, `CO2`, and `CO3` terminal-return paths, including their durable
-  artifact indices and typed blockers.
+  artifact indices, typed blockers, and `open_axis_nominations` sections.
 - Dereferenced fan-out evidence: company/claim findings, retail/commercial
   findings, and `CO3`'s Reddit/community composition, Channel-3, J3,
   mediator, and unmet-value results.
@@ -132,7 +137,10 @@ routes; it does not claim that the whole internet was searched.
 ## Method (deltas only; spec sections above own the mechanics)
 
 1. **Consolidate fan-out findings.** Dereference all three specialist artifact
-   indices. Build one cited set of newly surfaced competitors, claims,
+   indices. Reconcile every `open_axis_nominations` entry to the provisional
+   inventory as a provisional axis, explicit proposed merge or scope expansion,
+   or unresolved candidate; do not dispatch Phase 2 while any entry is missing
+   a disposition. Build one cited set of newly surfaced competitors, claims,
    contradictions, substitutions, and unmet-value axes. A terminal blocked
    result stays visible as a gap; it is never silently treated as an empty
    finding.
@@ -184,6 +192,9 @@ routes; it does not claim that the whole internet was searched.
 
 - `fanout_inputs_consumed`: one terminal path and dereferenced artifact index
   for each of `CO1`, `CO2`, and `CO3`, including typed blockers.
+- `open_axis_nomination_reconciliation`: each candidate label or ID, source
+  terminal and native evidence references, decision effect, and provisional-
+  inventory disposition.
 - `targeted_probe_derivations`: each query with the specialist finding and
   artifact cite that caused it.
 - `product_axis_probe_derivations`: for the consumer-brand profile, each axis
