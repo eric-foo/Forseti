@@ -1,0 +1,462 @@
+{
+  "schema_version": "summer_fridays_verification_supplement_extracts.v1",
+  "subject": "Summer Fridays",
+  "retrieval_date": "2026-08-06",
+  "raw_root": "C:\\tmp\\forseti-sf-verification-supplement-20260806\\data",
+  "source_packet": {
+    "repo_path": "docs/prompts/handoffs/summer_fridays_verification_supplement_capture_handoff_20260806_v0.md",
+    "origin_ref": "origin/claude/verification-aems-rebind",
+    "git_blob": "1561bfd5fc936aa787ebe489c5b21642e6fb5477"
+  },
+  "wayback": {
+    "instrument_verdict": "partial",
+    "verdict_ceiling": "Only two complete late-2022 Sheer Skin Tint snapshots and the 2026-08-06 live page support the sampled history verdict. Lip Butter Balm and Jet Lag Mask archive indexes were blocked.",
+    "products": [
+      {
+        "product": "Sheer Skin Tint",
+        "verdict": "no_inci_or_price_change_observed_claims_wording_changed",
+        "verdict_ceiling": "Sampled endpoints only; changes between captures cannot be excluded. Current-page retrieval is not a Wayback event date.",
+        "normalized_inci_sha256": "5d8001e92f747355854b278dc04bc4a135657c7d0846dce5b230e3c0e4fa0b29",
+        "snapshots": [
+          {
+            "capture_date": "2022-09-29",
+            "archive_timestamp": "20220929002552",
+            "url": "https://web.archive.org/web/20220929002552id_/https://summerfridays.com/products/sheer-skin-tint",
+            "transport": "complete_gzip_response",
+            "price_usd": 42,
+            "size": null,
+            "size_observation": "not_exposed_in_captured_page_text",
+            "claims": [
+              "weightless fluid formula",
+              "helps diminish the look of redness, pores and uneven skin tone",
+              "sheer-to-light coverage",
+              "natural finish",
+              "fresh no-makeup look"
+            ],
+            "raw_capture": {
+              "path": "wayback/sheer_skin_tint_20220929002552.html",
+              "bytes": 71040,
+              "sha256": "9fb8c5c44fb8da176fb40e36004a6566c2182901ad4889929dbe61caab1aed2b"
+            }
+          },
+          {
+            "capture_date": "2022-12-11",
+            "archive_timestamp": "20221211205012",
+            "url": "https://web.archive.org/web/20221211205012id_/https://summerfridays.com/products/sheer-skin-tint",
+            "transport": "complete_gzip_response",
+            "price_usd": 42,
+            "size": null,
+            "size_observation": "not_exposed_in_captured_page_text",
+            "claims": [
+              "weightless fluid formula",
+              "helps diminish the look of redness, pores and uneven skin tone",
+              "sheer-to-light coverage",
+              "natural finish",
+              "fresh no-makeup look"
+            ],
+            "raw_capture": {
+              "path": "wayback/sheer_skin_tint_20221211205012.html",
+              "bytes": 75292,
+              "sha256": "1c989a8d1ffc092abaf89e1cea72ef97728a142dc750199c25f1a34e3ccfb8c1"
+            }
+          },
+          {
+            "capture_date": "2026-08-06",
+            "archive_timestamp": null,
+            "url": "https://summerfridays.com/products/sheer-skin-tint",
+            "transport": "complete_live_page_response",
+            "price_usd": 42,
+            "size": "30 ml / 1 fl oz",
+            "claims": [
+              "lightweight fluid formula",
+              "adds a touch of sheer color and coverage",
+              "natural finish while hydrating",
+              "Hydrating",
+              "Dewy",
+              "Sheer Color"
+            ],
+            "raw_capture": {
+              "path": "wayback/sheer_skin_tint_current.html",
+              "bytes": 824661,
+              "sha256": "c33f195407bb09ada630a05d832e349834cf262a07199b0f484da8b7b63d2e2f"
+            }
+          }
+        ],
+        "change_events": [
+          {
+            "dimension": "inci",
+            "status": "no_change_observed",
+            "before_capture": "2022-12-11",
+            "after_capture": "2026-08-06",
+            "detail": "Normalized INCI strings are identical at the sampled endpoints."
+          },
+          {
+            "dimension": "price",
+            "status": "no_change_observed",
+            "before_capture": "2022-12-11",
+            "after_capture": "2026-08-06",
+            "detail": "$42 at both sampled endpoints."
+          },
+          {
+            "dimension": "size",
+            "status": "inconclusive",
+            "before_capture": "2022-12-11",
+            "after_capture": "2026-08-06",
+            "detail": "Current page states 30 ml / 1 fl oz; the historical page text did not expose a size."
+          },
+          {
+            "dimension": "claims_wording",
+            "status": "changed",
+            "before_capture": "2022-12-11",
+            "after_capture": "2026-08-06",
+            "detail": "Copy moved from redness/pores/uneven-tone and sheer-to-light language to sheer color/coverage plus hydration language."
+          }
+        ]
+      },
+      {
+        "product": "Lip Butter Balm",
+        "verdict": "capture_blocked",
+        "current_observation": {
+          "capture_date": "2026-08-06",
+          "price_usd": 24,
+          "size": "15 g / 0.5 oz",
+          "url": "https://summerfridays.com/products/lip-butter-balm",
+          "raw_capture": {
+            "path": "inci/summer_fridays_lip_butter_balm_current.html",
+            "bytes": 738390,
+            "sha256": "e40e931294cb740a588e663a78b7459b8d06741bba297d6097adaa14faa05c4b"
+          }
+        },
+        "gap": "Wayback CDX returned HTTP 503 and the bounded alternate request timed out with zero bytes."
+      },
+      {
+        "product": "Jet Lag Mask",
+        "verdict": "capture_blocked_with_preperiod_brand_verified_event",
+        "current_observation": {
+          "capture_date": "2026-08-06",
+          "sizes": ["28 g / 1.0 oz", "64 g / 2.25 oz"],
+          "selected_size_display_price_usd": 49,
+          "url": "https://summerfridays.com/products/jet-lag-mask",
+          "raw_capture": {
+            "path": "wayback/jet_lag_mask_current.html",
+            "bytes": 783562,
+            "sha256": "e36de088759bef103ed17606775e4027b906aa692010f73592042d4f5b42edf7"
+          }
+        },
+        "supplemental_formula_event": {
+          "published_date": "2021-06-16",
+          "status": "brand_announced_formula_change",
+          "detail": "Summer Fridays said the upgraded formula removed all fragrance including essential oils and added allantoin, bisabolol, panthenol and cucumber extract.",
+          "ceiling": "Outside the 2022-present archive sample; not an INCI-to-INCI snapshot comparison and not evidence of a later 2024-2025 change.",
+          "url": "https://summerfridays.com/blogs/blog/jet-lag-mask-is-back-with-an-upgrade",
+          "raw_capture": {
+            "path": "wayback/jet_lag_mask_upgrade_blog_current.html",
+            "bytes": 540280,
+            "sha256": "95ff727f4d9ddc3795ab66bbcd8acd9a2abf6bf32e62e4181c261b9ab1657a32"
+          },
+          "companion_statement_raw_capture": {
+            "path": "wayback/jet_lag_mask_statement_current.html",
+            "bytes": 519436,
+            "sha256": "0d42e96d89ad7d7c8cfba2b944b19bfe57b29aad147dd140146a0a25cee1ec1f"
+          }
+        },
+        "gap": "Wayback CDX timed out and the bounded alternate response was unusable."
+      }
+    ]
+  },
+  "aems": {
+    "instrument_verdict": "two_subject_matches_signal_only",
+    "dashboard_url": "https://fis.fda.gov/sense/app/556fa804-28bf-4ec4-97f3-aab9eba283d4/sheet/7a47a261-d58b-4203-a8aa-6d3021737452/state/analysis",
+    "record_route": "https://api.fda.gov/cosmetic/event.json",
+    "record_route_status": "official_fda_linked_alternative_after_dashboard_search_export_gap",
+    "data_last_updated": "2025-08-31",
+    "subject_queries": [
+      "products.product_name:\"Summer Fridays\"",
+      "products.product_name:Summer"
+    ],
+    "mandatory_ceiling_labels": [
+      "Reports are unverified and do not establish causation.",
+      "Presence is signal; absence is not exoneration.",
+      "Counts are never incidence or rates.",
+      "Comparator counts are context, never a safety ranking.",
+      "Year-over-year changes across the late-2023/2024 MoCRA boundary must not be interpreted as product deterioration.",
+      "The official API response is current only through 2025-08-31 and cannot establish present-day absence."
+    ],
+    "subject_counts_by_initial_received_year": {
+      "2020": 1,
+      "2021": 1,
+      "total": 2
+    },
+    "subject_records": [
+      {
+        "report_number": "24516207",
+        "legacy_report_id": "2020-CFS-012383",
+        "initial_received_date": "2020-11-27",
+        "latest_received_date": "2020-11-27",
+        "event_date": "2020-11-27",
+        "report_type": "Direct",
+        "products": [
+          {"role": "Suspect", "product_name": "Summer Fridays Jet Lag Mask"},
+          {"role": "Concomitant", "product_name": "Vitamin D"}
+        ],
+        "reactions": ["Erythema", "Skin Irritation"],
+        "raw_capture": {
+          "path": "aems/summer_fridays_phrase.json",
+          "sha256": "a7a9ac5b61792d078c7b58b964fcc57829b7c9fe351a00edcd4e805dbd8fca71"
+        }
+      },
+      {
+        "report_number": "24519370",
+        "legacy_report_id": "2021-CFS-000593",
+        "initial_received_date": "2021-01-20",
+        "latest_received_date": "2021-01-20",
+        "event_date": "2021-01-16",
+        "report_type": "Direct",
+        "products": [
+          {"role": "Suspect", "product_name": "Summer Fridays Jet Lag Mask"}
+        ],
+        "reactions": ["Chemical Burn"],
+        "raw_capture": {
+          "path": "aems/summer_fridays_phrase.json",
+          "sha256": "a7a9ac5b61792d078c7b58b964fcc57829b7c9fe351a00edcd4e805dbd8fca71"
+        }
+      }
+    ],
+    "comparators": [
+      {
+        "brand_query": "Laneige",
+        "counts_by_initial_received_year": {"2022": 1, "2025": 1, "total": 2},
+        "records": [
+          {
+            "report_number": "24478739",
+            "initial_received_date": "2022-08-09",
+            "event_date": "2022-08-08",
+            "report_type": "Direct",
+            "products": [
+              {"role": "Suspect", "product_name": "Laneige Radian C Cream"},
+              {"role": "Concomitant", "product_name": "Skincare Products"}
+            ],
+            "reactions": ["Dermatitis Contact", "Erythema", "Skin Exfoliation", "Swelling"],
+            "raw_capture": {"path": "aems/laneige.json", "sha256": "9cede1c6dcf0c1ab1899824c9dd2e388aaaf1abda13f3cf7a52b7728367d3efc"}
+          },
+          {
+            "report_number": "24837647",
+            "initial_received_date": "2025-01-12",
+            "event_date": "2025-01-11",
+            "report_type": "Direct",
+            "products": [
+              {"role": "Suspect", "product_name": "Laneige Lip Glowy Balm Grapefruit"}
+            ],
+            "reactions": ["Drug Hypersensitivity"],
+            "raw_capture": {"path": "aems/laneige.json", "sha256": "9cede1c6dcf0c1ab1899824c9dd2e388aaaf1abda13f3cf7a52b7728367d3efc"}
+          }
+        ]
+      },
+      {
+        "brand_query": "Glossier",
+        "counts_by_initial_received_year": {"2019": 1, "2020": 1, "total": 2},
+        "records": [
+          {
+            "report_number": "24501253",
+            "initial_received_date": "2019-06-09",
+            "event_date": "2019-05-09",
+            "report_type": "Direct",
+            "products": [
+              {"role": "Suspect", "product_name": "Glossier Perfecting Skin Tint"},
+              {"role": "Concomitant", "product_name": "Prenatal Vitamins"}
+            ],
+            "reactions": ["Burning Sensation", "Erythema", "Skin Irritation", "Skin Swelling"],
+            "raw_capture": {"path": "aems/glossier.json", "sha256": "5fbd726cc36884ad44b32f5c508c3fd25e159aa85108f7501584c4a521a347e8"}
+          },
+          {
+            "report_number": "24476688",
+            "initial_received_date": "2020-04-10",
+            "event_date": "2020-04-08",
+            "report_type": "Direct",
+            "products": [
+              {"role": "Suspect", "product_name": "Glossier Bubblewrap Eye And Lip Plumping Cream"},
+              {"role": "Concomitant", "product_name": "Alesse Birth Control Pills"},
+              {"role": "Concomitant", "product_name": "Vitamin C"},
+              {"role": "Concomitant", "product_name": "Magnesium Biglycinate"},
+              {"role": "Concomitant", "product_name": "Women's Daily Vitamin"},
+              {"role": "Concomitant", "product_name": "Vitamin D+K2"},
+              {"role": "Concomitant", "product_name": "5-Htp"}
+            ],
+            "reactions": ["Dry Skin", "Erythema", "Pruritus", "Swelling"],
+            "raw_capture": {"path": "aems/glossier.json", "sha256": "5fbd726cc36884ad44b32f5c508c3fd25e159aa85108f7501584c4a521a347e8"}
+          }
+        ]
+      }
+    ],
+    "gaps": [
+      "The live Qlik dashboard disclaimer and daily-refresh statement were observed, but the product-search extension did not reliably bind the typed selection and no export could be verified.",
+      "The official openFDA cosmetic-event response is older than the live dashboard and reports last_updated 2025-08-31."
+    ]
+  },
+  "inci_comparisons": [
+    {
+      "pair_id": "sf_lip_butter_balm_vanilla__elf_glow_reviver_yummy_gummy",
+      "coding_basis": {
+        "file": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json",
+        "row_index": 844,
+        "thread_id": "1ktoo8j",
+        "source_ref": "https://old.reddit.com/r/drugstoreMUA/comments/1ktoo8j/review_elf_glow_reviver_melting_lip_balm/"
+      },
+      "subject": {
+        "product": "Summer Fridays Lip Butter Balm",
+        "variant": "Vanilla",
+        "url": "https://summerfridays.com/products/lip-butter-balm",
+        "ingredients": [
+          "Phytosteryl/Isostearyl/Cetyl/Stearyl/Behenyl Dimer Dilinoleate",
+          "Diisostearyl Malate",
+          "Hydrogenated Polyisobutene",
+          "Polybutene",
+          "Hydrogenated Poly (C6-14 Olefin)",
+          "Butyrospermum Parkii (Shea) Butter",
+          "Microcrystalline Wax",
+          "Octyldodecanol",
+          "Synthetic Wax",
+          "Disteardimonium Hectorite",
+          "Astrocaryum Murumuru Seed Butter",
+          "Sodium Hyaluronate",
+          "Vanillin",
+          "Tocopherol",
+          "Propylene Carbonate",
+          "Polyglyceryl-2 Diisostearate",
+          "Mica",
+          "BHT"
+        ],
+        "raw_capture": {"path": "inci/summer_fridays_lip_butter_balm_current.html", "sha256": "e40e931294cb740a588e663a78b7459b8d06741bba297d6097adaa14faa05c4b"}
+      },
+      "comparator": {
+        "product": "e.l.f. Glow Reviver Melting Lip Balm",
+        "variant": "Yummy Gummy",
+        "url": "https://www.elfcosmetics.com/products/glow-reviver-melting-lip-balm?Color=Yummy+Gummy+-+Plum",
+        "ingredients": [
+          "Bis-Behenyl/Isostearyl/Phytosteryl Dimer Dilinoleyl Dimer Dilinoleate",
+          "Hydrogenated Polyisobutene",
+          "Tridecyl Trimellitate",
+          "Hydrogenated Styrene/Methylstyrene/Indene Copolymer",
+          "Diisostearyl Malate",
+          "Simmondsia Chinensis (Jojoba) Seed Oil",
+          "Microcrystalline Wax",
+          "Mangifera Indica (Mango) Seed Butter",
+          "Theobroma Cacao (Cocoa) Seed Butter",
+          "Octyldodecanol",
+          "Butyrospermum Parkii (Shea) Butter",
+          "Synthetic Wax",
+          "Polyglyceryl-2 Diisostearate",
+          "Silica Dimethyl Silylate",
+          "Ethylene/Propylene/Styrene Copolymer",
+          "Limnanthes Alba (Meadowfoam) Seed Oil",
+          "Fragrance (Parfum)",
+          "Diethylhexyl Syringylidenemalonate",
+          "Disteardimonium Hectorite",
+          "Tocopherol",
+          "Ethylhexylglycerin",
+          "Dipotassium Glycyrrhizate",
+          "Glyceryl Behenate",
+          "Propylene Carbonate",
+          "Helianthus Annuus (Sunflower) Seed Oil",
+          "Hydrolyzed Sodium Hyaluronate",
+          "Pentaerythrityl Tetra-di-t-butyl Hydroxyhydrocinnamate",
+          "Butylene/Ethylene/Styrene Copolymer",
+          "Caprylic/Capric Triglyceride",
+          "Citral"
+        ],
+        "may_contain": [
+          "Red 33 Lake (CI 17200)",
+          "Titanium Dioxide (CI 77891)",
+          "Iron Oxides (CI 77499)",
+          "Red 7 Lake (CI 15850)",
+          "Yellow 6 Lake (CI 15985)",
+          "Iron Oxides (CI 77492)"
+        ],
+        "raw_capture": {"path": "inci/elf_glow_reviver_melting_lip_balm_yummy_gummy_current.html", "sha256": "d5de6dcd0f7ed900ca26f8c3dd878790e7d7d5083f195fb0bd62eb46780ff13a"}
+      },
+      "metrics": {
+        "first_five_overlap_count": 2,
+        "subject_ingredient_count": 18,
+        "comparator_ingredient_count": 30,
+        "full_overlap_count": 10,
+        "subject_overlap_share": 0.5556,
+        "comparator_overlap_share": 0.3333,
+        "jaccard": 0.2632
+      },
+      "verdict": "materially_different_lists",
+      "ceiling": "Ingredient lists do not reveal concentrations or manufacturing. No safety or efficacy inference."
+    },
+    {
+      "pair_id": "sf_lip_butter_balm_vanilla__glossier_balm_dotcom_original",
+      "coding_basis": {
+        "file": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json",
+        "row_indices": [18, 109],
+        "thread_ids": ["10vrvls", "15qtzd8"],
+        "source_refs": [
+          "https://www.reddit.com/r/glossier/comments/10vrvls/anyone_who_owns_the_summer_fridays_lip_butter/",
+          "https://old.reddit.com/r/Sephora/comments/15qtzd8/summer_fridays_doesnt_work_as_a_lip_balm_for_me/"
+        ]
+      },
+      "subject": {
+        "product": "Summer Fridays Lip Butter Balm",
+        "variant": "Vanilla",
+        "url": "https://summerfridays.com/products/lip-butter-balm",
+        "ingredients_ref": "#/inci_comparisons/0/subject/ingredients",
+        "raw_capture": {"path": "inci/summer_fridays_lip_butter_balm_current.html", "sha256": "e40e931294cb740a588e663a78b7459b8d06741bba297d6097adaa14faa05c4b"}
+      },
+      "comparator": {
+        "product": "Glossier Balm Dotcom",
+        "variant": "Original",
+        "url": "https://www.glossier.com/products/balm-dotcom?parent_collection=balms",
+        "ingredients": [
+          "Petrolatum",
+          "Ricinus Communis (Castor) Seed Oil",
+          "Beeswax/Cera Alba/Cire d'Abeille",
+          "Lanolin",
+          "Theobroma Grandiflorum Seed Butter",
+          "Oryza Sativa (Rice) Bran Extract",
+          "Helianthus Annuus (Sunflower) Extract",
+          "Rosmarinus Officinalis (Rosemary) Leaf Extract",
+          "Tocopheryl Acetate",
+          "Tocopherol",
+          "BHT"
+        ],
+        "raw_capture": {"path": "inci/glossier_balm_dotcom_current.html", "sha256": "f563fba6af598968c2e92a6c6b9905114e5293e930dba1cbef9883f7b432bdb8"}
+      },
+      "metrics": {
+        "first_five_overlap_count": 0,
+        "subject_ingredient_count": 18,
+        "comparator_ingredient_count": 11,
+        "full_overlap_count": 2,
+        "subject_overlap_share": 0.1111,
+        "comparator_overlap_share": 0.1818,
+        "jaccard": 0.0741
+      },
+      "verdict": "materially_different_lists",
+      "ceiling": "Ingredient lists do not reveal concentrations or manufacturing. No safety or efficacy inference."
+    }
+  ],
+  "failure_gap_ledger": [
+    {
+      "surface": "Wayback CDX",
+      "status": "partial_failure",
+      "detail": "Sheer Skin Tint initially returned an observed 49-row index but the response was not retained after a later 503; Lip Butter Balm returned 503; Jet Lag Mask timed out; bounded alternate requests also failed."
+    },
+    {
+      "surface": "Wayback playback 20220927024031",
+      "status": "partial_transport_excluded",
+      "detail": "Timed out after 469627 of an expected 510021 bytes. Retained but excluded from the decisive table.",
+      "raw_capture": {"path": "wayback/sheer_skin_tint_20220927024031.html", "sha256": "1e357bdadbfaa6a7377b211e94c057e290e5ad779501d4e9aef151eb9f18e8b0"}
+    },
+    {
+      "surface": "FDA AEMS Qlik dashboard",
+      "status": "search_export_gap",
+      "detail": "Disclaimer and daily-refresh claim observed; typed product filter did not reliably bind and export was not verified."
+    },
+    {
+      "surface": "Raw HTTP captures",
+      "status": "retained_failures",
+      "detail": "Two FDA overview downloads produced 10-byte 404 bodies and one obsolete e.l.f. URL produced a 404 page; none are cited as evidence."
+    }
+  ]
+}
