@@ -1032,9 +1032,22 @@ Owner decision (2026-08-06): every future broad consumer-brand Phase A run
 includes one bounded category-benchmark search-interest read, so Deliver can
 separate brand-specific attention decline from category-wide decline instead
 of assuming the difference. Shape: one one-shot pull in the run's primary geo
-plus a worldwide check, 5-year window, comparing the subject brand term
-against the head terms of each product category the subject competes in
-(category terms derived from the run's product-axis inventory, not invented).
+plus a worldwide check, 5-year window, **web-search property**, comparing the
+subject brand term against the head terms of each product category the
+subject competes in.
+
+Category terms are derived from the run's own artifacts, never invented. The
+deriving sources, in the run's `coordinated/` directory: the hash-pinned axis
+inventory (`consumer_brand_axis_inventory.json`, `axes[]`), the evidence
+depth ledger (`evidence_depth_ledger.json`, `product_axes[]` — `label`,
+`scope`, and `decision_usefulness` name the products and named alternatives),
+and the acquisition record's "Product-axis decision support" table. Read the
+product contexts and hero products those carry, then take the ordinary
+category head term for each (for the founding instance: lip balm / lip mask /
+lip butter / lip oil for the lip axis; skin tint / tinted sunscreen / tinted
+moisturizer for the tint axis). Record which artifact each term set came
+from. If the run has no axis inventory yet, this read is not yet derivable —
+wait for it rather than inventing terms.
 Record the verdict explicitly against this decision rule: subject curve
 declining while its category curves rise or hold → brand-specific decline;
 category curves deflating alongside the subject → category-wide decline;
@@ -1050,9 +1063,15 @@ follow
 values are the source's 0–100 relative index only (no sales, share,
 prevalence, or population claims; below-threshold rows use the exact phrase
 "below the Google Trends reporting threshold under the recorded geo/window").
-Shopping-property purchase-leaning checks are not relied upon for this read
-until a run demonstrates above-threshold coverage (2026-08-06 outcome:
+Shopping-property purchase-leaning checks are not part of this read (it is
+web-search property, above) and are not relied upon until a run demonstrates
+above-threshold coverage (2026-08-06 outcome:
 inconclusive-below-threshold).
+
+The anchor term is the subject's hero-product term (founding instance:
+"summer fridays lip butter balm"), carried in every batch so cross-batch
+comparison is bridgeable; expect it to sit near the reporting threshold
+against category head terms, which bounds that bridging as weak.
 
 ## Graph-Light Contract
 
