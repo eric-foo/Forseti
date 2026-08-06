@@ -519,56 +519,65 @@ and are not restated here.
 
 - **source:** Google Trends web UI (`trends.google.com`), web-search and Shopping properties.
 - **substrate:** the page's own internal API — `POST /trends/api/explore` mints per-widget tokens
-  (cheap; never rate-limited across ~25 same-day calls); `GET /trends/api/widgetdata/multiline|relatedsearches?req=…&token=…`
+  (cheap; not rate-limited in ~25 observed same-day calls); `GET /trends/api/widgetdata/multiline|relatedsearches?req=…&token=…`
   returns the data (aggressively quota'd; the scarce resource). Responses carry an XSSI prefix
   (`)]}'`) to strip. Multi-term explores emit indexed related-query widget ids
   (`RELATED_QUERIES_0..N` with `keywordName`); single-term explores emit unsuffixed ids. Shopping
   property (`froogle`) rides the same endpoints, token scheme, and quota pool.
 - **route that worked:** embedded-state / internal-API extract via an in-page browser session —
-  homepage-first to establish the session (direct `/trends/explore` navigation without one 429s),
+  homepage-first to establish the session (in the founding run, navigating straight to
+  `/trends/explore` without first loading the homepage returned 429),
   then in-page `fetch()` of explore + widgetdata with session cookies, driven by an injected
-  sequential runner. **The runner is what you build; you do not wait for the page.** The Trends UI
-  issues its own chart requests only when a chart is actually rendered and visible, which never
-  happens in an undisplayed automation pane — so you inject a script that calls explore, reads the
-  returned widget tokens, and calls widgetdata itself. Absent widget traffic from the page is the
-  expected state on this route, not a block.
+  sequential runner. **The runner is what you build; you do not wait for the page.** In the
+  founding undisplayed automation pane the Trends UI rendered no chart and issued no widget
+  requests, so the injected script called explore, read the returned widget tokens, and called
+  widgetdata itself. Absent page-issued widget traffic is the expected state on this route, not a
+  block; diagnose the injected requests and their receipts instead.
 - **access posture:** publicly-viewable-but-ToS-restricted; human-rate under the Risk posture.
-  Google stamps `userType: USER_TYPE_SCRAPER` into its own tokens by **IP reputation, not browser
-  environment** — an automation pane, the owner's real signed-in Chrome, and a datacenter VPN
-  egress all received the same flag same-day. Datacenter/VPN ranges (observed: AS60068) are
-  pre-flagged; a residential IP is the meaningful variable, not the browser.
+  Observed behavior was consistent with IP reputation rather than browser environment: an
+  automation pane and the owner's real signed-in Chrome on the same egress both received
+  `userType: USER_TYPE_SCRAPER`, and a datacenter VPN egress (AS60068) was also flagged. This is an
+  engineering prior from the bounded pulls, not proof of Google's classification rule.
 - **request-rate ceiling (observed 2026-08-05/06, one machine — engineering priors, not stable
-  Google behavior):** a fresh day grants the first 1–2 `widgetdata` pulls instantly, then drip
-  recovery with successes ~20 min–2.5 h apart. 55–75s pacing ran too hot; the working pattern was
-  paced first attempts, one 120–150s-cooloff retry, then escalating patient rounds (7–45 min).
+  Google behavior):** each of the two observed fresh days granted the first 1–2 `widgetdata` pulls
+  instantly, then drip recovery produced successes ~20 min–2.5 h apart. 55–75s pacing ran too hot;
+  the working pattern was paced first attempts, one 120–150s-cooloff retry, then escalating
+  patient rounds (7–45 min).
   One observed case: an owner-instructed 1/min burst landed on round 3 after ~10-min rounds had
   failed for ~40 min — recovery windows may be short enough for slow polling to miss; single case,
-  not yet method. **Budget note:** those round lengths are *per round*, not a task budget. A
-  bounded exercise must state its own total-attempt cap and how many rounds fit inside it; a
-  single 45-minute round can consume an entire short cap. When the cap is spent, record the
-  blocked state per Step 3 — that is a valid outcome, not a failure to retry harder.
+  not yet method. One retry round means at most one sequential `widgetdata` attempt for each still-
+  missing authorized artifact; do not run attempts concurrently. **Budget note:** those round
+  lengths are *per round*, not a task budget. A bounded exercise must state its own total-attempt
+  cap and how many rounds fit inside it; every `widgetdata` call, including first attempts, counts
+  toward that cap, and waiting does not replenish it. A single 45-minute round can consume an
+  entire short cap. When the cap is spent, record the blocked state per Step 3 — that is a valid
+  outcome, not a failure to retry harder.
 - **content-anchor:** `default.timelineData[].value[i]` per term (weekly points; `isPartial` on the
   trailing week), keyword order pinned by the paired explore receipt; related panels under
   `default.rankedList[]`.
 - **extraction paths by surface:** app-embedded browser pane → POST raw bodies to a localhost
   receiver (works; append-only sha256 manifest). **The repo ships no such receiver — write a
   throwaway one** (a ~40-line stdlib HTTP server that writes the posted body to the raw root and
-  appends a `{file, bytes, sha256, received_utc}` manifest line) in scratch, not in the repo.
+  appends a `{file, bytes, sha256, received_utc}` manifest line) in scratch, not in the repo. Bind
+  it to loopback only (not `0.0.0.0` or a LAN address), make no outbound calls, write only beneath
+  the bound raw root, and never persist request headers or cookies.
   Real Chrome via extension → localhost is gated behind the local-network permission (fetch
   hangs) and the extension blocks base64 tool returns (exfiltration guard); the working path is
   bundling all captures into **one** JSON blob-download per session — Chrome silently blocks a
   tab's second programmatic download until the operator allows multiple downloads.
 - **expected-pattern note for reviewers/monitors:** this route legitimately looks like scraping
   automation — credentialed same-origin `fetch()` whose response bodies are POSTed to a local
-  listener, on a deliberately slow timer. That is the method working as designed: the listener is
-  a local disk writer (nothing leaves the machine) and the slow timer is the Risk-posture
-  human-rate requirement, not evasion. A run flagged on this basis should be checked against the
-  receipt, not assumed hostile.
-- **known false-diagnoses:** an undisplayed automation pane never fires the page's own chart
-  requests (lazy rendering) — absent widget traffic is not a block; `pytrends` 429-on-first-probe
-  is a dead route symptom, not source absence; a mostly-zero Shopping series is threshold sparsity
-  plus an apparent trailing ~5–7-week reporting lag (right-truncation) — never read trailing
-  Shopping zeros as decline; below-threshold rows are threshold artifacts, never "no interest."
+  listener, on a deliberately slow timer. Treat that pattern as expected only when the receipt
+  binds the Trends origin and authorized surfaces, total-attempt cap and realized attempts,
+  loopback listener, raw-root destination, and output hashes. Under those conditions the listener
+  is a local disk writer and the slow timer is the Risk-posture human-rate requirement, not
+  evasion. A mismatch remains a real alert; this note is not a whitelist.
+- **known false-diagnoses:** the founding undisplayed automation pane fired none of the page's own
+  chart requests (lazy rendering) — absent page-issued widget traffic is not a block; `pytrends`
+  429-on-first-probe is a dead route symptom, not source absence; a mostly-zero Shopping series is
+  threshold sparsity plus an apparent trailing ~5–7-week reporting lag (right-truncation) — never
+  read trailing Shopping zeros as decline; below-threshold rows are threshold artifacts, never
+  "no interest."
 - **provenance:** `docs/research/summer_fridays_ci_inputs_20260805/search_interest_capture_return.md`
   (§2 receipts, §9 ledger) and
   `docs/research/summer_fridays_ci_inputs_20260806/search_interest_addendum_return.md` (§7 method

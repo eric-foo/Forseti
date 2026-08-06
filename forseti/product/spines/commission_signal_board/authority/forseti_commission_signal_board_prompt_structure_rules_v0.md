@@ -1036,18 +1036,27 @@ plus a worldwide check, 5-year window, **web-search property**, comparing the
 subject brand term against the head terms of each product category the
 subject competes in.
 
-Category terms are derived from the run's own artifacts, never invented. The
-deriving sources, in the run's `coordinated/` directory: the hash-pinned axis
-inventory (`consumer_brand_axis_inventory.json`, `axes[]`), the evidence
-depth ledger (`evidence_depth_ledger.json`, `product_axes[]` — `label`,
-`scope`, and `decision_usefulness` name the products and named alternatives),
-and the acquisition record's "Product-axis decision support" table. Read the
-product contexts and hero products those carry, then take the ordinary
-category head term for each (for the founding instance: lip balm / lip mask /
-lip butter / lip oil for the lip axis; skin tint / tinted sunscreen / tinted
-moisturizer for the tint axis). Record which artifact each term set came
-from. If the run has no axis inventory yet, this read is not yet derivable —
-wait for it rather than inventing terms.
+Category terms must be bound from the run's own artifacts before capture; this
+card does not authorize the operator to coin a head term. In the run's
+`coordinated/` directory, use the acquisition record's product-specific search
+coverage rows for hero and secondary product names, `community_axis_coding.json`
+`product_context` values when present, and
+`evidence_depth_ledger.json` `product_axes[].decision_usefulness` for named
+alternatives and the product conditions they serve. The hash-pinned
+`consumer_brand_axis_inventory.json` `axes[]` is a customer pain/delight-axis
+inventory, not a product or category-term source.
+
+Before the pull, record in the run commission or capture handoff a
+term-derivation table with product family, exact candidate term, the source
+phrase that supports it, and artifact locator. A term is usable only when that
+exact generic category phrase appears in a run artifact or the run's explicit
+commission binds it; a product name or alternative brand name alone is not
+permission to invent an adjacent synonym. If any material product family lacks
+a bound head term, record the read as `unresolved — category terms unbound` and
+do not pull. The founding commission bound lip balm / lip mask / lip butter /
+lip oil and skin tint / tinted sunscreen / tinted moisturizer; those examples
+are not a reusable derivation rule.
+
 Record the verdict explicitly against this decision rule: subject curve
 declining while its category curves rise or hold → brand-specific decline;
 category curves deflating alongside the subject → category-wide decline;
@@ -1068,10 +1077,13 @@ web-search property, above) and are not relied upon until a run demonstrates
 above-threshold coverage (2026-08-06 outcome:
 inconclusive-below-threshold).
 
-The anchor term is the subject's hero-product term (founding instance:
-"summer fridays lip butter balm"), carried in every batch so cross-batch
-comparison is bridgeable; expect it to sit near the reporting threshold
-against category head terms, which bounds that bridging as weak.
+Before capture, the run commission or term-derivation table must bind one exact
+subject-plus-hero-product query as the anchor and cite the source product name;
+the operator does not choose it ad hoc. Carry that exact query in every batch
+so cross-batch comparison is bridgeable. If it is unbound, record the read as
+`unresolved — anchor unbound` and do not pull. The founding anchor was "summer
+fridays lip butter balm"; it sat near the reporting threshold against category
+head terms, so the resulting bridge was weak.
 
 ## Graph-Light Contract
 
