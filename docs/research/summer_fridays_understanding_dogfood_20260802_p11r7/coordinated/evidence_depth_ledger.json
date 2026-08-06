@@ -11791,11 +11791,17 @@
         },
         "strongest_counterevidence": "No Summer Fridays-owned retention, repurchase, or recommendation event survives the p11r7 referent-binding re-derivation on this axis; the earlier counterweight rested on outcome verbs whose referent was a competitor product. Recorded as absent rather than restated.",
         "competitive_decision": "Prioritize substantiated tolerance and low-irritation performance; reaction risk is a stronger attack surface than generic efficacy.",
+        "counterevidence_absent_verified": true,
         "decision_bearing_support_refs": [
           {
             "family": "reddit_forum",
             "unit_id": "1mzokbt",
             "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "1eo9ln0",
+            "role": "segment_or_condition"
           },
           {
             "family": "reddit_forum",
@@ -15185,6 +15191,7 @@
         },
         "strongest_counterevidence": "No Summer Fridays-owned retention, repurchase, or recommendation event survives the p11r7 referent-binding re-derivation on this axis; the earlier counterweight rested on outcome verbs whose referent was a competitor product. Recorded as absent rather than restated.",
         "competitive_decision": "Make product-specific wear gains without sacrificing the comfortable finish customers defend.",
+        "counterevidence_absent_verified": true,
         "decision_bearing_support_refs": [
           {
             "family": "reddit_forum",
@@ -15195,6 +15202,11 @@
             "family": "reddit_forum",
             "unit_id": "1r09924",
             "role": "behavior_or_purchase_consequence"
+          },
+          {
+            "family": "reddit_forum",
+            "unit_id": "xh5ys2",
+            "role": "competitor_destination"
           }
         ],
         "limitations": [
@@ -24537,7 +24549,7 @@
           "behavior_or_purchase_consequence": "Suspected changes or bad batches cause stopping, returns, and threatened switching.",
           "competitor_destination": "Rhode, Ole Henriksen, Hourglass, and stable staple alternatives."
         },
-        "strongest_counterevidence": "No Summer Fridays-owned retention, repurchase, or recommendation event survives the p11r7 referent-binding re-derivation on this axis; the earlier counterweight rested on outcome verbs whose referent was a competitor product. Recorded as absent rather than restated.",
+        "strongest_counterevidence": "One subject-owned positive event survives the p11r7 referent-binding re-derivation on this axis: a repeat buyer's stated intent to purchase the new flavor drop ('I'll get this one', 1sahmci) — a one-row counterweight, not a pattern. The earlier broader counterweight rested on outcome verbs whose referent was a competitor product.",
         "competitive_decision": "Compete on batch consistency and transparent formula-change handling; this severe but smaller seam should be monitored rather than generalized.",
         "decision_bearing_support_refs": [
           {
@@ -24548,7 +24560,7 @@
           {
             "family": "reddit_forum",
             "unit_id": "1sahmci",
-            "role": "competitor_destination"
+            "role": "counterevidence"
           },
           {
             "family": "reddit_forum",

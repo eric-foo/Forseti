@@ -2849,7 +2849,7 @@ phase_acquisition_seal:
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-    sha256: fb58fbcd27fa9ea4a69c799e40490137e0c692c3ee2d1e8f2baf1240efd44319
+    sha256: 9410fb08326aae1ff8c2cd17eb6d18c1893a861eb821aebd1f8583be55c1e8fe
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -2866,7 +2866,7 @@ phase_acquisition_seal:
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-      sha256: fb58fbcd27fa9ea4a69c799e40490137e0c692c3ee2d1e8f2baf1240efd44319
+      sha256: 9410fb08326aae1ff8c2cd17eb6d18c1893a861eb821aebd1f8583be55c1e8fe
       invalid_if:
       - artifact hash changes
       - frontier accounting or source-native coding changes
@@ -2884,7 +2884,7 @@ population-prevalence—claim ceiling.
 
 The hash pins for `turn_a_consumer_brand_v3_acquisition_record.md`
 (`edb172f4…` → `a8aeb4b9…`) and `evidence_depth_ledger.json` (`4454b015…` →
-`fb58fbcd…`) were re-cut by the commissioning Chief Architect after an
+`9410fb08…`) were re-cut by the commissioning Chief Architect after an
 adjudicated remediation chain: a delegated semantic source review
 (cross-vendor, 2026-08-06) returned `NEEDS_ARCHITECTURE_PASS` for systemic
 `choice`/`explicit_outcome` misattribution in the community coding; a
@@ -2897,4 +2897,8 @@ coding as
 `p11r7_disposition_log.csv`. Raw preserved sources, route receipts, job
 accounting, and the qualitative claim ceiling are unchanged; corrected
 counterweight totals are stated in the acquisition record's re-derivation
-section. This re-cut amends hash pins only; it does not reopen acquisition.
+section. This re-cut amends hash pins only; it does not reopen acquisition. Two axes
+(reaction, wear) carry the contract's `counterevidence_absent_verified`
+marker (owner-authorized contract amendment, 2026-08-06): their positive
+counterweight is verified absent, recorded rather than fabricated; formula
+consistency re-anchored to its one surviving subject-owned event.

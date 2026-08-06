@@ -2193,7 +2193,25 @@ def _validate_consumer_brand_product_axes(
                         )
                         complete = False
                 if closure_basis == "evidence_supported":
-                    if "counterevidence" not in decision_roles:
+                    absence_marker = usefulness.get(
+                        "counterevidence_absent_verified"
+                    )
+                    if absence_marker not in (None, True):
+                        findings.append(
+                            "invalid_product_axis_counterevidence_absence_marker"
+                            f":{axis_id}"
+                        )
+                        complete = False
+                    if absence_marker is True and "counterevidence" in decision_roles:
+                        findings.append(
+                            "contradictory_counterevidence_absence_marker"
+                            f":{axis_id}"
+                        )
+                        complete = False
+                    if (
+                        "counterevidence" not in decision_roles
+                        and absence_marker is not True
+                    ):
                         findings.append(
                             f"missing_product_axis_counterevidence_ref:{axis_id}"
                         )

@@ -1027,6 +1027,46 @@ def test_consumer_brand_v2_passes_with_axis_evidence_and_coding(
     assert _validate(tmp_path, _make_passing(seal)) == []
 
 
+def test_verified_absent_counterevidence_marker_waives_counterevidence_ref(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    usefulness = ledger["product_axes"][0]["decision_usefulness"]
+    usefulness["counterevidence_absent_verified"] = True
+    for ref in usefulness["decision_bearing_support_refs"]:
+        if ref["role"] == "counterevidence":
+            ref["role"] = "segment_or_condition"
+    usefulness["strongest_counterevidence"] = (
+        "No subject-owned positive event survives re-derivation; recorded as "
+        "verified absent, not restated."
+    )
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_contradictory_counterevidence_absence_marker_is_visible(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    usefulness = ledger["product_axes"][0]["decision_usefulness"]
+    usefulness["counterevidence_absent_verified"] = True
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert (
+        "contradictory_counterevidence_absence_marker:packaging_reliability"
+        in findings
+    )
+
+
 def test_consumer_brand_v3_requires_three_phase2_goals(tmp_path: Path) -> None:
     seal = _blocked_seal(tmp_path)
     reference = _consumer_depth_ledger(tmp_path)
