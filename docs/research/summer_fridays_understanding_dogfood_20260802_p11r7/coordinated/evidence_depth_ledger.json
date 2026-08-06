@@ -377,7 +377,7 @@
     {
       "artifact_id": "p11r7_community_axis_coding",
       "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json",
-      "sha256": "29a7e5e1ed83d9aff6798528d30e444d90c5cefec98276cc004fd4f1d84910cd"
+      "sha256": "9d545838b4b5cefdef264f924709f472a2563ac056b76dfd7ba9d443818423d3"
     },
     {
       "artifact_id": "p11r7_reddit_listing_policy_decisions",
@@ -437,7 +437,7 @@
     {
       "artifact_id": "p11r7_material_value_assessment",
       "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/phase_a_material_value_and_future_acquisition_calibration.md",
-      "sha256": "20463b71ddefe21a0eea7e9cda089de26782561f20b6a4dec89e2ecbe16880e3"
+      "sha256": "213f188c120d563b6fa2935c9f2062e05352473f655d34e3b672ddc4f72f9382"
     },
     {
       "artifact_id": "p11r7_process_change_assessment",
@@ -10961,35 +10961,35 @@
           "family": "reddit_forum",
           "unit_id": "15qtzd8",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
           "family": "reddit_forum",
           "unit_id": "15tzg3w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "166j6zu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16b3wt1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rare Beauty"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16kgx3t",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -11118,7 +11118,7 @@
           "family": "reddit_forum",
           "unit_id": "1ceemxn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -11150,14 +11150,14 @@
           "family": "reddit_forum",
           "unit_id": "1e13lo7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ee21xh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -11177,7 +11177,7 @@
           "family": "reddit_forum",
           "unit_id": "1eo9ln0",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "subject"
         },
         {
           "family": "reddit_forum",
@@ -11214,14 +11214,14 @@
           "family": "reddit_forum",
           "unit_id": "1fu32im",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1fvevie",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -11292,7 +11292,7 @@
           "family": "reddit_forum",
           "unit_id": "1j6xhqb",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -11369,7 +11369,7 @@
           "family": "reddit_forum",
           "unit_id": "1mzokbt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Vaseline"
         },
         {
@@ -11394,14 +11394,14 @@
           "family": "reddit_forum",
           "unit_id": "1ougkua",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -11446,7 +11446,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -11460,7 +11460,7 @@
           "family": "reddit_forum",
           "unit_id": "1r09924",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -11529,7 +11529,8 @@
           "family": "reddit_forum",
           "unit_id": "1tk5s11",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Jack Black"
         },
         {
           "family": "reddit_forum",
@@ -11596,7 +11597,7 @@
           "family": "reddit_forum",
           "unit_id": "ks3ou1",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -11670,7 +11671,7 @@
           "family": "reddit_forum",
           "unit_id": "xysaq8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -11703,7 +11704,7 @@
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -11788,7 +11789,7 @@
           "behavior_or_purchase_consequence": "Customers report stopping use, discarding products, and choosing simpler alternatives after reactions.",
           "competitor_destination": "Vaseline, Rhode, Rare Beauty, and other tolerance-led substitutes."
         },
-        "strongest_counterevidence": "Other customers retain and repurchase Summer Fridays complexion products without reporting a reaction.",
+        "strongest_counterevidence": "No Summer Fridays-owned retention, repurchase, or recommendation event survives the p11r7 referent-binding re-derivation on this axis; the earlier counterweight rested on outcome verbs whose referent was a competitor product. Recorded as absent rather than restated.",
         "competitive_decision": "Prioritize substantiated tolerance and low-irritation performance; reaction risk is a stronger attack surface than generic efficacy.",
         "decision_bearing_support_refs": [
           {
@@ -11800,11 +11801,6 @@
             "family": "reddit_forum",
             "unit_id": "16b3wt1",
             "role": "competitor_destination"
-          },
-          {
-            "family": "reddit_forum",
-            "unit_id": "zcglwe",
-            "role": "counterevidence"
           }
         ],
         "limitations": [
@@ -11866,7 +11862,7 @@
           "family": "reddit_forum",
           "unit_id": "118c4om",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -11891,14 +11887,14 @@
           "family": "reddit_forum",
           "unit_id": "13aw1sp",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ilia"
         },
         {
           "family": "reddit_forum",
           "unit_id": "13end3f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -11930,7 +11926,7 @@
           "family": "reddit_forum",
           "unit_id": "15qtzd8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Glossier"
         },
         {
@@ -11943,14 +11939,14 @@
           "family": "reddit_forum",
           "unit_id": "166j6zu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16old70",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -11962,7 +11958,7 @@
           "family": "reddit_forum",
           "unit_id": "171be67",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -11975,7 +11971,7 @@
           "family": "reddit_forum",
           "unit_id": "1742rj9",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -12017,14 +12013,14 @@
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Mac"
         },
         {
           "family": "reddit_forum",
           "unit_id": "18ez6ft",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
@@ -12070,7 +12066,7 @@
           "family": "reddit_forum",
           "unit_id": "1901xtx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
@@ -12110,7 +12106,7 @@
           "family": "reddit_forum",
           "unit_id": "19dayj0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -12129,7 +12125,7 @@
           "family": "reddit_forum",
           "unit_id": "19ebtuv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -12160,7 +12156,7 @@
           "family": "reddit_forum",
           "unit_id": "1ahn26w",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -12173,7 +12169,7 @@
           "family": "reddit_forum",
           "unit_id": "1akf6oh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -12224,14 +12220,14 @@
           "family": "reddit_forum",
           "unit_id": "1b2bl9j",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1bb12wj",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -12250,7 +12246,7 @@
           "family": "reddit_forum",
           "unit_id": "1bm9izm",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Laneige"
         },
         {
@@ -12264,7 +12260,7 @@
           "family": "reddit_forum",
           "unit_id": "1btktl2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -12277,7 +12273,7 @@
           "family": "reddit_forum",
           "unit_id": "1bzh9qs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -12296,7 +12292,7 @@
           "family": "reddit_forum",
           "unit_id": "1ceemxn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -12348,21 +12344,21 @@
           "family": "reddit_forum",
           "unit_id": "1e13lo7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1e57hgs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ee21xh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
@@ -12376,14 +12372,14 @@
           "family": "reddit_forum",
           "unit_id": "1eizw8l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -12396,13 +12392,13 @@
           "family": "reddit_forum",
           "unit_id": "1eo9ln0",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "subject"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1es5107",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -12422,7 +12418,7 @@
           "family": "reddit_forum",
           "unit_id": "1fcbif7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tarte"
         },
         {
@@ -12447,7 +12443,7 @@
           "family": "reddit_forum",
           "unit_id": "1fu32im",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -12460,28 +12456,28 @@
           "family": "reddit_forum",
           "unit_id": "1fvevie",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1fyynnz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1g207cd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1g9kuoe",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -12500,7 +12496,7 @@
           "family": "reddit_forum",
           "unit_id": "1h0wfao",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -12520,7 +12516,7 @@
           "family": "reddit_forum",
           "unit_id": "1hf0hhi",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Elf"
         },
         {
@@ -12534,7 +12530,7 @@
           "family": "reddit_forum",
           "unit_id": "1ho4jo9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -12580,7 +12576,7 @@
           "family": "reddit_forum",
           "unit_id": "1iozr04",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Lanolips"
         },
         {
@@ -12688,7 +12684,7 @@
           "family": "reddit_forum",
           "unit_id": "1kq0492",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -12731,7 +12727,8 @@
           "family": "reddit_forum",
           "unit_id": "1m460nd",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Etude House"
         },
         {
           "family": "reddit_forum",
@@ -12786,7 +12783,7 @@
           "family": "reddit_forum",
           "unit_id": "1oh26y0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Glossier"
         },
         {
@@ -12818,7 +12815,7 @@
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -12869,7 +12866,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -12889,7 +12886,7 @@
           "family": "reddit_forum",
           "unit_id": "1r09924",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -12927,7 +12924,7 @@
           "family": "reddit_forum",
           "unit_id": "1r8e2yu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -12958,7 +12955,7 @@
           "family": "reddit_forum",
           "unit_id": "1rk7azd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -12977,7 +12974,7 @@
           "family": "reddit_forum",
           "unit_id": "1s4ywh5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -13016,14 +13013,14 @@
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1sxhnh9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -13079,7 +13076,7 @@
           "family": "reddit_forum",
           "unit_id": "ks3ou1",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -13109,14 +13106,14 @@
           "family": "reddit_forum",
           "unit_id": "u53j7f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "v4ioij",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Elf"
         },
         {
@@ -13129,14 +13126,14 @@
           "family": "reddit_forum",
           "unit_id": "wve0sg",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "x0ryud",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -13268,7 +13265,7 @@
           "behavior_or_purchase_consequence": "Price-performance disappointment drives rejection and no-future-purchase decisions.",
           "competitor_destination": "Laneige, Glossier, e.l.f., and lower-priced staple balms."
         },
-        "strongest_counterevidence": "Some users willingly repurchase because color, scent, and finish make the premium feel worthwhile.",
+        "strongest_counterevidence": "One captured customer defends the premium outright ('totally worth the hype ... I would buy again'); the surviving subject-owned value counterweight is two rows, not a broad pattern.",
         "competitive_decision": "Compete on demonstrable usable quantity and durable performance per dollar, not on a vague lower-price claim.",
         "decision_bearing_support_refs": [
           {
@@ -13283,7 +13280,7 @@
           },
           {
             "family": "reddit_forum",
-            "unit_id": "wve0sg",
+            "unit_id": "1m07jmq",
             "role": "counterevidence"
           }
         ],
@@ -13420,7 +13417,7 @@
           "family": "reddit_forum",
           "unit_id": "15qtzd8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Glossier"
         },
         {
@@ -13433,7 +13430,7 @@
           "family": "reddit_forum",
           "unit_id": "16old70",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -13457,7 +13454,7 @@
           "family": "reddit_forum",
           "unit_id": "178nmmr",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
@@ -13488,7 +13485,7 @@
           "family": "reddit_forum",
           "unit_id": "18ez6ft",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -13507,14 +13504,14 @@
           "family": "reddit_forum",
           "unit_id": "18v755c",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Dior"
         },
         {
           "family": "reddit_forum",
           "unit_id": "18zsubw",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -13563,7 +13560,7 @@
           "family": "reddit_forum",
           "unit_id": "19eo5it",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
@@ -13583,13 +13580,13 @@
           "family": "reddit_forum",
           "unit_id": "1ahn26w",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1akf6oh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -13659,14 +13656,14 @@
           "family": "reddit_forum",
           "unit_id": "1btktl2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1bzh9qs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -13679,7 +13676,7 @@
           "family": "reddit_forum",
           "unit_id": "1ceemxn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -13717,7 +13714,7 @@
           "family": "reddit_forum",
           "unit_id": "1dgu3zx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -13730,7 +13727,7 @@
           "family": "reddit_forum",
           "unit_id": "1ee21xh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
@@ -13743,7 +13740,7 @@
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Merit"
         },
         {
@@ -13806,7 +13803,8 @@
           "family": "reddit_forum",
           "unit_id": "1fu32im",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Topicals"
         },
         {
           "family": "reddit_forum",
@@ -13824,14 +13822,14 @@
           "family": "reddit_forum",
           "unit_id": "1g6a3ok",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1gk4w7d",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -13880,7 +13878,7 @@
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -13901,7 +13899,7 @@
           "family": "reddit_forum",
           "unit_id": "1j6xhqb",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -13914,7 +13912,7 @@
           "family": "reddit_forum",
           "unit_id": "1k11yq2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14050,7 +14048,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14143,7 +14141,7 @@
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -14186,7 +14184,7 @@
           "family": "reddit_forum",
           "unit_id": "henyd9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14243,7 +14241,7 @@
           "family": "reddit_forum",
           "unit_id": "wfbfdq",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14262,7 +14260,7 @@
           "family": "reddit_forum",
           "unit_id": "y1n2wx",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Kosas"
         },
         {
@@ -14428,21 +14426,21 @@
           "family": "reddit_forum",
           "unit_id": "13aw1sp",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "13end3f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "13gxs8s",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14455,7 +14453,7 @@
           "family": "reddit_forum",
           "unit_id": "15qtzd8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -14506,7 +14504,7 @@
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
@@ -14531,7 +14529,7 @@
           "family": "reddit_forum",
           "unit_id": "196uttv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -14551,7 +14549,7 @@
           "family": "reddit_forum",
           "unit_id": "19dayj0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -14564,7 +14562,7 @@
           "family": "reddit_forum",
           "unit_id": "19ebtuv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -14577,7 +14575,7 @@
           "family": "reddit_forum",
           "unit_id": "1aeox43",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14634,7 +14632,7 @@
           "family": "reddit_forum",
           "unit_id": "1bzh9qs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -14671,7 +14669,7 @@
           "family": "reddit_forum",
           "unit_id": "1df3erx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -14696,7 +14694,7 @@
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -14709,7 +14707,7 @@
           "family": "reddit_forum",
           "unit_id": "1fj59vo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -14723,7 +14721,7 @@
           "family": "reddit_forum",
           "unit_id": "1ft1w8d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -14742,7 +14740,7 @@
           "family": "reddit_forum",
           "unit_id": "1gixwmt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
@@ -14774,21 +14772,21 @@
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1iuiz6f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1j3ne46",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -14808,7 +14806,7 @@
           "family": "reddit_forum",
           "unit_id": "1jmt7ko",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -14845,7 +14843,7 @@
           "family": "reddit_forum",
           "unit_id": "1nr7jxv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -14865,7 +14863,7 @@
           "family": "reddit_forum",
           "unit_id": "1ougkua",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -14905,7 +14903,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
@@ -14918,7 +14916,7 @@
           "family": "reddit_forum",
           "unit_id": "1r09924",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -14937,7 +14935,7 @@
           "family": "reddit_forum",
           "unit_id": "1r8e2rk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -14968,7 +14966,7 @@
           "family": "reddit_forum",
           "unit_id": "1s4ywh5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -14981,7 +14979,8 @@
           "family": "reddit_forum",
           "unit_id": "1sj7lf3",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Naked Sundays"
         },
         {
           "family": "reddit_forum",
@@ -15007,7 +15006,7 @@
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -15087,7 +15086,7 @@
           "family": "reddit_forum",
           "unit_id": "wve0sg",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -15107,7 +15106,7 @@
           "family": "reddit_forum",
           "unit_id": "ygdg6c",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         }
       ],
@@ -15184,7 +15183,7 @@
           "behavior_or_purchase_consequence": "Short wear contributes to non-repurchase and reduced use.",
           "competitor_destination": "Longer-wearing Ole Henriksen and lower-cost drugstore formats."
         },
-        "strongest_counterevidence": "Some users retain the product as an everyday lip color and accept reapplication.",
+        "strongest_counterevidence": "No Summer Fridays-owned retention, repurchase, or recommendation event survives the p11r7 referent-binding re-derivation on this axis; the earlier counterweight rested on outcome verbs whose referent was a competitor product. Recorded as absent rather than restated.",
         "competitive_decision": "Make product-specific wear gains without sacrificing the comfortable finish customers defend.",
         "decision_bearing_support_refs": [
           {
@@ -15196,11 +15195,6 @@
             "family": "reddit_forum",
             "unit_id": "1r09924",
             "role": "behavior_or_purchase_consequence"
-          },
-          {
-            "family": "reddit_forum",
-            "unit_id": "wve0sg",
-            "role": "counterevidence"
           }
         ],
         "limitations": [
@@ -15275,7 +15269,7 @@
           "family": "reddit_forum",
           "unit_id": "10vrvls",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -15288,7 +15282,7 @@
           "family": "reddit_forum",
           "unit_id": "118c4om",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -15301,7 +15295,7 @@
           "family": "reddit_forum",
           "unit_id": "11lyjzy",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -15364,7 +15358,7 @@
           "family": "reddit_forum",
           "unit_id": "13aw1sp",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ilia"
         },
         {
@@ -15391,7 +15385,7 @@
           "family": "reddit_forum",
           "unit_id": "13gxs8s",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Lanolips"
         },
         {
@@ -15416,21 +15410,21 @@
           "family": "reddit_forum",
           "unit_id": "15qtzd8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "166j6zu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16b3wt1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rare Beauty"
         },
         {
@@ -15462,7 +15456,7 @@
           "family": "reddit_forum",
           "unit_id": "170wnjd",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Tower 28"
         },
         {
@@ -15475,20 +15469,20 @@
           "family": "reddit_forum",
           "unit_id": "1742rj9",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
           "unit_id": "175n4ck",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Armani"
         },
         {
           "family": "reddit_forum",
           "unit_id": "176msij",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
@@ -15521,7 +15515,7 @@
           "family": "reddit_forum",
           "unit_id": "17p8me8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -15552,8 +15546,8 @@
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "subject",
-          "alternative_brand": "Laneige"
+          "choice": "alternative",
+          "alternative_brand": "Dior"
         },
         {
           "family": "reddit_forum",
@@ -15604,7 +15598,7 @@
           "family": "reddit_forum",
           "unit_id": "18v755c",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Dior"
         },
         {
@@ -15617,21 +15611,21 @@
           "family": "reddit_forum",
           "unit_id": "1901xtx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "192hjc3",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "196uttv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -15656,7 +15650,7 @@
           "family": "reddit_forum",
           "unit_id": "199wb9b",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -15689,20 +15683,21 @@
           "family": "reddit_forum",
           "unit_id": "19ebtuv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rare Beauty"
         },
         {
           "family": "reddit_forum",
           "unit_id": "19eo5it",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "subject"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1abzm5e",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Farmacy"
         },
         {
           "family": "reddit_forum",
@@ -15728,21 +15723,21 @@
           "family": "reddit_forum",
           "unit_id": "1aeox43",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ahn26w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1akf6oh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -15755,7 +15750,7 @@
           "family": "reddit_forum",
           "unit_id": "1asnsu0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -15781,7 +15776,7 @@
           "family": "reddit_forum",
           "unit_id": "1b2bl9j",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
@@ -15825,7 +15820,7 @@
           "family": "reddit_forum",
           "unit_id": "1bm9izm",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Laneige"
         },
         {
@@ -15845,14 +15840,14 @@
           "family": "reddit_forum",
           "unit_id": "1bwaurz",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1bzh9qs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -15871,28 +15866,28 @@
           "family": "reddit_forum",
           "unit_id": "1ceemxn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1cfis9v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1cx0kf6",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1d1frnd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -15905,7 +15900,7 @@
           "family": "reddit_forum",
           "unit_id": "1dao7be",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -15924,7 +15919,7 @@
           "family": "reddit_forum",
           "unit_id": "1df3erx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -15950,7 +15945,7 @@
           "family": "reddit_forum",
           "unit_id": "1dmxqe1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -15970,7 +15965,7 @@
           "family": "reddit_forum",
           "unit_id": "1ebcxf5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -15990,7 +15985,7 @@
           "family": "reddit_forum",
           "unit_id": "1eizw8l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
@@ -16003,20 +15998,20 @@
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Merit"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1eo9ln0",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "subject"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ep8x4l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -16047,7 +16042,7 @@
           "family": "reddit_forum",
           "unit_id": "1ffau37",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16066,7 +16061,7 @@
           "family": "reddit_forum",
           "unit_id": "1flu6u4",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -16080,7 +16075,7 @@
           "family": "reddit_forum",
           "unit_id": "1fu32im",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Rhode"
         },
         {
@@ -16137,14 +16132,14 @@
           "family": "reddit_forum",
           "unit_id": "1gixwmt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1gk4w7d",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -16156,21 +16151,21 @@
           "family": "reddit_forum",
           "unit_id": "1gy2gaf",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1h0wfao",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1h20mws",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -16196,14 +16191,14 @@
           "family": "reddit_forum",
           "unit_id": "1hfmutg",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1hjvfpa",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -16234,14 +16229,14 @@
           "family": "reddit_forum",
           "unit_id": "1hu9x46",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1i0e6fh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -16281,7 +16276,7 @@
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -16294,7 +16289,7 @@
           "family": "reddit_forum",
           "unit_id": "1imqp7o",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -16314,7 +16309,7 @@
           "family": "reddit_forum",
           "unit_id": "1iozr04",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Glossier"
         },
         {
@@ -16327,7 +16322,7 @@
           "family": "reddit_forum",
           "unit_id": "1iuiz6f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -16388,7 +16383,7 @@
           "family": "reddit_forum",
           "unit_id": "1jmt7ko",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -16407,7 +16402,7 @@
           "family": "reddit_forum",
           "unit_id": "1k11yq2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16439,7 +16434,7 @@
           "family": "reddit_forum",
           "unit_id": "1klb78y",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -16452,14 +16447,14 @@
           "family": "reddit_forum",
           "unit_id": "1kq0492",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1kqg230",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -16479,7 +16474,7 @@
           "family": "reddit_forum",
           "unit_id": "1kup12q",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -16535,7 +16530,7 @@
           "family": "reddit_forum",
           "unit_id": "1meq79x",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Rare Beauty"
         },
         {
@@ -16549,14 +16544,14 @@
           "family": "reddit_forum",
           "unit_id": "1mzokbt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1n2g73w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -16607,28 +16602,29 @@
           "family": "reddit_forum",
           "unit_id": "1o4gnom",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Clinique"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1oatxkp",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1oh26y0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1oi0dnd",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
@@ -16640,7 +16636,7 @@
           "family": "reddit_forum",
           "unit_id": "1ougkua",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Laneige"
         },
         {
@@ -16654,14 +16650,14 @@
           "family": "reddit_forum",
           "unit_id": "1ox7f7t",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16687,7 +16683,7 @@
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16706,7 +16702,7 @@
           "family": "reddit_forum",
           "unit_id": "1pysv33",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -16731,7 +16727,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16745,7 +16741,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxpiwg",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16764,7 +16760,7 @@
           "family": "reddit_forum",
           "unit_id": "1r09924",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -16796,28 +16792,28 @@
           "family": "reddit_forum",
           "unit_id": "1r8e2rk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r8e2yu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r9vw38",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1riigui",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -16830,14 +16826,14 @@
           "family": "reddit_forum",
           "unit_id": "1rk7azd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1rxtvlh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -16862,7 +16858,7 @@
           "family": "reddit_forum",
           "unit_id": "1sbv12x",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -16882,7 +16878,7 @@
           "family": "reddit_forum",
           "unit_id": "1slrvyj",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
@@ -16900,7 +16896,7 @@
           "family": "reddit_forum",
           "unit_id": "1srjzrl",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -16920,7 +16916,7 @@
           "family": "reddit_forum",
           "unit_id": "1szkvr3",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -16959,7 +16955,8 @@
           "family": "reddit_forum",
           "unit_id": "1tk5s11",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
@@ -16984,7 +16981,7 @@
           "family": "reddit_forum",
           "unit_id": "1tzetov",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -17004,7 +17001,7 @@
           "family": "reddit_forum",
           "unit_id": "1urbojg",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -17035,7 +17032,7 @@
           "family": "reddit_forum",
           "unit_id": "1vb9vgi",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -17048,7 +17045,7 @@
           "family": "reddit_forum",
           "unit_id": "8czsyq",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Clinique"
         },
         {
@@ -17073,7 +17070,8 @@
           "family": "reddit_forum",
           "unit_id": "kaikx3",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Dermalogica"
         },
         {
           "family": "reddit_forum",
@@ -17151,14 +17149,14 @@
           "family": "reddit_forum",
           "unit_id": "u53j7f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "v4ioij",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Elf"
         },
         {
@@ -17178,7 +17176,7 @@
           "family": "reddit_forum",
           "unit_id": "wfbfdq",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -17191,7 +17189,7 @@
           "family": "reddit_forum",
           "unit_id": "wve0sg",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -17218,7 +17216,7 @@
           "family": "reddit_forum",
           "unit_id": "xysaq8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -17250,7 +17248,7 @@
           "family": "reddit_forum",
           "unit_id": "ywhshv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Clinique"
         },
         {
@@ -17269,7 +17267,7 @@
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -17282,7 +17280,7 @@
           "family": "reddit_forum",
           "unit_id": "zlgv98",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tarte"
         },
         {
@@ -17368,7 +17366,7 @@
           "behavior_or_purchase_consequence": "The seam produces both strong repurchase and rejection depending on the hydration job.",
           "competitor_destination": "Laneige, Rhode, Aquaphor, and other repair-led balms."
         },
-        "strongest_counterevidence": "Substantial retained and repurchased evidence supports hydration and comfort for many use cases.",
+        "strongest_counterevidence": "Subject-owned repurchase evidence supports hydration for everyday cosmetic comfort (bought the full size after finishing the minis), while the same customers stop short of claiming it resolves severe dryness.",
         "competitive_decision": "Do not attack hydration broadly; either defend the cosmetic comfort seam or target the narrower deep-repair condition with proof.",
         "decision_bearing_support_refs": [
           {
@@ -17388,7 +17386,7 @@
           },
           {
             "family": "reddit_forum",
-            "unit_id": "18v755c",
+            "unit_id": "18ez6ft",
             "role": "counterevidence"
           }
         ],
@@ -17499,7 +17497,7 @@
           "family": "reddit_forum",
           "unit_id": "118c4om",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -17512,7 +17510,7 @@
           "family": "reddit_forum",
           "unit_id": "11c3mmk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
@@ -17580,7 +17578,7 @@
           "family": "reddit_forum",
           "unit_id": "13d4u1f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
@@ -17593,7 +17591,7 @@
           "family": "reddit_forum",
           "unit_id": "13end3f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -17612,14 +17610,14 @@
           "family": "reddit_forum",
           "unit_id": "141m8tt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Merit"
         },
         {
           "family": "reddit_forum",
           "unit_id": "145yvrq",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -17651,7 +17649,7 @@
           "family": "reddit_forum",
           "unit_id": "15tzg3w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
@@ -17671,7 +17669,7 @@
           "family": "reddit_forum",
           "unit_id": "16b3wt1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rare Beauty"
         },
         {
@@ -17690,7 +17688,7 @@
           "family": "reddit_forum",
           "unit_id": "16old70",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -17709,14 +17707,14 @@
           "family": "reddit_forum",
           "unit_id": "171be67",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1742rj9",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -17728,7 +17726,7 @@
           "family": "reddit_forum",
           "unit_id": "176msij",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
@@ -17765,14 +17763,15 @@
           "family": "reddit_forum",
           "unit_id": "17x7aq7",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Dr. Jart"
         },
         {
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "subject",
-          "alternative_brand": "Laneige"
+          "choice": "alternative",
+          "alternative_brand": "Dior"
         },
         {
           "family": "reddit_forum",
@@ -17784,7 +17783,7 @@
           "family": "reddit_forum",
           "unit_id": "18ez6ft",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -17823,7 +17822,7 @@
           "family": "reddit_forum",
           "unit_id": "18v755c",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Dior"
         },
         {
@@ -17855,21 +17854,21 @@
           "family": "reddit_forum",
           "unit_id": "199wb9b",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "19akm0c",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
           "family": "reddit_forum",
           "unit_id": "19b61sb",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
@@ -17900,7 +17899,7 @@
           "family": "reddit_forum",
           "unit_id": "19eo5it",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -17926,14 +17925,14 @@
           "family": "reddit_forum",
           "unit_id": "1aeox43",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ahn26w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rhode"
         },
         {
@@ -17980,7 +17979,7 @@
           "family": "reddit_forum",
           "unit_id": "1asnsu0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -18005,14 +18004,14 @@
           "family": "reddit_forum",
           "unit_id": "1b77ldw",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1bb12wj",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
@@ -18062,14 +18061,14 @@
           "family": "reddit_forum",
           "unit_id": "1bwaurz",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1bzh9qs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -18082,7 +18081,7 @@
           "family": "reddit_forum",
           "unit_id": "1ceemxn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18095,7 +18094,7 @@
           "family": "reddit_forum",
           "unit_id": "1ckhmme",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18115,7 +18114,7 @@
           "family": "reddit_forum",
           "unit_id": "1d18sp0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
@@ -18129,7 +18128,7 @@
           "family": "reddit_forum",
           "unit_id": "1dao7be",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18148,7 +18147,7 @@
           "family": "reddit_forum",
           "unit_id": "1df3erx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -18174,7 +18173,7 @@
           "family": "reddit_forum",
           "unit_id": "1dmxqe1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -18187,7 +18186,7 @@
           "family": "reddit_forum",
           "unit_id": "1e13lo7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
@@ -18214,21 +18213,21 @@
           "family": "reddit_forum",
           "unit_id": "1eizw8l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Lanolips"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Merit"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ep8x4l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -18259,7 +18258,7 @@
           "family": "reddit_forum",
           "unit_id": "1fcbif7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -18272,7 +18271,7 @@
           "family": "reddit_forum",
           "unit_id": "1fj59vo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -18318,14 +18317,14 @@
           "family": "reddit_forum",
           "unit_id": "1ft1w8d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1fu32im",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18358,7 +18357,7 @@
           "family": "reddit_forum",
           "unit_id": "1g9kuoe",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -18371,14 +18370,14 @@
           "family": "reddit_forum",
           "unit_id": "1gf8zau",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1gixwmt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
@@ -18397,14 +18396,14 @@
           "family": "reddit_forum",
           "unit_id": "1gy2gaf",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1h0wfao",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18431,7 +18430,7 @@
           "family": "reddit_forum",
           "unit_id": "1hf0hhi",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -18489,7 +18488,7 @@
           "family": "reddit_forum",
           "unit_id": "1i0e6fh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -18516,14 +18515,14 @@
           "family": "reddit_forum",
           "unit_id": "1i8imlu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -18549,7 +18548,7 @@
           "family": "reddit_forum",
           "unit_id": "1iuiz6f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -18563,21 +18562,21 @@
           "family": "reddit_forum",
           "unit_id": "1j2ep6v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Armani"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1j3ne46",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1j6xhqb",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18629,7 +18628,7 @@
           "family": "reddit_forum",
           "unit_id": "1jqoybz",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -18648,7 +18647,7 @@
           "family": "reddit_forum",
           "unit_id": "1k11yq2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18681,7 +18680,7 @@
           "family": "reddit_forum",
           "unit_id": "1km0jms",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -18706,14 +18705,14 @@
           "family": "reddit_forum",
           "unit_id": "1ktoo8j",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1kup12q",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -18747,13 +18746,14 @@
           "unit_id": "1m07jmq",
           "contribution": "compares",
           "choice": "alternative",
-          "alternative_brand": "Laneige"
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1m460nd",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Etude House"
         },
         {
           "family": "reddit_forum",
@@ -18777,35 +18777,35 @@
           "family": "reddit_forum",
           "unit_id": "1mbd2za",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1mns8tt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1n2g73w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1nhojda",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Elf"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1nl02jk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18818,7 +18818,7 @@
           "family": "reddit_forum",
           "unit_id": "1nr7jxv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -18831,7 +18831,7 @@
           "family": "reddit_forum",
           "unit_id": "1ntik4i",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18845,7 +18845,7 @@
           "family": "reddit_forum",
           "unit_id": "1o4gnom",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Clinique"
         },
         {
@@ -18866,7 +18866,7 @@
           "unit_id": "1oh26y0",
           "contribution": "compares",
           "choice": "alternative",
-          "alternative_brand": "Laneige"
+          "alternative_brand": "Eadem"
         },
         {
           "family": "reddit_forum",
@@ -18884,14 +18884,14 @@
           "family": "reddit_forum",
           "unit_id": "1ot2sna",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ougkua",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18904,7 +18904,7 @@
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18923,7 +18923,7 @@
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -18955,7 +18955,7 @@
           "family": "reddit_forum",
           "unit_id": "1q1rcr0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19006,7 +19006,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19038,7 +19038,7 @@
           "family": "reddit_forum",
           "unit_id": "1r09924",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -19065,21 +19065,21 @@
           "family": "reddit_forum",
           "unit_id": "1r8e2rk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r8e2yu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r9vw38",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19118,14 +19118,14 @@
           "family": "reddit_forum",
           "unit_id": "1rw0pg9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1s4ywh5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -19163,7 +19163,7 @@
           "family": "reddit_forum",
           "unit_id": "1sgal6d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -19183,7 +19183,7 @@
           "family": "reddit_forum",
           "unit_id": "1slrvyj",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
@@ -19202,7 +19202,7 @@
           "family": "reddit_forum",
           "unit_id": "1srjzrl",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Elf"
         },
         {
@@ -19216,14 +19216,14 @@
           "family": "reddit_forum",
           "unit_id": "1sw16j8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -19270,7 +19270,7 @@
           "family": "reddit_forum",
           "unit_id": "1tzetov",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19331,14 +19331,14 @@
           "family": "reddit_forum",
           "unit_id": "kd6r0i",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "ks3ou1",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -19375,7 +19375,7 @@
           "family": "reddit_forum",
           "unit_id": "u53j7f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19388,13 +19388,14 @@
           "family": "reddit_forum",
           "unit_id": "v60njh",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Supergoop"
         },
         {
           "family": "reddit_forum",
           "unit_id": "wve0sg",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19420,7 +19421,7 @@
           "family": "reddit_forum",
           "unit_id": "xysaq8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -19433,14 +19434,15 @@
           "family": "reddit_forum",
           "unit_id": "ygdg6c",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
           "family": "reddit_forum",
           "unit_id": "yicm66",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Beautyblender"
         },
         {
           "family": "reddit_forum",
@@ -19453,7 +19455,7 @@
           "family": "reddit_forum",
           "unit_id": "ywhshv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Clinique"
         },
         {
@@ -19473,7 +19475,7 @@
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -19492,7 +19494,7 @@
           "family": "reddit_forum",
           "unit_id": "zpsv0o",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -19577,7 +19579,7 @@
           "behavior_or_purchase_consequence": "Texture failures lead to returns, stopping use, and switching.",
           "competitor_destination": "Ole Henriksen, Laneige, Eadem, and thicker treatment formats."
         },
-        "strongest_counterevidence": "Texture and finish carry the largest positive-choice balance and sustained loyalty.",
+        "strongest_counterevidence": "Texture remains the strongest subject-owned counterweight: customers who prefer a thin, slippy finish state they would repurchase for that texture specifically.",
         "competitive_decision": "Avoid a frontal texture attack; preserve effortless feel and target specific instability or preference mismatches.",
         "decision_bearing_support_refs": [
           {
@@ -19592,7 +19594,7 @@
           },
           {
             "family": "reddit_forum",
-            "unit_id": "1bwaurz",
+            "unit_id": "1s5ifz6",
             "role": "counterevidence"
           }
         ],
@@ -19649,7 +19651,7 @@
           "family": "reddit_forum",
           "unit_id": "10p1pr4",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -19681,7 +19683,7 @@
           "family": "reddit_forum",
           "unit_id": "11lyjzy",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -19707,14 +19709,14 @@
           "family": "reddit_forum",
           "unit_id": "13aw1sp",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "13d4u1f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
@@ -19753,14 +19755,14 @@
           "family": "reddit_forum",
           "unit_id": "15tzg3w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16b3wt1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rare Beauty"
         },
         {
@@ -19797,7 +19799,7 @@
           "family": "reddit_forum",
           "unit_id": "175n4ck",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Armani"
         },
         {
@@ -19848,7 +19850,7 @@
           "family": "reddit_forum",
           "unit_id": "1848nkz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Armani"
         },
         {
@@ -19880,7 +19882,7 @@
           "family": "reddit_forum",
           "unit_id": "18v755c",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Dior"
         },
         {
@@ -19912,14 +19914,14 @@
           "family": "reddit_forum",
           "unit_id": "199wb9b",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "19akm0c",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -20046,49 +20048,49 @@
           "family": "reddit_forum",
           "unit_id": "1clfkmo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1d18sp0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1d1frnd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1df3erx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1dgu3zx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1dmxqe1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1e13lo7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -20108,7 +20110,7 @@
           "family": "reddit_forum",
           "unit_id": "1ebcxf5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -20121,7 +20123,7 @@
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Merit"
         },
         {
@@ -20134,7 +20136,7 @@
           "family": "reddit_forum",
           "unit_id": "1fj59vo",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -20218,7 +20220,7 @@
           "family": "reddit_forum",
           "unit_id": "1gspi3y",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -20238,7 +20240,7 @@
           "family": "reddit_forum",
           "unit_id": "1i0e6fh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -20251,7 +20253,7 @@
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -20328,7 +20330,7 @@
           "family": "reddit_forum",
           "unit_id": "1klb78y",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -20347,7 +20349,7 @@
           "family": "reddit_forum",
           "unit_id": "1kq0492",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -20427,14 +20429,14 @@
           "family": "reddit_forum",
           "unit_id": "1m5ymjw",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1mbd2za",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -20486,7 +20488,7 @@
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -20545,14 +20547,14 @@
           "family": "reddit_forum",
           "unit_id": "1r4uqwj",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Hourglass"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r8e2rk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -20584,14 +20586,14 @@
           "family": "reddit_forum",
           "unit_id": "1rxtvlh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1s4ywh5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -20622,35 +20624,35 @@
           "family": "reddit_forum",
           "unit_id": "1sptxrv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1srjzrl",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1sw16j8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1sxhnh9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -20664,7 +20666,7 @@
           "family": "reddit_forum",
           "unit_id": "1tk5s11",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -20678,7 +20680,7 @@
           "family": "reddit_forum",
           "unit_id": "1trq2k5",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -20692,7 +20694,7 @@
           "family": "reddit_forum",
           "unit_id": "1ur9u91",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -20705,7 +20707,7 @@
           "family": "reddit_forum",
           "unit_id": "1uv5umz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -20730,7 +20732,8 @@
           "family": "reddit_forum",
           "unit_id": "v60njh",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Supergoop"
         },
         {
           "family": "reddit_forum",
@@ -20762,27 +20765,28 @@
           "family": "reddit_forum",
           "unit_id": "y1n2wx",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Kosas"
         },
         {
           "family": "reddit_forum",
           "unit_id": "ygdg6c",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
           "family": "reddit_forum",
           "unit_id": "yicm66",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Beautyblender"
         },
         {
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -21000,7 +21004,7 @@
           "family": "reddit_forum",
           "unit_id": "11tv4zb",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -21108,7 +21112,7 @@
           "family": "reddit_forum",
           "unit_id": "16old70",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -21133,7 +21137,7 @@
           "family": "reddit_forum",
           "unit_id": "1742rj9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rare Beauty"
         },
         {
@@ -21146,7 +21150,7 @@
           "family": "reddit_forum",
           "unit_id": "175n4ck",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Armani"
         },
         {
@@ -21185,13 +21189,14 @@
           "family": "reddit_forum",
           "unit_id": "17x7aq7",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Dr. Jart"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1848nkz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Armani"
         },
         {
@@ -21274,7 +21279,7 @@
           "family": "reddit_forum",
           "unit_id": "199wb9b",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Saie"
         },
         {
@@ -21299,7 +21304,7 @@
           "family": "reddit_forum",
           "unit_id": "19ebtuv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -21356,7 +21361,7 @@
           "family": "reddit_forum",
           "unit_id": "1asnsu0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -21370,7 +21375,7 @@
           "family": "reddit_forum",
           "unit_id": "1b685pn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -21426,7 +21431,7 @@
           "family": "reddit_forum",
           "unit_id": "1clfkmo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -21464,7 +21469,7 @@
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -21484,7 +21489,7 @@
           "family": "reddit_forum",
           "unit_id": "1fj59vo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -21521,21 +21526,21 @@
           "family": "reddit_forum",
           "unit_id": "1g5v2xo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1gixwmt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1gk4w7d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -21644,7 +21649,7 @@
           "family": "reddit_forum",
           "unit_id": "1k11yq2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -21678,7 +21683,7 @@
           "family": "reddit_forum",
           "unit_id": "1kq0492",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -21799,7 +21804,7 @@
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -21912,7 +21917,7 @@
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -21951,7 +21956,7 @@
           "family": "reddit_forum",
           "unit_id": "1uu0fzt",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -21988,7 +21993,7 @@
           "family": "reddit_forum",
           "unit_id": "wpz35n",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
@@ -22033,7 +22038,7 @@
           "family": "reddit_forum",
           "unit_id": "ywhshv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Clinique"
         },
         {
@@ -22047,7 +22052,7 @@
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -22142,7 +22147,7 @@
           "behavior_or_purchase_consequence": "Poor fit produces returns and intended returns.",
           "competitor_destination": "Hourglass, Armani, Kosas, and Saie shade alternatives."
         },
-        "strongest_counterevidence": "Matched customers report close shade equivalence and retain the natural finish.",
+        "strongest_counterevidence": "Matched customers name the shade itself as the repurchase reason ('the scent and shade of brown sugar are also to die for'), but the surviving subject-owned evidence is two rows.",
         "competitive_decision": "Treat range and visible payoff as a segment-expansion opportunity, while preserving the low-effort shades existing users defend.",
         "decision_bearing_support_refs": [
           {
@@ -22157,7 +22162,7 @@
           },
           {
             "family": "reddit_forum",
-            "unit_id": "zcglwe",
+            "unit_id": "13aw1sp",
             "role": "counterevidence"
           }
         ],
@@ -22337,7 +22342,7 @@
           "family": "reddit_forum",
           "unit_id": "13end3f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -22370,7 +22375,7 @@
           "unit_id": "15qtzd8",
           "contribution": "compares",
           "choice": "alternative",
-          "alternative_brand": "Laneige"
+          "alternative_brand": "Cay Skin"
         },
         {
           "family": "reddit_forum",
@@ -22390,21 +22395,21 @@
           "family": "reddit_forum",
           "unit_id": "16b3wt1",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rare Beauty"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16meqlh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
           "family": "reddit_forum",
           "unit_id": "16old70",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -22428,7 +22433,7 @@
           "family": "reddit_forum",
           "unit_id": "1742rj9",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -22453,7 +22458,7 @@
           "family": "reddit_forum",
           "unit_id": "178nmmr",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -22485,20 +22490,21 @@
           "family": "reddit_forum",
           "unit_id": "17tnj2m",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "subject",
-          "alternative_brand": "Laneige"
+          "choice": "alternative",
+          "alternative_brand": "Dior"
         },
         {
           "family": "reddit_forum",
           "unit_id": "18ez6ft",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
@@ -22525,14 +22531,14 @@
           "family": "reddit_forum",
           "unit_id": "18t0uh7",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
           "family": "reddit_forum",
           "unit_id": "18v755c",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Dior"
         },
         {
@@ -22546,7 +22552,7 @@
           "family": "reddit_forum",
           "unit_id": "1901xtx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
@@ -22560,7 +22566,7 @@
           "family": "reddit_forum",
           "unit_id": "196uttv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -22580,13 +22586,13 @@
           "family": "reddit_forum",
           "unit_id": "19b61sb",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
           "unit_id": "19dayj0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -22599,7 +22605,7 @@
           "family": "reddit_forum",
           "unit_id": "19eo5it",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "subject"
         },
         {
           "family": "reddit_forum",
@@ -22617,21 +22623,21 @@
           "family": "reddit_forum",
           "unit_id": "1aeox43",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ahn26w",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1akf6oh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -22675,7 +22681,7 @@
           "family": "reddit_forum",
           "unit_id": "1arqikh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tarte"
         },
         {
@@ -22712,7 +22718,7 @@
           "family": "reddit_forum",
           "unit_id": "1b77ldw",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -22738,7 +22744,7 @@
           "family": "reddit_forum",
           "unit_id": "1bm9izm",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "neither",
           "alternative_brand": "Laneige"
         },
         {
@@ -22783,14 +22789,14 @@
           "family": "reddit_forum",
           "unit_id": "1ceemxn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ckhmme",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -22810,21 +22816,21 @@
           "family": "reddit_forum",
           "unit_id": "1d1frnd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Saie"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1df3erx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1dgu3zx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -22843,28 +22849,28 @@
           "family": "reddit_forum",
           "unit_id": "1ee21xh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1eizw8l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1ep8x4l",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -22878,7 +22884,7 @@
           "family": "reddit_forum",
           "unit_id": "1f216cu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -22897,7 +22903,7 @@
           "family": "reddit_forum",
           "unit_id": "1fj59vo",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -22940,14 +22946,14 @@
           "family": "reddit_forum",
           "unit_id": "1ft1w8d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1fu32im",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Vaseline"
         },
         {
@@ -22960,14 +22966,14 @@
           "family": "reddit_forum",
           "unit_id": "1fvevie",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1fyynnz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -22986,14 +22992,14 @@
           "family": "reddit_forum",
           "unit_id": "1g5v2xo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1g6a3ok",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23013,7 +23019,7 @@
           "family": "reddit_forum",
           "unit_id": "1gk4w7d",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -23037,7 +23043,7 @@
           "family": "reddit_forum",
           "unit_id": "1h0wfao",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23057,14 +23063,14 @@
           "family": "reddit_forum",
           "unit_id": "1hfmutg",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1hjvfpa",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23114,7 +23120,7 @@
           "family": "reddit_forum",
           "unit_id": "1i7oale",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23127,7 +23133,7 @@
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23152,7 +23158,7 @@
           "family": "reddit_forum",
           "unit_id": "1iuiz6f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Dior"
         },
         {
@@ -23166,21 +23172,22 @@
           "family": "reddit_forum",
           "unit_id": "1j2ep6v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1j3ne46",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1j6xhqb",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Lanolips"
         },
         {
           "family": "reddit_forum",
@@ -23205,7 +23212,7 @@
           "family": "reddit_forum",
           "unit_id": "1jge75k",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23218,7 +23225,7 @@
           "family": "reddit_forum",
           "unit_id": "1jmt7ko",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -23231,7 +23238,7 @@
           "family": "reddit_forum",
           "unit_id": "1k11yq2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23263,7 +23270,7 @@
           "family": "reddit_forum",
           "unit_id": "1kq0492",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -23282,7 +23289,7 @@
           "family": "reddit_forum",
           "unit_id": "1kup12q",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -23332,7 +23339,7 @@
           "unit_id": "1m07jmq",
           "contribution": "compares",
           "choice": "alternative",
-          "alternative_brand": "Laneige"
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
@@ -23357,7 +23364,7 @@
           "family": "reddit_forum",
           "unit_id": "1meq79x",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Rare Beauty"
         },
         {
@@ -23403,14 +23410,14 @@
           "family": "reddit_forum",
           "unit_id": "1nl02jk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1nm5fq8",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -23441,7 +23448,7 @@
           "family": "reddit_forum",
           "unit_id": "1oatxkp",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -23454,7 +23461,7 @@
           "family": "reddit_forum",
           "unit_id": "1oh26y0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23500,14 +23507,14 @@
           "family": "reddit_forum",
           "unit_id": "1pmuzmn",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23526,7 +23533,7 @@
           "family": "reddit_forum",
           "unit_id": "1pysv33",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23558,14 +23565,14 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1qxpiwg",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23603,14 +23610,14 @@
           "family": "reddit_forum",
           "unit_id": "1r8e2rk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r8e2yu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23629,7 +23636,7 @@
           "family": "reddit_forum",
           "unit_id": "1rk7azd",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23690,7 +23697,7 @@
           "family": "reddit_forum",
           "unit_id": "1sl90oh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23735,7 +23742,7 @@
           "family": "reddit_forum",
           "unit_id": "1swmuo2",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -23754,7 +23761,8 @@
           "family": "reddit_forum",
           "unit_id": "1tk5s11",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
@@ -23780,7 +23788,7 @@
           "family": "reddit_forum",
           "unit_id": "1ur9u91",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23831,14 +23839,14 @@
           "family": "reddit_forum",
           "unit_id": "kaikx3",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "ks3ou1",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -23894,7 +23902,7 @@
           "family": "reddit_forum",
           "unit_id": "wfbfdq",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -23907,21 +23915,21 @@
           "family": "reddit_forum",
           "unit_id": "wpz35n",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ilia"
         },
         {
           "family": "reddit_forum",
           "unit_id": "wve0sg",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "x0ryud",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -23953,7 +23961,7 @@
           "family": "reddit_forum",
           "unit_id": "ywhshv",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -23966,7 +23974,7 @@
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         },
         {
@@ -23985,7 +23993,7 @@
           "family": "reddit_forum",
           "unit_id": "zpsv0o",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -24151,7 +24159,8 @@
           "family": "reddit_forum",
           "unit_id": "17tnj2m",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
@@ -24170,7 +24179,7 @@
           "family": "reddit_forum",
           "unit_id": "18v755c",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Dior"
         },
         {
@@ -24222,7 +24231,7 @@
           "family": "reddit_forum",
           "unit_id": "1c2h4qp",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -24235,7 +24244,7 @@
           "family": "reddit_forum",
           "unit_id": "1dgu3zx",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -24317,14 +24326,14 @@
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -24349,14 +24358,14 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1r8e2rk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
@@ -24451,7 +24460,7 @@
           "family": "reddit_forum",
           "unit_id": "v4ioij",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Elf"
         }
       ],
@@ -24528,7 +24537,7 @@
           "behavior_or_purchase_consequence": "Suspected changes or bad batches cause stopping, returns, and threatened switching.",
           "competitor_destination": "Rhode, Ole Henriksen, Hourglass, and stable staple alternatives."
         },
-        "strongest_counterevidence": "Some customers prefer and recommend the original or current formula and continue repurchasing.",
+        "strongest_counterevidence": "No Summer Fridays-owned retention, repurchase, or recommendation event survives the p11r7 referent-binding re-derivation on this axis; the earlier counterweight rested on outcome verbs whose referent was a competitor product. Recorded as absent rather than restated.",
         "competitive_decision": "Compete on batch consistency and transparent formula-change handling; this severe but smaller seam should be monitored rather than generalized.",
         "decision_bearing_support_refs": [
           {
@@ -24545,11 +24554,6 @@
             "family": "reddit_forum",
             "unit_id": "1c2h4qp",
             "role": "segment_or_condition"
-          },
-          {
-            "family": "reddit_forum",
-            "unit_id": "17tnj2m",
-            "role": "counterevidence"
           }
         ],
         "limitations": [
@@ -24593,7 +24597,7 @@
           "family": "reddit_forum",
           "unit_id": "11lyjzy",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -24619,7 +24623,7 @@
           "family": "reddit_forum",
           "unit_id": "13d4u1f",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Fenty"
         },
         {
@@ -24645,7 +24649,7 @@
           "family": "reddit_forum",
           "unit_id": "16old70",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -24657,7 +24661,8 @@
           "family": "reddit_forum",
           "unit_id": "176msij",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Jack Black"
         },
         {
           "family": "reddit_forum",
@@ -24669,7 +24674,7 @@
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "subject",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -24701,7 +24706,7 @@
           "family": "reddit_forum",
           "unit_id": "19akm0c",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -24745,14 +24750,14 @@
           "family": "reddit_forum",
           "unit_id": "1bwaurz",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1clfkmo",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Hourglass"
         },
         {
@@ -24771,7 +24776,7 @@
           "family": "reddit_forum",
           "unit_id": "1ek7s9d",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Merit"
         },
         {
@@ -24829,7 +24834,7 @@
           "family": "reddit_forum",
           "unit_id": "1i964e8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -24896,7 +24901,7 @@
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -24953,21 +24958,21 @@
           "family": "reddit_forum",
           "unit_id": "1srjzrl",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1sw16j8",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Glossier"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1sxhnh9",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
@@ -25004,7 +25009,8 @@
           "family": "reddit_forum",
           "unit_id": "v60njh",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "alternative",
+          "alternative_brand": "Supergoop"
         },
         {
           "family": "reddit_forum",
@@ -25023,7 +25029,7 @@
           "family": "reddit_forum",
           "unit_id": "zcglwe",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Kosas"
         }
       ],
@@ -25171,7 +25177,7 @@
           "family": "reddit_forum",
           "unit_id": "135nu81",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -25195,7 +25201,7 @@
           "family": "reddit_forum",
           "unit_id": "145yvrq",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -25227,7 +25233,7 @@
           "family": "reddit_forum",
           "unit_id": "16kgx3t",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -25245,7 +25251,7 @@
           "family": "reddit_forum",
           "unit_id": "1742rj9",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -25277,7 +25283,7 @@
           "family": "reddit_forum",
           "unit_id": "188rp74",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Mac"
         },
         {
@@ -25351,7 +25357,7 @@
           "family": "reddit_forum",
           "unit_id": "1akf6oh",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -25370,7 +25376,7 @@
           "family": "reddit_forum",
           "unit_id": "1asnsu0",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Aquaphor"
         },
         {
@@ -25384,7 +25390,7 @@
           "family": "reddit_forum",
           "unit_id": "1b2bl9j",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tatcha"
         },
         {
@@ -25415,14 +25421,14 @@
           "family": "reddit_forum",
           "unit_id": "1bsww9d",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "unstated",
           "alternative_brand": "Lanolips"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1bzh9qs",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -25460,7 +25466,7 @@
           "family": "reddit_forum",
           "unit_id": "1ee21xh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Mac"
         },
         {
@@ -25479,7 +25485,7 @@
           "family": "reddit_forum",
           "unit_id": "1f216cu",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Tower 28"
         },
         {
@@ -25499,7 +25505,7 @@
           "family": "reddit_forum",
           "unit_id": "1fj59vo",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
@@ -25573,7 +25579,7 @@
           "family": "reddit_forum",
           "unit_id": "1hf0hhi",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "neither",
           "alternative_brand": "Elf"
         },
         {
@@ -25638,7 +25644,7 @@
           "family": "reddit_forum",
           "unit_id": "1j6xhqb",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -25665,13 +25671,13 @@
           "unit_id": "1k11yq2",
           "contribution": "compares",
           "choice": "alternative",
-          "alternative_brand": "Laneige"
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1k1il40",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Ole Henriksen"
         },
         {
@@ -25697,7 +25703,7 @@
           "family": "reddit_forum",
           "unit_id": "1kq0492",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -25710,7 +25716,8 @@
           "family": "reddit_forum",
           "unit_id": "1m460nd",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Etude House"
         },
         {
           "family": "reddit_forum",
@@ -25772,7 +25779,7 @@
           "family": "reddit_forum",
           "unit_id": "1p7si2m",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
@@ -25784,7 +25791,8 @@
           "family": "reddit_forum",
           "unit_id": "1pneo7v",
           "contribution": "sharpens",
-          "choice": "neither"
+          "choice": "alternative",
+          "alternative_brand": "Ole Henriksen"
         },
         {
           "family": "reddit_forum",
@@ -25822,7 +25830,7 @@
           "family": "reddit_forum",
           "unit_id": "1qxm1tz",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Laneige"
         },
         {
@@ -25859,7 +25867,7 @@
           "family": "reddit_forum",
           "unit_id": "1r6fdwk",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -25890,20 +25898,20 @@
           "family": "reddit_forum",
           "unit_id": "1sl90oh",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1slrvyj",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "neither"
         },
         {
           "family": "reddit_forum",
           "unit_id": "1srjzrl",
           "contribution": "compares",
-          "choice": "subject",
+          "choice": "alternative",
           "alternative_brand": "Elf"
         },
         {
@@ -25917,7 +25925,7 @@
           "family": "reddit_forum",
           "unit_id": "1utwndw",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Rhode"
         },
         {
@@ -25955,13 +25963,13 @@
           "family": "reddit_forum",
           "unit_id": "x9paxn",
           "contribution": "sharpens",
-          "choice": "subject"
+          "choice": "unstated"
         },
         {
           "family": "reddit_forum",
           "unit_id": "yicm66",
           "contribution": "compares",
-          "choice": "alternative",
+          "choice": "unstated",
           "alternative_brand": "Elf"
         },
         {
@@ -26050,7 +26058,7 @@
           "behavior_or_purchase_consequence": "Underwhelmed buyers decline repurchase or move to cheaper equivalents.",
           "competitor_destination": "e.l.f., Ole Henriksen, Glossier-style dupes, and category staples."
         },
-        "strongest_counterevidence": "Some long-time users defend product quality and believe the brand earned its attention.",
+        "strongest_counterevidence": "A small number of customers defend the product against the hype critique directly ('totally worth the hype ... I would buy again').",
         "competitive_decision": "Ground differentiation in product proof and trustworthy operations; do not rely on generic deinfluencing alone.",
         "decision_bearing_support_refs": [
           {
@@ -26070,7 +26078,7 @@
           },
           {
             "family": "reddit_forum",
-            "unit_id": "1srjzrl",
+            "unit_id": "1m07jmq",
             "role": "counterevidence"
           }
         ],
