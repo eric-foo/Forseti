@@ -27,10 +27,14 @@
             "size": null,
             "size_observation": "not_exposed_in_captured_page_text",
             "claims": [
+              "lightweight skin tint",
+              "adds a touch of sheer color",
+              "infusing skin with hydration",
               "weightless fluid formula",
               "helps diminish the look of redness, pores and uneven skin tone",
               "sheer-to-light coverage",
               "natural finish",
+              "flexible shades",
               "fresh no-makeup look"
             ],
             "raw_capture": {
@@ -48,10 +52,14 @@
             "size": null,
             "size_observation": "not_exposed_in_captured_page_text",
             "claims": [
+              "lightweight skin tint",
+              "adds a touch of sheer color",
+              "infusing skin with hydration",
               "weightless fluid formula",
               "helps diminish the look of redness, pores and uneven skin tone",
               "sheer-to-light coverage",
               "natural finish",
+              "flexible shades",
               "fresh no-makeup look"
             ],
             "raw_capture": {
@@ -109,7 +117,7 @@
             "status": "changed",
             "before_capture": "2022-12-11",
             "after_capture": "2026-08-06",
-            "detail": "Copy moved from redness/pores/uneven-tone and sheer-to-light language to sheer color/coverage plus hydration language."
+            "detail": "The description was shortened and compressed. It dropped the redness/pores/uneven-tone claim plus weightless, sheer-to-light-coverage, flexible-shades and no-makeup-look language; lightweight, sheer-color, natural-finish and hydration concepts were already present in 2022."
           }
         ]
       },
@@ -174,6 +182,11 @@
       "products.product_name:\"Summer Fridays\"",
       "products.product_name:Summer"
     ],
+    "broad_screening_raw_capture": {
+      "path": "aems/summer_token.json",
+      "bytes": 40636,
+      "sha256": "d93d0e1d87ea956cbc60c8c228560b6bc0110eab9a35b509242c79bbbb5a0864"
+    },
     "mandatory_ceiling_labels": [
       "Reports are unverified and do not establish causation.",
       "Presence is signal; absence is not exoneration.",

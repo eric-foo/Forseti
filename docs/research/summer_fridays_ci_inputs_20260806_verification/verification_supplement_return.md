@@ -28,13 +28,19 @@ Commissioning source: `docs/prompts/handoffs/summer_fridays_verification_supplem
    Skin Tint snapshots and the 2026-08-06 live page contain the same 820-character
    INCI string (normalized-string SHA-256
    `5d8001e92f747355854b278dc04bc4a135657c7d0846dce5b230e3c0e4fa0b29`)
-   and show a $42 price. The headline copy changed between the 2022-12-11
-   snapshot and the current page. Lip Butter Balm and Jet Lag Mask archive
-   indexes were not retrievable in this sitting, so no 2022-present historical
-   verdict is claimed for them. Separately, Summer Fridays' dated 2021-06-16
-   brand post verifies an earlier Jet Lag Mask reformulation that removed
-   fragrance/essential oils and added a soothing blend; it does not verify a
-   second change during the 2024-2025 complaint era.
+   and show a $42 price. The product description was shortened and compressed
+   between the 2022-12-11 snapshot and the current page: the efficacy-adjacent
+   redness / pores / uneven-tone claim was dropped, while the lightweight,
+   sheer-color, natural-finish, and hydration concepts were already present in
+   2022. Lip Butter Balm and Jet
+   Lag Mask archive indexes were not retrievable in this sitting, so no
+   2022-present historical verdict is claimed for them. Separately, Summer
+   Fridays' dated 2021-06-16 brand post announces an earlier Jet Lag Mask
+   reformulation that removed fragrance/essential oils and added a soothing
+   blend. A companion first-party statement responds to irritation reports and
+   says some third-party production batches were compromised; it does not link
+   those batches to the captured FDA reports or verify a second change during
+   the 2024-2025 complaint era.
 2. **Reaction signal — two Summer Fridays matches, both Jet Lag Mask and both
    direct reports.** The official openFDA cosmetic-event endpoint returned two
    records: a 2020 report with erythema and skin irritation and a 2021 report
@@ -55,9 +61,18 @@ Commissioning source: `docs/prompts/handoffs/summer_fridays_verification_supplem
 
 | Capture | INCI | Price | Size shown | Headline/claim wording | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| Wayback `20220929002552` | Same normalized 820-character list as current | $42 | Not exposed in captured page text | “weightless, fluid”; helps diminish the look of redness, pores, and uneven tone; sheer-to-light coverage; natural finish | Baseline; complete gzip response |
-| Wayback `20221211205012` | Same | $42 | Not exposed | Same sampled wording as 2022-09-29 | `no_change_observed` vs 2022-09-29 |
-| Live page, retrieved 2026-08-06 | Same | $42 | 30 ml / 1 fl oz | “lightweight, fluid”; adds sheer color and coverage with a natural finish while hydrating; badges: Hydrating / Dewy / Sheer Color | Claims wording changed after 2022-12-11; INCI and price unchanged at sampled endpoints |
+| Wayback `20220929002552` | Same normalized 820-character list as current | $42 | Not exposed in captured page text | Lightweight skin tint; sheer color; hydration; weightless fluid formula; redness / pores / uneven-tone claim; sheer-to-light coverage; natural finish; flexible shades; no-makeup look | Baseline; complete gzip response |
+| Wayback `20221211205012` | Same | $42 | Not exposed | Byte-identical description to 2022-09-29 | `no_change_observed` vs 2022-09-29 |
+| Live page, retrieved 2026-08-06 | Same | $42 | 30 ml / 1 fl oz | Lightweight fluid formula; sheer color and coverage; natural finish; hydration; badges: Hydrating / Dewy / Sheer Color | Description shortened after 2022-12-11; INCI and price unchanged at sampled endpoints |
+
+The observed change is primarily a deletion plus compression, not a shift
+toward lightweight / sheer-color / natural-finish / hydration concepts: all
+four were already present in 2022. The current description drops the
+efficacy-adjacent redness / pores / uneven-tone claim and the historical
+weightless, sheer-to-light-coverage, flexible-shades, and no-makeup-look
+language. The site-level `<meta name="description">` and `og:description` are
+byte-identical across all three captures, which bounds the observed change to
+the product-description surface.
 
 The change is bracketed by captures, not point-dated. The size axis is
 `inconclusive`: the current page states 30 ml / 1 fl oz, while the two usable
@@ -79,13 +94,23 @@ The current official page was captured with two sizes, **28 g / 1.0 oz** and
 The Wayback CDX request timed out; the bounded alternate response was unusable.
 The 2022-present page-history verdict is therefore `capture_blocked`.
 
-An official Summer Fridays post dated **2021-06-16** independently verifies an
-earlier reformulation: the brand says it removed all fragrance, including
-essential oils, and added allantoin, bisabolol, panthenol, and cucumber extract.
-The companion statement describes this as a minor reformulation intended to
-reduce potential irritation. This is a verified brand-announced formula-change
-event, but it is outside the requested 2022-present sample and is not an
-INCI-to-INCI snapshot comparison.
+An official Summer Fridays post dated **2021-06-16** announces an earlier
+reformulation: the brand says it removed all fragrance, including essential
+oils, and added allantoin, bisabolol, panthenol, and cucumber extract. The
+source is the brand's own blog post, so this is a first-party announcement, not
+independent verification of the formula change.
+
+The companion statement supplies the first-party remediation context. The brand
+says it received reports of temporary redness and irritation, found certain
+third-party production batches compromised, tightened manufacturing protocols,
+withdrew named lots from retailers, offered refunds, and made a minor
+reformulation that removed essential oils. It also states the brand's view that
+the product did not threaten customer health and safety. These are the brand's
+own claims; the captured evidence does not independently establish the cause of
+the reported reactions or connect the affected batches to either FDA report.
+
+This is a verified brand-announced formula-change event, but it is outside the
+requested 2022-present sample and is not an INCI-to-INCI snapshot comparison.
 
 ## 3. Instrument 2 — FDA cosmetic adverse-event records
 
@@ -120,12 +145,16 @@ brand screening found only these same two Summer Fridays matches.
 | Laneige | 2022: 1; 2025: 1 | 2 | Radian C Cream; Lip Glowy Balm Grapefruit |
 | Glossier | 2019: 1; 2020: 1 | 2 | Perfecting Skin Tint; Bubblewrap Eye And Lip Plumping Cream |
 
-These counts are **context only, never a safety ranking**. The result set mixes
-voluntary direct reports with MoCRA-era mandatory serious-event reporting.
-Presence is a signal; absence is not exoneration. Counts are not incidence or
-rates. Year-over-year changes across the late-2023/2024 MoCRA boundary must not
-be read as product deterioration, and this API's 2025-08-31 currency ceiling
-means it cannot establish present-day absence.
+These counts are **context only, never a safety ranking**. Every record captured
+here — both Summer Fridays records, all 44 broad-screening records, and all four
+comparator records — carries `report_type: Direct`; no mandatory MoCRA-era
+serious-event report appears in this capture, so the mix of reporting streams in
+the wider database is unobserved rather than confirmed. Presence is a signal;
+absence is not exoneration. Counts are not incidence or rates. Because the
+underlying database spans both voluntary and, since MoCRA, mandatory reporting,
+year-over-year changes across the late-2023/2024 boundary must not be read as
+product deterioration, and this API's 2025-08-31 currency ceiling means it
+cannot establish present-day absence.
 
 ## 4. Instrument 3 — INCI comparison against named alternatives
 
@@ -167,16 +196,19 @@ Raw root: `C:\tmp\forseti-sf-verification-supplement-20260806\data`
 | `inci/elf_glow_reviver_melting_lip_balm_yummy_gummy_current.html` | 1,336,895 | `d5de6dcd0f7ed900ca26f8c3dd878790e7d7d5083f195fb0bd62eb46780ff13a` | e.l.f. comparator INCI |
 | `inci/glossier_balm_dotcom_current.html` | 1,499,471 | `f563fba6af598968c2e92a6c6b9905114e5293e930dba1cbef9883f7b432bdb8` | Glossier comparator INCI |
 
-All URLs, lists, records, metrics, and per-record capture hashes are duplicated
-in `verification_supplement_extracts.json` for machine use.
+The URLs, ingredient lists, records, metrics, and capture hashes behind the
+decisive verdicts are duplicated in `verification_supplement_extracts.json` for
+machine use, including the broad-screening receipt
+`aems/summer_token.json`. The JSON does not duplicate every byte count shown in
+the table above.
 
 ## 6. Failure and gap ledger
 
-- **Wayback CDX:** Sheer Skin Tint returned an observed 49 distinct HTML rows on
-  the first query, but the index response could not be retained after a later
-  HTTP 503. Lip Butter Balm returned HTTP 503; Jet Lag Mask timed out. One
-  bounded alternate request also failed for each. No other archive was silently
-  substituted.
+- **Wayback CDX:** Sheer Skin Tint returned an observed 49-row index on the
+  first query, but that response could not be retained after a later HTTP 503,
+  so the row count is an unretained observation with no capture behind it. Lip
+  Butter Balm returned HTTP 503; Jet Lag Mask timed out. One bounded alternate
+  request also failed for each. No other archive was silently substituted.
 - **Wayback playback:** snapshot `20220927024031` timed out after 469,627 bytes
   of an expected 510,021 and is retained as a partial raw file; it is excluded
   from the decisive table. The `20220929002552` and `20221211205012` gzip
@@ -198,12 +230,22 @@ in `verification_supplement_extracts.json` for machine use.
 
 - The Deliver run may say the sampled Sheer Skin Tint INCI and $42 price were
   unchanged between two late-2022 snapshots and the 2026-08-06 page, and that
-  the claims wording changed within that bracket.
+  the product description was shortened and dropped its redness / pores /
+  uneven-tone claim within that bracket. It may not portray the retained
+  lightweight / sheer-color / natural-finish / hydration concepts as newly
+  introduced, or date the change more precisely than the bracket.
 - It may say Summer Fridays publicly acknowledged a Jet Lag Mask reformulation
-  in 2021. It may not infer a later 2024-2025 reformulation from that event.
+  in 2021 alongside a statement responding to irritation reports and describing
+  compromised third-party production batches. It may not infer a later
+  2024-2025 reformulation from that event, treat the brand's own post as
+  independent confirmation, or treat the statement as proof of causation.
 - It may say two Summer Fridays Jet Lag Mask reports exist in the captured FDA
   endpoint data. It may not say the product caused the reactions, calculate a
   rate, rank brands, or treat no newer captured report as exoneration.
+- Both captured FDA reports were initially received before the 2021-06-16
+  statement. It may state that ordering. It may not join the two sources into a
+  causal chain: nothing in this capture links either report to the batches the
+  brand described as compromised, or to any specific lot code.
 - It may say the e.l.f. and Glossier public lists are materially different from
   Summer Fridays and therefore are not ingredient-list-identical. It may not
   infer comparative safety, efficacy, concentrations, sensory equivalence, or
