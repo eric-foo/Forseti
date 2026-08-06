@@ -581,6 +581,175 @@ source registry, forecast-target schema, and graph retrieval schema. Installing
 that bundle as authority would silently decide product, Judgment, Data Capture,
 and prompt-packaging questions that are not all settled.
 
+## Understanding Acquire & Seal Route Revision Contracts (Route 1.1.0)
+
+These contracts bind the versioned company-Understanding route revision whose
+operating sequence, version block, and append-only changelog live in the CSB
+playbook (`understanding_acquire_seal_route`). The acquisition seal records
+the route version actually used in an `understanding_route` block, and
+`run_phase_acquisition_seal_validation.py` enforces the deterministic shapes
+below at the seal boundary. Relationship interpretation, campaign clustering,
+and competitor directness remain evidence-backed judgment under the existing
+review lanes; the validator proves shape and traceability, never semantic
+truth.
+
+### Campaign-Evidence Integration View
+
+One controller-owned post-fan-out integration job (route
+`campaign_evidence_integration`, phase `campaign_integration`) joins already
+captured evidence — CO1 owned posts and Google/Meta ad observations, CO3
+creator-authored units with separately preserved audience comments, CO2
+canonical product/SKU, retailer/market, and landing-destination identity —
+into one hash-pinned `campaign_evidence_view_v1` JSON artifact. There is no
+standing `CO4` specialist, no creator crawl, no second evidence lake, and no
+standing monitor. Creator-registry records contribute identity and
+source-visible metric inputs only, never campaign membership or
+commercial-effect proof. The view is derived run-scoped acquisition
+accounting over already captured typed evidence (ledger social/external rows,
+ad-transparency projections, CO2 identity); it is not a Silver Vault entity
+type, a campaign object contract, or a coordination/manufactured-demand
+judgment, which the data-lake Silver Vault contract reserves for
+Gold/Judgment.
+
+Each view unit carries: `unit_id`; `source_role` from
+`owned_post | paid_ad | creator_authored | audience_comment | retailer_review
+| retailer_qa | community_post` — creator-authored content and audience or
+customer evidence never merge into one role, and a post's engagement never
+transfers to its comments; publisher/creator/account identity; the brand
+binding plus product/SKU and claim bindings where observed; source surface
+and raw source references; `published_at`, `observed_at`, and `captured_at`
+(`captured_at` required; unknown source timestamps stay null, never
+invented); `relationship_posture` from
+`owned | retailer_operated | disclosed_paid_or_affiliate |
+partnership_byline_observed | apparently_independent | relationship_unknown`
+— missing disclosure stays `relationship_unknown` and is never treated as
+organic; a creative/message fingerprint or bounded cluster reference when
+derived; ad/creator/landing-page `linkage_posture` from
+`direct | inferred | unknown`; `independent_origin_key`;
+`independent_origin_credit`; and claim ceiling, conflicts, and missingness.
+
+Independence rules: `independent_origin_credit: true` requires
+`apparently_independent`, and one `independent_origin_key` receives at most
+one credit regardless of repeated units — same-origin echoes are citable but
+never independence. Engagement facts remain observation context and never
+become evidence weight.
+
+Clusters: do not force a durable `campaign_id` that public evidence cannot
+establish. A message/episode cluster is `basis: direct` only when every
+member unit's linkage posture is `direct`; otherwise it is `basis: inferred`
+and must carry explicit provenance and a reversal condition.
+
+The integrator may emit targeted capture requests for exact posts, ads,
+landing pages, or dates that would resolve a material link; each request is
+terminally dispositioned (`captured | blocked | no_longer_material`) before a
+passing seal, and fulfilled requests run as ordinary jobs in the owning
+routes. The integrator does not launch broad crawls, infer spend or
+conversion, or issue market conclusions: campaign integration is post-fan-out
+synthesis for acquisition control, not Deliver synthesis.
+
+### Competitor-Set Closure
+
+The route installs three explicit comparator states; no separate standing
+competitor lane is created:
+
+1. `candidate_comparator_frame` after SERP Phase 1: typed, provisional, and
+   sufficient to guide fan-out. The frame's candidate and competing-product
+   identities scope the existing `CO1`-`CO3` fan-out capsules. The frame is
+   never frozen: complaint-, retailer-, creator-, and substitute-borne
+   candidates remain discoverable during fan-out.
+2. `adjudicated_comparator_set` after specialist returns plus SERP Phase 2:
+   exact subject/product identities, comparator role, evidence origins,
+   price/size context where observed, directness posture, and claim ceiling.
+3. `phase_a_competitor_context_closed` at the acquisition seal: every
+   material candidate is terminally dispositioned; no candidate silently
+   disappears.
+
+For every material candidate, the existing lanes owe comparator evidence or a
+typed gap — never silence: `CO2` retailer/category adjacency and exact
+product identity (retailer co-placement alone is never directness proof);
+`CO3` retailer-review and Reddit/customer comparison evidence — explicit
+comparisons, substitutes, switch/return/repurchase destinations, and
+complaint-borne alternatives; campaign-integration creator comparison
+evidence — head-to-heads, dupe claims, and repeated claim propagation,
+relationship-typed; and `CO1` owned/advertiser positioning and named
+comparisons as actor-strategy evidence, never independent customer proof.
+
+SERP Phase 2 consolidates those lane emissions, runs only material
+targeted/J5 delta probes, and adjudicates the direct-competitor set from the
+specialist returns before the acquisition seal, under the existing SERP
+Phase 2 decision contract: a `promoted` (decision-ready) candidate requires
+both the exact subject product and the exact competitor product identity
+bound. The seal's comparator closure gives every frame or lane-emitted
+candidate one terminal disposition from
+`promoted | rejected | watch_listed | role_bounded | explicit_gap`.
+Watch/validate-once/parked decision outcomes map to `watch_listed`;
+harvest-junk and adjudicated non-competitors map to `rejected`;
+self-variants, mediators, and corroborative-only surfaces map to
+`role_bounded`; sub-finding-grade or unresolved candidates close as
+`explicit_gap`. Phase A promises decision-usable comparator context, never an
+exhaustive-direct-competitor claim, representative market sentiment, or
+rival-by-rival depth; a separate competitor commission is triggered only when
+a named downstream decision needs depth beyond the closed Phase A context.
+
+### Conditional Product/Claim Verification
+
+```text
+verification_request = reconciled product identity
+                     × material evidence axis or contradiction
+                     × publicly verifiable unresolved claim
+```
+
+Candidate products before CO2 are discovery anchors only. CO2 breadth plus
+customer/creator/external evidence selects material product contexts; a
+non-hero product enters only through a material axis, condition, consequence,
+competitor destination, contradiction, or sampling-risk trigger. Verification
+is a conditional adjustment job, not a catalog-wide first-wave specialist and
+not a requirement to run every instrument for every product. Each request
+carries the reconciled product identity, its trigger kind
+(`material_axis | contradiction | condition_or_consequence |
+competitor_destination | sampling_risk`), the trigger's evidence references,
+and the unresolved claim; a request without that material trigger is a
+defect. A completed return attaches instrument-level verdicts, provenance,
+failures, and claim ceilings to the shared evidence model and may reopen the
+affected acquisition axis; it may not start Deliver. An emitted request left
+`not_run` blocks a passing seal.
+
+### Retailer State And Movement Semantics
+
+CO2 captures the point-in-time current-state baseline. Route semantics, with
+no new schema for terminology alone:
+
+- one comparable observation = `retailer_state_snapshot`;
+- two observations with stable retailer/product/market/scope identity —
+  stable retailer-local product identity plus confirmed storefront, currency,
+  and variant pins under the retail-PDP capture authorities — may derive a
+  `retailer_state_change` carrying old and new evidence references;
+- no prior comparable observation = `movement_unresolved_baseline_only`;
+- stockout, review velocity, assortment presence, and promotion remain
+  proxies, never sales or productivity;
+- refresh is commissioned by a material event or change question, never a
+  standing monitoring obligation.
+
+A movement or trend event from one observation is a defect: one observation
+is a state snapshot.
+
+### Seal Accounting For The Versioned Route
+
+The v3 seal's `understanding_route` block carries `route_version`,
+`comparator_closure`, `campaign_evidence_integration`,
+`verification_requests`, and `retailer_state_accounting`; the playbook's seal
+template shows the field shapes. The seal validator enforces: known route
+version; the `campaign_evidence_integration` route accounting and
+`campaign_integration` phase at route 1.1.0; view schema/subject/cycle
+binding and per-unit enums; independent-origin credit rules; cluster
+linkage/provenance rules; terminal comparator dispositions with exact-product
+identity binding for `promoted` candidates and per-material-candidate lane
+evidence; verification triggers and terminal statuses; and the
+two-observation movement rule. A seal sealed before route versioning began
+(2026-08-07) has no stamped version and is audited with
+`--allow-preversion-route`; recording `1.0.0` retrospectively never claims it
+was historically stamped.
+
 ## Company Competitive-Intelligence Extension
 
 The canonical representation is:

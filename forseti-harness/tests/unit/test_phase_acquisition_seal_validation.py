@@ -670,6 +670,234 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
     return {"locator": "evidence_depth_ledger.json", "sha256": _artifact_hash(path)}
 
 
+def _campaign_view(tmp_path: Path) -> dict[str, str]:
+    view = {
+        "schema_version": "campaign_evidence_view_v1",
+        "subject": "Summer Fridays",
+        "cycle_id": "summer_fridays_confirmation",
+        "units": [
+            {
+                "unit_id": "cv-owned-1",
+                "source_role": "owned_post",
+                "publisher_identity": "summerfridays",
+                "brand_binding": "Summer Fridays",
+                "product_bindings": ["Lip Butter Balm"],
+                "claim_bindings": ["hydration"],
+                "source_surface": "instagram",
+                "source_refs": ["packet:owned-1"],
+                "published_at": "2026-07-25",
+                "observed_at": "2026-08-01",
+                "captured_at": "2026-08-01T00:00:00+00:00",
+                "relationship_posture": "owned",
+                "linkage_posture": "direct",
+                "independent_origin_key": "creator:summerfridays",
+                "independent_origin_credit": False,
+                "claim_ceiling": "owned direction evidence only",
+            },
+            {
+                # Direct partnership byline: observed relationship, direct
+                # ad-to-creator linkage.
+                "unit_id": "cv-partner-ad-1",
+                "source_role": "paid_ad",
+                "publisher_identity": "JADE LILY with Summer Fridays",
+                "brand_binding": "Summer Fridays",
+                "product_bindings": ["Lip Butter Balm"],
+                "claim_bindings": [],
+                "source_surface": "meta_ad_library",
+                "source_refs": ["packet:meta-ad-1"],
+                "published_at": "2026-07-15",
+                "observed_at": None,
+                "captured_at": "2026-08-01T00:00:00+00:00",
+                "relationship_posture": "partnership_byline_observed",
+                "linkage_posture": "direct",
+                "independent_origin_key": "advertiser:summerfridays",
+                "independent_origin_credit": False,
+                "claim_ceiling": "advertiser strategy evidence, not customer proof",
+            },
+            {
+                "unit_id": "cv-creator-1",
+                "source_role": "creator_authored",
+                "publisher_identity": "creator-a",
+                "brand_binding": "Summer Fridays",
+                "product_bindings": [],
+                "claim_bindings": [],
+                "source_surface": "youtube",
+                "source_refs": ["packet:creator-a-1"],
+                "published_at": None,
+                "observed_at": "2026-08-01",
+                "captured_at": "2026-08-01T00:00:00+00:00",
+                "relationship_posture": "apparently_independent",
+                "linkage_posture": "unknown",
+                "independent_origin_key": "creator:creator-a",
+                "independent_origin_credit": True,
+                "claim_ceiling": "single creator perspective",
+            },
+            {
+                # Unknown creator relationship stays relationship_unknown and
+                # earns no independence credit.
+                "unit_id": "cv-creator-2",
+                "source_role": "creator_authored",
+                "publisher_identity": "creator-b",
+                "brand_binding": "Summer Fridays",
+                "product_bindings": [],
+                "claim_bindings": [],
+                "source_surface": "tiktok",
+                "source_refs": ["packet:creator-b-1"],
+                "published_at": None,
+                "observed_at": None,
+                "captured_at": "2026-08-01T00:00:00+00:00",
+                "relationship_posture": "relationship_unknown",
+                "linkage_posture": "unknown",
+                "independent_origin_key": "creator:creator-b",
+                "independent_origin_credit": False,
+                "claim_ceiling": "relationship unknown; not organic",
+            },
+        ],
+        "clusters": [
+            {
+                "cluster_id": "cl-direct-1",
+                "basis": "direct",
+                "member_unit_ids": ["cv-owned-1", "cv-partner-ad-1"],
+            },
+            {
+                # Inferred message cluster with an honest ceiling.
+                "cluster_id": "cl-inferred-1",
+                "basis": "inferred",
+                "member_unit_ids": ["cv-creator-1", "cv-creator-2"],
+                "provenance": "shared creative fingerprint across both units",
+                "reversal_condition": (
+                    "distinct creative origins observed for either unit"
+                ),
+            },
+        ],
+    }
+    path = tmp_path / "campaign_evidence_view.json"
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    return {"locator": "campaign_evidence_view.json", "sha256": _artifact_hash(path)}
+
+
+def _understanding_route(tmp_path: Path) -> dict:
+    frame = _artifact(tmp_path, "serp_phase1_comparator_frame.md")
+    adjudicated = _artifact(tmp_path, "serp_phase2_adjudicated_set.md")
+    verification_return = _artifact(tmp_path, "verification_return.md")
+    return {
+        "route_version": "1.1.0",
+        "comparator_closure": {
+            "state": "phase_a_competitor_context_closed",
+            "candidate_frame": frame,
+            "adjudicated_set": adjudicated,
+            "frame_candidate_ids": ["cand-elf", "cand-rhode", "cand-generic"],
+            "candidates": [
+                {
+                    "candidate_id": "cand-elf",
+                    "name": "e.l.f. Glow Reviver",
+                    "material": True,
+                    "disposition": "promoted",
+                    "decision_ready": True,
+                    "subject_product_identity": (
+                        "Summer Fridays Lip Butter Balm 15 g"
+                    ),
+                    "competitor_product_identity": (
+                        "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                    ),
+                    "claim_ceiling": (
+                        "observed comparison context; not market share"
+                    ),
+                    "lane_evidence": {
+                        "co1_owned_ad_positioning": "observed",
+                        "co2_retailer_product": "observed",
+                        "co3_customer_comparison": "observed",
+                        "campaign_creator_comparison": "observed",
+                    },
+                },
+                {
+                    # Terminal watch-only competitor.
+                    "candidate_id": "cand-rhode",
+                    "name": "Rhode Peptide Lip Treatment",
+                    "material": True,
+                    "disposition": "watch_listed",
+                    "decision_ready": False,
+                    "subject_product_identity": (
+                        "Summer Fridays Lip Butter Balm 15 g"
+                    ),
+                    "competitor_product_identity": (
+                        "Rhode Peptide Lip Treatment 10 ml"
+                    ),
+                    "claim_ceiling": "watch-only; no decision licence",
+                    "lane_evidence": {
+                        "co1_owned_ad_positioning": "none_found",
+                        "co2_retailer_product": "observed",
+                        "co3_customer_comparison": "none_found",
+                        "campaign_creator_comparison": "blocked",
+                    },
+                },
+                {
+                    # Rejected non-competitor.
+                    "candidate_id": "cand-generic",
+                    "name": "generic commodity name",
+                    "material": False,
+                    "disposition": "rejected",
+                    "decision_ready": False,
+                    "claim_ceiling": "harvest-quality rejection",
+                },
+            ],
+        },
+        "campaign_evidence_integration": {
+            "status": "completed",
+            "view": _campaign_view(tmp_path),
+            "targeted_capture_requests": [
+                {
+                    "request_id": "CEI-REQ-001",
+                    "target": "exact creator post resolving ad linkage",
+                    "disposition": "captured",
+                }
+            ],
+        },
+        "verification_requests": [
+            {
+                "request_id": "VER-001",
+                "product_identity": "Summer Fridays Sheer Skin Tint",
+                "trigger_kind": "contradiction",
+                "trigger_evidence_refs": ["thread-0", "native-0"],
+                "claim": "SPF claim drift across sampled PDP history",
+                "status": "completed",
+                "return": verification_return,
+            }
+        ],
+        "retailer_state_accounting": {
+            "claims": [
+                {
+                    "claim_id": "RSA-001",
+                    "kind": "retailer_state_snapshot",
+                    "retailer": "sephora",
+                    "product_identity": "Lip Butter Balm 15 g",
+                    "market_scope": "US",
+                    "current_observation_ref": "pdp-obs-2",
+                },
+                {
+                    # Comparable two-snapshot retailer change.
+                    "claim_id": "RSA-002",
+                    "kind": "retailer_state_change",
+                    "retailer": "sephora",
+                    "product_identity": "Lip Butter Balm 15 g",
+                    "market_scope": "US",
+                    "prior_observation_ref": "pdp-obs-1",
+                    "current_observation_ref": "pdp-obs-2",
+                    "change_summary": "in_stock -> out_of_stock",
+                },
+                {
+                    "claim_id": "RSA-003",
+                    "kind": "movement_unresolved_baseline_only",
+                    "retailer": "ulta",
+                    "product_identity": "Jet Lag Mask 64 g",
+                    "market_scope": "US",
+                    "current_observation_ref": "pdp-obs-3",
+                },
+            ]
+        },
+    }
+
+
 def _blocked_seal(tmp_path: Path) -> dict:
     specialist_returns = []
     for actor in ("CO1", "CO2", "CO3"):
@@ -741,6 +969,24 @@ def _blocked_seal(tmp_path: Path) -> dict:
     reddit_route["planned_count"] = 1 + len(frontier_job_ids)
     reddit_route["completed_job_ids"].extend(frontier_job_ids)
     reddit_route["completed_count"] = 1 + len(frontier_job_ids)
+    understanding_route = _understanding_route(tmp_path)
+    campaign_view = understanding_route["campaign_evidence_integration"]["view"]
+    campaign_route = {
+        "route_id": "campaign_evidence_integration",
+        "phase": "campaign_integration",
+        "required": True,
+        "material": True,
+        "planned_job_ids": ["CEI-001"],
+        "planned_count": 1,
+        "completed_job_ids": ["CEI-001"],
+        "completed_count": 1,
+        "blocked_job_ids": [],
+        "blocked_count": 0,
+        "unrun_job_ids": [],
+        "unrun_count": 0,
+        "terminal_artifact_locator": campaign_view["locator"],
+        "terminal_artifact_sha256": campaign_view["sha256"],
+    }
     return {
         "schema_version": SEAL_VERSION,
         "cycle_id": "summer_fridays_confirmation",
@@ -799,6 +1045,7 @@ def _blocked_seal(tmp_path: Path) -> dict:
                 "terminal_artifact_sha256": phase1["sha256"],
             },
             *specialist_routes,
+            campaign_route,
             {
                 "route_id": "serp_phase2",
                 "phase": "serp_phase2",
@@ -821,6 +1068,7 @@ def _blocked_seal(tmp_path: Path) -> dict:
             "entries": 0,
         },
         "evidence_depth_ledger": _depth_ledger(tmp_path),
+        "understanding_route": understanding_route,
         "resume_contract": {
             "pending_job_ids": list(phase2_jobs),
             "reusable_artifacts": [
@@ -3318,3 +3566,323 @@ def test_route_job_counts_require_exact_integers(
 
     assert findings.count("invalid_planned_count_type") == 1
     assert findings.count("invalid_completed_count_type") == 1
+
+
+# ---------------------------------------------------------------------------
+# Understanding route version, campaign integration, comparator closure,
+# conditional verification, and retailer state accounting (route 1.1.0).
+# ---------------------------------------------------------------------------
+
+
+def _rewrite_campaign_view(tmp_path: Path, seal: dict, mutate) -> None:
+    view_ref = seal["understanding_route"]["campaign_evidence_integration"][
+        "view"
+    ]
+    path = tmp_path / view_ref["locator"]
+    view = json.loads(path.read_text(encoding="utf-8"))
+    mutate(view)
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    view_ref["sha256"] = _artifact_hash(path)
+    for row in seal["route_job_accounting"]:
+        if row.get("route_id") == "campaign_evidence_integration":
+            row["terminal_artifact_sha256"] = view_ref["sha256"]
+
+
+def test_seal_without_route_version_blocks_by_default(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    del seal["understanding_route"]
+
+    assert "missing_understanding_route_version" in _validate(tmp_path, seal)
+
+
+def test_preversion_route_audit_switch_permits_historical_seals(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    del seal["understanding_route"]
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert "missing_understanding_route_version" not in findings
+
+
+def test_unknown_route_version_is_invalid(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "9.9.9"
+
+    assert "invalid_understanding_route_version" in _validate(tmp_path, seal)
+
+
+def test_older_recorded_route_carries_no_current_obligations(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"] = {"route_version": "1.0.0"}
+
+    assert _validate(tmp_path, seal) == []
+
+
+def test_current_route_requires_campaign_integration_accounting(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "campaign_evidence_integration"
+    ]
+
+    assert "missing_campaign_integration_route_accounting" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_campaign_integration_route_phase_is_bound(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    row = next(
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] == "campaign_evidence_integration"
+    )
+    row["phase"] = "co1"
+
+    assert "campaign_integration_phase_mismatch" in _validate(tmp_path, seal)
+
+
+def test_comparator_candidate_cannot_silently_disappear(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    closure = seal["understanding_route"]["comparator_closure"]
+    closure["candidates"] = [
+        row
+        for row in closure["candidates"]
+        if row["candidate_id"] != "cand-rhode"
+    ]
+
+    assert "comparator_candidate_silently_dropped:cand-rhode" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_promoted_candidate_requires_exact_product_identities(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    closure = seal["understanding_route"]["comparator_closure"]
+    promoted = next(
+        row
+        for row in closure["candidates"]
+        if row["candidate_id"] == "cand-elf"
+    )
+    del promoted["competitor_product_identity"]
+
+    assert "comparator_promoted_without_exact_identity:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_material_candidate_requires_every_lane_evidence_state(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    closure = seal["understanding_route"]["comparator_closure"]
+    watch = next(
+        row
+        for row in closure["candidates"]
+        if row["candidate_id"] == "cand-rhode"
+    )
+    del watch["lane_evidence"]["co2_retailer_product"]
+
+    assert (
+        "invalid_comparator_lane_evidence:cand-rhode:co2_retailer_product"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_passing_seal_requires_closed_comparator_context(
+    tmp_path: Path,
+) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+    seal["understanding_route"]["comparator_closure"]["state"] = (
+        "blocked_open_comparator_candidates"
+    )
+
+    assert "passing_seal_without_comparator_context_closure" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_nonindependent_unit_cannot_earn_origin_credit(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        unit = next(
+            row
+            for row in view["units"]
+            if row["unit_id"] == "cv-partner-ad-1"
+        )
+        unit["independent_origin_credit"] = True
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert (
+        "campaign_credit_without_independent_relationship:cv-partner-ad-1"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_one_origin_key_receives_one_independence_credit(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        base = next(
+            row
+            for row in view["units"]
+            if row["unit_id"] == "cv-creator-1"
+        )
+        echo = dict(base)
+        echo["unit_id"] = "cv-creator-1-echo"
+        view["units"].append(echo)
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert (
+        "duplicate_independent_origin_credit:creator:creator-a"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_merged_creator_and_audience_role_is_invalid(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        unit = next(
+            row
+            for row in view["units"]
+            if row["unit_id"] == "cv-creator-1"
+        )
+        unit["source_role"] = "creator_and_audience"
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert "invalid_campaign_unit_source_role:cv-creator-1" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_relationship_unknown_cannot_be_relabelled_organic(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        unit = next(
+            row
+            for row in view["units"]
+            if row["unit_id"] == "cv-creator-2"
+        )
+        unit["relationship_posture"] = "organic"
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert (
+        "invalid_campaign_unit_relationship_posture:cv-creator-2"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_direct_cluster_cannot_carry_nondirect_members(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        cluster = next(
+            row
+            for row in view["clusters"]
+            if row["cluster_id"] == "cl-direct-1"
+        )
+        cluster["member_unit_ids"].append("cv-creator-1")
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert "campaign_cluster_overstated_linkage:cl-direct-1" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_inferred_cluster_requires_provenance_and_reversal(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        cluster = next(
+            row
+            for row in view["clusters"]
+            if row["cluster_id"] == "cl-inferred-1"
+        )
+        del cluster["provenance"]
+
+    _rewrite_campaign_view(tmp_path, seal, mutate)
+
+    assert (
+        "campaign_cluster_inference_without_provenance:cl-inferred-1"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_verification_request_requires_material_trigger(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    request = seal["understanding_route"]["verification_requests"][0]
+    request["trigger_evidence_refs"] = []
+
+    assert (
+        "verification_request_without_material_trigger:VER-001"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_passing_seal_cannot_carry_unrun_verification_request(
+    tmp_path: Path,
+) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+    request = seal["understanding_route"]["verification_requests"][0]
+    request["status"] = "not_run"
+
+    assert (
+        "passing_seal_with_unrun_verification_request:VER-001"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_retailer_state_change_requires_two_observations(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    claims = seal["understanding_route"]["retailer_state_accounting"]["claims"]
+    change = next(row for row in claims if row["claim_id"] == "RSA-002")
+    del change["prior_observation_ref"]
+
+    assert (
+        "retailer_state_change_without_two_observations:RSA-002"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_single_snapshot_cannot_emit_movement(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    claims = seal["understanding_route"]["retailer_state_accounting"]["claims"]
+    snapshot = next(row for row in claims if row["claim_id"] == "RSA-001")
+    snapshot["change_summary"] = "stock trend inferred from one observation"
+
+    assert "movement_claim_from_single_snapshot:RSA-001" in _validate(
+        tmp_path, seal
+    )

@@ -217,6 +217,70 @@ MANDATORY_ROUTE_PHASES = {
     "reddit_community_scout": "co3",
     "serp_phase2": "serp_phase2",
 }
+# Understanding Acquire & Seal route versioning (owning authority: CSB
+# playbook `understanding_acquire_seal_route`). Versioning started
+# 2026-08-07; seals sealed before that carry no stamped version and are
+# audited with --allow-preversion-route.
+UNDERSTANDING_ROUTE_VERSIONS = {"1.0.0", "1.1.0"}
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.1.0"
+CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
+_CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
+_CAMPAIGN_INTEGRATION_PHASE = "campaign_integration"
+_CAMPAIGN_SOURCE_ROLES = {
+    "owned_post",
+    "paid_ad",
+    "creator_authored",
+    "audience_comment",
+    "retailer_review",
+    "retailer_qa",
+    "community_post",
+}
+_CAMPAIGN_RELATIONSHIP_POSTURES = {
+    "owned",
+    "retailer_operated",
+    "disclosed_paid_or_affiliate",
+    "partnership_byline_observed",
+    "apparently_independent",
+    "relationship_unknown",
+}
+_CAMPAIGN_LINKAGE_POSTURES = {"direct", "inferred", "unknown"}
+_CAMPAIGN_CLUSTER_BASES = {"direct", "inferred"}
+_CAMPAIGN_CAPTURE_REQUEST_STATES = {
+    "captured",
+    "blocked",
+    "no_longer_material",
+}
+_COMPARATOR_CLOSURE_STATES = {
+    "phase_a_competitor_context_closed",
+    "blocked_open_comparator_candidates",
+}
+_COMPARATOR_DISPOSITIONS = {
+    "promoted",
+    "rejected",
+    "watch_listed",
+    "role_bounded",
+    "explicit_gap",
+}
+_COMPARATOR_LANE_KEYS = (
+    "co1_owned_ad_positioning",
+    "co2_retailer_product",
+    "co3_customer_comparison",
+    "campaign_creator_comparison",
+)
+_COMPARATOR_LANE_STATES = {"observed", "none_found", "blocked"}
+_VERIFICATION_TRIGGER_KINDS = {
+    "material_axis",
+    "contradiction",
+    "condition_or_consequence",
+    "competitor_destination",
+    "sampling_risk",
+}
+_VERIFICATION_STATUSES = {"completed", "blocked", "not_run"}
+_RETAILER_STATE_KINDS = {
+    "retailer_state_snapshot",
+    "retailer_state_change",
+    "movement_unresolved_baseline_only",
+}
 _YAML_FENCE = re.compile(r"```yaml\s*(.*?)```", re.DOTALL | re.IGNORECASE)
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
@@ -229,6 +293,7 @@ def validate_phase_acquisition_seal(
     allow_legacy_v2: bool = False,
     allow_legacy_consumer_v1: bool = False,
     allow_legacy_consumer_v2: bool = False,
+    allow_preversion_route: bool = False,
 ) -> list[str]:
     seal = _load_seal(seal_path)
     findings: list[str] = []
@@ -283,6 +348,13 @@ def validate_phase_acquisition_seal(
             valid_pass=valid_pass,
             allow_legacy_consumer_v1=allow_legacy_consumer_v1,
             allow_legacy_consumer_v2=allow_legacy_consumer_v2,
+            findings=findings,
+        )
+        _validate_understanding_route(
+            seal,
+            repo_root=repo_root,
+            valid_pass=valid_pass,
+            allow_preversion_route=allow_preversion_route,
             findings=findings,
         )
     continuation = seal.get("post_phase1_continuation_mode")
@@ -3649,6 +3721,514 @@ def _validate_resume_contract(
         )
 
 
+def _validate_understanding_route(
+    seal: Mapping[str, Any],
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    allow_preversion_route: bool,
+    findings: list[str],
+) -> None:
+    """Enforce the seal-recorded route version and its 1.1.0 obligations.
+
+    Shape checks only: relationship interpretation, campaign clustering, and
+    competitor directness remain evidence-backed judgment.
+    """
+    route = seal.get("understanding_route")
+    if not isinstance(route, dict) or not route.get("route_version"):
+        if not allow_preversion_route:
+            findings.append("missing_understanding_route_version")
+        return
+    version = route.get("route_version")
+    if version not in UNDERSTANDING_ROUTE_VERSIONS:
+        findings.append("invalid_understanding_route_version")
+        return
+    if version != CURRENT_UNDERSTANDING_ROUTE_VERSION:
+        # An older recorded route carries only its own obligations; the
+        # current obligations below must not be back-claimed onto it.
+        return
+    _validate_campaign_integration_route_row(seal, findings=findings)
+    _validate_comparator_closure(
+        route.get("comparator_closure"),
+        repo_root=repo_root,
+        valid_pass=valid_pass,
+        findings=findings,
+    )
+    _validate_campaign_integration(
+        route.get("campaign_evidence_integration"),
+        seal=seal,
+        repo_root=repo_root,
+        valid_pass=valid_pass,
+        findings=findings,
+    )
+    _validate_verification_requests(
+        route.get("verification_requests"),
+        repo_root=repo_root,
+        valid_pass=valid_pass,
+        findings=findings,
+    )
+    _validate_retailer_state_accounting(
+        route.get("retailer_state_accounting"), findings=findings
+    )
+
+
+def _validate_campaign_integration_route_row(
+    seal: Mapping[str, Any], *, findings: list[str]
+) -> None:
+    rows = seal.get("route_job_accounting")
+    if not isinstance(rows, list):
+        return  # missing_route_job_accounting already reported
+    row = next(
+        (
+            item
+            for item in rows
+            if isinstance(item, dict)
+            and item.get("route_id") == _CAMPAIGN_INTEGRATION_ROUTE_ID
+        ),
+        None,
+    )
+    if row is None:
+        findings.append("missing_campaign_integration_route_accounting")
+        return
+    if row.get("phase") != _CAMPAIGN_INTEGRATION_PHASE:
+        findings.append("campaign_integration_phase_mismatch")
+    if row.get("required") is not True:
+        findings.append("campaign_integration_route_not_required")
+    planned = row.get("planned_job_ids")
+    if not isinstance(planned, list) or not planned:
+        findings.append("campaign_integration_route_has_no_accounting_job")
+
+
+def _validate_comparator_closure(
+    closure: Any,
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(closure, dict):
+        findings.append("missing_comparator_closure")
+        return
+    state = closure.get("state")
+    if state not in _COMPARATOR_CLOSURE_STATES:
+        findings.append("invalid_comparator_closure_state")
+    elif valid_pass and state != "phase_a_competitor_context_closed":
+        findings.append("passing_seal_without_comparator_context_closure")
+    for key, code in (
+        ("candidate_frame", "comparator_candidate_frame"),
+        ("adjudicated_set", "comparator_adjudicated_set"),
+    ):
+        reference = closure.get(key)
+        if not isinstance(reference, dict):
+            findings.append(f"missing_{code}")
+            continue
+        _verify_artifact(
+            reference.get("locator"),
+            reference.get("sha256"),
+            repo_root=repo_root,
+            code=code,
+            findings=findings,
+        )
+    frame_ids = _string_set(
+        closure.get("frame_candidate_ids"),
+        code="invalid_comparator_frame_candidate_ids",
+        findings=findings,
+    )
+    candidates = closure.get("candidates")
+    if not isinstance(candidates, list):
+        findings.append("invalid_comparator_candidates")
+        candidates = []
+    seen: set[str] = set()
+    for row in candidates:
+        if not isinstance(row, dict):
+            findings.append("invalid_comparator_candidate")
+            continue
+        candidate_id = row.get("candidate_id")
+        if not isinstance(candidate_id, str) or not candidate_id:
+            findings.append("missing_comparator_candidate_id")
+            continue
+        if candidate_id in seen:
+            findings.append("duplicate_comparator_candidate_id")
+            continue
+        seen.add(candidate_id)
+        material = row.get("material")
+        if not isinstance(material, bool):
+            findings.append(
+                f"invalid_comparator_candidate_material_flag:{candidate_id}"
+            )
+            material = False
+        disposition = row.get("disposition")
+        if disposition not in _COMPARATOR_DISPOSITIONS:
+            findings.append(f"invalid_comparator_disposition:{candidate_id}")
+        decision_ready = row.get("decision_ready")
+        if not isinstance(decision_ready, bool):
+            findings.append(
+                f"invalid_comparator_decision_ready_flag:{candidate_id}"
+            )
+            decision_ready = False
+        if decision_ready and disposition != "promoted":
+            findings.append(
+                f"inconsistent_comparator_decision_ready:{candidate_id}"
+            )
+        if disposition == "promoted" or decision_ready:
+            # The Phase 2 decision contract requires both exact product
+            # identities before a candidate may be direct/decision-ready.
+            for identity_key in (
+                "subject_product_identity",
+                "competitor_product_identity",
+            ):
+                value = row.get(identity_key)
+                if not isinstance(value, str) or not value:
+                    findings.append(
+                        "comparator_promoted_without_exact_identity:"
+                        + candidate_id
+                    )
+                    break
+        ceiling = row.get("claim_ceiling")
+        if not isinstance(ceiling, str) or not ceiling:
+            findings.append(f"missing_comparator_claim_ceiling:{candidate_id}")
+        if material:
+            lanes = row.get("lane_evidence")
+            if not isinstance(lanes, dict):
+                findings.append(
+                    f"missing_comparator_lane_evidence:{candidate_id}"
+                )
+            else:
+                for lane in _COMPARATOR_LANE_KEYS:
+                    if lanes.get(lane) not in _COMPARATOR_LANE_STATES:
+                        findings.append(
+                            "invalid_comparator_lane_evidence:"
+                            + f"{candidate_id}:{lane}"
+                        )
+    dropped = sorted(frame_ids - seen)
+    if dropped:
+        findings.append(
+            "comparator_candidate_silently_dropped:" + ",".join(dropped)
+        )
+
+
+def _validate_campaign_integration(
+    block: Any,
+    *,
+    seal: Mapping[str, Any],
+    repo_root: Path,
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(block, dict):
+        findings.append("missing_campaign_evidence_integration")
+        return
+    status = block.get("status")
+    if status not in {"completed", "blocked"}:
+        findings.append("invalid_campaign_integration_status")
+    elif valid_pass and status != "completed":
+        findings.append("passing_seal_without_campaign_integration")
+    requests = block.get("targeted_capture_requests")
+    if not isinstance(requests, list):
+        findings.append("invalid_campaign_capture_requests")
+        requests = []
+    request_ids: set[str] = set()
+    for row in requests:
+        if not isinstance(row, dict):
+            findings.append("invalid_campaign_capture_request")
+            continue
+        request_id = row.get("request_id")
+        if not isinstance(request_id, str) or not request_id:
+            findings.append("missing_campaign_capture_request_id")
+            continue
+        if request_id in request_ids:
+            findings.append("duplicate_campaign_capture_request_id")
+            continue
+        request_ids.add(request_id)
+        target = row.get("target")
+        if not isinstance(target, str) or not target:
+            findings.append(f"missing_campaign_capture_request_target:{request_id}")
+        if row.get("disposition") not in _CAMPAIGN_CAPTURE_REQUEST_STATES:
+            findings.append(
+                f"invalid_campaign_capture_request_disposition:{request_id}"
+            )
+    reference = block.get("view")
+    if not isinstance(reference, dict):
+        findings.append("missing_campaign_evidence_view")
+        return
+    locator = reference.get("locator")
+    before = len(findings)
+    _verify_artifact(
+        locator,
+        reference.get("sha256"),
+        repo_root=repo_root,
+        code="campaign_evidence_view",
+        findings=findings,
+    )
+    if len(findings) != before:
+        return
+    view_path = Path(str(locator))
+    if not view_path.is_absolute():
+        view_path = repo_root / view_path
+    try:
+        view = json.loads(view_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"invalid_campaign_evidence_view:{type(exc).__name__}")
+        return
+    if not isinstance(view, dict):
+        findings.append("invalid_campaign_evidence_view_shape")
+        return
+    _validate_campaign_view(view, seal=seal, findings=findings)
+
+
+def _validate_campaign_view(
+    view: Mapping[str, Any],
+    *,
+    seal: Mapping[str, Any],
+    findings: list[str],
+) -> None:
+    if view.get("schema_version") != CAMPAIGN_EVIDENCE_VIEW_VERSION:
+        findings.append("invalid_campaign_evidence_view_version")
+    if view.get("subject") != seal.get("subject"):
+        findings.append("campaign_view_subject_mismatch")
+    if view.get("cycle_id") != seal.get("cycle_id"):
+        findings.append("campaign_view_cycle_id_mismatch")
+    units = view.get("units")
+    if not isinstance(units, list):
+        findings.append("invalid_campaign_view_units")
+        units = []
+    unit_ids: set[str] = set()
+    credited_origins: set[str] = set()
+    for row in units:
+        if not isinstance(row, dict):
+            findings.append("invalid_campaign_view_unit")
+            continue
+        unit_id = row.get("unit_id")
+        if not isinstance(unit_id, str) or not unit_id:
+            findings.append("missing_campaign_unit_id")
+            continue
+        if unit_id in unit_ids:
+            findings.append("duplicate_campaign_unit_id")
+            continue
+        unit_ids.add(unit_id)
+        if row.get("source_role") not in _CAMPAIGN_SOURCE_ROLES:
+            # Creator-authored and audience/customer evidence keep distinct
+            # roles; a merged or unknown role is a defect, never a default.
+            findings.append(f"invalid_campaign_unit_source_role:{unit_id}")
+        for key, code in (
+            ("publisher_identity", "publisher_identity"),
+            ("brand_binding", "brand_binding"),
+            ("source_surface", "source_surface"),
+            ("captured_at", "captured_at"),
+            ("independent_origin_key", "origin_key"),
+            ("claim_ceiling", "claim_ceiling"),
+        ):
+            value = row.get(key)
+            if not isinstance(value, str) or not value:
+                findings.append(f"missing_campaign_unit_{code}:{unit_id}")
+        refs = row.get("source_refs")
+        if not isinstance(refs, list) or not refs or any(
+            not isinstance(item, str) or not item for item in refs
+        ):
+            findings.append(f"missing_campaign_unit_source_refs:{unit_id}")
+        relationship = row.get("relationship_posture")
+        if relationship not in _CAMPAIGN_RELATIONSHIP_POSTURES:
+            findings.append(
+                f"invalid_campaign_unit_relationship_posture:{unit_id}"
+            )
+        if row.get("linkage_posture") not in _CAMPAIGN_LINKAGE_POSTURES:
+            findings.append(f"invalid_campaign_unit_linkage_posture:{unit_id}")
+        credit = row.get("independent_origin_credit")
+        if not isinstance(credit, bool):
+            findings.append(f"invalid_campaign_unit_origin_credit:{unit_id}")
+            continue
+        if credit:
+            if relationship != "apparently_independent":
+                findings.append(
+                    f"campaign_credit_without_independent_relationship:{unit_id}"
+                )
+            origin_key = row.get("independent_origin_key")
+            if isinstance(origin_key, str) and origin_key:
+                if origin_key in credited_origins:
+                    findings.append(
+                        f"duplicate_independent_origin_credit:{origin_key}"
+                    )
+                credited_origins.add(origin_key)
+    linkage_by_unit = {
+        str(row.get("unit_id")): row.get("linkage_posture")
+        for row in units
+        if isinstance(row, dict)
+    }
+    clusters = view.get("clusters", [])
+    if not isinstance(clusters, list):
+        findings.append("invalid_campaign_clusters")
+        clusters = []
+    cluster_ids: set[str] = set()
+    for cluster in clusters:
+        if not isinstance(cluster, dict):
+            findings.append("invalid_campaign_cluster")
+            continue
+        cluster_id = cluster.get("cluster_id")
+        if not isinstance(cluster_id, str) or not cluster_id:
+            findings.append("missing_campaign_cluster_id")
+            continue
+        if cluster_id in cluster_ids:
+            findings.append("duplicate_campaign_cluster_id")
+            continue
+        cluster_ids.add(cluster_id)
+        members = cluster.get("member_unit_ids")
+        if not isinstance(members, list) or not members or any(
+            not isinstance(item, str) or not item for item in members
+        ):
+            findings.append(f"invalid_campaign_cluster_members:{cluster_id}")
+            members = []
+        unresolved = [item for item in members if item not in unit_ids]
+        if unresolved:
+            findings.append(f"unresolved_campaign_cluster_member:{cluster_id}")
+        basis = cluster.get("basis")
+        if basis not in _CAMPAIGN_CLUSTER_BASES:
+            findings.append(f"invalid_campaign_cluster_basis:{cluster_id}")
+        elif basis == "direct":
+            if any(
+                linkage_by_unit.get(item) != "direct"
+                for item in members
+                if item in unit_ids
+            ):
+                findings.append(
+                    f"campaign_cluster_overstated_linkage:{cluster_id}"
+                )
+        else:
+            for key in ("provenance", "reversal_condition"):
+                value = cluster.get(key)
+                if not isinstance(value, str) or not value:
+                    findings.append(
+                        "campaign_cluster_inference_without_provenance:"
+                        + cluster_id
+                    )
+                    break
+
+
+def _validate_verification_requests(
+    requests: Any,
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(requests, list):
+        findings.append("missing_verification_requests")
+        return
+    request_ids: set[str] = set()
+    for row in requests:
+        if not isinstance(row, dict):
+            findings.append("invalid_verification_request")
+            continue
+        request_id = row.get("request_id")
+        if not isinstance(request_id, str) or not request_id:
+            findings.append("missing_verification_request_id")
+            continue
+        if request_id in request_ids:
+            findings.append("duplicate_verification_request_id")
+            continue
+        request_ids.add(request_id)
+        product = row.get("product_identity")
+        claim = row.get("claim")
+        trigger_kind = row.get("trigger_kind")
+        trigger_refs = row.get("trigger_evidence_refs")
+        has_trigger = (
+            isinstance(product, str)
+            and product
+            and trigger_kind in _VERIFICATION_TRIGGER_KINDS
+            and isinstance(trigger_refs, list)
+            and trigger_refs
+            and all(
+                isinstance(item, str) and item for item in trigger_refs
+            )
+            and isinstance(claim, str)
+            and claim
+        )
+        if not has_trigger:
+            # Verification is conditional: reconciled product identity ×
+            # material axis/contradiction × verifiable claim, never
+            # catalog-wide.
+            findings.append(
+                f"verification_request_without_material_trigger:{request_id}"
+            )
+        status = row.get("status")
+        if status not in _VERIFICATION_STATUSES:
+            findings.append(f"invalid_verification_status:{request_id}")
+            continue
+        if valid_pass and status == "not_run":
+            findings.append(
+                f"passing_seal_with_unrun_verification_request:{request_id}"
+            )
+        if status == "completed":
+            reference = row.get("return")
+            if not isinstance(reference, dict):
+                findings.append(f"missing_verification_return:{request_id}")
+                continue
+            _verify_artifact(
+                reference.get("locator"),
+                reference.get("sha256"),
+                repo_root=repo_root,
+                code="verification_return",
+                findings=findings,
+            )
+
+
+def _validate_retailer_state_accounting(
+    block: Any, *, findings: list[str]
+) -> None:
+    if not isinstance(block, dict):
+        findings.append("missing_retailer_state_accounting")
+        return
+    claims = block.get("claims")
+    if not isinstance(claims, list):
+        findings.append("invalid_retailer_state_claims")
+        return
+    claim_ids: set[str] = set()
+    for row in claims:
+        if not isinstance(row, dict):
+            findings.append("invalid_retailer_state_claim")
+            continue
+        claim_id = row.get("claim_id")
+        if not isinstance(claim_id, str) or not claim_id:
+            findings.append("missing_retailer_state_claim_id")
+            continue
+        if claim_id in claim_ids:
+            findings.append("duplicate_retailer_state_claim_id")
+            continue
+        claim_ids.add(claim_id)
+        kind = row.get("kind")
+        if kind not in _RETAILER_STATE_KINDS:
+            findings.append(f"invalid_retailer_state_kind:{claim_id}")
+            continue
+        for key in ("retailer", "product_identity", "market_scope"):
+            value = row.get(key)
+            if not isinstance(value, str) or not value:
+                findings.append(
+                    f"missing_retailer_state_identity:{claim_id}:{key}"
+                )
+        current_ref = row.get("current_observation_ref")
+        if not isinstance(current_ref, str) or not current_ref:
+            findings.append(
+                f"missing_retailer_state_observation_ref:{claim_id}"
+            )
+            current_ref = ""
+        prior_ref = row.get("prior_observation_ref")
+        if kind == "retailer_state_change":
+            # A movement event requires two comparable observations; one
+            # snapshot is a state, never a change.
+            if (
+                not isinstance(prior_ref, str)
+                or not prior_ref
+                or prior_ref == current_ref
+            ):
+                findings.append(
+                    f"retailer_state_change_without_two_observations:{claim_id}"
+                )
+        else:
+            if prior_ref or row.get("change_summary"):
+                findings.append(
+                    f"movement_claim_from_single_snapshot:{claim_id}"
+                )
+
+
 def _verify_artifact(
     locator: Any,
     digest: Any,
@@ -3720,6 +4300,15 @@ def _parser() -> argparse.ArgumentParser:
             "It does not satisfy the current decision-maturity Phase A contract."
         ),
     )
+    parser.add_argument(
+        "--allow-preversion-route",
+        action="store_true",
+        help=(
+            "Audit a seal sealed before Understanding route versioning began "
+            "(2026-08-07). Such seals carry no stamped route version; this "
+            "switch never satisfies the current route contract."
+        ),
+    )
     return parser
 
 
@@ -3734,6 +4323,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             allow_legacy_v2=args.allow_legacy_v2,
             allow_legacy_consumer_v1=args.allow_legacy_consumer_v1,
             allow_legacy_consumer_v2=args.allow_legacy_consumer_v2,
+            allow_preversion_route=args.allow_preversion_route,
         )
     except Exception as exc:  # noqa: BLE001 - controlled validator diagnostic
         parser.exit(

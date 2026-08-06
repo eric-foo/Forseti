@@ -277,8 +277,14 @@ not spend a separate sacrificial query.
 5. `CO0` waits on completion or decision-requiring blocker events, not polling
    dialogue. After all terminal returns exist, `CO0` reads the load-bearing
    artifacts themselves once, resolves any actor-local correction in the same
-   actor task, and runs SERP Phase 2 from the combined findings. Phase 2 owns
-   only the targeted SERP return and decision lifecycle; it does not repeat the
+   actor task, runs the controller-owned campaign-evidence integration job
+   (route `campaign_evidence_integration`, phase `campaign_integration`; see
+   the route-1.1.0 subsection below), and then runs SERP Phase 2 from the
+   combined findings, including the integration view's relationship-typed
+   creator-comparison emissions. Phase 2 owns
+   only the targeted SERP return and decision lifecycle — including
+   adjudicating the direct-competitor set from the specialist and integration
+   returns before the seal — and it does not repeat the
    fan-out's native/community capture. First hash-pin the complete axis
    inventory. For each material consumer-brand axis, Phase 2 then runs one
    adaptive corroboration/segmentation goal, one comparison/switch/value goal,
@@ -333,9 +339,12 @@ not spend a separate sacrificial query.
       `route_bounded_source_exhaustion`, never because an axis count, thread
       count, or elapsed-time target was reached.
    5. Terminally reconcile every selected target and candidate before treating
-      the corpus as closed.
+      the corpus as closed, including every comparator candidate from the
+      Phase 1 frame and the lane emissions.
    6. Only then perform final semantic adjudication, bind decision usefulness,
-      run the delegated source-native check, and validate the seal.
+      close the comparator set with terminal dispositions, record the route
+      version actually used in the seal's `understanding_route` block, run the
+      delegated source-native check, and validate the seal.
 
 Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
 social listing is ambiguous and opening the native item could change the bound
@@ -557,7 +566,7 @@ phase_acquisition_seal:
       status:
   route_job_accounting:
     - route_id:
-      phase: serp_phase1 | co1 | co2 | co3 | serp_phase2
+      phase: serp_phase1 | co1 | co2 | co3 | campaign_integration | serp_phase2
       required: true | false
       material: true | false
       planned_job_ids: []
@@ -577,6 +586,60 @@ phase_acquisition_seal:
   evidence_depth_ledger:
     locator:
     sha256:
+  understanding_route:
+    route_version: "1.1.0"
+    comparator_closure:
+      state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
+      candidate_frame:
+        locator:
+        sha256:
+      adjudicated_set:
+        locator:
+        sha256:
+      frame_candidate_ids: []
+      candidates:
+        - candidate_id:
+          name:
+          material: true | false
+          disposition: promoted | rejected | watch_listed | role_bounded | explicit_gap
+          decision_ready: true | false
+          subject_product_identity:
+          competitor_product_identity:
+          claim_ceiling:
+          lane_evidence:
+            co1_owned_ad_positioning: observed | none_found | blocked
+            co2_retailer_product: observed | none_found | blocked
+            co3_customer_comparison: observed | none_found | blocked
+            campaign_creator_comparison: observed | none_found | blocked
+    campaign_evidence_integration:
+      status: completed | blocked
+      view:
+        locator:
+        sha256:
+      targeted_capture_requests:
+        - request_id:
+          target:
+          disposition: captured | blocked | no_longer_material
+    verification_requests:
+      - request_id:
+        product_identity:
+        trigger_kind: material_axis | contradiction | condition_or_consequence | competitor_destination | sampling_risk
+        trigger_evidence_refs: []
+        claim:
+        status: completed | blocked | not_run
+        return:
+          locator:
+          sha256:
+    retailer_state_accounting:
+      claims:
+        - claim_id:
+          kind: retailer_state_snapshot | retailer_state_change | movement_unresolved_baseline_only
+          retailer:
+          product_identity:
+          market_scope:
+          current_observation_ref:
+          prior_observation_ref:
+          change_summary:
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -609,7 +672,15 @@ checks. A valid empty SERP Phase 2 decision receipt never gives completion
 credit to licensed-but-unrun SERP Phase 2 queries. Resume re-hashes every
 reusable artifact and runs only pending jobs unless the bound question changes,
 an artifact hash drifts, its source-specific currentness expires, or owning
-authority becomes incompatible.
+authority becomes incompatible. The validator also enforces the
+`understanding_route` block: a known `route_version`; at `1.1.0` the
+campaign-integration route accounting, view binding and per-unit shape,
+independent-origin credit and cluster rules, terminal comparator dispositions
+with exact-identity binding for promoted candidates and
+per-material-candidate lane evidence, verification-request triggers and
+terminal statuses, and the two-observation retailer-movement rule. A seal
+sealed before route versioning began (2026-08-07) carries no stamped version
+and is audited with `--allow-preversion-route`.
 
 The v3 ledger uses schema `understanding_evidence_depth_v1` and profile
 `broad_company_understanding_v1`. It repeats the seal's subject and cycle ID;
@@ -694,7 +765,9 @@ For company Understanding, non-empty route accounting is required for
 `serp_phase1`, `official_retailer_authorization`,
 `google_ads_transparency`, `meta_ads_library`, `retailer_full_pdp`,
 `reddit_weekly_lake`, `reddit_community_scout`, and `serp_phase2`, with explicit
-`serp_phase1`, `CO1`, `CO2`, `CO3`, and `serp_phase2` phase coverage. A typed
+`serp_phase1`, `CO1`, `CO2`, `CO3`, and `serp_phase2` phase coverage. Under
+route version `1.1.0` and later, `campaign_evidence_integration` (phase
+`campaign_integration`) joins that required set. A typed
 no-work decision may be the planned job when a route truly has no work; silence
 is not accounting. Triggered TikTok Shop or native TikTok, Instagram, or YouTube
 capture adds its route to the same accounting requirement.
@@ -722,6 +795,109 @@ limit or source boundary stops acquisition, or if the assembled evidence cannot
 support a decision-useful answer to the bound question, use
 `BLOCKED_ACQUISITION_INCOMPLETE`; do not lower the answer standard to pass the
 seal.
+
+#### Route 1.1.0 — Campaign Integration, Comparator Closure, Verification, Retailer State
+
+Field contracts, enums, and claim ceilings for these obligations live in the
+Prompt Structure Rules authority ("Understanding Acquire & Seal Route Revision
+Contracts"). Operating rules:
+
+- **Campaign-evidence integration** is one controller-owned post-fan-out job
+  (route `campaign_evidence_integration`, phase `campaign_integration`) run
+  after all specialist terminal returns and before the seal, feeding SERP
+  Phase 2. It joins existing CO1 owned/ad, CO3 creator/audience, and CO2
+  identity evidence into one hash-pinned `campaign_evidence_view_v1` artifact
+  and may emit targeted capture requests that run as ordinary jobs in the
+  owning routes and are terminally dispositioned before a passing seal. It is
+  acquisition-control synthesis: no standing `CO4`, no creator crawl, no
+  standing monitor, no spend/conversion inference, no market conclusion, and
+  no merging of creator-authored and audience/customer evidence roles.
+- **Competitor-set closure** runs through three states:
+  `candidate_comparator_frame` (SERP Phase 1; provisional; scopes the
+  `CO1`-`CO3` fan-out capsules and is never frozen),
+  `adjudicated_comparator_set` (after specialist returns plus SERP Phase 2,
+  which adjudicates the direct-competitor set from those returns before the
+  seal), and `phase_a_competitor_context_closed` (at the seal: every material
+  candidate `promoted | rejected | watch_listed | role_bounded | explicit_gap`;
+  no candidate silently disappears). Every material candidate owes lane
+  comparator evidence or a typed gap from CO2 (retailer/product with exact
+  identity), CO3 (retailer-review and Reddit/customer comparison), the
+  campaign view (creator comparison, relationship-typed), and CO1 (owned/ad
+  positioning as actor strategy). A `promoted` candidate requires both exact
+  subject and competitor product identities. Phase A closes decision-usable
+  comparator context only — never an exhaustive-direct-competitor claim,
+  representative market sentiment, or a standing competitor lane.
+- **Conditional product/claim verification** triggers only on
+  reconciled product identity × material axis or contradiction × publicly
+  verifiable unresolved claim. It is a conditional adjustment job, never
+  catalog-wide; a completed return attaches instrument-level verdicts,
+  provenance, failures, and claim ceilings, and may reopen the affected axis
+  but never starts Deliver. An emitted request left `not_run` blocks a
+  passing seal.
+- **Retailer state and movement**: one comparable CO2 observation is a
+  `retailer_state_snapshot`; a `retailer_state_change` requires two
+  observations with stable retailer/product/market/scope identity and old/new
+  evidence references; otherwise `movement_unresolved_baseline_only`. Proxies
+  (stockout, review velocity, assortment, promotion) never become sales or
+  productivity, and refresh is event-commissioned, never a standing monitor.
+
+#### Understanding Acquire & Seal Route Version And Changelog
+
+The operating-sequence authority for this route stays in this playbook; do
+not create a parallel Phase A manual. The acquisition seal records the route
+version actually used; a run started under an older route retains that
+version unless an explicit migration/restart is applied and recorded.
+
+```yaml
+understanding_acquire_seal_route:
+  current_version: 1.1.0
+  versioning_started: 2026-08-07
+  baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
+  version_semantics:
+    major: phase order, authority boundary or seal meaning changes
+    minor: required/conditional evidence lane, integration job or closure gate changes
+    patch: non-semantic clarification or validation hardening
+  changelog:
+    - version: 1.0.0
+      date: 2026-08-07
+      owning_change: retrospectively recorded baseline; no owning PR
+      changed_behavior: >
+        Records the pre-versioning current-main route: validated board ->
+        SERP Phase 1 -> CO1/CO2/CO3 fan-out -> SERP Phase 2 -> adaptive
+        consumer-depth and category-benchmark work -> acquisition seal, with
+        its known gaps: no campaign-evidence integration job, no explicit
+        competitor-set closure, no conditional verification accounting, no
+        retailer snapshot/change semantics, and no recorded route version.
+      affected_gate: none; baseline record only
+      migration_note: >
+        1.0.0 is a retrospectively recorded baseline, not a version
+        historically stamped at the time. Seals from pre-versioning runs are
+        audited with --allow-preversion-route; historical artifacts are never
+        rewritten to claim a version.
+    - version: 1.1.0
+      date: 2026-08-07
+      owning_change: Phase A campaign/competitor integration implementation (this change's PR)
+      changed_behavior: >
+        Adds the controller-owned post-fan-out campaign-evidence integration
+        job and campaign_evidence_view_v1; three-state competitor closure with
+        the Phase 1 frame scoping the fan-out, per-material-candidate lane
+        comparator evidence, and pre-seal SERP Phase 2 direct-competitor
+        adjudication; conditional product/claim verification accounting;
+        retailer snapshot/change/baseline-only movement semantics; and the
+        seal-recorded route version with this append-only changelog.
+      affected_gate: >
+        Acquisition seal: understanding_route block enforced by
+        run_phase_acquisition_seal_validation.py.
+      migration_note: >
+        A run started under 1.0.0 retains 1.0.0 unless an explicit
+        migration/restart is recorded. New runs seal under 1.1.0.
+  append_only_rule: >
+    Every future semantic route change appends one row with version, date,
+    owning change/PR when known, changed behavior, affected gate, and
+    migration or compatibility note. Rows are never rewritten or deleted, and
+    historical body artifacts are never rewritten to pretend they used a
+    later route.
+```
 
 ### Turn B — Synthesize
 
@@ -992,11 +1168,15 @@ gate above controls whether the Synthesize turn may begin.
    dominance, and closure; Capture fulfills the bounded request or returns typed
    failure/route exhaustion. Reddit/community acquisition runs inside `CO3`.
 10. After every specialist reaches a terminal return, `CO0` dereferences the
-    load-bearing artifacts and runs the post-fan-out targeted SERP return:
+    load-bearing artifacts, runs the controller-owned campaign-evidence
+    integration job (route 1.1.0), and then runs the post-fan-out targeted
+    SERP return:
     `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`.
-    Phase 2 derives each query from a named specialist finding, applies the
-    decision lifecycle, and returns the consolidated ledger, decision receipt,
-    provenance, and material blocks. It does not repeat native capture.
+    Phase 2 derives each query from a named specialist or integration finding,
+    applies the decision lifecycle, adjudicates the direct-competitor set from
+    the lane returns before the seal, and returns the consolidated ledger,
+    decision receipt, provenance, and material blocks. It does not repeat
+    native capture.
 11. For an Intelligence Cycle, assemble the phase acquisition seal only after
     the Phase 2 terminal result and all owning Scanning/Capture work return. A
     typed acquisition failure remains visible and blocks synthesis when material;

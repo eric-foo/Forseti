@@ -68,9 +68,12 @@ def _write_seal(path: Path, seal: dict) -> None:
 def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
     tmp_path: Path,
 ) -> None:
+    # p11r4 predates Understanding route versioning (2026-08-07), so its
+    # seal carries no stamped route version and is audited explicitly.
     assert validate_phase_acquisition_seal(
         seal_path=V1_SEAL,
         repo_root=REPO_ROOT,
+        allow_preversion_route=True,
     ) == []
 
     source_types = {
@@ -118,6 +121,7 @@ def test_summer_fridays_v1_passes_but_v2_shadow_exposes_missing_axis_work(
         seal_path=shadow_seal,
         repo_root=REPO_ROOT,
         allow_legacy_consumer_v1=True,
+        allow_preversion_route=True,
     )
 
     expected = {
@@ -160,6 +164,7 @@ def test_summer_fridays_p11r5_requires_explicit_legacy_audit() -> None:
         seal_path=V2_SEAL,
         repo_root=REPO_ROOT,
         allow_legacy_consumer_v1=True,
+        allow_preversion_route=True,
     ) == []
 
     ledger = json.loads(V2_LEDGER.read_text(encoding="utf-8"))
