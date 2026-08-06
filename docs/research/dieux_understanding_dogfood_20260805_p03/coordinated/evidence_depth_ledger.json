@@ -7,12 +7,12 @@
     {
       "artifact_id": "axis_inventory",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/consumer_brand_axis_inventory.json",
-      "sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106"
+      "sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04"
     },
     {
       "artifact_id": "retailer_axis_coding",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/retailer_product_axis_coding.json",
-      "sha256": "dd814e19a6a0ab56f234842ea5cacf0291762cdc5ad7672d6c74c3a6b39b66cb"
+      "sha256": "604fbb99aa26fb52349460f9fb8464e5a70fe41afecc40ae3160804ed58152f0"
     },
     {
       "artifact_id": "community_axis_coding",
@@ -22,7 +22,7 @@
     {
       "artifact_id": "native_social_composition",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co1_native_social_floor_composition.json",
-      "sha256": "f04f5ac5ac86ef12a12cbe52310a370bd7895755e12d43de489a2eb733970b7b"
+      "sha256": "3ef8cb30f5c06db9fa925574887e5f0cb625d609e26b18d49e610e510921790b"
     },
     {
       "artifact_id": "co1_terminal",
@@ -847,7 +847,7 @@
     {
       "artifact_id": "material_axis_discovery_audit",
       "locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/material_axis_discovery_audit.json",
-      "sha256": "a056e4e16f294442af2e06e255f4ab58996ada4bdd14905e4af021393da0bb5b"
+      "sha256": "f7a842bdb52f72381556f723f47b9536acf5375082818c4b9db388a3bb2d8205"
     },
     {
       "artifact_id": "material_axis_probe_community",
@@ -987,7 +987,7 @@
         {
           "corpus_id": "sephora_non_incentivized",
           "artifact_id": "retailer_axis_coding",
-          "unique_review_count": 913,
+          "unique_review_count": 915,
           "cross_corpus_duplicate_count": 0,
           "product_context_ids": [
             "P510288",
@@ -2201,7 +2201,7 @@
           "job_id": "P2-A01-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2214,7 +2214,7 @@
           "job_id": "P2-A01-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2224,7 +2224,7 @@
           "job_id": "P2-A01-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2313,7 +2313,7 @@
           "job_id": "P2-A02-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2325,7 +2325,7 @@
           "job_id": "P2-A02-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2335,7 +2335,7 @@
           "job_id": "P2-A02-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2424,7 +2424,7 @@
           "job_id": "P2-A03-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2436,7 +2436,7 @@
           "job_id": "P2-A03-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2446,7 +2446,7 @@
           "job_id": "P2-A03-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2535,7 +2535,7 @@
           "job_id": "P2-A04-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2545,7 +2545,7 @@
           "job_id": "P2-A04-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2555,7 +2555,7 @@
           "job_id": "P2-A04-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2644,7 +2644,7 @@
           "job_id": "P2-A05-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2654,7 +2654,7 @@
           "job_id": "P2-A05-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2666,7 +2666,7 @@
           "job_id": "P2-A05-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2753,7 +2753,7 @@
           "job_id": "P2-A06-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2763,7 +2763,7 @@
           "job_id": "P2-A06-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2773,7 +2773,7 @@
           "job_id": "P2-A06-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2860,7 +2860,7 @@
           "job_id": "P2-A07-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2870,7 +2870,7 @@
           "job_id": "P2-A07-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2880,7 +2880,7 @@
           "job_id": "P2-A07-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],
@@ -2920,7 +2920,7 @@
     {
       "axis_id": "service_fulfillment_support_trust",
       "label": "Availability, fulfillment, support, returns, and buying confidence",
-      "scope": "Stock and geographic access, DTC order fulfillment, shipping, order accuracy, customer support, returns/refunds, and transaction trust",
+      "scope": "Stock and geographic access, including ingredient- or regulation-driven SKU market exclusions; retailer-channel and format availability; DTC order fulfillment; shipping; order accuracy; customer support; returns/refunds; and transaction trust",
       "polarity": "pain",
       "strength": "signal",
       "disposition": "material",
@@ -2949,17 +2949,17 @@
         {
           "corpus_id": "sephora_non_incentivized",
           "eligible_text_review_count": 913,
-          "axis_mention_count": 18,
-          "negative_choice_review_count": 1,
-          "positive_choice_review_count": 7,
+          "axis_mention_count": 35,
+          "negative_choice_review_count": 2,
+          "positive_choice_review_count": 15,
           "disclosed_incentivized_axis_mention_count": 0
         },
         {
           "corpus_id": "soko_glam_verified_window",
           "eligible_text_review_count": 77,
-          "axis_mention_count": 2,
+          "axis_mention_count": 4,
           "negative_choice_review_count": 0,
-          "positive_choice_review_count": 2,
+          "positive_choice_review_count": 4,
           "disclosed_incentivized_axis_mention_count": 0
         }
       ],
@@ -2968,7 +2968,7 @@
           "job_id": "P2-A08-C",
           "goal": "corroborate_or_segment",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2980,7 +2980,7 @@
           "job_id": "P2-A08-V",
           "goal": "compare_switch_or_value",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [
@@ -2992,7 +2992,7 @@
           "job_id": "P2-A08-D",
           "goal": "disconfirm_or_strongest_delight",
           "workstream": "product_axis",
-          "axis_inventory_sha256": "58812e2fb91173ea4588ee120e064081e6826a0cf21c3361fc46dca0d5a2e106",
+          "axis_inventory_sha256": "02aa70fee31fd7afa981e17451a2c0e1fdc4c49b85e08d12762a437b1783fd04",
           "planned_at": "2026-08-05T16:12:30.8461715Z",
           "search_artifact_id": "phase2_search",
           "target_ids": [],

@@ -318,7 +318,7 @@ phase_acquisition_seal:
     unrun_job_ids: []
     unrun_count: 0
     terminal_artifact_locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/material_axis_discovery_audit.json
-    terminal_artifact_sha256: a056e4e16f294442af2e06e255f4ab58996ada4bdd14905e4af021393da0bb5b
+    terminal_artifact_sha256: f7a842bdb52f72381556f723f47b9536acf5375082818c4b9db388a3bb2d8205
   serp_phase2_decision_receipt:
     locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/serp_phase2_decision_receipt.json
     sha256: ef80b209356f53dced7b2957d01cb42a1a19d056ec27b603e7ec99dd1636503a
@@ -327,7 +327,7 @@ phase_acquisition_seal:
     pending_job_ids: []
     reusable_artifacts:
     - locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/evidence_depth_ledger.json
-      sha256: 6360dd31bbfdc2c9cdf06efd781748d1babf5031be67b0596e43dd34874eb8bd
+      sha256: 0735378f31792e58f8913b3c057a6edcb0064f59db4368f9acd580bdfe338d3c
       invalid_if:
       - Any pinned evidence body or coding artifact changes bytes.
     - locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/serp_phase2_lifecycle_sealed_receipt.json
@@ -336,7 +336,7 @@ phase_acquisition_seal:
       - The Phase 2 settlement or lifecycle store changes.
   evidence_depth_ledger:
     locator: docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/evidence_depth_ledger.json
-    sha256: 6360dd31bbfdc2c9cdf06efd781748d1babf5031be67b0596e43dd34874eb8bd
+    sha256: 0735378f31792e58f8913b3c057a6edcb0064f59db4368f9acd580bdfe338d3c
   independent_semantic_review:
     status: historical_profile_v3_complete_and_chief_architect_adjudicated
     scope: pre_material_axis_discovery_profile_v3
@@ -397,6 +397,8 @@ phase_acquisition_seal:
     - retailer_product_axis_coding.json
     - community_axis_coding_v4.json
     - evidence_depth_ledger.json
+    - co1_native_social_floor_composition.json
+    - turn_a_consumer_brand_v3_acquisition_record.md
     - acquisition_seal.md
-  blocker: required_different_vendor_material_axis_discovery_review_pending
+  blocker: required_different_vendor_material_axis_discovery_re_review_pending
 ```

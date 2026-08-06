@@ -6,7 +6,7 @@
     {
       "corpus_id": "sephora_non_incentivized",
       "eligible_text_review_count": 913,
-      "excluded_no_usable_text_count": 0
+      "excluded_no_usable_text_count": 2
     },
     {
       "corpus_id": "soko_glam_verified_window",
@@ -809,6 +809,12 @@
         },
         {
           "axis_id": "packaging_dispensing_usability",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -2941,6 +2947,12 @@
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -7511,6 +7523,12 @@
           "choice_outcomes": [
             "returned_or_refunded"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "returned_or_refunded"
+          ]
         }
       ]
     },
@@ -8995,6 +9013,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -13124,6 +13148,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -13265,6 +13295,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "retained_or_repurchased"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
@@ -21138,6 +21174,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -21357,6 +21399,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -23002,6 +23050,12 @@
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased"
+          ]
         }
       ]
     },
@@ -23128,6 +23182,12 @@
           "choice_outcomes": [
             "retained_or_repurchased"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased"
+          ]
         }
       ]
     },
@@ -23172,6 +23232,13 @@
         },
         {
           "axis_id": "repeat_purchase_switching_destinations",
+          "choice_outcomes": [
+            "retained_or_repurchased",
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "retained_or_repurchased",
             "recommended_or_would_purchase"
@@ -23227,6 +23294,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -23715,6 +23788,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -24097,6 +24176,12 @@
           "choice_outcomes": [
             "none_explicit"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
         }
       ]
     },
@@ -24154,6 +24239,12 @@
       "axis_codes": [
         {
           "axis_id": "hydration_barrier_visible_results",
+          "choice_outcomes": [
+            "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "none_explicit"
           ]
@@ -24220,6 +24311,12 @@
         },
         {
           "axis_id": "segment_portfolio_product_fit",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
@@ -26096,6 +26193,12 @@
           "choice_outcomes": [
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -27761,6 +27864,13 @@
             "retained_or_repurchased",
             "recommended_or_would_purchase"
           ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "retained_or_repurchased",
+            "recommended_or_would_purchase"
+          ]
         }
       ]
     },
@@ -28122,6 +28232,12 @@
           "axis_id": "texture_finish_makeup_routine_fit",
           "choice_outcomes": [
             "none_explicit"
+          ]
+        },
+        {
+          "axis_id": "service_fulfillment_support_trust",
+          "choice_outcomes": [
+            "recommended_or_would_purchase"
           ]
         }
       ]

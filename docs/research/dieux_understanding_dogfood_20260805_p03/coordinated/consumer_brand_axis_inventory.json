@@ -234,7 +234,7 @@
       "label": "Availability, fulfillment, support, returns, and buying confidence",
       "polarity": "pain",
       "disposition": "material",
-      "scope": "Stock and geographic access, DTC order fulfillment, shipping, order accuracy, customer support, returns/refunds, and transaction trust",
+      "scope": "Stock and geographic access, including ingredient- or regulation-driven SKU market exclusions; retailer-channel and format availability; DTC order fulfillment; shipping; order accuracy; customer support; returns/refunds; and transaction trust",
       "source_axis_ids": [
         "trustpilot_service_window",
         "official_service_policy"

@@ -4,6 +4,14 @@
   "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
   "audited_at": "2026-08-05T19:15:00Z",
   "audit_method": "open_taxonomy_residual",
+  "review_remediation": {
+    "reviewed_revision": "089454c9188a8b1bf9c254f440c41818a5dd6454",
+    "affected_candidate_id": "availability-channel-access",
+    "rerun_scope": "All 30 native-social and all 990 retailer text units were re-screened for decision-bearing stock, geography, shipping, retailer-channel, and missing-SKU or format access evidence.",
+    "qualifying_rule": "A unit qualifies when access is constrained or newly enabled, or when channel or stock state causes an explicit wait, reroute, replenishment, purchase, repurchase, or request for a missing SKU or format; retailer mentions without an access or choice effect do not qualify.",
+    "review_citation_correction": "Sephora review 344083660 contains no restock language and remains non-candidate; review 271895900 is the omitted sold-out instance.",
+    "last_material_addition_effect": "unchanged_existing_candidate_corroboration_only; no new axis or boundary was added, so the two existing later diverse dry probes remain later than the last material addition"
+  },
   "source_family_accounting": [
     {
       "family_id": "external_context",
@@ -68,7 +76,11 @@
         "youtube_youtube:zxNrQP8V4K8"
       ],
       "non_axis_bearing_units": [],
-      "candidate_unit_ids": []
+      "candidate_unit_ids": [
+        "youtube_youtube:8uZKNMnXImI",
+        "youtube_youtube:eejwDCxfZgE",
+        "youtube_youtube:qYPdISwPJyQ"
+      ]
     },
     {
       "family_id": "reddit_forum",
@@ -1221,7 +1233,27 @@
         "soko_glam_verified_window:soko-forever_eye_masks-008",
         "soko_glam_verified_window:soko-forever_eye_masks-011",
         "soko_glam_verified_window:soko-forever_eye_masks-012",
-        "soko_glam_verified_window:soko-instant_angel-001"
+        "soko_glam_verified_window:soko-instant_angel-001",
+        "sephora_non_incentivized:271572362",
+        "sephora_non_incentivized:271648135",
+        "sephora_non_incentivized:271755811",
+        "sephora_non_incentivized:271844092",
+        "sephora_non_incentivized:271895900",
+        "sephora_non_incentivized:274698327",
+        "sephora_non_incentivized:274745359",
+        "sephora_non_incentivized:274798927",
+        "sephora_non_incentivized:274957989",
+        "sephora_non_incentivized:275586520",
+        "sephora_non_incentivized:312836821",
+        "sephora_non_incentivized:313391091",
+        "sephora_non_incentivized:313825155",
+        "sephora_non_incentivized:315224645",
+        "sephora_non_incentivized:336604047",
+        "sephora_non_incentivized:337174313",
+        "sephora_non_incentivized:360192916",
+        "sephora_non_incentivized:363151625",
+        "soko_glam_verified_window:soko-instant_angel-026",
+        "soko_glam_verified_window:soko-baptism-003"
       ]
     }
   ],
@@ -1375,6 +1407,98 @@
         {
           "family_id": "reddit_forum",
           "unit_id": "vc7kso"
+        },
+        {
+          "family_id": "native_social",
+          "unit_id": "youtube_youtube:8uZKNMnXImI"
+        },
+        {
+          "family_id": "native_social",
+          "unit_id": "youtube_youtube:eejwDCxfZgE"
+        },
+        {
+          "family_id": "native_social",
+          "unit_id": "youtube_youtube:qYPdISwPJyQ"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:271572362"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:271648135"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:271755811"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:271844092"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:271895900"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:274698327"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:274745359"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:274798927"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:274957989"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:275586520"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:312836821"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:313391091"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:313825155"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:315224645"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:336604047"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:337174313"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:360192916"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "sephora_non_incentivized:363151625"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "soko_glam_verified_window:soko-instant_angel-026"
+        },
+        {
+          "family_id": "retailer_reviews",
+          "unit_id": "soko_glam_verified_window:soko-baptism-003"
         }
       ],
       "scope_change": "Expanded the service/fulfillment axis upstream to include stock, geography, retailer, and mail-forwarding access.",
@@ -1392,7 +1516,7 @@
           "unit_id": "1l8evw5"
         }
       ],
-      "decision_effect": "Adds Dr. Jart, Lions Pose, Alpyn, and Kiehl’s as examples without changing the already-established switching decision.",
+      "decision_effect": "The source names Dr. Jart, Lions Pose, Alpyn, and Kiehl’s as examples of the already-established switching decision; no inventory destination was added.",
       "rationale": "The source-native counterexample instantiates the existing repeat-purchase and switching axis; it changes no axis, mechanism, segment, claim ceiling, or competitive decision."
     }
   ],
