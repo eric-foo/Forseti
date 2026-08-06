@@ -417,11 +417,17 @@ exact duplicates collapse and do not inflate distinct-origin spread.
 
 Community support is comment-coded: thread and comment identity, product
 context, axis, contribution, choice, alternative brand when present, explicit
-outcome, source reference, and parser limitation. Every usable independent
-Reddit/forum thread has at least one such row, and an axis support reference
-into a community thread must be backed by a coding row for that axis and
-thread carrying the same contribution, choice, and alternative brand; a
-support claim no coded comment states is invalid. SERP or search-registry
+outcome, source reference, source-native creation timestamp
+(`comment_created_utc`, read from the preserved raw body or source metadata at
+coding time, never inferred), and parser limitation. The timestamp is an
+acquisition-time obligation because the coder is already reading the raw body;
+it is what lets later synthesis attribute evidence to eras (formula
+generations, attention cycles) without reopening raw files. Synthesis
+deliverables may consume dates but are not required to display them. Every
+usable independent Reddit/forum thread has at least one such row, and an axis
+support reference into a community thread must be backed by a coding row for
+that axis and thread carrying the same contribution, choice, and alternative
+brand; a support claim no coded comment states is invalid. SERP or search-registry
 artifacts never satisfy a native-body reference. A useful new thread is
 informational yield, not an automatic reopen. A material addition is limited to
 a new axis, evidence-tier change, mechanism, segment or condition, behavior
