@@ -75,10 +75,11 @@ missing any link is not consumable:
 5. **Synthesis citation** — the memorandum cites the return by
    repository path and sha256 and stays inside the return's own non-claims.
 
-Worked instances of links 2–5:
+Worked instances of links 2–5 (the first resolves in-tree; the latter two land
+via PR #1433, pin: `origin/claude/sf-deliver-search-interest-input`):
 `docs/prompts/handoffs/summer_fridays_search_interest_capture_handoff_20260805_v0.md`,
-`docs/research/summer_fridays_ci_inputs_20260805/search_interest_capture_return.md`,
-`docs/prompts/handoffs/summer_fridays_deliver_search_interest_input_handoff_20260806_v0.md`.
+`docs/research/summer_fridays_ci_inputs_20260805/search_interest_capture_return.md` (PR #1433),
+`docs/prompts/handoffs/summer_fridays_deliver_search_interest_input_handoff_20260806_v0.md` (PR #1433).
 
 ## Run Sequence
 
