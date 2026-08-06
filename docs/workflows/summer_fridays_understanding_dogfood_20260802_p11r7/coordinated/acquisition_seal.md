@@ -2842,14 +2842,14 @@ phase_acquisition_seal:
     unrun_job_ids: []
     unrun_count: 0
     terminal_artifact_locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-    terminal_artifact_sha256: a8aeb4b915d4c6a50828fe1620881938a3900d4342797da2a5a8b07154837ec6
+    terminal_artifact_sha256: 193ca252eedeb80a9b7e7dcd6d344a696a9234ddc145fecd8d2e07e19966ceff
   serp_phase2_decision_receipt:
     locator: docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json
     sha256: 3e814232972ecedec7c563f79c78bfca70f9618fae5b5a6c17446345f1dc95bf
     entries: 2
   evidence_depth_ledger:
     locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-    sha256: 9410fb08326aae1ff8c2cd17eb6d18c1893a861eb821aebd1f8583be55c1e8fe
+    sha256: dda91e3ec6f9ec391ad41555fade14d90879ed1fc45f98eb93a512603990eb39
   resume_contract:
     pending_job_ids: []
     reusable_artifacts:
@@ -2860,13 +2860,13 @@ phase_acquisition_seal:
       - parent acquisition provenance changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
-      sha256: a8aeb4b915d4c6a50828fe1620881938a3900d4342797da2a5a8b07154837ec6
+      sha256: 193ca252eedeb80a9b7e7dcd6d344a696a9234ddc145fecd8d2e07e19966ceff
       invalid_if:
       - artifact hash changes
       - raw integrity audit changes
       - Deliver artifact appears
     - locator: docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
-      sha256: 9410fb08326aae1ff8c2cd17eb6d18c1893a861eb821aebd1f8583be55c1e8fe
+      sha256: dda91e3ec6f9ec391ad41555fade14d90879ed1fc45f98eb93a512603990eb39
       invalid_if:
       - artifact hash changes
       - frontier accounting or source-native coding changes
@@ -2883,9 +2883,11 @@ population-prevalence—claim ceiling.
 ## Seal re-cut 2026-08-06 (semantic remediation)
 
 The hash pins for `turn_a_consumer_brand_v3_acquisition_record.md`
-(`edb172f4…` → `a8aeb4b9…`) and `evidence_depth_ledger.json` (`4454b015…` →
-`9410fb08…`) were re-cut by the commissioning Chief Architect after an
-adjudicated remediation chain: a delegated semantic source review
+(`edb172f4…` → `a8aeb4b9…` → `193ca252…`) and `evidence_depth_ledger.json`
+(`4454b015…` → `9410fb08…` → `dda91e3e…`) were re-cut by the commissioning
+Chief Architect after an adjudicated remediation chain (second re-cut
+2026-08-06: four adjudicated corrections from the cross-vendor confirming
+re-check, AR-01..04, including two retailer axis-binding removals): a delegated semantic source review
 (cross-vendor, 2026-08-06) returned `NEEDS_ARCHITECTURE_PASS` for systemic
 `choice`/`explicit_outcome` misattribution in the community coding; a
 commissioned re-derivation re-coded all 355 outcome-bearing rows against raw

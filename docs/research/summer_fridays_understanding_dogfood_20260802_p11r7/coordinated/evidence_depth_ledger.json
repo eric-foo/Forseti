@@ -67,7 +67,7 @@
     {
       "artifact_id": "p11r5_retailer_axis_coding",
       "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_product_axis_coding.json",
-      "sha256": "ed1fca2f3fdcc84ee09db1c0574fad6278a483a4b12194f54b2b21343fca538e"
+      "sha256": "ae7dd09916d28eed58080dca9402d8a99504840fb506ac9363cd8741f25055be"
     },
     {
       "artifact_id": "p11r5_retailer_axis_report",
@@ -377,7 +377,7 @@
     {
       "artifact_id": "p11r7_community_axis_coding",
       "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json",
-      "sha256": "9d545838b4b5cefdef264f924709f472a2563ac056b76dfd7ba9d443818423d3"
+      "sha256": "64c34b767d7aa59a0488bffac82ec5b3b5db2c4f8375a5ccb3b45034b56c0350"
     },
     {
       "artifact_id": "p11r7_reddit_listing_policy_decisions",
@@ -11734,9 +11734,9 @@
         {
           "corpus_id": "sephora_product_group_reviews",
           "eligible_text_review_count": 2926,
-          "axis_mention_count": 517,
+          "axis_mention_count": 516,
           "negative_choice_review_count": 138,
-          "positive_choice_review_count": 41,
+          "positive_choice_review_count": 40,
           "disclosed_incentivized_axis_mention_count": 0
         }
       ],
@@ -16074,7 +16074,7 @@
           "unit_id": "1flu6u4",
           "contribution": "compares",
           "choice": "unstated",
-          "alternative_brand": "Glossier"
+          "alternative_brand": "Tower 28"
         },
         {
           "family": "reddit_forum",
@@ -16928,7 +16928,7 @@
           "family": "reddit_forum",
           "unit_id": "1szkvr3",
           "contribution": "compares",
-          "choice": "unstated",
+          "choice": "neither",
           "alternative_brand": "Rhode"
         },
         {
@@ -17314,9 +17314,9 @@
         {
           "corpus_id": "revolve_native_reviews",
           "eligible_text_review_count": 78,
-          "axis_mention_count": 16,
+          "axis_mention_count": 15,
           "negative_choice_review_count": 0,
-          "positive_choice_review_count": 5,
+          "positive_choice_review_count": 4,
           "disclosed_incentivized_axis_mention_count": 3
         },
         {

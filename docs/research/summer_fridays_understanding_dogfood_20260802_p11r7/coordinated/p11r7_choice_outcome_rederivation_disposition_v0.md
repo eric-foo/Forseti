@@ -67,6 +67,22 @@ as their negative counterpart; unresolvable referents carry
 - Comparison volume (`compares` 866), sharpening volume, axis assignments,
   and the 2,117 row×axis accounting are unchanged.
 
+## Confirming re-check and final adjudication (2026-08-06)
+
+A cross-vendor confirming re-check (OpenAI family; 40-row stratified
+re-derivation sample, marker legitimacy sweep, 25-row retailer spot check,
+mechanical revalidation) returned `CONFIRMED_WITH_FINDINGS`. All four findings
+were adjudicated and accepted: `1sahmci/odxxuca` re-typed retained →
+recommended (intent, not repurchase); `1szkvr3/oj3a5rj` restored as a
+segment-bound `rejected_or_not_recommended` (was over-demoted to no-event);
+`1flu6u4/lo6dau6` competitor corrected Glossier → Tower 28; two false retailer
+axis bindings removed (Sephora reaction split +41 → +40, Revolve hydration
++5 → +4). Corrected headline: retained 37, recommended 27, positive subtotal
+64, negative subtotal 142, net −78. Retailer referent-misattribution defect
+rate in the sample: 0/25; axis-binding noise: 2/25 — recorded as a known
+limitation, with a named trigger: any retailer split carrying decision weight
+in a memorandum gets its rows spot-checked at drafting time.
+
 ## Known boundaries
 
 - Retailer-review coding (3,200 rows) and native-social coding were not

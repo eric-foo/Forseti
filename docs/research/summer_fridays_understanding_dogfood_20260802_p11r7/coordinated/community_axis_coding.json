@@ -8907,7 +8907,7 @@
       ],
       "contribution": "compares",
       "choice": "unstated",
-      "alternative_brand": "Glossier",
+      "alternative_brand": "Tower 28",
       "explicit_outcome": "none_explicit",
       "source_ref": "https://www.reddit.com/r/Sephora/comments/1flu6u4/summer_fridays_vs_tower_28/",
       "parser_limitation": "thread declares 15 comments; 14 captured (1 not captured)",
@@ -17746,7 +17746,7 @@
       "contribution": "compares",
       "choice": "subject",
       "alternative_brand": "Ole Henriksen",
-      "explicit_outcome": "retained_or_repurchased",
+      "explicit_outcome": "recommended_or_would_purchase",
       "source_ref": "https://old.reddit.com/r/Sephora/comments/1sahmci/summer_fridays_released_the_toasted_marshmallow/",
       "parser_limitation": null,
       "evidence_text": "They changed the formula? Disappointing. I’ll get this one but if the new formula sucks I won’t even repurchase my pink sugar and sweet mint anymore and move onto rhode or ole henriksen"
@@ -18509,9 +18509,9 @@
         "hydration_and_moisture"
       ],
       "contribution": "compares",
-      "choice": "unstated",
+      "choice": "neither",
       "alternative_brand": "Rhode",
-      "explicit_outcome": "none_explicit",
+      "explicit_outcome": "rejected_or_not_recommended",
       "source_ref": "https://old.reddit.com/r/LipBalm/comments/1szkvr3/myth_busting/",
       "parser_limitation": null,
       "evidence_text": "Ole is really that good. It's thick and nourishing and lasts a long time for me. Top recommendation. Summer Fridays performs fine for me as a day to day lip balm but nothing life changing-I mainly love it for their delicious scents but wouldn't necessarily recommend for very dry lips in need of lasting moisture and nourishment. Fenty lip gloss-I've had mine for an embarrassing amount of time (I need to toss) and have had it rolling around in my giant purse and it has never leaked. Have not yet tried Rhode."
