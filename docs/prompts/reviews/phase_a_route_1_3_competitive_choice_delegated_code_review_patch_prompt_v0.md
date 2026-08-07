@@ -1,18 +1,18 @@
-# Phase A Route 1.3 Competitive-Choice Delegated Code Review + Patch Prompt v0
+# Intelligence Claim Support + Phase A Route 1.3 Delegated Code Review + Patch Prompt v0
 
 ```yaml
 retrieval_header_version: 1
 artifact_role: Review prompt artifact (delegated code review-and-patch commission, repo access mode)
 scope: >
   Paste-ready operator-courier commission for a different-vendor, repo-mode
-  review and bounded patch of the Phase A route 1.3 competitive-choice,
-  public-identity, semantic-value, and two-scope competitor-retailer change.
+  review and bounded patch of the cycle-wide intelligence claim-support
+  contract and its Phase A route 1.3 competitive-choice consumer.
 use_when:
-  - Couriering the success-implement review for implementation commit 83713ffa37cb8e77d590dbef59d3746a22cb9d51.
-  - Adjudicating whether route 1.3 stays evidence-only and fail-closed across code, tests, authority, prompt, playbook, and handoff.
+  - Couriering the success-implement review for implementation commit b4c9e2ca9a594ddb46f718ef6f4477768303e20b.
+  - Adjudicating whether the shared contract and route 1.3 consumer stay evidence-only and fail-closed across routing, authority, code, tests, dogfood, prompt, and playbook.
 authority_boundary: retrieval_only
 stale_if:
-  - Commit 83713ffa37cb8e77d590dbef59d3746a22cb9d51 is not an ancestor of the target branch.
+  - Commit b4c9e2ca9a594ddb46f718ef6f4477768303e20b is not an ancestor of the target branch.
   - Any named target changes before the delegate binds the reviewed revision.
   - The receiver lacks different-vendor lineage or direct repository write access.
 ```
@@ -40,15 +40,19 @@ below is observed and the who-constraint passes.
 
 ### Goal and success signal
 
-Review the Phase A route 1.3 implementation at
-`83713ffa37cb8e77d590dbef59d3746a22cb9d51` for the material failure class that
-can survive its own tests: the authority, execution prompt, seal schema,
-validator, and author-built fixtures may all share the same mistaken assumption
-and therefore agree while either (a) a final competitor label still substitutes
-for evidence of why customers choose, (b) aliased public actors receive false
-independence credit, (c) semantic price/value language escapes the required
-two-product context, or (d) actor-strategy positioning is silently treated as
-customer evidence.
+Review the cycle-wide intelligence claim-support contract and its Phase A route
+1.3 implementation at `b4c9e2ca9a594ddb46f718ef6f4477768303e20b`
+for material failure classes that can survive their own tests: the shared
+contract, cold-agent routing, execution prompt, seal schema, validator,
+author-built fixtures, and dogfood may all share the same mistaken assumption.
+In particular, test whether they can (a) mistake one testimonial for a
+directional finding, (b) treat likes as independent experiences or discard
+zero-engagement evidence entirely, (c) combine repetitions that do not bind the
+same product, axis, condition, formula, or time, (d) award cross-venue support
+to duplicated or incompetent source roles, (e) suppress counterevidence, (f)
+turn repeated reported reasons into general causal truth, or (g) conflate the
+new subject-claim support contract with the existing Judgment run-quality
+evidence ladder.
 
 Done means you have inspected the whole named diff against its owning sources,
 patched only accepted material defects inside the named set, run the named
@@ -68,7 +72,7 @@ receiver_binding:
   repository: C:\Users\vmon7\Desktop\projects\orca
   effective_target_worktree: C:\Users\vmon7\Desktop\projects\orca\.claude\worktrees\forseti-phase-a-choice-20260807
   target_branch: codex/phase-a-competitive-choice-20260807
-  required_revision: 83713ffa37cb8e77d590dbef59d3746a22cb9d51
+  required_revision: b4c9e2ca9a594ddb46f718ef6f4477768303e20b
   revision_mode: ancestor
   receiver_to_observe:
     - launch_root
@@ -114,10 +118,16 @@ targeted sections **When it applies**, **The loop**, **De-correlation**, and
 owned by `.agents/workflow-overlay/review-lanes.md`; review findings-first.
 Perform the binding intake before broader source loading. By the second
 latency-bearing tool call, inspect the actual diff for
-`origin/main..83713ffa37cb8e77d590dbef59d3746a22cb9d51`.
+`origin/main..b4c9e2ca9a594ddb46f718ef6f4477768303e20b`.
 
 Owning sources to judge against:
 
+- `AGENTS.md` — cold-agent trigger and project behavior kernel
+- `.agents/workflow-overlay/source-loading.md` — claim-support read-pack route
+- `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
+- `docs/research/judgment-spine/judgment_spine_consolidation_map_v0.md`
+- `forseti/product/spines/judgment/evidence_ladder/forseti_judgment_evidence_ladder_v0.md`
+  — read-only comparator for run-quality proof; do not collapse the two ladders
 - `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
 - `forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md`
 - `forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md`
@@ -129,22 +139,52 @@ Owning sources to judge against:
 
 Only these files are writable:
 
-1. `forseti-harness/runners/run_phase_acquisition_seal_validation.py`
-2. `forseti-harness/tests/unit/test_phase_acquisition_seal_validation.py`
-3. `forseti/product/spines/commission_signal_board/README.md`
-4. `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
-5. `forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md`
-6. `forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md`
-7. `docs/prompts/handoffs/phase_acquisition_validator_malformed_enum_hardening_handoff_20260807_v0.md`
+1. `AGENTS.md`
+2. `.agents/workflow-overlay/source-loading.md`
+3. `docs/research/judgment-spine/judgment_spine_consolidation_map_v0.md`
+4. `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
+5. `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/intelligence_claim_support_dogfood_20260807_v0.md`
+6. `forseti-harness/runners/run_phase_acquisition_seal_validation.py`
+7. `forseti-harness/tests/unit/test_phase_acquisition_seal_validation.py`
+8. `forseti/product/spines/commission_signal_board/README.md`
+9. `forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
+10. `forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md`
+11. `forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md`
+12. `docs/prompts/handoffs/phase_acquisition_validator_malformed_enum_hardening_handoff_20260807_v0.md`
 
 Everything else is read-only/flag-only, including this courier prompt,
-historical Summer Fridays research, generated/hash-pinned artifacts, overlay
-authority, and repository maps. Do not widen the set.
+the pre-existing Summer Fridays source evidence, generated/hash-pinned
+artifacts, other overlay authority, and other repository maps. Do not widen the
+set.
 
 ### Review focus
 
 Review the whole named diff, not only likely defects:
 
+- A cold Forseti actor that turns evidence into a finding, explanation, memo,
+  comparison, or recommendation is routed to one shared claim-support contract
+  across the intelligence cycle. Capture may preserve and nominate evidence but
+  cannot silently award corroboration or causal force.
+- The shared contract binds one exact proposition before support is counted:
+  subject, comparator if any, axis, direction, condition, formula/version, and
+  time. Repetitions that do not match that proposition stay separate.
+- `directly_observed` can establish a bounded official or measured fact without
+  pretending that a single testimonial establishes a customer tendency.
+  `isolated` evidence cannot set a directional choice advantage.
+- Engagement is represented as resonance or pseudo-corroboration, not an
+  independent-person count. Zero or negligible engagement supplies no resonance
+  credit but does not erase a raw observation, safety signal, or counterexample.
+- Independent repetition de-duplicates actor and syndicated origin.
+  Cross-venue corroboration requires at least two competent source roles that
+  can actually support the same proposition; source prestige is not a static
+  substitute for proposition fit.
+- Counterevidence is actively checked. Mixed evidence remains split or
+  conditional; contradicted evidence remains parity/unresolved. Repeated
+  self-attributions can support a repeated reported reason, never general causal
+  truth without a stronger design.
+- The new contract governs support for subject claims. The existing Judgment
+  evidence ladder governs proof that a Forseti run changed a decision. Neither
+  overwrites, duplicates, or silently scores the other.
 - Phase order stays `SERP Phase 1 -> pre-fanout qualification -> CO1/CO2/CO3
   fan-out -> post-return Phase 2 -> acquisition seal`; competitor status is
   sufficiently confirmed before core fan-out, while later role adjudication is
@@ -167,10 +207,12 @@ Review the whole named diff, not only likely defects:
 - The final semantic language-model pass catches price/value concepts outside
   tokenized axis IDs but cannot invent normalization, currency conversion, or
   equal-value claims.
-- The Summer Fridays example accurately reflects its cited historical files:
-  e.l.f./Rhode Phase 1 selection, the old Phase 2 watch-only result, the named
-  customer comments, price/size facts, and focal retailer counts. Examples do
-  not become current competitor verdicts or representative sentiment.
+- The Summer Fridays dogfood accurately traces every support posture to the
+  cited historical evidence. It does not promote engagement points to unique
+  experience counts, combine formula/time mismatches, use broad retailer wear
+  mentions as exact product-to-product corroboration, or turn price facts into
+  value/premium conclusions. Examples do not become current competitor verdicts
+  or representative sentiment.
 - The malformed-enum handoff remains a separate mechanical implementation
   commission and does not silently perform or authorize schema changes.
 - Diff scope is the smallest complete route change; reject extra ceremony,
@@ -188,9 +230,11 @@ Run and report observed output for:
 python -m pytest forseti-harness/tests/unit/test_phase_acquisition_seal_validation.py -q
 python -m compileall -q forseti-harness/runners/run_phase_acquisition_seal_validation.py
 python .agents/hooks/check_retrieval_header.py --changed --strict
+python .agents/hooks/check_placement.py --strict --base origin/main
 python .agents/hooks/check_prompt_output_mode.py --strict --base origin/main
 python .agents/hooks/check_handoff_pointers.py --strict --base origin/main
 python .agents/hooks/check_review_routing.py --strict --base origin/main
+python .agents/hooks/check_map_links.py --strict --base origin/main
 git diff --check
 ```
 
