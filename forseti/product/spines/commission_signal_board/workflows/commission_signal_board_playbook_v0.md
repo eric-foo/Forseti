@@ -307,10 +307,14 @@ not spend a separate sacrificial query.
 
    The inventory at this point is provisional and has no fixed axis count.
    Use its lightweight maturity scan to choose the material-exhaustion work;
-   do not spend the final semantic adjudication before the corpus is terminal.
-   After the evidence-floor plus material-exhaustion loop closes, final
-   adjudication may merge, split, rename, add, or exclude provisional axes and
-   then binds their decision-usefulness conclusions for the seal.
+   do not build the shared semantic proposition view before the admitted
+   corpus is terminal. After the evidence-floor plus material-exhaustion loop
+   closes, Route 1.4 accounts for every claim-bearing evidence unit and groups
+   semantically equivalent or opposing observations without losing their
+   product, comparator, condition, provenance, or source role. Final
+   adjudication then consumes that view and may merge, split, rename, add, or
+   exclude provisional axes before binding decision-usefulness conclusions for
+   the seal.
 
    A cold executor follows this order without reconstructing the authoring
    conversation:
@@ -348,10 +352,14 @@ not spend a separate sacrificial query.
    5. Terminally reconcile every selected target and candidate before treating
       the corpus as closed, including every comparator candidate from the
       Phase 1 frame and the lane emissions.
-   6. Only then perform final semantic adjudication, bind decision usefulness,
-      close the comparator set with terminal dispositions, record the route
-      version actually used in the seal's `understanding_route` block, run the
-      delegated source-native check, and validate the seal.
+   6. For Route 1.4, compile the terminal admitted corpus into the shared
+      semantic evidence integration view. Every claim-bearing unit must be
+      accounted for, and every proposition must retain its product/comparator
+      binding, conditions, counterevidence, support posture, and provenance.
+   7. Only then bind decision usefulness, close the comparator set with
+      terminal dispositions, record the route version actually used in the
+      seal's `understanding_route` block, run the delegated source-native
+      check, and validate the seal.
 
 Native TikTok, Instagram, or YouTube capture is licensed only when the SERP or
 social listing is ambiguous and opening the native item could change the bound
@@ -573,7 +581,7 @@ phase_acquisition_seal:
       status:
   route_job_accounting:
     - route_id:
-      phase: serp_phase1 | co1 | co2 | co3 | campaign_integration | serp_phase2
+      phase: serp_phase1 | co1 | co2 | co3 | campaign_integration | serp_phase2 | semantic_integration
       required: true | false
       material: true | false
       planned_job_ids: []
@@ -594,7 +602,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.3.0"
+    route_version: "1.4.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -652,6 +660,7 @@ phase_acquisition_seal:
             summary:
             axis_findings:
               - axis_id:
+                proposition_refs: []
                 choice_posture: subject_advantage | competitor_advantage | split_or_conditional | parity_or_unresolved
                 why:
                 conditions: []
@@ -723,6 +732,16 @@ phase_acquisition_seal:
         - request_id:
           target:
           disposition: captured | blocked | no_longer_material
+    semantic_evidence_integration:
+      status: completed | blocked
+      view:
+        locator:
+        sha256:
+      corpus_sha256:
+      unresolved_material_evidence_ids: []
+      emerging_axis_dispositions:
+        - label:
+          status: integrated_nonmaterial | axis_inventory_reconciled | blocked_material
     verification_requests:
       - request_id:
         product_identity:
@@ -785,7 +804,10 @@ every Phase 1 frame candidate, including the core two-origin/two-source-role
 bar and the per-product identity-evidence and price/size shape; at `1.3.0`,
 light public-actor de-duplication for credited origins and an evidence-backed
 axis-level competitive-choice explanation whose terminal role is derived only
-after the explanation;
+after the explanation; at `1.4.0`, a complete versioned semantic-integration
+view over the admitted claim-bearing corpus, proposition references on each
+material axis finding, source-role competence, counterevidence visibility, and
+artifact/hash binding;
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -1088,7 +1110,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.3.0
+  current_version: 1.4.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1184,6 +1206,28 @@ understanding_acquire_seal_route:
         migration/restart is recorded. New runs seal under 1.3.0. An authorized
         historical audit of a 1.2.0 seal enforces the full 1.2.0 obligation set
         and none of the 1.3.0 additions.
+    - version: 1.4.0
+      date: 2026-08-07
+      owning_change: Phase A semantic evidence integration implementation (this change's PR)
+      changed_behavior: >
+        Keeps the existing acquisition lanes and SERP sequence, then adds one
+        controller-owned evidence-structuring step after the admitted corpus is
+        terminal and before final judgment. A no-provider-API agent pass groups
+        evidence by meaning into shared propositions while retaining exact
+        product/comparator binding, conditions, provenance, source role,
+        counterevidence, and support posture. Every claim-bearing admitted unit
+        must be used or explicitly left unmerged; emerging axes stay visible.
+        Final comparator axis findings reference those propositions instead of
+        silently selecting a few convenient observations from the corpus.
+      affected_gate: >
+        Acquisition seal: route 1.4.0 requires a hash-bound
+        semantic_evidence_integration_view_v1 with complete admitted-evidence
+        accounting and proposition references for material comparator findings.
+      migration_note: >
+        A run started under 1.3.0 retains 1.3.0 unless an explicit
+        migration/restart is recorded. New runs seal under 1.4.0. An authorized
+        historical audit of a 1.3.0 seal enforces the full 1.3.0 obligation set
+        and none of the 1.4.0 additions.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

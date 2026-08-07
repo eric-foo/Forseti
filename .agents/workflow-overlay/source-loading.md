@@ -501,6 +501,7 @@ what captured material proves.
 Start with:
 
 - `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
+- `forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`
   for provenance, engagement-as-resonance, independent recurrence, cross-venue
   corroboration, counterevidence, scope, and causal ceilings.
 

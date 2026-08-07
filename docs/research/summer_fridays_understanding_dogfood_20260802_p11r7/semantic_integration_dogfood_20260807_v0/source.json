@@ -1,0 +1,72 @@
+{
+  "cycle_id": "summer-fridays-understanding-dogfood-p11r7",
+  "question_id": "phase-a-semantic-integration-dogfood",
+  "question": "What distinct customer-experience propositions are present, and which exact products are compared on each?",
+  "axes": [
+    {
+      "axis_id": "scent_and_flavor",
+      "label": "Scent and flavor"
+    },
+    {
+      "axis_id": "texture_and_skin_finish",
+      "label": "Texture, comfort, and finish"
+    },
+    {
+      "axis_id": "wear_and_longevity",
+      "label": "Wear and longevity"
+    }
+  ],
+  "source_artifacts": [
+    {
+      "artifact_id": "p11r7-community-axis-coding",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json",
+      "sha256": "fd2d9a57ce4a8474f2c3e785f7c3b8039bb39477722a4ee2eb03cc7e07093752"
+    }
+  ],
+  "evidence_units": [
+    {
+      "evidence_id": "reddit:1ft1w8d:lppwb5s",
+      "source_family": "reddit_community",
+      "source_role": "community_post",
+      "source_artifact_id": "p11r7-community-axis-coding",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1ft1w8d/summer_fridays_brown_sugar_mini_doesnt_seem_full/",
+      "text": "These smell good and more comfortable than ole henriksen and lasts longer on lips than laneige glowy but i find it to dissopear still too quickly :/ I used to use vanilla religiously but found better lip treatments.",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm",
+        "ole-henriksen-pout-preserve",
+        "laneige-lip-glowy-balm"
+      ],
+      "axis_candidates": [
+        "scent_and_flavor",
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "independence_key": "reddit:public-actor-unavailable",
+      "engagement": {
+        "material_positive": false,
+        "kind": "unavailable"
+      }
+    },
+    {
+      "evidence_id": "reddit:1h0wfao:lz75gqx",
+      "source_family": "reddit_community",
+      "source_role": "community_post",
+      "source_artifact_id": "p11r7-community-axis-coding",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/",
+      "text": "Laneige!!!! It's my daily driver! It's buttery smooth and not to thick or thin and lasts longer than summer Fridays imo. SF didn't do anything for me and felt like it had to constantly reapply.",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm",
+        "laneige-lip-glowy-balm"
+      ],
+      "axis_candidates": [
+        "texture_and_skin_finish",
+        "wear_and_longevity"
+      ],
+      "independence_key": "reddit:public-actor-unavailable",
+      "engagement": {
+        "material_positive": false,
+        "kind": "unavailable"
+      }
+    }
+  ]
+}

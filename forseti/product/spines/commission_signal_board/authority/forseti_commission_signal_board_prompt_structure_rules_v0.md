@@ -815,6 +815,26 @@ audience endorsement, never an independent-experience count. `Mixed` evidence
 must remain `split_or_conditional`, and an unchecked conflict posture cannot
 carry a directional finding.
 
+Route 1.4.0 adds the Judgment-owned Semantic Evidence Integration closure job
+after every selected acquisition and Phase 2-triggered job is terminal and
+before the seal. Follow
+`forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`.
+The controller verifies and hash-pins the admitted evidence set, renders
+bounded prompts, and gives them to a fresh agent; no runner calls a model API.
+The agent reads for meaning, splits multi-product or multi-axis statements,
+preserves conditions and opposition, and reconciles paraphrases. Deterministic
+code alone accounts every alias, resolves source artifacts, de-duplicates
+origins, checks source-role competence, derives support posture, and writes
+`semantic_evidence_integration_view_v1`.
+
+Current axes guide but do not cap discovery. A material emerging axis reopens
+only the affected work and invalidates the prior view; a nonmaterial candidate
+is explicitly dispositioned. Route-1.4 axis findings carry `proposition_refs`
+to the view. Any retained inline claim-support display is a mechanically
+derived compatibility projection and never a second authority. A passing seal
+requires a current view whose admitted and accounted evidence counts match,
+no unresolved material evidence, and terminal dispositions for emerging axes.
+
 Phase 2 runs targeted/J5 delta probes only for a named material gap left by the
 combined returns; it does not reacquire the fan-out corpus. A `promoted`
 (decision-ready) candidate requires both exact product identities and an
@@ -881,14 +901,18 @@ is a state snapshot.
 
 The v3 seal's `understanding_route` block carries `route_version`,
 `comparator_closure`, `campaign_evidence_integration`,
-`verification_requests`, and `retailer_state_accounting`; the playbook's seal
+`semantic_evidence_integration`, `verification_requests`, and
+`retailer_state_accounting`; the playbook's seal
 template shows the field shapes. The seal validator enforces: known route
 version; the `campaign_evidence_integration` route accounting and
 `campaign_integration` phase at route 1.1.0 and later; at route 1.2.0,
 per-frame-candidate pre-fanout posture, open-comparator discovery references,
 and the core exact-identity/shared-job/two-origin/two-source-role bar; at route
 1.3.0, public-actor identity de-duplication for credited origins and one
-axis-level competitive-choice explanation for every material candidate; view schema/subject/cycle
+axis-level competitive-choice explanation for every material candidate; at
+route 1.4.0, a material terminal semantic-integration job, current hash-pinned
+view, exact evidence coverage, proposition-to-axis resolution, source-role
+competence, and material unresolved/emerging-axis closure; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
@@ -910,7 +934,9 @@ version introduced — a `1.1.0` seal owes the full 1.1.0 accounting above, not
 only its campaign-integration row — and owes no obligation a later version
 introduced. Route 1.2.0's pre-fanout and price/size checks are therefore never
 back-claimed onto a `1.1.0` or `1.0.0` seal, and route 1.3.0's identity and
-choice-explanation fields are never back-claimed onto a 1.2.0 seal.
+choice-explanation fields are never back-claimed onto a 1.2.0 seal. Route
+1.4.0's semantic-integration job and proposition references are never
+back-claimed onto a 1.3.0 seal.
 
 ## Company Competitive-Intelligence Extension
 

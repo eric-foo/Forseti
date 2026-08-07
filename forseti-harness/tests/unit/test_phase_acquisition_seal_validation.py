@@ -776,12 +776,94 @@ def _campaign_view(tmp_path: Path) -> dict[str, str]:
     return {"locator": "campaign_evidence_view.json", "sha256": _artifact_hash(path)}
 
 
+def _semantic_integration_view(
+    tmp_path: Path,
+) -> tuple[dict[str, str], str, str]:
+    proposition_id = "prop-sf-elf-price"
+    corpus_sha256 = "1" * 64
+    view = {
+        "schema_version": "semantic_evidence_integration_view_v1",
+        "cycle_id": "summer_fridays_confirmation",
+        "question_id": "phase-a-evidence-integration",
+        "bundle_sha256": "2" * 64,
+        "corpus_sha256": corpus_sha256,
+        "method_version": "semantic_evidence_integration_method_v1",
+        "method_sha256": "3" * 64,
+        "coverage": {
+            "admitted_evidence_unit_count": 2,
+            "accounted_evidence_unit_count": 2,
+            "source_family_counts": {"owned_product": 2},
+            "unresolved_evidence_ids": [],
+            "complete": True,
+        },
+        "propositions": [
+            {
+                "proposition_id": proposition_id,
+                "bounded_proposition": (
+                    "At the observed US cutoff, the e.l.f. product had the lower "
+                    "sticker price; different size units remain unnormalized."
+                ),
+                "claim_kind": "observable_fact",
+                "subject_product_ids": ["sf-lbb"],
+                "comparator_product_ids": ["elf-glow-reviver"],
+                "axis_ids": ["price"],
+                "emerging_axis_labels": [],
+                "conditions": ["US prices observed at the same cutoff"],
+                "semantic_relations": {
+                    "support": ["sf-pdp::price", "elf-pdp::price"],
+                    "counter": [],
+                    "adjacent": [],
+                },
+                "claim_support": {
+                    "bounded_proposition": (
+                        "At the observed US cutoff, the e.l.f. product had the "
+                        "lower sticker price; different size units remain unnormalized."
+                    ),
+                    "support_posture": "directly_observed",
+                    "independent_origin_count": 2,
+                    "source_roles": ["owned_source"],
+                    "evidence_refs": ["sf-pdp", "elf-pdp"],
+                    "engagement_evidence_refs": [],
+                    "behavior_evidence_refs": [],
+                    "counterevidence_refs": [],
+                    "conflict_posture": "none_observed",
+                    "scope_conditions": ["US prices observed at the same cutoff"],
+                    "causal_ceiling": "descriptive_only",
+                },
+                "adjacent_evidence_refs": [],
+            }
+        ],
+        "emerging_axis_candidates": [],
+        "unmerged_semantic_units": [],
+    }
+    core = json.dumps(
+        view,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    view["view_sha256"] = __import__("hashlib").sha256(core).hexdigest()
+    path = tmp_path / "semantic_evidence_integration_view.json"
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    return (
+        {
+            "locator": path.name,
+            "sha256": _artifact_hash(path),
+        },
+        proposition_id,
+        corpus_sha256,
+    )
+
+
 def _understanding_route(tmp_path: Path) -> dict:
     frame = _artifact(tmp_path, "serp_phase1_comparator_frame.md")
     adjudicated = _artifact(tmp_path, "serp_phase2_adjudicated_set.md")
     verification_return = _artifact(tmp_path, "verification_return.md")
+    semantic_view, price_proposition_id, corpus_sha256 = (
+        _semantic_integration_view(tmp_path)
+    )
     return {
-        "route_version": "1.3.0",
+        "route_version": "1.4.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -873,6 +955,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                                     "US prices observed at the same cutoff"
                                 ],
                                 "evidence_refs": ["sf-pdp", "elf-pdp"],
+                                "proposition_refs": [price_proposition_id],
                                 "claim_support": {
                                     "bounded_proposition": (
                                         "At the observed US cutoff, the e.l.f. "
@@ -1081,6 +1164,13 @@ def _understanding_route(tmp_path: Path) -> dict:
                 }
             ],
         },
+        "semantic_evidence_integration": {
+            "status": "completed",
+            "view": semantic_view,
+            "corpus_sha256": corpus_sha256,
+            "unresolved_material_evidence_ids": [],
+            "emerging_axis_dispositions": [],
+        },
         "verification_requests": [
             {
                 "request_id": "VER-001",
@@ -1215,6 +1305,23 @@ def _blocked_seal(tmp_path: Path) -> dict:
         "terminal_artifact_locator": campaign_view["locator"],
         "terminal_artifact_sha256": campaign_view["sha256"],
     }
+    semantic_view = understanding_route["semantic_evidence_integration"]["view"]
+    semantic_route = {
+        "route_id": "semantic_evidence_integration",
+        "phase": "semantic_integration",
+        "required": True,
+        "material": True,
+        "planned_job_ids": ["SEI-001"],
+        "planned_count": 1,
+        "completed_job_ids": ["SEI-001"],
+        "completed_count": 1,
+        "blocked_job_ids": [],
+        "blocked_count": 0,
+        "unrun_job_ids": [],
+        "unrun_count": 0,
+        "terminal_artifact_locator": semantic_view["locator"],
+        "terminal_artifact_sha256": semantic_view["sha256"],
+    }
     return {
         "schema_version": SEAL_VERSION,
         "cycle_id": "summer_fridays_confirmation",
@@ -1274,6 +1381,7 @@ def _blocked_seal(tmp_path: Path) -> dict:
             },
             *specialist_routes,
             campaign_route,
+            semantic_route,
             {
                 "route_id": "serp_phase2",
                 "phase": "serp_phase2",
@@ -3816,6 +3924,31 @@ def _rewrite_campaign_view(tmp_path: Path, seal: dict, mutate) -> None:
             row["terminal_artifact_sha256"] = view_ref["sha256"]
 
 
+def _rewrite_semantic_view(
+    tmp_path: Path, seal: dict, mutate, *, refresh_internal_hash: bool = True
+) -> None:
+    view_ref = seal["understanding_route"]["semantic_evidence_integration"][
+        "view"
+    ]
+    path = tmp_path / view_ref["locator"]
+    view = json.loads(path.read_text(encoding="utf-8"))
+    mutate(view)
+    if refresh_internal_hash:
+        view.pop("view_sha256", None)
+        core = json.dumps(
+            view,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        view["view_sha256"] = __import__("hashlib").sha256(core).hexdigest()
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    view_ref["sha256"] = _artifact_hash(path)
+    for row in seal["route_job_accounting"]:
+        if row.get("route_id") == "semantic_evidence_integration":
+            row["terminal_artifact_sha256"] = view_ref["sha256"]
+
+
 def test_seal_without_route_version_blocks_by_default(tmp_path: Path) -> None:
     seal = _blocked_seal(tmp_path)
     del seal["understanding_route"]
@@ -3886,6 +4019,123 @@ def test_current_route_requires_campaign_integration_accounting(
         "missing_required_route_accounting:campaign_evidence_integration"
         in _validate(tmp_path, seal)
     )
+
+
+def test_current_route_requires_semantic_integration_accounting(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "semantic_evidence_integration"
+    ]
+
+    assert (
+        "missing_required_route_accounting:semantic_evidence_integration"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_historical_route_1_3_does_not_owe_semantic_integration(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.3.0"
+    seal["understanding_route"].pop("semantic_evidence_integration")
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "semantic_evidence_integration"
+    ]
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert not [finding for finding in findings if "semantic_integration" in finding]
+
+
+def test_semantic_integration_requires_complete_coverage(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["coverage"]["accounted_evidence_unit_count"] = 1
+        view["coverage"]["complete"] = False
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "incomplete_semantic_integration_coverage" in _validate(tmp_path, seal)
+
+
+def test_semantic_integration_rejects_incompetent_source_role(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        proposition = view["propositions"][0]
+        proposition["claim_kind"] = "customer_experience"
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "incompetent_semantic_integration_source_role:prop-sf-elf-price"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_semantic_integration_corpus_hash_must_match_seal_pointer(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "corpus_sha256"
+    ] = "9" * 64
+
+    assert "semantic_integration_corpus_hash_mismatch" in _validate(tmp_path, seal)
+
+
+def test_comparator_axis_must_resolve_semantic_proposition(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    axis = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]
+    axis["proposition_refs"] = ["prop-does-not-exist"]
+
+    assert (
+        "unknown_comparator_choice_axis_proposition:cand-elf:prop-does-not-exist"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_passing_seal_rejects_unresolved_material_semantic_evidence(
+    tmp_path: Path,
+) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "unresolved_material_evidence_ids"
+    ] = ["reddit:material-unresolved"]
+
+    assert (
+        "passing_seal_with_unresolved_material_semantic_evidence"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_semantic_integration_internal_hash_is_verified(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["coverage"]["source_family_counts"] = {"tampered": 2}
+
+    _rewrite_semantic_view(
+        tmp_path, seal, mutate, refresh_internal_hash=False
+    )
+
+    assert "semantic_integration_internal_hash_mismatch" in _validate(tmp_path, seal)
 
 
 def test_historical_route_1_1_retains_campaign_integration_accounting(

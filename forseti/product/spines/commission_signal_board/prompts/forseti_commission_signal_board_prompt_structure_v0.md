@@ -886,6 +886,20 @@ ceiling; do not let an isolated testimonial set an advantage; and keep mixed
 evidence split or conditional. A directly observed bounded fact may carry only
 that fact. Audience engagement is resonance corroboration, not an independent
 experience count.
+
+For a new broad consumer-brand run, use Route 1.4's semantic evidence
+integration after the admitted evidence corpus and all selected acquisition
+jobs, including SERP Phase 2, are terminal. Follow
+`forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`.
+The integration agent groups evidence by meaning rather than keyword match,
+but it may use only the admitted evidence units and provenance supplied in the
+bundle. It must account for every claim-bearing unit, keep exact products and
+comparators attached to the right proposition, preserve conditions and
+counterevidence, and expose emerging axes instead of silently forcing them
+into the provisional inventory. Its versioned integration view is the shared
+proposition source for final axis findings; the inline `claim_support` block is
+a compatibility projection of those referenced propositions, not a second
+independent judgment. No model-provider API call is licensed by this route.
 Run targeted delta queries only for a named material gap left by the combined
 returns. Do not issue a recommendation, market conclusion, or Deliver output.
 
@@ -910,9 +924,12 @@ bars; do not reconstruct them from this prompt.
 
 Sequence the judgment correctly: use a lightweight provisional maturity scan
 to direct the evidence-floor and material-exhaustion loop, terminally account
-the resulting corpus, and only then perform final semantic adjudication and its
-delegated source check. The provisional scan is routing input, not a finished
-competitive-intelligence conclusion.
+the resulting corpus, compile the admitted evidence into the Route 1.4 shared
+semantic proposition view, and only then perform final decision-usefulness and
+competitor adjudication plus its delegated source check. The provisional scan
+is routing input, not a finished competitive-intelligence conclusion, and the
+semantic view is evidence structure, not a recommendation or market
+conclusion.
 
 Before accepting the completed Phase A seal for synthesis or landing it, run the
 authority's final delegated semantic review-and-patch. Require the reviewer to
