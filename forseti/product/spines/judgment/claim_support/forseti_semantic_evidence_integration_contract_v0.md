@@ -279,9 +279,10 @@ Current-route operations are:
    acquisition seal.
 3. `build-serp-source-surface-spec` hash-pins the bounded job-to-packet map;
    `prepare-serp-source-frontier` enumerates every source-bearing row; and
-   `materialize-serp-source-frontier-review` applies an agent-authored semantic
-   review, mechanically deduplicates repeated locators, and emits the recovery
-   targets that target reconciliation must settle.
+   `materialize-serp-source-frontier-review` accepts one explicit agent-authored
+   decision for every inventory row (no bulk/default decision), mechanically
+   deduplicates repeated locators, and emits recovery targets that target
+   reconciliation must settle.
 4. `census-phase-a-corpus` independently proves the captured Reddit and
    retailer customer-corpus denominators where those Phase A source shapes are
    present.
@@ -350,8 +351,10 @@ A passing route-1.7.0 seal additionally requires one embedded
 Phase 2 job sets must exactly match the sealed jobs, every focused-search SERP
 packet must be admitted, and every source-bearing result row from those bounded
 surfaces must receive exactly one agent-semantic disposition: `routed`,
-`duplicate`, or `excluded`. A routed row points to an existing native-capture
-or locator-recovery target; a duplicate points directly to a routed owner; an
+`duplicate`, or `excluded`; a bulk/default routing decision is invalid. A
+routed row points to an existing native-capture or locator-recovery target with
+the exact source URL (or its deterministic recovery locator) and a discovery
+job recorded by that row's packet; a duplicate points directly to a routed owner; an
 excluded row carries a reason. People-also-ask and related-search prompts are
 Google navigation aids, not external sources. This closes the SERP-to-native
 linking gap without crawling result pagination or treating SERP text as native

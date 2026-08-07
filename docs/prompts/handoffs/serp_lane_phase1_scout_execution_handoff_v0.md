@@ -140,7 +140,9 @@ target and a review axis-to-attack, not a review pass bar.
    the job-to-packet mapping in the evidence-depth ledger's
    `serp_source_frontier`; a later semantic pass classifies every source-bearing
    row exactly once. People-also-ask and related-search prompts are retained in
-   the packet but are not external-source rows.
+   the packet but are not external-source rows. Each later decision must name
+   one row identity and reason; a bulk/default routed decision is not a
+   semantic disposition.
 
 ## If unsure, proceed like this
 

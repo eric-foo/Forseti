@@ -233,7 +233,12 @@ def eligible_serp_source_rows(
         )
         if not source_bearing:
             continue
-        if not isinstance(module, str) or not module or not isinstance(order, int):
+        if (
+            not isinstance(module, str)
+            or not module
+            or not isinstance(order, int)
+            or isinstance(order, bool)
+        ):
             raise SemanticIntegrationError(
                 "source-bearing SERP row lacks stable module identity"
             )
@@ -390,28 +395,35 @@ def materialize_serp_source_frontier_review(
         or review.get("model_api_calls") != 0
     ):
         raise SemanticIntegrationError("SERP source review lacks no-API semantic posture")
-    default = review.get("default_semantic_decision")
-    if (
-        not isinstance(default, Mapping)
-        or default.get("disposition") != "routed"
-        or not _nonempty(default.get("reason"))
-    ):
-        raise SemanticIntegrationError("SERP source review lacks a routed semantic default")
-    overrides = review.get("row_overrides", [])
-    if not isinstance(overrides, list):
-        raise SemanticIntegrationError("SERP source review overrides must be a list")
-    override_index: dict[tuple[str, str, int], Mapping[str, Any]] = {}
-    for row in overrides:
+    # A default would turn one agent judgment into an arbitrary bulk route.
+    # Every external-source row must instead carry its own reviewed decision.
+    if "default_semantic_decision" in review:
+        raise SemanticIntegrationError("SERP source review cannot use a default semantic decision")
+    decisions = review.get("row_decisions")
+    if not isinstance(decisions, list):
+        raise SemanticIntegrationError("SERP source review decisions must be a list")
+    decision_index: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for row in decisions:
         if not isinstance(row, Mapping):
-            raise SemanticIntegrationError("SERP source review has invalid override")
-        key = (row.get("artifact_id"), row.get("module_type"), row.get("order_in_module"))
-        if key in override_index:
-            raise SemanticIntegrationError("SERP source review has duplicate override")
+            raise SemanticIntegrationError("SERP source review has invalid decision")
+        artifact_id = row.get("artifact_id")
+        module_type = row.get("module_type")
+        order = row.get("order_in_module")
+        if (
+            not _nonempty(artifact_id)
+            or not _nonempty(module_type)
+            or not isinstance(order, int)
+            or isinstance(order, bool)
+        ):
+            raise SemanticIntegrationError("SERP source review decision has invalid row identity")
+        key = (artifact_id, module_type, order)
+        if key in decision_index:
+            raise SemanticIntegrationError("SERP source review has duplicate decision")
         if row.get("disposition") not in {"routed", "excluded"} or not _nonempty(
             row.get("reason")
         ):
-            raise SemanticIntegrationError("SERP source review override is incomplete")
-        override_index[key] = row
+            raise SemanticIntegrationError("SERP source review decision is incomplete")
+        decision_index[key] = row
     rows = inventory.get("row_inventory")
     if not isinstance(rows, list):
         raise SemanticIntegrationError("SERP source inventory lacks rows")
@@ -420,8 +432,8 @@ def materialize_serp_source_frontier_review(
         for row in rows
         if isinstance(row, Mapping)
     }
-    if not set(override_index).issubset(row_keys):
-        raise SemanticIntegrationError("SERP source review overrides unknown rows")
+    if set(decision_index) != row_keys:
+        raise SemanticIntegrationError("SERP source review decisions do not exactly cover inventory rows")
     artifact_jobs: dict[str, str] = {}
     for surface in inventory.get("search_surfaces", []):
         if isinstance(surface, Mapping) and _nonempty(surface.get("job_id")):
@@ -435,7 +447,7 @@ def materialize_serp_source_frontier_review(
         if not isinstance(row, Mapping):
             raise SemanticIntegrationError("SERP source inventory has invalid row")
         key = (row["artifact_id"], row["module_type"], row["order_in_module"])
-        decision = override_index.get(key, default)
+        decision = decision_index[key]
         reason = decision["reason"]
         classification = {
             "artifact_id": key[0],

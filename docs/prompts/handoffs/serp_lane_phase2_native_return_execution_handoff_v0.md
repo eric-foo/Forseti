@@ -164,6 +164,9 @@ routes; it does not claim that the whole internet was searched.
    row as `routed`, `duplicate`, or `excluded`; relevance is decided from the
    row's meaning, not an exact-word rule. A relevant row without a canonical
    URL routes to one bounded locator-recovery target rather than disappearing.
+   Each decision names its row identity and reason; a bulk/default route is
+   invalid. A routed target preserves the source URL, or the deterministic
+   recovery locator when the URL is absent, and a job from that packet surface.
 6. **Seal and consolidate.** Seal through the lifecycle adapter using only the
    persisted claims and store-supplied prior receipts. Persist the decision
    receipt and lifecycle provenance. Update the typed ledger, unmet-value map

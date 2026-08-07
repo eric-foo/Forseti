@@ -1733,6 +1733,8 @@ def test_consumer_brand_v2_passes_with_axis_evidence_and_coding(
     [
         ("drop_row", "serp_source_frontier_row_set_mismatch"),
         ("unknown_target", "unresolved_serp_source_frontier_target"),
+        ("target_locator_mismatch", "serp_source_frontier_target_locator_mismatch"),
+        ("target_job_mismatch", "serp_source_frontier_target_job_mismatch"),
         ("missing_reason", "missing_serp_source_frontier_reason"),
         ("drop_phase_job", "incomplete_serp_source_frontier_jobs:serp_phase2"),
     ],
@@ -1749,6 +1751,10 @@ def test_route_1_7_serp_frontier_fails_closed_on_silent_link_loss(
         frontier["row_classifications"] = []
     elif mutation == "unknown_target":
         frontier["row_classifications"][0]["target_id"] = "not-a-target"
+    elif mutation == "target_locator_mismatch":
+        ledger["target_reconciliation"][0]["locator"] = "https://example.test/other"
+    elif mutation == "target_job_mismatch":
+        ledger["target_reconciliation"][0]["discovered_by_job_id"] = "unrelated-job"
     elif mutation == "missing_reason":
         frontier["row_classifications"][0]["reason"] = ""
     elif mutation == "drop_phase_job":
@@ -1774,6 +1780,9 @@ def test_route_1_7_serp_frontier_excludes_google_prompts_and_routes_url_recovery
         row for row in ledger["artifacts"] if row["artifact_id"] == "serp-packet"
     )
     artifact["sha256"] = _artifact_hash(serp_path)
+    ledger["target_reconciliation"][0]["locator"] = (
+        "serp-locator-recovery:serp-packet:organic:1"
+    )
     _rewrite_depth_reference(seal, ledger_path, ledger)
 
     # The source-bearing row remains routed through target reconciliation;

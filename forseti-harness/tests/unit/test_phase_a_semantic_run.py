@@ -588,11 +588,15 @@ def test_serp_frontier_inventory_enumerates_sources_without_google_prompts(
             "inventory_sha256": inventory["inventory_sha256"],
             "review_method": "agent_semantic_judgment",
             "model_api_calls": 0,
-            "default_semantic_decision": {
-                "disposition": "routed",
-                "reason": "The row is a plausible native evidence door.",
-            },
-            "row_overrides": [],
+            "row_decisions": [
+                {
+                    "artifact_id": "serp-1",
+                    "module_type": "organic",
+                    "order_in_module": 1,
+                    "disposition": "routed",
+                    "reason": "The row is a plausible native evidence door.",
+                }
+            ],
         },
     )
     result = materialize_serp_source_frontier_review(
@@ -604,6 +608,52 @@ def test_serp_frontier_inventory_enumerates_sources_without_google_prompts(
         "excluded": 0,
     }
     assert len(result["locator_recovery_targets"]) == 1
+
+
+def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
+    tmp_path: Path,
+) -> None:
+    inventory = {
+        "schema_version": "phase_a_serp_source_inventory_v1",
+        "inventory_sha256": "inventory-hash",
+        "row_inventory": [
+            {"artifact_id": "serp-1", "module_type": "organic", "order_in_module": 1}
+        ],
+        "search_surfaces": [],
+    }
+    inventory_path = tmp_path / "inventory.json"
+    _write_json(inventory_path, inventory)
+    review_path = tmp_path / "review.json"
+    _write_json(
+        review_path,
+        {
+            "schema_version": "phase_a_serp_source_review_v1",
+            "inventory_sha256": "inventory-hash",
+            "review_method": "agent_semantic_judgment",
+            "model_api_calls": 0,
+            "default_semantic_decision": {"disposition": "routed", "reason": "bulk"},
+            "row_decisions": [],
+        },
+    )
+    with pytest.raises(SemanticIntegrationError, match="cannot use a default"):
+        materialize_serp_source_frontier_review(
+            inventory_path=inventory_path, review_path=review_path
+        )
+
+    _write_json(
+        review_path.with_name("missing.json"),
+        {
+            "schema_version": "phase_a_serp_source_review_v1",
+            "inventory_sha256": "inventory-hash",
+            "review_method": "agent_semantic_judgment",
+            "model_api_calls": 0,
+            "row_decisions": [],
+        },
+    )
+    with pytest.raises(SemanticIntegrationError, match="exactly cover"):
+        materialize_serp_source_frontier_review(
+            inventory_path=inventory_path, review_path=review_path.with_name("missing.json")
+        )
 
 
 def test_census_rejects_a_union_that_silently_drops_captured_threads(

@@ -26,10 +26,12 @@ review membership through the source-native structures for Bazaarvoice,
 Amazon, and Revolve. The complete bounded SERP dogfood covered 32 preserved
 packet surfaces: all 12 sealed Phase 1 jobs, all 8 sealed Phase 2 jobs, and 12
 later product-axis packets. It enumerated 371 external-source-bearing result
-rows. After semantic review, 315 unique native or locator-recovery targets were
-routed, 54 repeated locators were linked as duplicates, and 2 unrelated rows
-were explicitly excluded. Google people-also-ask and related-search prompts
-were not counted as external sources. No pagination or wider web crawl ran.
+rows. The pre-hardening review record produced 315 unique native or
+locator-recovery targets, 54 repeated-locator duplicates, and 2 explicit
+exclusions. It used one routed default for the other 369 rows, so these are
+mechanical-output observations, not a compliant per-row Route 1.7 semantic
+review. Google people-also-ask and related-search prompts were not counted as
+external sources. No pagination or wider web crawl ran.
 
 | Corpus | Captured | Readable / assessable | Mechanical exclusion |
 |---|---:|---:|---:|
@@ -82,9 +84,14 @@ the two exhaustive semantic sources blocked: `reddit_community_scout` and
 SERP recovery targets are retrospective work candidates, not claims that native
 capture has completed.
 
+The recorded SERP review must also be redone with one explicit decision for
+each of the 371 inventory rows before it can support Route 1.7 linkage claims;
+the controller now rejects its routed default. The captured target counts do
+not prove that individual review or target-to-row binding.
+
 Therefore this is a successful implementation and real denominator dogfood,
-not a completed Summer Fridays integration view, acquisition reseal, market
-conclusion, or Deliver artifact.
+not a completed Summer Fridays integration view, Route 1.7 SERP-linking
+review, acquisition reseal, market conclusion, or Deliver artifact.
 
 ## Lineage
 

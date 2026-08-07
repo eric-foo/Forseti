@@ -855,7 +855,8 @@ review records under raw-byte-pinned files, never from a whole-file substring.
 The evidence-depth ledger also carries one `phase_a_serp_source_frontier_v1`.
 For the exact jobs sealed in SERP Phase 1 and Phase 2, plus every bounded
 focused-search packet, a fresh agent reads each source-bearing result row for
-meaning and marks it `routed`, `duplicate`, or `excluded`. Deterministic code
+meaning and marks it `routed`, `duplicate`, or `excluded` in one explicit
+row-identified decision; a bulk/default route is invalid. Deterministic code
 checks exact row coverage and target resolution; it does not infer relevance
 from keywords. Routed rows bind to an existing native-capture or
 locator-recovery target. Google people-also-ask and related-search prompts are

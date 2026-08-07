@@ -2030,6 +2030,7 @@ def _validate_serp_source_frontier(
         return False
     observed_phase_jobs = {phase: set() for phase in phase_job_ids}
     admitted_artifacts: set[str] = set()
+    artifact_jobs: dict[str, set[str]] = {}
     for row in surfaces:
         if not isinstance(row, dict):
             findings.append("invalid_serp_source_frontier_surface")
@@ -2059,6 +2060,10 @@ def _validate_serp_source_frontier(
             complete = False
             continue
         admitted_artifacts.update(artifact_ids)
+        if isinstance(job_id, str):
+            for artifact_id in artifact_ids:
+                if isinstance(artifact_id, str):
+                    artifact_jobs.setdefault(artifact_id, set()).add(job_id)
     for phase, expected in phase_job_ids.items():
         if observed_phase_jobs[phase] != expected:
             findings.append(f"incomplete_serp_source_frontier_jobs:{phase}")
@@ -2112,9 +2117,26 @@ def _validate_serp_source_frontier(
         if not str(row.get("reason", "")).strip():
             findings.append("missing_serp_source_frontier_reason")
             complete = False
-        if disposition == "routed" and row.get("target_id") not in targets:
-            findings.append("unresolved_serp_source_frontier_target")
-            complete = False
+        if disposition == "routed":
+            target = targets.get(row.get("target_id"))
+            if target is None:
+                findings.append("unresolved_serp_source_frontier_target")
+                complete = False
+            else:
+                source_row = eligible.get(key)
+                expected_locator = (
+                    source_row.get("canonical_url")
+                    if isinstance(source_row, Mapping)
+                    and isinstance(source_row.get("canonical_url"), str)
+                    and source_row["canonical_url"].strip()
+                    else f"serp-locator-recovery:{key[0]}:{key[1]}:{key[2]}"
+                )
+                if target.get("locator") != expected_locator:
+                    findings.append("serp_source_frontier_target_locator_mismatch")
+                    complete = False
+                if target.get("discovered_by_job_id") not in artifact_jobs.get(key[0], set()):
+                    findings.append("serp_source_frontier_target_job_mismatch")
+                    complete = False
         if disposition == "duplicate":
             duplicate = row.get("duplicate_of")
             if not isinstance(duplicate, dict):

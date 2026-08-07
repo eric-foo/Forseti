@@ -816,8 +816,9 @@ evidence-item/container/origin/role/engagement counts;
 at `1.7.0`, exhaustive semantic processing is limited to Reddit/community
 conversation text and retailer review text, while other evidence routes remain
 verified structured references, and every source-bearing row from the bounded
-Phase 1, Phase 2, and focused-search SERP surfaces is semantically routed,
-deduplicated, or excluded exactly once before seal;
+Phase 1, Phase 2, and focused-search SERP surfaces has one explicit
+row-identified semantic route, duplicate, or exclusion before seal (never a
+bulk/default route);
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -1296,8 +1297,9 @@ understanding_acquire_seal_route:
         retailer review text. Other acquired evidence remains hash-verified as
         structured references. Every source-bearing result row from the sealed
         Phase 1 and Phase 2 jobs and every focused-search SERP packet receives
-        exactly one agent-semantic routed, duplicate, or excluded disposition;
-        routed rows bind to native capture or locator recovery. Retailer source
+        exactly one explicit row-identified agent-semantic routed, duplicate,
+        or excluded disposition; a bulk/default route is invalid. Routed rows
+        bind to native capture or locator recovery. Retailer source
         files are raw-byte pinned and review membership is structurally checked.
       affected_gate: >
         Acquisition seal: route 1.7.0 requires a complete embedded
