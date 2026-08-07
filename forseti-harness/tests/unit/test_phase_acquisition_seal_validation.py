@@ -4359,6 +4359,41 @@ def test_route_1_6_mixed_containers_must_be_support_and_counter_overlap(
     )
 
 
+def test_route_1_6_container_type_counts_must_match_supporting_containers(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["propositions"][0]["evidence_stack"][
+            "support_container_counts_by_type"
+        ] = {"community_thread": 7}
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "semantic_integration_container_type_count_mismatch:prop-sf-elf-price"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_route_1_6_stack_containers_must_be_disclosed_capture_envelopes(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        stack = view["propositions"][0]["evidence_stack"]
+        stack["support_container_ids"] = ["owned:sf-pdp", "community:undisclosed"]
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "semantic_integration_container_not_in_capture_envelopes:prop-sf-elf-price"
+        in _validate(tmp_path, seal)
+    )
+
+
 def test_route_1_6_bounded_regression_is_not_final_corpus_seal_proof(
     tmp_path: Path,
 ) -> None:

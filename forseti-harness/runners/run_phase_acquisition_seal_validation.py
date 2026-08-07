@@ -4117,6 +4117,10 @@ def _validate_semantic_evidence_integration(
     if internal_hash != observed_internal:
         findings.append("semantic_integration_internal_hash_mismatch")
     coverage = view.get("coverage")
+    # Disclosed container postures are the only independent statement of which
+    # containers exist and what type each one is, so keep them for the
+    # evidence-stack container checks below.
+    envelope_container_types: dict[str, str] | None = None
     if not isinstance(coverage, dict):
         findings.append("missing_semantic_integration_coverage")
     elif route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
@@ -4207,6 +4211,11 @@ def _validate_semantic_evidence_integration(
                 "captured_item_count"
             ):
                 findings.append("semantic_integration_capture_envelope_leaf_mismatch")
+            if len(envelope_ids) == len(envelopes):
+                envelope_container_types = {
+                    envelope["container_id"]: envelope["container_type"]
+                    for envelope in envelopes
+                }
     else:
         admitted = coverage.get("admitted_evidence_unit_count")
         accounted = coverage.get("accounted_evidence_unit_count")
@@ -4391,6 +4400,7 @@ def _validate_semantic_evidence_integration(
                     proposition=proposition,
                     support=support,
                     proposition_id=proposition_id,
+                    container_types=envelope_container_types,
                     findings=findings,
                 )
     return index
@@ -4410,6 +4420,7 @@ def _check_evidence_stack_dimensions(
     proposition: Mapping[str, Any],
     support: Mapping[str, Any],
     proposition_id: str,
+    container_types: Mapping[str, str] | None,
     findings: list[str],
 ) -> None:
     """Bind each route-1.6 stack dimension to the block it claims to count.
@@ -4469,6 +4480,39 @@ def _check_evidence_stack_dimensions(
     if set(mixed_containers) != set(support_containers) & set(counter_containers):
         findings.append(
             f"semantic_integration_mixed_container_mismatch:{proposition_id}"
+        )
+    # A stack may only cite containers the capture envelopes disclose, and its
+    # per-type breakdown is a restatement of those same containers. Left
+    # untethered, either one could assert breadth -- more containers, or a more
+    # independent container type -- that the disclosed corpus never captured.
+    by_type = stack.get("support_container_counts_by_type")
+    if not isinstance(by_type, Mapping) or any(
+        not isinstance(name, str)
+        or not name
+        or not isinstance(count, int)
+        or isinstance(count, bool)
+        or count < 1
+        for name, count in by_type.items()
+    ):
+        findings.append(
+            f"invalid_semantic_integration_container_type_counts:{proposition_id}"
+        )
+        return
+    if container_types is None:
+        return
+    cited = set(support_containers) | set(counter_containers)
+    if cited - set(container_types):
+        findings.append(
+            f"semantic_integration_container_not_in_capture_envelopes:{proposition_id}"
+        )
+        return
+    expected_by_type: dict[str, int] = {}
+    for container_id in set(support_containers):
+        name = container_types[container_id]
+        expected_by_type[name] = expected_by_type.get(name, 0) + 1
+    if dict(by_type) != expected_by_type:
+        findings.append(
+            f"semantic_integration_container_type_count_mismatch:{proposition_id}"
         )
 
 
