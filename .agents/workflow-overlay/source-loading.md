@@ -501,9 +501,11 @@ what captured material proves.
 Start with:
 
 - `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
-- `forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`
   for provenance, engagement-as-resonance, independent recurrence, cross-venue
   corroboration, counterevidence, scope, and causal ceilings.
+- `forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`
+  for compiling one completed acquisition corpus into the meaning-aware
+  proposition view; it defers claim-support semantics to the contract above.
 
 Then open only the source that owns the consuming schema or decision. This pack
 does not replace source-family capture rules or the Judgment Spine Evidence

@@ -4138,6 +4138,59 @@ def test_semantic_integration_internal_hash_is_verified(tmp_path: Path) -> None:
     assert "semantic_integration_internal_hash_mismatch" in _validate(tmp_path, seal)
 
 
+def test_unresolved_material_ids_must_exist_in_view_coverage(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "unresolved_material_evidence_ids"
+    ] = ["ghost:not-in-view"]
+
+    assert (
+        "semantic_integration_unresolved_material_not_in_view"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_inline_claim_support_projection_cannot_diverge_from_proposition(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    axis = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]
+    axis["claim_support"]["support_posture"] = "cross_venue_corroborated"
+
+    findings = _validate(tmp_path, seal)
+
+    assert any(
+        finding.startswith(
+            "comparator_choice_claim_support_projection_divergence:cand-elf"
+        )
+        for finding in findings
+    )
+
+
+def test_duplicate_emerging_axis_disposition_labels_are_rejected(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["emerging_axis_candidates"] = ["application_ritual"]
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "emerging_axis_dispositions"
+    ] = [
+        {"label": "application_ritual", "status": "blocked_material"},
+        {"label": "application_ritual", "status": "integrated_nonmaterial"},
+    ]
+
+    assert (
+        "duplicate_semantic_integration_emerging_axis_disposition"
+        in _validate(tmp_path, seal)
+    )
+
+
 def test_historical_route_1_1_retains_campaign_integration_accounting(
     tmp_path: Path,
 ) -> None:

@@ -1,0 +1,2344 @@
+{
+  "axes": [
+    {
+      "axis_id": "reaction_and_breakout",
+      "question": "What direct reaction, irritation, tolerance, timing, and uncertainty evidence is present?"
+    }
+  ],
+  "cycle_id": "summer-fridays-understanding-dogfood-p11r7",
+  "evidence_units": [
+    {
+      "actor_identity": "joemama370",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T08:32:17Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:13aw1sp:jja2rx6",
+      "independence_key": "reddit:joemama370",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-05-08T00:50:46+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-13aw1sp",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/13aw1sp/summer_fridays_lip_balm/jja2rx6/",
+      "source_role": "community_post",
+      "text": "i’m gonna end up buying yet another lip product 😭 i noticed it says plumper, does it have that stinging plumping effect?"
+    },
+    {
+      "actor_identity": "rxl9696",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T16:06:55Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:13end3f:jjsqcoj",
+      "independence_key": "reddit:rxl9696",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-05-11T22:11:12+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-13end3f",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/13end3f/summer_fridays_lip_butter_balm_vs_rhode_peptide/jjsqcoj/",
+      "source_role": "community_post",
+      "text": "Did you find that the rash wasn’t immediate? I was ok using it for a while then I suddenly had the reaction. I had a similar situation to you where I didn’t realize it was Rhode causing it until I stopped using it. I had assumed I applied a glycolic acid product too closely to my lips"
+    },
+    {
+      "actor_identity": "ShadyLady709Q49",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T16:02:29Z",
+        "raw_value": "1 point"
+      },
+      "evidence_id": "reddit:15qtzd8:jw6ecej",
+      "independence_key": "reddit:shadylady709q49",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-08-14T18:54:10+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-15qtzd8",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/15qtzd8/summer_fridays_doesnt_work_as_a_lip_balm_for_me/jw6ecej/",
+      "source_role": "community_post",
+      "text": "The same thing happened to me with Lanolips and I’m still heartbroken over it :( their original ointment balm and lip water both made my lips dry and cracked so I feel like I must have a Lanolin allergy or something"
+    },
+    {
+      "actor_identity": "Limp-Measurement7863",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-07-27T18:43:52Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:166j6zu:l9d0ja7",
+      "independence_key": "reddit:limp-measurement7863",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-19T20:22:32+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-166j6zu",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/MakeupAddiction/comments/166j6zu/l9d0ja7/",
+      "source_role": "community_post",
+      "text": "I am having the same issue. I had the same issue with Rhode lip products which is why I switched to Summer Friday lip products but it’s the same reaction, unfortunately"
+    },
+    {
+      "actor_identity": "Waste-Carpenter-8035",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T07:34:30Z",
+        "raw_value": "4 points"
+      },
+      "evidence_id": "reddit:16old70:k1p6c8q",
+      "independence_key": "reddit:waste-carpenter-8035",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-09-22T11:38:16+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-16old70",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/16old70/summer_fridays/k1p6c8q/",
+      "source_role": "community_post",
+      "text": "I love it. Personally I love mint lip products and this one is more muted, but still feels good on the lips but not to the point of burning. Love the smell too and that this one isn't tinted so its great for everyday."
+    },
+    {
+      "actor_identity": "Phthalo-blu",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T08:33:03Z",
+        "raw_value": "6 points"
+      },
+      "evidence_id": "reddit:171ciwt:k3sk0fh",
+      "independence_key": "reddit:phthalo-blu",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-10-07T00:37:10+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-171ciwt",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/BeautyGuruChatter/comments/171ciwt/mini_summer_fridays_balm_set/k3sk0fh/",
+      "source_role": "community_post",
+      "text": "These have been the only product to give me an allergy and I’m a lip product girl. It was like a weird rash on my lips"
+    },
+    {
+      "actor_identity": "FunKoala12",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T15:56:25Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:1742rj9:k47xo36",
+      "independence_key": "reddit:funkoala12",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-10-10T02:08:06+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1742rj9",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1742rj9/first_time_user_of_summer_fridays_lip_balm_and_i/k47xo36/",
+      "source_role": "community_post",
+      "text": "Yasss it’s sooo good all purpose … I use it for cuts, burns, dry skin, makeup remover."
+    },
+    {
+      "actor_identity": "FreeBasis5436",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T01:35:34Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:17585yg:nv5vqin",
+      "independence_key": "reddit:freebasis5436",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-12-21T07:03:00+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-17585yg",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/AsianBeauty/comments/17585yg/anyone_else_have_lipstick_chellitisallergic/nv5vqin/",
+      "source_role": "community_post",
+      "text": "I started getting contact chelitis when I turned 21, and I found out I had it when I used a chanel lipstick, and later with the rom&nd lip tints. The only thing that would slightly help was if I used aquaphor first, the lip color, and another layer of aquaphor. But even then, I’d still get flare ups on a lesser scale. I also had this apple cider vinegar shot phase where I would take a cap full of ACV every morning with water and that’s when my contact chelitis became horrendous. My lips became chronically red (my normal lips are pale), swollen, scaled over, and dry. The only thing that seemed to help with it was hopping off ACV and using aquaphor religiously. However, sometimes I do get random contact chelitis with aquaphor. Lip products I’m allergic to: any products with scent, Chanel lipstick, summer fridays, makeup by Mario, kosas, any Korean lip stain with scent, ole henrikson. Products that don’t trigger chelitis: milani, winky lux"
+    },
+    {
+      "actor_identity": "fancyfreckledfarts",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-04T00:53:15Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:176msij:k4ph1fs",
+      "independence_key": "reddit:fancyfreckledfarts",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-10-13T14:01:55.385000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-176msij",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/176msij/unpopular_opinion_but_i_think_jack_black_lipbalm/k4ph1fs/",
+      "source_role": "community_post",
+      "text": "The one thing I’ve noticed is that it’s hard to find a good SPF lip balm (not a chapstick that wears off in 5 seconds). If I wear something like the summer Fridays out when I’m outdoors it almost makes my lips burn MORE with the shiny reflection. The JB have been my lifesaver. Even my fiancé likes them. Planning to buy so many of the gift sets so we can have them everywhere!!"
+    },
+    {
+      "actor_identity": "PeptideWitch",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": true,
+        "observed_at": "2026-08-03T07:39:11Z",
+        "raw_value": "22 points"
+      },
+      "evidence_id": "reddit:17p8me8:k848qmb",
+      "independence_key": "reddit:peptidewitch",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-11-06T20:29:20+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-17p8me8",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/17p8me8/sale_regrets/k848qmb/",
+      "source_role": "community_post",
+      "text": "I wonder if the summer fridays lip balm has something you’re allergic to? I had this happen with the old Bite Beauty agave lip balm formula and turns out I’m allergic to lanolin. Anyway thank you for de-influencing me with this regardless because it’s all the rage on tiktok and I was so tempted."
+    },
+    {
+      "actor_identity": "lipgloss_nd_hotsauce",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T07:56:03Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:193h7hu:khal87h",
+      "independence_key": "reddit:lipgloss_nd_hotsauce",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-01-11T00:52:59+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-193h7hu",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/193h7hu/if_you_were_to_design_a_sephora_favorites_set/khal87h/",
+      "source_role": "community_post",
+      "text": "I would love a Cherry edit favorites set with: Dior blush in Cherry (FS) Summer Fridays lip balm in Cherry (FS) Kayali burning cherry perfume (travel size) Huda beauty mini powder in cherry blossom (mini) The Sephora collection lip liner to go in shade Classic Red (mini) And make it like $50 ❤️🍒"
+    },
+    {
+      "actor_identity": "unavailable",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-04T00:18:26Z",
+        "raw_value": "1"
+      },
+      "evidence_id": "reddit:199wb9b:kimed09",
+      "independence_key": "reddit:actor-unavailable",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-01-19T18:15:10.612000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-199wb9b",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/199wb9b/my_thoughts_on_the_new_summer_fridays_lip_oil_and/kimed09/",
+      "source_role": "community_post",
+      "text": "It has a very slight minty taste but it doesn’t burn or sting. No plumping effect."
+    },
+    {
+      "actor_identity": "tablecatsss",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-07-31T20:36:47Z",
+        "raw_value": "5 points"
+      },
+      "evidence_id": "reddit:1ahn26w:kop3sbr",
+      "independence_key": "reddit:tablecatsss",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-02-03T04:42:37+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ahn26w",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ahn26w/how_do_yall_feel_about_the_summer_fridays_lip_balm/kop3sbr/",
+      "source_role": "community_post",
+      "text": "i’m allergic! made my lips peel like crazy"
+    },
+    {
+      "actor_identity": "baldgirlriri",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-04T00:11:38Z",
+        "raw_value": "13"
+      },
+      "evidence_id": "reddit:1akf6oh:kp7oa4h",
+      "independence_key": "reddit:baldgirlriri",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-02-06T18:32:52.753000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1akf6oh",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1akf6oh/new_summer_fridays_lip_balm_rip_wallet/kp7oa4h/",
+      "source_role": "community_post",
+      "text": "Rhode gave me a chemical burn so I’ll be sticking with summer Fridays"
+    },
+    {
+      "actor_identity": "realbigsquish",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T15:58:44Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:1aoorwz:kq4asxf",
+      "independence_key": "reddit:realbigsquish",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-02-12T18:53:03+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1aoorwz",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1aoorwz/lip_balm_emergency/kq4asxf/",
+      "source_role": "community_post",
+      "text": "what’s your fav? mine is summer fridays, solely because I wear their face moisturizers and they are legitimately the only moisturizers I’ve tried that haven’t broken me out or irritated me in the least."
+    },
+    {
+      "actor_identity": "Hotmess56789",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T17:57:38Z",
+        "raw_value": "5 points"
+      },
+      "evidence_id": "reddit:1asnsu0:kqsq5lb",
+      "independence_key": "reddit:hotmess56789",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-02-17T05:12:38+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1asnsu0",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/NYCinfluencersnark/comments/1asnsu0/summer_fridays_lip_balm/kqsq5lb/",
+      "source_role": "community_post",
+      "text": "I’m so allergic to that shit it destroyed my lips for weeks"
+    },
+    {
+      "actor_identity": "purplegirl2001",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T13:45:12Z",
+        "raw_value": "5 points"
+      },
+      "evidence_id": "reddit:1bm9izm:kwapzrw",
+      "independence_key": "reddit:purplegirl2001",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-03-24T04:21:13+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1bm9izm",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1bm9izm/kwapzrw/",
+      "source_role": "community_post",
+      "text": "It’s not bad, but it’s got way more synthetic emollients than it does any of the touted “ultra-hydrating seed butters and botanical extracts” or hyaluronic acid - which is last in the ingredients except for pigments. Note that synthetic emollients aren’t bad, I just think you should know what you’re getting. I do think there are better products out there for hydrating/moisturizing - but if you like the scents/colors of this product, it does a good job, and the tube is a pretty good size for that $24. I personally do not like the Vanilla / Vanilla Beige scents - the so-called “natural vanilla flavor” is actually vanillin, the main component of pure vanilla extract. Vanilla beans are expensive and vanilla extract is even more expensive (as you will know if you’ve purchased any in the last year or two!). If you buy artificial vanilla extract for baking, you’re likely buying straight synthetic vanillin. However, pure vanilla extract is composed of hundreds of compounds in addition to vanillin, yielding a richer and more complex scent and flavor. If you’re accustomed to pure vanilla extract, vanillin smells and tastes very fake. If you’re accustomed to using artificial vanilla extract, you likely don’t notice the difference. I typically avoid scents in cosmetic products because of rosacea that tends to react to fragrances, and anything mint or mint-derived makes me break out in little red spots (rosacea symptom, not acne). I do like flavored lip products, though, so there are a few I’ve used and can recommend: •Paula’s Choice Lip Booster (has squalane, hyaluronic acid, and peptides to help moisturize and maintain your lips’ shape over time). Ive purchased at least half a dozen of these over the years. •Indeed Labs’ Hydraluron + Tinted Lip Treatment (similar ingredients to PC but comes in sheer pink, sheer red, or pastel peach tints, and is priced a little lower). •Jouer Conditioning Lip Treatment in Vanilla (much better than the fake vanilla used by Summer Fridays) and their lovely Matte Lip Balm. •Pacifica also has a nice line of Complex Lip Balms with vegan collagen and squalane for $10 apiece. It comes in four colors/scents/flavors: •Vegan Collagen is a shimmery pink tinted balm in a pink tube with a vanilla birthday cake scent (very subtle, and not overly artificial). •Wake Up Beautiful is a clear balm in a blue tube with a lemon-lavender scent (also very subtle and surprisingly pleasant for a lip balm - I keep this one on my nightstand). •Dreamy Youth is a purple-red tinted balm in a purple tube with a strawberry-rose scent (I find this one overpowering and not particularly like strawberries or roses, which is unfortunate because the color is lovely). •Glow Baby is a sheer balm with peachy-gold shimmer in an orange tube with a “tangerine dreamsicle” scent, which turned out to be my favorite of the lot. The shimmer is just right and that dreamsicle scent takes me right back to childhood and eating push-up pops, lol."
+    },
+    {
+      "actor_identity": "cynthia_101",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T07:46:03Z",
+        "raw_value": "6 points"
+      },
+      "evidence_id": "reddit:1bsww9d:kxirfnr",
+      "independence_key": "reddit:cynthia_101",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-04-01T09:32:29+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1bsww9d",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/AustralianMakeup/comments/1bsww9d/birthday_cake_summer_fridays_lip_balm_coming_to/kxirfnr/",
+      "source_role": "community_post",
+      "text": "I am allergic to lanolin but I am absolutely not ever paying $48 for a lip product. MCO and Sportsgirl lip mask ones are okay."
+    },
+    {
+      "actor_identity": "PoetryandScrubs",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T23:10:40Z",
+        "raw_value": "8 points"
+      },
+      "evidence_id": "reddit:1ceemxn:l1iao4w",
+      "independence_key": "reddit:poetryandscrubs",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-04-27T14:56:02+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ceemxn",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ceemxn/is_the_summer_friday_lip_balm_worth_it/l1iao4w/",
+      "source_role": "community_post",
+      "text": "I have dry lips so bad, and am eczema prone on my face and lips. For moisture you can’t beat Vaseline and/or aquaphor so that’s what I use morning and night, or if I need extra moisture through the day. I have both Summer Fridays and Ole Henrikson. They both have strengths. Personally, I like how SF feels on my lips better and I love the smell. OH is a thicker feeling formula which I personally don’t love the sensory feel of, but it is longer lasting on my lips. I find them both hydrating but as a very dry lip girlie these alone would not hydrate me enough, so I use my good ol Vaseline morning and night and these for a pop of color. Overall I like both! Hope that helps!"
+    },
+    {
+      "actor_identity": "Comfortable-Buy-5309",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T11:50:58Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1ddzt09:l8bvc0m",
+      "independence_key": "reddit:comfortable-buy-5309",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-12T21:06:11.869000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ddzt09",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/MakeupAddiction/comments/1ddzt09/are_the_summer_friday_lip_balms_actually_worth_it/l8bvc0m/",
+      "source_role": "community_post",
+      "text": "Actually the laneige lip sleeping mask is a hit and miss. Some ppl have lip eczema after using it. I tried it before. It worked at first then didn’t do anything for me after I use like 1/3 of the container so keep that in mind. Cheers ✌🏻 Haven’t try the balm but maybe a no for me."
+    },
+    {
+      "actor_identity": "Dry-Savings5850",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T20:33:41Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1ee21xh:loloacl",
+      "independence_key": "reddit:dry-savings5850",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-09-23T22:45:41.852000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ee21xh",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/makeupdupes/comments/1ee21xh/aliexpress_dupe_lippies_summer_fridays_rhodes/loloacl/",
+      "source_role": "community_post",
+      "text": "don’t buy makeup from there because you might have an allergic reaction. They use chemical and other substances that is unhealthy for your skin. but the lip products are a must. They are way cheap and do the exact same thing. You cannot tell the difference! They rhode ones are my personal favorite. U can also try the summer Fridays!"
+    },
+    {
+      "actor_identity": "Gus_r3yn",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T21:42:46Z",
+        "raw_value": "3"
+      },
+      "evidence_id": "reddit:1eizw8l:lgcfqof",
+      "independence_key": "reddit:gus_r3yn",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-08-03T19:38:51.949000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1eizw8l",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Makeup/comments/1eizw8l/summer_fridays_lip_balm_worth_it/lgcfqof/",
+      "source_role": "community_post",
+      "text": "I feel like tinted lip balms are a bit gimmicky, they don’t hydrate as well, and the risk of irritation is higher, for the same look yall can use a good dye based lip stain, and aquaphor or any clear glossy balm"
+    },
+    {
+      "actor_identity": "Falala-Surprise-90",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": true,
+        "observed_at": "2026-08-03T10:51:53Z",
+        "raw_value": "35"
+      },
+      "evidence_id": "reddit:1fk0zu0:post",
+      "independence_key": "reddit:falala-surprise-90",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-09-18T19:14:09.511000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1fk0zu0",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/rhodeskin/comments/1fk0zu0/beware_of_rhode_fakes_counterfeits_dupes_on_ebay/",
+      "source_role": "community_post",
+      "text": "Hi everyone, be aware: there are a TON of fake (counterfeit, dupe) Rhode lip products on Ebay right now!!! They are probably trickling to other resale sites as well. The products that are being reproduced illegally are the Core Lip Tints (Toast, Ribbon, Raspberry Jelly, Espresso) and the Summer Lip Tints (Guava Spritz, Strawberry Shortcake, Peach Pit, and Salty Tan). Same goes for the Pocket Blushes as well. ***UPDATE AS OF 2/18/26 in between the asterisks*************************** THIS HAS BEEN HAPPENING ACROSS platforms - Ebay, Mercari, Depop, Poshmark, and of course Tik Tok, Insta, Ali Express... First it started on Ebay and now... everyone is doing it. Everyone, please be careful! If someone is selling Rhode, Fake Alo Leggings, Acne Scarves, Fake Summer Fridays and they have Vanilla Cake in a shiny white tube and pink box, and they have unlimited quantities of black Alo leggings, and summer lip tints, THIS PERSON IS SELLING YOU A FAKE!!! OMG... Please!!! You don't know what is in this garbage... and you will never know what a real product looks like if you keep buying from these people! Some examples of 1000% fake products look like this... I get so many messages from people and I am so tired of people being deceived by these sellers! Also, JELLY BEANS WERE ONLY MADE IN PINK AND NEVER CAME IN A RECTANGULAR BOX - they came in a jelly bean shaped gift box! Also, is the seller telling a strange story? FAKE. Read this fakey fake seller story I saw recently: READ BELOW (3pack) ⚠️ Effected item, I work at Sephora and at the end of the months there’s boxes in the back which are thrown away because the items may not be made correctly, for example this one says “sweet guava” on packaging and also does not have ANY flavor to it. Still works like any other lip gloss though. Therefore I have it at a huge discounted price So fake... where do I even start? I'M DYING. FAKE! FAKE! FAKE! PLEASE - let's talk about how products are produced: they certainly don't make them at Sephora, in the back! And Sephora is never sent items that don't pass Quality Control, that are mis-labeled. If the seller tells you some strange story about why something is weird - RUNNNNNNNNNNNNN! Please don't fall for this. What else is the seller selling? Are they also selling weird cheap items? Do they sell fake Alo leggings, fake Acne plaid scarves, fake Summer Fridays, fake Alo socks, blah blah blah? Then the product is FAKE! ALO LEGGINGS DON'T HAVE CLEAR PLASTIC FASTENERS for the tags! Here are some recent fake pics across the marketplaces - THESE ARE ALL FAKE! So if someone is selling fake Alo leggings, why would they be selling Authentic Rhode??? NO WAY Lemontini... don't get me started with the fakes. The real one has a very subtly sparkly yellow box. It sparkles in the light. It is not a sold yellow color. And Rhode stopped writing the stuff on the side of the box with the barcode - so the only thing that should be on the side with the barcode is the BARCODE. Please ask sellers for pictures of ALL SIDES OF THE ITEM. One pic is not going to cut it. Fake beyond a reasonable doubt Fake Lemontini! Fakey fakey fakerson. No sparkly box too! Bundle o' Fakes FAKE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Fake-a-rama FAKE!!! FAKE!!!! FAKE!!! OMG! SO FAKE!!!! SO FAKE! Why is it purple? Why is the lettering on the tube PURE WHITE???? FAKE! RHODE NEVER MADE A YELLOW JELLY BEAN - My Queens - if you see a seller selling this - RUNNNNNNNNNNNNN What do you think? Fake or Real? I'll give you a hint. The answer begins with an FFFFFFFFFFFFFF Please I'm dying. Stop. I can't. The fakeness... I am dying. So fake, on so many levels. It's giving FAKE FAKE FAKE Fah-fah-fah-FAHHHHKE The only thing sadder than this FAKE is that 27 people have this in their shopping carts right now and 128 PEOPLE ACTUALLY BOUGHT THIS!!!! WHAT??? THIS IS SO FAKE OMG Fakealicious Rainbow o' fakes Fake Rhodes are often seen in the wild with Fake Summer Fridays and Fake Alo. Also seen with Fake Acne Plaid Scarves. STOP IT. Please don't make me say it. You know this one...don't you? FAKE CUBED. I could go on and on.... Honestly I should make an IG account dedicated to every fake I see, because they are ALL OVER! Stay safe out there, check the seller's feedback, look at ALL the products they are selling, look for these little inconsistencies... And keep posting pics of sellers who are selling fakes! And report them to the platforms! <3 <3 <3 <3 *********************************************************************************** Many are shipping from China, where illegally counterfeited products not only have no specs for safe limits of heavy metals, PFCs, and other dangerous substances, they do not testing at all. Lead poisoning is no joke. PFC contamination can damage your reproductive organs and lead to cancer. Before you try and save $10 by buying these for $8 or even $13 on these platforms, please think twice. Rhode lip products are finished in Italy with components sourced in Asia, yes. From Italy they are then shipped to the US for distribution. They are not distributed from China. Update 2/18/26: Most people distributing these on US resell sites are based in the US. At the time this was originally posted, the people selling the fakes were shipping them from China. BE CAREFUL! Things are much trickier than when they started selling fakes right after the Summer lip tints (Shortcake, Salty Tan, etc). sold out. THESE GO ON YOUR LIPS, you, your kids, your partner, even your animals lick them and Ebay doesn't care to take these down, so you need to protect yourself! If you see pictures like the one I uploaded, and the item is shipping from China, or from someone who has a brand new account, or from someone selling strange items, BE CAREFUL! Do your research. Most sellers from China don't post pictures of the actual items; they take photos from others and use lots of stock images. Read more"
+    },
+    {
+      "actor_identity": "lizardgal10",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T15:30:51Z",
+        "raw_value": "4 points"
+      },
+      "evidence_id": "reddit:1fu32im:lpxamer",
+      "independence_key": "reddit:lizardgal10",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-10-02T03:39:14+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1fu32im",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1fu32im/summer_fridays_ruined_my_lips/lpxamer/",
+      "source_role": "community_post",
+      "text": "So I’ll share a bit of my lip balm journey. Wearing masks in 2020 DESTROYED my lips. Like to the point of constant pain and irritation. Honestly, you just have to put in the work. Keep notes on everything you try. Make a spreadsheet if you have to. Google ingredients and learn what they do. I discovered my lips don’t like shea butter or beeswax. They love squalene (which is not in enough lip products imo, it’s so good) and petroleum, and lanolin is good. Most other common ingredients are okay for occasional use but not as my primary moisturizer. I use either Khiel’s lip balm or plain Vaseline as my everyday moisturizer, sometimes Rosebud Perfume Co lip balm. Jack Black lip balm if I need SPF. I also found that less ingredients is generally better. Rosebud and Khiels are both pretty simple formulas. A lot of lip products, especially high end ones (looking at you Laingne lip mask), are just so full of that they end up being irritating. Or whatever miracle ingredient they’re advertising is so far down the list that there’s not enough in the product to actually have any benefits. stuff"
+    },
+    {
+      "actor_identity": "silver-haze34",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-07-24T20:48:19Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:1fvevie:lq79h2b",
+      "independence_key": "reddit:silver-haze34",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-10-03T21:14:26+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1fvevie",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1fvevie/summer_fridays_is_lying_to_you/lq79h2b/",
+      "source_role": "community_post",
+      "text": "The dollar general lip oils and the LA Girls lip oils are better than any high end I’ve tried, they’re mainly castor/jojoba oil and way more hydrating. I need to check the Kosas lip oil ingredients because I feel like I got a reaction to those too"
+    },
+    {
+      "actor_identity": "Kayla_Rene_1",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T00:23:53Z",
+        "raw_value": "5 points"
+      },
+      "evidence_id": "reddit:1hpgjxj:m4k6dwg",
+      "independence_key": "reddit:kayla_rene_1",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-12-30T18:24:33+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1hpgjxj",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/BeautyGuruChatter/comments/1hpgjxj/weve_seen_all_the_bg_favs_and_fails_of_the_year/m4k6dwg/",
+      "source_role": "community_post",
+      "text": "Faves: Palettes: Lethal x Avatar palettes, Bella beaute bar poison garden and secret garden Haus labs concealer: by far the best concealer I’ve ever used. Works great for under eyes and spot concealing Merit blushes: blend out so easily and dry down enough for me to skip setting with powder Natasha Denona powder foundation: the only powder foundation that has ever worked for me. I like to use a buffing brush on days I want lighter coverage. Fails: Ilia multisticks: basically just tinted Vaseline. It stayed super tacky and gross on my cheeks Smash box face palettes: terrible packaging and just chalky. The highlighter emphasized allll my texture Tarte ceaseless lavender powder: lavender powder makes my undereye circles look worse. Plus it looked pretty textured on my skin Summer fridays lip balm: overpriced and made my throat a little itchy if I put too much on"
+    },
+    {
+      "actor_identity": "chanyeol2012",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T19:46:08Z",
+        "raw_value": "5"
+      },
+      "evidence_id": "reddit:1i7jaw4:m8lbtwd",
+      "independence_key": "reddit:chanyeol2012",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-01-22T19:38:03.592000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1i7jaw4",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1i7jaw4/is_the_summer_fridays_lip_oil_supposed_to_be_minty/m8lbtwd/",
+      "source_role": "community_post",
+      "text": "I’ve actually had a similar feeling when it comes to the dior glow products (specifically the lip oil) but it’s never given me a bad reaction if I can’t recall 🤷 thought it was in my head, but I guess it seems to be common with other lip products!"
+    },
+    {
+      "actor_identity": "georgethebarbarian",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T20:48:30Z",
+        "raw_value": "1"
+      },
+      "evidence_id": "reddit:1i7of0b:m8nmm10",
+      "independence_key": "reddit:georgethebarbarian",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-01-23T02:27:34.124000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1i7of0b",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/ProjectPan/comments/1i7of0b/lip_balm_project/m8nmm10/",
+      "source_role": "community_post",
+      "text": "Ole henriksen leaves my lips so peely and dry… I’m allergic to summer Fridays so I won’t rule out that it’s also an allergic reaction"
+    },
+    {
+      "actor_identity": "tokoloshe_noms_toes",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T16:40:46Z",
+        "raw_value": "9 points"
+      },
+      "evidence_id": "reddit:1j6xhqb:mgsi6qw",
+      "independence_key": "reddit:tokoloshe_noms_toes",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-03-09T02:56:08+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1j6xhqb",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1j6xhqb/are_you_a_summer_fridays_or_laneige_person/mgsi6qw/",
+      "source_role": "community_post",
+      "text": "Summer Fridays since I’m allergic to Laneige lol Although I prefer Eadem miles over all of the lip treatments/balm including Summer Fridays."
+    },
+    {
+      "actor_identity": "DitzyfanofFantasy",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T22:58:56Z",
+        "raw_value": "3 points"
+      },
+      "evidence_id": "reddit:1k562e8:moffpaj",
+      "independence_key": "reddit:ditzyfanoffantasy",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-04-22T13:35:22+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1k562e8",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1k562e8/anyone_having_problems_with_the_eadem_lip_balm/moffpaj/",
+      "source_role": "community_post",
+      "text": "I'm sorry you got such a bad reaction, I loved the EADEM, but ole henrikson and summer fridays are definitely amazing too. You can return the item if you haven't used much of it and still have your receipt, besides it'd be rude on their part to not complete the return transaction especially considering you had such a bad reaction to it."
+    },
+    {
+      "actor_identity": "nessa_14",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T13:41:28Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:1kq0492:mt21uxw",
+      "independence_key": "reddit:nessa_14",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-05-19T02:14:10+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1kq0492",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1kq0492/mt21uxw/",
+      "source_role": "community_post",
+      "text": "I honestly really like Summer Fridays! I’m allergic to many lip products and SF isn’t one of them. I find it to be hydrating but as someone else said, it isn’t super pigmented. Elf unfortunately gave me an allergic reaction but other than that it was ok! I would pick Summer Fridays of the two though"
+    },
+    {
+      "actor_identity": "nessa_14",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T15:47:10Z",
+        "raw_value": "6 points"
+      },
+      "evidence_id": "reddit:1m07jmq:n37cif6",
+      "independence_key": "reddit:nessa_14",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-07-15T04:05:31+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1m07jmq",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1m07jmq/summer_fridays_lip_balm/n37cif6/",
+      "source_role": "community_post",
+      "text": "I really like it. It’s one of the few balms I’m not allergic to (minus the birthday cake one). I get contact dermatitis from many lip products"
+    },
+    {
+      "actor_identity": "purplepeas18",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-07-24T20:49:05Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1mzokbt:post",
+      "independence_key": "reddit:purplepeas18",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-08-25T12:02:02+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1mzokbt",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/beauty/comments/1mzokbt/dry_flaky_burning_lips_after_using_summer_fridays/",
+      "source_role": "community_post",
+      "text": "I need help! In Feb of this year, I started using summer Fridays mint lip balm, and after a few weeks noticed my lips were burning and dry and flaky I stopped using it within a few weeks but since then, I feel like my lip barrier is broken. Every time I use any lip product other than Vaseline, my lips are dry and flaky and burning again! I’ve never experienced chapped lips before and it’s annoying because I used to love wearing tinted lip balms etc but now I can’t cause everything irritates it Has anyone experienced anything like this before? Please help a girl out xxx"
+    },
+    {
+      "actor_identity": "katiemix14",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T06:09:08Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:1oatxkp:nkd50vp",
+      "independence_key": "reddit:katiemix14",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-10-19T20:03:51+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1oatxkp",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1oatxkp/has_anyone_tried_the_summer_fridays_holiday_trio/nkd50vp/",
+      "source_role": "community_post",
+      "text": "I get a bad reaction with SF. I think they're so cute and i want to like them but my lip area is senators to stevia. I know SF is not even sweet, but it is listed as an ingredient. My lips always end up peeling and irritated from any lippie with stevia (all of EOS, lip smacker since owned by Markwins, and now Summer Fridays). Mind you, i drink zevia, a soda with stevia, daily without problem. It just affects my delicate lip skin differently."
+    },
+    {
+      "actor_identity": "TheEarthyHearts",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": true,
+        "observed_at": "2026-07-31T20:30:36Z",
+        "raw_value": "45"
+      },
+      "evidence_id": "reddit:1oh26y0:post",
+      "independence_key": "reddit:theearthyhearts",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-10-27T01:47:01+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1oh26y0",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1oh26y0/review_finally_got_around_to_trying_summer/",
+      "source_role": "community_post",
+      "text": "I'm on a low buy and a minimalist. So I only have one lip balm open at any given time. I recently panned my other lip balm I was using. I was gifted a Summer Fridays lip balm a few months ago, so I picked it from my stash (new and unopened). Shade: Iced Coffee Love that they are vegan and cruelty free. However I am extremely disappointed in the product. My initial reaction was: \"that.....that's it?\" Why is this product so hyped? The lip balm is so underwhelming. It's not cushiony at all. . It rubs off after 30 seconds and I have to reapply. It smells okay, but imo too much fragrance and smells too much like a waxy candle. It doesn't hit the right balance. Other lip balm brands don't make their scent so overwhelming. It's so THIN The shade is whatever. I'm not mad at it. It's barely there. It's almost like wearing a clear, or sheer nude. I think I would have liked Brown Sugar better since that one looks more pigmented. But the shade is fine for Fall. The quality of the balm, which is what's most important to me, sucks ass. I've tried a lot of balms and I would rank this one pretty low. About 15 minutes after applying it in my car, I got to the elevators and had to peel the skin off my lips because it actually made them flake. In the span of 1 hour I had to reapply 3 times. Between walking to my car and getting to the elevators inside the building I had to re-apply. People who say they prefer summer fridays over brands like lanaige or olehenriksen are just straight up lying. This lip balm is doo-doo. It's ass cheeks. I will have to quickly hate pan it so I can move on to another product in my stash. I was interested in trying other products in this brand. But now that I've tried this balm I have a feeling their other products are equally underwhelming. And it's just the millions dumped into social media marketing that is driving this brand's hype because the quality in the product is not there. I will personally never purchase another Summer Fridays lippie ever in the future based on this experience/review."
+    },
+    {
+      "actor_identity": "confusedtexter",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T00:36:25Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:1ougkua:nod3nek",
+      "independence_key": "reddit:confusedtexter",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-11-11T23:02:55+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ougkua",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ougkua/please_help_list_your_top_5_lip_balms/nod3nek/",
+      "source_role": "community_post",
+      "text": "I love the Laneige lip sleeping mask! I got one for my birthday last November and just finished it. I find that it really helps keep my lips from drying out in the winter at night when we run the heat, and it’s so yummy-smelling and fun to use. The Tarte lip balms are also great (unless you hate coconut) - they’re moisturizing, smooth and not sticky, and so glossy. The Summer Fridays butter balm made my lips irritated and don’t moisturize them, so cannot recommend those."
+    },
+    {
+      "actor_identity": "kelhar417",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T12:40:41Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1p7si2m:nr4vg3q",
+      "independence_key": "reddit:kelhar417",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-11-27T23:49:12.382000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1p7si2m",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1p7si2m/summer_fridays_vs_laneige_lip_balms/nr4vg3q/",
+      "source_role": "community_post",
+      "text": "Personally, I prefer Laneige, but SF is definitely more popular among teens. I always go back to rhe laneige. I do have a Summer Fridays that I like, but its more for the pigment. I find myself reapplying it way more than the laneige. I did like balm dotcom and it almost replaced laneige until it separated beyond rehab and burns my lips now. Olehenriksen felt like sticky glue drying on my lips."
+    },
+    {
+      "actor_identity": "magicalkitty7",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-07-24T20:49:48Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1pf427h:post",
+      "independence_key": "reddit:magicalkitty7",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-12-05T19:21:23+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1pf427h",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1pf427h/summer_fridays_lip_butter_balm_reaction/",
+      "source_role": "community_post",
+      "text": "I absolutely love the SF Lip Butter Balm. But recently I’ve started to get contact dermatitis all over my face around my mouth. The only thing I can think of is it’s the Summer Fridays. Has anyone else experienced this? If you have what other lip balm do you use that is thick and hydrating. I work a job where I have to talk a lot and live where it’s cold in the winters so having something that’s a bit weighted when you put it on but not super goopy is preferred."
+    },
+    {
+      "actor_identity": "book-dragon92",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T16:04:34Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:1pneo7v:nvahs80",
+      "independence_key": "reddit:book-dragon92",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-12-22T00:44:49+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1pneo7v",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1pneo7v/i_cant_stand_the_summer_fridays_lip_balm/nvahs80/",
+      "source_role": "community_post",
+      "text": "SF burned on my lips but I didn’t like OH either. I’m a Laneige person"
+    },
+    {
+      "actor_identity": "kelhar417",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T16:23:27Z",
+        "raw_value": "3 points"
+      },
+      "evidence_id": "reddit:1qxm1tz:o3xko68",
+      "independence_key": "reddit:kelhar417",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-02-06T17:08:22+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1qxm1tz",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1qxm1tz/which_lip_balm_is_best_for_everyday_hydration/o3xko68/",
+      "source_role": "community_post",
+      "text": "I always go back to laneige. Olehenriksen felt like glue drying on my lips and I hated it. Balm dotcom was a close contender until it separated the started to burn my lips. Summer Fridays I liked until I was using it daily and realized it was drying my lips out horrendously. Took over a week to get them feeling better."
+    },
+    {
+      "actor_identity": "Dreamy_glow",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-02T16:28:14Z",
+        "raw_value": "4 points"
+      },
+      "evidence_id": "reddit:1r09924:o4h7wba",
+      "independence_key": "reddit:dreamy_glow",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-02-09T18:44:01+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1r09924",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1r09924/ole_v_summer_fridays/o4h7wba/",
+      "source_role": "community_post",
+      "text": "Love Ole Henricksen lip balms they works and hydrate like they should. It’s amazing. Nice flavours and shades. Recommend and will repurchase. Longer staying power and makes my lip feel so nourished and moisturised, no need to constantly reapply. Winner for me. Summer Fridays had adverse effects, not an allergic reaction but dries and parches my lips out with constant use. Thin formula, have to keep reapplying it every 30 minutes, too shiny and leaves my lips worse. It caused my lips to peel, chap and become sore. Regardless of the nice shades and flavours, NEVER AGAIN! I had all of them decluttered them, only finished one tube and it was horrible. Stick to Ole Henriksen 🩷"
+    },
+    {
+      "actor_identity": "dendonnn",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": true,
+        "observed_at": "2026-08-02T15:41:27Z",
+        "raw_value": "24 points"
+      },
+      "evidence_id": "reddit:1r18e9m:o4nnut9",
+      "independence_key": "reddit:dendonnn",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-02-10T18:18:56+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1r18e9m",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1r18e9m/any_good_dupes_for_summer_fridays_toasted/o4nnut9/",
+      "source_role": "community_post",
+      "text": "I AGREE 100% 😭😭😭😭😭 i honestly think it’s more marketable than the hot cocoa one, which is watery and tinted. i wish they’d sold it alone insteaddddd i’m so peeved i got it as a gift for christmas because i just couldn’t shut up about it, but now i’m left with a burning pit in my soul bc i need more lol."
+    },
+    {
+      "actor_identity": "frankensteeeeen",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T19:47:30Z",
+        "raw_value": "4"
+      },
+      "evidence_id": "reddit:1r348ph:o52e37k",
+      "independence_key": "reddit:frankensteeeeen",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-02-12T22:47:49.199000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1r348ph",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1r348ph/psa_the_summer_friday_lip_stain_is_not_worth_it/o52e37k/",
+      "source_role": "community_post",
+      "text": "It looks like the border of your mouth is irritated tbh"
+    },
+    {
+      "actor_identity": "-KPinky-",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T21:46:47Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1st35o0:ohqcq6v",
+      "independence_key": "reddit:-kpinky-",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-04-23T00:29:43.452000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1st35o0",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/Makeup/comments/1st35o0/summer_fridays_isnt_for_lip_pickers/ohqcq6v/",
+      "source_role": "community_post",
+      "text": "I have picked at my lips for about 30 years and and I’m finally quitting with the help of fenty beauty lip products! The oil is so slick you can’t pick at anything cause your nails slide around! And the gloss bomb stuck is so pretty you don’t want to ruin it! Both last a very long time and the scent fades after 2 min so you don’t have fragrance to worry about. They taste like nothing to they aren’t tempting to taste. Also the plush puddin’ balm is amazing! Last 6 hours, is thick and has nice cousin and plumps WITHOUT burning or numbing. The vanilla is my fav, but I won them all. Fenty beauty for the win! Sign up for the emails so you will get early access to the good 30% off sales!"
+    },
+    {
+      "actor_identity": "sljokica_",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T06:49:13Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:1t79b03:okovbz2",
+      "independence_key": "reddit:sljokica_",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-05-08T18:47:43+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1t79b03",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/LipBalm/comments/1t79b03/the_gloss_report_summer_fridays_lip_butter_balm/okovbz2/",
+      "source_role": "community_post",
+      "text": "Do mint have burning sensations or nothing? 😊"
+    },
+    {
+      "actor_identity": "blossom-up",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-04T05:44:18Z",
+        "raw_value": "2"
+      },
+      "evidence_id": "reddit:1ul7dbe:ov1w0o0",
+      "independence_key": "reddit:blossom-up",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-07-02T03:54:31.503000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ul7dbe",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/BeautyEmpties/comments/1ul7dbe/6_months_of_empties_2026/ov1w0o0/",
+      "source_role": "community_post",
+      "text": "January Hempz Sensitive Skin Lotion Equate Beauty Oil-Free Acne Wash Dove Advanced Care Deodorant Clean Reserve Sparkling Sugar Perfume Summer Fridays Vanilla Lip Butter Balm Mini February Summer Fridays Iced Coffee Lip Butter Balm La Roche Posay Hydrating Gentle Cleanser Tree Hut Watermelon Sugar Scrub Byoma Hydrating Milky Toner Aquaphor Lip Repair Secret Clinical Strength Wickedly Wonderful Deodorant Vanilla Bean Noel Hand Soap Refill Amika Hydrorush Leave in Conditioner Fenty Beauty Lip Oil Cherry Morphe Continuous Setting Mist Secret Clinical Strength Couldn’t Be Lovelier Deodorant March Degree Ultraclear Dry Spray Deodorant Equate Glacial Mint Mouth Wash Maybeline Sky High Mascara Brown Rare Beauty Soft Pinch Liquid Blush in Bliss Tartelette Mini Tubing Mascara Summer Fridays Vanilla Beige Lip Butter Balm Eos Pink Champagne Body Lotion Summer Fridays Pink Sugar Lip Butter Balm NYX Bare With Me Concealer Lush Polar Bear Dreaming Shower Jelly Equate Hand Sanitizer with Aloe Laneige Water Sleeping Mask April Summer Fridays Brown Sugar Mini Lip Butter Balm Rare Beauty Brow Harmony Eyebrow Gel Secret Clinical Strength Couldn’t Be Lovelier Deodorant Lush Butterball Perfume Aquafresh Toothpaste Touchland Applelicious Hand Sanitizer May Equate Glacial Mint Mouth Wash Summer Fridays Mini Jet Lag Masque Dove Deep Moisture Body Wash Green Flash LED Nail Polish Remover Secret Clinical Strength Wickedly Wonderful Deodorant Lush Angel Dust Dusting Powder June Mini Listerine Total Care Mouth Wash Mini Native Cucumber & Mint Shampoo Mini Native Cucumber & Mint Conditioner Mini Dove Advanced Care Deodorant Equate Glacial Mint Mouth Wash Bath and Body Works Cucumber Melon Body Lotion"
+    },
+    {
+      "actor_identity": "Pretend-Contract6652",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-04T02:32:22Z",
+        "raw_value": "1"
+      },
+      "evidence_id": "reddit:1ur9u91:owpq4df",
+      "independence_key": "reddit:pretend-contract6652",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-07-10T15:18:41.597000+0000",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-1ur9u91",
+      "source_family": "reddit_community",
+      "source_ref": "https://www.reddit.com/r/LipBalm/comments/1ur9u91/recs_for_delicious_smelling_lip_balms/owpq4df/",
+      "source_role": "community_post",
+      "text": "I’m not a fan of balm dot coms but thanks for the rec anyways! I’m split on summer fridays since I want it for the scent but I don’t know if it’ll be moisturizing enough :/ some people commented it makes their lips burn with consistent usage"
+    },
+    {
+      "actor_identity": "skincare_obssessed",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T08:41:32Z",
+        "raw_value": "2 points"
+      },
+      "evidence_id": "reddit:vileta:ide3k7s",
+      "independence_key": "reddit:skincare_obssessed",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2022-06-23T04:00:41+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-vileta",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/vileta/what_do_you_use_for_skincare_at_bedtime/ide3k7s/",
+      "source_role": "community_post",
+      "text": "Tatcha the rice wash Tower 28 SOS spray Summer Fridays Oasis serum Sunday Riley retinol eye cream Curology tretinoin mix PC barrier repair moisturizer Summer Fridays lip butter I also use peace out acne patches if I have a breakout."
+    },
+    {
+      "actor_identity": "maievsha",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T03:50:46Z",
+        "raw_value": "0 points"
+      },
+      "evidence_id": "reddit:wve0sg:ilfvip1",
+      "independence_key": "reddit:maievsha",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2022-08-23T11:04:54+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-wve0sg",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/wve0sg/which_lip_balm_summer_fridays_or_laneige/ilfvip1/",
+      "source_role": "community_post",
+      "text": "I love the Summer Fridays one in terms of texture and taste (vanilla), but it ended up drying my lips over time. :( I’m not sure which ingredient it is exactly, but this only happens with certain lip products and I don’t get the same reaction from Laneige."
+    },
+    {
+      "actor_identity": "NeekanHazill",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment; no universal Reddit threshold.",
+        "kind": "reddit_points",
+        "material_positive": false,
+        "observed_at": "2026-08-03T04:19:04Z",
+        "raw_value": "6 points"
+      },
+      "evidence_id": "reddit:xysaq8:irihylw",
+      "independence_key": "reddit:neekanhazill",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2022-10-08T13:26:15+00:00",
+      "selection_basis": "existing Lip Butter Balm reaction_and_breakout coding",
+      "source_artifact_id": "reddit-xysaq8",
+      "source_family": "reddit_community",
+      "source_ref": "https://old.reddit.com/r/swatchitforme/comments/xysaq8/summer_fridays_lip_butter_balm_set_vanilla/irihylw/",
+      "source_role": "community_post",
+      "text": "I'd say they are moderately to satisfyingly moisturizing, my lips feel nicer than with most lip oils, it's more efficient than the Laneige liquid balm. I think the brand mentions using it as an overnight mask, however it's a bit too thin imo, to stay put all night (although I haven't tried it overnight yet, so maybe it works better than I expect). Just for info, I have perpetually dry lips, and I'm currently using the Mario Badescu lip balm as a mask, and it's doing a pretty good job (I have a reaction to the Laneige mask)."
+    },
+    {
+      "actor_identity": "43532478387",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": true,
+        "observed_at": "2025-08-24T02:43:28.000+00:00",
+        "raw_value": {
+          "negative": 6,
+          "positive": 30,
+          "total": 36
+        }
+      },
+      "evidence_id": "sephora-review:272258322",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:43532478387",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-02-22T04:28:23.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-1",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:272258322",
+      "source_role": "retailer_review",
+      "text": "The images include a photo from before ever using  this product to after I used it: At first it seemed nice but when it had worn off my lips would be really dry and I would have to apply more, my lips would be peeling. This then increased to my lips starting to be very dry and excessively peeling all around which has never happend to me before. When I noticed this I stopped using it as well as stopped using any other products (even though my other products have been a constant in my routine), though I am fairly sure that this reaction started from this lip balm. My lips were very swollen, peeling, and in pain, as you can see and they just kept getting worse even after stopping the use of all products. I haven’t seen this happen to anyone else before so if you do get it and have this reaction you can fix it with aquaphor which is what the doctor told me to use after I took a visit there because my lips were in so much pain and discomfort.  so overall I can’t really say if it was a good product or not because I could have a specific reaction that others may not have and with reactions everyone is different but there are definitely cheaper and better options out there without having to take the chance on a product that has some",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Vanilla Beige - sheer beige"
+    },
+    {
+      "actor_identity": "996153584",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": true,
+        "observed_at": "2025-08-24T07:07:07.000+00:00",
+        "raw_value": {
+          "negative": 9,
+          "positive": 24,
+          "total": 33
+        }
+      },
+      "evidence_id": "sephora-review:325782313",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:996153584",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-11-21T01:10:24.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-1",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:325782313",
+      "source_role": "retailer_review",
+      "text": "If I can give this product zero stars I would! Whatever you do please do not buy this product. I thought it was just me, but on tik tok so many other girls have been having the same reaction to this “lip balm”. At first I thought I my lips were just dry, so I continued to use this product. Turns out this product dried out my lips and caused a chemical burn that will not go away. Anything I eat hurts my lips. It has been torture. Whatever you do do jot buy this.",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Iced Coffee - sheer cocoa"
+    },
+    {
+      "actor_identity": "46901416576",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": true,
+        "observed_at": "2026-01-18T19:47:54.000+00:00",
+        "raw_value": {
+          "negative": 21,
+          "positive": 22,
+          "total": 43
+        }
+      },
+      "evidence_id": "sephora-review:263610826",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:46901416576",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2023-11-18T19:11:57.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-1",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:263610826",
+      "source_role": "retailer_review",
+      "text": "This product destroyed my lips. Not worth it ! My lips are dry and irritated. It keeps itching.I’m definitely returning this product",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Pink Sugar - sheer light pink"
+    },
+    {
+      "actor_identity": "1792047916",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": true,
+        "observed_at": "2025-09-03T01:08:34.000+00:00",
+        "raw_value": {
+          "negative": 3,
+          "positive": 22,
+          "total": 25
+        }
+      },
+      "evidence_id": "sephora-review:187419902",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:1792047916",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2021-09-17T14:01:34.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-1",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:187419902",
+      "source_role": "retailer_review",
+      "text": "Let me first preface this by saying that I had a tube of the original formula that I used until its very last drop,  so I know exactly what this one should feel and apply like. It was exquisite. I was excited to see them repackage this because the old metal package was not great and those can crack and break easily. Having that said, both the new packaging and the new formula are absolutely terrible. The applicator is silicone and drags during application. The formula (specifically vanilla one) burns my lips and makes them warm. I have seen many other reviews saying the same. Something is wrong here Summer Fridays. Why when this product is applied does it feel warm, and burn the lips? I will never purchase this again. Please consider coming back with the actual old formula in better packaging. You had a huge hit there, now ruined by this monstrosity.",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Vanilla Beige - sheer beige"
+    },
+    {
+      "actor_identity": "10139265283",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": true,
+        "observed_at": "2025-08-24T04:19:01.000+00:00",
+        "raw_value": {
+          "negative": 10,
+          "positive": 18,
+          "total": 28
+        }
+      },
+      "evidence_id": "sephora-review:309383242",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:10139265283",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-05-13T23:12:47.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-1",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:309383242",
+      "source_role": "retailer_review",
+      "text": "After using this product for a few days I noticed my lips starting to break out in a rash. I believe the shea butter is too heavy for people with sensitive skin/lips. It’s very moisturizing, very sad this happened",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Vanilla - sheer clear"
+    },
+    {
+      "actor_identity": "22240423257",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": true,
+        "observed_at": "2025-08-24T02:51:14.000+00:00",
+        "raw_value": {
+          "negative": 15,
+          "positive": 16,
+          "total": 31
+        }
+      },
+      "evidence_id": "sephora-review:272686517",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:22240423257",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-02-28T14:17:17.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-1",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:272686517",
+      "source_role": "retailer_review",
+      "text": "Loved this product so much UNTIL I got contact dermatitis on my lips. I have three flavors of this product so that’s $70 down the drain now they’ll be going in the trash 🚮",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Pink Sugar - sheer light pink"
+    },
+    {
+      "actor_identity": "8446928608",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": false,
+        "observed_at": "2026-07-11T14:31:58.000+00:00",
+        "raw_value": {
+          "negative": 0,
+          "positive": 0,
+          "total": 0
+        }
+      },
+      "evidence_id": "sephora-review:397665133",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:8446928608",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-07-11T14:14:39.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-2",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:397665133",
+      "source_role": "retailer_review",
+      "text": "I love this so much. It actually hydrates. A lot of lip products dry out and irritate my lips. This is an exception. Feel so good on the lips, hydrates, and smells so yummy",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Pink Sugar - sheer light pink"
+    },
+    {
+      "actor_identity": "4516679963856640",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": false,
+        "observed_at": "2026-07-13T15:46:21.000+00:00",
+        "raw_value": {
+          "negative": 0,
+          "positive": 0,
+          "total": 0
+        }
+      },
+      "evidence_id": "sephora-review:397449903",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:4516679963856640",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-07-08T21:30:18.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-2",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:397449903",
+      "source_role": "retailer_review",
+      "text": "Very pretty and nice smell. But it agitates my lip a little not burning. However agitates the lip nonetheless.",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Cherry - sheer cherry red"
+    },
+    {
+      "actor_identity": "5141492258",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within the most-helpful/recent captures; no universal retailer threshold.",
+        "kind": "sephora_helpful_votes",
+        "material_positive": false,
+        "observed_at": "2026-07-13T20:34:26.000+00:00",
+        "raw_value": {
+          "negative": 0,
+          "positive": 1,
+          "total": 1
+        }
+      },
+      "evidence_id": "sephora-review:397129614",
+      "incentive_state": "not_marked_incentivized",
+      "independence_key": "sephora:5141492258",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-07-06T05:15:47.000+00:00",
+      "selection_basis": "existing P455936 reaction_and_breakout coding",
+      "source_artifact_id": "sephora-reviews-2",
+      "source_family": "sephora_retailer_reviews",
+      "source_ref": "sephora:review:397129614",
+      "source_role": "retailer_review",
+      "text": "Keep getting an allergic reaction to this lip butter, have they changed their formula????",
+      "variant_observed": "Lip Butter Balm Treatment for Hydration + Nourishing Shine Toasted Marshmallow"
+    },
+    {
+      "actor_identity": "marinabarnoo",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "4,090 observed diggs is materially positive for this captured post; resonance only, not independent experience.",
+        "kind": "tiktok_video_diggs",
+        "material_positive": true,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 4090
+      },
+      "evidence_id": "tiktok-video:7381649202134207786",
+      "independence_key": "tiktok:marinabarnoo",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T01:29:01Z",
+      "selection_basis": "captured creator post directly framed the bound reaction question",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_creator_post",
+      "source_ref": "https://www.tiktok.com/@marinabarnoo/video/7381649202134207786",
+      "source_role": "creator_authored",
+      "text": "Replying to @Sarah 😀.  My vanilla beige burns my lips when i first put it on… am i the only one or #fypシ゚viral #summerfridays #lipbalm"
+    },
+    {
+      "actor_identity": "bernstein_stella",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": true,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 288
+      },
+      "evidence_id": "tiktok-comment:7381650580382679851",
+      "independence_key": "tiktok:7156388661079245867",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T01:34:36Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7381650580382679851",
+      "source_role": "audience_comment",
+      "text": "ME TOO! ITS ONLY VANILLA BEIGE IDK WHY"
+    },
+    {
+      "actor_identity": ".arieltbh",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": true,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 46
+      },
+      "evidence_id": "tiktok-comment:7381718145440121631",
+      "independence_key": "tiktok:6576485183602589701",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T05:56:52Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7381718145440121631",
+      "source_role": "audience_comment",
+      "text": "omg wait i genuinely thought this was just me… literally it’s only vanilla beige for me too’"
+    },
+    {
+      "actor_identity": "naukz",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": true,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 75
+      },
+      "evidence_id": "tiktok-comment:7381652067243606830",
+      "independence_key": "tiktok:6685232265084027910",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T01:40:26Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7381652067243606830",
+      "source_role": "audience_comment",
+      "text": "What… I just bought it 😫😭 I haven’t received it yet but I’m worried and upset now"
+    },
+    {
+      "actor_identity": "1ove.alexandra3",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 1
+      },
+      "evidence_id": "tiktok-comment:7592607959882220319",
+      "independence_key": "tiktok:7560146539419599886",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-01-07T13:17:52Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7592607959882220319",
+      "source_role": "audience_comment",
+      "text": "Me to but it’s that pink guava one"
+    },
+    {
+      "actor_identity": "elionwillpower",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 6
+      },
+      "evidence_id": "tiktok-comment:7381890439343735598",
+      "independence_key": "tiktok:6824589150130750470",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T17:05:43Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7381890439343735598",
+      "source_role": "audience_comment",
+      "text": "this happens to me with tower 28 lip softie burns my lips & not in a good way 😭"
+    },
+    {
+      "actor_identity": "allykent1",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": true,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 85
+      },
+      "evidence_id": "tiktok-comment:7381673774888059679",
+      "independence_key": "tiktok:7319359083883267118",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T03:04:28Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7381673774888059679",
+      "source_role": "audience_comment",
+      "text": "I got the coffe one and it’s so good idk what yall talking abt"
+    },
+    {
+      "actor_identity": "imsotuffguys1",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 5
+      },
+      "evidence_id": "tiktok-comment:7508953746987959082",
+      "independence_key": "tiktok:7281076858035405866",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-05-27T02:55:57Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7508953746987959082",
+      "source_role": "audience_comment",
+      "text": "I js put it in im crying sm MY LIPS ARE ON FIRE THEY BURN SO BAD😭"
+    },
+    {
+      "actor_identity": "kels_ce",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 0
+      },
+      "evidence_id": "tiktok-comment:7621769689929138958",
+      "independence_key": "tiktok:7420552810079470635",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2026-03-27T03:19:33Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7621769689929138958",
+      "source_role": "audience_comment",
+      "text": "Wait only the vanilla beige burns my lips 👀"
+    },
+    {
+      "actor_identity": "aceber_in_a_box",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 0
+      },
+      "evidence_id": "tiktok-comment:7578266905766462230",
+      "independence_key": "tiktok:6653778322429345798",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-11-29T21:46:13Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7578266905766462230",
+      "source_role": "audience_comment",
+      "text": "It also burns my lips but it’s literally the only shade that does that so i honestly don’t know what’s up with that🫤"
+    },
+    {
+      "actor_identity": "kinsy6767",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 0
+      },
+      "evidence_id": "tiktok-comment:7577689077408940856",
+      "independence_key": "tiktok:7530387671010968581",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-11-28T08:24:05Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7577689077408940856",
+      "source_role": "audience_comment",
+      "text": "I-I I"
+    },
+    {
+      "actor_identity": "jadore.dreaaa",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 4
+      },
+      "evidence_id": "tiktok-comment:7382063111974732575",
+      "independence_key": "tiktok:7042845497657001006",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-19T04:15:21Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7382063111974732575",
+      "source_role": "audience_comment",
+      "text": "i bought my brown sugar a while ago like 2 months ago, mind u ts is my 4th one, it feels like sm more of a watery formula and js feels weird & a bit drying on the lips 2 me"
+    },
+    {
+      "actor_identity": "zeshhhhhh",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 3
+      },
+      "evidence_id": "tiktok-comment:7384166497462289182",
+      "independence_key": "tiktok:6812674870997206022",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-24T20:17:37Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7384166497462289182",
+      "source_role": "audience_comment",
+      "text": "For me it’s only the brown sugar that burns my lip 😭"
+    },
+    {
+      "actor_identity": "lilaariana19",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 2
+      },
+      "evidence_id": "tiktok-comment:7481591833072943888",
+      "independence_key": "tiktok:6702696588072780806",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-03-14T09:17:40Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7481591833072943888",
+      "source_role": "audience_comment",
+      "text": "Vinilla or pink sugar"
+    },
+    {
+      "actor_identity": "nicoles0diary",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 3
+      },
+      "evidence_id": "tiktok-comment:7385589334789554987",
+      "independence_key": "tiktok:7274990807009444906",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-28T16:19:04Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7385589334789554987",
+      "source_role": "audience_comment",
+      "text": "For some reason brown sugar literally makes me feel so itchy like its weird to describe but like what"
+    },
+    {
+      "actor_identity": "vi.3252",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 1
+      },
+      "evidence_id": "tiktok-comment:7381753285764956946",
+      "independence_key": "tiktok:7369875453252928517",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-18T08:12:58Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7381753285764956946",
+      "source_role": "audience_comment",
+      "text": "Omg what?? I've had multiple and used up one whole pink sugar through a year and that's NEVER happened. Hell I'm almost through a 2nd pink sugar and its still perfect"
+    },
+    {
+      "actor_identity": "stacicypress",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 1
+      },
+      "evidence_id": "tiktok-comment:7476703422690509614",
+      "independence_key": "tiktok:6807351019782751238",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-03-01T05:08:25Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7476703422690509614",
+      "source_role": "audience_comment",
+      "text": "Pink sugar did this to me"
+    },
+    {
+      "actor_identity": "unk_unk_un",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 2
+      },
+      "evidence_id": "tiktok-comment:7556672989032203064",
+      "independence_key": "tiktok:7352285652086932485",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2025-10-02T17:10:48Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7556672989032203064",
+      "source_role": "audience_comment",
+      "text": "IM NOT THE ONLY ONEEEE"
+    },
+    {
+      "actor_identity": "char.vrs",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 0
+      },
+      "evidence_id": "tiktok-comment:7403144097768948486",
+      "independence_key": "tiktok:6674212458885334021",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-08-14T23:40:15Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7403144097768948486",
+      "source_role": "audience_comment",
+      "text": "Omg I thought I was crazy but my vanilla beige burn like WTF it wasn’t like that when I bought it"
+    },
+    {
+      "actor_identity": "ruby_foreva4",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 1
+      },
+      "evidence_id": "tiktok-comment:7402937447262192402",
+      "independence_key": "tiktok:7245408559764341767",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-08-14T10:18:14Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7402937447262192402",
+      "source_role": "audience_comment",
+      "text": "IT IS EXPIRED BESTIE DONT USE IT YOUR LIPS ARE GOING TO GET WORSE"
+    },
+    {
+      "actor_identity": "astoldbykarleigh",
+      "axis_candidates": [
+        "reaction_and_breakout"
+      ],
+      "engagement": {
+        "context": "Dogfood-specific conservative materiality judgment within a 20-of-77 captured comment envelope; no universal TikTok threshold.",
+        "kind": "tiktok_comment_diggs",
+        "material_positive": false,
+        "observed_at": "2026-07-26T11:10:27Z",
+        "raw_value": 1
+      },
+      "evidence_id": "tiktok-comment:7382344206406320927",
+      "independence_key": "tiktok:7097974777756107819",
+      "product_candidates": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "publication_time": "2024-06-19T22:26:03Z",
+      "selection_basis": "all comments in the captured 20-of-77 audience envelope",
+      "source_artifact_id": "tiktok-reaction-capture",
+      "source_family": "tiktok_audience_comments",
+      "source_ref": "tiktok:video:7381649202134207786:comment:7382344206406320927",
+      "source_role": "audience_comment",
+      "text": "my iced coffee one is more watery than all the rest. i still love it but 😭😭"
+    }
+  ],
+  "question": "Within the declared captured candidate slice, what customer-experience evidence reports or opposes burning, irritation, dryness, peeling, rash, itching, or related adverse reactions after using Summer Fridays Lip Butter Balm; which product variants, timing conditions, behavior consequences, creator framing, and unverified causal explanations must remain separate?",
+  "question_id": "phase-a-semantic-integration-multisource-reaction-dogfood",
+  "source_artifacts": [
+    {
+      "artifact_id": "community-axis-coding",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json",
+      "sha256": "fd2d9a57ce4a8474f2c3e785f7c3b8039bb39477722a4ee2eb03cc7e07093752"
+    },
+    {
+      "artifact_id": "retailer-product-axis-coding",
+      "locator": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r5/coordinated/retailer_product_axis_coding.json",
+      "sha256": "28a1f92661cd2e75c40cbcea8adbf51206c15b418be2561e8dce17b6770a7cf6"
+    },
+    {
+      "artifact_id": "reddit-13aw1sp",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_013\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "d9563609d21da0893030dd0ccbbe4e24ccb47d00b5df7a8bdb9c2eca21e274cf"
+    },
+    {
+      "artifact_id": "reddit-13end3f",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_004\\slot_004_packet\\raw\\01_content_record.json",
+      "sha256": "79e62868c8bc47ab3964bdb2c12330328b450236335b3d892bf114e4491fbbeb"
+    },
+    {
+      "artifact_id": "reddit-15qtzd8",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_004\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "6d144e86dcd251aecf01e2d56f9d1619609e899b8e19170ab7c0ed6517c156b4"
+    },
+    {
+      "artifact_id": "reddit-166j6zu",
+      "locator": "C:\\tmp\\forseti-sf-phase2-native-return-20260728\\q02_allergy_packet\\raw\\01_http_response_body.bin",
+      "sha256": "dadb87b52586479c3e1a6c04c0c4f15720d80649c93cd300a0acb93073cc8779"
+    },
+    {
+      "artifact_id": "reddit-16old70",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_004\\slot_007_packet\\raw\\01_content_record.json",
+      "sha256": "67a83a66e649260b0800b437da6582d2e7eab51261c9da35e8f5b8bf665345f1"
+    },
+    {
+      "artifact_id": "reddit-171ciwt",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_013\\slot_007_packet\\raw\\01_content_record.json",
+      "sha256": "336cc21e245e142d6339c4c24dfe3299d8139862c3b044bdd073a51551ef0aa5"
+    },
+    {
+      "artifact_id": "reddit-1742rj9",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_003\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "c2e3669f0491488bca4eccc8b777424b8000802fb64592fd7a7be51775249fe4"
+    },
+    {
+      "artifact_id": "reddit-17585yg",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_013\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "4674036cf945881fa1dc82048b6a2f0c108a87008806b3d671dcb5932bca24d1"
+    },
+    {
+      "artifact_id": "reddit-176msij",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_wx_www_realchrome_v13\\batch_003\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "f857dc643dc896c59504e4df6e228d3e91ed6424be09aa32bb7b68f1713c2ec6"
+    },
+    {
+      "artifact_id": "reddit-17p8me8",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_005\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "f96b5a86828d8840f8b4cf7887b5c89e17924aa7da68412dba2c5ac056d72ff6"
+    },
+    {
+      "artifact_id": "reddit-193h7hu",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_008\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "11749720b1f366921146256fed5e047a0e6e28f0a6fe27fa6a2ffb9294d867e8"
+    },
+    {
+      "artifact_id": "reddit-199wb9b",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_wx_www_realchrome_v13\\batch_002\\slot_001_packet\\raw\\01_content_record.json",
+      "sha256": "06b7295fd70a03d048a92fb4f6a4e603577c665c1da460e289833bb642666012"
+    },
+    {
+      "artifact_id": "reddit-1ahn26w",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1ahn26w_packet\\raw\\01_content_record.json",
+      "sha256": "73f303e3a6c2c7bf36a6cbffedd943575d61cc50ed471630e3c023cb68c9af04"
+    },
+    {
+      "artifact_id": "reddit-1akf6oh",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_wx_www_realchrome_v13\\batch_001\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "22bc1cf42ce90f9e3548a2ff68c507a89667ffa54d6dafe80e5c57a99b176909"
+    },
+    {
+      "artifact_id": "reddit-1aoorwz",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_003\\slot_007_packet\\raw\\01_content_record.json",
+      "sha256": "a3332dd66064fbd48ab43cb906eeb0d104f520bde6717711b4fb0707cca06c65"
+    },
+    {
+      "artifact_id": "reddit-1asnsu0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_012\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "14fc193769ac1e260ceeb6bb8f1dab1ba8b4ca1a310e621ec69016aa9d4b690e"
+    },
+    {
+      "artifact_id": "reddit-1bm9izm",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\1bm9izm_packet\\raw\\01_content_record.json",
+      "sha256": "4a38390d9f5266183c982f9b058e124eb7ffa1acf85b2ad05b5705ca1e1a9e95"
+    },
+    {
+      "artifact_id": "reddit-1bsww9d",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_006\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "34b8e36732e4470e85dd9519674fcf28cddfa0dffc7a93e9e0e0b7eea1337d18"
+    },
+    {
+      "artifact_id": "reddit-1ceemxn",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_003\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "28403503e4a888347c9168961526d3906ef020f433f28e3a9ea22d602646849d"
+    },
+    {
+      "artifact_id": "reddit-1ddzt09",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_post_op_delta_browser\\batch_001\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "6a815153e4bf5792a34de52333e011b827330f21a39f2e24e85ae03589bab716"
+    },
+    {
+      "artifact_id": "reddit-1ee21xh",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r7_st_www_v9\\batch_003\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "8d45c59993ceb76f8752cd8b706001f312a56531b778c78d6cebc9f7e7fc71ef"
+    },
+    {
+      "artifact_id": "reddit-1eizw8l",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r7_uv_www_v11\\batch_001\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "3e75990fbcbe22150459f83433ad2e756f984b95f928eaf2adf08012d1224358"
+    },
+    {
+      "artifact_id": "reddit-1fk0zu0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_browser_recovery\\batch_003\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "6443d67dd2560bda7470fd42b37d391ff5e93f5c9d5ecf5562dac583eb611aa2"
+    },
+    {
+      "artifact_id": "reddit-1fu32im",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_001\\slot_007_packet\\raw\\01_content_record.json",
+      "sha256": "24eaee7f17e07ac3e6b329990bf2ba5059969aa07fe1bd136d1572eeca1a9604"
+    },
+    {
+      "artifact_id": "reddit-1fvevie",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\brand_claim_challenge_001_packet\\raw\\01_http_response_body.bin",
+      "sha256": "a0935dc2de61e4bbe5b3adb9d7e1ee558f6ae809e28e085d8c1e011f94421488"
+    },
+    {
+      "artifact_id": "reddit-1hpgjxj",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_008\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "ddf1821694e20b1e4b81121c835522bf225c8735997e706df9db9f1d0566d63d"
+    },
+    {
+      "artifact_id": "reddit-1i7jaw4",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r7_st_www_v9\\batch_000\\slot_001_packet\\raw\\01_content_record.json",
+      "sha256": "1c47331e9a59644d023d7d630caba95d050fec08f3ead24da41cb97770c94448"
+    },
+    {
+      "artifact_id": "reddit-1i7of0b",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r7_st_www_v9\\batch_005\\slot_001_packet\\raw\\01_content_record.json",
+      "sha256": "c83b11e315d982bc416d43bbc6e818d4183b5ec2db5a0f1f082a1a3b256d7514"
+    },
+    {
+      "artifact_id": "reddit-1j6xhqb",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_006\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "563ee1a4a1f43d7f9da4157004bccba98493149ba288203383135d87b4fb1d49"
+    },
+    {
+      "artifact_id": "reddit-1k562e8",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_002\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "7720f7191eba420e55514f93a87d5f0c5393990463289f8cc7bac330235803dd"
+    },
+    {
+      "artifact_id": "reddit-1kq0492",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r6-20260802\\reddit\\batch_b\\1kq0492_packet\\raw\\01_content_record.json",
+      "sha256": "f14f9683653fc033153b5cd9e8bed7687fa33812b0c77fa4aca4f3d2c914c2a1"
+    },
+    {
+      "artifact_id": "reddit-1m07jmq",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_003\\slot_001_packet\\raw\\01_content_record.json",
+      "sha256": "84df01797d595c55120c3934d755e55228e121b315a44e379f5b894654a7a315"
+    },
+    {
+      "artifact_id": "reddit-1mzokbt",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_burning_003_packet\\raw\\01_http_response_body.bin",
+      "sha256": "9c54b7d2ee3d57d78614365cf6e65fab491c3386aa2c2d71d9001fea058c558e"
+    },
+    {
+      "artifact_id": "reddit-1oatxkp",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_032\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "52d1cf6f449fb9674866dced6b4246fd59f3ee5d65b33ee6b85934c97ea623fa"
+    },
+    {
+      "artifact_id": "reddit-1oh26y0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r2-20260801\\specialists\\co3\\reddit\\remaining_slow_batch\\1oh26y0_packet\\raw\\01_content_record.json",
+      "sha256": "c27a2c5d1b3ed787981aceff087ac64a655bb6d61c3da8454883ad25a40fc99e"
+    },
+    {
+      "artifact_id": "reddit-1ougkua",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_009\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "c6d13a36690e89b56094a7e2e210c1948b5facceb0ad8ca8c33874d41a6cbbb5"
+    },
+    {
+      "artifact_id": "reddit-1p7si2m",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\identity_guard_continuation_v5\\batch_000\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "39b8811196f97f09200c7cb1d96c388d99cd02e2f1d660c1744e68dd4278fbc2"
+    },
+    {
+      "artifact_id": "reddit-1pf427h",
+      "locator": "C:\\tmp\\forseti-sf-understanding-dogfood-20260725-p10\\data\\co3\\community\\reddit_batch_001\\lip_reaction_005_packet\\raw\\01_http_response_body.bin",
+      "sha256": "f06efcfd454723d508c81b42d49fc884400f170e42518bb2e177782c2f4a2835"
+    },
+    {
+      "artifact_id": "reddit-1pneo7v",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_004\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "4c2e008b55723c351c5c0ee342b7ce6b73e943badb14118fde1adcd41c4771d4"
+    },
+    {
+      "artifact_id": "reddit-1qxm1tz",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_005\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "85b93f73cdb604d22b1a7dd3fa54539350ec2459c58e0b1f9ebb045a4a217372"
+    },
+    {
+      "artifact_id": "reddit-1r09924",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_005\\slot_007_packet\\raw\\01_content_record.json",
+      "sha256": "adbb154b56635b03f0a0e6e235d5ad63e70b56b6ef41512a2f87aabaf274ccf2"
+    },
+    {
+      "artifact_id": "reddit-1r18e9m",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r6_omissions\\batch_002\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "c3ec064367b04973f8d9a85cf334686849e512ce53edca9b72a57bd85b9c70fd"
+    },
+    {
+      "artifact_id": "reddit-1r348ph",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r7_st_www_v9\\batch_000\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "8a9ca5bbba95c229ccbfa5c1e2814da55357e6e4fdb61faf5d7f31cd65c87a57"
+    },
+    {
+      "artifact_id": "reddit-1st35o0",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\p11r7_uv_www_v11\\batch_001\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "f98ce83567592559bdd8dd92313f7b6447a404eeba6cab53211e6040a656d513"
+    },
+    {
+      "artifact_id": "reddit-1t79b03",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_035\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "87d3cdeec65b28fb27bd39405af4a0b526a847c0d9ef4515e97529dff233b8e6"
+    },
+    {
+      "artifact_id": "reddit-1ul7dbe",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_acad_www_realchrome_v19\\batch_001\\slot_005_packet\\raw\\01_content_record.json",
+      "sha256": "e915b92931fe3e4291216e85669da7c68ee5d87ec18f690ae940b2f4b470cc21"
+    },
+    {
+      "artifact_id": "reddit-1ur9u91",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_yz_www_realchrome_v15\\batch_000\\slot_003_packet\\raw\\01_content_record.json",
+      "sha256": "0813e0d9f75cdc3cdcf255f18f3e6fb69996b12cc4c22c1d49831ca632bafdf6"
+    },
+    {
+      "artifact_id": "reddit-vileta",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier_listing_policy_continuation\\batch_015\\slot_002_packet\\raw\\01_content_record.json",
+      "sha256": "2446e985581e3fe5583ce2b9c4c1cb29d334499a8e94183263cebcb94b979fcd"
+    },
+    {
+      "artifact_id": "reddit-wve0sg",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_022\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "31ffb84de098205f3074ec0970a2b36e178a9f63c8038aace62bcaf6bbd64096"
+    },
+    {
+      "artifact_id": "reddit-xysaq8",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11r7-20260802\\reddit\\frontier\\batch_024\\slot_006_packet\\raw\\01_content_record.json",
+      "sha256": "dba1d8413a6ff267fe4eb3e11533f785b91b07c364b62854ce67dc86a26af747"
+    },
+    {
+      "artifact_id": "sephora-reviews-1",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\raw\\7a4\\01KYWCQZ9C90M78Z7HTZ8TZRAA\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json",
+      "sha256": "05e5b315662b191eb5b0caf9c7ea999af2660eae5e8e3d760eb6df65fa627f00"
+    },
+    {
+      "artifact_id": "sephora-reviews-2",
+      "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\raw\\7a4\\01KYWCQZ9C90M78Z7HTZ8TZRAA\\raw\\03_reviews_non_incentivized_most_recent_offset_00000.json",
+      "sha256": "75a0688c779ded23702d624270742d8ff9731405dfcefa7c72510fcb00603527"
+    },
+    {
+      "artifact_id": "tiktok-reaction-capture",
+      "locator": "C:\\tmp\\forseti-sf-serp-social-composition-20260726\\data\\raw\\178\\01KYF1X0V8TTNZ9KH718V1CTJ8\\raw\\01_tiktok_batch_capture.json",
+      "sha256": "89993fdf54634913813e1d17ce5cea24131c299f6e1b884a66dd2f38c9e81c5e"
+    }
+  ]
+}

@@ -84,6 +84,15 @@ def _sha256(value: Any) -> str:
     return hashlib.sha256(_json_bytes(value)).hexdigest()
 
 
+def _verify_stored_hash(value: Mapping[str, Any], *, field: str, label: str) -> None:
+    """Reject an artifact whose content no longer matches its stored hash."""
+    core = {key: item for key, item in value.items() if key != field}
+    if value.get(field) != _sha256(core):
+        raise SemanticIntegrationError(
+            f"{label} content does not match its stored {field}"
+        )
+
+
 def _stable_id(prefix: str, *parts: Any) -> str:
     digest = hashlib.sha256(
         "\0".join(str(part) for part in parts).encode("utf-8")
@@ -301,8 +310,10 @@ def validate_batch_responses(
     bundle: Mapping[str, Any], responses: Sequence[Mapping[str, Any]]
 ) -> dict[str, Any]:
     """Validate exact batch coverage and compile stable semantic-unit refs."""
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
     expected_batches = {row["batch_id"]: row for row in bundle["batches"]}
     seen_batches: set[str] = set()
+    seen_refs: set[str] = set()
     semantic_units: list[dict[str, Any]] = []
     dispositions: list[dict[str, Any]] = []
     axis_ids = {row["axis_id"] for row in bundle["axes"]}
@@ -354,9 +365,16 @@ def validate_batch_responses(
                     raise SemanticIntegrationError(f"semantic unit {evidence_id}:{key} cites unknown axis")
                 emerging = _string_list(unit.get("emerging_axis_labels", []), field=f"{evidence_id}.{key}.emerging_axes")
                 conditions = _string_list(unit.get("conditions", []), field=f"{evidence_id}.{key}.conditions")
+                ref = f"{evidence_id}::{key}"
+                # Evidence ids are operator data, so two (evidence, key) pairs
+                # can render the same ref; a collision would silently collapse
+                # a unit out of the completeness accounting downstream.
+                if ref in seen_refs:
+                    raise SemanticIntegrationError(f"duplicate semantic unit ref: {ref}")
+                seen_refs.add(ref)
                 semantic_units.append(
                     {
-                        "semantic_unit_ref": f"{evidence_id}::{key}",
+                        "semantic_unit_ref": ref,
                         "evidence_id": evidence_id,
                         "statement": unit["statement"].strip(),
                         "subject_product_ids": subjects,
@@ -387,6 +405,8 @@ def validate_batch_responses(
 
 
 def build_reconciliation_prompt(bundle: Mapping[str, Any], compiled: Mapping[str, Any]) -> str:
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _verify_stored_hash(compiled, field="compilation_sha256", label="batch compilation")
     if compiled.get("bundle_sha256") != bundle.get("bundle_sha256"):
         raise SemanticIntegrationError("batch compilation does not match bundle")
     shape = {
@@ -440,15 +460,20 @@ def finalize_view(
     response: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Compile the agent's reconciliation into one authoritative proposition view."""
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _verify_stored_hash(compiled, field="compilation_sha256", label="batch compilation")
     if response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION:
         raise SemanticIntegrationError("invalid reconciliation response version")
     if response.get("bundle_sha256") != bundle.get("bundle_sha256"):
         raise SemanticIntegrationError("reconciliation has stale bundle hash")
     if response.get("compilation_sha256") != compiled.get("compilation_sha256"):
         raise SemanticIntegrationError("reconciliation has stale compilation hash")
-    semantic_index = {
-        row["semantic_unit_ref"]: row for row in compiled["semantic_units"]
-    }
+    semantic_index: dict[str, Mapping[str, Any]] = {}
+    for row in compiled["semantic_units"]:
+        unit_ref = row["semantic_unit_ref"]
+        if unit_ref in semantic_index:
+            raise SemanticIntegrationError(f"duplicate semantic unit ref: {unit_ref}")
+        semantic_index[unit_ref] = row
     evidence_index = _unit_index(bundle)
     axis_ids = {row["axis_id"] for row in bundle["axes"]}
     propositions = response.get("propositions")
@@ -527,6 +552,14 @@ def finalize_view(
             for ref in support_evidence
             if _nonempty(evidence_index[ref].get("independence_key"))
         }
+        # Cross-venue credit requires at least one independently credited
+        # origin in each counted source role, so roles carried only by
+        # uncredited evidence must not widen the venue count.
+        credited_roles = {
+            evidence_index[ref]["source_role"]
+            for ref in support_evidence
+            if _nonempty(evidence_index[ref].get("independence_key"))
+        }
         engagement_refs = [
             ref
             for ref in support_evidence
@@ -534,7 +567,7 @@ def finalize_view(
         ]
         if kind == "observable_fact":
             posture = "directly_observed"
-        elif len(origin_keys) >= 2 and len(roles) >= 2:
+        elif len(origin_keys) >= 2 and len(credited_roles) >= 2:
             posture = "cross_venue_corroborated"
         elif len(origin_keys) >= 2:
             posture = "independently_repeated"
@@ -558,6 +591,10 @@ def finalize_view(
             *sorted(axes),
             *sorted(conditions),
         )
+        if any(row["proposition_id"] == proposition_id for row in compiled_props):
+            raise SemanticIntegrationError(
+                f"duplicate proposition identity: {proposition_id}"
+            )
         compiled_props.append(
             {
                 "proposition_id": proposition_id,
@@ -600,11 +637,18 @@ def finalize_view(
     unresolved = sorted(
         row["evidence_id"] for row in dispositions if row["disposition"] == "unresolved"
     )
+    # Batch-stage nominations must stay visible even when the reconciliation
+    # leaves the nominating unit unmerged; otherwise the seal never sees them.
     emerging_axes = sorted(
         {
             label
             for row in compiled_props
             for label in row["emerging_axis_labels"]
+        }
+        | {
+            label
+            for row in compiled["semantic_units"]
+            for label in row.get("emerging_axis_labels", [])
         }
     )
     view = {

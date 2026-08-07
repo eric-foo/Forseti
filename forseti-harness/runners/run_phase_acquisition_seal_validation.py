@@ -4059,6 +4059,16 @@ def _validate_semantic_evidence_integration(
             or coverage.get("complete") is not True
         ):
             findings.append("incomplete_semantic_integration_coverage")
+        unresolved_view = coverage.get("unresolved_evidence_ids")
+        if not isinstance(unresolved_view, list) or any(
+            not isinstance(item, str) or not item for item in unresolved_view
+        ):
+            findings.append("invalid_semantic_integration_unresolved_evidence_ids")
+            unresolved_view = []
+        # The seal's materiality claim may only reference evidence the view
+        # actually left unresolved; anything else is a stale or invented id.
+        if set(unresolved_material) - set(unresolved_view):
+            findings.append("semantic_integration_unresolved_material_not_in_view")
     emerging = view.get("emerging_axis_candidates")
     if not isinstance(emerging, list) or any(
         not isinstance(item, str) or not item for item in emerging
@@ -4070,6 +4080,15 @@ def _validate_semantic_evidence_integration(
         if not isinstance(dispositions, list):
             findings.append("missing_semantic_integration_emerging_axis_dispositions")
         else:
+            labels = [
+                row.get("label")
+                for row in dispositions
+                if isinstance(row, dict) and isinstance(row.get("label"), str)
+            ]
+            if len(labels) != len(set(labels)):
+                findings.append(
+                    "duplicate_semantic_integration_emerging_axis_disposition"
+                )
             by_label = {
                 row.get("label"): row
                 for row in dispositions
@@ -4532,6 +4551,37 @@ def _validate_comparator_choice_explanation(
                 findings.append(
                     f"mixed_comparator_choice_axis_not_split:{candidate_id}"
                 )
+            # The inline claim_support block is a derived compatibility
+            # projection of a referenced proposition and must not diverge
+            # from it on any field both carry.
+            inline_support = axis_row.get("claim_support")
+            if resolved and isinstance(inline_support, dict):
+                matched = next(
+                    (
+                        proposition["claim_support"]
+                        for proposition in resolved
+                        if isinstance(proposition.get("claim_support"), dict)
+                        and proposition["claim_support"].get("bounded_proposition")
+                        == inline_support.get("bounded_proposition")
+                    ),
+                    None,
+                )
+                if matched is None:
+                    findings.append(
+                        "comparator_choice_claim_support_projection_unmatched:"
+                        + candidate_id
+                    )
+                else:
+                    diverged = sorted(
+                        key
+                        for key, value in inline_support.items()
+                        if key in matched and matched[key] != value
+                    )
+                    if diverged:
+                        findings.append(
+                            "comparator_choice_claim_support_projection_divergence:"
+                            + f"{candidate_id}:{','.join(diverged)}"
+                        )
 
         claim_support = axis_row.get("claim_support")
         if not isinstance(claim_support, dict):

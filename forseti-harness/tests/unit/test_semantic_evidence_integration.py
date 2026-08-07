@@ -450,6 +450,228 @@ def test_reconciliation_prompt_contains_every_compiled_meaning() -> None:
         assert unit["semantic_unit_ref"] in prompt
 
 
+def test_uncredited_role_cannot_manufacture_cross_venue_credit() -> None:
+    source = _source()
+    source["evidence_units"][3]["independence_key"] = "reddit:u/customer-c"
+    source["evidence_units"][3]["axis_candidates"] = ["comfort"]
+    source["evidence_units"][3]["product_candidates"] = ["sf-lbb", "ole-pout"]
+    source["evidence_units"].append(
+        {
+            "evidence_id": "retailer:uncredited-comfort",
+            "source_family": "retailer_reviews",
+            "source_role": "retailer_review",
+            "source_artifact_id": "retailer-coding",
+            "source_ref": "retailer:review-2",
+            "text": "More comfortable than Ole Henriksen for me too.",
+            "product_candidates": ["sf-lbb", "ole-pout"],
+            "axis_candidates": ["comfort"],
+            "engagement": {"material_positive": False},
+        }
+    )
+    bundle = build_bundle(source)
+    comfort_unit = {
+        "subject_product_ids": ["sf-lbb"],
+        "comparator_product_ids": ["ole-pout"],
+        "axis_ids": ["comfort"],
+        "emerging_axis_labels": [],
+        "conditions": ["reported lip use"],
+    }
+    rows = {
+        row["evidence_id"]: row
+        for base_response in _batch_responses(_bundle())
+        for row in base_response["evidence"]
+    }
+    rows["reddit:echo"] = {
+        "evidence_id": "reddit:echo",
+        "disposition": "claim_bearing",
+        "disposition_reason": "second credited comfort comparison",
+        "semantic_units": [
+            {
+                "semantic_unit_key": "comfort-second",
+                "statement": "Summer Fridays felt more comfortable than Ole.",
+                **comfort_unit,
+            }
+        ],
+    }
+    rows["retailer:uncredited-comfort"] = {
+        "evidence_id": "retailer:uncredited-comfort",
+        "disposition": "claim_bearing",
+        "disposition_reason": "uncredited comfort comparison",
+        "semantic_units": [
+            {
+                "semantic_unit_key": "comfort-uncredited",
+                "statement": "Summer Fridays felt more comfortable than Ole Henriksen.",
+                **comfort_unit,
+            }
+        ],
+    }
+    responses = [
+        {
+            "schema_version": BATCH_RESPONSE_VERSION,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch["batch_id"],
+            "evidence": [rows[evidence_id] for evidence_id in batch["evidence_ids"]],
+        }
+        for batch in bundle["batches"]
+    ]
+    compiled = validate_batch_responses(bundle, responses)
+    response = _reconciliation(bundle, compiled)
+    response["propositions"][0]["relations"].extend(
+        [
+            {"semantic_unit_ref": "reddit:echo::comfort-second", "relation": "support"},
+            {
+                "semantic_unit_ref": "retailer:uncredited-comfort::comfort-uncredited",
+                "relation": "support",
+            },
+        ]
+    )
+    view = finalize_view(bundle, compiled, response)
+    comfort = next(
+        row for row in view["propositions"] if "more comfortable" in row["bounded_proposition"]
+    )
+
+    assert comfort["claim_support"]["independent_origin_count"] == 2
+    assert comfort["claim_support"]["support_posture"] == "independently_repeated"
+
+
+def test_semantic_unit_ref_collision_is_rejected() -> None:
+    source = _source()
+    source["evidence_units"][0]["evidence_id"] = "amb"
+    source["evidence_units"][1]["evidence_id"] = "amb::comfort"
+    bundle = build_bundle(source)
+    rows = {
+        "amb": {
+            "evidence_id": "amb",
+            "disposition": "claim_bearing",
+            "disposition_reason": "comfort comparison",
+            "semantic_units": [
+                {
+                    "semantic_unit_key": "comfort::vs-ole",
+                    "statement": "Summer Fridays felt more comfortable than Ole Henriksen.",
+                    "subject_product_ids": ["sf-lbb"],
+                    "comparator_product_ids": ["ole-pout"],
+                    "axis_ids": ["comfort"],
+                    "emerging_axis_labels": [],
+                    "conditions": [],
+                }
+            ],
+        },
+        "amb::comfort": {
+            "evidence_id": "amb::comfort",
+            "disposition": "claim_bearing",
+            "disposition_reason": "wear comparison",
+            "semantic_units": [
+                {
+                    "semantic_unit_key": "vs-ole",
+                    "statement": "Laneige lasted longer than Summer Fridays for this reviewer.",
+                    "subject_product_ids": ["sf-lbb"],
+                    "comparator_product_ids": ["laneige-glowy"],
+                    "axis_ids": ["wear_and_longevity"],
+                    "emerging_axis_labels": [],
+                    "conditions": [],
+                }
+            ],
+        },
+        "owned:sf-pdp": {
+            "evidence_id": "owned:sf-pdp",
+            "disposition": "context_only",
+            "disposition_reason": "not needed for this fixture",
+            "semantic_units": [],
+        },
+        "reddit:echo": {
+            "evidence_id": "reddit:echo",
+            "disposition": "context_only",
+            "disposition_reason": "no separate product experience",
+            "semantic_units": [],
+        },
+    }
+    responses = [
+        {
+            "schema_version": BATCH_RESPONSE_VERSION,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch["batch_id"],
+            "evidence": [rows[evidence_id] for evidence_id in batch["evidence_ids"]],
+        }
+        for batch in bundle["batches"]
+    ]
+
+    with pytest.raises(SemanticIntegrationError, match="duplicate semantic unit ref"):
+        validate_batch_responses(bundle, responses)
+
+
+def test_tampered_bundle_with_stale_stored_hash_is_rejected() -> None:
+    bundle = _bundle()
+    responses = _batch_responses(bundle)
+    tampered = next(
+        row
+        for row in bundle["evidence_units"]
+        if row["evidence_id"] == "retailer:laneige-wear-1"
+    )
+    tampered["independence_key"] = "reddit:u/customer-a"
+
+    with pytest.raises(SemanticIntegrationError, match="stored bundle_sha256"):
+        validate_batch_responses(bundle, responses)
+
+
+def test_tampered_compilation_with_stale_stored_hash_is_rejected() -> None:
+    bundle = _bundle()
+    compiled = _compiled(bundle)
+    response = _reconciliation(bundle, compiled)
+    compiled["semantic_units"][0]["subject_product_ids"] = ["laneige-glowy"]
+
+    with pytest.raises(SemanticIntegrationError, match="stored compilation_sha256"):
+        finalize_view(bundle, compiled, response)
+
+
+def test_unmerged_unit_emerging_axis_nomination_stays_visible() -> None:
+    bundle = _bundle()
+    responses = _batch_responses(bundle)
+    echo = next(
+        row for row in responses[0]["evidence"] if row["evidence_id"] == "reddit:echo"
+    )
+    echo.update(
+        {
+            "disposition": "claim_bearing",
+            "disposition_reason": "mentions an application ritual",
+            "semantic_units": [
+                {
+                    "semantic_unit_key": "ritual",
+                    "statement": "The customer described a nightly application ritual.",
+                    "subject_product_ids": ["sf-lbb"],
+                    "comparator_product_ids": [],
+                    "axis_ids": [],
+                    "emerging_axis_labels": ["application_ritual"],
+                    "conditions": [],
+                }
+            ],
+        }
+    )
+    compiled = validate_batch_responses(bundle, responses)
+    response = _reconciliation(bundle, compiled)
+    response["unmerged_semantic_units"] = [
+        {
+            "semantic_unit_ref": "reddit:echo::ritual",
+            "reason": "single ambiguous mention without a bounded proposition",
+        }
+    ]
+    view = finalize_view(bundle, compiled, response)
+
+    assert "application_ritual" in view["emerging_axis_candidates"]
+
+
+def test_duplicate_proposition_identity_is_rejected() -> None:
+    bundle = _bundle()
+    compiled = _compiled(bundle)
+    response = _reconciliation(bundle, compiled)
+    clone = deepcopy(response["propositions"][0])
+    clone["proposition_key"] = "sf-comfort-vs-ole-as-behavior"
+    clone["claim_kind"] = "reported_behavior"
+    response["propositions"].append(clone)
+
+    with pytest.raises(SemanticIntegrationError, match="duplicate proposition identity"):
+        finalize_view(bundle, compiled, response)
+
+
 def test_prepare_runner_verifies_sources_and_makes_no_api_call(tmp_path: Path) -> None:
     for name in ("community.json", "retailer.json", "owned.json"):
         (tmp_path / name).write_bytes(b"source\n")
