@@ -38,6 +38,19 @@ Validation reports must preserve failure visibility by bucket:
   `INFO`. A future wrapper may encode this policy, but bucket membership is owned here; any wrapper
   script that encodes it must exit nonzero iff any `GATE FAIL` exists.
 
+When the bound outcome claims that a future actor can execute, route, hand off,
+or reuse the result without author context, validation includes one
+context-starved consumer signal against the exact final revision and intended
+entry point. If that signal causes an instruction, route, or handoff edit, it
+is invalidated and a fresh actor replays the changed revision. Branch-only or
+machine-local evidence does not support the durable-target claim until the
+evidence or an equivalent replay is readable from that target. A truthful
+fail-closed result is valid when blocking is the expected behavior. This is a
+claim-scoped resident judgment, not a universal dogfood pass: it adds no
+required status, receipt, template, run artifact, or checker. The admitted
+defect class and backtest are recorded in
+`docs/workflows/efficiency/cold_operability_signal_pr_backtest_2026_08_07_v0.md`.
+
 Throughout Forseti workflow doctrine, a `status claim` asserts acceptance or
 approval; validation, readiness, or completion (including `PASS` or
 `ADEQUATE_NOW`); implementation, deployment, installation, or resolver state;
