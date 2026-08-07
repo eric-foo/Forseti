@@ -602,7 +602,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.6.0"
+    route_version: "1.7.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -813,6 +813,12 @@ accounting, capture envelopes, rendered-prompt byte bounds, root-batch-bound
 hierarchical leaf lineage, semantic posture, immutable consolidated emerging
 axes (including carried blockers), and separately computed
 evidence-item/container/origin/role/engagement counts;
+at `1.7.0`, exhaustive semantic processing is limited to Reddit/community
+conversation text and retailer review text, while other evidence routes remain
+verified structured references, and every source-bearing row from the bounded
+Phase 1, Phase 2, and focused-search SERP surfaces has one explicit
+row-identified semantic route, duplicate, or exclusion before seal (never a
+bulk/default route);
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -1115,7 +1121,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.6.0
+  current_version: 1.7.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1282,6 +1288,26 @@ understanding_acquire_seal_route:
         the 1.6.0 additions. The existing 80-item Summer Fridays migration is a
         bounded regression slice, not final-corpus proof; the full shadow run is
         separately commissioned after this architecture lands.
+    - version: 1.7.0
+      date: 2026-08-08
+      owning_change: Phase A semantic-source boundary and SERP linking implementation (this change's PR)
+      changed_behavior: >
+        Keeps Route 1.6's full-corpus semantic method, but limits the exhaustive
+        customer-language denominator to Reddit/community conversations and
+        retailer review text. Other acquired evidence remains hash-verified as
+        structured references. Every source-bearing result row from the sealed
+        Phase 1 and Phase 2 jobs and every focused-search SERP packet receives
+        exactly one explicit row-identified agent-semantic routed, duplicate,
+        or excluded disposition; a bulk/default route is invalid. Routed rows
+        bind to native capture or locator recovery. Retailer source
+        files are raw-byte pinned and review membership is structurally checked.
+      affected_gate: >
+        Acquisition seal: route 1.7.0 requires a complete embedded
+        phase_a_serp_source_frontier_v1 and exact customer-language source
+        accounting before semantic materialization.
+      migration_note: >
+        A run started under 1.6.0 retains 1.6.0 unless explicitly restarted.
+        Historical seals are never restamped. New runs seal under 1.7.0.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

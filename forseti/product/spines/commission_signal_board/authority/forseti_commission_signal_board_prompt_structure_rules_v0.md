@@ -844,6 +844,25 @@ semantically assessed, mechanically excluded with an exact reason, or blocked.
 It preserves conversations, creator/audience threads, individual retailer
 reviews, and published objects as containers with capture-envelope facts.
 
+Route 1.7.0 keeps the full-corpus method but corrects its acquisition boundary.
+Only Reddit/community conversation text and retailer review text are exhaustive
+semantic sources. Owned pages, PDP facts, advertising, creator posts,
+editorial, and other acquired materials stay hash-verified structured
+references and remain available to judgment without pretending they are one
+customer-language denominator. Retailer membership is proven from source-native
+review records under raw-byte-pinned files, never from a whole-file substring.
+
+The evidence-depth ledger also carries one `phase_a_serp_source_frontier_v1`.
+For the exact jobs sealed in SERP Phase 1 and Phase 2, plus every bounded
+focused-search packet, a fresh agent reads each source-bearing result row for
+meaning and marks it `routed`, `duplicate`, or `excluded` in one explicit
+row-identified decision; a bulk/default route is invalid. Deterministic code
+checks exact row coverage and target resolution; it does not infer relevance
+from keywords. Routed rows bind to an existing native-capture or
+locator-recovery target. Google people-also-ask and related-search prompts are
+not external sources. This is a bounded search-surface census, not permission
+to paginate or crawl the web.
+
 The semantic runner bounds actual rendered UTF-8 bytes, including prompt
 instructions, schemas, axes, context, and formatting. It may reconcile in
 child-referenced levels. At every level deterministic code owns exact child
@@ -962,6 +981,8 @@ comparators, and exact candidate-to-proposition product binding; at route
 1.6.0, view v2/method v3, complete captured-item accounting with no blocked
 leaf, exact capture-envelope/container shape, consolidated emerging-axis
 lineage, and per-proposition evidence-stack counts; view schema/subject/cycle
+binding; at route 1.7.0, the semantic-source/structured-reference boundary,
+raw-byte retailer source manifest, and exact bounded SERP-row frontier;
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
@@ -989,6 +1010,8 @@ back-claimed onto a 1.3.0 seal, and 1.5.0's contextual product-binding
 requirements are never back-claimed onto a 1.4.0 seal. Route 1.6.0's full-
 corpus, hierarchy, capture-envelope, consolidated-axis, and evidence-stack
 requirements are never back-claimed onto a 1.5.0 seal.
+Route 1.7.0's source boundary, retailer manifest, and SERP frontier are never
+back-claimed onto a 1.6.0 seal.
 
 ## Company Competitive-Intelligence Extension
 

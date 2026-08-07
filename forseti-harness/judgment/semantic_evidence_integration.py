@@ -930,7 +930,10 @@ def build_batch_prompts(bundle: Mapping[str, Any]) -> list[dict[str, Any]]:
 
 
 def validate_batch_responses(
-    bundle: Mapping[str, Any], responses: Sequence[Mapping[str, Any]]
+    bundle: Mapping[str, Any],
+    responses: Sequence[Mapping[str, Any]],
+    *,
+    require_all: bool = True,
 ) -> dict[str, Any]:
     """Validate exact batch coverage and compile stable semantic-unit refs."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
@@ -1063,8 +1066,18 @@ def validate_batch_responses(
                 }
             )
         seen_batches.add(batch_id)
-    if seen_batches != set(expected_batches):
+    if require_all and seen_batches != set(expected_batches):
         raise SemanticIntegrationError("not all semantic batches were submitted")
+    if not require_all:
+        receipt = {
+            "schema_version": "semantic_evidence_batch_validation_v1",
+            "bundle_sha256": bundle["bundle_sha256"],
+            "validated_batch_ids": sorted(seen_batches),
+            "validated_evidence_count": len(dispositions),
+            "semantic_unit_count": len(semantic_units),
+        }
+        receipt["validation_sha256"] = _sha256(receipt)
+        return receipt
     compiled = {
         "schema_version": (
             "semantic_evidence_batch_compilation_v2"
@@ -1427,6 +1440,8 @@ def validate_reconciliation_stage(
     bundle: Mapping[str, Any],
     stage: Mapping[str, Any],
     responses: Sequence[Mapping[str, Any]],
+    *,
+    require_all: bool = True,
 ) -> dict[str, Any]:
     """Validate one hierarchy level, reject cycles, and flatten leaf lineage."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
@@ -1653,8 +1668,19 @@ def validate_reconciliation_stage(
             )
         )
         seen_batches.add(batch_id)
-    if seen_batches != set(expected_batches):
+    if require_all and seen_batches != set(expected_batches):
         raise SemanticIntegrationError("not all reconciliation batches were submitted")
+    if not require_all:
+        receipt = {
+            "schema_version": "semantic_evidence_reconciliation_validation_v1",
+            "bundle_sha256": bundle["bundle_sha256"],
+            "stage_sha256": stage["stage_sha256"],
+            "validated_batch_ids": sorted(seen_batches),
+            "semantic_node_count": len(nodes),
+            "unmerged_semantic_unit_count": len(unmerged),
+        }
+        receipt["validation_sha256"] = _sha256(receipt)
+        return receipt
     consolidation_keys = [
         row["candidate_key"] for row in [*carried_consolidations, *consolidations]
     ]

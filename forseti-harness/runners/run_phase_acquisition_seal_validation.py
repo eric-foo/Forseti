@@ -16,6 +16,11 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from harness_utils import hash_file, sha256_bytes  # noqa: E402
+from judgment.phase_a_semantic_run import (  # noqa: E402
+    SemanticIntegrationError,
+    eligible_serp_source_rows,
+    load_google_serp_rows,
+)
 
 
 SEAL_VERSION = "phase_acquisition_seal_v3"
@@ -234,8 +239,9 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.4.0",
     "1.5.0",
     "1.6.0",
+    "1.7.0",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.6.0"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
@@ -271,9 +277,10 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.4.0",
     "1.5.0",
     "1.6.0",
+    "1.7.0",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -286,6 +293,7 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.4.0",
     "1.5.0",
     "1.6.0",
+    "1.7.0",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
@@ -293,11 +301,13 @@ _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.4.0",
     "1.5.0",
     "1.6.0",
+    "1.7.0",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0"}
-_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -647,6 +657,26 @@ def _validate_understanding_evidence_depth(
     consumer_brand = (
         legacy_consumer_brand or previous_consumer_brand or current_consumer_brand
     )
+    route_version = (
+        seal.get("understanding_route", {}).get("route_version")
+        if isinstance(seal.get("understanding_route"), dict)
+        else None
+    )
+    serp_link_contract = (
+        isinstance(route_version, str)
+        and route_version in _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS
+    )
+    serp_route_job_ids: dict[str, set[str]] = {
+        "serp_phase1": set(),
+        "serp_phase2": set(),
+    }
+    for row in seal.get("route_job_accounting", []):
+        if isinstance(row, dict) and row.get("route_id") in serp_route_job_ids:
+            planned = row.get("planned_job_ids")
+            if isinstance(planned, list):
+                serp_route_job_ids[row["route_id"]] = {
+                    str(job_id) for job_id in planned
+                }
     if legacy_consumer_brand and not allow_legacy_consumer_v1:
         findings.append("legacy_consumer_v1_requires_explicit_historical_audit")
     if previous_consumer_brand and not allow_legacy_consumer_v2:
@@ -720,6 +750,8 @@ def _validate_understanding_evidence_depth(
             require_complete=valid_pass,
             current_contract=(previous_consumer_brand or current_consumer_brand),
             decision_contract=current_consumer_brand,
+            serp_link_contract=serp_link_contract,
+            serp_route_job_ids=serp_route_job_ids,
             findings=findings,
         )
     closure_complete = _validate_depth_closure(
@@ -1956,6 +1988,194 @@ def _validate_target_reconciliation(
     return targets, complete
 
 
+def _load_google_serp_rows(path: Path) -> list[Mapping[str, Any]]:
+    return load_google_serp_rows(path)
+
+
+def _eligible_serp_source_rows(
+    artifact_id: str, rows: Sequence[Mapping[str, Any]]
+) -> dict[tuple[str, str, int], Mapping[str, Any]]:
+    return eligible_serp_source_rows(artifact_id, rows)
+
+
+def _validate_serp_source_frontier(
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    targets: Mapping[str, Mapping[str, Any]],
+    phase_job_ids: Mapping[str, set[str]],
+    focused_searches: Mapping[tuple[str, str], Mapping[str, Any]],
+    findings: list[str],
+) -> bool:
+    """Require one semantic disposition for every bounded source-bearing SERP row."""
+    if not isinstance(value, dict):
+        findings.append("missing_serp_source_frontier")
+        return False
+    complete = True
+    if value.get("schema_version") != "phase_a_serp_source_frontier_v1":
+        findings.append("invalid_serp_source_frontier_version")
+        complete = False
+    if value.get("status") != "complete":
+        findings.append("incomplete_serp_source_frontier")
+        complete = False
+    if value.get("review_method") != "agent_semantic_judgment":
+        findings.append("invalid_serp_source_frontier_review_method")
+        complete = False
+    if value.get("model_api_calls") != 0:
+        findings.append("serp_source_frontier_used_model_api")
+        complete = False
+    surfaces = value.get("search_surfaces")
+    if not isinstance(surfaces, list):
+        findings.append("missing_serp_source_frontier_surfaces")
+        return False
+    observed_phase_jobs = {phase: set() for phase in phase_job_ids}
+    admitted_artifacts: set[str] = set()
+    artifact_jobs: dict[str, set[str]] = {}
+    for row in surfaces:
+        if not isinstance(row, dict):
+            findings.append("invalid_serp_source_frontier_surface")
+            complete = False
+            continue
+        phase = row.get("phase")
+        job_id = row.get("job_id")
+        artifact_ids = row.get("artifact_ids")
+        if phase in observed_phase_jobs:
+            if not isinstance(job_id, str) or job_id in observed_phase_jobs[phase]:
+                findings.append("invalid_or_duplicate_serp_source_frontier_job")
+                complete = False
+            else:
+                observed_phase_jobs[phase].add(job_id)
+        elif phase != "phase_a_adjustment":
+            findings.append("invalid_serp_source_frontier_phase")
+            complete = False
+        if (
+            not isinstance(artifact_ids, list)
+            or not artifact_ids
+            or any(
+                not isinstance(artifact_id, str) or artifact_id not in artifacts
+                for artifact_id in artifact_ids
+            )
+        ):
+            findings.append(f"invalid_serp_source_frontier_artifacts:{job_id}")
+            complete = False
+            continue
+        admitted_artifacts.update(artifact_ids)
+        if isinstance(job_id, str):
+            for artifact_id in artifact_ids:
+                if isinstance(artifact_id, str):
+                    artifact_jobs.setdefault(artifact_id, set()).add(job_id)
+    for phase, expected in phase_job_ids.items():
+        if observed_phase_jobs[phase] != expected:
+            findings.append(f"incomplete_serp_source_frontier_jobs:{phase}")
+            complete = False
+    focused_artifacts = {
+        artifact_id
+        for record in focused_searches.values()
+        for artifact_id in record.get("serp_packet_artifact_ids", [])
+        if isinstance(artifact_id, str)
+    }
+    if not focused_artifacts.issubset(admitted_artifacts):
+        findings.append("missing_focused_search_serp_source_surfaces")
+        complete = False
+    eligible: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for artifact_id in sorted(admitted_artifacts):
+        try:
+            artifact_rows = _eligible_serp_source_rows(
+                artifact_id, _load_google_serp_rows(artifacts[artifact_id])
+            )
+        except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:
+            findings.append(
+                f"invalid_serp_source_frontier_artifact:{artifact_id}:{type(exc).__name__}"
+            )
+            complete = False
+            continue
+        overlap = set(eligible).intersection(artifact_rows)
+        if overlap:
+            findings.append("duplicate_serp_source_frontier_row_identity")
+            complete = False
+        eligible.update(artifact_rows)
+    classifications = value.get("row_classifications")
+    if not isinstance(classifications, list):
+        findings.append("missing_serp_source_frontier_classifications")
+        return False
+    classified: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for row in classifications:
+        if not isinstance(row, dict):
+            findings.append("invalid_serp_source_frontier_classification")
+            complete = False
+            continue
+        key = (row.get("artifact_id"), row.get("module_type"), row.get("order_in_module"))
+        if key in classified:
+            findings.append("duplicate_serp_source_frontier_classification")
+            complete = False
+            continue
+        classified[key] = row
+        disposition = row.get("disposition")
+        if disposition not in {"routed", "duplicate", "excluded"}:
+            findings.append("invalid_serp_source_frontier_disposition")
+            complete = False
+        if not str(row.get("reason", "")).strip():
+            findings.append("missing_serp_source_frontier_reason")
+            complete = False
+        if disposition == "routed":
+            target = targets.get(row.get("target_id"))
+            if target is None:
+                findings.append("unresolved_serp_source_frontier_target")
+                complete = False
+            else:
+                source_row = eligible.get(key)
+                expected_locator = (
+                    source_row.get("canonical_url")
+                    if isinstance(source_row, Mapping)
+                    and isinstance(source_row.get("canonical_url"), str)
+                    and source_row["canonical_url"].strip()
+                    else f"serp-locator-recovery:{key[0]}:{key[1]}:{key[2]}"
+                )
+                if target.get("locator") != expected_locator:
+                    findings.append("serp_source_frontier_target_locator_mismatch")
+                    complete = False
+                if target.get("discovered_by_job_id") not in artifact_jobs.get(key[0], set()):
+                    findings.append("serp_source_frontier_target_job_mismatch")
+                    complete = False
+        if disposition == "duplicate":
+            duplicate = row.get("duplicate_of")
+            if not isinstance(duplicate, dict):
+                findings.append("invalid_serp_source_frontier_duplicate")
+                complete = False
+            else:
+                owner_key = (
+                    duplicate.get("artifact_id"),
+                    duplicate.get("module_type"),
+                    duplicate.get("order_in_module"),
+                )
+                owner = classified.get(owner_key)
+                if owner is None:
+                    # Forward references are checked after the index is built.
+                    pass
+        if disposition != "routed" and row.get("target_id") is not None:
+            findings.append("nonrouted_serp_row_has_target")
+            complete = False
+    if set(classified) != set(eligible):
+        findings.append("serp_source_frontier_row_set_mismatch")
+        complete = False
+    for row in classifications:
+        if not isinstance(row, dict) or row.get("disposition") != "duplicate":
+            continue
+        duplicate = row.get("duplicate_of")
+        if isinstance(duplicate, dict):
+            owner = classified.get(
+                (
+                    duplicate.get("artifact_id"),
+                    duplicate.get("module_type"),
+                    duplicate.get("order_in_module"),
+                )
+            )
+            if owner is None or owner.get("disposition") != "routed":
+                findings.append("serp_source_frontier_duplicate_lacks_routed_owner")
+                complete = False
+    return complete
+
+
 def _validate_focused_search_jobs(
     axis: Mapping[str, Any],
     *,
@@ -2111,6 +2331,8 @@ def _validate_consumer_brand_product_axes(
     require_complete: bool,
     current_contract: bool,
     decision_contract: bool,
+    serp_link_contract: bool,
+    serp_route_job_ids: Mapping[str, set[str]],
     findings: list[str],
 ) -> bool:
     axes = ledger.get("product_axes")
@@ -2279,6 +2501,18 @@ def _validate_consumer_brand_product_axes(
             and searches_complete
             and targets_complete
         )
+        if serp_link_contract:
+            complete = (
+                _validate_serp_source_frontier(
+                    ledger.get("serp_source_frontier"),
+                    artifacts=artifacts,
+                    targets=targets,
+                    phase_job_ids=serp_route_job_ids,
+                    focused_searches=search_jobs,
+                    findings=findings,
+                )
+                and complete
+            )
     for axis_id, axis in axis_rows.items():
         refs = axis.get("support_refs")
         family_origins: dict[str, set[str]] = {}
