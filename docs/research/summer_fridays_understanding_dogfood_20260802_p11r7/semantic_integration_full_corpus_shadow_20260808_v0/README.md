@@ -1,9 +1,9 @@
 ---
 retrieval_header_version: 1
-artifact_role: Summer Fridays Route 1.6 full-corpus shadow receipt
-scope: Real customer-corpus census and reusable-run implementation proof; not a completed semantic integration view
+artifact_role: Summer Fridays Route 1.7 full-corpus and SERP-linking shadow receipt
+scope: Real customer-corpus census, retailer-source proof, and bounded SERP-link census; not a completed semantic integration view
 use_when:
-  - Auditing whether the Summer Fridays Route 1.6 run used the complete captured customer corpus.
+  - Auditing whether the Summer Fridays shadow run used the complete captured customer corpus and bounded SERP surfaces.
   - Continuing the external no-API semantic assessment from its exact denominator.
 authority_boundary: evidence_only
 open_next:
@@ -12,7 +12,7 @@ open_next:
   - docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/evidence_depth_ledger.json
 ---
 
-# Summer Fridays Route 1.6 full-corpus shadow receipt v0
+# Summer Fridays Route 1.7 full-corpus and SERP-linking shadow receipt v0
 
 ## Observed result
 
@@ -20,6 +20,16 @@ The reusable full-corpus controller and census were exercised against the real
 Summer Fridays Phase A acquisition. The customer-corpus census completed with
 no model API calls and reproduced the full captured denominator rather than the
 historical 577-thread `used` family.
+
+The retailer proof now pins all 95 source files by raw-byte SHA-256 and verifies
+review membership through the source-native structures for Bazaarvoice,
+Amazon, and Revolve. The complete bounded SERP dogfood covered 32 preserved
+packet surfaces: all 12 sealed Phase 1 jobs, all 8 sealed Phase 2 jobs, and 12
+later product-axis packets. It enumerated 371 external-source-bearing result
+rows. After semantic review, 315 unique native or locator-recovery targets were
+routed, 54 repeated locators were linked as duplicates, and 2 unrelated rows
+were explicitly excluded. Google people-also-ask and related-search prompts
+were not counted as external sources. No pagination or wider web crawl ran.
 
 | Corpus | Captured | Readable / assessable | Mechanical exclusion |
 |---|---:|---:|---:|
@@ -43,13 +53,17 @@ specific false-success path it was built to prevent.
 ## What is implemented
 
 - An immutable `phase_a_semantic_integration_run_v1` control spec.
-- Exact accounting for every route in the final acquisition seal as evidence,
-  discovery, control, duplicate, or blocked.
+- Exact accounting for every route in the final acquisition seal as semantic
+  source, structured reference, discovery, control, duplicate, or blocked.
 - Hash verification for the seal, every terminal route artifact, and every v3
   source fragment.
 - Fail-closed v3 fragment merging with a separate lineage receipt.
 - A source-native Reddit/retailer census that distinguishes captured,
   readable, mechanically excluded, and formerly screened-out leaves.
+- A raw-byte retailer source manifest with structural review-ID verification.
+- A repeatable job-to-packet SERP surface spec, complete row inventory,
+  agent-semantic review, deterministic locator de-duplication, and emitted
+  target-reconciliation work.
 - Validation of one extraction or reconciliation response as soon as it
   returns.
 - Honest resumability status for valid, missing, duplicate, and invalid batch
@@ -58,14 +72,15 @@ specific false-success path it was built to prevent.
 ## Current boundary
 
 This receipt does **not** claim that all 59,780 readable customer-language
-items have already been semantically judged. It also does not claim that the
-owned, paid-ad, PDP, creator/native-social, and external-editorial families
-have been converted into their final v3 source fragments. Until every sealed
-evidence route has a hash-pinned fragment, `audit-phase-a-source` must report a
-blocked run and `materialize-phase-a-v3` must refuse to produce a final source.
-The real audit accounted for all 20 sealed routes and correctly reported 11
-evidence routes blocked on missing final v3 fragments; it verified no source
-binding because none was falsely supplied.
+items have already been semantically judged. Owned, paid-ad, PDP,
+creator/native-social, and external-editorial materials remain verified
+structured references; they do not owe customer-language corpus conversion.
+The real audit accounted for all 20 sealed routes and correctly reported only
+the two exhaustive semantic sources blocked: `reddit_community_scout` and
+`retailer_review_qa_corpus`. Until both v3 fragments exist,
+`materialize-phase-a-v3` must refuse to produce a final source. The 315 emitted
+SERP recovery targets are retrospective work candidates, not claims that native
+capture has completed.
 
 Therefore this is a successful implementation and real denominator dogfood,
 not a completed Summer Fridays integration view, acquisition reseal, market
@@ -80,21 +95,30 @@ conclusion, or Deliver artifact.
   `20a5141d51698c01cce36586071f21a2aa91b6c5463251da28fd01c3368a18b5`.
 - Retailer coding raw SHA-256:
   `28a1f92661cd2e75c40cbcea8adbf51206c15b418be2561e8dce17b6770a7cf6`.
+- External retailer source manifest:
+  `C:\tmp\forseti-summer-fridays-route-1-7-full-corpus-20260808\retailer_source_manifest_v1.json`
+  (raw SHA-256 `92e346401bf75e5ce7ae3d46b991848f9678e60f5c22873b80aec53f54d9a04c`;
+  content manifest SHA-256 `3f1209dac10c69777cb5969fcb0388c4db29269a5a91b8afbb3a81ae582dcc1e`).
 - External census:
-  `C:\tmp\forseti-summer-fridays-route-1-6-full-corpus-20260808\customer_corpus_census_v4.json`.
-- External census raw SHA-256:
-  `fce86afed6bc50e4568e5ead2ccc5f09d16794b187f5b515b0eb1a5c70d2c48f`.
-- Census content SHA-256:
-  `523fc3c48a86fee45ee55f6c0329237b954fd114cd40b58e87e23c090a60c934`.
+  `C:\tmp\forseti-summer-fridays-route-1-7-full-corpus-20260808\customer_corpus_census_v1.json`
+  (raw SHA-256 `60f291fec5e3b6a0aa73457ca015631c55f802a10f0b90e1e6b7969fded0abe9`;
+  content SHA-256 `82a89ca73572ed99fe7bb766aabe46741323b230464735b3382404c9e1946b74`).
 - External blocked run spec:
-  `C:\tmp\forseti-summer-fridays-route-1-6-full-corpus-20260808\run_spec_blocked_v0.json`
+  `C:\tmp\forseti-summer-fridays-route-1-7-full-corpus-20260808\run_spec_blocked_v1.json`
   (raw SHA-256
-  `2ee558cd6dc88b0ef17a13c5aa9df624d9d3833657ccb3eadc1aa11388d45039`).
+  `6e9420e29865c62c270cd55462383acf5f8a8db5c06bdcaebc312da0f27e0225`).
 - External source audit:
-  `C:\tmp\forseti-summer-fridays-route-1-6-full-corpus-20260808\source_audit_blocked_v1.json`
+  `C:\tmp\forseti-summer-fridays-route-1-7-full-corpus-20260808\source_audit_blocked_v1.json`
   (raw SHA-256
-  `e6a7b80ebe86b92137daea3b296c905005e10aeb15f6e00150c95ce9488eb089`;
+  `d5229fcf3018e14018d3fa499cfd91512a210c535f63a52832cb7a73ef39b611`;
   content SHA-256
-  `6e4e008b6cd91c00fcedf7be50ef27692e7d6cf073368a5f58dd5be7e4a6f813`).
+  `0bc695c529fe211be37568118b832ba0bc9eb6cfdf743d50b80b2667904b764c`).
+- External SERP surface spec, inventory, semantic review, and result live under
+  `C:\tmp\forseti-summer-fridays-route-1-7-full-corpus-20260808\`; their raw
+  SHA-256 values are respectively
+  `5bcff9c9aafc6f0e3c04e56d5f61d55766abd6ca70667d9564cc86530fa68590`,
+  `c028ba0422c2e5363c043fd80c147333f0dfd23bcba64f87acab37b68ce10799`,
+  `67cfed6bbf318d021e9dbeb7895470b82ab0a513fb465889bfd37024cbac3fa9`,
+  and `94a237874419cc81721ec849d9eebde46c64c3d7d929cb56251dc99d3d34053e`.
 - Historical acquisition seal restamped: `false`.
 - Model API calls: `0`.

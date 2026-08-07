@@ -10,8 +10,11 @@ import pytest
 from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION,
     audit_phase_a_source,
+    build_retailer_source_manifest,
     census_phase_a_customer_corpus,
     materialize_phase_a_v3,
+    materialize_serp_source_frontier_review,
+    prepare_serp_source_frontier_inventory,
     run_status,
     validate_one_batch_response,
     validate_one_reconciliation_response,
@@ -179,7 +182,7 @@ def _spec(tmp_path: Path) -> tuple[dict, dict]:
             },
             {
                 "route_id": "community",
-                "disposition": "evidence_source",
+                "disposition": "semantic_source",
                 "reason": "source-native customer language",
                 "binding_ids": ["community-source"],
             },
@@ -263,7 +266,7 @@ def test_full_corpus_run_audits_every_route_and_materializes_deterministically(
 
     assert audit["complete"] is True
     assert audit["sealed_route_count"] == 2
-    assert audit["route_disposition_counts"]["evidence_source"] == 1
+    assert audit["route_disposition_counts"]["semantic_source"] == 1
     assert first == second
     assert first_receipt == second_receipt
     assert first_receipt["captured_item_count"] == 1
@@ -351,9 +354,37 @@ def test_status_reports_interrupted_and_bad_work_without_fake_completion(
     assert recovered["batch_stage_complete"] is True
 
 
-def test_customer_corpus_census_counts_excluded_thread_bodies_and_rating_only_rows(
-    tmp_path: Path,
-) -> None:
+def test_duplicate_route_must_name_a_route_that_owns_evidence(tmp_path: Path) -> None:
+    spec, _ = _spec(tmp_path)
+    spec["source_bindings"] = []
+    spec["route_classifications"][1] = {
+        "route_id": "community",
+        "disposition": "duplicate_of",
+        "duplicate_of": "serp",
+        "reason": "reuses the discovery route",
+    }
+    with pytest.raises(SemanticIntegrationError, match="owns no evidence"):
+        audit_phase_a_source(spec, repo_root=tmp_path)
+
+    spec, _ = _spec(tmp_path)
+    spec["source_bindings"] = []
+    spec["route_classifications"][0] = {
+        "route_id": "serp",
+        "disposition": "blocked",
+        "reason": "final fragment not produced",
+    }
+    spec["route_classifications"][1] = {
+        "route_id": "community",
+        "disposition": "duplicate_of",
+        "duplicate_of": "serp",
+        "reason": "reuses evidence the blocked route still owes",
+    }
+    audit = audit_phase_a_source(spec, repo_root=tmp_path)
+    assert audit["complete"] is False
+    assert audit["blocked_routes"] == ["serp"]
+
+
+def _census_inputs(tmp_path: Path) -> tuple[Path, Path, Path, dict]:
     packet = tmp_path / "packet"
     raw = packet / "raw"
     raw.mkdir(parents=True)
@@ -381,13 +412,14 @@ def test_customer_corpus_census_counts_excluded_thread_bodies_and_rating_only_ro
         (json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode()
     ).hexdigest()
     retailer_source = tmp_path / "review.json"
-    retailer_source.write_text('{"review_id":"r1","text":"Readable"}\n', encoding="utf-8")
+    retailer_source.write_text(
+        '{"Results":[{"Id":"r1","ReviewText":"Readable"}]}\n',
+        encoding="utf-8",
+    )
     ledger_path = tmp_path / "ledger.json"
     community_coding = tmp_path / "community.json"
     _write_json(community_coding, {"legacy_parent_threads_not_requalified": []})
-    _write_json(
-        ledger_path,
-        {
+    ledger = {
             "cycle_id": "cycle-1",
             "artifacts": [
                 {
@@ -420,8 +452,8 @@ def test_customer_corpus_census_counts_excluded_thread_bodies_and_rating_only_ro
                     }
             ],
             "community_axis_coding": {"artifact_id": "community-coding"},
-        },
-    )
+    }
+    _write_json(ledger_path, ledger)
     retailer_path = tmp_path / "retailer.json"
     _write_json(
         retailer_path,
@@ -442,10 +474,23 @@ def test_customer_corpus_census_counts_excluded_thread_bodies_and_rating_only_ro
             ],
         },
     )
+    manifest_path = tmp_path / "retailer-source-manifest.json"
+    _write_json(
+        manifest_path,
+        build_retailer_source_manifest(retailer_coding_path=retailer_path),
+    )
+    return ledger_path, retailer_path, manifest_path, ledger
+
+
+def test_customer_corpus_census_counts_excluded_thread_bodies_and_rating_only_rows(
+    tmp_path: Path,
+) -> None:
+    ledger_path, retailer_path, manifest_path, _ = _census_inputs(tmp_path)
 
     census = census_phase_a_customer_corpus(
         evidence_ledger_path=ledger_path,
         retailer_coding_path=retailer_path,
+        retailer_source_manifest_path=manifest_path,
     )
 
     assert census["reddit"]["captured_leaf_count"] == 3
@@ -453,3 +498,141 @@ def test_customer_corpus_census_counts_excluded_thread_bodies_and_rating_only_ro
     assert census["reddit"]["captured_excluded_readable_leaf_count"] == 2
     assert census["retailer_reviews"]["captured_review_count"] == 3
     assert census["selected_subset_used_as_denominator"] is False
+
+
+def test_retailer_census_rejects_source_bytes_changed_after_manifest(
+    tmp_path: Path,
+) -> None:
+    ledger_path, retailer_path, manifest_path, _ = _census_inputs(tmp_path)
+    retailer = json.loads(retailer_path.read_text(encoding="utf-8"))
+    locator = retailer["rows"][0]["source_row_ref"].partition("#review:")[0]
+    Path(locator).write_text(
+        '{"Results":[{"Id":"different","ReviewText":"Changed"}]}\n',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(SemanticIntegrationError, match="source hash mismatch"):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
+        )
+
+
+def test_serp_frontier_inventory_enumerates_sources_without_google_prompts(
+    tmp_path: Path,
+) -> None:
+    record_path = tmp_path / "serp.json"
+    _write_json(
+        record_path,
+        {
+            "content_record_version": "google_serp_content_v3",
+            "rows": [
+                {
+                    "module_type": "organic",
+                    "order_in_module": 1,
+                    "title": "Relevant review",
+                    "displayed_source": "Example",
+                    "canonical_url": "https://example.test/review",
+                },
+                {
+                    "module_type": "people_also_ask",
+                    "order_in_module": 1,
+                    "title": "A question",
+                    "displayed_source": "Google",
+                    "canonical_url": None,
+                },
+                {
+                    "module_type": "related_search",
+                    "order_in_module": 1,
+                    "title": "A suggestion",
+                    "displayed_source": "Google",
+                    "canonical_url": None,
+                },
+            ],
+        },
+    )
+    spec_path = tmp_path / "surface-spec.json"
+    _write_json(
+        spec_path,
+        {
+            "schema_version": "phase_a_serp_source_surface_spec_v1",
+            "search_surfaces": [
+                {
+                    "phase": "serp_phase1",
+                    "job_id": "p1",
+                    "artifact_ids": ["serp-1"],
+                }
+            ],
+            "source_artifacts": [
+                {
+                    "artifact_id": "serp-1",
+                    "locator": str(record_path),
+                    "raw_sha256": _raw_sha(record_path),
+                }
+            ],
+        },
+    )
+
+    inventory = prepare_serp_source_frontier_inventory(surface_spec_path=spec_path)
+
+    assert inventory["eligible_row_count"] == 1
+    assert inventory["row_inventory"][0]["title"] == "Relevant review"
+    inventory_path = tmp_path / "inventory.json"
+    _write_json(inventory_path, inventory)
+    review_path = tmp_path / "review.json"
+    _write_json(
+        review_path,
+        {
+            "schema_version": "phase_a_serp_source_review_v1",
+            "inventory_sha256": inventory["inventory_sha256"],
+            "review_method": "agent_semantic_judgment",
+            "model_api_calls": 0,
+            "default_semantic_decision": {
+                "disposition": "routed",
+                "reason": "The row is a plausible native evidence door.",
+            },
+            "row_overrides": [],
+        },
+    )
+    result = materialize_serp_source_frontier_review(
+        inventory_path=inventory_path, review_path=review_path
+    )
+    assert result["classification_counts"] == {
+        "routed": 1,
+        "duplicate": 0,
+        "excluded": 0,
+    }
+    assert len(result["locator_recovery_targets"]) == 1
+
+
+def test_census_rejects_a_union_that_silently_drops_captured_threads(
+    tmp_path: Path,
+) -> None:
+    ledger_path, retailer_path, manifest_path, ledger = _census_inputs(tmp_path)
+    ledger["families"]["reddit_forum"]["threads"].append(
+        {"thread_id": "1abcxyz", "artifact_id": "reddit-manifest-1abcxyz"}
+    )
+    _write_json(ledger_path, ledger)
+    with pytest.raises(SemanticIntegrationError, match="missing from the captured-corpus union"):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
+        )
+
+    ledger_path, retailer_path, manifest_path, ledger = _census_inputs(tmp_path / "second")
+    ledger["target_reconciliation"].append(
+        {
+            "target_id": "reddit_1abcxyz",
+            "source_family": "reddit_forum",
+            "terminal_state": "used",
+        }
+    )
+    _write_json(ledger_path, ledger)
+    with pytest.raises(SemanticIntegrationError, match="lacks a native packet binding"):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
+        )

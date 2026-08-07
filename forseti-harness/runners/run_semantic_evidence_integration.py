@@ -24,8 +24,12 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
 )
 from judgment.phase_a_semantic_run import (  # noqa: E402
     audit_phase_a_source,
+    build_serp_source_surface_spec,
+    build_retailer_source_manifest,
     census_phase_a_customer_corpus,
     materialize_phase_a_v3,
+    materialize_serp_source_frontier_review,
+    prepare_serp_source_frontier_inventory,
     run_status,
     validate_one_batch_response,
     validate_one_reconciliation_response,
@@ -183,11 +187,16 @@ def audit_phase_a_source_run(
 
 
 def census_phase_a_corpus_run(
-    *, evidence_ledger_path: Path, retailer_coding_path: Path, census_out: Path
+    *,
+    evidence_ledger_path: Path,
+    retailer_coding_path: Path,
+    retailer_source_manifest_path: Path,
+    census_out: Path,
 ) -> dict[str, Any]:
     census = census_phase_a_customer_corpus(
         evidence_ledger_path=evidence_ledger_path,
         retailer_coding_path=retailer_coding_path,
+        retailer_source_manifest_path=retailer_source_manifest_path,
     )
     _write_json(census_out, census)
     return {
@@ -196,6 +205,70 @@ def census_phase_a_corpus_run(
         "reddit": census["reddit"],
         "retailer_reviews": census["retailer_reviews"],
         "census_out": str(census_out),
+        "model_api_calls": 0,
+    }
+
+
+def build_retailer_source_manifest_run(
+    *, retailer_coding_path: Path, manifest_out: Path
+) -> dict[str, Any]:
+    manifest = build_retailer_source_manifest(retailer_coding_path=retailer_coding_path)
+    _write_json(manifest_out, manifest)
+    return {
+        "status": "RETAILER_REVIEW_SOURCE_MANIFEST_COMPLETE",
+        "manifest_sha256": manifest["manifest_sha256"],
+        "source_set_sha256": manifest["source_set_sha256"],
+        "source_file_count": len(manifest["sources"]),
+        "manifest_out": str(manifest_out),
+        "model_api_calls": 0,
+    }
+
+
+def prepare_serp_source_frontier_run(
+    *, surface_spec_path: Path, inventory_out: Path
+) -> dict[str, Any]:
+    inventory = prepare_serp_source_frontier_inventory(
+        surface_spec_path=surface_spec_path
+    )
+    _write_json(inventory_out, inventory)
+    return {
+        "status": "SERP_SOURCE_FRONTIER_SEMANTIC_REVIEW_REQUIRED",
+        "inventory_sha256": inventory["inventory_sha256"],
+        "source_artifact_count": inventory["source_artifact_count"],
+        "eligible_row_count": inventory["eligible_row_count"],
+        "inventory_out": str(inventory_out),
+        "model_api_calls": 0,
+    }
+
+
+def build_serp_source_surface_spec_run(
+    *, surface_map_path: Path, surface_spec_out: Path
+) -> dict[str, Any]:
+    spec = build_serp_source_surface_spec(surface_map_path=surface_map_path)
+    _write_json(surface_spec_out, spec)
+    return {
+        "status": "SERP_SOURCE_SURFACE_SPEC_COMPLETE",
+        "surface_spec_sha256": spec["surface_spec_sha256"],
+        "search_surface_count": len(spec["search_surfaces"]),
+        "source_artifact_count": len(spec["source_artifacts"]),
+        "surface_spec_out": str(surface_spec_out),
+        "model_api_calls": 0,
+    }
+
+
+def materialize_serp_source_frontier_review_run(
+    *, inventory_path: Path, review_path: Path, result_out: Path
+) -> dict[str, Any]:
+    result = materialize_serp_source_frontier_review(
+        inventory_path=inventory_path, review_path=review_path
+    )
+    _write_json(result_out, result)
+    return {
+        "status": "SERP_SOURCE_FRONTIER_REVIEW_MATERIALIZED",
+        "result_sha256": result["result_sha256"],
+        "classification_counts": result["classification_counts"],
+        "locator_recovery_target_count": len(result["locator_recovery_targets"]),
+        "result_out": str(result_out),
         "model_api_calls": 0,
     }
 
@@ -428,7 +501,25 @@ def _parser() -> argparse.ArgumentParser:
     census_phase_a = sub.add_parser("census-phase-a-corpus")
     census_phase_a.add_argument("--evidence-ledger", type=Path, required=True)
     census_phase_a.add_argument("--retailer-coding", type=Path, required=True)
+    census_phase_a.add_argument("--retailer-source-manifest", type=Path, required=True)
     census_phase_a.add_argument("--census-out", type=Path, required=True)
+
+    retailer_manifest = sub.add_parser("build-retailer-source-manifest")
+    retailer_manifest.add_argument("--retailer-coding", type=Path, required=True)
+    retailer_manifest.add_argument("--manifest-out", type=Path, required=True)
+
+    serp_frontier = sub.add_parser("prepare-serp-source-frontier")
+    serp_frontier.add_argument("--surface-spec", type=Path, required=True)
+    serp_frontier.add_argument("--inventory-out", type=Path, required=True)
+
+    serp_surface_spec = sub.add_parser("build-serp-source-surface-spec")
+    serp_surface_spec.add_argument("--surface-map", type=Path, required=True)
+    serp_surface_spec.add_argument("--surface-spec-out", type=Path, required=True)
+
+    serp_review = sub.add_parser("materialize-serp-source-frontier-review")
+    serp_review.add_argument("--inventory", type=Path, required=True)
+    serp_review.add_argument("--review", type=Path, required=True)
+    serp_review.add_argument("--result-out", type=Path, required=True)
 
     materialize_phase_a = sub.add_parser("materialize-phase-a-v3")
     materialize_phase_a.add_argument("--spec", type=Path, required=True)
@@ -514,7 +605,29 @@ def main(argv: list[str] | None = None) -> int:
             result = census_phase_a_corpus_run(
                 evidence_ledger_path=args.evidence_ledger,
                 retailer_coding_path=args.retailer_coding,
+                retailer_source_manifest_path=args.retailer_source_manifest,
                 census_out=args.census_out,
+            )
+        elif args.command == "build-retailer-source-manifest":
+            result = build_retailer_source_manifest_run(
+                retailer_coding_path=args.retailer_coding,
+                manifest_out=args.manifest_out,
+            )
+        elif args.command == "prepare-serp-source-frontier":
+            result = prepare_serp_source_frontier_run(
+                surface_spec_path=args.surface_spec,
+                inventory_out=args.inventory_out,
+            )
+        elif args.command == "build-serp-source-surface-spec":
+            result = build_serp_source_surface_spec_run(
+                surface_map_path=args.surface_map,
+                surface_spec_out=args.surface_spec_out,
+            )
+        elif args.command == "materialize-serp-source-frontier-review":
+            result = materialize_serp_source_frontier_review_run(
+                inventory_path=args.inventory,
+                review_path=args.review,
+                result_out=args.result_out,
             )
         elif args.command == "materialize-phase-a-v3":
             result = materialize_phase_a_source(

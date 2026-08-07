@@ -438,7 +438,41 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
             "evidence_refs": [],
         },
     ]
-    serp_packet = _artifact(tmp_path, "serp_packet.json", '{"results": []}\n')
+    serp_packet = _artifact(
+        tmp_path,
+        "serp_packet.json",
+        json.dumps(
+            {
+                "content_record_version": "google_serp_content_v3",
+                "rows": [
+                    {
+                        "module_type": "organic",
+                        "order_in_module": 1,
+                        "title": "Summer Fridays packaging discussion",
+                        "displayed_source": "Reddit",
+                        "displayed_domain": "reddit.com",
+                        "canonical_url": "https://example.test/thread-0",
+                    },
+                    {
+                        "module_type": "people_also_ask",
+                        "order_in_module": 1,
+                        "title": "Does the package leak?",
+                        "displayed_source": "Google",
+                        "canonical_url": None,
+                    },
+                    {
+                        "module_type": "related_search",
+                        "order_in_module": 1,
+                        "title": "Summer Fridays packaging",
+                        "displayed_source": "Google",
+                        "canonical_url": None,
+                    },
+                ],
+            },
+            indent=2,
+        )
+        + "\n",
+    )
     ledger["artifacts"].append({"artifact_id": "serp-packet", **serp_packet})
     search_payload = {
         "schema_version": "consumer_brand_phase2_search_v1",
@@ -468,6 +502,37 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
             "sha256": _artifact_hash(search_path),
         }
     )
+    ledger["serp_source_frontier"] = {
+        "schema_version": "phase_a_serp_source_frontier_v1",
+        "status": "complete",
+        "review_method": "agent_semantic_judgment",
+        "model_api_calls": 0,
+        "search_surfaces": [
+            {
+                "phase": "serp_phase1",
+                "job_id": "P1-001",
+                "artifact_ids": ["serp-packet"],
+            },
+            *[
+                {
+                    "phase": "serp_phase2",
+                    "job_id": f"P2-{index:03d}",
+                    "artifact_ids": ["serp-packet"],
+                }
+                for index in range(1, 6)
+            ],
+        ],
+        "row_classifications": [
+            {
+                "artifact_id": "serp-packet",
+                "module_type": "organic",
+                "order_in_module": 1,
+                "disposition": "routed",
+                "target_id": "target-1",
+                "reason": "The row points to a captured customer discussion.",
+            }
+        ],
+    }
     frontier_initial = _artifact(
         tmp_path, "reddit_frontier_initial.json", '{"results": ["initial"]}\n'
     )
@@ -911,7 +976,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.6.0",
+        "route_version": "1.7.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -1660,6 +1725,59 @@ def test_consumer_brand_v2_passes_with_axis_evidence_and_coding(
     seal = _blocked_seal(tmp_path)
     seal["evidence_depth_ledger"] = _consumer_depth_ledger(tmp_path)
 
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected"),
+    [
+        ("drop_row", "serp_source_frontier_row_set_mismatch"),
+        ("unknown_target", "unresolved_serp_source_frontier_target"),
+        ("missing_reason", "missing_serp_source_frontier_reason"),
+        ("drop_phase_job", "incomplete_serp_source_frontier_jobs:serp_phase2"),
+    ],
+)
+def test_route_1_7_serp_frontier_fails_closed_on_silent_link_loss(
+    tmp_path: Path, mutation: str, expected: str
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    frontier = ledger["serp_source_frontier"]
+    if mutation == "drop_row":
+        frontier["row_classifications"] = []
+    elif mutation == "unknown_target":
+        frontier["row_classifications"][0]["target_id"] = "not-a-target"
+    elif mutation == "missing_reason":
+        frontier["row_classifications"][0]["reason"] = ""
+    elif mutation == "drop_phase_job":
+        frontier["search_surfaces"].pop()
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    assert expected in _validate(tmp_path, _make_passing(seal))
+
+
+def test_route_1_7_serp_frontier_excludes_google_prompts_and_routes_url_recovery(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    serp_path = tmp_path / "serp_packet.json"
+    record = json.loads(serp_path.read_text(encoding="utf-8"))
+    record["rows"][0]["canonical_url"] = None
+    record["rows"][0]["canonical_url_absent_reason"] = "locator recovery required"
+    serp_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    artifact = next(
+        row for row in ledger["artifacts"] if row["artifact_id"] == "serp-packet"
+    )
+    artifact["sha256"] = _artifact_hash(serp_path)
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    # The source-bearing row remains routed through target reconciliation;
+    # PAA and related-search prompts do not become fake external sources.
     assert _validate(tmp_path, _make_passing(seal)) == []
 
 

@@ -159,6 +159,11 @@ routes; it does not claim that the whole internet was searched.
    selected candidate as `used`, `captured_excluded`, `no_material_yield`,
    `blocked`, or `unavailable`; `captured` requires a native body and a final
    evidence-unit reference, never a SERP artifact alone.
+   Also return the complete job-to-packet mapping for every bounded Phase 2 and
+   product-axis search. `CO0` must semantically disposition every source-bearing
+   row as `routed`, `duplicate`, or `excluded`; relevance is decided from the
+   row's meaning, not an exact-word rule. A relevant row without a canonical
+   URL routes to one bounded locator-recovery target rather than disappearing.
 6. **Seal and consolidate.** Seal through the lifecycle adapter using only the
    persisted claims and store-supplied prior receipts. Persist the decision
    receipt and lifecycle provenance. Update the typed ledger, unmet-value map

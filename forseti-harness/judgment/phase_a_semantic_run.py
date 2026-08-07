@@ -23,13 +23,26 @@ RUN_SPEC_VERSION = "phase_a_semantic_integration_run_v1"
 AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
 CORPUS_CENSUS_VERSION = "phase_a_customer_corpus_census_v1"
+RETAILER_SOURCE_MANIFEST_VERSION = "retailer_review_source_manifest_v1"
 ROUTE_DISPOSITIONS = {
-    "evidence_source",
+    "semantic_source",
+    "structured_reference",
     "discovery_only",
     "control_only",
     "duplicate_of",
     "blocked",
 }
+# A duplicate route reuses evidence another route owns, so only these
+# dispositions can be duplicated: an evidence route that supplies it, or a
+# blocked route that visibly still owes it.
+EVIDENCE_OWNING_DISPOSITIONS = {
+    "semantic_source",
+    "structured_reference",
+    "blocked",
+}
+# Reddit target states that mean leaves were captured and therefore belong in
+# the customer-corpus denominator.
+CAPTURED_TERMINAL_STATES = {"used", "captured_excluded"}
 _YAML_FENCE = re.compile(r"```ya?ml\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
 _TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
 
@@ -136,6 +149,10 @@ def _reddit_record_from_manifest(manifest_path: Path) -> dict[str, Any]:
             content_candidates.append(path)
         elif lowered.endswith(("http_response_body.bin", ".html", ".htm")):
             html_candidates.append(path)
+    if len(content_candidates) > 1 or len(html_candidates) > 1:
+        raise SemanticIntegrationError(
+            f"Reddit packet has ambiguous preserved source candidates: {manifest_path}"
+        )
     if content_candidates:
         return _load_json_object(content_candidates[0], label="Reddit content record")
     if not html_candidates:
@@ -155,8 +172,481 @@ def _reddit_record_from_manifest(manifest_path: Path) -> dict[str, Any]:
         ) from exc
 
 
+def load_google_serp_rows(path: Path) -> list[Mapping[str, Any]]:
+    """Load one Google SERP v3 record or its hash-pinned packet manifest."""
+    value = _load_json_object(path, label="SERP artifact")
+    if value.get("content_record_version") == "google_serp_content_v3":
+        record = value
+    else:
+        preserved = value.get("preserved_files")
+        if not isinstance(preserved, list):
+            raise SemanticIntegrationError(
+                "SERP artifact is neither a v3 record nor packet manifest"
+            )
+        candidates: list[Path] = []
+        for row in preserved:
+            if not isinstance(row, Mapping):
+                continue
+            relative = row.get("relative_packet_path")
+            if not isinstance(relative, str) or not relative.lower().endswith(
+                "content_record.json"
+            ):
+                continue
+            candidate = (path.parent / relative).resolve(strict=True)
+            try:
+                candidate.relative_to(path.parent.resolve())
+            except ValueError as exc:
+                raise SemanticIntegrationError(
+                    "SERP content record escapes its packet"
+                ) from exc
+            if row.get("sha256") != hash_file(candidate):
+                raise SemanticIntegrationError("SERP content record hash mismatch")
+            candidates.append(candidate)
+        if len(candidates) != 1:
+            raise SemanticIntegrationError(
+                "SERP packet must own exactly one v3 content record"
+            )
+        record = _load_json_object(candidates[0], label="SERP content record")
+        if record.get("content_record_version") != "google_serp_content_v3":
+            raise SemanticIntegrationError(
+                "SERP packet content record is not google_serp_content_v3"
+            )
+    rows = record.get("rows")
+    if not isinstance(rows, list) or any(not isinstance(row, Mapping) for row in rows):
+        raise SemanticIntegrationError("Google SERP content record has invalid rows")
+    return rows
+
+
+def eligible_serp_source_rows(
+    artifact_id: str, rows: Sequence[Mapping[str, Any]]
+) -> dict[tuple[str, str, int], Mapping[str, Any]]:
+    """Enumerate source-bearing rows while excluding Google-only prompts."""
+    eligible: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for row in rows:
+        module = row.get("module_type")
+        order = row.get("order_in_module")
+        if module in {"people_also_ask", "related_search"}:
+            continue
+        source_bearing = any(
+            isinstance(row.get(field), str) and bool(row[field].strip())
+            for field in ("canonical_url", "displayed_domain", "displayed_source")
+        )
+        if not source_bearing:
+            continue
+        if not isinstance(module, str) or not module or not isinstance(order, int):
+            raise SemanticIntegrationError(
+                "source-bearing SERP row lacks stable module identity"
+            )
+        key = (artifact_id, module, order)
+        if key in eligible:
+            raise SemanticIntegrationError("duplicate source-bearing SERP row identity")
+        eligible[key] = row
+    return eligible
+
+
+def prepare_serp_source_frontier_inventory(
+    *, surface_spec_path: Path
+) -> dict[str, Any]:
+    """Render the complete bounded SERP row inventory for agent semantic review."""
+    spec = _load_json_object(surface_spec_path, label="SERP surface spec")
+    if spec.get("schema_version") != "phase_a_serp_source_surface_spec_v1":
+        raise SemanticIntegrationError("SERP surface spec has wrong version")
+    surfaces = spec.get("search_surfaces")
+    artifacts = spec.get("source_artifacts")
+    if not isinstance(surfaces, list) or not isinstance(artifacts, list):
+        raise SemanticIntegrationError("SERP surface spec lacks surfaces or artifacts")
+    artifact_index: dict[str, Mapping[str, Any]] = {}
+    row_inventory: list[dict[str, Any]] = []
+    for row in artifacts:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("artifact_id")):
+            raise SemanticIntegrationError("SERP surface spec has invalid artifact")
+        artifact_id = row["artifact_id"]
+        if artifact_id in artifact_index:
+            raise SemanticIntegrationError("SERP surface spec has duplicate artifact id")
+        path = Path(str(row.get("locator", ""))).resolve(strict=True)
+        if row.get("raw_sha256") != hash_file(path):
+            raise SemanticIntegrationError(f"SERP surface artifact hash mismatch: {artifact_id}")
+        artifact_index[artifact_id] = row
+        eligible = eligible_serp_source_rows(
+            artifact_id, load_google_serp_rows(path)
+        )
+        for (source_id, module, order), source_row in sorted(eligible.items()):
+            row_inventory.append(
+                {
+                    "artifact_id": source_id,
+                    "module_type": module,
+                    "order_in_module": order,
+                    "title": source_row.get("title"),
+                    "snippet": source_row.get("snippet"),
+                    "displayed_source": source_row.get("displayed_source"),
+                    "displayed_domain": source_row.get("displayed_domain"),
+                    "canonical_url": source_row.get("canonical_url"),
+                    "canonical_url_absent_reason": source_row.get(
+                        "canonical_url_absent_reason"
+                    ),
+                }
+            )
+    cited_ids = {
+        artifact_id
+        for surface in surfaces
+        if isinstance(surface, Mapping)
+        for artifact_id in surface.get("artifact_ids", [])
+        if isinstance(artifact_id, str)
+    }
+    if cited_ids != set(artifact_index):
+        raise SemanticIntegrationError(
+            "SERP surfaces and source artifacts do not have exact coverage"
+        )
+    result = {
+        "schema_version": "phase_a_serp_source_inventory_v1",
+        "surface_spec_raw_sha256": hash_file(surface_spec_path),
+        "search_surfaces": surfaces,
+        "source_artifact_count": len(artifact_index),
+        "eligible_row_count": len(row_inventory),
+        "row_inventory": row_inventory,
+        "review_instruction": (
+            "A capable agent reads every row by meaning and supplies exactly one "
+            "routed, duplicate, or excluded classification with a reason."
+        ),
+        "model_api_calls": 0,
+    }
+    result["inventory_sha256"] = _canonical_hash(result)
+    return result
+
+
+def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
+    """Hash-pin an operator-declared bounded job-to-packet map."""
+    source_map = _load_json_object(surface_map_path, label="SERP surface map")
+    if source_map.get("schema_version") != "phase_a_serp_source_surface_map_v1":
+        raise SemanticIntegrationError("SERP surface map has wrong version")
+    surfaces = source_map.get("search_surfaces")
+    if not isinstance(surfaces, list) or not surfaces:
+        raise SemanticIntegrationError("SERP surface map lacks search surfaces")
+    artifacts: dict[str, dict[str, Any]] = {}
+    rendered_surfaces: list[dict[str, Any]] = []
+    for surface in surfaces:
+        if (
+            not isinstance(surface, Mapping)
+            or not _nonempty(surface.get("phase"))
+            or not _nonempty(surface.get("job_id"))
+            or not isinstance(surface.get("artifacts"), list)
+            or not surface["artifacts"]
+        ):
+            raise SemanticIntegrationError("SERP surface map has invalid surface")
+        artifact_ids: list[str] = []
+        for row in surface["artifacts"]:
+            if (
+                not isinstance(row, Mapping)
+                or not _nonempty(row.get("artifact_id"))
+                or not _nonempty(row.get("locator"))
+            ):
+                raise SemanticIntegrationError("SERP surface map has invalid artifact")
+            artifact_id = row["artifact_id"]
+            path = Path(row["locator"]).resolve(strict=True)
+            rendered = {
+                "artifact_id": artifact_id,
+                "locator": str(path),
+                "raw_sha256": hash_file(path),
+                "hash_convention": "sha256_raw_bytes",
+            }
+            if artifact_id in artifacts and artifacts[artifact_id] != rendered:
+                raise SemanticIntegrationError(
+                    f"SERP artifact id maps to conflicting files: {artifact_id}"
+                )
+            artifacts[artifact_id] = rendered
+            artifact_ids.append(artifact_id)
+        rendered_surfaces.append(
+            {
+                "phase": surface["phase"],
+                "job_id": surface["job_id"],
+                "artifact_ids": artifact_ids,
+            }
+        )
+    result = {
+        "schema_version": "phase_a_serp_source_surface_spec_v1",
+        "surface_map_raw_sha256": hash_file(surface_map_path),
+        "search_surfaces": rendered_surfaces,
+        "source_artifacts": sorted(artifacts.values(), key=lambda row: row["artifact_id"]),
+        "model_api_calls": 0,
+    }
+    result["surface_spec_sha256"] = _canonical_hash(result)
+    return result
+
+
+def materialize_serp_source_frontier_review(
+    *, inventory_path: Path, review_path: Path
+) -> dict[str, Any]:
+    """Apply an agent-authored semantic review and mechanically deduplicate routes."""
+    inventory = _load_json_object(inventory_path, label="SERP source inventory")
+    review = _load_json_object(review_path, label="SERP source semantic review")
+    if inventory.get("schema_version") != "phase_a_serp_source_inventory_v1":
+        raise SemanticIntegrationError("SERP source inventory has wrong version")
+    if review.get("schema_version") != "phase_a_serp_source_review_v1":
+        raise SemanticIntegrationError("SERP source review has wrong version")
+    if review.get("inventory_sha256") != inventory.get("inventory_sha256"):
+        raise SemanticIntegrationError("SERP source review has stale inventory hash")
+    if (
+        review.get("review_method") != "agent_semantic_judgment"
+        or review.get("model_api_calls") != 0
+    ):
+        raise SemanticIntegrationError("SERP source review lacks no-API semantic posture")
+    default = review.get("default_semantic_decision")
+    if (
+        not isinstance(default, Mapping)
+        or default.get("disposition") != "routed"
+        or not _nonempty(default.get("reason"))
+    ):
+        raise SemanticIntegrationError("SERP source review lacks a routed semantic default")
+    overrides = review.get("row_overrides", [])
+    if not isinstance(overrides, list):
+        raise SemanticIntegrationError("SERP source review overrides must be a list")
+    override_index: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for row in overrides:
+        if not isinstance(row, Mapping):
+            raise SemanticIntegrationError("SERP source review has invalid override")
+        key = (row.get("artifact_id"), row.get("module_type"), row.get("order_in_module"))
+        if key in override_index:
+            raise SemanticIntegrationError("SERP source review has duplicate override")
+        if row.get("disposition") not in {"routed", "excluded"} or not _nonempty(
+            row.get("reason")
+        ):
+            raise SemanticIntegrationError("SERP source review override is incomplete")
+        override_index[key] = row
+    rows = inventory.get("row_inventory")
+    if not isinstance(rows, list):
+        raise SemanticIntegrationError("SERP source inventory lacks rows")
+    row_keys = {
+        (row.get("artifact_id"), row.get("module_type"), row.get("order_in_module"))
+        for row in rows
+        if isinstance(row, Mapping)
+    }
+    if not set(override_index).issubset(row_keys):
+        raise SemanticIntegrationError("SERP source review overrides unknown rows")
+    artifact_jobs: dict[str, str] = {}
+    for surface in inventory.get("search_surfaces", []):
+        if isinstance(surface, Mapping) and _nonempty(surface.get("job_id")):
+            for artifact_id in surface.get("artifact_ids", []):
+                if isinstance(artifact_id, str):
+                    artifact_jobs.setdefault(artifact_id, surface["job_id"])
+    owner_by_locator: dict[str, tuple[str, str, int]] = {}
+    classifications: list[dict[str, Any]] = []
+    targets: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise SemanticIntegrationError("SERP source inventory has invalid row")
+        key = (row["artifact_id"], row["module_type"], row["order_in_module"])
+        decision = override_index.get(key, default)
+        reason = decision["reason"]
+        classification = {
+            "artifact_id": key[0],
+            "module_type": key[1],
+            "order_in_module": key[2],
+            "reason": reason,
+        }
+        if decision["disposition"] == "excluded":
+            classification["disposition"] = "excluded"
+            classifications.append(classification)
+            continue
+        locator = row.get("canonical_url")
+        if not _nonempty(locator):
+            locator = f"serp-locator-recovery:{key[0]}:{key[1]}:{key[2]}"
+        owner = owner_by_locator.get(locator)
+        if owner is not None:
+            classification.update(
+                {
+                    "disposition": "duplicate",
+                    "duplicate_of": {
+                        "artifact_id": owner[0],
+                        "module_type": owner[1],
+                        "order_in_module": owner[2],
+                    },
+                }
+            )
+        else:
+            owner_by_locator[locator] = key
+            target_id = "serp_recovery_" + hashlib.sha256(
+                locator.encode("utf-8")
+            ).hexdigest()[:20]
+            classification.update(
+                {"disposition": "routed", "target_id": target_id}
+            )
+            targets[target_id] = {
+                "target_id": target_id,
+                "discovered_by_job_id": artifact_jobs.get(key[0]),
+                "locator": locator,
+                "terminal_state": "blocked",
+                "reason": "Native capture or bounded locator recovery is still owed.",
+                "source_serp_row": {
+                    "artifact_id": key[0],
+                    "module_type": key[1],
+                    "order_in_module": key[2],
+                },
+            }
+        classifications.append(classification)
+    result = {
+        "schema_version": "phase_a_serp_source_frontier_review_result_v1",
+        "inventory_sha256": inventory["inventory_sha256"],
+        "frontier": {
+            "schema_version": "phase_a_serp_source_frontier_v1",
+            "status": "complete",
+            "review_method": "agent_semantic_judgment",
+            "model_api_calls": 0,
+            "search_surfaces": inventory["search_surfaces"],
+            "row_classifications": classifications,
+        },
+        "locator_recovery_targets": sorted(
+            targets.values(), key=lambda row: row["target_id"]
+        ),
+        "classification_counts": {
+            disposition: sum(
+                row["disposition"] == disposition for row in classifications
+            )
+            for disposition in ("routed", "duplicate", "excluded")
+        },
+        "model_api_calls": 0,
+    }
+    result["result_sha256"] = _canonical_hash(result)
+    return result
+
+
+def _retailer_review_ids(source: Mapping[str, Any]) -> tuple[str, set[str]]:
+    """Return source-native review ids for the three admitted retailer formats."""
+    schema = source.get("schema_version")
+    if schema == "retail_pdp_amazon_aggregate_content_v1":
+        rows = source.get("rows")
+        if not isinstance(rows, list):
+            raise SemanticIntegrationError("Amazon retailer source lacks rows")
+        ids = {
+            str(fields["review_id"])
+            for row in rows
+            if isinstance(row, Mapping)
+            and row.get("row_kind") == "retail_review_row"
+            and isinstance((fields := row.get("source_visible_fields")), Mapping)
+            and fields.get("review_id") is not None
+        }
+        return "amazon_aggregate_v1", ids
+    if schema == "revolve_review_corpus_recent_v1":
+        ids = source.get("captured_review_ids")
+        if not isinstance(ids, list) or any(value is None for value in ids):
+            raise SemanticIntegrationError("Revolve retailer source lacks captured review ids")
+        return "revolve_recent_v1", {str(value) for value in ids}
+    results = source.get("Results")
+    if isinstance(results, list):
+        ids = {
+            str(row["Id"])
+            for row in results
+            if isinstance(row, Mapping) and row.get("Id") is not None
+        }
+        return "bazaarvoice_results_v1", ids
+    raise SemanticIntegrationError("retailer source uses an unsupported review structure")
+
+
+def build_retailer_source_manifest(*, retailer_coding_path: Path) -> dict[str, Any]:
+    """Pin every retailer file and the structurally located review ids it supplies."""
+    retailer = _load_json_object(retailer_coding_path, label="retailer axis coding")
+    rows = retailer.get("rows")
+    if not isinstance(rows, list):
+        raise SemanticIntegrationError("retailer coding lacks rows")
+    sources: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("source_row_ref")):
+            raise SemanticIntegrationError("retailer coding has invalid review row")
+        review_id = str(row.get("review_id", ""))
+        locator, separator, anchor = row["source_row_ref"].partition("#review:")
+        if separator != "#review:" or not review_id or anchor != review_id:
+            raise SemanticIntegrationError(
+                f"invalid retailer source row ref: {row['source_row_ref']}"
+            )
+        path = Path(locator).resolve(strict=True)
+        key = str(path)
+        source_row = sources.get(key)
+        if source_row is None:
+            source = _load_json_object(path, label=f"retailer source {path}")
+            parser_family, native_ids = _retailer_review_ids(source)
+            source_row = {
+                "locator": key,
+                "raw_sha256": hash_file(path),
+                "hash_convention": "sha256_raw_bytes",
+                "parser_family": parser_family,
+                "native_review_ids": native_ids,
+                "referenced_review_ids": set(),
+            }
+            sources[key] = source_row
+        if review_id not in source_row["native_review_ids"]:
+            raise SemanticIntegrationError(
+                f"retailer review {review_id} is absent from its source-native review rows"
+            )
+        source_row["referenced_review_ids"].add(review_id)
+    manifest_sources = []
+    for row in sources.values():
+        native_ids = sorted(row.pop("native_review_ids"))
+        referenced_ids = sorted(row.pop("referenced_review_ids"))
+        manifest_sources.append(
+            {
+                **row,
+                "native_review_id_count": len(native_ids),
+                "native_review_ids_sha256": _canonical_hash(native_ids),
+                "referenced_review_ids": referenced_ids,
+            }
+        )
+    result = {
+        "schema_version": RETAILER_SOURCE_MANIFEST_VERSION,
+        "retailer_coding_raw_sha256": hash_file(retailer_coding_path),
+        "hash_convention": "sha256_raw_bytes",
+        "sources": sorted(manifest_sources, key=lambda row: row["locator"]),
+    }
+    result["source_set_sha256"] = _canonical_hash(result["sources"])
+    result["manifest_sha256"] = _canonical_hash(result)
+    return result
+
+
+def _verify_retailer_source_manifest(
+    *, retailer_coding_path: Path, manifest_path: Path
+) -> dict[str, Mapping[str, Any]]:
+    manifest = _load_json_object(manifest_path, label="retailer source manifest")
+    if manifest.get("schema_version") != RETAILER_SOURCE_MANIFEST_VERSION:
+        raise SemanticIntegrationError("retailer source manifest has wrong version")
+    if manifest.get("retailer_coding_raw_sha256") != hash_file(retailer_coding_path):
+        raise SemanticIntegrationError("retailer source manifest has stale coding hash")
+    expected_manifest_hash = manifest.get("manifest_sha256")
+    unhashed = dict(manifest)
+    unhashed.pop("manifest_sha256", None)
+    if expected_manifest_hash != _canonical_hash(unhashed):
+        raise SemanticIntegrationError("retailer source manifest hash mismatch")
+    sources = manifest.get("sources")
+    if not isinstance(sources, list):
+        raise SemanticIntegrationError("retailer source manifest lacks sources")
+    if manifest.get("source_set_sha256") != _canonical_hash(sources):
+        raise SemanticIntegrationError("retailer source-set hash mismatch")
+    index: dict[str, Mapping[str, Any]] = {}
+    for row in sources:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("locator")):
+            raise SemanticIntegrationError("retailer source manifest has invalid source")
+        locator = str(Path(row["locator"]).resolve(strict=True))
+        if locator in index:
+            raise SemanticIntegrationError("retailer source manifest has duplicate locator")
+        if row.get("hash_convention") != "sha256_raw_bytes":
+            raise SemanticIntegrationError("retailer source uses an unknown hash convention")
+        path = Path(locator)
+        if row.get("raw_sha256") != hash_file(path):
+            raise SemanticIntegrationError(f"retailer source hash mismatch: {locator}")
+        source = _load_json_object(path, label=f"retailer source {locator}")
+        parser_family, ids = _retailer_review_ids(source)
+        if row.get("parser_family") != parser_family:
+            raise SemanticIntegrationError(f"retailer source parser mismatch: {locator}")
+        if row.get("native_review_id_count") != len(ids) or row.get(
+            "native_review_ids_sha256"
+        ) != _canonical_hash(sorted(ids)):
+            raise SemanticIntegrationError(f"retailer native review set mismatch: {locator}")
+        index[locator] = row
+    return index
+
+
 def census_phase_a_customer_corpus(
-    *, evidence_ledger_path: Path, retailer_coding_path: Path
+    *,
+    evidence_ledger_path: Path,
+    retailer_coding_path: Path,
+    retailer_source_manifest_path: Path,
 ) -> dict[str, Any]:
     """Recount the captured Reddit and retailer leaves from their pinned source rows.
 
@@ -185,11 +675,17 @@ def census_phase_a_customer_corpus(
         raise SemanticIntegrationError("evidence depth ledger lacks target reconciliation")
     thread_index: dict[str, dict[str, Any]] = {}
     for row in target_rows:
-        if (
-            not isinstance(row, Mapping)
-            or row.get("source_family") != "reddit_forum"
-            or not _nonempty(row.get("native_artifact_id"))
-        ):
+        if not isinstance(row, Mapping) or row.get("source_family") != "reddit_forum":
+            continue
+        if not _nonempty(row.get("native_artifact_id")):
+            # A target that already yielded captured material owns leaves in
+            # this denominator. Dropping it for a missing packet binding would
+            # shrink the corpus silently instead of failing.
+            if row.get("terminal_state") in CAPTURED_TERMINAL_STATES:
+                raise SemanticIntegrationError(
+                    "captured Reddit target lacks a native packet binding: "
+                    f"{row.get('target_id')}"
+                )
             continue
         thread_id = str(row.get("target_id", "")).removeprefix("reddit_")
         if not thread_id:
@@ -240,6 +736,22 @@ def census_phase_a_customer_corpus(
             "thread_id": thread_id,
             "artifact_id": artifact_id,
         }
+    # The coded family cannot build the union, but it must still be inside it.
+    # Reconciling the two sources is what stops the union from quietly
+    # regressing to a subset the way the first census attempt did.
+    family_ids: set[str] = set()
+    for row in family_threads:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("thread_id")):
+            raise SemanticIntegrationError(
+                "evidence depth ledger has an invalid Reddit thread row"
+            )
+        family_ids.add(row["thread_id"])
+    missing_family = sorted(family_ids - set(thread_index))
+    if missing_family:
+        raise SemanticIntegrationError(
+            "coded Reddit threads are missing from the captured-corpus union: "
+            f"{missing_family}"
+        )
     threads = [thread_index[thread_id] for thread_id in sorted(thread_index)]
     target_states = {
         row.get("target_id", "").removeprefix("reddit_"): row.get("terminal_state")
@@ -324,8 +836,12 @@ def census_phase_a_customer_corpus(
     rows = retailer.get("rows")
     if not isinstance(corpora, list) or not isinstance(rows, list):
         raise SemanticIntegrationError("retailer coding lacks corpora or rows")
+    source_manifest = _verify_retailer_source_manifest(
+        retailer_coding_path=retailer_coding_path,
+        manifest_path=retailer_source_manifest_path,
+    )
     review_keys: set[tuple[str, str]] = set()
-    source_files: dict[str, str] = {}
+    source_files: set[str] = set()
     for row in rows:
         if not isinstance(row, Mapping):
             raise SemanticIntegrationError("retailer coding has invalid review row")
@@ -343,14 +859,19 @@ def census_phase_a_customer_corpus(
             raise SemanticIntegrationError(f"invalid retailer source row ref: {source_ref}")
         source_path = Path(locator).resolve(strict=True)
         source_key = str(source_path)
-        body = source_files.get(source_key)
-        if body is None:
-            body = source_path.read_text(encoding="utf-8-sig")
-            source_files[source_key] = body
-        if review_id not in body:
+        manifest_source = source_manifest.get(source_key)
+        if not isinstance(manifest_source, Mapping):
             raise SemanticIntegrationError(
-                f"retailer review {review_id} is absent from its pinned source file"
+                f"retailer source is absent from its manifest: {source_key}"
             )
+        referenced = manifest_source.get("referenced_review_ids")
+        if not isinstance(referenced, list) or review_id not in referenced:
+            raise SemanticIntegrationError(
+                f"retailer review {review_id} is absent from its source manifest"
+            )
+        source_files.add(source_key)
+    if source_files != set(source_manifest):
+        raise SemanticIntegrationError("retailer source manifest does not exactly match coding sources")
     eligible_by_corpus = {
         row.get("corpus_id"): row.get("eligible_text_review_count")
         for row in corpora
@@ -386,6 +907,18 @@ def census_phase_a_customer_corpus(
         "cycle_id": ledger.get("cycle_id"),
         "evidence_ledger_sha256": hash_file(evidence_ledger_path),
         "retailer_coding_sha256": hash_file(retailer_coding_path),
+        "retailer_source_manifest_sha256": hash_file(retailer_source_manifest_path),
+        "retailer_source_set_sha256": _canonical_hash(
+            [source_manifest[key] for key in sorted(source_manifest)]
+        ),
+        "reddit_target_terminal_state_counts": {
+            state: sum(value == state for value in target_states.values())
+            for state in sorted(set(target_states.values()))
+        },
+        "reddit_projection_dependency": {
+            "content_record": "source-native preserved content record",
+            "html_fallback": "source_capture.reddit_consolidation.build_thread_content_record",
+        },
         "reddit": reddit_counts,
         "retailer_reviews": retailer_counts,
         "selected_subset_used_as_denominator": False,
@@ -582,11 +1115,11 @@ def audit_phase_a_source(
             binding_id not in binding_index for binding_id in row_bindings
         ):
             raise SemanticIntegrationError(f"route {route_id} cites unknown source binding")
-        if disposition == "evidence_source" and not row_bindings:
-            raise SemanticIntegrationError(f"evidence route {route_id} lacks a source binding")
-        if disposition != "evidence_source" and row_bindings:
+        if disposition == "semantic_source" and not row_bindings:
+            raise SemanticIntegrationError(f"semantic route {route_id} lacks a source binding")
+        if disposition != "semantic_source" and row_bindings:
             raise SemanticIntegrationError(
-                f"non-evidence route {route_id} cannot carry source bindings"
+                f"non-semantic route {route_id} cannot carry semantic source bindings"
             )
         if disposition == "duplicate_of":
             duplicate_of = row.get("duplicate_of")
@@ -604,9 +1137,21 @@ def audit_phase_a_source(
         raise SemanticIntegrationError(
             f"route classifications do not match sealed routes; missing={missing}, extra={extra}"
         )
+    # Checked after the equality above so every duplicate target is classified.
+    # Duplicating a discovery, control, or duplicate route would let a route
+    # that actually captured a corpus donate nothing while the audit still
+    # reported a complete run.
+    for route_id, row in sorted(classified.items()):
+        if row["disposition"] != "duplicate_of":
+            continue
+        owner = row["duplicate_of"]
+        if classified[owner]["disposition"] not in EVIDENCE_OWNING_DISPOSITIONS:
+            raise SemanticIntegrationError(
+                f"route {route_id} duplicates {owner}, which owns no evidence"
+            )
     unused = sorted(binding_id for binding_id, users in binding_users.items() if not users)
     if unused:
-        raise SemanticIntegrationError(f"source bindings are not attached to evidence routes: {unused}")
+        raise SemanticIntegrationError(f"source bindings are not attached to semantic routes: {unused}")
 
     audit = {
         "schema_version": AUDIT_VERSION,
