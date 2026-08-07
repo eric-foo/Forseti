@@ -776,12 +776,94 @@ def _campaign_view(tmp_path: Path) -> dict[str, str]:
     return {"locator": "campaign_evidence_view.json", "sha256": _artifact_hash(path)}
 
 
+def _semantic_integration_view(
+    tmp_path: Path,
+) -> tuple[dict[str, str], str, str]:
+    proposition_id = "prop-sf-elf-price"
+    corpus_sha256 = "1" * 64
+    view = {
+        "schema_version": "semantic_evidence_integration_view_v1",
+        "cycle_id": "summer_fridays_confirmation",
+        "question_id": "phase-a-evidence-integration",
+        "bundle_sha256": "2" * 64,
+        "corpus_sha256": corpus_sha256,
+        "method_version": "semantic_evidence_integration_method_v1",
+        "method_sha256": "3" * 64,
+        "coverage": {
+            "admitted_evidence_unit_count": 2,
+            "accounted_evidence_unit_count": 2,
+            "source_family_counts": {"owned_product": 2},
+            "unresolved_evidence_ids": [],
+            "complete": True,
+        },
+        "propositions": [
+            {
+                "proposition_id": proposition_id,
+                "bounded_proposition": (
+                    "At the observed US cutoff, the e.l.f. product had the lower "
+                    "sticker price; different size units remain unnormalized."
+                ),
+                "claim_kind": "observable_fact",
+                "subject_product_ids": ["sf-lbb"],
+                "comparator_product_ids": ["elf-glow-reviver"],
+                "axis_ids": ["price"],
+                "emerging_axis_labels": [],
+                "conditions": ["US prices observed at the same cutoff"],
+                "semantic_relations": {
+                    "support": ["sf-pdp::price", "elf-pdp::price"],
+                    "counter": [],
+                    "adjacent": [],
+                },
+                "claim_support": {
+                    "bounded_proposition": (
+                        "At the observed US cutoff, the e.l.f. product had the "
+                        "lower sticker price; different size units remain unnormalized."
+                    ),
+                    "support_posture": "directly_observed",
+                    "independent_origin_count": 2,
+                    "source_roles": ["owned_source"],
+                    "evidence_refs": ["sf-pdp", "elf-pdp"],
+                    "engagement_evidence_refs": [],
+                    "behavior_evidence_refs": [],
+                    "counterevidence_refs": [],
+                    "conflict_posture": "none_observed",
+                    "scope_conditions": ["US prices observed at the same cutoff"],
+                    "causal_ceiling": "descriptive_only",
+                },
+                "adjacent_evidence_refs": [],
+            }
+        ],
+        "emerging_axis_candidates": [],
+        "unmerged_semantic_units": [],
+    }
+    core = json.dumps(
+        view,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    view["view_sha256"] = __import__("hashlib").sha256(core).hexdigest()
+    path = tmp_path / "semantic_evidence_integration_view.json"
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    return (
+        {
+            "locator": path.name,
+            "sha256": _artifact_hash(path),
+        },
+        proposition_id,
+        corpus_sha256,
+    )
+
+
 def _understanding_route(tmp_path: Path) -> dict:
     frame = _artifact(tmp_path, "serp_phase1_comparator_frame.md")
     adjudicated = _artifact(tmp_path, "serp_phase2_adjudicated_set.md")
     verification_return = _artifact(tmp_path, "verification_return.md")
+    semantic_view, price_proposition_id, corpus_sha256 = (
+        _semantic_integration_view(tmp_path)
+    )
     return {
-        "route_version": "1.2.0",
+        "route_version": "1.4.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -807,11 +889,15 @@ def _understanding_route(tmp_path: Path) -> dict:
                             {
                                 "origin_key": "reddit:elf-thread-1",
                                 "source_role": "reddit_community",
+                                "public_actor_key": "reddit:u/elf-comparer",
+                                "identity_overlap_posture": "no_match_observed",
                                 "evidence_refs": ["elf-reddit-thread-1"],
                             },
                             {
                                 "origin_key": "creator:elf-post-1",
                                 "source_role": "creator_authored",
+                                "public_actor_key": "youtube:@elf-reviewer",
+                                "identity_overlap_posture": "no_match_observed",
                                 "evidence_refs": ["elf-creator-post-1"],
                             },
                         ],
@@ -822,7 +908,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                         "Summer Fridays Lip Butter Balm 15 g"
                     ),
                     "competitor_product_identity": (
-                        "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                        "e.l.f. Glow Reviver Melting Lip Balm 0.52 oz"
                     ),
                     "claim_ceiling": (
                         "observed comparison context; not market share"
@@ -830,7 +916,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "portfolio_role": {
                         "scope": "product",
                         "assessed_identity": (
-                            "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                            "e.l.f. Glow Reviver Melting Lip Balm 0.52 oz"
                         ),
                         "status": "likely_major",
                         "basis": "multi_source_inference",
@@ -850,6 +936,53 @@ def _understanding_route(tmp_path: Path) -> dict:
                         }
                     ],
                     "shared_axis_ids": ["format", "price", "claim_language"],
+                    "competitive_choice_explanation": {
+                        "status": "observed",
+                        "summary": (
+                            "The lower-priced e.l.f. product competes on value, "
+                            "while observed comparison evidence can still favor "
+                            "Summer Fridays on wear and hydration."
+                        ),
+                        "axis_findings": [
+                            {
+                                "axis_id": "price",
+                                "choice_posture": "competitor_advantage",
+                                "why": (
+                                    "The observed e.l.f. sticker price is lower; "
+                                    "the different size units are not normalized."
+                                ),
+                                "conditions": [
+                                    "US prices observed at the same cutoff"
+                                ],
+                                "evidence_refs": ["sf-pdp", "elf-pdp"],
+                                "proposition_refs": [price_proposition_id],
+                                "claim_support": {
+                                    "bounded_proposition": (
+                                        "At the observed US cutoff, the e.l.f. "
+                                        "product had the lower sticker price; "
+                                        "different size units remain unnormalized."
+                                    ),
+                                    "support_posture": "directly_observed",
+                                    "independent_origin_count": 2,
+                                    "source_roles": ["owned_source"],
+                                    "engagement_evidence_refs": [],
+                                    "behavior_evidence_refs": [],
+                                    "counterevidence_refs": [],
+                                    "conflict_posture": "none_observed",
+                                    "causal_ceiling": "descriptive_only",
+                                },
+                            }
+                        ],
+                        "final_comparator_role": "value_substitute",
+                        "role_rationale": (
+                            "It serves the same portable glossy-lip job with a "
+                            "materially lower observed sticker price."
+                        ),
+                        "role_evidence_refs": [
+                            "elf-reddit-thread-1",
+                            "elf-creator-post-1",
+                        ],
+                    },
                     "price_size_context": {
                         "status": "observed",
                         "normalization_posture": "not_directly_normalized",
@@ -867,7 +1000,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                         },
                         "competitor": {
                             "product_identity": (
-                                "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                                "e.l.f. Glow Reviver Melting Lip Balm 0.52 oz"
                             ),
                             "price_amount": 9.0,
                             "currency": "USD",
@@ -921,6 +1054,8 @@ def _understanding_route(tmp_path: Path) -> dict:
                             {
                                 "origin_key": "reddit:rhode-thread-1",
                                 "source_role": "reddit_community",
+                                "public_actor_key": "reddit:u/rhode-comparer",
+                                "identity_overlap_posture": "no_match_observed",
                                 "evidence_refs": ["rhode-reddit-thread-1"],
                             }
                         ],
@@ -954,6 +1089,23 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "position_gap_reason": (
                         "sampled sources exposed no stable ordered list"
                     ),
+                    "competitive_choice_explanation": {
+                        "status": "unresolved",
+                        "summary": (
+                            "The product fit is plausible, but the sampled run "
+                            "did not establish a stable customer choice pattern."
+                        ),
+                        "axis_findings": [],
+                        "final_comparator_role": "unresolved",
+                        "role_rationale": (
+                            "Only one independent comparison origin was confirmed."
+                        ),
+                        "role_evidence_refs": [],
+                        "gap_reason": (
+                            "A second source role and axis-level choice evidence "
+                            "were not captured."
+                        ),
+                    },
                     "lane_evidence": {
                         "co1_owned_ad_positioning": {
                             "status": "none_found",
@@ -1011,6 +1163,13 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "disposition": "captured",
                 }
             ],
+        },
+        "semantic_evidence_integration": {
+            "status": "completed",
+            "view": semantic_view,
+            "corpus_sha256": corpus_sha256,
+            "unresolved_material_evidence_ids": [],
+            "emerging_axis_dispositions": [],
         },
         "verification_requests": [
             {
@@ -1146,6 +1305,23 @@ def _blocked_seal(tmp_path: Path) -> dict:
         "terminal_artifact_locator": campaign_view["locator"],
         "terminal_artifact_sha256": campaign_view["sha256"],
     }
+    semantic_view = understanding_route["semantic_evidence_integration"]["view"]
+    semantic_route = {
+        "route_id": "semantic_evidence_integration",
+        "phase": "semantic_integration",
+        "required": True,
+        "material": True,
+        "planned_job_ids": ["SEI-001"],
+        "planned_count": 1,
+        "completed_job_ids": ["SEI-001"],
+        "completed_count": 1,
+        "blocked_job_ids": [],
+        "blocked_count": 0,
+        "unrun_job_ids": [],
+        "unrun_count": 0,
+        "terminal_artifact_locator": semantic_view["locator"],
+        "terminal_artifact_sha256": semantic_view["sha256"],
+    }
     return {
         "schema_version": SEAL_VERSION,
         "cycle_id": "summer_fridays_confirmation",
@@ -1205,6 +1381,7 @@ def _blocked_seal(tmp_path: Path) -> dict:
             },
             *specialist_routes,
             campaign_route,
+            semantic_route,
             {
                 "route_id": "serp_phase2",
                 "phase": "serp_phase2",
@@ -3747,6 +3924,31 @@ def _rewrite_campaign_view(tmp_path: Path, seal: dict, mutate) -> None:
             row["terminal_artifact_sha256"] = view_ref["sha256"]
 
 
+def _rewrite_semantic_view(
+    tmp_path: Path, seal: dict, mutate, *, refresh_internal_hash: bool = True
+) -> None:
+    view_ref = seal["understanding_route"]["semantic_evidence_integration"][
+        "view"
+    ]
+    path = tmp_path / view_ref["locator"]
+    view = json.loads(path.read_text(encoding="utf-8"))
+    mutate(view)
+    if refresh_internal_hash:
+        view.pop("view_sha256", None)
+        core = json.dumps(
+            view,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        view["view_sha256"] = __import__("hashlib").sha256(core).hexdigest()
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    view_ref["sha256"] = _artifact_hash(path)
+    for row in seal["route_job_accounting"]:
+        if row.get("route_id") == "semantic_evidence_integration":
+            row["terminal_artifact_sha256"] = view_ref["sha256"]
+
+
 def test_seal_without_route_version_blocks_by_default(tmp_path: Path) -> None:
     seal = _blocked_seal(tmp_path)
     del seal["understanding_route"]
@@ -3819,6 +4021,176 @@ def test_current_route_requires_campaign_integration_accounting(
     )
 
 
+def test_current_route_requires_semantic_integration_accounting(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "semantic_evidence_integration"
+    ]
+
+    assert (
+        "missing_required_route_accounting:semantic_evidence_integration"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_historical_route_1_3_does_not_owe_semantic_integration(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.3.0"
+    seal["understanding_route"].pop("semantic_evidence_integration")
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "semantic_evidence_integration"
+    ]
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert not [finding for finding in findings if "semantic_integration" in finding]
+
+
+def test_semantic_integration_requires_complete_coverage(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["coverage"]["accounted_evidence_unit_count"] = 1
+        view["coverage"]["complete"] = False
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "incomplete_semantic_integration_coverage" in _validate(tmp_path, seal)
+
+
+def test_semantic_integration_rejects_incompetent_source_role(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        proposition = view["propositions"][0]
+        proposition["claim_kind"] = "customer_experience"
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "incompetent_semantic_integration_source_role:prop-sf-elf-price"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_semantic_integration_corpus_hash_must_match_seal_pointer(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "corpus_sha256"
+    ] = "9" * 64
+
+    assert "semantic_integration_corpus_hash_mismatch" in _validate(tmp_path, seal)
+
+
+def test_comparator_axis_must_resolve_semantic_proposition(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    axis = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]
+    axis["proposition_refs"] = ["prop-does-not-exist"]
+
+    assert (
+        "unknown_comparator_choice_axis_proposition:cand-elf:prop-does-not-exist"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_passing_seal_rejects_unresolved_material_semantic_evidence(
+    tmp_path: Path,
+) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "unresolved_material_evidence_ids"
+    ] = ["reddit:material-unresolved"]
+
+    assert (
+        "passing_seal_with_unresolved_material_semantic_evidence"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_semantic_integration_internal_hash_is_verified(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["coverage"]["source_family_counts"] = {"tampered": 2}
+
+    _rewrite_semantic_view(
+        tmp_path, seal, mutate, refresh_internal_hash=False
+    )
+
+    assert "semantic_integration_internal_hash_mismatch" in _validate(tmp_path, seal)
+
+
+def test_unresolved_material_ids_must_exist_in_view_coverage(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "unresolved_material_evidence_ids"
+    ] = ["ghost:not-in-view"]
+
+    assert (
+        "semantic_integration_unresolved_material_not_in_view"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_inline_claim_support_projection_cannot_diverge_from_proposition(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    axis = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]
+    axis["claim_support"]["support_posture"] = "cross_venue_corroborated"
+
+    findings = _validate(tmp_path, seal)
+
+    assert any(
+        finding.startswith(
+            "comparator_choice_claim_support_projection_divergence:cand-elf"
+        )
+        for finding in findings
+    )
+
+
+def test_duplicate_emerging_axis_disposition_labels_are_rejected(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["emerging_axis_candidates"] = ["application_ritual"]
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+    seal["understanding_route"]["semantic_evidence_integration"][
+        "emerging_axis_dispositions"
+    ] = [
+        {"label": "application_ritual", "status": "blocked_material"},
+        {"label": "application_ritual", "status": "integrated_nonmaterial"},
+    ]
+
+    assert (
+        "duplicate_semantic_integration_emerging_axis_disposition"
+        in _validate(tmp_path, seal)
+    )
+
+
 def test_historical_route_1_1_retains_campaign_integration_accounting(
     tmp_path: Path,
 ) -> None:
@@ -3858,6 +4230,30 @@ def test_historical_route_1_1_retains_comparator_closure_obligations(
     )
 
     assert "comparator_promoted_without_exact_identity:cand-elf" in findings
+
+
+def test_historical_route_1_2_does_not_owe_route_1_3_choice_or_identity_fields(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.2.0"
+    for candidate in seal["understanding_route"]["comparator_closure"][
+        "candidates"
+    ]:
+        candidate.pop("competitive_choice_explanation", None)
+        for origin in candidate["prefanout_qualification"][
+            "independent_comparison_origins"
+        ]:
+            origin.pop("public_actor_key", None)
+            origin.pop("identity_overlap_posture", None)
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert findings == []
 
 
 def test_historical_route_1_1_does_not_owe_route_1_2_obligations(
@@ -4075,6 +4471,172 @@ def test_promoted_comparator_requires_shared_axes(tmp_path: Path) -> None:
     promoted["shared_axis_ids"] = []
 
     assert "promoted_comparator_without_shared_axes:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_material_candidate_requires_competitive_choice_explanation(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["competitive_choice_explanation"]
+
+    assert "missing_comparator_choice_explanation:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_choice_axis_requires_evidence_and_must_be_shared(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    choice = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]
+    choice["axis_findings"][0]["axis_id"] = "wear"
+    choice["axis_findings"][0]["evidence_refs"] = []
+
+    findings = _validate(tmp_path, seal)
+
+    assert "comparator_choice_axis_not_shared:cand-elf:wear" in findings
+    assert "missing_comparator_choice_axis_evidence:cand-elf" in findings
+
+
+def test_isolated_choice_axis_cannot_claim_direction(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "isolated"
+    support["independent_origin_count"] = 1
+
+    assert "isolated_comparator_choice_axis_direction:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_resonance_support_requires_engagement_reference(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "resonance_supported"
+
+    assert "resonant_comparator_choice_axis_without_engagement:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_repeated_support_requires_two_independent_origins(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "independently_repeated"
+    support["independent_origin_count"] = 1
+
+    assert "repeated_comparator_choice_axis_without_two_origins:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_cross_venue_support_requires_two_source_roles(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "cross_venue_corroborated"
+
+    assert "cross_venue_comparator_choice_axis_without_two_roles:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_mixed_support_requires_counterevidence_and_split_posture(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    axis = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]
+    axis["claim_support"]["conflict_posture"] = "mixed"
+
+    findings = _validate(tmp_path, seal)
+
+    assert "comparator_choice_axis_conflict_without_counterevidence:cand-elf" in findings
+    assert "mixed_comparator_choice_axis_not_split:cand-elf" in findings
+
+
+def test_observed_choice_axis_requires_conflict_check(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["conflict_posture"] = "not_checked"
+
+    assert (
+        "observed_comparator_choice_axis_without_conflict_check:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_unchecked_conflict_cannot_carry_directional_axis_on_partial_choice(
+    tmp_path: Path,
+) -> None:
+    # `not_checked` caps a claim at an unresolved/provisional posture, so a
+    # non-promoted material row cannot publish a directional axis advantage on
+    # evidence never checked for opposition just because its explanation-level
+    # status is below `observed`.
+    seal = _blocked_seal(tmp_path)
+    choice = seal["understanding_route"]["comparator_closure"]["candidates"][1][
+        "competitive_choice_explanation"
+    ]
+    choice["axis_findings"] = [
+        {
+            "axis_id": "hydration",
+            "choice_posture": "competitor_advantage",
+            "why": "one dated observation favored the competitor",
+            "conditions": ["US observation cutoff"],
+            "evidence_refs": ["rhode-pdp"],
+            "claim_support": {
+                "bounded_proposition": (
+                    "At the observed cutoff the competitor exposed the "
+                    "stronger hydration claim."
+                ),
+                "support_posture": "directly_observed",
+                "independent_origin_count": 1,
+                "source_roles": ["retailer_product"],
+                "engagement_evidence_refs": [],
+                "behavior_evidence_refs": [],
+                "counterevidence_refs": [],
+                "conflict_posture": "not_checked",
+                "causal_ceiling": "descriptive_only",
+            },
+        }
+    ]
+
+    findings = _validate(tmp_path, seal)
+
+    assert (
+        "directional_comparator_choice_axis_without_conflict_check:cand-rhode"
+        in findings
+    )
+    assert (
+        "observed_comparator_choice_axis_without_conflict_check:cand-rhode"
+        not in findings
+    )
+
+
+def test_promoted_candidate_requires_observed_choice_explanation(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    choice = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]
+    choice["status"] = "partial"
+    choice["gap_reason"] = "one material condition remains unresolved"
+
+    assert "promoted_comparator_without_observed_choice:cand-elf" in _validate(
         tmp_path, seal
     )
 
@@ -4451,6 +5013,53 @@ def test_core_fanout_requires_two_distinct_source_roles(tmp_path: Path) -> None:
         "insufficient_comparator_prefanout_source_roles:cand-elf"
         in _validate(tmp_path, seal)
     )
+
+
+def test_same_public_actor_cannot_supply_two_prefanout_origins(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    origins = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"]
+    origins[1]["public_actor_key"] = " REDDIT:U/ELF-COMPARER "
+
+    findings = _validate(tmp_path, seal)
+
+    assert (
+        "duplicate_comparator_prefanout_public_actor_key:"
+        "cand-elf:reddit:u/elf-comparer" in findings
+    )
+    assert "insufficient_comparator_prefanout_origins:cand-elf" in findings
+
+
+def test_possible_identity_overlap_receives_no_independence_credit(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    origins = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"]
+    origins[1]["identity_overlap_posture"] = "possible_same_actor"
+
+    assert "insufficient_comparator_prefanout_origins:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_public_actor_key_is_required_for_route_1_3_origin(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    origin = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"][0]
+    del origin["public_actor_key"]
+
+    findings = _validate(tmp_path, seal)
+
+    assert "missing_comparator_prefanout_public_actor_key:cand-elf" in findings
+    assert "insufficient_comparator_prefanout_origins:cand-elf" in findings
 
 
 def test_serp_surface_cannot_count_as_prefanout_confirmation(

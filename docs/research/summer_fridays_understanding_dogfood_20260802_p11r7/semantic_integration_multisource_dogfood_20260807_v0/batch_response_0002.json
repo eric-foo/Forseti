@@ -1,0 +1,933 @@
+{
+  "batch_id": "batch-0002",
+  "bundle_sha256": "013851d703f6f721223dc1621837d1030b172c8beea6677c4a9491253842f9a5",
+  "evidence": [
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The burning report concerns Balm Dotcom; Summer Fridays is discussed only for pigment and reapplication.",
+      "evidence_id": "reddit:1p7si2m:nr4vg3q",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "First-person post reports dermatitis around the mouth while preserving uncertain product attribution.",
+      "evidence_id": "reddit:1pf427h:post",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "product attribution explicitly uncertain",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-suspected-contact-dermatitis",
+          "statement": "The customer reported contact-dermatitis-like symptoms around their mouth and suspected, but did not establish, Summer Fridays Lip Butter Balm as the cause.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct use report describes burning and a resulting preference for Laneige.",
+      "evidence_id": "reddit:1pneo7v:nvahs80",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-burned-lips",
+          "statement": "The customer reported that Summer Fridays Lip Butter Balm burned their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "reported product choice"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-rejected-for-laneige",
+          "statement": "The customer identified Laneige as their preferred balm after reporting that Summer Fridays burned their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct report links daily use with severe dryness and a recovery period.",
+      "evidence_id": "reddit:1qxm1tz:o3xko68",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "daily use",
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-daily-use-drying",
+          "statement": "The customer reported that daily Summer Fridays use dried their lips severely and that recovery took more than a week.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct report describes multiple adverse effects under continued use and a costly abandonment decision.",
+      "evidence_id": "reddit:1r09924:o4h7wba",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "constant use",
+            "variant set was not itemized"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-continued-use-peeling-soreness",
+          "statement": "The customer reported that continued Summer Fridays use dried, peeled, chapped, and made their lips sore.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "multiple variants",
+            "reported abandonment behavior"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-collection-decluttered",
+          "statement": "The customer reported decluttering their Summer Fridays balm collection and refusing future use after the adverse experience.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "'Burning pit in my soul' is figurative disappointment, not a physical reaction.",
+      "evidence_id": "reddit:1r18e9m:o4nnut9",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Observes irritation around another person's mouth but does not establish the product or a first-hand experience.",
+      "evidence_id": "reddit:1r348ph:o52e37k",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The no-burning report concerns Fenty products, not Summer Fridays.",
+      "evidence_id": "reddit:1st35o0:ohqcq6v",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Asks whether Mint burns; a question is not an experience report.",
+      "evidence_id": "reddit:1t79b03:okovbz2",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "An empties inventory lists Summer Fridays variants but reports no reaction or explicit tolerance.",
+      "evidence_id": "reddit:1ul7dbe:ov1w0o0",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Repeats that other commenters reported burning but does not supply a separate first-hand experience.",
+      "evidence_id": "reddit:1ur9u91:owpq4df",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "A routine product list mentions Lip Butter Balm but reports no reaction or tolerance.",
+      "evidence_id": "reddit:vileta:ide3k7s",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct report describes drying that emerged over time.",
+      "evidence_id": "reddit:wve0sg:ilfvip1",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla variant",
+            "effect emerged over time"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-drying-over-time",
+          "statement": "The customer reported that the Summer Fridays Vanilla balm dried their lips over time.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The reaction is attributed to Laneige mask, not Summer Fridays.",
+      "evidence_id": "reddit:xysaq8:irihylw",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Verified-purchaser Vanilla Beige review separates a burn report, a formula-change comparison, and refusal to repurchase.",
+      "evidence_id": "sephora-review:187419902",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-burn-warm",
+          "statement": "The reviewer reported that Vanilla Beige made their lips feel warm and burn.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant",
+            "same-reviewer before-and-after formula attribution",
+            "formula identity was not independently verified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "new-formula-attribution",
+          "statement": "The reviewer attributed the burning difference to what they described as a new formula compared with a previously finished tube.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant",
+            "reported future purchase behavior"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-no-repurchase",
+          "statement": "The reviewer said they would not purchase the reformulated Vanilla Beige again.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Verified-purchaser Pink Sugar review reports dryness, irritation, itching, and intended return.",
+      "evidence_id": "sephora-review:263610826",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-sugar-dry-irritated-itching",
+          "statement": "The reviewer reported that Pink Sugar left their lips dry, irritated, and itching.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar variant",
+            "reported behavior following the reaction"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-sugar-return",
+          "statement": "The reviewer reported intending to return Pink Sugar because of the reaction.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "First-person non-incentivized Vanilla Beige review reports swelling, peeling, pain, and discontinuation while preserving individual uncertainty.",
+      "evidence_id": "sephora-review:272258322",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant",
+            "reviewer explicitly allowed that the reaction might be individual"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-swelling-peeling",
+          "statement": "The reviewer reported severe dryness, peeling, swelling, and pain after using Vanilla Beige.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant",
+            "reported behavior following the reaction"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-stopped",
+          "statement": "The reviewer reported stopping Vanilla Beige after the reaction developed.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Non-incentivized Pink Sugar review reports dermatitis and discarding three flavors.",
+      "evidence_id": "sephora-review:272686517",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar product page",
+            "reviewer described owning three flavors",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-sugar-dermatitis",
+          "statement": "The reviewer reported contact-dermatitis-like symptoms while reviewing Pink Sugar.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar review context",
+            "reported abandonment behavior"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "three-flavors-discarded",
+          "statement": "The reviewer reported discarding three Summer Fridays balm flavors after the reaction.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Non-incentivized Vanilla review separates a rash report from a speculative ingredient explanation.",
+      "evidence_id": "sephora-review:309383242",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla variant",
+            "reaction appeared after several days"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-rash-after-days",
+          "statement": "The reviewer reported developing a lip rash after using the Vanilla balm for several days.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla variant",
+            "unverified customer attribution"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "shea-cause-speculation",
+          "statement": "The reviewer speculated that shea butter might explain the rash for sensitive users.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "First-person non-incentivized Iced Coffee review reports severe dryness and a burn-like experience; its TikTok reference is separated as echo.",
+      "evidence_id": "sephora-review:325782313",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Iced Coffee variant",
+            "customer description; no clinical diagnosis or chemical cause established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "iced-coffee-burn-like-reaction",
+          "statement": "The reviewer reported that Iced Coffee dried their lips and caused what they described as a chemical burn with continuing pain.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "downstream echo rather than an independently captured TikTok experience"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "tiktok-reports-echo",
+          "statement": "The reviewer said they had seen similar reports on TikTok.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Non-incentivized Toasted Marshmallow review reports repeated allergy-like reactions and separately questions a formula change.",
+      "evidence_id": "sephora-review:397129614",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Toasted Marshmallow variant",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "toasted-marshmallow-repeated-reaction",
+          "statement": "The reviewer reported repeatedly experiencing an allergy-like reaction to Toasted Marshmallow.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Toasted Marshmallow variant",
+            "unverified question rather than evidence of a formula change"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "formula-change-question",
+          "statement": "The reviewer asked whether a formula change might explain the repeated reaction.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Verified-purchaser Cherry review distinguishes slight irritation from burning.",
+      "evidence_id": "sephora-review:397449903",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Cherry variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "cherry-slight-irritation",
+          "statement": "The reviewer reported that Cherry slightly irritated their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Cherry variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "cherry-not-burning",
+          "statement": "The reviewer explicitly distinguished the Cherry irritation from burning.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Non-incentivized Pink Sugar review explicitly describes the product as an exception to products that irritate the reviewer.",
+      "evidence_id": "sephora-review:397665133",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar variant",
+            "individual self-reported tolerance"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-sugar-no-irritation",
+          "statement": "A reviewer who said many lip products dry and irritate their lips reported that Pink Sugar did not and instead felt hydrating.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly agrees that Vanilla Beige causes the same burning experience.",
+      "evidence_id": "tiktok-comment:7381650580382679851",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-burning",
+          "statement": "The audience member reported that Vanilla Beige burned their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Expresses concern before receiving the product and therefore contains no use experience.",
+      "evidence_id": "tiktok-comment:7381652067243606830",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member explicitly rejects the video's adverse framing for Iced Coffee based on their own use.",
+      "evidence_id": "tiktok-comment:7381673774888059679",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Iced Coffee variant",
+            "exact absence of every possible reaction was not established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "iced-coffee-no-same-problem",
+          "statement": "The audience member reported a positive Iced Coffee experience and rejected the implication that they had the same adverse reaction.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports the same Vanilla Beige-specific experience.",
+      "evidence_id": "tiktok-comment:7381718145440121631",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-burning",
+          "statement": "The audience member reported that Vanilla Beige was the only variant that caused the same burning experience.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member explicitly reports extended Pink Sugar use without the reaction.",
+      "evidence_id": "tiktok-comment:7381753285764956946",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar variant",
+            "extended repeat use"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-sugar-no-reaction",
+          "statement": "The audience member reported using one full Pink Sugar tube over a year and most of a second without experiencing the discussed reaction.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The burning report concerns Tower 28, not Summer Fridays.",
+      "evidence_id": "tiktok-comment:7381890439343735598",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member reports Brown Sugar formula and drying differences.",
+      "evidence_id": "tiktok-comment:7382063111974732575",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Brown Sugar variant",
+            "fourth reported tube",
+            "possible formula difference not independently verified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "brown-sugar-drying",
+          "statement": "The audience member reported that a Brown Sugar tube felt more watery than prior tubes and slightly drying on the lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Reports Iced Coffee as watery but still liked; it does not assert a reaction or explicit tolerance to the bound symptoms.",
+      "evidence_id": "tiktok-comment:7382344206406320927",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports Brown Sugar-specific burning.",
+      "evidence_id": "tiktok-comment:7384166497462289182",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "brown-sugar-burning",
+          "statement": "The audience member reported that only Brown Sugar burned their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports Brown Sugar-specific itching.",
+      "evidence_id": "tiktok-comment:7385589334789554987",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "brown-sugar-itching",
+          "statement": "The audience member reported that Brown Sugar made their lips feel itchy.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Speculates that the product is expired; provides no observed expiry evidence or separate use experience.",
+      "evidence_id": "tiktok-comment:7402937447262192402",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member reports Vanilla Beige burning that was not present when the product was first purchased.",
+      "evidence_id": "tiktok-comment:7403144097768948486",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant",
+            "effect changed over the customer's ownership period",
+            "cause of change not established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-later-burning",
+          "statement": "The audience member reported that Vanilla Beige burned their lips even though it had not done so when first purchased.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports that Pink Sugar caused the same reaction.",
+      "evidence_id": "tiktok-comment:7476703422690509614",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Sugar variant",
+            "exact symptom wording inherited from the burning-focused video context"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-sugar-same-reaction",
+          "statement": "The audience member reported that Pink Sugar caused the same reaction discussed in the video.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Names possible variants without stating a reaction or enough context to resolve the meaning safely.",
+      "evidence_id": "tiktok-comment:7481591833072943888",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports intense burning immediately after application; the captured context binds the product but not the variant.",
+      "evidence_id": "tiktok-comment:7508953746987959082",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-intense-burning",
+          "statement": "The audience member reported that their lips burned intensely immediately after applying the product.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly agrees they experienced the same issue, without a variant.",
+      "evidence_id": "tiktok-comment:7556672989032203064",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-same-reaction",
+          "statement": "The audience member reported that they had experienced the same reaction discussed in the video.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "Contains no interpretable proposition.",
+      "evidence_id": "tiktok-comment:7577689077408940856",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member reports that only the video-discussed shade caused burning.",
+      "evidence_id": "tiktok-comment:7578266905766462230",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant bound by the video context"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-burning",
+          "statement": "The audience member reported that the video-discussed Vanilla Beige shade was the only shade that burned their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports the same experience with Pink Guava.",
+      "evidence_id": "tiktok-comment:7592607959882220319",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Pink Guava variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "pink-guava-burning",
+          "statement": "The audience member reported that Pink Guava caused the same burning experience.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Audience member directly reports Vanilla Beige-specific burning.",
+      "evidence_id": "tiktok-comment:7621769689929138958",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "vanilla-beige-burning",
+          "statement": "The audience member reported that only Vanilla Beige burned their lips.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Creator-authored post publicly frames a personal Vanilla Beige burning experience; it is not customer corroboration.",
+      "evidence_id": "tiktok-video:7381649202134207786",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Vanilla Beige variant",
+            "creator-authored framing",
+            "not independent customer-experience proof"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "creator-vanilla-beige-burning-frame",
+          "statement": "The creator publicly framed Vanilla Beige as burning their lips on initial application.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    }
+  ],
+  "schema_version": "semantic_evidence_batch_response_v1"
+}

@@ -15,6 +15,7 @@ open_next:
   - docs/research/judgment-spine/manifest_v0.md
 stale_if:
   - An owner source renames/retires a spine area or its owning doc moves trees.
+  - The intelligence claim-support contract changes support or conflict postures.
   - The evidence ladder changes claim tiers or closeout states.
   - The conductor changes its invariants, the five seams, or the outcome precedence.
   - The current-state/decomposition map or fragrance Level 1 organizers change default mode, SCV loop, readiness gates, or satellite-fill contract.
@@ -40,6 +41,7 @@ stale_if:
 | Find the case inventory + per-case artifact status | `manifest_v0.md` | research |
 | Run or plan a case through gates JSG-01→JSG-10 | `forseti/product/spines/judgment/conductor/judgment_quality_promotion_operating_model_v0.md` (conductor) | product |
 | Know who owns a gate + its required receipts | `forseti/product/spines/judgment/conductor/judgment_spine_gate_ownership_map_v0.md` | product |
+| Know what captured evidence supports about an underlying intelligence proposition (provenance, engagement, recurrence, cross-venue corroboration, conflict, causal ceiling) | `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md` | product |
 | Know what a run/artifact can **claim** (tiers, closeout states, caps) | `forseti/product/spines/judgment/claim_ladder/judgment_spine_evidence_ladder_architecture_v0.md` | product |
 | Apply the JSG-08 reveal/calibration receipt | `forseti/product/spines/judgment/conductor/judgment_spine_reveal_calibration_owner_contract_v0.md` | product |
 | Work from the harness spec (schemas, scorer, runner, probe) | `harness/v0_14/index.md` | research |
@@ -93,6 +95,14 @@ stale_if:
 - summary: Claim tiers (product_learning / buyer_proof / judgment_quality), closeout states, weakest-cleared-gate + sub-floor caps.
 - status: controlling doctrine.
 - pointer: `forseti/product/spines/judgment/claim_ladder/judgment_spine_evidence_ladder_architecture_v0.md` (product).
+
+### Intelligence claim support — what the underlying sources support
+
+- summary: Shared intelligence-cycle contract for exact proposition binding,
+  provenance, engagement-as-resonance, independent recurrence, cross-venue
+  corroboration, counterevidence, scope, and causal ceilings.
+- status: owner-adopted controlling product contract.
+- pointer: `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md` (product).
 
 ### JSG-08 reveal / calibration owner contract
 - summary: The reveal/calibration receipt shape and its satisfaction states the conductor reads at JSG-08.

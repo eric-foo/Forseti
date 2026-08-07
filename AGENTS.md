@@ -155,6 +155,14 @@ owns every durable prompt, handoff, wrapper, rerun, and patch prompt.
 `docs/decisions/dev_workflow_ci_branch_protection_doctrine_v0.md` owns
 publication and landing.
 
+Before any Forseti actor synthesizes, compares, weights, or promotes evidence
+into a finding, explanation, memo input, or recommendation anywhere in the
+intelligence cycle, load
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+Scanning may nominate and Capture may preserve evidence without judging it, but
+neither may silently award corroboration or causal force. This is a trigger and
+pointer only; the named contract owns the semantics.
+
 Default allowed work is documentation, decisions, prompts, reviews, migration
 notes, and overlay maintenance. Implementation or runtime work requires
 explicit bounded authorization in the current turn or an accepted handoff.
