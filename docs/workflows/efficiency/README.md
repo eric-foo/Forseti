@@ -13,6 +13,7 @@ claim that any documented result has been reproduced.
 | Run the fixed cold-agent vendor-admission tool-calling case | `tool_calling_dogfood_case_v0.md` |
 | Review the observed 2026-07-15 three-run baseline and efficiency diagnosis | `tool_calling_dogfood_run_2026_07_15_v0.md` |
 | Compare an in-session Success Implement review with a strict cross-vendor delegated review-and-patch on PR #1111 | `pr1111_success_implement_vs_delegated_review_case_v0.md` |
+| Review the 100-PR backtest that admitted a scoped cold-operability signal and rejected a universal dogfood protocol | `cold_operability_signal_pr_backtest_2026_08_07_v0.md` |
 | Record an observed recurring tooling or workflow failure and its corrective pointers | `../technical_difficulties_log_v0.md` |
 | Follow the dated 2026-07-09 hygiene-audit checklist and its execution waves | `../../hygiene/efficiency_audit_wave_plan_v0.md` |
 
