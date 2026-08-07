@@ -152,7 +152,6 @@
         "conflict_posture": "mixed",
         "counterevidence_refs": [
           "reddit:16old70:k1p6c8q",
-          "reddit:199wb9b:kimed09",
           "sephora-review:397449903",
           "tiktok-comment:7381673774888059679",
           "tiktok-comment:7381753285764956946"
@@ -209,7 +208,6 @@
         ],
         "counter": [
           "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
-          "reddit:199wb9b:kimed09::mint-no-burn-or-sting",
           "sephora-review:397449903::cherry-not-burning",
           "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem",
           "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
@@ -302,8 +300,7 @@
         "causal_ceiling": "descriptive_only",
         "conflict_posture": "mixed",
         "counterevidence_refs": [
-          "reddit:16old70:k1p6c8q",
-          "reddit:199wb9b:kimed09"
+          "reddit:16old70:k1p6c8q"
         ],
         "engagement_evidence_refs": [],
         "evidence_refs": [
@@ -331,8 +328,7 @@
       "semantic_relations": {
         "adjacent": [],
         "counter": [
-          "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
-          "reddit:199wb9b:kimed09::mint-no-burn-or-sting"
+          "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
         ],
         "support": [
           "reddit:1mzokbt:post::mint-delayed-burning-flaking"
@@ -590,7 +586,6 @@
         "conflict_posture": "mixed",
         "counterevidence_refs": [
           "reddit:16old70:k1p6c8q",
-          "reddit:199wb9b:kimed09",
           "reddit:1kq0492:mt21uxw",
           "reddit:1m07jmq:n37cif6",
           "sephora-review:397665133",
@@ -674,7 +669,6 @@
         "adjacent": [],
         "counter": [
           "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
-          "reddit:199wb9b:kimed09::mint-no-burn-or-sting",
           "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating",
           "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated",
           "sephora-review:397665133::pink-sugar-no-irritation",
@@ -1105,14 +1099,13 @@
         ],
         "evidence_refs": [
           "reddit:16old70:k1p6c8q",
-          "reddit:199wb9b:kimed09",
           "reddit:1kq0492:mt21uxw",
           "reddit:1m07jmq:n37cif6",
           "sephora-review:397665133",
           "tiktok-comment:7381673774888059679",
           "tiktok-comment:7381753285764956946"
         ],
-        "independent_origin_count": 6,
+        "independent_origin_count": 5,
         "scope_conditions": [
           "captured public evidence is nonrepresentative",
           "variants and individual sensitivity histories differ",
@@ -1177,7 +1170,6 @@
         ],
         "support": [
           "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
-          "reddit:199wb9b:kimed09::mint-no-burn-or-sting",
           "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating",
           "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated",
           "sephora-review:397665133::pink-sugar-no-irritation",
@@ -1214,5 +1206,5 @@
       "semantic_unit_ref": "sephora-review:397129614::formula-change-question"
     }
   ],
-  "view_sha256": "74305933581f2c032250877ace32cbe8652c1e511f79f4088da3528248b3fcd5"
+  "view_sha256": "72cf4634963a6f20fe27f519f7a745433658080bc5951d00511d8dfeac6e4d05"
 }

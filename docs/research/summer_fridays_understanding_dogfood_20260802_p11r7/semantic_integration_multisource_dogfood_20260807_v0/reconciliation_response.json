@@ -1,6 +1,6 @@
 {
   "bundle_sha256": "013851d703f6f721223dc1621837d1030b172c8beea6677c4a9491253842f9a5",
-  "compilation_sha256": "b7c9571b1cbb807ba0971225cf971974b2edb3e080cdf77b007f9b180c046990",
+  "compilation_sha256": "bdce338bb13c2da6dac816f8d7117410a55ef79747ca7c74ab1e5285a0b76c08",
   "propositions": [
     {
       "axis_ids": [
@@ -178,10 +178,6 @@
         },
         {
           "relation": "counter",
-          "semantic_unit_ref": "reddit:199wb9b:kimed09::mint-no-burn-or-sting"
-        },
-        {
-          "relation": "counter",
           "semantic_unit_ref": "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating"
         },
         {
@@ -289,10 +285,6 @@
         },
         {
           "relation": "counter",
-          "semantic_unit_ref": "reddit:199wb9b:kimed09::mint-no-burn-or-sting"
-        },
-        {
-          "relation": "counter",
           "semantic_unit_ref": "sephora-review:397449903::cherry-not-burning"
         },
         {
@@ -391,10 +383,6 @@
         {
           "relation": "counter",
           "semantic_unit_ref": "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
-        },
-        {
-          "relation": "counter",
-          "semantic_unit_ref": "reddit:199wb9b:kimed09::mint-no-burn-or-sting"
         }
       ],
       "subject_product_ids": [
@@ -776,10 +764,6 @@
         {
           "relation": "support",
           "semantic_unit_ref": "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
-        },
-        {
-          "relation": "support",
-          "semantic_unit_ref": "reddit:199wb9b:kimed09::mint-no-burn-or-sting"
         },
         {
           "relation": "support",

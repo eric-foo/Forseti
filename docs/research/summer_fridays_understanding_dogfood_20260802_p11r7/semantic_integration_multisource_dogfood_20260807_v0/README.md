@@ -43,6 +43,11 @@ product binding, source role, and independent-origin key.
 This denominator proves integration of the existing coded slice. It does not
 prove that upstream acquisition or axis coding found every relevant statement
 among all 577 captured Reddit threads or 3,200 eligible retailer reviews.
+One admitted Reddit row was upstream-coded as Lip Butter Balm evidence even
+though its thread context binds the statement to Summer Fridays lip oil. This
+integration keeps the row in the declared denominator but rejects it as
+`out_of_scope`; the upstream coding artifact remains unchanged and needs
+correction in its owning lane.
 
 ## Observed run
 
@@ -50,21 +55,22 @@ The no-provider file workflow completed against the patched semantic-
 integration implementation:
 
 - 80 evidence units were admitted and 80 were accounted for.
-- 45 were `claim_bearing`.
+- 44 were `claim_bearing`.
 - 14 were `context_only` questions, hearsay, hypotheses, or related material
   that could not support the bounded customer-experience claim.
-- 21 were `out_of_scope`, including competitor reactions, wrong-product
-  statements, inventories without an experience, and false-positive wording
-  such as a perfume named “Burning Cherry” or a figurative “burning pit.”
-- The 45 claim-bearing items produced 62 distinct semantic units.
+- 22 were `out_of_scope`, including competitor reactions, wrong-product
+  statements such as an answer about the Summer Fridays lip oil, inventories
+  without an experience, and false-positive wording such as a perfume named
+  “Burning Cherry” or a figurative “burning pit.”
+- The 44 claim-bearing items produced 61 distinct semantic units.
 - Reconciliation produced 17 bounded propositions and retained five
   unmerged causal or echo units.
-- Bundle SHA-256:
+- Bundle SHA-256 (built with `--max-batch-chars 50000`):
   `013851d703f6f721223dc1621837d1030b172c8beea6677c4a9491253842f9a5`.
 - Compilation SHA-256:
-  `b7c9571b1cbb807ba0971225cf971974b2edb3e080cdf77b007f9b180c046990`.
+  `bdce338bb13c2da6dac816f8d7117410a55ef79747ca7c74ab1e5285a0b76c08`.
 - View SHA-256:
-  `74305933581f2c032250877ace32cbe8652c1e511f79f4088da3528248b3fcd5`.
+  `72cf4634963a6f20fe27f519f7a745433658080bc5951d00511d8dfeac6e4d05`.
 - Model-provider API calls: `0`.
 
 ## What evidence stacking produced
@@ -82,7 +88,7 @@ Its compiled support block contains:
 - 37 independently credited supporting origins;
 - customer-experience support from `community_post`, `retailer_review`, and
   `audience_comment` roles;
-- seven counterevidence records;
+- six counterevidence records;
 - `mixed` conflict posture; and
 - nine engagement-bearing support records.
 
@@ -96,14 +102,14 @@ The more exact propositions remained separate:
 
 | Bounded point | Observed support |
 | --- | --- |
-| Burning experience is mixed | 15 supporting origins across three customer roles, five counterevidence records, `mixed` |
+| Burning experience is mixed | 15 supporting origins across three customer roles, four counterevidence records, `mixed` |
 | Vanilla Beige adverse reports | 7 supporting origins across Sephora reviews and TikTok audience comments; creator post retained only as adjacent framing |
 | Pink Sugar experience is mixed | 3 supporting origins across retailer and audience roles, 2 counterevidence records |
 | Iced Coffee experience is mixed | 2 supporting origins across Reddit and retailer reviews, 1 TikTok audience counterexample |
 | Brown Sugar adverse reports | 3 independent TikTok audience origins; one venue only |
 | Adverse effects emerging with time/use | 6 supporting origins across Reddit, retailer, and TikTok audience roles |
 | Customer behavior after an adverse experience | 9 supporting origins across Reddit and retailer reviews reporting stopping, returning, discarding, declining repurchase/recommendation, switching preference, or clearing a collection |
-| Explicit tolerance/no comparable reaction | 7 supporting records but 6 independent origins because two Reddit records came from the same visible author |
+| Explicit tolerance/no comparable reaction | 6 supporting records but 5 independent origins because two Reddit records came from the same visible author |
 
 ## Concrete provenance examples
 
@@ -166,7 +172,7 @@ Observed checks against the patched implementation:
   `customer_experience`;
 - altering bundle content without recomputing its stored hash fails with
   `content does not match its stored bundle_sha256`; and
-- the repeated `nessa_14` records produce six independent origins from seven
+- the repeated `nessa_14` records produce five independent origins from six
   tolerance-support records.
 
 The durable agent judgments are `batch_response_0001.json`,

@@ -156,27 +156,10 @@
       "semantic_units": []
     },
     {
-      "disposition": "claim_bearing",
-      "disposition_reason": "Direct Mint-variant report explicitly says the sensation was not burning or stinging.",
+      "disposition": "out_of_scope",
+      "disposition_reason": "The no-burn answer responds to a question about the new Summer Fridays lip oil reviewed in the captured thread, not the Lip Butter Balm.",
       "evidence_id": "reddit:199wb9b:kimed09",
-      "semantic_units": [
-        {
-          "axis_ids": [
-            "reaction_and_breakout"
-          ],
-          "comparator_product_ids": [],
-          "conditions": [
-            "Mint variant inferred from the bound product thread",
-            "public actor identity unavailable"
-          ],
-          "emerging_axis_labels": [],
-          "semantic_unit_key": "mint-no-burn-or-sting",
-          "statement": "The customer reported that the mint sensation was slight and did not burn or sting.",
-          "subject_product_ids": [
-            "summer-fridays-lip-butter-balm"
-          ]
-        }
-      ]
+      "semantic_units": []
     },
     {
       "disposition": "claim_bearing",
