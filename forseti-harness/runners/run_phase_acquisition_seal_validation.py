@@ -230,6 +230,13 @@ CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.2.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 _CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
 _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {"1.1.0", "1.2.0"}
+# Route 1.1.0 introduced comparator closure, campaign-evidence integration,
+# conditional verification, and retailer-state accounting together, so a
+# historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
+# qualification and price/size context entered at 1.2.0 and are never
+# back-claimed onto an earlier stamped seal. 1.0.0 owes none of them.
+_ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {"1.1.0", "1.2.0"}
+_ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {"1.2.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -343,6 +350,16 @@ _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
 
 
+def _is_enum_value(value: Any, allowed: set[str]) -> bool:
+    """Enum membership that survives unhashable YAML values.
+
+    A seal is operator-authored YAML, so any field can arrive as a list or
+    mapping. Bare ``value in allowed`` raises ``TypeError`` on those shapes,
+    which would crash the run instead of emitting a finding.
+    """
+    return isinstance(value, str) and value in allowed
+
+
 def validate_phase_acquisition_seal(
     *,
     seal_path: Path,
@@ -384,8 +401,10 @@ def validate_phase_acquisition_seal(
     if (
         schema_version == SEAL_VERSION
         and isinstance(route_block, dict)
-        and route_block.get("route_version")
-        in _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS
+        and _is_enum_value(
+            route_block.get("route_version"),
+            _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS,
+        )
     ):
         # Campaign integration entered the route at 1.1.0 and remains a
         # mandatory accounted job in later revisions. Historical audits retain
@@ -3810,19 +3829,24 @@ def _validate_understanding_route(
             findings.append("missing_understanding_route_version")
         return
     version = route.get("route_version")
-    if version not in UNDERSTANDING_ROUTE_VERSIONS:
+    if not _is_enum_value(version, UNDERSTANDING_ROUTE_VERSIONS):
         findings.append("invalid_understanding_route_version")
         return
     if version != CURRENT_UNDERSTANDING_ROUTE_VERSION:
-        # An older recorded route carries only its own obligations; the
-        # current obligations below must not be back-claimed onto it. Like
-        # the legacy seal and ledger switches, reading such a seal is an
-        # explicit historical audit, never a flag-free current-contract pass.
+        # Like the legacy seal and ledger switches, reading an older recorded
+        # route is an explicit historical audit, never a flag-free
+        # current-contract pass.
         if not allow_preversion_route:
             findings.append(
                 "noncurrent_route_version_requires_explicit_historical_audit"
             )
+            return
+    if version not in _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS:
+        # Pre-1.1.0 routes carried none of the obligations below.
         return
+    # An authorized historical audit still enforces the obligations the
+    # stamped version itself carried; later-version obligations are gated
+    # per-check below and are never back-claimed onto an older seal.
     rows = seal.get("route_job_accounting")
     if isinstance(rows, list):
         campaign_row = next(
@@ -3844,6 +3868,7 @@ def _validate_understanding_route(
         route.get("comparator_closure"),
         repo_root=repo_root,
         valid_pass=valid_pass,
+        route_version=version,
         findings=findings,
     )
     _validate_campaign_integration(
@@ -3903,43 +3928,51 @@ def _validate_comparator_prefanout_qualification(
         return
 
     posture = qualification.get("posture")
-    if posture not in _COMPARATOR_PREFANOUT_POSTURES:
+    if not _is_enum_value(posture, _COMPARATOR_PREFANOUT_POSTURES):
         findings.append(f"invalid_comparator_prefanout_posture:{candidate_id}")
     comparator_role = qualification.get("comparator_role")
-    if comparator_role not in _COMPARATOR_PREFANOUT_ROLES:
+    if not _is_enum_value(comparator_role, _COMPARATOR_PREFANOUT_ROLES):
         findings.append(f"invalid_comparator_prefanout_role:{candidate_id}")
 
-    for key, code in (
-        ("open_comparator_search_refs", "open_comparator_search"),
-        ("identity_evidence_refs", "identity_evidence"),
-    ):
-        refs = qualification.get(key)
-        if (
-            not isinstance(refs, list)
-            or (posture == "core_fanout" and not refs)
-            or any(not isinstance(ref, str) or not ref for ref in refs)
-        ):
-            findings.append(f"invalid_comparator_prefanout_{code}:{candidate_id}")
-    identity_refs = qualification.get("identity_evidence_refs")
+    # Every frame row points to the open-comparator SERP observation that
+    # surfaced it, so discovery provenance survives a weaker posture too.
+    search_refs = qualification.get("open_comparator_search_refs")
     if (
-        posture == "core_fanout"
-        and isinstance(identity_refs, list)
-        and len(
-            {
-                ref
-                for ref in identity_refs
-                if isinstance(ref, str) and ref
-            }
-        )
-        < 2
+        not isinstance(search_refs, list)
+        or not search_refs
+        or any(not isinstance(ref, str) or not ref for ref in search_refs)
     ):
         findings.append(
-            f"insufficient_comparator_prefanout_identity_evidence:{candidate_id}"
+            "invalid_comparator_prefanout_open_comparator_search:"
+            + candidate_id
         )
+
+    # Identity evidence is typed per product: an untyped list cannot show that
+    # both named products were bound, because two refs to the same product
+    # would satisfy a bar that names both.
+    identity_evidence = qualification.get("identity_evidence_refs")
+    identity_sides: dict[str, list[str]] = {}
+    if not isinstance(identity_evidence, dict):
+        findings.append(
+            f"invalid_comparator_prefanout_identity_evidence:{candidate_id}"
+        )
+    else:
+        for side in ("subject", "competitor"):
+            refs = identity_evidence.get(side)
+            if not isinstance(refs, list) or any(
+                not isinstance(ref, str) or not ref for ref in refs
+            ):
+                findings.append(
+                    "invalid_comparator_prefanout_identity_evidence:"
+                    + f"{candidate_id}:{side}"
+                )
+                continue
+            identity_sides[side] = list(refs)
 
     origins = qualification.get("independent_comparison_origins")
     valid_origin_keys: set[str] = set()
     valid_source_roles: set[str] = set()
+    credited_origin_evidence: set[str] = set()
     if not isinstance(origins, list):
         findings.append(f"invalid_comparator_prefanout_origins:{candidate_id}")
         origins = []
@@ -3959,12 +3992,12 @@ def _validate_comparator_prefanout_qualification(
         else:
             valid_origin_keys.add(origin_key)
         source_role = origin.get("source_role")
-        if source_role not in _COMPARATOR_PREFANOUT_SOURCE_ROLES:
+        if not _is_enum_value(source_role, _COMPARATOR_PREFANOUT_SOURCE_ROLES):
             findings.append(
                 f"invalid_comparator_prefanout_source_role:{candidate_id}"
             )
         else:
-            valid_source_roles.add(str(source_role))
+            valid_source_roles.add(source_role)
         evidence_refs = origin.get("evidence_refs")
         if (
             not isinstance(evidence_refs, list)
@@ -3977,6 +4010,16 @@ def _validate_comparator_prefanout_qualification(
             findings.append(
                 f"missing_comparator_prefanout_origin_evidence:{candidate_id}"
             )
+            continue
+        # An origin that re-cites another origin's evidence unit is an alias
+        # of one underlying origin, not independent repeated comparison.
+        shared = credited_origin_evidence.intersection(evidence_refs)
+        if shared:
+            findings.append(
+                "shared_comparator_prefanout_origin_evidence:"
+                + f"{candidate_id}:{','.join(sorted(shared))}"
+            )
+        credited_origin_evidence.update(evidence_refs)
 
     if posture == "core_fanout":
         for identity_key in (
@@ -3990,7 +4033,15 @@ def _validate_comparator_prefanout_qualification(
                     + candidate_id
                 )
                 break
-        if comparator_role in {"adjacent", "unresolved", "non_competitor"}:
+        for side in ("subject", "competitor"):
+            if side in identity_sides and not identity_sides[side]:
+                findings.append(
+                    "insufficient_comparator_prefanout_identity_evidence:"
+                    + f"{candidate_id}:{side}"
+                )
+        if _is_enum_value(
+            comparator_role, {"adjacent", "unresolved", "non_competitor"}
+        ):
             findings.append(
                 f"invalid_comparator_core_fanout_role:{candidate_id}"
             )
@@ -4008,7 +4059,7 @@ def _validate_comparator_prefanout_qualification(
                 "insufficient_comparator_prefanout_source_roles:"
                 + candidate_id
             )
-    elif posture in {"bounded_watch", "rejected_before_fanout"}:
+    elif _is_enum_value(posture, {"bounded_watch", "rejected_before_fanout"}):
         gap_reason = qualification.get("gap_reason")
         if not isinstance(gap_reason, str) or not gap_reason:
             findings.append(
@@ -4033,11 +4084,13 @@ def _validate_comparator_price_size_context(
         findings.append(f"missing_comparator_price_size_context:{candidate_id}")
         return
     status = context.get("status")
-    if status not in _COMPARATOR_PRICE_SIZE_STATUSES:
+    if not _is_enum_value(status, _COMPARATOR_PRICE_SIZE_STATUSES):
         findings.append(f"invalid_comparator_price_size_status:{candidate_id}")
         return
     normalization = context.get("normalization_posture")
-    if normalization not in _COMPARATOR_SIZE_NORMALIZATION_POSTURES:
+    if not _is_enum_value(
+        normalization, _COMPARATOR_SIZE_NORMALIZATION_POSTURES
+    ):
         findings.append(
             f"invalid_comparator_size_normalization_posture:{candidate_id}"
         )
@@ -4109,6 +4162,15 @@ def _validate_comparator_price_size_context(
             != observations["competitor"].get("size_unit")
         ):
             findings.append(f"comparator_size_unit_mismatch:{candidate_id}")
+    if (
+        _is_enum_value(normalization, {"same_unit", "source_normalized"})
+        and len(observations) == 2
+        and observations["subject"].get("currency")
+        != observations["competitor"].get("currency")
+    ):
+        # A posture that licenses direct comparison cannot span two
+        # currencies: the sticker numbers would otherwise read as equal price.
+        findings.append(f"comparator_price_currency_mismatch:{candidate_id}")
     if normalization == "source_normalized":
         normalization_refs = context.get("normalization_evidence_refs")
         if (
@@ -4129,6 +4191,7 @@ def _validate_comparator_closure(
     *,
     repo_root: Path,
     valid_pass: bool,
+    route_version: str,
     findings: list[str],
 ) -> None:
     if not isinstance(closure, dict):
@@ -4183,7 +4246,10 @@ def _validate_comparator_closure(
             findings.append("duplicate_comparator_candidate_id")
             continue
         seen.add(candidate_id)
-        if candidate_id in frame_ids:
+        if (
+            candidate_id in frame_ids
+            and route_version in _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS
+        ):
             _validate_comparator_prefanout_qualification(
                 row,
                 candidate_id=candidate_id,
@@ -4448,13 +4514,17 @@ def _validate_comparator_closure(
                 )
             ):
                 findings.append(f"invalid_comparator_shared_axes:{candidate_id}")
-            if isinstance(shared_axis_ids, list) and any(
-                isinstance(axis_id, str)
+            if (
+                route_version in _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS
+                and isinstance(shared_axis_ids, list)
                 and any(
-                    token in axis_id.lower()
-                    for token in ("price", "value", "quantity", "cost")
+                    isinstance(axis_id, str)
+                    and any(
+                        token in axis_id.lower()
+                        for token in ("price", "value", "quantity", "cost")
+                    )
+                    for axis_id in shared_axis_ids
                 )
-                for axis_id in shared_axis_ids
             ):
                 _validate_comparator_price_size_context(
                     row.get("price_size_context"),

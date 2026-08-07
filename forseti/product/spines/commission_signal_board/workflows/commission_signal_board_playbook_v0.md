@@ -611,7 +611,9 @@ phase_acquisition_seal:
             comparator_role: direct_peer | value_substitute | adjacent | unresolved | non_competitor
             shared_job:
             open_comparator_search_refs: []
-            identity_evidence_refs: []
+            identity_evidence_refs:
+              subject: []
+              competitor: []
             independent_comparison_origins:
               - origin_key:
                 source_role: reddit_community | retailer_review | creator_authored | independent_editorial
@@ -753,13 +755,21 @@ independent-origin credit and cluster rules, terminal comparator dispositions
 with exact-identity binding for promoted candidates and
 per-material-candidate lane evidence; at `1.2.0`, pre-fanout qualification for
 every Phase 1 frame candidate, including the core two-origin/two-source-role
-bar; verification-request triggers and
+bar and the per-product identity-evidence and price/size shape;
+verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
 and is audited with `--allow-preversion-route`. A seal stamped with a known
 older route version (a recorded route retention) is likewise
 historical-audit-only under the same switch; neither case satisfies the
-current route contract.
+current route contract. An authorized historical audit is version-symmetric:
+the seal still owes everything its own stamped version introduced, and owes
+nothing a later version introduced.
+
+The mechanical price/size check is limited to material candidate rows whose
+`shared_axis_ids` contains `price`, `value`, `quantity`, or `cost`. Different
+axis labels and price/value language outside that shape remain semantic `CO0`
+review obligations and are not proven complete by validator pass.
 
 The v3 ledger uses schema `understanding_evidence_depth_v1` and profile
 `broad_company_understanding_v1`. It repeats the seal's subject and cycle ID;
@@ -925,9 +935,12 @@ Contracts"). Operating rules:
   `blocked` records why.
   Route 1.2.0 hardens the first state: every frame row records an open-comparator
   discovery reference and a pre-fanout posture. `Core_fanout` requires exact
-  subject and competitor products, one shared customer job, and two independent
+  subject and competitor products, identity evidence recorded separately per
+  product, one shared customer job, and two independent
   comparison origins drawn from two distinct source roles among community,
-  retailer review, creator-authored, and independent editorial. SERP snippets,
+  retailer review, creator-authored, and independent editorial. Two origins
+  that re-cite the same evidence unit are one origin under two keys. SERP
+  snippets,
   retailer co-placement, owned claims, and ads remain discovery or actor-strategy
   evidence, not independent confirmation. `Bounded_watch` and
   `rejected_before_fanout` preserve their gap reason. Consistent qualification
@@ -935,7 +948,8 @@ Contracts"). Operating rules:
   row; it does not impose equal creator posts, customer rows, or a new creator
   parity gate.
   When price or value is compared, both products' cited price and size units
-  travel together; unequal or non-normalized units remain explicit.
+  travel together; unequal or non-normalized units remain explicit, and a
+  posture that licenses direct comparison cannot span two currencies.
 - **Conditional product/claim verification** triggers only on
   reconciled product identity × material axis or contradiction × publicly
   verifiable unresolved claim. It is a conditional adjustment job, never
@@ -1012,18 +1026,24 @@ understanding_acquire_seal_route:
       changed_behavior: >
         Keeps the 1.1.0 phase order and existing CO1-CO3 lanes, but makes the
         Phase 1 candidate frame decision-usable before fan-out. Every frame row
-        receives a pre-fanout posture and role. Core fan-out candidates require
-        exact product and shared-job binding plus two independent comparison
-        origins across two source roles; SERP remains discovery-only. Weaker
+        receives a pre-fanout posture, role, and open-comparator discovery
+        reference. Core fan-out candidates require
+        exact product and shared-job binding, per-product identity evidence,
+        plus two independent comparison
+        origins across two source roles that do not re-cite the same evidence
+        unit; SERP remains discovery-only. Weaker
         candidates remain bounded watch rows or explicit pre-fanout rejections.
         Price/value comparisons must carry both products' size units or state
-        that they are not directly normalized.
+        that they are not directly normalized, and a posture that licenses
+        direct comparison cannot span two currencies.
       affected_gate: >
         Acquisition seal: route 1.2.0 comparator frame candidates are enforced
         by run_phase_acquisition_seal_validation.py.
       migration_note: >
         A run started under 1.1.0 retains 1.1.0 unless an explicit
-        migration/restart is recorded. New runs seal under 1.2.0.
+        migration/restart is recorded. New runs seal under 1.2.0. An authorized
+        historical audit of a 1.1.0 seal enforces the full 1.1.0 obligation set
+        and none of the 1.2.0 additions.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

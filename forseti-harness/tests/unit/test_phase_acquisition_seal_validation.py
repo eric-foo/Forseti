@@ -799,7 +799,10 @@ def _understanding_route(tmp_path: Path) -> dict:
                             "portable glossy lip hydration with optional tint"
                         ),
                         "open_comparator_search_refs": ["serp-open-comparator-1"],
-                        "identity_evidence_refs": ["sf-pdp", "elf-pdp"],
+                        "identity_evidence_refs": {
+                            "subject": ["sf-pdp"],
+                            "competitor": ["elf-pdp"],
+                        },
                         "independent_comparison_origins": [
                             {
                                 "origin_key": "reddit:elf-thread-1",
@@ -910,7 +913,10 @@ def _understanding_route(tmp_path: Path) -> dict:
                             "portable glossy lip hydration with optional tint"
                         ),
                         "open_comparator_search_refs": ["serp-open-comparator-1"],
-                        "identity_evidence_refs": ["sf-pdp", "rhode-pdp"],
+                        "identity_evidence_refs": {
+                            "subject": ["sf-pdp"],
+                            "competitor": ["rhode-pdp"],
+                        },
                         "independent_comparison_origins": [
                             {
                                 "origin_key": "reddit:rhode-thread-1",
@@ -980,7 +986,10 @@ def _understanding_route(tmp_path: Path) -> dict:
                         "posture": "rejected_before_fanout",
                         "comparator_role": "non_competitor",
                         "open_comparator_search_refs": ["serp-open-comparator-1"],
-                        "identity_evidence_refs": [],
+                        "identity_evidence_refs": {
+                            "subject": [],
+                            "competitor": [],
+                        },
                         "independent_comparison_origins": [],
                         "gap_reason": (
                             "the surfaced term did not resolve to a competing product"
@@ -3831,7 +3840,73 @@ def test_historical_route_1_1_retains_campaign_integration_accounting(
         "missing_required_route_accounting:campaign_evidence_integration"
         in findings
     )
-    assert "missing_comparator_prefanout_qualification:cand-elf" not in findings
+
+
+def test_historical_route_1_1_retains_comparator_closure_obligations(
+    tmp_path: Path,
+) -> None:
+    """A 1.1.0 seal still owes the obligations 1.1.0 itself introduced."""
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.1.0"
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["competitor_product_identity"]
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert "comparator_promoted_without_exact_identity:cand-elf" in findings
+
+
+def test_historical_route_1_1_does_not_owe_route_1_2_obligations(
+    tmp_path: Path,
+) -> None:
+    """1.2.0 pre-fanout and price/size shape is never back-claimed onto 1.1.0."""
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.1.0"
+    for candidate in seal["understanding_route"]["comparator_closure"][
+        "candidates"
+    ]:
+        candidate.pop("prefanout_qualification", None)
+        candidate.pop("price_size_context", None)
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert not [
+        finding
+        for finding in findings
+        if "prefanout" in finding or "price_size" in finding
+    ]
+
+
+def test_historical_route_1_0_does_not_owe_route_1_1_obligations(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"] = {"route_version": "1.0.0"}
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert "missing_comparator_closure" not in findings
+
+
+def test_malformed_route_version_produces_finding_not_crash(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = ["1.2.0"]
+
+    assert "invalid_understanding_route_version" in _validate(tmp_path, seal)
 
 
 def test_campaign_integration_route_phase_is_bound(tmp_path: Path) -> None:
@@ -4423,12 +4498,81 @@ def test_core_fanout_requires_identity_evidence_for_both_products(
 ) -> None:
     seal = _blocked_seal(tmp_path)
     candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
-    candidate["prefanout_qualification"]["identity_evidence_refs"] = ["sf-pdp"]
+    candidate["prefanout_qualification"]["identity_evidence_refs"][
+        "competitor"
+    ] = []
 
     assert (
-        "insufficient_comparator_prefanout_identity_evidence:cand-elf"
+        "insufficient_comparator_prefanout_identity_evidence:cand-elf:competitor"
         in _validate(tmp_path, seal)
     )
+
+
+def test_core_fanout_identity_evidence_must_be_typed_per_product(
+    tmp_path: Path,
+) -> None:
+    """An untyped ref list cannot show evidence for both named products."""
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    candidate["prefanout_qualification"]["identity_evidence_refs"] = [
+        "sf-pdp",
+        "sf-pdp-mirror",
+    ]
+
+    assert (
+        "invalid_comparator_prefanout_identity_evidence:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_comparison_origins_cannot_reuse_one_evidence_unit(
+    tmp_path: Path,
+) -> None:
+    """Two aliases of one underlying origin are not independent recurrence."""
+    seal = _blocked_seal(tmp_path)
+    origins = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"]
+    origins[1]["evidence_refs"] = list(origins[0]["evidence_refs"])
+
+    assert (
+        "shared_comparator_prefanout_origin_evidence:"
+        "cand-elf:elf-reddit-thread-1" in _validate(tmp_path, seal)
+    )
+
+
+def test_every_frame_row_records_open_comparator_discovery_reference(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][1]
+    candidate["prefanout_qualification"]["open_comparator_search_refs"] = []
+
+    assert (
+        "invalid_comparator_prefanout_open_comparator_search:cand-rhode"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_malformed_prefanout_enum_values_produce_findings_not_crash(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    qualification = candidate["prefanout_qualification"]
+    qualification["posture"] = ["core_fanout"]
+    qualification["comparator_role"] = {"role": "direct_peer"}
+    qualification["independent_comparison_origins"][0]["source_role"] = [
+        "reddit_community"
+    ]
+    candidate["price_size_context"]["status"] = ["observed"]
+
+    findings = _validate(tmp_path, seal)
+
+    assert "invalid_comparator_prefanout_posture:cand-elf" in findings
+    assert "invalid_comparator_prefanout_role:cand-elf" in findings
+    assert "invalid_comparator_prefanout_source_role:cand-elf" in findings
+    assert "invalid_comparator_price_size_status:cand-elf" in findings
 
 
 def test_price_axis_requires_price_and_size_context(tmp_path: Path) -> None:
@@ -4450,6 +4594,24 @@ def test_price_size_context_cannot_claim_same_unit_for_different_units(
     candidate["price_size_context"]["normalization_posture"] = "same_unit"
 
     assert "comparator_size_unit_mismatch:cand-elf" in _validate(tmp_path, seal)
+
+
+def test_price_size_context_cannot_normalize_across_two_currencies(
+    tmp_path: Path,
+) -> None:
+    """A normalization posture that licenses comparison cannot span currencies."""
+    seal = _blocked_seal(tmp_path)
+    context = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "price_size_context"
+    ]
+    context["normalization_posture"] = "source_normalized"
+    context["normalization_evidence_refs"] = ["unit-conversion-source"]
+    context["competitor"]["currency"] = "GBP"
+
+    assert (
+        "comparator_price_currency_mismatch:cand-elf"
+        in _validate(tmp_path, seal)
+    )
 
 
 def test_campaign_unit_bindings_require_string_lists(tmp_path: Path) -> None:

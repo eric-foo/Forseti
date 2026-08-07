@@ -677,11 +677,13 @@ role from `direct_peer | value_substitute | adjacent | unresolved |
 non_competitor`. SERP is the discovery map, not confirmation. Every frame row
 points to the open-comparator SERP observation that surfaced it. A
 `core_fanout` candidate additionally binds both exact product identities, the
-shared customer job, exact-product identity evidence from an owned page or
-exact PDP, and at least two independent comparison origins across at least two
+shared customer job, exact-product identity evidence recorded separately for
+the subject and for the competitor from an owned page or exact PDP, and at
+least two independent comparison origins across at least two
 of these source roles: Reddit/community, retailer review, creator-authored, or
-independent editorial. Two rows from one origin or two origins from only one
-source role do not meet the core bar. SERP snippets, retailer co-placement,
+independent editorial. Two rows from one origin, two origins from only one
+source role, and two origins that re-cite the same evidence unit under
+different keys do not meet the core bar. SERP snippets, retailer co-placement,
 owned comparison claims, and ad positioning never count as those independent
 comparison origins.
 
@@ -728,7 +730,15 @@ When price parity, value, or usable quantity is compared, the cited observation
 must carry price, currency, size, unit, market, and observation time for both
 products, or state which element is unavailable. Different mass and volume
 units remain `not_directly_normalized` unless a source-backed conversion is
-licensed. Equal sticker price alone is never equal quantity or equal value.
+licensed, and a posture that licenses direct comparison (`same_unit` or
+`source_normalized`) cannot span two currencies. Equal sticker price alone is
+never equal quantity or equal value.
+
+The seal validator mechanically requests this context only on a material
+candidate whose `shared_axis_ids` contains `price`, `value`, `quantity`, or
+`cost`. Alternative axis names and price/value comparisons outside that
+machine-visible shape remain evidence-backed `CO0` judgment; validator pass
+does not prove that every semantic price comparison was detected.
 
 SERP Phase 2 consolidates those lane emissions, runs only material
 targeted/J5 delta probes, and adjudicates the direct-competitor set from the
@@ -815,7 +825,12 @@ versioning began
 `--allow-preversion-route`; recording `1.0.0` retrospectively never claims it
 was historically stamped. A seal stamped with a known older route version (a
 recorded route retention) is likewise audit-only under the same switch and
-never satisfies the current route contract.
+never satisfies the current route contract. That audit is version-symmetric in
+both directions: the older seal still owes every obligation its own stamped
+version introduced — a `1.1.0` seal owes the full 1.1.0 accounting above, not
+only its campaign-integration row — and owes no obligation a later version
+introduced. Route 1.2.0's pre-fanout and price/size checks are therefore never
+back-claimed onto a `1.1.0` or `1.0.0` seal.
 
 ## Company Competitive-Intelligence Extension
 
