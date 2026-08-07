@@ -4258,6 +4258,107 @@ def test_route_1_6_requires_capture_envelope_accounting(tmp_path: Path) -> None:
     )
 
 
+def test_route_1_6_capture_envelopes_must_account_for_captured_leaves(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["capture_envelopes"][0]["captured_leaf_count"] = 20
+        view["capture_envelopes"][0]["source_visible_total"] = 20
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "semantic_integration_capture_envelope_leaf_mismatch" in _validate(
+        tmp_path, seal
+    )
+
+
+@pytest.mark.parametrize(
+    "field", ["container_type", "completeness", "capture_boundary"]
+)
+def test_route_1_6_capture_envelope_requires_disclosed_posture(
+    tmp_path: Path, field: str
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["capture_envelopes"][0].pop(field, None)
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "invalid_semantic_integration_capture_envelope" in _validate(
+        tmp_path, seal
+    )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("independent_origin_count", 99),
+        ("support_evidence_item_count", 99),
+        ("source_role_count", 42),
+        ("support_semantic_unit_count", 7),
+        ("engagement_evidence_count", 5),
+        ("counter_evidence_item_count", 3),
+    ],
+)
+def test_route_1_6_evidence_stack_must_match_claim_support(
+    tmp_path: Path, field: str, value: int
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["propositions"][0]["evidence_stack"][field] = value
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        f"semantic_integration_evidence_stack_mismatch:prop-sf-elf-price:{field}"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_route_1_6_container_count_cannot_exceed_supporting_evidence_items(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        stack = view["propositions"][0]["evidence_stack"]
+        stack["support_container_ids"] = [
+            "owned:sf-pdp",
+            "owned:elf-pdp",
+            "owned:extra-1",
+        ]
+        stack["support_container_count"] = 3
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "semantic_integration_containers_exceed_evidence_items:prop-sf-elf-price"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_route_1_6_mixed_containers_must_be_support_and_counter_overlap(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["propositions"][0]["evidence_stack"]["mixed_container_ids"] = [
+            "owned:sf-pdp"
+        ]
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "semantic_integration_mixed_container_mismatch:prop-sf-elf-price"
+        in _validate(tmp_path, seal)
+    )
+
+
 def test_route_1_6_bounded_regression_is_not_final_corpus_seal_proof(
     tmp_path: Path,
 ) -> None:

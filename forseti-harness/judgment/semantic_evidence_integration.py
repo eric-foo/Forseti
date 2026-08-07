@@ -1836,6 +1836,32 @@ def finalize_v3_view(
             container_to_props[evidence_index[evidence_id]["container_id"]].add(
                 proposition_id
             )
+    # Per-level child accounting only proves that a level lost nothing relative
+    # to its own immutable input. It cannot prove that this terminal hierarchy
+    # descends from this batch compilation, so close the leaf denominator here:
+    # otherwise a dropped or mismatched lineage would vanish behind item-level
+    # counts that stay exact.
+    used_units = {
+        relation["semantic_unit_ref"]
+        for node in nodes
+        for relation in node["leaf_relations"]
+    }
+    unmerged_units: set[str] = set()
+    for row in node_compilation["unmerged_semantic_units"]:
+        ref = row.get("semantic_unit_ref") if isinstance(row, Mapping) else None
+        if ref not in semantic_index:
+            raise SemanticIntegrationError(
+                "unmerged semantic unit is not part of this batch compilation"
+            )
+        unmerged_units.add(ref)
+    if used_units & unmerged_units:
+        raise SemanticIntegrationError(
+            "semantic unit cannot be both used and unmerged"
+        )
+    if used_units | unmerged_units != set(semantic_index):
+        raise SemanticIntegrationError(
+            "terminal reconciliation does not account for every semantic unit"
+        )
     denominator = bundle["coverage_denominator"]
     accounting = denominator["accounting_disposition_counts"]
     assessed_count = denominator["admitted_evidence_unit_count"]

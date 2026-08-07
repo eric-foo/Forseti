@@ -1182,6 +1182,62 @@ def test_v3_emerging_labels_require_explicit_consolidation() -> None:
     ]
 
 
+def _rehash_node_compilation(compilation: dict) -> dict:
+    core = {
+        key: value
+        for key, value in compilation.items()
+        if key != "node_compilation_sha256"
+    }
+    compilation["node_compilation_sha256"] = hashlib.sha256(
+        json.dumps(
+            core, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+    ).hexdigest()
+    return compilation
+
+
+def test_v3_terminal_hierarchy_cannot_drop_a_semantic_unit() -> None:
+    bundle, compiled, terminal, _ = _v3_complete_view()
+    forged = deepcopy(terminal)
+    node = forged["semantic_nodes"][0]
+    dropped = node["leaf_relations"][0]["semantic_unit_ref"]
+    node["leaf_relations"] = node["leaf_relations"][1:]
+    node["condition_lineage"] = [
+        row for row in node["condition_lineage"] if row["semantic_unit_ref"] != dropped
+    ]
+    _rehash_node_compilation(forged)
+
+    with pytest.raises(SemanticIntegrationError, match="every semantic unit"):
+        finalize_v3_view(bundle, compiled, forged)
+
+
+def test_v3_finalization_rejects_lineage_from_another_batch_compilation() -> None:
+    bundle, _, terminal, _ = _v3_complete_view()
+    richer = _v3_batch_responses(bundle)
+    for response in richer:
+        for row in response["evidence"]:
+            extra = deepcopy(row["semantic_units"][0])
+            extra["semantic_unit_key"] = "second-meaning"
+            extra["statement"] = "A second, distinct meaning from the same leaf."
+            row["semantic_units"].append(extra)
+    other_compilation = validate_batch_responses(bundle, richer)
+
+    with pytest.raises(SemanticIntegrationError, match="every semantic unit"):
+        finalize_v3_view(bundle, other_compilation, terminal)
+
+
+def test_v3_finalization_rejects_unmerged_unit_outside_the_batch_compilation() -> None:
+    bundle, compiled, terminal, _ = _v3_complete_view()
+    forged = deepcopy(terminal)
+    forged["unmerged_semantic_units"] = [
+        {"semantic_unit_ref": "reddit:t1:comment::not-a-real-unit", "reason": "forged"}
+    ]
+    _rehash_node_compilation(forged)
+
+    with pytest.raises(SemanticIntegrationError, match="not part of this batch compilation"):
+        finalize_v3_view(bundle, compiled, forged)
+
+
 def test_v3_controlled_partition_sensitivity_preserves_leaf_membership_and_counts() -> None:
     _, _, _, narrow = _v3_complete_view_at_ceiling(max_prompt_bytes=8_000)
     _, _, _, wide = _v3_complete_view_at_ceiling(max_prompt_bytes=12_000)

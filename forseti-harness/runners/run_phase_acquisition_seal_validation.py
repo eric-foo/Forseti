@@ -4167,6 +4167,7 @@ def _validate_semantic_evidence_integration(
             findings.append("invalid_semantic_integration_capture_envelopes")
         else:
             envelope_ids: set[str] = set()
+            envelope_leaf_total = 0
             for envelope in envelopes:
                 if not isinstance(envelope, dict):
                     findings.append("invalid_semantic_integration_capture_envelope")
@@ -4178,6 +4179,12 @@ def _validate_semantic_evidence_integration(
                     not isinstance(container_id, str)
                     or not container_id
                     or container_id in envelope_ids
+                    or not isinstance(envelope.get("container_type"), str)
+                    or not envelope["container_type"]
+                    or envelope.get("completeness")
+                    not in {"complete", "partial", "unavailable"}
+                    or not isinstance(envelope.get("capture_boundary"), str)
+                    or not envelope["capture_boundary"]
                     or not isinstance(captured, int)
                     or isinstance(captured, bool)
                     or captured < 1
@@ -4193,6 +4200,13 @@ def _validate_semantic_evidence_integration(
                     findings.append("invalid_semantic_integration_capture_envelope")
                 else:
                     envelope_ids.add(container_id)
+                    envelope_leaf_total += captured
+            # Container accounting is exact only when the disclosed envelopes
+            # carry the same leaves the corpus counts declare.
+            if len(envelope_ids) == len(envelopes) and envelope_leaf_total != counts.get(
+                "captured_item_count"
+            ):
+                findings.append("semantic_integration_capture_envelope_leaf_mismatch")
     else:
         admitted = coverage.get("admitted_evidence_unit_count")
         accounted = coverage.get("accounted_evidence_unit_count")
@@ -4372,7 +4386,90 @@ def _validate_semantic_evidence_integration(
                         findings.append(
                             f"invalid_semantic_integration_evidence_stack:{proposition_id}:{field}"
                         )
+                _check_evidence_stack_dimensions(
+                    stack,
+                    proposition=proposition,
+                    support=support,
+                    proposition_id=proposition_id,
+                    findings=findings,
+                )
     return index
+
+
+def _stack_id_list(value: Any) -> list[str] | None:
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item for item in value
+    ):
+        return None
+    return value
+
+
+def _check_evidence_stack_dimensions(
+    stack: Mapping[str, Any],
+    *,
+    proposition: Mapping[str, Any],
+    support: Mapping[str, Any],
+    proposition_id: str,
+    findings: list[str],
+) -> None:
+    """Bind each route-1.6 stack dimension to the block it claims to count.
+
+    Evidence items, containers, independent origins, roles, and engagement are
+    separate dimensions, so an untethered count could inflate one of them into
+    another without contradicting any other seal check.
+    """
+    relations = proposition.get("semantic_relations")
+    support_units = (
+        _stack_id_list(relations.get("support"))
+        if isinstance(relations, Mapping)
+        else None
+    )
+    expected: dict[str, int] = {}
+    if support_units is not None:
+        expected["support_semantic_unit_count"] = len(set(support_units))
+    for field, source in (
+        ("support_evidence_item_count", support.get("evidence_refs")),
+        ("counter_evidence_item_count", support.get("counterevidence_refs")),
+        ("source_role_count", support.get("source_roles")),
+        ("engagement_evidence_count", support.get("engagement_evidence_refs")),
+    ):
+        values = _stack_id_list(source)
+        if values is not None:
+            expected[field] = len(set(values))
+    origins = support.get("independent_origin_count")
+    if isinstance(origins, int) and not isinstance(origins, bool):
+        expected["independent_origin_count"] = origins
+    for field, value in expected.items():
+        if stack.get(field) != value:
+            findings.append(
+                f"semantic_integration_evidence_stack_mismatch:{proposition_id}:{field}"
+            )
+    support_containers = _stack_id_list(stack.get("support_container_ids"))
+    counter_containers = _stack_id_list(stack.get("counter_container_ids"))
+    mixed_containers = _stack_id_list(stack.get("mixed_container_ids"))
+    if support_containers is None or counter_containers is None or mixed_containers is None:
+        findings.append(
+            f"invalid_semantic_integration_container_ids:{proposition_id}"
+        )
+        return
+    if stack.get("support_container_count") != len(set(support_containers)):
+        findings.append(
+            "semantic_integration_evidence_stack_mismatch:"
+            + f"{proposition_id}:support_container_count"
+        )
+    # One evidence item sits in exactly one container, so containers can never
+    # outnumber the supporting evidence items they were drawn from.
+    item_count = stack.get("support_evidence_item_count")
+    if isinstance(item_count, int) and not isinstance(item_count, bool) and len(
+        set(support_containers)
+    ) > item_count:
+        findings.append(
+            f"semantic_integration_containers_exceed_evidence_items:{proposition_id}"
+        )
+    if set(mixed_containers) != set(support_containers) & set(counter_containers):
+        findings.append(
+            f"semantic_integration_mixed_container_mismatch:{proposition_id}"
+        )
 
 
 def _forbidden_synthetic_keys(
