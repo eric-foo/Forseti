@@ -80,6 +80,7 @@ def _json_bytes(value: Any) -> bytes:
     ).encode("utf-8")
 
 
+# helper-delta: hashes canonical JSON values, not raw text, bytes, or file content.
 def _sha256(value: Any) -> str:
     return hashlib.sha256(_json_bytes(value)).hexdigest()
 

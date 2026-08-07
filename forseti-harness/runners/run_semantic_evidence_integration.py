@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -19,6 +18,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     finalize_view,
     validate_batch_responses,
 )
+from harness_utils import hash_file  # noqa: E402
 
 
 def _load_object(path: Path) -> dict[str, Any]:
@@ -43,10 +43,6 @@ def _write_json(path: Path, value: Any) -> None:
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8")
         + b"\n",
     )
-
-
-def _hash_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _resolve_artifact(repo_root: Path, locator: str) -> Path:
@@ -77,7 +73,7 @@ def _verify_sources(source: dict[str, Any], *, repo_root: Path) -> None:
         expected = row.get("sha256")
         if not isinstance(locator, str) or not isinstance(expected, str):
             raise ValueError("source artifact lacks locator or sha256")
-        observed = _hash_file(_resolve_artifact(repo_root, locator))
+        observed = hash_file(_resolve_artifact(repo_root, locator))
         if observed != expected:
             raise ValueError(
                 f"source artifact hash mismatch for {row.get('artifact_id')}: "
