@@ -4577,6 +4577,32 @@ def test_duplicate_consolidated_emerging_axis_candidates_are_rejected(
     )
 
 
+def test_route_1_6_lower_level_emerging_axis_blocker_blocks_passing_seal(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["acquisition_gate"] = "pass"
+    seal["seal_state"] = "SEALED_READY_FOR_DELIVER"
+    seal["deliver_allowed"] = True
+
+    def mutate(view: dict) -> None:
+        view["emerging_axis_candidates"] = [
+            {
+                "candidate_key": "ritual",
+                "canonical_label": "use ritual",
+                "original_labels": ["nightly ritual"],
+                "disposition": "blocker",
+                "reason": "carried unchanged from reconciliation level one",
+            }
+        ]
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "passing_seal_with_blocked_emerging_axis:ritual" in _validate(
+        tmp_path, seal
+    )
+
+
 def test_historical_route_1_1_retains_campaign_integration_accounting(
     tmp_path: Path,
 ) -> None:

@@ -11,27 +11,27 @@
       "causal_ceiling": "causal_not_established",
       "child_relations": [
         {
-          "child_ref": "node_7470762012ab0105da95",
+          "child_ref": "node_2628d35db86db95c541c",
           "relation": "support"
         },
         {
-          "child_ref": "node_4a0f0d4380af58a616c3",
+          "child_ref": "node_ca7a8f4ba226a7c95d93",
           "relation": "support"
         },
         {
-          "child_ref": "node_6fc9c523470eefdece96",
+          "child_ref": "node_313926aa4ae3edd29cb7",
           "relation": "support"
         },
         {
-          "child_ref": "node_d45ac246eb263d01a4e9",
+          "child_ref": "node_b5401d32e091ac77a3b2",
           "relation": "support"
         },
         {
-          "child_ref": "node_30df477dc95eeed01b74",
+          "child_ref": "node_b520e9edfa13b121a39a",
           "relation": "support"
         },
         {
-          "child_ref": "node_0db934107746a12d1fa0",
+          "child_ref": "node_df44ad86d7df41610aab",
           "relation": "support"
         }
       ],
@@ -70,179 +70,179 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_7d2593dd47201d4df1b3",
+          "child_ref": "node_a0efbf47c121b7e3bbab",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a67a8debebe824857897",
+          "child_ref": "node_6a1e55ebda2b52eddb43",
           "relation": "counter"
         },
         {
-          "child_ref": "node_7e7991669ab89627f87a",
+          "child_ref": "node_4d9da74bfc66e298207f",
           "relation": "counter"
         },
         {
-          "child_ref": "node_298c4369924129dd2315",
+          "child_ref": "node_237575aa7607f0c8e9eb",
           "relation": "counter"
         },
         {
-          "child_ref": "node_3231c3680836ac17edf4",
+          "child_ref": "node_915ee23b57971c746a74",
           "relation": "counter"
         },
         {
-          "child_ref": "node_16477c7291750a6a7bb9",
+          "child_ref": "node_11462e4d243fcb1917cd",
           "relation": "counter"
         },
         {
-          "child_ref": "node_3f7e86abe722f8477b2f",
+          "child_ref": "node_5dd79a12023771a2b8f1",
           "relation": "counter"
         },
         {
-          "child_ref": "node_59691f5a9911fcef81f6",
+          "child_ref": "node_77c322630374afe27e12",
           "relation": "counter"
         },
         {
-          "child_ref": "node_7470762012ab0105da95",
+          "child_ref": "node_2628d35db86db95c541c",
           "relation": "counter"
         },
         {
-          "child_ref": "node_07ad12ea730ba3a99332",
+          "child_ref": "node_ebc53318690cbdac1831",
           "relation": "counter"
         },
         {
-          "child_ref": "node_e6b43a6b736d1632557a",
+          "child_ref": "node_139b27d45de139f22560",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a3d0a438b19b6ceb6ef3",
+          "child_ref": "node_e2cb8a7d5990595ca4bd",
           "relation": "counter"
         },
         {
-          "child_ref": "node_f539a6294ce1a34f6bba",
+          "child_ref": "node_1cebcf4fda3dcf7435e3",
           "relation": "counter"
         },
         {
-          "child_ref": "node_302e92f15f3cd8de2087",
+          "child_ref": "node_07e54aa3e0918b51aaa6",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a918173dda2a93d3e992",
+          "child_ref": "node_1372e406a18b49df1002",
           "relation": "counter"
         },
         {
-          "child_ref": "node_4a0f0d4380af58a616c3",
+          "child_ref": "node_ca7a8f4ba226a7c95d93",
           "relation": "counter"
         },
         {
-          "child_ref": "node_6fc9c523470eefdece96",
+          "child_ref": "node_313926aa4ae3edd29cb7",
           "relation": "counter"
         },
         {
-          "child_ref": "node_d45ac246eb263d01a4e9",
+          "child_ref": "node_b5401d32e091ac77a3b2",
           "relation": "counter"
         },
         {
-          "child_ref": "node_55f0f45c755a7b92d029",
+          "child_ref": "node_e68e2e5bd81a57398695",
           "relation": "counter"
         },
         {
-          "child_ref": "node_fb17d0701ff7a0752838",
+          "child_ref": "node_667bc8a4dddb9ce2047d",
           "relation": "counter"
         },
         {
-          "child_ref": "node_79e3637038ba42e79551",
+          "child_ref": "node_95cb6d3cbc54d424c9b6",
           "relation": "counter"
         },
         {
-          "child_ref": "node_33202e5aab03ef020857",
+          "child_ref": "node_304742dda2fa5c024c52",
           "relation": "counter"
         },
         {
-          "child_ref": "node_30df477dc95eeed01b74",
+          "child_ref": "node_b520e9edfa13b121a39a",
           "relation": "counter"
         },
         {
-          "child_ref": "node_499200f441bbc44e956a",
+          "child_ref": "node_c8d51bb96ce956fcbd7f",
           "relation": "counter"
         },
         {
-          "child_ref": "node_54082bf028c80772da8b",
+          "child_ref": "node_cbabafc5c13b0c132a9c",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a8e7e28b0ac02b406854",
+          "child_ref": "node_7f232a874f7eb2c1f872",
           "relation": "counter"
         },
         {
-          "child_ref": "node_dfb3b274f7c737a224b3",
+          "child_ref": "node_c93249bc8872f9142263",
           "relation": "counter"
         },
         {
-          "child_ref": "node_b8becac46871da050854",
+          "child_ref": "node_d943939c3ae9f1438b63",
           "relation": "counter"
         },
         {
-          "child_ref": "node_5a28618e954a9aed6be9",
+          "child_ref": "node_3647d248a8241df55e41",
           "relation": "counter"
         },
         {
-          "child_ref": "node_3eccf0865a4dc097415a",
+          "child_ref": "node_0fdc1f26cff00d981bb7",
           "relation": "counter"
         },
         {
-          "child_ref": "node_b344178b6c1fe1896ff5",
+          "child_ref": "node_672a8ac57622cc7baec2",
           "relation": "counter"
         },
         {
-          "child_ref": "node_0db934107746a12d1fa0",
+          "child_ref": "node_df44ad86d7df41610aab",
           "relation": "counter"
         },
         {
-          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "child_ref": "node_179fcf99c55455a10bf5",
           "relation": "counter"
         },
         {
-          "child_ref": "node_7494fd6fa64cc88d1a75",
+          "child_ref": "node_6bdff5474e432eb146b7",
           "relation": "counter"
         },
         {
-          "child_ref": "node_c6abd762ad4c80ceedb6",
+          "child_ref": "node_657e5bce35a7982dca9c",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a9b1c118562f87ec7510",
+          "child_ref": "node_bb7612b8078c622b102a",
           "relation": "counter"
         },
         {
-          "child_ref": "node_fbea8cef2ead66897175",
+          "child_ref": "node_948cb2ea351457f1766e",
           "relation": "counter"
         },
         {
-          "child_ref": "node_425063849f25b4e9949f",
+          "child_ref": "node_36d98e9b2c650036ef9f",
           "relation": "counter"
         },
         {
-          "child_ref": "node_96a807810e9452854de4",
+          "child_ref": "node_8a72bab33d8a10be2811",
           "relation": "support"
         },
         {
-          "child_ref": "node_213eb3dae96c952036f1",
+          "child_ref": "node_74801050bf0e28b876fe",
           "relation": "support"
         },
         {
-          "child_ref": "node_c9c9e2e927c84e2263e0",
+          "child_ref": "node_de60951dcb01516f9d93",
           "relation": "support"
         },
         {
-          "child_ref": "node_a8c49cf8893a39606baa",
+          "child_ref": "node_8a7680aff7e422f4fbdd",
           "relation": "support"
         },
         {
-          "child_ref": "node_a780c15ee4ac242ad086",
+          "child_ref": "node_159762cee8f7e085abf1",
           "relation": "support"
         },
         {
-          "child_ref": "node_ba78883f3e51b488c87f",
+          "child_ref": "node_17e357d5bfc6acca5b13",
           "relation": "support"
         }
       ],
@@ -316,179 +316,179 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_96a807810e9452854de4",
+          "child_ref": "node_8a72bab33d8a10be2811",
           "relation": "counter"
         },
         {
-          "child_ref": "node_213eb3dae96c952036f1",
+          "child_ref": "node_74801050bf0e28b876fe",
           "relation": "counter"
         },
         {
-          "child_ref": "node_c9c9e2e927c84e2263e0",
+          "child_ref": "node_de60951dcb01516f9d93",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a8c49cf8893a39606baa",
+          "child_ref": "node_8a7680aff7e422f4fbdd",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a780c15ee4ac242ad086",
+          "child_ref": "node_159762cee8f7e085abf1",
           "relation": "counter"
         },
         {
-          "child_ref": "node_ba78883f3e51b488c87f",
+          "child_ref": "node_17e357d5bfc6acca5b13",
           "relation": "counter"
         },
         {
-          "child_ref": "node_7d2593dd47201d4df1b3",
+          "child_ref": "node_a0efbf47c121b7e3bbab",
           "relation": "support"
         },
         {
-          "child_ref": "node_a67a8debebe824857897",
+          "child_ref": "node_6a1e55ebda2b52eddb43",
           "relation": "support"
         },
         {
-          "child_ref": "node_7e7991669ab89627f87a",
+          "child_ref": "node_4d9da74bfc66e298207f",
           "relation": "support"
         },
         {
-          "child_ref": "node_298c4369924129dd2315",
+          "child_ref": "node_237575aa7607f0c8e9eb",
           "relation": "support"
         },
         {
-          "child_ref": "node_3231c3680836ac17edf4",
+          "child_ref": "node_915ee23b57971c746a74",
           "relation": "support"
         },
         {
-          "child_ref": "node_16477c7291750a6a7bb9",
+          "child_ref": "node_11462e4d243fcb1917cd",
           "relation": "support"
         },
         {
-          "child_ref": "node_3f7e86abe722f8477b2f",
+          "child_ref": "node_5dd79a12023771a2b8f1",
           "relation": "support"
         },
         {
-          "child_ref": "node_59691f5a9911fcef81f6",
+          "child_ref": "node_77c322630374afe27e12",
           "relation": "support"
         },
         {
-          "child_ref": "node_7470762012ab0105da95",
+          "child_ref": "node_2628d35db86db95c541c",
           "relation": "support"
         },
         {
-          "child_ref": "node_07ad12ea730ba3a99332",
+          "child_ref": "node_ebc53318690cbdac1831",
           "relation": "support"
         },
         {
-          "child_ref": "node_e6b43a6b736d1632557a",
+          "child_ref": "node_139b27d45de139f22560",
           "relation": "support"
         },
         {
-          "child_ref": "node_a3d0a438b19b6ceb6ef3",
+          "child_ref": "node_e2cb8a7d5990595ca4bd",
           "relation": "support"
         },
         {
-          "child_ref": "node_f539a6294ce1a34f6bba",
+          "child_ref": "node_1cebcf4fda3dcf7435e3",
           "relation": "support"
         },
         {
-          "child_ref": "node_302e92f15f3cd8de2087",
+          "child_ref": "node_07e54aa3e0918b51aaa6",
           "relation": "support"
         },
         {
-          "child_ref": "node_a918173dda2a93d3e992",
+          "child_ref": "node_1372e406a18b49df1002",
           "relation": "support"
         },
         {
-          "child_ref": "node_4a0f0d4380af58a616c3",
+          "child_ref": "node_ca7a8f4ba226a7c95d93",
           "relation": "support"
         },
         {
-          "child_ref": "node_6fc9c523470eefdece96",
+          "child_ref": "node_313926aa4ae3edd29cb7",
           "relation": "support"
         },
         {
-          "child_ref": "node_d45ac246eb263d01a4e9",
+          "child_ref": "node_b5401d32e091ac77a3b2",
           "relation": "support"
         },
         {
-          "child_ref": "node_55f0f45c755a7b92d029",
+          "child_ref": "node_e68e2e5bd81a57398695",
           "relation": "support"
         },
         {
-          "child_ref": "node_fb17d0701ff7a0752838",
+          "child_ref": "node_667bc8a4dddb9ce2047d",
           "relation": "support"
         },
         {
-          "child_ref": "node_79e3637038ba42e79551",
+          "child_ref": "node_95cb6d3cbc54d424c9b6",
           "relation": "support"
         },
         {
-          "child_ref": "node_33202e5aab03ef020857",
+          "child_ref": "node_304742dda2fa5c024c52",
           "relation": "support"
         },
         {
-          "child_ref": "node_30df477dc95eeed01b74",
+          "child_ref": "node_b520e9edfa13b121a39a",
           "relation": "support"
         },
         {
-          "child_ref": "node_499200f441bbc44e956a",
+          "child_ref": "node_c8d51bb96ce956fcbd7f",
           "relation": "support"
         },
         {
-          "child_ref": "node_54082bf028c80772da8b",
+          "child_ref": "node_cbabafc5c13b0c132a9c",
           "relation": "support"
         },
         {
-          "child_ref": "node_a8e7e28b0ac02b406854",
+          "child_ref": "node_7f232a874f7eb2c1f872",
           "relation": "support"
         },
         {
-          "child_ref": "node_dfb3b274f7c737a224b3",
+          "child_ref": "node_c93249bc8872f9142263",
           "relation": "support"
         },
         {
-          "child_ref": "node_b8becac46871da050854",
+          "child_ref": "node_d943939c3ae9f1438b63",
           "relation": "support"
         },
         {
-          "child_ref": "node_5a28618e954a9aed6be9",
+          "child_ref": "node_3647d248a8241df55e41",
           "relation": "support"
         },
         {
-          "child_ref": "node_3eccf0865a4dc097415a",
+          "child_ref": "node_0fdc1f26cff00d981bb7",
           "relation": "support"
         },
         {
-          "child_ref": "node_b344178b6c1fe1896ff5",
+          "child_ref": "node_672a8ac57622cc7baec2",
           "relation": "support"
         },
         {
-          "child_ref": "node_0db934107746a12d1fa0",
+          "child_ref": "node_df44ad86d7df41610aab",
           "relation": "support"
         },
         {
-          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "child_ref": "node_179fcf99c55455a10bf5",
           "relation": "support"
         },
         {
-          "child_ref": "node_7494fd6fa64cc88d1a75",
+          "child_ref": "node_6bdff5474e432eb146b7",
           "relation": "support"
         },
         {
-          "child_ref": "node_c6abd762ad4c80ceedb6",
+          "child_ref": "node_657e5bce35a7982dca9c",
           "relation": "support"
         },
         {
-          "child_ref": "node_a9b1c118562f87ec7510",
+          "child_ref": "node_bb7612b8078c622b102a",
           "relation": "support"
         },
         {
-          "child_ref": "node_fbea8cef2ead66897175",
+          "child_ref": "node_948cb2ea351457f1766e",
           "relation": "support"
         },
         {
-          "child_ref": "node_425063849f25b4e9949f",
+          "child_ref": "node_36d98e9b2c650036ef9f",
           "relation": "support"
         }
       ],
@@ -562,11 +562,11 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_96a807810e9452854de4",
+          "child_ref": "node_8a72bab33d8a10be2811",
           "relation": "counter"
         },
         {
-          "child_ref": "node_7470762012ab0105da95",
+          "child_ref": "node_2628d35db86db95c541c",
           "relation": "support"
         }
       ],
@@ -597,35 +597,35 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_7806f319716f673595d6",
+          "child_ref": "node_c1afef99f13a05699820",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_55f0f45c755a7b92d029",
+          "child_ref": "node_e68e2e5bd81a57398695",
           "relation": "support"
         },
         {
-          "child_ref": "node_79e3637038ba42e79551",
+          "child_ref": "node_95cb6d3cbc54d424c9b6",
           "relation": "support"
         },
         {
-          "child_ref": "node_dfb3b274f7c737a224b3",
+          "child_ref": "node_c93249bc8872f9142263",
           "relation": "support"
         },
         {
-          "child_ref": "node_b8becac46871da050854",
+          "child_ref": "node_d943939c3ae9f1438b63",
           "relation": "support"
         },
         {
-          "child_ref": "node_0db934107746a12d1fa0",
+          "child_ref": "node_df44ad86d7df41610aab",
           "relation": "support"
         },
         {
-          "child_ref": "node_a9b1c118562f87ec7510",
+          "child_ref": "node_bb7612b8078c622b102a",
           "relation": "support"
         },
         {
-          "child_ref": "node_425063849f25b4e9949f",
+          "child_ref": "node_36d98e9b2c650036ef9f",
           "relation": "support"
         }
       ],
@@ -659,39 +659,39 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_238875a82771ec78c5b8",
+          "child_ref": "node_340540675c5131a2d22a",
           "relation": "support"
         },
         {
-          "child_ref": "node_28e67e667aedec5b1a6f",
+          "child_ref": "node_1ed30f6906857cfe874d",
           "relation": "support"
         },
         {
-          "child_ref": "node_79390433900a9b093e49",
+          "child_ref": "node_cc031b3ebd6d568394a8",
           "relation": "support"
         },
         {
-          "child_ref": "node_9fd075b08a839948ccab",
+          "child_ref": "node_f117eb8f2e701cfb811c",
           "relation": "support"
         },
         {
-          "child_ref": "node_31f06d31a96a7b85575a",
+          "child_ref": "node_0d3ecc9738830b8eeaeb",
           "relation": "support"
         },
         {
-          "child_ref": "node_193b00e94c54175ad0b8",
+          "child_ref": "node_3f6059ee9e546ab27b50",
           "relation": "support"
         },
         {
-          "child_ref": "node_6a26bf86c02a0c318bcf",
+          "child_ref": "node_91c79d294adeb28100f6",
           "relation": "support"
         },
         {
-          "child_ref": "node_dc742988cca0a0a47c3c",
+          "child_ref": "node_3c0e3742a0c2aaad8f53",
           "relation": "support"
         },
         {
-          "child_ref": "node_1ba45a5bfe8cad16d853",
+          "child_ref": "node_4ea39214a4f95f0e83ff",
           "relation": "support"
         }
       ],
@@ -730,83 +730,83 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_7806f319716f673595d6",
+          "child_ref": "node_c1afef99f13a05699820",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_96a807810e9452854de4",
+          "child_ref": "node_8a72bab33d8a10be2811",
           "relation": "counter"
         },
         {
-          "child_ref": "node_7f46321ef55f222caf12",
+          "child_ref": "node_b1ce15d956bc74201c05",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a780c15ee4ac242ad086",
+          "child_ref": "node_159762cee8f7e085abf1",
           "relation": "counter"
         },
         {
-          "child_ref": "node_ba78883f3e51b488c87f",
+          "child_ref": "node_17e357d5bfc6acca5b13",
           "relation": "counter"
         },
         {
-          "child_ref": "node_298c4369924129dd2315",
+          "child_ref": "node_237575aa7607f0c8e9eb",
           "relation": "support"
         },
         {
-          "child_ref": "node_7470762012ab0105da95",
+          "child_ref": "node_2628d35db86db95c541c",
           "relation": "support"
         },
         {
-          "child_ref": "node_a918173dda2a93d3e992",
+          "child_ref": "node_1372e406a18b49df1002",
           "relation": "support"
         },
         {
-          "child_ref": "node_55f0f45c755a7b92d029",
+          "child_ref": "node_e68e2e5bd81a57398695",
           "relation": "support"
         },
         {
-          "child_ref": "node_499200f441bbc44e956a",
+          "child_ref": "node_c8d51bb96ce956fcbd7f",
           "relation": "support"
         },
         {
-          "child_ref": "node_dfb3b274f7c737a224b3",
+          "child_ref": "node_c93249bc8872f9142263",
           "relation": "support"
         },
         {
-          "child_ref": "node_b8becac46871da050854",
+          "child_ref": "node_d943939c3ae9f1438b63",
           "relation": "support"
         },
         {
-          "child_ref": "node_3eccf0865a4dc097415a",
+          "child_ref": "node_0fdc1f26cff00d981bb7",
           "relation": "support"
         },
         {
-          "child_ref": "node_0db934107746a12d1fa0",
+          "child_ref": "node_df44ad86d7df41610aab",
           "relation": "support"
         },
         {
-          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "child_ref": "node_179fcf99c55455a10bf5",
           "relation": "support"
         },
         {
-          "child_ref": "node_7494fd6fa64cc88d1a75",
+          "child_ref": "node_6bdff5474e432eb146b7",
           "relation": "support"
         },
         {
-          "child_ref": "node_c6abd762ad4c80ceedb6",
+          "child_ref": "node_657e5bce35a7982dca9c",
           "relation": "support"
         },
         {
-          "child_ref": "node_a9b1c118562f87ec7510",
+          "child_ref": "node_bb7612b8078c622b102a",
           "relation": "support"
         },
         {
-          "child_ref": "node_fbea8cef2ead66897175",
+          "child_ref": "node_948cb2ea351457f1766e",
           "relation": "support"
         },
         {
-          "child_ref": "node_425063849f25b4e9949f",
+          "child_ref": "node_36d98e9b2c650036ef9f",
           "relation": "support"
         }
       ],
@@ -856,7 +856,7 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_54082bf028c80772da8b",
+          "child_ref": "node_cbabafc5c13b0c132a9c",
           "relation": "support"
         }
       ],
@@ -885,11 +885,11 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_c9c9e2e927c84e2263e0",
+          "child_ref": "node_de60951dcb01516f9d93",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_fb482789d12b19affb40",
+          "child_ref": "node_34ac4dbfdf52ed7a8f10",
           "relation": "support"
         }
       ],
@@ -919,7 +919,7 @@
       "causal_ceiling": "causal_not_established",
       "child_relations": [
         {
-          "child_ref": "node_07ad12ea730ba3a99332",
+          "child_ref": "node_ebc53318690cbdac1831",
           "relation": "support"
         }
       ],
@@ -948,11 +948,11 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_7f46321ef55f222caf12",
+          "child_ref": "node_b1ce15d956bc74201c05",
           "relation": "support"
         },
         {
-          "child_ref": "node_a8e7e28b0ac02b406854",
+          "child_ref": "node_7f232a874f7eb2c1f872",
           "relation": "support"
         }
       ],
@@ -980,11 +980,11 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_d45ac246eb263d01a4e9",
+          "child_ref": "node_b5401d32e091ac77a3b2",
           "relation": "support"
         },
         {
-          "child_ref": "node_30df477dc95eeed01b74",
+          "child_ref": "node_b520e9edfa13b121a39a",
           "relation": "support"
         }
       ],
@@ -1014,23 +1014,23 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_a8c49cf8893a39606baa",
+          "child_ref": "node_8a7680aff7e422f4fbdd",
           "relation": "counter"
         },
         {
-          "child_ref": "node_ba78883f3e51b488c87f",
+          "child_ref": "node_17e357d5bfc6acca5b13",
           "relation": "counter"
         },
         {
-          "child_ref": "node_fb17d0701ff7a0752838",
+          "child_ref": "node_667bc8a4dddb9ce2047d",
           "relation": "support"
         },
         {
-          "child_ref": "node_33202e5aab03ef020857",
+          "child_ref": "node_304742dda2fa5c024c52",
           "relation": "support"
         },
         {
-          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "child_ref": "node_179fcf99c55455a10bf5",
           "relation": "support"
         }
       ],
@@ -1064,15 +1064,15 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_5a28618e954a9aed6be9",
+          "child_ref": "node_3647d248a8241df55e41",
           "relation": "support"
         },
         {
-          "child_ref": "node_3eccf0865a4dc097415a",
+          "child_ref": "node_0fdc1f26cff00d981bb7",
           "relation": "support"
         },
         {
-          "child_ref": "node_b344178b6c1fe1896ff5",
+          "child_ref": "node_672a8ac57622cc7baec2",
           "relation": "support"
         }
       ],
@@ -1102,23 +1102,23 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_dfb3b274f7c737a224b3",
+          "child_ref": "node_c93249bc8872f9142263",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_b8becac46871da050854",
+          "child_ref": "node_d943939c3ae9f1438b63",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_a9b1c118562f87ec7510",
+          "child_ref": "node_bb7612b8078c622b102a",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_425063849f25b4e9949f",
+          "child_ref": "node_36d98e9b2c650036ef9f",
           "relation": "adjacent"
         },
         {
-          "child_ref": "node_7806f319716f673595d6",
+          "child_ref": "node_c1afef99f13a05699820",
           "relation": "support"
         }
       ],
@@ -1149,7 +1149,7 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_fbea8cef2ead66897175",
+          "child_ref": "node_948cb2ea351457f1766e",
           "relation": "support"
         }
       ],
@@ -1177,15 +1177,15 @@
       "causal_ceiling": "descriptive_only",
       "child_relations": [
         {
-          "child_ref": "node_a780c15ee4ac242ad086",
+          "child_ref": "node_159762cee8f7e085abf1",
           "relation": "counter"
         },
         {
-          "child_ref": "node_a3d0a438b19b6ceb6ef3",
+          "child_ref": "node_e2cb8a7d5990595ca4bd",
           "relation": "support"
         },
         {
-          "child_ref": "node_499200f441bbc44e956a",
+          "child_ref": "node_c8d51bb96ce956fcbd7f",
           "relation": "support"
         }
       ],
@@ -1209,26 +1209,26 @@
       "uncertainty_posture": "asserted"
     }
   ],
-  "stage_sha256": "a051d342cc50999247a6eb6f1d5ab649ac38e59866f89cb6845397d8f3d72526",
+  "stage_sha256": "179287cb0f6610c1d07beb3306f638c108d7c93de4017f4929a277dd4aa66e3d",
   "unmerged_children": [
     {
-      "child_ref": "node_2ce69c97e98fbfd51395",
+      "child_ref": "node_93f8f17d85207a9b9c5e",
       "reason": "A single customer's ingredient hypothesis is preserved but cannot establish stevia as the cause."
     },
     {
-      "child_ref": "node_f841ef273cf4bfb1ffb1",
+      "child_ref": "node_7a4e4e3a57cf4ffa8b30",
       "reason": "A same-reviewer before-and-after attribution is preserved but the formula identity and change were not independently verified."
     },
     {
-      "child_ref": "node_bebefff6d0d884a9bdc6",
+      "child_ref": "node_d8491bbd29f2c28c33ef",
       "reason": "A single customer's shea-butter hypothesis is preserved but cannot establish an ingredient cause."
     },
     {
-      "child_ref": "node_bf2b957d12e0c9ccde8d",
+      "child_ref": "node_eb28bfc0f1b156f9198a",
       "reason": "The reviewer repeats awareness of TikTok reports; this is an echo and receives no additional independent support credit."
     },
     {
-      "child_ref": "node_3ea68534bc1a7cb2af9e",
+      "child_ref": "node_e99f1b9715026a80c7b5",
       "reason": "A question about a formula change is not evidence that a formula change occurred."
     }
   ]

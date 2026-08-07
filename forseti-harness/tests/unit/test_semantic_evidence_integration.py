@@ -979,6 +979,13 @@ def _group_level_responses(stage: dict, *, terminal: bool) -> list[dict]:
             }
         )
         polarities = {row["polarity"] for row in selected}
+        emerging_labels = sorted(
+            {
+                label
+                for row in selected
+                for label in row["emerging_axis_labels"]
+            }
+        )
         responses.append(
             {
                 "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
@@ -994,7 +1001,7 @@ def _group_level_responses(stage: dict, *, terminal: bool) -> list[dict]:
                         "comparator_product_ids": [],
                         "product_version_ids": [],
                         "axis_ids": ["wear"],
-                        "emerging_axis_labels": [],
+                        "emerging_axis_labels": emerging_labels,
                         "conditions": conditions,
                         "polarity": next(iter(polarities)) if len(polarities) == 1 else "mixed",
                         "uncertainty_posture": "asserted",
@@ -1182,6 +1189,95 @@ def test_v3_emerging_labels_require_explicit_consolidation() -> None:
     ]
 
 
+def _one_label_level_one(*, disposition: str = "blocker") -> tuple[dict, dict, dict]:
+    bundle = build_bundle(_source_v3(count=1), max_prompt_bytes=20_000)
+    responses = _v3_batch_responses(bundle)
+    responses[0]["evidence"][0]["semantic_units"][0]["emerging_axis_labels"] = [
+        "nightly ritual"
+    ]
+    compiled = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    reconciliation = _group_level_responses(stage, terminal=False)
+    reconciliation[0]["emerging_axis_consolidations"] = [
+        {
+            "candidate_key": "ritual",
+            "canonical_label": "use ritual",
+            "original_labels": ["nightly ritual"],
+            "disposition": disposition,
+            "reason": "frozen lower-level disposition",
+        }
+    ]
+    return bundle, compiled, validate_reconciliation_stage(
+        bundle, stage, reconciliation
+    )
+
+
+def test_v3_lower_level_blocker_survives_to_terminal_view() -> None:
+    bundle, compiled, level_one = _one_label_level_one()
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    assert stage_two["carried_emerging_axis_consolidations"] == [
+        {
+            "candidate_key": "ritual",
+            "canonical_label": "use ritual",
+            "original_labels": ["nightly ritual"],
+            "disposition": "blocker",
+            "reason": "frozen lower-level disposition",
+        }
+    ]
+    terminal = validate_reconciliation_stage(
+        bundle, stage_two, _group_level_responses(stage_two, terminal=True)
+    )
+    view = finalize_v3_view(bundle, compiled, terminal)
+
+    assert view["emerging_axis_candidates"] == stage_two[
+        "carried_emerging_axis_consolidations"
+    ]
+
+
+@pytest.mark.parametrize("replacement", [[], ["nightly ritual", "invented label"]])
+def test_v3_parent_cannot_drop_or_invent_child_emerging_labels(
+    replacement: list[str],
+) -> None:
+    bundle, _, level_one = _one_label_level_one(disposition="accepted")
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    responses = _group_level_responses(stage_two, terminal=True)
+    responses[0]["semantic_nodes"][0]["emerging_axis_labels"] = replacement
+
+    with pytest.raises(SemanticIntegrationError, match="exact union"):
+        validate_reconciliation_stage(bundle, stage_two, responses)
+
+
+@pytest.mark.parametrize(
+    "replacement",
+    [
+        {
+            "candidate_key": "ritual-copy",
+            "canonical_label": "copied ritual",
+            "original_labels": ["nightly ritual"],
+            "disposition": "nonmaterial",
+            "reason": "attempted overwrite",
+        },
+        {
+            "candidate_key": "ritual",
+            "canonical_label": "different label",
+            "original_labels": ["new label"],
+            "disposition": "accepted",
+            "reason": "attempted key overwrite",
+        },
+    ],
+)
+def test_v3_carried_consolidation_cannot_be_duplicated_or_overwritten(
+    replacement: dict,
+) -> None:
+    bundle, _, level_one = _one_label_level_one(disposition="accepted")
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    responses = _group_level_responses(stage_two, terminal=True)
+    responses[0]["emerging_axis_consolidations"] = [replacement]
+
+    with pytest.raises(SemanticIntegrationError, match="invalid or duplicate"):
+        validate_reconciliation_stage(bundle, stage_two, responses)
+
+
 def _rehash_node_compilation(compilation: dict) -> dict:
     core = {
         key: value
@@ -1213,16 +1309,13 @@ def test_v3_terminal_hierarchy_cannot_drop_a_semantic_unit() -> None:
 
 def test_v3_finalization_rejects_lineage_from_another_batch_compilation() -> None:
     bundle, _, terminal, _ = _v3_complete_view()
-    richer = _v3_batch_responses(bundle)
-    for response in richer:
-        for row in response["evidence"]:
-            extra = deepcopy(row["semantic_units"][0])
-            extra["semantic_unit_key"] = "second-meaning"
-            extra["statement"] = "A second, distinct meaning from the same leaf."
-            row["semantic_units"].append(extra)
-    other_compilation = validate_batch_responses(bundle, richer)
+    different = _v3_batch_responses(bundle)
+    different[0]["evidence"][0]["semantic_units"][0]["statement"] = (
+        "A different meaning with the same semantic-unit denominator."
+    )
+    other_compilation = validate_batch_responses(bundle, different)
 
-    with pytest.raises(SemanticIntegrationError, match="every semantic unit"):
+    with pytest.raises(SemanticIntegrationError, match="root batch compilation"):
         finalize_v3_view(bundle, other_compilation, terminal)
 
 

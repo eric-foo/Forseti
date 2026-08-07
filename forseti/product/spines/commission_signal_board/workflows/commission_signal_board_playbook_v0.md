@@ -809,8 +809,9 @@ material axis finding, source-role competence, counterevidence visibility, and
 artifact/hash binding; at `1.5.0`, contextual semantic method v2, distinct
 stable product IDs for material comparators, and exact
 candidate-to-proposition product binding; at `1.6.0`, full captured-corpus
-accounting, capture envelopes, rendered-prompt byte bounds, hierarchical leaf
-lineage, semantic posture, consolidated emerging axes, and separately computed
+accounting, capture envelopes, rendered-prompt byte bounds, root-batch-bound
+hierarchical leaf lineage, semantic posture, immutable consolidated emerging
+axes (including carried blockers), and separately computed
 evidence-item/container/origin/role/engagement counts;
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal

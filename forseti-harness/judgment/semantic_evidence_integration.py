@@ -1276,8 +1276,10 @@ def prepare_reconciliation_stage(
             _v3_candidate_from_unit(row) for row in compilation["semantic_units"]
         ]
         carried_unmerged: list[dict[str, Any]] = []
+        carried_consolidations: list[dict[str, Any]] = []
         level = 1
         input_sha = compilation["compilation_sha256"]
+        batch_compilation_sha256 = compilation["compilation_sha256"]
     elif compilation.get("schema_version") == "semantic_evidence_node_compilation_v2":
         _verify_stored_hash(
             compilation, field="node_compilation_sha256", label="node compilation"
@@ -1287,8 +1289,14 @@ def prepare_reconciliation_stage(
             _v3_candidate_from_node(row) for row in compilation["semantic_nodes"]
         ]
         carried_unmerged = list(compilation["unmerged_semantic_units"])
+        carried_consolidations = list(compilation["emerging_axis_consolidations"])
         level = compilation["level"] + 1
         input_sha = compilation["node_compilation_sha256"]
+        batch_compilation_sha256 = compilation.get("batch_compilation_sha256")
+        if not _nonempty(batch_compilation_sha256):
+            raise SemanticIntegrationError(
+                "node compilation lacks root batch compilation lineage"
+            )
     else:
         raise SemanticIntegrationError("invalid reconciliation input compilation")
     max_bytes = bundle["max_prompt_bytes"]
@@ -1335,10 +1343,12 @@ def prepare_reconciliation_stage(
         "schema_version": "semantic_evidence_reconciliation_stage_v2",
         "bundle_sha256": bundle["bundle_sha256"],
         "input_compilation_sha256": input_sha,
+        "batch_compilation_sha256": batch_compilation_sha256,
         "level": level,
         "candidates": candidates,
         "batches": batches,
         "carried_unmerged_semantic_units": carried_unmerged,
+        "carried_emerging_axis_consolidations": carried_consolidations,
         "max_prompt_bytes": max_bytes,
     }
     stage["stage_sha256"] = _sha256(stage)
@@ -1367,7 +1377,12 @@ def prepare_reconciliation_stage(
 
 
 def _validate_emerging_axis_consolidations(
-    rows: Any, *, original_labels: set[str], batch_id: str
+    rows: Any,
+    *,
+    original_labels: set[str],
+    batch_id: str,
+    forbidden_labels: set[str] | None = None,
+    forbidden_keys: set[str] | None = None,
 ) -> list[dict[str, Any]]:
     if not isinstance(rows, list):
         raise SemanticIntegrationError(
@@ -1375,6 +1390,8 @@ def _validate_emerging_axis_consolidations(
         )
     seen_keys: set[str] = set()
     seen_labels: set[str] = set()
+    forbidden_labels = forbidden_labels or set()
+    forbidden_keys = forbidden_keys or set()
     normalized: list[dict[str, Any]] = []
     for row in rows:
         if not isinstance(row, Mapping):
@@ -1388,10 +1405,12 @@ def _validate_emerging_axis_consolidations(
         if (
             not _nonempty(key)
             or key in seen_keys
+            or key in forbidden_keys
             or not _nonempty(row.get("canonical_label"))
             or row.get("disposition") not in EMERGING_AXIS_DISPOSITIONS
             or not _nonempty(row.get("reason"))
             or seen_labels & set(labels)
+            or forbidden_labels & set(labels)
         ):
             raise SemanticIntegrationError("invalid or duplicate emerging-axis consolidation")
         seen_keys.add(key)
@@ -1414,12 +1433,31 @@ def validate_reconciliation_stage(
     _verify_stored_hash(stage, field="stage_sha256", label="reconciliation stage")
     if stage.get("bundle_sha256") != bundle.get("bundle_sha256"):
         raise SemanticIntegrationError("reconciliation stage has stale bundle hash")
+    if not _nonempty(stage.get("batch_compilation_sha256")):
+        raise SemanticIntegrationError(
+            "reconciliation stage lacks root batch compilation lineage"
+        )
     candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
     expected_batches = {row["batch_id"]: row for row in stage["batches"]}
     seen_batches: set[str] = set()
     node_keys: set[str] = set()
     nodes: list[dict[str, Any]] = []
     unmerged: list[dict[str, Any]] = list(stage["carried_unmerged_semantic_units"])
+    carried_consolidations = _validate_emerging_axis_consolidations(
+        stage.get("carried_emerging_axis_consolidations"),
+        original_labels={
+            label
+            for row in stage.get("carried_emerging_axis_consolidations", [])
+            if isinstance(row, Mapping)
+            for label in row.get("original_labels", [])
+            if isinstance(label, str)
+        },
+        batch_id="carried",
+    )
+    carried_labels = {
+        label for row in carried_consolidations for label in row["original_labels"]
+    }
+    carried_keys = {row["candidate_key"] for row in carried_consolidations}
     consolidations: list[dict[str, Any]] = []
     for response in responses:
         if not isinstance(response, Mapping):
@@ -1451,6 +1489,7 @@ def validate_reconciliation_stage(
             leaf_relations: dict[str, str] = {}
             condition_lineage: dict[str, list[str]] = {}
             child_polarities: set[str] = set()
+            child_emerging_labels: set[str] = set()
             subjects = _string_list(
                 row.get("subject_product_ids"), field=f"{key}.subjects", allow_empty=False
             )
@@ -1504,8 +1543,13 @@ def validate_reconciliation_stage(
                         lineage["conditions"]
                     )
                 child_polarities.add(child["polarity"])
+                child_emerging_labels.update(child["emerging_axis_labels"])
                 child_seen.add(child_ref)
                 batch_used.add(child_ref)
+            if set(emerging) != child_emerging_labels:
+                raise SemanticIntegrationError(
+                    f"semantic node {key} does not preserve the exact union of child emerging-axis labels"
+                )
             required_conditions = {
                 condition
                 for values in condition_lineage.values()
@@ -1598,20 +1642,38 @@ def validate_reconciliation_stage(
             label
             for ref in allowed
             for label in candidate_index[ref]["emerging_axis_labels"]
-        }
+        } - carried_labels
         consolidations.extend(
             _validate_emerging_axis_consolidations(
                 response.get("emerging_axis_consolidations"),
                 original_labels=original_labels,
                 batch_id=batch_id,
+                forbidden_labels=carried_labels,
+                forbidden_keys=carried_keys,
             )
         )
         seen_batches.add(batch_id)
     if seen_batches != set(expected_batches):
         raise SemanticIntegrationError("not all reconciliation batches were submitted")
-    consolidation_keys = [row["candidate_key"] for row in consolidations]
+    consolidation_keys = [
+        row["candidate_key"] for row in [*carried_consolidations, *consolidations]
+    ]
     if len(consolidation_keys) != len(set(consolidation_keys)):
         raise SemanticIntegrationError("duplicate emerging-axis candidate key across batches")
+    required_consolidation_labels = carried_labels | {
+        label
+        for candidate in stage["candidates"]
+        for label in candidate["emerging_axis_labels"]
+    }
+    observed_consolidation_labels = {
+        label
+        for row in [*carried_consolidations, *consolidations]
+        for label in row["original_labels"]
+    }
+    if observed_consolidation_labels != required_consolidation_labels:
+        raise SemanticIntegrationError(
+            "reconciliation level does not exactly account for carried and newly required emerging labels"
+        )
     # A child reference can only point to the immutable input stage. This makes
     # cycles unrepresentable within a valid stage; assert the stage-level graph
     # boundary explicitly so a malformed self-reference fails locally.
@@ -1625,6 +1687,7 @@ def validate_reconciliation_stage(
     result = {
         "schema_version": "semantic_evidence_node_compilation_v2",
         "bundle_sha256": bundle["bundle_sha256"],
+        "batch_compilation_sha256": stage["batch_compilation_sha256"],
         "stage_sha256": stage["stage_sha256"],
         "level": stage["level"],
         "input_batch_count": len(stage["batches"]),
@@ -1633,7 +1696,10 @@ def validate_reconciliation_stage(
             {row["semantic_unit_ref"]: row for row in unmerged}.values(),
             key=lambda row: row["semantic_unit_ref"],
         ),
-        "emerging_axis_consolidations": consolidations,
+        "emerging_axis_consolidations": [
+            *carried_consolidations,
+            *consolidations,
+        ],
     }
     result["node_compilation_sha256"] = _sha256(result)
     return result
@@ -1668,6 +1734,12 @@ def finalize_v3_view(
         "bundle_sha256"
     ) != bundle["bundle_sha256"]:
         raise SemanticIntegrationError("v3 finalization has stale bundle lineage")
+    if node_compilation.get("batch_compilation_sha256") != batch_compilation.get(
+        "compilation_sha256"
+    ):
+        raise SemanticIntegrationError(
+            "terminal reconciliation has stale root batch compilation lineage"
+        )
     if node_compilation.get("input_batch_count") != 1:
         raise SemanticIntegrationError(
             "terminal reconciliation must fit in one prompt-bounded batch"

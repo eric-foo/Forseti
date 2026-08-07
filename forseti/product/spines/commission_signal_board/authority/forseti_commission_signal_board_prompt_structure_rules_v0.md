@@ -856,7 +856,12 @@ creator framing, and unknown or overlapping actors cannot manufacture
 independent customer experience.
 
 Before seal, the agent consolidates meaning-equivalent emerging labels and the
-compiler preserves every original label. Integration view v2 exposes separate
+compiler preserves every original label. Every parent preserves the exact
+union of its children's emerging labels, and every validated consolidation is
+carried unchanged through later levels. A lower-level blocker therefore stays
+visible and blocks seal. Every stage and node compilation also carries the
+root batch-compilation hash, which finalization must match exactly.
+Integration view v2 exposes separate
 semantic-unit, evidence-item, container, independent-origin, source-role,
 engagement, support, opposition, and mixed-container counts. A seven-thread
 count is therefore never silently restated as seven independent people. This

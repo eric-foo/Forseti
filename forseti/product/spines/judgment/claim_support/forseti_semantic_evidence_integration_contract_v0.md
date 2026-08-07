@@ -218,7 +218,10 @@ Reconciliation may repeat in levels. A level reads immutable candidates from
 the prior level and emits child-referenced semantic nodes. Deterministic code
 validates exact child accounting, source/product/comparator/version bindings,
 condition lineage, polarity lineage, stale hashes, cycles, duplicate credit,
-and flattened leaf provenance. The agent still owns whether meanings are
+and flattened leaf provenance. Every stage and node compilation retains the
+root batch-compilation hash; finalization rejects a terminal hierarchy whose
+root hash differs from the supplied batch compilation even when the visible
+leaf denominator happens to match. The agent still owns whether meanings are
 equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
@@ -226,7 +229,11 @@ recall is not.
 Emerging labels are consolidated semantically before seal. The agent groups
 meaning-equivalent labels; the compiler preserves every original label and
 never invents a merge. Each consolidated candidate terminates as `accepted`,
-`nonmaterial`, or `blocker`.
+`nonmaterial`, or `blocker`. Every parent node preserves the exact union of its
+children's emerging labels. Once validated, a consolidation is carried
+unchanged through every later level; no later response may duplicate,
+overwrite, drop, or invent its original-label disposition. A lower-level
+`blocker` therefore remains visible in the terminal view and blocks seal.
 
 ## No-provider workflow
 
@@ -277,12 +284,13 @@ A passing route-1.6.0 seal additionally requires:
   with every count exact and no blocked item;
 - exact container accounting and disclosed capture envelopes;
 - a prompt-bounded, acyclic reconciliation hierarchy whose terminal nodes
-  flatten to exact leaf evidence;
+  flatten to exact leaf evidence and retain the exact root batch-compilation
+  lineage;
 - truthful evidence-stack counts that keep evidence items, containers,
   independent origins, roles, engagement, support, opposition, and mixed
   containers separate; and
-- every emerging-axis candidate consolidated with original-label lineage and
-  terminal disposition.
+- every emerging-axis candidate consolidated with immutable original-label
+  lineage and terminal disposition, including lower-level blockers.
 
 Uncertainty is preserved rather than repaired. Nonmaterial unresolved evidence
 may remain visible; material unresolved evidence blocks the affected claim or
@@ -310,5 +318,9 @@ Route 1.6 fields.
   reconciliation, response/view version changes, emerging-axis consolidation,
   and separated evidence-stack counts. Preserved every historical Route 1.4
   and 1.5 contract.
+- `v1` correction / 2026-08-08 — carried immutable emerging-axis dispositions
+  and the root batch-compilation hash through every reconciliation level so
+  labels, lower-level blockers, and coincident-denominator lineage cannot
+  disappear.
 - `v0` / 2026-08-07 — introduced Route 1.4 semantic integration and Route 1.5
   source-pinned product context.
