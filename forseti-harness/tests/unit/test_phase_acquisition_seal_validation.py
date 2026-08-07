@@ -9,7 +9,9 @@ import yaml
 
 from judgment.semantic_evidence_integration import (
     METHOD_TEXT_V2,
+    METHOD_TEXT_V3,
     METHOD_VERSION_V2,
+    METHOD_VERSION_V3,
     _sha256,
 )
 from runners.run_phase_acquisition_seal_validation import (
@@ -23,6 +25,8 @@ from runners.run_phase_acquisition_seal_validation import (
     PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION,
     SEAL_VERSION,
+    SEMANTIC_EVIDENCE_METHOD_SHA256_V3,
+    SEMANTIC_EVIDENCE_METHOD_VERSION_V3,
     _artifact_hash,
     _validate_reddit_candidate_frontier,
     main,
@@ -789,22 +793,44 @@ def _semantic_integration_view(
     proposition_id = "prop-sf-elf-price"
     corpus_sha256 = "1" * 64
     view = {
-        "schema_version": "semantic_evidence_integration_view_v1",
+        "schema_version": "semantic_evidence_integration_view_v2",
         "cycle_id": "summer_fridays_confirmation",
         "question_id": "phase-a-evidence-integration",
         "bundle_sha256": "2" * 64,
         "corpus_sha256": corpus_sha256,
-        "method_version": "semantic_evidence_integration_method_v2",
-        "method_sha256": (
-            "044e34d41f28c8a98baf0677d227703690b79765db63822808765e23778ed205"
-        ),
+        "method_version": METHOD_VERSION_V3,
+        "method_sha256": _sha256(METHOD_TEXT_V3),
+        "corpus_profile": "phase_a_final_acquisition",
         "coverage": {
-            "admitted_evidence_unit_count": 2,
-            "accounted_evidence_unit_count": 2,
+            "captured_item_count": 2,
+            "semantically_assessed_item_count": 2,
+            "mechanically_excluded_item_count": 0,
+            "blocked_item_count": 0,
+            "accounted_item_count": 2,
+            "captured_container_count": 2,
             "source_family_counts": {"owned_product": 2},
+            "container_type_counts": {"published_object": 2},
             "unresolved_evidence_ids": [],
             "complete": True,
         },
+        "capture_envelopes": [
+            {
+                "container_id": "owned:sf-pdp",
+                "container_type": "published_object",
+                "captured_leaf_count": 1,
+                "source_visible_total": 1,
+                "completeness": "complete",
+                "capture_boundary": "one published object",
+            },
+            {
+                "container_id": "owned:elf-pdp",
+                "container_type": "published_object",
+                "captured_leaf_count": 1,
+                "source_visible_total": 1,
+                "completeness": "complete",
+                "capture_boundary": "one published object",
+            },
+        ],
         "propositions": [
             {
                 "proposition_id": proposition_id,
@@ -839,6 +865,19 @@ def _semantic_integration_view(
                     "scope_conditions": ["US prices observed at the same cutoff"],
                     "causal_ceiling": "descriptive_only",
                 },
+                "evidence_stack": {
+                    "support_semantic_unit_count": 2,
+                    "support_evidence_item_count": 2,
+                    "support_container_count": 2,
+                    "support_container_counts_by_type": {"published_object": 2},
+                    "support_container_ids": ["owned:sf-pdp", "owned:elf-pdp"],
+                    "counter_evidence_item_count": 0,
+                    "counter_container_ids": [],
+                    "mixed_container_ids": [],
+                    "independent_origin_count": 2,
+                    "source_role_count": 1,
+                    "engagement_evidence_count": 0,
+                },
                 "adjacent_evidence_refs": [],
             }
         ],
@@ -872,7 +911,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.5.0",
+        "route_version": "1.6.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -4105,8 +4144,20 @@ def test_historical_route_1_4_retains_v1_method_and_owes_no_stable_product_ids(
         candidate.pop("competitor_product_id", None)
 
     def mutate(view: dict) -> None:
+        view["schema_version"] = "semantic_evidence_integration_view_v1"
         view["method_version"] = "semantic_evidence_integration_method_v1"
         view["method_sha256"] = "3" * 64
+        view["coverage"] = {
+            "admitted_evidence_unit_count": 2,
+            "accounted_evidence_unit_count": 2,
+            "source_family_counts": {"owned_product": 2},
+            "unresolved_evidence_ids": [],
+            "complete": True,
+        }
+        view.pop("capture_envelopes", None)
+        view.pop("corpus_profile", None)
+        for proposition in view["propositions"]:
+            proposition.pop("evidence_stack", None)
 
     _rewrite_semantic_view(tmp_path, seal, mutate)
     findings = validate_phase_acquisition_seal(
@@ -4119,16 +4170,107 @@ def test_historical_route_1_4_retains_v1_method_and_owes_no_stable_product_ids(
     assert not [finding for finding in findings if "comparator_product_id" in finding]
 
 
+def test_historical_route_1_5_retains_view_v1_method_v2_and_owes_no_route_1_6_fields(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.5.0"
+
+    def mutate(view: dict) -> None:
+        view["schema_version"] = "semantic_evidence_integration_view_v1"
+        view["method_version"] = METHOD_VERSION_V2
+        view["method_sha256"] = _sha256(METHOD_TEXT_V2)
+        view["coverage"] = {
+            "admitted_evidence_unit_count": 2,
+            "accounted_evidence_unit_count": 2,
+            "source_family_counts": {"owned_product": 2},
+            "unresolved_evidence_ids": [],
+            "complete": True,
+        }
+        view.pop("capture_envelopes", None)
+        view.pop("corpus_profile", None)
+        for proposition in view["propositions"]:
+            proposition.pop("evidence_stack", None)
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert not [finding for finding in findings if "semantic_integration" in finding]
+
+
 def test_semantic_integration_requires_complete_coverage(tmp_path: Path) -> None:
     seal = _blocked_seal(tmp_path)
 
     def mutate(view: dict) -> None:
-        view["coverage"]["accounted_evidence_unit_count"] = 1
+        view["coverage"]["accounted_item_count"] = 1
         view["coverage"]["complete"] = False
 
     _rewrite_semantic_view(tmp_path, seal, mutate)
 
     assert "incomplete_semantic_integration_coverage" in _validate(tmp_path, seal)
+
+
+@pytest.mark.parametrize("bad_count", [True, 1.5, -1])
+def test_route_1_6_full_corpus_counts_require_exact_nonnegative_integers(
+    tmp_path: Path, bad_count: object
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["coverage"]["mechanically_excluded_item_count"] = bad_count
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "invalid_semantic_integration_full_corpus_counts" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_passing_route_1_6_rejects_blocked_captured_item(tmp_path: Path) -> None:
+    seal = _make_passing(_blocked_seal(tmp_path))
+
+    def mutate(view: dict) -> None:
+        coverage = view["coverage"]
+        coverage["semantically_assessed_item_count"] = 1
+        coverage["blocked_item_count"] = 1
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    findings = _validate(tmp_path, seal)
+    assert "incomplete_semantic_integration_coverage" in findings
+    assert "passing_seal_with_blocked_semantic_corpus_items" in findings
+
+
+def test_route_1_6_requires_capture_envelope_accounting(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["capture_envelopes"][0]["source_visible_total"] = 0
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "invalid_semantic_integration_capture_envelope" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_route_1_6_bounded_regression_is_not_final_corpus_seal_proof(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["corpus_profile"] = "bounded_regression_slice"
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "invalid_semantic_integration_corpus_profile" in _validate(
+        tmp_path, seal
+    )
 
 
 def test_current_route_requires_context_aware_semantic_method(tmp_path: Path) -> None:
@@ -4161,6 +4303,8 @@ def test_pinned_current_semantic_method_matches_the_judgment_module() -> None:
     # than restated as a third independent literal.
     assert CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION == METHOD_VERSION_V2
     assert CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 == _sha256(METHOD_TEXT_V2)
+    assert SEMANTIC_EVIDENCE_METHOD_VERSION_V3 == METHOD_VERSION_V3
+    assert SEMANTIC_EVIDENCE_METHOD_SHA256_V3 == _sha256(METHOD_TEXT_V3)
 
 
 def test_semantic_integration_rejects_incompetent_source_role(
@@ -4301,24 +4445,33 @@ def test_inline_claim_support_projection_cannot_diverge_from_proposition(
     )
 
 
-def test_duplicate_emerging_axis_disposition_labels_are_rejected(
+def test_duplicate_consolidated_emerging_axis_candidates_are_rejected(
     tmp_path: Path,
 ) -> None:
     seal = _blocked_seal(tmp_path)
 
     def mutate(view: dict) -> None:
-        view["emerging_axis_candidates"] = ["application_ritual"]
+        view["emerging_axis_candidates"] = [
+            {
+                "candidate_key": "application-ritual",
+                "canonical_label": "application ritual",
+                "original_labels": ["application_ritual"],
+                "disposition": "accepted",
+                "reason": "material recurring meaning",
+            },
+            {
+                "candidate_key": "application-ritual",
+                "canonical_label": "night ritual",
+                "original_labels": ["nightly_ritual"],
+                "disposition": "nonmaterial",
+                "reason": "duplicate key should fail",
+            },
+        ]
 
     _rewrite_semantic_view(tmp_path, seal, mutate)
-    seal["understanding_route"]["semantic_evidence_integration"][
-        "emerging_axis_dispositions"
-    ] = [
-        {"label": "application_ritual", "status": "blocked_material"},
-        {"label": "application_ritual", "status": "integrated_nonmaterial"},
-    ]
 
     assert (
-        "duplicate_semantic_integration_emerging_axis_disposition"
+        "invalid_semantic_integration_emerging_axis_candidate"
         in _validate(tmp_path, seal)
     )
 

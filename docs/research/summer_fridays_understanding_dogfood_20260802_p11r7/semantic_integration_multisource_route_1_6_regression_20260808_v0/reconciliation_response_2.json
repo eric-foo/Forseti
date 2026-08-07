@@ -1,0 +1,1235 @@
+{
+  "batch_id": "reconcile-0002-0001",
+  "emerging_axis_consolidations": [],
+  "schema_version": "semantic_evidence_reconciliation_response_v2",
+  "semantic_nodes": [
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured accounts across Reddit, Sephora reviews, and TikTok report adverse effects that appeared after several days, weeks, daily use, or a change over the product's ownership period rather than only at first contact.",
+      "causal_ceiling": "causal_not_established",
+      "child_relations": [
+        {
+          "child_ref": "node_7470762012ab0105da95",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_4a0f0d4380af58a616c3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_6fc9c523470eefdece96",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_d45ac246eb263d01a4e9",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_30df477dc95eeed01b74",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_0db934107746a12d1fa0",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Mint variant",
+        "Vanilla Beige variant",
+        "Vanilla variant",
+        "cause of change not established",
+        "constant use",
+        "daily use",
+        "effect changed over the customer's ownership period",
+        "effect emerged over time",
+        "reaction appeared after several days",
+        "reaction appeared after several weeks of use",
+        "variant set was not itemized",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_08d35e17cf9d4bcb409e",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured community, Sephora, and TikTok accounts also contain explicit reports of tolerating Summer Fridays Lip Butter Balm or not experiencing the discussed burning or irritation.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_7d2593dd47201d4df1b3",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a67a8debebe824857897",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_7e7991669ab89627f87a",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_298c4369924129dd2315",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_3231c3680836ac17edf4",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_16477c7291750a6a7bb9",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_3f7e86abe722f8477b2f",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_59691f5a9911fcef81f6",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_7470762012ab0105da95",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_07ad12ea730ba3a99332",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_e6b43a6b736d1632557a",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a3d0a438b19b6ceb6ef3",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_f539a6294ce1a34f6bba",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_302e92f15f3cd8de2087",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a918173dda2a93d3e992",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_4a0f0d4380af58a616c3",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_6fc9c523470eefdece96",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_d45ac246eb263d01a4e9",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_55f0f45c755a7b92d029",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_fb17d0701ff7a0752838",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_79e3637038ba42e79551",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_33202e5aab03ef020857",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_30df477dc95eeed01b74",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_499200f441bbc44e956a",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_54082bf028c80772da8b",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a8e7e28b0ac02b406854",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_dfb3b274f7c737a224b3",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_b8becac46871da050854",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_5a28618e954a9aed6be9",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_3eccf0865a4dc097415a",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_b344178b6c1fe1896ff5",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_0db934107746a12d1fa0",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_7494fd6fa64cc88d1a75",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_c6abd762ad4c80ceedb6",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a9b1c118562f87ec7510",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_fbea8cef2ead66897175",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_425063849f25b4e9949f",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_96a807810e9452854de4",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_213eb3dae96c952036f1",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_c9c9e2e927c84e2263e0",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a8c49cf8893a39606baa",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a780c15ee4ac242ad086",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_ba78883f3e51b488c87f",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Brown Sugar variant",
+        "Cherry variant",
+        "Iced Coffee variant",
+        "Mint variant",
+        "Mint variant was the earlier exposure",
+        "Pink Guava variant",
+        "Pink Sugar product page",
+        "Pink Sugar variant",
+        "Summer Fridays Lip Butter Balm bound by the captured video context",
+        "Summer Fridays product binding comes from the captured thread context",
+        "Summer Fridays variant was not identified",
+        "Sweet Mint variant",
+        "Toasted Marshmallow variant",
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "Vanilla variant",
+        "cause of change not established",
+        "constant use",
+        "continuing symptoms are self-reported and causation is not established",
+        "customer attributed the effect to shiny reflection",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "customer-described allergy; no clinical diagnosis established",
+        "customer-described condition; no clinical attribution established",
+        "customer-described condition; no clinical diagnosis established",
+        "daily use",
+        "effect changed over the customer's ownership period",
+        "effect emerged over time",
+        "exact absence of every possible reaction was not established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "fourth reported tube",
+        "heavier application",
+        "individual self-reported experience",
+        "individual self-reported tolerance",
+        "multiple other product and dietary sensitivities were reported",
+        "outdoor use",
+        "possible formula difference not independently verified",
+        "product attribution explicitly uncertain",
+        "reaction appeared after several days",
+        "reaction appeared after several weeks of use",
+        "reaction symptoms and variant were not identified",
+        "reaction symptoms were not specified",
+        "reviewer described owning three flavors",
+        "reviewer explicitly allowed that the reaction might be individual",
+        "single first-use account",
+        "variant set was not itemized",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_132af1f416aad5a59b08",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Across the captured Reddit, Sephora-review, and TikTok-audience evidence, customers report several kinds of adverse Lip Butter Balm experience, while other captured customers explicitly report tolerance or no comparable reaction.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_96a807810e9452854de4",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_213eb3dae96c952036f1",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_c9c9e2e927c84e2263e0",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a8c49cf8893a39606baa",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a780c15ee4ac242ad086",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_ba78883f3e51b488c87f",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_7d2593dd47201d4df1b3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a67a8debebe824857897",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_7e7991669ab89627f87a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_298c4369924129dd2315",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_3231c3680836ac17edf4",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_16477c7291750a6a7bb9",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_3f7e86abe722f8477b2f",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_59691f5a9911fcef81f6",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_7470762012ab0105da95",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_07ad12ea730ba3a99332",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_e6b43a6b736d1632557a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a3d0a438b19b6ceb6ef3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_f539a6294ce1a34f6bba",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_302e92f15f3cd8de2087",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a918173dda2a93d3e992",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_4a0f0d4380af58a616c3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_6fc9c523470eefdece96",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_d45ac246eb263d01a4e9",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_55f0f45c755a7b92d029",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_fb17d0701ff7a0752838",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_79e3637038ba42e79551",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_33202e5aab03ef020857",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_30df477dc95eeed01b74",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_499200f441bbc44e956a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_54082bf028c80772da8b",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a8e7e28b0ac02b406854",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_dfb3b274f7c737a224b3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_b8becac46871da050854",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_5a28618e954a9aed6be9",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_3eccf0865a4dc097415a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_b344178b6c1fe1896ff5",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_0db934107746a12d1fa0",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_7494fd6fa64cc88d1a75",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_c6abd762ad4c80ceedb6",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a9b1c118562f87ec7510",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_fbea8cef2ead66897175",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_425063849f25b4e9949f",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Brown Sugar variant",
+        "Cherry variant",
+        "Iced Coffee variant",
+        "Mint variant",
+        "Mint variant was the earlier exposure",
+        "Pink Guava variant",
+        "Pink Sugar product page",
+        "Pink Sugar variant",
+        "Summer Fridays Lip Butter Balm bound by the captured video context",
+        "Summer Fridays product binding comes from the captured thread context",
+        "Summer Fridays variant was not identified",
+        "Sweet Mint variant",
+        "Toasted Marshmallow variant",
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "Vanilla variant",
+        "cause of change not established",
+        "constant use",
+        "continuing symptoms are self-reported and causation is not established",
+        "customer attributed the effect to shiny reflection",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "customer-described allergy; no clinical diagnosis established",
+        "customer-described condition; no clinical attribution established",
+        "customer-described condition; no clinical diagnosis established",
+        "daily use",
+        "effect changed over the customer's ownership period",
+        "effect emerged over time",
+        "exact absence of every possible reaction was not established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "fourth reported tube",
+        "heavier application",
+        "individual self-reported experience",
+        "individual self-reported tolerance",
+        "multiple other product and dietary sensitivities were reported",
+        "outdoor use",
+        "possible formula difference not independently verified",
+        "product attribution explicitly uncertain",
+        "reaction appeared after several days",
+        "reaction appeared after several weeks of use",
+        "reaction symptoms and variant were not identified",
+        "reaction symptoms were not specified",
+        "reviewer described owning three flavors",
+        "reviewer explicitly allowed that the reaction might be individual",
+        "single first-use account",
+        "variant set was not itemized",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_1dce105549ed8539e5aa",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured community accounts disagree on whether the Mint or Sweet Mint variant burns or otherwise irritates the individual user's lips.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_96a807810e9452854de4",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_7470762012ab0105da95",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Mint variant",
+        "Sweet Mint variant",
+        "individual self-reported experience",
+        "reaction appeared after several weeks of use"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_2ad7e38ccb938e88eb32",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured Sephora reviewers and TikTok audience members report burning or other painful lip reactions with the Vanilla Beige variant.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_7806f319716f673595d6",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_55f0f45c755a7b92d029",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_79e3637038ba42e79551",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_dfb3b274f7c737a224b3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_b8becac46871da050854",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_0db934107746a12d1fa0",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a9b1c118562f87ec7510",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_425063849f25b4e9949f",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "cause of change not established",
+        "creator-authored framing",
+        "effect changed over the customer's ownership period",
+        "not independent customer-experience proof",
+        "reviewer explicitly allowed that the reaction might be individual"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_2ec3d4aa37acdd295c95",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured customers across Reddit and Sephora report stopping use, returning or discarding products, declining repurchase or recommendation, switching preference, or clearing their collection after an adverse Lip Butter Balm experience.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_238875a82771ec78c5b8",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_28e67e667aedec5b1a6f",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_79390433900a9b093e49",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_9fd075b08a839948ccab",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_31f06d31a96a7b85575a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_193b00e94c54175ad0b8",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_6a26bf86c02a0c318bcf",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_dc742988cca0a0a47c3c",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_1ba45a5bfe8cad16d853",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "reported_behavior",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Iced Coffee variant prompted the decision",
+        "Mint variant",
+        "Pink Sugar review context",
+        "Pink Sugar variant",
+        "Vanilla Beige variant",
+        "multiple variants",
+        "reported abandonment behavior",
+        "reported behavior following the reaction",
+        "reported future purchase behavior",
+        "reported product choice",
+        "reported recommendation behavior",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_4da0de541ae3bd9c9cd1",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured customer accounts differ on whether Summer Fridays Lip Butter Balm produces a burning sensation for the individual user.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_7806f319716f673595d6",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_96a807810e9452854de4",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_7f46321ef55f222caf12",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a780c15ee4ac242ad086",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_ba78883f3e51b488c87f",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_298c4369924129dd2315",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_7470762012ab0105da95",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a918173dda2a93d3e992",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_55f0f45c755a7b92d029",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_499200f441bbc44e956a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_dfb3b274f7c737a224b3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_b8becac46871da050854",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_3eccf0865a4dc097415a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_0db934107746a12d1fa0",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_7494fd6fa64cc88d1a75",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_c6abd762ad4c80ceedb6",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a9b1c118562f87ec7510",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_fbea8cef2ead66897175",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_425063849f25b4e9949f",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Brown Sugar variant",
+        "Cherry variant",
+        "Iced Coffee variant",
+        "Mint variant",
+        "Pink Guava variant",
+        "Pink Sugar variant",
+        "Summer Fridays Lip Butter Balm bound by the captured video context",
+        "Sweet Mint variant",
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "cause of change not established",
+        "creator-authored framing",
+        "customer attributed the effect to shiny reflection",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "effect changed over the customer's ownership period",
+        "exact absence of every possible reaction was not established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "individual self-reported experience",
+        "not independent customer-experience proof",
+        "outdoor use",
+        "reaction appeared after several weeks of use",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_6c7356bb5ff4b7bc083c",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "One captured reviewer reports repeated allergy-like reactions with Toasted Marshmallow.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_54082bf028c80772da8b",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Toasted Marshmallow variant",
+        "customer-described allergy; no clinical diagnosis established"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_7ea158ccdb50bc6281f0",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "One captured customer who generally tolerates Summer Fridays identifies Birthday Cake as an exception.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_c9c9e2e927c84e2263e0",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_fb482789d12b19affb40",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Birthday Cake variant",
+        "individual self-reported tolerance",
+        "reaction details were not specified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_898e56e30519ec8471e6",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "One captured customer reports recurring lip sensitivity with other products after stopping the Mint Lip Butter Balm.",
+      "causal_ceiling": "causal_not_established",
+      "child_relations": [
+        {
+          "child_ref": "node_07ad12ea730ba3a99332",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Mint variant was the earlier exposure",
+        "continuing symptoms are self-reported and causation is not established"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_932fb8c8868a5b0b0151",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "One captured Cherry reviewer reported slight irritation while explicitly distinguishing it from burning.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_7f46321ef55f222caf12",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_a8e7e28b0ac02b406854",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Cherry variant"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_93f1ad458b4ee0fbf2a5",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Two captured customers report delayed drying or rash experiences with the Vanilla variant.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_d45ac246eb263d01a4e9",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_30df477dc95eeed01b74",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Vanilla variant",
+        "effect emerged over time",
+        "reaction appeared after several days"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_985c1afd4f0d6fe17ff4",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured Sephora and TikTok accounts disagree on whether Pink Sugar irritates the individual user's lips.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_a8c49cf8893a39606baa",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_ba78883f3e51b488c87f",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_fb17d0701ff7a0752838",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_33202e5aab03ef020857",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_e3cf0169ee1d3faa8eb3",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Pink Sugar product page",
+        "Pink Sugar variant",
+        "customer-described condition; no clinical diagnosis established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "individual self-reported tolerance",
+        "reviewer described owning three flavors"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_9aff39a03b03feacc888",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Three captured TikTok audience members independently report drying, burning, or itching experiences with Brown Sugar.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_5a28618e954a9aed6be9",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_3eccf0865a4dc097415a",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_b344178b6c1fe1896ff5",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Brown Sugar variant",
+        "fourth reported tube",
+        "possible formula difference not independently verified"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_a31baf9940fcb14060c1",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "One captured creator publicly framed Vanilla Beige as burning their lips on initial application.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_dfb3b274f7c737a224b3",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_b8becac46871da050854",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_a9b1c118562f87ec7510",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_425063849f25b4e9949f",
+          "relation": "adjacent"
+        },
+        {
+          "child_ref": "node_7806f319716f673595d6",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "actor_strategy",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "creator-authored framing",
+        "not independent customer-experience proof"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_af9a5872df2a2091db2c",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "One captured TikTok audience member reports a Pink Guava burning experience.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_fbea8cef2ead66897175",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Pink Guava variant"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_ca947dad0f728c94c2e9",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_meaning": "Captured Reddit, Sephora, and TikTok accounts disagree on whether Iced Coffee causes a drying or burn-like adverse experience for the individual user.",
+      "causal_ceiling": "descriptive_only",
+      "child_relations": [
+        {
+          "child_ref": "node_a780c15ee4ac242ad086",
+          "relation": "counter"
+        },
+        {
+          "child_ref": "node_a3d0a438b19b6ceb6ef3",
+          "relation": "support"
+        },
+        {
+          "child_ref": "node_499200f441bbc44e956a",
+          "relation": "support"
+        }
+      ],
+      "claim_kind": "customer_experience",
+      "comparator_product_ids": [],
+      "conditions": [
+        "Iced Coffee variant",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "exact absence of every possible reaction was not established",
+        "single first-use account"
+      ],
+      "emerging_axis_labels": [],
+      "opposition_checked": true,
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_node_key": "prop_e6b7f2bd188bbb1030f5",
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ],
+      "terminal_proposition": true,
+      "uncertainty_posture": "asserted"
+    }
+  ],
+  "stage_sha256": "a051d342cc50999247a6eb6f1d5ab649ac38e59866f89cb6845397d8f3d72526",
+  "unmerged_children": [
+    {
+      "child_ref": "node_2ce69c97e98fbfd51395",
+      "reason": "A single customer's ingredient hypothesis is preserved but cannot establish stevia as the cause."
+    },
+    {
+      "child_ref": "node_f841ef273cf4bfb1ffb1",
+      "reason": "A same-reviewer before-and-after attribution is preserved but the formula identity and change were not independently verified."
+    },
+    {
+      "child_ref": "node_bebefff6d0d884a9bdc6",
+      "reason": "A single customer's shea-butter hypothesis is preserved but cannot establish an ingredient cause."
+    },
+    {
+      "child_ref": "node_bf2b957d12e0c9ccde8d",
+      "reason": "The reviewer repeats awareness of TikTok reports; this is an echo and receives no additional independent support credit."
+    },
+    {
+      "child_ref": "node_3ea68534bc1a7cb2af9e",
+      "reason": "A question about a formula change is not evidence that a formula change occurred."
+    }
+  ]
+}

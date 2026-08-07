@@ -233,17 +233,35 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.3.0",
     "1.4.0",
     "1.5.0",
+    "1.6.0",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.5.0"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.6.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
-SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION = (
+SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
 )
-CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION = (
+SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V2 = (
+    "semantic_evidence_integration_view_v2"
+)
+SEMANTIC_EVIDENCE_METHOD_VERSION_V2 = (
     "semantic_evidence_integration_method_v2"
 )
-CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 = (
+SEMANTIC_EVIDENCE_METHOD_SHA256_V2 = (
     "044e34d41f28c8a98baf0677d227703690b79765db63822808765e23778ed205"
+)
+SEMANTIC_EVIDENCE_METHOD_VERSION_V3 = (
+    "semantic_evidence_integration_method_v3"
+)
+SEMANTIC_EVIDENCE_METHOD_SHA256_V3 = (
+    "c1a3fde85acf10f6be6ad9078f0341aa7000dbddf40786261406b6fa79db3e3c"
+)
+# Historical compatibility aliases used by route-1.5 fixtures. New route
+# validation selects an explicit version tuple and never treats these as the
+# route-1.6 current method.
+CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION = SEMANTIC_EVIDENCE_METHOD_VERSION_V2
+CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 = SEMANTIC_EVIDENCE_METHOD_SHA256_V2
+SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION = (
+    SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1
 )
 _CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
 _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
@@ -252,9 +270,10 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.3.0",
     "1.4.0",
     "1.5.0",
+    "1.6.0",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0"}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -266,16 +285,19 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.3.0",
     "1.4.0",
     "1.5.0",
+    "1.6.0",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
     "1.3.0",
     "1.4.0",
     "1.5.0",
+    "1.6.0",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0"}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -3958,9 +3980,7 @@ def _validate_understanding_route(
             seal=seal,
             repo_root=repo_root,
             valid_pass=valid_pass,
-            require_current_method=(
-                version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS
-            ),
+            route_version=version,
             findings=findings,
         )
         if isinstance(rows, list):
@@ -4007,7 +4027,7 @@ def _validate_semantic_evidence_integration(
     seal: Mapping[str, Any],
     repo_root: Path,
     valid_pass: bool,
-    require_current_method: bool,
+    route_version: str,
     findings: list[str],
 ) -> dict[str, Mapping[str, Any]]:
     """Verify the route-1.4 bridge without re-performing semantic judgment."""
@@ -4056,17 +4076,25 @@ def _validate_semantic_evidence_integration(
     if not isinstance(view, dict):
         findings.append("invalid_semantic_integration_view")
         return {}
-    if view.get("schema_version") != SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION:
+    expected_view_version = (
+        SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V2
+        if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS
+        else SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1
+    )
+    if view.get("schema_version") != expected_view_version:
         findings.append("invalid_semantic_integration_view_version")
-    if (
-        require_current_method
-        and view.get("method_version") != CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION
-    ):
+    if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+        expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V3
+        expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V3
+    elif route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS:
+        expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V2
+        expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V2
+    else:
+        expected_method_version = None
+        expected_method_hash = None
+    if expected_method_version is not None and view.get("method_version") != expected_method_version:
         findings.append("invalid_semantic_integration_method_version")
-    if (
-        require_current_method
-        and view.get("method_sha256") != CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256
-    ):
+    if expected_method_hash is not None and view.get("method_sha256") != expected_method_hash:
         findings.append("invalid_semantic_integration_method_hash")
     for field in ("bundle_sha256", "corpus_sha256", "method_sha256"):
         if not isinstance(view.get(field), str) or not _DIGEST.fullmatch(
@@ -4091,6 +4119,80 @@ def _validate_semantic_evidence_integration(
     coverage = view.get("coverage")
     if not isinstance(coverage, dict):
         findings.append("missing_semantic_integration_coverage")
+    elif route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+        if view.get("corpus_profile") != "phase_a_final_acquisition":
+            findings.append("invalid_semantic_integration_corpus_profile")
+        count_fields = (
+            "captured_item_count",
+            "semantically_assessed_item_count",
+            "mechanically_excluded_item_count",
+            "blocked_item_count",
+            "accounted_item_count",
+            "captured_container_count",
+        )
+        counts = {field: coverage.get(field) for field in count_fields}
+        if any(
+            not isinstance(value, int) or isinstance(value, bool) or value < 0
+            for value in counts.values()
+        ):
+            findings.append("invalid_semantic_integration_full_corpus_counts")
+        elif (
+            counts["captured_item_count"] < 1
+            or counts["captured_container_count"] < 1
+            or counts["accounted_item_count"]
+            != counts["semantically_assessed_item_count"]
+            + counts["mechanically_excluded_item_count"]
+            + counts["blocked_item_count"]
+            or counts["accounted_item_count"] != counts["captured_item_count"]
+            or counts["blocked_item_count"] != 0
+            or coverage.get("complete") is not True
+        ):
+            findings.append("incomplete_semantic_integration_coverage")
+        if valid_pass and isinstance(counts.get("blocked_item_count"), int) and counts[
+            "blocked_item_count"
+        ]:
+            findings.append("passing_seal_with_blocked_semantic_corpus_items")
+        unresolved_view = coverage.get("unresolved_evidence_ids")
+        if not isinstance(unresolved_view, list) or any(
+            not isinstance(item, str) or not item for item in unresolved_view
+        ):
+            findings.append("invalid_semantic_integration_unresolved_evidence_ids")
+            unresolved_view = []
+        if set(unresolved_material) - set(unresolved_view):
+            findings.append("semantic_integration_unresolved_material_not_in_view")
+        envelopes = view.get("capture_envelopes")
+        if not isinstance(envelopes, list) or len(envelopes) != counts.get(
+            "captured_container_count"
+        ):
+            findings.append("invalid_semantic_integration_capture_envelopes")
+        else:
+            envelope_ids: set[str] = set()
+            for envelope in envelopes:
+                if not isinstance(envelope, dict):
+                    findings.append("invalid_semantic_integration_capture_envelope")
+                    continue
+                container_id = envelope.get("container_id")
+                captured = envelope.get("captured_leaf_count")
+                visible = envelope.get("source_visible_total")
+                if (
+                    not isinstance(container_id, str)
+                    or not container_id
+                    or container_id in envelope_ids
+                    or not isinstance(captured, int)
+                    or isinstance(captured, bool)
+                    or captured < 1
+                    or (
+                        visible != "unavailable"
+                        and (
+                            not isinstance(visible, int)
+                            or isinstance(visible, bool)
+                            or visible < captured
+                        )
+                    )
+                ):
+                    findings.append("invalid_semantic_integration_capture_envelope")
+                else:
+                    envelope_ids.add(container_id)
     else:
         admitted = coverage.get("admitted_evidence_unit_count")
         accounted = coverage.get("accounted_evidence_unit_count")
@@ -4115,13 +4217,41 @@ def _validate_semantic_evidence_integration(
         if set(unresolved_material) - set(unresolved_view):
             findings.append("semantic_integration_unresolved_material_not_in_view")
     emerging = view.get("emerging_axis_candidates")
-    if not isinstance(emerging, list) or any(
+    if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+        if not isinstance(emerging, list):
+            findings.append("invalid_semantic_integration_emerging_axes")
+            emerging = []
+        candidate_keys: set[str] = set()
+        for row in emerging:
+            if (
+                not isinstance(row, dict)
+                or not isinstance(row.get("candidate_key"), str)
+                or not row["candidate_key"]
+                or row["candidate_key"] in candidate_keys
+                or not isinstance(row.get("canonical_label"), str)
+                or not row["canonical_label"]
+                or not isinstance(row.get("original_labels"), list)
+                or not row["original_labels"]
+                or any(
+                    not isinstance(label, str) or not label
+                    for label in row["original_labels"]
+                )
+                or row.get("disposition") not in {"accepted", "nonmaterial", "blocker"}
+            ):
+                findings.append("invalid_semantic_integration_emerging_axis_candidate")
+                continue
+            candidate_keys.add(row["candidate_key"])
+            if valid_pass and row["disposition"] == "blocker":
+                findings.append(
+                    f"passing_seal_with_blocked_emerging_axis:{row['candidate_key']}"
+                )
+    elif not isinstance(emerging, list) or any(
         not isinstance(item, str) or not item for item in emerging
     ):
         findings.append("invalid_semantic_integration_emerging_axes")
         emerging = []
     dispositions = value.get("emerging_axis_dispositions", [])
-    if emerging:
+    if route_version not in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS and emerging:
         if not isinstance(dispositions, list):
             findings.append("missing_semantic_integration_emerging_axis_dispositions")
         else:
@@ -4223,6 +4353,25 @@ def _validate_semantic_evidence_integration(
             findings.append(f"semantic_integration_repetition_without_two_origins:{proposition_id}")
         if posture == "cross_venue_corroborated" and len(set(roles or [])) < 2:
             findings.append(f"semantic_integration_cross_venue_without_two_roles:{proposition_id}")
+        if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+            stack = proposition.get("evidence_stack")
+            if not isinstance(stack, dict):
+                findings.append(f"missing_semantic_integration_evidence_stack:{proposition_id}")
+            else:
+                for field in (
+                    "support_semantic_unit_count",
+                    "support_evidence_item_count",
+                    "support_container_count",
+                    "counter_evidence_item_count",
+                    "independent_origin_count",
+                    "source_role_count",
+                    "engagement_evidence_count",
+                ):
+                    count = stack.get(field)
+                    if not isinstance(count, int) or isinstance(count, bool) or count < 0:
+                        findings.append(
+                            f"invalid_semantic_integration_evidence_stack:{proposition_id}:{field}"
+                        )
     return index
 
 

@@ -837,6 +837,32 @@ context or leaves the item unresolved/out of scope. Context may identify the
 product but may not be rephrased as though the evidence author made its
 claims.
 
+Route 1.6.0 keeps that source-pinned product binding and widens the admitted
+denominator to the declared final captured Phase A corpus. The controller uses
+`semantic_evidence_source_v3` to account every captured source-native leaf as
+semantically assessed, mechanically excluded with an exact reason, or blocked.
+It preserves conversations, creator/audience threads, individual retailer
+reviews, and published objects as containers with capture-envelope facts.
+
+The semantic runner bounds actual rendered UTF-8 bytes, including prompt
+instructions, schemas, axes, context, and formatting. It may reconcile in
+child-referenced levels. At every level deterministic code owns exact child
+accounting, product/comparator/version binding, condition and polarity lineage,
+stale hashes, acyclic provenance, and duplicate-credit prevention; the agent
+owns meaning equivalence. Batch response v2 distinguishes first-hand report,
+personal agreement, attribution/echo, question, speculation, observable fact,
+and actor strategy while keeping uncertainty separate. Echoes, questions,
+creator framing, and unknown or overlapping actors cannot manufacture
+independent customer experience.
+
+Before seal, the agent consolidates meaning-equivalent emerging labels and the
+compiler preserves every original label. Integration view v2 exposes separate
+semantic-unit, evidence-item, container, independent-origin, source-role,
+engagement, support, opposition, and mixed-container counts. A seven-thread
+count is therefore never silently restated as seven independent people. This
+is evidence structuring only, not prevalence, safety, market conclusion,
+causation, or recommendation.
+
 Current axes guide but do not cap discovery. A material emerging axis reopens
 only the affected work and invalidates the prior view; a nonmaterial candidate
 is explicitly dispositioned. Route-1.4-and-later axis findings carry `proposition_refs`
@@ -927,7 +953,10 @@ route 1.4.0, a material terminal semantic-integration job, current hash-pinned
 view, exact evidence coverage, proposition-to-axis resolution, source-role
 competence, and material unresolved/emerging-axis closure; at route 1.5.0,
 contextual semantic method v2, distinct stable product IDs for material
-comparators, and exact candidate-to-proposition product binding; view schema/subject/cycle
+comparators, and exact candidate-to-proposition product binding; at route
+1.6.0, view v2/method v3, complete captured-item accounting with no blocked
+leaf, exact capture-envelope/container shape, consolidated emerging-axis
+lineage, and per-proposition evidence-stack counts; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
@@ -952,7 +981,9 @@ back-claimed onto a `1.1.0` or `1.0.0` seal, and route 1.3.0's identity and
 choice-explanation fields are never back-claimed onto a 1.2.0 seal. Route
 1.4.0's semantic-integration job and proposition references are never
 back-claimed onto a 1.3.0 seal, and 1.5.0's contextual product-binding
-requirements are never back-claimed onto a 1.4.0 seal.
+requirements are never back-claimed onto a 1.4.0 seal. Route 1.6.0's full-
+corpus, hierarchy, capture-envelope, consolidated-axis, and evidence-stack
+requirements are never back-claimed onto a 1.5.0 seal.
 
 ## Company Competitive-Intelligence Extension
 

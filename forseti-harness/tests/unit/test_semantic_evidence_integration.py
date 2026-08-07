@@ -9,18 +9,27 @@ import pytest
 
 from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION,
+    BATCH_RESPONSE_VERSION_V2,
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
+    BUNDLE_VERSION_V3,
     METHOD_VERSION,
     METHOD_VERSION_V2,
+    METHOD_VERSION_V3,
     RECONCILIATION_RESPONSE_VERSION,
+    RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
+    SOURCE_VERSION_V3,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
     build_reconciliation_prompt,
     finalize_view,
+    finalize_v3_view,
+    materialize_source_v3,
+    prepare_reconciliation_stage,
     validate_batch_responses,
+    validate_reconciliation_stage,
 )
 from runners.run_semantic_evidence_integration import prepare_batches
 
@@ -845,3 +854,391 @@ def test_prepare_runner_rejects_source_hash_mismatch(tmp_path: Path) -> None:
             prompt_dir=tmp_path / "prompts",
             max_batch_chars=80_000,
         )
+
+
+def _source_v3(*, actor_mode: str = "distinct", count: int = 7) -> dict:
+    artifacts = []
+    containers = []
+    items = []
+    for index in range(count):
+        artifact_id = f"thread-{index + 1}"
+        container_id = f"reddit-thread-{index + 1}"
+        evidence_id = f"reddit:t{index + 1}:comment"
+        artifacts.append(
+            {
+                "artifact_id": artifact_id,
+                "locator": f"thread-{index + 1}.json",
+                "sha256": _digest(f"thread-{index + 1}\n".encode()),
+            }
+        )
+        containers.append(
+            {
+                "container_id": container_id,
+                "container_type": "conversation",
+                "source_artifact_id": artifact_id,
+                "captured_leaf_count": 1,
+                "source_visible_total": "unavailable",
+                "completeness": "unavailable",
+                "captured_at": "2026-08-08T00:00:00Z",
+                "capture_boundary": "controlled one-leaf fixture",
+            }
+        )
+        actor_key = "reddit:one-actor" if actor_mode == "same" else f"reddit:actor-{index + 1}"
+        items.append(
+            {
+                "evidence_id": evidence_id,
+                "container_id": container_id,
+                "source_family": "reddit_community",
+                "source_role": "community_post",
+                "source_artifact_id": artifact_id,
+                "source_ref": f"https://reddit.test/t{index + 1}",
+                "text": "The balm became drying after a week of use.",
+                "accounting_disposition": "assess",
+                "accounting_reason": "captured text leaf inside fixture scope",
+                "product_candidates": ["sf-lbb"],
+                "axis_candidates": ["wear"],
+                "product_context": [
+                    {
+                        "context_type": "thread_title",
+                        "source_artifact_id": artifact_id,
+                        "text": "Summer Fridays Lip Butter Balm wear",
+                        "source_ref": f"https://reddit.test/t{index + 1}",
+                    }
+                ],
+                "independence_posture": "credited",
+                "independence_key": actor_key,
+                "engagement": {"material_positive": False},
+                "conversation_depth": 0,
+                "parent_context": [],
+            }
+        )
+    return {
+        "schema_version": SOURCE_VERSION_V3,
+        "cycle_id": "controlled-seven-thread-proof",
+        "question_id": "drying-after-use",
+        "question": "What captured customers report about wear",
+        "corpus_profile": "bounded_regression_slice",
+        "corpus_scope": "controlled seven-thread corpus",
+        "corpus_cutoff": "2026-08-08T00:00:00Z",
+        "axes": [{"axis_id": "wear", "label": "Wear"}],
+        "source_artifacts": artifacts,
+        "containers": containers,
+        "captured_items": items,
+    }
+
+
+def _v3_batch_responses(bundle: dict) -> list[dict]:
+    responses = []
+    for batch in bundle["batches"]:
+        rows = []
+        for evidence_id in batch["evidence_ids"]:
+            rows.append(
+                {
+                    "evidence_id": evidence_id,
+                    "disposition": "claim_bearing",
+                    "disposition_reason": "direct first-hand experience",
+                    "semantic_units": [
+                        {
+                            "semantic_unit_key": "drying-after-week",
+                            "statement": "The balm became drying after one week of use.",
+                            "subject_product_ids": ["sf-lbb"],
+                            "comparator_product_ids": [],
+                            "product_version_ids": [],
+                            "axis_ids": ["wear"],
+                            "emerging_axis_labels": [],
+                            "conditions": ["after one week of use"],
+                            "polarity": "affirmed",
+                            "evidence_posture": "first_hand",
+                            "uncertainty_posture": "asserted",
+                        }
+                    ],
+                }
+            )
+        responses.append(
+            {
+                "schema_version": BATCH_RESPONSE_VERSION_V2,
+                "bundle_sha256": bundle["bundle_sha256"],
+                "batch_id": batch["batch_id"],
+                "evidence": rows,
+            }
+        )
+    return responses
+
+
+def _group_level_responses(stage: dict, *, terminal: bool) -> list[dict]:
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    responses = []
+    for batch in stage["batches"]:
+        selected = [candidate_index[ref] for ref in batch["candidate_refs"]]
+        conditions = sorted(
+            {
+                condition
+                for row in selected
+                for lineage in row["condition_lineage"]
+                for condition in lineage["conditions"]
+            }
+        )
+        polarities = {row["polarity"] for row in selected}
+        responses.append(
+            {
+                "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "semantic_nodes": [
+                    {
+                        "semantic_node_key": f"group-{batch['batch_id']}",
+                        "bounded_meaning": "Captured customers reported drying after one week of use.",
+                        "terminal_proposition": terminal,
+                        "claim_kind": "customer_experience" if terminal else None,
+                        "subject_product_ids": ["sf-lbb"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": ["wear"],
+                        "emerging_axis_labels": [],
+                        "conditions": conditions,
+                        "polarity": next(iter(polarities)) if len(polarities) == 1 else "mixed",
+                        "uncertainty_posture": "asserted",
+                        "child_relations": [
+                            {"child_ref": ref, "relation": "support"}
+                            for ref in batch["candidate_refs"]
+                        ],
+                        "opposition_checked": True if terminal else None,
+                        "causal_ceiling": "descriptive_only" if terminal else None,
+                    }
+                ],
+                "unmerged_children": [],
+                "emerging_axis_consolidations": [],
+            }
+        )
+    return responses
+
+
+def _v3_complete_view(*, actor_mode: str = "distinct") -> tuple[dict, dict, dict, dict]:
+    return _v3_complete_view_at_ceiling(actor_mode=actor_mode, max_prompt_bytes=8_000)
+
+
+def _v3_complete_view_at_ceiling(
+    *, actor_mode: str = "distinct", max_prompt_bytes: int
+) -> tuple[dict, dict, dict, dict]:
+    bundle = build_bundle(
+        _source_v3(actor_mode=actor_mode), max_prompt_bytes=max_prompt_bytes
+    )
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    stage_one, _ = prepare_reconciliation_stage(bundle, compiled)
+    level_one = validate_reconciliation_stage(
+        bundle, stage_one, _group_level_responses(stage_one, terminal=False)
+    )
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    assert len(stage_two["batches"]) == 1
+    level_two = validate_reconciliation_stage(
+        bundle, stage_two, _group_level_responses(stage_two, terminal=True)
+    )
+    return bundle, compiled, level_two, finalize_v3_view(bundle, compiled, level_two)
+
+
+def test_v3_seven_threads_stack_without_inventing_seven_people() -> None:
+    _, _, _, distinct_view = _v3_complete_view(actor_mode="distinct")
+    _, _, _, same_actor_view = _v3_complete_view(actor_mode="same")
+
+    distinct = distinct_view["propositions"][0]
+    same_actor = same_actor_view["propositions"][0]
+    assert distinct["evidence_stack"]["support_evidence_item_count"] == 7
+    assert distinct["evidence_stack"]["support_container_count"] == 7
+    assert distinct["claim_support"]["independent_origin_count"] == 7
+    assert same_actor["evidence_stack"]["support_container_count"] == 7
+    assert same_actor["claim_support"]["independent_origin_count"] == 1
+
+
+def test_v3_prompts_never_exceed_actual_rendered_utf8_ceiling() -> None:
+    bundle = build_bundle(_source_v3(), max_prompt_bytes=8_000)
+    prompts = build_batch_prompts(bundle)
+
+    assert len(prompts) > 1
+    assert all(row["prompt_utf8_bytes"] <= 8_000 for row in prompts)
+    oversized = _source_v3(count=1)
+    oversized["captured_items"][0]["text"] = "é" * 8_000
+    with pytest.raises(SemanticIntegrationError, match="rendered prompt byte ceiling"):
+        build_bundle(oversized, max_prompt_bytes=8_000)
+
+
+def test_v3_full_corpus_accounting_fails_closed_on_missing_leaf() -> None:
+    source = _source_v3()
+    source["captured_items"].pop()
+
+    with pytest.raises(SemanticIntegrationError, match="captured_leaf_count"):
+        build_bundle(source, max_prompt_bytes=8_000)
+
+
+def test_v3_materializer_is_deterministic_and_rejects_unsupported_family() -> None:
+    source = _source_v3(count=2)
+    first = materialize_source_v3(source)
+    second = materialize_source_v3(deepcopy(source))
+    assert first == second
+    assert first["source_sha256"]
+
+    source["captured_items"][0]["source_family"] = "unknown_future_family"
+    with pytest.raises(SemanticIntegrationError, match="unsupported source_family"):
+        materialize_source_v3(source)
+
+
+def test_v3_unknown_actor_cannot_receive_independence_credit() -> None:
+    source = _source_v3(count=1)
+    source["captured_items"][0]["independence_posture"] = "unavailable"
+    # The stale-looking key is retained deliberately: compiler posture, not a
+    # nonempty operator string, owns whether independence credit is possible.
+    bundle = build_bundle(source, max_prompt_bytes=8_000)
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+    view = finalize_v3_view(bundle, compiled, terminal)
+
+    assert view["propositions"][0]["claim_support"]["independent_origin_count"] == 0
+
+
+def test_v3_reconciliation_rejects_dropped_conditions_and_collapsed_negation() -> None:
+    bundle = build_bundle(_source_v3(count=2), max_prompt_bytes=20_000)
+    responses = _v3_batch_responses(bundle)
+    responses[0]["evidence"][1]["semantic_units"][0]["conditions"] = ["only in winter"]
+    responses[0]["evidence"][1]["semantic_units"][0]["polarity"] = "negated"
+    compiled = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    collapsed = _group_level_responses(stage, terminal=True)
+    collapsed[0]["semantic_nodes"][0]["conditions"] = ["after one week of use"]
+    collapsed[0]["semantic_nodes"][0]["polarity"] = "affirmed"
+
+    with pytest.raises(
+        SemanticIntegrationError, match="drops a child condition|collapses child polarity"
+    ):
+        validate_reconciliation_stage(bundle, stage, collapsed)
+
+
+def test_v3_reconciliation_rejects_stale_stage_and_unaccounted_child() -> None:
+    bundle = build_bundle(_source_v3(count=2), max_prompt_bytes=20_000)
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    responses = _group_level_responses(stage, terminal=True)
+    stale = deepcopy(responses)
+    stale[0]["stage_sha256"] = "0" * 64
+    with pytest.raises(SemanticIntegrationError, match="stale stage hash"):
+        validate_reconciliation_stage(bundle, stage, stale)
+
+    missing = deepcopy(responses)
+    missing[0]["semantic_nodes"][0]["child_relations"].pop()
+    with pytest.raises(SemanticIntegrationError, match="does not account for every child"):
+        validate_reconciliation_stage(bundle, stage, missing)
+
+
+def test_v3_reconciliation_rejects_same_level_cycle() -> None:
+    bundle = build_bundle(_source_v3(count=2), max_prompt_bytes=20_000)
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    node_compilation = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=False)
+    )
+    node_ref = node_compilation["semantic_nodes"][0]["semantic_node_ref"]
+    node_compilation["semantic_nodes"][0]["child_relations"] = [
+        {"child_ref": node_ref, "relation": "support"}
+    ]
+    unhashed = dict(node_compilation)
+    unhashed.pop("node_compilation_sha256")
+    node_compilation["node_compilation_sha256"] = hashlib.sha256(
+        json.dumps(
+            unhashed, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+    ).hexdigest()
+
+    with pytest.raises(SemanticIntegrationError, match="same-level link or cycle"):
+        prepare_reconciliation_stage(bundle, node_compilation)
+
+
+def test_v3_emerging_labels_require_explicit_consolidation() -> None:
+    bundle = build_bundle(_source_v3(count=1), max_prompt_bytes=20_000)
+    responses = _v3_batch_responses(bundle)
+    responses[0]["evidence"][0]["semantic_units"][0]["emerging_axis_labels"] = [
+        "nightly ritual"
+    ]
+    compiled = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    reconciliation = _group_level_responses(stage, terminal=True)
+
+    with pytest.raises(SemanticIntegrationError, match="every emerging label"):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+    reconciliation[0]["emerging_axis_consolidations"] = [
+        {
+            "candidate_key": "ritual",
+            "canonical_label": "use ritual",
+            "original_labels": ["nightly ritual"],
+            "disposition": "accepted",
+            "reason": "meaning-equivalent use ritual label",
+        }
+    ]
+    terminal = validate_reconciliation_stage(bundle, stage, reconciliation)
+    view = finalize_v3_view(bundle, compiled, terminal)
+    assert view["emerging_axis_candidates"][0]["original_labels"] == [
+        "nightly ritual"
+    ]
+
+
+def test_v3_controlled_partition_sensitivity_preserves_leaf_membership_and_counts() -> None:
+    _, _, _, narrow = _v3_complete_view_at_ceiling(max_prompt_bytes=8_000)
+    _, _, _, wide = _v3_complete_view_at_ceiling(max_prompt_bytes=12_000)
+
+    narrow_prop = narrow["propositions"][0]
+    wide_prop = wide["propositions"][0]
+    assert set(narrow_prop["semantic_relations"]["support"]) == set(
+        wide_prop["semantic_relations"]["support"]
+    )
+    assert narrow_prop["evidence_stack"] == wide_prop["evidence_stack"]
+    assert narrow_prop["claim_support"] == wide_prop["claim_support"]
+
+
+def test_route_1_6_multisource_dogfood_rebuilds_exactly() -> None:
+    repo_root = Path(__file__).resolve().parents[3]
+    dogfood = (
+        repo_root
+        / "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7"
+        / "semantic_integration_multisource_route_1_6_regression_20260808_v0"
+    )
+
+    def load(name: str) -> dict | list:
+        return json.loads((dogfood / name).read_text(encoding="utf-8"))
+
+    source = load("source.json")
+    expected_bundle = load("bundle.json")
+    assert isinstance(source, dict) and isinstance(expected_bundle, dict)
+    bundle = build_bundle(source, max_prompt_bytes=150_000)
+    assert bundle == expected_bundle
+
+    responses = load("batch_responses.json")
+    assert isinstance(responses, list)
+    compiled = validate_batch_responses(bundle, responses)
+    assert compiled == load("batch_compilation.json")
+
+    stage_one, prompts_one = prepare_reconciliation_stage(bundle, compiled)
+    assert stage_one == load("reconciliation_stage_1.json")
+    assert prompts_one == load("reconciliation_prompts_1.json")
+    responses_one = load("reconciliation_responses_1.json")
+    assert isinstance(responses_one, list)
+    nodes_one = validate_reconciliation_stage(
+        bundle, stage_one, responses_one
+    )
+    assert nodes_one == load("node_compilation_1.json")
+
+    stage_two, prompts_two = prepare_reconciliation_stage(bundle, nodes_one)
+    assert stage_two == load("reconciliation_stage_2.json")
+    assert prompts_two == load("reconciliation_prompts_2.json")
+    response_two = load("reconciliation_response_2.json")
+    assert isinstance(response_two, dict)
+    nodes_two = validate_reconciliation_stage(
+        bundle, stage_two, [response_two]
+    )
+    assert nodes_two == load("node_compilation_2.json")
+    assert finalize_v3_view(bundle, compiled, nodes_two) == load("view.json")
+
+    sensitivity = load("partition_sensitivity.json")
+    assert isinstance(sensitivity, dict)
+    assert sensitivity["partitions_differ"] is True
+    assert sensitivity["flattened_membership_and_counts_equal"] is True
