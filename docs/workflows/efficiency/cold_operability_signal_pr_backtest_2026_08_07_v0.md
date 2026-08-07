@@ -19,19 +19,22 @@ stale_if:
 
 ## Decision
 
-Adopt one **claim-scoped cold-operability signal**. Do not adopt a general
-dogfooding protocol or skill.
+**Do not adopt** a standing cold-operability signal, general dogfooding
+protocol, or skill from this backtest.
 
-The signal applies only when the bound outcome says a future actor can execute,
-route, hand off, or reuse the result without author context. It requires a
-context-starved consumer against the exact final revision and intended entry
-point. An edit caused by the signal invalidates that signal and requires a
-fresh-actor replay. Evidence that exists only on an unmerged branch or local
-machine does not prove the durable target.
+The candidate signal showed useful behavior, but it did not clear its
+predeclared admission bar under the strict reading: two determinate
+recommendations were corrected, while #1383 resolved an indeterminate baseline
+rather than correcting a decision. The selection predicate was not
+reproducible, and the evidence did not establish an absence of within-family
+regression. Installing a recurring consumer run on that basis would violate
+Behavioral Admission.
 
-This record is current as of **2026-08-07 Asia/Singapore**. The owning live rule
-is `.agents/workflow-overlay/validation-gates.md`; this record does not override
-it.
+This record is current as of **2026-08-08 Asia/Singapore**. No live validation
+rule is installed from this case. The controlling admission authority remains
+`.agents/workflow-overlay/README.md` and
+`.agents/workflow-overlay/validation-gates.md`; this record does not override
+either.
 
 ## Bound outcome and admission bar
 
@@ -46,19 +49,26 @@ Before gold adjudication, adoption was bound to all of the following:
 
 The candidate named four defects: author-knowledge leakage, false currentness,
 reuse of evidence invalidated by its own repair, and proof existing off the
-durable target. Its recurring cost is one fresh consumer run, and another only
-when that run causes relevant edits. Work that does not claim cold operability
-pays no new step.
+durable target. Its recurring cost would have been one fresh consumer run, and
+another when that run caused relevant edits. Because the admission bar failed,
+no future work unit pays that standing cost.
 
 ## Corpus and controls
 
-The frozen screen was the latest 100 merged or closed PRs available at the
-start of the backtest: **#1346 through #1447**, spanning 2026-07-24 through
-2026-08-07. The screen did not equate the word `dogfood` with an executed test:
-35 PR bodies used the term, while planned-only, incidental, retrospective, and
-future-only mentions were excluded; executed cold evidence without that label
-remained eligible. The eight newest independent cold-operability cases were
-#1439, #1398, #1392, #1383, #1381, #1372, #1370, and #1353.
+The frozen screen was the latest 100 pull requests available at the start of
+the backtest: **#1346 through #1447**, spanning 2026-07-24 through 2026-08-07
+(#1412 and #1418 are not pull requests). Only 96 of those 100 are merged or
+closed: #1360, #1407, #1432, and #1436 have never been closed. The screen is
+therefore the latest 100 PRs, not the latest 100 merged or closed PRs. The
+screen did not equate the word `dogfood` with an executed test: 35 of those PRs
+used the term in title or body (34 in the body alone), while planned-only,
+incidental, retrospective, and future-only mentions were excluded; executed cold
+evidence without that label remained eligible. Eight cold-operability cases were
+selected from that screen: #1439, #1398, #1392, #1383, #1381, #1372, #1370, and
+#1353. The eligibility and independence predicate was resident judgment and is
+not reproducible from this record; #1440 — whose handoff a cold receiver
+executed, as #1441 records — is adjacent to the selected set with no recorded
+exclusion basis.
 
 Two historical controls bounded the proposal:
 
@@ -92,6 +102,9 @@ The protocol-reader input was 21,622 bytes with SHA-256
 It was kept outside the repository at
 `C:\tmp\dogfood-protocol-reader-input-20260807.md`; the hash identifies the
 frozen comparison input without creating a recurring run-artifact convention.
+That path is machine-local, so the hash is checkable only on the authoring
+host: read from the durable target, the blind reader's input is unverifiable —
+the same off-target-proof defect the admitted rule names.
 
 ## Results
 
@@ -110,11 +123,53 @@ preserves a truthful terminal failure.
 | #1370 | Narrow to serial use | Repair/replay | The second replay succeeded only on commit `6bef3c82`, which is not an ancestor of current `main`; merged authority did not contain its evidence. | **Corrected** |
 | #1353 | Block | Block | The cold downstream consumer correctly prevented Deliver while a material retailer route remained incomplete. | No change |
 
-The structured signal produced **three gold-confirmed corrections in eight
-cases (37.5%)**, no differential regression, and no new durable per-run
-surface. It therefore met the predeclared admission bar exactly. This is not a
-statistical generalization: the value was concentrated in cold-operability
-claims, and the universal-protocol hypothesis was rejected.
+The structured signal initially reported **three deltas in eight cases
+(37.5%)** and no new durable per-run surface. Two qualifications bound that
+count, and both matter because the predeclared bar was exactly three.
+
+First, #1383's baseline outcome was indeterminate rather than a determinate
+recommendation, so that row is an indeterminate-to-gold-confirmed-action
+resolution, not a corrected recommendation. Read strictly as `decision
+corrections`, the count is two and the bar is not met; read as the bound
+outcome's `materially improve the next action`, the count is three and the bar
+is met. The adjudication below applies the predeclared strict reading, so the
+bar is not met.
+
+Second, the deltas above are counted at action-family granularity
+(indeterminate, `accept`/`narrow`, `repair/replay`, `block`). #1398 moved from
+`Accept narrowly` to `Accept` — a loosened claim ceiling inside one family,
+recorded as `No change` and never separately adjudicated. The record therefore
+supports only `no family-level regression among the adjudicated rows`, not a
+general absence of differential regression. #1372's label is likewise not
+reconstructable here: its stated gold rationale is an absent final-state replay,
+which the legend above defines as `Repair/replay` rather than `Block`.
+
+This is not a statistical generalization: the observed value was concentrated in
+cold-operability claims, and the universal-protocol hypothesis was rejected.
+
+## Cross-vendor review adjudication
+
+The different-vendor delegated review of commit
+`fc82b18690fa2334b7ef0113afa4a4612b95ab54` returned seven findings. The Chief
+Architect adjudication is:
+
+- **F1 accepted.** The predeclared wording was `decision corrections`; its
+  strict reading governs. #1383 is useful improvement but not a corrected
+  determinate decision, so the admission count is two and the bar fails.
+- **F2 accepted.** The evidence supports no family-level regression among the
+  adjudicated rows, not the broader no-regression claim.
+- **F3 and F6 accepted.** The corpus and keyword counts are corrected above.
+- **F4 accepted.** #1372's `Block` label is not reconstructable from the stated
+  legend; this weakens the decision evidence rather than changing the result.
+- **F5 accepted as a reproducibility limitation.** The unrecorded selection
+  predicate leaves #1440's exclusion unexplained.
+- **F7 accepted.** The frozen blind input's machine-local location makes the
+  comparison unverifiable from the durable target.
+
+The live validation paragraph added by the reviewed commit was therefore
+removed during adjudication. The directory router remains because this negative
+record has a distinct future consumer: it prevents the same insufficient case
+from being presented later as settled admission evidence.
 
 ## Frozen identities
 
@@ -132,13 +187,15 @@ the PR head later became the merge commit.
 | #1370 | `2b3b3d8798c37262744cf7d6a68bf77d784722e0` | `6cb2b48d71cf9bd123447f3919846eaa67952f684d16e9d941dae1fc790d81f5` |
 | #1353 | `8cebfc9c9ced50acad6afa7572c6a2e512eadcbd` | `de9bc708d4e276c0b347e68dd2ae40f40247302154460a77abd9ea1b5a61fdc3` |
 
-## Non-claims and reversal condition
+## Non-claims and upgrade condition
 
 This backtest does not validate a generic dogfood skill, require dogfood on
 ordinary implementation, prove that cold agents are always better reviewers,
 or make a blocked run successful. It does not claim that eight selected cases
-estimate a population effect.
+estimate a population effect or that the candidate signal is installed.
 
-Retire or narrow the signal if a later comparable sample shows fewer than
-three net decision corrections per eight cases, any repeated regression, or a
-lower-cost existing signal reliably catches the same four defects.
+Reconsider only with a preregistered, reproducible selection predicate,
+portable frozen inputs, determinate baseline actions, and at least three net
+gold-confirmed decision corrections per eight cases with no material
+within-family regression. Until then, use cold consumers only when explicitly
+commissioned for the current work unit, not as standing validation doctrine.
