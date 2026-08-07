@@ -781,7 +781,7 @@ def _understanding_route(tmp_path: Path) -> dict:
     adjudicated = _artifact(tmp_path, "serp_phase2_adjudicated_set.md")
     verification_return = _artifact(tmp_path, "verification_return.md")
     return {
-        "route_version": "1.2.0",
+        "route_version": "1.3.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -807,11 +807,15 @@ def _understanding_route(tmp_path: Path) -> dict:
                             {
                                 "origin_key": "reddit:elf-thread-1",
                                 "source_role": "reddit_community",
+                                "public_actor_key": "reddit:u/elf-comparer",
+                                "identity_overlap_posture": "no_match_observed",
                                 "evidence_refs": ["elf-reddit-thread-1"],
                             },
                             {
                                 "origin_key": "creator:elf-post-1",
                                 "source_role": "creator_authored",
+                                "public_actor_key": "youtube:@elf-reviewer",
+                                "identity_overlap_posture": "no_match_observed",
                                 "evidence_refs": ["elf-creator-post-1"],
                             },
                         ],
@@ -822,7 +826,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                         "Summer Fridays Lip Butter Balm 15 g"
                     ),
                     "competitor_product_identity": (
-                        "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                        "e.l.f. Glow Reviver Melting Lip Balm 0.52 oz"
                     ),
                     "claim_ceiling": (
                         "observed comparison context; not market share"
@@ -830,7 +834,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "portfolio_role": {
                         "scope": "product",
                         "assessed_identity": (
-                            "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                            "e.l.f. Glow Reviver Melting Lip Balm 0.52 oz"
                         ),
                         "status": "likely_major",
                         "basis": "multi_source_inference",
@@ -850,6 +854,37 @@ def _understanding_route(tmp_path: Path) -> dict:
                         }
                     ],
                     "shared_axis_ids": ["format", "price", "claim_language"],
+                    "competitive_choice_explanation": {
+                        "status": "observed",
+                        "summary": (
+                            "The lower-priced e.l.f. product competes on value, "
+                            "while observed comparison evidence can still favor "
+                            "Summer Fridays on wear and hydration."
+                        ),
+                        "axis_findings": [
+                            {
+                                "axis_id": "price",
+                                "choice_posture": "competitor_advantage",
+                                "why": (
+                                    "The observed e.l.f. sticker price is lower; "
+                                    "the different size units are not normalized."
+                                ),
+                                "conditions": [
+                                    "US prices observed at the same cutoff"
+                                ],
+                                "evidence_refs": ["sf-pdp", "elf-pdp"],
+                            }
+                        ],
+                        "final_comparator_role": "value_substitute",
+                        "role_rationale": (
+                            "It serves the same portable glossy-lip job with a "
+                            "materially lower observed sticker price."
+                        ),
+                        "role_evidence_refs": [
+                            "elf-reddit-thread-1",
+                            "elf-creator-post-1",
+                        ],
+                    },
                     "price_size_context": {
                         "status": "observed",
                         "normalization_posture": "not_directly_normalized",
@@ -867,7 +902,7 @@ def _understanding_route(tmp_path: Path) -> dict:
                         },
                         "competitor": {
                             "product_identity": (
-                                "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                                "e.l.f. Glow Reviver Melting Lip Balm 0.52 oz"
                             ),
                             "price_amount": 9.0,
                             "currency": "USD",
@@ -921,6 +956,8 @@ def _understanding_route(tmp_path: Path) -> dict:
                             {
                                 "origin_key": "reddit:rhode-thread-1",
                                 "source_role": "reddit_community",
+                                "public_actor_key": "reddit:u/rhode-comparer",
+                                "identity_overlap_posture": "no_match_observed",
                                 "evidence_refs": ["rhode-reddit-thread-1"],
                             }
                         ],
@@ -954,6 +991,23 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "position_gap_reason": (
                         "sampled sources exposed no stable ordered list"
                     ),
+                    "competitive_choice_explanation": {
+                        "status": "unresolved",
+                        "summary": (
+                            "The product fit is plausible, but the sampled run "
+                            "did not establish a stable customer choice pattern."
+                        ),
+                        "axis_findings": [],
+                        "final_comparator_role": "unresolved",
+                        "role_rationale": (
+                            "Only one independent comparison origin was confirmed."
+                        ),
+                        "role_evidence_refs": [],
+                        "gap_reason": (
+                            "A second source role and axis-level choice evidence "
+                            "were not captured."
+                        ),
+                    },
                     "lane_evidence": {
                         "co1_owned_ad_positioning": {
                             "status": "none_found",
@@ -3860,6 +3914,30 @@ def test_historical_route_1_1_retains_comparator_closure_obligations(
     assert "comparator_promoted_without_exact_identity:cand-elf" in findings
 
 
+def test_historical_route_1_2_does_not_owe_route_1_3_choice_or_identity_fields(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.2.0"
+    for candidate in seal["understanding_route"]["comparator_closure"][
+        "candidates"
+    ]:
+        candidate.pop("competitive_choice_explanation", None)
+        for origin in candidate["prefanout_qualification"][
+            "independent_comparison_origins"
+        ]:
+            origin.pop("public_actor_key", None)
+            origin.pop("identity_overlap_posture", None)
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert findings == []
+
+
 def test_historical_route_1_1_does_not_owe_route_1_2_obligations(
     tmp_path: Path,
 ) -> None:
@@ -4075,6 +4153,47 @@ def test_promoted_comparator_requires_shared_axes(tmp_path: Path) -> None:
     promoted["shared_axis_ids"] = []
 
     assert "promoted_comparator_without_shared_axes:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_material_candidate_requires_competitive_choice_explanation(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["competitive_choice_explanation"]
+
+    assert "missing_comparator_choice_explanation:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_choice_axis_requires_evidence_and_must_be_shared(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    choice = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]
+    choice["axis_findings"][0]["axis_id"] = "wear"
+    choice["axis_findings"][0]["evidence_refs"] = []
+
+    findings = _validate(tmp_path, seal)
+
+    assert "comparator_choice_axis_not_shared:cand-elf:wear" in findings
+    assert "missing_comparator_choice_axis_evidence:cand-elf" in findings
+
+
+def test_promoted_candidate_requires_observed_choice_explanation(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    choice = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]
+    choice["status"] = "partial"
+    choice["gap_reason"] = "one material condition remains unresolved"
+
+    assert "promoted_comparator_without_observed_choice:cand-elf" in _validate(
         tmp_path, seal
     )
 
@@ -4451,6 +4570,53 @@ def test_core_fanout_requires_two_distinct_source_roles(tmp_path: Path) -> None:
         "insufficient_comparator_prefanout_source_roles:cand-elf"
         in _validate(tmp_path, seal)
     )
+
+
+def test_same_public_actor_cannot_supply_two_prefanout_origins(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    origins = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"]
+    origins[1]["public_actor_key"] = " REDDIT:U/ELF-COMPARER "
+
+    findings = _validate(tmp_path, seal)
+
+    assert (
+        "duplicate_comparator_prefanout_public_actor_key:"
+        "cand-elf:reddit:u/elf-comparer" in findings
+    )
+    assert "insufficient_comparator_prefanout_origins:cand-elf" in findings
+
+
+def test_possible_identity_overlap_receives_no_independence_credit(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    origins = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"]
+    origins[1]["identity_overlap_posture"] = "possible_same_actor"
+
+    assert "insufficient_comparator_prefanout_origins:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_public_actor_key_is_required_for_route_1_3_origin(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    origin = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "prefanout_qualification"
+    ]["independent_comparison_origins"][0]
+    del origin["public_actor_key"]
+
+    findings = _validate(tmp_path, seal)
+
+    assert "missing_comparator_prefanout_public_actor_key:cand-elf" in findings
+    assert "insufficient_comparator_prefanout_origins:cand-elf" in findings
 
 
 def test_serp_surface_cannot_count_as_prefanout_confirmation(

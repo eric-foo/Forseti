@@ -862,6 +862,25 @@ decision through a typed new axis, tier, mechanism, segment/condition, behavior
 consequence, competitor destination, contradiction, sampling-risk, or
 competitive-action addition; reopen only affected and justified adjacent axes.
 
+For comparator candidates, treat SERP as the map and the fan-out lanes as the
+evidence acquisition. Before core fan-out, require the authority's two-origin,
+two-source-role bar plus its route-1.3.0 light public-identity de-duplication;
+different rows or handles do not prove different people when exact public
+identity evidence indicates overlap. For a core rival, capture the exact
+competing product across the selected comparable retailers and map only the
+relevant franchise far enough to establish its local portfolio role. Do not
+launch a second Phase A or a full rival-company assortment unless the bound
+question is brand/portfolio-level.
+
+After specialist returns, make the primary Phase 2 comparator output the
+evidence-only choice explanation: which exact product the observed evidence
+favors on each shared axis, why, and under which conditions. Derive the final
+comparator role only after that explanation. Keep owned/ad and campaign
+positioning evidence separate from customer evidence: what a brand emphasizes
+may explain context, but it is not proof that customers choose for that reason.
+Run targeted delta queries only for a named material gap left by the combined
+returns. Do not issue a recommendation, market conclusion, or Deliver output.
+
 Every material axis must be decision-mature through either strong evidence with
 a strong qualitative ceiling or route-bounded source exhaustion with a bounded
 observation ceiling. On that same axis row, write the compact
@@ -891,7 +910,12 @@ Before accepting the completed Phase A seal for synthesis or landing it, run the
 authority's final delegated semantic review-and-patch. Require the reviewer to
 read every decision-bearing reference in its source-native body and two
 independent spot checks per material axis; verify local subject anchoring,
-axis/role fit, competitor-event attribution, and genuine counterevidence. Use
+axis/role fit, competitor-event attribution, and genuine counterevidence. Also
+scan axis labels and decision-bearing prose for affordability, premium,
+worth-it, deal, cost-per-use, quantity, duration, and use-rate comparisons; if
+present, require both products' price/size context or an explicit unavailable
+or not-directly-normalized disposition. Never invent a conversion or infer
+equal value from sticker price. Use
 the authority's affected-axis-first escalation rule rather than defaulting to a
 full-corpus reread. Revalidate any bounded patch against the seal, and require
 separate Chief Architect adjudication before keeping it.
@@ -1418,7 +1442,9 @@ the board precedes the scout and cannot claim its results. During specialist
 fan-out, consume the SERP Phase 1 ledger rather than re-deriving comparators.
 For a completed Understanding report, consume the final Phase 2 consolidated
 ledger and decision receipt, including the provenance that shows which
-specialist finding caused each targeted query. Do not stop at the Phase 1
+specialist finding caused each targeted query. Lead with the axis-level
+competitive-choice explanation and its conditions; treat the terminal
+comparator role as the derived secondary field. Do not stop at the Phase 1
 ledger or rerun its discovery from memory. Carry each entry's type, ladder rung,
 and provenance, and ship rungs below finding-grade as `status: gap`. Comparator
 names must trace to a harvested surface or a typed gap — never to an unsourced

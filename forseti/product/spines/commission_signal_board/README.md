@@ -98,8 +98,9 @@ evidence-acquisition order:
 2. run or validly reuse the SERP Phase 1 competitor scout;
 3. feed its typed outputs into the `CO1`-`CO3` specialist fan-out, where `CO3`
    owns Reddit/community acquisition;
-4. wait for the specialist terminal returns, then run the targeted SERP Phase 2
-   return from their combined findings;
+4. wait for the specialist terminal returns, then use SERP Phase 2 to explain
+   the observed product choice by shared axis and condition, run only named
+   material delta probes, and derive the terminal comparator role afterward;
 5. write the Understanding seal only after the Phase 2 terminal result; a
    material Phase 2 block forces a blocked seal and forbids Deliver.
 

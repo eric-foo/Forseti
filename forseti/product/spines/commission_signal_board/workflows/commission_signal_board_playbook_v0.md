@@ -286,11 +286,13 @@ not spend a separate sacrificial query.
    (route `campaign_evidence_integration`, phase `campaign_integration`; see
    the route-1.1.0 subsection below), and then runs SERP Phase 2 from the
    combined findings, including the integration view's relationship-typed
-   creator-comparison emissions. Phase 2 owns
-   only the targeted SERP return and decision lifecycle — including
-   adjudicating the direct-competitor set from the specialist and integration
-   returns before the seal — and it does not repeat the
-   fan-out's native/community capture. First hash-pin the complete axis
+   creator-comparison emissions. Phase 2 owns only the targeted SERP return
+   and decision lifecycle. Its primary competitor output explains, axis by
+   axis, why the observed evidence favors the subject, the competitor, a
+   conditional split, or no conclusion; the final comparator role is derived
+   after that explanation. It does not repeat the fan-out's native/community
+   capture or produce a recommendation, market conclusion, or Deliver
+   artifact. First hash-pin the complete axis
    inventory. For each material consumer-brand axis, Phase 2 then runs one
    adaptive corroboration/segmentation goal, one comparison/switch/value goal,
    and one disconfirmation/strongest-delight goal. A concrete material source
@@ -592,7 +594,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.2.0"
+    route_version: "1.3.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -617,6 +619,8 @@ phase_acquisition_seal:
             independent_comparison_origins:
               - origin_key:
                 source_role: reddit_community | retailer_review | creator_authored | independent_editorial
+                public_actor_key:
+                identity_overlap_posture: no_match_observed | possible_same_actor | confirmed_same_actor | unavailable
                 evidence_refs: []
             gap_reason:
           disposition: promoted | rejected | watch_listed | role_bounded | explicit_gap
@@ -643,6 +647,19 @@ phase_acquisition_seal:
               evidence_refs: []
           position_gap_reason:
           shared_axis_ids: []
+          competitive_choice_explanation:
+            status: observed | partial | unresolved
+            summary:
+            axis_findings:
+              - axis_id:
+                choice_posture: subject_advantage | competitor_advantage | split_or_conditional | parity_or_unresolved
+                why:
+                conditions: []
+                evidence_refs: []
+            final_comparator_role: direct_peer | value_substitute | adjacent | unresolved | non_competitor
+            role_rationale:
+            role_evidence_refs: []
+            gap_reason:
           price_size_context:
             status: observed | partial | unavailable
             normalization_posture: same_unit | source_normalized | not_directly_normalized | unavailable
@@ -755,7 +772,10 @@ independent-origin credit and cluster rules, terminal comparator dispositions
 with exact-identity binding for promoted candidates and
 per-material-candidate lane evidence; at `1.2.0`, pre-fanout qualification for
 every Phase 1 frame candidate, including the core two-origin/two-source-role
-bar and the per-product identity-evidence and price/size shape;
+bar and the per-product identity-evidence and price/size shape; at `1.3.0`,
+light public-actor de-duplication for credited origins and an evidence-backed
+axis-level competitive-choice explanation whose terminal role is derived only
+after the explanation;
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -768,8 +788,13 @@ nothing a later version introduced.
 
 The mechanical price/size check is limited to material candidate rows whose
 `shared_axis_ids` contains `price`, `value`, `quantity`, or `cost`. Different
-axis labels and price/value language outside that shape remain semantic `CO0`
-review obligations and are not proven complete by validator pass.
+axis labels and price/value language outside that shape remain semantic review
+obligations and are not proven complete by validator pass. The final delegated
+semantic pass scans axis labels and prose for affordability, premium, worth-it,
+deal, cost-per-use, quantity, duration, and use-rate language; when detected it
+requires the same two-product price/size context or an explicit
+unavailable/not-directly-normalized disposition. It may flag missing context,
+but may not invent a conversion or infer equal value from sticker price.
 
 The v3 ledger uses schema `understanding_evidence_depth_v1` and profile
 `broad_company_understanding_v1`. It repeats the seal's subject and cycle ID;
@@ -907,8 +932,9 @@ Contracts"). Operating rules:
   `candidate_comparator_frame` (SERP Phase 1; provisional; scopes the
   `CO1`-`CO3` fan-out capsules and is never frozen),
   `adjudicated_comparator_set` (after specialist returns plus SERP Phase 2,
-  which adjudicates the direct-competitor set from those returns before the
-  seal), and `phase_a_competitor_context_closed` (at the seal: every material
+  which first explains the observed product choice by axis and only then
+  derives the terminal comparator role), and
+  `phase_a_competitor_context_closed` (at the seal: every material
   candidate `promoted | rejected | watch_listed | role_bounded | explicit_gap`;
   no candidate silently disappears). Every material candidate owes lane
   comparator evidence or a typed gap from CO2 (retailer/product with exact
@@ -947,9 +973,75 @@ Contracts"). Operating rules:
   means the same bounded competitor question and typed outcome for every frame
   row; it does not impose equal creator posts, customer rows, or a new creator
   parity gate.
+  Route 1.3.0 adds a light public-identity pass: each credited origin carries a
+  normalized source-visible actor key plus its overlap posture. Exact duplicate,
+  possible-same-actor, confirmed-same-actor, and unavailable identities cannot
+  jointly satisfy the two-origin bar. The semantic pass checks normalized
+  handles, profile URLs, and disclosed links/codes; it does not attempt a full
+  cross-platform identity graph.
+  For every material candidate, Phase 2 records an evidence-only
+  `competitive_choice_explanation`: the axis, which side the evidence favors or
+  whether it splits, why, conditions, and evidence references. The final role
+  is derived afterward. A promoted row requires an observed explanation; a
+  partial or unresolved row preserves its exact gap. This does not authorize a
+  recommendation, market conclusion, or Deliver work.
+  Serious competitor retailer work has two scopes, both inside this one Phase A:
+  the exact competing product receives full capture across the selected
+  comparable retailers (CO2 product/PDP state and separately typed CO3
+  review/Q&A evidence), while the relevant franchise receives a bounded
+  owned/retailer map sufficient to establish local portfolio role. A sibling
+  expands to full exact-product capture only if it could change that role or the
+  customer-choice explanation. A full rival-company assortment is commissioned
+  only for a brand/portfolio-level question; there is no percentage-of-focal
+  quota.
+  Observable brand positioning remains context. CO1 and campaign evidence show
+  what the brand and its messengers emphasize; customer evidence shows whether
+  people repeat, reject, or ignore it. Phase 2 may join those facts but never
+  relabel actor strategy as customer choice.
   When price or value is compared, both products' cited price and size units
   travel together; unequal or non-normalized units remain explicit, and a
   posture that licenses direct comparison cannot span two currencies.
+
+  **Summer Fridays dogfood grounding (historical evidence, not a current
+  competitor verdict).** The p11 Phase 1 ledger selected e.l.f. Glow Reviver
+  Melting Lip Balm and Rhode Peptide Lip Treatment after each appeared in two
+  fresh subject queries. It observed Summer Fridays Lip Butter Balm at USD 24
+  for 15 g, e.l.f. at USD 9 for 0.52 oz, and Rhode at USD 20 for 10 ml; the
+  Rhode comparison correctly remained unnormalized across mass and volume.
+  The same run's Phase 2 kept both brands watch-only because its admitted
+  evidence showed zero first-hand authors, threads, or venues. That was a sound
+  evidence result, but it did not yet explain customer choice.
+
+  The later p11r7 customer corpus shows why choice axes are more valuable than
+  the label alone. In thread `1t79b03`, comment `oq629l9`, a person who owned
+  both said they did not reach for e.l.f.; they described e.l.f. as thinner,
+  uneven in color, brief-wearing, and drying, while Summer Fridays wore about
+  an hour and left hydration for two to three hours. In thread `13aw1sp`,
+  comment `jjabq8d`, the writer preferred Ole Henriksen for the price because
+  Brown Sugar and Vanilla Beige wore off within half an hour while Ole lasted
+  hours and required little product. In `10vrvls`/`jc40g3l`, the writer
+  preferred Summer Fridays over Glossier on thickness and hydration. The Rhode
+  thread `13end3f` split: `jjqp1q2` preferred Rhode for shine and lasting,
+  while `jjrz9k4` preferred and repurchased Summer Fridays after dryness from
+  Rhode. These are sourced public observations, not population sentiment.
+
+  The focal retailer work also shows the difference between phase count and
+  retailer scope: the p11 Summer Fridays CO2 return captured 52 owned Shop All
+  rows, a complete 46-row Sephora brand grid with 44 exact non-bundle PDP
+  baselines, a 96-placement Amazon query window with 26 valid exact baselines,
+  and a blocked Space NK US route that rendered GBP. Under route 1.3.0, a core
+  e.l.f. comparison would not rerun a second Phase A or capture all e.l.f.
+  cosmetics. It would fully capture the exact Glow Reviver Melting Lip Balm
+  across the selected comparable retailers, then map only the relevant e.l.f.
+  lip franchise far enough to establish that product's local role. The
+  Phase 1 “premium anchor versus lower-price dupe surface” is positioning
+  context; the customer rows above test whether that context affects choice.
+
+  Source artifacts for this example:
+  `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/competitor_ledger.json`,
+  `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json`,
+  `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md`, and
+  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json`.
 - **Conditional product/claim verification** triggers only on
   reconciled product identity × material axis or contradiction × publicly
   verifiable unresolved claim. It is a conditional adjustment job, never
@@ -976,7 +1068,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.2.0
+  current_version: 1.3.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1044,6 +1136,29 @@ understanding_acquire_seal_route:
         migration/restart is recorded. New runs seal under 1.2.0. An authorized
         historical audit of a 1.1.0 seal enforces the full 1.1.0 obligation set
         and none of the 1.2.0 additions.
+    - version: 1.3.0
+      date: 2026-08-07
+      owning_change: Phase A competitive-choice evidence implementation (this change's PR)
+      changed_behavior: >
+        Keeps the existing SERP Phase 1 -> CO1/CO2/CO3 fan-out -> SERP Phase 2
+        order, but makes the Phase 2 primary comparator output an axis-level
+        explanation of why and under which observed conditions customers choose
+        either exact product; the terminal comparator role is derived afterward.
+        Core pre-fanout origins receive a light public-identity de-duplication
+        check. Serious rival retailer acquisition uses two scopes inside the
+        existing fan-out: full selected-retailer capture for the exact competing
+        product and a bounded relevant-franchise map. Observable brand
+        positioning remains a separate context input. The final semantic review
+        also detects price/value concepts that machine-visible axis names miss.
+      affected_gate: >
+        Acquisition seal: route 1.3.0 requires public-actor identity fields for
+        credited pre-fanout origins and a competitive_choice_explanation for
+        every material comparator candidate.
+      migration_note: >
+        A run started under 1.2.0 retains 1.2.0 unless an explicit
+        migration/restart is recorded. New runs seal under 1.3.0. An authorized
+        historical audit of a 1.2.0 seal enforces the full 1.2.0 obligation set
+        and none of the 1.3.0 additions.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and
@@ -1326,10 +1441,10 @@ gate above controls whether the Synthesize turn may begin.
     SERP return:
     `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`.
     Phase 2 derives each query from a named specialist or integration finding,
-    applies the decision lifecycle, adjudicates the direct-competitor set from
-    the lane returns before the seal, and returns the consolidated ledger,
-    decision receipt, provenance, and material blocks. It does not repeat
-    native capture.
+    applies the decision lifecycle, explains competitive choice by shared axis
+    from the lane returns, derives the terminal comparator role afterward, and
+    returns the consolidated ledger, decision receipt, provenance, and material
+    blocks. It does not repeat native capture or start Deliver.
 11. For an Intelligence Cycle, assemble the phase acquisition seal only after
     the Phase 2 terminal result and all owning Scanning/Capture work return. A
     typed acquisition failure remains visible and blocks synthesis when material;

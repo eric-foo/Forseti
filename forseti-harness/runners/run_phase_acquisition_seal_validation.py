@@ -225,18 +225,19 @@ MANDATORY_ROUTE_PHASES = {
 # playbook `understanding_acquire_seal_route`). Versioning started
 # 2026-08-07; seals sealed before that carry no stamped version and are
 # audited with --allow-preversion-route.
-UNDERSTANDING_ROUTE_VERSIONS = {"1.0.0", "1.1.0", "1.2.0"}
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.2.0"
+UNDERSTANDING_ROUTE_VERSIONS = {"1.0.0", "1.1.0", "1.2.0", "1.3.0"}
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.3.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 _CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
-_CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {"1.1.0", "1.2.0"}
+_CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {"1.1.0", "1.2.0", "1.3.0"}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
 # qualification and price/size context entered at 1.2.0 and are never
 # back-claimed onto an earlier stamped seal. 1.0.0 owes none of them.
-_ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {"1.1.0", "1.2.0"}
-_ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {"1.2.0"}
+_ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {"1.1.0", "1.2.0", "1.3.0"}
+_ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {"1.2.0", "1.3.0"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -289,6 +290,19 @@ _COMPARATOR_PREFANOUT_SOURCE_ROLES = {
     "retailer_review",
     "creator_authored",
     "independent_editorial",
+}
+_COMPARATOR_ACTOR_OVERLAP_POSTURES = {
+    "no_match_observed",
+    "possible_same_actor",
+    "confirmed_same_actor",
+    "unavailable",
+}
+_COMPARATOR_CHOICE_STATUSES = {"observed", "partial", "unresolved"}
+_COMPARATOR_CHOICE_POSTURES = {
+    "subject_advantage",
+    "competitor_advantage",
+    "split_or_conditional",
+    "parity_or_unresolved",
 }
 _COMPARATOR_PRICE_SIZE_STATUSES = {"observed", "partial", "unavailable"}
 _COMPARATOR_SIZE_NORMALIZATION_POSTURES = {
@@ -3918,6 +3932,7 @@ def _validate_comparator_prefanout_qualification(
     row: Mapping[str, Any],
     *,
     candidate_id: str,
+    route_version: str,
     findings: list[str],
 ) -> None:
     qualification = row.get("prefanout_qualification")
@@ -3973,6 +3988,10 @@ def _validate_comparator_prefanout_qualification(
     valid_origin_keys: set[str] = set()
     valid_source_roles: set[str] = set()
     credited_origin_evidence: set[str] = set()
+    public_actor_keys: set[str] = set()
+    identity_check_required = (
+        route_version in _ROUTE_REVISION_1_3_OBLIGATION_VERSIONS
+    )
     if not isinstance(origins, list):
         findings.append(f"invalid_comparator_prefanout_origins:{candidate_id}")
         origins = []
@@ -3981,7 +4000,8 @@ def _validate_comparator_prefanout_qualification(
             findings.append(f"invalid_comparator_prefanout_origin:{candidate_id}")
             continue
         origin_key = origin.get("origin_key")
-        if not isinstance(origin_key, str) or not origin_key:
+        valid_origin_key = isinstance(origin_key, str) and bool(origin_key)
+        if not valid_origin_key:
             findings.append(
                 f"missing_comparator_prefanout_origin_key:{candidate_id}"
             )
@@ -3992,12 +4012,55 @@ def _validate_comparator_prefanout_qualification(
         else:
             valid_origin_keys.add(origin_key)
         source_role = origin.get("source_role")
-        if not _is_enum_value(source_role, _COMPARATOR_PREFANOUT_SOURCE_ROLES):
+        valid_source_role = _is_enum_value(
+            source_role, _COMPARATOR_PREFANOUT_SOURCE_ROLES
+        )
+        if not valid_source_role:
             findings.append(
                 f"invalid_comparator_prefanout_source_role:{candidate_id}"
             )
-        else:
-            valid_source_roles.add(source_role)
+        identity_credited = True
+        if identity_check_required:
+            public_actor_key = origin.get("public_actor_key")
+            overlap_posture = origin.get("identity_overlap_posture")
+            normalized_actor_key = (
+                public_actor_key.strip().casefold()
+                if isinstance(public_actor_key, str)
+                else ""
+            )
+            valid_public_actor_key = (
+                bool(normalized_actor_key)
+                and normalized_actor_key != "unavailable"
+            )
+            if not isinstance(public_actor_key, str) or not public_actor_key:
+                findings.append(
+                    "missing_comparator_prefanout_public_actor_key:"
+                    + candidate_id
+                )
+            if not _is_enum_value(
+                overlap_posture, _COMPARATOR_ACTOR_OVERLAP_POSTURES
+            ):
+                findings.append(
+                    "invalid_comparator_prefanout_identity_overlap_posture:"
+                    + candidate_id
+                )
+                identity_credited = False
+            elif overlap_posture != "no_match_observed":
+                identity_credited = False
+            elif not valid_public_actor_key:
+                findings.append(
+                    "comparator_prefanout_identity_credit_without_actor_key:"
+                    + candidate_id
+                )
+                identity_credited = False
+            elif normalized_actor_key in public_actor_keys:
+                findings.append(
+                    "duplicate_comparator_prefanout_public_actor_key:"
+                    + f"{candidate_id}:{normalized_actor_key}"
+                )
+                identity_credited = False
+            else:
+                public_actor_keys.add(normalized_actor_key)
         evidence_refs = origin.get("evidence_refs")
         if (
             not isinstance(evidence_refs, list)
@@ -4019,7 +4082,12 @@ def _validate_comparator_prefanout_qualification(
                 "shared_comparator_prefanout_origin_evidence:"
                 + f"{candidate_id}:{','.join(sorted(shared))}"
             )
+            identity_credited = False
         credited_origin_evidence.update(evidence_refs)
+        if identity_credited and valid_origin_key and valid_source_role:
+            valid_source_roles.add(source_role)
+        elif identity_check_required and valid_origin_key:
+            valid_origin_keys.discard(origin_key)
 
     if posture == "core_fanout":
         for identity_key in (
@@ -4072,6 +4140,110 @@ def _validate_comparator_prefanout_qualification(
             findings.append(
                 f"invalid_comparator_prefanout_rejection_role:{candidate_id}"
             )
+
+
+def _validate_comparator_choice_explanation(
+    explanation: Any,
+    *,
+    candidate_id: str,
+    shared_axis_ids: Any,
+    promoted: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(explanation, dict):
+        findings.append(f"missing_comparator_choice_explanation:{candidate_id}")
+        return
+
+    status = explanation.get("status")
+    if not _is_enum_value(status, _COMPARATOR_CHOICE_STATUSES):
+        findings.append(f"invalid_comparator_choice_status:{candidate_id}")
+    summary = explanation.get("summary")
+    if not isinstance(summary, str) or not summary:
+        findings.append(f"missing_comparator_choice_summary:{candidate_id}")
+
+    final_role = explanation.get("final_comparator_role")
+    if not _is_enum_value(final_role, _COMPARATOR_PREFANOUT_ROLES):
+        findings.append(f"invalid_comparator_final_role:{candidate_id}")
+    role_rationale = explanation.get("role_rationale")
+    if not isinstance(role_rationale, str) or not role_rationale:
+        findings.append(f"missing_comparator_final_role_rationale:{candidate_id}")
+    role_refs = explanation.get("role_evidence_refs")
+    valid_role_refs = (
+        isinstance(role_refs, list)
+        and bool(role_refs)
+        and all(isinstance(ref, str) and ref for ref in role_refs)
+    )
+    if final_role != "unresolved" and not valid_role_refs:
+        findings.append(f"missing_comparator_final_role_evidence:{candidate_id}")
+
+    axis_findings = explanation.get("axis_findings")
+    if not isinstance(axis_findings, list):
+        findings.append(f"invalid_comparator_choice_axes:{candidate_id}")
+        axis_findings = []
+    if status == "observed" and not axis_findings:
+        findings.append(f"observed_comparator_choice_without_axes:{candidate_id}")
+    seen_axis_ids: set[str] = set()
+    shared_axis_set = (
+        {axis_id for axis_id in shared_axis_ids if isinstance(axis_id, str)}
+        if isinstance(shared_axis_ids, list)
+        else set()
+    )
+    for axis_row in axis_findings:
+        if not isinstance(axis_row, dict):
+            findings.append(f"invalid_comparator_choice_axis:{candidate_id}")
+            continue
+        axis_id = axis_row.get("axis_id")
+        if (
+            not isinstance(axis_id, str)
+            or not axis_id
+            or axis_id in seen_axis_ids
+        ):
+            findings.append(f"invalid_comparator_choice_axis_id:{candidate_id}")
+        else:
+            seen_axis_ids.add(axis_id)
+            if shared_axis_set and axis_id not in shared_axis_set:
+                findings.append(
+                    f"comparator_choice_axis_not_shared:{candidate_id}:{axis_id}"
+                )
+        if not _is_enum_value(
+            axis_row.get("choice_posture"), _COMPARATOR_CHOICE_POSTURES
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_posture:{candidate_id}"
+            )
+        if not isinstance(axis_row.get("why"), str) or not axis_row.get("why"):
+            findings.append(f"missing_comparator_choice_axis_why:{candidate_id}")
+        conditions = axis_row.get("conditions")
+        if not isinstance(conditions, list) or any(
+            not isinstance(condition, str) or not condition
+            for condition in conditions
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_conditions:{candidate_id}"
+            )
+        evidence_refs = axis_row.get("evidence_refs")
+        if (
+            not isinstance(evidence_refs, list)
+            or not evidence_refs
+            or any(not isinstance(ref, str) or not ref for ref in evidence_refs)
+        ):
+            findings.append(
+                f"missing_comparator_choice_axis_evidence:{candidate_id}"
+            )
+
+    if _is_enum_value(status, {"partial", "unresolved"}) and (
+        not isinstance(explanation.get("gap_reason"), str)
+        or not explanation.get("gap_reason")
+    ):
+        findings.append(f"comparator_choice_gap_without_reason:{candidate_id}")
+    if promoted and status != "observed":
+        findings.append(
+            f"promoted_comparator_without_observed_choice:{candidate_id}"
+        )
+    if promoted and _is_enum_value(
+        final_role, {"adjacent", "unresolved", "non_competitor"}
+    ):
+        findings.append(f"invalid_promoted_comparator_final_role:{candidate_id}")
 
 
 def _validate_comparator_price_size_context(
@@ -4253,6 +4425,7 @@ def _validate_comparator_closure(
             _validate_comparator_prefanout_qualification(
                 row,
                 candidate_id=candidate_id,
+                route_version=route_version,
                 findings=findings,
             )
         material = row.get("material")
@@ -4514,6 +4687,14 @@ def _validate_comparator_closure(
                 )
             ):
                 findings.append(f"invalid_comparator_shared_axes:{candidate_id}")
+            if route_version in _ROUTE_REVISION_1_3_OBLIGATION_VERSIONS:
+                _validate_comparator_choice_explanation(
+                    row.get("competitive_choice_explanation"),
+                    candidate_id=candidate_id,
+                    shared_axis_ids=shared_axis_ids,
+                    promoted=disposition == "promoted" or decision_ready,
+                    findings=findings,
+                )
             if (
                 route_version in _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS
                 and isinstance(shared_axis_ids, list)

@@ -305,6 +305,17 @@ against the acquisition seal and separately adjudicated by the Chief Architect.
 This semantic review catches valid-but-misattributed citations that mechanical
 shape and hash checks cannot.
 
+The same semantic pass scans decision-bearing axis labels and prose for a
+price, affordability, usable-quantity, or value comparison even when the
+machine-visible axis ID does not contain `price`, `value`, `quantity`, or
+`cost`. Signals include cheaper, premium, worth it, better deal, cost per use,
+more product, less product, lasts longer, and needing less product. When one is
+present, the reviewer verifies that both products carry the required
+`price_size_context`, or an explicit unavailable/not-directly-normalized
+disposition. This is a language-model semantic catch for missed concepts, not
+permission to invent a conversion, infer equal value from sticker price, or
+upgrade a validator pass into semantic proof.
+
 When an adjudicated re-derivation or semantic remediation proves that no
 subject-owned counterevidence survives on an axis, that axis records
 `counterevidence_absent_verified: true` in its decision usefulness beside
@@ -664,8 +675,10 @@ competitor lane is created:
    never frozen: complaint-, retailer-, creator-, and substitute-borne
    candidates remain discoverable during fan-out.
 2. `adjudicated_comparator_set` after specialist returns plus SERP Phase 2:
-   exact subject/product identities, comparator role, evidence origins,
-   price/size context where observed, directness posture, and claim ceiling.
+   exact subject/product identities, evidence origins, axis-level explanation
+   of why and under which observed conditions customers choose either product,
+   price/size context where observed, an evidence-derived terminal comparator
+   role, and claim ceiling.
 3. `phase_a_competitor_context_closed` at the acquisition seal: every
    material candidate is terminally dispositioned; no candidate silently
    disappears.
@@ -696,6 +709,20 @@ Route 1.2.0 does not add a creator-coverage parity gate. The creator-value
 assessment handoff tests whether the existing route changes any material
 judgment before a recurring creator obligation is considered.
 
+Route 1.3.0 adds one light public-identity check to the origins used for that
+core bar. Each origin records a source-visible `public_actor_key` (for example,
+a normalized platform handle, retailer reviewer ID, or publication/author
+key) and its posture relative to the other credited origins from
+`no_match_observed |
+possible_same_actor | confirmed_same_actor | unavailable`. Only
+`no_match_observed` with a non-placeholder key earns independence credit;
+duplicate keys, possible/confirmed overlap, and unavailable identity remain
+usable evidence but cannot together manufacture two independent origins.
+The semantic pass compares exact/normalized usernames, profile URLs, and
+source-visible disclosed links or codes. A display name alone can raise a
+possible overlap but cannot prove one. This is deliberately a light public
+check, not a complete cross-platform identity graph.
+
 For every material candidate, the existing lanes owe comparator evidence or a
 typed gap — never silence: `CO2` retailer/category adjacency and exact
 product identity (retailer co-placement alone is never directness proof);
@@ -710,6 +737,25 @@ An `observed` lane points to its evidence references. `None_found` and
 `blocked` are valid bounded outcomes only with a gap reason. Retailer reviews
 and Reddit/community observations are public customer-language samples, not
 representative sentiment or population polling.
+
+For a `core_fanout` competitor, retailer work has two scopes inside the same
+Phase A and the same `CO2`/`CO3` fan-out; it is not a separate rival Phase A:
+
+1. **Exact competing product** — capture the full selected,
+   comparable-retailer corpus for that product: exact PDP/product state in
+   `CO2` and the exposed retailer-review/Q&A corpus in the separate `CO3`
+   customer role. A blocked or unavailable selected retailer remains a typed
+   gap.
+2. **Relevant franchise** — map the source-visible sibling products and their
+   retailer/owned prominence only far enough to establish whether the exact
+   product is hero, likely major, supporting, or unclear. A sibling receives
+   full exact-product capture only when its observed role or customer-choice
+   evidence could change the comparison.
+
+A full rival-company assortment is not a standing third scope. It is licensed
+only when the bound question is itself brand/portfolio-level. This rule changes
+acquisition volume, not phase count. No percentage-of-focal quota substitutes
+for the evidence need.
 
 Each material candidate also binds an evidence-backed local portfolio-role
 assessment for the exact competitor product or named franchise:
@@ -726,6 +772,14 @@ does not establish portfolio role. A promoted direct competitor binds at least
 one shared axis so its stronger evidence is decision-comparable to the subject
 product rather than merely voluminous.
 
+Observable brand positioning is context, not the primary competitor verdict.
+`CO1` owned/ad evidence and relationship-typed campaign evidence show what each
+actor emphasizes; customer and retailer-review lanes show whether people
+repeat, reject, or ignore it. Phase 2 may use that context to explain an axis,
+but must not relabel actor strategy as customer choice. The highest-value
+comparator record therefore joins exact-product choice, franchise importance,
+and observable positioning without collapsing those evidence roles.
+
 When price parity, value, or usable quantity is compared, the cited observation
 must carry price, currency, size, unit, market, and observation time for both
 products, or state which element is unavailable. Different mass and volume
@@ -737,22 +791,33 @@ never equal quantity or equal value.
 The seal validator mechanically requests this context only on a material
 candidate whose `shared_axis_ids` contains `price`, `value`, `quantity`, or
 `cost`. Alternative axis names and price/value comparisons outside that
-machine-visible shape remain evidence-backed `CO0` judgment; validator pass
-does not prove that every semantic price comparison was detected.
+machine-visible shape are caught by the final semantic review described above;
+validator pass does not prove that every semantic price comparison was detected.
 
-SERP Phase 2 consolidates those lane emissions, runs only material
-targeted/J5 delta probes, and adjudicates the direct-competitor set from the
-specialist returns before the acquisition seal, under the existing SERP
-Phase 2 decision contract: a `promoted` (decision-ready) candidate requires
-both the exact subject product and the exact competitor product identity
-bound. The seal's comparator closure gives every frame or lane-emitted
-candidate one terminal disposition from
+SERP Phase 2 first consolidates the specialist and campaign-integration
+returns into an evidence-only `competitive_choice_explanation` for every
+material candidate. Its primary output is the axis-level answer: what observed
+evidence favors the subject, favors the competitor, splits by condition, or
+remains unresolved; why; under which conditions; and the exact evidence
+references. Only then does it derive the terminal comparator role from
+`direct_peer | value_substitute | adjacent | unresolved | non_competitor`.
+The role is a compact consequence of the explanation, not a substitute for it.
+
+Phase 2 runs targeted/J5 delta probes only for a named material gap left by the
+combined returns; it does not reacquire the fan-out corpus. A `promoted`
+(decision-ready) candidate requires both exact product identities and an
+`observed` choice explanation with at least one shared axis. `Partial` and
+`unresolved` records preserve their gap and cannot be promoted. The seal's
+comparator closure gives every frame or lane-emitted candidate one terminal
+disposition from
 `promoted | rejected | watch_listed | role_bounded | explicit_gap`.
 Watch/validate-once/parked decision outcomes map to `watch_listed`;
 harvest-junk and adjudicated non-competitors map to `rejected`;
 self-variants, mediators, and corroborative-only surfaces map to
 `role_bounded`; sub-finding-grade or unresolved candidates close as
-`explicit_gap`. Phase A promises decision-usable comparator context, never an
+`explicit_gap`. This remains acquisition evidence, not a recommendation,
+market conclusion, or Deliver artifact. Phase A promises decision-usable
+comparator context, never an
 exhaustive-direct-competitor claim, representative market sentiment, or
 rival-by-rival depth; a separate competitor commission is triggered only when
 a named downstream decision needs depth beyond the closed Phase A context.
@@ -809,7 +874,9 @@ template shows the field shapes. The seal validator enforces: known route
 version; the `campaign_evidence_integration` route accounting and
 `campaign_integration` phase at route 1.1.0 and later; at route 1.2.0,
 per-frame-candidate pre-fanout posture, open-comparator discovery references,
-and the core exact-identity/shared-job/two-origin/two-source-role bar; view schema/subject/cycle
+and the core exact-identity/shared-job/two-origin/two-source-role bar; at route
+1.3.0, public-actor identity de-duplication for credited origins and one
+axis-level competitive-choice explanation for every material candidate; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
@@ -830,7 +897,8 @@ both directions: the older seal still owes every obligation its own stamped
 version introduced — a `1.1.0` seal owes the full 1.1.0 accounting above, not
 only its campaign-integration row — and owes no obligation a later version
 introduced. Route 1.2.0's pre-fanout and price/size checks are therefore never
-back-claimed onto a `1.1.0` or `1.0.0` seal.
+back-claimed onto a `1.1.0` or `1.0.0` seal, and route 1.3.0's identity and
+choice-explanation fields are never back-claimed onto a 1.2.0 seal.
 
 ## Company Competitive-Intelligence Extension
 
