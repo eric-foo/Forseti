@@ -878,6 +878,14 @@ favors on each shared axis, why, and under which conditions. Derive the final
 comparator role only after that explanation. Keep owned/ad and campaign
 positioning evidence separate from customer evidence: what a brand emphasizes
 may explain context, but it is not proof that customers choose for that reason.
+For every axis finding, apply
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`:
+bind the exact proposition; preserve support posture, origin count, source
+roles, engagement, behavior, counterevidence, conflict, scope, and causal
+ceiling; do not let an isolated testimonial set an advantage; and keep mixed
+evidence split or conditional. A directly observed bounded fact may carry only
+that fact. Audience engagement is resonance corroboration, not an independent
+experience count.
 Run targeted delta queries only for a named material gap left by the combined
 returns. Do not issue a recommendation, market conclusion, or Deliver output.
 

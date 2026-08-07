@@ -304,6 +304,30 @@ _COMPARATOR_CHOICE_POSTURES = {
     "split_or_conditional",
     "parity_or_unresolved",
 }
+_INTELLIGENCE_CLAIM_SUPPORT_POSTURES = {
+    "isolated",
+    "directly_observed",
+    "resonance_supported",
+    "independently_repeated",
+    "cross_venue_corroborated",
+}
+_INTELLIGENCE_CLAIM_CONFLICT_POSTURES = {
+    "not_checked",
+    "none_observed",
+    "mixed",
+    "contradicted",
+}
+_INTELLIGENCE_CLAIM_SOURCE_ROLES = {
+    "owned_source",
+    "paid_ad",
+    "retailer_product",
+    "retailer_review",
+    "reddit_community",
+    "creator_authored",
+    "independent_editorial",
+    "direct_measurement",
+    "other_public_source",
+}
 _COMPARATOR_PRICE_SIZE_STATUSES = {"observed", "partial", "unavailable"}
 _COMPARATOR_SIZE_NORMALIZATION_POSTURES = {
     "same_unit",
@@ -4229,6 +4253,133 @@ def _validate_comparator_choice_explanation(
         ):
             findings.append(
                 f"missing_comparator_choice_axis_evidence:{candidate_id}"
+            )
+
+        claim_support = axis_row.get("claim_support")
+        if not isinstance(claim_support, dict):
+            findings.append(
+                f"missing_comparator_choice_axis_claim_support:{candidate_id}"
+            )
+            continue
+        bounded_proposition = claim_support.get("bounded_proposition")
+        if not isinstance(bounded_proposition, str) or not bounded_proposition:
+            findings.append(
+                f"missing_comparator_choice_axis_proposition:{candidate_id}"
+            )
+        support_posture = claim_support.get("support_posture")
+        if not _is_enum_value(
+            support_posture, _INTELLIGENCE_CLAIM_SUPPORT_POSTURES
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_support_posture:{candidate_id}"
+            )
+        independent_origin_count = claim_support.get("independent_origin_count")
+        if (
+            not isinstance(independent_origin_count, int)
+            or isinstance(independent_origin_count, bool)
+            or independent_origin_count < 1
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_origin_count:{candidate_id}"
+            )
+        source_roles = claim_support.get("source_roles")
+        valid_source_roles = (
+            isinstance(source_roles, list)
+            and bool(source_roles)
+            and all(
+                _is_enum_value(role, _INTELLIGENCE_CLAIM_SOURCE_ROLES)
+                for role in source_roles
+            )
+        )
+        if not valid_source_roles:
+            findings.append(
+                f"invalid_comparator_choice_axis_source_roles:{candidate_id}"
+            )
+
+        ref_fields: dict[str, list[str]] = {}
+        for field_name in (
+            "engagement_evidence_refs",
+            "behavior_evidence_refs",
+            "counterevidence_refs",
+        ):
+            refs = claim_support.get(field_name)
+            if not isinstance(refs, list) or any(
+                not isinstance(ref, str) or not ref for ref in refs
+            ):
+                findings.append(
+                    f"invalid_comparator_choice_axis_{field_name}:{candidate_id}"
+                )
+                ref_fields[field_name] = []
+            else:
+                ref_fields[field_name] = refs
+
+        conflict_posture = claim_support.get("conflict_posture")
+        if not _is_enum_value(
+            conflict_posture, _INTELLIGENCE_CLAIM_CONFLICT_POSTURES
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_conflict_posture:{candidate_id}"
+            )
+        causal_ceiling = claim_support.get("causal_ceiling")
+        if not isinstance(causal_ceiling, str) or not causal_ceiling:
+            findings.append(
+                f"missing_comparator_choice_axis_causal_ceiling:{candidate_id}"
+            )
+
+        choice_posture = axis_row.get("choice_posture")
+        directional_choice = choice_posture in {
+            "subject_advantage",
+            "competitor_advantage",
+        }
+        if support_posture == "isolated" and directional_choice:
+            findings.append(
+                f"isolated_comparator_choice_axis_direction:{candidate_id}"
+            )
+        if (
+            support_posture == "resonance_supported"
+            and not ref_fields.get("engagement_evidence_refs")
+        ):
+            findings.append(
+                f"resonant_comparator_choice_axis_without_engagement:{candidate_id}"
+            )
+        if support_posture in {
+            "independently_repeated",
+            "cross_venue_corroborated",
+        } and (
+            not isinstance(independent_origin_count, int)
+            or isinstance(independent_origin_count, bool)
+            or independent_origin_count < 2
+        ):
+            findings.append(
+                f"repeated_comparator_choice_axis_without_two_origins:{candidate_id}"
+            )
+        if (
+            support_posture == "cross_venue_corroborated"
+            and (not valid_source_roles or len(set(source_roles)) < 2)
+        ):
+            findings.append(
+                f"cross_venue_comparator_choice_axis_without_two_roles:{candidate_id}"
+            )
+        if conflict_posture in {"mixed", "contradicted"} and not ref_fields.get(
+            "counterevidence_refs"
+        ):
+            findings.append(
+                f"comparator_choice_axis_conflict_without_counterevidence:{candidate_id}"
+            )
+        if conflict_posture == "mixed" and choice_posture != "split_or_conditional":
+            findings.append(
+                f"mixed_comparator_choice_axis_not_split:{candidate_id}"
+            )
+        if (
+            conflict_posture == "contradicted"
+            and choice_posture != "parity_or_unresolved"
+        ):
+            findings.append(
+                f"contradicted_comparator_choice_axis_still_directional:{candidate_id}"
+            )
+        if conflict_posture == "not_checked" and status == "observed":
+            findings.append(
+                f"observed_comparator_choice_axis_without_conflict_check:{candidate_id}"
             )
 
     if _is_enum_value(status, {"partial", "unresolved"}) and (

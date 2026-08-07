@@ -803,6 +803,18 @@ references. Only then does it derive the terminal comparator role from
 `direct_peer | value_substitute | adjacent | unresolved | non_competitor`.
 The role is a compact consequence of the explanation, not a substitute for it.
 
+Each axis finding consumes the intelligence-cycle-wide contract at
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+The finding binds one bounded proposition and records its support posture,
+independent-origin count, source roles, engagement and behavior references,
+counterevidence, conflict posture, and causal ceiling. `Isolated` testimonial
+or interpretive evidence cannot set a directional advantage. A competent
+`directly_observed` trace may establish only its bounded descriptive fact.
+`Resonance_supported` requires source-native engagement evidence and may claim
+audience endorsement, never an independent-experience count. `Mixed` evidence
+must remain `split_or_conditional`, and an unchecked conflict posture cannot
+carry a directional finding.
+
 Phase 2 runs targeted/J5 delta probes only for a named material gap left by the
 combined returns; it does not reacquire the fan-out corpus. A `promoted`
 (decision-ready) candidate requires both exact product identities and an

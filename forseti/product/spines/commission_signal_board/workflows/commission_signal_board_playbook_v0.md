@@ -656,6 +656,16 @@ phase_acquisition_seal:
                 why:
                 conditions: []
                 evidence_refs: []
+                claim_support:
+                  bounded_proposition:
+                  support_posture: isolated | directly_observed | resonance_supported | independently_repeated | cross_venue_corroborated
+                  independent_origin_count:
+                  source_roles: []
+                  engagement_evidence_refs: []
+                  behavior_evidence_refs: []
+                  counterevidence_refs: []
+                  conflict_posture: not_checked | none_observed | mixed | contradicted
+                  causal_ceiling:
             final_comparator_role: direct_peer | value_substitute | adjacent | unresolved | non_competitor
             role_rationale:
             role_evidence_refs: []
@@ -985,6 +995,14 @@ Contracts"). Operating rules:
   is derived afterward. A promoted row requires an observed explanation; a
   partial or unresolved row preserves its exact gap. This does not authorize a
   recommendation, market conclusion, or Deliver work.
+  Every axis finding consumes
+  `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+  It binds one proposition and preserves its support posture, exact independent
+  origin count, source roles, engagement and behavior evidence, counterevidence,
+  conflict posture, conditions, and causal ceiling. An isolated testimonial
+  cannot set an advantage; a directly observed bounded fact may. Resonance
+  support requires source-native engagement evidence and never becomes an
+  independent-experience count. Mixed evidence stays split or conditional.
   Serious competitor retailer work has two scopes, both inside this one Phase A:
   the exact competing product receives full capture across the selected
   comparable retailers (CO2 product/PDP state and separately typed CO3
@@ -1012,18 +1030,18 @@ Contracts"). Operating rules:
   evidence showed zero first-hand authors, threads, or venues. That was a sound
   evidence result, but it did not yet explain customer choice.
 
-  The later p11r7 customer corpus shows why choice axes are more valuable than
-  the label alone. In thread `1t79b03`, comment `oq629l9`, a person who owned
-  both said they did not reach for e.l.f.; they described e.l.f. as thinner,
-  uneven in color, brief-wearing, and drying, while Summer Fridays wore about
-  an hour and left hydration for two to three hours. In thread `13aw1sp`,
-  comment `jjabq8d`, the writer preferred Ole Henriksen for the price because
-  Brown Sugar and Vanilla Beige wore off within half an hour while Ole lasted
-  hours and required little product. In `10vrvls`/`jc40g3l`, the writer
-  preferred Summer Fridays over Glossier on thickness and hydration. The Rhode
-  thread `13end3f` split: `jjqp1q2` preferred Rhode for shine and lasting,
-  while `jjrz9k4` preferred and repurchased Summer Fridays after dryness from
-  Rhode. These are sourced public observations, not population sentiment.
+  The later p11r7 customer corpus shows why claim-level support matters more
+  than a label or broad axis count. Fresh claim-support dogfood found the
+  Summer-Fridays-versus-e.l.f. hydration comparison independently repeated but
+  mixed: two low-engagement authors favored Summer Fridays and one favored
+  e.l.f. Three separate Reddit authors reported a wear/reapplication
+  disadvantage versus Ole Henriksen, which supports a repeated community
+  signal but not current-formula certainty or cross-venue corroboration. The
+  single one-point statement that bundled flavors, older formulas, shorter wear,
+  and continued buying remains isolated and cannot establish flavor as a
+  repurchase cause. The dated sticker-price comparison remains a bounded direct
+  observation. The full provenance and claim-support blocks are in
+  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/intelligence_claim_support_dogfood_20260807_v0.md`.
 
   The focal retailer work also shows the difference between phase count and
   retailer scope: the p11 Summer Fridays CO2 return captured 52 owned Shop All
@@ -1041,7 +1059,9 @@ Contracts"). Operating rules:
   `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/competitor_ledger.json`,
   `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json`,
   `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md`, and
-  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json`.
+  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json`, with the
+  claim-support adjudication in
+  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/intelligence_claim_support_dogfood_20260807_v0.md`.
 - **Conditional product/claim verification** triggers only on
   reconciled product identity × material axis or contradiction × publicly
   verifiable unresolved claim. It is a conditional adjustment job, never
@@ -1150,10 +1170,15 @@ understanding_acquire_seal_route:
         product and a bounded relevant-franchise map. Observable brand
         positioning remains a separate context input. The final semantic review
         also detects price/value concepts that machine-visible axis names miss.
+        Each axis finding consumes the intelligence-cycle claim-support contract
+        so an isolated comment, audience resonance, independent recurrence,
+        cross-venue corroboration, behavior, counterevidence, and causal ceiling
+        cannot be silently collapsed into one directional claim.
       affected_gate: >
         Acquisition seal: route 1.3.0 requires public-actor identity fields for
         credited pre-fanout origins and a competitive_choice_explanation for
-        every material comparator candidate.
+        every material comparator candidate; each axis finding carries and
+        satisfies the shared claim-support block.
       migration_note: >
         A run started under 1.2.0 retains 1.2.0 unless an explicit
         migration/restart is recorded. New runs seal under 1.3.0. An authorized

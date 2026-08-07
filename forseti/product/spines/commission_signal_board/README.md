@@ -14,6 +14,7 @@ open_next:
   - forseti/product/spines/commission_signal_board/spine.yaml
   - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
   - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+  - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
   - forseti/product/spines/commission_signal_board/migrations/moved_paths_index.md
 stale_if:
   - The Commission Signal Board spine is renamed, retired, or merged into another spine.
@@ -90,6 +91,12 @@ The two possible turns are:
    Understanding synthesis produces the decision-neutral company-intelligence
    substrate; Deliver synthesis produces the explicitly commissioned
    decision-bearing artifact under the Deliver decision-memorandum method.
+
+Both turns consume the shared intelligence claim-support contract before they
+turn evidence into a finding. Acquire & Seal preserves the support and conflict
+postures needed downstream; Synthesize and Deliver may not silently promote an
+isolated or resonance-only observation into independent recurrence,
+cross-venue corroboration, representative prevalence, or causation.
 
 Inside an Understanding Acquire & Seal turn, every company commission uses one
 evidence-acquisition order:

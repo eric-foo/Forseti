@@ -873,6 +873,21 @@ def _understanding_route(tmp_path: Path) -> dict:
                                     "US prices observed at the same cutoff"
                                 ],
                                 "evidence_refs": ["sf-pdp", "elf-pdp"],
+                                "claim_support": {
+                                    "bounded_proposition": (
+                                        "At the observed US cutoff, the e.l.f. "
+                                        "product had the lower sticker price; "
+                                        "different size units remain unnormalized."
+                                    ),
+                                    "support_posture": "directly_observed",
+                                    "independent_origin_count": 2,
+                                    "source_roles": ["owned_source"],
+                                    "engagement_evidence_refs": [],
+                                    "behavior_evidence_refs": [],
+                                    "counterevidence_refs": [],
+                                    "conflict_posture": "none_observed",
+                                    "causal_ceiling": "descriptive_only",
+                                },
                             }
                         ],
                         "final_comparator_role": "value_substitute",
@@ -4181,6 +4196,84 @@ def test_choice_axis_requires_evidence_and_must_be_shared(tmp_path: Path) -> Non
 
     assert "comparator_choice_axis_not_shared:cand-elf:wear" in findings
     assert "missing_comparator_choice_axis_evidence:cand-elf" in findings
+
+
+def test_isolated_choice_axis_cannot_claim_direction(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "isolated"
+    support["independent_origin_count"] = 1
+
+    assert "isolated_comparator_choice_axis_direction:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_resonance_support_requires_engagement_reference(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "resonance_supported"
+
+    assert "resonant_comparator_choice_axis_without_engagement:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_repeated_support_requires_two_independent_origins(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "independently_repeated"
+    support["independent_origin_count"] = 1
+
+    assert "repeated_comparator_choice_axis_without_two_origins:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_cross_venue_support_requires_two_source_roles(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["support_posture"] = "cross_venue_corroborated"
+
+    assert "cross_venue_comparator_choice_axis_without_two_roles:cand-elf" in _validate(
+        tmp_path, seal
+    )
+
+
+def test_mixed_support_requires_counterevidence_and_split_posture(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    axis = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]
+    axis["claim_support"]["conflict_posture"] = "mixed"
+
+    findings = _validate(tmp_path, seal)
+
+    assert "comparator_choice_axis_conflict_without_counterevidence:cand-elf" in findings
+    assert "mixed_comparator_choice_axis_not_split:cand-elf" in findings
+
+
+def test_observed_choice_axis_requires_conflict_check(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    support = seal["understanding_route"]["comparator_closure"]["candidates"][0][
+        "competitive_choice_explanation"
+    ]["axis_findings"][0]["claim_support"]
+    support["conflict_posture"] = "not_checked"
+
+    assert (
+        "observed_comparator_choice_axis_without_conflict_check:cand-elf"
+        in _validate(tmp_path, seal)
+    )
 
 
 def test_promoted_candidate_requires_observed_choice_explanation(
