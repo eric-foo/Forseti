@@ -581,7 +581,7 @@ source registry, forecast-target schema, and graph retrieval schema. Installing
 that bundle as authority would silently decide product, Judgment, Data Capture,
 and prompt-packaging questions that are not all settled.
 
-## Understanding Acquire & Seal Route Revision Contracts (Route 1.1.0)
+## Understanding Acquire & Seal Route Revision Contracts (Route 1.1.0+)
 
 These contracts bind the versioned company-Understanding route revision whose
 operating sequence, version block, and append-only changelog live in the CSB
@@ -670,6 +670,32 @@ competitor lane is created:
    material candidate is terminally dispositioned; no candidate silently
    disappears.
 
+Route 1.2.0 makes "sufficient to guide fan-out" falsifiable. Every Phase 1
+frame candidate carries a `prefanout_qualification` posture:
+`core_fanout | bounded_watch | rejected_before_fanout`, plus its comparator
+role from `direct_peer | value_substitute | adjacent | unresolved |
+non_competitor`. SERP is the discovery map, not confirmation. Every frame row
+points to the open-comparator SERP observation that surfaced it. A
+`core_fanout` candidate additionally binds both exact product identities, the
+shared customer job, exact-product identity evidence recorded separately for
+the subject and for the competitor from an owned page or exact PDP, and at
+least two independent comparison origins across at least two
+of these source roles: Reddit/community, retailer review, creator-authored, or
+independent editorial. Two rows from one origin, two origins from only one
+source role, and two origins that re-cite the same evidence unit under
+different keys do not meet the core bar. SERP snippets, retailer co-placement,
+owned comparison claims, and ad positioning never count as those independent
+comparison origins.
+
+Candidates that fit the product shape but do not meet that recurrence and
+source-role bar remain `bounded_watch` with the exact gap; obvious entity,
+format, or job mismatches close as `rejected_before_fanout`. This is bounded
+shortlist confirmation inside Phase 1, not a miniature competitor commission
+and not a second Phase A. Later lanes may still add or correct candidates.
+Route 1.2.0 does not add a creator-coverage parity gate. The creator-value
+assessment handoff tests whether the existing route changes any material
+judgment before a recurring creator obligation is considered.
+
 For every material candidate, the existing lanes owe comparator evidence or a
 typed gap — never silence: `CO2` retailer/category adjacency and exact
 product identity (retailer co-placement alone is never directness proof);
@@ -699,6 +725,20 @@ sales rank, market share, or cross-retailer league table. Review volume alone
 does not establish portfolio role. A promoted direct competitor binds at least
 one shared axis so its stronger evidence is decision-comparable to the subject
 product rather than merely voluminous.
+
+When price parity, value, or usable quantity is compared, the cited observation
+must carry price, currency, size, unit, market, and observation time for both
+products, or state which element is unavailable. Different mass and volume
+units remain `not_directly_normalized` unless a source-backed conversion is
+licensed, and a posture that licenses direct comparison (`same_unit` or
+`source_normalized`) cannot span two currencies. Equal sticker price alone is
+never equal quantity or equal value.
+
+The seal validator mechanically requests this context only on a material
+candidate whose `shared_axis_ids` contains `price`, `value`, `quantity`, or
+`cost`. Alternative axis names and price/value comparisons outside that
+machine-visible shape remain evidence-backed `CO0` judgment; validator pass
+does not prove that every semantic price comparison was detected.
 
 SERP Phase 2 consolidates those lane emissions, runs only material
 targeted/J5 delta probes, and adjudicates the direct-competitor set from the
@@ -767,7 +807,9 @@ The v3 seal's `understanding_route` block carries `route_version`,
 `verification_requests`, and `retailer_state_accounting`; the playbook's seal
 template shows the field shapes. The seal validator enforces: known route
 version; the `campaign_evidence_integration` route accounting and
-`campaign_integration` phase at route 1.1.0; view schema/subject/cycle
+`campaign_integration` phase at route 1.1.0 and later; at route 1.2.0,
+per-frame-candidate pre-fanout posture, open-comparator discovery references,
+and the core exact-identity/shared-job/two-origin/two-source-role bar; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
@@ -783,7 +825,12 @@ versioning began
 `--allow-preversion-route`; recording `1.0.0` retrospectively never claims it
 was historically stamped. A seal stamped with a known older route version (a
 recorded route retention) is likewise audit-only under the same switch and
-never satisfies the current route contract.
+never satisfies the current route contract. That audit is version-symmetric in
+both directions: the older seal still owes every obligation its own stamped
+version introduced — a `1.1.0` seal owes the full 1.1.0 accounting above, not
+only its campaign-integration row — and owes no obligation a later version
+introduced. Route 1.2.0's pre-fanout and price/size checks are therefore never
+back-claimed onto a `1.1.0` or `1.0.0` seal.
 
 ## Company Competitive-Intelligence Extension
 
