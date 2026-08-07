@@ -4276,6 +4276,53 @@ def test_observed_choice_axis_requires_conflict_check(tmp_path: Path) -> None:
     )
 
 
+def test_unchecked_conflict_cannot_carry_directional_axis_on_partial_choice(
+    tmp_path: Path,
+) -> None:
+    # `not_checked` caps a claim at an unresolved/provisional posture, so a
+    # non-promoted material row cannot publish a directional axis advantage on
+    # evidence never checked for opposition just because its explanation-level
+    # status is below `observed`.
+    seal = _blocked_seal(tmp_path)
+    choice = seal["understanding_route"]["comparator_closure"]["candidates"][1][
+        "competitive_choice_explanation"
+    ]
+    choice["axis_findings"] = [
+        {
+            "axis_id": "hydration",
+            "choice_posture": "competitor_advantage",
+            "why": "one dated observation favored the competitor",
+            "conditions": ["US observation cutoff"],
+            "evidence_refs": ["rhode-pdp"],
+            "claim_support": {
+                "bounded_proposition": (
+                    "At the observed cutoff the competitor exposed the "
+                    "stronger hydration claim."
+                ),
+                "support_posture": "directly_observed",
+                "independent_origin_count": 1,
+                "source_roles": ["retailer_product"],
+                "engagement_evidence_refs": [],
+                "behavior_evidence_refs": [],
+                "counterevidence_refs": [],
+                "conflict_posture": "not_checked",
+                "causal_ceiling": "descriptive_only",
+            },
+        }
+    ]
+
+    findings = _validate(tmp_path, seal)
+
+    assert (
+        "directional_comparator_choice_axis_without_conflict_check:cand-rhode"
+        in findings
+    )
+    assert (
+        "observed_comparator_choice_axis_without_conflict_check:cand-rhode"
+        not in findings
+    )
+
+
 def test_promoted_candidate_requires_observed_choice_explanation(
     tmp_path: Path,
 ) -> None:

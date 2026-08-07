@@ -4381,6 +4381,14 @@ def _validate_comparator_choice_explanation(
             findings.append(
                 f"observed_comparator_choice_axis_without_conflict_check:{candidate_id}"
             )
+        if conflict_posture == "not_checked" and directional_choice:
+            # `not_checked` caps a claim at an unresolved/provisional posture, so
+            # a partial or unresolved explanation cannot carry a directional axis
+            # advantage on evidence never checked for material opposition.
+            findings.append(
+                "directional_comparator_choice_axis_without_conflict_check:"
+                + candidate_id
+            )
 
     if _is_enum_value(status, {"partial", "unresolved"}) and (
         not isinstance(explanation.get("gap_reason"), str)

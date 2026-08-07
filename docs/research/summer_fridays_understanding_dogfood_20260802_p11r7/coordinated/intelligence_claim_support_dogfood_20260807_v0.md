@@ -22,16 +22,34 @@ stale_if:
 
 ## Boundary and method
 
-This is historical dogfood, not a current competitor verdict, market conclusion,
-sentiment estimate, or premiumization recommendation. It freshly read the coded
-rows and their preserved raw content records. The coded community rows retain
-thread/comment provenance and excerpts but do not carry engagement; engagement
-below was read from the source-native raw record named by the pinned manifest in
-the evidence-depth ledger.
+This is historical dogfood of four worked examples, not a corpus-wide
+adjudication, current competitor verdict, market conclusion, sentiment estimate,
+or premiumization recommendation. It freshly read the cited coded rows and their
+preserved raw content records. The coded community rows retain thread/comment
+provenance and excerpts but do not carry engagement; engagement below was read
+from the source-native raw record named by the pinned manifest in the
+evidence-depth ledger.
 
 Only rows that actually assert the bounded proposition count. Broad axis totals
 and regex-nominated rows do not corroborate a precise claim merely because they
 share an axis label.
+
+## Corpus context and selection receipt
+
+The sealed Phase A corpus is much larger than the evidence refs in these four
+examples: 577 source-native Reddit threads, 38,065 parsed comments, and 1,371
+coded community rows across all 577 threads. The coded set contains 116 thread
+bodies (`comment_id: post`) and 1,255 comments. The retailer lane separately
+contains 3,200 eligible text reviews across Amazon, Revolve, and Sephora; the
+native-social lane contains 36 posts from 23 creators. These counts describe the
+available corpus, not support for any one proposition.
+
+The examples below deliberately count only their cited, proposition-matched
+units. They do not claim that the cited independent-origin count is the total
+number of matching rows in the full corpus. A corpus-wide finding must screen
+the whole coded candidate set, record admitted and excluded candidates with
+reasons, include qualifying thread bodies, and reconcile retailer, creator,
+editorial, owned, and ad lanes before assigning its final support posture.
 
 ## Claim 1 — Summer Fridays versus e.l.f. hydration is mixed
 
@@ -57,7 +75,8 @@ claim_support:
   scope_conditions:
     - Reddit only
     - exact formula/version not established
-    - captured comments dated 2025-05-19 through 2026-06-07
+    - captured comments dated 2025-05-19 through 2026-06-06 UTC
+    - independent_origin_count covers this cited worked-example set, not every corpus match
   causal_ceiling: descriptive_repeated_reports_only
 ```
 
@@ -68,6 +87,16 @@ items earns material resonance credit alone. Together they establish recurrence
 and disagreement, so the only honest Phase A posture is
 `split_or_conditional`. The zero-point comment is not discarded; it contributes
 only because a separate author makes a similar comparison.
+
+Selection receipt: the coded corpus contains six hydration-coded rows whose
+text names both Summer Fridays and e.l.f.; three directly assert the exact
+two-product hydration comparison and are cited here. The other three are a
+generic category statement, a product-inventory fragment, and a broad lip-oil
+roundup. None of the six is a thread body. The focal retailer corpus contains
+hydration evidence but no exact Summer-Fridays-versus-e.l.f. hydration review.
+The acquired creator comparisons cover package/formula similarity, texture,
+shine, and price—not this hydration direction—so this example remains
+Reddit-only rather than cross-venue corroborated.
 
 Source URLs:
 
@@ -100,9 +129,10 @@ claim_support:
   conflict_posture: none_observed
   scope_conditions:
     - Reddit only
-    - comments span 2023-05-08 through 2026-02-10
+    - comments span 2023-05-08 through 2026-02-09 UTC
     - exact formula/version continuity is not established
     - one 2023 row names Brown Sugar and Vanilla Beige; later rows are broader
+    - independent_origin_count covers this cited worked-example set, not every corpus match
   causal_ceiling: descriptive_repeated_reports_only
 ```
 
@@ -114,6 +144,17 @@ the same exact Summer Fridays-versus-Ole proposition, product version, or
 direction. It therefore does not earn cross-venue credit here. A future
 retailer-review or competent editorial comparison must be read at source and
 matched to this proposition before promotion.
+
+Selection receipt: a broader text screen finds ten wear-coded community rows
+that name Summer Fridays and Ole Henriksen, including one thread body and nine
+comments. This worked example adjudicates three of them; it is not an exhaustive
+origin count. Several remaining rows are directionally relevant and require a
+full proposition pass, while others mention only Ole wear, compare a different
+Summer Fridays product, or make the wear comparison against another brand. The
+focal retailer corpus contains 184 wear/longevity mentions (8 Amazon, 6 Revolve,
+170 Sephora), but no captured review binds the exact Summer-Fridays-versus-Ole
+product, direction, and formula/time proposition. No acquired creator or
+editorial unit was found that closes that exact comparison.
 
 Source URLs:
 
@@ -154,6 +195,18 @@ from formula nostalgia and other plausible reasons; cross-venue recurrence
 would strengthen the reported-motivation claim but still would not prove
 population-level causation.
 
+The wider corpus is not empty on adjacent propositions. Eight Lip Butter Balm
+community rows combine scent/flavor with an explicit positive purchase or
+retention outcome. One (`197e9bf/ki1lc96`) explicitly says the author would skip
+an unscented lip oil and repurchase the scented balm, but it does not include the
+shorter-wear condition in this bounded proposition. A coded thread body
+(`1i2oqpt/post`) praises the smell but says the product did not nourish and was
+being panned before moving to Ole Henriksen. Revolve review `812944380` says the
+Birthday Duo smells sweet, has good texture, and would be repurchased; it bundles
+scent with texture and likewise says nothing about shorter wear. These sources
+are adjacent evidence, not corroboration of the exact causal trade-off claimed
+here.
+
 Source URL:
 
 - `https://old.reddit.com/r/LipBalm/comments/1tjqlg0/lets_chat_3_whats_your_biggest_problem_with_lip/`
@@ -168,7 +221,10 @@ claim_support:
   support_posture: directly_observed
   independent_origin_count: 2
   source_roles: [owned_source, retailer_product]
-  evidence_refs: [sf-pdp, elf-pdp]
+  evidence_refs:
+    - 01KYWMC8ZSWS6K6ZRZR3VVERWA#organic:4
+    - 01KYWMN6SF5QAM2QJ1HT9120T9#organic:5
+    - 01KYWMN6SF5QAM2QJ1HT9120T9#organic:6
   engagement_evidence_refs: []
   behavior_evidence_refs: []
   counterevidence_refs: []
@@ -185,6 +241,12 @@ This claim does not need customer likes or repeated testimony because the dated
 prices are the directly observed facts. It supports a lower observed sticker
 price, not superior value, willingness to switch, market positioning, margin,
 or premium permission.
+
+The first packet was captured on 2026-07-31 at 17:43:29 UTC and preserves the
+Summer Fridays official Lip Butter Balm result showing 15 g / 0.5 oz and USD 24.
+The second was captured at 17:48:22 UTC and preserves an e.l.f. official result
+showing USD 9 plus a Target result binding USD 9 to the 0.52 oz product. These
+packet-row refs replace the earlier unresolved `sf-pdp` / `elf-pdp` aliases.
 
 ## Dogfood verdict
 
