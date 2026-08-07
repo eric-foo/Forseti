@@ -1008,7 +1008,7 @@ understanding_acquire_seal_route:
         migration/restart is recorded. New runs seal under 1.1.0.
     - version: 1.2.0
       date: 2026-08-07
-      owning_change: Phase A pre-fanout comparator qualification hardening (PR pending)
+      owning_change: PR #1445 — Phase A pre-fanout comparator qualification hardening
       changed_behavior: >
         Keeps the 1.1.0 phase order and existing CO1-CO3 lanes, but makes the
         Phase 1 candidate frame decision-usable before fan-out. Every frame row
