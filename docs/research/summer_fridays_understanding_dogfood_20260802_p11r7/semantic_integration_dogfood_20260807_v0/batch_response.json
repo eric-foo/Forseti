@@ -1,12 +1,12 @@
 {
   "schema_version": "semantic_evidence_batch_response_v1",
-  "bundle_sha256": "4e0472ecd789bfb2a5c6c059ec62aec1935ce2a3ba252db88b38dee52531bd95",
+  "bundle_sha256": "11e36d2ceec5ab1a410fc7a7678a05d2d1b9037a442cfca8e7641cd8c0faab2e",
   "batch_id": "batch-0001",
   "evidence": [
     {
       "evidence_id": "reddit:1ft1w8d:lppwb5s",
       "disposition": "claim_bearing",
-      "disposition_reason": "The comment contains distinct scent, comfort, wear-time, and replacement meanings involving three named products.",
+      "disposition_reason": "The source-pinned context resolves 'These' to Lip Butter Balm; the body then contains distinct scent, comfort, wear-time, and replacement meanings and names the Ole Henriksen and Laneige comparisons.",
       "semantic_units": [
         {
           "semantic_unit_key": "sf-scent-positive",

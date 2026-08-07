@@ -10,9 +10,15 @@ scope: two admitted Summer Fridays Reddit evidence units; not a full-corpus conc
 
 ## Question
 
-Can the Route 1.4 workflow read customer language by meaning, preserve every
+Can the Route 1.5 workflow read customer language by meaning, preserve every
 distinct claim, and keep the exact compared product attached to the correct
 axis without a model-provider API?
+
+The first admitted comment begins with the ambiguous word "These." Its
+source row's recorded `product_context: "Lip Butter Balm"` supplies the missing
+product scope; the upstream product-candidate list alone is not treated as
+proof. The second comment names both products directly and carries the same
+recorded product context.
 
 This is a bounded implementation dogfood, not a refreshed Summer Fridays
 finding. It uses two already-captured Reddit comments to exercise the failure
@@ -39,6 +45,10 @@ The two evidence aliases are:
   Summer Fridays, and contrasts that with frequent Summer Fridays
   reapplication.
 
+Both cited source rows record `product_context: "Lip Butter Balm"`. Each v2
+context row cites the hash-pinned `p11r7-community-axis-coding` artifact; no
+thread title or free-standing analyst note is used as product-binding proof.
+
 The source does not expose public actor identity or engagement for these rows.
 The dogfood therefore uses one shared unavailable-actor independence key and
 gives neither row engagement credit. Two comments do not become two proven
@@ -50,15 +60,15 @@ The no-API file workflow completed all four stages:
 
 1. `prepare-batches` admitted 2 evidence units into 1 batch, with bundle
    SHA-256
-   `4e0472ecd789bfb2a5c6c059ec62aec1935ce2a3ba252db88b38dee52531bd95`
+   `11e36d2ceec5ab1a410fc7a7678a05d2d1b9037a442cfca8e7641cd8c0faab2e`
    and `model_api_calls: 0`.
 2. The agent batch response split the 2 source bodies into 10 semantic units.
 3. `submit-batches` produced compilation SHA-256
-   `05c3a54daac059f88d6caf230fed532919fd572b0cd94171419a52a27af484ed`
+   `decdc98145e517a7774710b58887137fa3d1ad624c86e903189d5f9d31cbe2a2`
    and `model_api_calls: 0`.
 4. `finalize` accounted for 2 of 2 admitted units, emitted 8 propositions,
    and wrote view SHA-256
-   `de847076a2374dd7ff1818dc1f65ba155cec9813fdce2ca51ecc2dd964b5154e`
+   `41b90d5b084d77bc483e870d44d2172159ba9187fb82ed2c47d8cdf1b47f3212`
    with `model_api_calls: 0`.
 
 The durable inputs, agent judgments, and compiled result are `source.json`,
@@ -69,6 +79,9 @@ directory.
 
 The compiled view kept the comparisons separate:
 
+- The ambiguous opening word "These" was bound to Summer Fridays Lip Butter
+  Balm from the pinned source row's recorded product context, not from the
+  candidate list alone. The regenerated agent disposition records that basis.
 - Summer Fridays comfort versus Ole Henriksen is one proposition on
   `texture_and_skin_finish`.
 - Summer Fridays wear time versus Laneige is a different proposition on
@@ -99,6 +112,6 @@ hashes. An agent still performs the meaning-based batch and reconciliation
 judgments from the generated file prompts. The runner neither calls a model
 provider nor pretends semantic judgment is deterministic software.
 
-The full future-run obligation is larger than this dogfood: Route 1.4 must feed
+The full future-run obligation is larger than this dogfood: Route 1.5 must feed
 the entire admitted claim-bearing Phase A corpus through the same accounting
 contract before a new seal can pass.

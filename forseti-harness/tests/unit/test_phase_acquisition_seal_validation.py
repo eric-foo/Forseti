@@ -7,10 +7,17 @@ from pathlib import Path
 import pytest
 import yaml
 
+from judgment.semantic_evidence_integration import (
+    METHOD_TEXT_V2,
+    METHOD_VERSION_V2,
+    _sha256,
+)
 from runners.run_phase_acquisition_seal_validation import (
     BROAD_UNDERSTANDING_PROFILE,
     CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     CONSUMER_DEPTH_LEDGER_VERSION,
+    CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256,
+    CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION,
     DEPTH_LEDGER_VERSION,
     LEGACY_SEAL_VERSION,
     PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
@@ -787,8 +794,10 @@ def _semantic_integration_view(
         "question_id": "phase-a-evidence-integration",
         "bundle_sha256": "2" * 64,
         "corpus_sha256": corpus_sha256,
-        "method_version": "semantic_evidence_integration_method_v1",
-        "method_sha256": "3" * 64,
+        "method_version": "semantic_evidence_integration_method_v2",
+        "method_sha256": (
+            "044e34d41f28c8a98baf0677d227703690b79765db63822808765e23778ed205"
+        ),
         "coverage": {
             "admitted_evidence_unit_count": 2,
             "accounted_evidence_unit_count": 2,
@@ -863,7 +872,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.4.0",
+        "route_version": "1.5.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -904,6 +913,8 @@ def _understanding_route(tmp_path: Path) -> dict:
                     },
                     "disposition": "promoted",
                     "decision_ready": True,
+                    "subject_product_id": "sf-lbb",
+                    "competitor_product_id": "elf-glow-reviver",
                     "subject_product_identity": (
                         "Summer Fridays Lip Butter Balm 15 g"
                     ),
@@ -1066,6 +1077,8 @@ def _understanding_route(tmp_path: Path) -> dict:
                     },
                     "disposition": "watch_listed",
                     "decision_ready": False,
+                    "subject_product_id": "sf-lbb",
+                    "competitor_product_id": "rhode-peptide-lip-treatment",
                     "subject_product_identity": (
                         "Summer Fridays Lip Butter Balm 15 g"
                     ),
@@ -4058,6 +4071,54 @@ def test_historical_route_1_3_does_not_owe_semantic_integration(
     assert not [finding for finding in findings if "semantic_integration" in finding]
 
 
+def test_historical_route_1_3_does_not_owe_stable_comparator_product_ids(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.3.0"
+    seal["understanding_route"].pop("semantic_evidence_integration")
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "semantic_evidence_integration"
+    ]
+    for candidate in seal["understanding_route"]["comparator_closure"]["candidates"]:
+        candidate.pop("subject_product_id", None)
+        candidate.pop("competitor_product_id", None)
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert not [finding for finding in findings if "comparator_product_id" in finding]
+
+
+def test_historical_route_1_4_retains_v1_method_and_owes_no_stable_product_ids(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.4.0"
+    for candidate in seal["understanding_route"]["comparator_closure"]["candidates"]:
+        candidate.pop("subject_product_id", None)
+        candidate.pop("competitor_product_id", None)
+
+    def mutate(view: dict) -> None:
+        view["method_version"] = "semantic_evidence_integration_method_v1"
+        view["method_sha256"] = "3" * 64
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert not [finding for finding in findings if "semantic_integration_method" in finding]
+    assert not [finding for finding in findings if "comparator_product_id" in finding]
+
+
 def test_semantic_integration_requires_complete_coverage(tmp_path: Path) -> None:
     seal = _blocked_seal(tmp_path)
 
@@ -4068,6 +4129,38 @@ def test_semantic_integration_requires_complete_coverage(tmp_path: Path) -> None
     _rewrite_semantic_view(tmp_path, seal, mutate)
 
     assert "incomplete_semantic_integration_coverage" in _validate(tmp_path, seal)
+
+
+def test_current_route_requires_context_aware_semantic_method(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["method_version"] = "semantic_evidence_integration_method_v1"
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "invalid_semantic_integration_method_version" in _validate(tmp_path, seal)
+
+
+def test_current_route_requires_exact_context_aware_method_hash(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["method_sha256"] = "3" * 64
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert "invalid_semantic_integration_method_hash" in _validate(tmp_path, seal)
+
+
+def test_pinned_current_semantic_method_matches_the_judgment_module() -> None:
+    # The seal gate pins the canonical method by literal version and digest,
+    # while the bundle stamps whatever the judgment module actually emits. Any
+    # edit to METHOD_TEXT_V2 that leaves this pin behind would reject every
+    # legitimately produced route-1.5.0 view, so the pin is bound here rather
+    # than restated as a third independent literal.
+    assert CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION == METHOD_VERSION_V2
+    assert CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 == _sha256(METHOD_TEXT_V2)
 
 
 def test_semantic_integration_rejects_incompetent_source_role(
@@ -4107,6 +4200,45 @@ def test_comparator_axis_must_resolve_semantic_proposition(tmp_path: Path) -> No
 
     assert (
         "unknown_comparator_choice_axis_proposition:cand-elf:prop-does-not-exist"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_material_comparator_requires_stable_product_ids(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["subject_product_id"]
+    del candidate["competitor_product_id"]
+
+    findings = _validate(tmp_path, seal)
+
+    assert "missing_comparator_product_id:cand-elf:subject" in findings
+    assert "missing_comparator_product_id:cand-elf:competitor" in findings
+
+
+def test_comparator_product_ids_must_be_distinct(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    candidate["competitor_product_id"] = candidate["subject_product_id"]
+
+    assert "duplicate_comparator_product_ids:cand-elf" in _validate(tmp_path, seal)
+
+
+def test_comparator_axis_proposition_must_bind_exact_candidate_products(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["propositions"][0]["comparator_product_ids"] = [
+            "rhode-peptide-lip-treatment"
+        ]
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert (
+        "comparator_choice_proposition_product_mismatch:"
+        "cand-elf:prop-sf-elf-price"
         in _validate(tmp_path, seal)
     )
 

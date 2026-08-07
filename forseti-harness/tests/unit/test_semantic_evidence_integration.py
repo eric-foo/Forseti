@@ -9,7 +9,12 @@ import pytest
 
 from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION,
+    BUNDLE_VERSION,
+    BUNDLE_VERSION_V2,
+    METHOD_VERSION,
+    METHOD_VERSION_V2,
     RECONCILIATION_RESPONSE_VERSION,
+    SOURCE_VERSION_V2,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
@@ -109,6 +114,29 @@ def _source() -> dict:
 
 def _bundle(*, max_batch_chars: int = 80_000) -> dict:
     return build_bundle(_source(), max_batch_chars=max_batch_chars)
+
+
+def _source_v2() -> dict:
+    source = deepcopy(_source())
+    source["schema_version"] = SOURCE_VERSION_V2
+    for unit in source["evidence_units"]:
+        unit["product_context"] = [
+            {
+                "context_type": "source_scope",
+                "source_artifact_id": unit["source_artifact_id"],
+                "text": "Summer Fridays Lip Butter Balm comparison corpus",
+                "source_ref": unit["source_ref"],
+            }
+        ]
+    source["evidence_units"][0]["product_context"] = [
+        {
+            "context_type": "thread_title",
+            "source_artifact_id": source["evidence_units"][0]["source_artifact_id"],
+            "text": "Summer Fridays Brown Sugar mini doesn't seem full",
+            "source_ref": source["evidence_units"][0]["source_ref"],
+        }
+    ]
+    return source
 
 
 def _batch_responses(bundle: dict) -> list[dict]:
@@ -278,6 +306,118 @@ def test_prompts_ask_for_meaning_and_account_for_every_alias() -> None:
     assert "read for meaning rather than exact wording" in normalized_prompt
     for unit in bundle["evidence_units"]:
         assert unit["evidence_id"] in prompts[0]["prompt"]
+
+
+def test_v2_prompts_bind_ambiguous_product_language_through_context() -> None:
+    bundle = build_bundle(_source_v2())
+    prompt = build_batch_prompts(bundle)[0]["prompt"]
+
+    assert bundle["schema_version"] == BUNDLE_VERSION_V2
+    assert bundle["method_version"] == METHOD_VERSION_V2
+    assert "Product candidates are hypotheses, never product truth" in prompt
+    assert "Summer Fridays Brown Sugar mini doesn't seem full" in prompt
+    assert '"context_type": "thread_title"' in prompt
+
+
+def test_legacy_source_remains_reproducible_as_v1() -> None:
+    bundle = build_bundle(_source())
+
+    assert bundle["schema_version"] == BUNDLE_VERSION
+    assert bundle["method_version"] == METHOD_VERSION
+
+
+@pytest.mark.parametrize(
+    "product_context",
+    [
+        None,
+        [],
+        [
+            {
+                "context_type": "unknown",
+                "source_artifact_id": "community-coding",
+                "text": "title",
+                "source_ref": "ref",
+            }
+        ],
+        [
+            {
+                "context_type": "thread_title",
+                "source_artifact_id": "community-coding",
+                "text": "",
+                "source_ref": "ref",
+            }
+        ],
+    ],
+)
+def test_v2_rejects_missing_or_malformed_product_context(product_context: object) -> None:
+    source = _source_v2()
+    source["evidence_units"][0]["product_context"] = product_context
+
+    with pytest.raises(SemanticIntegrationError, match="product_context"):
+        build_bundle(source)
+
+
+def test_v2_can_preserve_ambiguous_wrong_product_item_as_out_of_scope() -> None:
+    source = _source_v2()
+    unit = source["evidence_units"][0]
+    unit["text"] = "Does it have a plumping effect or a lip burney feel?"
+    unit["product_candidates"] = ["summer-fridays-lip-butter-balm"]
+    unit["product_context"] = [
+        {
+            "context_type": "parent_text",
+            "source_artifact_id": unit["source_artifact_id"],
+            "text": "Question and replies concern the Summer Fridays Lip Oil.",
+            "source_ref": unit["source_ref"],
+        }
+    ]
+    bundle = build_bundle(source)
+    responses = _batch_responses(bundle)
+    response_unit = next(
+        row
+        for response in responses
+        for row in response["evidence"]
+        if row["evidence_id"] == unit["evidence_id"]
+    )
+    response_unit.update(
+        {
+            "disposition": "out_of_scope",
+            "disposition_reason": "context binds the statement to Lip Oil, not Lip Butter Balm",
+            "semantic_units": [],
+        }
+    )
+
+    compiled = validate_batch_responses(bundle, responses)
+
+    assert next(
+        row
+        for row in compiled["evidence_dispositions"]
+        if row["evidence_id"] == unit["evidence_id"]
+    )["disposition"] == "out_of_scope"
+
+
+def test_v2_product_context_must_cite_a_pinned_source_artifact() -> None:
+    source = _source_v2()
+    source["evidence_units"][0]["product_context"][0][
+        "source_artifact_id"
+    ] = "not-pinned"
+
+    with pytest.raises(SemanticIntegrationError, match="unknown source artifact"):
+        build_bundle(source)
+
+
+def test_v1_rejects_unversioned_product_context() -> None:
+    source = _source()
+    source["evidence_units"][0]["product_context"] = [
+        {
+            "context_type": "source_scope",
+            "source_artifact_id": "community-coding",
+            "text": "Lip Butter Balm",
+            "source_ref": source["evidence_units"][0]["source_ref"],
+        }
+    ]
+
+    with pytest.raises(SemanticIntegrationError, match="v1 source"):
+        build_bundle(source)
 
 
 def test_real_sf_sentence_keeps_ole_comfort_separate_from_laneige_wear() -> None:

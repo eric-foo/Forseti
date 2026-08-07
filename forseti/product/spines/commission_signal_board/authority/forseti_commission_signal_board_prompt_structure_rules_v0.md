@@ -827,10 +827,23 @@ code alone accounts every alias, resolves source artifacts, de-duplicates
 origins, checks source-role competence, derives support posture, and writes
 `semantic_evidence_integration_view_v1`.
 
+Route 1.5.0 keeps the 1.4 closure job but requires
+`semantic_evidence_source_v2` and method v2.
+Every admitted unit carries surrounding product context that cites one of the
+bundle's hash-pinned source artifacts;
+`product_candidates` are search/coding hypotheses, never identity proof. The
+semantic pass binds an exact subject and comparator from the item plus its
+context or leaves the item unresolved/out of scope. Context may identify the
+product but may not be rephrased as though the evidence author made its
+claims.
+
 Current axes guide but do not cap discovery. A material emerging axis reopens
 only the affected work and invalidates the prior view; a nonmaterial candidate
-is explicitly dispositioned. Route-1.4 axis findings carry `proposition_refs`
-to the view. Any retained inline claim-support display is a mechanically
+is explicitly dispositioned. Route-1.4-and-later axis findings carry `proposition_refs`
+to the view. Each material comparator carries distinct stable
+`subject_product_id` and `competitor_product_id` values at route 1.5.0, and each referenced
+competitive-choice proposition must bind exactly those IDs in that
+orientation. Any retained inline claim-support display is a mechanically
 derived compatibility projection and never a second authority. A passing seal
 requires a current view whose admitted and accounted evidence counts match,
 no unresolved material evidence, and terminal dispositions for emerging axes.
@@ -912,7 +925,9 @@ and the core exact-identity/shared-job/two-origin/two-source-role bar; at route
 axis-level competitive-choice explanation for every material candidate; at
 route 1.4.0, a material terminal semantic-integration job, current hash-pinned
 view, exact evidence coverage, proposition-to-axis resolution, source-role
-competence, and material unresolved/emerging-axis closure; view schema/subject/cycle
+competence, and material unresolved/emerging-axis closure; at route 1.5.0,
+contextual semantic method v2, distinct stable product IDs for material
+comparators, and exact candidate-to-proposition product binding; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;
@@ -936,7 +951,8 @@ introduced. Route 1.2.0's pre-fanout and price/size checks are therefore never
 back-claimed onto a `1.1.0` or `1.0.0` seal, and route 1.3.0's identity and
 choice-explanation fields are never back-claimed onto a 1.2.0 seal. Route
 1.4.0's semantic-integration job and proposition references are never
-back-claimed onto a 1.3.0 seal.
+back-claimed onto a 1.3.0 seal, and 1.5.0's contextual product-binding
+requirements are never back-claimed onto a 1.4.0 seal.
 
 ## Company Competitive-Intelligence Extension
 

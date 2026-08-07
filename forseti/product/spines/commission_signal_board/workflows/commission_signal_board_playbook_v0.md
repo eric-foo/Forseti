@@ -602,7 +602,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.4.0"
+    route_version: "1.5.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -633,6 +633,8 @@ phase_acquisition_seal:
             gap_reason:
           disposition: promoted | rejected | watch_listed | role_bounded | explicit_gap
           decision_ready: true | false
+          subject_product_id:
+          competitor_product_id:
           subject_product_identity:
           competitor_product_identity:
           claim_ceiling:
@@ -807,7 +809,9 @@ axis-level competitive-choice explanation whose terminal role is derived only
 after the explanation; at `1.4.0`, a complete versioned semantic-integration
 view over the admitted claim-bearing corpus, proposition references on each
 material axis finding, source-role competence, counterevidence visibility, and
-artifact/hash binding;
+artifact/hash binding; at `1.5.0`, contextual semantic method v2, distinct
+stable product IDs for material comparators, and exact
+candidate-to-proposition product binding;
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -1110,7 +1114,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.4.0
+  current_version: 1.5.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1228,6 +1232,27 @@ understanding_acquire_seal_route:
         migration/restart is recorded. New runs seal under 1.4.0. An authorized
         historical audit of a 1.3.0 seal enforces the full 1.3.0 obligation set
         and none of the 1.4.0 additions.
+    - version: 1.5.0
+      date: 2026-08-07
+      owning_change: Phase A contextual product binding implementation (this change's PR)
+      changed_behavior: >
+        Keeps route 1.4's semantic evidence integration step and evidence
+        accounting, but requires every admitted unit to carry source-pinned
+        product context tied to a hash-pinned source artifact and makes
+        upstream product candidates hypotheses rather
+        than identity proof. Every material comparator also carries distinct
+        stable subject and competitor product IDs; a competitive-choice axis
+        may cite only propositions bound to that exact product pair in that
+        orientation.
+      affected_gate: >
+        Acquisition seal: route 1.5.0 requires context-aware semantic method v2
+        with its exact method hash, stable product IDs for material comparator
+        candidates, and exact candidate-to-proposition product binding.
+      migration_note: >
+        A run started under 1.4.0 retains 1.4.0 unless an explicit
+        migration/restart is recorded. New runs seal under 1.5.0. An authorized
+        historical audit of a 1.4.0 seal enforces the full 1.4.0 obligation set
+        and none of the 1.5.0 additions.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and
