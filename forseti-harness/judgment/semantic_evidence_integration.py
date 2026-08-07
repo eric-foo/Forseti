@@ -62,7 +62,6 @@ PRODUCT_CONTEXT_TYPES = {
     "product_page",
     "creator_post",
     "source_scope",
-    "other",
 }
 
 METHOD_TEXT = """SEMANTIC EVIDENCE INTEGRATION METHOD V1
@@ -179,7 +178,9 @@ def _validate_source_artifacts(rows: Any) -> list[dict[str, Any]]:
     return normalized
 
 
-def _validate_product_context(value: Any, *, evidence_id: str) -> list[dict[str, str]]:
+def _validate_product_context(
+    value: Any, *, evidence_id: str, artifact_ids: set[str]
+) -> list[dict[str, str]]:
     if not isinstance(value, list) or not value:
         raise SemanticIntegrationError(
             f"evidence {evidence_id} requires non-empty product_context"
@@ -195,6 +196,11 @@ def _validate_product_context(value: Any, *, evidence_id: str) -> list[dict[str,
             raise SemanticIntegrationError(
                 f"evidence {evidence_id} has invalid product_context type"
             )
+        source_artifact_id = row.get("source_artifact_id")
+        if source_artifact_id not in artifact_ids:
+            raise SemanticIntegrationError(
+                f"evidence {evidence_id} product_context cites unknown source artifact"
+            )
         if not _nonempty(row.get("text")) or not _nonempty(row.get("source_ref")):
             raise SemanticIntegrationError(
                 f"evidence {evidence_id} has incomplete product_context"
@@ -202,13 +208,19 @@ def _validate_product_context(value: Any, *, evidence_id: str) -> list[dict[str,
         normalized.append(
             {
                 "context_type": context_type,
+                "source_artifact_id": source_artifact_id,
                 "text": row["text"].strip(),
                 "source_ref": row["source_ref"].strip(),
             }
         )
     return sorted(
         normalized,
-        key=lambda row: (row["context_type"], row["source_ref"], row["text"]),
+        key=lambda row: (
+            row["source_artifact_id"],
+            row["context_type"],
+            row["source_ref"],
+            row["text"],
+        ),
     )
 
 
@@ -254,7 +266,13 @@ def _validate_evidence_units(
         normalized_row = dict(row)
         if require_product_context:
             normalized_row["product_context"] = _validate_product_context(
-                row.get("product_context"), evidence_id=evidence_id
+                row.get("product_context"),
+                evidence_id=evidence_id,
+                artifact_ids=artifact_ids,
+            )
+        elif "product_context" in row:
+            raise SemanticIntegrationError(
+                f"evidence {evidence_id} cannot carry product_context in a v1 source"
             )
         seen.add(evidence_id)
         normalized.append(normalized_row)

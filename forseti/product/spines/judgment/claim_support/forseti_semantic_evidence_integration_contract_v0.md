@@ -127,7 +127,9 @@ It remains reproducible for historical artifacts.
 
 `semantic_evidence_bundle_v2`, selected by
 `semantic_evidence_source_v2`, additionally requires at least one normalized,
-source-pinned `product_context` row for every admitted evidence unit and binds
+`product_context` row for every admitted evidence unit. Each row cites one of
+the bundle's hash-pinned `source_artifacts`; free-standing analyst context is
+not admissible. The bundle binds
 `semantic_evidence_integration_method_v2`. The v2 method treats product
 candidates as hypotheses and fails closed when text plus context cannot bind
 the exact product. A v1 bundle cannot satisfy a new route-1.5.0 seal.

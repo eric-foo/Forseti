@@ -34,8 +34,9 @@
       "text": "These smell good and more comfortable than ole henriksen and lasts longer on lips than laneige glowy but i find it to dissopear still too quickly :/ I used to use vanilla religiously but found better lip treatments.",
       "product_context": [
         {
-          "context_type": "thread_title",
-          "text": "Summer Fridays Brown Sugar mini doesn't seem full",
+          "context_type": "source_scope",
+          "source_artifact_id": "p11r7-community-axis-coding",
+          "text": "Lip Butter Balm",
           "source_ref": "https://www.reddit.com/r/Sephora/comments/1ft1w8d/summer_fridays_brown_sugar_mini_doesnt_seem_full/"
         }
       ],
@@ -64,8 +65,9 @@
       "text": "Laneige!!!! It's my daily driver! It's buttery smooth and not to thick or thin and lasts longer than summer Fridays imo. SF didn't do anything for me and felt like it had to constantly reapply.",
       "product_context": [
         {
-          "context_type": "thread_title",
-          "text": "Summer Fridays Lip Butter Balm vs Laneige Lip Glowy Balm",
+          "context_type": "source_scope",
+          "source_artifact_id": "p11r7-community-axis-coding",
+          "text": "Lip Butter Balm",
           "source_ref": "https://old.reddit.com/r/Sephora/comments/1h0wfao/summer_fridays_lip_butter_balm_vs_laneige_lip/"
         }
       ],

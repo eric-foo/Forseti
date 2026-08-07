@@ -123,6 +123,7 @@ def _source_v2() -> dict:
         unit["product_context"] = [
             {
                 "context_type": "source_scope",
+                "source_artifact_id": unit["source_artifact_id"],
                 "text": "Summer Fridays Lip Butter Balm comparison corpus",
                 "source_ref": unit["source_ref"],
             }
@@ -130,6 +131,7 @@ def _source_v2() -> dict:
     source["evidence_units"][0]["product_context"] = [
         {
             "context_type": "thread_title",
+            "source_artifact_id": source["evidence_units"][0]["source_artifact_id"],
             "text": "Summer Fridays Brown Sugar mini doesn't seem full",
             "source_ref": source["evidence_units"][0]["source_ref"],
         }
@@ -329,8 +331,22 @@ def test_legacy_source_remains_reproducible_as_v1() -> None:
     [
         None,
         [],
-        [{"context_type": "unknown", "text": "title", "source_ref": "ref"}],
-        [{"context_type": "thread_title", "text": "", "source_ref": "ref"}],
+        [
+            {
+                "context_type": "unknown",
+                "source_artifact_id": "community-coding",
+                "text": "title",
+                "source_ref": "ref",
+            }
+        ],
+        [
+            {
+                "context_type": "thread_title",
+                "source_artifact_id": "community-coding",
+                "text": "",
+                "source_ref": "ref",
+            }
+        ],
     ],
 )
 def test_v2_rejects_missing_or_malformed_product_context(product_context: object) -> None:
@@ -349,6 +365,7 @@ def test_v2_can_preserve_ambiguous_wrong_product_item_as_out_of_scope() -> None:
     unit["product_context"] = [
         {
             "context_type": "parent_text",
+            "source_artifact_id": unit["source_artifact_id"],
             "text": "Question and replies concern the Summer Fridays Lip Oil.",
             "source_ref": unit["source_ref"],
         }
@@ -376,6 +393,31 @@ def test_v2_can_preserve_ambiguous_wrong_product_item_as_out_of_scope() -> None:
         for row in compiled["evidence_dispositions"]
         if row["evidence_id"] == unit["evidence_id"]
     )["disposition"] == "out_of_scope"
+
+
+def test_v2_product_context_must_cite_a_pinned_source_artifact() -> None:
+    source = _source_v2()
+    source["evidence_units"][0]["product_context"][0][
+        "source_artifact_id"
+    ] = "not-pinned"
+
+    with pytest.raises(SemanticIntegrationError, match="unknown source artifact"):
+        build_bundle(source)
+
+
+def test_v1_rejects_unversioned_product_context() -> None:
+    source = _source()
+    source["evidence_units"][0]["product_context"] = [
+        {
+            "context_type": "source_scope",
+            "source_artifact_id": "community-coding",
+            "text": "Lip Butter Balm",
+            "source_ref": source["evidence_units"][0]["source_ref"],
+        }
+    ]
+
+    with pytest.raises(SemanticIntegrationError, match="v1 source"):
+        build_bundle(source)
 
 
 def test_real_sf_sentence_keeps_ole_comfort_separate_from_laneige_wear() -> None:

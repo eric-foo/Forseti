@@ -829,7 +829,8 @@ origins, checks source-role competence, derives support posture, and writes
 
 Route 1.5.0 keeps the 1.4 closure job but requires
 `semantic_evidence_source_v2` and method v2.
-Every admitted unit carries source-pinned surrounding product context;
+Every admitted unit carries surrounding product context that cites one of the
+bundle's hash-pinned source artifacts;
 `product_candidates` are search/coding hypotheses, never identity proof. The
 semantic pass binds an exact subject and comparator from the item plus its
 context or leaves the item unresolved/out of scope. Context may identify the

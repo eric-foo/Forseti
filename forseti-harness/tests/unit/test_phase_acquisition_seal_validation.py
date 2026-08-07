@@ -7,10 +7,17 @@ from pathlib import Path
 import pytest
 import yaml
 
+from judgment.semantic_evidence_integration import (
+    METHOD_TEXT_V2,
+    METHOD_VERSION_V2,
+    _sha256,
+)
 from runners.run_phase_acquisition_seal_validation import (
     BROAD_UNDERSTANDING_PROFILE,
     CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     CONSUMER_DEPTH_LEDGER_VERSION,
+    CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256,
+    CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION,
     DEPTH_LEDGER_VERSION,
     LEGACY_SEAL_VERSION,
     PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
@@ -4144,6 +4151,16 @@ def test_current_route_requires_exact_context_aware_method_hash(tmp_path: Path) 
     _rewrite_semantic_view(tmp_path, seal, mutate)
 
     assert "invalid_semantic_integration_method_hash" in _validate(tmp_path, seal)
+
+
+def test_pinned_current_semantic_method_matches_the_judgment_module() -> None:
+    # The seal gate pins the canonical method by literal version and digest,
+    # while the bundle stamps whatever the judgment module actually emits. Any
+    # edit to METHOD_TEXT_V2 that leaves this pin behind would reject every
+    # legitimately produced route-1.5.0 view, so the pin is bound here rather
+    # than restated as a third independent literal.
+    assert CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION == METHOD_VERSION_V2
+    assert CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 == _sha256(METHOD_TEXT_V2)
 
 
 def test_semantic_integration_rejects_incompetent_source_role(

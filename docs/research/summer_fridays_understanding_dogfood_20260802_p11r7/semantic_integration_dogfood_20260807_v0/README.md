@@ -15,10 +15,10 @@ distinct claim, and keep the exact compared product attached to the correct
 axis without a model-provider API?
 
 The first admitted comment begins with the ambiguous word "These." Its
-source-pinned thread title supplies the missing Summer Fridays product context;
-the upstream product-candidate list alone is not treated as proof. The second
-comment names both products directly and carries its comparison-thread title
-as corroborating context.
+source row's recorded `product_context: "Lip Butter Balm"` supplies the missing
+product scope; the upstream product-candidate list alone is not treated as
+proof. The second comment names both products directly and carries the same
+recorded product context.
 
 This is a bounded implementation dogfood, not a refreshed Summer Fridays
 finding. It uses two already-captured Reddit comments to exercise the failure
@@ -45,6 +45,10 @@ The two evidence aliases are:
   Summer Fridays, and contrasts that with frequent Summer Fridays
   reapplication.
 
+Both cited source rows record `product_context: "Lip Butter Balm"`. Each v2
+context row cites the hash-pinned `p11r7-community-axis-coding` artifact; no
+thread title or free-standing analyst note is used as product-binding proof.
+
 The source does not expose public actor identity or engagement for these rows.
 The dogfood therefore uses one shared unavailable-actor independence key and
 gives neither row engagement credit. Two comments do not become two proven
@@ -56,15 +60,15 @@ The no-API file workflow completed all four stages:
 
 1. `prepare-batches` admitted 2 evidence units into 1 batch, with bundle
    SHA-256
-   `62e934375122dd7f460769f4c9ff20878153327f739ee89ca3b0e79c8f372453`
+   `11e36d2ceec5ab1a410fc7a7678a05d2d1b9037a442cfca8e7641cd8c0faab2e`
    and `model_api_calls: 0`.
 2. The agent batch response split the 2 source bodies into 10 semantic units.
 3. `submit-batches` produced compilation SHA-256
-   `460963cac21243f2fffc33feae0c3dfbcf8449d84b581f4c7feb657fcf7e2f51`
+   `decdc98145e517a7774710b58887137fa3d1ad624c86e903189d5f9d31cbe2a2`
    and `model_api_calls: 0`.
 4. `finalize` accounted for 2 of 2 admitted units, emitted 8 propositions,
    and wrote view SHA-256
-   `c36df1ece16df513fa2e57e6ae9d0870cec3f9bf277a7dbd3403f6a750cfec63`
+   `41b90d5b084d77bc483e870d44d2172159ba9187fb82ed2c47d8cdf1b47f3212`
    with `model_api_calls: 0`.
 
 The durable inputs, agent judgments, and compiled result are `source.json`,
@@ -76,7 +80,8 @@ directory.
 The compiled view kept the comparisons separate:
 
 - The ambiguous opening word "These" was bound to Summer Fridays Lip Butter
-  Balm from its source-pinned thread title, not from the candidate list alone.
+  Balm from the pinned source row's recorded product context, not from the
+  candidate list alone. The regenerated agent disposition records that basis.
 - Summer Fridays comfort versus Ole Henriksen is one proposition on
   `texture_and_skin_finish`.
 - Summer Fridays wear time versus Laneige is a different proposition on

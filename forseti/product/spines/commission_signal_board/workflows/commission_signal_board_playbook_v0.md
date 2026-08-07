@@ -1238,7 +1238,8 @@ understanding_acquire_seal_route:
       changed_behavior: >
         Keeps route 1.4's semantic evidence integration step and evidence
         accounting, but requires every admitted unit to carry source-pinned
-        product context and makes upstream product candidates hypotheses rather
+        product context tied to a hash-pinned source artifact and makes
+        upstream product candidates hypotheses rather
         than identity proof. Every material comparator also carries distinct
         stable subject and competitor product IDs; a competitive-choice axis
         may cite only propositions bound to that exact product pair in that
