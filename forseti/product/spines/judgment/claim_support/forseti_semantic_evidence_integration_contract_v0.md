@@ -70,6 +70,14 @@ Deterministic code owns:
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
 
+Upstream `product_candidates` are hypotheses, not product truth. For the
+current method, every admitted item also carries source-pinned product context
+such as a thread title, parent text, post text, product page, creator post, or
+source scope. The agent may bind an exact product only from the evidence text
+together with that context. Context establishes what the item is about; it
+does not donate unstated claims to the item's author. If the binding remains
+unclear, the item stays `unresolved` or `out_of_scope`.
+
 ## Admitted evidence and completeness
 
 Completeness is bounded to the run's declared admitted evidence set. It never
@@ -115,6 +123,14 @@ not a second authority, and must not diverge from the referenced proposition.
 `semantic_evidence_bundle_v1` binds the cycle/question, current axes,
 hash-pinned source artifacts, admitted normalized evidence units, source-family
 denominators, method hash, stable batches, corpus hash, and bundle hash.
+It remains reproducible for historical artifacts.
+
+`semantic_evidence_bundle_v2`, selected by
+`semantic_evidence_source_v2`, additionally requires at least one normalized,
+source-pinned `product_context` row for every admitted evidence unit and binds
+`semantic_evidence_integration_method_v2`. The v2 method treats product
+candidates as hypotheses and fails closed when text plus context cannot bind
+the exact product. A v1 bundle cannot satisfy a new route-1.5.0 seal.
 
 `semantic_evidence_batch_response_v1` is agent-authored. It accounts for every
 alias and emits zero or more meaning units with precise subject, comparator,
@@ -145,14 +161,18 @@ accepts it.
 
 ## Failure and seal posture
 
-A passing route-1.4.0 acquisition seal requires:
+A passing route-1.5.0 acquisition seal requires:
 
 - a material, terminal `semantic_evidence_integration` route job;
 - a completed integration block and resolvable hash-pinned view;
 - exact bundle/corpus/method/view hashes;
+- `semantic_evidence_integration_method_v2` for a newly sealed route;
 - equal admitted and accounted counts with `complete: true`;
 - no unresolved material evidence;
 - every proposition reference resolved on the axis that cites it;
+- every material comparator carries distinct stable subject and competitor
+  product IDs, and every cited competitive-choice proposition binds exactly
+  those two IDs in that orientation;
 - every emerging axis terminally dispositioned; and
 - no impossible source-role, independence, repetition, cross-venue, conflict,
   or causal combination.
@@ -166,3 +186,6 @@ the seal. A changed corpus always requires a new view.
 This contract enters the Understanding Acquire & Seal route at `1.4.0`.
 Historical `1.3.0` and earlier seals retain exactly their stamped obligations
 and are never rewritten or restamped to claim semantic-integration coverage.
+The context-aware method and stable comparator product-ID requirements enter at
+`1.5.0`; a historical `1.4.0` seal retains its original v1 method obligation
+and never owes the 1.5.0 additions.

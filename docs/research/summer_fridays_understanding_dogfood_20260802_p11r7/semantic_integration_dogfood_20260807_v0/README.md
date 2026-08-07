@@ -10,9 +10,15 @@ scope: two admitted Summer Fridays Reddit evidence units; not a full-corpus conc
 
 ## Question
 
-Can the Route 1.4 workflow read customer language by meaning, preserve every
+Can the Route 1.5 workflow read customer language by meaning, preserve every
 distinct claim, and keep the exact compared product attached to the correct
 axis without a model-provider API?
+
+The first admitted comment begins with the ambiguous word "These." Its
+source-pinned thread title supplies the missing Summer Fridays product context;
+the upstream product-candidate list alone is not treated as proof. The second
+comment names both products directly and carries its comparison-thread title
+as corroborating context.
 
 This is a bounded implementation dogfood, not a refreshed Summer Fridays
 finding. It uses two already-captured Reddit comments to exercise the failure
@@ -50,15 +56,15 @@ The no-API file workflow completed all four stages:
 
 1. `prepare-batches` admitted 2 evidence units into 1 batch, with bundle
    SHA-256
-   `4e0472ecd789bfb2a5c6c059ec62aec1935ce2a3ba252db88b38dee52531bd95`
+   `62e934375122dd7f460769f4c9ff20878153327f739ee89ca3b0e79c8f372453`
    and `model_api_calls: 0`.
 2. The agent batch response split the 2 source bodies into 10 semantic units.
 3. `submit-batches` produced compilation SHA-256
-   `05c3a54daac059f88d6caf230fed532919fd572b0cd94171419a52a27af484ed`
+   `460963cac21243f2fffc33feae0c3dfbcf8449d84b581f4c7feb657fcf7e2f51`
    and `model_api_calls: 0`.
 4. `finalize` accounted for 2 of 2 admitted units, emitted 8 propositions,
    and wrote view SHA-256
-   `de847076a2374dd7ff1818dc1f65ba155cec9813fdce2ca51ecc2dd964b5154e`
+   `c36df1ece16df513fa2e57e6ae9d0870cec3f9bf277a7dbd3403f6a750cfec63`
    with `model_api_calls: 0`.
 
 The durable inputs, agent judgments, and compiled result are `source.json`,
@@ -69,6 +75,8 @@ directory.
 
 The compiled view kept the comparisons separate:
 
+- The ambiguous opening word "These" was bound to Summer Fridays Lip Butter
+  Balm from its source-pinned thread title, not from the candidate list alone.
 - Summer Fridays comfort versus Ole Henriksen is one proposition on
   `texture_and_skin_finish`.
 - Summer Fridays wear time versus Laneige is a different proposition on
@@ -99,6 +107,6 @@ hashes. An agent still performs the meaning-based batch and reconciliation
 judgments from the generated file prompts. The runner neither calls a model
 provider nor pretends semantic judgment is deterministic software.
 
-The full future-run obligation is larger than this dogfood: Route 1.4 must feed
+The full future-run obligation is larger than this dogfood: Route 1.5 must feed
 the entire admitted claim-bearing Phase A corpus through the same accounting
 contract before a new seal can pass.

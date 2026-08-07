@@ -226,25 +226,56 @@ MANDATORY_ROUTE_PHASES = {
 # playbook `understanding_acquire_seal_route`). Versioning started
 # 2026-08-07; seals sealed before that carry no stamped version and are
 # audited with --allow-preversion-route.
-UNDERSTANDING_ROUTE_VERSIONS = {"1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"}
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.4.0"
+UNDERSTANDING_ROUTE_VERSIONS = {
+    "1.0.0",
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+}
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.5.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION = (
     "semantic_evidence_integration_view_v1"
 )
+CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION = (
+    "semantic_evidence_integration_method_v2"
+)
+CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 = (
+    "044e34d41f28c8a98baf0677d227703690b79765db63822808765e23778ed205"
+)
 _CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
-_CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {"1.1.0", "1.2.0", "1.3.0", "1.4.0"}
+_CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+}
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0"}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
 # qualification and price/size context entered at 1.2.0 and are never
 # back-claimed onto an earlier stamped seal. 1.0.0 owes none of them.
-_ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {"1.1.0", "1.2.0", "1.3.0", "1.4.0"}
-_ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {"1.2.0", "1.3.0", "1.4.0"}
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0"}
+_ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+}
+_ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -3927,6 +3958,9 @@ def _validate_understanding_route(
             seal=seal,
             repo_root=repo_root,
             valid_pass=valid_pass,
+            require_current_method=(
+                version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS
+            ),
             findings=findings,
         )
         if isinstance(rows, list):
@@ -3973,6 +4007,7 @@ def _validate_semantic_evidence_integration(
     seal: Mapping[str, Any],
     repo_root: Path,
     valid_pass: bool,
+    require_current_method: bool,
     findings: list[str],
 ) -> dict[str, Mapping[str, Any]]:
     """Verify the route-1.4 bridge without re-performing semantic judgment."""
@@ -4023,6 +4058,16 @@ def _validate_semantic_evidence_integration(
         return {}
     if view.get("schema_version") != SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION:
         findings.append("invalid_semantic_integration_view_version")
+    if (
+        require_current_method
+        and view.get("method_version") != CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION
+    ):
+        findings.append("invalid_semantic_integration_method_version")
+    if (
+        require_current_method
+        and view.get("method_sha256") != CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256
+    ):
+        findings.append("invalid_semantic_integration_method_hash")
     for field in ("bundle_sha256", "corpus_sha256", "method_sha256"):
         if not isinstance(view.get(field), str) or not _DIGEST.fullmatch(
             view[field].casefold()
@@ -4134,6 +4179,16 @@ def _validate_semantic_evidence_integration(
             not isinstance(axis_id, str) or not axis_id for axis_id in axis_ids
         ):
             findings.append(f"invalid_semantic_integration_proposition_axes:{proposition_id}")
+        for product_field in ("subject_product_ids", "comparator_product_ids"):
+            product_ids = proposition.get(product_field)
+            if not isinstance(product_ids, list) or any(
+                not isinstance(product_id, str) or not product_id
+                for product_id in product_ids
+            ):
+                findings.append(
+                    "invalid_semantic_integration_proposition_products:"
+                    + f"{proposition_id}:{product_field}"
+                )
         support = proposition.get("claim_support")
         if not isinstance(support, dict):
             findings.append(f"missing_semantic_integration_claim_support:{proposition_id}")
@@ -4416,6 +4471,8 @@ def _validate_comparator_choice_explanation(
     candidate_id: str,
     shared_axis_ids: Any,
     promoted: bool,
+    subject_product_id: Any,
+    competitor_product_id: Any,
     proposition_index: Mapping[str, Mapping[str, Any]] | None,
     findings: list[str],
 ) -> None:
@@ -4523,6 +4580,35 @@ def _validate_comparator_choice_explanation(
                 if axis_id not in proposition.get("axis_ids", []):
                     findings.append(
                         f"comparator_choice_proposition_axis_mismatch:{candidate_id}:{ref}"
+                    )
+                proposition_subject_ids = proposition.get("subject_product_ids")
+                proposition_comparator_ids = proposition.get("comparator_product_ids")
+                valid_proposition_products = (
+                    isinstance(proposition_subject_ids, list)
+                    and all(
+                        isinstance(product_id, str) and product_id
+                        for product_id in proposition_subject_ids
+                    )
+                    and isinstance(proposition_comparator_ids, list)
+                    and all(
+                        isinstance(product_id, str) and product_id
+                        for product_id in proposition_comparator_ids
+                    )
+                )
+                if (
+                    isinstance(subject_product_id, str)
+                    and subject_product_id
+                    and isinstance(competitor_product_id, str)
+                    and competitor_product_id
+                    and (
+                        not valid_proposition_products
+                        or set(proposition_subject_ids) != {subject_product_id}
+                        or set(proposition_comparator_ids) != {competitor_product_id}
+                    )
+                ):
+                    findings.append(
+                        "comparator_choice_proposition_product_mismatch:"
+                        + f"{candidate_id}:{ref}"
                     )
             choice_posture = axis_row.get("choice_posture")
             directional_choice = choice_posture in {
@@ -4978,6 +5064,28 @@ def _validate_comparator_closure(
                 + f"{candidate_id}:{','.join(forbidden_fields)}"
             )
         if material:
+            subject_product_id = row.get("subject_product_id")
+            competitor_product_id = row.get("competitor_product_id")
+            if route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS:
+                if not isinstance(subject_product_id, str) or not subject_product_id:
+                    findings.append(
+                        f"missing_comparator_product_id:{candidate_id}:subject"
+                    )
+                if (
+                    not isinstance(competitor_product_id, str)
+                    or not competitor_product_id
+                ):
+                    findings.append(
+                        f"missing_comparator_product_id:{candidate_id}:competitor"
+                    )
+                if (
+                    isinstance(subject_product_id, str)
+                    and subject_product_id
+                    and subject_product_id == competitor_product_id
+                ):
+                    findings.append(
+                        f"duplicate_comparator_product_ids:{candidate_id}"
+                    )
             portfolio_role = row.get("portfolio_role")
             if not isinstance(portfolio_role, dict):
                 findings.append(f"missing_comparator_portfolio_role:{candidate_id}")
@@ -5181,6 +5289,16 @@ def _validate_comparator_closure(
                     candidate_id=candidate_id,
                     shared_axis_ids=shared_axis_ids,
                     promoted=disposition == "promoted" or decision_ready,
+                    subject_product_id=(
+                        row.get("subject_product_id")
+                        if route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS
+                        else None
+                    ),
+                    competitor_product_id=(
+                        row.get("competitor_product_id")
+                        if route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS
+                        else None
+                    ),
                     proposition_index=(
                         proposition_index
                         if route_version in _ROUTE_REVISION_1_4_OBLIGATION_VERSIONS

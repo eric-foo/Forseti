@@ -1,6 +1,6 @@
 {
   "schema_version": "semantic_evidence_batch_response_v1",
-  "bundle_sha256": "4e0472ecd789bfb2a5c6c059ec62aec1935ce2a3ba252db88b38dee52531bd95",
+  "bundle_sha256": "62e934375122dd7f460769f4c9ff20878153327f739ee89ca3b0e79c8f372453",
   "batch_id": "batch-0001",
   "evidence": [
     {
