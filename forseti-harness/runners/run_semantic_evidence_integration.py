@@ -22,6 +22,14 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     validate_batch_responses,
     validate_reconciliation_stage,
 )
+from judgment.phase_a_semantic_run import (  # noqa: E402
+    audit_phase_a_source,
+    census_phase_a_customer_corpus,
+    materialize_phase_a_v3,
+    run_status,
+    validate_one_batch_response,
+    validate_one_reconciliation_response,
+)
 from harness_utils import hash_file  # noqa: E402
 
 
@@ -151,6 +159,119 @@ def materialize_v3(
         "source_out": str(source_out),
         "model_api_calls": 0,
     }
+
+
+def audit_phase_a_source_run(
+    *, spec_path: Path, repo_root: Path, audit_out: Path
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    audit = audit_phase_a_source(spec, repo_root=repo_root)
+    _write_json(audit_out, audit)
+    return {
+        "status": (
+            "PHASE_A_SOURCE_AUDIT_COMPLETE"
+            if audit["complete"]
+            else "PHASE_A_SOURCE_AUDIT_BLOCKED"
+        ),
+        "audit_sha256": audit["audit_sha256"],
+        "sealed_route_count": audit["sealed_route_count"],
+        "verified_source_binding_count": len(audit["verified_source_bindings"]),
+        "blocked_routes": audit["blocked_routes"],
+        "audit_out": str(audit_out),
+        "model_api_calls": 0,
+    }
+
+
+def census_phase_a_corpus_run(
+    *, evidence_ledger_path: Path, retailer_coding_path: Path, census_out: Path
+) -> dict[str, Any]:
+    census = census_phase_a_customer_corpus(
+        evidence_ledger_path=evidence_ledger_path,
+        retailer_coding_path=retailer_coding_path,
+    )
+    _write_json(census_out, census)
+    return {
+        "status": "PHASE_A_CUSTOMER_CORPUS_CENSUS_COMPLETE",
+        "census_sha256": census["census_sha256"],
+        "reddit": census["reddit"],
+        "retailer_reviews": census["retailer_reviews"],
+        "census_out": str(census_out),
+        "model_api_calls": 0,
+    }
+
+
+def materialize_phase_a_source(
+    *,
+    spec_path: Path,
+    repo_root: Path,
+    source_out: Path,
+    receipt_out: Path,
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    source, receipt = materialize_phase_a_v3(spec, repo_root=repo_root)
+    _write_json(source_out, source)
+    _write_json(receipt_out, receipt)
+    return {
+        "status": "PHASE_A_SEMANTIC_SOURCE_MATERIALIZED",
+        "source_sha256": source["source_sha256"],
+        "receipt_sha256": receipt["receipt_sha256"],
+        "captured_item_count": receipt["captured_item_count"],
+        "captured_container_count": receipt["captured_container_count"],
+        "source_out": str(source_out),
+        "receipt_out": str(receipt_out),
+        "model_api_calls": 0,
+    }
+
+
+def validate_batch_response_file(
+    *, bundle_path: Path, response_path: Path, receipt_out: Path | None
+) -> dict[str, Any]:
+    receipt = validate_one_batch_response(
+        _load_object(bundle_path), _load_object(response_path)
+    )
+    if receipt_out is not None:
+        _write_json(receipt_out, receipt)
+    return {
+        "status": "SEMANTIC_BATCH_RESPONSE_VALID",
+        **receipt,
+        "receipt_out": str(receipt_out) if receipt_out is not None else None,
+        "model_api_calls": 0,
+    }
+
+
+def validate_reconciliation_response_file(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_path: Path,
+    receipt_out: Path | None,
+) -> dict[str, Any]:
+    receipt = validate_one_reconciliation_response(
+        _load_object(bundle_path),
+        _load_object(stage_path),
+        _load_object(response_path),
+    )
+    if receipt_out is not None:
+        _write_json(receipt_out, receipt)
+    return {
+        "status": "SEMANTIC_RECONCILIATION_RESPONSE_VALID",
+        **receipt,
+        "receipt_out": str(receipt_out) if receipt_out is not None else None,
+        "model_api_calls": 0,
+    }
+
+
+def semantic_run_status(
+    *, bundle_path: Path, response_dir: Path
+) -> dict[str, Any]:
+    responses = []
+    if response_dir.exists():
+        for path in sorted(response_dir.glob("*.json")):
+            try:
+                responses.append(_load_object(path))
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                responses.append({"batch_id": path.stem, "invalid_file_error": str(exc)})
+    return run_status(bundle=_load_object(bundle_path), batch_responses=responses)
 
 
 def submit_batches(
@@ -299,6 +420,22 @@ def _parser() -> argparse.ArgumentParser:
     materialize.add_argument("--repo-root", type=Path, required=True)
     materialize.add_argument("--source-out", type=Path, required=True)
 
+    audit_phase_a = sub.add_parser("audit-phase-a-source")
+    audit_phase_a.add_argument("--spec", type=Path, required=True)
+    audit_phase_a.add_argument("--repo-root", type=Path, required=True)
+    audit_phase_a.add_argument("--audit-out", type=Path, required=True)
+
+    census_phase_a = sub.add_parser("census-phase-a-corpus")
+    census_phase_a.add_argument("--evidence-ledger", type=Path, required=True)
+    census_phase_a.add_argument("--retailer-coding", type=Path, required=True)
+    census_phase_a.add_argument("--census-out", type=Path, required=True)
+
+    materialize_phase_a = sub.add_parser("materialize-phase-a-v3")
+    materialize_phase_a.add_argument("--spec", type=Path, required=True)
+    materialize_phase_a.add_argument("--repo-root", type=Path, required=True)
+    materialize_phase_a.add_argument("--source-out", type=Path, required=True)
+    materialize_phase_a.add_argument("--receipt-out", type=Path, required=True)
+
     prepare = sub.add_parser("prepare-batches")
     prepare.add_argument("--source", type=Path, required=True)
     prepare.add_argument("--repo-root", type=Path, required=True)
@@ -311,6 +448,11 @@ def _parser() -> argparse.ArgumentParser:
     submit.add_argument("--bundle", type=Path, required=True)
     submit.add_argument("--response", type=Path, action="append", required=True)
     submit.add_argument("--compiled-out", type=Path, required=True)
+
+    validate_batch = sub.add_parser("validate-batch-response")
+    validate_batch.add_argument("--bundle", type=Path, required=True)
+    validate_batch.add_argument("--response", type=Path, required=True)
+    validate_batch.add_argument("--receipt-out", type=Path)
 
     reconcile = sub.add_parser("prepare-reconciliation")
     reconcile.add_argument("--bundle", type=Path, required=True)
@@ -335,6 +477,16 @@ def _parser() -> argparse.ArgumentParser:
     submit_level.add_argument("--response", type=Path, action="append", required=True)
     submit_level.add_argument("--compilation-out", type=Path, required=True)
 
+    validate_reconciliation = sub.add_parser("validate-reconciliation-response")
+    validate_reconciliation.add_argument("--bundle", type=Path, required=True)
+    validate_reconciliation.add_argument("--stage", type=Path, required=True)
+    validate_reconciliation.add_argument("--response", type=Path, required=True)
+    validate_reconciliation.add_argument("--receipt-out", type=Path)
+
+    status = sub.add_parser("status")
+    status.add_argument("--bundle", type=Path, required=True)
+    status.add_argument("--response-dir", type=Path, required=True)
+
     finish_v3 = sub.add_parser("finalize-v3")
     finish_v3.add_argument("--bundle", type=Path, required=True)
     finish_v3.add_argument("--batch-compilation", type=Path, required=True)
@@ -352,6 +504,25 @@ def main(argv: list[str] | None = None) -> int:
                 repo_root=args.repo_root,
                 source_out=args.source_out,
             )
+        elif args.command == "audit-phase-a-source":
+            result = audit_phase_a_source_run(
+                spec_path=args.spec,
+                repo_root=args.repo_root,
+                audit_out=args.audit_out,
+            )
+        elif args.command == "census-phase-a-corpus":
+            result = census_phase_a_corpus_run(
+                evidence_ledger_path=args.evidence_ledger,
+                retailer_coding_path=args.retailer_coding,
+                census_out=args.census_out,
+            )
+        elif args.command == "materialize-phase-a-v3":
+            result = materialize_phase_a_source(
+                spec_path=args.spec,
+                repo_root=args.repo_root,
+                source_out=args.source_out,
+                receipt_out=args.receipt_out,
+            )
         elif args.command == "prepare-batches":
             result = prepare_batches(
                 source_path=args.source,
@@ -366,6 +537,12 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 response_paths=args.response,
                 compiled_out=args.compiled_out,
+            )
+        elif args.command == "validate-batch-response":
+            result = validate_batch_response_file(
+                bundle_path=args.bundle,
+                response_path=args.response,
+                receipt_out=args.receipt_out,
             )
         elif args.command == "prepare-reconciliation":
             result = prepare_reconciliation(
@@ -393,6 +570,18 @@ def main(argv: list[str] | None = None) -> int:
                 stage_path=args.stage,
                 response_paths=args.response,
                 compilation_out=args.compilation_out,
+            )
+        elif args.command == "validate-reconciliation-response":
+            result = validate_reconciliation_response_file(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_path=args.response,
+                receipt_out=args.receipt_out,
+            )
+        elif args.command == "status":
+            result = semantic_run_status(
+                bundle_path=args.bundle,
+                response_dir=args.response_dir,
             )
         else:
             result = finalize_v3(

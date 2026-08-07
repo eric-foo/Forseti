@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v1
+version: v2
 effective_date: 2026-08-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v1
+# Semantic Evidence Integration Contract v2
 
 ## Purpose
 
@@ -238,19 +238,51 @@ overwrite, drop, or invent its original-label disposition. A lower-level
 ## No-provider workflow
 
 The runner makes no model API call. Historical v1/v2 routes retain their four
-operations. Route 1.6 adds repeatable reconciliation-level operations:
+operations. Before Route 1.6 batching, a reusable full-corpus run uses an
+immutable `phase_a_semantic_integration_run_v1` specification. The spec binds
+the final acquisition seal, cycle/question/cutoff, current axes, rendered
+prompt ceiling, external run root, and hash-pinned v3 source fragments. Every
+sealed route must terminate as exactly one of `evidence_source`,
+`discovery_only`, `control_only`, `duplicate_of`, or `blocked`. An evidence
+route requires at least one source binding; discovery and control routes may
+not donate claims. A blocked route prevents materialization. This route audit
+stops the historical `used` subset from silently becoming the full-corpus
+denominator.
 
-1. `materialize-v3` verifies source artifacts and normalizes the declared
+The customer-corpus census rereads packet-backed Reddit records and verifies
+retailer source-row references before semantic work. It counts roots, replies,
+readable leaves, mechanical exclusions, former captured-excluded leaves, and
+retailer text/rating-only rows separately. The census is a denominator proof,
+not semantic judgment and not a substitute for v3 source materialization.
+Large source, prompt, response, and compilation artifacts remain under the
+spec's external run root; a compact repository receipt may bind their hashes.
+
+Route 1.6 operations are:
+
+1. `audit-phase-a-source` verifies the final seal, every terminal route
+   artifact, every route classification, and every hash-pinned source binding.
+2. `census-phase-a-corpus` independently proves the captured Reddit and
+   retailer customer-corpus denominators where those Phase A source shapes are
+   present.
+3. `materialize-phase-a-v3` merges audited, source-family-produced v3
+   fragments into one final-acquisition source and writes a separate lineage
+   receipt. It never guesses a new source-family adapter.
+4. `materialize-v3` verifies source artifacts and normalizes declared
    containers/leaves into one hash-bound v3 source; unsupported families or
    denominator mismatches fail closed.
-2. `prepare-batches` verifies sources, builds the bundle, and renders prompts.
-3. `submit-batches` validates agent responses and exact alias coverage.
-4. `prepare-reconciliation-level` renders one or more byte-bounded prompts
+5. `prepare-batches` verifies sources, builds the bundle, and renders prompts.
+6. `validate-batch-response` validates one returned batch immediately without
+   compiling a partial corpus. `status` reports valid, missing, duplicate, and
+   invalid responses so an interrupted run can resume honestly.
+7. `submit-batches` validates all agent responses and exact alias coverage.
+8. `prepare-reconciliation-level` renders one or more byte-bounded prompts
    from batch units or prior semantic nodes.
-5. `submit-reconciliation-level` validates exact child accounting and writes
-   the next node compilation; repeat until one terminal level remains.
-6. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
-   v2.
+9. `validate-reconciliation-response` validates one returned hierarchy batch
+   before the level is complete.
+10. `submit-reconciliation-level` validates exact child accounting and writes
+    the next node compilation; repeat until one terminal level remains.
+11. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
+    v2.
 
 The controller gives the rendered prompts to a capable agent in a fresh turn.
 The returned JSON is untrusted until the corresponding submit/finalize command
@@ -313,6 +345,10 @@ Route 1.6 fields.
 
 ## Changelog
 
+- `v2` / 2026-08-08 — added the reusable full-corpus run specification,
+  acquisition-route/source audit, customer-corpus census, v3-fragment
+  materialization receipt, single-response validation, and resumable status.
+  These operations add no provider API and do not restamp historical seals.
 - `v1` / 2026-08-08 — added Route 1.6 full captured-corpus accounting,
   containers and capture envelopes, prompt-bounded hierarchical
   reconciliation, response/view version changes, emerging-axis consolidation,
