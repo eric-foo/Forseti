@@ -602,7 +602,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.5.0"
+    route_version: "1.6.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -741,9 +741,6 @@ phase_acquisition_seal:
         sha256:
       corpus_sha256:
       unresolved_material_evidence_ids: []
-      emerging_axis_dispositions:
-        - label:
-          status: integrated_nonmaterial | axis_inventory_reconciled | blocked_material
     verification_requests:
       - request_id:
         product_identity:
@@ -811,7 +808,11 @@ view over the admitted claim-bearing corpus, proposition references on each
 material axis finding, source-role competence, counterevidence visibility, and
 artifact/hash binding; at `1.5.0`, contextual semantic method v2, distinct
 stable product IDs for material comparators, and exact
-candidate-to-proposition product binding;
+candidate-to-proposition product binding; at `1.6.0`, full captured-corpus
+accounting, capture envelopes, rendered-prompt byte bounds, root-batch-bound
+hierarchical leaf lineage, semantic posture, immutable consolidated emerging
+axes (including carried blockers), and separately computed
+evidence-item/container/origin/role/engagement counts;
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -1114,7 +1115,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.5.0
+  current_version: 1.6.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1253,6 +1254,34 @@ understanding_acquire_seal_route:
         migration/restart is recorded. New runs seal under 1.5.0. An authorized
         historical audit of a 1.4.0 seal enforces the full 1.4.0 obligation set
         and none of the 1.5.0 additions.
+    - version: 1.6.0
+      date: 2026-08-08
+      owning_change: Phase A full captured-corpus semantic integration implementation (this change's PR)
+      changed_behavior: >
+        Keeps the existing Phase A sequence and claim-support authority, but
+        replaces screen-bounded semantic closure for new runs with one
+        explicitly declared final captured corpus. Every captured source-native
+        leaf is semantically assessed, mechanically excluded with an exact
+        reason, or blocks. Containers preserve conversation/review/published-
+        object context and capture envelopes. Extraction and reconciliation
+        prompts are bounded by actual rendered UTF-8 bytes; reconciliation may
+        repeat through child-referenced levels while the compiler preserves
+        exact leaf, condition, polarity, product/version, and provenance
+        lineage. Emerging labels are agent-consolidated with original lineage.
+        View v2 separates semantic-unit, evidence-item, container, independent-
+        origin, source-role, engagement, support, opposition, and mixed counts.
+      affected_gate: >
+        Acquisition seal: route 1.6.0 requires semantic integration view v2,
+        exact method v3/hash, complete final-corpus accounting with no blocked
+        leaf, exact container/capture-envelope accounting, terminal consolidated
+        axes, and proposition evidence-stack shape.
+      migration_note: >
+        A run started under 1.5.0 retains 1.5.0 unless an explicit
+        migration/restart is recorded. New runs seal under 1.6.0. An authorized
+        historical audit of a 1.5.0 seal enforces view v1/method v2 and none of
+        the 1.6.0 additions. The existing 80-item Summer Fridays migration is a
+        bounded regression slice, not final-corpus proof; the full shadow run is
+        separately commissioned after this architecture lands.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

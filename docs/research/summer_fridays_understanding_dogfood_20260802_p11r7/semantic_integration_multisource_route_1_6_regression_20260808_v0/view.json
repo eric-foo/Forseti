@@ -1,0 +1,3906 @@
+{
+  "bundle_sha256": "ddbfc2132f5b58ea796e42d06a47250f7f2edeb865f1dea4622b95f69aedd6cf",
+  "capture_envelopes": [
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:13aw1sp",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:13end3f",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:15qtzd8",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:166j6zu",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:16old70",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:171ciwt",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1742rj9",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:17585yg",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:176msij",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:17p8me8",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:193h7hu",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:199wb9b",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ahn26w",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1akf6oh",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1aoorwz",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1asnsu0",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1bm9izm",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1bsww9d",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ceemxn",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ddzt09",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ee21xh",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1eizw8l",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1fk0zu0",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1fu32im",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1fvevie",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1hpgjxj",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1i7jaw4",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1i7of0b",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1j6xhqb",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1k562e8",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1kq0492",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1m07jmq",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1mzokbt",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1oatxkp",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1oh26y0",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ougkua",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1p7si2m",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1pf427h",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1pneo7v",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1qxm1tz",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1r09924",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1r18e9m",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1r348ph",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1st35o0",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1t79b03",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ul7dbe",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:1ur9u91",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:vileta",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:wve0sg",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one selected reaction-axis leaf from a larger captured Reddit conversation; regression slice only",
+      "captured_leaf_count": 1,
+      "completeness": "partial",
+      "container_id": "reddit-thread:xysaq8",
+      "container_type": "conversation",
+      "source_visible_total": "unavailable"
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:187419902",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:263610826",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:272258322",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:272686517",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:309383242",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:325782313",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:397129614",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:397449903",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "one captured retailer review",
+      "captured_leaf_count": 1,
+      "completeness": "complete",
+      "container_id": "sephora-review:397665133",
+      "container_type": "retailer_review",
+      "source_visible_total": 1
+    },
+    {
+      "capture_boundary": "creator post plus 20 captured of 77 source-visible audience comments",
+      "captured_leaf_count": 21,
+      "completeness": "partial",
+      "container_id": "tiktok-video:7381649202134207786",
+      "container_type": "creator_conversation",
+      "source_visible_total": 78
+    }
+  ],
+  "container_to_propositions": {
+    "reddit-thread:166j6zu": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:16old70": [
+      "prop_0065ae9a24e02195e382",
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit-thread:171ciwt": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:17585yg": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:176msij": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit-thread:1ahn26w": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1asnsu0": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1hpgjxj": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1i7of0b": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1kq0492": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1m07jmq": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_dcf5298b76d4e073c076"
+    ],
+    "reddit-thread:1mzokbt": [
+      "prop_0065ae9a24e02195e382",
+      "prop_00a4d685489ce45b4c1c",
+      "prop_1694b7fb78bbcf2436f2",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit-thread:1oatxkp": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1oh26y0": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_c69bb877b3f87c570f49",
+      "prop_f774451c27f0610283fb"
+    ],
+    "reddit-thread:1ougkua": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb"
+    ],
+    "reddit-thread:1pf427h": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1pneo7v": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit-thread:1qxm1tz": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit-thread:1r09924": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb"
+    ],
+    "reddit-thread:wve0sg": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_8573ba807e3082806c0d"
+    ],
+    "sephora-review:187419902": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_f774451c27f0610283fb",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "sephora-review:263610826": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_f774451c27f0610283fb"
+    ],
+    "sephora-review:272258322": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_f774451c27f0610283fb"
+    ],
+    "sephora-review:272686517": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_f774451c27f0610283fb"
+    ],
+    "sephora-review:309383242": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_8573ba807e3082806c0d"
+    ],
+    "sephora-review:325782313": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_c69bb877b3f87c570f49",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "sephora-review:397129614": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_d845a6cf6a0cb18a646d"
+    ],
+    "sephora-review:397449903": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_5c5540cfb9c99139ada9",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "sephora-review:397665133": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5"
+    ],
+    "tiktok-video:7381649202134207786": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_1dacad12d520931dce79",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_a313d52891c1f331cf6e",
+      "prop_c69bb877b3f87c570f49",
+      "prop_df46bb962bcfbb83fd74",
+      "prop_fdba937173f03faa9cb1"
+    ]
+  },
+  "corpus_profile": "bounded_regression_slice",
+  "corpus_sha256": "eb8d8c9920376fad0c8cd3fc263563b8537cc0d6290bf0e1a41a5703e3170f21",
+  "coverage": {
+    "accounted_item_count": 80,
+    "blocked_item_count": 0,
+    "captured_container_count": 60,
+    "captured_item_count": 80,
+    "complete": true,
+    "container_type_counts": {
+      "conversation": 50,
+      "creator_conversation": 1,
+      "retailer_review": 9
+    },
+    "mechanically_excluded_item_count": 0,
+    "semantically_assessed_item_count": 80,
+    "source_family_counts": {
+      "reddit_community": 50,
+      "sephora_retailer_reviews": 9,
+      "tiktok_audience_comments": 20,
+      "tiktok_creator_post": 1
+    },
+    "unresolved_evidence_ids": []
+  },
+  "cycle_id": "summer-fridays-understanding-dogfood-p11r7",
+  "emerging_axis_candidates": [],
+  "evidence_to_propositions": {
+    "reddit:166j6zu:l9d0ja7": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:16old70:k1p6c8q": [
+      "prop_0065ae9a24e02195e382",
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit:171ciwt:k3sk0fh": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:17585yg:nv5vqin": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:176msij:k4ph1fs": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit:1ahn26w:kop3sbr": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1asnsu0:kqsq5lb": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1hpgjxj:m4k6dwg": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1i7of0b:m8nmm10": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1kq0492:mt21uxw": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1m07jmq:n37cif6": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_dcf5298b76d4e073c076"
+    ],
+    "reddit:1mzokbt:post": [
+      "prop_0065ae9a24e02195e382",
+      "prop_00a4d685489ce45b4c1c",
+      "prop_1694b7fb78bbcf2436f2",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit:1oatxkp:nkd50vp": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1oh26y0:post": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_c69bb877b3f87c570f49",
+      "prop_f774451c27f0610283fb"
+    ],
+    "reddit:1ougkua:nod3nek": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb"
+    ],
+    "reddit:1pf427h:post": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1pneo7v:nvahs80": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "reddit:1qxm1tz:o3xko68": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d"
+    ],
+    "reddit:1r09924:o4h7wba": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_f774451c27f0610283fb"
+    ],
+    "reddit:wve0sg:ilfvip1": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_8573ba807e3082806c0d"
+    ],
+    "sephora-review:187419902": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_f774451c27f0610283fb",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "sephora-review:263610826": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_f774451c27f0610283fb"
+    ],
+    "sephora-review:272258322": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_f774451c27f0610283fb"
+    ],
+    "sephora-review:272686517": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_f774451c27f0610283fb"
+    ],
+    "sephora-review:309383242": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_8573ba807e3082806c0d"
+    ],
+    "sephora-review:325782313": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_c69bb877b3f87c570f49",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "sephora-review:397129614": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_d845a6cf6a0cb18a646d"
+    ],
+    "sephora-review:397449903": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_5c5540cfb9c99139ada9",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "sephora-review:397665133": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5"
+    ],
+    "tiktok-comment:7381650580382679851": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_df46bb962bcfbb83fd74",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7381673774888059679": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_c69bb877b3f87c570f49",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7381718145440121631": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_df46bb962bcfbb83fd74",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7381753285764956946": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7382063111974732575": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_a313d52891c1f331cf6e"
+    ],
+    "tiktok-comment:7384166497462289182": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_a313d52891c1f331cf6e",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7385589334789554987": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_a313d52891c1f331cf6e"
+    ],
+    "tiktok-comment:7403144097768948486": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_264427a3e39753d37d8a",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7476703422690509614": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_83e8deddbd0de9cb02f5",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7508953746987959082": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7556672989032203064": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7578266905766462230": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_df46bb962bcfbb83fd74",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7592607959882220319": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_1dacad12d520931dce79",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-comment:7621769689929138958": [
+      "prop_00a4d685489ce45b4c1c",
+      "prop_2a0e69f729b46473bc2d",
+      "prop_6fb9be176a63bd369fc9",
+      "prop_df46bb962bcfbb83fd74",
+      "prop_fdba937173f03faa9cb1"
+    ],
+    "tiktok-video:7381649202134207786": [
+      "prop_6fb9be176a63bd369fc9",
+      "prop_df46bb962bcfbb83fd74",
+      "prop_fdba937173f03faa9cb1"
+    ]
+  },
+  "method_sha256": "c1a3fde85acf10f6be6ad9078f0341aa7000dbddf40786261406b6fa79db3e3c",
+  "method_version": "semantic_evidence_integration_method_v3",
+  "propositions": [
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured community accounts disagree on whether the Mint or Sweet Mint variant burns or otherwise irritates the individual user's lips.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured community accounts disagree on whether the Mint or Sweet Mint variant burns or otherwise irritates the individual user's lips.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "reddit:16old70:k1p6c8q"
+        ],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1mzokbt:post"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Mint variant",
+          "Sweet Mint variant",
+          "individual self-reported experience",
+          "reaction appeared after several weeks of use"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Sweet Mint variant",
+            "individual self-reported experience"
+          ],
+          "semantic_unit_ref": "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
+        },
+        {
+          "conditions": [
+            "Mint variant",
+            "reaction appeared after several weeks of use"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-delayed-burning-flaking"
+        }
+      ],
+      "conditions": [
+        "Mint variant",
+        "Sweet Mint variant",
+        "individual self-reported experience",
+        "reaction appeared after several weeks of use"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [
+          "reddit-thread:16old70"
+        ],
+        "counter_evidence_item_count": 1,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "conversation": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:1mzokbt"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 1
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_0065ae9a24e02195e382",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [
+          "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
+        ],
+        "support": [
+          "reddit:1mzokbt:post::mint-delayed-burning-flaking"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Across the captured Reddit, Sephora-review, and TikTok-audience evidence, customers report several kinds of adverse Lip Butter Balm experience, while other captured customers explicitly report tolerance or no comparable reaction.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Across the captured Reddit, Sephora-review, and TikTok-audience evidence, customers report several kinds of adverse Lip Butter Balm experience, while other captured customers explicitly report tolerance or no comparable reaction.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "reddit:16old70:k1p6c8q",
+          "reddit:1kq0492:mt21uxw",
+          "reddit:1m07jmq:n37cif6",
+          "sephora-review:397665133",
+          "tiktok-comment:7381673774888059679",
+          "tiktok-comment:7381753285764956946"
+        ],
+        "engagement_evidence_refs": [
+          "reddit:1oh26y0:post",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517",
+          "sephora-review:309383242",
+          "sephora-review:325782313",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631"
+        ],
+        "evidence_refs": [
+          "reddit:166j6zu:l9d0ja7",
+          "reddit:171ciwt:k3sk0fh",
+          "reddit:17585yg:nv5vqin",
+          "reddit:176msij:k4ph1fs",
+          "reddit:1ahn26w:kop3sbr",
+          "reddit:1asnsu0:kqsq5lb",
+          "reddit:1hpgjxj:m4k6dwg",
+          "reddit:1i7of0b:m8nmm10",
+          "reddit:1mzokbt:post",
+          "reddit:1oatxkp:nkd50vp",
+          "reddit:1oh26y0:post",
+          "reddit:1ougkua:nod3nek",
+          "reddit:1pf427h:post",
+          "reddit:1pneo7v:nvahs80",
+          "reddit:1qxm1tz:o3xko68",
+          "reddit:1r09924:o4h7wba",
+          "reddit:wve0sg:ilfvip1",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517",
+          "sephora-review:309383242",
+          "sephora-review:325782313",
+          "sephora-review:397129614",
+          "sephora-review:397449903",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631",
+          "tiktok-comment:7382063111974732575",
+          "tiktok-comment:7384166497462289182",
+          "tiktok-comment:7385589334789554987",
+          "tiktok-comment:7403144097768948486",
+          "tiktok-comment:7476703422690509614",
+          "tiktok-comment:7508953746987959082",
+          "tiktok-comment:7556672989032203064",
+          "tiktok-comment:7578266905766462230",
+          "tiktok-comment:7592607959882220319",
+          "tiktok-comment:7621769689929138958"
+        ],
+        "independent_origin_count": 37,
+        "scope_conditions": [
+          "Brown Sugar variant",
+          "Cherry variant",
+          "Iced Coffee variant",
+          "Mint variant",
+          "Mint variant was the earlier exposure",
+          "Pink Guava variant",
+          "Pink Sugar product page",
+          "Pink Sugar variant",
+          "Summer Fridays Lip Butter Balm bound by the captured video context",
+          "Summer Fridays product binding comes from the captured thread context",
+          "Summer Fridays variant was not identified",
+          "Sweet Mint variant",
+          "Toasted Marshmallow variant",
+          "Vanilla Beige variant",
+          "Vanilla Beige variant bound by the video context",
+          "Vanilla variant",
+          "cause of change not established",
+          "constant use",
+          "continuing symptoms are self-reported and causation is not established",
+          "customer attributed the effect to shiny reflection",
+          "customer description; no clinical diagnosis or chemical cause established",
+          "customer-described allergy; no clinical diagnosis established",
+          "customer-described condition; no clinical attribution established",
+          "customer-described condition; no clinical diagnosis established",
+          "daily use",
+          "effect changed over the customer's ownership period",
+          "effect emerged over time",
+          "exact absence of every possible reaction was not established",
+          "exact symptom wording inherited from the burning-focused video context",
+          "extended repeat use",
+          "fourth reported tube",
+          "heavier application",
+          "individual self-reported experience",
+          "individual self-reported tolerance",
+          "multiple other product and dietary sensitivities were reported",
+          "outdoor use",
+          "possible formula difference not independently verified",
+          "product attribution explicitly uncertain",
+          "reaction appeared after several days",
+          "reaction appeared after several weeks of use",
+          "reaction symptoms and variant were not identified",
+          "reaction symptoms were not specified",
+          "reviewer described owning three flavors",
+          "reviewer explicitly allowed that the reaction might be individual",
+          "single first-use account",
+          "variant set was not itemized",
+          "variant was not identified"
+        ],
+        "source_roles": [
+          "audience_comment",
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "reaction symptoms were not specified",
+            "Summer Fridays variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:166j6zu:l9d0ja7::sf-similar-reaction"
+        },
+        {
+          "conditions": [
+            "Sweet Mint variant",
+            "individual self-reported experience"
+          ],
+          "semantic_unit_ref": "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:171ciwt:k3sk0fh::sf-rash-allergy"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "multiple other product and dietary sensitivities were reported",
+            "customer-described condition; no clinical attribution established"
+          ],
+          "semantic_unit_ref": "reddit:17585yg:nv5vqin::sf-contact-cheilitis-history"
+        },
+        {
+          "conditions": [
+            "outdoor use",
+            "customer attributed the effect to shiny reflection",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:176msij:k4ph1fs::sf-outdoor-burning"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1ahn26w:kop3sbr::sf-allergy-peeling"
+        },
+        {
+          "conditions": [
+            "Summer Fridays product binding comes from the captured thread context",
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1asnsu0:kqsq5lb::sf-allergy-prolonged"
+        },
+        {
+          "conditions": [
+            "heavier application",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1hpgjxj:m4k6dwg::sf-throat-itch"
+        },
+        {
+          "conditions": [
+            "reaction symptoms and variant were not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1i7of0b:m8nmm10::sf-allergy-unspecified"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating"
+        },
+        {
+          "conditions": [
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated"
+        },
+        {
+          "conditions": [
+            "Mint variant",
+            "reaction appeared after several weeks of use"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-delayed-burning-flaking"
+        },
+        {
+          "conditions": [
+            "Mint variant was the earlier exposure",
+            "continuing symptoms are self-reported and causation is not established"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-persistent-sensitivity"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1oatxkp:nkd50vp::sf-peeling-irritation"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "single first-use account"
+          ],
+          "semantic_unit_ref": "reddit:1oh26y0:post::iced-coffee-rapid-flaking"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1ougkua:nod3nek::sf-irritated-not-moisturizing"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "product attribution explicitly uncertain",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1pf427h:post::sf-suspected-contact-dermatitis"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1pneo7v:nvahs80::sf-burned-lips"
+        },
+        {
+          "conditions": [
+            "daily use",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1qxm1tz:o3xko68::sf-daily-use-drying"
+        },
+        {
+          "conditions": [
+            "constant use",
+            "variant set was not itemized"
+          ],
+          "semantic_unit_ref": "reddit:1r09924:o4h7wba::sf-continued-use-peeling-soreness"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "effect emerged over time"
+          ],
+          "semantic_unit_ref": "reddit:wve0sg:ilfvip1::sf-drying-over-time"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "sephora-review:187419902::vanilla-beige-burn-warm"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant"
+          ],
+          "semantic_unit_ref": "sephora-review:263610826::pink-sugar-dry-irritated-itching"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "reviewer explicitly allowed that the reaction might be individual"
+          ],
+          "semantic_unit_ref": "sephora-review:272258322::vanilla-beige-swelling-peeling"
+        },
+        {
+          "conditions": [
+            "Pink Sugar product page",
+            "reviewer described owning three flavors",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "sephora-review:272686517::pink-sugar-dermatitis"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "reaction appeared after several days"
+          ],
+          "semantic_unit_ref": "sephora-review:309383242::vanilla-rash-after-days"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "customer description; no clinical diagnosis or chemical cause established"
+          ],
+          "semantic_unit_ref": "sephora-review:325782313::iced-coffee-burn-like-reaction"
+        },
+        {
+          "conditions": [
+            "Toasted Marshmallow variant",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "sephora-review:397129614::toasted-marshmallow-repeated-reaction"
+        },
+        {
+          "conditions": [
+            "Cherry variant"
+          ],
+          "semantic_unit_ref": "sephora-review:397449903::cherry-slight-irritation"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "sephora-review:397665133::pink-sugar-no-irritation"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381650580382679851::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "exact absence of every possible reaction was not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381718145440121631::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "extended repeat use"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant",
+            "fourth reported tube",
+            "possible formula difference not independently verified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7382063111974732575::brown-sugar-drying"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7384166497462289182::brown-sugar-burning"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7385589334789554987::brown-sugar-itching"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "effect changed over the customer's ownership period",
+            "cause of change not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7403144097768948486::vanilla-beige-later-burning"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "exact symptom wording inherited from the burning-focused video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7476703422690509614::pink-sugar-same-reaction"
+        },
+        {
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7508953746987959082::sf-intense-burning"
+        },
+        {
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7556672989032203064::sf-same-reaction"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant bound by the video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7578266905766462230::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Pink Guava variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7592607959882220319::pink-guava-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        }
+      ],
+      "conditions": [
+        "Brown Sugar variant",
+        "Cherry variant",
+        "Iced Coffee variant",
+        "Mint variant",
+        "Mint variant was the earlier exposure",
+        "Pink Guava variant",
+        "Pink Sugar product page",
+        "Pink Sugar variant",
+        "Summer Fridays Lip Butter Balm bound by the captured video context",
+        "Summer Fridays product binding comes from the captured thread context",
+        "Summer Fridays variant was not identified",
+        "Sweet Mint variant",
+        "Toasted Marshmallow variant",
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "Vanilla variant",
+        "cause of change not established",
+        "constant use",
+        "continuing symptoms are self-reported and causation is not established",
+        "customer attributed the effect to shiny reflection",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "customer-described allergy; no clinical diagnosis established",
+        "customer-described condition; no clinical attribution established",
+        "customer-described condition; no clinical diagnosis established",
+        "daily use",
+        "effect changed over the customer's ownership period",
+        "effect emerged over time",
+        "exact absence of every possible reaction was not established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "fourth reported tube",
+        "heavier application",
+        "individual self-reported experience",
+        "individual self-reported tolerance",
+        "multiple other product and dietary sensitivities were reported",
+        "outdoor use",
+        "possible formula difference not independently verified",
+        "product attribution explicitly uncertain",
+        "reaction appeared after several days",
+        "reaction appeared after several weeks of use",
+        "reaction symptoms and variant were not identified",
+        "reaction symptoms were not specified",
+        "reviewer described owning three flavors",
+        "reviewer explicitly allowed that the reaction might be individual",
+        "single first-use account",
+        "variant set was not itemized",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [
+          "reddit-thread:16old70",
+          "reddit-thread:1kq0492",
+          "reddit-thread:1m07jmq",
+          "sephora-review:397665133",
+          "tiktok-video:7381649202134207786"
+        ],
+        "counter_evidence_item_count": 6,
+        "engagement_evidence_count": 9,
+        "independent_origin_count": 37,
+        "mixed_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "source_role_count": 3,
+        "support_container_count": 26,
+        "support_container_counts_by_type": {
+          "conversation": 17,
+          "creator_conversation": 1,
+          "retailer_review": 8
+        },
+        "support_container_ids": [
+          "reddit-thread:166j6zu",
+          "reddit-thread:171ciwt",
+          "reddit-thread:17585yg",
+          "reddit-thread:176msij",
+          "reddit-thread:1ahn26w",
+          "reddit-thread:1asnsu0",
+          "reddit-thread:1hpgjxj",
+          "reddit-thread:1i7of0b",
+          "reddit-thread:1mzokbt",
+          "reddit-thread:1oatxkp",
+          "reddit-thread:1oh26y0",
+          "reddit-thread:1ougkua",
+          "reddit-thread:1pf427h",
+          "reddit-thread:1pneo7v",
+          "reddit-thread:1qxm1tz",
+          "reddit-thread:1r09924",
+          "reddit-thread:wve0sg",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517",
+          "sephora-review:309383242",
+          "sephora-review:325782313",
+          "sephora-review:397129614",
+          "sephora-review:397449903",
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 37,
+        "support_semantic_unit_count": 38
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_00a4d685489ce45b4c1c",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [
+          "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
+          "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating",
+          "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated",
+          "sephora-review:397665133::pink-sugar-no-irritation",
+          "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem",
+          "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        ],
+        "support": [
+          "reddit:166j6zu:l9d0ja7::sf-similar-reaction",
+          "reddit:171ciwt:k3sk0fh::sf-rash-allergy",
+          "reddit:17585yg:nv5vqin::sf-contact-cheilitis-history",
+          "reddit:176msij:k4ph1fs::sf-outdoor-burning",
+          "reddit:1ahn26w:kop3sbr::sf-allergy-peeling",
+          "reddit:1asnsu0:kqsq5lb::sf-allergy-prolonged",
+          "reddit:1hpgjxj:m4k6dwg::sf-throat-itch",
+          "reddit:1i7of0b:m8nmm10::sf-allergy-unspecified",
+          "reddit:1mzokbt:post::mint-delayed-burning-flaking",
+          "reddit:1mzokbt:post::mint-persistent-sensitivity",
+          "reddit:1oatxkp:nkd50vp::sf-peeling-irritation",
+          "reddit:1oh26y0:post::iced-coffee-rapid-flaking",
+          "reddit:1ougkua:nod3nek::sf-irritated-not-moisturizing",
+          "reddit:1pf427h:post::sf-suspected-contact-dermatitis",
+          "reddit:1pneo7v:nvahs80::sf-burned-lips",
+          "reddit:1qxm1tz:o3xko68::sf-daily-use-drying",
+          "reddit:1r09924:o4h7wba::sf-continued-use-peeling-soreness",
+          "reddit:wve0sg:ilfvip1::sf-drying-over-time",
+          "sephora-review:187419902::vanilla-beige-burn-warm",
+          "sephora-review:263610826::pink-sugar-dry-irritated-itching",
+          "sephora-review:272258322::vanilla-beige-swelling-peeling",
+          "sephora-review:272686517::pink-sugar-dermatitis",
+          "sephora-review:309383242::vanilla-rash-after-days",
+          "sephora-review:325782313::iced-coffee-burn-like-reaction",
+          "sephora-review:397129614::toasted-marshmallow-repeated-reaction",
+          "sephora-review:397449903::cherry-slight-irritation",
+          "tiktok-comment:7381650580382679851::vanilla-beige-burning",
+          "tiktok-comment:7381718145440121631::vanilla-beige-burning",
+          "tiktok-comment:7382063111974732575::brown-sugar-drying",
+          "tiktok-comment:7384166497462289182::brown-sugar-burning",
+          "tiktok-comment:7385589334789554987::brown-sugar-itching",
+          "tiktok-comment:7403144097768948486::vanilla-beige-later-burning",
+          "tiktok-comment:7476703422690509614::pink-sugar-same-reaction",
+          "tiktok-comment:7508953746987959082::sf-intense-burning",
+          "tiktok-comment:7556672989032203064::sf-same-reaction",
+          "tiktok-comment:7578266905766462230::vanilla-beige-burning",
+          "tiktok-comment:7592607959882220319::pink-guava-burning",
+          "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "One captured customer reports recurring lip sensitivity with other products after stopping the Mint Lip Butter Balm.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured customer reports recurring lip sensitivity with other products after stopping the Mint Lip Butter Balm.",
+        "causal_ceiling": "causal_not_established",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1mzokbt:post"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Mint variant was the earlier exposure",
+          "continuing symptoms are self-reported and causation is not established"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Mint variant was the earlier exposure",
+            "continuing symptoms are self-reported and causation is not established"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-persistent-sensitivity"
+        }
+      ],
+      "conditions": [
+        "Mint variant was the earlier exposure",
+        "continuing symptoms are self-reported and causation is not established"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "conversation": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:1mzokbt"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 1
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_1694b7fb78bbcf2436f2",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1mzokbt:post::mint-persistent-sensitivity"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "One captured TikTok audience member reports a Pink Guava burning experience.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured TikTok audience member reports a Pink Guava burning experience.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "tiktok-comment:7592607959882220319"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Pink Guava variant"
+        ],
+        "source_roles": [
+          "audience_comment"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Pink Guava variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7592607959882220319::pink-guava-burning"
+        }
+      ],
+      "conditions": [
+        "Pink Guava variant"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "creator_conversation": 1
+        },
+        "support_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 1
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_1dacad12d520931dce79",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "tiktok-comment:7592607959882220319::pink-guava-burning"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured accounts across Reddit, Sephora reviews, and TikTok report adverse effects that appeared after several days, weeks, daily use, or a change over the product's ownership period rather than only at first contact.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured accounts across Reddit, Sephora reviews, and TikTok report adverse effects that appeared after several days, weeks, daily use, or a change over the product's ownership period rather than only at first contact.",
+        "causal_ceiling": "causal_not_established",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [
+          "sephora-review:309383242"
+        ],
+        "evidence_refs": [
+          "reddit:1mzokbt:post",
+          "reddit:1qxm1tz:o3xko68",
+          "reddit:1r09924:o4h7wba",
+          "reddit:wve0sg:ilfvip1",
+          "sephora-review:309383242",
+          "tiktok-comment:7403144097768948486"
+        ],
+        "independent_origin_count": 6,
+        "scope_conditions": [
+          "Mint variant",
+          "Vanilla Beige variant",
+          "Vanilla variant",
+          "cause of change not established",
+          "constant use",
+          "daily use",
+          "effect changed over the customer's ownership period",
+          "effect emerged over time",
+          "reaction appeared after several days",
+          "reaction appeared after several weeks of use",
+          "variant set was not itemized",
+          "variant was not identified"
+        ],
+        "source_roles": [
+          "audience_comment",
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Mint variant",
+            "reaction appeared after several weeks of use"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-delayed-burning-flaking"
+        },
+        {
+          "conditions": [
+            "daily use",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1qxm1tz:o3xko68::sf-daily-use-drying"
+        },
+        {
+          "conditions": [
+            "constant use",
+            "variant set was not itemized"
+          ],
+          "semantic_unit_ref": "reddit:1r09924:o4h7wba::sf-continued-use-peeling-soreness"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "effect emerged over time"
+          ],
+          "semantic_unit_ref": "reddit:wve0sg:ilfvip1::sf-drying-over-time"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "reaction appeared after several days"
+          ],
+          "semantic_unit_ref": "sephora-review:309383242::vanilla-rash-after-days"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "effect changed over the customer's ownership period",
+            "cause of change not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7403144097768948486::vanilla-beige-later-burning"
+        }
+      ],
+      "conditions": [
+        "Mint variant",
+        "Vanilla Beige variant",
+        "Vanilla variant",
+        "cause of change not established",
+        "constant use",
+        "daily use",
+        "effect changed over the customer's ownership period",
+        "effect emerged over time",
+        "reaction appeared after several days",
+        "reaction appeared after several weeks of use",
+        "variant set was not itemized",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 1,
+        "independent_origin_count": 6,
+        "mixed_container_ids": [],
+        "source_role_count": 3,
+        "support_container_count": 6,
+        "support_container_counts_by_type": {
+          "conversation": 4,
+          "creator_conversation": 1,
+          "retailer_review": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:1mzokbt",
+          "reddit-thread:1qxm1tz",
+          "reddit-thread:1r09924",
+          "reddit-thread:wve0sg",
+          "sephora-review:309383242",
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 6,
+        "support_semantic_unit_count": 6
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_264427a3e39753d37d8a",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1mzokbt:post::mint-delayed-burning-flaking",
+          "reddit:1qxm1tz:o3xko68::sf-daily-use-drying",
+          "reddit:1r09924:o4h7wba::sf-continued-use-peeling-soreness",
+          "reddit:wve0sg:ilfvip1::sf-drying-over-time",
+          "sephora-review:309383242::vanilla-rash-after-days",
+          "tiktok-comment:7403144097768948486::vanilla-beige-later-burning"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured community, Sephora, and TikTok accounts also contain explicit reports of tolerating Summer Fridays Lip Butter Balm or not experiencing the discussed burning or irritation.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured community, Sephora, and TikTok accounts also contain explicit reports of tolerating Summer Fridays Lip Butter Balm or not experiencing the discussed burning or irritation.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "reddit:166j6zu:l9d0ja7",
+          "reddit:171ciwt:k3sk0fh",
+          "reddit:17585yg:nv5vqin",
+          "reddit:176msij:k4ph1fs",
+          "reddit:1ahn26w:kop3sbr",
+          "reddit:1asnsu0:kqsq5lb",
+          "reddit:1hpgjxj:m4k6dwg",
+          "reddit:1i7of0b:m8nmm10",
+          "reddit:1mzokbt:post",
+          "reddit:1oatxkp:nkd50vp",
+          "reddit:1oh26y0:post",
+          "reddit:1ougkua:nod3nek",
+          "reddit:1pf427h:post",
+          "reddit:1pneo7v:nvahs80",
+          "reddit:1qxm1tz:o3xko68",
+          "reddit:1r09924:o4h7wba",
+          "reddit:wve0sg:ilfvip1",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517",
+          "sephora-review:309383242",
+          "sephora-review:325782313",
+          "sephora-review:397129614",
+          "sephora-review:397449903",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631",
+          "tiktok-comment:7382063111974732575",
+          "tiktok-comment:7384166497462289182",
+          "tiktok-comment:7385589334789554987",
+          "tiktok-comment:7403144097768948486",
+          "tiktok-comment:7476703422690509614",
+          "tiktok-comment:7508953746987959082",
+          "tiktok-comment:7556672989032203064",
+          "tiktok-comment:7578266905766462230",
+          "tiktok-comment:7592607959882220319",
+          "tiktok-comment:7621769689929138958"
+        ],
+        "engagement_evidence_refs": [
+          "tiktok-comment:7381673774888059679"
+        ],
+        "evidence_refs": [
+          "reddit:16old70:k1p6c8q",
+          "reddit:1kq0492:mt21uxw",
+          "reddit:1m07jmq:n37cif6",
+          "sephora-review:397665133",
+          "tiktok-comment:7381673774888059679",
+          "tiktok-comment:7381753285764956946"
+        ],
+        "independent_origin_count": 5,
+        "scope_conditions": [
+          "Brown Sugar variant",
+          "Cherry variant",
+          "Iced Coffee variant",
+          "Mint variant",
+          "Mint variant was the earlier exposure",
+          "Pink Guava variant",
+          "Pink Sugar product page",
+          "Pink Sugar variant",
+          "Summer Fridays Lip Butter Balm bound by the captured video context",
+          "Summer Fridays product binding comes from the captured thread context",
+          "Summer Fridays variant was not identified",
+          "Sweet Mint variant",
+          "Toasted Marshmallow variant",
+          "Vanilla Beige variant",
+          "Vanilla Beige variant bound by the video context",
+          "Vanilla variant",
+          "cause of change not established",
+          "constant use",
+          "continuing symptoms are self-reported and causation is not established",
+          "customer attributed the effect to shiny reflection",
+          "customer description; no clinical diagnosis or chemical cause established",
+          "customer-described allergy; no clinical diagnosis established",
+          "customer-described condition; no clinical attribution established",
+          "customer-described condition; no clinical diagnosis established",
+          "daily use",
+          "effect changed over the customer's ownership period",
+          "effect emerged over time",
+          "exact absence of every possible reaction was not established",
+          "exact symptom wording inherited from the burning-focused video context",
+          "extended repeat use",
+          "fourth reported tube",
+          "heavier application",
+          "individual self-reported experience",
+          "individual self-reported tolerance",
+          "multiple other product and dietary sensitivities were reported",
+          "outdoor use",
+          "possible formula difference not independently verified",
+          "product attribution explicitly uncertain",
+          "reaction appeared after several days",
+          "reaction appeared after several weeks of use",
+          "reaction symptoms and variant were not identified",
+          "reaction symptoms were not specified",
+          "reviewer described owning three flavors",
+          "reviewer explicitly allowed that the reaction might be individual",
+          "single first-use account",
+          "variant set was not itemized",
+          "variant was not identified"
+        ],
+        "source_roles": [
+          "audience_comment",
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "reaction symptoms were not specified",
+            "Summer Fridays variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:166j6zu:l9d0ja7::sf-similar-reaction"
+        },
+        {
+          "conditions": [
+            "Sweet Mint variant",
+            "individual self-reported experience"
+          ],
+          "semantic_unit_ref": "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:171ciwt:k3sk0fh::sf-rash-allergy"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "multiple other product and dietary sensitivities were reported",
+            "customer-described condition; no clinical attribution established"
+          ],
+          "semantic_unit_ref": "reddit:17585yg:nv5vqin::sf-contact-cheilitis-history"
+        },
+        {
+          "conditions": [
+            "outdoor use",
+            "customer attributed the effect to shiny reflection",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:176msij:k4ph1fs::sf-outdoor-burning"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1ahn26w:kop3sbr::sf-allergy-peeling"
+        },
+        {
+          "conditions": [
+            "Summer Fridays product binding comes from the captured thread context",
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1asnsu0:kqsq5lb::sf-allergy-prolonged"
+        },
+        {
+          "conditions": [
+            "heavier application",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1hpgjxj:m4k6dwg::sf-throat-itch"
+        },
+        {
+          "conditions": [
+            "reaction symptoms and variant were not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1i7of0b:m8nmm10::sf-allergy-unspecified"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating"
+        },
+        {
+          "conditions": [
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated"
+        },
+        {
+          "conditions": [
+            "Mint variant",
+            "reaction appeared after several weeks of use"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-delayed-burning-flaking"
+        },
+        {
+          "conditions": [
+            "Mint variant was the earlier exposure",
+            "continuing symptoms are self-reported and causation is not established"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-persistent-sensitivity"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1oatxkp:nkd50vp::sf-peeling-irritation"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "single first-use account"
+          ],
+          "semantic_unit_ref": "reddit:1oh26y0:post::iced-coffee-rapid-flaking"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1ougkua:nod3nek::sf-irritated-not-moisturizing"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "product attribution explicitly uncertain",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "reddit:1pf427h:post::sf-suspected-contact-dermatitis"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1pneo7v:nvahs80::sf-burned-lips"
+        },
+        {
+          "conditions": [
+            "daily use",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1qxm1tz:o3xko68::sf-daily-use-drying"
+        },
+        {
+          "conditions": [
+            "constant use",
+            "variant set was not itemized"
+          ],
+          "semantic_unit_ref": "reddit:1r09924:o4h7wba::sf-continued-use-peeling-soreness"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "effect emerged over time"
+          ],
+          "semantic_unit_ref": "reddit:wve0sg:ilfvip1::sf-drying-over-time"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "sephora-review:187419902::vanilla-beige-burn-warm"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant"
+          ],
+          "semantic_unit_ref": "sephora-review:263610826::pink-sugar-dry-irritated-itching"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "reviewer explicitly allowed that the reaction might be individual"
+          ],
+          "semantic_unit_ref": "sephora-review:272258322::vanilla-beige-swelling-peeling"
+        },
+        {
+          "conditions": [
+            "Pink Sugar product page",
+            "reviewer described owning three flavors",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "sephora-review:272686517::pink-sugar-dermatitis"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "reaction appeared after several days"
+          ],
+          "semantic_unit_ref": "sephora-review:309383242::vanilla-rash-after-days"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "customer description; no clinical diagnosis or chemical cause established"
+          ],
+          "semantic_unit_ref": "sephora-review:325782313::iced-coffee-burn-like-reaction"
+        },
+        {
+          "conditions": [
+            "Toasted Marshmallow variant",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "sephora-review:397129614::toasted-marshmallow-repeated-reaction"
+        },
+        {
+          "conditions": [
+            "Cherry variant"
+          ],
+          "semantic_unit_ref": "sephora-review:397449903::cherry-slight-irritation"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "sephora-review:397665133::pink-sugar-no-irritation"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381650580382679851::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "exact absence of every possible reaction was not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381718145440121631::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "extended repeat use"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant",
+            "fourth reported tube",
+            "possible formula difference not independently verified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7382063111974732575::brown-sugar-drying"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7384166497462289182::brown-sugar-burning"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7385589334789554987::brown-sugar-itching"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "effect changed over the customer's ownership period",
+            "cause of change not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7403144097768948486::vanilla-beige-later-burning"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "exact symptom wording inherited from the burning-focused video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7476703422690509614::pink-sugar-same-reaction"
+        },
+        {
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7508953746987959082::sf-intense-burning"
+        },
+        {
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7556672989032203064::sf-same-reaction"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant bound by the video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7578266905766462230::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Pink Guava variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7592607959882220319::pink-guava-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        }
+      ],
+      "conditions": [
+        "Brown Sugar variant",
+        "Cherry variant",
+        "Iced Coffee variant",
+        "Mint variant",
+        "Mint variant was the earlier exposure",
+        "Pink Guava variant",
+        "Pink Sugar product page",
+        "Pink Sugar variant",
+        "Summer Fridays Lip Butter Balm bound by the captured video context",
+        "Summer Fridays product binding comes from the captured thread context",
+        "Summer Fridays variant was not identified",
+        "Sweet Mint variant",
+        "Toasted Marshmallow variant",
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "Vanilla variant",
+        "cause of change not established",
+        "constant use",
+        "continuing symptoms are self-reported and causation is not established",
+        "customer attributed the effect to shiny reflection",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "customer-described allergy; no clinical diagnosis established",
+        "customer-described condition; no clinical attribution established",
+        "customer-described condition; no clinical diagnosis established",
+        "daily use",
+        "effect changed over the customer's ownership period",
+        "effect emerged over time",
+        "exact absence of every possible reaction was not established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "fourth reported tube",
+        "heavier application",
+        "individual self-reported experience",
+        "individual self-reported tolerance",
+        "multiple other product and dietary sensitivities were reported",
+        "outdoor use",
+        "possible formula difference not independently verified",
+        "product attribution explicitly uncertain",
+        "reaction appeared after several days",
+        "reaction appeared after several weeks of use",
+        "reaction symptoms and variant were not identified",
+        "reaction symptoms were not specified",
+        "reviewer described owning three flavors",
+        "reviewer explicitly allowed that the reaction might be individual",
+        "single first-use account",
+        "variant set was not itemized",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [
+          "reddit-thread:166j6zu",
+          "reddit-thread:171ciwt",
+          "reddit-thread:17585yg",
+          "reddit-thread:176msij",
+          "reddit-thread:1ahn26w",
+          "reddit-thread:1asnsu0",
+          "reddit-thread:1hpgjxj",
+          "reddit-thread:1i7of0b",
+          "reddit-thread:1mzokbt",
+          "reddit-thread:1oatxkp",
+          "reddit-thread:1oh26y0",
+          "reddit-thread:1ougkua",
+          "reddit-thread:1pf427h",
+          "reddit-thread:1pneo7v",
+          "reddit-thread:1qxm1tz",
+          "reddit-thread:1r09924",
+          "reddit-thread:wve0sg",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517",
+          "sephora-review:309383242",
+          "sephora-review:325782313",
+          "sephora-review:397129614",
+          "sephora-review:397449903",
+          "tiktok-video:7381649202134207786"
+        ],
+        "counter_evidence_item_count": 37,
+        "engagement_evidence_count": 1,
+        "independent_origin_count": 5,
+        "mixed_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "source_role_count": 3,
+        "support_container_count": 5,
+        "support_container_counts_by_type": {
+          "conversation": 3,
+          "creator_conversation": 1,
+          "retailer_review": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:16old70",
+          "reddit-thread:1kq0492",
+          "reddit-thread:1m07jmq",
+          "sephora-review:397665133",
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 6,
+        "support_semantic_unit_count": 6
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_2a0e69f729b46473bc2d",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [
+          "reddit:166j6zu:l9d0ja7::sf-similar-reaction",
+          "reddit:171ciwt:k3sk0fh::sf-rash-allergy",
+          "reddit:17585yg:nv5vqin::sf-contact-cheilitis-history",
+          "reddit:176msij:k4ph1fs::sf-outdoor-burning",
+          "reddit:1ahn26w:kop3sbr::sf-allergy-peeling",
+          "reddit:1asnsu0:kqsq5lb::sf-allergy-prolonged",
+          "reddit:1hpgjxj:m4k6dwg::sf-throat-itch",
+          "reddit:1i7of0b:m8nmm10::sf-allergy-unspecified",
+          "reddit:1mzokbt:post::mint-delayed-burning-flaking",
+          "reddit:1mzokbt:post::mint-persistent-sensitivity",
+          "reddit:1oatxkp:nkd50vp::sf-peeling-irritation",
+          "reddit:1oh26y0:post::iced-coffee-rapid-flaking",
+          "reddit:1ougkua:nod3nek::sf-irritated-not-moisturizing",
+          "reddit:1pf427h:post::sf-suspected-contact-dermatitis",
+          "reddit:1pneo7v:nvahs80::sf-burned-lips",
+          "reddit:1qxm1tz:o3xko68::sf-daily-use-drying",
+          "reddit:1r09924:o4h7wba::sf-continued-use-peeling-soreness",
+          "reddit:wve0sg:ilfvip1::sf-drying-over-time",
+          "sephora-review:187419902::vanilla-beige-burn-warm",
+          "sephora-review:263610826::pink-sugar-dry-irritated-itching",
+          "sephora-review:272258322::vanilla-beige-swelling-peeling",
+          "sephora-review:272686517::pink-sugar-dermatitis",
+          "sephora-review:309383242::vanilla-rash-after-days",
+          "sephora-review:325782313::iced-coffee-burn-like-reaction",
+          "sephora-review:397129614::toasted-marshmallow-repeated-reaction",
+          "sephora-review:397449903::cherry-slight-irritation",
+          "tiktok-comment:7381650580382679851::vanilla-beige-burning",
+          "tiktok-comment:7381718145440121631::vanilla-beige-burning",
+          "tiktok-comment:7382063111974732575::brown-sugar-drying",
+          "tiktok-comment:7384166497462289182::brown-sugar-burning",
+          "tiktok-comment:7385589334789554987::brown-sugar-itching",
+          "tiktok-comment:7403144097768948486::vanilla-beige-later-burning",
+          "tiktok-comment:7476703422690509614::pink-sugar-same-reaction",
+          "tiktok-comment:7508953746987959082::sf-intense-burning",
+          "tiktok-comment:7556672989032203064::sf-same-reaction",
+          "tiktok-comment:7578266905766462230::vanilla-beige-burning",
+          "tiktok-comment:7592607959882220319::pink-guava-burning",
+          "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        ],
+        "support": [
+          "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
+          "reddit:1kq0492:mt21uxw::sf-not-allergic-hydrating",
+          "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated",
+          "sephora-review:397665133::pink-sugar-no-irritation",
+          "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem",
+          "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "One captured Cherry reviewer reported slight irritation while explicitly distinguishing it from burning.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured Cherry reviewer reported slight irritation while explicitly distinguishing it from burning.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "sephora-review:397449903"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Cherry variant"
+        ],
+        "source_roles": [
+          "retailer_review"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Cherry variant"
+          ],
+          "semantic_unit_ref": "sephora-review:397449903::cherry-not-burning"
+        },
+        {
+          "conditions": [
+            "Cherry variant"
+          ],
+          "semantic_unit_ref": "sephora-review:397449903::cherry-slight-irritation"
+        }
+      ],
+      "conditions": [
+        "Cherry variant"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "retailer_review": 1
+        },
+        "support_container_ids": [
+          "sephora-review:397449903"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 2
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_5c5540cfb9c99139ada9",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "sephora-review:397449903::cherry-not-burning",
+          "sephora-review:397449903::cherry-slight-irritation"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [
+        "tiktok-video:7381649202134207786"
+      ],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured Sephora reviewers and TikTok audience members report burning or other painful lip reactions with the Vanilla Beige variant.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured Sephora reviewers and TikTok audience members report burning or other painful lip reactions with the Vanilla Beige variant.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [
+          "sephora-review:187419902",
+          "sephora-review:272258322",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631"
+        ],
+        "evidence_refs": [
+          "sephora-review:187419902",
+          "sephora-review:272258322",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631",
+          "tiktok-comment:7403144097768948486",
+          "tiktok-comment:7578266905766462230",
+          "tiktok-comment:7621769689929138958"
+        ],
+        "independent_origin_count": 7,
+        "scope_conditions": [
+          "Vanilla Beige variant",
+          "Vanilla Beige variant bound by the video context",
+          "cause of change not established",
+          "creator-authored framing",
+          "effect changed over the customer's ownership period",
+          "not independent customer-experience proof",
+          "reviewer explicitly allowed that the reaction might be individual"
+        ],
+        "source_roles": [
+          "audience_comment",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "sephora-review:187419902::vanilla-beige-burn-warm"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "reviewer explicitly allowed that the reaction might be individual"
+          ],
+          "semantic_unit_ref": "sephora-review:272258322::vanilla-beige-swelling-peeling"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381650580382679851::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381718145440121631::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "effect changed over the customer's ownership period",
+            "cause of change not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7403144097768948486::vanilla-beige-later-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant bound by the video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7578266905766462230::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "creator-authored framing",
+            "not independent customer-experience proof"
+          ],
+          "semantic_unit_ref": "tiktok-video:7381649202134207786::creator-vanilla-beige-burning-frame"
+        }
+      ],
+      "conditions": [
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "cause of change not established",
+        "creator-authored framing",
+        "effect changed over the customer's ownership period",
+        "not independent customer-experience proof",
+        "reviewer explicitly allowed that the reaction might be individual"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 4,
+        "independent_origin_count": 7,
+        "mixed_container_ids": [],
+        "source_role_count": 2,
+        "support_container_count": 3,
+        "support_container_counts_by_type": {
+          "creator_conversation": 1,
+          "retailer_review": 2
+        },
+        "support_container_ids": [
+          "sephora-review:187419902",
+          "sephora-review:272258322",
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 7,
+        "support_semantic_unit_count": 7
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_6fb9be176a63bd369fc9",
+      "semantic_relations": {
+        "adjacent": [
+          "tiktok-video:7381649202134207786::creator-vanilla-beige-burning-frame"
+        ],
+        "counter": [],
+        "support": [
+          "sephora-review:187419902::vanilla-beige-burn-warm",
+          "sephora-review:272258322::vanilla-beige-swelling-peeling",
+          "tiktok-comment:7381650580382679851::vanilla-beige-burning",
+          "tiktok-comment:7381718145440121631::vanilla-beige-burning",
+          "tiktok-comment:7403144097768948486::vanilla-beige-later-burning",
+          "tiktok-comment:7578266905766462230::vanilla-beige-burning",
+          "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured Sephora and TikTok accounts disagree on whether Pink Sugar irritates the individual user's lips.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured Sephora and TikTok accounts disagree on whether Pink Sugar irritates the individual user's lips.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "sephora-review:397665133",
+          "tiktok-comment:7381753285764956946"
+        ],
+        "engagement_evidence_refs": [
+          "sephora-review:263610826",
+          "sephora-review:272686517"
+        ],
+        "evidence_refs": [
+          "sephora-review:263610826",
+          "sephora-review:272686517",
+          "tiktok-comment:7476703422690509614"
+        ],
+        "independent_origin_count": 3,
+        "scope_conditions": [
+          "Pink Sugar product page",
+          "Pink Sugar variant",
+          "customer-described condition; no clinical diagnosis established",
+          "exact symptom wording inherited from the burning-focused video context",
+          "extended repeat use",
+          "individual self-reported tolerance",
+          "reviewer described owning three flavors"
+        ],
+        "source_roles": [
+          "audience_comment",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Pink Sugar variant"
+          ],
+          "semantic_unit_ref": "sephora-review:263610826::pink-sugar-dry-irritated-itching"
+        },
+        {
+          "conditions": [
+            "Pink Sugar product page",
+            "reviewer described owning three flavors",
+            "customer-described condition; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "sephora-review:272686517::pink-sugar-dermatitis"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "sephora-review:397665133::pink-sugar-no-irritation"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "extended repeat use"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "exact symptom wording inherited from the burning-focused video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7476703422690509614::pink-sugar-same-reaction"
+        }
+      ],
+      "conditions": [
+        "Pink Sugar product page",
+        "Pink Sugar variant",
+        "customer-described condition; no clinical diagnosis established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "individual self-reported tolerance",
+        "reviewer described owning three flavors"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [
+          "sephora-review:397665133",
+          "tiktok-video:7381649202134207786"
+        ],
+        "counter_evidence_item_count": 2,
+        "engagement_evidence_count": 2,
+        "independent_origin_count": 3,
+        "mixed_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "source_role_count": 2,
+        "support_container_count": 3,
+        "support_container_counts_by_type": {
+          "creator_conversation": 1,
+          "retailer_review": 2
+        },
+        "support_container_ids": [
+          "sephora-review:263610826",
+          "sephora-review:272686517",
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 3,
+        "support_semantic_unit_count": 3
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_83e8deddbd0de9cb02f5",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [
+          "sephora-review:397665133::pink-sugar-no-irritation",
+          "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        ],
+        "support": [
+          "sephora-review:263610826::pink-sugar-dry-irritated-itching",
+          "sephora-review:272686517::pink-sugar-dermatitis",
+          "tiktok-comment:7476703422690509614::pink-sugar-same-reaction"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Two captured customers report delayed drying or rash experiences with the Vanilla variant.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Two captured customers report delayed drying or rash experiences with the Vanilla variant.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [
+          "sephora-review:309383242"
+        ],
+        "evidence_refs": [
+          "reddit:wve0sg:ilfvip1",
+          "sephora-review:309383242"
+        ],
+        "independent_origin_count": 2,
+        "scope_conditions": [
+          "Vanilla variant",
+          "effect emerged over time",
+          "reaction appeared after several days"
+        ],
+        "source_roles": [
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Vanilla variant",
+            "effect emerged over time"
+          ],
+          "semantic_unit_ref": "reddit:wve0sg:ilfvip1::sf-drying-over-time"
+        },
+        {
+          "conditions": [
+            "Vanilla variant",
+            "reaction appeared after several days"
+          ],
+          "semantic_unit_ref": "sephora-review:309383242::vanilla-rash-after-days"
+        }
+      ],
+      "conditions": [
+        "Vanilla variant",
+        "effect emerged over time",
+        "reaction appeared after several days"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 1,
+        "independent_origin_count": 2,
+        "mixed_container_ids": [],
+        "source_role_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 1,
+          "retailer_review": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:wve0sg",
+          "sephora-review:309383242"
+        ],
+        "support_evidence_item_count": 2,
+        "support_semantic_unit_count": 2
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_8573ba807e3082806c0d",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:wve0sg:ilfvip1::sf-drying-over-time",
+          "sephora-review:309383242::vanilla-rash-after-days"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Three captured TikTok audience members independently report drying, burning, or itching experiences with Brown Sugar.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Three captured TikTok audience members independently report drying, burning, or itching experiences with Brown Sugar.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "tiktok-comment:7382063111974732575",
+          "tiktok-comment:7384166497462289182",
+          "tiktok-comment:7385589334789554987"
+        ],
+        "independent_origin_count": 3,
+        "scope_conditions": [
+          "Brown Sugar variant",
+          "fourth reported tube",
+          "possible formula difference not independently verified"
+        ],
+        "source_roles": [
+          "audience_comment"
+        ],
+        "support_posture": "independently_repeated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Brown Sugar variant",
+            "fourth reported tube",
+            "possible formula difference not independently verified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7382063111974732575::brown-sugar-drying"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7384166497462289182::brown-sugar-burning"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7385589334789554987::brown-sugar-itching"
+        }
+      ],
+      "conditions": [
+        "Brown Sugar variant",
+        "fourth reported tube",
+        "possible formula difference not independently verified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 3,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "creator_conversation": 1
+        },
+        "support_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 3,
+        "support_semantic_unit_count": 3
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_a313d52891c1f331cf6e",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "tiktok-comment:7382063111974732575::brown-sugar-drying",
+          "tiktok-comment:7384166497462289182::brown-sugar-burning",
+          "tiktok-comment:7385589334789554987::brown-sugar-itching"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured Reddit, Sephora, and TikTok accounts disagree on whether Iced Coffee causes a drying or burn-like adverse experience for the individual user.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured Reddit, Sephora, and TikTok accounts disagree on whether Iced Coffee causes a drying or burn-like adverse experience for the individual user.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "tiktok-comment:7381673774888059679"
+        ],
+        "engagement_evidence_refs": [
+          "reddit:1oh26y0:post",
+          "sephora-review:325782313"
+        ],
+        "evidence_refs": [
+          "reddit:1oh26y0:post",
+          "sephora-review:325782313"
+        ],
+        "independent_origin_count": 2,
+        "scope_conditions": [
+          "Iced Coffee variant",
+          "customer description; no clinical diagnosis or chemical cause established",
+          "exact absence of every possible reaction was not established",
+          "single first-use account"
+        ],
+        "source_roles": [
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "single first-use account"
+          ],
+          "semantic_unit_ref": "reddit:1oh26y0:post::iced-coffee-rapid-flaking"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "customer description; no clinical diagnosis or chemical cause established"
+          ],
+          "semantic_unit_ref": "sephora-review:325782313::iced-coffee-burn-like-reaction"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "exact absence of every possible reaction was not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem"
+        }
+      ],
+      "conditions": [
+        "Iced Coffee variant",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "exact absence of every possible reaction was not established",
+        "single first-use account"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "counter_evidence_item_count": 1,
+        "engagement_evidence_count": 2,
+        "independent_origin_count": 2,
+        "mixed_container_ids": [],
+        "source_role_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 1,
+          "retailer_review": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:1oh26y0",
+          "sephora-review:325782313"
+        ],
+        "support_evidence_item_count": 2,
+        "support_semantic_unit_count": 2
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_c69bb877b3f87c570f49",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [
+          "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem"
+        ],
+        "support": [
+          "reddit:1oh26y0:post::iced-coffee-rapid-flaking",
+          "sephora-review:325782313::iced-coffee-burn-like-reaction"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "One captured reviewer reports repeated allergy-like reactions with Toasted Marshmallow.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured reviewer reports repeated allergy-like reactions with Toasted Marshmallow.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "sephora-review:397129614"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Toasted Marshmallow variant",
+          "customer-described allergy; no clinical diagnosis established"
+        ],
+        "source_roles": [
+          "retailer_review"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Toasted Marshmallow variant",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "semantic_unit_ref": "sephora-review:397129614::toasted-marshmallow-repeated-reaction"
+        }
+      ],
+      "conditions": [
+        "Toasted Marshmallow variant",
+        "customer-described allergy; no clinical diagnosis established"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "retailer_review": 1
+        },
+        "support_container_ids": [
+          "sephora-review:397129614"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 1
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_d845a6cf6a0cb18a646d",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "sephora-review:397129614::toasted-marshmallow-repeated-reaction"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [
+        "reddit:1m07jmq:n37cif6"
+      ],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "One captured customer who generally tolerates Summer Fridays identifies Birthday Cake as an exception.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured customer who generally tolerates Summer Fridays identifies Birthday Cake as an exception.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1m07jmq:n37cif6"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Birthday Cake variant",
+          "individual self-reported tolerance",
+          "reaction details were not specified"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Birthday Cake variant",
+            "reaction details were not specified"
+          ],
+          "semantic_unit_ref": "reddit:1m07jmq:n37cif6::birthday-cake-exception"
+        },
+        {
+          "conditions": [
+            "individual self-reported tolerance"
+          ],
+          "semantic_unit_ref": "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated"
+        }
+      ],
+      "conditions": [
+        "Birthday Cake variant",
+        "individual self-reported tolerance",
+        "reaction details were not specified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 0,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "conversation": 1
+        },
+        "support_container_ids": [
+          "reddit-thread:1m07jmq"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 1
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_dcf5298b76d4e073c076",
+      "semantic_relations": {
+        "adjacent": [
+          "reddit:1m07jmq:n37cif6::sf-most-variants-tolerated"
+        ],
+        "counter": [],
+        "support": [
+          "reddit:1m07jmq:n37cif6::birthday-cake-exception"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [
+        "tiktok-comment:7381650580382679851",
+        "tiktok-comment:7381718145440121631",
+        "tiktok-comment:7578266905766462230",
+        "tiktok-comment:7621769689929138958"
+      ],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "One captured creator publicly framed Vanilla Beige as burning their lips on initial application.",
+      "claim_kind": "actor_strategy",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured creator publicly framed Vanilla Beige as burning their lips on initial application.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "evidence_refs": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "Vanilla Beige variant",
+          "Vanilla Beige variant bound by the video context",
+          "creator-authored framing",
+          "not independent customer-experience proof"
+        ],
+        "source_roles": [
+          "creator_authored"
+        ],
+        "support_posture": "resonance_supported"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381650580382679851::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381718145440121631::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant bound by the video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7578266905766462230::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "creator-authored framing",
+            "not independent customer-experience proof"
+          ],
+          "semantic_unit_ref": "tiktok-video:7381649202134207786::creator-vanilla-beige-burning-frame"
+        }
+      ],
+      "conditions": [
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "creator-authored framing",
+        "not independent customer-experience proof"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 1,
+        "independent_origin_count": 1,
+        "mixed_container_ids": [],
+        "source_role_count": 1,
+        "support_container_count": 1,
+        "support_container_counts_by_type": {
+          "creator_conversation": 1
+        },
+        "support_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 1,
+        "support_semantic_unit_count": 1
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_df46bb962bcfbb83fd74",
+      "semantic_relations": {
+        "adjacent": [
+          "tiktok-comment:7381650580382679851::vanilla-beige-burning",
+          "tiktok-comment:7381718145440121631::vanilla-beige-burning",
+          "tiktok-comment:7578266905766462230::vanilla-beige-burning",
+          "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        ],
+        "counter": [],
+        "support": [
+          "tiktok-video:7381649202134207786::creator-vanilla-beige-burning-frame"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured customers across Reddit and Sephora report stopping use, returning or discarding products, declining repurchase or recommendation, switching preference, or clearing their collection after an adverse Lip Butter Balm experience.",
+      "claim_kind": "reported_behavior",
+      "claim_support": {
+        "behavior_evidence_refs": [
+          "reddit:1mzokbt:post",
+          "reddit:1oh26y0:post",
+          "reddit:1ougkua:nod3nek",
+          "reddit:1pneo7v:nvahs80",
+          "reddit:1r09924:o4h7wba",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517"
+        ],
+        "bounded_proposition": "Captured customers across Reddit and Sephora report stopping use, returning or discarding products, declining repurchase or recommendation, switching preference, or clearing their collection after an adverse Lip Butter Balm experience.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [
+          "reddit:1oh26y0:post",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517"
+        ],
+        "evidence_refs": [
+          "reddit:1mzokbt:post",
+          "reddit:1oh26y0:post",
+          "reddit:1ougkua:nod3nek",
+          "reddit:1pneo7v:nvahs80",
+          "reddit:1r09924:o4h7wba",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517"
+        ],
+        "independent_origin_count": 9,
+        "scope_conditions": [
+          "Iced Coffee variant prompted the decision",
+          "Mint variant",
+          "Pink Sugar review context",
+          "Pink Sugar variant",
+          "Vanilla Beige variant",
+          "multiple variants",
+          "reported abandonment behavior",
+          "reported behavior following the reaction",
+          "reported future purchase behavior",
+          "reported product choice",
+          "reported recommendation behavior",
+          "variant was not identified"
+        ],
+        "source_roles": [
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Mint variant",
+            "reported behavior following the reaction"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-stopped-use"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant prompted the decision",
+            "reported future purchase behavior"
+          ],
+          "semantic_unit_ref": "reddit:1oh26y0:post::iced-coffee-no-future-purchase"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "reported recommendation behavior"
+          ],
+          "semantic_unit_ref": "reddit:1ougkua:nod3nek::sf-cannot-recommend"
+        },
+        {
+          "conditions": [
+            "variant was not identified",
+            "reported product choice"
+          ],
+          "semantic_unit_ref": "reddit:1pneo7v:nvahs80::sf-rejected-for-laneige"
+        },
+        {
+          "conditions": [
+            "multiple variants",
+            "reported abandonment behavior"
+          ],
+          "semantic_unit_ref": "reddit:1r09924:o4h7wba::sf-collection-decluttered"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "reported future purchase behavior"
+          ],
+          "semantic_unit_ref": "sephora-review:187419902::vanilla-beige-no-repurchase"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "reported behavior following the reaction"
+          ],
+          "semantic_unit_ref": "sephora-review:263610826::pink-sugar-return"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "reported behavior following the reaction"
+          ],
+          "semantic_unit_ref": "sephora-review:272258322::vanilla-beige-stopped"
+        },
+        {
+          "conditions": [
+            "Pink Sugar review context",
+            "reported abandonment behavior"
+          ],
+          "semantic_unit_ref": "sephora-review:272686517::three-flavors-discarded"
+        }
+      ],
+      "conditions": [
+        "Iced Coffee variant prompted the decision",
+        "Mint variant",
+        "Pink Sugar review context",
+        "Pink Sugar variant",
+        "Vanilla Beige variant",
+        "multiple variants",
+        "reported abandonment behavior",
+        "reported behavior following the reaction",
+        "reported future purchase behavior",
+        "reported product choice",
+        "reported recommendation behavior",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [],
+        "counter_evidence_item_count": 0,
+        "engagement_evidence_count": 5,
+        "independent_origin_count": 9,
+        "mixed_container_ids": [],
+        "source_role_count": 2,
+        "support_container_count": 9,
+        "support_container_counts_by_type": {
+          "conversation": 5,
+          "retailer_review": 4
+        },
+        "support_container_ids": [
+          "reddit-thread:1mzokbt",
+          "reddit-thread:1oh26y0",
+          "reddit-thread:1ougkua",
+          "reddit-thread:1pneo7v",
+          "reddit-thread:1r09924",
+          "sephora-review:187419902",
+          "sephora-review:263610826",
+          "sephora-review:272258322",
+          "sephora-review:272686517"
+        ],
+        "support_evidence_item_count": 9,
+        "support_semantic_unit_count": 9
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_f774451c27f0610283fb",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1mzokbt:post::mint-stopped-use",
+          "reddit:1oh26y0:post::iced-coffee-no-future-purchase",
+          "reddit:1ougkua:nod3nek::sf-cannot-recommend",
+          "reddit:1pneo7v:nvahs80::sf-rejected-for-laneige",
+          "reddit:1r09924:o4h7wba::sf-collection-decluttered",
+          "sephora-review:187419902::vanilla-beige-no-repurchase",
+          "sephora-review:263610826::pink-sugar-return",
+          "sephora-review:272258322::vanilla-beige-stopped",
+          "sephora-review:272686517::three-flavors-discarded"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [
+        "tiktok-video:7381649202134207786"
+      ],
+      "axis_ids": [
+        "reaction_and_breakout"
+      ],
+      "bounded_proposition": "Captured customer accounts differ on whether Summer Fridays Lip Butter Balm produces a burning sensation for the individual user.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured customer accounts differ on whether Summer Fridays Lip Butter Balm produces a burning sensation for the individual user.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "reddit:16old70:k1p6c8q",
+          "sephora-review:397449903",
+          "tiktok-comment:7381673774888059679",
+          "tiktok-comment:7381753285764956946"
+        ],
+        "engagement_evidence_refs": [
+          "sephora-review:187419902",
+          "sephora-review:325782313",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631"
+        ],
+        "evidence_refs": [
+          "reddit:176msij:k4ph1fs",
+          "reddit:1mzokbt:post",
+          "reddit:1pneo7v:nvahs80",
+          "sephora-review:187419902",
+          "sephora-review:325782313",
+          "tiktok-comment:7381650580382679851",
+          "tiktok-comment:7381718145440121631",
+          "tiktok-comment:7384166497462289182",
+          "tiktok-comment:7403144097768948486",
+          "tiktok-comment:7476703422690509614",
+          "tiktok-comment:7508953746987959082",
+          "tiktok-comment:7556672989032203064",
+          "tiktok-comment:7578266905766462230",
+          "tiktok-comment:7592607959882220319",
+          "tiktok-comment:7621769689929138958"
+        ],
+        "independent_origin_count": 15,
+        "scope_conditions": [
+          "Brown Sugar variant",
+          "Cherry variant",
+          "Iced Coffee variant",
+          "Mint variant",
+          "Pink Guava variant",
+          "Pink Sugar variant",
+          "Summer Fridays Lip Butter Balm bound by the captured video context",
+          "Sweet Mint variant",
+          "Vanilla Beige variant",
+          "Vanilla Beige variant bound by the video context",
+          "cause of change not established",
+          "creator-authored framing",
+          "customer attributed the effect to shiny reflection",
+          "customer description; no clinical diagnosis or chemical cause established",
+          "effect changed over the customer's ownership period",
+          "exact absence of every possible reaction was not established",
+          "exact symptom wording inherited from the burning-focused video context",
+          "extended repeat use",
+          "individual self-reported experience",
+          "not independent customer-experience proof",
+          "outdoor use",
+          "reaction appeared after several weeks of use",
+          "variant was not identified"
+        ],
+        "source_roles": [
+          "audience_comment",
+          "community_post",
+          "retailer_review"
+        ],
+        "support_posture": "cross_venue_corroborated"
+      },
+      "comparator_product_ids": [],
+      "condition_lineage": [
+        {
+          "conditions": [
+            "Sweet Mint variant",
+            "individual self-reported experience"
+          ],
+          "semantic_unit_ref": "reddit:16old70:k1p6c8q::sweet-mint-not-burning"
+        },
+        {
+          "conditions": [
+            "outdoor use",
+            "customer attributed the effect to shiny reflection",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:176msij:k4ph1fs::sf-outdoor-burning"
+        },
+        {
+          "conditions": [
+            "Mint variant",
+            "reaction appeared after several weeks of use"
+          ],
+          "semantic_unit_ref": "reddit:1mzokbt:post::mint-delayed-burning-flaking"
+        },
+        {
+          "conditions": [
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "reddit:1pneo7v:nvahs80::sf-burned-lips"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "sephora-review:187419902::vanilla-beige-burn-warm"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "customer description; no clinical diagnosis or chemical cause established"
+          ],
+          "semantic_unit_ref": "sephora-review:325782313::iced-coffee-burn-like-reaction"
+        },
+        {
+          "conditions": [
+            "Cherry variant"
+          ],
+          "semantic_unit_ref": "sephora-review:397449903::cherry-not-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381650580382679851::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Iced Coffee variant",
+            "exact absence of every possible reaction was not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381718145440121631::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "extended repeat use"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        },
+        {
+          "conditions": [
+            "Brown Sugar variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7384166497462289182::brown-sugar-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "effect changed over the customer's ownership period",
+            "cause of change not established"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7403144097768948486::vanilla-beige-later-burning"
+        },
+        {
+          "conditions": [
+            "Pink Sugar variant",
+            "exact symptom wording inherited from the burning-focused video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7476703422690509614::pink-sugar-same-reaction"
+        },
+        {
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7508953746987959082::sf-intense-burning"
+        },
+        {
+          "conditions": [
+            "Summer Fridays Lip Butter Balm bound by the captured video context",
+            "variant was not identified"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7556672989032203064::sf-same-reaction"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant bound by the video context"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7578266905766462230::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Pink Guava variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7592607959882220319::pink-guava-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant"
+          ],
+          "semantic_unit_ref": "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        },
+        {
+          "conditions": [
+            "Vanilla Beige variant",
+            "creator-authored framing",
+            "not independent customer-experience proof"
+          ],
+          "semantic_unit_ref": "tiktok-video:7381649202134207786::creator-vanilla-beige-burning-frame"
+        }
+      ],
+      "conditions": [
+        "Brown Sugar variant",
+        "Cherry variant",
+        "Iced Coffee variant",
+        "Mint variant",
+        "Pink Guava variant",
+        "Pink Sugar variant",
+        "Summer Fridays Lip Butter Balm bound by the captured video context",
+        "Sweet Mint variant",
+        "Vanilla Beige variant",
+        "Vanilla Beige variant bound by the video context",
+        "cause of change not established",
+        "creator-authored framing",
+        "customer attributed the effect to shiny reflection",
+        "customer description; no clinical diagnosis or chemical cause established",
+        "effect changed over the customer's ownership period",
+        "exact absence of every possible reaction was not established",
+        "exact symptom wording inherited from the burning-focused video context",
+        "extended repeat use",
+        "individual self-reported experience",
+        "not independent customer-experience proof",
+        "outdoor use",
+        "reaction appeared after several weeks of use",
+        "variant was not identified"
+      ],
+      "emerging_axis_labels": [],
+      "evidence_stack": {
+        "counter_container_ids": [
+          "reddit-thread:16old70",
+          "sephora-review:397449903",
+          "tiktok-video:7381649202134207786"
+        ],
+        "counter_evidence_item_count": 4,
+        "engagement_evidence_count": 4,
+        "independent_origin_count": 15,
+        "mixed_container_ids": [
+          "tiktok-video:7381649202134207786"
+        ],
+        "source_role_count": 3,
+        "support_container_count": 6,
+        "support_container_counts_by_type": {
+          "conversation": 3,
+          "creator_conversation": 1,
+          "retailer_review": 2
+        },
+        "support_container_ids": [
+          "reddit-thread:176msij",
+          "reddit-thread:1mzokbt",
+          "reddit-thread:1pneo7v",
+          "sephora-review:187419902",
+          "sephora-review:325782313",
+          "tiktok-video:7381649202134207786"
+        ],
+        "support_evidence_item_count": 15,
+        "support_semantic_unit_count": 15
+      },
+      "product_version_ids": [],
+      "proposition_id": "prop_fdba937173f03faa9cb1",
+      "semantic_relations": {
+        "adjacent": [
+          "tiktok-video:7381649202134207786::creator-vanilla-beige-burning-frame"
+        ],
+        "counter": [
+          "reddit:16old70:k1p6c8q::sweet-mint-not-burning",
+          "sephora-review:397449903::cherry-not-burning",
+          "tiktok-comment:7381673774888059679::iced-coffee-no-same-problem",
+          "tiktok-comment:7381753285764956946::pink-sugar-no-reaction"
+        ],
+        "support": [
+          "reddit:176msij:k4ph1fs::sf-outdoor-burning",
+          "reddit:1mzokbt:post::mint-delayed-burning-flaking",
+          "reddit:1pneo7v:nvahs80::sf-burned-lips",
+          "sephora-review:187419902::vanilla-beige-burn-warm",
+          "sephora-review:325782313::iced-coffee-burn-like-reaction",
+          "tiktok-comment:7381650580382679851::vanilla-beige-burning",
+          "tiktok-comment:7381718145440121631::vanilla-beige-burning",
+          "tiktok-comment:7384166497462289182::brown-sugar-burning",
+          "tiktok-comment:7403144097768948486::vanilla-beige-later-burning",
+          "tiktok-comment:7476703422690509614::pink-sugar-same-reaction",
+          "tiktok-comment:7508953746987959082::sf-intense-burning",
+          "tiktok-comment:7556672989032203064::sf-same-reaction",
+          "tiktok-comment:7578266905766462230::vanilla-beige-burning",
+          "tiktok-comment:7592607959882220319::pink-guava-burning",
+          "tiktok-comment:7621769689929138958::vanilla-beige-burning"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    }
+  ],
+  "question_id": "phase-a-semantic-integration-multisource-reaction-dogfood-route-1-6-regression",
+  "schema_version": "semantic_evidence_integration_view_v2",
+  "unmerged_semantic_units": [
+    {
+      "reason": "A single customer's ingredient hypothesis is preserved but cannot establish stevia as the cause.",
+      "semantic_unit_ref": "reddit:1oatxkp:nkd50vp::stevia-cause-speculation"
+    },
+    {
+      "reason": "A same-reviewer before-and-after attribution is preserved but the formula identity and change were not independently verified.",
+      "semantic_unit_ref": "sephora-review:187419902::new-formula-attribution"
+    },
+    {
+      "reason": "A single customer's shea-butter hypothesis is preserved but cannot establish an ingredient cause.",
+      "semantic_unit_ref": "sephora-review:309383242::shea-cause-speculation"
+    },
+    {
+      "reason": "The reviewer repeats awareness of TikTok reports; this is an echo and receives no additional independent support credit.",
+      "semantic_unit_ref": "sephora-review:325782313::tiktok-reports-echo"
+    },
+    {
+      "reason": "A question about a formula change is not evidence that a formula change occurred.",
+      "semantic_unit_ref": "sephora-review:397129614::formula-change-question"
+    }
+  ],
+  "view_sha256": "07daa100b635175634dcfe7cafd0891b79056760597d39f262762376ffe21a27"
+}

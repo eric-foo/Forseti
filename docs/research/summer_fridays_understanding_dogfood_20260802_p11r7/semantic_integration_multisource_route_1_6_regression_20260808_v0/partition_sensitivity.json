@@ -1,0 +1,34 @@
+{
+  "corpus_sha256_equal": true,
+  "flattened_membership_and_counts_equal": true,
+  "non_claims": [
+    "bounded live regression only",
+    "not full-corpus recall",
+    "not byte-identical model judgment"
+  ],
+  "partition_a": {
+    "batch_membership_sha256": "4bd3057d0927b4114073d8051f0bb3d7ad58ff9df312395fee3091c709475bc6",
+    "batch_sizes": [
+      71,
+      9
+    ],
+    "extraction_batches": 2,
+    "level_1_batches": 1,
+    "level_2_batches": 1,
+    "max_prompt_bytes": 150000
+  },
+  "partition_b": {
+    "batch_membership_sha256": "e5de6c58cad72c2890762f0a5d023b7fdda77fb88eca3dc13104905d8692deb3",
+    "batch_sizes": [
+      45,
+      35
+    ],
+    "extraction_batches": 2,
+    "level_1_batches": 1,
+    "level_2_batches": 1,
+    "max_prompt_bytes": 100000
+  },
+  "partitions_differ": true,
+  "proposition_ids_equal": true,
+  "schema_version": "semantic_evidence_partition_sensitivity_v1"
+}

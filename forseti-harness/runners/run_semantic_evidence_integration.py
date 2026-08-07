@@ -15,8 +15,12 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     build_batch_prompts,
     build_bundle,
     build_reconciliation_prompt,
+    finalize_v3_view,
     finalize_view,
+    materialize_source_v3,
+    prepare_reconciliation_stage,
     validate_batch_responses,
+    validate_reconciliation_stage,
 )
 from harness_utils import hash_file  # noqa: E402
 
@@ -83,11 +87,15 @@ def _verify_sources(source: dict[str, Any], *, repo_root: Path) -> None:
 
 def prepare_batches(
     *, source_path: Path, repo_root: Path, bundle_out: Path, prompt_dir: Path,
-    max_batch_chars: int,
+    max_batch_chars: int, max_prompt_bytes: int | None = None,
 ) -> dict[str, Any]:
     source = _load_object(source_path)
     _verify_sources(source, repo_root=repo_root)
-    bundle = build_bundle(source, max_batch_chars=max_batch_chars)
+    bundle = build_bundle(
+        source,
+        max_batch_chars=max_batch_chars,
+        max_prompt_bytes=max_prompt_bytes,
+    )
     if prompt_dir.exists():
         raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
     _write_json(bundle_out, bundle)
@@ -106,6 +114,41 @@ def prepare_batches(
         "admitted_evidence_unit_count": bundle["coverage_denominator"]["admitted_evidence_unit_count"],
         "bundle_out": str(bundle_out),
         "prompt_dir": str(prompt_dir),
+        "model_api_calls": 0,
+        **(
+            {
+                "max_prompt_bytes": bundle["max_prompt_bytes"],
+                "largest_rendered_prompt_bytes": max(
+                    row["prompt_utf8_bytes"] for row in prompts
+                ),
+                "captured_item_count": bundle["coverage_denominator"][
+                    "captured_item_count"
+                ],
+            }
+            if bundle.get("schema_version") == "semantic_evidence_bundle_v3"
+            else {}
+        ),
+    }
+
+
+def materialize_v3(
+    *, source_path: Path, repo_root: Path, source_out: Path
+) -> dict[str, Any]:
+    source = _load_object(source_path)
+    _verify_sources(source, repo_root=repo_root)
+    materialized = materialize_source_v3(source)
+    _write_json(source_out, materialized)
+    counts: dict[str, int] = {}
+    for row in materialized["captured_items"]:
+        disposition = row["accounting_disposition"]
+        counts[disposition] = counts.get(disposition, 0) + 1
+    return {
+        "status": "SEMANTIC_EVIDENCE_SOURCE_V3_MATERIALIZED",
+        "source_sha256": materialized["source_sha256"],
+        "captured_item_count": len(materialized["captured_items"]),
+        "captured_container_count": len(materialized["containers"]),
+        "accounting_disposition_counts": dict(sorted(counts.items())),
+        "source_out": str(source_out),
         "model_api_calls": 0,
     }
 
@@ -160,15 +203,109 @@ def finalize(
     }
 
 
+def prepare_reconciliation_level(
+    *, bundle_path: Path, compilation_path: Path, stage_out: Path, prompt_dir: Path
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    compilation = _load_object(compilation_path)
+    stage, prompts = prepare_reconciliation_stage(bundle, compilation)
+    if prompt_dir.exists():
+        raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
+    _write_json(stage_out, stage)
+    prompt_dir.mkdir(parents=True)
+    for row in prompts:
+        _write_new(
+            prompt_dir / f"{row['batch_id']}.md",
+            row["prompt"].encode("utf-8") + b"\n",
+        )
+    return {
+        "status": "SEMANTIC_RECONCILIATION_LEVEL_JUDGMENT_REQUIRED",
+        "stage_sha256": stage["stage_sha256"],
+        "level": stage["level"],
+        "batch_count": len(prompts),
+        "candidate_count": len(stage["candidates"]),
+        "largest_rendered_prompt_bytes": max(
+            row["prompt_utf8_bytes"] for row in prompts
+        ),
+        "stage_out": str(stage_out),
+        "prompt_dir": str(prompt_dir),
+        "model_api_calls": 0,
+    }
+
+
+def submit_reconciliation_level(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_paths: list[Path],
+    compilation_out: Path,
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    stage = _load_object(stage_path)
+    responses = [_load_object(path) for path in response_paths]
+    compilation = validate_reconciliation_stage(bundle, stage, responses)
+    _write_json(compilation_out, compilation)
+    terminal = (
+        compilation["input_batch_count"] == 1
+        and bool(compilation["semantic_nodes"])
+        and all(
+            row["terminal_proposition"] is True
+            for row in compilation["semantic_nodes"]
+        )
+    )
+    return {
+        "status": (
+            "SEMANTIC_FINALIZATION_READY"
+            if terminal
+            else "SEMANTIC_RECONCILIATION_LEVEL_REQUIRED"
+        ),
+        "node_compilation_sha256": compilation["node_compilation_sha256"],
+        "level": compilation["level"],
+        "node_count": len(compilation["semantic_nodes"]),
+        "terminal": terminal,
+        "compilation_out": str(compilation_out),
+        "model_api_calls": 0,
+    }
+
+
+def finalize_v3(
+    *,
+    bundle_path: Path,
+    batch_compilation_path: Path,
+    node_compilation_path: Path,
+    view_out: Path,
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    batch_compilation = _load_object(batch_compilation_path)
+    node_compilation = _load_object(node_compilation_path)
+    view = finalize_v3_view(bundle, batch_compilation, node_compilation)
+    _write_json(view_out, view)
+    return {
+        "status": "SEMANTIC_EVIDENCE_INTEGRATION_COMPLETE",
+        "view_sha256": view["view_sha256"],
+        "proposition_count": len(view["propositions"]),
+        "captured_item_count": view["coverage"]["captured_item_count"],
+        "accounted_item_count": view["coverage"]["accounted_item_count"],
+        "view_out": str(view_out),
+        "model_api_calls": 0,
+    }
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
+    materialize = sub.add_parser("materialize-v3")
+    materialize.add_argument("--source", type=Path, required=True)
+    materialize.add_argument("--repo-root", type=Path, required=True)
+    materialize.add_argument("--source-out", type=Path, required=True)
+
     prepare = sub.add_parser("prepare-batches")
     prepare.add_argument("--source", type=Path, required=True)
     prepare.add_argument("--repo-root", type=Path, required=True)
     prepare.add_argument("--bundle-out", type=Path, required=True)
     prepare.add_argument("--prompt-dir", type=Path, required=True)
     prepare.add_argument("--max-batch-chars", type=int, default=80_000)
+    prepare.add_argument("--max-prompt-bytes", type=int)
 
     submit = sub.add_parser("submit-batches")
     submit.add_argument("--bundle", type=Path, required=True)
@@ -185,19 +322,44 @@ def _parser() -> argparse.ArgumentParser:
     finish.add_argument("--compiled", type=Path, required=True)
     finish.add_argument("--response", type=Path, required=True)
     finish.add_argument("--view-out", type=Path, required=True)
+
+    reconcile_level = sub.add_parser("prepare-reconciliation-level")
+    reconcile_level.add_argument("--bundle", type=Path, required=True)
+    reconcile_level.add_argument("--compilation", type=Path, required=True)
+    reconcile_level.add_argument("--stage-out", type=Path, required=True)
+    reconcile_level.add_argument("--prompt-dir", type=Path, required=True)
+
+    submit_level = sub.add_parser("submit-reconciliation-level")
+    submit_level.add_argument("--bundle", type=Path, required=True)
+    submit_level.add_argument("--stage", type=Path, required=True)
+    submit_level.add_argument("--response", type=Path, action="append", required=True)
+    submit_level.add_argument("--compilation-out", type=Path, required=True)
+
+    finish_v3 = sub.add_parser("finalize-v3")
+    finish_v3.add_argument("--bundle", type=Path, required=True)
+    finish_v3.add_argument("--batch-compilation", type=Path, required=True)
+    finish_v3.add_argument("--node-compilation", type=Path, required=True)
+    finish_v3.add_argument("--view-out", type=Path, required=True)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
-        if args.command == "prepare-batches":
+        if args.command == "materialize-v3":
+            result = materialize_v3(
+                source_path=args.source,
+                repo_root=args.repo_root,
+                source_out=args.source_out,
+            )
+        elif args.command == "prepare-batches":
             result = prepare_batches(
                 source_path=args.source,
                 repo_root=args.repo_root,
                 bundle_out=args.bundle_out,
                 prompt_dir=args.prompt_dir,
                 max_batch_chars=args.max_batch_chars,
+                max_prompt_bytes=args.max_prompt_bytes,
             )
         elif args.command == "submit-batches":
             result = submit_batches(
@@ -211,11 +373,32 @@ def main(argv: list[str] | None = None) -> int:
                 compiled_path=args.compiled,
                 prompt_out=args.prompt_out,
             )
-        else:
+        elif args.command == "finalize":
             result = finalize(
                 bundle_path=args.bundle,
                 compiled_path=args.compiled,
                 response_path=args.response,
+                view_out=args.view_out,
+            )
+        elif args.command == "prepare-reconciliation-level":
+            result = prepare_reconciliation_level(
+                bundle_path=args.bundle,
+                compilation_path=args.compilation,
+                stage_out=args.stage_out,
+                prompt_dir=args.prompt_dir,
+            )
+        elif args.command == "submit-reconciliation-level":
+            result = submit_reconciliation_level(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_paths=args.response,
+                compilation_out=args.compilation_out,
+            )
+        else:
+            result = finalize_v3(
+                bundle_path=args.bundle,
+                batch_compilation_path=args.batch_compilation,
+                node_compilation_path=args.node_compilation,
                 view_out=args.view_out,
             )
     except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:

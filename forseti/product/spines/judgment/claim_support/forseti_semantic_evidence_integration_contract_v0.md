@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v0
-effective_date: 2026-08-07
+version: v1
+effective_date: 2026-08-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v0
+# Semantic Evidence Integration Contract v1
 
 ## Purpose
 
@@ -100,6 +100,43 @@ a deterministic bounded semantic audit sample per screening family. One
 load-bearing missed class reopens that family rather than licensing a passing
 seal from the original screen.
 
+Route 1.6 uses a stronger, explicitly selected profile. Its declared corpus is
+the union of unique source-native items captured inside the final Phase A scope
+and cutoff, not only items nominated by an earlier lexical or axis screen.
+Every captured item ends as:
+
+- `assess` — usable captured text read semantically;
+- `mechanically_excluded` — excluded by a deterministic reason such as an
+  exact duplicate, wrong cutoff, corrupt body, or non-text object; or
+- `blocked` — required text, artifact, or material conversational context is
+  unavailable.
+
+The compiler keeps captured, assessed, mechanically excluded, and blocked
+counts separate. A blocked item prevents a complete Route 1.6 view. This
+full-captured-corpus profile is not silently weakened into the historical
+screen-plus-audit profile. A bounded regression slice may exercise Route 1.6
+mechanics, but it is not seal-eligible as a final-acquisition corpus.
+
+## Containers, context, and capture envelopes
+
+Leaves remain the claim-bearing evidence items. Containers preserve context
+and supply a separate count dimension:
+
+- one Reddit root plus its captured replies is one conversation container;
+- one creator post plus captured audience comments is one creator-conversation
+  container;
+- each retailer review is one retailer-review container; and
+- each PDP, owned post, advertisement, editorial item, or measured object is
+  one published-object container.
+
+Each container records captured-leaf count, source-visible total or
+`unavailable`, completeness posture, capture time, and the exact capture
+boundary. A claim may therefore say that support appears in seven containers
+without pretending those containers are seven independent people. When an
+oversized conversation is split across semantic prompts, every reply travels
+with the root and captured immediate-parent chain needed to interpret it.
+Missing or truncated context remains visible and may force `unresolved`.
+
 ## Axes and propositions
 
 Axes are organizing questions; propositions are the specific bounded meanings
@@ -147,15 +184,73 @@ every unused meaning unit.
 coverage, propositions, claim-support blocks, emerging-axis candidates,
 unmerged meanings, source/method/corpus bindings, and its own content hash.
 
+Route 1.6 adds, without changing the historical interfaces above:
+
+- `semantic_evidence_source_v3` — final-corpus scope/cutoff, container
+  registry, capture envelopes, and one accounting row per captured item;
+- `semantic_evidence_bundle_v3` — the normalized v3 corpus, actual rendered
+  UTF-8 prompt-byte ceiling, and exact source/container/item denominators;
+- `semantic_evidence_integration_method_v3` — leaf-with-container semantic
+  assessment and bounded hierarchical reconciliation;
+- `semantic_evidence_batch_response_v2` — semantic posture, uncertainty,
+  polarity, exact product/version binding, and container-linked leaf output;
+- `semantic_evidence_reconciliation_response_v2` — child-referenced semantic
+  nodes, terminal claim metadata, unmerged children, and explicit emerging-axis
+  consolidation; and
+- `semantic_evidence_integration_view_v2` — compiler-flattened leaf lineage,
+  capture-envelope accounting, evidence-item/container/origin/source-role/
+  engagement counts, reverse indexes, and terminal consolidated axes.
+
+Semantic posture distinguishes first-hand experience, personal agreement,
+attribution or echo, questions, speculation, observable statements, and actor
+strategy. Uncertainty remains a separate dimension. The compiler never turns
+an echo, question, creator framing, or unknown actor into an independent
+customer experience.
+
+## Prompt-bounded hierarchy
+
+Route 1.6 bounds the actual rendered UTF-8 bytes of every extraction and
+reconciliation prompt, including method, schema, axes, context, and formatting
+overhead. A single evidence item or semantic candidate that cannot fit fails
+before agent output is accepted.
+
+Reconciliation may repeat in levels. A level reads immutable candidates from
+the prior level and emits child-referenced semantic nodes. Deterministic code
+validates exact child accounting, source/product/comparator/version bindings,
+condition lineage, polarity lineage, stale hashes, cycles, duplicate credit,
+and flattened leaf provenance. Every stage and node compilation retains the
+root batch-compilation hash; finalization rejects a terminal hierarchy whose
+root hash differs from the supplied batch compilation even when the visible
+leaf denominator happens to match. The agent still owns whether meanings are
+equivalent and how conditions, negation, and uncertainty should be described.
+Structural completeness is therefore proven; perfect open-world semantic
+recall is not.
+
+Emerging labels are consolidated semantically before seal. The agent groups
+meaning-equivalent labels; the compiler preserves every original label and
+never invents a merge. Each consolidated candidate terminates as `accepted`,
+`nonmaterial`, or `blocker`. Every parent node preserves the exact union of its
+children's emerging labels. Once validated, a consolidation is carried
+unchanged through every later level; no later response may duplicate,
+overwrite, drop, or invent its original-label disposition. A lower-level
+`blocker` therefore remains visible in the terminal view and blocks seal.
+
 ## No-provider workflow
 
-The runner makes no model API call. It provides four file-based operations:
+The runner makes no model API call. Historical v1/v2 routes retain their four
+operations. Route 1.6 adds repeatable reconciliation-level operations:
 
-1. `prepare-batches` verifies sources, builds the bundle, and renders prompts.
-2. `submit-batches` validates agent responses and exact alias coverage.
-3. `prepare-reconciliation` renders the cross-batch meaning-reconciliation
-   prompt.
-4. `finalize` validates that response and writes the authoritative view.
+1. `materialize-v3` verifies source artifacts and normalizes the declared
+   containers/leaves into one hash-bound v3 source; unsupported families or
+   denominator mismatches fail closed.
+2. `prepare-batches` verifies sources, builds the bundle, and renders prompts.
+3. `submit-batches` validates agent responses and exact alias coverage.
+4. `prepare-reconciliation-level` renders one or more byte-bounded prompts
+   from batch units or prior semantic nodes.
+5. `submit-reconciliation-level` validates exact child accounting and writes
+   the next node compilation; repeat until one terminal level remains.
+6. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
+   v2.
 
 The controller gives the rendered prompts to a capable agent in a fresh turn.
 The returned JSON is untrusted until the corresponding submit/finalize command
@@ -179,6 +274,24 @@ A passing route-1.5.0 acquisition seal requires:
 - no impossible source-role, independence, repetition, cross-venue, conflict,
   or causal combination.
 
+A passing route-1.6.0 seal additionally requires:
+
+- source v3, bundle v3, method v3, batch-response v2, reconciliation-response
+  v2, and integration-view v2 lineage;
+- the `phase_a_final_acquisition` corpus profile rather than a bounded
+  regression slice;
+- captured count equal to assessed plus mechanically excluded plus blocked,
+  with every count exact and no blocked item;
+- exact container accounting and disclosed capture envelopes;
+- a prompt-bounded, acyclic reconciliation hierarchy whose terminal nodes
+  flatten to exact leaf evidence and retain the exact root batch-compilation
+  lineage;
+- truthful evidence-stack counts that keep evidence items, containers,
+  independent origins, roles, engagement, support, opposition, and mixed
+  containers separate; and
+- every emerging-axis candidate consolidated with immutable original-label
+  lineage and terminal disposition, including lower-level blockers.
+
 Uncertainty is preserved rather than repaired. Nonmaterial unresolved evidence
 may remain visible; material unresolved evidence blocks the affected claim or
 the seal. A changed corpus always requires a new view.
@@ -191,3 +304,23 @@ and are never rewritten or restamped to claim semantic-integration coverage.
 The context-aware method and stable comparator product-ID requirements enter at
 `1.5.0`; a historical `1.4.0` seal retains its original v1 method obligation
 and never owes the 1.5.0 additions.
+
+Full captured-corpus accounting, prompt-bounded hierarchy, semantic posture,
+container/capture-envelope accounting, explicit emerging-axis consolidation,
+and truthful evidence-stack counts enter at `1.6.0`. Historical `1.5.0` and
+earlier seals retain their stamped view and method obligations and never owe
+Route 1.6 fields.
+
+## Changelog
+
+- `v1` / 2026-08-08 — added Route 1.6 full captured-corpus accounting,
+  containers and capture envelopes, prompt-bounded hierarchical
+  reconciliation, response/view version changes, emerging-axis consolidation,
+  and separated evidence-stack counts. Preserved every historical Route 1.4
+  and 1.5 contract.
+- `v1` correction / 2026-08-08 — carried immutable emerging-axis dispositions
+  and the root batch-compilation hash through every reconciliation level so
+  labels, lower-level blockers, and coincident-denominator lineage cannot
+  disappear.
+- `v0` / 2026-08-07 — introduced Route 1.4 semantic integration and Route 1.5
+  source-pinned product context.
