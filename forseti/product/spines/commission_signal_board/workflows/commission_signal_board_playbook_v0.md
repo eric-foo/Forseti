@@ -186,7 +186,12 @@ not spend a separate sacrificial query.
    Ads Transparency Center, Meta Ads Library, and Reddit weekly-lake rows,
    binds the shared roots and terminal output paths, completes the capability
    preflight above, and completes or validly reuses the SERP Phase 1
-   competitor scout. It then dispatches `CO1`-`CO3` together with thin
+   competitor scout. Under route 1.2.0, `CO0` first terminally dispositions
+   every surfaced frame row as `core_fanout`, `bounded_watch`, or
+   `rejected_before_fanout`. Core rows require exact product/job binding and
+   two independent comparison origins across two source roles; SERP supplies
+   discovery, never one of those confirmation origins. It then dispatches
+   `CO1`-`CO3` together with thin
    role-specific source capsules. `CO1` receives the relevant subject,
    competitor-identity, and claim questions; `CO2` receives the priced
    comparator and retail-relevance rows; `CO3` receives the full typed ledger,
@@ -587,7 +592,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.1.0"
+    route_version: "1.2.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -601,6 +606,17 @@ phase_acquisition_seal:
         - candidate_id:
           name:
           material: true | false
+          prefanout_qualification:
+            posture: core_fanout | bounded_watch | rejected_before_fanout
+            comparator_role: direct_peer | value_substitute | adjacent | unresolved | non_competitor
+            shared_job:
+            open_comparator_search_refs: []
+            identity_evidence_refs: []
+            independent_comparison_origins:
+              - origin_key:
+                source_role: reddit_community | retailer_review | creator_authored | independent_editorial
+                evidence_refs: []
+            gap_reason:
           disposition: promoted | rejected | watch_listed | role_bounded | explicit_gap
           decision_ready: true | false
           subject_product_identity:
@@ -625,6 +641,29 @@ phase_acquisition_seal:
               evidence_refs: []
           position_gap_reason:
           shared_axis_ids: []
+          price_size_context:
+            status: observed | partial | unavailable
+            normalization_posture: same_unit | source_normalized | not_directly_normalized | unavailable
+            subject:
+              product_identity:
+              price_amount:
+              currency:
+              size_value:
+              size_unit:
+              market_scope:
+              observed_at:
+              evidence_refs: []
+            competitor:
+              product_identity:
+              price_amount:
+              currency:
+              size_value:
+              size_unit:
+              market_scope:
+              observed_at:
+              evidence_refs: []
+            normalization_evidence_refs: []
+            gap_reason:
           lane_evidence:
             co1_owned_ad_positioning:
               status: observed | none_found | blocked
@@ -708,11 +747,13 @@ credit to licensed-but-unrun SERP Phase 2 queries. Resume re-hashes every
 reusable artifact and runs only pending jobs unless the bound question changes,
 an artifact hash drifts, its source-specific currentness expires, or owning
 authority becomes incompatible. The validator also enforces the
-`understanding_route` block: a known `route_version`; at `1.1.0` the
+`understanding_route` block: a known `route_version`; at `1.1.0` and later the
 campaign-integration route accounting, view binding and per-unit shape,
 independent-origin credit and cluster rules, terminal comparator dispositions
 with exact-identity binding for promoted candidates and
-per-material-candidate lane evidence, verification-request triggers and
+per-material-candidate lane evidence; at `1.2.0`, pre-fanout qualification for
+every Phase 1 frame candidate, including the core two-origin/two-source-role
+bar; verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
 and is audited with `--allow-preversion-route`. A seal stamped with a known
@@ -834,7 +875,7 @@ support a decision-useful answer to the bound question, use
 `BLOCKED_ACQUISITION_INCOMPLETE`; do not lower the answer standard to pass the
 seal.
 
-#### Route 1.1.0 — Campaign Integration, Comparator Closure, Verification, Retailer State
+#### Route 1.1.0+ — Campaign Integration, Comparator Closure, Verification, Retailer State
 
 Field contracts, enums, and claim ceilings for these obligations live in the
 Prompt Structure Rules authority ("Understanding Acquire & Seal Route Revision
@@ -882,6 +923,19 @@ Contracts"). Operating rules:
   both are public customer-language samples, not representative sentiment or
   population polling. Each observed lane points to evidence; `none_found` or
   `blocked` records why.
+  Route 1.2.0 hardens the first state: every frame row records an open-comparator
+  discovery reference and a pre-fanout posture. `Core_fanout` requires exact
+  subject and competitor products, one shared customer job, and two independent
+  comparison origins drawn from two distinct source roles among community,
+  retailer review, creator-authored, and independent editorial. SERP snippets,
+  retailer co-placement, owned claims, and ads remain discovery or actor-strategy
+  evidence, not independent confirmation. `Bounded_watch` and
+  `rejected_before_fanout` preserve their gap reason. Consistent qualification
+  means the same bounded competitor question and typed outcome for every frame
+  row; it does not impose equal creator posts, customer rows, or a new creator
+  parity gate.
+  When price or value is compared, both products' cited price and size units
+  travel together; unequal or non-normalized units remain explicit.
 - **Conditional product/claim verification** triggers only on
   reconciled product identity × material axis or contradiction × publicly
   verifiable unresolved claim. It is a conditional adjustment job, never
@@ -908,7 +962,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.1.0
+  current_version: 1.2.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -952,6 +1006,24 @@ understanding_acquire_seal_route:
       migration_note: >
         A run started under 1.0.0 retains 1.0.0 unless an explicit
         migration/restart is recorded. New runs seal under 1.1.0.
+    - version: 1.2.0
+      date: 2026-08-07
+      owning_change: Phase A pre-fanout comparator qualification hardening (PR pending)
+      changed_behavior: >
+        Keeps the 1.1.0 phase order and existing CO1-CO3 lanes, but makes the
+        Phase 1 candidate frame decision-usable before fan-out. Every frame row
+        receives a pre-fanout posture and role. Core fan-out candidates require
+        exact product and shared-job binding plus two independent comparison
+        origins across two source roles; SERP remains discovery-only. Weaker
+        candidates remain bounded watch rows or explicit pre-fanout rejections.
+        Price/value comparisons must carry both products' size units or state
+        that they are not directly normalized.
+      affected_gate: >
+        Acquisition seal: route 1.2.0 comparator frame candidates are enforced
+        by run_phase_acquisition_seal_validation.py.
+      migration_note: >
+        A run started under 1.1.0 retains 1.1.0 unless an explicit
+        migration/restart is recorded. New runs seal under 1.2.0.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and
@@ -1230,7 +1302,7 @@ gate above controls whether the Synthesize turn may begin.
    failure/route exhaustion. Reddit/community acquisition runs inside `CO3`.
 10. After every specialist reaches a terminal return, `CO0` dereferences the
     load-bearing artifacts, runs the controller-owned campaign-evidence
-    integration job (route 1.1.0), and then runs the post-fan-out targeted
+    integration job (route 1.1.0 and later), and then runs the post-fan-out targeted
     SERP return:
     `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`.
     Phase 2 derives each query from a named specialist or integration finding,

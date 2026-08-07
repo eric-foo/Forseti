@@ -781,7 +781,7 @@ def _understanding_route(tmp_path: Path) -> dict:
     adjudicated = _artifact(tmp_path, "serp_phase2_adjudicated_set.md")
     verification_return = _artifact(tmp_path, "verification_return.md")
     return {
-        "route_version": "1.1.0",
+        "route_version": "1.2.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -792,6 +792,27 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "candidate_id": "cand-elf",
                     "name": "e.l.f. Glow Reviver",
                     "material": True,
+                    "prefanout_qualification": {
+                        "posture": "core_fanout",
+                        "comparator_role": "value_substitute",
+                        "shared_job": (
+                            "portable glossy lip hydration with optional tint"
+                        ),
+                        "open_comparator_search_refs": ["serp-open-comparator-1"],
+                        "identity_evidence_refs": ["sf-pdp", "elf-pdp"],
+                        "independent_comparison_origins": [
+                            {
+                                "origin_key": "reddit:elf-thread-1",
+                                "source_role": "reddit_community",
+                                "evidence_refs": ["elf-reddit-thread-1"],
+                            },
+                            {
+                                "origin_key": "creator:elf-post-1",
+                                "source_role": "creator_authored",
+                                "evidence_refs": ["elf-creator-post-1"],
+                            },
+                        ],
+                    },
                     "disposition": "promoted",
                     "decision_ready": True,
                     "subject_product_identity": (
@@ -826,6 +847,34 @@ def _understanding_route(tmp_path: Path) -> dict:
                         }
                     ],
                     "shared_axis_ids": ["format", "price", "claim_language"],
+                    "price_size_context": {
+                        "status": "observed",
+                        "normalization_posture": "not_directly_normalized",
+                        "subject": {
+                            "product_identity": (
+                                "Summer Fridays Lip Butter Balm 15 g"
+                            ),
+                            "price_amount": 24.0,
+                            "currency": "USD",
+                            "size_value": 15.0,
+                            "size_unit": "g",
+                            "market_scope": "US",
+                            "observed_at": "2026-08-06T12:00:00Z",
+                            "evidence_refs": ["sf-pdp"],
+                        },
+                        "competitor": {
+                            "product_identity": (
+                                "e.l.f. Glow Reviver Lip Oil 0.52 oz"
+                            ),
+                            "price_amount": 9.0,
+                            "currency": "USD",
+                            "size_value": 0.52,
+                            "size_unit": "oz",
+                            "market_scope": "US",
+                            "observed_at": "2026-08-06T12:00:00Z",
+                            "evidence_refs": ["elf-pdp"],
+                        },
+                    },
                     "lane_evidence": {
                         "co1_owned_ad_positioning": {
                             "status": "observed",
@@ -854,6 +903,26 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "candidate_id": "cand-rhode",
                     "name": "Rhode Peptide Lip Treatment",
                     "material": True,
+                    "prefanout_qualification": {
+                        "posture": "bounded_watch",
+                        "comparator_role": "direct_peer",
+                        "shared_job": (
+                            "portable glossy lip hydration with optional tint"
+                        ),
+                        "open_comparator_search_refs": ["serp-open-comparator-1"],
+                        "identity_evidence_refs": ["sf-pdp", "rhode-pdp"],
+                        "independent_comparison_origins": [
+                            {
+                                "origin_key": "reddit:rhode-thread-1",
+                                "source_role": "reddit_community",
+                                "evidence_refs": ["rhode-reddit-thread-1"],
+                            }
+                        ],
+                        "gap_reason": (
+                            "only one independent source role was confirmed "
+                            "before fan-out"
+                        ),
+                    },
                     "disposition": "watch_listed",
                     "decision_ready": False,
                     "subject_product_identity": (
@@ -907,6 +976,16 @@ def _understanding_route(tmp_path: Path) -> dict:
                     "candidate_id": "cand-generic",
                     "name": "generic commodity name",
                     "material": False,
+                    "prefanout_qualification": {
+                        "posture": "rejected_before_fanout",
+                        "comparator_role": "non_competitor",
+                        "open_comparator_search_refs": ["serp-open-comparator-1"],
+                        "identity_evidence_refs": [],
+                        "independent_comparison_origins": [],
+                        "gap_reason": (
+                            "the surfaced term did not resolve to a competing product"
+                        ),
+                    },
                     "disposition": "rejected",
                     "decision_ready": False,
                     "claim_ceiling": "harvest-quality rejection",
@@ -3641,7 +3720,7 @@ def test_route_job_counts_require_exact_integers(
 
 # ---------------------------------------------------------------------------
 # Understanding route version, campaign integration, comparator closure,
-# conditional verification, and retailer state accounting (route 1.1.0).
+# conditional verification, and retailer state accounting (current route).
 # ---------------------------------------------------------------------------
 
 
@@ -3729,6 +3808,30 @@ def test_current_route_requires_campaign_integration_accounting(
         "missing_required_route_accounting:campaign_evidence_integration"
         in _validate(tmp_path, seal)
     )
+
+
+def test_historical_route_1_1_retains_campaign_integration_accounting(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.1.0"
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "campaign_evidence_integration"
+    ]
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert (
+        "missing_required_route_accounting:campaign_evidence_integration"
+        in findings
+    )
+    assert "missing_comparator_prefanout_qualification:cand-elf" not in findings
 
 
 def test_campaign_integration_route_phase_is_bound(tmp_path: Path) -> None:
@@ -4232,6 +4335,121 @@ def test_comparator_frame_candidate_ids_must_be_unique(tmp_path: Path) -> None:
     assert "duplicate_comparator_frame_candidate_ids" in _validate(
         tmp_path, seal
     )
+
+
+def test_frame_candidate_requires_prefanout_qualification(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["prefanout_qualification"]
+
+    assert (
+        "missing_comparator_prefanout_qualification:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_core_fanout_requires_two_distinct_comparison_origins(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    qualification = candidate["prefanout_qualification"]
+    qualification["independent_comparison_origins"] = [
+        qualification["independent_comparison_origins"][0]
+    ]
+
+    assert (
+        "insufficient_comparator_prefanout_origins:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_core_fanout_requires_two_distinct_source_roles(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    origins = candidate["prefanout_qualification"][
+        "independent_comparison_origins"
+    ]
+    origins[1]["source_role"] = origins[0]["source_role"]
+
+    assert (
+        "insufficient_comparator_prefanout_source_roles:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_serp_surface_cannot_count_as_prefanout_confirmation(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    candidate["prefanout_qualification"]["independent_comparison_origins"][
+        1
+    ]["source_role"] = "serp_surface"
+
+    findings = _validate(tmp_path, seal)
+
+    assert "invalid_comparator_prefanout_source_role:cand-elf" in findings
+    assert (
+        "insufficient_comparator_prefanout_source_roles:cand-elf"
+        in findings
+    )
+
+
+def test_bounded_watch_requires_prefanout_gap_reason(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][1]
+    del candidate["prefanout_qualification"]["gap_reason"]
+
+    assert (
+        "comparator_prefanout_gap_without_reason:cand-rhode"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_core_fanout_requires_exact_product_identities(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["competitor_product_identity"]
+
+    assert (
+        "comparator_core_fanout_without_exact_identity:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_core_fanout_requires_identity_evidence_for_both_products(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    candidate["prefanout_qualification"]["identity_evidence_refs"] = ["sf-pdp"]
+
+    assert (
+        "insufficient_comparator_prefanout_identity_evidence:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_price_axis_requires_price_and_size_context(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    del candidate["price_size_context"]
+
+    assert (
+        "missing_comparator_price_size_context:cand-elf"
+        in _validate(tmp_path, seal)
+    )
+
+
+def test_price_size_context_cannot_claim_same_unit_for_different_units(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    candidate = seal["understanding_route"]["comparator_closure"]["candidates"][0]
+    candidate["price_size_context"]["normalization_posture"] = "same_unit"
+
+    assert "comparator_size_unit_mismatch:cand-elf" in _validate(tmp_path, seal)
 
 
 def test_campaign_unit_bindings_require_string_lists(tmp_path: Path) -> None:
