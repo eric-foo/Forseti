@@ -21,6 +21,7 @@ from source_capture.reddit_consolidation import build_thread_content_record
 
 
 RUN_SPEC_VERSION = "phase_a_semantic_integration_run_v1"
+RUN_SPEC_VERSION_V2 = "phase_a_semantic_integration_run_v2"
 AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
 CORPUS_CENSUS_VERSION = "phase_a_customer_corpus_census_v1"
@@ -1283,7 +1284,7 @@ def _source_artifact(
 
 def _phase_a_source_shell(spec: Mapping[str, Any]) -> dict[str, Any]:
     _validate_run_spec_shape(spec)
-    return {
+    source = {
         "schema_version": "semantic_evidence_source_v3",
         "cycle_id": spec["cycle_id"],
         "question_id": spec["question_id"],
@@ -1293,6 +1294,223 @@ def _phase_a_source_shell(spec: Mapping[str, Any]) -> dict[str, Any]:
         "corpus_cutoff": spec["corpus_cutoff"],
         "axes": spec["axes"],
     }
+    if spec["schema_version"] == RUN_SPEC_VERSION_V2:
+        source["semantic_method_version"] = "semantic_evidence_integration_method_v4"
+    return source
+
+
+def _product_binding_indexes(
+    spec: Mapping[str, Any], *, repo_root: Path
+) -> tuple[dict[str, Mapping[str, Any]], list[dict[str, str]]]:
+    """Verify and index run-local product identity without installing a registry."""
+    if spec.get("schema_version") != RUN_SPEC_VERSION_V2:
+        return {}, []
+    bindings = spec.get("product_bindings")
+    if not isinstance(bindings, list) or not bindings:
+        raise SemanticIntegrationError("v2 run spec requires product_bindings")
+    token_index: dict[str, Mapping[str, Any]] = {}
+    stable_ids: set[str] = set()
+    artifacts: list[dict[str, str]] = []
+    artifact_ids: set[str] = set()
+    for ordinal, row in enumerate(bindings, start=1):
+        if not isinstance(row, Mapping):
+            raise SemanticIntegrationError("v2 run spec has invalid product binding")
+        stable_id = row.get("stable_product_id")
+        display_name = row.get("display_name")
+        if not _nonempty(stable_id) or not _nonempty(display_name):
+            raise SemanticIntegrationError("product binding lacks stable id or display name")
+        if stable_id in stable_ids:
+            raise SemanticIntegrationError(f"duplicate stable product id: {stable_id}")
+        stable_ids.add(stable_id)
+        source_ids = row.get("source_product_ids")
+        aliases = row.get("aliases", [])
+        evidence_refs = row.get("evidence_refs")
+        if (
+            not isinstance(source_ids, list)
+            or not source_ids
+            or any(not _nonempty(value) for value in source_ids)
+            or not isinstance(aliases, list)
+            or any(not _nonempty(value) for value in aliases)
+            or not isinstance(evidence_refs, list)
+            or not evidence_refs
+        ):
+            raise SemanticIntegrationError(f"product binding {stable_id} is incomplete")
+        normalized = dict(row)
+        normalized["stable_product_id"] = stable_id.strip()
+        normalized["display_name"] = display_name.strip()
+        normalized["_evidence_context"] = []
+        tokens = [stable_id, display_name, *source_ids, *aliases]
+        for token in tokens:
+            key = token.strip().casefold()
+            owner = token_index.get(key)
+            if owner is not None and owner["stable_product_id"] != stable_id:
+                raise SemanticIntegrationError(
+                    f"product identity token maps to multiple stable products: {token}"
+                )
+            token_index[key] = normalized
+        for evidence_ordinal, evidence in enumerate(evidence_refs, start=1):
+            if not isinstance(evidence, Mapping):
+                raise SemanticIntegrationError(
+                    f"product binding {stable_id} has invalid evidence reference"
+                )
+            path = _verified_path(
+                evidence,
+                repo_root=repo_root,
+                label=f"product binding {stable_id} evidence",
+            )
+            artifact_id = (
+                f"product_binding_{ordinal:04d}_{evidence_ordinal:04d}_"
+                + hashlib.sha256(str(path).casefold().encode("utf-8")).hexdigest()[:12]
+            )
+            if artifact_id in artifact_ids:
+                raise SemanticIntegrationError("product binding artifact id is duplicated")
+            artifact_ids.add(artifact_id)
+            artifact = _source_artifact(artifact_id, path, repo_root=repo_root)
+            artifacts.append(artifact)
+            normalized["_evidence_context"].append(
+                {
+                    "context_type": "source_scope",
+                    "source_artifact_id": artifact_id,
+                    "text": (
+                        f"{normalized['display_name']} "
+                        f"[{normalized['stable_product_id']}]; run-local identity binding"
+                    ),
+                    "source_ref": artifact["locator"],
+                }
+            )
+    return token_index, artifacts
+
+
+def _resolve_product_candidates(
+    candidates: Sequence[str], token_index: Mapping[str, Mapping[str, Any]]
+) -> tuple[list[str], list[Mapping[str, Any]]]:
+    resolved: dict[str, Mapping[str, Any]] = {}
+    unresolved: list[str] = []
+    for candidate in candidates:
+        binding = token_index.get(candidate.strip().casefold())
+        if binding is None:
+            unresolved.append(candidate)
+        else:
+            resolved[binding["stable_product_id"]] = binding
+    return sorted([*resolved, *unresolved]), [resolved[key] for key in sorted(resolved)]
+
+
+def build_phase_a_product_axis_proof_source(
+    *,
+    full_source_path: Path,
+    run_spec_path: Path,
+    stable_product_id: str,
+    axis_ids: Sequence[str],
+    repo_root: Path,
+) -> dict[str, Any]:
+    """Project one complete product/axis slice for a bounded semantic proof."""
+    spec = _load_json_object(run_spec_path, label="Phase A run spec")
+    _validate_run_spec_shape(spec)
+    product_index, binding_artifacts = _product_binding_indexes(
+        spec, repo_root=repo_root
+    )
+    binding = product_index.get(stable_product_id.strip().casefold())
+    if binding is None or binding["stable_product_id"] != stable_product_id:
+        raise SemanticIntegrationError(
+            f"proof product lacks a run-local stable binding: {stable_product_id}"
+        )
+    requested_axes = set(axis_ids)
+    known_axes = {row["axis_id"] for row in spec["axes"]}
+    if not requested_axes or not requested_axes <= known_axes:
+        raise SemanticIntegrationError("proof axes must be non-empty known axis ids")
+    full_source = _load_json_object(full_source_path, label="full Phase A source")
+    stored_source_hash = full_source.get("source_sha256")
+    source_without_hash = {
+        key: value for key, value in full_source.items() if key != "source_sha256"
+    }
+    if (
+        not _nonempty(stored_source_hash)
+        or stored_source_hash != _canonical_hash(source_without_hash)
+    ):
+        raise SemanticIntegrationError(
+            "full Phase A source content does not match source_sha256"
+        )
+    _verify_v3_source_artifacts(
+        full_source, repo_root=repo_root, binding_id="product-axis proof full source"
+    )
+    normalized = materialize_source_v3(full_source)
+    if (
+        normalized["cycle_id"] != spec["cycle_id"]
+        or normalized["question_id"] != spec["question_id"]
+    ):
+        raise SemanticIntegrationError("proof source does not match the run spec")
+    binding_tokens = {
+        str(value).strip().casefold()
+        for value in (
+            binding["stable_product_id"],
+            binding["display_name"],
+            *binding["source_product_ids"],
+            *binding.get("aliases", []),
+        )
+    }
+    selected: list[dict[str, Any]] = []
+    container_counts: dict[str, int] = {}
+    for row in normalized["captured_items"]:
+        candidates = row.get("product_candidates", [])
+        axes = set(row.get("axis_candidates", []))
+        if (
+            row.get("accounting_disposition") != "assess"
+            or not requested_axes.intersection(axes)
+            or not any(value.strip().casefold() in binding_tokens for value in candidates)
+        ):
+            continue
+        projected = dict(row)
+        projected["product_candidates"] = sorted(
+            {
+                stable_product_id
+                if value.strip().casefold() in binding_tokens
+                else value
+                for value in candidates
+            }
+        )
+        projected["axis_candidates"] = sorted(requested_axes.intersection(axes))
+        projected["product_context"] = [
+            *projected["product_context"],
+            binding["_evidence_context"][0],
+        ]
+        selected.append(projected)
+        container_id = projected["container_id"]
+        container_counts[container_id] = container_counts.get(container_id, 0) + 1
+    if not selected:
+        raise SemanticIntegrationError("product/axis proof selection is empty")
+    containers: list[dict[str, Any]] = []
+    for row in normalized["containers"]:
+        count = container_counts.get(row["container_id"])
+        if count is None:
+            continue
+        projected = dict(row)
+        projected["captured_leaf_count"] = count
+        projected["completeness"] = "partial"
+        projected["capture_boundary"] = (
+            f"bounded proof slice for {stable_product_id}; all captured assessable "
+            f"leaves coded to {', '.join(sorted(requested_axes))}"
+        )
+        containers.append(projected)
+    source = {
+        "schema_version": "semantic_evidence_source_v3",
+        "semantic_method_version": "semantic_evidence_integration_method_v4",
+        "cycle_id": normalized["cycle_id"],
+        "question_id": normalized["question_id"],
+        "question": normalized["question"],
+        "corpus_profile": "bounded_regression_slice",
+        "corpus_scope": (
+            f"complete captured {stable_product_id} customer-language slice for "
+            f"{', '.join(sorted(requested_axes))}; not a final-acquisition corpus"
+        ),
+        "corpus_cutoff": normalized["corpus_cutoff"],
+        "axes": [
+            row for row in normalized["axes"] if row["axis_id"] in requested_axes
+        ],
+        "source_artifacts": [*normalized["source_artifacts"], *binding_artifacts],
+        "containers": containers,
+        "captured_items": selected,
+    }
+    return _materialize_declared_source(source)
 
 
 def _materialize_declared_source(source: Mapping[str, Any]) -> dict[str, Any]:
@@ -1379,6 +1597,9 @@ def build_phase_a_reddit_source_v3(
     """Build the complete packet-backed Reddit v3 fragment without model calls."""
     spec = _load_json_object(run_spec_path, label="Phase A run spec")
     source = _phase_a_source_shell(spec)
+    product_index, product_binding_artifacts = _product_binding_indexes(
+        spec, repo_root=repo_root
+    )
     ledger = _load_json_object(evidence_ledger_path, label="evidence depth ledger")
     if ledger.get("cycle_id") != spec["cycle_id"]:
         raise SemanticIntegrationError("Reddit ledger cycle does not match run spec")
@@ -1475,6 +1696,7 @@ def build_phase_a_reddit_source_v3(
         _source_artifact(
             "reddit_community_coding", coding_path, repo_root=repo_root
         ),
+        *product_binding_artifacts,
     ]
     containers: list[dict[str, Any]] = []
     captured_items: list[dict[str, Any]] = []
@@ -1617,7 +1839,9 @@ def build_phase_a_reddit_source_v3(
             depth = max(depth, 0)
             if disposition == "assess":
                 coded = coded_by_leaf.get((thread_id, comment_id), {})
-                product_candidates = sorted(coded.get("products", set()))
+                product_candidates, resolved_bindings = _resolve_product_candidates(
+                    sorted(coded.get("products", set())), product_index
+                )
                 axis_candidates = set(coded.get("axes", set()))
                 if not axis_candidates:
                     axis_candidates.update(target_axes.get(thread_id, []))
@@ -1642,7 +1866,12 @@ def build_phase_a_reddit_source_v3(
                                 "source_artifact_id": raw_artifact_id,
                                 "text": title,
                                 "source_ref": source_ref,
-                            }
+                            },
+                            *[
+                                context
+                                for binding in resolved_bindings
+                                for context in binding["_evidence_context"]
+                            ],
                         ],
                         "independence_posture": credited,
                         "independence_key": identity_key,
@@ -1757,6 +1986,9 @@ def build_phase_a_retailer_source_v3(
     """Build the full deduplicated retailer-review v3 fragment."""
     spec = _load_json_object(run_spec_path, label="Phase A run spec")
     source = _phase_a_source_shell(spec)
+    product_index, product_binding_artifacts = _product_binding_indexes(
+        spec, repo_root=repo_root
+    )
     coding = _load_json_object(retailer_coding_path, label="retailer axis coding")
     coding_rows = coding.get("rows")
     if not isinstance(coding_rows, list):
@@ -1830,6 +2062,7 @@ def build_phase_a_retailer_source_v3(
             revolve_completion_receipt_path,
             repo_root=repo_root,
         ),
+        *product_binding_artifacts,
     ]
     parsed_by_path: dict[str, tuple[str, dict[str, dict[str, Any]]]] = {}
     revolve_product_ids_by_path: dict[str, list[str]] = {}
@@ -1964,18 +2197,30 @@ def build_phase_a_retailer_source_v3(
         product_id = str(coding_row.get("product_context_id", "")).strip()
         if not product_id:
             raise SemanticIntegrationError(f"retailer review lacks product context: {review_id}")
-        product_ids = [product_id]
+        product_ids, resolved_bindings = _resolve_product_candidates(
+            [product_id], product_index
+        )
         product_context = [
             {
                 "context_type": "product_page",
                 "source_artifact_id": artifact_id,
-                "text": product_id,
+                "text": (
+                    f"{resolved_bindings[0]['display_name']} "
+                    f"[{resolved_bindings[0]['stable_product_id']}]; source product id {product_id}"
+                    if len(resolved_bindings) == 1
+                    else product_id
+                ),
                 "source_ref": source_ref,
             }
         ]
+        product_context.extend(
+            context
+            for binding in resolved_bindings
+            for context in binding["_evidence_context"]
+        )
         if corpus_id == "revolve_native_reviews":
             product_context = []
-            product_ids = sorted(
+            source_product_ids = sorted(
                 {
                     occurrence_product_id
                     for occurrence_locator, _ in occurrences
@@ -1984,10 +2229,17 @@ def build_phase_a_retailer_source_v3(
                     ]
                 }
             )
-            if product_id not in product_ids:
+            if product_id not in source_product_ids:
                 raise SemanticIntegrationError(
                     f"coded Revolve product context is absent from source occurrences: {review_id}"
                 )
+            product_ids, resolved_bindings = _resolve_product_candidates(
+                source_product_ids, product_index
+            )
+            binding_by_source_id = {
+                source_id: product_index.get(source_id.casefold())
+                for source_id in source_product_ids
+            }
             for occurrence_locator, _ in sorted(occurrences, key=lambda pair: pair[0]):
                 occurrence_ref = f"{occurrence_locator}#review:{review_id}"
                 for occurrence_product_id in revolve_product_ids_by_path[
@@ -1997,10 +2249,21 @@ def build_phase_a_retailer_source_v3(
                         {
                             "context_type": "product_page",
                             "source_artifact_id": artifact_by_path[occurrence_locator],
-                            "text": occurrence_product_id,
+                            "text": (
+                                f"{binding_by_source_id[occurrence_product_id]['display_name']} "
+                                f"[{binding_by_source_id[occurrence_product_id]['stable_product_id']}]; "
+                                f"source product id {occurrence_product_id}"
+                                if binding_by_source_id[occurrence_product_id] is not None
+                                else occurrence_product_id
+                            ),
                             "source_ref": occurrence_ref,
                         }
                     )
+            product_context.extend(
+                context
+                for binding in resolved_bindings
+                for context in binding["_evidence_context"]
+            )
         posture, identity_key = _identity_fields(f"retailer:{corpus_id}", raw.get("author"))
         helpful = raw.get("helpful_positive")
         helpful_value = helpful if isinstance(helpful, (int, float)) and not isinstance(helpful, bool) else None
@@ -2203,7 +2466,7 @@ def _verify_v3_source_artifacts(
 
 
 def _validate_run_spec_shape(spec: Mapping[str, Any]) -> None:
-    if spec.get("schema_version") != RUN_SPEC_VERSION:
+    if spec.get("schema_version") not in {RUN_SPEC_VERSION, RUN_SPEC_VERSION_V2}:
         raise SemanticIntegrationError("invalid Phase A semantic run spec version")
     for field in (
         "run_id",
@@ -2233,6 +2496,10 @@ def _validate_run_spec_shape(spec: Mapping[str, Any]) -> None:
         or len(set(axis_ids)) != len(axis_ids)
     ):
         raise SemanticIntegrationError("run spec axes must have unique non-empty ids")
+    if spec.get("schema_version") == RUN_SPEC_VERSION_V2:
+        bindings = spec.get("product_bindings")
+        if not isinstance(bindings, list) or not bindings:
+            raise SemanticIntegrationError("v2 run spec requires product_bindings")
 
 
 def audit_phase_a_source(
@@ -2240,6 +2507,7 @@ def audit_phase_a_source(
 ) -> dict[str, Any]:
     """Account for every sealed route before any semantic source can be materialized."""
     _validate_run_spec_shape(spec)
+    _product_binding_indexes(spec, repo_root=repo_root)
     seal_path = _verified_path(
         spec.get("acquisition_seal", {}),
         repo_root=repo_root,
@@ -2428,21 +2696,20 @@ def materialize_phase_a_v3(
                         f"conflicting duplicate {key} across source bindings: {row_id}"
                     )
                 index[row_id] = dict(row)
-    source = {
-        "schema_version": "semantic_evidence_source_v3",
-        "cycle_id": spec["cycle_id"],
-        "question_id": spec["question_id"],
-        "question": spec["question"],
-        "corpus_profile": spec["corpus_profile"],
-        "corpus_scope": spec["corpus_scope"],
-        "corpus_cutoff": spec["corpus_cutoff"],
-        "axes": list(spec["axes"]),
-        "source_artifacts": sorted(artifacts.values(), key=lambda row: row["artifact_id"]),
-        "containers": sorted(containers.values(), key=lambda row: row["container_id"]),
-        "captured_items": sorted(
-            captured_items.values(), key=lambda row: row["evidence_id"]
-        ),
-    }
+    source = _phase_a_source_shell(spec)
+    source.update(
+        {
+            "source_artifacts": sorted(
+                artifacts.values(), key=lambda row: row["artifact_id"]
+            ),
+            "containers": sorted(
+                containers.values(), key=lambda row: row["container_id"]
+            ),
+            "captured_items": sorted(
+                captured_items.values(), key=lambda row: row["evidence_id"]
+            ),
+        }
+    )
     materialized = materialize_source_v3(source)
     receipt = {
         "schema_version": RUN_RECEIPT_VERSION,
@@ -2560,7 +2827,9 @@ __all__ = [
     "CORPUS_CENSUS_VERSION",
     "RUN_RECEIPT_VERSION",
     "RUN_SPEC_VERSION",
+    "RUN_SPEC_VERSION_V2",
     "audit_phase_a_source",
+    "build_phase_a_product_axis_proof_source",
     "census_phase_a_customer_corpus",
     "materialize_phase_a_v3",
     "run_status",
