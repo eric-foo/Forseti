@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v5
+version: v6
 effective_date: 2026-08-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v5
+# Semantic Evidence Integration Contract v6
 
 ## Purpose
 
@@ -311,6 +311,18 @@ Current-route operations are:
    structurally proves their review identities. For a retrospective run this
    proves the bytes available now; it does not rewrite or restamp the historical
    acquisition seal.
+   `build-phase-a-reddit-source-v3` then materializes every packet-backed root
+   and comment, and `build-phase-a-retailer-source-v3` materializes every
+   source-native retailer review. Both commands preserve the captured
+   denominator, mechanically exclude only exact non-text placeholders, and
+   keep repository-owned locators relative to the declared repository root.
+   The retailer builder also verifies the completion receipt, retains every
+   captured source file, and de-duplicates a repeated native review identity to
+   one customer evidence item while preserving every source-pinned product
+   listing context carried by its occurrences. A repeated listing occurrence
+   does not become another customer experience. No admitted retailer source
+   format preserves a capture timestamp, so retailer capture envelopes record
+   capture time as unavailable rather than stamping a run-derived date.
 3. `build-serp-source-surface-spec` reads hash-pinned Phase 1 and Phase 2
    queue-state receipts selected by their terminal returns, derives every
    successful job-to-packet edge, and requires the
@@ -319,7 +331,10 @@ Current-route operations are:
    `materialize-serp-source-frontier-review` accepts one explicit agent-authored
    decision for every inventory row (no bulk/default decision), mechanically
    deduplicates repeated locators, and emits recovery targets that target
-   reconciliation must settle.
+   reconciliation must settle. `reconcile-serp-frontier-targets` then binds
+   exact Reddit and native-social object identities already present in the
+   evidence ledger and leaves unmatched historical links explicitly
+   unavailable; it performs no fresh acquisition.
 4. `census-phase-a-corpus` independently proves the captured Reddit and
    retailer customer-corpus denominators where those Phase A source shapes are
    present.
@@ -328,7 +343,8 @@ Current-route operations are:
    receipt. It never guesses a new source-family adapter.
 6. `materialize-v3` verifies source artifacts and normalizes declared
    containers/leaves into one hash-bound v3 source; unsupported families or
-   denominator mismatches fail closed.
+   denominator mismatches fail closed. Materialization never renders
+   provisional prompts; prompt packing belongs only to `prepare-batches`.
 7. `prepare-batches` verifies sources, builds the bundle, and renders prompts.
 8. `validate-batch-response` validates one returned batch immediately without
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
@@ -346,6 +362,12 @@ Current-route operations are:
 The controller gives the rendered prompts to a capable agent in a fresh turn.
 The returned JSON is untrusted until the corresponding submit/finalize command
 accepts it.
+
+If exact prompt packing exposes more work than the available no-API judgment
+lane can execute as one bounded run, the status remains
+`SEMANTIC_BATCH_JUDGMENT_REQUIRED`. The controller records that observed
+capacity boundary; it may not substitute a sample, silently raise the prompt
+ceiling, or describe prompt generation as completed semantic integration.
 
 ## Failure and seal posture
 
@@ -430,6 +452,13 @@ new frontier.
 
 ## Changelog
 
+- `v6` / 2026-08-08 — added reusable full-corpus Reddit and retailer v3 source
+  builders, exact SERP-target reconciliation against existing native captures,
+  repository-relative locator enforcement, and separation of source
+  materialization from prompt packing. A real Summer Fridays shadow compiler
+  may now expose an honest no-API execution-capacity block without sampling or
+  claiming that generated prompts were semantically judged. No route version,
+  provider API, conclusion layer, or historical-seal obligation changed.
 - `v5` / 2026-08-08 — added `phase_a_evidence_packet_v1`, a complete
   proposition/axis evidence-stack projection from the finalized v2 view. It
   de-duplicates shared records; preserves opposition, semantic posture,

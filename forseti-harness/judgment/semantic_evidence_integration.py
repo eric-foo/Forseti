@@ -655,6 +655,7 @@ def build_bundle(
     *,
     max_batch_chars: int = 80_000,
     max_prompt_bytes: int | None = None,
+    _pack_batches: bool = True,
 ) -> dict[str, Any]:
     """Build one deterministic, hash-bound evidence bundle and batch register."""
     if max_batch_chars < 1_000:
@@ -726,8 +727,12 @@ def build_bundle(
         prompt_ceiling = max_prompt_bytes or max_batch_chars
         if prompt_ceiling < 1_000:
             raise SemanticIntegrationError("max_prompt_bytes must be at least 1000")
-        batches = _pack_v3_batches(
-            units, axes=normalized_axes, max_prompt_bytes=prompt_ceiling
+        batches = (
+            _pack_v3_batches(
+                units, axes=normalized_axes, max_prompt_bytes=prompt_ceiling
+            )
+            if _pack_batches
+            else []
         )
     else:
         prompt_ceiling = None
@@ -832,10 +837,12 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
     """
     if source.get("schema_version") != SOURCE_VERSION_V3:
         raise SemanticIntegrationError("materializer requires semantic evidence source v3")
-    # The temporary ceiling is only a way to reuse the source validators. The
-    # materialized source does not persist batching, and the real run binds its
-    # own rendered-prompt ceiling when build_bundle is called.
-    bundle = build_bundle(source, max_prompt_bytes=1_000_000)
+    # Reuse the source validators without rendering provisional batches. Batch
+    # packing is a separate operation and repeatedly renders a growing prompt;
+    # doing that here made full-corpus materialization quadratic in practice.
+    bundle = build_bundle(
+        source, max_prompt_bytes=1_000_000, _pack_batches=False
+    )
     normalized = {
         "schema_version": SOURCE_VERSION_V3,
         "cycle_id": bundle["cycle_id"],

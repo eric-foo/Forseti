@@ -10,12 +10,15 @@ import pytest
 from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION,
     audit_phase_a_source,
+    build_phase_a_reddit_source_v3,
+    build_phase_a_retailer_source_v3,
     build_serp_source_surface_spec,
     build_retailer_source_manifest,
     census_phase_a_customer_corpus,
     materialize_phase_a_v3,
     materialize_serp_source_frontier_review,
     prepare_serp_source_frontier_inventory,
+    reconcile_serp_frontier_targets,
     run_status,
     validate_one_batch_response,
     validate_one_reconciliation_response,
@@ -1001,3 +1004,529 @@ def test_census_rejects_a_union_that_silently_drops_captured_threads(
             retailer_coding_path=retailer_path,
             retailer_source_manifest_path=manifest_path,
         )
+
+
+def _source_run_spec(tmp_path: Path) -> Path:
+    path = tmp_path / "run-spec.json"
+    _write_json(
+        path,
+        {
+            "schema_version": RUN_SPEC_VERSION,
+            "run_id": "source-builder-fixture",
+            "cycle_id": "cycle-1",
+            "question_id": "question-1",
+            "question": "What do captured customers report?",
+            "corpus_profile": "phase_a_final_acquisition",
+            "corpus_scope": "complete controlled source-builder fixture",
+            "corpus_cutoff": "2026-08-08T00:00:00Z",
+            "external_run_root": str(tmp_path / "run"),
+            "max_prompt_bytes": 8_000,
+            "axes": [{"axis_id": "wear", "label": "Wear"}],
+        },
+    )
+    return path
+
+
+def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    packet = tmp_path / "packet"
+    raw = packet / "raw"
+    raw.mkdir(parents=True)
+    content_path = raw / "content_record.json"
+    _write_json(
+        content_path,
+        {
+            "thread": {"thread_id": "abc", "title": "Summer Fridays wear"},
+            "post": {
+                "body_text": "[deleted]",
+                "author_state": "[deleted]",
+                "score_state": "5 points",
+            },
+            "comments": [
+                {
+                    "row_id": "comment_1",
+                    "comment_id": "deleted",
+                    "body_text": "[removed]",
+                    "depth": 0,
+                },
+                {
+                    "row_id": "comment_2",
+                    "comment_id": "c2",
+                    "body_text": "It lasts through lunch.",
+                    "author_state": "customer",
+                    "score_state": "2 points",
+                    "depth": 2,
+                },
+            ],
+        },
+    )
+    manifest_path = packet / "manifest.json"
+    _write_json(
+        manifest_path,
+        {
+            "source_locator": {
+                "status": "known",
+                "value": "https://old.reddit.com/r/test/comments/abc/example/",
+            },
+            "timing": {
+                "capture_time": {
+                    "status": "known",
+                    "value": "2026-08-01T00:00:00Z",
+                }
+            },
+            "preserved_files": [
+                {
+                    "relative_packet_path": "raw/content_record.json",
+                    "sha256": _raw_sha(content_path),
+                }
+            ],
+        },
+    )
+    community_path = tmp_path / "community.json"
+    _write_json(
+        community_path,
+        {
+            "legacy_parent_threads_not_requalified": [],
+            "rows": [
+                {
+                    "thread_id": "abc",
+                    "comment_id": "c2",
+                    "product_context": "Lip Butter Balm",
+                    "axis_ids": ["wear"],
+                }
+            ],
+        },
+    )
+    ledger_path = tmp_path / "ledger.json"
+    _write_json(
+        ledger_path,
+        {
+            "cycle_id": "cycle-1",
+            "artifacts": [
+                {
+                    "artifact_id": "reddit_manifest_abc",
+                    "locator": str(manifest_path),
+                    "sha256": _sha(manifest_path),
+                },
+                {
+                    "artifact_id": "community",
+                    "locator": str(community_path),
+                    "sha256": _sha(community_path),
+                },
+            ],
+            "families": {
+                "reddit_forum": {
+                    "threads": [
+                        {"thread_id": "abc", "artifact_id": "reddit_manifest_abc"}
+                    ]
+                }
+            },
+            "target_reconciliation": [
+                {
+                    "target_id": "reddit_abc",
+                    "source_family": "reddit_forum",
+                    "terminal_state": "used",
+                    "native_artifact_id": "reddit_manifest_abc",
+                    "axis_ids": ["wear"],
+                }
+            ],
+            "community_axis_coding": {"artifact_id": "community"},
+        },
+    )
+
+    source = build_phase_a_reddit_source_v3(
+        run_spec_path=spec_path,
+        evidence_ledger_path=ledger_path,
+        repo_root=tmp_path,
+    )
+
+    assert len(source["captured_items"]) == 3
+    assert [row["accounting_disposition"] for row in source["captured_items"]].count(
+        "mechanically_excluded"
+    ) == 2
+    assessed = next(
+        row for row in source["captured_items"] if row["accounting_disposition"] == "assess"
+    )
+    assert assessed["text"] == "It lasts through lunch."
+    assert assessed["product_context"][0]["text"] == "Summer Fridays wear"
+    assert assessed["product_candidates"] == ["Lip Butter Balm"]
+    assert assessed["engagement"]["material_positive"] is True
+    assert assessed["conversation_depth"] == 0
+    assert assessed["source_reported_depth"] == 2
+    assert next(
+        row["locator"]
+        for row in source["source_artifacts"]
+        if row["artifact_id"] == "reddit_evidence_ledger"
+    ) == "ledger.json"
+
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["families"]["reddit_forum"]["threads"].append(
+        {"thread_id": "missing", "artifact_id": "reddit_manifest_missing"}
+    )
+    _write_json(ledger_path, ledger)
+    with pytest.raises(SemanticIntegrationError, match="outside captured union"):
+        build_phase_a_reddit_source_v3(
+            run_spec_path=spec_path,
+            evidence_ledger_path=ledger_path,
+            repo_root=tmp_path,
+        )
+
+
+def _revolve_corpus(
+    path: Path, reviews: list[dict], *, product_id: str | None = None
+) -> None:
+    _write_json(
+        path,
+        {
+            "schema_version": "revolve_review_corpus_recent_v1",
+            "source_product_ids": [product_id or path.stem],
+            "captured_review_ids": [str(row["id"]) for row in reviews],
+            "responses": [
+                {
+                    "body_text": json.dumps(
+                        {"reviews": reviews}, ensure_ascii=False, sort_keys=True
+                    )
+                }
+            ],
+        },
+    )
+
+
+def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_text(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    source_a = tmp_path / "revolve-a.json"
+    source_b = tmp_path / "revolve-b.json"
+    placeholder = "This REVOLVE shopper left a rating without a review."
+    _revolve_corpus(
+        source_a,
+        [
+            {
+                "id": "r1",
+                "content": "Comfortable for hours.",
+                "votesUp": 1,
+                "user": {"userId": "user-1"},
+            },
+            {"id": "p1", "content": placeholder, "votesUp": 0, "user": {}},
+        ],
+        product_id="SUMR-WU1",
+    )
+    _revolve_corpus(
+        source_b,
+        [
+            {
+                "id": "r1",
+                "content": "Comfortable for hours.",
+                "votesUp": 1,
+                "user": {"userId": "user-1"},
+            },
+            {"id": "p1", "content": placeholder, "votesUp": 0, "user": {}},
+            {"id": "p2", "content": placeholder, "votesUp": 0, "user": {}},
+        ],
+        product_id="SUMR-WU14",
+    )
+    coding_path = tmp_path / "retailer-coding.json"
+    _write_json(
+        coding_path,
+        {
+            "rows": [
+                {
+                    "corpus_id": "revolve_native_reviews",
+                    "review_id": "r1",
+                    "product_context_id": "SUMR-WU1",
+                    "axis_codes": [{"axis_id": "wear"}],
+                    "source_row_ref": f"{source_a}#review:r1",
+                }
+            ]
+        },
+    )
+    manifest_path = tmp_path / "retailer-manifest.json"
+    _write_json(
+        manifest_path,
+        build_retailer_source_manifest(retailer_coding_path=coding_path),
+    )
+    completion_path = tmp_path / "completion.json"
+
+    def write_completion() -> None:
+        _write_json(
+            completion_path,
+            {
+                "schema_version": "revolve_review_corpus_completion_run_v1",
+                "completed_corpus_count": 2,
+                "captured_review_occurrence_count": 5,
+                "unique_review_id_count": 3,
+                "cross_corpus_duplicate_review_ids": ["p1", "r1"],
+                "outcomes": [
+                    {
+                        "status": "complete",
+                        "failure": None,
+                        "receipt_path": str(path),
+                        "receipt_sha256": _raw_sha(path),
+                        "captured_review_count": 2 if path == source_a else 3,
+                    }
+                    for path in (source_a, source_b)
+                ],
+            },
+        )
+
+    write_completion()
+    source = build_phase_a_retailer_source_v3(
+        run_spec_path=spec_path,
+        retailer_coding_path=coding_path,
+        retailer_source_manifest_path=manifest_path,
+        revolve_completion_receipt_path=completion_path,
+        repo_root=tmp_path,
+    )
+    assert len(source["containers"]) == 3
+    assert len(source["source_artifacts"]) == 5
+    assert sum(
+        row["accounting_disposition"] == "assess" for row in source["captured_items"]
+    ) == 1
+    assert sum(
+        row["accounting_disposition"] == "mechanically_excluded"
+        for row in source["captured_items"]
+    ) == 2
+    readable = next(
+        row for row in source["captured_items"] if row["accounting_disposition"] == "assess"
+    )
+    assert readable["engagement"]["material_positive"] is True
+    assert readable["product_candidates"] == ["SUMR-WU1", "SUMR-WU14"]
+    assert {
+        (row["text"], row["source_artifact_id"], row["source_ref"])
+        for row in readable["product_context"]
+    } == {
+        (
+            "SUMR-WU1",
+            next(
+                row["artifact_id"]
+                for row in source["source_artifacts"]
+                if Path(row["locator"]).name == source_a.name
+            ),
+            f"{source_a}#review:r1",
+        ),
+        (
+            "SUMR-WU14",
+            next(
+                row["artifact_id"]
+                for row in source["source_artifacts"]
+                if Path(row["locator"]).name == source_b.name
+            ),
+            f"{source_b}#review:r1",
+        ),
+    }
+    assert {row["captured_at"] for row in source["containers"]} == {
+        "capture_time_unavailable_in_preserved_source"
+    }
+    assert next(
+        row["locator"]
+        for row in source["source_artifacts"]
+        if row["artifact_id"] == "retailer_axis_coding"
+    ) == "retailer-coding.json"
+
+    _revolve_corpus(
+        source_b,
+        [
+            {
+                "id": "r1",
+                "content": "Comfortable for hours.",
+                "votesUp": 1,
+                "user": {"userId": "user-1"},
+            },
+            {"id": "p1", "content": placeholder, "votesUp": 0, "user": {}},
+            {"id": "p2", "content": "This uncoded review must not vanish.", "votesUp": 0, "user": {}},
+        ],
+        product_id="SUMR-WU14",
+    )
+    write_completion()
+    with pytest.raises(SemanticIntegrationError, match="uncoded"):
+        build_phase_a_retailer_source_v3(
+            run_spec_path=spec_path,
+            retailer_coding_path=coding_path,
+            retailer_source_manifest_path=manifest_path,
+            revolve_completion_receipt_path=completion_path,
+            repo_root=tmp_path,
+        )
+
+
+def test_reddit_source_builder_keeps_the_root_post_in_every_reply_ancestry(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    packet = tmp_path / "packet"
+    raw = packet / "raw"
+    raw.mkdir(parents=True)
+    content_path = raw / "content_record.json"
+    _write_json(
+        content_path,
+        {
+            "thread": {"thread_id": "abc", "title": "Summer Fridays wear"},
+            "post": {
+                "body_text": "Does the balm survive a workday?",
+                "author_state": "asker",
+                "score_state": "9 points",
+            },
+            "comments": [
+                {
+                    "row_id": "comment_1",
+                    "comment_id": "c1",
+                    "body_text": "It lasts through lunch.",
+                    "author_state": "customer",
+                    "score_state": "2 points",
+                    "depth": 0,
+                },
+                {
+                    "row_id": "comment_2",
+                    "comment_id": "c2",
+                    "body_text": "Same for me.",
+                    "author_state": "other",
+                    "score_state": "2 points",
+                    "depth": 1,
+                },
+            ],
+        },
+    )
+    manifest_path = packet / "manifest.json"
+    _write_json(
+        manifest_path,
+        {
+            "source_locator": {
+                "status": "known",
+                "value": "https://old.reddit.com/r/test/comments/abc/example/",
+            },
+            "timing": {
+                "capture_time": {"status": "known", "value": "2026-08-01T00:00:00Z"}
+            },
+            "preserved_files": [
+                {
+                    "relative_packet_path": "raw/content_record.json",
+                    "sha256": _raw_sha(content_path),
+                }
+            ],
+        },
+    )
+    community_path = tmp_path / "community.json"
+    _write_json(
+        community_path,
+        {"legacy_parent_threads_not_requalified": [], "rows": []},
+    )
+    ledger_path = tmp_path / "ledger.json"
+    _write_json(
+        ledger_path,
+        {
+            "cycle_id": "cycle-1",
+            "artifacts": [
+                {
+                    "artifact_id": "reddit_manifest_abc",
+                    "locator": str(manifest_path),
+                    "sha256": _sha(manifest_path),
+                },
+                {
+                    "artifact_id": "community",
+                    "locator": str(community_path),
+                    "sha256": _sha(community_path),
+                },
+            ],
+            "families": {
+                "reddit_forum": {
+                    "threads": [
+                        {"thread_id": "abc", "artifact_id": "reddit_manifest_abc"}
+                    ]
+                }
+            },
+            "target_reconciliation": [
+                {
+                    "target_id": "reddit_abc",
+                    "source_family": "reddit_forum",
+                    "terminal_state": "used",
+                    "native_artifact_id": "reddit_manifest_abc",
+                    "axis_ids": ["wear"],
+                }
+            ],
+            "community_axis_coding": {"artifact_id": "community"},
+        },
+    )
+
+    source = build_phase_a_reddit_source_v3(
+        run_spec_path=spec_path,
+        evidence_ledger_path=ledger_path,
+        repo_root=tmp_path,
+    )
+    items = {row["evidence_id"]: row for row in source["captured_items"]}
+    post = items["reddit:abc:post"]
+    top_level = items["reddit:abc:c1"]
+    reply = items["reddit:abc:c2"]
+
+    # A depth-0 reply answers the root post, so the post body must travel with
+    # it; dropping the root also makes a personal-agreement unit unvalidatable.
+    assert [row["source_ref"] for row in top_level["parent_context"]] == [
+        post["source_ref"]
+    ]
+    assert top_level["parent_context"][0]["text"] == post["text"]
+    assert top_level["conversation_depth"] == 1
+    assert top_level["source_reported_depth"] == 0
+    assert [row["source_ref"] for row in reply["parent_context"]] == [
+        post["source_ref"],
+        top_level["source_ref"],
+    ]
+    assert reply["conversation_depth"] == 2
+
+
+def test_serp_target_reconciliation_links_only_exact_native_object_ids(
+    tmp_path: Path,
+) -> None:
+    frontier_path = tmp_path / "frontier.json"
+    frontier = {
+        "schema_version": "phase_a_serp_source_frontier_review_result_v1",
+        "locator_recovery_targets": [
+            {
+                "target_id": "reddit-hit",
+                "locator": "https://www.reddit.com/r/x/comments/abc/title/",
+            },
+            {
+                "target_id": "video-hit",
+                "locator": "https://www.youtube.com/watch?v=video123",
+            },
+            {"target_id": "miss", "locator": "https://example.test/editorial"},
+        ],
+    }
+    frontier["result_sha256"] = _canonical(frontier)
+    _write_json(frontier_path, frontier)
+    ledger_path = tmp_path / "ledger.json"
+    _write_json(
+        ledger_path,
+        {
+            "target_reconciliation": [
+                {
+                    "target_id": "reddit_abc",
+                    "source_family": "reddit_forum",
+                    "locator": "https://old.reddit.com/r/x/comments/abc/title/",
+                    "native_artifact_id": "reddit_manifest_abc",
+                }
+            ],
+            "families": {
+                "native_social": {
+                    "posts": [
+                        {
+                            "unit_id": "yt_video123",
+                            "platform": "youtube",
+                            "post_id": "video123",
+                            "artifact_id": "social-composition",
+                        }
+                    ]
+                }
+            },
+        },
+    )
+
+    result = reconcile_serp_frontier_targets(
+        frontier_result_path=frontier_path, evidence_ledger_path=ledger_path
+    )
+
+    assert result["terminal_state_counts"] == {
+        "already_captured": 2,
+        "historical_capture_unavailable": 1,
+    }
+    assert result["new_source_acquisition_performed"] is False

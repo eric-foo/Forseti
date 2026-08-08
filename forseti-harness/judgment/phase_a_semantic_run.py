@@ -6,6 +6,7 @@ import json
 import re
 from pathlib import Path
 from typing import Any, Mapping, Sequence
+from urllib.parse import urlparse
 
 import yaml
 
@@ -46,6 +47,10 @@ EVIDENCE_OWNING_DISPOSITIONS = {
 CAPTURED_TERMINAL_STATES = {"used", "captured_excluded"}
 _YAML_FENCE = re.compile(r"```ya?ml\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
 _TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
+_REDDIT_PLACEHOLDERS = {"[deleted]", "[removed]"}
+_REVOLVE_RATING_ONLY_PLACEHOLDER = (
+    "This REVOLVE shopper left a rating without a review."
+)
 
 
 def _canonical_hash(value: Any) -> str:
@@ -1259,6 +1264,873 @@ def census_phase_a_customer_corpus(
     }
     result["census_sha256"] = _canonical_hash(result)
     return result
+
+
+def _source_artifact(
+    artifact_id: str, path: Path, *, repo_root: Path
+) -> dict[str, str]:
+    resolved = path.resolve(strict=True)
+    try:
+        locator = resolved.relative_to(repo_root.resolve(strict=True)).as_posix()
+    except ValueError:
+        locator = str(resolved)
+    return {
+        "artifact_id": artifact_id,
+        "locator": locator,
+        "sha256": hash_file(resolved),
+    }
+
+
+def _phase_a_source_shell(spec: Mapping[str, Any]) -> dict[str, Any]:
+    _validate_run_spec_shape(spec)
+    return {
+        "schema_version": "semantic_evidence_source_v3",
+        "cycle_id": spec["cycle_id"],
+        "question_id": spec["question_id"],
+        "question": spec["question"],
+        "corpus_profile": spec["corpus_profile"],
+        "corpus_scope": spec["corpus_scope"],
+        "corpus_cutoff": spec["corpus_cutoff"],
+        "axes": spec["axes"],
+    }
+
+
+def _materialize_declared_source(source: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate and normalize source accounting before separate batch packing."""
+    return materialize_source_v3(source)
+
+
+def _reddit_manifest_record(
+    manifest_path: Path,
+) -> tuple[dict[str, Any], Path, str, str]:
+    """Return the projected record and the exact preserved bytes that own it."""
+    manifest = _load_json_object(manifest_path, label="Reddit packet manifest")
+    preserved = manifest.get("preserved_files")
+    if not isinstance(preserved, list):
+        raise SemanticIntegrationError("Reddit packet manifest lacks preserved files")
+    content: list[Path] = []
+    html: list[Path] = []
+    for row in preserved:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("relative_packet_path")):
+            continue
+        relative = row["relative_packet_path"]
+        path = (manifest_path.parent / relative).resolve(strict=True)
+        lowered = relative.lower()
+        if lowered.endswith("content_record.json"):
+            content.append(path)
+        elif lowered.endswith(("http_response_body.bin", ".html", ".htm")):
+            html.append(path)
+    if len(content) > 1 or len(html) > 1 or (not content and not html):
+        raise SemanticIntegrationError(
+            f"Reddit packet has an ambiguous or absent source record: {manifest_path}"
+        )
+    source_path = content[0] if content else html[0]
+    record = _reddit_record_from_manifest(manifest_path)
+    locator_row = manifest.get("source_locator")
+    source_ref = (
+        locator_row.get("value") if isinstance(locator_row, Mapping) else None
+    )
+    if not _nonempty(source_ref):
+        raise SemanticIntegrationError(f"Reddit packet lacks source URL: {manifest_path}")
+    timing = manifest.get("timing")
+    capture = timing.get("capture_time") if isinstance(timing, Mapping) else None
+    captured_at = capture.get("value") if isinstance(capture, Mapping) else None
+    if not _nonempty(captured_at):
+        captured_at = "capture_time_unavailable_in_packet"
+    return record, source_path, source_ref, captured_at
+
+
+def _score_value(value: Any) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    if not isinstance(value, str):
+        return None
+    match = re.search(r"-?\d[\d,]*", value)
+    return int(match.group(0).replace(",", "")) if match else None
+
+
+def _identity_fields(prefix: str, value: Any) -> tuple[str, str | None]:
+    if not _nonempty(value):
+        return "unavailable", None
+    normalized = value.strip()
+    lowered = normalized.casefold()
+    if lowered in {"[deleted]", "[removed]", "unknown"} or lowered.startswith(
+        "unknown_with_reason:"
+    ):
+        return "unavailable", None
+    return "credited", f"{prefix}:{lowered}"
+
+
+def build_phase_a_reddit_source_v3(
+    *, run_spec_path: Path, evidence_ledger_path: Path, repo_root: Path
+) -> dict[str, Any]:
+    """Build the complete packet-backed Reddit v3 fragment without model calls."""
+    spec = _load_json_object(run_spec_path, label="Phase A run spec")
+    source = _phase_a_source_shell(spec)
+    ledger = _load_json_object(evidence_ledger_path, label="evidence depth ledger")
+    if ledger.get("cycle_id") != spec["cycle_id"]:
+        raise SemanticIntegrationError("Reddit ledger cycle does not match run spec")
+    artifacts = ledger.get("artifacts")
+    families = ledger.get("families")
+    targets = ledger.get("target_reconciliation")
+    if not isinstance(artifacts, list) or not isinstance(families, Mapping) or not isinstance(
+        targets, list
+    ):
+        raise SemanticIntegrationError("Reddit ledger lacks corpus bindings")
+    artifact_index = {
+        row.get("artifact_id"): row
+        for row in artifacts
+        if isinstance(row, Mapping) and _nonempty(row.get("artifact_id"))
+    }
+    thread_bindings: dict[str, str] = {}
+    target_axes: dict[str, list[str]] = {}
+    for row in targets:
+        if not isinstance(row, Mapping) or row.get("source_family") != "reddit_forum":
+            continue
+        thread_id = str(row.get("target_id", "")).removeprefix("reddit_")
+        artifact_id = row.get("native_artifact_id")
+        if _nonempty(artifact_id):
+            if not thread_id or thread_id in thread_bindings:
+                raise SemanticIntegrationError("Reddit target identities are duplicated")
+            thread_bindings[thread_id] = artifact_id
+            axis_ids = row.get("axis_ids", [])
+            if not isinstance(axis_ids, list) or any(not _nonempty(v) for v in axis_ids):
+                raise SemanticIntegrationError(f"Reddit target has invalid axes: {thread_id}")
+            target_axes[thread_id] = list(axis_ids)
+        elif row.get("terminal_state") in CAPTURED_TERMINAL_STATES:
+            raise SemanticIntegrationError(
+                f"captured Reddit target lacks native artifact: {thread_id}"
+            )
+    coding_binding = ledger.get("community_axis_coding")
+    coding_id = (
+        coding_binding.get("artifact_id") if isinstance(coding_binding, Mapping) else None
+    )
+    coding_artifact = artifact_index.get(coding_id)
+    if not isinstance(coding_artifact, Mapping) or not _nonempty(
+        coding_artifact.get("locator")
+    ):
+        raise SemanticIntegrationError("Reddit ledger lacks community coding")
+    coding_path = _resolve_ledger_locator(
+        evidence_ledger_path, coding_artifact["locator"]
+    )
+    if coding_artifact.get("sha256") != _artifact_hash(coding_path):
+        raise SemanticIntegrationError("community coding hash mismatch")
+    coding = _load_json_object(coding_path, label="community axis coding")
+    legacy_ids = coding.get("legacy_parent_threads_not_requalified")
+    coding_rows = coding.get("rows")
+    if not isinstance(legacy_ids, list) or not isinstance(coding_rows, list):
+        raise SemanticIntegrationError("community coding lacks rows or legacy threads")
+    for thread_id in legacy_ids:
+        if not _nonempty(thread_id):
+            raise SemanticIntegrationError("community coding has invalid legacy thread")
+        artifact_id = f"reddit_manifest_{thread_id}"
+        if thread_id in thread_bindings or artifact_id not in artifact_index:
+            raise SemanticIntegrationError(
+                f"legacy Reddit binding is duplicated or absent: {thread_id}"
+            )
+        thread_bindings[thread_id] = artifact_id
+    family = families.get("reddit_forum")
+    family_rows = family.get("threads") if isinstance(family, Mapping) else None
+    if not isinstance(family_rows, list) or not family_rows:
+        raise SemanticIntegrationError("Reddit family has no coded threads")
+    family_ids = {
+        row.get("thread_id")
+        for row in family_rows
+        if isinstance(row, Mapping) and _nonempty(row.get("thread_id"))
+    }
+    if not family_ids <= set(thread_bindings):
+        raise SemanticIntegrationError("coded Reddit family is outside captured union")
+    known_axis_ids = {row["axis_id"] for row in spec["axes"]}
+    coded_by_leaf: dict[tuple[str, str], dict[str, set[str]]] = {}
+    for row in coding_rows:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("thread_id")) or not _nonempty(
+            row.get("comment_id")
+        ):
+            raise SemanticIntegrationError("community coding has invalid row identity")
+        key = (row["thread_id"], row["comment_id"])
+        entry = coded_by_leaf.setdefault(key, {"products": set(), "axes": set()})
+        if _nonempty(row.get("product_context")):
+            entry["products"].add(row["product_context"].strip())
+        axes = row.get("axis_ids", [])
+        if not isinstance(axes, list) or any(axis not in known_axis_ids for axis in axes):
+            raise SemanticIntegrationError(f"community coding has unknown axis: {key}")
+        entry["axes"].update(axes)
+
+    source_artifacts = [
+        _source_artifact(
+            "reddit_evidence_ledger", evidence_ledger_path, repo_root=repo_root
+        ),
+        _source_artifact(
+            "reddit_community_coding", coding_path, repo_root=repo_root
+        ),
+    ]
+    containers: list[dict[str, Any]] = []
+    captured_items: list[dict[str, Any]] = []
+    seen_artifact_ids = {row["artifact_id"] for row in source_artifacts}
+    for thread_id in sorted(thread_bindings):
+        manifest_id = thread_bindings[thread_id]
+        binding = artifact_index.get(manifest_id)
+        if not isinstance(binding, Mapping) or not _nonempty(binding.get("locator")):
+            raise SemanticIntegrationError(f"Reddit manifest is absent: {manifest_id}")
+        manifest_path = _resolve_ledger_locator(evidence_ledger_path, binding["locator"])
+        if binding.get("sha256") != _canonical_json_file_hash(manifest_path):
+            raise SemanticIntegrationError(f"Reddit manifest hash mismatch: {manifest_id}")
+        record, record_path, source_ref, captured_at = _reddit_manifest_record(
+            manifest_path
+        )
+        raw_artifact_id = f"reddit_source_{thread_id}"
+        for artifact in (
+            _source_artifact(manifest_id, manifest_path, repo_root=repo_root),
+            _source_artifact(raw_artifact_id, record_path, repo_root=repo_root),
+        ):
+            if artifact["artifact_id"] in seen_artifact_ids:
+                raise SemanticIntegrationError("Reddit source artifact id is duplicated")
+            seen_artifact_ids.add(artifact["artifact_id"])
+            source_artifacts.append(artifact)
+        post = record.get("post")
+        comments = record.get("comments")
+        thread = record.get("thread")
+        if not isinstance(post, Mapping) or not isinstance(comments, list):
+            raise SemanticIntegrationError(f"Reddit source record is malformed: {thread_id}")
+        title = thread.get("title") if isinstance(thread, Mapping) else None
+        if not _nonempty(title):
+            title = source_ref
+        container_id = f"reddit_thread_{thread_id}"
+        containers.append(
+            {
+                "container_id": container_id,
+                "container_type": "conversation",
+                "source_artifact_id": raw_artifact_id,
+                "captured_leaf_count": 1 + len(comments),
+                "source_visible_total": "unavailable",
+                "completeness": "unavailable",
+                "captured_at": captured_at,
+                "capture_boundary": "exact preserved Reddit packet; title is context only",
+            }
+        )
+        post_text = post.get("body_text") if isinstance(post.get("body_text"), str) else ""
+        post_disposition = (
+            "mechanically_excluded"
+            if not post_text.strip() or post_text.strip() in _REDDIT_PLACEHOLDERS
+            else "assess"
+        )
+        post_ref = source_ref
+        posture, key = _identity_fields("reddit", post.get("author_state"))
+        post_item: dict[str, Any] = {
+            "evidence_id": f"reddit:{thread_id}:post",
+            "container_id": container_id,
+            "source_artifact_id": raw_artifact_id,
+            "source_ref": post_ref,
+            "accounting_disposition": post_disposition,
+            "accounting_reason": (
+                "readable source-native post body"
+                if post_disposition == "assess"
+                else "empty or exact Reddit deletion placeholder"
+            ),
+        }
+        if post_disposition == "assess":
+            score = _score_value(post.get("score_state"))
+            post_item.update(
+                {
+                    "source_family": "reddit_community",
+                    "source_role": "community_post",
+                    "text": post_text.strip(),
+                    "product_candidates": [],
+                    "axis_candidates": sorted(
+                        set(target_axes.get(thread_id, [])) & known_axis_ids
+                    ),
+                    "product_context": [
+                        {
+                            "context_type": "thread_title",
+                            "source_artifact_id": raw_artifact_id,
+                            "text": title,
+                            "source_ref": source_ref,
+                        }
+                    ],
+                    "independence_posture": posture,
+                    "independence_key": key,
+                    "engagement": {
+                        "raw_score_state": post.get("score_state"),
+                        "material_positive": score is not None and score > 1,
+                        "materiality_basis": "Reddit score exceeds the one-point self-vote baseline",
+                    },
+                    "conversation_depth": 0,
+                    "parent_context": [],
+                }
+            )
+        captured_items.append(post_item)
+        ancestor_stack: list[dict[str, str]] = []
+        # Reddit reports top-level comments at depth 0, so the root post occupies
+        # a fixed base frame below every reply depth. Without that offset the
+        # first depth-0 comment pops the root off the stack and every reply in
+        # the thread travels without the post body it answers.
+        root_frames = 0
+        if post_disposition == "assess":
+            ancestor_stack.append({"source_ref": post_ref, "text": post_text.strip()})
+            root_frames = 1
+        for ordinal, comment in enumerate(comments, start=1):
+            if not isinstance(comment, Mapping):
+                raise SemanticIntegrationError(f"Reddit comment is malformed: {thread_id}")
+            native_comment_id = comment.get("comment_id")
+            if not _nonempty(native_comment_id) or native_comment_id.casefold() in {
+                "deleted",
+                "removed",
+            }:
+                native_comment_id = comment.get("row_id") or f"row_{ordinal:06d}"
+            comment_id = str(native_comment_id)
+            text = comment.get("body_text") if isinstance(comment.get("body_text"), str) else ""
+            disposition = (
+                "mechanically_excluded"
+                if not text.strip() or text.strip() in _REDDIT_PLACEHOLDERS
+                else "assess"
+            )
+            comment_ref = f"https://www.reddit.com/comments/{thread_id}/_/{comment_id}"
+            item: dict[str, Any] = {
+                "evidence_id": f"reddit:{thread_id}:{comment_id}",
+                "container_id": container_id,
+                "source_artifact_id": raw_artifact_id,
+                "source_ref": comment_ref,
+                "accounting_disposition": disposition,
+                "accounting_reason": (
+                    "readable source-native comment body"
+                    if disposition == "assess"
+                    else "empty or exact Reddit deletion placeholder"
+                ),
+            }
+            raw_depth = comment.get("depth", 0)
+            depth = raw_depth if isinstance(raw_depth, int) and not isinstance(raw_depth, bool) else 0
+            depth = max(depth, 0)
+            if disposition == "assess":
+                coded = coded_by_leaf.get((thread_id, comment_id), {})
+                product_candidates = sorted(coded.get("products", set()))
+                axis_candidates = set(coded.get("axes", set()))
+                if not axis_candidates:
+                    axis_candidates.update(target_axes.get(thread_id, []))
+                effective_depth = min(depth + root_frames, len(ancestor_stack))
+                while len(ancestor_stack) > effective_depth:
+                    ancestor_stack.pop()
+                parent_context = list(ancestor_stack)
+                credited, identity_key = _identity_fields(
+                    "reddit", comment.get("author_state")
+                )
+                score = _score_value(comment.get("score_state"))
+                item.update(
+                    {
+                        "source_family": "reddit_community",
+                        "source_role": "community_post",
+                        "text": text.strip(),
+                        "product_candidates": product_candidates,
+                        "axis_candidates": sorted(axis_candidates & known_axis_ids),
+                        "product_context": [
+                            {
+                                "context_type": "thread_title",
+                                "source_artifact_id": raw_artifact_id,
+                                "text": title,
+                                "source_ref": source_ref,
+                            }
+                        ],
+                        "independence_posture": credited,
+                        "independence_key": identity_key,
+                        "engagement": {
+                            "raw_score_state": comment.get("score_state"),
+                            "material_positive": score is not None and score > 1,
+                            "materiality_basis": "Reddit score exceeds the one-point self-vote baseline",
+                        },
+                        "conversation_depth": len(parent_context),
+                        "source_reported_depth": depth,
+                        "parent_context": parent_context,
+                    }
+                )
+                ancestor = {"source_ref": comment_ref, "text": text.strip()}
+                if len(ancestor_stack) == effective_depth:
+                    ancestor_stack.append(ancestor)
+                else:
+                    ancestor_stack[effective_depth] = ancestor
+            captured_items.append(item)
+    source.update(
+        {
+            "source_artifacts": source_artifacts,
+            "containers": containers,
+            "captured_items": captured_items,
+        }
+    )
+    return _materialize_declared_source(source)
+
+
+def _retailer_rows(source: Mapping[str, Any]) -> tuple[str, dict[str, dict[str, Any]]]:
+    parser_family, native_ids = _retailer_review_ids(source)
+    rows: dict[str, dict[str, Any]] = {}
+    if parser_family == "amazon_aggregate_v1":
+        candidates = []
+        for row in source["rows"]:
+            if isinstance(row, Mapping) and row.get("row_kind") == "retail_review_row":
+                fields = row.get("source_visible_fields")
+                if isinstance(fields, Mapping):
+                    candidates.append(fields)
+        for row in candidates:
+            review_id = str(row.get("review_id", ""))
+            rows[review_id] = {
+                "text": row.get("body"),
+                "author": row.get("author"),
+                "helpful_positive": row.get("helpful_count"),
+                "raw": row,
+            }
+    elif parser_family == "bazaarvoice_results_v1":
+        for row in source["Results"]:
+            if not isinstance(row, Mapping) or row.get("Id") is None:
+                continue
+            review_id = str(row["Id"])
+            rows[review_id] = {
+                "text": row.get("ReviewText"),
+                "author": row.get("AuthorId") or row.get("UserNickname"),
+                "helpful_positive": row.get("TotalPositiveFeedbackCount"),
+                "raw": row,
+            }
+    else:
+        for response in source.get("responses", []):
+            if not isinstance(response, Mapping) or not isinstance(response.get("body_text"), str):
+                raise SemanticIntegrationError("Revolve response lacks body text")
+            try:
+                body = json.loads(response["body_text"])
+            except json.JSONDecodeError as exc:
+                raise SemanticIntegrationError("Revolve response body is invalid JSON") from exc
+            reviews = body.get("reviews") if isinstance(body, Mapping) else None
+            if not isinstance(reviews, list):
+                raise SemanticIntegrationError("Revolve response lacks reviews")
+            for row in reviews:
+                if not isinstance(row, Mapping) or row.get("id") is None:
+                    continue
+                review_id = str(row["id"])
+                normalized = {
+                    "text": row.get("content"),
+                    "author": (
+                        row.get("user", {}).get("userId")
+                        if isinstance(row.get("user"), Mapping)
+                        else None
+                    )
+                    or (
+                        row.get("user", {}).get("displayName")
+                        if isinstance(row.get("user"), Mapping)
+                        else None
+                    ),
+                    "helpful_positive": row.get("votesUp"),
+                    "raw": row,
+                }
+                if review_id in rows and rows[review_id] != normalized:
+                    raise SemanticIntegrationError(
+                        f"Revolve review changes across response pages: {review_id}"
+                    )
+                rows[review_id] = normalized
+    if set(rows) != native_ids:
+        raise SemanticIntegrationError(
+            f"retailer parser did not reproduce native review ids: {parser_family}"
+        )
+    return parser_family, rows
+
+
+def build_phase_a_retailer_source_v3(
+    *,
+    run_spec_path: Path,
+    retailer_coding_path: Path,
+    retailer_source_manifest_path: Path,
+    revolve_completion_receipt_path: Path,
+    repo_root: Path,
+) -> dict[str, Any]:
+    """Build the full deduplicated retailer-review v3 fragment."""
+    spec = _load_json_object(run_spec_path, label="Phase A run spec")
+    source = _phase_a_source_shell(spec)
+    coding = _load_json_object(retailer_coding_path, label="retailer axis coding")
+    coding_rows = coding.get("rows")
+    if not isinstance(coding_rows, list):
+        raise SemanticIntegrationError("retailer coding lacks rows")
+    manifest_sources, _ = _verify_retailer_source_manifest(
+        retailer_coding_path=retailer_coding_path,
+        manifest_path=retailer_source_manifest_path,
+    )
+    completion = _load_json_object(
+        revolve_completion_receipt_path, label="Revolve completion receipt"
+    )
+    if completion.get("schema_version") != "revolve_review_corpus_completion_run_v1":
+        raise SemanticIntegrationError("Revolve completion receipt has wrong version")
+    outcomes = completion.get("outcomes")
+    if not isinstance(outcomes, list) or not outcomes:
+        raise SemanticIntegrationError("Revolve completion receipt lacks outcomes")
+    source_paths: dict[str, dict[str, Any]] = {}
+    for locator, row in manifest_sources.items():
+        source_paths[locator] = {"parser_family": row["parser_family"]}
+    completion_occurrences: list[str] = []
+    for outcome in outcomes:
+        if (
+            not isinstance(outcome, Mapping)
+            or outcome.get("status") != "complete"
+            or outcome.get("failure") is not None
+            or not _nonempty(outcome.get("receipt_path"))
+            or not _nonempty(outcome.get("receipt_sha256"))
+        ):
+            raise SemanticIntegrationError("Revolve completion has a non-complete outcome")
+        path = Path(outcome["receipt_path"]).resolve(strict=True)
+        if hash_file(path) != outcome["receipt_sha256"]:
+            raise SemanticIntegrationError(f"Revolve corpus hash mismatch: {path}")
+        key = str(path)
+        existing = source_paths.get(key)
+        if existing is not None and existing["parser_family"] != "revolve_recent_v1":
+            raise SemanticIntegrationError("completion receipt collides with non-Revolve source")
+        source_paths[key] = {"parser_family": "revolve_recent_v1"}
+        corpus = _load_json_object(path, label=f"Revolve corpus {path}")
+        ids = corpus.get("captured_review_ids")
+        if not isinstance(ids, list) or len(ids) != outcome.get("captured_review_count"):
+            raise SemanticIntegrationError("Revolve outcome count does not match corpus")
+        completion_occurrences.extend(str(value) for value in ids)
+    if completion.get("completed_corpus_count") != len(outcomes):
+        raise SemanticIntegrationError("Revolve completion corpus count is stale")
+    if completion.get("captured_review_occurrence_count") != len(completion_occurrences):
+        raise SemanticIntegrationError("Revolve completion occurrence count is stale")
+    unique_revolve = set(completion_occurrences)
+    if completion.get("unique_review_id_count") != len(unique_revolve):
+        raise SemanticIntegrationError("Revolve completion unique-review count is stale")
+    occurrence_counts: dict[str, int] = {}
+    for review_id in completion_occurrences:
+        occurrence_counts[review_id] = occurrence_counts.get(review_id, 0) + 1
+    duplicated_ids = sorted(
+        review_id for review_id, count in occurrence_counts.items() if count > 1
+    )
+    if completion.get("cross_corpus_duplicate_review_ids") != duplicated_ids:
+        raise SemanticIntegrationError("Revolve completion duplicate count is stale")
+
+    artifact_by_path: dict[str, str] = {}
+    source_artifacts = [
+        _source_artifact(
+            "retailer_axis_coding", retailer_coding_path, repo_root=repo_root
+        ),
+        _source_artifact(
+            "retailer_source_manifest",
+            retailer_source_manifest_path,
+            repo_root=repo_root,
+        ),
+        _source_artifact(
+            "revolve_completion_receipt",
+            revolve_completion_receipt_path,
+            repo_root=repo_root,
+        ),
+    ]
+    parsed_by_path: dict[str, tuple[str, dict[str, dict[str, Any]]]] = {}
+    revolve_product_ids_by_path: dict[str, list[str]] = {}
+    for locator in sorted(source_paths):
+        path = Path(locator)
+        artifact_id = "retailer_source_" + hashlib.sha256(
+            locator.casefold().encode("utf-8")
+        ).hexdigest()[:20]
+        artifact_by_path[locator] = artifact_id
+        source_artifacts.append(
+            _source_artifact(artifact_id, path, repo_root=repo_root)
+        )
+        source_object = _load_json_object(path, label=f"retailer source {path}")
+        parsed = _retailer_rows(source_object)
+        if parsed[0] != source_paths[locator]["parser_family"]:
+            raise SemanticIntegrationError(f"retailer parser family changed: {locator}")
+        if parsed[0] == "revolve_recent_v1":
+            source_product_ids = source_object.get("source_product_ids")
+            if (
+                not isinstance(source_product_ids, list)
+                or not source_product_ids
+                or any(not _nonempty(value) for value in source_product_ids)
+            ):
+                raise SemanticIntegrationError(
+                    f"Revolve retailer source lacks product listing ids: {locator}"
+                )
+            revolve_product_ids_by_path[locator] = sorted(set(source_product_ids))
+        parsed_by_path[locator] = parsed
+
+    coded: dict[tuple[str, str], Mapping[str, Any]] = {}
+    for row in coding_rows:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("corpus_id")):
+            raise SemanticIntegrationError("retailer coding has invalid row")
+        review_id = str(row.get("review_id", ""))
+        locator, separator, anchor = str(row.get("source_row_ref", "")).partition(
+            "#review:"
+        )
+        path = str(Path(locator).resolve(strict=True)) if separator else ""
+        if separator != "#review:" or anchor != review_id or path not in parsed_by_path:
+            raise SemanticIntegrationError("retailer coding row has invalid source binding")
+        if review_id not in parsed_by_path[path][1]:
+            raise SemanticIntegrationError(f"coded retailer review is absent: {review_id}")
+        key = (row["corpus_id"], review_id)
+        if key in coded:
+            raise SemanticIntegrationError(f"retailer coding duplicates review: {key}")
+        coded[key] = row
+
+    corpus_by_parser = {
+        "amazon_aggregate_v1": "amazon_rendered_reviews",
+        "revolve_recent_v1": "revolve_native_reviews",
+        "bazaarvoice_results_v1": "sephora_product_group_reviews",
+    }
+    native: dict[tuple[str, str], list[tuple[str, dict[str, Any]]]] = {}
+    for locator, (parser_family, rows) in parsed_by_path.items():
+        corpus_id = corpus_by_parser[parser_family]
+        for review_id, row in rows.items():
+            native.setdefault((corpus_id, review_id), []).append((locator, row))
+    missing_native = sorted(set(coded) - set(native))
+    if missing_native:
+        raise SemanticIntegrationError(f"coded retailer reviews are absent: {missing_native}")
+    uncoded_nonplaceholder: list[tuple[str, str]] = []
+    excluded: set[tuple[str, str]] = set()
+    for key, occurrences in native.items():
+        if key in coded:
+            continue
+        texts = {
+            row.get("text").strip()
+            for _, row in occurrences
+            if isinstance(row.get("text"), str)
+        }
+        if key[0] == "revolve_native_reviews" and texts == {
+            _REVOLVE_RATING_ONLY_PLACEHOLDER
+        }:
+            excluded.add(key)
+        else:
+            uncoded_nonplaceholder.append(key)
+    if uncoded_nonplaceholder:
+        raise SemanticIntegrationError(
+            "captured non-placeholder retailer reviews are uncoded: "
+            f"{uncoded_nonplaceholder[:10]}"
+        )
+
+    known_axes = {row["axis_id"] for row in spec["axes"]}
+    containers: list[dict[str, Any]] = []
+    captured_items: list[dict[str, Any]] = []
+    for corpus_id, review_id in sorted(native):
+        occurrences = native[(corpus_id, review_id)]
+        owner_locator, raw = sorted(occurrences, key=lambda pair: pair[0])[0]
+        artifact_id = artifact_by_path[owner_locator]
+        container_id = f"retailer_review_{corpus_id}_{review_id}"
+        containers.append(
+            {
+                "container_id": container_id,
+                "container_type": "retailer_review",
+                "source_artifact_id": artifact_id,
+                "captured_leaf_count": 1,
+                "source_visible_total": 1,
+                "completeness": "complete",
+                # No admitted retailer source format preserves a capture
+                # timestamp, so a reusable builder must not stamp one.
+                "captured_at": "capture_time_unavailable_in_preserved_source",
+                "capture_boundary": "one source-native retailer review, deduplicated by corpus and native review id",
+            }
+        )
+        source_ref = f"{owner_locator}#review:{review_id}"
+        if (corpus_id, review_id) in excluded:
+            captured_items.append(
+                {
+                    "evidence_id": f"retailer:{corpus_id}:{review_id}",
+                    "container_id": container_id,
+                    "source_artifact_id": artifact_id,
+                    "source_ref": source_ref,
+                    "accounting_disposition": "mechanically_excluded",
+                    "accounting_reason": "exact source-native Revolve rating-only placeholder",
+                }
+            )
+            continue
+        coding_row = coded[(corpus_id, review_id)]
+        text = raw.get("text")
+        if not _nonempty(text) or text.strip() in _REDDIT_PLACEHOLDERS or text.strip() == _REVOLVE_RATING_ONLY_PLACEHOLDER:
+            raise SemanticIntegrationError(f"coded retailer review lacks usable text: {review_id}")
+        axis_codes = coding_row.get("axis_codes", [])
+        if not isinstance(axis_codes, list):
+            raise SemanticIntegrationError("retailer coding has invalid axis codes")
+        axis_ids = {
+            row.get("axis_id")
+            for row in axis_codes
+            if isinstance(row, Mapping) and _nonempty(row.get("axis_id"))
+        }
+        if not axis_ids <= known_axes:
+            raise SemanticIntegrationError(f"retailer review cites unknown axis: {review_id}")
+        product_id = str(coding_row.get("product_context_id", "")).strip()
+        if not product_id:
+            raise SemanticIntegrationError(f"retailer review lacks product context: {review_id}")
+        product_ids = [product_id]
+        product_context = [
+            {
+                "context_type": "product_page",
+                "source_artifact_id": artifact_id,
+                "text": product_id,
+                "source_ref": source_ref,
+            }
+        ]
+        if corpus_id == "revolve_native_reviews":
+            product_context = []
+            product_ids = sorted(
+                {
+                    occurrence_product_id
+                    for occurrence_locator, _ in occurrences
+                    for occurrence_product_id in revolve_product_ids_by_path[
+                        occurrence_locator
+                    ]
+                }
+            )
+            if product_id not in product_ids:
+                raise SemanticIntegrationError(
+                    f"coded Revolve product context is absent from source occurrences: {review_id}"
+                )
+            for occurrence_locator, _ in sorted(occurrences, key=lambda pair: pair[0]):
+                occurrence_ref = f"{occurrence_locator}#review:{review_id}"
+                for occurrence_product_id in revolve_product_ids_by_path[
+                    occurrence_locator
+                ]:
+                    product_context.append(
+                        {
+                            "context_type": "product_page",
+                            "source_artifact_id": artifact_by_path[occurrence_locator],
+                            "text": occurrence_product_id,
+                            "source_ref": occurrence_ref,
+                        }
+                    )
+        posture, identity_key = _identity_fields(f"retailer:{corpus_id}", raw.get("author"))
+        helpful = raw.get("helpful_positive")
+        helpful_value = helpful if isinstance(helpful, (int, float)) and not isinstance(helpful, bool) else None
+        captured_items.append(
+            {
+                "evidence_id": f"retailer:{corpus_id}:{review_id}",
+                "container_id": container_id,
+                "source_family": "retailer_review",
+                "source_role": "retailer_review",
+                "source_artifact_id": artifact_id,
+                "source_ref": source_ref,
+                "text": text.strip(),
+                "accounting_disposition": "assess",
+                "accounting_reason": "readable source-native retailer review text",
+                "product_candidates": product_ids,
+                "axis_candidates": sorted(axis_ids),
+                "product_context": product_context,
+                "independence_posture": posture,
+                "independence_key": identity_key,
+                "engagement": {
+                    "raw_positive_helpful_count": helpful,
+                    "material_positive": helpful_value is not None and helpful_value > 0,
+                    "materiality_basis": "source-native positive helpful vote count exceeds zero",
+                },
+                "conversation_depth": 0,
+                "parent_context": [],
+            }
+        )
+    source.update(
+        {
+            "source_artifacts": source_artifacts,
+            "containers": containers,
+            "captured_items": captured_items,
+        }
+    )
+    return _materialize_declared_source(source)
+
+
+def _native_social_key(locator: str) -> tuple[str, str] | None:
+    parsed = urlparse(locator)
+    host = parsed.netloc.casefold().removeprefix("www.")
+    parts = [part for part in parsed.path.split("/") if part]
+    if "reddit.com" in host:
+        try:
+            index = parts.index("comments")
+            return "reddit", parts[index + 1]
+        except (ValueError, IndexError):
+            return None
+    if host in {"youtu.be"} and parts:
+        return "youtube", parts[0]
+    if "youtube.com" in host:
+        query = parsed.query.split("&")
+        for row in query:
+            if row.startswith("v=") and len(row) > 2:
+                return "youtube", row[2:]
+        if len(parts) >= 2 and parts[0] in {"shorts", "embed"}:
+            return "youtube", parts[1]
+    if "tiktok.com" in host and "video" in parts:
+        index = parts.index("video")
+        if len(parts) > index + 1:
+            return "tiktok", parts[index + 1]
+    if "instagram.com" in host and len(parts) >= 2 and parts[0] in {"p", "reel", "tv"}:
+        return "instagram", parts[1]
+    return None
+
+
+def reconcile_serp_frontier_targets(
+    *, frontier_result_path: Path, evidence_ledger_path: Path
+) -> dict[str, Any]:
+    """Link reviewed SERP recovery targets to exact already-captured native objects."""
+    result = _load_json_object(frontier_result_path, label="SERP frontier result")
+    if result.get("schema_version") != "phase_a_serp_source_frontier_review_result_v1":
+        raise SemanticIntegrationError("SERP frontier result has wrong version")
+    expected_hash = result.get("result_sha256")
+    unhashed = dict(result)
+    unhashed.pop("result_sha256", None)
+    if expected_hash != _canonical_hash(unhashed):
+        raise SemanticIntegrationError("SERP frontier result hash mismatch")
+    ledger = _load_json_object(evidence_ledger_path, label="evidence depth ledger")
+    captured: dict[tuple[str, str], dict[str, str]] = {}
+    for row in ledger.get("target_reconciliation", []):
+        if not isinstance(row, Mapping) or row.get("source_family") != "reddit_forum":
+            continue
+        key = _native_social_key(str(row.get("locator", "")))
+        if key and _nonempty(row.get("native_artifact_id")):
+            captured[key] = {
+                "artifact_id": row["native_artifact_id"],
+                "unit_id": str(row.get("target_id", "")).removeprefix("reddit_"),
+            }
+    families = ledger.get("families")
+    native_social = families.get("native_social") if isinstance(families, Mapping) else None
+    posts = native_social.get("posts") if isinstance(native_social, Mapping) else None
+    if not isinstance(posts, list):
+        raise SemanticIntegrationError("evidence ledger lacks native social posts")
+    for row in posts:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("platform")) or not _nonempty(
+            row.get("post_id")
+        ) or not _nonempty(row.get("artifact_id")):
+            raise SemanticIntegrationError("native social row has invalid identity")
+        key = (row["platform"].casefold(), row["post_id"])
+        candidate = {"artifact_id": row["artifact_id"], "unit_id": row.get("unit_id")}
+        if key in captured and captured[key] != candidate:
+            raise SemanticIntegrationError(f"native capture identity is ambiguous: {key}")
+        captured[key] = candidate
+    targets = result.get("locator_recovery_targets")
+    if not isinstance(targets, list):
+        raise SemanticIntegrationError("SERP frontier result lacks recovery targets")
+    reconciled: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for row in targets:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("target_id")) or not _nonempty(
+            row.get("locator")
+        ):
+            raise SemanticIntegrationError("SERP recovery target is invalid")
+        if row["target_id"] in seen:
+            raise SemanticIntegrationError("SERP recovery target is duplicated")
+        seen.add(row["target_id"])
+        key = _native_social_key(row["locator"])
+        match = captured.get(key) if key else None
+        reconciled.append(
+            {
+                "target_id": row["target_id"],
+                "locator": row["locator"],
+                "terminal_state": (
+                    "already_captured" if match else "historical_capture_unavailable"
+                ),
+                "evidence_ref": match,
+                "reason": (
+                    "exact native object id is present in the frozen evidence ledger"
+                    if match
+                    else "no exact native object id match exists in the frozen evidence ledger"
+                ),
+            }
+        )
+    output = {
+        "schema_version": "phase_a_serp_target_reconciliation_v1",
+        "frontier_result_sha256": expected_hash,
+        "evidence_ledger_sha256": hash_file(evidence_ledger_path),
+        "targets": reconciled,
+        "terminal_state_counts": {
+            state: sum(row["terminal_state"] == state for row in reconciled)
+            for state in ("already_captured", "historical_capture_unavailable")
+        },
+        "new_source_acquisition_performed": False,
+        "model_api_calls": 0,
+    }
+    output["reconciliation_sha256"] = _canonical_hash(output)
+    return output
 
 
 def _load_seal(path: Path) -> dict[str, Any]:
