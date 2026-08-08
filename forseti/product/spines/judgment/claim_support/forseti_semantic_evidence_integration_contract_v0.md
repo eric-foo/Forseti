@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v2
+version: v3
 effective_date: 2026-08-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v2
+# Semantic Evidence Integration Contract v3
 
 ## Purpose
 
