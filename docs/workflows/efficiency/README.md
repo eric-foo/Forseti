@@ -15,7 +15,7 @@ claim that any documented result has been reproduced.
 | Compare an in-session Success Implement review with a strict cross-vendor delegated review-and-patch on PR #1111 | `pr1111_success_implement_vs_delegated_review_case_v0.md` |
 | Review the 100-PR backtest that admitted a scoped cold-operability signal and rejected a universal dogfood protocol | `cold_operability_signal_pr_backtest_2026_08_07_v0.md` |
 | Review the frozen backtest that met its recall bar but failed its false-flag bound and declined the falsifiable-invariant authoring clause | `architecture_falsifiable_invariant_backtest_2026_08_08_v0.md` |
-| Review the frozen aggregation showing delegated review-and-patch episodes paid at 10/11 and the lane's bound status is supported | `delegated_review_patch_yield_backtest_2026_08_08_v0.md` |
+| Review the frozen aggregation showing delegated review-and-patch episodes paid at 10/11, the lane's bound status supported, and the open-commission triage that found no backlog | `delegated_review_patch_yield_backtest_2026_08_08_v0.md` |
 | Record an observed recurring tooling or workflow failure and its corrective pointers | `../technical_difficulties_log_v0.md` |
 | Follow the dated 2026-07-09 hygiene-audit checklist and its execution waves | `../../hygiene/efficiency_audit_wave_plan_v0.md` |
 

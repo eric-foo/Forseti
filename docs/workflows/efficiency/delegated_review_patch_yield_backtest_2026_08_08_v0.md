@@ -33,11 +33,15 @@ pay-rate condition passed (>= 2/3) but only one primary episode (#1424,
 DRP-01) carries an explicitly labeled blocking/critical accepted finding.
 NARROW-consideration was not flagged.
 
-One owner-relevant observation falls outside the bar: **11 of 28 selected
-PRs are open or unreturned commissions**, and at least two (#1454, #1403)
-merged despite their own "do not merge before the return" text — returns
-systematically trail merges, with at least one adjudication landing
-post-merge (#1452).
+One owner-relevant observation was reported outside the bar — that 11 of 28
+selected PRs carry open or unreturned commissions and that returns
+systematically trail merges. **That observation is withdrawn.** A follow-on
+triage (see *Open-commission triage* below) re-checked all 11 against
+commit-message trailers and found 7 were returned and adjudicated before
+merge, 3 are unmerged PRs where nothing has landed, and 1 (#1449) is a
+single genuine gap. The lane's prescribed sequence — commission, freeze,
+delegate, adjudicate, then merge — is being followed; the stale hold-text
+in PR bodies is a cosmetic artifact, not a discipline failure.
 
 **Post-publication correction (same day, before merge).** This record
 initially reported a second observation — that #1391 and #1407 assert
@@ -346,8 +350,57 @@ that distinction decides whether any mechanism is warranted. A one-time
 triage of the 11 resolves the backlog and produces exactly that evidence;
 no standing mechanism is justified before it. This record installs nothing.
 
-The withdrawn second finding is itself instructive: the recording mechanism
-that already exists (the `review_routing_status` trailer grammar, gated at
-CI for code roots) was working, and the apparent gap was an artifact of
-looking in the wrong place. Confirm where a record actually lives before
-concluding it is absent.
+Both withdrawn findings are instructive in the same direction: the
+recording mechanism that already exists (the `review_routing_status`
+trailer grammar, gated at CI for code roots) was working, and both apparent
+gaps were artifacts of looking in the wrong place. Confirm where a record
+actually lives before concluding it is absent.
+
+---
+
+# Open-commission triage (appended 2026-08-09)
+
+The single operational observation above was triaged as the smallest
+complete response — a one-time backlog resolution rather than any standing
+mechanism. Method: for each of the 11, read PR state, then the merge
+commit's full message including `review_routing_status` trailers, then any
+adjudication commit on the PR branch. This is the corrected source set that
+the frozen extraction protocol lacked.
+
+| PR | State | Disposition | Evidence |
+| --- | --- | --- | --- |
+| 1454 | merged | returned, adjudicated pre-merge | `blocked` then `routed -- chat_only_adjudicated: cross-vendor delegate findings adjudicated; duplicate-unmerged, semantic-posture, unscoped-unmerged, and relation-count issues closed and verified` |
+| 1453 | merged | returned, adjudicated pre-merge | `routed -- chat_only_adjudicated: accepted F1 with global one-file-one-id closure and F2; deferred nonmaterial flag-only observations` |
+| 1447 | merged | returned, adjudicated (content-thin) | `review_routing_status: delegated_review_adjudicated` — nonstandard grammar, no disposition content |
+| 1445 | merged | returned, adjudicated pre-merge | `routed -- chat_only_adjudicated: Anthropic cross-vendor review returned; F1-F7 accepted ... F8-F9 as explicit semantic residuals; F10-F11 deferred` |
+| 1403 | merged | returned, adjudicated pre-merge | `routed -- chat_only_adjudicated: cross-vendor findings GQ-1 and RA-1 accepted; AS-1 rejected against playbook non-material-block authority` |
+| 1421 | merged | returned, adjudicated (content-thin) | branch commit `Adjudicate Phase A source diversity review` |
+| 1384 | merged | returned, adjudicated | branch commit `Adjudicate the delegated review: accept with two modifications, seal evidence` |
+| 1436 | open | pending; nothing landed | commissioned separately per owner instruction; PR unmerged |
+| 1432 | open | pending; nothing landed | PR body is itself the courier commission, `dispatch_state: preparation_only` |
+| 1360 | open | pending; nothing landed | `blocked` on frozen candidate `ff5b78e6`; production run gated behind adjudication |
+| 1449 | merged | **single genuine gap** | body: "De-correlated delegated review-and-patch is required before merge"; no trailer, no adjudication commit, no later adjudicating PR found |
+
+**Triage result: 7 returned, 3 pending with nothing landed, 1 gap.** The
+backlog the observation implied does not exist. #1449 is the only case
+where a stated pre-merge review requirement has no locatable return; a
+chat-only adjudication may exist and simply was never recorded, which is
+not distinguishable from repo evidence. It is an owner recall question, not
+a process defect, and it authorizes no mechanism.
+
+**Metric consequence, disclosed not silently applied.** The frozen
+protocol's body-only extraction undercounted adjudicated episodes. Four of
+the newly confirmed returns record both cross-vendor lineage and accepted
+material findings (#1454, #1453, #1445, #1403), and #1384 records accepted
+findings with unrecorded lineage. A corrected primary recount is
+directionally **14/15 (0.93)**, versus the frozen run's 10/11 (0.91). The
+frozen figure is left standing as what the frozen protocol produced;
+retrofitting new episodes into a frozen denominator post hoc would be
+denominator manipulation. The bar outcome is unchanged and strengthened:
+**RETAIN-as-bound supported**.
+
+**Standing conclusion.** No mechanism is warranted. The triage that this
+record recommended has been performed and returned nothing to build. The
+recurring lesson is a reading rule for future aggregation, not a gate:
+`review_routing_status` trailers in commit messages — not PR bodies — are
+where this repository's review dispositions actually live.
