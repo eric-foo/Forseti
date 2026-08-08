@@ -853,11 +853,17 @@ customer-language denominator. Retailer membership is proven from source-native
 review records under raw-byte-pinned files, never from a whole-file substring.
 
 The evidence-depth ledger also carries one `phase_a_serp_source_frontier_v1`.
-For the exact jobs sealed in SERP Phase 1 and Phase 2, plus every bounded
-focused-search packet, a fresh agent reads each source-bearing result row for
+Terminal-return-selected, hash-pinned Phase 1 and Phase 2 queue-state receipts generate the exact
+successful job-to-packet inventory; an operator-selected subset is invalid.
+Recovery runtime job IDs may map to sealed parent IDs only through an explicit
+one-to-one alias.
+Focused-search records separately own their exact job packet sets. For those
+producer-owned surfaces, a fresh agent reads each source-bearing result row for
 meaning and marks it `routed`, `duplicate`, or `excluded` in one explicit
 row-identified decision; a bulk/default route is invalid. Deterministic code
-checks exact row coverage and target resolution; it does not infer relevance
+checks exact row coverage, one packet-file identity across all surfaces, and
+target resolution. One identity may serve multiple jobs, but two identities
+may not enumerate the same packet twice. It does not infer relevance
 from keywords. Routed rows bind to an existing native-capture or
 locator-recovery target. Google people-also-ask and related-search prompts are
 not external sources. This is a bounded search-surface census, not permission
@@ -1010,7 +1016,8 @@ back-claimed onto a 1.3.0 seal, and 1.5.0's contextual product-binding
 requirements are never back-claimed onto a 1.4.0 seal. Route 1.6.0's full-
 corpus, hierarchy, capture-envelope, consolidated-axis, and evidence-stack
 requirements are never back-claimed onto a 1.5.0 seal.
-Route 1.7.0's source boundary, retailer manifest, and SERP frontier are never
+Route 1.7.0's source boundary, retailer manifest, producer-owned packet
+inventory, and SERP frontier are never
 back-claimed onto a 1.6.0 seal.
 
 ## Company Competitive-Intelligence Extension

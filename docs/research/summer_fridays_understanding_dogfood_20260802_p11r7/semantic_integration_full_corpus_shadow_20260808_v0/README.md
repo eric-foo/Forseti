@@ -23,9 +23,11 @@ historical 577-thread `used` family.
 
 The retailer proof now pins all 95 source files by raw-byte SHA-256 and verifies
 review membership through the source-native structures for Bazaarvoice,
-Amazon, and Revolve. The bounded SERP dogfood covered 32 preserved
-packet surfaces: all 12 sealed Phase 1 jobs, all 8 sealed Phase 2 jobs, and 12
-later product-axis packets. It enumerated 371 external-source-bearing result
+Amazon, and Revolve. The bounded SERP dogfood covered 32 preserved unique
+packet artifacts: all 12 sealed Phase 1 jobs, all 8 sealed Phase 2 jobs, and 12
+later product-axis packets. The producer-backed correction represents them as
+56 job surfaces because each of the 36 focused product-axis jobs keeps its
+exact packet edge even when three jobs reuse one packet. It enumerated 371 external-source-bearing result
 rows. The pre-hardening review record produced 315 unique native or
 locator-recovery targets, 54 repeated-locator duplicates, and 2 explicit
 exclusions. It used one routed default for the other 369 rows, so these are
@@ -63,7 +65,7 @@ specific false-success path it was built to prevent.
 - A source-native Reddit/retailer census that distinguishes captured,
   readable, mechanically excluded, and formerly screened-out leaves.
 - A raw-byte retailer source manifest with structural review-ID verification.
-- A repeatable job-to-packet SERP surface spec, complete row inventory,
+- A repeatable producer-derived job-to-packet SERP surface spec, complete row inventory,
   agent-semantic review, deterministic locator de-duplication, and emitted
   target-reconciliation work.
 - Validation of one extraction or reconciliation response as soon as it
@@ -89,13 +91,15 @@ each of the 371 inventory rows before it can support Route 1.7 linkage claims;
 the controller now rejects its routed default. The captured target counts do
 not prove that individual review or target-to-row binding.
 
-The frontier reconciles the sealed Phase 1/2 job IDs and every packet named by
-focused product-axis searches, but it has no independent per-job packet
-inventory for the earlier Phase 1/2 jobs. The 32 surfaces are therefore the
-operator-declared bounded set, not proof that every packet produced by each
-job was admitted. Closing that broader completeness gap requires a separate
-architecture decision about which source owns the canonical job-to-packet
-inventory; this receipt does not choose one.
+The first shadow frontier reconciled sealed job IDs but relied on an
+operator-declared packet set. The producer-backed correction closes that
+specific gap: six terminal-return-selected queue-state receipts generated 20
+Phase 1/2 job-to-packet edges (12 Phase 1 and 8 Phase 2), including two
+explicit one-to-one recovery aliases. The 36 focused-search records generated
+their own exact job edges. All 56 edges reconcile to the same 32 unique packet
+artifacts and the same 371 eligible result rows; the evidence denominator did
+not change. Removing the successful `p1_07_dupe` surface made the real builder
+fail with `successful SERP producer job lacks a source surface` (exit 2).
 
 Therefore this is a successful implementation and real denominator dogfood,
 not a completed Summer Fridays integration view, Route 1.7 SERP-linking
@@ -135,5 +139,17 @@ review, acquisition reseal, market conclusion, or Deliver artifact.
   `c028ba0422c2e5363c043fd80c147333f0dfd23bcba64f87acab37b68ce10799`,
   `67cfed6bbf318d021e9dbeb7895470b82ab0a513fb465889bfd37024cbac3fa9`,
   and `94a237874419cc81721ec849d9eebde46c64c3d7d929cb56251dc99d3d34053e`.
+- Producer-backed correction artifacts live under
+  `C:\tmp\forseti-summer-fridays-route-1-7-packet-inventory-20260808\`.
+  The surface map, generated surface spec, and row inventory raw SHA-256 values
+  are respectively
+  `23f6deeb4ff76c19d4cec55883824931ac492c08341d9ebfb40c03005e41baac`,
+  `e3f35b228790cee1c425052bb11e3acf819493ab58bf393096803b3b4a0b1158`,
+  and `834f2b67191a380ad6133d8918e8342dafd24f17d2d3d7a56164a163759908c7`.
+  The producer inventory content SHA-256 is
+  `413b6112919563b8140d18bf8d2596e802fb6d4273c0790eddd77c923edc1931`;
+  the surface-spec and inventory content SHA-256 values are
+  `a18adc8d6015ad487fc37ed327277e5a943c3c3edde95f77f957e08c7cf1e852`
+  and `57b7c4614358023e7caf26a77eb6c13584c22f3e442f9ce459cbbb43f10c0a74`.
 - Historical acquisition seal restamped: `false`.
 - Model API calls: `0`.

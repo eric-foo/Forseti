@@ -277,7 +277,10 @@ Current-route operations are:
    structurally proves their review identities. For a retrospective run this
    proves the bytes available now; it does not rewrite or restamp the historical
    acquisition seal.
-3. `build-serp-source-surface-spec` hash-pins the bounded job-to-packet map;
+3. `build-serp-source-surface-spec` reads hash-pinned Phase 1 and Phase 2
+   queue-state receipts selected by their terminal returns, derives every
+   successful job-to-packet edge, and requires the
+   bounded surface map to match that producer-owned inventory exactly;
    `prepare-serp-source-frontier` enumerates every source-bearing row; and
    `materialize-serp-source-frontier-review` accepts one explicit agent-authored
    decision for every inventory row (no bulk/default decision), mechanically
@@ -348,17 +351,25 @@ A passing route-1.6.0 seal additionally requires:
 
 A passing route-1.7.0 seal additionally requires one embedded
 `phase_a_serp_source_frontier_v1` in the evidence-depth ledger. Its Phase 1 and
-Phase 2 job sets must exactly match the sealed jobs, every focused-search SERP
-packet must be admitted, and every source-bearing result row from those bounded
-surfaces must receive exactly one agent-semantic disposition: `routed`,
-`duplicate`, or `excluded`; a bulk/default routing decision is invalid. A
+Phase 2 job sets and packet sets must exactly match the successful attempts in
+the terminal-return-selected, hash-pinned queue-state receipts. A recovery job
+may name its sealed parent through one explicit one-to-one alias. Every
+focused-search job must match its own recorded packet set exactly, and every
+source-bearing result row from those bounded surfaces must receive exactly one
+agent-semantic disposition: `routed`, `duplicate`, or `excluded`; a bulk/default
+routing decision is invalid. One resolved packet file has one artifact identity
+across all Phase 1, Phase 2, and focused-search surfaces. The same identity may
+visibly serve more than one job, but a second identity over the same file would
+enumerate its rows twice and is invalid. A
 routed row points to an existing native-capture or locator-recovery target with
 the exact source URL (or its deterministic recovery locator) and a discovery
 job recorded by that row's packet; a duplicate points directly to a routed owner; an
 excluded row carries a reason. People-also-ask and related-search prompts are
 Google navigation aids, not external sources. This closes the SERP-to-native
 linking gap without crawling result pagination or treating SERP text as native
-evidence.
+evidence. Blocked and failed attempts remain visible in the producer receipt
+but do not become source-bearing packet surfaces. The frontier classifies the
+producer-owned set; it never defines that set.
 
 Uncertainty is preserved rather than repaired. Nonmaterial unresolved evidence
 may remain visible; material unresolved evidence blocks the affected claim or
@@ -385,6 +396,13 @@ new frontier.
 
 ## Changelog
 
+- `v4` / 2026-08-08 — replaced the operator-declared Phase 1/2 packet
+  denominator with a generated inventory from terminal-return-selected,
+  hash-pinned Google SERP
+  queue states. The seal now rejects missing or extra successful packets per
+  job and exactly reconciles focused-search job packet sets. This is a
+  correction to the unsealed Route 1.7 implementation; historical Route 1.6
+  seals remain unchanged.
 - `v3` / 2026-08-08 — narrowed exhaustive semantic processing to customer
   language in Reddit/community conversations and retailer reviews; introduced
   verified structured-reference routes for other evidence; pinned retailer

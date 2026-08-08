@@ -474,6 +474,51 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
         + "\n",
     )
     ledger["artifacts"].append({"artifact_id": "serp-packet", **serp_packet})
+    serp_path = tmp_path / serp_packet["locator"]
+    phase1_queue_path = tmp_path / "serp_phase1_queue_state.json"
+    phase2_queue_path = tmp_path / "serp_phase2_queue_state.json"
+    phase1_job_ids = ["P1-001"]
+    phase2_job_ids = [f"P2-{index:03d}" for index in range(1, 6)]
+    for queue_path, job_ids in (
+        (phase1_queue_path, phase1_job_ids),
+        (phase2_queue_path, phase2_job_ids),
+    ):
+        queue_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": "google_serp_queue_state_v1",
+                    "status": "complete",
+                    "jobs": [{"job_id": job_id} for job_id in job_ids],
+                    "completed_job_ids": job_ids,
+                    "failed_job_ids": [],
+                    "attempt_history": [
+                        {
+                            "job_id": job_id,
+                            "outcome": "success",
+                            "packet_locator": str(serp_path),
+                        }
+                        for job_id in job_ids
+                    ],
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+    ledger["artifacts"].extend(
+        [
+            {
+                "artifact_id": "serp-phase1-queue-state",
+                "locator": phase1_queue_path.name,
+                "sha256": _artifact_hash(phase1_queue_path),
+            },
+            {
+                "artifact_id": "serp-phase2-queue-state",
+                "locator": phase2_queue_path.name,
+                "sha256": _artifact_hash(phase2_queue_path),
+            },
+        ]
+    )
     search_payload = {
         "schema_version": "consumer_brand_phase2_search_v1",
         "subject": ledger["subject"],
@@ -507,6 +552,24 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
         "status": "complete",
         "review_method": "agent_semantic_judgment",
         "model_api_calls": 0,
+        "producer_queue_states": [
+            {
+                "phase": "serp_phase1",
+                "artifact_id": "serp-phase1-queue-state",
+                "raw_sha256": __import__("hashlib").sha256(
+                    phase1_queue_path.read_bytes()
+                ).hexdigest(),
+                "hash_convention": "sha256_raw_bytes",
+            },
+            {
+                "phase": "serp_phase2",
+                "artifact_id": "serp-phase2-queue-state",
+                "raw_sha256": __import__("hashlib").sha256(
+                    phase2_queue_path.read_bytes()
+                ).hexdigest(),
+                "hash_convention": "sha256_raw_bytes",
+            },
+        ],
         "search_surfaces": [
             {
                 "phase": "serp_phase1",
@@ -522,6 +585,27 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
                 for index in range(1, 6)
             ],
         ],
+        "producer_job_packet_inventory": [
+            {
+                "phase": "serp_phase1",
+                "job_id": "P1-001",
+                "producer_job_id": "P1-001",
+                "producer_queue_state_artifact_id": "serp-phase1-queue-state",
+                "artifact_ids": ["serp-packet"],
+                "successful_packet_count": 1,
+            },
+            *[
+                {
+                    "phase": "serp_phase2",
+                    "job_id": f"P2-{index:03d}",
+                    "producer_job_id": f"P2-{index:03d}",
+                    "producer_queue_state_artifact_id": "serp-phase2-queue-state",
+                    "artifact_ids": ["serp-packet"],
+                    "successful_packet_count": 1,
+                }
+                for index in range(1, 6)
+            ],
+        ],
         "row_classifications": [
             {
                 "artifact_id": "serp-packet",
@@ -533,6 +617,21 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
             }
         ],
     }
+    producer_inventory = ledger["serp_source_frontier"][
+        "producer_job_packet_inventory"
+    ]
+    ledger["serp_source_frontier"]["producer_job_packet_inventory_sha256"] = (
+        __import__("hashlib")
+        .sha256(
+            json.dumps(
+                producer_inventory,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        )
+        .hexdigest()
+    )
     frontier_initial = _artifact(
         tmp_path, "reddit_frontier_initial.json", '{"results": ["initial"]}\n'
     )
@@ -1762,6 +1861,133 @@ def test_route_1_7_serp_frontier_fails_closed_on_silent_link_loss(
     _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert expected in _validate(tmp_path, _make_passing(seal))
+
+
+def test_route_1_7_serp_frontier_rejects_a_produced_packet_omitted_from_surface(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    second_packet = tmp_path / "serp_packet_second.json"
+    second_packet.write_text(
+        (tmp_path / "serp_packet.json").read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    queue_path = tmp_path / "serp_phase1_queue_state.json"
+    queue_state = json.loads(queue_path.read_text(encoding="utf-8"))
+    queue_state["attempt_history"].append(
+        {
+            "job_id": "P1-001",
+            "outcome": "success",
+            "packet_locator": str(second_packet),
+        }
+    )
+    queue_path.write_text(json.dumps(queue_state, indent=2) + "\n", encoding="utf-8")
+    queue_artifact = next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "serp-phase1-queue-state"
+    )
+    queue_artifact["sha256"] = _artifact_hash(queue_path)
+    producer_binding = next(
+        row
+        for row in ledger["serp_source_frontier"]["producer_queue_states"]
+        if row["artifact_id"] == "serp-phase1-queue-state"
+    )
+    producer_binding["raw_sha256"] = (
+        __import__("hashlib").sha256(queue_path.read_bytes()).hexdigest()
+    )
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert (
+        "invalid_serp_producer_job_packet_inventory:SemanticIntegrationError"
+        in findings
+    )
+
+
+def test_route_1_7_serp_frontier_reports_an_unreadable_producer_receipt(
+    tmp_path: Path,
+) -> None:
+    """A registered receipt whose bytes are gone is a finding, not a traceback
+    that would suppress every remaining seal finding."""
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    (tmp_path / "serp_phase1_queue_state.json").unlink()
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "invalid_serp_producer_queue_state:serp-phase1-queue-state" in findings
+
+
+def test_route_1_7_serp_frontier_rejects_two_ids_for_one_adjustment_packet(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    packet = next(
+        row for row in ledger["artifacts"] if row["artifact_id"] == "serp-packet"
+    )
+    ledger["artifacts"].append(
+        {**packet, "artifact_id": "serp-packet-adjustment-alias"}
+    )
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    search["jobs"].append(
+        {
+            "job_id": "adjustment-extra",
+            "axis_id": "packaging_reliability",
+            "goal": "corroborate_or_segment",
+            "query": "Summer Fridays packaging adjustment",
+            "executed_at": "2026-08-02T00:10:00+00:00",
+            "serp_packet_artifact_ids": ["serp-packet-adjustment-alias"],
+            "selected_target_ids": [],
+        }
+    )
+    search_path.write_text(json.dumps(search, indent=2) + "\n", encoding="utf-8")
+    next(
+        row for row in ledger["artifacts"] if row["artifact_id"] == "phase2-search"
+    )["sha256"] = _artifact_hash(search_path)
+    frontier = ledger["serp_source_frontier"]
+    frontier["search_surfaces"].append(
+        {
+            "phase": "phase_a_adjustment",
+            "job_id": "adjustment-extra",
+            "artifact_ids": ["serp-packet-adjustment-alias"],
+        }
+    )
+    frontier["row_classifications"].append(
+        {
+            "artifact_id": "serp-packet-adjustment-alias",
+            "module_type": "organic",
+            "order_in_module": 1,
+            "disposition": "duplicate",
+            "duplicate_of": {
+                "artifact_id": "serp-packet",
+                "module_type": "organic",
+                "order_in_module": 1,
+            },
+            "reason": "The same captured row was assigned another identity.",
+        }
+    )
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert any(
+        finding.startswith(
+            "serp_source_frontier_packet_file_has_multiple_artifact_ids:"
+        )
+        for finding in findings
+    )
 
 
 def test_route_1_7_serp_frontier_excludes_google_prompts_and_routes_url_recovery(

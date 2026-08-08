@@ -160,7 +160,12 @@ routes; it does not claim that the whole internet was searched.
    `blocked`, or `unavailable`; `captured` requires a native body and a final
    evidence-unit reference, never a SERP artifact alone.
    Also return the complete job-to-packet mapping for every bounded Phase 2 and
-   product-axis search. `CO0` must semantically disposition every source-bearing
+   product-axis search plus the Phase 2 queue-state receipt(s) selected by the
+   terminal return that contain those successful attempts. A recovery runtime
+   job may map to its sealed parent only through an explicit one-to-one alias.
+   `CO0` hash-pins those receipts and generates the Phase 2 packet membership
+   from their successful attempts; each product-axis search separately
+   reconciles to the exact packet IDs in its search record. `CO0` must semantically disposition every source-bearing
    row as `routed`, `duplicate`, or `excluded`; relevance is decided from the
    row's meaning, not an exact-word rule. A relevant row without a canonical
    URL routes to one bounded locator-recovery target rather than disappearing.
