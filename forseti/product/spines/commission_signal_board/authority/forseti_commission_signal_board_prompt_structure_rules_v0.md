@@ -980,9 +980,9 @@ contextual semantic method v2, distinct stable product IDs for material
 comparators, and exact candidate-to-proposition product binding; at route
 1.6.0, view v2/method v3, complete captured-item accounting with no blocked
 leaf, exact capture-envelope/container shape, consolidated emerging-axis
-lineage, and per-proposition evidence-stack counts; view schema/subject/cycle
-binding; at route 1.7.0, the semantic-source/structured-reference boundary,
-raw-byte retailer source manifest, and exact bounded SERP-row frontier;
+lineage, and per-proposition evidence-stack counts; at route 1.7.0, the
+semantic-source/structured-reference boundary, raw-byte retailer source
+manifest, and exact bounded SERP-row frontier; view schema/subject/cycle
 binding and per-unit enums; independent-origin credit rules; cluster
 linkage/provenance rules; terminal comparator dispositions with exact-product
 identity binding and shared axes for `promoted` candidates;

@@ -145,9 +145,19 @@ def _reddit_record_from_manifest(manifest_path: Path) -> dict[str, Any]:
         if _nonempty(expected) and hash_file(path) != expected:
             raise SemanticIntegrationError(f"Reddit preserved file hash mismatch: {path}")
         lowered = relative.lower()
+        is_source = lowered.endswith("content_record.json") or lowered.endswith(
+            ("http_response_body.bin", ".html", ".htm")
+        )
+        # The file the census actually reads sets the captured-leaf denominator.
+        # An unpinned preserved source would let substituted bytes change that
+        # denominator without failing any hash check.
+        if is_source and not _nonempty(expected):
+            raise SemanticIntegrationError(
+                f"Reddit preserved source file lacks a pinned hash: {path}"
+            )
         if lowered.endswith("content_record.json"):
             content_candidates.append(path)
-        elif lowered.endswith(("http_response_body.bin", ".html", ".htm")):
+        elif is_source:
             html_candidates.append(path)
     if len(content_candidates) > 1 or len(html_candidates) > 1:
         raise SemanticIntegrationError(
@@ -614,7 +624,7 @@ def build_retailer_source_manifest(*, retailer_coding_path: Path) -> dict[str, A
 
 def _verify_retailer_source_manifest(
     *, retailer_coding_path: Path, manifest_path: Path
-) -> dict[str, Mapping[str, Any]]:
+) -> tuple[dict[str, Mapping[str, Any]], dict[str, set[str]]]:
     manifest = _load_json_object(manifest_path, label="retailer source manifest")
     if manifest.get("schema_version") != RETAILER_SOURCE_MANIFEST_VERSION:
         raise SemanticIntegrationError("retailer source manifest has wrong version")
@@ -631,6 +641,7 @@ def _verify_retailer_source_manifest(
     if manifest.get("source_set_sha256") != _canonical_hash(sources):
         raise SemanticIntegrationError("retailer source-set hash mismatch")
     index: dict[str, Mapping[str, Any]] = {}
+    native_ids_by_locator: dict[str, set[str]] = {}
     for row in sources:
         if not isinstance(row, Mapping) or not _nonempty(row.get("locator")):
             raise SemanticIntegrationError("retailer source manifest has invalid source")
@@ -651,7 +662,8 @@ def _verify_retailer_source_manifest(
         ) != _canonical_hash(sorted(ids)):
             raise SemanticIntegrationError(f"retailer native review set mismatch: {locator}")
         index[locator] = row
-    return index
+        native_ids_by_locator[locator] = ids
+    return index, native_ids_by_locator
 
 
 def census_phase_a_customer_corpus(
@@ -848,7 +860,7 @@ def census_phase_a_customer_corpus(
     rows = retailer.get("rows")
     if not isinstance(corpora, list) or not isinstance(rows, list):
         raise SemanticIntegrationError("retailer coding lacks corpora or rows")
-    source_manifest = _verify_retailer_source_manifest(
+    source_manifest, native_review_ids = _verify_retailer_source_manifest(
         retailer_coding_path=retailer_coding_path,
         manifest_path=retailer_source_manifest_path,
     )
@@ -881,19 +893,38 @@ def census_phase_a_customer_corpus(
             raise SemanticIntegrationError(
                 f"retailer review {review_id} is absent from its source manifest"
             )
+        # `referenced_review_ids` is a manifest declaration. Membership must
+        # still be proven against the source-native review rows, or a manifest
+        # that names a review the file does not contain would admit it.
+        if review_id not in native_review_ids[source_key]:
+            raise SemanticIntegrationError(
+                f"retailer review {review_id} is absent from its source-native review rows"
+            )
         source_files.add(source_key)
     if source_files != set(source_manifest):
         raise SemanticIntegrationError("retailer source manifest does not exactly match coding sources")
-    eligible_by_corpus = {
-        row.get("corpus_id"): row.get("eligible_text_review_count")
-        for row in corpora
-        if isinstance(row, Mapping)
-    }
-    excluded_by_corpus = {
-        row.get("corpus_id"): row.get("excluded_no_usable_text_count")
-        for row in corpora
-        if isinstance(row, Mapping)
-    }
+    # A skipped, unnamed, or collapsed corpus row would silently delete one
+    # corpus's excluded reviews from the captured denominator, so every corpus
+    # row must be well formed and uniquely named.
+    eligible_by_corpus: dict[str, Any] = {}
+    excluded_by_corpus: dict[str, Any] = {}
+    for row in corpora:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("corpus_id")):
+            raise SemanticIntegrationError("retailer coding has an invalid corpus row")
+        corpus_id = row["corpus_id"]
+        if corpus_id in eligible_by_corpus:
+            raise SemanticIntegrationError(
+                f"retailer coding has a duplicate corpus id: {corpus_id}"
+            )
+        eligible_by_corpus[corpus_id] = row.get("eligible_text_review_count")
+        excluded_by_corpus[corpus_id] = row.get("excluded_no_usable_text_count")
+    undeclared = sorted(
+        {corpus_id for corpus_id, _ in review_keys} - set(eligible_by_corpus)
+    )
+    if undeclared:
+        raise SemanticIntegrationError(
+            f"retailer coding rows cite corpora with no declared denominator: {undeclared}"
+        )
     if any(
         not isinstance(value, int) or isinstance(value, bool) or value < 0
         for value in eligible_by_corpus.values()

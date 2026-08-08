@@ -38,6 +38,13 @@ def _raw_sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _canonical(value: object) -> str:
+    body = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return hashlib.sha256(body).hexdigest()
+
+
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -653,6 +660,100 @@ def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
     with pytest.raises(SemanticIntegrationError, match="exactly cover"):
         materialize_serp_source_frontier_review(
             inventory_path=inventory_path, review_path=review_path.with_name("missing.json")
+        )
+
+
+def test_retailer_census_rejects_a_manifest_declared_review_absent_from_the_source(
+    tmp_path: Path,
+) -> None:
+    ledger_path, retailer_path, manifest_path, _ = _census_inputs(tmp_path)
+    retailer = json.loads(retailer_path.read_text(encoding="utf-8"))
+    retailer["rows"][0]["review_id"] = "ghost"
+    retailer["rows"][0]["source_row_ref"] = (
+        retailer["rows"][0]["source_row_ref"].partition("#review:")[0] + "#review:ghost"
+    )
+    _write_json(retailer_path, retailer)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    # A hand-authored manifest can name a review the source file never had.
+    manifest["retailer_coding_raw_sha256"] = _raw_sha(retailer_path)
+    manifest["sources"][0]["referenced_review_ids"] = ["ghost"]
+    manifest["source_set_sha256"] = _canonical(manifest["sources"])
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical(manifest)
+    _write_json(manifest_path, manifest)
+
+    with pytest.raises(
+        SemanticIntegrationError, match="absent from its source-native review rows"
+    ):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
+        )
+
+
+def test_retailer_census_rejects_collapsed_or_undeclared_corpus_denominators(
+    tmp_path: Path,
+) -> None:
+    ledger_path, retailer_path, manifest_path, _ = _census_inputs(tmp_path)
+    retailer = json.loads(retailer_path.read_text(encoding="utf-8"))
+    # The surviving duplicate keeps the eligible-count reconciliation honest
+    # while 40 excluded reviews vanish from the captured denominator.
+    retailer["corpora"].insert(
+        0,
+        {
+            "corpus_id": "retailer",
+            "eligible_text_review_count": 0,
+            "excluded_no_usable_text_count": 40,
+        },
+    )
+    _write_json(retailer_path, retailer)
+    _write_json(
+        manifest_path, build_retailer_source_manifest(retailer_coding_path=retailer_path)
+    )
+    with pytest.raises(SemanticIntegrationError, match="duplicate corpus id"):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
+        )
+
+    ledger_path, retailer_path, manifest_path, _ = _census_inputs(tmp_path / "second")
+    retailer = json.loads(retailer_path.read_text(encoding="utf-8"))
+    retailer["corpora"][0]["corpus_id"] = "a_different_corpus"
+    _write_json(retailer_path, retailer)
+    _write_json(
+        manifest_path, build_retailer_source_manifest(retailer_coding_path=retailer_path)
+    )
+    with pytest.raises(SemanticIntegrationError, match="no declared denominator"):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
+        )
+
+
+def test_census_rejects_a_reddit_packet_source_file_without_a_pinned_hash(
+    tmp_path: Path,
+) -> None:
+    ledger_path, retailer_path, manifest_path, ledger = _census_inputs(tmp_path)
+    packet_manifest_path = Path(ledger["artifacts"][0]["locator"])
+    packet_manifest = json.loads(packet_manifest_path.read_text(encoding="utf-8"))
+    packet_manifest["preserved_files"][0].pop("sha256")
+    _write_json(packet_manifest_path, packet_manifest)
+    ledger["artifacts"][0]["sha256"] = hashlib.sha256(
+        (
+            json.dumps(packet_manifest, ensure_ascii=False, indent=2, sort_keys=True)
+            + "\n"
+        ).encode()
+    ).hexdigest()
+    _write_json(ledger_path, ledger)
+
+    with pytest.raises(SemanticIntegrationError, match="lacks a pinned hash"):
+        census_phase_a_customer_corpus(
+            evidence_ledger_path=ledger_path,
+            retailer_coding_path=retailer_path,
+            retailer_source_manifest_path=manifest_path,
         )
 
 

@@ -23,7 +23,7 @@ historical 577-thread `used` family.
 
 The retailer proof now pins all 95 source files by raw-byte SHA-256 and verifies
 review membership through the source-native structures for Bazaarvoice,
-Amazon, and Revolve. The complete bounded SERP dogfood covered 32 preserved
+Amazon, and Revolve. The bounded SERP dogfood covered 32 preserved
 packet surfaces: all 12 sealed Phase 1 jobs, all 8 sealed Phase 2 jobs, and 12
 later product-axis packets. It enumerated 371 external-source-bearing result
 rows. The pre-hardening review record produced 315 unique native or
@@ -88,6 +88,14 @@ The recorded SERP review must also be redone with one explicit decision for
 each of the 371 inventory rows before it can support Route 1.7 linkage claims;
 the controller now rejects its routed default. The captured target counts do
 not prove that individual review or target-to-row binding.
+
+The frontier reconciles the sealed Phase 1/2 job IDs and every packet named by
+focused product-axis searches, but it has no independent per-job packet
+inventory for the earlier Phase 1/2 jobs. The 32 surfaces are therefore the
+operator-declared bounded set, not proof that every packet produced by each
+job was admitted. Closing that broader completeness gap requires a separate
+architecture decision about which source owns the canonical job-to-packet
+inventory; this receipt does not choose one.
 
 Therefore this is a successful implementation and real denominator dogfood,
 not a completed Summer Fridays integration view, Route 1.7 SERP-linking
