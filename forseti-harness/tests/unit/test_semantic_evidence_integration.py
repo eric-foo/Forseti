@@ -1304,6 +1304,25 @@ def test_v3_materializer_is_deterministic_and_rejects_unsupported_family() -> No
         materialize_source_v3(source)
 
 
+def test_v3_materializer_validates_without_provisional_batch_packing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_if_packed(*args: object, **kwargs: object) -> list[dict]:
+        raise AssertionError("batch packing belongs to prepare-batches")
+
+    monkeypatch.setattr(
+        "judgment.semantic_evidence_integration._pack_v3_batches",
+        fail_if_packed,
+    )
+    source = _source_v3(count=2)
+
+    materialized = materialize_source_v3(source)
+
+    assert len(materialized["captured_items"]) == 2
+    with pytest.raises(AssertionError, match="prepare-batches"):
+        build_bundle(source, max_prompt_bytes=8_000)
+
+
 def test_v3_unknown_actor_cannot_receive_independence_credit() -> None:
     source = _source_v3(count=1)
     source["captured_items"][0]["independence_posture"] = "unavailable"

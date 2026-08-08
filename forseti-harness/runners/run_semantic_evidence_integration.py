@@ -25,12 +25,15 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
 )
 from judgment.phase_a_semantic_run import (  # noqa: E402
     audit_phase_a_source,
+    build_phase_a_reddit_source_v3,
+    build_phase_a_retailer_source_v3,
     build_serp_source_surface_spec,
     build_retailer_source_manifest,
     census_phase_a_customer_corpus,
     materialize_phase_a_v3,
     materialize_serp_source_frontier_review,
     prepare_serp_source_frontier_inventory,
+    reconcile_serp_frontier_targets,
     run_status,
     validate_one_batch_response,
     validate_one_reconciliation_response,
@@ -225,6 +228,74 @@ def build_retailer_source_manifest_run(
     }
 
 
+def build_phase_a_reddit_source_v3_run(
+    *,
+    run_spec_path: Path,
+    evidence_ledger_path: Path,
+    repo_root: Path,
+    source_out: Path,
+) -> dict[str, Any]:
+    source = build_phase_a_reddit_source_v3(
+        run_spec_path=run_spec_path,
+        evidence_ledger_path=evidence_ledger_path,
+        repo_root=repo_root,
+    )
+    _write_json(source_out, source)
+    dispositions = {
+        disposition: sum(
+            row["accounting_disposition"] == disposition
+            for row in source["captured_items"]
+        )
+        for disposition in ("assess", "mechanically_excluded", "blocked")
+    }
+    return {
+        "status": "PHASE_A_REDDIT_SOURCE_V3_COMPLETE",
+        "source_sha256": source["source_sha256"],
+        "source_artifact_count": len(source["source_artifacts"]),
+        "container_count": len(source["containers"]),
+        "captured_item_count": len(source["captured_items"]),
+        "accounting_disposition_counts": dispositions,
+        "source_out": str(source_out),
+        "model_api_calls": 0,
+    }
+
+
+def build_phase_a_retailer_source_v3_run(
+    *,
+    run_spec_path: Path,
+    retailer_coding_path: Path,
+    retailer_source_manifest_path: Path,
+    revolve_completion_receipt_path: Path,
+    repo_root: Path,
+    source_out: Path,
+) -> dict[str, Any]:
+    source = build_phase_a_retailer_source_v3(
+        run_spec_path=run_spec_path,
+        retailer_coding_path=retailer_coding_path,
+        retailer_source_manifest_path=retailer_source_manifest_path,
+        revolve_completion_receipt_path=revolve_completion_receipt_path,
+        repo_root=repo_root,
+    )
+    _write_json(source_out, source)
+    dispositions = {
+        disposition: sum(
+            row["accounting_disposition"] == disposition
+            for row in source["captured_items"]
+        )
+        for disposition in ("assess", "mechanically_excluded", "blocked")
+    }
+    return {
+        "status": "PHASE_A_RETAILER_SOURCE_V3_COMPLETE",
+        "source_sha256": source["source_sha256"],
+        "source_artifact_count": len(source["source_artifacts"]),
+        "container_count": len(source["containers"]),
+        "captured_item_count": len(source["captured_items"]),
+        "accounting_disposition_counts": dispositions,
+        "source_out": str(source_out),
+        "model_api_calls": 0,
+    }
+
+
 def prepare_serp_source_frontier_run(
     *, surface_spec_path: Path, inventory_out: Path
 ) -> dict[str, Any]:
@@ -269,6 +340,24 @@ def materialize_serp_source_frontier_review_run(
         "result_sha256": result["result_sha256"],
         "classification_counts": result["classification_counts"],
         "locator_recovery_target_count": len(result["locator_recovery_targets"]),
+        "result_out": str(result_out),
+        "model_api_calls": 0,
+    }
+
+
+def reconcile_serp_frontier_targets_run(
+    *, frontier_result_path: Path, evidence_ledger_path: Path, result_out: Path
+) -> dict[str, Any]:
+    result = reconcile_serp_frontier_targets(
+        frontier_result_path=frontier_result_path,
+        evidence_ledger_path=evidence_ledger_path,
+    )
+    _write_json(result_out, result)
+    return {
+        "status": "SERP_FRONTIER_TARGETS_RECONCILED",
+        "reconciliation_sha256": result["reconciliation_sha256"],
+        "target_count": len(result["targets"]),
+        "terminal_state_counts": result["terminal_state_counts"],
         "result_out": str(result_out),
         "model_api_calls": 0,
     }
@@ -546,6 +635,24 @@ def _parser() -> argparse.ArgumentParser:
     retailer_manifest.add_argument("--retailer-coding", type=Path, required=True)
     retailer_manifest.add_argument("--manifest-out", type=Path, required=True)
 
+    reddit_source = sub.add_parser("build-phase-a-reddit-source-v3")
+    reddit_source.add_argument("--run-spec", type=Path, required=True)
+    reddit_source.add_argument("--evidence-ledger", type=Path, required=True)
+    reddit_source.add_argument("--repo-root", type=Path, required=True)
+    reddit_source.add_argument("--source-out", type=Path, required=True)
+
+    retailer_source = sub.add_parser("build-phase-a-retailer-source-v3")
+    retailer_source.add_argument("--run-spec", type=Path, required=True)
+    retailer_source.add_argument("--retailer-coding", type=Path, required=True)
+    retailer_source.add_argument(
+        "--retailer-source-manifest", type=Path, required=True
+    )
+    retailer_source.add_argument(
+        "--revolve-completion-receipt", type=Path, required=True
+    )
+    retailer_source.add_argument("--repo-root", type=Path, required=True)
+    retailer_source.add_argument("--source-out", type=Path, required=True)
+
     serp_frontier = sub.add_parser("prepare-serp-source-frontier")
     serp_frontier.add_argument("--surface-spec", type=Path, required=True)
     serp_frontier.add_argument("--inventory-out", type=Path, required=True)
@@ -558,6 +665,11 @@ def _parser() -> argparse.ArgumentParser:
     serp_review.add_argument("--inventory", type=Path, required=True)
     serp_review.add_argument("--review", type=Path, required=True)
     serp_review.add_argument("--result-out", type=Path, required=True)
+
+    serp_reconciliation = sub.add_parser("reconcile-serp-frontier-targets")
+    serp_reconciliation.add_argument("--frontier-result", type=Path, required=True)
+    serp_reconciliation.add_argument("--evidence-ledger", type=Path, required=True)
+    serp_reconciliation.add_argument("--result-out", type=Path, required=True)
 
     materialize_phase_a = sub.add_parser("materialize-phase-a-v3")
     materialize_phase_a.add_argument("--spec", type=Path, required=True)
@@ -661,6 +773,22 @@ def main(argv: list[str] | None = None) -> int:
                 retailer_coding_path=args.retailer_coding,
                 manifest_out=args.manifest_out,
             )
+        elif args.command == "build-phase-a-reddit-source-v3":
+            result = build_phase_a_reddit_source_v3_run(
+                run_spec_path=args.run_spec,
+                evidence_ledger_path=args.evidence_ledger,
+                repo_root=args.repo_root,
+                source_out=args.source_out,
+            )
+        elif args.command == "build-phase-a-retailer-source-v3":
+            result = build_phase_a_retailer_source_v3_run(
+                run_spec_path=args.run_spec,
+                retailer_coding_path=args.retailer_coding,
+                retailer_source_manifest_path=args.retailer_source_manifest,
+                revolve_completion_receipt_path=args.revolve_completion_receipt,
+                repo_root=args.repo_root,
+                source_out=args.source_out,
+            )
         elif args.command == "prepare-serp-source-frontier":
             result = prepare_serp_source_frontier_run(
                 surface_spec_path=args.surface_spec,
@@ -675,6 +803,12 @@ def main(argv: list[str] | None = None) -> int:
             result = materialize_serp_source_frontier_review_run(
                 inventory_path=args.inventory,
                 review_path=args.review,
+                result_out=args.result_out,
+            )
+        elif args.command == "reconcile-serp-frontier-targets":
+            result = reconcile_serp_frontier_targets_run(
+                frontier_result_path=args.frontier_result,
+                evidence_ledger_path=args.evidence_ledger,
                 result_out=args.result_out,
             )
         elif args.command == "materialize-phase-a-v3":
