@@ -20,10 +20,22 @@ stale_if:
 
 ## Decision
 
-PENDING at freeze. The predeclaration below is frozen in this commit before
-any blind-lane execution; selection, blind returns, scoring, and the
-adjudicated decision are appended in a later commit and must not modify the
-predeclaration hunks.
+**Do not adopt** the falsifiable-invariant authoring clause from this
+backtest. The hit bar was met — the blind lane recovered 3 of 7 (case-scoped
+reading) or 4 of 7 (literal reading) accepted in-family architecture defects
+across both fix PRs — but the false-flag bound failed decisively: 8 of 11
+audited document-instances exceeded the predeclared limit of 1 false flag per
+document, with roughly 27 false flags total, overwhelmingly on deliberately
+judgment-reserved rules ("material", "equal-or-better", "ambiguous",
+"genuinely required"). Installing the clause would convert resident-judgment
+doctrine into a standing noise surface while the delegated-review lane
+already catches these defects. The delegated-review lane remains the
+catching mechanism.
+
+This record is current as of **2026-08-08 Asia/Singapore**. Adjudication and
+results were appended after the freeze commit; the predeclaration sections
+below are unchanged from freeze except this Decision placeholder, as the
+freeze text provided.
 
 ## Bound outcome and admission bar (frozen)
 
@@ -186,3 +198,149 @@ delegated-review lane is replaceable, does not re-adjudicate any gold
 finding, and does not claim its blind subagent returns generalize across
 models or vendors. A passing bar supports proposing one clause in the
 external `agent-workflow` source candidate; it authorizes no edit by itself.
+
+---
+
+# Results (appended post-freeze)
+
+## Selection results
+
+Sweep executed 2026-08-08 with the frozen command. Realized window:
+PR numbers **#1352–#1454**, 100 PRs returned (number gaps in that range are
+issues or never-created numbers, not exclusions). Selected fix PRs:
+
+- **#1434** "Apply adjudicated structure-review fixes (AR-01..08) to
+  Intelligence Cycle architecture" — pre-review revision `5b293e97`
+  (stated in the PR body); merge commit `ddebe55a`.
+- **#1424** "Cycle phase restructure (re-applied) + adjudicated
+  delegated-review fixes DRP-01..06" — `reviewed_revision` `bb7e134e`
+  (stated in the PR body); merge commit `3e0ade5f`.
+
+No other PR in the window satisfied the predicate. Both cases were blindable.
+Both cases audit the same Commission Signal Board doctrine set at different
+revisions; the frozen scoring text did not case-scope hit matching, so both
+the literal and case-scoped readings are computed below.
+
+## Frozen blind inputs (all verified with `git cat-file -e`)
+
+Case A (`5b293e97`, for the #1434 gold): the four changed durable doctrine
+files of `ddebe55a` — `authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`,
+`spine.yaml`, `workflows/commission_signal_board_playbook_v0.md`,
+`workflows/deliver_decision_memorandum_method_v0.md` (all under
+`forseti/product/spines/commission_signal_board/`).
+
+Case B (`bb7e134e`, for the #1424 gold): the six changed durable doctrine
+files of `3e0ade5f` after the frozen filter (handoff prompt and migration
+note excluded) — the four case A files plus `README.md` and
+`prompts/forseti_commission_signal_board_prompt_structure_v0.md`.
+
+One fresh subagent per case received the frozen template verbatim plus
+revision and file list; neither prompt contained finding IDs, finding
+content, or PR identifiers.
+
+## Gold family classification
+
+In-family (7): AR-01 unexecutable mandatory rubric review, FAM-1. AR-02
+supplement consumption gate with no production chain, FAM-1. AR-04
+Synthesize entry gate opened by a mechanically passing seal, FAM-2. AR-05
+cold read with no observable completion disposition, FAM-3. DRP-01
+contradictory Deliver acquisition gate, FAM-4. DRP-02 entry gate prohibiting
+what Rules 2/12 require, FAM-4. DRP-03 unverifiable "schema-consistent"
+label, FAM-3.
+
+Out-of-family (7, excluded from all counts): AR-03 under-specified ceiling
+composition; AR-06 ownership decision; AR-07 lifecycle bookkeeping; AR-08
+vocabulary drift; DRP-04 contract binding choice; DRP-05 selector wording;
+DRP-06 manifest listing.
+
+## Scoring
+
+Blind returns: case A produced 24 flags (12 rules-doc / 1 spine / 5 playbook
+/ 6 method) with ~109 rules successfully restated; case B produced 21 flags
+(3 README / 5 rules-doc / 5 prompt-doc / 4 playbook / 4 method / 0 spine)
+with ~80 rules restated.
+
+Hits (strict; flag names the same rule and the same defect character):
+
+| Gold | Blind flag | Class map | Reading |
+| --- | --- | --- | --- |
+| AR-04 FAM-2 | Case A playbook: seal validity for the Synthesize turn is mechanically satisfiable while the honesty condition is judged by the sealing actor | b→FAM-2 | both |
+| AR-05 FAM-3 | Case A method: "the cold read gates ready-to-show" with no pass/fail disposition defined | c→FAM-3 | both |
+| DRP-02 FAM-4 | Case B method: entry gate "never reinterprets the sealed corpus" vs Rule 12 mandatory grain recomputation | d→FAM-4 | both |
+| AR-01 FAM-1 | Case B playbook: required post-seal adversarial review whose rubric "authority is deferred until separately adopted" | a→FAM-1 | literal only (cross-case) |
+
+Strict hits: **4 literal / 3 case-scoped — both readings meet the ≥3-hit,
+≥2-PR condition** (AR findings are #1434 gold; DRP-02 is #1424 gold).
+Lenient recount (same rule, different class): adds no further gold match.
+
+Misses (3): AR-02 (the only supplement flag targeted ceiling-change
+judgment, class c, on the out-of-family AR-03 rule), DRP-01 (no flag named
+the Deliver acquisition-gate contradiction), DRP-03 (Rule 11's
+"schema-consistent" label was not flagged; the reader restated the adjacent
+format-drift rule as falsifiable).
+
+False flags and novel candidates per document-instance (dispositions applied
+per the frozen definitions; matched-duplicate flags on already-hit or
+out-of-family gold excluded from both counts):
+
+| Case:document | Flags | Hits | False flags | Novel | Bound (≤1 FF) |
+| --- | --- | --- | --- | --- | --- |
+| A:rules-doc | 12 | 0 (2 dup of AR-04 seam) | 8 | 2 | FAIL |
+| A:spine.yaml | 1 | 0 (on out-of-family AR-03; excluded) | 0 | 0 | pass |
+| A:playbook | 5 | 1 (AR-04) | 4 | 0 | FAIL |
+| A:method | 6 | 1 (AR-05) | 4 | 1 | FAIL |
+| B:README | 3 | 0 | 2 | 1 | FAIL |
+| B:rules-doc | 5 | 0 (1 dup AR-04 seam) | 2 | 2 | FAIL |
+| B:prompt-doc | 5 | 0 | 5 | 0 | FAIL |
+| B:playbook | 4 | 1 literal (AR-01; dup AR-04) | 2 | 0 | FAIL |
+| B:method | 4 | 1 (DRP-02) | 0 | 3 | pass |
+| B:spine.yaml | 0 | 0 | 0 | 0 | pass |
+
+Totals: ~27 false flags; 8 of 11 audited document-instances (case A README
+not in scope) exceed the bound. The dominant false-flag class is flags on
+deliberately judgment-reserved rules — materiality triggers, "equal-or-better"
+parsimony, capture-ambiguity licenses, scope boundaries — which this
+repository's validation doctrine intentionally keeps resident rather than
+mechanical.
+
+Novel candidates (observations only, not adjudicated defects; several may
+merit owner attention): unlisted-material-job seal completeness (case A
+rules-doc — an area later hardened by the Phase A accounting PRs
+#1451–#1454); delegated semantic spot-check sampling coverage and missing
+spot-check receipts (both cases); lake-first preflight leaves no artifact;
+blocked-to-pass reseal fresh-read leaves no artifact; anchor-product scoring
+lacks a combination rule (flagged independently by both readers); cold-read
+reviewer-independence and fresh-context verification are self-certified.
+
+## Adjudication
+
+The bar required hit-recall AND per-document precision AND no new recurring
+surface. Recall passed under both readings; precision failed in 8 of 11
+document-instances. Under the frozen bar the decision is **do-not-adopt**.
+
+Interpretation within this record's scope: the falsifiable-restatement
+discipline can surface roughly half of the in-family defect classes that
+delegated architecture reviews later caught, but it cannot distinguish
+deliberately judgment-reserved rules from genuinely unfalsifiable ones
+without repo-doctrine context that an authoring-time clause does not carry.
+Applied as a standing authoring rule it would tax every architecture pass
+with a high false-positive load. The observed value concentrates in the
+delegated-review lane, which already catches these defects with adjudication
+context.
+
+## Signal results
+
+- S1 freeze-before-execute: freeze commit `3c6a65b3` precedes all blind-lane
+  execution; this results commit appends results and replaces only the
+  Decision placeholder the freeze text named. PASS.
+- S2 blind integrity: both prompts were the frozen template plus revision
+  and file list; no finding IDs or finding content present. PASS.
+- S3 mechanical selection: the frozen command and predicate selected exactly
+  #1434 and #1424; re-runnable from this record. PASS.
+- S4 durable inputs: all ten revision:path pins verified with
+  `git cat-file -e` (exit 0 each). PASS.
+- S5 strict-bar adjudication: strict counts governed; the literal vs
+  case-scoped matching ambiguity was disclosed and computed both ways with
+  an invariant bar outcome; the lenient recount was computed and added no
+  gold match. PASS with disclosed predeclaration gap (scoring text did not
+  anticipate the two cases sharing one document set).
