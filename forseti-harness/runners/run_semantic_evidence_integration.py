@@ -18,6 +18,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     finalize_v3_view,
     finalize_view,
     materialize_source_v3,
+    project_evidence_packet,
     prepare_reconciliation_stage,
     validate_batch_responses,
     validate_reconciliation_stage,
@@ -485,6 +486,43 @@ def finalize_v3(
     }
 
 
+def project_evidence_packet_run(
+    *,
+    view_path: Path,
+    bundle_path: Path,
+    batch_compilation_path: Path,
+    node_compilation_path: Path,
+    axis_ids: list[str],
+    proposition_ids: list[str],
+    packet_out: Path,
+) -> dict[str, Any]:
+    view = _load_object(view_path)
+    bundle = _load_object(bundle_path)
+    batch_compilation = _load_object(batch_compilation_path)
+    node_compilation = _load_object(node_compilation_path)
+    packet = project_evidence_packet(
+        view,
+        bundle,
+        batch_compilation,
+        node_compilation,
+        axis_ids=axis_ids,
+        proposition_ids=proposition_ids,
+    )
+    _write_json(packet_out, packet)
+    return {
+        "status": "PHASE_A_EVIDENCE_PACKET_READY",
+        "packet_sha256": packet["packet_sha256"],
+        "selected_proposition_count": packet["selection_coverage"][
+            "selected_proposition_count"
+        ],
+        "returned_evidence_item_count": packet["selection_coverage"][
+            "returned_evidence_item_count"
+        ],
+        "packet_out": str(packet_out),
+        "model_api_calls": 0,
+    }
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -583,6 +621,16 @@ def _parser() -> argparse.ArgumentParser:
     finish_v3.add_argument("--batch-compilation", type=Path, required=True)
     finish_v3.add_argument("--node-compilation", type=Path, required=True)
     finish_v3.add_argument("--view-out", type=Path, required=True)
+
+    evidence_packet = sub.add_parser("project-evidence-packet")
+    evidence_packet.add_argument("--view", type=Path, required=True)
+    evidence_packet.add_argument("--bundle", type=Path, required=True)
+    evidence_packet.add_argument("--batch-compilation", type=Path, required=True)
+    evidence_packet.add_argument("--node-compilation", type=Path, required=True)
+    selection = evidence_packet.add_mutually_exclusive_group(required=True)
+    selection.add_argument("--axis-id", action="append", default=[])
+    selection.add_argument("--proposition-id", action="append", default=[])
+    evidence_packet.add_argument("--packet-out", type=Path, required=True)
     return parser
 
 
@@ -696,12 +744,22 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 response_dir=args.response_dir,
             )
-        else:
+        elif args.command == "finalize-v3":
             result = finalize_v3(
                 bundle_path=args.bundle,
                 batch_compilation_path=args.batch_compilation,
                 node_compilation_path=args.node_compilation,
                 view_out=args.view_out,
+            )
+        else:
+            result = project_evidence_packet_run(
+                view_path=args.view,
+                bundle_path=args.bundle,
+                batch_compilation_path=args.batch_compilation,
+                node_compilation_path=args.node_compilation,
+                axis_ids=args.axis_id,
+                proposition_ids=args.proposition_id,
+                packet_out=args.packet_out,
             )
     except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:
         print(json.dumps({"status": "error", "error": str(exc)}, indent=2, sort_keys=True))

@@ -893,6 +893,20 @@ count is therefore never silently restated as seven independent people. This
 is evidence structuring only, not prevalence, safety, market conclusion,
 causation, or recommendation.
 
+After the final view exists, Phase A may project a
+`phase_a_evidence_packet_v1` for an exact proposition set or axis set. If the
+request begins in natural language, an agent selects the relevant IDs by
+meaning from that view; the deterministic projector then returns the complete
+linked union rather than a keyword match or a convenient top-k sample. Shared
+records appear once while keeping every relation, and support, counter,
+adjacent, unresolved, and unmerged axis candidates remain distinguishable.
+Linked semantic units retain posture, uncertainty, and polarity. The packet
+also exposes the full unmerged denominator and any no-axis unmerged meanings;
+per-relation counts are explicit non-disjoint unions.
+This is a read-only tail-end Phase A retrieval surface: it adds no acquisition
+job or seal field, creates no second evidence authority, and cannot issue the
+conclusion or recommendation that belongs to Deliver.
+
 Current axes guide but do not cap discovery. A material emerging axis reopens
 only the affected work and invalidates the prior view; a nonmaterial candidate
 is explicitly dispositioned. Route-1.4-and-later axis findings carry `proposition_refs`

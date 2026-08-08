@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v3
+version: v5
 effective_date: 2026-08-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v3
+# Semantic Evidence Integration Contract v5
 
 ## Purpose
 
@@ -200,6 +200,40 @@ Route 1.6 adds, without changing the historical interfaces above:
 - `semantic_evidence_integration_view_v2` — compiler-flattened leaf lineage,
   capture-envelope accounting, evidence-item/container/origin/source-role/
   engagement counts, reverse indexes, and terminal consolidated axes.
+
+`phase_a_evidence_packet_v1` is a read-only projection from one finalized
+`semantic_evidence_integration_view_v2`, its bound v3 bundle, and its bound
+batch and terminal-node compilations. The projector first rebuilds the supplied
+view from those inputs, preventing an altered semantic statement from being
+paired with a valid view. It is the tail-end retrieval surface for Phase A evidence,
+not another evidence authority or another closure job. A caller selects either
+one or more exact proposition IDs or one or more exact axis IDs. When a caller
+starts from a natural-language question, an agent interprets that meaning and
+chooses the relevant IDs from the finalized view; deterministic code then
+expands those IDs without a keyword or top-k cutoff.
+
+The packet returns every distinct linked evidence item once, while preserving
+all proposition/relation/semantic-unit links. Each linked semantic unit retains
+its evidence posture, uncertainty posture, and polarity; accepted relations do
+not lose qualifications that remain visible on unmerged material. It reports
+the complete selected union of support, counter, and adjacent evidence,
+container and independent-origin counts, the selected containers with their
+capture boundaries, and any
+axis-relevant unmerged or unresolved candidates. It also reports the complete
+corpus unmerged denominator and returns unscoped unmerged meanings separately,
+so an emerging-label meaning with no accepted axis cannot disappear from every
+packet. Per-relation evidence counts are non-disjoint unions: one item may
+support one selected proposition and oppose another. One
+item supporting multiple propositions or axes remains one evidence item. The
+packet binds the source view, bundle, both compilation hashes, and corpus hash.
+It fails closed on unknown IDs, stale lineage, or inconsistent reverse indexes.
+
+The packet contains bounded propositions only as retrieval labels. It does not
+carry a conclusion, recommendation, importance ranking, prevalence estimate,
+or causal judgment. Deliver may use the packet as evidence input but owns any
+downstream conclusion. A changed corpus invalidates the source view and every
+packet derived from it. The projection uses no provider API, embeddings,
+vector store, or new persistent index.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -396,6 +430,12 @@ new frontier.
 
 ## Changelog
 
+- `v5` / 2026-08-08 — added `phase_a_evidence_packet_v1`, a complete
+  proposition/axis evidence-stack projection from the finalized v2 view. It
+  de-duplicates shared records; preserves opposition, semantic posture,
+  uncertainty, polarity, unresolved material, and unscoped unmerged meanings;
+  exposes no top-k truncation or conclusion; and adds no provider API or new
+  seal obligation.
 - `v4` / 2026-08-08 — replaced the operator-declared Phase 1/2 packet
   denominator with a generated inventory from terminal-return-selected,
   hash-pinned Google SERP

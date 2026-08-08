@@ -23,6 +23,7 @@ RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
 VIEW_VERSION = "semantic_evidence_integration_view_v1"
 VIEW_VERSION_V2 = "semantic_evidence_integration_view_v2"
+EVIDENCE_PACKET_VERSION = "phase_a_evidence_packet_v1"
 METHOD_VERSION = "semantic_evidence_integration_method_v1"
 METHOD_VERSION_V2 = "semantic_evidence_integration_method_v2"
 METHOD_VERSION_V3 = "semantic_evidence_integration_method_v3"
@@ -1951,6 +1952,11 @@ def finalize_v3_view(
             raise SemanticIntegrationError(
                 "unmerged semantic unit is not part of this batch compilation"
             )
+        # The set denominator below collapses a repeated row, so a duplicate
+        # would still account for every semantic unit while the view carried
+        # the same unmerged candidate twice.
+        if ref in unmerged_units:
+            raise SemanticIntegrationError("duplicate unmerged semantic unit")
         unmerged_units.add(ref)
     if used_units & unmerged_units:
         raise SemanticIntegrationError(
@@ -2022,6 +2028,329 @@ def finalize_v3_view(
     }
     view["view_sha256"] = _sha256(view)
     return view
+
+
+def project_evidence_packet(
+    view: Mapping[str, Any],
+    bundle: Mapping[str, Any],
+    batch_compilation: Mapping[str, Any],
+    node_compilation: Mapping[str, Any],
+    *,
+    axis_ids: Sequence[str] = (),
+    proposition_ids: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Project a complete, read-only evidence stack from one finalized v3 view."""
+    _verify_stored_hash(view, field="view_sha256", label="integration view")
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _verify_stored_hash(
+        batch_compilation,
+        field="compilation_sha256",
+        label="batch compilation",
+    )
+    if view.get("schema_version") != VIEW_VERSION_V2:
+        raise SemanticIntegrationError("evidence packet requires integration view v2")
+    if bundle.get("schema_version") != BUNDLE_VERSION_V3:
+        raise SemanticIntegrationError("evidence packet requires semantic bundle v3")
+    if view.get("bundle_sha256") != bundle["bundle_sha256"] or batch_compilation.get(
+        "bundle_sha256"
+    ) != bundle["bundle_sha256"]:
+        raise SemanticIntegrationError("evidence packet inputs have stale bundle lineage")
+    rebuilt_view = finalize_v3_view(bundle, batch_compilation, node_compilation)
+    if rebuilt_view != view:
+        raise SemanticIntegrationError(
+            "evidence packet inputs do not rebuild the supplied integration view"
+        )
+
+    def normalized_ids(values: Sequence[str], *, label: str) -> list[str]:
+        if isinstance(values, (str, bytes)):
+            raise SemanticIntegrationError(f"{label} must be a sequence of ids")
+        normalized: list[str] = []
+        for value in values:
+            if not _nonempty(value):
+                raise SemanticIntegrationError(f"{label} contains an empty id")
+            item = value.strip()
+            if item in normalized:
+                raise SemanticIntegrationError(f"{label} contains a duplicate id: {item}")
+            normalized.append(item)
+        return normalized
+
+    requested_axes = normalized_ids(axis_ids, label="axis_ids")
+    requested_propositions = normalized_ids(
+        proposition_ids, label="proposition_ids"
+    )
+    if bool(requested_axes) == bool(requested_propositions):
+        raise SemanticIntegrationError(
+            "evidence packet requires exactly one selection mode: axis ids or proposition ids"
+        )
+
+    axis_index = {row["axis_id"]: row for row in bundle["axes"]}
+    proposition_index = {
+        row["proposition_id"]: row for row in view.get("propositions", [])
+    }
+    if requested_axes:
+        unknown = sorted(set(requested_axes) - set(axis_index))
+        if unknown:
+            raise SemanticIntegrationError(f"unknown evidence-packet axis ids: {unknown}")
+        selected = sorted(
+            (
+                row
+                for row in proposition_index.values()
+                if set(row.get("axis_ids", [])) & set(requested_axes)
+            ),
+            key=lambda row: row["proposition_id"],
+        )
+        relevant_axes = set(requested_axes)
+        selection = {"mode": "axis", "axis_ids": sorted(requested_axes)}
+    else:
+        unknown = sorted(set(requested_propositions) - set(proposition_index))
+        if unknown:
+            raise SemanticIntegrationError(
+                f"unknown evidence-packet proposition ids: {unknown}"
+            )
+        selected = [proposition_index[key] for key in sorted(requested_propositions)]
+        relevant_axes = {
+            axis_id for row in selected for axis_id in row.get("axis_ids", [])
+        }
+        selection = {
+            "mode": "proposition",
+            "proposition_ids": sorted(requested_propositions),
+            "axis_ids": sorted(relevant_axes),
+        }
+
+    evidence_index = _unit_index(bundle)
+    semantic_index = {
+        row["semantic_unit_ref"]: row
+        for row in batch_compilation.get("semantic_units", [])
+    }
+    container_index = {row["container_id"]: row for row in bundle["containers"]}
+    expected_evidence_to_props: dict[str, set[str]] = defaultdict(set)
+    expected_container_to_props: dict[str, set[str]] = defaultdict(set)
+    for proposition in proposition_index.values():
+        proposition_id = proposition["proposition_id"]
+        relations = proposition.get("semantic_relations")
+        if not isinstance(relations, Mapping) or set(relations) != RELATIONS:
+            raise SemanticIntegrationError(
+                f"proposition {proposition_id} has invalid semantic relations"
+            )
+        for relation_name, refs in relations.items():
+            if not isinstance(refs, list) or len(refs) != len(set(refs)):
+                raise SemanticIntegrationError(
+                    f"proposition {proposition_id} has invalid {relation_name} refs"
+                )
+            for ref in refs:
+                semantic = semantic_index.get(ref)
+                if semantic is None:
+                    raise SemanticIntegrationError(
+                        f"proposition {proposition_id} cites unknown semantic unit: {ref}"
+                    )
+                evidence_id = semantic["evidence_id"]
+                evidence = evidence_index.get(evidence_id)
+                if evidence is None:
+                    raise SemanticIntegrationError(
+                        f"semantic unit {ref} cites unknown evidence: {evidence_id}"
+                    )
+                expected_evidence_to_props[evidence_id].add(proposition_id)
+                expected_container_to_props[evidence["container_id"]].add(
+                    proposition_id
+                )
+    normalized_evidence_map = {
+        key: sorted(value) for key, value in sorted(expected_evidence_to_props.items())
+    }
+    normalized_container_map = {
+        key: sorted(value) for key, value in sorted(expected_container_to_props.items())
+    }
+    if view.get("evidence_to_propositions") != normalized_evidence_map:
+        raise SemanticIntegrationError(
+            "integration view evidence-to-proposition map is inconsistent"
+        )
+    if view.get("container_to_propositions") != normalized_container_map:
+        raise SemanticIntegrationError(
+            "integration view container-to-proposition map is inconsistent"
+        )
+
+    selected_ids = {row["proposition_id"] for row in selected}
+    links: dict[str, dict[str, dict[str, list[str]]]] = defaultdict(
+        lambda: defaultdict(lambda: defaultdict(list))
+    )
+    selected_propositions: list[dict[str, Any]] = []
+    for proposition in selected:
+        proposition_id = proposition["proposition_id"]
+        relation_evidence: dict[str, set[str]] = {
+            relation: set() for relation in RELATIONS
+        }
+        for relation, refs in proposition["semantic_relations"].items():
+            for ref in refs:
+                evidence_id = semantic_index[ref]["evidence_id"]
+                relation_evidence[relation].add(evidence_id)
+                links[evidence_id][proposition_id][relation].append(ref)
+        selected_propositions.append(
+            {
+                "proposition_id": proposition_id,
+                "bounded_proposition": proposition["bounded_proposition"],
+                "claim_kind": proposition["claim_kind"],
+                "subject_product_ids": proposition["subject_product_ids"],
+                "comparator_product_ids": proposition["comparator_product_ids"],
+                "product_version_ids": proposition["product_version_ids"],
+                "axis_ids": proposition["axis_ids"],
+                "conditions": proposition["conditions"],
+                "evidence_item_counts": {
+                    relation: len(relation_evidence[relation])
+                    for relation in sorted(RELATIONS)
+                },
+            }
+        )
+
+    evidence_rows: list[dict[str, Any]] = []
+    relation_unions: dict[str, set[str]] = {relation: set() for relation in RELATIONS}
+    for evidence_id in sorted(links):
+        evidence = dict(evidence_index[evidence_id])
+        proposition_relations: list[dict[str, Any]] = []
+        observed_relations: set[str] = set()
+        for proposition_id in sorted(links[evidence_id]):
+            for relation in sorted(links[evidence_id][proposition_id]):
+                refs = sorted(links[evidence_id][proposition_id][relation])
+                observed_relations.add(relation)
+                relation_unions[relation].add(evidence_id)
+                proposition_relations.append(
+                    {
+                        "proposition_id": proposition_id,
+                        "relation": relation,
+                        "semantic_unit_refs": refs,
+                        "semantic_statements": [
+                            semantic_index[ref]["statement"] for ref in refs
+                        ],
+                        "semantic_units": [semantic_index[ref] for ref in refs],
+                    }
+                )
+        evidence["relations"] = sorted(observed_relations)
+        evidence["proposition_relations"] = proposition_relations
+        evidence_rows.append(evidence)
+
+    credited_support = [
+        evidence_index[evidence_id]
+        for evidence_id in relation_unions["support"]
+        if evidence_index[evidence_id].get("independence_posture") == "credited"
+        and _nonempty(evidence_index[evidence_id].get("independence_key"))
+    ]
+    independent_origins = {
+        row["independence_key"].strip().casefold() for row in credited_support
+    }
+    source_roles = {
+        evidence_index[evidence_id]["source_role"]
+        for evidence_id in relation_unions["support"]
+    }
+    container_ids = {
+        evidence_index[evidence_id]["container_id"] for evidence_id in links
+    }
+
+    used_semantic_refs = {
+        ref
+        for proposition in proposition_index.values()
+        for refs in proposition["semantic_relations"].values()
+        for ref in refs
+    }
+    unmerged_rows: list[dict[str, Any]] = []
+    unscoped_unmerged_rows: list[dict[str, Any]] = []
+    seen_unmerged: set[str] = set()
+    for row in view.get("unmerged_semantic_units", []):
+        if not isinstance(row, Mapping) or not _nonempty(row.get("semantic_unit_ref")):
+            raise SemanticIntegrationError("integration view has invalid unmerged unit")
+        ref = row["semantic_unit_ref"]
+        if ref in seen_unmerged or ref in used_semantic_refs or ref not in semantic_index:
+            raise SemanticIntegrationError(
+                f"integration view has inconsistent unmerged semantic unit: {ref}"
+            )
+        seen_unmerged.add(ref)
+        semantic = semantic_index[ref]
+        packet_row = {
+            "semantic_unit_ref": ref,
+            "reason": row.get("reason"),
+            "semantic_unit": semantic,
+            "evidence": evidence_index[semantic["evidence_id"]],
+        }
+        semantic_axes = set(semantic.get("axis_ids", []))
+        if semantic_axes & relevant_axes:
+            unmerged_rows.append(packet_row)
+        elif not semantic_axes:
+            # A legitimate unmerged meaning may carry only an emerging label
+            # and no accepted axis. Keep it visible in every packet rather
+            # than letting every axis filter hide it.
+            unscoped_unmerged_rows.append(packet_row)
+
+    disposition_index = {
+        row["evidence_id"]: row
+        for row in batch_compilation.get("evidence_dispositions", [])
+    }
+    unresolved_rows: list[dict[str, Any]] = []
+    for evidence_id in view.get("coverage", {}).get("unresolved_evidence_ids", []):
+        evidence = evidence_index.get(evidence_id)
+        disposition = disposition_index.get(evidence_id)
+        if evidence is None or disposition is None or disposition.get("disposition") != "unresolved":
+            raise SemanticIntegrationError(
+                f"integration view has inconsistent unresolved evidence: {evidence_id}"
+            )
+        if set(evidence.get("axis_candidates", [])) & relevant_axes:
+            unresolved_rows.append(
+                {"evidence": evidence, "disposition": disposition}
+            )
+
+    mixed_relation_count = sum(
+        1 for row in evidence_rows if len(row["relations"]) > 1
+    )
+    packet = {
+        "schema_version": EVIDENCE_PACKET_VERSION,
+        "cycle_id": view["cycle_id"],
+        "question_id": view["question_id"],
+        "selection": selection,
+        "source_bindings": {
+            "view_sha256": view["view_sha256"],
+            "bundle_sha256": bundle["bundle_sha256"],
+            "compilation_sha256": batch_compilation["compilation_sha256"],
+            "node_compilation_sha256": node_compilation[
+                "node_compilation_sha256"
+            ],
+            "corpus_sha256": view["corpus_sha256"],
+        },
+        "corpus_coverage": view["coverage"],
+        "selection_coverage": {
+            "selected_proposition_count": len(selected_ids),
+            "returned_evidence_item_count": len(evidence_rows),
+            "returned_container_count": len(container_ids),
+            "support_evidence_item_count": len(relation_unions["support"]),
+            "counter_evidence_item_count": len(relation_unions["counter"]),
+            "adjacent_evidence_item_count": len(relation_unions["adjacent"]),
+            "mixed_relation_evidence_item_count": mixed_relation_count,
+            "independent_support_origin_count": len(independent_origins),
+            "support_source_role_count": len(source_roles),
+            "support_source_roles": sorted(source_roles),
+            "relation_count_semantics": (
+                "distinct evidence union per relation; relation unions can overlap"
+            ),
+            "corpus_unmerged_semantic_unit_count": len(
+                view.get("unmerged_semantic_units", [])
+            ),
+            "unmerged_axis_candidate_count": len(unmerged_rows),
+            "unscoped_unmerged_candidate_count": len(unscoped_unmerged_rows),
+            "unresolved_axis_candidate_count": len(unresolved_rows),
+            "truncated": False,
+        },
+        "propositions": selected_propositions,
+        "evidence": evidence_rows,
+        "containers": [container_index[key] for key in sorted(container_ids)],
+        "unmerged_axis_candidates": unmerged_rows,
+        "unscoped_unmerged_candidates": unscoped_unmerged_rows,
+        "unresolved_axis_candidates": unresolved_rows,
+        "output_boundary": [
+            "evidence structuring only",
+            "not a market conclusion",
+            "not a recommendation",
+            "not a prevalence estimate",
+            "not a causal judgment",
+        ],
+        "model_api_calls": 0,
+    }
+    packet["packet_sha256"] = _sha256(packet)
+    return packet
 
 
 def finalize_view(
@@ -2250,6 +2579,7 @@ __all__ = [
     "BUNDLE_VERSION",
     "BUNDLE_VERSION_V2",
     "BUNDLE_VERSION_V3",
+    "EVIDENCE_PACKET_VERSION",
     "METHOD_TEXT",
     "METHOD_TEXT_V2",
     "METHOD_TEXT_V3",
@@ -2269,6 +2599,7 @@ __all__ = [
     "finalize_view",
     "finalize_v3_view",
     "materialize_source_v3",
+    "project_evidence_packet",
     "prepare_reconciliation_stage",
     "validate_batch_responses",
     "validate_reconciliation_stage",
