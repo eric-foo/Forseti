@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v6
+version: v7
 effective_date: 2026-08-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v6
+# Semantic Evidence Integration Contract v7
 
 ## Purpose
 
@@ -61,7 +61,7 @@ Deterministic code owns:
 - the admitted evidence denominator and exact per-alias accounting;
 - source-artifact resolution and hashes;
 - stable batch, semantic-unit, proposition, corpus, and view identity;
-- actor/origin de-duplication and independent-origin counts;
+- actor/origin de-duplication and conservative credited-public-origin counts;
 - engagement availability;
 - authority-owned source-role competence and impossible combinations;
 - claim-support projection; and
@@ -134,8 +134,19 @@ Each container records captured-leaf count, source-visible total or
 boundary. A claim may therefore say that support appears in seven containers
 without pretending those containers are seven independent people. When an
 oversized conversation is split across semantic prompts, every reply travels
-with the root and captured immediate-parent chain needed to interpret it.
+with references to a context table in that prompt containing the root and
+captured immediate-parent chain needed to interpret it. Shared context text is
+rendered once per work unit rather than copied into every reply row.
 Missing or truncated context remains visible and may force `unresolved`.
+
+Origin counts are conservative credited-public-origin counts, not unique-person
+counts. A source-scoped visible handle may receive origin credit. Exact
+normalized public-handle matches across venues are treated as a possible same
+actor and receive one combined credit; they never prove that the accounts are
+the same person. Different visible handles may count as apparently distinct
+public origins. Missing or hidden identities remain unavailable and receive no
+independence credit. This identity handling is deterministic; the semantic
+agent does not decide it.
 
 ## Axes and propositions
 
@@ -201,6 +212,16 @@ Route 1.6 adds, without changing the historical interfaces above:
   capture-envelope accounting, evidence-item/container/origin/source-role/
   engagement counts, reverse indexes, and terminal consolidated axes.
 
+Contract v7 adds `semantic_evidence_bundle_v4` and
+`semantic_work_unit_projection_v1` without changing source v3, batch-response
+v2, reconciliation-response v2, view v2, or evidence-packet v1 semantics.
+Bundle v4 stores each assessable evidence row once, keeps captured accounting
+as references to those rows, stores repeated context once in a hash-bound
+context registry, and binds a bijective work-unit projection over the exact
+assessable denominator. Every work unit carries one explicit agent-authored
+disposition per assessable evidence row. Historical bundle v3 construction
+remains explicitly reproducible; new full-corpus preparation defaults to v4.
+
 `phase_a_evidence_packet_v1` is a read-only projection from one finalized
 `semantic_evidence_integration_view_v2`, its bound v3 bundle, and its bound
 batch and terminal-node compilations. The projector first rebuilds the supplied
@@ -260,11 +281,24 @@ equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
 
+For bundle v4, agent-facing reconciliation prompts carry child references and
+the meaning dimensions needed to judge a merge, but omit expanded
+`leaf_relations` and `condition_lineage`. The stage and compiler retain that
+full lineage and deterministically reconstruct it from accepted child
+references. The terminal hierarchy must still fit one declared prompt-bounded
+batch; v7 neither raises that ceiling nor claims that an unexecuted full corpus
+will converge to it.
+
 Emerging labels are consolidated semantically before seal. The agent groups
 meaning-equivalent labels; the compiler preserves every original label and
 never invents a merge. Each consolidated candidate terminates as `accepted`,
 `nonmaterial`, or `blocker`. Every parent node preserves the exact union of its
-children's emerging labels. Once validated, a consolidation is carried
+children's emerging labels. Under bundle v4, exactly one prompt batch owns the
+level-wide emerging-label decision and receives the complete unique label set;
+every other batch must return no consolidations. This prevents parallel prompt
+batches from making overlapping or conflicting decisions about the same label
+without replacing that semantic decision with a deterministic compiler choice.
+Once validated, a consolidation is carried
 unchanged through every later level; no later response may duplicate,
 overwrite, drop, or invent its original-label disposition. A lower-level
 `blocker` therefore remains visible in the terminal view and blocks seal.
@@ -345,7 +379,9 @@ Current-route operations are:
    containers/leaves into one hash-bound v3 source; unsupported families or
    denominator mismatches fail closed. Materialization never renders
    provisional prompts; prompt packing belongs only to `prepare-batches`.
-7. `prepare-batches` verifies sources, builds the bundle, and renders prompts.
+7. `prepare-batches` verifies sources, builds bundle v4, proves the work-unit
+   bijection, writes byte-bounded prompts, and writes one deterministic
+   three-worker assignment manifest.
 8. `validate-batch-response` validates one returned batch immediately without
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
    invalid responses so an interrupted run can resume honestly.
@@ -359,9 +395,18 @@ Current-route operations are:
 13. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
     v2.
 
-The controller gives the rendered prompts to a capable agent in a fresh turn.
-The returned JSON is untrusted until the corresponding submit/finalize command
-accepts it.
+The controller is the active agent task. It assigns immutable batch IDs to at
+most three no-API semantic subagents and treats the response directory as the
+durable resume surface. Repository code prepares, validates, and reports work;
+it does not invoke a model through an API or headless CLI. A worker writes a
+temporary response and publishes it by atomic rename only after completing the
+file. `publish-batch-response` enforces this boundary: it accepts only a
+validated sibling `.json.tmp`, refuses an existing final response, and then
+atomically renames the file. Missing batches may be reassigned when no accepted output exists. No
+lease, daemon, mutable queue service, or claim-marker subsystem is required.
+The returned JSON is untrusted until the corresponding validator accepts it.
+Status is derived from validated response files and reports remaining work per
+static worker partition; a dead worker never becomes a completed batch.
 
 If exact prompt packing exposes more work than the available no-API judgment
 lane can execute as one bounded run, the status remains
@@ -389,7 +434,7 @@ A passing route-1.5.0 acquisition seal requires:
 
 A passing route-1.6.0 seal additionally requires:
 
-- source v3, bundle v3, method v3, batch-response v2, reconciliation-response
+- source v3, bundle v4, method v3, batch-response v2, reconciliation-response
   v2, and integration-view v2 lineage;
 - the `phase_a_final_acquisition` corpus profile rather than a bounded
   regression slice;
@@ -452,6 +497,16 @@ new frontier.
 
 ## Changelog
 
+- `v7` / 2026-08-08 — added bundle v4 accounting-by-reference, a hash-bound
+  context registry and bijective work-unit projection, deterministic three-way
+  no-API worker assignment and resumable per-partition status, and slim
+  reconciliation prompts whose full lineage remains compiler-owned. One
+  declared prompt batch owns each level's global emerging-label consolidation,
+  so parallel batches cannot emit overlapping label decisions. Exact
+  public-handle matches across venues now collapse to one conservative credited
+  origin without claiming a unique person. Source v3, response/view/packet
+  semantics, the prompt ceiling, the single-terminal-batch gate, and historical
+  bundle v3 reproduction remain unchanged.
 - `v6` / 2026-08-08 — added reusable full-corpus Reddit and retailer v3 source
   builders, exact SERP-target reconciliation against existing native captures,
   repository-relative locator enforcement, and separation of source

@@ -17,6 +17,8 @@ from typing import Any
 BUNDLE_VERSION = "semantic_evidence_bundle_v1"
 BUNDLE_VERSION_V2 = "semantic_evidence_bundle_v2"
 BUNDLE_VERSION_V3 = "semantic_evidence_bundle_v3"
+BUNDLE_VERSION_V4 = "semantic_evidence_bundle_v4"
+WORK_UNIT_PROJECTION_VERSION = "semantic_work_unit_projection_v1"
 BATCH_RESPONSE_VERSION = "semantic_evidence_batch_response_v1"
 BATCH_RESPONSE_VERSION_V2 = "semantic_evidence_batch_response_v2"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
@@ -29,6 +31,7 @@ METHOD_VERSION_V2 = "semantic_evidence_integration_method_v2"
 METHOD_VERSION_V3 = "semantic_evidence_integration_method_v3"
 SOURCE_VERSION_V2 = "semantic_evidence_source_v2"
 SOURCE_VERSION_V3 = "semantic_evidence_source_v3"
+CURRENT_BUNDLE_VERSIONS = {BUNDLE_VERSION_V3, BUNDLE_VERSION_V4}
 
 SOURCE_ROLES = {
     "community_post",
@@ -497,6 +500,15 @@ def _validate_v3_captured_items(
                 raise SemanticIntegrationError(
                     f"captured item {evidence_id} has invalid independence_key"
                 )
+            public_key = row.get("public_identity_key")
+            if public_key is not None and not _nonempty(public_key):
+                raise SemanticIntegrationError(
+                    f"captured item {evidence_id} has invalid public_identity_key"
+                )
+            if posture != "credited" and public_key is not None:
+                raise SemanticIntegrationError(
+                    f"uncredited captured item {evidence_id} carries public identity"
+                )
             parent_chain = row.get("parent_context", [])
             if not isinstance(parent_chain, list) or any(
                 not isinstance(item, Mapping)
@@ -540,6 +552,280 @@ def _validate_v3_captured_items(
         sorted(captured, key=lambda row: row["evidence_id"]),
         sorted(assessable, key=lambda row: row["evidence_id"]),
     )
+
+
+def _is_current_bundle(bundle: Mapping[str, Any]) -> bool:
+    return bundle.get("schema_version") in CURRENT_BUNDLE_VERSIONS
+
+
+def _build_context_registry(
+    units: Sequence[Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Store repeated context once and replace it with stable references."""
+    by_identity: dict[tuple[str, str, str], dict[str, Any]] = {}
+    compact_units: list[dict[str, Any]] = []
+
+    def register(
+        *, source_artifact_id: str, context_type: str, source_ref: str, text: str
+    ) -> str:
+        identity = (source_artifact_id, context_type, source_ref)
+        existing = by_identity.get(identity)
+        if existing is not None and existing["text"] != text:
+            raise SemanticIntegrationError(
+                "repeated context identity carries divergent text: "
+                f"{source_artifact_id}:{context_type}:{source_ref}"
+            )
+        if existing is None:
+            context_id = _stable_id(
+                "context", source_artifact_id, context_type, source_ref, text
+            )
+            existing = {
+                "context_id": context_id,
+                "context_type": context_type,
+                "source_artifact_id": source_artifact_id,
+                "source_ref": source_ref,
+                "text": text,
+            }
+            by_identity[identity] = existing
+        return existing["context_id"]
+
+    for unit in units:
+        compact = dict(unit)
+        product_refs = [
+            register(
+                source_artifact_id=row["source_artifact_id"],
+                context_type=row["context_type"],
+                source_ref=row["source_ref"],
+                text=row["text"],
+            )
+            for row in compact.pop("product_context", [])
+        ]
+        parent_refs = [
+            register(
+                source_artifact_id=unit["source_artifact_id"],
+                context_type="parent_text",
+                source_ref=row["source_ref"],
+                text=row["text"],
+            )
+            for row in compact.pop("parent_context", [])
+        ]
+        compact["product_context_refs"] = product_refs
+        compact["parent_context_refs"] = parent_refs
+        compact_units.append(compact)
+    return (
+        sorted(by_identity.values(), key=lambda row: row["context_id"]),
+        sorted(compact_units, key=lambda row: row["evidence_id"]),
+    )
+
+
+def _apply_cross_venue_identity_posture(
+    units: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Credit one representative when one visible handle spans scoped origins."""
+    normalized = [dict(row) for row in units]
+    by_public_key: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in normalized:
+        public_key = row.get("public_identity_key")
+        if row.get("independence_posture") == "credited" and _nonempty(public_key):
+            by_public_key[public_key.strip().casefold()].append(row)
+    for rows in by_public_key.values():
+        scoped_keys = {
+            row["independence_key"].strip().casefold()
+            for row in rows
+            if _nonempty(row.get("independence_key"))
+        }
+        if len(scoped_keys) < 2:
+            continue
+        for row in sorted(rows, key=lambda item: item["evidence_id"])[1:]:
+            row["independence_posture"] = "possible_same_actor"
+    return normalized
+
+
+def _context_index(bundle: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
+    projection = bundle.get("semantic_work_unit_projection")
+    if not isinstance(projection, Mapping):
+        return {}
+    rows = projection.get("context_registry", [])
+    if not isinstance(rows, list):
+        raise SemanticIntegrationError("work-unit projection has invalid context registry")
+    index = {
+        row.get("context_id"): row
+        for row in rows
+        if isinstance(row, Mapping) and _nonempty(row.get("context_id"))
+    }
+    if len(index) != len(rows):
+        raise SemanticIntegrationError("work-unit projection has duplicate context ids")
+    return index
+
+
+def _validate_v4_projection(bundle: Mapping[str, Any]) -> None:
+    if bundle.get("schema_version") != BUNDLE_VERSION_V4:
+        return
+    projection = bundle.get("semantic_work_unit_projection")
+    if not isinstance(projection, Mapping) or projection.get(
+        "schema_version"
+    ) != WORK_UNIT_PROJECTION_VERSION:
+        raise SemanticIntegrationError("v4 bundle lacks valid work-unit projection")
+    _verify_stored_hash(
+        projection, field="projection_sha256", label="work-unit projection"
+    )
+    contexts = _context_index(bundle)
+    for context_id, row in contexts.items():
+        if (
+            row.get("context_id") != context_id
+            or row.get("context_type")
+            not in {*PRODUCT_CONTEXT_TYPES, "parent_text"}
+            or not _nonempty(row.get("source_artifact_id"))
+            or not _nonempty(row.get("source_ref"))
+            or not _nonempty(row.get("text"))
+        ):
+            raise SemanticIntegrationError(f"invalid projected context: {context_id}")
+    evidence_index = _unit_index(bundle)
+    for evidence_id, row in evidence_index.items():
+        product_refs = row.get("product_context_refs")
+        parent_refs = row.get("parent_context_refs")
+        if not isinstance(product_refs, list) or not product_refs:
+            raise SemanticIntegrationError(
+                f"v4 evidence {evidence_id} lacks product context refs"
+            )
+        if not isinstance(parent_refs, list):
+            raise SemanticIntegrationError(
+                f"v4 evidence {evidence_id} has invalid parent context refs"
+            )
+        if any(
+            ref not in contexts or contexts[ref]["context_type"] == "parent_text"
+            for ref in product_refs
+        ) or any(
+            ref not in contexts or contexts[ref]["context_type"] != "parent_text"
+            for ref in parent_refs
+        ):
+            raise SemanticIntegrationError(
+                f"v4 evidence {evidence_id} has misbound context refs"
+            )
+    work_units = projection.get("work_units")
+    if not isinstance(work_units, list) or not work_units:
+        raise SemanticIntegrationError("v4 work-unit projection has no work units")
+    batches = bundle.get("batches")
+    if not isinstance(batches, list) or len(batches) != len(work_units):
+        raise SemanticIntegrationError("v4 work units do not match batch register")
+    projected_ids: list[str] = []
+    for work_unit, batch in zip(work_units, batches, strict=True):
+        if (
+            not isinstance(work_unit, Mapping)
+            or not isinstance(batch, Mapping)
+            or work_unit.get("work_unit_id") != batch.get("batch_id")
+            or work_unit.get("evidence_ids") != batch.get("evidence_ids")
+            or work_unit.get("worker_partition") != batch.get("worker_partition")
+        ):
+            raise SemanticIntegrationError("v4 work unit diverges from batch register")
+        refs = work_unit.get("context_ids")
+        if not isinstance(refs, list) or any(ref not in contexts for ref in refs):
+            raise SemanticIntegrationError(
+                f"v4 work unit {work_unit.get('work_unit_id')} has invalid contexts"
+            )
+        projected_ids.extend(work_unit["evidence_ids"])
+    admitted_ids = sorted(evidence_index)
+    proof = projection.get("coverage_proof")
+    if (
+        not isinstance(proof, Mapping)
+        or len(projected_ids) != len(set(projected_ids))
+        or sorted(projected_ids) != admitted_ids
+        or proof.get("admitted_evidence_count") != len(admitted_ids)
+        or proof.get("projected_evidence_count") != len(projected_ids)
+        or proof.get("admitted_evidence_ids_sha256") != _sha256(admitted_ids)
+        or proof.get("projected_evidence_ids_sha256")
+        != _sha256(sorted(projected_ids))
+        or proof.get("bijection_complete") is not True
+    ):
+        raise SemanticIntegrationError(
+            "v4 work-unit projection fails exact evidence coverage"
+        )
+
+
+def _expand_v4_unit(
+    bundle: Mapping[str, Any], unit: Mapping[str, Any]
+) -> dict[str, Any]:
+    contexts = _context_index(bundle)
+    expanded = dict(unit)
+    product_refs = expanded.pop("product_context_refs", [])
+    parent_refs = expanded.pop("parent_context_refs", [])
+    try:
+        expanded["product_context"] = [
+            {
+                "context_type": contexts[ref]["context_type"],
+                "source_artifact_id": contexts[ref]["source_artifact_id"],
+                "text": contexts[ref]["text"],
+                "source_ref": contexts[ref]["source_ref"],
+            }
+            for ref in product_refs
+        ]
+        expanded["parent_context"] = [
+            {"source_ref": contexts[ref]["source_ref"], "text": contexts[ref]["text"]}
+            for ref in parent_refs
+        ]
+    except KeyError as exc:
+        raise SemanticIntegrationError(
+            f"evidence {unit.get('evidence_id')} cites unknown context: {exc.args[0]}"
+        ) from exc
+    return expanded
+
+
+def _accounting_by_reference(
+    captured_items: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for item in captured_items:
+        row = {
+            field: item[field]
+            for field in (
+                "evidence_id",
+                "container_id",
+                "source_artifact_id",
+                "source_ref",
+                "accounting_disposition",
+                "accounting_reason",
+            )
+        }
+        if item["accounting_disposition"] == "assess":
+            row["evidence_unit_ref"] = item["evidence_id"]
+        rows.append(row)
+    return rows
+
+
+def _v4_prompt_unit(unit: Mapping[str, Any]) -> dict[str, Any]:
+    """Project only meaning-bearing fields into an agent-facing prompt."""
+    return {
+        field: unit[field]
+        for field in (
+            "evidence_id",
+            "container_id",
+            "source_family",
+            "text",
+            "product_candidates",
+            "axis_candidates",
+            "product_context_refs",
+            "parent_context_refs",
+            "conversation_depth",
+        )
+    }
+
+
+def _v4_prompt_contexts(
+    units: Sequence[Mapping[str, Any]],
+    context_registry: Mapping[str, Mapping[str, Any]],
+) -> list[Mapping[str, Any]]:
+    refs = {
+        ref
+        for unit in units
+        for field in ("product_context_refs", "parent_context_refs")
+        for ref in unit.get(field, [])
+    }
+    unknown = refs - set(context_registry)
+    if unknown:
+        raise SemanticIntegrationError(
+            f"work unit cites unknown contexts: {sorted(unknown)}"
+        )
+    return [context_registry[ref] for ref in sorted(refs)]
 
 
 def _v3_response_shape(bundle_sha256: str, batch_id: str) -> dict[str, Any]:
@@ -650,12 +936,148 @@ def _pack_v3_batches(
     return batches
 
 
+def _render_v4_batch_prompt(
+    *,
+    bundle_sha256: str,
+    batch_id: str,
+    axes: Sequence[Mapping[str, Any]],
+    evidence: Sequence[Mapping[str, Any]],
+    context_registry: Mapping[str, Mapping[str, Any]],
+) -> str:
+    prompt_units = [_v4_prompt_unit(row) for row in evidence]
+    prompt_contexts = _v4_prompt_contexts(evidence, context_registry)
+    return (
+        METHOD_TEXT_V3
+        + "\nReturn only JSON matching this shape:\n"
+        + json.dumps(
+            _v3_response_shape(bundle_sha256, batch_id),
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n\nCURRENT_AXES\n"
+        + json.dumps(axes, ensure_ascii=False, indent=2)
+        + "\n\nCONTEXT_TABLE\n"
+        + json.dumps(prompt_contexts, ensure_ascii=False, indent=2)
+        + "\n\nEVIDENCE_BATCH\n"
+        + json.dumps(prompt_units, ensure_ascii=False, indent=2)
+    )
+
+
+def _pack_v4_work_units(
+    units: Sequence[Mapping[str, Any]],
+    *,
+    axes: Sequence[Mapping[str, Any]],
+    context_registry: Sequence[Mapping[str, Any]],
+    max_prompt_bytes: int,
+    max_evidence_per_work_unit: int,
+    worker_count: int,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    if max_evidence_per_work_unit < 1:
+        raise SemanticIntegrationError("max_evidence_per_work_unit must be positive")
+    if worker_count < 1:
+        raise SemanticIntegrationError("worker_count must be positive")
+    contexts = {row["context_id"]: row for row in context_registry}
+
+    def ordering_key(unit: Mapping[str, Any]) -> tuple[Any, ...]:
+        # Conversation leaves stay adjacent; one-leaf retailer containers group
+        # by shared product-page context so the table is rendered once.
+        if unit.get("source_family") == "retailer_review":
+            group = ("retailer", tuple(unit.get("product_context_refs", [])))
+        else:
+            group = ("container", unit.get("container_id"))
+        return (*group, unit["evidence_id"])
+
+    ordered = sorted(units, key=ordering_key)
+    placeholder_hash = "0" * 64
+    provisional: list[list[Mapping[str, Any]]] = []
+
+    def add_chunk(chunk: Sequence[Mapping[str, Any]]) -> None:
+        batch_id = f"batch-{len(provisional) + 1:04d}"
+        rendered = _render_v4_batch_prompt(
+            bundle_sha256=placeholder_hash,
+            batch_id=batch_id,
+            axes=axes,
+            evidence=chunk,
+            context_registry=contexts,
+        )
+        if len(rendered.encode("utf-8")) <= max_prompt_bytes:
+            provisional.append(list(chunk))
+            return
+        if len(chunk) == 1:
+            raise SemanticIntegrationError(
+                f"evidence {chunk[0]['evidence_id']} exceeds rendered prompt byte ceiling"
+            )
+        midpoint = len(chunk) // 2
+        add_chunk(chunk[:midpoint])
+        add_chunk(chunk[midpoint:])
+
+    for start in range(0, len(ordered), max_evidence_per_work_unit):
+        add_chunk(ordered[start : start + max_evidence_per_work_unit])
+
+    batches: list[dict[str, Any]] = []
+    work_units: list[dict[str, Any]] = []
+    projected_ids: list[str] = []
+    for index, chunk in enumerate(provisional):
+        batch_id = f"batch-{index + 1:04d}"
+        evidence_ids = [row["evidence_id"] for row in chunk]
+        context_ids = sorted(
+            {
+                ref
+                for row in chunk
+                for field in ("product_context_refs", "parent_context_refs")
+                for ref in row.get(field, [])
+            }
+        )
+        worker_partition = index % worker_count + 1
+        batches.append(
+            {
+                "batch_id": batch_id,
+                "evidence_ids": evidence_ids,
+                "worker_partition": worker_partition,
+            }
+        )
+        work_units.append(
+            {
+                "work_unit_id": batch_id,
+                "evidence_ids": evidence_ids,
+                "context_ids": context_ids,
+                "worker_partition": worker_partition,
+            }
+        )
+        projected_ids.extend(evidence_ids)
+    admitted_ids = sorted(row["evidence_id"] for row in units)
+    if len(projected_ids) != len(set(projected_ids)) or sorted(projected_ids) != admitted_ids:
+        raise SemanticIntegrationError(
+            "work-unit projection is not a bijection over assessable evidence"
+        )
+    projection = {
+        "schema_version": WORK_UNIT_PROJECTION_VERSION,
+        "context_registry": list(context_registry),
+        "work_units": work_units,
+        "worker_count": worker_count,
+        "max_evidence_per_work_unit": max_evidence_per_work_unit,
+        "coverage_proof": {
+            "admitted_evidence_count": len(admitted_ids),
+            "projected_evidence_count": len(projected_ids),
+            "admitted_evidence_ids_sha256": _sha256(admitted_ids),
+            "projected_evidence_ids_sha256": _sha256(sorted(projected_ids)),
+            "bijection_complete": True,
+        },
+    }
+    projection["projection_sha256"] = _sha256(projection)
+    return batches, projection
+
+
 def build_bundle(
     source: Mapping[str, Any],
     *,
     max_batch_chars: int = 80_000,
     max_prompt_bytes: int | None = None,
+    max_evidence_per_work_unit: int = 120,
+    worker_count: int = 3,
+    target_bundle_version: str | None = None,
     _pack_batches: bool = True,
+    _apply_identity_posture: bool = True,
 ) -> dict[str, Any]:
     """Build one deterministic, hash-bound evidence bundle and batch register."""
     if max_batch_chars < 1_000:
@@ -671,7 +1093,9 @@ def build_bundle(
         bundle_version = BUNDLE_VERSION_V2
         method_version = METHOD_VERSION_V2
     elif source_version == SOURCE_VERSION_V3:
-        bundle_version = BUNDLE_VERSION_V3
+        bundle_version = target_bundle_version or BUNDLE_VERSION_V4
+        if bundle_version not in CURRENT_BUNDLE_VERSIONS:
+            raise SemanticIntegrationError("v3 source requires bundle v3 or v4")
         method_version = METHOD_VERSION_V3
     else:
         raise SemanticIntegrationError("invalid semantic evidence source version")
@@ -693,6 +1117,8 @@ def build_bundle(
     artifact_ids = {row["artifact_id"] for row in artifacts}
     containers: list[dict[str, Any]] = []
     captured_items: list[dict[str, Any]] = []
+    context_registry: list[dict[str, Any]] = []
+    projection: dict[str, Any] | None = None
     if source_version == SOURCE_VERSION_V3:
         if source.get("corpus_profile") not in CORPUS_PROFILES:
             raise SemanticIntegrationError("invalid corpus_profile")
@@ -703,12 +1129,20 @@ def build_bundle(
         containers = _validate_v3_containers(
             source.get("containers"), artifact_ids=artifact_ids
         )
-        captured_items, units = _validate_v3_captured_items(
+        captured_items, validated_units = _validate_v3_captured_items(
             source.get("captured_items"),
             artifact_ids=artifact_ids,
             containers={row["container_id"]: row for row in containers},
             axis_ids=axis_ids,
         )
+        if bundle_version == BUNDLE_VERSION_V4:
+            if _apply_identity_posture:
+                validated_units = _apply_cross_venue_identity_posture(
+                    validated_units
+                )
+            context_registry, units = _build_context_registry(validated_units)
+        else:
+            units = validated_units
     else:
         units = _validate_evidence_units(
             source.get("evidence_units"),
@@ -727,13 +1161,40 @@ def build_bundle(
         prompt_ceiling = max_prompt_bytes or max_batch_chars
         if prompt_ceiling < 1_000:
             raise SemanticIntegrationError("max_prompt_bytes must be at least 1000")
-        batches = (
-            _pack_v3_batches(
+        if _pack_batches and bundle_version == BUNDLE_VERSION_V4:
+            batches, projection = _pack_v4_work_units(
+                units,
+                axes=normalized_axes,
+                context_registry=context_registry,
+                max_prompt_bytes=prompt_ceiling,
+                max_evidence_per_work_unit=max_evidence_per_work_unit,
+                worker_count=worker_count,
+            )
+        elif _pack_batches:
+            batches = _pack_v3_batches(
                 units, axes=normalized_axes, max_prompt_bytes=prompt_ceiling
             )
-            if _pack_batches
-            else []
-        )
+        elif bundle_version == BUNDLE_VERSION_V4:
+            batches = []
+            projection = {
+                "schema_version": WORK_UNIT_PROJECTION_VERSION,
+                "context_registry": context_registry,
+                "work_units": [],
+                "worker_count": worker_count,
+                "max_evidence_per_work_unit": max_evidence_per_work_unit,
+                "coverage_proof": {
+                    "admitted_evidence_count": len(units),
+                    "projected_evidence_count": 0,
+                    "admitted_evidence_ids_sha256": _sha256(
+                        sorted(row["evidence_id"] for row in units)
+                    ),
+                    "projected_evidence_ids_sha256": _sha256([]),
+                    "bijection_complete": False,
+                },
+            }
+            projection["projection_sha256"] = _sha256(projection)
+        else:
+            batches = []
     else:
         prompt_ceiling = None
         batches = []
@@ -777,6 +1238,11 @@ def build_bundle(
         "batches": batches,
     }
     if source_version == SOURCE_VERSION_V3:
+        accounting_rows = (
+            _accounting_by_reference(captured_items)
+            if bundle_version == BUNDLE_VERSION_V4
+            else captured_items
+        )
         disposition_counts = {
             disposition: sum(
                 row["accounting_disposition"] == disposition
@@ -787,16 +1253,17 @@ def build_bundle(
         container_type_counts: dict[str, int] = defaultdict(int)
         for row in containers:
             container_type_counts[row["container_type"]] += 1
-        core.update(
-            {
+        v3_fields = {
                 "corpus_profile": source["corpus_profile"],
                 "corpus_scope": source["corpus_scope"],
                 "corpus_cutoff": source["corpus_cutoff"],
                 "containers": containers,
-                "corpus_accounting": captured_items,
+                "corpus_accounting": accounting_rows,
                 "max_prompt_bytes": prompt_ceiling,
             }
-        )
+        if bundle_version == BUNDLE_VERSION_V4:
+            v3_fields["semantic_work_unit_projection"] = projection
+        core.update(v3_fields)
         core["coverage_denominator"].update(
             {
                 "captured_item_count": len(captured_items),
@@ -813,7 +1280,12 @@ def build_bundle(
             **(
                 {
                     "containers": containers,
-                    "corpus_accounting": captured_items,
+                    "corpus_accounting": accounting_rows,
+                    **(
+                        {"context_registry": context_registry}
+                        if bundle_version == BUNDLE_VERSION_V4
+                        else {}
+                    ),
                     "corpus_profile": source["corpus_profile"],
                     "corpus_scope": source["corpus_scope"],
                     "corpus_cutoff": source["corpus_cutoff"],
@@ -841,8 +1313,23 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
     # packing is a separate operation and repeatedly renders a growing prompt;
     # doing that here made full-corpus materialization quadratic in practice.
     bundle = build_bundle(
-        source, max_prompt_bytes=1_000_000, _pack_batches=False
+        source,
+        max_prompt_bytes=1_000_000,
+        _pack_batches=False,
+        _apply_identity_posture=False,
     )
+    unit_index = _unit_index(bundle)
+    captured_items: list[dict[str, Any]] = []
+    for accounting in bundle["corpus_accounting"]:
+        if accounting["accounting_disposition"] == "assess":
+            evidence_id = accounting.get("evidence_unit_ref")
+            if evidence_id not in unit_index:
+                raise SemanticIntegrationError(
+                    f"accounting row cites unknown evidence unit: {evidence_id}"
+                )
+            captured_items.append(_expand_v4_unit(bundle, unit_index[evidence_id]))
+        else:
+            captured_items.append(dict(accounting))
     normalized = {
         "schema_version": SOURCE_VERSION_V3,
         "cycle_id": bundle["cycle_id"],
@@ -854,7 +1341,7 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
         "axes": bundle["axes"],
         "source_artifacts": bundle["source_artifacts"],
         "containers": bundle["containers"],
-        "captured_items": bundle["corpus_accounting"],
+        "captured_items": captured_items,
     }
     normalized["source_sha256"] = _sha256(normalized)
     return normalized
@@ -874,9 +1361,56 @@ def _method_text(bundle: Mapping[str, Any]) -> str:
 
 def build_batch_prompts(bundle: Mapping[str, Any]) -> list[dict[str, Any]]:
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_v4_projection(bundle)
     method_text = _method_text(bundle)
     units = _unit_index(bundle)
     prompts: list[dict[str, str]] = []
+    if bundle.get("schema_version") == BUNDLE_VERSION_V4:
+        contexts = _context_index(bundle)
+        projection = bundle.get("semantic_work_unit_projection")
+        if not isinstance(projection, Mapping):
+            raise SemanticIntegrationError("v4 bundle lacks work-unit projection")
+        _verify_stored_hash(
+            projection, field="projection_sha256", label="work-unit projection"
+        )
+        projected = {
+            row["work_unit_id"]: row
+            for row in projection.get("work_units", [])
+            if isinstance(row, Mapping) and _nonempty(row.get("work_unit_id"))
+        }
+        if set(projected) != {row["batch_id"] for row in bundle["batches"]}:
+            raise SemanticIntegrationError("work-unit projection does not match batch register")
+        for batch in bundle["batches"]:
+            work_unit = projected[batch["batch_id"]]
+            if (
+                work_unit.get("evidence_ids") != batch.get("evidence_ids")
+                or work_unit.get("worker_partition") != batch.get("worker_partition")
+            ):
+                raise SemanticIntegrationError(
+                    f"work unit {batch['batch_id']} diverges from batch register"
+                )
+            evidence = [units[evidence_id] for evidence_id in batch["evidence_ids"]]
+            prompt = _render_v4_batch_prompt(
+                bundle_sha256=bundle["bundle_sha256"],
+                batch_id=batch["batch_id"],
+                axes=bundle["axes"],
+                evidence=evidence,
+                context_registry=contexts,
+            )
+            prompt_bytes = len(prompt.encode("utf-8"))
+            if prompt_bytes > bundle["max_prompt_bytes"]:
+                raise SemanticIntegrationError(
+                    f"batch {batch['batch_id']} exceeds rendered prompt byte ceiling"
+                )
+            prompts.append(
+                {
+                    "batch_id": batch["batch_id"],
+                    "worker_partition": batch["worker_partition"],
+                    "prompt": prompt,
+                    "prompt_utf8_bytes": prompt_bytes,
+                }
+            )
+        return prompts
     if bundle.get("schema_version") == BUNDLE_VERSION_V3:
         for batch in bundle["batches"]:
             evidence = [units[evidence_id] for evidence_id in batch["evidence_ids"]]
@@ -945,6 +1479,7 @@ def validate_batch_responses(
 ) -> dict[str, Any]:
     """Validate exact batch coverage and compile stable semantic-unit refs."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_v4_projection(bundle)
     expected_batches = {row["batch_id"]: row for row in bundle["batches"]}
     seen_batches: set[str] = set()
     seen_refs: set[str] = set()
@@ -957,7 +1492,7 @@ def validate_batch_responses(
             raise SemanticIntegrationError("batch response must be an object")
         expected_response_version = (
             BATCH_RESPONSE_VERSION_V2
-            if bundle.get("schema_version") == BUNDLE_VERSION_V3
+            if _is_current_bundle(bundle)
             else BATCH_RESPONSE_VERSION
         )
         if response.get("schema_version") != expected_response_version:
@@ -1009,7 +1544,7 @@ def validate_batch_responses(
                 evidence_posture: str | None = None
                 uncertainty_posture: str | None = None
                 polarity: str | None = None
-                if bundle.get("schema_version") == BUNDLE_VERSION_V3:
+                if _is_current_bundle(bundle):
                     version_ids = _string_list(
                         unit.get("product_version_ids", []),
                         field=f"{evidence_id}.{key}.product_versions",
@@ -1031,7 +1566,10 @@ def validate_batch_responses(
                         )
                     if (
                         evidence_posture == "personal_agreement"
-                        and not evidence_index[evidence_id].get("parent_context")
+                        and not (
+                            evidence_index[evidence_id].get("parent_context")
+                            or evidence_index[evidence_id].get("parent_context_refs")
+                        )
                     ):
                         raise SemanticIntegrationError(
                             f"personal-agreement unit {evidence_id}:{key} lacks parent context"
@@ -1061,7 +1599,7 @@ def validate_batch_responses(
                                 "polarity": polarity,
                                 "container_id": evidence_index[evidence_id]["container_id"],
                             }
-                            if bundle.get("schema_version") == BUNDLE_VERSION_V3
+                            if _is_current_bundle(bundle)
                             else {}
                         ),
                     }
@@ -1089,7 +1627,7 @@ def validate_batch_responses(
     compiled = {
         "schema_version": (
             "semantic_evidence_batch_compilation_v2"
-            if bundle.get("schema_version") == BUNDLE_VERSION_V3
+            if _is_current_bundle(bundle)
             else "semantic_evidence_batch_compilation_v1"
         ),
         "bundle_sha256": bundle["bundle_sha256"],
@@ -1191,6 +1729,27 @@ def _v3_candidate_from_node(node: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _agent_reconciliation_candidate(
+    candidate: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Hide compiler-owned expanded lineage from reconciliation prompts."""
+    return {
+        field: candidate[field]
+        for field in (
+            "candidate_ref",
+            "statement",
+            "subject_product_ids",
+            "comparator_product_ids",
+            "product_version_ids",
+            "axis_ids",
+            "emerging_axis_labels",
+            "conditions",
+            "polarity",
+            "uncertainty_posture",
+        )
+    }
+
+
 def _reject_same_level_node_links(nodes: Any) -> None:
     """Reject forged reconciliation graphs that point within their own level."""
     if not isinstance(nodes, list):
@@ -1259,7 +1818,37 @@ def _render_v3_reconciliation_prompt(
     stage_sha256: str,
     batch_id: str,
     candidates: Sequence[Mapping[str, Any]],
+    compact_lineage: bool = False,
+    emerging_axis_labels: Sequence[str] | None = None,
+    emerging_axis_owner: bool = True,
 ) -> str:
+    if emerging_axis_labels is None:
+        axis_instruction = (
+            "Consolidate every emerging label exactly once while preserving originals. "
+        )
+        axis_payload = ""
+    elif not emerging_axis_owner:
+        axis_instruction = (
+            "Another batch owns the level-wide emerging-axis decision. Return an empty "
+            "emerging_axis_consolidations list. "
+        )
+        axis_payload = ""
+    elif emerging_axis_labels:
+        axis_instruction = (
+            "This batch owns the level-wide emerging-axis decision. Consolidate every "
+            "label in EMERGING_AXIS_LABELS_TO_CONSOLIDATE exactly once, including labels "
+            "observed in other candidate batches. "
+        )
+        axis_payload = "\n\nEMERGING_AXIS_LABELS_TO_CONSOLIDATE\n" + json.dumps(
+            list(emerging_axis_labels), ensure_ascii=False, indent=2
+        )
+    else:
+        axis_instruction = (
+            "This batch owns the level-wide emerging-axis decision, but every label was "
+            "already carried from a prior level. Return an empty "
+            "emerging_axis_consolidations list. "
+        )
+        axis_payload = ""
     return (
         METHOD_TEXT_V3
         + "\nReconcile these candidates into meaning-equivalent semantic nodes. "
@@ -1268,15 +1857,24 @@ def _render_v3_reconciliation_prompt(
         "Conditions, negation, and uncertainty remain semantic judgments: do not "
         "collapse them merely because an axis matches. Mark terminal_proposition "
         "true only when the node is ready for compiler-owned claim support. "
-        "Consolidate every emerging label exactly once while preserving originals. "
-        "Return only JSON matching this shape:\n"
+        + axis_instruction
+        + "Return only JSON matching this shape:\n"
         + json.dumps(
             _v3_reconciliation_response_shape(stage_sha256, batch_id),
             ensure_ascii=False,
             indent=2,
         )
         + "\n\nCANDIDATES\n"
-        + json.dumps(candidates, ensure_ascii=False, indent=2)
+        + json.dumps(
+            (
+                [_agent_reconciliation_candidate(row) for row in candidates]
+                if compact_lineage
+                else candidates
+            ),
+            ensure_ascii=False,
+            indent=2,
+        )
+        + axis_payload
     )
 
 
@@ -1285,8 +1883,9 @@ def prepare_reconciliation_stage(
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Prepare one prompt-bounded Route 1.6 reconciliation level."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
-    if bundle.get("schema_version") != BUNDLE_VERSION_V3:
-        raise SemanticIntegrationError("reconciliation stages require a v3 bundle")
+    _validate_v4_projection(bundle)
+    if not _is_current_bundle(bundle):
+        raise SemanticIntegrationError("reconciliation stages require a current bundle")
     if compilation.get("bundle_sha256") != bundle["bundle_sha256"]:
         raise SemanticIntegrationError("reconciliation input has stale bundle hash")
     if compilation.get("schema_version") == "semantic_evidence_batch_compilation_v2":
@@ -1321,6 +1920,19 @@ def prepare_reconciliation_stage(
     else:
         raise SemanticIntegrationError("invalid reconciliation input compilation")
     max_bytes = bundle["max_prompt_bytes"]
+    compact_lineage = bundle.get("schema_version") == BUNDLE_VERSION_V4
+    current_emerging_labels = sorted(
+        {
+            label
+            for candidate in candidates
+            for label in candidate["emerging_axis_labels"]
+        }
+        - {
+            label
+            for row in carried_consolidations
+            for label in row["original_labels"]
+        }
+    )
     batches: list[dict[str, Any]] = []
     current: list[dict[str, Any]] = []
     placeholder_hash = "0" * 64
@@ -1331,6 +1943,17 @@ def prepare_reconciliation_stage(
             stage_sha256=placeholder_hash,
             batch_id=batch_id,
             candidates=proposed,
+            compact_lineage=compact_lineage,
+            emerging_axis_labels=(
+                (
+                    current_emerging_labels
+                    if not batches
+                    else []
+                )
+                if compact_lineage
+                else None
+            ),
+            emerging_axis_owner=not batches,
         )
         if len(prompt.encode("utf-8")) > max_bytes:
             if not current:
@@ -1346,6 +1969,9 @@ def prepare_reconciliation_stage(
                 stage_sha256=placeholder_hash,
                 batch_id=next_id,
                 candidates=current,
+                compact_lineage=compact_lineage,
+                emerging_axis_labels=([] if compact_lineage else None),
+                emerging_axis_owner=False,
             )
             if len(single.encode("utf-8")) > max_bytes:
                 raise SemanticIntegrationError(
@@ -1372,15 +1998,26 @@ def prepare_reconciliation_stage(
         "carried_emerging_axis_consolidations": carried_consolidations,
         "max_prompt_bytes": max_bytes,
     }
+    if compact_lineage:
+        stage["emerging_axis_owner_batch_id"] = (
+            batches[0]["batch_id"] if batches else None
+        )
     stage["stage_sha256"] = _sha256(stage)
     candidate_index = {row["candidate_ref"]: row for row in candidates}
     prompts: list[dict[str, Any]] = []
-    for batch in batches:
+    for batch_index, batch in enumerate(batches):
         selected = [candidate_index[ref] for ref in batch["candidate_refs"]]
         prompt = _render_v3_reconciliation_prompt(
             stage_sha256=stage["stage_sha256"],
             batch_id=batch["batch_id"],
             candidates=selected,
+            compact_lineage=compact_lineage,
+            emerging_axis_labels=(
+                current_emerging_labels
+                if compact_lineage and batch_index == 0
+                else ([] if compact_lineage else None)
+            ),
+            emerging_axis_owner=batch_index == 0,
         )
         prompt_bytes = len(prompt.encode("utf-8"))
         if prompt_bytes > max_bytes:
@@ -1453,6 +2090,7 @@ def validate_reconciliation_stage(
 ) -> dict[str, Any]:
     """Validate one hierarchy level, reject cycles, and flatten leaf lineage."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_v4_projection(bundle)
     _verify_stored_hash(stage, field="stage_sha256", label="reconciliation stage")
     if stage.get("bundle_sha256") != bundle.get("bundle_sha256"):
         raise SemanticIntegrationError("reconciliation stage has stale bundle hash")
@@ -1462,6 +2100,9 @@ def validate_reconciliation_stage(
         )
     candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
     expected_batches = {row["batch_id"]: row for row in stage["batches"]}
+    emerging_axis_owner_batch_id = stage.get("emerging_axis_owner_batch_id")
+    if emerging_axis_owner_batch_id is not None and emerging_axis_owner_batch_id not in expected_batches:
+        raise SemanticIntegrationError("invalid emerging-axis owner batch")
     seen_batches: set[str] = set()
     node_keys: set[str] = set()
     nodes: list[dict[str, Any]] = []
@@ -1481,6 +2122,11 @@ def validate_reconciliation_stage(
         label for row in carried_consolidations for label in row["original_labels"]
     }
     carried_keys = {row["candidate_key"] for row in carried_consolidations}
+    level_emerging_labels = {
+        label
+        for candidate in stage["candidates"]
+        for label in candidate["emerging_axis_labels"]
+    } - carried_labels
     consolidations: list[dict[str, Any]] = []
     for response in responses:
         if not isinstance(response, Mapping):
@@ -1661,11 +2307,20 @@ def validate_reconciliation_stage(
             raise SemanticIntegrationError(
                 f"reconciliation batch {batch_id} does not account for every child"
             )
-        original_labels = {
-            label
-            for ref in allowed
-            for label in candidate_index[ref]["emerging_axis_labels"]
-        } - carried_labels
+        original_labels = (
+            level_emerging_labels
+            if batch_id == emerging_axis_owner_batch_id
+            else (
+                set()
+                if emerging_axis_owner_batch_id is not None
+                else {
+                    label
+                    for ref in allowed
+                    for label in candidate_index[ref]["emerging_axis_labels"]
+                }
+                - carried_labels
+            )
+        )
         consolidations.extend(
             _validate_emerging_axis_consolidations(
                 response.get("emerging_axis_consolidations"),
@@ -1747,6 +2402,16 @@ def _competent_roles(claim_kind: str) -> set[str]:
     return ACTOR_STRATEGY_ROLES
 
 
+def _credited_origin_key(evidence: Mapping[str, Any]) -> str | None:
+    """Return one conservative credited-origin key, never a unique-person claim."""
+    if evidence.get("independence_posture") != "credited":
+        return None
+    public_key = evidence.get("public_identity_key")
+    scoped_key = evidence.get("independence_key")
+    selected = public_key if _nonempty(public_key) else scoped_key
+    return selected.strip().casefold() if _nonempty(selected) else None
+
+
 def finalize_v3_view(
     bundle: Mapping[str, Any],
     batch_compilation: Mapping[str, Any],
@@ -1754,6 +2419,7 @@ def finalize_v3_view(
 ) -> dict[str, Any]:
     """Compile one terminal Route 1.6 hierarchy into a leaf-linked view."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_v4_projection(bundle)
     _verify_stored_hash(
         batch_compilation, field="compilation_sha256", label="batch compilation"
     )
@@ -1762,8 +2428,8 @@ def finalize_v3_view(
         field="node_compilation_sha256",
         label="node compilation",
     )
-    if bundle.get("schema_version") != BUNDLE_VERSION_V3:
-        raise SemanticIntegrationError("v3 finalization requires a v3 bundle")
+    if not _is_current_bundle(bundle):
+        raise SemanticIntegrationError("v3 finalization requires a current bundle")
     if batch_compilation.get("bundle_sha256") != bundle["bundle_sha256"] or node_compilation.get(
         "bundle_sha256"
     ) != bundle["bundle_sha256"]:
@@ -1844,8 +2510,9 @@ def finalize_v3_view(
             and _nonempty(evidence_index[ref].get("independence_key"))
         ]
         origin_keys = {
-            evidence_index[ref]["independence_key"].strip().casefold()
+            key
             for ref in credited_support
+            if (key := _credited_origin_key(evidence_index[ref])) is not None
         }
         credited_roles = {evidence_index[ref]["source_role"] for ref in credited_support}
         engagement_refs = [
@@ -2049,6 +2716,7 @@ def project_evidence_packet(
     """Project a complete, read-only evidence stack from one finalized v3 view."""
     _verify_stored_hash(view, field="view_sha256", label="integration view")
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_v4_projection(bundle)
     _verify_stored_hash(
         batch_compilation,
         field="compilation_sha256",
@@ -2056,8 +2724,8 @@ def project_evidence_packet(
     )
     if view.get("schema_version") != VIEW_VERSION_V2:
         raise SemanticIntegrationError("evidence packet requires integration view v2")
-    if bundle.get("schema_version") != BUNDLE_VERSION_V3:
-        raise SemanticIntegrationError("evidence packet requires semantic bundle v3")
+    if not _is_current_bundle(bundle):
+        raise SemanticIntegrationError("evidence packet requires a current semantic bundle")
     if view.get("bundle_sha256") != bundle["bundle_sha256"] or batch_compilation.get(
         "bundle_sha256"
     ) != bundle["bundle_sha256"]:
@@ -2210,7 +2878,11 @@ def project_evidence_packet(
     evidence_rows: list[dict[str, Any]] = []
     relation_unions: dict[str, set[str]] = {relation: set() for relation in RELATIONS}
     for evidence_id in sorted(links):
-        evidence = dict(evidence_index[evidence_id])
+        evidence = (
+            _expand_v4_unit(bundle, evidence_index[evidence_id])
+            if bundle.get("schema_version") == BUNDLE_VERSION_V4
+            else dict(evidence_index[evidence_id])
+        )
         proposition_relations: list[dict[str, Any]] = []
         observed_relations: set[str] = set()
         for proposition_id in sorted(links[evidence_id]):
@@ -2240,7 +2912,9 @@ def project_evidence_packet(
         and _nonempty(evidence_index[evidence_id].get("independence_key"))
     ]
     independent_origins = {
-        row["independence_key"].strip().casefold() for row in credited_support
+        key
+        for row in credited_support
+        if (key := _credited_origin_key(row)) is not None
     }
     source_roles = {
         evidence_index[evidence_id]["source_role"]
@@ -2586,6 +3260,7 @@ __all__ = [
     "BUNDLE_VERSION",
     "BUNDLE_VERSION_V2",
     "BUNDLE_VERSION_V3",
+    "BUNDLE_VERSION_V4",
     "EVIDENCE_PACKET_VERSION",
     "METHOD_TEXT",
     "METHOD_TEXT_V2",
@@ -2600,6 +3275,7 @@ __all__ = [
     "SemanticIntegrationError",
     "VIEW_VERSION",
     "VIEW_VERSION_V2",
+    "WORK_UNIT_PROJECTION_VERSION",
     "build_batch_prompts",
     "build_bundle",
     "build_reconciliation_prompt",

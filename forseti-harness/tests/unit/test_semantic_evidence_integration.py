@@ -13,6 +13,7 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
     BUNDLE_VERSION_V3,
+    BUNDLE_VERSION_V4,
     EVIDENCE_PACKET_VERSION,
     METHOD_VERSION,
     METHOD_VERSION_V2,
@@ -33,11 +34,22 @@ from judgment.semantic_evidence_integration import (
     validate_batch_responses,
     validate_reconciliation_stage,
 )
-from runners.run_semantic_evidence_integration import prepare_batches
+from runners.run_semantic_evidence_integration import (
+    prepare_batches,
+    publish_batch_response_file,
+)
 
 
 def _digest(data: bytes = b"source\n") -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def _canonical_hash(value: object) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode()
+    ).hexdigest()
 
 
 def _source() -> dict:
@@ -1166,14 +1178,15 @@ def test_v3_evidence_packet_preserves_counterevidence_and_unresolved_candidates(
     responses[-1]["evidence"][-1]["semantic_units"] = []
     compiled = validate_batch_responses(bundle, responses)
     stage_one, _ = prepare_reconciliation_stage(bundle, compiled)
+    level_one_responses = _group_level_responses(stage_one, terminal=False)
+    level_one_responses[0]["semantic_nodes"][0]["child_relations"][0][
+        "relation"
+    ] = "counter"
     level_one = validate_reconciliation_stage(
-        bundle, stage_one, _group_level_responses(stage_one, terminal=False)
+        bundle, stage_one, level_one_responses
     )
     stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
     terminal_responses = _group_level_responses(stage_two, terminal=True)
-    terminal_responses[0]["semantic_nodes"][0]["child_relations"][0][
-        "relation"
-    ] = "counter"
     terminal = validate_reconciliation_stage(
         bundle, stage_two, terminal_responses
     )
@@ -1276,12 +1289,185 @@ def test_v3_prompts_never_exceed_actual_rendered_utf8_ceiling() -> None:
     bundle = build_bundle(_source_v3(), max_prompt_bytes=8_000)
     prompts = build_batch_prompts(bundle)
 
-    assert len(prompts) > 1
+    assert bundle["schema_version"] == BUNDLE_VERSION_V4
+    assert prompts
     assert all(row["prompt_utf8_bytes"] <= 8_000 for row in prompts)
+    assert all("CONTEXT_TABLE" in row["prompt"] for row in prompts)
+    proof = bundle["semantic_work_unit_projection"]["coverage_proof"]
+    assert proof["bijection_complete"] is True
+    assert proof["projected_evidence_count"] == proof["admitted_evidence_count"]
     oversized = _source_v3(count=1)
     oversized["captured_items"][0]["text"] = "é" * 8_000
     with pytest.raises(SemanticIntegrationError, match="rendered prompt byte ceiling"):
         build_bundle(oversized, max_prompt_bytes=8_000)
+
+
+def test_v4_prepare_runner_writes_deterministic_three_worker_assignment(
+    tmp_path: Path,
+) -> None:
+    source = _source_v3()
+    for index in range(1, 8):
+        (tmp_path / f"thread-{index}.json").write_bytes(
+            f"thread-{index}\n".encode()
+        )
+    source_path = tmp_path / "source-v3.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+
+    result = prepare_batches(
+        source_path=source_path,
+        repo_root=tmp_path,
+        bundle_out=tmp_path / "bundle-v4.json",
+        prompt_dir=tmp_path / "prompts-v4",
+        max_batch_chars=20_000,
+        max_prompt_bytes=20_000,
+        max_evidence_per_work_unit=2,
+    )
+    assignment = json.loads(
+        (tmp_path / "prompts-v4" / "worker_assignments.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert result["batch_count"] == 4
+    assert assignment["worker_count"] == 3
+    assert [row["worker_partition"] for row in assignment["assignments"]] == [
+        1,
+        2,
+        3,
+        1,
+    ]
+
+
+def test_v4_publish_validates_sibling_temp_and_refuses_existing_target(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(_source_v3(count=1), max_prompt_bytes=8_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    response_dir = tmp_path / "responses"
+    response_dir.mkdir()
+    staged = response_dir / "batch-0001.json.tmp"
+    staged.write_text(
+        json.dumps(_v3_batch_responses(bundle)[0]), encoding="utf-8"
+    )
+
+    result = publish_batch_response_file(
+        bundle_path=bundle_path,
+        staged_response_path=staged,
+        response_dir=response_dir,
+    )
+
+    target = response_dir / "batch-0001.json"
+    assert result["status"] == "SEMANTIC_BATCH_RESPONSE_PUBLISHED"
+    assert target.is_file()
+    assert not staged.exists()
+
+    staged.write_text(
+        json.dumps(_v3_batch_responses(bundle)[0]), encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        publish_batch_response_file(
+            bundle_path=bundle_path,
+            staged_response_path=staged,
+            response_dir=response_dir,
+        )
+    assert staged.is_file()
+
+
+def test_v4_stores_accounting_by_reference_and_renders_shared_context_once() -> None:
+    source = _source_v3(count=1)
+    source["containers"][0]["captured_leaf_count"] = 2
+    second = deepcopy(source["captured_items"][0])
+    second["evidence_id"] = "reddit:t1:reply"
+    second["source_ref"] = "https://reddit.test/t1/reply"
+    second["conversation_depth"] = 1
+    second["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t1",
+            "text": "The balm became drying after a week of use.",
+        }
+    ]
+    source["captured_items"].append(second)
+
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    prompts = build_batch_prompts(bundle)
+
+    assert bundle["schema_version"] == BUNDLE_VERSION_V4
+    assert all("text" not in row for row in bundle["corpus_accounting"])
+    assert {
+        row["evidence_unit_ref"] for row in bundle["corpus_accounting"]
+    } == {"reddit:t1:comment", "reddit:t1:reply"}
+    assert len(prompts) == 1
+    assert prompts[0]["prompt"].count("Summer Fridays Lip Butter Balm wear") == 1
+    assert prompts[0]["prompt"].count("The balm became drying after a week of use.") == 3
+
+
+def test_v4_reconciliation_prompt_omits_expanded_lineage_but_stage_keeps_it() -> None:
+    bundle = build_bundle(_source_v3(), max_prompt_bytes=8_000)
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    stage_one, _ = prepare_reconciliation_stage(bundle, compiled)
+    nodes_one = validate_reconciliation_stage(
+        bundle, stage_one, _group_level_responses(stage_one, terminal=False)
+    )
+
+    stage_two, prompts = prepare_reconciliation_stage(bundle, nodes_one)
+
+    assert stage_two["candidates"][0]["leaf_relations"]
+    assert stage_two["candidates"][0]["condition_lineage"]
+    assert all('"leaf_relations"' not in row["prompt"] for row in prompts)
+    assert all('"condition_lineage"' not in row["prompt"] for row in prompts)
+
+
+def test_v4_projection_rejects_rehashed_coverage_and_context_forgery() -> None:
+    bundle = build_bundle(_source_v3(count=2), max_prompt_bytes=8_000)
+    forged = deepcopy(bundle)
+    projection = forged["semantic_work_unit_projection"]
+    projection["work_units"][0]["evidence_ids"].pop()
+    projection["projection_sha256"] = _canonical_hash(
+        {key: value for key, value in projection.items() if key != "projection_sha256"}
+    )
+    forged["bundle_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="batch register|coverage"):
+        validate_batch_responses(forged, [], require_all=False)
+
+    forged = deepcopy(bundle)
+    projection = forged["semantic_work_unit_projection"]
+    projection["context_registry"][0]["context_type"] = "parent_text"
+    projection["projection_sha256"] = _canonical_hash(
+        {key: value for key, value in projection.items() if key != "projection_sha256"}
+    )
+    forged["bundle_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="misbound context refs"):
+        validate_batch_responses(forged, [], require_all=False)
+
+
+def test_v4_exact_public_handle_match_across_scoped_origins_gets_one_credit() -> None:
+    source = _source_v3(count=2)
+    source["captured_items"][0]["independence_key"] = "reddit:same-handle"
+    source["captured_items"][1]["independence_key"] = "retailer:same-handle"
+    for row in source["captured_items"]:
+        row["public_identity_key"] = "public_handle:same-handle"
+    bundle = build_bundle(source, max_prompt_bytes=8_000)
+    assert sorted(
+        row["independence_posture"] for row in bundle["evidence_units"]
+    ) == ["credited", "possible_same_actor"]
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    stage_one, _ = prepare_reconciliation_stage(bundle, compiled)
+    nodes_one = validate_reconciliation_stage(
+        bundle, stage_one, _group_level_responses(stage_one, terminal=False)
+    )
+    stage_two, _ = prepare_reconciliation_stage(bundle, nodes_one)
+    terminal = validate_reconciliation_stage(
+        bundle, stage_two, _group_level_responses(stage_two, terminal=True)
+    )
+
+    view = finalize_v3_view(bundle, compiled, terminal)
+
+    assert view["propositions"][0]["claim_support"]["independent_origin_count"] == 1
 
 
 def test_v3_full_corpus_accounting_fails_closed_on_missing_leaf() -> None:
@@ -1311,7 +1497,7 @@ def test_v3_materializer_validates_without_provisional_batch_packing(
         raise AssertionError("batch packing belongs to prepare-batches")
 
     monkeypatch.setattr(
-        "judgment.semantic_evidence_integration._pack_v3_batches",
+        "judgment.semantic_evidence_integration._pack_v4_work_units",
         fail_if_packed,
     )
     source = _source_v3(count=2)
@@ -1424,6 +1610,53 @@ def test_v3_emerging_labels_require_explicit_consolidation() -> None:
     ]
 
 
+def test_v4_one_batch_owns_level_wide_emerging_axis_consolidation() -> None:
+    bundle = build_bundle(_source_v3(), max_prompt_bytes=6_000)
+    responses = _v3_batch_responses(bundle)
+    for response in responses:
+        for evidence in response["evidence"]:
+            for unit in evidence["semantic_units"]:
+                unit["emerging_axis_labels"] = ["shared label"]
+    compiled = validate_batch_responses(bundle, responses)
+
+    stage, prompts = prepare_reconciliation_stage(bundle, compiled)
+    assert len(stage["batches"]) > 1
+    owner = stage["emerging_axis_owner_batch_id"]
+    assert owner == stage["batches"][0]["batch_id"]
+    assert "EMERGING_AXIS_LABELS_TO_CONSOLIDATE" in prompts[0]["prompt"]
+    assert all(
+        "Return an empty emerging_axis_consolidations list" in row["prompt"]
+        for row in prompts[1:]
+    )
+
+    reconciliation = _group_level_responses(stage, terminal=False)
+    for response in reconciliation:
+        response["emerging_axis_consolidations"] = (
+            [
+                {
+                    "candidate_key": "shared",
+                    "canonical_label": "shared label",
+                    "original_labels": ["shared label"],
+                    "disposition": "accepted",
+                    "reason": "one level-wide semantic decision",
+                }
+            ]
+            if response["batch_id"] == owner
+            else []
+        )
+
+    level_one = validate_reconciliation_stage(bundle, stage, reconciliation)
+    assert level_one["emerging_axis_consolidations"] == [
+        {
+            "candidate_key": "shared",
+            "canonical_label": "shared label",
+            "original_labels": ["shared label"],
+            "disposition": "accepted",
+            "reason": "one level-wide semantic decision",
+        }
+    ]
+
+
 def _one_label_level_one(*, disposition: str = "blocker") -> tuple[dict, dict, dict]:
     bundle = build_bundle(_source_v3(count=1), max_prompt_bytes=20_000)
     responses = _v3_batch_responses(bundle)
@@ -1449,7 +1682,8 @@ def _one_label_level_one(*, disposition: str = "blocker") -> tuple[dict, dict, d
 
 def test_v3_lower_level_blocker_survives_to_terminal_view() -> None:
     bundle, compiled, level_one = _one_label_level_one()
-    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    stage_two, prompts = prepare_reconciliation_stage(bundle, level_one)
+    assert "every label was already carried from a prior level" in prompts[0]["prompt"]
     assert stage_two["carried_emerging_axis_consolidations"] == [
         {
             "candidate_key": "ritual",
@@ -1621,7 +1855,11 @@ def test_route_1_6_multisource_dogfood_rebuilds_exactly() -> None:
     source = load("source.json")
     expected_bundle = load("bundle.json")
     assert isinstance(source, dict) and isinstance(expected_bundle, dict)
-    bundle = build_bundle(source, max_prompt_bytes=150_000)
+    bundle = build_bundle(
+        source,
+        max_prompt_bytes=150_000,
+        target_bundle_version=BUNDLE_VERSION_V3,
+    )
     assert bundle == expected_bundle
 
     responses = load("batch_responses.json")
