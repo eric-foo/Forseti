@@ -1419,6 +1419,20 @@ def build_phase_a_product_axis_proof_source(
     if not requested_axes or not requested_axes <= known_axes:
         raise SemanticIntegrationError("proof axes must be non-empty known axis ids")
     full_source = _load_json_object(full_source_path, label="full Phase A source")
+    stored_source_hash = full_source.get("source_sha256")
+    source_without_hash = {
+        key: value for key, value in full_source.items() if key != "source_sha256"
+    }
+    if (
+        not _nonempty(stored_source_hash)
+        or stored_source_hash != _canonical_hash(source_without_hash)
+    ):
+        raise SemanticIntegrationError(
+            "full Phase A source content does not match source_sha256"
+        )
+    _verify_v3_source_artifacts(
+        full_source, repo_root=repo_root, binding_id="product-axis proof full source"
+    )
     normalized = materialize_source_v3(full_source)
     if (
         normalized["cycle_id"] != spec["cycle_id"]
@@ -2682,21 +2696,20 @@ def materialize_phase_a_v3(
                         f"conflicting duplicate {key} across source bindings: {row_id}"
                     )
                 index[row_id] = dict(row)
-    source = {
-        "schema_version": "semantic_evidence_source_v3",
-        "cycle_id": spec["cycle_id"],
-        "question_id": spec["question_id"],
-        "question": spec["question"],
-        "corpus_profile": spec["corpus_profile"],
-        "corpus_scope": spec["corpus_scope"],
-        "corpus_cutoff": spec["corpus_cutoff"],
-        "axes": list(spec["axes"]),
-        "source_artifacts": sorted(artifacts.values(), key=lambda row: row["artifact_id"]),
-        "containers": sorted(containers.values(), key=lambda row: row["container_id"]),
-        "captured_items": sorted(
-            captured_items.values(), key=lambda row: row["evidence_id"]
-        ),
-    }
+    source = _phase_a_source_shell(spec)
+    source.update(
+        {
+            "source_artifacts": sorted(
+                artifacts.values(), key=lambda row: row["artifact_id"]
+            ),
+            "containers": sorted(
+                containers.values(), key=lambda row: row["container_id"]
+            ),
+            "captured_items": sorted(
+                captured_items.values(), key=lambda row: row["evidence_id"]
+            ),
+        }
+    )
     materialized = materialize_source_v3(source)
     receipt = {
         "schema_version": RUN_RECEIPT_VERSION,

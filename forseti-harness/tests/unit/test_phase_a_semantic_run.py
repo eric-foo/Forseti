@@ -29,6 +29,7 @@ from judgment.phase_a_semantic_run import (
 from judgment.semantic_evidence_integration import (
     SemanticIntegrationError,
     build_bundle,
+    materialize_source_v3,
     prepare_reconciliation_stage,
     validate_batch_responses,
 )
@@ -285,6 +286,33 @@ def test_full_corpus_run_audits_every_route_and_materializes_deterministically(
     assert first_receipt == second_receipt
     assert first_receipt["captured_item_count"] == 1
     assert first_receipt["historical_seal_restamped"] is False
+
+
+def test_v2_full_materialization_preserves_method_v4_marker(tmp_path: Path) -> None:
+    spec, _ = _spec(tmp_path)
+    authority = tmp_path / "product-authority.json"
+    _write_json(authority, {"product": "Summer Fridays Lip Butter Balm"})
+    spec["schema_version"] = RUN_SPEC_VERSION_V2
+    spec["product_bindings"] = [
+        {
+            "stable_product_id": "summer-fridays-lip-butter-balm",
+            "display_name": "Summer Fridays Lip Butter Balm",
+            "source_product_ids": ["sf-lbb"],
+            "aliases": ["Lip Butter Balm"],
+            "evidence_refs": [
+                {"locator": str(authority), "sha256": _sha(authority)}
+            ],
+        }
+    ]
+
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+
+    assert source["semantic_method_version"] == (
+        "semantic_evidence_integration_method_v4"
+    )
+    assert build_bundle(source, max_prompt_bytes=8_000)["method_version"] == (
+        "semantic_evidence_integration_method_v4"
+    )
 
 
 def test_run_audit_rejects_old_subset_style_missing_route_and_stale_source(
@@ -1127,6 +1155,7 @@ def test_product_axis_proof_selects_all_mapped_source_ids_and_rejects_mentions(
         ]
     )
     full["captured_items"].extend([second, wrong])
+    full = materialize_source_v3(full)
     _write_json(full_path, full)
     authority = tmp_path / "product-authority.json"
     _write_json(authority, {"product": "Summer Fridays Lip Butter Balm"})
@@ -1182,6 +1211,35 @@ def test_product_axis_proof_selects_all_mapped_source_ids_and_rejects_mentions(
     assert proof["semantic_method_version"] == (
         "semantic_evidence_integration_method_v4"
     )
+
+    raw_source = tmp_path / "raw-thread.json"
+    raw_source.write_text("changed body\n", encoding="utf-8")
+    with pytest.raises(
+        SemanticIntegrationError, match="source artifact.*hash mismatch"
+    ):
+        build_phase_a_product_axis_proof_source(
+            full_source_path=full_path,
+            run_spec_path=spec_path,
+            stable_product_id="summer-fridays-lip-butter-balm",
+            axis_ids=["wear"],
+            repo_root=tmp_path,
+        )
+    raw_source.write_text("source body\n", encoding="utf-8")
+
+    tampered = deepcopy(full)
+    tampered["captured_items"][0]["text"] = "tampered source content"
+    tampered_path = tmp_path / "tampered-proof-source.json"
+    _write_json(tampered_path, tampered)
+    with pytest.raises(
+        SemanticIntegrationError, match="does not match source_sha256"
+    ):
+        build_phase_a_product_axis_proof_source(
+            full_source_path=tampered_path,
+            run_spec_path=spec_path,
+            stable_product_id="summer-fridays-lip-butter-balm",
+            axis_ids=["wear"],
+            repo_root=tmp_path,
+        )
 
 
 def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders(
