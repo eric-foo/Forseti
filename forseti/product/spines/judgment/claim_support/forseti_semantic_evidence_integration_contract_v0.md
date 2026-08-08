@@ -213,13 +213,20 @@ chooses the relevant IDs from the finalized view; deterministic code then
 expands those IDs without a keyword or top-k cutoff.
 
 The packet returns every distinct linked evidence item once, while preserving
-all proposition/relation/semantic-unit links. It reports the complete selected
-union of support, counter, and adjacent evidence, container and independent-
-origin counts, the selected containers with their capture boundaries, and any
-axis-relevant unmerged or unresolved candidates. One
+all proposition/relation/semantic-unit links. Each linked semantic unit retains
+its evidence posture, uncertainty posture, and polarity; accepted relations do
+not lose qualifications that remain visible on unmerged material. It reports
+the complete selected union of support, counter, and adjacent evidence,
+container and independent-origin counts, the selected containers with their
+capture boundaries, and any
+axis-relevant unmerged or unresolved candidates. It also reports the complete
+corpus unmerged denominator and returns unscoped unmerged meanings separately,
+so an emerging-label meaning with no accepted axis cannot disappear from every
+packet. Per-relation evidence counts are non-disjoint unions: one item may
+support one selected proposition and oppose another. One
 item supporting multiple propositions or axes remains one evidence item. The
-packet binds the source view, bundle, both compilation hashes, and corpus hash and fails
-closed on unknown IDs, stale lineage, or inconsistent reverse indexes.
+packet binds the source view, bundle, both compilation hashes, and corpus hash.
+It fails closed on unknown IDs, stale lineage, or inconsistent reverse indexes.
 
 The packet contains bounded propositions only as retrieval labels. It does not
 carry a conclusion, recommendation, importance ranking, prevalence estimate,
@@ -425,8 +432,9 @@ new frontier.
 
 - `v5` / 2026-08-08 — added `phase_a_evidence_packet_v1`, a complete
   proposition/axis evidence-stack projection from the finalized v2 view. It
-  de-duplicates shared records, preserves opposition and unresolved material,
-  exposes no top-k truncation or conclusion, and adds no provider API or new
+  de-duplicates shared records; preserves opposition, semantic posture,
+  uncertainty, polarity, unresolved material, and unscoped unmerged meanings;
+  exposes no top-k truncation or conclusion; and adds no provider API or new
   seal obligation.
 - `v4` / 2026-08-08 — replaced the operator-declared Phase 1/2 packet
   denominator with a generated inventory from terminal-return-selected,

@@ -900,6 +900,9 @@ meaning from that view; the deterministic projector then returns the complete
 linked union rather than a keyword match or a convenient top-k sample. Shared
 records appear once while keeping every relation, and support, counter,
 adjacent, unresolved, and unmerged axis candidates remain distinguishable.
+Linked semantic units retain posture, uncertainty, and polarity. The packet
+also exposes the full unmerged denominator and any no-axis unmerged meanings;
+per-relation counts are explicit non-disjoint unions.
 This is a read-only tail-end Phase A retrieval surface: it adds no acquisition
 job or seal field, creates no second evidence authority, and cannot issue the
 conclusion or recommendation that belongs to Deliver.

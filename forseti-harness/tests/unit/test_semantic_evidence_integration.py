@@ -1068,6 +1068,18 @@ def _rehash_view(view: dict) -> dict:
     return view
 
 
+def _rehash_batch_compilation(compilation: dict) -> dict:
+    core = {
+        key: value for key, value in compilation.items() if key != "compilation_sha256"
+    }
+    compilation["compilation_sha256"] = hashlib.sha256(
+        json.dumps(
+            core, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+    ).hexdigest()
+    return compilation
+
+
 def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() -> None:
     bundle, compiled, terminal, view = _v3_complete_view()
     proposition_id = view["propositions"][0]["proposition_id"]
@@ -1088,12 +1100,25 @@ def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() ->
         "independent_support_origin_count": 7,
         "support_source_role_count": 1,
         "support_source_roles": ["community_post"],
+        "relation_count_semantics": (
+            "distinct evidence union per relation; relation unions can overlap"
+        ),
+        "corpus_unmerged_semantic_unit_count": 0,
         "unmerged_axis_candidate_count": 0,
+        "unscoped_unmerged_candidate_count": 0,
         "unresolved_axis_candidate_count": 0,
         "truncated": False,
     }
     assert len({row["evidence_id"] for row in packet["evidence"]}) == 7
     assert len(packet["containers"]) == 7
+    linked_unit = packet["evidence"][0]["proposition_relations"][0][
+        "semantic_units"
+    ][0]
+    assert {
+        "evidence_posture",
+        "uncertainty_posture",
+        "polarity",
+    } <= set(linked_unit)
     assert all("conclusion" not in row for row in packet["propositions"])
     assert all("recommendation" not in row for row in packet["propositions"])
     assert packet["model_api_calls"] == 0
@@ -1165,6 +1190,43 @@ def test_v3_evidence_packet_preserves_counterevidence_and_unresolved_candidates(
     ] == unresolved_evidence_id
 
 
+def test_v3_evidence_packet_keeps_no_axis_unmerged_meaning_visible() -> None:
+    repo_root = Path(__file__).resolve().parents[3]
+    dogfood = (
+        repo_root
+        / "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7"
+        / "semantic_integration_multisource_route_1_6_regression_20260808_v0"
+    )
+
+    def load(name: str) -> dict:
+        value = json.loads((dogfood / name).read_text(encoding="utf-8"))
+        assert isinstance(value, dict)
+        return value
+
+    bundle = load("bundle.json")
+    compiled = load("batch_compilation.json")
+    terminal = load("node_compilation_2.json")
+    unscoped_ref = terminal["unmerged_semantic_units"][0]["semantic_unit_ref"]
+    semantic = next(
+        row
+        for row in compiled["semantic_units"]
+        if row["semantic_unit_ref"] == unscoped_ref
+    )
+    semantic["axis_ids"] = []
+    _rehash_batch_compilation(compiled)
+    terminal["batch_compilation_sha256"] = compiled["compilation_sha256"]
+    _rehash_node_compilation(terminal)
+    view = finalize_v3_view(bundle, compiled, terminal)
+
+    packet = project_evidence_packet(
+        view, bundle, compiled, terminal, axis_ids=["reaction_and_breakout"]
+    )
+
+    assert packet["selection_coverage"]["corpus_unmerged_semantic_unit_count"] == 5
+    assert packet["selection_coverage"]["unscoped_unmerged_candidate_count"] == 1
+    assert packet["unscoped_unmerged_candidates"][0]["semantic_unit_ref"] == unscoped_ref
+
+
 def test_v3_evidence_packet_fails_closed_on_unknown_or_inconsistent_selection() -> None:
     bundle, compiled, terminal, original = _v3_complete_view()
     proposition_id = original["propositions"][0]["proposition_id"]
@@ -1199,19 +1261,7 @@ def test_v3_evidence_packet_fails_closed_on_unknown_or_inconsistent_selection() 
 
     stale_compilation = deepcopy(compiled)
     stale_compilation["semantic_units"][0]["statement"] = "altered after finalization"
-    compilation_core = {
-        key: value
-        for key, value in stale_compilation.items()
-        if key != "compilation_sha256"
-    }
-    stale_compilation["compilation_sha256"] = hashlib.sha256(
-        json.dumps(
-            compilation_core,
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode("utf-8")
-    ).hexdigest()
+    _rehash_batch_compilation(stale_compilation)
     with pytest.raises(SemanticIntegrationError, match="root batch compilation"):
         project_evidence_packet(
             original,
@@ -1495,6 +1545,34 @@ def test_v3_finalization_rejects_unmerged_unit_outside_the_batch_compilation() -
 
     with pytest.raises(SemanticIntegrationError, match="not part of this batch compilation"):
         finalize_v3_view(bundle, compiled, forged)
+
+
+def test_v3_finalization_rejects_a_repeated_unmerged_semantic_unit() -> None:
+    repo_root = Path(__file__).resolve().parents[3]
+    dogfood = (
+        repo_root
+        / "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7"
+        / "semantic_integration_multisource_route_1_6_regression_20260808_v0"
+    )
+    bundle = json.loads((dogfood / "bundle.json").read_text(encoding="utf-8"))
+    compiled = json.loads(
+        (dogfood / "batch_compilation.json").read_text(encoding="utf-8")
+    )
+    terminal = json.loads(
+        (dogfood / "node_compilation_2.json").read_text(encoding="utf-8")
+    )
+    assert terminal["unmerged_semantic_units"]
+
+    repeated = deepcopy(terminal)
+    repeated["unmerged_semantic_units"].append(
+        deepcopy(repeated["unmerged_semantic_units"][0])
+    )
+    _rehash_node_compilation(repeated)
+
+    with pytest.raises(
+        SemanticIntegrationError, match="duplicate unmerged semantic unit"
+    ):
+        finalize_v3_view(bundle, compiled, repeated)
 
 
 def test_v3_controlled_partition_sensitivity_preserves_leaf_membership_and_counts() -> None:

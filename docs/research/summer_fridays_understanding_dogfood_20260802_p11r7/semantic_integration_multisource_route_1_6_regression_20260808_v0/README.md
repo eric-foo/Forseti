@@ -91,12 +91,15 @@ Model-provider API calls: zero.
 The read-only `phase_a_evidence_packet_v1` projector was run against the
 frozen bundle, batch compilation, and view. Selecting the real broad adverse-
 reaction proposition `prop_00a4d685489ce45b4c1c` returned all 43 distinct
-linked evidence items: 37 support and six counter, across 30 containers and
-three supporting source roles (`community_post`, `retailer_review`, and
-`audience_comment`). It also retained five axis-relevant unmerged candidates.
+linked evidence items: 37 support and six counter, across 30 containers — the
+support-plus-counter container union, not the 26 support containers counted
+below — and three supporting source roles (`community_post`, `retailer_review`,
+and `audience_comment`). Every linked semantic unit retains its posture,
+uncertainty, and polarity. It also retained all five corpus unmerged meanings
+as axis-relevant candidates; this slice has no no-axis unmerged meaning.
 The packet reports `truncated: false`, makes zero model-provider API calls, and
 has packet hash
-`3d6b914cfb6141e8049edfbf26ca879faf8f7f5645599fce06fac9b6913cf97d`.
+`66240baff9af5b4ffb2cccf921e29e2e47a34a3ea50333667285519d8edbf24f`.
 
 An axis-wide check for `reaction_and_breakout` selected all 17 propositions
 and returned a 44-item de-duplicated union rather than adding the same source

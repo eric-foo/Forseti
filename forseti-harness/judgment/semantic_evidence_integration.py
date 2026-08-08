@@ -1952,6 +1952,11 @@ def finalize_v3_view(
             raise SemanticIntegrationError(
                 "unmerged semantic unit is not part of this batch compilation"
             )
+        # The set denominator below collapses a repeated row, so a duplicate
+        # would still account for every semantic unit while the view carried
+        # the same unmerged candidate twice.
+        if ref in unmerged_units:
+            raise SemanticIntegrationError("duplicate unmerged semantic unit")
         unmerged_units.add(ref)
     if used_units & unmerged_units:
         raise SemanticIntegrationError(
@@ -2214,6 +2219,7 @@ def project_evidence_packet(
                         "semantic_statements": [
                             semantic_index[ref]["statement"] for ref in refs
                         ],
+                        "semantic_units": [semantic_index[ref] for ref in refs],
                     }
                 )
         evidence["relations"] = sorted(observed_relations)
@@ -2244,6 +2250,7 @@ def project_evidence_packet(
         for ref in refs
     }
     unmerged_rows: list[dict[str, Any]] = []
+    unscoped_unmerged_rows: list[dict[str, Any]] = []
     seen_unmerged: set[str] = set()
     for row in view.get("unmerged_semantic_units", []):
         if not isinstance(row, Mapping) or not _nonempty(row.get("semantic_unit_ref")):
@@ -2255,16 +2262,20 @@ def project_evidence_packet(
             )
         seen_unmerged.add(ref)
         semantic = semantic_index[ref]
-        if set(semantic.get("axis_ids", [])) & relevant_axes:
-            evidence = evidence_index[semantic["evidence_id"]]
-            unmerged_rows.append(
-                {
-                    "semantic_unit_ref": ref,
-                    "reason": row.get("reason"),
-                    "semantic_unit": semantic,
-                    "evidence": evidence,
-                }
-            )
+        packet_row = {
+            "semantic_unit_ref": ref,
+            "reason": row.get("reason"),
+            "semantic_unit": semantic,
+            "evidence": evidence_index[semantic["evidence_id"]],
+        }
+        semantic_axes = set(semantic.get("axis_ids", []))
+        if semantic_axes & relevant_axes:
+            unmerged_rows.append(packet_row)
+        elif not semantic_axes:
+            # A legitimate unmerged meaning may carry only an emerging label
+            # and no accepted axis. Keep it visible in every packet rather
+            # than letting every axis filter hide it.
+            unscoped_unmerged_rows.append(packet_row)
 
     disposition_index = {
         row["evidence_id"]: row
@@ -2312,7 +2323,14 @@ def project_evidence_packet(
             "independent_support_origin_count": len(independent_origins),
             "support_source_role_count": len(source_roles),
             "support_source_roles": sorted(source_roles),
+            "relation_count_semantics": (
+                "distinct evidence union per relation; relation unions can overlap"
+            ),
+            "corpus_unmerged_semantic_unit_count": len(
+                view.get("unmerged_semantic_units", [])
+            ),
             "unmerged_axis_candidate_count": len(unmerged_rows),
+            "unscoped_unmerged_candidate_count": len(unscoped_unmerged_rows),
             "unresolved_axis_candidate_count": len(unresolved_rows),
             "truncated": False,
         },
@@ -2320,6 +2338,7 @@ def project_evidence_packet(
         "evidence": evidence_rows,
         "containers": [container_index[key] for key in sorted(container_ids)],
         "unmerged_axis_candidates": unmerged_rows,
+        "unscoped_unmerged_candidates": unscoped_unmerged_rows,
         "unresolved_axis_candidates": unresolved_rows,
         "output_boundary": [
             "evidence structuring only",
