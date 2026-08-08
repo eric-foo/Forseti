@@ -86,6 +86,30 @@ Hashes:
 
 Model-provider API calls: zero.
 
+## Observed evidence-packet projection
+
+The read-only `phase_a_evidence_packet_v1` projector was run against the
+frozen bundle, batch compilation, and view. Selecting the real broad adverse-
+reaction proposition `prop_00a4d685489ce45b4c1c` returned all 43 distinct
+linked evidence items: 37 support and six counter, across 30 containers and
+three supporting source roles (`community_post`, `retailer_review`, and
+`audience_comment`). It also retained five axis-relevant unmerged candidates.
+The packet reports `truncated: false`, makes zero model-provider API calls, and
+has packet hash
+`3d6b914cfb6141e8049edfbf26ca879faf8f7f5645599fce06fac9b6913cf97d`.
+
+An axis-wide check for `reaction_and_breakout` selected all 17 propositions
+and returned a 44-item de-duplicated union rather than adding the same source
+again for every proposition. All 44 items participate in more than one
+relation across those propositions, so the packet explicitly reports 44 mixed-
+relation evidence items. This axis-wide output was a temporary verification
+artifact; the proposition packet below is the durable dogfood.
+
+The packet is evidence retrieval, not the answer: it contains the bounded
+proposition as a label and preserves support, counter, adjacent, unmerged, and
+unresolved lanes, but it emits no conclusion, recommendation, importance
+ranking, prevalence estimate, or causal judgment.
+
 ## What truthful stacking added
 
 The broad adverse-experience proposition retains the historical 38 supporting
@@ -134,6 +158,8 @@ agent judgment.
 - `reconciliation_prompts_1.json` and `reconciliation_prompts_2.json` — exact
   rendered prompts with byte counts.
 - `view.json` — compiler-authored view v2.
+- `evidence_packet_prop_00a4d685489ce45b4c1c.json` — complete read-only
+  support/counter stack for one real multi-source proposition.
 - `partition_sensitivity.json` — bounded alternate-partition comparison.
 
 ## Non-claims
