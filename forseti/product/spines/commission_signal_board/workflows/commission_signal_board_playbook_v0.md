@@ -815,8 +815,9 @@ axes (including carried blockers), and separately computed
 evidence-item/container/origin/role/engagement counts;
 at `1.7.0`, exhaustive semantic processing is limited to Reddit/community
 conversation text and retailer review text, while other evidence routes remain
-verified structured references, and every source-bearing row from the bounded
-Phase 1, Phase 2, and focused-search SERP surfaces has one explicit
+verified structured references; terminal-return-selected, hash-pinned Phase 1
+and Phase 2 queue-state receipts generate the successful job-to-packet inventory, focused-search records
+own their exact packet sets, and every source-bearing row from those surfaces has one explicit
 row-identified semantic route, duplicate, or exclusion before seal (never a
 bulk/default route);
 verification-request triggers and
@@ -1301,6 +1302,10 @@ understanding_acquire_seal_route:
         or excluded disposition; a bulk/default route is invalid. Routed rows
         bind to native capture or locator recovery. Retailer source
         files are raw-byte pinned and review membership is structurally checked.
+        A same-day correction makes terminal-return-selected, hash-pinned SERP queue states the
+        owner of Phase 1/2 packet membership and rejects a surface map that
+        drops or adds a successful packet; focused-search records reconcile
+        their packet sets exactly.
       affected_gate: >
         Acquisition seal: route 1.7.0 requires a complete embedded
         phase_a_serp_source_frontier_v1 and exact customer-language source

@@ -18,6 +18,7 @@ if __package__ in {None, ""}:
 from harness_utils import hash_file, sha256_bytes  # noqa: E402
 from judgment.phase_a_semantic_run import (  # noqa: E402
     SemanticIntegrationError,
+    derive_serp_job_packet_inventory,
     eligible_serp_source_rows,
     load_google_serp_rows,
 )
@@ -2031,6 +2032,8 @@ def _validate_serp_source_frontier(
     observed_phase_jobs = {phase: set() for phase in phase_job_ids}
     admitted_artifacts: set[str] = set()
     artifact_jobs: dict[str, set[str]] = {}
+    surface_artifacts_by_job: dict[str, list[set[str]]] = {}
+    adjustment_jobs: set[str] = set()
     for row in surfaces:
         if not isinstance(row, dict):
             findings.append("invalid_serp_source_frontier_surface")
@@ -2048,6 +2051,8 @@ def _validate_serp_source_frontier(
         elif phase != "phase_a_adjustment":
             findings.append("invalid_serp_source_frontier_phase")
             complete = False
+        elif isinstance(job_id, str):
+            adjustment_jobs.add(job_id)
         if (
             not isinstance(artifact_ids, list)
             or not artifact_ids
@@ -2061,6 +2066,7 @@ def _validate_serp_source_frontier(
             continue
         admitted_artifacts.update(artifact_ids)
         if isinstance(job_id, str):
+            surface_artifacts_by_job.setdefault(job_id, []).append(set(artifact_ids))
             for artifact_id in artifact_ids:
                 if isinstance(artifact_id, str):
                     artifact_jobs.setdefault(artifact_id, set()).add(job_id)
@@ -2068,15 +2074,89 @@ def _validate_serp_source_frontier(
         if observed_phase_jobs[phase] != expected:
             findings.append(f"incomplete_serp_source_frontier_jobs:{phase}")
             complete = False
-    focused_artifacts = {
-        artifact_id
-        for record in focused_searches.values()
-        for artifact_id in record.get("serp_packet_artifact_ids", [])
-        if isinstance(artifact_id, str)
-    }
-    if not focused_artifacts.issubset(admitted_artifacts):
-        findings.append("missing_focused_search_serp_source_surfaces")
+    focused_job_ids: set[str] = set()
+    for record in focused_searches.values():
+        job_id = record.get("job_id")
+        packet_ids = record.get("serp_packet_artifact_ids")
+        if not isinstance(job_id, str) or not isinstance(packet_ids, list):
+            continue
+        focused_job_ids.add(job_id)
+        expected_packet_ids = {
+            artifact_id for artifact_id in packet_ids if isinstance(artifact_id, str)
+        }
+        matches = surface_artifacts_by_job.get(job_id, [])
+        if len(matches) != 1 or matches[0] != expected_packet_ids:
+            findings.append(f"focused_search_serp_source_surface_mismatch:{job_id}")
+            complete = False
+    if not adjustment_jobs.issubset(focused_job_ids):
+        findings.append("orphan_phase_a_adjustment_serp_source_surface")
         complete = False
+
+    producer_states = value.get("producer_queue_states")
+    declared_inventory = value.get("producer_job_packet_inventory")
+    inventory_sha256 = value.get("producer_job_packet_inventory_sha256")
+    if not isinstance(producer_states, list) or not isinstance(declared_inventory, list):
+        findings.append("missing_serp_producer_job_packet_inventory")
+        complete = False
+    else:
+        observed_bindings: list[tuple[str, str, Path, Mapping[str, str]]] = []
+        seen_receipts: set[str] = set()
+        for row in producer_states:
+            if not isinstance(row, Mapping):
+                findings.append("invalid_serp_producer_queue_state")
+                complete = False
+                continue
+            phase = row.get("phase")
+            artifact_id = row.get("artifact_id")
+            if (
+                phase not in {"serp_phase1", "serp_phase2"}
+                or not isinstance(artifact_id, str)
+                or artifact_id in seen_receipts
+                or artifact_id not in artifacts
+                or row.get("raw_sha256") != hash_file(artifacts[artifact_id])
+            ):
+                findings.append(f"invalid_serp_producer_queue_state:{artifact_id}")
+                complete = False
+                continue
+            seen_receipts.add(artifact_id)
+            aliases = row.get("job_id_aliases", {})
+            if not isinstance(aliases, Mapping) or any(
+                not isinstance(key, str)
+                or not key.strip()
+                or not isinstance(target, str)
+                or not target.strip()
+                for key, target in aliases.items()
+            ):
+                findings.append(f"invalid_serp_producer_job_aliases:{artifact_id}")
+                complete = False
+                continue
+            observed_bindings.append(
+                (phase, artifact_id, artifacts[artifact_id], aliases)
+            )
+        try:
+            observed_inventory = derive_serp_job_packet_inventory(
+                search_surfaces=surfaces,
+                packet_artifact_paths=artifacts,
+                queue_state_bindings=observed_bindings,
+            )
+        except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:
+            findings.append(
+                f"invalid_serp_producer_job_packet_inventory:{type(exc).__name__}"
+            )
+            complete = False
+        else:
+            canonical = json.dumps(
+                declared_inventory,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+            if inventory_sha256 != sha256_bytes(canonical):
+                findings.append("stale_serp_producer_job_packet_inventory_hash")
+                complete = False
+            if observed_inventory != declared_inventory:
+                findings.append("serp_producer_job_packet_inventory_mismatch")
+                complete = False
     eligible: dict[tuple[str, str, int], Mapping[str, Any]] = {}
     for artifact_id in sorted(admitted_artifacts):
         try:

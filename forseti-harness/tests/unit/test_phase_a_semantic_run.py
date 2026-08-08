@@ -10,6 +10,7 @@ import pytest
 from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION,
     audit_phase_a_source,
+    build_serp_source_surface_spec,
     build_retailer_source_manifest,
     census_phase_a_customer_corpus,
     materialize_phase_a_v3,
@@ -559,27 +560,50 @@ def test_serp_frontier_inventory_enumerates_sources_without_google_prompts(
             ],
         },
     )
-    spec_path = tmp_path / "surface-spec.json"
+    queue_path = tmp_path / "queue-state.json"
     _write_json(
-        spec_path,
+        queue_path,
         {
-            "schema_version": "phase_a_serp_source_surface_spec_v1",
-            "search_surfaces": [
+            "schema_version": "google_serp_queue_state_v1",
+            "status": "complete",
+            "jobs": [{"job_id": "p1"}],
+            "completed_job_ids": ["p1"],
+            "failed_job_ids": [],
+            "attempt_history": [
                 {
-                    "phase": "serp_phase1",
                     "job_id": "p1",
-                    "artifact_ids": ["serp-1"],
-                }
-            ],
-            "source_artifacts": [
-                {
-                    "artifact_id": "serp-1",
-                    "locator": str(record_path),
-                    "raw_sha256": _raw_sha(record_path),
+                    "outcome": "success",
+                    "packet_locator": str(record_path),
                 }
             ],
         },
     )
+    map_path = tmp_path / "surface-map.json"
+    _write_json(
+        map_path,
+        {
+            "schema_version": "phase_a_serp_source_surface_map_v1",
+            "search_surfaces": [
+                {
+                    "phase": "serp_phase1",
+                    "job_id": "p1",
+                    "artifacts": [
+                        {"artifact_id": "serp-1", "locator": str(record_path)}
+                    ],
+                }
+            ],
+            "producer_queue_states": [
+                {
+                    "phase": "serp_phase1",
+                    "artifact_id": "queue-1",
+                    "locator": str(queue_path),
+                }
+            ],
+        },
+    )
+    spec = build_serp_source_surface_spec(surface_map_path=map_path)
+    spec_path = tmp_path / "surface-spec.json"
+    _write_json(spec_path, spec)
 
     inventory = prepare_serp_source_frontier_inventory(surface_spec_path=spec_path)
 
@@ -615,6 +639,77 @@ def test_serp_frontier_inventory_enumerates_sources_without_google_prompts(
         "excluded": 0,
     }
     assert len(result["locator_recovery_targets"]) == 1
+    assert result["frontier"]["producer_job_packet_inventory"] == [
+        {
+            "phase": "serp_phase1",
+            "job_id": "p1",
+            "producer_job_id": "p1",
+            "producer_queue_state_artifact_id": "queue-1",
+            "artifact_ids": ["serp-1"],
+            "successful_packet_count": 1,
+        }
+    ]
+
+
+def test_serp_surface_spec_rejects_a_successful_packet_omitted_from_the_map(
+    tmp_path: Path,
+) -> None:
+    first = tmp_path / "first.json"
+    second = tmp_path / "second.json"
+    for path, title in ((first, "First"), (second, "Second")):
+        _write_json(
+            path,
+            {
+                "content_record_version": "google_serp_content_v3",
+                "rows": [
+                    {
+                        "module_type": "organic",
+                        "order_in_module": 1,
+                        "title": title,
+                        "displayed_source": "Example",
+                    }
+                ],
+            },
+        )
+    queue_path = tmp_path / "queue-state.json"
+    _write_json(
+        queue_path,
+        {
+            "schema_version": "google_serp_queue_state_v1",
+            "status": "complete",
+            "jobs": [{"job_id": "p1"}],
+            "completed_job_ids": ["p1"],
+            "failed_job_ids": [],
+            "attempt_history": [
+                {"job_id": "p1", "outcome": "success", "packet_locator": str(first)},
+                {"job_id": "p1", "outcome": "success", "packet_locator": str(second)},
+            ],
+        },
+    )
+    map_path = tmp_path / "surface-map.json"
+    _write_json(
+        map_path,
+        {
+            "schema_version": "phase_a_serp_source_surface_map_v1",
+            "search_surfaces": [
+                {
+                    "phase": "serp_phase1",
+                    "job_id": "p1",
+                    "artifacts": [{"artifact_id": "serp-1", "locator": str(first)}],
+                }
+            ],
+            "producer_queue_states": [
+                {
+                    "phase": "serp_phase1",
+                    "artifact_id": "queue-1",
+                    "locator": str(queue_path),
+                }
+            ],
+        },
+    )
+
+    with pytest.raises(SemanticIntegrationError, match="does not exactly match"):
+        build_serp_source_surface_spec(surface_map_path=map_path)
 
 
 def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(

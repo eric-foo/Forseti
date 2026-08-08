@@ -24,6 +24,7 @@ AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
 CORPUS_CENSUS_VERSION = "phase_a_customer_corpus_census_v1"
 RETAILER_SOURCE_MANIFEST_VERSION = "retailer_review_source_manifest_v1"
+GOOGLE_SERP_QUEUE_STATE_VERSION = "google_serp_queue_state_v1"
 ROUTE_DISPOSITIONS = {
     "semantic_source",
     "structured_reference",
@@ -227,6 +228,163 @@ def load_google_serp_rows(path: Path) -> list[Mapping[str, Any]]:
     return rows
 
 
+def google_serp_queue_job_packets(queue_state_path: Path) -> dict[str, list[Path]]:
+    """Return every successful packet preserved in one SERP queue receipt."""
+    state = _load_json_object(queue_state_path, label="Google SERP queue state")
+    if state.get("schema_version") != GOOGLE_SERP_QUEUE_STATE_VERSION:
+        raise SemanticIntegrationError("Google SERP queue state has wrong version")
+    jobs = state.get("jobs")
+    completed = state.get("completed_job_ids")
+    failed = state.get("failed_job_ids")
+    attempts = state.get("attempt_history")
+    if (
+        not isinstance(jobs, list)
+        or not jobs
+        or not isinstance(completed, list)
+        or not isinstance(failed, list)
+        or not isinstance(attempts, list)
+    ):
+        raise SemanticIntegrationError("Google SERP queue state has invalid accounting")
+    job_ids: list[str] = []
+    for row in jobs:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("job_id")):
+            raise SemanticIntegrationError("Google SERP queue state has an invalid job")
+        job_ids.append(row["job_id"])
+    if len(job_ids) != len(set(job_ids)):
+        raise SemanticIntegrationError("Google SERP queue state has duplicate jobs")
+    if (
+        any(not _nonempty(job_id) for job_id in completed)
+        or len(completed) != len(set(completed))
+        or not set(completed).issubset(job_ids)
+        or any(not _nonempty(job_id) or job_id not in job_ids for job_id in failed)
+        or set(completed).intersection(failed)
+    ):
+        raise SemanticIntegrationError(
+            "Google SERP queue state has inconsistent terminal job accounting"
+        )
+    packet_paths: dict[str, list[Path]] = {job_id: [] for job_id in completed}
+    for attempt in attempts:
+        if not isinstance(attempt, Mapping):
+            raise SemanticIntegrationError("Google SERP queue state has an invalid attempt")
+        if attempt.get("outcome") != "success":
+            continue
+        job_id = attempt.get("job_id")
+        locator = attempt.get("packet_locator")
+        if job_id not in packet_paths or not _nonempty(locator):
+            raise SemanticIntegrationError(
+                "successful Google SERP attempt lacks a known job or packet locator"
+            )
+        raw = Path(locator)
+        packet = raw if raw.is_absolute() else queue_state_path.parent / raw
+        packet = packet.resolve(strict=True)
+        manifest = (packet / "manifest.json").resolve(strict=True) if packet.is_dir() else packet
+        # A successful packet is source-bearing only when its manifest remains
+        # readable and owns exactly one pinned Google SERP v3 record.
+        load_google_serp_rows(manifest)
+        if manifest in packet_paths[job_id]:
+            raise SemanticIntegrationError(
+                f"Google SERP queue state repeats a successful packet: {job_id}"
+            )
+        packet_paths[job_id].append(manifest)
+    missing = sorted(job_id for job_id, paths in packet_paths.items() if not paths)
+    if missing:
+        raise SemanticIntegrationError(
+            f"completed Google SERP jobs lack successful packets: {missing}"
+        )
+    return {job_id: sorted(paths, key=str) for job_id, paths in sorted(packet_paths.items())}
+
+
+def derive_serp_job_packet_inventory(
+    *,
+    search_surfaces: Sequence[Mapping[str, Any]],
+    packet_artifact_paths: Mapping[str, Path],
+    queue_state_bindings: Sequence[tuple[str, str, Path, Mapping[str, str]]],
+) -> list[dict[str, Any]]:
+    """Derive and exactly reconcile the producer-owned Phase 1/2 packet set."""
+    surface_index: dict[tuple[str, str], Mapping[str, Any]] = {}
+    for surface in search_surfaces:
+        if not isinstance(surface, Mapping):
+            raise SemanticIntegrationError("SERP source surface is invalid")
+        phase = surface.get("phase")
+        job_id = surface.get("job_id")
+        artifact_ids = surface.get("artifact_ids")
+        if (
+            phase not in {"serp_phase1", "serp_phase2", "phase_a_adjustment"}
+            or not _nonempty(job_id)
+            or not isinstance(artifact_ids, list)
+            or not artifact_ids
+            or any(not _nonempty(artifact_id) for artifact_id in artifact_ids)
+            or len(artifact_ids) != len(set(artifact_ids))
+        ):
+            raise SemanticIntegrationError("SERP source surface is incomplete")
+        key = (phase, job_id)
+        if key in surface_index:
+            raise SemanticIntegrationError("SERP source surface repeats a phase job")
+        surface_index[key] = surface
+
+    inventory: list[dict[str, Any]] = []
+    producer_keys: set[tuple[str, str]] = set()
+    receipt_ids: set[str] = set()
+    for phase, receipt_id, state_path, job_id_aliases in queue_state_bindings:
+        if phase not in {"serp_phase1", "serp_phase2"} or not _nonempty(receipt_id):
+            raise SemanticIntegrationError("SERP producer receipt has invalid phase or id")
+        if receipt_id in receipt_ids:
+            raise SemanticIntegrationError("SERP producer receipt id is duplicated")
+        receipt_ids.add(receipt_id)
+        produced = google_serp_queue_job_packets(state_path)
+        if set(job_id_aliases) - set(produced):
+            raise SemanticIntegrationError(
+                "SERP producer recovery aliases name jobs without successful packets"
+            )
+        resolved_job_ids = [job_id_aliases.get(job_id, job_id) for job_id in produced]
+        if len(resolved_job_ids) != len(set(resolved_job_ids)):
+            raise SemanticIntegrationError("SERP producer recovery aliases are not one-to-one")
+        for producer_job_id, produced_paths in produced.items():
+            job_id = job_id_aliases.get(producer_job_id, producer_job_id)
+            key = (phase, job_id)
+            if key in producer_keys:
+                raise SemanticIntegrationError("SERP producer receipts overlap one phase job")
+            producer_keys.add(key)
+            surface = surface_index.get(key)
+            if surface is None:
+                raise SemanticIntegrationError(
+                    f"successful SERP producer job lacks a source surface: {phase}:{job_id}"
+                )
+            artifact_ids = list(surface["artifact_ids"])
+            try:
+                declared_paths = [packet_artifact_paths[artifact_id].resolve() for artifact_id in artifact_ids]
+            except KeyError as exc:
+                raise SemanticIntegrationError(
+                    f"SERP source surface cites an unknown packet artifact: {exc.args[0]}"
+                ) from exc
+            if set(declared_paths) != set(produced_paths) or len(declared_paths) != len(
+                produced_paths
+            ):
+                raise SemanticIntegrationError(
+                    f"SERP source surface does not exactly match producer packets: {phase}:{job_id}"
+                )
+            inventory.append(
+                {
+                    "phase": phase,
+                    "job_id": job_id,
+                    "producer_job_id": producer_job_id,
+                    "producer_queue_state_artifact_id": receipt_id,
+                    "artifact_ids": artifact_ids,
+                    "successful_packet_count": len(artifact_ids),
+                }
+            )
+    expected_keys = {
+        key for key in surface_index if key[0] in {"serp_phase1", "serp_phase2"}
+    }
+    if producer_keys != expected_keys:
+        missing = sorted(expected_keys - producer_keys)
+        extra = sorted(producer_keys - expected_keys)
+        raise SemanticIntegrationError(
+            f"SERP producer receipts and Phase 1/2 surfaces differ; missing={missing}, extra={extra}"
+        )
+    return sorted(inventory, key=lambda row: (row["phase"], row["job_id"]))
+
+
 def eligible_serp_source_rows(
     artifact_id: str, rows: Sequence[Mapping[str, Any]]
 ) -> dict[tuple[str, str, int], Mapping[str, Any]]:
@@ -268,7 +426,14 @@ def prepare_serp_source_frontier_inventory(
         raise SemanticIntegrationError("SERP surface spec has wrong version")
     surfaces = spec.get("search_surfaces")
     artifacts = spec.get("source_artifacts")
-    if not isinstance(surfaces, list) or not isinstance(artifacts, list):
+    producer_receipts = spec.get("producer_queue_states")
+    declared_job_packets = spec.get("producer_job_packet_inventory")
+    if (
+        not isinstance(surfaces, list)
+        or not isinstance(artifacts, list)
+        or not isinstance(producer_receipts, list)
+        or not isinstance(declared_job_packets, list)
+    ):
         raise SemanticIntegrationError("SERP surface spec lacks surfaces or artifacts")
     artifact_index: dict[str, Mapping[str, Any]] = {}
     row_inventory: list[dict[str, Any]] = []
@@ -312,10 +477,49 @@ def prepare_serp_source_frontier_inventory(
         raise SemanticIntegrationError(
             "SERP surfaces and source artifacts do not have exact coverage"
         )
+    queue_state_bindings: list[tuple[str, str, Path, Mapping[str, str]]] = []
+    for row in producer_receipts:
+        if (
+            not isinstance(row, Mapping)
+            or not _nonempty(row.get("phase"))
+            or not _nonempty(row.get("artifact_id"))
+            or not _nonempty(row.get("locator"))
+        ):
+            raise SemanticIntegrationError("SERP surface spec has an invalid producer receipt")
+        path = Path(row["locator"]).resolve(strict=True)
+        if row.get("raw_sha256") != hash_file(path):
+            raise SemanticIntegrationError(
+                f"SERP producer receipt hash mismatch: {row['artifact_id']}"
+            )
+        aliases = row.get("job_id_aliases", {})
+        if not isinstance(aliases, Mapping) or any(
+            not _nonempty(key) or not _nonempty(value) for key, value in aliases.items()
+        ):
+            raise SemanticIntegrationError("SERP producer receipt has invalid job aliases")
+        queue_state_bindings.append((row["phase"], row["artifact_id"], path, aliases))
+    observed_job_packets = derive_serp_job_packet_inventory(
+        search_surfaces=surfaces,
+        packet_artifact_paths={
+            artifact_id: Path(row["locator"]).resolve()
+            for artifact_id, row in artifact_index.items()
+        },
+        queue_state_bindings=queue_state_bindings,
+    )
+    if observed_job_packets != declared_job_packets:
+        raise SemanticIntegrationError("SERP producer job-packet inventory is stale")
+    if spec.get("producer_job_packet_inventory_sha256") != _canonical_hash(
+        declared_job_packets
+    ):
+        raise SemanticIntegrationError("SERP producer job-packet inventory hash is stale")
     result = {
         "schema_version": "phase_a_serp_source_inventory_v1",
         "surface_spec_raw_sha256": hash_file(surface_spec_path),
         "search_surfaces": surfaces,
+        "producer_queue_states": producer_receipts,
+        "producer_job_packet_inventory": declared_job_packets,
+        "producer_job_packet_inventory_sha256": spec.get(
+            "producer_job_packet_inventory_sha256"
+        ),
         "source_artifact_count": len(artifact_index),
         "eligible_row_count": len(row_inventory),
         "row_inventory": row_inventory,
@@ -330,7 +534,7 @@ def prepare_serp_source_frontier_inventory(
 
 
 def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
-    """Hash-pin an operator-declared bounded job-to-packet map."""
+    """Derive a producer-backed, hash-pinned bounded job-to-packet map."""
     source_map = _load_json_object(surface_map_path, label="SERP surface map")
     if source_map.get("schema_version") != "phase_a_serp_source_surface_map_v1":
         raise SemanticIntegrationError("SERP surface map has wrong version")
@@ -338,6 +542,7 @@ def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
     if not isinstance(surfaces, list) or not surfaces:
         raise SemanticIntegrationError("SERP surface map lacks search surfaces")
     artifacts: dict[str, dict[str, Any]] = {}
+    artifact_paths: dict[str, Path] = {}
     rendered_surfaces: list[dict[str, Any]] = []
     for surface in surfaces:
         if (
@@ -369,6 +574,7 @@ def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
                     f"SERP artifact id maps to conflicting files: {artifact_id}"
                 )
             artifacts[artifact_id] = rendered
+            artifact_paths[artifact_id] = path
             artifact_ids.append(artifact_id)
         rendered_surfaces.append(
             {
@@ -377,11 +583,56 @@ def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
                 "artifact_ids": artifact_ids,
             }
         )
+    producer_rows = source_map.get("producer_queue_states")
+    if not isinstance(producer_rows, list) or not producer_rows:
+        raise SemanticIntegrationError("SERP surface map lacks producer queue states")
+    producer_receipts: list[dict[str, Any]] = []
+    queue_state_bindings: list[tuple[str, str, Path, Mapping[str, str]]] = []
+    producer_ids: set[str] = set()
+    for row in producer_rows:
+        if (
+            not isinstance(row, Mapping)
+            or row.get("phase") not in {"serp_phase1", "serp_phase2"}
+            or not _nonempty(row.get("artifact_id"))
+            or not _nonempty(row.get("locator"))
+        ):
+            raise SemanticIntegrationError("SERP surface map has an invalid producer receipt")
+        artifact_id = row["artifact_id"]
+        if artifact_id in producer_ids or artifact_id in artifacts:
+            raise SemanticIntegrationError("SERP producer receipt artifact id is duplicated")
+        producer_ids.add(artifact_id)
+        path = Path(row["locator"]).resolve(strict=True)
+        aliases = row.get("job_id_aliases", {})
+        if not isinstance(aliases, Mapping) or any(
+            not _nonempty(key) or not _nonempty(value) for key, value in aliases.items()
+        ):
+            raise SemanticIntegrationError("SERP producer receipt has invalid job aliases")
+        producer_receipts.append(
+            {
+                "phase": row["phase"],
+                "artifact_id": artifact_id,
+                "locator": str(path),
+                "raw_sha256": hash_file(path),
+                "hash_convention": "sha256_raw_bytes",
+                "job_id_aliases": dict(sorted(aliases.items())),
+            }
+        )
+        queue_state_bindings.append((row["phase"], artifact_id, path, aliases))
+    producer_inventory = derive_serp_job_packet_inventory(
+        search_surfaces=rendered_surfaces,
+        packet_artifact_paths=artifact_paths,
+        queue_state_bindings=queue_state_bindings,
+    )
     result = {
         "schema_version": "phase_a_serp_source_surface_spec_v1",
         "surface_map_raw_sha256": hash_file(surface_map_path),
         "search_surfaces": rendered_surfaces,
         "source_artifacts": sorted(artifacts.values(), key=lambda row: row["artifact_id"]),
+        "producer_queue_states": sorted(
+            producer_receipts, key=lambda row: (row["phase"], row["artifact_id"])
+        ),
+        "producer_job_packet_inventory": producer_inventory,
+        "producer_job_packet_inventory_sha256": _canonical_hash(producer_inventory),
         "model_api_calls": 0,
     }
     result["surface_spec_sha256"] = _canonical_hash(result)
@@ -514,6 +765,13 @@ def materialize_serp_source_frontier_review(
             "review_method": "agent_semantic_judgment",
             "model_api_calls": 0,
             "search_surfaces": inventory["search_surfaces"],
+            "producer_queue_states": inventory["producer_queue_states"],
+            "producer_job_packet_inventory": inventory[
+                "producer_job_packet_inventory"
+            ],
+            "producer_job_packet_inventory_sha256": inventory[
+                "producer_job_packet_inventory_sha256"
+            ],
             "row_classifications": classifications,
         },
         "locator_recovery_targets": sorted(
