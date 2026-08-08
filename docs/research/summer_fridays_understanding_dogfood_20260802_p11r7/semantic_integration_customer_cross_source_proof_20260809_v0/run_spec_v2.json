@@ -1,0 +1,54 @@
+{
+  "schema_version": "phase_a_semantic_integration_run_v2",
+  "run_id": "summer_fridays_customer_cross_source_proof_20260809_v0",
+  "cycle_id": "summer_fridays_understanding_p11r7_20260802",
+  "question_id": "summer_fridays_broad_consumer_brand_understanding",
+  "question": "What does the complete captured Phase A customer evidence report about Summer Fridays Lip Butter Balm hydration and wear?",
+  "corpus_profile": "phase_a_final_acquisition",
+  "corpus_scope": "Run-local product identity authority for a bounded Lip Butter Balm Reddit and retailer proof",
+  "corpus_cutoff": "2026-08-02T23:59:59+08:00",
+  "external_run_root": "C:\\tmp\\forseti-phase-a-customer-cross-source-proof-20260809",
+  "max_prompt_bytes": 150000,
+  "axes": [
+    {
+      "axis_id": "hydration_and_moisture",
+      "label": "Hydration and moisture performance"
+    },
+    {
+      "axis_id": "wear_and_longevity",
+      "label": "Wear time and longevity"
+    }
+  ],
+  "product_bindings": [
+    {
+      "stable_product_id": "summer-fridays-lip-butter-balm",
+      "display_name": "Summer Fridays Lip Butter Balm",
+      "source_product_ids": [
+        "P455936",
+        "B0C42HJRBF",
+        "SUMR-WU110",
+        "SUMR-WU121",
+        "SUMR-WU76",
+        "SUMR-WU93"
+      ],
+      "aliases": [
+        "Lip Butter Balm",
+        "Summer Fridays Lip Butter Balm"
+      ],
+      "evidence_refs": [
+        {
+          "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co3\\retailer_onboarding_lake\\raw\\7a4\\01KYWCQZ9C90M78Z7HTZ8TZRAA\\raw\\02_reviews_non_incentivized_most_helpful_offset_000.json",
+          "sha256": "05e5b315662b191eb5b0caf9c7ea999af2660eae5e8e3d760eb6df65fa627f00"
+        },
+        {
+          "locator": "C:\\tmp\\forseti-summer-fridays-understanding-p11-20260731\\specialists\\co2\\amazon_pdp\\B0C42HJRBF\\raw\\03_content_record.json",
+          "sha256": "4ed2a8a8644e1bcac005957b8a2beebd73f95c269344717075881a101323ee3a"
+        },
+        {
+          "locator": "C:\\tmp\\forseti-sf-review-corpus-completion-20260725-p07-r3\\corpora\\review_corpus_9fb341e5d70379c7ab44c5c6.json",
+          "sha256": "9f3b550002109a92e9e2dd19e694b45d835852037c615b925b64bd3488566425"
+        }
+      ]
+    }
+  ]
+}

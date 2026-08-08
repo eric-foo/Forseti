@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v7
-effective_date: 2026-08-08
+version: v8
+effective_date: 2026-08-09
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v7
+# Semantic Evidence Integration Contract v8
 
 ## Purpose
 
@@ -221,6 +221,33 @@ context registry, and binds a bijective work-unit projection over the exact
 assessable denominator. Every work unit carries one explicit agent-authored
 disposition per assessable evidence row. Historical bundle v3 construction
 remains explicitly reproducible; new full-corpus preparation defaults to v4.
+
+Contract v8 adds `phase_a_semantic_integration_run_v2` and
+`semantic_evidence_integration_method_v4` for run-local product identity and
+cross-source customer-evidence proof. A v2 run binds each stable product ID to
+a human-readable name, source-native product IDs and aliases, and one or more
+hash-pinned authority artifacts. One source-native ID or alias cannot map to
+two stable products in the same run. This is a run-local identity table, not a
+global product registry or a claim that similarly named variants are the same.
+
+Method v4 retains method v3 accounting and reconciliation semantics. It adds
+one product-binding rule: source-pinned stable identity controls which product
+owns an experience; a different product named inside the text is a comparator,
+adjacent subject, or unresolved mention unless the evidence and context
+establish otherwise. Meaning-equivalent customer experience may reconcile
+across community and retailer-review roles when stable product, direction,
+conditions, and uncertainty are compatible. Source roles and origins remain
+separate. Method v4 adds no conclusion, recommendation, prevalence estimate,
+provider API, embeddings service, or campaign-evidence bridge.
+
+`build-product-axis-proof-source` creates a bounded regression source from an
+already materialized full source by selecting the complete captured union for
+one stable product and one or more exact axes. It replaces mapped source IDs
+with the stable run ID, retains source-native context, and rejects lexical
+mentions on pages bound to a different product. Its output is never a
+final-acquisition corpus. Route 1.6 and 1.7 passing-seal requirements remain on
+method v3 until an explicit later route revision adopts method v4; a v4 shadow
+or proof cannot silently satisfy those historical obligations.
 
 `phase_a_evidence_packet_v1` is a read-only projection from one finalized
 `semantic_evidence_integration_view_v2`, its bound v3 bundle, and its bound
@@ -499,6 +526,12 @@ new frontier.
 
 ## Changelog
 
+- `v8` / 2026-08-09 — added a hash-pinned, run-local product identity table,
+  method v4 cross-source customer-evidence semantics, and a deterministic
+  bounded product/axis proof-source projection. Preserved wrong-product
+  mentions as comparator, adjacent, unresolved, or out-of-scope material;
+  retained historical run v1/method v3 reproduction; and made no current-route
+  seal claim, conclusion, campaign bridge, provider call, or global registry.
 - `v7` / 2026-08-08 — added bundle v4 accounting-by-reference, a hash-bound
   context registry and bijective work-unit projection, deterministic three-way
   no-API worker assignment and resumable per-partition status, and slim

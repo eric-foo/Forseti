@@ -9,9 +9,12 @@ import pytest
 
 from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION,
+    RUN_SPEC_VERSION_V2,
+    _product_binding_indexes,
     audit_phase_a_source,
     build_phase_a_reddit_source_v3,
     build_phase_a_retailer_source_v3,
+    build_phase_a_product_axis_proof_source,
     build_serp_source_surface_spec,
     build_retailer_source_manifest,
     census_phase_a_customer_corpus,
@@ -1040,6 +1043,147 @@ def _source_run_spec(tmp_path: Path) -> Path:
     return path
 
 
+def test_v2_product_bindings_are_pinned_run_local_and_unambiguous(
+    tmp_path: Path,
+) -> None:
+    authority = tmp_path / "product-page.json"
+    _write_json(
+        authority,
+        {"product_id": "P455936", "product_name": "Summer Fridays Lip Butter Balm"},
+    )
+    spec = {
+        "schema_version": RUN_SPEC_VERSION_V2,
+        "product_bindings": [
+            {
+                "stable_product_id": "summer-fridays-lip-butter-balm",
+                "display_name": "Summer Fridays Lip Butter Balm",
+                "source_product_ids": ["P455936", "B0C42HJRBF"],
+                "aliases": ["Lip Butter Balm"],
+                "evidence_refs": [
+                    {"locator": str(authority), "sha256": _sha(authority)}
+                ],
+            }
+        ],
+    }
+
+    index, artifacts = _product_binding_indexes(spec, repo_root=tmp_path)
+
+    assert index["p455936"]["stable_product_id"] == (
+        "summer-fridays-lip-butter-balm"
+    )
+    assert index["lip butter balm"]["display_name"] == (
+        "Summer Fridays Lip Butter Balm"
+    )
+    assert len(artifacts) == 1
+    assert artifacts[0]["sha256"] == _raw_sha(authority)
+
+    forged = deepcopy(spec)
+    forged["product_bindings"].append(
+        {
+            "stable_product_id": "another-product",
+            "display_name": "Another product",
+            "source_product_ids": ["P455936"],
+            "aliases": [],
+            "evidence_refs": [
+                {"locator": str(authority), "sha256": _sha(authority)}
+            ],
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError, match="maps to multiple stable products"
+    ):
+        _product_binding_indexes(forged, repo_root=tmp_path)
+
+    stale = deepcopy(spec)
+    stale["product_bindings"][0]["evidence_refs"][0]["sha256"] = "0" * 64
+    with pytest.raises(SemanticIntegrationError, match="hash mismatch"):
+        _product_binding_indexes(stale, repo_root=tmp_path)
+
+
+def test_product_axis_proof_selects_all_mapped_source_ids_and_rejects_mentions(
+    tmp_path: Path,
+) -> None:
+    full_path, full = _source_fragment(tmp_path)
+    second = deepcopy(full["captured_items"][0])
+    second["evidence_id"] = "retailer:r1"
+    second["container_id"] = "review-1"
+    second["source_family"] = "retailer_review"
+    second["source_role"] = "retailer_review"
+    second["product_candidates"] = ["P455936"]
+    second["text"] = "Hydrating for several hours."
+    wrong = deepcopy(second)
+    wrong["evidence_id"] = "retailer:r2"
+    wrong["container_id"] = "review-2"
+    wrong["product_candidates"] = ["dream-lip-oil"]
+    wrong["text"] = "Dream Lip Oil fades quickly; Lip Butter Balm lasts longer."
+    full["containers"].extend(
+        [
+            {
+                **full["containers"][0],
+                "container_id": container_id,
+                "container_type": "retailer_review",
+            }
+            for container_id in ("review-1", "review-2")
+        ]
+    )
+    full["captured_items"].extend([second, wrong])
+    _write_json(full_path, full)
+    authority = tmp_path / "product-authority.json"
+    _write_json(authority, {"product": "Summer Fridays Lip Butter Balm"})
+    spec_path = tmp_path / "proof-spec.json"
+    _write_json(
+        spec_path,
+        {
+            "schema_version": RUN_SPEC_VERSION_V2,
+            "run_id": "proof",
+            "cycle_id": "cycle-1",
+            "question_id": "question-1",
+            "question": "What do captured customers report?",
+            "corpus_profile": "phase_a_final_acquisition",
+            "corpus_scope": "controlled proof source",
+            "corpus_cutoff": "2026-08-08T00:00:00Z",
+            "external_run_root": str(tmp_path / "run"),
+            "max_prompt_bytes": 8_000,
+            "axes": [{"axis_id": "wear", "label": "Wear"}],
+            "product_bindings": [
+                {
+                    "stable_product_id": "summer-fridays-lip-butter-balm",
+                    "display_name": "Summer Fridays Lip Butter Balm",
+                    "source_product_ids": ["sf-lbb", "P455936"],
+                    "aliases": ["Lip Butter Balm"],
+                    "evidence_refs": [
+                        {"locator": str(authority), "sha256": _sha(authority)}
+                    ],
+                }
+            ],
+        },
+    )
+
+    proof = build_phase_a_product_axis_proof_source(
+        full_source_path=full_path,
+        run_spec_path=spec_path,
+        stable_product_id="summer-fridays-lip-butter-balm",
+        axis_ids=["wear"],
+        repo_root=tmp_path,
+    )
+
+    assert {row["evidence_id"] for row in proof["captured_items"]} == {
+        "reddit:t1:c1",
+        "retailer:r1",
+    }
+    assert all(
+        row["product_candidates"] == ["summer-fridays-lip-butter-balm"]
+        for row in proof["captured_items"]
+    )
+    assert all(
+        any("run-local identity binding" in context["text"] for context in row["product_context"])
+        for row in proof["captured_items"]
+    )
+    assert proof["semantic_method_version"] == (
+        "semantic_evidence_integration_method_v4"
+    )
+
+
 def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders(
     tmp_path: Path,
 ) -> None:
@@ -1338,6 +1482,55 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
         for row in source["source_artifacts"]
         if row["artifact_id"] == "retailer_axis_coding"
     ) == "retailer-coding.json"
+
+    binding_authority = tmp_path / "lip-balm-product-page.json"
+    _write_json(
+        binding_authority,
+        {
+            "product_name": "Summer Fridays Lip Butter Balm",
+            "source_product_ids": ["SUMR-WU1", "SUMR-WU14"],
+        },
+    )
+    v2_spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    v2_spec["schema_version"] = RUN_SPEC_VERSION_V2
+    v2_spec["product_bindings"] = [
+        {
+            "stable_product_id": "summer-fridays-lip-butter-balm",
+            "display_name": "Summer Fridays Lip Butter Balm",
+            "source_product_ids": ["SUMR-WU1", "SUMR-WU14"],
+            "aliases": ["Lip Butter Balm"],
+            "evidence_refs": [
+                {
+                    "locator": str(binding_authority),
+                    "sha256": _sha(binding_authority),
+                }
+            ],
+        }
+    ]
+    _write_json(spec_path, v2_spec)
+    stable_source = build_phase_a_retailer_source_v3(
+        run_spec_path=spec_path,
+        retailer_coding_path=coding_path,
+        retailer_source_manifest_path=manifest_path,
+        revolve_completion_receipt_path=completion_path,
+        repo_root=tmp_path,
+    )
+    stable_readable = next(
+        row
+        for row in stable_source["captured_items"]
+        if row["accounting_disposition"] == "assess"
+    )
+    assert stable_readable["product_candidates"] == [
+        "summer-fridays-lip-butter-balm"
+    ]
+    assert all(
+        "Summer Fridays Lip Butter Balm [summer-fridays-lip-butter-balm]"
+        in row["text"]
+        for row in stable_readable["product_context"]
+    )
+    assert stable_source["semantic_method_version"] == (
+        "semantic_evidence_integration_method_v4"
+    )
 
     _revolve_corpus(
         source_b,

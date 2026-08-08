@@ -29,6 +29,7 @@ from judgment.phase_a_semantic_run import (  # noqa: E402
     audit_phase_a_source,
     build_phase_a_reddit_source_v3,
     build_phase_a_retailer_source_v3,
+    build_phase_a_product_axis_proof_source,
     build_serp_source_surface_spec,
     build_retailer_source_manifest,
     census_phase_a_customer_corpus,
@@ -190,6 +191,39 @@ def materialize_v3(
         "captured_item_count": len(materialized["captured_items"]),
         "captured_container_count": len(materialized["containers"]),
         "accounting_disposition_counts": dict(sorted(counts.items())),
+        "source_out": str(source_out),
+        "model_api_calls": 0,
+    }
+
+
+def build_product_axis_proof_run(
+    *,
+    full_source_path: Path,
+    run_spec_path: Path,
+    stable_product_id: str,
+    axis_ids: list[str],
+    repo_root: Path,
+    source_out: Path,
+) -> dict[str, Any]:
+    source = build_phase_a_product_axis_proof_source(
+        full_source_path=full_source_path,
+        run_spec_path=run_spec_path,
+        stable_product_id=stable_product_id,
+        axis_ids=axis_ids,
+        repo_root=repo_root,
+    )
+    _write_json(source_out, source)
+    family_counts: dict[str, int] = {}
+    for row in source["captured_items"]:
+        family = row["source_family"]
+        family_counts[family] = family_counts.get(family, 0) + 1
+    return {
+        "status": "PHASE_A_PRODUCT_AXIS_PROOF_SOURCE_READY",
+        "source_sha256": source["source_sha256"],
+        "stable_product_id": stable_product_id,
+        "axis_ids": sorted(axis_ids),
+        "assessable_evidence_count": len(source["captured_items"]),
+        "source_family_counts": dict(sorted(family_counts.items())),
         "source_out": str(source_out),
         "model_api_calls": 0,
     }
@@ -722,6 +756,14 @@ def _parser() -> argparse.ArgumentParser:
     retailer_source.add_argument("--repo-root", type=Path, required=True)
     retailer_source.add_argument("--source-out", type=Path, required=True)
 
+    product_axis_proof = sub.add_parser("build-product-axis-proof-source")
+    product_axis_proof.add_argument("--full-source", type=Path, required=True)
+    product_axis_proof.add_argument("--run-spec", type=Path, required=True)
+    product_axis_proof.add_argument("--stable-product-id", required=True)
+    product_axis_proof.add_argument("--axis-id", action="append", required=True)
+    product_axis_proof.add_argument("--repo-root", type=Path, required=True)
+    product_axis_proof.add_argument("--source-out", type=Path, required=True)
+
     serp_frontier = sub.add_parser("prepare-serp-source-frontier")
     serp_frontier.add_argument("--surface-spec", type=Path, required=True)
     serp_frontier.add_argument("--inventory-out", type=Path, required=True)
@@ -861,6 +903,15 @@ def main(argv: list[str] | None = None) -> int:
                 retailer_coding_path=args.retailer_coding,
                 retailer_source_manifest_path=args.retailer_source_manifest,
                 revolve_completion_receipt_path=args.revolve_completion_receipt,
+                repo_root=args.repo_root,
+                source_out=args.source_out,
+            )
+        elif args.command == "build-product-axis-proof-source":
+            result = build_product_axis_proof_run(
+                full_source_path=args.full_source,
+                run_spec_path=args.run_spec,
+                stable_product_id=args.stable_product_id,
+                axis_ids=args.axis_id,
                 repo_root=args.repo_root,
                 source_out=args.source_out,
             )

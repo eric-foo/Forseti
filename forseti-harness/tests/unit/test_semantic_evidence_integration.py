@@ -19,6 +19,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
+    METHOD_VERSION_V4,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
@@ -1301,6 +1302,47 @@ def test_v3_prompts_never_exceed_actual_rendered_utf8_ceiling() -> None:
     oversized["captured_items"][0]["text"] = "é" * 8_000
     with pytest.raises(SemanticIntegrationError, match="rendered prompt byte ceiling"):
         build_bundle(oversized, max_prompt_bytes=8_000)
+
+
+def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> None:
+    historical_source = _source_v3(count=2)
+    historical = build_bundle(
+        historical_source,
+        max_prompt_bytes=8_000,
+        target_bundle_version=BUNDLE_VERSION_V3,
+    )
+    assert historical["method_version"] == METHOD_VERSION_V3
+    assert "semantic_method_version" not in historical
+
+    source = deepcopy(historical_source)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["captured_items"][0]["product_candidates"] = [
+        "summer-fridays-lip-butter-balm"
+    ]
+    source["captured_items"][0]["text"] = (
+        "Dream Lip Oil fades quickly, unlike this balm."
+    )
+    source["captured_items"][0]["product_context"][0]["text"] = (
+        "Summer Fridays Lip Butter Balm [summer-fridays-lip-butter-balm]; "
+        "source product id P455936"
+    )
+
+    bundle = build_bundle(source, max_prompt_bytes=8_000)
+    prompt = build_batch_prompts(bundle)[0]["prompt"]
+
+    assert bundle["method_version"] == METHOD_VERSION_V4
+    assert bundle["semantic_method_version"] == METHOD_VERSION_V4
+    assert "wording inside a review or comment may" in prompt
+    assert "mention another product without changing" in prompt
+    assert "summer-fridays-lip-butter-balm" in prompt
+    assert materialize_source_v3(source)["semantic_method_version"] == METHOD_VERSION_V4
+
+    with pytest.raises(SemanticIntegrationError, match="requires bundle v4"):
+        build_bundle(
+            source,
+            max_prompt_bytes=8_000,
+            target_bundle_version=BUNDLE_VERSION_V3,
+        )
 
 
 def test_v4_prepare_runner_writes_deterministic_three_worker_assignment(
