@@ -317,8 +317,12 @@ Current-route operations are:
    denominator, mechanically exclude only exact non-text placeholders, and
    keep repository-owned locators relative to the declared repository root.
    The retailer builder also verifies the completion receipt, retains every
-   captured source file, and de-duplicates repeated native review identities
-   without discarding their product-context edges.
+   captured source file, and de-duplicates a repeated native review identity to
+   one customer evidence item while preserving every source-pinned product
+   listing context carried by its occurrences. A repeated listing occurrence
+   does not become another customer experience. No admitted retailer source
+   format preserves a capture timestamp, so retailer capture envelopes record
+   capture time as unavailable rather than stamping a run-derived date.
 3. `build-serp-source-surface-spec` reads hash-pinned Phase 1 and Phase 2
    queue-state receipts selected by their terminal returns, derives every
    successful job-to-packet edge, and requires the

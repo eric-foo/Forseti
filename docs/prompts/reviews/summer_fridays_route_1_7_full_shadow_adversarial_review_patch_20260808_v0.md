@@ -20,6 +20,14 @@ continued implementation.
 
 ## Forseti Prompt Preflight
 
+```yaml
+output_mode: review-report
+edit_permission: patch-only
+targets: the seven files named under Bound target and why patch authority is included
+branch: codex/sf-route-1-7-full-shadow-run-20260808
+destination: chat return to the OpenAI home adjudicator
+```
+
 Read `AGENTS.md` and `.agents/workflow-overlay/README.md` first. Apply the
 project-owned source hierarchy, review doctrine, delegated-review-patch rules,
 validation gates, and communication style by pointer; do not import policy from

@@ -1560,8 +1560,14 @@ def build_phase_a_reddit_source_v3(
             )
         captured_items.append(post_item)
         ancestor_stack: list[dict[str, str]] = []
+        # Reddit reports top-level comments at depth 0, so the root post occupies
+        # a fixed base frame below every reply depth. Without that offset the
+        # first depth-0 comment pops the root off the stack and every reply in
+        # the thread travels without the post body it answers.
+        root_frames = 0
         if post_disposition == "assess":
             ancestor_stack.append({"source_ref": post_ref, "text": post_text.strip()})
+            root_frames = 1
         for ordinal, comment in enumerate(comments, start=1):
             if not isinstance(comment, Mapping):
                 raise SemanticIntegrationError(f"Reddit comment is malformed: {thread_id}")
@@ -1600,7 +1606,7 @@ def build_phase_a_reddit_source_v3(
                 axis_candidates = set(coded.get("axes", set()))
                 if not axis_candidates:
                     axis_candidates.update(target_axes.get(thread_id, []))
-                effective_depth = min(depth, len(ancestor_stack))
+                effective_depth = min(depth + root_frames, len(ancestor_stack))
                 while len(ancestor_stack) > effective_depth:
                     ancestor_stack.pop()
                 parent_context = list(ancestor_stack)
@@ -1808,6 +1814,7 @@ def build_phase_a_retailer_source_v3(
         ),
     ]
     parsed_by_path: dict[str, tuple[str, dict[str, dict[str, Any]]]] = {}
+    revolve_product_ids_by_path: dict[str, list[str]] = {}
     for locator in sorted(source_paths):
         path = Path(locator)
         artifact_id = "retailer_source_" + hashlib.sha256(
@@ -1817,9 +1824,21 @@ def build_phase_a_retailer_source_v3(
         source_artifacts.append(
             _source_artifact(artifact_id, path, repo_root=repo_root)
         )
-        parsed = _retailer_rows(_load_json_object(path, label=f"retailer source {path}"))
+        source_object = _load_json_object(path, label=f"retailer source {path}")
+        parsed = _retailer_rows(source_object)
         if parsed[0] != source_paths[locator]["parser_family"]:
             raise SemanticIntegrationError(f"retailer parser family changed: {locator}")
+        if parsed[0] == "revolve_recent_v1":
+            source_product_ids = source_object.get("source_product_ids")
+            if (
+                not isinstance(source_product_ids, list)
+                or not source_product_ids
+                or any(not _nonempty(value) for value in source_product_ids)
+            ):
+                raise SemanticIntegrationError(
+                    f"Revolve retailer source lacks product listing ids: {locator}"
+                )
+            revolve_product_ids_by_path[locator] = sorted(set(source_product_ids))
         parsed_by_path[locator] = parsed
 
     coded: dict[tuple[str, str], Mapping[str, Any]] = {}
@@ -1891,11 +1910,9 @@ def build_phase_a_retailer_source_v3(
                 "captured_leaf_count": 1,
                 "source_visible_total": 1,
                 "completeness": "complete",
-                "captured_at": (
-                    "2026-07-25"
-                    if corpus_id == "revolve_native_reviews"
-                    else "capture_time_unavailable_in_preserved_source"
-                ),
+                # No admitted retailer source format preserves a capture
+                # timestamp, so a reusable builder must not stamp one.
+                "captured_at": "capture_time_unavailable_in_preserved_source",
                 "capture_boundary": "one source-native retailer review, deduplicated by corpus and native review id",
             }
         )
@@ -1929,6 +1946,43 @@ def build_phase_a_retailer_source_v3(
         product_id = str(coding_row.get("product_context_id", "")).strip()
         if not product_id:
             raise SemanticIntegrationError(f"retailer review lacks product context: {review_id}")
+        product_ids = [product_id]
+        product_context = [
+            {
+                "context_type": "product_page",
+                "source_artifact_id": artifact_id,
+                "text": product_id,
+                "source_ref": source_ref,
+            }
+        ]
+        if corpus_id == "revolve_native_reviews":
+            product_context = []
+            product_ids = sorted(
+                {
+                    occurrence_product_id
+                    for occurrence_locator, _ in occurrences
+                    for occurrence_product_id in revolve_product_ids_by_path[
+                        occurrence_locator
+                    ]
+                }
+            )
+            if product_id not in product_ids:
+                raise SemanticIntegrationError(
+                    f"coded Revolve product context is absent from source occurrences: {review_id}"
+                )
+            for occurrence_locator, _ in sorted(occurrences, key=lambda pair: pair[0]):
+                occurrence_ref = f"{occurrence_locator}#review:{review_id}"
+                for occurrence_product_id in revolve_product_ids_by_path[
+                    occurrence_locator
+                ]:
+                    product_context.append(
+                        {
+                            "context_type": "product_page",
+                            "source_artifact_id": artifact_by_path[occurrence_locator],
+                            "text": occurrence_product_id,
+                            "source_ref": occurrence_ref,
+                        }
+                    )
         posture, identity_key = _identity_fields(f"retailer:{corpus_id}", raw.get("author"))
         helpful = raw.get("helpful_positive")
         helpful_value = helpful if isinstance(helpful, (int, float)) and not isinstance(helpful, bool) else None
@@ -1943,16 +1997,9 @@ def build_phase_a_retailer_source_v3(
                 "text": text.strip(),
                 "accounting_disposition": "assess",
                 "accounting_reason": "readable source-native retailer review text",
-                "product_candidates": [product_id],
+                "product_candidates": product_ids,
                 "axis_candidates": sorted(axis_ids),
-                "product_context": [
-                    {
-                        "context_type": "product_page",
-                        "source_artifact_id": artifact_id,
-                        "text": product_id,
-                        "source_ref": source_ref,
-                    }
-                ],
+                "product_context": product_context,
                 "independence_posture": posture,
                 "independence_key": identity_key,
                 "engagement": {

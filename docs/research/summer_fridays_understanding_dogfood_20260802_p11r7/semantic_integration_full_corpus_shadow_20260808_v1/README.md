@@ -4,7 +4,7 @@ artifact_role: Summer Fridays Route 1.7 full-corpus semantic shadow execution re
 scope: Complete source materialization, SERP reconciliation, and exact semantic workload compilation; semantic judgment remains blocked on observed no-API execution capacity
 use_when:
   - Auditing the complete Summer Fridays customer-language denominator and Route 1.7 source bindings.
-  - Planning or resuming semantic execution from the exact 716-prompt workload.
+  - Planning semantic execution, after regenerating the source, bundle, and prompt lineage superseded below.
 authority_boundary: evidence_only
 open_next:
   - forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
@@ -33,7 +33,8 @@ The Reddit exclusions are 623 empty bodies plus 555 exact `[deleted]` or
 author body. The retailer exclusions are 498 exact Revolve rating-only
 placeholders carrying their real native review IDs. All 37 Revolve source
 files are verified; 607 source occurrences resolve to 576 unique review IDs,
-with 31 repeated IDs de-duplicated without discarding product-context edges.
+with 31 repeated IDs de-duplicated to one evidence item each while retaining
+every source-pinned product listing context carried by their occurrences.
 Repeated native IDs across other retailer files are likewise de-duplicated by
 source-family identity rather than counted as new customer experiences.
 
@@ -67,9 +68,10 @@ capacity block in the present orchestration, not permission to sample, raise
 the byte ceiling silently, collapse meanings, or call prompt generation a
 completed semantic run.
 
-This receipt therefore proves complete source representation and workload
-compilation. It does **not** claim completed full-corpus semantic judgment,
-Route 1.7 sealing, a market conclusion, or Deliver readiness.
+This receipt therefore proves the complete captured denominator and that the
+workload compiles. It does **not** claim completed full-corpus semantic
+judgment, Route 1.7 sealing, a market conclusion, or Deliver readiness, and the
+compiled 716-prompt set itself is superseded by the corrections recorded below.
 
 ## Implementation corrections proven by the run
 
@@ -89,6 +91,36 @@ Route 1.7 sealing, a market conclusion, or Deliver readiness.
   internally valid v1 combined source and the other was stopped after its
   exact command line was verified. The corrected v2 run completed normally
   and owns the usable lineage below.
+
+## Superseded source, bundle, and prompt lineage
+
+Delegated review found that the Reddit builder dropped the root post from every
+reply's `parent_context`: Reddit reports top-level comments at depth 0, and the
+first such comment popped the root off the ancestor stack. Only 52 of 55,364
+assessable comments retained the root; 28,733 carried no ancestor at all, which
+also makes any honest `personal_agreement` extraction unit unvalidatable. Review
+also removed a hard-coded `2026-07-25` Revolve capture time that no admitted
+retailer source format preserves. Home adjudication rejected documenting the
+delegate-observed product-edge loss as intended behavior: the builder now keeps
+one customer evidence item for a repeated review while carrying every
+source-pinned product listing context from its occurrences. Three assessable
+Revolve reviews now carry two product contexts each.
+
+These corrections are code-level and change what the prompts say, not how much
+was captured. Every denominator above is unchanged and was independently
+reproduced from the pinned bytes: 804 / 3,698 containers, 57,203 / 3,698
+captured leaves, 56,025 / 3,200 assessable, 1,178 / 498 mechanically excluded,
+1,610 / 112 pinned artifacts. After the corrections the root post is carried by
+45,389 of 55,364 assessable comments; the remaining 5,067 empty chains are
+top-level comments whose root post is itself an empty or deleted placeholder.
+
+The corrected builders produce new source hashes — Reddit
+`bfd28c328e8a917c18a8e83f24f9dfd6bd026c21f4db1df639aa5838d18ee82b`, retailer
+`f4c297f5e3379a60e3760512c8058825769f3f9ec6e040681e5c1b93dbcb6c9d` — so the
+combined source, bundle, and 716-prompt set pinned below are superseded and
+must be regenerated before semantic execution resumes. The regenerated prompt
+count and byte total have not been measured. The lineage below remains the
+exact, verified record of the pre-correction run.
 
 ## Owning external lineage
 
