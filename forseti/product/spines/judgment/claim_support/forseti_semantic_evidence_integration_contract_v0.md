@@ -353,10 +353,14 @@ A passing route-1.7.0 seal additionally requires one embedded
 `phase_a_serp_source_frontier_v1` in the evidence-depth ledger. Its Phase 1 and
 Phase 2 job sets and packet sets must exactly match the successful attempts in
 the terminal-return-selected, hash-pinned queue-state receipts. A recovery job
-may name its sealed parent through one explicit one-to-one alias. Every focused-search job must match
-its own recorded packet set exactly, and every source-bearing result row from those bounded
-surfaces must receive exactly one agent-semantic disposition: `routed`,
-`duplicate`, or `excluded`; a bulk/default routing decision is invalid. A
+may name its sealed parent through one explicit one-to-one alias. Every
+focused-search job must match its own recorded packet set exactly, and every
+source-bearing result row from those bounded surfaces must receive exactly one
+agent-semantic disposition: `routed`, `duplicate`, or `excluded`; a bulk/default
+routing decision is invalid. One resolved packet file has one artifact identity
+across all Phase 1, Phase 2, and focused-search surfaces. The same identity may
+visibly serve more than one job, but a second identity over the same file would
+enumerate its rows twice and is invalid. A
 routed row points to an existing native-capture or locator-recovery target with
 the exact source URL (or its deterministic recovery locator) and a discovery
 job recorded by that row's packet; a duplicate points directly to a routed owner; an

@@ -325,6 +325,7 @@ def derive_serp_job_packet_inventory(
     inventory: list[dict[str, Any]] = []
     producer_keys: set[tuple[str, str]] = set()
     receipt_ids: set[str] = set()
+    packet_owners: dict[Path, str] = {}
     for phase, receipt_id, state_path, job_id_aliases in queue_state_bindings:
         if phase not in {"serp_phase1", "serp_phase2"} or not _nonempty(receipt_id):
             raise SemanticIntegrationError("SERP producer receipt has invalid phase or id")
@@ -363,6 +364,16 @@ def derive_serp_job_packet_inventory(
                 raise SemanticIntegrationError(
                     f"SERP source surface does not exactly match producer packets: {phase}:{job_id}"
                 )
+            # One producer packet file carries one artifact identity. Two ids
+            # over one file would enumerate that packet's rows twice and read
+            # as two independent sources rather than one.
+            for artifact_id, packet_path in zip(artifact_ids, declared_paths):
+                owner = packet_owners.setdefault(packet_path, artifact_id)
+                if owner != artifact_id:
+                    raise SemanticIntegrationError(
+                        "SERP producer packet is declared under two artifact "
+                        f"ids: {owner} and {artifact_id}"
+                    )
             inventory.append(
                 {
                     "phase": phase,
@@ -436,6 +447,7 @@ def prepare_serp_source_frontier_inventory(
     ):
         raise SemanticIntegrationError("SERP surface spec lacks surfaces or artifacts")
     artifact_index: dict[str, Mapping[str, Any]] = {}
+    artifact_ids_by_path: dict[Path, str] = {}
     row_inventory: list[dict[str, Any]] = []
     for row in artifacts:
         if not isinstance(row, Mapping) or not _nonempty(row.get("artifact_id")):
@@ -444,6 +456,12 @@ def prepare_serp_source_frontier_inventory(
         if artifact_id in artifact_index:
             raise SemanticIntegrationError("SERP surface spec has duplicate artifact id")
         path = Path(str(row.get("locator", ""))).resolve(strict=True)
+        owner = artifact_ids_by_path.setdefault(path, artifact_id)
+        if owner != artifact_id:
+            raise SemanticIntegrationError(
+                "SERP packet file is declared under two artifact ids: "
+                f"{owner} and {artifact_id}"
+            )
         if row.get("raw_sha256") != hash_file(path):
             raise SemanticIntegrationError(f"SERP surface artifact hash mismatch: {artifact_id}")
         artifact_index[artifact_id] = row
@@ -543,6 +561,7 @@ def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
         raise SemanticIntegrationError("SERP surface map lacks search surfaces")
     artifacts: dict[str, dict[str, Any]] = {}
     artifact_paths: dict[str, Path] = {}
+    artifact_ids_by_path: dict[Path, str] = {}
     rendered_surfaces: list[dict[str, Any]] = []
     for surface in surfaces:
         if (
@@ -563,6 +582,12 @@ def build_serp_source_surface_spec(*, surface_map_path: Path) -> dict[str, Any]:
                 raise SemanticIntegrationError("SERP surface map has invalid artifact")
             artifact_id = row["artifact_id"]
             path = Path(row["locator"]).resolve(strict=True)
+            owner = artifact_ids_by_path.setdefault(path, artifact_id)
+            if owner != artifact_id:
+                raise SemanticIntegrationError(
+                    "SERP packet file is declared under two artifact ids: "
+                    f"{owner} and {artifact_id}"
+                )
             rendered = {
                 "artifact_id": artifact_id,
                 "locator": str(path),

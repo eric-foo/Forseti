@@ -861,7 +861,9 @@ Focused-search records separately own their exact job packet sets. For those
 producer-owned surfaces, a fresh agent reads each source-bearing result row for
 meaning and marks it `routed`, `duplicate`, or `excluded` in one explicit
 row-identified decision; a bulk/default route is invalid. Deterministic code
-checks exact row coverage and target resolution; it does not infer relevance
+checks exact row coverage, one packet-file identity across all surfaces, and
+target resolution. One identity may serve multiple jobs, but two identities
+may not enumerate the same packet twice. It does not infer relevance
 from keywords. Routed rows bind to an existing native-capture or
 locator-recovery target. Google people-also-ask and related-search prompts are
 not external sources. This is a bounded search-surface census, not permission

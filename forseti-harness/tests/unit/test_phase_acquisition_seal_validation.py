@@ -1909,6 +1909,87 @@ def test_route_1_7_serp_frontier_rejects_a_produced_packet_omitted_from_surface(
     )
 
 
+def test_route_1_7_serp_frontier_reports_an_unreadable_producer_receipt(
+    tmp_path: Path,
+) -> None:
+    """A registered receipt whose bytes are gone is a finding, not a traceback
+    that would suppress every remaining seal finding."""
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    (tmp_path / "serp_phase1_queue_state.json").unlink()
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "invalid_serp_producer_queue_state:serp-phase1-queue-state" in findings
+
+
+def test_route_1_7_serp_frontier_rejects_two_ids_for_one_adjustment_packet(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    packet = next(
+        row for row in ledger["artifacts"] if row["artifact_id"] == "serp-packet"
+    )
+    ledger["artifacts"].append(
+        {**packet, "artifact_id": "serp-packet-adjustment-alias"}
+    )
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    search["jobs"].append(
+        {
+            "job_id": "adjustment-extra",
+            "axis_id": "packaging_reliability",
+            "goal": "corroborate_or_segment",
+            "query": "Summer Fridays packaging adjustment",
+            "executed_at": "2026-08-02T00:10:00+00:00",
+            "serp_packet_artifact_ids": ["serp-packet-adjustment-alias"],
+            "selected_target_ids": [],
+        }
+    )
+    search_path.write_text(json.dumps(search, indent=2) + "\n", encoding="utf-8")
+    next(
+        row for row in ledger["artifacts"] if row["artifact_id"] == "phase2-search"
+    )["sha256"] = _artifact_hash(search_path)
+    frontier = ledger["serp_source_frontier"]
+    frontier["search_surfaces"].append(
+        {
+            "phase": "phase_a_adjustment",
+            "job_id": "adjustment-extra",
+            "artifact_ids": ["serp-packet-adjustment-alias"],
+        }
+    )
+    frontier["row_classifications"].append(
+        {
+            "artifact_id": "serp-packet-adjustment-alias",
+            "module_type": "organic",
+            "order_in_module": 1,
+            "disposition": "duplicate",
+            "duplicate_of": {
+                "artifact_id": "serp-packet",
+                "module_type": "organic",
+                "order_in_module": 1,
+            },
+            "reason": "The same captured row was assigned another identity.",
+        }
+    )
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert any(
+        finding.startswith(
+            "serp_source_frontier_packet_file_has_multiple_artifact_ids:"
+        )
+        for finding in findings
+    )
+
+
 def test_route_1_7_serp_frontier_excludes_google_prompts_and_routes_url_recovery(
     tmp_path: Path,
 ) -> None:

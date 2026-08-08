@@ -2092,6 +2092,19 @@ def _validate_serp_source_frontier(
         findings.append("orphan_phase_a_adjustment_serp_source_surface")
         complete = False
 
+    packet_ids_by_path: dict[Path, str] = {}
+    for artifact_id in sorted(admitted_artifacts):
+        if artifact_id not in artifacts:
+            continue
+        packet_path = artifacts[artifact_id].resolve()
+        owner = packet_ids_by_path.setdefault(packet_path, artifact_id)
+        if owner != artifact_id:
+            findings.append(
+                "serp_source_frontier_packet_file_has_multiple_artifact_ids:"
+                f"{owner}:{artifact_id}"
+            )
+            complete = False
+
     producer_states = value.get("producer_queue_states")
     declared_inventory = value.get("producer_job_packet_inventory")
     inventory_sha256 = value.get("producer_job_packet_inventory_sha256")
@@ -2108,12 +2121,22 @@ def _validate_serp_source_frontier(
                 continue
             phase = row.get("phase")
             artifact_id = row.get("artifact_id")
+            # A registered receipt whose bytes are unreadable is a finding, not
+            # a traceback that would suppress every remaining seal finding.
+            try:
+                observed_sha256 = (
+                    hash_file(artifacts[artifact_id])
+                    if isinstance(artifact_id, str) and artifact_id in artifacts
+                    else None
+                )
+            except OSError:
+                observed_sha256 = None
             if (
                 phase not in {"serp_phase1", "serp_phase2"}
                 or not isinstance(artifact_id, str)
                 or artifact_id in seen_receipts
                 or artifact_id not in artifacts
-                or row.get("raw_sha256") != hash_file(artifacts[artifact_id])
+                or row.get("raw_sha256") != observed_sha256
             ):
                 findings.append(f"invalid_serp_producer_queue_state:{artifact_id}")
                 complete = False
