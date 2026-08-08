@@ -132,7 +132,9 @@ def prepare_batches(
             {
                 "schema_version": "semantic_worker_assignment_v1",
                 "bundle_sha256": bundle["bundle_sha256"],
-                "worker_count": 3,
+                # Report the partitioning the bundle actually carries rather
+                # than a constant the manifest cannot fall out of sync with.
+                "worker_count": bundle["semantic_work_unit_projection"]["worker_count"],
                 "assignments": [
                     {
                         "batch_id": row["batch_id"],
@@ -444,12 +446,23 @@ def publish_batch_response_file(
     if len(batch_ids) != 1:
         raise ValueError("staged response must validate exactly one batch")
     target = response_dir / f"{batch_ids[0]}.json"
-    if target.exists():
-        raise ValueError(f"refusing to overwrite existing response: {target}")
     try:
-        os.rename(staged_response_path, target)
+        # Same-directory hard-link creation is atomic and no-replace on both
+        # Windows and POSIX. `os.rename` silently replaces on POSIX.
+        os.link(staged_response_path, target)
     except FileExistsError as exc:
         raise ValueError(f"refusing to overwrite existing response: {target}") from exc
+    except OSError as exc:
+        raise ValueError(
+            f"atomic no-replace response publication failed: {target}"
+        ) from exc
+    try:
+        staged_response_path.unlink()
+    except OSError as exc:
+        raise ValueError(
+            "response final was published but staged-response cleanup failed: "
+            f"{staged_response_path}"
+        ) from exc
     return {
         "status": "SEMANTIC_BATCH_RESPONSE_PUBLISHED",
         **receipt,

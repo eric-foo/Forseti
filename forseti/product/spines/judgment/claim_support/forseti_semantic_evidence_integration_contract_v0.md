@@ -399,10 +399,12 @@ The controller is the active agent task. It assigns immutable batch IDs to at
 most three no-API semantic subagents and treats the response directory as the
 durable resume surface. Repository code prepares, validates, and reports work;
 it does not invoke a model through an API or headless CLI. A worker writes a
-temporary response and publishes it by atomic rename only after completing the
-file. `publish-batch-response` enforces this boundary: it accepts only a
-validated sibling `.json.tmp`, refuses an existing final response, and then
-atomically renames the file. Missing batches may be reassigned when no accepted output exists. No
+temporary response and publishes it only after completing the file.
+`publish-batch-response` enforces this boundary: it accepts only a validated
+sibling `.json.tmp`, atomically creates a no-replace final hard link, and then
+removes the temporary name. An existing final response and a filesystem that
+cannot provide the no-replace link both fail closed. Missing batches may be
+reassigned when no accepted output exists. No
 lease, daemon, mutable queue service, or claim-marker subsystem is required.
 The returned JSON is untrusted until the corresponding validator accepts it.
 Status is derived from validated response files and reports remaining work per

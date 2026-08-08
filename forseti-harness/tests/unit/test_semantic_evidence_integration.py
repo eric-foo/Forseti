@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from copy import deepcopy
 from pathlib import Path
 
@@ -1328,8 +1329,16 @@ def test_v4_prepare_runner_writes_deterministic_three_worker_assignment(
         )
     )
 
+    bundle = json.loads(
+        (tmp_path / "bundle-v4.json").read_text(encoding="utf-8")
+    )
+
     assert result["batch_count"] == 4
     assert assignment["worker_count"] == 3
+    assert (
+        assignment["worker_count"]
+        == bundle["semantic_work_unit_projection"]["worker_count"]
+    )
     assert [row["worker_partition"] for row in assignment["assignments"]] == [
         1,
         2,
@@ -1372,6 +1381,35 @@ def test_v4_publish_validates_sibling_temp_and_refuses_existing_target(
             response_dir=response_dir,
         )
     assert staged.is_file()
+
+
+def test_v4_publish_fails_closed_when_no_replace_link_is_unavailable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    bundle = build_bundle(_source_v3(count=1), max_prompt_bytes=8_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    response_dir = tmp_path / "responses"
+    response_dir.mkdir()
+    staged = response_dir / "batch-0001.json.tmp"
+    staged.write_text(
+        json.dumps(_v3_batch_responses(bundle)[0]), encoding="utf-8"
+    )
+
+    def unavailable(_source: Path, _target: Path) -> None:
+        raise OSError("hard links unavailable")
+
+    monkeypatch.setattr(os, "link", unavailable)
+
+    with pytest.raises(ValueError, match="atomic no-replace"):
+        publish_batch_response_file(
+            bundle_path=bundle_path,
+            staged_response_path=staged,
+            response_dir=response_dir,
+        )
+
+    assert staged.is_file()
+    assert not (response_dir / "batch-0001.json").exists()
 
 
 def test_v4_stores_accounting_by_reference_and_renders_shared_context_once() -> None:
@@ -1443,6 +1481,105 @@ def test_v4_projection_rejects_rehashed_coverage_and_context_forgery() -> None:
     )
     with pytest.raises(SemanticIntegrationError, match="misbound context refs"):
         validate_batch_responses(forged, [], require_all=False)
+
+
+def test_v4_projection_rejects_dangling_or_misplaced_accounting_reference() -> None:
+    bundle = build_bundle(_source_v3(count=2), max_prompt_bytes=8_000)
+
+    forged = deepcopy(bundle)
+    row = next(
+        item
+        for item in forged["corpus_accounting"]
+        if item["accounting_disposition"] == "assess"
+    )
+    row["evidence_unit_ref"] = "reddit:t9:does-not-exist"
+    forged["bundle_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="cites unknown evidence unit"):
+        build_batch_prompts(forged)
+    with pytest.raises(SemanticIntegrationError, match="cites unknown evidence unit"):
+        validate_batch_responses(forged, [], require_all=False)
+
+    duplicated = deepcopy(bundle)
+    rows = [
+        item
+        for item in duplicated["corpus_accounting"]
+        if item["accounting_disposition"] == "assess"
+    ]
+    rows[1]["evidence_unit_ref"] = rows[0]["evidence_unit_ref"]
+    duplicated["bundle_sha256"] = _canonical_hash(
+        {key: value for key, value in duplicated.items() if key != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="not a bijection over admitted"):
+        validate_batch_responses(duplicated, [], require_all=False)
+
+
+def test_v4_accounting_keeps_nonassessable_text_for_inspection() -> None:
+    source = _source_v3(count=1)
+    source["containers"][0]["captured_leaf_count"] = 2
+    blocked = deepcopy(source["captured_items"][0])
+    blocked["evidence_id"] = "reddit:t1:blocked"
+    blocked["source_ref"] = "https://reddit.test/t1/blocked"
+    blocked["accounting_disposition"] = "blocked"
+    blocked["accounting_reason"] = "truncated body cannot be safely assessed"
+    blocked["text"] = "partial body kept visible for inspection"
+    source["captured_items"].append(blocked)
+
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    accounted = {row["evidence_id"]: row for row in bundle["corpus_accounting"]}
+    rematerialized = {
+        row["evidence_id"]: row
+        for row in materialize_source_v3(source)["captured_items"]
+    }
+
+    assert bundle["schema_version"] == BUNDLE_VERSION_V4
+    assert accounted["reddit:t1:blocked"]["text"] == (
+        "partial body kept visible for inspection"
+    )
+    assert "evidence_unit_ref" not in accounted["reddit:t1:blocked"]
+    assert "text" not in accounted["reddit:t1:comment"]
+    assert rematerialized["reddit:t1:blocked"]["text"] == (
+        "partial body kept visible for inspection"
+    )
+
+
+def test_v4_prompts_render_sources_that_omit_optional_v3_fields() -> None:
+    for field, rendered in (
+        ("product_candidates", '"product_candidates": []'),
+        ("axis_candidates", '"axis_candidates": []'),
+        ("conversation_depth", '"conversation_depth": 0'),
+    ):
+        source = _source_v3(count=1)
+        source["captured_items"][0].pop(field)
+
+        bundle = build_bundle(source, max_prompt_bytes=20_000)
+        prompts = build_batch_prompts(bundle)
+
+        assert bundle["schema_version"] == BUNDLE_VERSION_V4
+        assert len(prompts) == 1
+        assert rendered in prompts[0]["prompt"]
+
+
+def test_v4_materialization_shares_one_context_index_across_leaves(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from judgment import semantic_evidence_integration as integration
+
+    original = integration._context_index
+    calls: list[str] = []
+
+    def counted(bundle: dict) -> dict:
+        calls.append(bundle["bundle_sha256"])
+        return original(bundle)
+
+    monkeypatch.setattr(integration, "_context_index", counted)
+    source = _source_v3(count=6)
+
+    materialize_source_v3(source)
+
+    # One shared index for the whole corpus, never one rebuild per leaf.
+    assert len(calls) == 1
 
 
 def test_v4_exact_public_handle_match_across_scoped_origins_gets_one_credit() -> None:

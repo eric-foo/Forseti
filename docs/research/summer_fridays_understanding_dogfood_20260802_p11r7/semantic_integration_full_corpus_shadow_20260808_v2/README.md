@@ -121,9 +121,16 @@ Large artifacts live under
 
 - Full-corpus semantic judgment remains `0 / 513`; the bounded calibration is
   proof of the method, not a substitute for the full run.
-- Source reconstruction and combined source materialization still take minutes
-  because they reread and rehash the large pinned source artifacts. Bundle-v4
-  packing itself completed in seconds; source-layer latency is separate work.
+- Source reconstruction still takes minutes because it rereads and rehashes
+  the large pinned acquisition artifacts. The delegated patch removed a
+  separate quadratic context-index rebuild: rematerializing the corrected
+  157 MB combined source fell from a 388.4-second upper-bound baseline measured
+  with a concurrent verifier to 4.3 seconds measured alone, while preserving
+  source SHA-256
+  `156cb1659e418f8ba2e7e4534cceeacac880f2f0e2efe3f7ccea2f6933bad252`.
+  Bundle-v4 packing also
+  completes in seconds; remaining source-reconstruction latency is separate
+  work.
 - Terminal reconciliation at full scale remains unproven. The single-terminal-
   batch gate and 150,000-byte ceiling remain unchanged and fail closed.
 - Exact normalized public-handle matches can conservatively collapse cross-

@@ -740,12 +740,43 @@ def _validate_v4_projection(bundle: Mapping[str, Any]) -> None:
         raise SemanticIntegrationError(
             "v4 work-unit projection fails exact evidence coverage"
         )
+    # Accounting is stored by reference under v4, so a dangling or duplicated
+    # reference would otherwise claim an assessed leaf that no evidence row
+    # backs. Bind the reference set to the admitted denominator exactly.
+    accounting = bundle.get("corpus_accounting")
+    if not isinstance(accounting, list):
+        raise SemanticIntegrationError("v4 bundle lacks corpus accounting")
+    accounted_refs: list[str] = []
+    for row in accounting:
+        if not isinstance(row, Mapping):
+            raise SemanticIntegrationError("v4 accounting row must be an object")
+        reference = row.get("evidence_unit_ref")
+        if row.get("accounting_disposition") == "assess":
+            if reference not in evidence_index:
+                raise SemanticIntegrationError(
+                    f"v4 accounting row {row.get('evidence_id')} cites unknown evidence unit"
+                )
+            accounted_refs.append(reference)
+        elif reference is not None:
+            raise SemanticIntegrationError(
+                f"v4 non-assessable accounting row {row.get('evidence_id')} cites an evidence unit"
+            )
+    if len(accounted_refs) != len(set(accounted_refs)) or sorted(accounted_refs) != admitted_ids:
+        raise SemanticIntegrationError(
+            "v4 accounting references are not a bijection over admitted evidence"
+        )
 
 
 def _expand_v4_unit(
-    bundle: Mapping[str, Any], unit: Mapping[str, Any]
+    bundle: Mapping[str, Any],
+    unit: Mapping[str, Any],
+    *,
+    contexts: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    contexts = _context_index(bundle)
+    # Callers that expand many units pass one prebuilt index; rebuilding it per
+    # unit made full-corpus materialization quadratic in the registry size.
+    if contexts is None:
+        contexts = _context_index(bundle)
     expanded = dict(unit)
     product_refs = expanded.pop("product_context_refs", [])
     parent_refs = expanded.pop("parent_context_refs", [])
@@ -788,14 +819,27 @@ def _accounting_by_reference(
         }
         if item["accounting_disposition"] == "assess":
             row["evidence_unit_ref"] = item["evidence_id"]
+        elif _nonempty(item.get("text")):
+            # A non-assessable row has no evidence unit to carry its text, so
+            # keeping it here preserves the inspection text v3 retained.
+            row["text"] = item["text"]
         rows.append(row)
     return rows
 
 
 def _v4_prompt_unit(unit: Mapping[str, Any]) -> dict[str, Any]:
     """Project only meaning-bearing fields into an agent-facing prompt."""
+    # `product_candidates`, `axis_candidates`, and `conversation_depth` are
+    # optional in source v3; use the validator's own defaults instead of
+    # failing on a source the v3 validator already admitted. Field order is
+    # part of the rendered prompt bytes and must stay fixed.
+    optional: dict[str, Any] = {
+        "product_candidates": [],
+        "axis_candidates": [],
+        "conversation_depth": 0,
+    }
     return {
-        field: unit[field]
+        field: unit[field] if field in unit else optional[field]
         for field in (
             "evidence_id",
             "container_id",
@@ -1319,6 +1363,7 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
         _apply_identity_posture=False,
     )
     unit_index = _unit_index(bundle)
+    contexts = _context_index(bundle)
     captured_items: list[dict[str, Any]] = []
     for accounting in bundle["corpus_accounting"]:
         if accounting["accounting_disposition"] == "assess":
@@ -1327,7 +1372,9 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
                 raise SemanticIntegrationError(
                     f"accounting row cites unknown evidence unit: {evidence_id}"
                 )
-            captured_items.append(_expand_v4_unit(bundle, unit_index[evidence_id]))
+            captured_items.append(
+                _expand_v4_unit(bundle, unit_index[evidence_id], contexts=contexts)
+            )
         else:
             captured_items.append(dict(accounting))
     normalized = {
@@ -2877,9 +2924,16 @@ def project_evidence_packet(
 
     evidence_rows: list[dict[str, Any]] = []
     relation_unions: dict[str, set[str]] = {relation: set() for relation in RELATIONS}
+    packet_contexts = (
+        _context_index(bundle)
+        if bundle.get("schema_version") == BUNDLE_VERSION_V4
+        else {}
+    )
     for evidence_id in sorted(links):
         evidence = (
-            _expand_v4_unit(bundle, evidence_index[evidence_id])
+            _expand_v4_unit(
+                bundle, evidence_index[evidence_id], contexts=packet_contexts
+            )
             if bundle.get("schema_version") == BUNDLE_VERSION_V4
             else dict(evidence_index[evidence_id])
         )
