@@ -22,10 +22,28 @@ stale_if:
 
 ## Decision
 
-PENDING at freeze. The predeclaration below is frozen in this commit before
-any sweep, extraction, or scoring. Selection results, the episode table,
-metrics, and the adjudicated decision are appended in a later commit and must
-not modify the predeclaration hunks; only this Decision placeholder changes.
+**RETAIN-as-bound supported.** Across the frozen window, adjudicated
+cross-vendor delegated review-and-patch episodes paid at **10 of 11**
+(pay-rate 0.91 against a 1/3 bar), with **zero all-rejected episodes** and a
+low delegate false-positive burden (3 rejected findings across ~60+
+adjudicated findings). The lane's bound opt-in status is supported by
+aggregated adjudicated evidence, not just the single pr1111 case.
+EXPAND-consideration was **not** flagged under the strict reading: the
+pay-rate condition passed (>= 2/3) but only one primary episode (#1424,
+DRP-01) carries an explicitly labeled blocking/critical accepted finding.
+NARROW-consideration was not flagged.
+
+Two owner-relevant observations fall outside the bar: (1) **11 of 28
+selected PRs are open or unreturned commissions**, and at least two (#1454,
+#1403) merged despite their own "do not merge before the return" text —
+returns systematically trail merges, with at least one adjudication landing
+post-merge (#1452); (2) two PRs (#1391, #1407) assert completed
+adjudications with **no recorded disposition content**, which the
+review-routing shape gate cannot see and which weakens future aggregation.
+
+This record is current as of **2026-08-08 Asia/Singapore**. Results were
+appended after the freeze commit; only this Decision placeholder changed in
+the predeclaration.
 
 ## Bound outcome and admission bar (frozen)
 
@@ -174,3 +192,131 @@ re-adjudicate findings, does not measure review cost, does not compare
 vendors' review quality, does not create or retire any gate, and does not
 change the lane's commission-only activation. Its decision output is owner
 decision input only.
+
+---
+
+# Results (appended post-freeze)
+
+## Selection results
+
+Sweep executed 2026-08-08. Realized window: #1352–#1454 (100 PRs; the
+identical window to the sibling architecture backtest). Arm 1 selected 28
+PRs. Arm 2 selected zero: the last file addition under `docs/review-outputs/`
+on `main` predates the window (PR #1116) — this window's returns are carried
+in PR bodies, consistent with the courier-retirement filing rules. Selected
+set: 1454, 1453, 1452, 1451, 1449, 1447, 1445, 1443, 1436, 1432, 1430,
+1429, 1425, 1424, 1421, 1420, 1419, 1417, 1415, 1407, 1403, 1402, 1396,
+1394, 1391, 1384, 1360, 1357.
+
+**Selection-frame residual realized:** PR #1434 (the AR-01..08 structure
+review, 8/8 findings accepted including one critical) contains a real
+in-window cross-vendor episode but its body never uses the word `delegated`,
+so it escapes both frozen arms. Per S3 the predicate governs: #1434 stays
+out of the primary metric and appears only in the disclosed sensitivity
+recount below.
+
+## Bucket accounting (S4)
+
+28 selected PRs = 12 episode-bearing (13 episode rows) + 5 `NO_EPISODE` +
+11 `OPEN_OR_UNRETURNED`. Reconciles exactly.
+
+- Episode-bearing: 1452, 1451, 1443, 1430, 1425, 1424, 1419 (two distinct
+  targets: the p11r7 decision-frontier pass, `PASS_PATCHED`; and the
+  community-coding semantic pass, `NEEDS_ARCHITECTURE_PASS` then
+  re-derivation with AR-01..04 corrections accepted — the extractor's
+  possible-merge caveat is disclosed; merging them changes the pay-rate from
+  10/11 to 9/10 and no bar outcome), 1417, 1415, 1402, 1396, 1394.
+- `NO_EPISODE`: 1429, 1357, 1420, plus 1391 and 1407 reclassified at
+  scoring — both assert completed adjudications ("delegated review-and-patch
+  return adjudicated"; "Three delegated cross-vendor reviews were
+  commissioned and adjudicated") with zero recorded disposition content, so
+  under the gold-only rule nothing is countable. Disclosed as
+  asserted-content-free adjudications, a survivorship-adjacent gap.
+- `OPEN_OR_UNRETURNED` (11): 1454, 1453, 1449, 1447, 1445, 1436, 1432,
+  1421, 1384, 1360, 1403. Excluded from the pay-rate denominator per the
+  frozen rule. Observed discipline gap: #1454 and #1403 are merged despite
+  body text "Do not merge before that return" / "Keep this PR draft and
+  unmerged until the operator-courier return is adjudicated"; #1452 records
+  an explicitly post-merge adjudication.
+
+## Episode table (dispositions traced to verbatim adjudication quotes)
+
+| Episode | Cross-vendor | Findings | Accepted (+modified) | Rejected | Material pay | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1452 | yes (recorded) | 8 | 5 | 0 (F5/F8 non-material; F2 unresolved) | yes | `NEEDS_ARCHITECTURE_PASS` on F2 |
+| 1443 | yes | 6 | 4 (+2) | 0 | yes | evidence-claim corrections |
+| 1425 | yes (OpenAI author / Anthropic delegate) | >=5 | 4 (+1) | 0 | yes | controller defects, wrong-cause tests |
+| 1424 | yes (Anthropic author / OpenAI delegate) | 6 | 3 (+3) | 0 | yes | DRP-01 blocking; escalation hard stop honored |
+| 1402 | yes (Claude Opus 5 delegate) | 0 | 0 | 0 | no (clean PASS) | zero hunks required |
+| 1396 | yes (Claude Opus 5 delegate) | 5 | 4 | 1 | yes | type-exact/fail-closed runtime fixes |
+| 1394 | yes | 5 | 5 | 0 | yes | runtime binding fixes; named architecture residual |
+| 1419-a | yes | >=2 | 2 | 0 | yes | `PASS_PATCHED`; wear-axis evidence replaced |
+| 1419-b | yes | 4 (+ systemic re-derivation) | 4 | 0 | yes | `NEEDS_ARCHITECTURE_PASS`; 355 rows re-coded |
+| 1417 | yes | 8 | 5 (+2) | 1 (delegate claim rejected as incomplete) | yes | F8 deferred |
+| 1415 | yes ("different-family" = vendor lineage per the overlay's own definition; vocabulary note disclosed) | 7 | 2 (+3) | 1 | yes | F-03 bounded residual |
+| 1451 | unrecorded ("de-correlated" does not establish vendor lineage) | 2 | 2 | 0 | yes | sensitivity bucket only |
+| 1430 | unrecorded | 13 | 10 (+2) | 0 | yes | sensitivity bucket only |
+
+Materiality where unlabeled was scored against the frozen definition; every
+pay entry traces to an accepted closure changing runtime behavior, test
+discrimination, evidence admissibility, validation semantics, a doctrine
+gate, or a claim ceiling.
+
+## Metrics and bar application (S5)
+
+Primary (adjudicated cross-vendor episodes): denominator 11, pay 10,
+**pay-rate 10/11 = 0.91** — far above the 1/3 RETAIN bar. All-rejected
+episodes: 0/11 (bar: <= 1/3). **RETAIN-as-bound supported.**
+
+EXPAND-consideration: pay-rate condition met (>= 2/3), but only #1424
+carries an explicitly labeled blocking/critical accepted finding in the
+primary set — the >= 2 episode condition fails under strict labels. Not
+flagged. (Blocking/critical labeling is sparse in this corpus; several
+accepted findings — the #1451 false-pass paths, the #1419-b systemic
+misattribution — are plausibly critical but unlabeled. Recorded as a
+labeling-practice observation, never upgraded at scoring.)
+
+Sensitivity recounts (disclosed, never govern): including unrecorded-vendor
+episodes (1451, 1430): 12/13. Including the known-missed #1434 (8/8
+accepted, AR-01 critical): 13/14, which would also satisfy the
+EXPAND-consideration episode count — noted only; the frozen predicate
+governs. Counting any accepted finding regardless of materiality: unchanged
+(every paying episode already has a material accepted finding).
+
+Delegate false-positive burden: 3 rejected findings total (1396
+settlement-global uniqueness; 1417 exhaustion-enforcement claim; 1415 F-06
+as completion blocker) across roughly 60+ adjudicated findings.
+
+## Signal results
+
+- S1 freeze-before-execute: freeze commit precedes all sweep/extraction;
+  this commit appends results and the Decision replacement only. PASS.
+- S2 gold-only with spot-check: 3 sampled episodes (1396, 1417, 1402)
+  re-verified verbatim against PR bodies, plus 1424 independently read by
+  the scoring author before extraction — all concordant; no second sample
+  triggered. PASS.
+- S3 mechanical selection: predicate re-runnable; arm-2 emptiness verified
+  against `git log --diff-filter=A` history; self-exclusion held (#1455+
+  out of window). PASS, with the #1434 selection-frame residual realized
+  and disclosed.
+- S4 bucket accounting: 12 + 5 + 11 = 28 reconciles; every episode row
+  carries PR-body or durable-doc pointers. PASS, with 1391/1407
+  reclassification disclosed.
+- S5 strict-bar adjudication: primary bar computed as frozen; sensitivity
+  recounts disclosed and non-governing. PASS.
+
+## Adjudication
+
+The lane's bound opt-in status now rests on aggregated adjudicated evidence:
+10 of 11 cross-vendor episodes returned at least one accepted material
+finding, rejection burden is low, and both `NEEDS_ARCHITECTURE_PASS`
+escalations in the window honored the hard stop rather than forcing patches.
+The aggregation the pr1111 case required before standing routing changes now
+exists, and it points the same direction as pr1111.
+
+The material owner-facing findings of this backtest are operational, not
+doctrinal: the return pipeline lags merges (11 open commissions; two
+merged-despite-hold PRs; one explicitly post-merge adjudication), and
+adjudication records are drifting toward content-free assertions that
+defeat future aggregation. Both are observations for owner triage; this
+record installs nothing.
