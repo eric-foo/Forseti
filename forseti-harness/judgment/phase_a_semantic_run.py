@@ -1361,6 +1361,18 @@ def _identity_fields(prefix: str, value: Any) -> tuple[str, str | None]:
     return "credited", f"{prefix}:{lowered}"
 
 
+def _public_identity_key(value: Any) -> str | None:
+    """Normalize a visible public handle across venues without claiming a person."""
+    if not _nonempty(value):
+        return None
+    lowered = value.strip().casefold()
+    if lowered in {"[deleted]", "[removed]", "unknown"} or lowered.startswith(
+        "unknown_with_reason:"
+    ):
+        return None
+    return f"public_handle:{lowered}"
+
+
 def build_phase_a_reddit_source_v3(
     *, run_spec_path: Path, evidence_ledger_path: Path, repo_root: Path
 ) -> dict[str, Any]:
@@ -1549,6 +1561,9 @@ def build_phase_a_reddit_source_v3(
                     ],
                     "independence_posture": posture,
                     "independence_key": key,
+                    "public_identity_key": _public_identity_key(
+                        post.get("author_state")
+                    ),
                     "engagement": {
                         "raw_score_state": post.get("score_state"),
                         "material_positive": score is not None and score > 1,
@@ -1631,6 +1646,9 @@ def build_phase_a_reddit_source_v3(
                         ],
                         "independence_posture": credited,
                         "independence_key": identity_key,
+                        "public_identity_key": _public_identity_key(
+                            comment.get("author_state")
+                        ),
                         "engagement": {
                             "raw_score_state": comment.get("score_state"),
                             "material_positive": score is not None and score > 1,
@@ -2002,6 +2020,7 @@ def build_phase_a_retailer_source_v3(
                 "product_context": product_context,
                 "independence_posture": posture,
                 "independence_key": identity_key,
+                "public_identity_key": _public_identity_key(raw.get("author")),
                 "engagement": {
                     "raw_positive_helpful_count": helpful,
                     "material_positive": helpful_value is not None and helpful_value > 0,
@@ -2464,7 +2483,15 @@ def run_status(
     batch_responses: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
     """Return honest resumability status without compiling a partial result."""
+    # Verify the bundle even when zero response files exist. Otherwise an
+    # interrupted run could report a workload derived from an unchecked file.
+    validate_batch_responses(bundle, [], require_all=False)
     expected = {row["batch_id"] for row in bundle.get("batches", [])}
+    partition_by_batch = {
+        row["batch_id"]: row.get("worker_partition")
+        for row in bundle.get("batches", [])
+        if isinstance(row, Mapping)
+    }
     valid: set[str] = set()
     invalid: list[dict[str, str]] = []
     duplicates: set[str] = set()
@@ -2480,7 +2507,7 @@ def run_status(
             continue
         valid.update(receipt["validated_batch_ids"])
     complete = valid == expected and not invalid and not duplicates
-    return {
+    result = {
         "schema_version": "phase_a_semantic_run_status_v1",
         "bundle_sha256": bundle.get("bundle_sha256"),
         "expected_batch_count": len(expected),
@@ -2496,6 +2523,36 @@ def run_status(
         ),
         "model_api_calls": 0,
     }
+    partitions = sorted(
+        {
+            value
+            for value in partition_by_batch.values()
+            if isinstance(value, int) and not isinstance(value, bool)
+        }
+    )
+    if partitions:
+        result["worker_partitions"] = [
+            {
+                "worker_partition": partition,
+                "expected_batch_count": len(
+                    [value for value in partition_by_batch.values() if value == partition]
+                ),
+                "valid_batch_count": len(
+                    [
+                        batch_id
+                        for batch_id in valid
+                        if partition_by_batch.get(batch_id) == partition
+                    ]
+                ),
+                "missing_batch_ids": sorted(
+                    batch_id
+                    for batch_id in expected - valid
+                    if partition_by_batch.get(batch_id) == partition
+                ),
+            }
+            for partition in partitions
+        ]
+    return result
 
 
 __all__ = [

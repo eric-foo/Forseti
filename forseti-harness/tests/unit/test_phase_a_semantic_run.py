@@ -359,10 +359,23 @@ def test_status_reports_interrupted_and_bad_work_without_fake_completion(
 
     assert interrupted["missing_batch_ids"] == ["batch-0001"]
     assert interrupted["batch_stage_complete"] is False
+    assert interrupted["worker_partitions"] == [
+        {
+            "worker_partition": 1,
+            "expected_batch_count": 1,
+            "valid_batch_count": 0,
+            "missing_batch_ids": ["batch-0001"],
+        }
+    ]
     assert invalid["invalid_responses"][0]["error"] == (
         "batch response has stale bundle hash"
     )
     assert recovered["batch_stage_complete"] is True
+
+    stale_bundle = deepcopy(bundle)
+    stale_bundle["question"] = "tampered after bundle hashing"
+    with pytest.raises(SemanticIntegrationError, match="stored bundle_sha256"):
+        run_status(bundle=stale_bundle, batch_responses=[])
 
 
 def test_duplicate_route_must_name_a_route_that_owns_evidence(tmp_path: Path) -> None:

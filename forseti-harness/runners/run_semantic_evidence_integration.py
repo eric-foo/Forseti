@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from judgment.semantic_evidence_integration import (  # noqa: E402
+    BUNDLE_VERSION_V4,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
@@ -104,6 +106,7 @@ def _verify_sources(source: dict[str, Any], *, repo_root: Path) -> None:
 def prepare_batches(
     *, source_path: Path, repo_root: Path, bundle_out: Path, prompt_dir: Path,
     max_batch_chars: int, max_prompt_bytes: int | None = None,
+    max_evidence_per_work_unit: int = 120,
 ) -> dict[str, Any]:
     source = _load_object(source_path)
     _verify_sources(source, repo_root=repo_root)
@@ -111,6 +114,7 @@ def prepare_batches(
         source,
         max_batch_chars=max_batch_chars,
         max_prompt_bytes=max_prompt_bytes,
+        max_evidence_per_work_unit=max_evidence_per_work_unit,
     )
     if prompt_dir.exists():
         raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
@@ -121,6 +125,25 @@ def prepare_batches(
         _write_new(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
+        )
+    if bundle.get("schema_version") == BUNDLE_VERSION_V4:
+        _write_json(
+            prompt_dir / "worker_assignments.json",
+            {
+                "schema_version": "semantic_worker_assignment_v1",
+                "bundle_sha256": bundle["bundle_sha256"],
+                # Report the partitioning the bundle actually carries rather
+                # than a constant the manifest cannot fall out of sync with.
+                "worker_count": bundle["semantic_work_unit_projection"]["worker_count"],
+                "assignments": [
+                    {
+                        "batch_id": row["batch_id"],
+                        "worker_partition": row["worker_partition"],
+                        "prompt_file": f"{row['batch_id']}.md",
+                    }
+                    for row in prompts
+                ],
+            },
         )
     return {
         "status": "SEMANTIC_BATCH_JUDGMENT_REQUIRED",
@@ -141,7 +164,10 @@ def prepare_batches(
                     "captured_item_count"
                 ],
             }
-            if bundle.get("schema_version") == "semantic_evidence_bundle_v3"
+            if bundle.get("schema_version") in {
+                "semantic_evidence_bundle_v3",
+                BUNDLE_VERSION_V4,
+            }
             else {}
         ),
     }
@@ -398,6 +424,49 @@ def validate_batch_response_file(
         "status": "SEMANTIC_BATCH_RESPONSE_VALID",
         **receipt,
         "receipt_out": str(receipt_out) if receipt_out is not None else None,
+        "model_api_calls": 0,
+    }
+
+
+def publish_batch_response_file(
+    *,
+    bundle_path: Path,
+    staged_response_path: Path,
+    response_dir: Path,
+) -> dict[str, Any]:
+    """Validate one sibling temp response and atomically publish it once."""
+    response_dir.mkdir(parents=True, exist_ok=True)
+    if staged_response_path.parent.resolve() != response_dir.resolve():
+        raise ValueError("staged response must be a sibling of its final response")
+    if not staged_response_path.name.endswith(".json.tmp"):
+        raise ValueError("staged response must use the .json.tmp suffix")
+    response = _load_object(staged_response_path)
+    receipt = validate_one_batch_response(_load_object(bundle_path), response)
+    batch_ids = receipt["validated_batch_ids"]
+    if len(batch_ids) != 1:
+        raise ValueError("staged response must validate exactly one batch")
+    target = response_dir / f"{batch_ids[0]}.json"
+    try:
+        # Same-directory hard-link creation is atomic and no-replace on both
+        # Windows and POSIX. `os.rename` silently replaces on POSIX.
+        os.link(staged_response_path, target)
+    except FileExistsError as exc:
+        raise ValueError(f"refusing to overwrite existing response: {target}") from exc
+    except OSError as exc:
+        raise ValueError(
+            f"atomic no-replace response publication failed: {target}"
+        ) from exc
+    try:
+        staged_response_path.unlink()
+    except OSError as exc:
+        raise ValueError(
+            "response final was published but staged-response cleanup failed: "
+            f"{staged_response_path}"
+        ) from exc
+    return {
+        "status": "SEMANTIC_BATCH_RESPONSE_PUBLISHED",
+        **receipt,
+        "response_path": str(target),
         "model_api_calls": 0,
     }
 
@@ -684,6 +753,7 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("--prompt-dir", type=Path, required=True)
     prepare.add_argument("--max-batch-chars", type=int, default=80_000)
     prepare.add_argument("--max-prompt-bytes", type=int)
+    prepare.add_argument("--max-evidence-per-work-unit", type=int, default=120)
 
     submit = sub.add_parser("submit-batches")
     submit.add_argument("--bundle", type=Path, required=True)
@@ -694,6 +764,11 @@ def _parser() -> argparse.ArgumentParser:
     validate_batch.add_argument("--bundle", type=Path, required=True)
     validate_batch.add_argument("--response", type=Path, required=True)
     validate_batch.add_argument("--receipt-out", type=Path)
+
+    publish_batch = sub.add_parser("publish-batch-response")
+    publish_batch.add_argument("--bundle", type=Path, required=True)
+    publish_batch.add_argument("--staged-response", type=Path, required=True)
+    publish_batch.add_argument("--response-dir", type=Path, required=True)
 
     reconcile = sub.add_parser("prepare-reconciliation")
     reconcile.add_argument("--bundle", type=Path, required=True)
@@ -826,6 +901,7 @@ def main(argv: list[str] | None = None) -> int:
                 prompt_dir=args.prompt_dir,
                 max_batch_chars=args.max_batch_chars,
                 max_prompt_bytes=args.max_prompt_bytes,
+                max_evidence_per_work_unit=args.max_evidence_per_work_unit,
             )
         elif args.command == "submit-batches":
             result = submit_batches(
@@ -838,6 +914,12 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 response_path=args.response,
                 receipt_out=args.receipt_out,
+            )
+        elif args.command == "publish-batch-response":
+            result = publish_batch_response_file(
+                bundle_path=args.bundle,
+                staged_response_path=args.staged_response,
+                response_dir=args.response_dir,
             )
         elif args.command == "prepare-reconciliation":
             result = prepare_reconciliation(
