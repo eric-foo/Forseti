@@ -33,13 +33,25 @@ pay-rate condition passed (>= 2/3) but only one primary episode (#1424,
 DRP-01) carries an explicitly labeled blocking/critical accepted finding.
 NARROW-consideration was not flagged.
 
-Two owner-relevant observations fall outside the bar: (1) **11 of 28
-selected PRs are open or unreturned commissions**, and at least two (#1454,
-#1403) merged despite their own "do not merge before the return" text —
-returns systematically trail merges, with at least one adjudication landing
-post-merge (#1452); (2) two PRs (#1391, #1407) assert completed
-adjudications with **no recorded disposition content**, which the
-review-routing shape gate cannot see and which weakens future aggregation.
+One owner-relevant observation falls outside the bar: **11 of 28 selected
+PRs are open or unreturned commissions**, and at least two (#1454, #1403)
+merged despite their own "do not merge before the return" text — returns
+systematically trail merges, with at least one adjudication landing
+post-merge (#1452).
+
+**Post-publication correction (same day, before merge).** This record
+initially reported a second observation — that #1391 and #1407 assert
+completed adjudications with no recorded disposition content. That was an
+extraction-scope defect in this backtest, not a defect in the corpus.
+#1391's dispositions are recorded in full in its **commit-message
+trailers** (`review_routing_status: routed -- chat_only_adjudicated:
+accepted F1-F7, modified Unicode identity matching, closed F8 F9 F11 F13,
+deferred F10 F12 F14 with residuals`), exactly where the review-routing
+gate requires them for a code-root change; its extractors read PR bodies
+only. #1391 is reclassified below as a recorded episode. #1407 is
+unmerged, therefore ungated, and nothing has landed from it. The
+content-free-assertion concern is withdrawn; the recording mechanism is
+working where it applies. Primary metrics are unaffected (see Metrics).
 
 This record is current as of **2026-08-08 Asia/Singapore**. Results were
 appended after the freeze commit; only this Decision placeholder changed in
@@ -217,21 +229,20 @@ recount below.
 
 ## Bucket accounting (S4)
 
-28 selected PRs = 12 episode-bearing (13 episode rows) + 5 `NO_EPISODE` +
-11 `OPEN_OR_UNRETURNED`. Reconciles exactly.
+28 selected PRs = 13 episode-bearing (14 episode rows) + 4 `NO_EPISODE` +
+11 `OPEN_OR_UNRETURNED`. Reconciles exactly. (Pre-correction: 12 + 5 + 11;
+#1391 moved from `NO_EPISODE` to episode-bearing.)
 
-- Episode-bearing: 1452, 1451, 1443, 1430, 1425, 1424, 1419 (two distinct
+- Episode-bearing: 1452, 1451, 1443, 1430, 1425, 1424, 1391, 1419 (two distinct
   targets: the p11r7 decision-frontier pass, `PASS_PATCHED`; and the
   community-coding semantic pass, `NEEDS_ARCHITECTURE_PASS` then
   re-derivation with AR-01..04 corrections accepted — the extractor's
   possible-merge caveat is disclosed; merging them changes the pay-rate from
   10/11 to 9/10 and no bar outcome), 1417, 1415, 1402, 1396, 1394.
-- `NO_EPISODE`: 1429, 1357, 1420, plus 1391 and 1407 reclassified at
-  scoring — both assert completed adjudications ("delegated review-and-patch
-  return adjudicated"; "Three delegated cross-vendor reviews were
-  commissioned and adjudicated") with zero recorded disposition content, so
-  under the gold-only rule nothing is countable. Disclosed as
-  asserted-content-free adjudications, a survivorship-adjacent gap.
+- `NO_EPISODE`: 1429, 1357, 1420, plus 1407 — which asserts "Three
+  delegated cross-vendor reviews were commissioned and adjudicated" with no
+  disposition content in its body, but is **unmerged**, so no gate applies
+  and nothing has landed. Not counted; not a corpus defect.
 - `OPEN_OR_UNRETURNED` (11): 1454, 1453, 1449, 1447, 1445, 1436, 1432,
   1421, 1384, 1360, 1403. Excluded from the pay-rate denominator per the
   frozen rule. Observed discipline gap: #1454 and #1403 are merged despite
@@ -256,6 +267,7 @@ recount below.
 | 1415 | yes ("different-family" = vendor lineage per the overlay's own definition; vocabulary note disclosed) | 7 | 2 (+3) | 1 | yes | F-03 bounded residual |
 | 1451 | unrecorded ("de-correlated" does not establish vendor lineage) | 2 | 2 | 0 | yes | sensitivity bucket only |
 | 1430 | unrecorded | 13 | 10 (+2) | 0 | yes | sensitivity bucket only |
+| 1391 | unrecorded (delegated, lineage not named) | 14 (F1-F14) | 7 (+1 modified), 4 closed, 3 deferred | 0 | yes | dispositions in commit trailers; sensitivity bucket only |
 
 Materiality where unlabeled was scored against the frozen definition; every
 pay entry traces to an accepted closure changing runtime behavior, test
@@ -276,9 +288,13 @@ accepted findings — the #1451 false-pass paths, the #1419-b systemic
 misattribution — are plausibly critical but unlabeled. Recorded as a
 labeling-practice observation, never upgraded at scoring.)
 
+Primary metrics are unaffected by the #1391 correction: its vendor lineage
+is unrecorded, so under the frozen rule it enters the sensitivity bucket,
+not the primary denominator.
+
 Sensitivity recounts (disclosed, never govern): including unrecorded-vendor
-episodes (1451, 1430): 12/13. Including the known-missed #1434 (8/8
-accepted, AR-01 critical): 13/14, which would also satisfy the
+episodes (1451, 1430, 1391): 13/14. Including the known-missed #1434 (8/8
+accepted, AR-01 critical): 14/15, which would also satisfy the
 EXPAND-consideration episode count — noted only; the frozen predicate
 governs. Counting any accepted finding regardless of materiality: unchanged
 (every paying episode already has a material accepted finding).
@@ -294,7 +310,14 @@ as completion blocker) across roughly 60+ adjudicated findings.
 - S2 gold-only with spot-check: 3 sampled episodes (1396, 1417, 1402)
   re-verified verbatim against PR bodies, plus 1424 independently read by
   the scoring author before extraction — all concordant; no second sample
-  triggered. PASS.
+  triggered. **PASS with a disclosed scope defect found post-publication:**
+  the frozen extraction protocol named PR bodies and referenced durable
+  artifacts as sources but not **commit-message trailers**, where this
+  repository's review-routing grammar actually lives for code-root changes.
+  The S2 sample could not surface this because all three sampled episodes
+  carried body content. One misclassification resulted (#1391) and is
+  corrected above. A future repeat must read `git log --format=%B` over each
+  PR's merge commit as a third source.
 - S3 mechanical selection: predicate re-runnable; arm-2 emptiness verified
   against `git log --diff-filter=A` history; self-exclusion held (#1455+
   out of window). PASS, with the #1434 selection-frame residual realized
@@ -314,9 +337,17 @@ escalations in the window honored the hard stop rather than forcing patches.
 The aggregation the pr1111 case required before standing routing changes now
 exists, and it points the same direction as pr1111.
 
-The material owner-facing findings of this backtest are operational, not
-doctrinal: the return pipeline lags merges (11 open commissions; two
-merged-despite-hold PRs; one explicitly post-merge adjudication), and
-adjudication records are drifting toward content-free assertions that
-defeat future aggregation. Both are observations for owner triage; this
-record installs nothing.
+The material owner-facing finding of this backtest is operational, not
+doctrinal: the return pipeline lags merges — 11 open commissions, two
+merged-despite-hold PRs, one explicitly post-merge adjudication. The data
+does not establish whether those open commissions represent unreviewed risk
+that landed or intent the Chief Architect later judged unnecessary, and
+that distinction decides whether any mechanism is warranted. A one-time
+triage of the 11 resolves the backlog and produces exactly that evidence;
+no standing mechanism is justified before it. This record installs nothing.
+
+The withdrawn second finding is itself instructive: the recording mechanism
+that already exists (the `review_routing_status` trailer grammar, gated at
+CI for code roots) was working, and the apparent gap was an artifact of
+looking in the wrong place. Confirm where a record actually lives before
+concluding it is absent.
