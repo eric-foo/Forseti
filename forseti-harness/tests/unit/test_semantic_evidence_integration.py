@@ -3415,7 +3415,7 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "exactly one context-aware relevance and accounting judgment" in text
     # Referential agreement keeps parent meaning without inheriting credit.
     assert '"same" may adopt the specific parent complaint' in text
-    assert 'Context may resolve what "it" refers to' in text
+    assert 'Context may resolve "it"' in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
     assert "personal_agreement applies only when a reply adopts" in text
     assert "attribution_or_echo applies when it only repeats" in text
@@ -3431,7 +3431,7 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "Never make ambiguity cheap" in text
     assert "routing it to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
-    assert "adds no specific attribute, condition" in text
+    assert "stays context_only without an attribute" in text
     assert "smallest complete set of in-scope atomic\nmeanings" in text
     assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
@@ -3439,6 +3439,9 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "When a result is what the author wanted" in text
     assert "preserve both the result and preference" in text
     assert "Generic approval" in text and "dislike adds no atom" in text
+    assert "Known product or parent choice\n  cannot make it the author's preference" in text
+    assert "Praise tied to a named result" in text
+    assert "application, is specific evidence" in text
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
     assert "include every existing axis it does express" in text

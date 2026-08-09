@@ -265,10 +265,10 @@ Choose exactly one disposition for each leaf:
 Worked boundaries:
 
 - "same" may adopt the specific parent complaint and is then claim_bearing.
-- Context may resolve what "it" refers to, but it cannot turn generic approval
-  or dislike into a more detailed proposition. "Love it", "my fav", or "hate
-  it" is context_only when it adds no specific attribute, condition,
-  comparison, behavior, or reason, even when the product referent is known.
+- Context may resolve "it" but cannot enrich generic approval or dislike.
+  "Love it", "my fav", or "hate it" stays context_only without an attribute,
+  condition, comparison, behavior, or reason. Known product or parent choice
+  cannot make it the author's preference.
 - "I always reach for it" carries a bounded customer-behavior proposition and
   is claim_bearing when context resolves the referent.
 - A short reply with several plausible parent propositions, or with
@@ -306,7 +306,7 @@ Report every claim_bearing or unresolved leaf in `evidence`. Use
 confirming a shared disposition and reason. List every id and one authored
 reason. Groups are transport only: never a sample, default, implicit
 remainder, wildcard, or filter. Terminal judgments may stay in `evidence`.
-Every supplied id appears once across both populations.
+Each id appears once across both.
 
 For each detailed leaf, extract the smallest complete set of in-scope atomic
 meanings. Split meanings that could be true independently or differ by product,
@@ -317,7 +317,8 @@ reason, comparison, and product-or-formula relationship, including secondary
 comparisons. A later product called better after target use is a target
 comparison when the referent is clear. When a result is what the author wanted,
 preserve both the result and preference, combined or split. Generic approval
-or dislike adds no atom.
+or dislike adds no atom. Praise tied to a named result, such as pleasant
+application, is specific evidence.
 
 Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
 must be directly supported by that unit's atomic statement and by the leaf.
