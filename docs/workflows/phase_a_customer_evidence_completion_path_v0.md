@@ -95,7 +95,8 @@ As of 2026-08-09, the bounded 300-leaf Summer Fridays proof and the later
 four-leaf catalog-reach shadow proof are complete. The latter observed two
 empty-candidate Reddit leaves receiving the verified Lip Butter Balm identity
 and one real Reddit-plus-Sephora wear stack, while preserving 18
-non-equivalent units as unmerged. Different-vendor review and home
-adjudication remain due before the 59,225-leaf full-corpus semantic completion.
-Terminal convergence at that scale is later observed work, not a current
-claim.
+non-equivalent units as unmerged. The first different-vendor pass has been
+adjudicated and its material findings closed; a clean closure pass remains due
+because the commissioned code-review method was unavailable to that receiver.
+The 59,225-leaf full-corpus semantic completion and terminal convergence remain
+later observed work, not a current claim.

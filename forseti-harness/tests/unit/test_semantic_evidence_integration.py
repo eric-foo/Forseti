@@ -1534,6 +1534,15 @@ def test_method_v4_mixed_product_thread_keeps_leaf_product_roles() -> None:
     with pytest.raises(SemanticIntegrationError, match="unknown catalog product"):
         validate_batch_responses(bundle, [forged])
 
+    invented_variant = deepcopy(response)
+    invented_variant["evidence"][1]["semantic_units"][0][
+        "product_version_ids"
+    ] = ["summer-fridays-lip-butter-balm-brown-sugar"]
+    with pytest.raises(
+        SemanticIntegrationError, match="unverified catalog product version"
+    ):
+        validate_batch_responses(bundle, [invented_variant])
+
 
 def test_v4_prepare_runner_writes_deterministic_three_worker_assignment(
     tmp_path: Path,

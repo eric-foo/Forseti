@@ -1223,6 +1223,30 @@ def test_product_axis_proof_selects_all_mapped_source_ids_and_rejects_mentions(
         "semantic_evidence_integration_method_v4"
     )
 
+    _, binding_artifacts, product_catalog = _product_binding_indexes(
+        json.loads(spec_path.read_text(encoding="utf-8")), repo_root=tmp_path
+    )
+    materialized_full = deepcopy(full)
+    materialized_full["semantic_method_version"] = (
+        "semantic_evidence_integration_method_v4"
+    )
+    materialized_full["product_identity_catalog"] = product_catalog
+    materialized_full["source_artifacts"].extend(binding_artifacts)
+    materialized_full = materialize_source_v3(materialized_full)
+    materialized_full_path = tmp_path / "materialized-full-source.json"
+    _write_json(materialized_full_path, materialized_full)
+    materialized_proof = build_phase_a_product_axis_proof_source(
+        full_source_path=materialized_full_path,
+        run_spec_path=spec_path,
+        stable_product_id="summer-fridays-lip-butter-balm",
+        axis_ids=["wear"],
+        repo_root=tmp_path,
+    )
+    assert materialized_proof == proof
+    assert len(
+        {row["artifact_id"] for row in materialized_proof["source_artifacts"]}
+    ) == len(materialized_proof["source_artifacts"])
+
     raw_source = tmp_path / "raw-thread.json"
     raw_source.write_text("changed body\n", encoding="utf-8")
     with pytest.raises(

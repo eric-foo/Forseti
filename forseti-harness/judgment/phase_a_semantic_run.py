@@ -1533,6 +1533,17 @@ def build_phase_a_product_axis_proof_source(
             f"leaves coded to {', '.join(sorted(requested_axes))}"
         )
         containers.append(projected)
+    source_artifacts = list(normalized["source_artifacts"])
+    artifacts_by_id = {row["artifact_id"]: row for row in source_artifacts}
+    for artifact in binding_artifacts:
+        existing = artifacts_by_id.get(artifact["artifact_id"])
+        if existing is None:
+            source_artifacts.append(artifact)
+            artifacts_by_id[artifact["artifact_id"]] = artifact
+        elif existing != artifact:
+            raise SemanticIntegrationError(
+                f"conflicting product binding artifact: {artifact['artifact_id']}"
+            )
     source = {
         "schema_version": "semantic_evidence_source_v3",
         "semantic_method_version": "semantic_evidence_integration_method_v4",
@@ -1548,7 +1559,7 @@ def build_phase_a_product_axis_proof_source(
         "axes": [
             row for row in normalized["axes"] if row["axis_id"] in requested_axes
         ],
-        "source_artifacts": [*normalized["source_artifacts"], *binding_artifacts],
+        "source_artifacts": source_artifacts,
         "containers": containers,
         "captured_items": selected,
     }

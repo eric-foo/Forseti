@@ -203,7 +203,9 @@ merge leaves merely because their product names or phrases look similar.
 When a PRODUCT_IDENTITY_CATALOG is supplied, use it only as the run's verified
 product vocabulary. Its names and aliases do not prove what a leaf is about.
 Bind one of its stable product ids only when the leaf plus its supplied thread,
-parent, post, or product-page context establishes that identity.
+parent, post, or product-page context establishes that identity. Catalog v1
+does not verify variant identities: preserve variant wording in the statement
+or conditions and return product_version_ids as an empty list.
 
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and
@@ -1781,6 +1783,11 @@ def validate_batch_responses(
                         unit.get("product_version_ids", []),
                         field=f"{evidence_id}.{key}.product_versions",
                     )
+                    if catalog_product_ids and version_ids:
+                        raise SemanticIntegrationError(
+                            f"semantic unit {evidence_id}:{key} cites an unverified "
+                            "catalog product version"
+                        )
                     evidence_posture = unit.get("evidence_posture")
                     uncertainty_posture = unit.get("uncertainty_posture")
                     polarity = unit.get("polarity")

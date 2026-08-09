@@ -3,7 +3,7 @@
   "status": "complete_bounded_shadow_proof",
   "cycle_id": "summer_fridays_product_catalog_reach_20260809_v0",
   "authority_boundary": "evidence_only",
-  "external_run_root": "C:\\tmp\\forseti-summer-fridays-product-catalog-reach-dogfood-20260809-v2",
+  "external_run_root": "C:\\tmp\\forseti-summer-fridays-product-catalog-reach-dogfood-20260809-v3",
   "input_lineage": {
     "full_source_locator": "C:\\tmp\\forseti-phase-a-semantic-work-units-v4-dogfood-20260808\\phase_a_source_v3.json",
     "full_source_sha256": "156cb1659e418f8ba2e7e4534cceeacac880f2f0e2efe3f7ccea2f6933bad252",
@@ -39,22 +39,23 @@
   },
   "execution": {
     "source_sha256": "9b3823bfe8f46f6afc2c18f328da38de8d3ea88b9ef16edfb64dd3a4498cfa22",
-    "bundle_sha256": "7d1124161fc5af150d7451cb89a9bfcd0accb0d21ecde97f96b253b48837e08e",
+    "bundle_sha256": "ac9846d824fa803c72b123ed93716969bf1e50fb4b23f1c9cda7079c239bf15d",
     "corpus_sha256": "a918a84717f818d7462fe2ad31d898aa00baed03bdf2cfddb21228cd6072df36",
-    "method_sha256": "6338a5f787ccb437db8b18905aa55987872f60fece570d5394ba1539ee6dca9c",
+    "method_sha256": "27fbb4a367c3d2decffca495c28b36e2807fb626ff5bd5d9e1891f573c76b016",
     "prompt_count": 1,
-    "largest_prompt_bytes": 9746,
+    "largest_prompt_bytes": 9898,
     "model_api_calls": 0,
-    "batch_validation_sha256": "52627195de453530097a1b08cd22a22bd2bf7516333ba59806db97a8269f6231",
-    "batch_compilation_sha256": "40361b3efd588abb090ed04f78a7a79389b490c7ac37d5b30bda2f78178a3ad5",
-    "reconciliation_stage_sha256": "66db58b11ae0fac461a4166ce13d5d98fa5de20a0162062537c1a477387b575d",
-    "reconciliation_validation_sha256": "b61481840ab86f3a1d465f5e7272070db3f534ddecd1043242d698022146c76e",
-    "node_compilation_sha256": "fe9b18b55ef72ec88f9e0101e5af775341e1890c8c317a6e2c6695dde613d957",
-    "view_sha256": "7266649618bb6daab7214a92b59c946d5e0f12fa45cdbd51b7f7f030aeb41a1f",
-    "evidence_packet_sha256": "910c4eb714aedaf3664129282d2cbd5da9b133a4a7243818a20e35cb3faa4499"
+    "batch_validation_sha256": "972c9608d0bd38dd22cc94a3589f3af8a56a07c1340e0a568ee1728e68aa10ed",
+    "batch_compilation_sha256": "b5fc39430d2df6ae032bf97e9517da86f8c7a46b4c58f4fb8c34047647094d77",
+    "reconciliation_stage_sha256": "19b26095d8fddd2d0982c9d7296c33af136ee6a08c61a295c896281336938fb0",
+    "reconciliation_validation_sha256": "1804012c629c5251afab65cb5831977179412a0eb74148c82342535caa84fe51",
+    "node_compilation_sha256": "e412b3de14fb599247fca754fa263bc64243fca74d88e4026e083e7fc732b55f",
+    "view_sha256": "6576320d88ce2032241e1681f014f5dd03803f220ddecb788cb1869f8216acb2",
+    "evidence_packet_sha256": "7543ec72a65c8ed7b6a41a25c2cebf74972033a1c6b568f93fd1dcb37c762178",
+    "failed_finalization_attempt_count": 3
   },
   "observed_stack": {
-    "proposition_id": "prop_9f2c87b5b91539cd3de2",
+    "proposition_id": "prop_f254dac66ecab1d9013e",
     "axis_ids": [
       "wear_and_longevity"
     ],
@@ -71,7 +72,11 @@
       "reddit:171ciwt:k3r1zda",
       "retailer:sephora_product_group_reviews:207164623"
     ],
-    "unmerged_semantic_unit_count": 18,
+    "terminal_proposition_count": 17,
+    "unmerged_semantic_unit_count": 1,
+    "nonempty_product_version_id_count": 0,
+    "packet_selected_proposition_count": 2,
+    "packet_returned_evidence_item_count": 3,
     "packet_truncated": false
   },
   "historical_exactness": {
@@ -87,4 +92,3 @@
     "seal_eligibility"
   ]
 }
-
