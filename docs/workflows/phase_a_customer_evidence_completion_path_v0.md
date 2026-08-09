@@ -41,6 +41,11 @@ small product-identity table. That table says, for example, that Sephora
 `P455936`, Amazon `B0C42HJRBF`, and the verified relevant Revolve listing IDs
 are presentations of Summer Fridays Lip Butter Balm for this run. Every map
 entry cites preserved source evidence. Unclear equivalence stays unresolved.
+For a method-v4 full run, that verified table is included once in every
+reading assignment. It lets a worker name the same stable product across
+Reddit and retailer evidence even when a Reddit leaf arrived without an
+upstream product candidate. It does not assign by keyword: the leaf and its
+conversation or product-page context still establish the subject.
 
 The semantic workers read every admitted customer leaf. They interpret meaning
 rather than exact wording and keep support, disagreement, conditions,
@@ -74,16 +79,24 @@ campaign action.
    leaves accounted and deterministic wrong-product controls.
 2. Freeze and independently review the product binding, semantic method,
    validators, and proof receipt.
-3. After accepted review, give a cold agent the full assessable Reddit and
+3. Prove catalog reach on a real empty-candidate or mixed-product Reddit leaf
+   plus retailer evidence, then independently review the runtime change.
+4. After accepted review, give cold agents the full assessable Reddit and
    retailer corpus and require exact per-leaf accounting through terminal
    reconciliation and evidence-packet projection.
-4. Adopt method v4 into a seal-bearing route only through an explicit later
+5. Adopt method v4 into a seal-bearing route only through an explicit later
    route revision. A bounded or full shadow run does not rewrite Route 1.6 or
    1.7 obligations.
-5. Only after the customer corpus is complete, integrated, reproducible, and
+6. Only after the customer corpus is complete, integrated, reproducible, and
    cold-agent proven should the separate campaign/customer bridge be handed
    off.
 
-As of 2026-08-09, the bounded 300-leaf Summer Fridays proof is the active
-proving unit. The 59,225-leaf full-corpus semantic completion and terminal
-convergence remain later observed work, not a current claim.
+As of 2026-08-09, the bounded 300-leaf Summer Fridays proof and the later
+four-leaf catalog-reach shadow proof are complete. The latter observed two
+empty-candidate Reddit leaves receiving the verified Lip Butter Balm identity
+and one real Reddit-plus-Sephora wear stack, while preserving 18
+non-equivalent units as unmerged. The first different-vendor pass has been
+adjudicated and its material findings closed; a clean closure pass remains due
+because the commissioned code-review method was unavailable to that receiver.
+The 59,225-leaf full-corpus semantic completion and terminal convergence remain
+later observed work, not a current claim.

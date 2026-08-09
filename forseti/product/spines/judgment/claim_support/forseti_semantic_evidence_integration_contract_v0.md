@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v8
+version: v9
 effective_date: 2026-08-09
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v8
+# Semantic Evidence Integration Contract v9
 
 ## Purpose
 
@@ -239,6 +239,26 @@ across community and retailer-review roles when stable product, direction,
 conditions, and uncertainty are compatible. Source roles and origins remain
 separate. Method v4 adds no conclusion, recommendation, prevalence estimate,
 provider API, embeddings service, or campaign-evidence bridge.
+
+Contract v9 carries that verified run-local identity table into every method-v4
+final-acquisition work unit as one hash-bound `product_identity_catalog_v1`.
+The catalog is vocabulary, not evidence and not an automatic classifier. A
+worker still binds each Reddit body or comment from its own text plus supplied
+thread and parent context; a retailer review remains owned by its product page.
+One thread may therefore contain different product subjects, and one comment
+may yield separate subject/comparator meanings without creating extra customer
+identity credit. A missing, altered, conflicting, or authority-unbound catalog
+fails before final-acquisition prompts are accepted. Bounded historical proof
+sources remain reproducible without acquiring the new final-run obligation.
+Catalog v1 verifies product identities but carries no verified variant
+vocabulary. Catalog-backed responses therefore keep `product_version_ids`
+empty and preserve variant or formula wording in the bounded statement and
+conditions. A later catalog revision is required before variants may become
+durable cross-leaf identities.
+The verified-catalog claim applies to the sanctioned source materializer that
+derives this catalog from the bound run spec. A directly hand-authored
+final-acquisition source is only internally self-consistent; until the runner
+binds it back to a run spec, it must not be described as spec-verified.
 
 `build-product-axis-proof-source` creates a bounded regression source from an
 already materialized full source by selecting the complete captured union for
@@ -526,6 +546,15 @@ new frontier.
 
 ## Changelog
 
+- `v9` / 2026-08-09 — added the hash-bound product-identity catalog to each
+  method-v4 final-acquisition work unit, required response subject/comparator
+  product IDs to come from that catalog, barred unverified identity-bearing
+  version IDs under catalog v1, and preserved per-leaf subject/comparator roles
+  in mixed-product conversations. The catalog supplies vocabulary only: it
+  adds no lexical product assignment, global registry, customer duplication,
+  conclusion, campaign bridge, or historical bounded-proof rewrite. The v9
+  method-text hash supersedes earlier method-v4 prompt bytes; older v4 bundles
+  remain hash-distinguishable but are not reproducible under the current code.
 - `v8` / 2026-08-09 — added a hash-pinned, run-local product identity table,
   method v4 cross-source customer-evidence semantics, and a deterministic
   bounded product/axis proof-source projection. Preserved wrong-product
