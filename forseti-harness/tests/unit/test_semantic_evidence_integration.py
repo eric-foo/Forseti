@@ -3428,7 +3428,8 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert '"is drying" is affirmed; "is not drying"\nis negated' in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
-    assert "Never route ambiguity to out_of_scope" in text
+    assert "Never make ambiguity cheap" in text
+    assert "routing it to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
     assert "adds no specific attribute, condition" in text
     assert "smallest complete set of in-scope atomic\nmeanings" in text
@@ -3436,15 +3437,16 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "including secondary\ncomparisons" in text
     assert "Generic approval or dislike adds no atom" in text
     assert "Axis candidates are vocabulary, not assignments" in text
-    assert "must not donate an\nattribute or axis" in text
-    assert "Include every\nexisting axis the atomic meaning does express" in text
-    assert "condition constrains but does not donate an axis" in text
-    assert "Category labels and\nprestige impressions do not imply latent" in text
+    assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
+    assert "include every existing axis it does express" in text
+    assert "Dry lips do not make smoothing\na hydration claim" in text
+    assert "Category labels and prestige impressions do not imply\nlatent" in text
     assert "Every unit must concern a verified subject product" in text
     assert "Never create their standalone units" in text
+    assert "category maps to exactly one catalog product" in text
     # Variant wording is preserved rather than dropped.
-    assert "Bounded variant\nor formula wording stays claim_bearing" in text
-    assert "ambiguous variant or formula binding\nis unresolved" in text
+    assert "Bounded variant or formula wording stays\nclaim_bearing" in text
+    assert "ambiguous variant or formula binding is unresolved" in text
     # Grouping is transport compression only.
     assert "never a sample, default, implicit\nremainder, wildcard" in text
 

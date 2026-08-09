@@ -252,19 +252,15 @@ be claim-bearing and long can lack a bounded proposition.
 
 Choose exactly one disposition for each leaf:
 
-- claim_bearing: read with its context, the leaf carries a uniquely bounded
-  in-scope proposition. The proposition may be direct or referential. A
-  referential reply that adopts a specific parent complaint, comparison,
-  behavior, condition, or variant is claim_bearing, not a generic reaction.
-- unresolved: the referent, product, variant, formula, or proposition is
-  ambiguous. Use this when several parent propositions are plausible or the
-  binding is insufficient. Never route ambiguity to out_of_scope because it is
-  cheaper to report.
-- context_only: the leaf is clearly inside the relevant context but, once that
-  context is read, carries no bounded proposition -- no attribute, condition,
-  comparison, behavior, reason, or resolvable referent.
-- out_of_scope: the leaf is clearly established as outside the governed
-  semantic scope.
+- claim_bearing: leaf plus context yields a unique in-scope proposition, direct
+  or referential. Adopting a specific parent complaint, comparison, behavior,
+  condition, or variant is claim_bearing, not a generic reaction.
+- unresolved: referent, product, variant, formula, or proposition remains
+  ambiguous or has several plausible bindings. Never make ambiguity cheap by
+  routing it to out_of_scope.
+- context_only: in relevant context but adds no bounded attribute, condition,
+  comparison, behavior, reason, or referent.
+- out_of_scope: clearly outside governed semantic scope.
 
 Worked boundaries:
 
@@ -298,12 +294,12 @@ Uncataloged products may appear only as comparators or conditions in a
 proposition about that subject. Never create their standalone units, invent an
 id, or rebind them to the target. Similar names never justify a merge.
 
-PRODUCT_IDENTITY_CATALOG is verified vocabulary, not proof of a leaf's subject.
-Bind a stable product only when leaf plus supplied context establish it.
-Catalog v1 verifies no variants: preserve variant or formula wording in the
-statement or conditions and return empty product_version_ids. Bounded variant
-or formula wording stays claim_bearing; ambiguous variant or formula binding
-is unresolved.
+PRODUCT_IDENTITY_CATALOG is vocabulary, not proof. Leaf plus context establish
+identity by naming the product or, absent a conflicting candidate, when their
+category maps to exactly one catalog product. Catalog v1 verifies no variants:
+preserve variant or formula wording in the statement or conditions and return
+empty product_version_ids. Bounded variant or formula wording stays
+claim_bearing; ambiguous variant or formula binding is unresolved.
 
 Report every claim_bearing or unresolved leaf in `evidence`. Use
 `terminal_groups` only after judging each context_only or out_of_scope leaf and
@@ -322,13 +318,12 @@ comparisons. Generic approval or dislike adds no atom.
 
 Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
 must be directly supported by that unit's atomic statement and by the leaf.
-Context may resolve the product or referent, but it must not donate an
-attribute or axis. Never copy all available or candidate axes onto a unit; if
-an axis cannot be explained from that unit alone, omit it. Include every
-existing axis the atomic meaning does express; owning every shade supports
-shade or color fit. A condition constrains but does not donate an axis: dry
-lips do not make a smoothing result a hydration claim. Category labels and
-prestige impressions do not imply latent texture, originality, or trust axes.
+Context may resolve product or referent but cannot donate an attribute or axis;
+neither can another unit or clause. Never copy candidate axes: omit any axis
+the unit alone cannot explain, and include every existing axis it does express.
+Owning every shade supports shade or color fit. Dry lips do not make smoothing
+a hydration claim. Category labels and prestige impressions do not imply
+latent texture, originality, or trust axes.
 
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and
