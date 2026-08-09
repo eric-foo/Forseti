@@ -28,7 +28,8 @@ from judgment.semantic_evidence_integration import (
 
 
 CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v1"
-CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v1"
+CALIBRATION_ADJUDICATION_VERSION_V1 = "semantic_calibration_adjudication_v1"
+CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v2"
 CALIBRATION_PREPARATION_VERSION = "semantic_calibration_preparation_v1"
 CALIBRATION_REPORT_VERSION = "semantic_calibration_report_v1"
 
@@ -96,6 +97,7 @@ _COLD_REPEAT_FIELDS = {
     "minimum_largest_prompt_bytes",
 }
 _AXIS_REPETITION_FIELDS = {"minimum_axis_count", "minimum_repeated_units"}
+_AXIS_SUPPORT_FIELDS = {"supported_axis_ids", "unsupported_axis_ids"}
 # The route fields that have an observable in-process counterpart.  Runner
 # revision and contract version are operator-declared provenance with nothing
 # to check them against, so they are deliberately absent here.
@@ -721,7 +723,11 @@ def validate_calibration_adjudication(
 ) -> dict[str, Any]:
     if (
         not isinstance(adjudication, Mapping)
-        or adjudication.get("schema_version") != CALIBRATION_ADJUDICATION_VERSION
+        or adjudication.get("schema_version")
+        not in {
+            CALIBRATION_ADJUDICATION_VERSION_V1,
+            CALIBRATION_ADJUDICATION_VERSION,
+        }
     ):
         raise SemanticCalibrationError("invalid calibration adjudication version")
     _verify_hash(
@@ -1072,6 +1078,59 @@ def evaluate_semantic_calibration(
                 ): unit
                 for unit in units
             }
+            if (
+                adjudication is not None
+                and adjudication.get("schema_version")
+                == CALIBRATION_ADJUDICATION_VERSION
+                and units_by_key
+            ):
+                axis_support = (
+                    adjudicated_case.get("axis_support_by_unit")
+                    if isinstance(adjudicated_case, Mapping)
+                    else None
+                )
+                if not isinstance(axis_support, Mapping):
+                    case_blockers.append("units lack per-axis semantic adjudication")
+                else:
+                    judged_keys = set(axis_support)
+                    actual_keys = set(units_by_key)
+                    if judged_keys != actual_keys:
+                        case_blockers.append(
+                            "per-axis semantic adjudication keys do not match units: "
+                            f"missing={sorted(actual_keys - judged_keys)}, "
+                            f"unexpected={sorted(judged_keys - actual_keys)}"
+                        )
+                    for unit_key in sorted(actual_keys & judged_keys):
+                        axis_judgment = axis_support[unit_key]
+                        if (
+                            not isinstance(axis_judgment, Mapping)
+                            or set(axis_judgment) != _AXIS_SUPPORT_FIELDS
+                        ):
+                            case_blockers.append(
+                                f"unit {unit_key} has invalid per-axis semantic adjudication"
+                            )
+                            continue
+                        supported = axis_judgment.get("supported_axis_ids")
+                        unsupported = axis_judgment.get("unsupported_axis_ids")
+                        if (
+                            not isinstance(supported, list)
+                            or not isinstance(unsupported, list)
+                            or any(not _nonempty(axis_id) for axis_id in supported + unsupported)
+                            or len(supported) != len(set(supported))
+                            or len(unsupported) != len(set(unsupported))
+                            or set(supported) & set(unsupported)
+                            or set(supported) | set(unsupported)
+                            != set(units_by_key[unit_key]["axis_ids"])
+                        ):
+                            case_blockers.append(
+                                f"unit {unit_key} has incomplete per-axis semantic adjudication"
+                            )
+                            continue
+                        if unsupported:
+                            case_failures.append(
+                                f"unit {unit_key} carries semantically unsupported axes "
+                                f"{sorted(unsupported)}"
+                            )
             matched_keys: set[str] = set()
             for atom_id, atom in required_atoms.items():
                 if not isinstance(atom_matches, Mapping) or atom_id not in atom_matches:
@@ -1396,6 +1455,7 @@ def evaluate_semantic_calibration(
 
 __all__ = [
     "CALIBRATION_ADJUDICATION_VERSION",
+    "CALIBRATION_ADJUDICATION_VERSION_V1",
     "CALIBRATION_PREPARATION_VERSION",
     "CALIBRATION_REPORT_VERSION",
     "CALIBRATION_SPEC_VERSION",

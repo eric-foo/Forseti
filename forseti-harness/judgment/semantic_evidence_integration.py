@@ -257,8 +257,8 @@ Choose exactly one disposition for each leaf:
 
 - claim_bearing: read with its context, the leaf carries a uniquely bounded
   in-scope proposition. The proposition may be direct or referential. A
-  referential reply that adopts a specific parent complaint, preference,
-  product, or variant is claim_bearing, not a generic reaction.
+  referential reply that adopts a specific parent complaint, comparison,
+  behavior, condition, or variant is claim_bearing, not a generic reaction.
 - unresolved: the referent, product, variant, formula, or proposition is
   ambiguous. Use this when several parent propositions are plausible or the
   binding is insufficient. Never route ambiguity to out_of_scope because it is
@@ -274,10 +274,12 @@ Worked boundaries:
 - "same" may adopt the specific parent complaint and is then claim_bearing.
 - "Facts" may be a personal agreement with a bounded parent proposition and is
   then claim_bearing.
-- "my fav" may adopt a specifically identified parent product or variant
-  preference and is then claim_bearing.
-- "love it" or "my fav" carrying no specific attribute, condition, comparison,
-  behavior, reason, or resolvable referent is context_only.
+- Context may resolve what "it" refers to, but it cannot turn generic approval
+  or dislike into a more detailed proposition. "Love it", "my fav", or "hate
+  it" is context_only when it adds no specific attribute, condition,
+  comparison, behavior, or reason, even when the product referent is known.
+- "I always reach for it" carries a bounded customer-behavior proposition and
+  is claim_bearing when context resolves the referent.
 - A short reply with several plausible parent propositions, or with
   insufficient binding, is unresolved rather than out_of_scope.
 
@@ -312,6 +314,20 @@ wildcard, or an exclusion filter. A nuanced context_only or out_of_scope
 judgment may stay in `evidence`, and a single terminal decision may stay there
 too. Every supplied evidence id must appear exactly once across `evidence` and
 `terminal_groups`.
+
+For each detailed leaf, extract the smallest complete set of atomic meanings.
+Split meanings that could be true independently, or concern different
+products, axes, behaviors, comparisons, conditions, polarities, or postures.
+Keep a condition with the proposition it qualifies; do not make a condition
+its own unit. Never hide several meanings behind a generic wrapper such as
+"the author reports". Check that removing any clause would not discard a
+separately useful meaning.
+
+Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
+must be directly supported by that unit's atomic statement and by the leaf.
+Context may resolve the product or referent, but it must not donate an
+attribute or axis. Never copy all available or candidate axes onto a unit; if
+an axis cannot be explained from that unit alone, omit it.
 
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and

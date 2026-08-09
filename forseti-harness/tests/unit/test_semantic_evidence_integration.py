@@ -47,6 +47,7 @@ from judgment.semantic_evidence_integration import (
 )
 from judgment.semantic_calibration import (
     CALIBRATION_ADJUDICATION_VERSION,
+    CALIBRATION_ADJUDICATION_VERSION_V1,
     CALIBRATION_SPEC_VERSION,
     SemanticCalibrationError,
     evaluate_semantic_calibration,
@@ -2462,6 +2463,12 @@ def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
                 "case_id": "drying-after-week",
                 "compilation_sha256": compilation_sha256,
                 "atom_matches": {"drying": "drying-after-week"},
+                "axis_support_by_unit": {
+                    "drying-after-week": {
+                        "supported_axis_ids": ["wear"],
+                        "unsupported_axis_ids": [],
+                    }
+                },
             }
         ],
         "relation_adjudications": [],
@@ -2574,6 +2581,114 @@ def test_calibration_treats_explicit_atom_no_match_as_failure() -> None:
         "has no equivalent semantic unit" in row["detail"]
         for row in report["hard_failures"]
     )
+
+
+def test_calibration_v2_rejects_a_semantically_unsupported_axis() -> None:
+    raw_source = _source_v5(count=2)
+    raw_source["axes"].append({"axis_id": "hydration", "label": "Hydration"})
+    raw_source["captured_items"][0]["axis_candidates"].append("hydration")
+    source = materialize_source_v3(raw_source)
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    responses[0]["evidence"][0]["semantic_units"][0]["axis_ids"].append(
+        "hydration"
+    )
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    axis_judgment = adjudication["case_adjudications"][0][
+        "axis_support_by_unit"
+    ]["drying-after-week"]
+    axis_judgment["unsupported_axis_ids"].append("hydration")
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        "semantically unsupported axes ['hydration']" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_v2_blocks_when_axis_judgment_is_missing() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        "units lack per-axis semantic adjudication" in row["detail"]
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V1
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
 
 
 def test_calibration_cannot_satisfy_two_atoms_with_one_broad_unit() -> None:
@@ -2839,6 +2954,12 @@ def test_relation_adjudication_requires_a_rebuilt_final_view() -> None:
             "case_id": "drying-after-week-second-origin",
             "compilation_sha256": compilation["compilation_sha256"],
             "atom_matches": {"drying": "drying-after-week"},
+            "axis_support_by_unit": {
+                "drying-after-week": {
+                    "supported_axis_ids": ["wear"],
+                    "unsupported_axis_ids": [],
+                }
+            },
         }
     )
     adjudication["relation_adjudications"] = [
@@ -3252,13 +3373,17 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     # Referential agreement keeps parent meaning without inheriting credit.
     assert '"same" may adopt the specific parent complaint' in text
     assert '"Facts" may be a personal agreement' in text
-    assert '"my fav" may adopt a specifically identified parent product' in text
+    assert 'Context may resolve what "it" refers to' in text
+    assert '"I always reach for it" carries a bounded customer-behavior' in text
     assert "receives no original-source\ncredit" in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
     assert "Never route ambiguity to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
-    assert "resolvable referent is context_only" in text
+    assert "adds no specific attribute, condition" in text
+    assert "smallest complete set of atomic meanings" in text
+    assert "Axis candidates are vocabulary, not assignments" in text
+    assert "must not donate an\nattribute or axis" in text
     # Variant wording is preserved rather than dropped.
     assert "Bounded variant or formula wording stays claim_bearing" in text
     assert "ambiguous\nvariant or formula binding is unresolved" in text
@@ -3269,11 +3394,11 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     text = METHOD_TEXT_V5
     assert "There is no keyword rule, phrase list, or\nlength rule" in text
-    # The worked examples are boundaries, never a matchable terminal list: each
-    # quoted phrase is shown with both a detailed and a terminal outcome.
-    for phrase in ('"same"', '"Facts"', '"my fav"'):
+    # The worked examples describe semantic boundaries, not matchable input
+    # filters. Short inputs can still be detailed, terminal, or unresolved.
+    for phrase in ('"same"', '"Facts"', '"my fav"', '"I always reach for it"'):
         assert phrase in text
-    assert '"love it" or "my fav" carrying no specific attribute' in text
+    assert '"Love it", "my fav", or "hate' in text
     assert "claim_bearing, not a generic reaction" in text
 
 

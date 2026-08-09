@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v11
+version: v12
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v11
+# Semantic Evidence Integration Contract v12
 
 ## Purpose
 
@@ -293,11 +293,22 @@ A leaf clearly established as outside the governed semantic scope may
 terminate as `out_of_scope`. A leaf clearly inside the relevant context that
 carries no bounded proposition once that context is read may terminate as
 `context_only`. No lexical phrase blacklist, keyword relevance gate, or length
-rule is permitted. Referential agreement uses the `personal_agreement`
+rule is permitted. Context may resolve what a short reply refers to, but it
+cannot donate a more detailed claim: generic approval or dislike remains
+`context_only` even when the product is known, while a reply that adopts a
+specific parent complaint or states customer behavior remains detailed.
+Referential agreement uses the `personal_agreement`
 posture: it does not inherit the parent's first-hand posture and receives no
 original-source credit. Bounded variant or formula wording stays detailed
 while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
 formula binding is detailed `unresolved`.
+
+Every detailed leaf is decomposed into the smallest complete set of atomic
+meanings. Meanings that can be independently true, or differ in product, axis,
+behavior, comparison, condition, polarity, or posture, remain separate; a
+condition stays with the proposition it qualifies. Axis candidates provide
+vocabulary only. Each assigned axis must be semantically supported by the
+atomic unit and leaf; context may resolve a referent but cannot donate an axis.
 
 After a leaf is validly classified as terminal `context_only` or clearly
 established `out_of_scope`, it incurs no bespoke extraction, semantic-unit
@@ -563,6 +574,14 @@ Current-route operations are:
     a critical mismatch fails. The report is a bounded calibration result only,
     never a prevalence estimate, readiness claim, or corpus-resume authority.
 
+Adjudication v2 closes the unsupported-axis gap without a phrase or field-value
+blacklist. For every semantic unit in every gold case, the adjudicator must
+partition the unit's exact assigned axes into supported and unsupported lists.
+Missing units, missing axes, extra axes, overlap, or malformed judgments block;
+any explicitly unsupported axis fails the case. Adjudication v1 remains
+readable only for historical report reproduction and cannot establish the v12
+axis-support obligation.
+
 The calibration spec is authored from source text, required context, and the
 run-local catalog before the evaluated responses are read. Fields representing
 observed or predicted machine output are forbidden in that gold artifact. Every
@@ -698,6 +717,14 @@ new frontier.
 
 ## Changelog
 
+- `v12` / 2026-08-10 — corrected method-v5's context boundary so a resolved
+  product referent cannot upgrade generic approval or dislike into a detailed
+  claim; added an explicit atomic-splitting self-check and made axis candidates
+  vocabulary rather than assignments. Added hash-bound adjudication v2, which
+  accounts for every assigned axis on every gold-case unit and fails explicit
+  semantic non-support while retaining v1 read compatibility for historical
+  reports. Added no phrase blacklist, provider API, full-corpus replay, route
+  revision, seal obligation, or product-version vocabulary.
 - `v11` / 2026-08-10 — added fail-closed bounded semantic calibration for the
   method-v5 route: blind hash-pinned gold, exact source projection, route
   fingerprints, production-shaped sentinel slices, deterministic validator
