@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v12
+version: v13
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v12
+# Semantic Evidence Integration Contract v13
 
 ## Purpose
 
@@ -293,13 +293,21 @@ A leaf clearly established as outside the governed semantic scope may
 terminate as `out_of_scope`. A leaf clearly inside the relevant context that
 carries no bounded proposition once that context is read may terminate as
 `context_only`. No lexical phrase blacklist, keyword relevance gate, or length
-rule is permitted. Context may resolve what a short reply refers to, but it
-cannot donate a more detailed claim: generic approval or dislike remains
-`context_only` even when the product is known, while a reply that adopts a
-specific parent complaint or states customer behavior remains detailed.
-Referential agreement uses the `personal_agreement`
-posture: it does not inherit the parent's first-hand posture and receives no
-original-source credit. Bounded variant or formula wording stays detailed
+rule is permitted. Context may resolve an omitted referent or predicate, but it
+cannot donate an attribute or axis. Generic approval or dislike remains
+`context_only` when context supplies only the product. A reply that uniquely
+adopts a bounded parent complaint, comparison, behavior, preference, product
+choice, condition, or variant remains detailed. For example, in the chain
+`which is your favorite?` -> `Vanilla Beige!` -> `My fav!`, the final reply
+adopts the Vanilla Beige preference; it is not an empty reaction.
+
+Referential agreement uses the `personal_agreement` posture and does not
+inherit the parent's first-hand experience. When a distinctly credited reply
+actually asserts the same bounded proposition, it may contribute that actor's
+same-thread recurrence under the intelligence claim-support contract. The
+shared thread remains disclosed and cannot earn cross-venue credit. A reply
+that merely repeats or reports the parent remains `attribution_or_echo` and
+adds no independent origin. Bounded variant or formula wording stays detailed
 while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
 formula binding is detailed `unresolved`.
 
@@ -732,6 +740,14 @@ new frontier.
 
 ## Changelog
 
+- `v13` / 2026-08-10 — corrected the context boundary for a short reply that
+  uniquely adopts a bounded preference or product choice. The real chain
+  `which is your favorite?` -> `Vanilla Beige!` -> `My fav!` is claim-bearing
+  `personal_agreement`, with no axis donated by context. A distinctly credited
+  agreeing actor may add same-thread recurrence for that exact preference,
+  while the shared thread stays disclosed and neither first-hand experience nor
+  cross-venue credit is inherited. Generic approval with only a known product
+  remains `context_only`; no lexical blacklist or runtime schema was added.
 - `v12` / 2026-08-10 — corrected method-v5's context boundary so a resolved
   product referent cannot upgrade generic approval or dislike into a detailed
   claim; added an explicit atomic-splitting self-check and made axis candidates

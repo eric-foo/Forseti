@@ -76,6 +76,16 @@ with no semantic unit, axis assignment, reconciliation candidacy, or packet
 delivery. Ambiguous binding stays `unresolved` rather than being pushed into a
 cheaper terminal disposition.
 
+For a context-dependent short reply, operators and adjudicators inspect the
+root question, immediate parent, and leaf together. They record the resolved
+reading and keep separate what context supplied from what the leaf asserted.
+For example, `which is your favorite?` -> `Vanilla Beige!` -> `My fav!` means
+the final author also prefers Vanilla Beige. The leaf is claim-bearing
+`personal_agreement`, not first-hand product experience. Because the two
+visible handles are distinct, the pair may support same-thread recurrence for
+that exact preference, with thread co-location disclosed; it is not
+cross-venue corroboration and supplies no product axis.
+
 Workers report those terminal decisions either individually or as explicit-ID
 groups sharing one agent-authored reason. Grouping is transport compression, not
 a sample or a default: every evidence ID is listed, raw occurrences are checked
@@ -153,7 +163,7 @@ run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
-As of 2026-08-10, contract v11 and the no-provider runner implement the bounded
+As of 2026-08-10, contract v13 and the no-provider runner implement the bounded
 calibration gate. A real Summer Fridays dogfood projected 127 primary rows into
 one seven-row core prompt and the complete 120-row historical stress carrier,
 then repacked four predeclared cases into one selective cold-repeat prompt. The
@@ -161,8 +171,12 @@ core also reached a hash-bound terminal reconciliation view. The final bounded
 report is `SEMANTIC_CALIBRATION_FAIL`: eight of twelve cases passed, four failed,
 three of four cold repeats were materially inconsistent, all four final-view
 relation obligations were satisfied, and no adjudication blocker remained.
-The failures include treating `My fav!` as claim-bearing and collapsing several
-multi-point comments into too few units. This proves the gate can stop known
-semantic defects; it does not prove method-v5 fitness, authorize corpus
-resumption, estimate defect prevalence, or change the still-incomplete
-full-corpus boundary above.
+The failures originally included treating `My fav!` as claim-bearing, but the
+owner later corrected that gold after reviewing the full root-parent-leaf
+chain: in this thread it does assert a bounded Vanilla Beige preference. That
+invalidates the earlier compact-pass interpretation and requires a fresh
+hash-bound calibration. The remaining observed failures, including collapsing
+several multi-point comments into too few units, remain historical evidence
+about that run. Neither the earlier report nor this correction proves
+method-v5 fitness, authorizes corpus resumption, estimates defect prevalence,
+or changes the still-incomplete full-corpus boundary above.

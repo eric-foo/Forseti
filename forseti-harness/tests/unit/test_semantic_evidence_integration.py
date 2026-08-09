@@ -3415,13 +3415,14 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "exactly one context-aware relevance and accounting judgment" in text
     # Referential agreement keeps parent meaning without inheriting credit.
     assert '"same" may adopt the specific parent complaint' in text
-    assert 'Context may resolve "it"' in text
+    assert "Context\nmay fill omissions but cannot donate attributes" in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
-    assert "personal_agreement applies only when a reply adopts" in text
-    assert "attribution_or_echo applies when it only repeats" in text
-    assert "A direct answer to a specific parent\nquestion is its own bounded" in text
+    assert "personal_agreement adopts a specific parent proposition" in text
+    assert "attribution_or_echo\nmerely reports the parent" in text
+    assert "A direct answer to a specific\nquestion is its own bounded" in text
     assert "Context fills an omitted predicate, not posture" in text
-    assert "original-source\ncredit" in text
+    assert "may add same-thread recurrence" in text
+    assert "never award cross-venue credit" in text
     assert "Evidence posture describes support, not the verb" in text
     assert "value judgment, or category\njudgment is first_hand" in text
     assert "never customer shopping or use behavior" in text
@@ -3431,7 +3432,7 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "Never make ambiguity cheap" in text
     assert "routing it to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
-    assert "stays context_only without an attribute" in text
+    assert '"Love it" with only a known product remains context_only' in text
     assert "smallest complete set of in-scope atomic\nmeanings" in text
     assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
@@ -3439,7 +3440,8 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "When a result is what the author wanted" in text
     assert "preserve both the result and preference" in text
     assert "Generic approval" in text and "dislike adds no atom" in text
-    assert "Known product or parent choice\n  cannot make it the author's preference" in text
+    assert '"Vanilla Beige!" -> "My fav!"' in text
+    assert "claim_bearing personal_agreement with no axis" in text
     assert "Praise tied to a named result" in text
     assert "application, is specific evidence" in text
     assert "Axis candidates are vocabulary, not assignments" in text
@@ -3463,10 +3465,10 @@ def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     assert "There is no keyword, phrase, or length rule" in text
     # The worked examples describe semantic boundaries, not matchable input
     # filters. Short inputs can still be detailed, terminal, or unresolved.
-    for phrase in ('"same"', '"my fav"', '"I always reach for it"'):
+    for phrase in ('"same"', '"My fav!"', '"I always reach for it"'):
         assert phrase in text
-    assert '"Love it", "my fav", or "hate' in text
-    assert "claim_bearing, not a generic reaction" in text
+    assert '"Love it" with only a known product remains context_only' in text
+    assert "Adopting a specific parent proposition is claim-bearing" in text
 
 
 def test_v5_terminal_grouping_expands_to_one_row_per_evidence_id() -> None:
