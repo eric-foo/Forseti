@@ -74,6 +74,29 @@ def _write_json(path: Path, value: Any) -> None:
     )
 
 
+def _load_prepared_prompts(
+    slice_dir: Path, bundle: dict[str, Any]
+) -> list[dict[str, Any]]:
+    prompt_dir = slice_dir / "prompts"
+    expected_ids = [row["batch_id"] for row in bundle.get("batches", [])]
+    observed_paths = {
+        path.stem: path for path in prompt_dir.glob("*.md") if path.is_file()
+    }
+    if set(observed_paths) != set(expected_ids):
+        raise ValueError(f"prepared prompt set does not match bundle: {slice_dir}")
+    prompts: list[dict[str, Any]] = []
+    for batch_id in expected_ids:
+        prompt_text = observed_paths[batch_id].read_bytes().decode("utf-8")
+        prompts.append(
+            {
+                "batch_id": batch_id,
+                "prompt": prompt_text,
+                "prompt_utf8_bytes": len(prompt_text.encode("utf-8")),
+            }
+        )
+    return prompts
+
+
 def _resolve_artifact(repo_root: Path, locator: str) -> Path:
     raw = Path(locator)
     if raw.is_absolute():
@@ -161,6 +184,7 @@ def prepare_semantic_calibration_run(
 
 def evaluate_semantic_calibration_run(
     *,
+    source_path: Path,
     prepared_dir: Path,
     spec_path: Path,
     response_root: Path,
@@ -170,6 +194,7 @@ def evaluate_semantic_calibration_run(
     report_out: Path,
 ) -> dict[str, Any]:
     """Evaluate returned calibration slices; a non-pass remains visible."""
+    source = _load_object(source_path)
     spec = _load_object(spec_path)
     normalized = validate_calibration_spec(spec)
     prepared: dict[str, Any] = {
@@ -182,11 +207,13 @@ def evaluate_semantic_calibration_run(
     for slice_spec in normalized["slices"]:
         slice_id = slice_spec["slice_id"]
         slice_dir = prepared_dir / slice_id
+        bundle = _load_object(slice_dir / "bundle.json")
         prepared["slices"].append(
             {
                 "slice_id": slice_id,
                 "source": _load_object(slice_dir / "source.json"),
-                "bundle": _load_object(slice_dir / "bundle.json"),
+                "bundle": bundle,
+                "prompts": _load_prepared_prompts(slice_dir, bundle),
                 "route_fingerprint": _load_object(
                     slice_dir / "route_fingerprint.json"
                 ),
@@ -200,10 +227,12 @@ def evaluate_semantic_calibration_run(
         ]
     if normalized["cold_repeat"] is not None:
         cold_dir = prepared_dir / "cold-repeat"
+        cold_bundle = _load_object(cold_dir / "bundle.json")
         prepared["cold_repeat"] = {
             "slice_id": "cold-repeat",
             "source": _load_object(cold_dir / "source.json"),
-            "bundle": _load_object(cold_dir / "bundle.json"),
+            "bundle": cold_bundle,
+            "prompts": _load_prepared_prompts(cold_dir, cold_bundle),
             "route_fingerprint": _load_object(
                 cold_dir / "route_fingerprint.json"
             ),
@@ -243,6 +272,7 @@ def evaluate_semantic_calibration_run(
         adjudication,
         cold_responses_by_slice,
         reconciliation_by_slice,
+        full_source=source,
     )
     _write_json(report_out, report)
     return report
@@ -1020,6 +1050,7 @@ def _parser() -> argparse.ArgumentParser:
     calibration_prepare.add_argument("--output-dir", type=Path, required=True)
 
     calibration_evaluate = sub.add_parser("evaluate-calibration")
+    calibration_evaluate.add_argument("--source", type=Path, required=True)
     calibration_evaluate.add_argument("--prepared-dir", type=Path, required=True)
     calibration_evaluate.add_argument("--spec", type=Path, required=True)
     calibration_evaluate.add_argument("--response-root", type=Path, required=True)
@@ -1203,6 +1234,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             result = evaluate_semantic_calibration_run(
+                source_path=args.source,
                 prepared_dir=args.prepared_dir,
                 spec_path=args.spec,
                 response_root=args.response_root,

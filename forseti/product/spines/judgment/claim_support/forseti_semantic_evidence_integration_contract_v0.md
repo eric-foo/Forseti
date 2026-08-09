@@ -565,14 +565,29 @@ Current-route operations are:
 
 The calibration spec is authored from source text, required context, and the
 run-local catalog before the evaluated responses are read. Fields representing
-observed or predicted machine output are forbidden in that gold artifact. A
-`route_contract` pins the semantic runner revision, contract version, method
-hash, bundle/response/prompt generations, rendered axes hash, and run-local
-catalog hash; preparation fails if the actual route differs. A
+observed or predicted machine output are forbidden in that gold artifact. Every
+gold container — spec, slice, case, atom, relation obligation, repeat bound, and
+anomaly threshold — is a closed key set, and the gold must declare at least one
+case: an unrecognized or misspelled obligation field is rejected rather than
+ignored, so an obligation cannot silently disappear from the gate while the
+report still reads as a pass. A `route_contract` pins the method hash,
+bundle/response/prompt generations, rendered axes hash, and run-local catalog
+hash; preparation fails if the actual route differs on any of those. The same
+`route_contract` also records the semantic runner revision and contract version,
+but those two are operator-declared provenance only: no observable in-process
+value is supplied by the current execution interface to check them against, so
+they are carried into the route fingerprint unverified and must not be read as
+machine-enforced pins. A
 calibration slice may be compact or production-shaped, but every selected
-evidence ID must project exactly once. Clearly empty reactions remain accounted
-as `context_only` with zero semantic units; no phrase blacklist or deterministic
-meaning matcher substitutes for the one context-aware relevance judgment.
+evidence ID must project exactly once, and a claim-bearing gold case must name
+at least one required atomic meaning. Evaluation requires the hash-pinned full
+source and deterministically rebuilds the expected bounded sources, bundles,
+prompts, route fingerprints, and preparation receipt. The supplied preparation
+must match those rebuilt artifacts exactly; its self-hash proves internal
+consistency only and is not accepted as provenance. Clearly empty reactions
+remain accounted as `context_only` with zero semantic units; no phrase blacklist
+or deterministic meaning matcher substitutes for the one context-aware
+relevance judgment.
 Repeated large axis signatures are a deterministic warning, not an automatic
 semantic verdict, and must receive a compilation-bound adjudication before a
 pass is possible. Selective second reads repack only the predeclared cases into
@@ -689,9 +704,14 @@ new frontier.
   reuse, explicit atom/relation/anomaly adjudication, and selectively repeated
   cold reads bound to both response compilations. Missing or stale semantic
   judgment blocks, critical mismatch fails, and every report disclaims
-  prevalence, readiness, full-corpus completion, and resume authority. Added no
-  provider API, phrase blacklist, full-corpus replay, queue service, or product
-  version vocabulary.
+  prevalence, readiness, full-corpus completion, and resume authority. Gold
+  containers are closed key sets, at least one case is required, and every
+  claim-bearing case names an atomic meaning; evaluation rebuilds the expected
+  preparation from the hash-pinned full source instead of trusting a self-hashed
+  preparation receipt; a cold repeat cannot be judged consistent without its
+  primary compilation. Runner revision and contract version are recorded as
+  declared provenance, not enforced pins. Added no provider API, phrase
+  blacklist, full-corpus replay, queue service, or product version vocabulary.
 - `v10` / 2026-08-09 — added the run-v3 / bundle-v5 / projection-v2 / method-v5
   / response-v3 / compilation-v3 semantic generation for full-corpus execution.
   Required one mandatory context-aware relevance and accounting judgment per

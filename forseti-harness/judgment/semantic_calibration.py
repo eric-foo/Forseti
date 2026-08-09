@@ -52,6 +52,61 @@ _FORBIDDEN_GOLD_KEY_PREFIXES = (
     "predicted_",
     "response_",
 )
+# Every gold container is a closed key set.  A misspelled obligation key would
+# otherwise fall through `.get(..., default)` and silently delete that
+# obligation from the gate while the report still reads as a pass.
+_SPEC_FIELDS = {
+    "schema_version",
+    "full_source_sha256",
+    "method_version",
+    "route_contract",
+    "slices",
+    "relation_obligations",
+    "cold_repeat_case_ids",
+    "cold_repeat",
+    "spec_sha256",
+}
+_SLICE_FIELDS = {
+    "slice_id",
+    "purpose",
+    "evidence_ids",
+    "max_prompt_bytes",
+    "max_evidence_per_work_unit",
+    "minimum_largest_prompt_bytes",
+    "axis_repetition_warning",
+    "cases",
+}
+_CASE_FIELDS = {
+    "case_id",
+    "evidence_id",
+    "archetype",
+    "critical",
+    "expected_disposition",
+    "min_semantic_units",
+    "max_semantic_units",
+    "required_atoms",
+    "forbidden_values",
+    "allow_unmatched_units",
+}
+_ATOM_FIELDS = {"atom_id", "meaning", "expected_fields"}
+_RELATION_FIELDS = {"relation_id", "relation_type", "case_ids", "critical", "meaning"}
+_COLD_REPEAT_FIELDS = {
+    "max_prompt_bytes",
+    "max_evidence_per_work_unit",
+    "minimum_largest_prompt_bytes",
+}
+_AXIS_REPETITION_FIELDS = {"minimum_axis_count", "minimum_repeated_units"}
+# The route fields that have an observable in-process counterpart.  Runner
+# revision and contract version are operator-declared provenance with nothing
+# to check them against, so they are deliberately absent here.
+_ROUTE_CONTRACT_VERIFIED_FIELDS = (
+    "method_sha256",
+    "bundle_schema_version",
+    "response_schema_version",
+    "prompt_encoding_version",
+    "axes_sha256",
+    "product_identity_catalog_sha256",
+)
 
 
 class SemanticCalibrationError(ValueError):
@@ -91,6 +146,14 @@ def _unique_strings(value: Any, *, label: str, allow_empty: bool = False) -> lis
     ):
         raise SemanticCalibrationError(f"{label} must be a unique string list")
     return list(value)
+
+
+def _reject_unknown_fields(
+    value: Mapping[str, Any], allowed: set[str], *, label: str
+) -> None:
+    unknown = sorted(set(value) - allowed)
+    if unknown:
+        raise SemanticCalibrationError(f"{label} has unknown gold fields: {unknown}")
 
 
 def _reject_machine_output_fields(value: Any, *, path: str = "spec") -> None:
@@ -141,6 +204,7 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     blind_content = _without_hash(spec, "spec_sha256")
     blind_content.pop("route_contract", None)
     _reject_machine_output_fields(blind_content)
+    _reject_unknown_fields(spec, _SPEC_FIELDS, label="calibration spec")
     if not _nonempty(spec.get("full_source_sha256")):
         raise SemanticCalibrationError("calibration spec lacks full_source_sha256")
     if spec.get("method_version") != METHOD_VERSION_V5:
@@ -179,6 +243,7 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         if slice_id in seen_slices:
             raise SemanticCalibrationError(f"duplicate calibration slice: {slice_id}")
         seen_slices.add(slice_id)
+        _reject_unknown_fields(raw_slice, _SLICE_FIELDS, label=f"slice {slice_id}")
         evidence_ids = _unique_strings(
             raw_slice.get("evidence_ids"), label=f"slice {slice_id} evidence_ids"
         )
@@ -214,6 +279,7 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
             disposition = raw_case.get("expected_disposition")
             if not _nonempty(case_id) or case_id in seen_cases:
                 raise SemanticCalibrationError(f"duplicate or missing case_id: {case_id}")
+            _reject_unknown_fields(raw_case, _CASE_FIELDS, label=f"case {case_id}")
             if evidence_id not in evidence_ids or evidence_id in case_evidence:
                 raise SemanticCalibrationError(
                     f"case {case_id} has missing, duplicate, or off-slice evidence_id"
@@ -246,6 +312,9 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
                 if atom_id in atom_ids or not _nonempty(atom.get("meaning")):
                     raise SemanticCalibrationError(f"case {case_id} has duplicate or empty atom")
                 atom_ids.add(atom_id)
+                _reject_unknown_fields(
+                    atom, _ATOM_FIELDS, label=f"case {case_id} atom {atom_id}"
+                )
                 normalized_atoms.append(
                     {
                         "atom_id": atom_id,
@@ -255,6 +324,10 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
                             label=f"case {case_id} atom {atom_id}",
                         ),
                     }
+                )
+            if disposition == "claim_bearing" and not normalized_atoms:
+                raise SemanticCalibrationError(
+                    f"claim-bearing case {case_id} requires at least one atomic meaning"
                 )
             if disposition != "claim_bearing" and (min_units or max_units or atoms):
                 raise SemanticCalibrationError(
@@ -293,6 +366,11 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
                 raise SemanticCalibrationError(
                     f"slice {slice_id} has invalid axis_repetition_warning"
                 )
+            _reject_unknown_fields(
+                anomaly,
+                _AXIS_REPETITION_FIELDS,
+                label=f"slice {slice_id} axis_repetition_warning",
+            )
             anomaly = dict(anomaly)
         normalized_slices.append(
             {
@@ -306,6 +384,9 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
                 "axis_repetition_warning": anomaly,
             }
         )
+
+    if not seen_cases:
+        raise SemanticCalibrationError("calibration spec requires at least one case")
 
     relations = spec.get("relation_obligations", [])
     if not isinstance(relations, list):
@@ -326,6 +407,9 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         relation_id = relation["relation_id"]
         if relation_id in seen_relations or relation.get("relation_type") not in allowed_relations:
             raise SemanticCalibrationError(f"invalid or duplicate relation: {relation_id}")
+        _reject_unknown_fields(
+            relation, _RELATION_FIELDS, label=f"relation {relation_id}"
+        )
         case_ids = _unique_strings(
             relation.get("case_ids"), label=f"relation {relation_id} case_ids"
         )
@@ -353,6 +437,7 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     if repeat_cases:
         if not isinstance(cold_repeat, Mapping):
             raise SemanticCalibrationError("cold repeats require cold_repeat route bounds")
+        _reject_unknown_fields(cold_repeat, _COLD_REPEAT_FIELDS, label="cold_repeat")
         cold_max_prompt = cold_repeat.get("max_prompt_bytes")
         cold_max_evidence = cold_repeat.get("max_evidence_per_work_unit")
         cold_min_prompt = cold_repeat.get("minimum_largest_prompt_bytes", 0)
@@ -481,6 +566,14 @@ def route_fingerprint(
     return fingerprint
 
 
+def _projected_evidence_ids(bundle: Mapping[str, Any]) -> list[str]:
+    return [
+        evidence_id
+        for work_unit in bundle["semantic_work_unit_projection"]["work_units"]
+        for evidence_id in work_unit["evidence_ids"]
+    ]
+
+
 def prepare_semantic_calibration(
     full_source: Mapping[str, Any], spec: Mapping[str, Any]
 ) -> dict[str, Any]:
@@ -506,25 +599,14 @@ def prepare_semantic_calibration(
             raise SemanticCalibrationError(
                 f"slice {slice_spec['slice_id']} did not reach its production-shape floor"
             )
-        projected_ids = [
-            evidence_id
-            for work_unit in bundle["semantic_work_unit_projection"]["work_units"]
-            for evidence_id in work_unit["evidence_ids"]
-        ]
+        projected_ids = _projected_evidence_ids(bundle)
         if sorted(projected_ids) != sorted(slice_spec["evidence_ids"]):
             raise SemanticCalibrationError(
                 f"slice {slice_spec['slice_id']} projection changed selected evidence"
             )
         fingerprint = route_fingerprint(bundle, route_contract=normalized["route_contract"])
         expected_route = normalized["route_contract"]
-        for field in (
-            "method_sha256",
-            "bundle_schema_version",
-            "response_schema_version",
-            "prompt_encoding_version",
-            "axes_sha256",
-            "product_identity_catalog_sha256",
-        ):
+        for field in _ROUTE_CONTRACT_VERIFIED_FIELDS:
             if fingerprint.get(field) != expected_route.get(field):
                 raise SemanticCalibrationError(
                     f"slice {slice_spec['slice_id']} route contract mismatch: {field}"
@@ -574,14 +656,7 @@ def prepare_semantic_calibration(
         cold_fingerprint = route_fingerprint(
             cold_bundle, route_contract=normalized["route_contract"]
         )
-        for field in (
-            "method_sha256",
-            "bundle_schema_version",
-            "response_schema_version",
-            "prompt_encoding_version",
-            "axes_sha256",
-            "product_identity_catalog_sha256",
-        ):
+        for field in _ROUTE_CONTRACT_VERIFIED_FIELDS:
             if cold_fingerprint.get(field) != normalized["route_contract"].get(field):
                 raise SemanticCalibrationError(
                     f"cold-repeat route contract mismatch: {field}"
@@ -731,9 +806,16 @@ def evaluate_semantic_calibration(
     adjudication: Mapping[str, Any] | None,
     cold_responses_by_slice: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
     reconciliation_by_slice: Mapping[str, Mapping[str, Any]] | None = None,
+    *,
+    full_source: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Combine deterministic gates with explicit semantic adjudication."""
     normalized = validate_calibration_spec(spec)
+    _verify_full_source(full_source, normalized["full_source_sha256"])
+    expected_prepared = prepare_semantic_calibration(full_source, spec)
+    expected_prepared_slices = {
+        row["slice_id"]: row for row in expected_prepared["slices"]
+    }
     receipt = prepared.get("receipt") if isinstance(prepared, Mapping) else None
     if not isinstance(receipt, Mapping) or receipt.get("spec_sha256") != normalized["spec_sha256"]:
         raise SemanticCalibrationError("prepared calibration does not match spec")
@@ -813,10 +895,16 @@ def evaluate_semantic_calibration(
     failures: list[dict[str, Any]] = []
     blockers: list[dict[str, Any]] = []
     warnings: list[dict[str, Any]] = []
+    if receipt != expected_prepared["receipt"]:
+        failures.append({"code": "PREPARATION_RECEIPT_MISMATCH"})
     case_results: list[dict[str, Any]] = []
     compiled_by_slice: dict[str, Any] = {}
     cold_compilation: dict[str, Any] | None = None
-    cold_rows: dict[str, Mapping[str, Any]] = {}
+    case_to_slice = {
+        case["case_id"]: slice_spec["slice_id"]
+        for slice_spec in normalized["slices"]
+        for case in slice_spec["cases"]
+    }
     cold_responses = cold_responses_by_slice or {}
     reconciliations = reconciliation_by_slice or {}
     allowed_cold_keys = {"cold-repeat"} if normalized["cold_repeat"] is not None else set()
@@ -838,6 +926,21 @@ def evaluate_semantic_calibration(
         bundle = prepared_slice["bundle"]
         receipt_slice = receipt_slices[slice_id]
         source = prepared_slice.get("source")
+        expected_slice = expected_prepared_slices[slice_id]
+        exact_mismatches = [
+            field
+            for field in ("source", "bundle", "prompts", "route_fingerprint")
+            if prepared_slice.get(field) != expected_slice.get(field)
+        ]
+        if exact_mismatches:
+            failures.append(
+                {
+                    "code": "PREPARED_SLICE_SPEC_MISMATCH",
+                    "slice_id": slice_id,
+                    "detail": ", ".join(exact_mismatches),
+                }
+            )
+            continue
         if (
             not isinstance(source, Mapping)
             or source.get("source_sha256") != receipt_slice.get("source_sha256")
@@ -960,8 +1063,14 @@ def evaluate_semantic_calibration(
             )
             if required_atoms and not isinstance(atom_matches, Mapping):
                 atom_matches = {}
+            # Strip the exact evidence prefix rather than splitting on the first
+            # `::`, so an evidence id that itself contains `::` cannot rename
+            # the key the adjudicator has to cite.
             units_by_key = {
-                unit["semantic_unit_ref"].split("::", 1)[1]: unit for unit in units
+                unit["semantic_unit_ref"].removeprefix(
+                    f"{unit['evidence_id']}::"
+                ): unit
+                for unit in units
             }
             matched_keys: set[str] = set()
             for atom_id, atom in required_atoms.items():
@@ -1039,7 +1148,21 @@ def evaluate_semantic_calibration(
         else:
             cold_bundle = prepared_cold.get("bundle")
             cold_source = prepared_cold.get("source")
-            if (
+            expected_cold = expected_prepared["cold_repeat"]
+            cold_exact_mismatches = [
+                field
+                for field in ("source", "bundle", "prompts", "route_fingerprint")
+                if not isinstance(expected_cold, Mapping)
+                or prepared_cold.get(field) != expected_cold.get(field)
+            ]
+            if cold_exact_mismatches:
+                failures.append(
+                    {
+                        "code": "COLD_REPEAT_SPEC_MISMATCH",
+                        "detail": ", ".join(cold_exact_mismatches),
+                    }
+                )
+            elif (
                 not isinstance(cold_bundle, Mapping)
                 or not isinstance(cold_source, Mapping)
                 or cold_source.get("source_sha256")
@@ -1054,21 +1177,22 @@ def evaluate_semantic_calibration(
                 != prepared_cold.get("route_fingerprint")
             ):
                 failures.append({"code": "COLD_REPEAT_LINEAGE_MISMATCH"})
-            elif "cold-repeat" not in cold_responses:
-                blockers.append({"code": "COLD_REPEAT_RESPONSE_MISSING"})
             else:
-                try:
-                    cold_rows, cold_compilation = _response_rows(
-                        cold_bundle, cold_responses["cold-repeat"]
-                    )
-                except SemanticIntegrationError as exc:
-                    failures.append(
-                        {
-                            "code": "COLD_STRUCTURAL_VALIDATION_FAILED",
-                            "slice_id": "cold-repeat",
-                            "detail": str(exc),
-                        }
-                    )
+                if "cold-repeat" not in cold_responses:
+                    blockers.append({"code": "COLD_REPEAT_RESPONSE_MISSING"})
+                else:
+                    try:
+                        _, cold_compilation = _response_rows(
+                            cold_bundle, cold_responses["cold-repeat"]
+                        )
+                    except SemanticIntegrationError as exc:
+                        failures.append(
+                            {
+                                "code": "COLD_STRUCTURAL_VALIDATION_FAILED",
+                                "slice_id": "cold-repeat",
+                                "detail": str(exc),
+                            }
+                        )
 
     reconciled_views: dict[str, Mapping[str, Any]] = {}
     for slice_id, packet in reconciliations.items():
@@ -1108,11 +1232,6 @@ def evaluate_semantic_calibration(
         reconciled_views[slice_id] = supplied_view
 
     relation_results: list[dict[str, Any]] = []
-    case_to_slice = {
-        case["case_id"]: slice_spec["slice_id"]
-        for slice_spec in normalized["slices"]
-        for case in slice_spec["cases"]
-    }
     for relation in normalized["relation_obligations"]:
         result = relation_adjudications.get(relation["relation_id"])
         outcome = result.get("outcome") if isinstance(result, Mapping) else None
@@ -1195,6 +1314,17 @@ def evaluate_semantic_calibration(
         if repeat_compiled is None:
             blockers.append(
                 {"code": "COLD_REPEAT_RESPONSE_MISSING", "case_id": case_id}
+            )
+            outcome = "missing"
+        elif primary_hash is None:
+            # Without a primary compilation there is nothing for the repeat to
+            # be consistent with; an omitted primary hash must not read as a
+            # matched one.
+            blockers.append(
+                {
+                    "code": "COLD_REPEAT_PRIMARY_COMPILATION_MISSING",
+                    "case_id": case_id,
+                }
             )
             outcome = "missing"
         elif isinstance(result, Mapping) and (
