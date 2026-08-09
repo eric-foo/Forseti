@@ -315,8 +315,9 @@ to their proposition; never make them standalone. Never hide meanings behind
 "the author reports". Account for every explicit in-scope attribute, behavior,
 reason, comparison, and product-or-formula relationship, including secondary
 comparisons. A later product called better after target use is a target
-comparison when the referent is clear. Generic approval or dislike adds no
-atom.
+comparison when the referent is clear. When a result is what the author wanted,
+preserve both the result and preference, combined or split. Generic approval
+or dislike adds no atom.
 
 Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
 must be directly supported by that unit's atomic statement and by the leaf.

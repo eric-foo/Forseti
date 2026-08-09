@@ -3436,7 +3436,9 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
     assert "later product called better after target use is a target\ncomparison" in text
-    assert "Generic approval or dislike adds no\natom" in text
+    assert "When a result is what the author wanted" in text
+    assert "preserve both the result and preference" in text
+    assert "Generic approval" in text and "dislike adds no atom" in text
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
     assert "include every existing axis it does express" in text
