@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v10
-effective_date: 2026-08-09
+version: v11
+effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v10
+# Semantic Evidence Integration Contract v11
 
 ## Purpose
 
@@ -548,6 +548,36 @@ Current-route operations are:
     the next node compilation; repeat until one terminal level remains.
 13. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
     v2.
+14. `prepare-calibration` reads a hash-pinned method-v5 source and blind owner
+    gold, projects exact bounded slices, and writes route-native sources,
+    bundles, fingerprints, and prompts. It makes no model call and cannot
+    authorize a corpus run.
+15. `evaluate-calibration` runs the existing response validator, then evaluates
+    disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
+    anomaly, and selective cold-repeat obligations. Semantic atom, relation,
+    anomaly, and repeat judgments must be explicit and hash-bound to the exact
+    compiled responses they judge. Cross-source relation judgments additionally
+    bind a final reconciliation view that the evaluator rebuilds from the
+    supplied terminal node compilation; extraction output alone cannot satisfy
+    a merge or counterevidence obligation. Missing or stale adjudication blocks;
+    a critical mismatch fails. The report is a bounded calibration result only,
+    never a prevalence estimate, readiness claim, or corpus-resume authority.
+
+The calibration spec is authored from source text, required context, and the
+run-local catalog before the evaluated responses are read. Fields representing
+observed or predicted machine output are forbidden in that gold artifact. A
+`route_contract` pins the semantic runner revision, contract version, method
+hash, bundle/response/prompt generations, rendered axes hash, and run-local
+catalog hash; preparation fails if the actual route differs. A
+calibration slice may be compact or production-shaped, but every selected
+evidence ID must project exactly once. Clearly empty reactions remain accounted
+as `context_only` with zero semantic units; no phrase blacklist or deterministic
+meaning matcher substitutes for the one context-aware relevance judgment.
+Repeated large axis signatures are a deterministic warning, not an automatic
+semantic verdict, and must receive a compilation-bound adjudication before a
+pass is possible. Selective second reads repack only the predeclared cases into
+one separately hash-bound route-native slice; their consistency judgment binds
+both the primary compilation for each case and the compact repeat compilation.
 
 The controller is the active agent task. It assigns immutable batch IDs to at
 most three no-API semantic subagents and treats the response directory as the
@@ -653,6 +683,15 @@ new frontier.
 
 ## Changelog
 
+- `v11` / 2026-08-10 — added fail-closed bounded semantic calibration for the
+  method-v5 route: blind hash-pinned gold, exact source projection, route
+  fingerprints, production-shaped sentinel slices, deterministic validator
+  reuse, explicit atom/relation/anomaly adjudication, and selectively repeated
+  cold reads bound to both response compilations. Missing or stale semantic
+  judgment blocks, critical mismatch fails, and every report disclaims
+  prevalence, readiness, full-corpus completion, and resume authority. Added no
+  provider API, phrase blacklist, full-corpus replay, queue service, or product
+  version vocabulary.
 - `v10` / 2026-08-09 — added the run-v3 / bundle-v5 / projection-v2 / method-v5
   / response-v3 / compilation-v3 semantic generation for full-corpus execution.
   Required one mandatory context-aware relevance and accounting judgment per

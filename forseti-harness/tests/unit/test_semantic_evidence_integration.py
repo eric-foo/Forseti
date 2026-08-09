@@ -45,8 +45,18 @@ from judgment.semantic_evidence_integration import (
     validate_reconciliation_stage,
     verify_bundle_context,
 )
+from judgment.semantic_calibration import (
+    CALIBRATION_ADJUDICATION_VERSION,
+    CALIBRATION_SPEC_VERSION,
+    SemanticCalibrationError,
+    evaluate_semantic_calibration,
+    prepare_semantic_calibration,
+    validate_calibration_spec,
+)
 from runners.run_semantic_evidence_integration import (
+    evaluate_semantic_calibration_run,
     prepare_batches,
+    prepare_semantic_calibration_run,
     publish_batch_response_file,
 )
 
@@ -2374,6 +2384,485 @@ def _v5_responses(
     return responses
 
 
+def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> dict:
+    evidence_ids = [row["evidence_id"] for row in source["captured_items"]]
+    route_bundle = build_bundle(source, max_prompt_bytes=12_000)
+    spec = {
+        "schema_version": CALIBRATION_SPEC_VERSION,
+        "full_source_sha256": source["source_sha256"],
+        "method_version": METHOD_VERSION_V5,
+        "route_contract": {
+            "runner_revision": "test-fixture-revision",
+            "contract_version": "v11-test",
+            "method_sha256": route_bundle["method_sha256"],
+            "bundle_schema_version": BUNDLE_VERSION_V5,
+            "response_schema_version": BATCH_RESPONSE_VERSION_V3,
+            "prompt_encoding_version": PROMPT_ENCODING_VERSION,
+            "axes_sha256": _canonical_hash(source["axes"]),
+            "product_identity_catalog_sha256": source.get(
+                "product_identity_catalog", {}
+            ).get("catalog_sha256"),
+        },
+        "slices": [
+            {
+                "slice_id": "semantic-core",
+                "purpose": "controlled semantic calibration fixture",
+                "evidence_ids": evidence_ids,
+                "max_prompt_bytes": 12_000,
+                "max_evidence_per_work_unit": 120,
+                "minimum_largest_prompt_bytes": 1_000,
+                "axis_repetition_warning": {
+                    "minimum_axis_count": 1,
+                    "minimum_repeated_units": 2,
+                },
+                "cases": [
+                    {
+                        "case_id": "drying-after-week",
+                        "evidence_id": evidence_ids[0],
+                        "archetype": "first-hand conditioned claim",
+                        "critical": True,
+                        "expected_disposition": "claim_bearing",
+                        "min_semantic_units": 1,
+                        "max_semantic_units": 1,
+                        "required_atoms": [
+                            {
+                                "atom_id": "drying",
+                                "meaning": "The balm became drying after a week of use.",
+                                "expected_fields": {
+                                    "subject_product_ids": ["sf-lbb"],
+                                    "axis_ids": ["wear"],
+                                    "evidence_posture": "first_hand",
+                                },
+                            }
+                        ],
+                        "forbidden_values": (
+                            {"subject_product_ids": [forbidden_product]}
+                            if forbidden_product
+                            else {}
+                        ),
+                        "allow_unmatched_units": False,
+                    }
+                ],
+            }
+        ],
+        "relation_obligations": [],
+        "cold_repeat_case_ids": [],
+    }
+    spec["spec_sha256"] = _canonical_hash(spec)
+    return spec
+
+
+def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
+    adjudication = {
+        "schema_version": CALIBRATION_ADJUDICATION_VERSION,
+        "spec_sha256": spec["spec_sha256"],
+        "adjudicator": "cold-test-adjudicator",
+        "case_adjudications": [
+            {
+                "case_id": "drying-after-week",
+                "compilation_sha256": compilation_sha256,
+                "atom_matches": {"drying": "drying-after-week"},
+            }
+        ],
+        "relation_adjudications": [],
+        "cold_repeat_adjudications": [],
+        "warning_adjudications": [
+            {
+                "warning_id": "repeated-large-axis-signature:semantic-core",
+                "compilation_sha256": compilation_sha256,
+                "outcome": "reviewed_benign",
+            }
+        ],
+    }
+    adjudication["adjudication_sha256"] = _canonical_hash(adjudication)
+    return adjudication
+
+
+def test_calibration_spec_rejects_machine_output_leakage() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["slices"][0]["cases"][0]["observed_disposition"] = "claim_bearing"
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    with pytest.raises(SemanticCalibrationError, match="machine-output field"):
+        validate_calibration_spec(spec)
+
+
+def test_calibration_preparation_is_exact_and_deterministic() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+
+    first = prepare_semantic_calibration(source, spec)
+    second = prepare_semantic_calibration(source, spec)
+
+    assert first == second
+    assert first["receipt"]["full_source_sha256"] == source["source_sha256"]
+    prepared = first["slices"][0]
+    assert prepared["bundle"]["schema_version"] == BUNDLE_VERSION_V5
+    assert [
+        evidence_id
+        for batch in prepared["bundle"]["batches"]
+        for evidence_id in batch["evidence_ids"]
+    ] == spec["slices"][0]["evidence_ids"]
+    assert source == materialize_source_v3(_source_v5(count=2))
+
+
+def test_calibration_preparation_rejects_a_stale_route_fingerprint() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["route_contract"]["method_sha256"] = "0" * 64
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    with pytest.raises(SemanticCalibrationError, match="method_sha256"):
+        prepare_semantic_calibration(source, spec)
+
+
+def test_calibration_blocks_without_semantic_adjudication() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+
+    report = evaluate_semantic_calibration(
+        prepared, spec, {"semantic-core": _v5_responses(bundle)}, None
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "SEMANTIC_ADJUDICATION_MISSING"
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_treats_explicit_atom_no_match_as_failure() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"][0]["atom_matches"]["drying"] = None
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared, spec, {"semantic-core": responses}, adjudication
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        "has no equivalent semantic unit" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_cannot_satisfy_two_atoms_with_one_broad_unit() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    second_atom = deepcopy(spec["slices"][0]["cases"][0]["required_atoms"][0])
+    second_atom["atom_id"] = "week-condition"
+    second_atom["meaning"] = "The drying appeared after one week of use."
+    spec["slices"][0]["cases"][0]["required_atoms"].append(second_atom)
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"][0]["atom_matches"][
+        "week-condition"
+    ] = "drying-after-week"
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared, spec, {"semantic-core": responses}, adjudication
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any("reuses unit key" in row["detail"] for row in report["hard_failures"])
+
+
+def test_calibration_passes_matching_semantic_atom_and_warns_on_repetition() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert report["case_results"][0]["status"] == "pass"
+    assert report["warnings"][0]["code"] == "REPEATED_LARGE_AXIS_SIGNATURE"
+
+
+def test_calibration_rejects_structurally_valid_wrong_known_product() -> None:
+    raw_source = _source_v5(count=2, catalog=True)
+    catalog = raw_source["product_identity_catalog"]
+    catalog.pop("catalog_sha256")
+    catalog["products"].append(
+        {
+            "stable_product_id": "other-balm",
+            "display_name": "Other Balm",
+            "source_product_ids": ["other-balm"],
+            "aliases": ["Other"],
+            "authority_artifact_ids": ["thread-1"],
+        }
+    )
+    catalog["products"].sort(key=lambda row: row["stable_product_id"])
+    catalog["catalog_sha256"] = _canonical_hash(catalog)
+    source = materialize_source_v3(raw_source)
+    spec = _calibration_spec(source, forbidden_product="other-balm")
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    responses[0]["evidence"][0]["semantic_units"][0]["subject_product_ids"] = [
+        "other-balm"
+    ]
+
+    # The route validator accepts the catalog-valid substitution; calibration
+    # must still reject its meaning and binding.
+    validate_batch_responses(bundle, responses)
+    compilation = validate_batch_responses(bundle, responses)
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any("forbidden subject_product_ids" in row["detail"] for row in report["hard_failures"])
+
+
+def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
+    tmp_path: Path,
+) -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    source_path = tmp_path / "source.json"
+    spec_path = tmp_path / "spec.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    prepared_dir = tmp_path / "prepared"
+
+    result = prepare_semantic_calibration_run(
+        source_path=source_path,
+        spec_path=spec_path,
+        output_dir=prepared_dir,
+    )
+    assert result["status"] == "SEMANTIC_CALIBRATION_PREPARED"
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        prepare_semantic_calibration_run(
+            source_path=source_path,
+            spec_path=spec_path,
+            output_dir=prepared_dir,
+        )
+
+    bundle = json.loads(
+        (prepared_dir / "semantic-core" / "bundle.json").read_text(encoding="utf-8")
+    )
+    responses = _v5_responses(bundle)
+    response_dir = tmp_path / "responses" / "semantic-core"
+    response_dir.mkdir(parents=True)
+    (response_dir / "batch-0001.json").write_text(
+        json.dumps(responses[0]), encoding="utf-8"
+    )
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication_path = tmp_path / "adjudication.json"
+    adjudication_path.write_text(json.dumps(adjudication), encoding="utf-8")
+
+    report = evaluate_semantic_calibration_run(
+        prepared_dir=prepared_dir,
+        spec_path=spec_path,
+        response_root=tmp_path / "responses",
+        cold_response_root=None,
+        reconciliation_root=None,
+        adjudication_path=adjudication_path,
+        report_out=tmp_path / "report.json",
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert (tmp_path / "report.json").is_file()
+
+
+def test_cold_repeat_adjudication_is_bound_to_both_compilations() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["cold_repeat_case_ids"] = ["drying-after-week"]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    cold_bundle = prepared["cold_repeat"]["bundle"]
+    assert [row["evidence_id"] for row in cold_bundle["evidence_units"]] == [
+        source["captured_items"][0]["evidence_id"]
+    ]
+    primary = _v5_responses(bundle)
+    repeat = _v5_responses(cold_bundle)
+    primary_compilation = validate_batch_responses(bundle, primary)
+    repeat_compilation = validate_batch_responses(cold_bundle, repeat)
+    adjudication = _calibration_adjudication(
+        spec, primary_compilation["compilation_sha256"]
+    )
+    adjudication["cold_repeat_adjudications"] = [
+        {
+            "case_id": "drying-after-week",
+            "primary_compilation_sha256": primary_compilation["compilation_sha256"],
+            "repeat_compilation_sha256": repeat_compilation["compilation_sha256"],
+            "outcome": "consistent",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": primary},
+        adjudication,
+        {"cold-repeat": repeat},
+    )
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+    stale = deepcopy(adjudication)
+    stale["cold_repeat_adjudications"][0]["repeat_compilation_sha256"] = "0" * 64
+    stale["adjudication_sha256"] = _canonical_hash(
+        {key: value for key, value in stale.items() if key != "adjudication_sha256"}
+    )
+    blocked = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": primary},
+        stale,
+        {"cold-repeat": repeat},
+    )
+    assert blocked["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "COLD_REPEAT_ADJUDICATION_STALE"
+        for row in blocked["blockers"]
+    )
+
+
+def test_relation_adjudication_requires_a_rebuilt_final_view() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    second_case = deepcopy(spec["slices"][0]["cases"][0])
+    second_case["case_id"] = "drying-after-week-second-origin"
+    second_case["evidence_id"] = source["captured_items"][1]["evidence_id"]
+    spec["slices"][0]["cases"].append(second_case)
+    spec["relation_obligations"] = [
+        {
+            "relation_id": "same-meaning-independent-origins",
+            "relation_type": "independent_origin_preserved",
+            "case_ids": ["drying-after-week", "drying-after-week-second-origin"],
+            "critical": True,
+            "meaning": "Both origins remain visible in one reconciled meaning.",
+        }
+    ]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_reconciliation_stage(bundle, compilation)
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+    view = finalize_v3_view(bundle, compilation, terminal)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"].append(
+        {
+            "case_id": "drying-after-week-second-origin",
+            "compilation_sha256": compilation["compilation_sha256"],
+            "atom_matches": {"drying": "drying-after-week"},
+        }
+    )
+    adjudication["relation_adjudications"] = [
+        {
+            "relation_id": "same-meaning-independent-origins",
+            "compilation_sha256_by_slice": {
+                "semantic-core": compilation["compilation_sha256"]
+            },
+            "view_sha256_by_slice": {"semantic-core": view["view_sha256"]},
+            "outcome": "satisfied",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    without_view = evaluate_semantic_calibration(
+        prepared, spec, {"semantic-core": responses}, adjudication
+    )
+    assert without_view["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "RECONCILIATION_OUTPUT_MISSING"
+        for row in without_view["blockers"]
+    )
+
+    with_view = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        reconciliation_by_slice={
+            "semantic-core": {"node_compilation": terminal, "view": view}
+        },
+    )
+    assert with_view["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
 def test_legacy_v4_bundle_prompt_and_compilation_bytes_are_unchanged() -> None:
     bundle = build_bundle(_source_v3(count=7), max_prompt_bytes=8_000)
     assert bundle["schema_version"] == BUNDLE_VERSION_V4
@@ -2792,8 +3281,8 @@ def test_v5_prepare_runner_writes_no_static_worker_assignment(tmp_path: Path) ->
     repo_root.mkdir()
     source = _source_v5(count=7)
     for index in range(7):
-        (repo_root / f"thread-{index + 1}.json").write_text(
-            f"thread-{index + 1}\n", encoding="utf-8"
+        (repo_root / f"thread-{index + 1}.json").write_bytes(
+            f"thread-{index + 1}\n".encode("utf-8")
         )
     source_path = tmp_path / "source.json"
     source_path.write_text(json.dumps(source), encoding="utf-8")

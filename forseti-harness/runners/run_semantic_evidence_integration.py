@@ -25,6 +25,12 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     validate_batch_responses,
     validate_reconciliation_stage,
 )
+from judgment.semantic_calibration import (  # noqa: E402
+    SemanticCalibrationError,
+    evaluate_semantic_calibration,
+    prepare_semantic_calibration,
+    validate_calibration_spec,
+)
 from judgment.phase_a_semantic_run import (  # noqa: E402
     audit_phase_a_source,
     build_phase_a_reddit_source_v3,
@@ -102,6 +108,144 @@ def _verify_sources(source: dict[str, Any], *, repo_root: Path) -> None:
                 f"source artifact hash mismatch for {row.get('artifact_id')}: "
                 f"expected {expected}, observed {observed}"
             )
+
+
+def prepare_semantic_calibration_run(
+    *, source_path: Path, spec_path: Path, output_dir: Path
+) -> dict[str, Any]:
+    """Prepare exact method-v5 calibration slices and their prompts."""
+    source = _load_object(source_path)
+    spec = _load_object(spec_path)
+    prepared = prepare_semantic_calibration(source, spec)
+    _write_json(output_dir / "preparation_receipt.json", prepared["receipt"])
+    for slice_row in prepared["slices"]:
+        slice_dir = output_dir / slice_row["slice_id"]
+        _write_json(slice_dir / "source.json", slice_row["source"])
+        _write_json(slice_dir / "bundle.json", slice_row["bundle"])
+        _write_json(slice_dir / "route_fingerprint.json", slice_row["route_fingerprint"])
+        for prompt in slice_row["prompts"]:
+            _write_new(
+                slice_dir / "prompts" / f"{prompt['batch_id']}.md",
+                prompt["prompt"].encode("utf-8"),
+            )
+    cold_repeat = prepared.get("cold_repeat")
+    if isinstance(cold_repeat, dict):
+        cold_dir = output_dir / "cold-repeat"
+        _write_json(cold_dir / "source.json", cold_repeat["source"])
+        _write_json(cold_dir / "bundle.json", cold_repeat["bundle"])
+        _write_json(
+            cold_dir / "route_fingerprint.json",
+            cold_repeat["route_fingerprint"],
+        )
+        for prompt in cold_repeat["prompts"]:
+            _write_new(
+                cold_dir / "prompts" / f"{prompt['batch_id']}.md",
+                prompt["prompt"].encode("utf-8"),
+            )
+    return {
+        "status": "SEMANTIC_CALIBRATION_PREPARED",
+        "preparation_sha256": prepared["receipt"]["preparation_sha256"],
+        "spec_sha256": prepared["receipt"]["spec_sha256"],
+        "slice_count": len(prepared["slices"]),
+        "work_unit_count": sum(
+            len(row["bundle"]["batches"]) for row in prepared["slices"]
+        )
+        + (
+            0
+            if not isinstance(cold_repeat, dict)
+            else len(cold_repeat["bundle"]["batches"])
+        ),
+        "model_api_calls": 0,
+    }
+
+
+def evaluate_semantic_calibration_run(
+    *,
+    prepared_dir: Path,
+    spec_path: Path,
+    response_root: Path,
+    cold_response_root: Path | None,
+    reconciliation_root: Path | None,
+    adjudication_path: Path | None,
+    report_out: Path,
+) -> dict[str, Any]:
+    """Evaluate returned calibration slices; a non-pass remains visible."""
+    spec = _load_object(spec_path)
+    normalized = validate_calibration_spec(spec)
+    prepared: dict[str, Any] = {
+        "receipt": _load_object(prepared_dir / "preparation_receipt.json"),
+        "slices": [],
+        "cold_repeat": None,
+    }
+    responses_by_slice: dict[str, list[dict[str, Any]]] = {}
+    cold_responses_by_slice: dict[str, list[dict[str, Any]]] = {}
+    for slice_spec in normalized["slices"]:
+        slice_id = slice_spec["slice_id"]
+        slice_dir = prepared_dir / slice_id
+        prepared["slices"].append(
+            {
+                "slice_id": slice_id,
+                "source": _load_object(slice_dir / "source.json"),
+                "bundle": _load_object(slice_dir / "bundle.json"),
+                "route_fingerprint": _load_object(
+                    slice_dir / "route_fingerprint.json"
+                ),
+            }
+        )
+        response_dir = response_root / slice_id
+        responses_by_slice[slice_id] = [
+            _load_object(path)
+            for path in sorted(response_dir.glob("batch-*.json"))
+            if path.is_file()
+        ]
+    if normalized["cold_repeat"] is not None:
+        cold_dir = prepared_dir / "cold-repeat"
+        prepared["cold_repeat"] = {
+            "slice_id": "cold-repeat",
+            "source": _load_object(cold_dir / "source.json"),
+            "bundle": _load_object(cold_dir / "bundle.json"),
+            "route_fingerprint": _load_object(
+                cold_dir / "route_fingerprint.json"
+            ),
+        }
+        if cold_response_root is not None:
+            cold_response_dir = cold_response_root / "cold-repeat"
+            cold_responses_by_slice["cold-repeat"] = [
+                _load_object(path)
+                for path in sorted(cold_response_dir.glob("batch-*.json"))
+                if path.is_file()
+            ]
+    adjudication = (
+        None if adjudication_path is None else _load_object(adjudication_path)
+    )
+    reconciliation_by_slice = (
+        {}
+        if reconciliation_root is None
+        else {
+            slice_spec["slice_id"]: {
+                "node_compilation": _load_object(
+                    reconciliation_root
+                    / slice_spec["slice_id"]
+                    / "node_compilation.json"
+                ),
+                "view": _load_object(
+                    reconciliation_root / slice_spec["slice_id"] / "view.json"
+                ),
+            }
+            for slice_spec in normalized["slices"]
+            if (reconciliation_root / slice_spec["slice_id"] / "view.json").is_file()
+        }
+    )
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        responses_by_slice,
+        adjudication,
+        cold_responses_by_slice,
+        reconciliation_by_slice,
+    )
+    _write_json(report_out, report)
+    return report
 
 
 def prepare_batches(
@@ -869,6 +1013,20 @@ def _parser() -> argparse.ArgumentParser:
     selection.add_argument("--axis-id", action="append", default=[])
     selection.add_argument("--proposition-id", action="append", default=[])
     evidence_packet.add_argument("--packet-out", type=Path, required=True)
+
+    calibration_prepare = sub.add_parser("prepare-calibration")
+    calibration_prepare.add_argument("--source", type=Path, required=True)
+    calibration_prepare.add_argument("--spec", type=Path, required=True)
+    calibration_prepare.add_argument("--output-dir", type=Path, required=True)
+
+    calibration_evaluate = sub.add_parser("evaluate-calibration")
+    calibration_evaluate.add_argument("--prepared-dir", type=Path, required=True)
+    calibration_evaluate.add_argument("--spec", type=Path, required=True)
+    calibration_evaluate.add_argument("--response-root", type=Path, required=True)
+    calibration_evaluate.add_argument("--cold-response-root", type=Path)
+    calibration_evaluate.add_argument("--reconciliation-root", type=Path)
+    calibration_evaluate.add_argument("--adjudication", type=Path)
+    calibration_evaluate.add_argument("--report-out", type=Path, required=True)
     return parser
 
 
@@ -1027,7 +1185,7 @@ def main(argv: list[str] | None = None) -> int:
                 node_compilation_path=args.node_compilation,
                 view_out=args.view_out,
             )
-        else:
+        elif args.command == "project-evidence-packet":
             result = project_evidence_packet_run(
                 view_path=args.view,
                 bundle_path=args.bundle,
@@ -1037,10 +1195,34 @@ def main(argv: list[str] | None = None) -> int:
                 proposition_ids=args.proposition_id,
                 packet_out=args.packet_out,
             )
-    except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:
+        elif args.command == "prepare-calibration":
+            result = prepare_semantic_calibration_run(
+                source_path=args.source,
+                spec_path=args.spec,
+                output_dir=args.output_dir,
+            )
+        else:
+            result = evaluate_semantic_calibration_run(
+                prepared_dir=args.prepared_dir,
+                spec_path=args.spec,
+                response_root=args.response_root,
+                cold_response_root=args.cold_response_root,
+                reconciliation_root=args.reconciliation_root,
+                adjudication_path=args.adjudication,
+                report_out=args.report_out,
+            )
+    except (
+        OSError,
+        ValueError,
+        json.JSONDecodeError,
+        SemanticIntegrationError,
+        SemanticCalibrationError,
+    ) as exc:
         print(json.dumps({"status": "error", "error": str(exc)}, indent=2, sort_keys=True))
         return 2
     print(json.dumps(result, indent=2, sort_keys=True))
+    if args.command == "evaluate-calibration" and result.get("status") != "SEMANTIC_CALIBRATION_PASS":
+        return 3
     return 0
 
 

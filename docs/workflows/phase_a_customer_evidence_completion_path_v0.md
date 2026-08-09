@@ -117,13 +117,18 @@ or campaign action.
    validators, and proof receipt.
 3. Prove catalog reach on a real empty-candidate or mixed-product Reddit leaf
    plus retailer evidence, then independently review the runtime change.
-4. After accepted review, give cold agents the full assessable Reddit and
-   retailer corpus and require exact per-leaf accounting through terminal
+4. Bind the final execution route, then run its hash-pinned bounded semantic
+   calibration before assigning any remaining full-corpus work. Calibration
+   must include a production-shaped work unit, blind atomic gold, selective
+   cold repeats, and final-view cross-source obligations; a failure or blocker
+   keeps the corpus paused.
+5. Only after calibration passes, give cold agents the full assessable Reddit
+   and retailer corpus and require exact per-leaf accounting through terminal
    reconciliation and evidence-packet projection.
-5. Adopt method v4 into a seal-bearing route only through an explicit later
+6. Adopt the current method into a seal-bearing route only through an explicit later
    route revision. A bounded or full shadow run does not rewrite Route 1.6 or
    1.7 obligations.
-6. Only after the customer corpus is complete, integrated, reproducible, and
+7. Only after the customer corpus is complete, integrated, reproducible, and
    cold-agent proven should the separate campaign/customer bridge be handed
    off.
 
@@ -147,3 +152,17 @@ claim, no token claim, no full-corpus execution readiness, and no
 run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
+
+As of 2026-08-10, contract v11 and the no-provider runner implement the bounded
+calibration gate. A real Summer Fridays dogfood projected 127 primary rows into
+one seven-row core prompt and the complete 120-row historical stress carrier,
+then repacked four predeclared cases into one selective cold-repeat prompt. The
+core also reached a hash-bound terminal reconciliation view. The final bounded
+report is `SEMANTIC_CALIBRATION_FAIL`: eight of twelve cases passed, four failed,
+three of four cold repeats were materially inconsistent, all four final-view
+relation obligations were satisfied, and no adjudication blocker remained.
+The failures include treating `My fav!` as claim-bearing and collapsing several
+multi-point comments into too few units. This proves the gate can stop known
+semantic defects; it does not prove method-v5 fitness, authorize corpus
+resumption, estimate defect prevalence, or change the still-incomplete
+full-corpus boundary above.
