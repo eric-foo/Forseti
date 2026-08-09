@@ -3397,6 +3397,7 @@ def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> 
     assert "SEMANTIC EVIDENCE INTEGRATION METHOD V5" in prompt
     assert '"terminal_groups"' in prompt
     assert '"schema_version": "semantic_evidence_batch_response_v3"' in prompt
+    assert '"required stable product id"' in prompt
     # Pretty, indented encoding is retained; no compact separators appear.
     assert '"evidence": [' in prompt
     assert '{"evidence_id"' not in prompt
@@ -3435,6 +3436,8 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "must not donate an\nattribute or axis" in text
     assert "Include every\nexisting axis the atomic meaning does express" in text
     assert "condition constrains but does not donate an axis" in text
+    assert "every unit\nneeds a subject_product_id" in text
+    assert "never invent ids or rebind the leaf" in text
     # Variant wording is preserved rather than dropped.
     assert "Bounded variant\nor formula wording stays claim_bearing" in text
     assert "ambiguous variant or formula binding\nis unresolved" in text

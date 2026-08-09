@@ -293,10 +293,10 @@ use, return, reach, repurchase, or purchase intent is first_hand.
 strategy_statement is only organizational strategy, never customer shopping or
 use behavior.
 
-Product candidates are hypotheses; source-pinned context anchors stable
-identity. Mentioning another product does not rebind a leaf: treat it as a
-comparator or adjacent subject unless leaf plus context establish experience
-about it. Similar product names or phrases never justify a merge.
+Product candidates are hypotheses. Source context anchors identity; every unit
+needs a subject_product_id. Keep uncataloged products in statement or
+conditions; never invent ids or rebind the leaf. Similar names never justify a
+merge.
 
 PRODUCT_IDENTITY_CATALOG is verified vocabulary, not proof of a leaf's subject.
 Bind a stable product only when leaf plus supplied context establish it.
@@ -1258,6 +1258,9 @@ def _v5_response_shape(bundle_sha256: str, batch_id: str) -> dict[str, Any]:
     """
     shape = _v3_response_shape(bundle_sha256, batch_id)
     shape["schema_version"] = BATCH_RESPONSE_VERSION_V3
+    shape["evidence"][0]["semantic_units"][0]["subject_product_ids"] = [
+        "required stable product id"
+    ]
     shape["terminal_groups"] = [
         {
             "disposition": "context_only|out_of_scope",
