@@ -310,6 +310,14 @@ condition stays with the proposition it qualifies. Axis candidates provide
 vocabulary only. Each assigned axis must be semantically supported by the
 atomic unit and leaf; context may resolve a referent but cannot donate an axis.
 
+For bundle v5 reconciliation, each candidate carries its exact set of leaf
+evidence postures through every level. The prompt exposes that set, and level
+validation rejects `customer_experience` or `reported_behavior` terminal proof
+when any supporting posture is not `first_hand` or `personal_agreement`.
+`strategy_statement` is routed as `actor_strategy`. This check occurs before
+finalization so a known impossible claim-kind/posture combination cannot spend
+another level or masquerade as a valid node compilation.
+
 After a leaf is validly classified as terminal `context_only` or clearly
 established `out_of_scope`, it incurs no bespoke extraction, semantic-unit
 construction, axis assignment, reconciliation candidacy, proposition
@@ -727,7 +735,10 @@ new frontier.
   reports. Calibration spec v2 explicitly requires adjudication v2 so a newly
   authored run cannot select the historical schema and skip the new gate. Added
   no phrase blacklist, provider API, full-corpus replay, route revision, seal
-  obligation, or product-version vocabulary.
+  obligation, or product-version vocabulary. A real calibration dogfood also
+  exposed reconciliation dropping extraction posture before claim-kind choice;
+  bundle v5 now carries posture through reconciliation and rejects an invalid
+  customer-proof binding at level validation rather than only at finalization.
 - `v11` / 2026-08-10 — added fail-closed bounded semantic calibration for the
   method-v5 route: blind hash-pinned gold, exact source projection, route
   fingerprints, production-shaped sentinel slices, deterministic validator

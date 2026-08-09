@@ -2551,8 +2551,10 @@ def _relation_product(parent: str, child: str) -> str:
     return "counter"
 
 
-def _v3_candidate_from_unit(unit: Mapping[str, Any]) -> dict[str, Any]:
-    return {
+def _v3_candidate_from_unit(
+    unit: Mapping[str, Any], *, carry_evidence_postures: bool = False
+) -> dict[str, Any]:
+    candidate = {
         "candidate_ref": unit["semantic_unit_ref"],
         "statement": unit["statement"],
         "subject_product_ids": unit["subject_product_ids"],
@@ -2573,10 +2575,15 @@ def _v3_candidate_from_unit(unit: Mapping[str, Any]) -> dict[str, Any]:
             }
         ],
     }
+    if carry_evidence_postures:
+        candidate["evidence_postures"] = [unit["evidence_posture"]]
+    return candidate
 
 
-def _v3_candidate_from_node(node: Mapping[str, Any]) -> dict[str, Any]:
-    return {
+def _v3_candidate_from_node(
+    node: Mapping[str, Any], *, carry_evidence_postures: bool = False
+) -> dict[str, Any]:
+    candidate = {
         "candidate_ref": node["semantic_node_ref"],
         "statement": node["bounded_meaning"],
         "subject_product_ids": node["subject_product_ids"],
@@ -2590,13 +2597,16 @@ def _v3_candidate_from_node(node: Mapping[str, Any]) -> dict[str, Any]:
         "leaf_relations": node["leaf_relations"],
         "condition_lineage": node["condition_lineage"],
     }
+    if carry_evidence_postures:
+        candidate["evidence_postures"] = node["evidence_postures"]
+    return candidate
 
 
 def _agent_reconciliation_candidate(
     candidate: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Hide compiler-owned expanded lineage from reconciliation prompts."""
-    return {
+    agent_candidate = {
         field: candidate[field]
         for field in (
             "candidate_ref",
@@ -2611,6 +2621,9 @@ def _agent_reconciliation_candidate(
             "uncertainty_posture",
         )
     }
+    if "evidence_postures" in candidate:
+        agent_candidate["evidence_postures"] = candidate["evidence_postures"]
+    return agent_candidate
 
 
 def _reject_same_level_node_links(nodes: Any) -> None:
@@ -2685,6 +2698,13 @@ def _render_v3_reconciliation_prompt(
     emerging_axis_labels: Sequence[str] | None = None,
     emerging_axis_owner: bool = True,
 ) -> str:
+    posture_instruction = (
+        "For candidates carrying evidence_postures, customer_experience and "
+        "reported_behavior support may use only first_hand or personal_agreement; "
+        "strategy_statement requires actor_strategy. "
+        if any("evidence_postures" in candidate for candidate in candidates)
+        else ""
+    )
     if emerging_axis_labels is None:
         axis_instruction = (
             "Consolidate every emerging label exactly once while preserving originals. "
@@ -2720,6 +2740,7 @@ def _render_v3_reconciliation_prompt(
         "Conditions, negation, and uncertainty remain semantic judgments: do not "
         "collapse them merely because an axis matches. Mark terminal_proposition "
         "true only when the node is ready for compiler-owned claim support. "
+        + posture_instruction
         + axis_instruction
         + "Return only JSON matching this shape:\n"
         + json.dumps(
@@ -2830,8 +2851,12 @@ def prepare_reconciliation_stage(
                 raise SemanticIntegrationError(
                     "batch compilation v3 lineage does not cover every work unit"
                 )
+        carry_evidence_postures = bundle.get("schema_version") == BUNDLE_VERSION_V5
         candidates = [
-            _v3_candidate_from_unit(row) for row in compilation["semantic_units"]
+            _v3_candidate_from_unit(
+                row, carry_evidence_postures=carry_evidence_postures
+            )
+            for row in compilation["semantic_units"]
         ]
         carried_unmerged: list[dict[str, Any]] = []
         carried_consolidations: list[dict[str, Any]] = []
@@ -2843,8 +2868,12 @@ def prepare_reconciliation_stage(
             compilation, field="node_compilation_sha256", label="node compilation"
         )
         _reject_same_level_node_links(compilation.get("semantic_nodes"))
+        carry_evidence_postures = bundle.get("schema_version") == BUNDLE_VERSION_V5
         candidates = [
-            _v3_candidate_from_node(row) for row in compilation["semantic_nodes"]
+            _v3_candidate_from_node(
+                row, carry_evidence_postures=carry_evidence_postures
+            )
+            for row in compilation["semantic_nodes"]
         ]
         carried_unmerged = list(compilation["unmerged_semantic_units"])
         carried_consolidations = list(compilation["emerging_axis_consolidations"])
@@ -3100,6 +3129,7 @@ def validate_reconciliation_stage(
             condition_lineage: dict[str, list[str]] = {}
             child_polarities: set[str] = set()
             child_emerging_labels: set[str] = set()
+            child_evidence_postures: set[str] = set()
             subjects = _string_list(
                 row.get("subject_product_ids"), field=f"{key}.subjects", allow_empty=False
             )
@@ -3154,6 +3184,7 @@ def validate_reconciliation_stage(
                     )
                 child_polarities.add(child["polarity"])
                 child_emerging_labels.update(child["emerging_axis_labels"])
+                child_evidence_postures.update(child.get("evidence_postures", []))
                 child_seen.add(child_ref)
                 batch_used.add(child_ref)
             if set(emerging) != child_emerging_labels:
@@ -3191,13 +3222,18 @@ def validate_reconciliation_stage(
                     raise SemanticIntegrationError(
                         f"terminal semantic node {key} lacks claim metadata"
                     )
+                if kind in {"customer_experience", "reported_behavior"} and (
+                    child_evidence_postures - {"first_hand", "personal_agreement"}
+                ):
+                    raise SemanticIntegrationError(
+                        f"terminal semantic node {key} uses non-experience posture as customer proof"
+                    )
             elif kind is not None or causal is not None:
                 raise SemanticIntegrationError(
                     f"nonterminal semantic node {key} carries terminal claim metadata"
                 )
             node_ref = _stable_id("node", stage["stage_sha256"], batch_id, key)
-            nodes.append(
-                {
+            node = {
                     "semantic_node_ref": node_ref,
                     "bounded_meaning": row["bounded_meaning"].strip(),
                     "terminal_proposition": terminal,
@@ -3222,7 +3258,9 @@ def validate_reconciliation_stage(
                     "opposition_checked": opposition,
                     "causal_ceiling": causal,
                 }
-            )
+            if child_evidence_postures:
+                node["evidence_postures"] = sorted(child_evidence_postures)
+            nodes.append(node)
         unmerged_rows = response.get("unmerged_children")
         if not isinstance(unmerged_rows, list):
             raise SemanticIntegrationError(

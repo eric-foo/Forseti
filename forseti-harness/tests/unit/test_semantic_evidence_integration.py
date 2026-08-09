@@ -3843,6 +3843,28 @@ def test_v5_lineage_rejects_duplicate_raw_response_hashes() -> None:
         prepare_reconciliation_stage(bundle, forged)
 
 
+def test_v5_reconciliation_carries_posture_and_rejects_customer_proof_early() -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle, detailed_per_batch=7)
+    responses[0]["evidence"][0]["semantic_units"][0][
+        "evidence_posture"
+    ] = "strategy_statement"
+    compiled = validate_batch_responses(bundle, responses)
+    stage, prompts = prepare_reconciliation_stage(bundle, compiled)
+
+    assert stage["candidates"][0]["evidence_postures"] == ["strategy_statement"]
+    assert '"evidence_postures": [' in prompts[0]["prompt"]
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="uses non-experience posture as customer proof",
+    ):
+        validate_reconciliation_stage(
+            bundle,
+            stage,
+            _group_level_responses(stage, terminal=True),
+        )
+
+
 def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
     """Exact denominator coverage across several prompt-bounded work units."""
     bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
