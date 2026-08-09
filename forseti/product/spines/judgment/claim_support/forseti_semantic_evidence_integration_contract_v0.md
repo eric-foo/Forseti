@@ -303,6 +303,12 @@ original-source credit. Bounded variant or formula wording stays detailed
 while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
 formula binding is detailed `unresolved`.
 
+Evidence posture describes how a leaf supports its unit, not whether its verb
+sounds like an action or plan. A customer's own purchase, use, return, reach,
+repurchase, or stated purchase intent is `first_hand`. `strategy_statement` is
+reserved for company, creator, or other organizational strategy; it never
+relabels customer shopping or use behavior.
+
 Every detailed leaf is decomposed into the smallest complete set of atomic
 meanings. Meanings that can be independently true, or differ in product, axis,
 behavior, comparison, condition, polarity, or posture, remain separate; a

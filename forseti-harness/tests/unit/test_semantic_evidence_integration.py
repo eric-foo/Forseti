@@ -3414,10 +3414,11 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "exactly one context-aware relevance and\naccounting judgment" in text
     # Referential agreement keeps parent meaning without inheriting credit.
     assert '"same" may adopt the specific parent complaint' in text
-    assert '"Facts" may be a personal agreement' in text
     assert 'Context may resolve what "it" refers to' in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
     assert "receives no original-source\ncredit" in text
+    assert "Evidence posture describes support, not the verb" in text
+    assert "never customer shopping or\nuse behavior" in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
     assert "Never route ambiguity to out_of_scope" in text
@@ -3438,7 +3439,7 @@ def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     assert "There is no keyword rule, phrase list, or\nlength rule" in text
     # The worked examples describe semantic boundaries, not matchable input
     # filters. Short inputs can still be detailed, terminal, or unresolved.
-    for phrase in ('"same"', '"Facts"', '"my fav"', '"I always reach for it"'):
+    for phrase in ('"same"', '"my fav"', '"I always reach for it"'):
         assert phrase in text
     assert '"Love it", "my fav", or "hate' in text
     assert "claim_bearing, not a generic reaction" in text

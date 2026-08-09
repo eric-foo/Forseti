@@ -272,8 +272,6 @@ Choose exactly one disposition for each leaf:
 Worked boundaries:
 
 - "same" may adopt the specific parent complaint and is then claim_bearing.
-- "Facts" may be a personal agreement with a bounded parent proposition and is
-  then claim_bearing.
 - Context may resolve what "it" refers to, but it cannot turn generic approval
   or dislike into a more detailed proposition. "Love it", "my fav", or "hate
   it" is context_only when it adds no specific attribute, condition,
@@ -286,6 +284,11 @@ Worked boundaries:
 Referential agreement uses evidence_posture personal_agreement. It never
 inherits the parent's first-hand posture and receives no original-source
 credit.
+
+Evidence posture describes support, not the verb. The author's own purchase,
+use, return, reach, repurchase, or purchase intent is first_hand.
+strategy_statement is only organizational strategy, never customer shopping or
+use behavior.
 
 Product candidates are hypotheses. A stable product id in source-pinned
 context is the run's identity anchor; wording inside a review or comment may
