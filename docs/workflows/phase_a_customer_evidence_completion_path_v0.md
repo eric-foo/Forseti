@@ -21,6 +21,15 @@ retrievable evidence structure. It prevents a future operator from stopping
 after two or three convenient examples or from treating Reddit and retailer
 reviews as unrelated summaries. It does not produce a market conclusion.
 
+The semantic leaf assessment, atomic evidence structuring, meaning-based
+reconciliation, and evidence-packet projection together form the named
+**Evidence Consolidation** stage. It begins only after acquisition has produced
+an immutable, completely accounted corpus and ends only when the final corpus
+hash has a complete, reproducible evidence packet or a visible unresolved
+failure. This is a conceptual and completion boundary between acquisition and
+Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
+B, Understanding, and Deliver vocabulary is not renumbered or migrated.
+
 ## Operating path
 
 ```text
@@ -28,9 +37,11 @@ SERP map
   -> native customer-evidence acquisition
   -> complete Reddit/community and retailer-review source accounting
   -> run-local stable product identity
-  -> semantic leaf assessment
-  -> meaning-based cross-source reconciliation
-  -> proposition/axis evidence packets
+  -> Evidence Consolidation
+       -> semantic leaf assessment
+       -> atomic evidence structuring
+       -> meaning-based cross-source reconciliation
+       -> proposition/axis evidence packets
   -> acquisition seal when the current route contract is satisfied
   -> Synthesize / Deliver judgment
 ```
@@ -79,11 +90,11 @@ response.
 The legacy v4 generation is unchanged and remains byte-reproducible; the paused
 v4 run's artifacts are not migrated or restamped.
 
-The final Phase A evidence packet is a retrieval surface. Asking for an axis or
-bounded proposition returns the complete linked evidence union, including
-counterevidence and unresolved adjacent material. Deliver owns any later
-recommendation about price, premiumization, positioning, product work, or
-campaign action.
+The final Evidence Consolidation packet is a retrieval surface. Asking for an
+axis or bounded proposition returns the complete linked evidence union,
+including counterevidence and unresolved adjacent material. Deliver owns any
+later recommendation about price, premiumization, positioning, product work,
+or campaign action.
 
 ## Evidence-family boundary
 

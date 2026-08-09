@@ -2933,49 +2933,6 @@ def run_status(
     return result
 
 
-def select_open_work_units(
-    status: Mapping[str, Any],
-    *,
-    worker_id: str,
-    limit: int,
-    active_assignments: Mapping[str, Sequence[str]] | None = None,
-) -> dict[str, Any]:
-    """Hand a fresh worker globally missing work, without static partitions.
-
-    This is controller-local and in-memory by design: `active_assignments` is
-    the controller's own view of what it has already handed out in this
-    session. Nothing is written, leased, or claimed on disk, so a dead worker
-    simply stops appearing and its units return to the missing set on the next
-    status read. Atomic no-overwrite publication remains the only durable
-    truth boundary.
-    """
-    if status.get("work_selection") != "global":
-        raise SemanticIntegrationError(
-            "global work selection requires a new-generation run status"
-        )
-    if not _nonempty(worker_id):
-        raise SemanticIntegrationError("work selection requires a worker id")
-    if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
-        raise SemanticIntegrationError("work selection limit must be positive")
-    missing = status.get("missing_batch_ids")
-    if not isinstance(missing, list):
-        raise SemanticIntegrationError("run status lacks missing work units")
-    assigned_elsewhere: set[str] = set()
-    for holder, batch_ids in (active_assignments or {}).items():
-        if holder == worker_id:
-            continue
-        assigned_elsewhere.update(batch_ids)
-    selected = [row for row in missing if row not in assigned_elsewhere][:limit]
-    return {
-        "schema_version": "phase_a_semantic_work_selection_v1",
-        "bundle_sha256": status.get("bundle_sha256"),
-        "worker_id": worker_id,
-        "assigned_work_unit_ids": selected,
-        "globally_missing_count": len(missing),
-        "model_api_calls": 0,
-    }
-
-
 __all__ = [
     "AUDIT_VERSION",
     "CORPUS_CENSUS_VERSION",
@@ -2983,7 +2940,6 @@ __all__ = [
     "RUN_SPEC_VERSION",
     "RUN_SPEC_VERSION_V2",
     "RUN_SPEC_VERSION_V3",
-    "select_open_work_units",
     "audit_phase_a_source",
     "build_phase_a_product_axis_proof_source",
     "census_phase_a_customer_corpus",

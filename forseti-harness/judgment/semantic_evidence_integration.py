@@ -2760,15 +2760,46 @@ def prepare_reconciliation_stage(
             _verify_stored_hash(
                 manifest, field="manifest_sha256", label="raw response manifest"
             )
-            manifest_batches = [
-                row.get("batch_id")
-                for row in manifest.get("responses", [])
-                if isinstance(row, Mapping)
-            ]
+            if (
+                set(manifest) != {
+                    "schema_version",
+                    "responses",
+                    "manifest_sha256",
+                }
+                or manifest.get("schema_version") != RAW_RESPONSE_MANIFEST_VERSION
+                or not isinstance(manifest.get("responses"), list)
+            ):
+                raise SemanticIntegrationError(
+                    "batch compilation v3 has an invalid raw response manifest"
+                )
+            manifest_batches: list[str] = []
+            for row in manifest["responses"]:
+                if not isinstance(row, Mapping) or set(row) != {
+                    "batch_id",
+                    "raw_response_sha256",
+                }:
+                    raise SemanticIntegrationError(
+                        "raw response manifest row has invalid shape"
+                    )
+                batch_id = row.get("batch_id")
+                digest = row.get("raw_response_sha256")
+                if (
+                    not _nonempty(batch_id)
+                    or not isinstance(digest, str)
+                    or len(digest) != 64
+                    or digest != digest.casefold()
+                    or any(character not in "0123456789abcdef" for character in digest)
+                ):
+                    raise SemanticIntegrationError(
+                        "raw response manifest row has invalid identity"
+                    )
+                manifest_batches.append(batch_id)
             # An expanded compilation must name one durable raw artifact per
             # work unit, otherwise the lineage silently covers less than the
             # corpus it claims to compile.
-            if sorted(manifest_batches) != sorted(
+            if len(manifest_batches) != len(set(manifest_batches)) or sorted(
+                manifest_batches
+            ) != sorted(
                 row["batch_id"] for row in bundle["batches"]
             ):
                 raise SemanticIntegrationError(
@@ -2802,7 +2833,10 @@ def prepare_reconciliation_stage(
     else:
         raise SemanticIntegrationError("invalid reconciliation input compilation")
     max_bytes = bundle["max_prompt_bytes"]
-    compact_lineage = bundle.get("schema_version") == BUNDLE_VERSION_V4
+    compact_lineage = bundle.get("schema_version") in {
+        BUNDLE_VERSION_V4,
+        BUNDLE_VERSION_V5,
+    }
     current_emerging_labels = sorted(
         {
             label
@@ -3761,7 +3795,7 @@ def project_evidence_packet(
     relation_unions: dict[str, set[str]] = {relation: set() for relation in RELATIONS}
     packet_contexts = (
         _context_index(bundle)
-        if bundle.get("schema_version") == BUNDLE_VERSION_V4
+        if bundle.get("schema_version") in {BUNDLE_VERSION_V4, BUNDLE_VERSION_V5}
         else {}
     )
     for evidence_id in sorted(links):
@@ -3769,7 +3803,7 @@ def project_evidence_packet(
             _expand_v4_unit(
                 bundle, evidence_index[evidence_id], contexts=packet_contexts
             )
-            if bundle.get("schema_version") == BUNDLE_VERSION_V4
+            if bundle.get("schema_version") in {BUNDLE_VERSION_V4, BUNDLE_VERSION_V5}
             else dict(evidence_index[evidence_id])
         )
         proposition_relations: list[dict[str, Any]] = []

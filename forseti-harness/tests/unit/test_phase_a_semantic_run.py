@@ -24,7 +24,6 @@ from judgment.phase_a_semantic_run import (
     prepare_serp_source_frontier_inventory,
     reconcile_serp_frontier_targets,
     run_status,
-    select_open_work_units,
     validate_one_batch_response,
     validate_one_reconciliation_response,
 )
@@ -1972,35 +1971,6 @@ def test_status_keeps_staged_artifacts_visible_and_incomplete(tmp_path: Path) ->
     assert staged["staged_batch_ids"] == ["batch-0001"]
     assert staged["batch_stage_complete"] is False
     assert staged["missing_batch_ids"] == ["batch-0001"]
-
-
-def test_global_work_selection_is_not_partition_exclusive(tmp_path: Path) -> None:
-    bundle = _v5_bundle(tmp_path)
-    status = run_status(bundle=bundle, batch_responses=[])
-    # Any fresh worker may take globally missing work.
-    first = select_open_work_units(status, worker_id="worker-a", limit=5)
-    second = select_open_work_units(status, worker_id="worker-b", limit=5)
-    assert first["assigned_work_unit_ids"] == ["batch-0001"]
-    assert second["assigned_work_unit_ids"] == ["batch-0001"]
-    assert first["globally_missing_count"] == 1
-    # Controller-local active assignment keeps two live workers off one unit
-    # without any durable lease, claim marker, or queue service.
-    third = select_open_work_units(
-        status,
-        worker_id="worker-b",
-        limit=5,
-        active_assignments={"worker-a": ["batch-0001"]},
-    )
-    assert third["assigned_work_unit_ids"] == []
-
-
-def test_global_work_selection_refuses_a_legacy_status(tmp_path: Path) -> None:
-    spec, _ = _spec(tmp_path)
-    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
-    bundle = build_bundle(source, max_prompt_bytes=8_000)
-    status = run_status(bundle=bundle, batch_responses=[])
-    with pytest.raises(SemanticIntegrationError, match="new-generation run status"):
-        select_open_work_units(status, worker_id="worker-a", limit=1)
 
 
 def test_new_generation_publication_still_fails_visibly_on_collision(

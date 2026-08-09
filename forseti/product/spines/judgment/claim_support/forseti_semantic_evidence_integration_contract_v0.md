@@ -23,6 +23,15 @@ The existing intelligence claim-support contract remains the authority for
 support posture, independence, conflict, source-role fitness, and causal
 ceiling.
 
+Semantic Evidence Integration is the runtime capability inside the named
+**Evidence Consolidation** stage. That stage starts from an immutable,
+completely accounted acquisition corpus and owns semantic leaf triage, atomic
+evidence structuring, meaning-based cross-source reconciliation, and
+evidence-packet projection. Its output is the complete evidence retrieval
+surface consumed by the acquisition seal and later Deliver work. This stage
+boundary does not create or rename a globally numbered phase; historical Phase
+A, Phase B, Turn B, Understanding, and Deliver vocabulary remains unchanged.
+
 It is not a market conclusion, recommendation, sentiment score, representative
 estimate, causal model, custom-trained model, embeddings service, vector store,
 or graph database.
@@ -342,8 +351,10 @@ projection once per invocation and reuses that verified context across all
 response validation in that invocation. Status reports global expected,
 accepted, staged, invalid, and missing work-unit state; it reports no static
 worker partitions, and the legacy partition report remains only on the
-projection-v1 path. Available fresh workers take globally missing work through
-controller-local, in-memory active assignment. Deterministic atomic
+projection-v1 path. The global missing-work list is the repository interface
+consumed by the invoking controller. Any active assignment bookkeeping belongs
+only to that controller's in-memory execution state; this contract installs no
+repository scheduler or otherwise-unused assignment API. Deterministic atomic
 no-overwrite publication remains the only durable truth boundary, and
 publication collisions plus invalid or staged artifacts stay visible rather
 than silently successful. No daemon, queue database, lease protocol, heartbeat,
@@ -651,9 +662,10 @@ new frontier.
   dictionary or set construction. Bound the accepted raw response-v3 set through
   canonical hashes in compilation v3, removed static worker topology from the
   new projection, and made bundle/projection verification invocation-scoped with
-  global work state and controller-local active assignment. Preserved the legacy
-  v4 generation byte-exactly, added no queue service or persistent coordination
-  subsystem, and made no latency, token, calibration, readiness, or seal claim.
+  a global missing-work interface and controller-owned ephemeral coordination.
+  Preserved the legacy v4 generation byte-exactly, added no queue service or
+  persistent coordination subsystem, and made no latency, token, calibration,
+  readiness, or seal claim.
 - `v9` / 2026-08-09 — added the hash-bound product-identity catalog to each
   method-v4 final-acquisition work unit, required response subject/comparator
   product IDs to come from that catalog, barred unverified identity-bearing

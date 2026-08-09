@@ -2840,6 +2840,23 @@ def test_v5_lineage_manifest_hash_is_verified() -> None:
         prepare_reconciliation_stage(bundle, forged)
 
 
+def test_v5_lineage_manifest_requires_each_raw_response_hash() -> None:
+    """Rehashing a manifest cannot make a missing raw artifact binding valid."""
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    forged = deepcopy(compiled)
+    manifest = forged["raw_response_manifest"]
+    manifest["responses"][0].pop("raw_response_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in manifest.items() if key != "manifest_sha256"}
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="raw response manifest row"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
 def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
     """Exact denominator coverage across several prompt-bounded work units."""
     bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
@@ -2867,11 +2884,21 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
     compiled = validate_batch_responses(bundle, responses)
     assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V3
 
-    stage_one, _ = prepare_reconciliation_stage(bundle, compiled)
+    stage_one, prompts_one = prepare_reconciliation_stage(bundle, compiled)
+    assert stage_one["emerging_axis_owner_batch_id"] == stage_one["batches"][0][
+        "batch_id"
+    ]
+    assert all('"leaf_relations"' not in row["prompt"] for row in prompts_one)
+    assert all('"condition_lineage"' not in row["prompt"] for row in prompts_one)
     level_one = validate_reconciliation_stage(
         bundle, stage_one, _group_level_responses(stage_one, terminal=False)
     )
-    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    stage_two, prompts_two = prepare_reconciliation_stage(bundle, level_one)
+    assert stage_two["emerging_axis_owner_batch_id"] == stage_two["batches"][0][
+        "batch_id"
+    ]
+    assert all('"leaf_relations"' not in row["prompt"] for row in prompts_two)
+    assert all('"condition_lineage"' not in row["prompt"] for row in prompts_two)
     level_two = validate_reconciliation_stage(
         bundle, stage_two, _group_level_responses(stage_two, terminal=True)
     )
@@ -2888,4 +2915,9 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
         compiled["compilation_sha256"]
     )
     assert packet["source_bindings"]["bundle_sha256"] == bundle["bundle_sha256"]
+    assert packet["evidence"]
+    assert all("product_context" in row for row in packet["evidence"])
+    assert all("parent_context" in row for row in packet["evidence"])
+    assert all("product_context_refs" not in row for row in packet["evidence"])
+    assert all("parent_context_refs" not in row for row in packet["evidence"])
     assert packet["model_api_calls"] == 0
