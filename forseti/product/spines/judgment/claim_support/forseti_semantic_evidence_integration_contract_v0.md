@@ -578,9 +578,10 @@ Adjudication v2 closes the unsupported-axis gap without a phrase or field-value
 blacklist. For every semantic unit in every gold case, the adjudicator must
 partition the unit's exact assigned axes into supported and unsupported lists.
 Missing units, missing axes, extra axes, overlap, or malformed judgments block;
-any explicitly unsupported axis fails the case. Adjudication v1 remains
-readable only for historical report reproduction and cannot establish the v12
-axis-support obligation.
+any explicitly unsupported axis fails the case. Calibration spec v2 binds this
+requirement explicitly and cannot pass with adjudication v1. The spec-v1 plus
+adjudication-v1 pair remains readable only for historical report reproduction
+and cannot establish the v12 axis-support obligation.
 
 The calibration spec is authored from source text, required context, and the
 run-local catalog before the evaluated responses are read. Fields representing
@@ -723,8 +724,10 @@ new frontier.
   vocabulary rather than assignments. Added hash-bound adjudication v2, which
   accounts for every assigned axis on every gold-case unit and fails explicit
   semantic non-support while retaining v1 read compatibility for historical
-  reports. Added no phrase blacklist, provider API, full-corpus replay, route
-  revision, seal obligation, or product-version vocabulary.
+  reports. Calibration spec v2 explicitly requires adjudication v2 so a newly
+  authored run cannot select the historical schema and skip the new gate. Added
+  no phrase blacklist, provider API, full-corpus replay, route revision, seal
+  obligation, or product-version vocabulary.
 - `v11` / 2026-08-10 — added fail-closed bounded semantic calibration for the
   method-v5 route: blind hash-pinned gold, exact source projection, route
   fingerprints, production-shaped sentinel slices, deterministic validator

@@ -49,6 +49,7 @@ from judgment.semantic_calibration import (
     CALIBRATION_ADJUDICATION_VERSION,
     CALIBRATION_ADJUDICATION_VERSION_V1,
     CALIBRATION_SPEC_VERSION,
+    CALIBRATION_SPEC_VERSION_V1,
     SemanticCalibrationError,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
@@ -2390,6 +2391,7 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
     route_bundle = build_bundle(source, max_prompt_bytes=12_000)
     spec = {
         "schema_version": CALIBRATION_SPEC_VERSION,
+        "required_adjudication_version": CALIBRATION_ADJUDICATION_VERSION,
         "full_source_sha256": source["source_sha256"],
         "method_version": METHOD_VERSION_V5,
         "route_contract": {
@@ -2663,6 +2665,11 @@ def test_calibration_v2_blocks_when_axis_judgment_is_missing() -> None:
 def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -> None:
     source = materialize_source_v3(_source_v5(count=2))
     spec = _calibration_spec(source)
+    spec["schema_version"] = CALIBRATION_SPEC_VERSION_V1
+    del spec["required_adjudication_version"]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
     prepared = prepare_semantic_calibration(source, spec)
     bundle = prepared["slices"][0]["bundle"]
     responses = _v5_responses(bundle)
@@ -2689,6 +2696,41 @@ def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -
     )
 
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
+def test_calibration_v2_cannot_pass_with_historical_v1_adjudication() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V1
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "ADJUDICATION_VERSION_REQUIRED"
+        for row in report["blockers"]
+    )
 
 
 def test_calibration_cannot_satisfy_two_atoms_with_one_broad_unit() -> None:

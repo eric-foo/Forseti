@@ -27,7 +27,8 @@ from judgment.semantic_evidence_integration import (
 )
 
 
-CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v1"
+CALIBRATION_SPEC_VERSION_V1 = "semantic_calibration_spec_v1"
+CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v2"
 CALIBRATION_ADJUDICATION_VERSION_V1 = "semantic_calibration_adjudication_v1"
 CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v2"
 CALIBRATION_PREPARATION_VERSION = "semantic_calibration_preparation_v1"
@@ -65,6 +66,7 @@ _SPEC_FIELDS = {
     "relation_obligations",
     "cold_repeat_case_ids",
     "cold_repeat",
+    "required_adjudication_version",
     "spec_sha256",
 }
 _SLICE_FIELDS = {
@@ -200,13 +202,30 @@ def _validate_expected_fields(value: Any, *, label: str) -> dict[str, Any]:
 
 def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     """Validate blind owner gold without reading any response artifact."""
-    if not isinstance(spec, Mapping) or spec.get("schema_version") != CALIBRATION_SPEC_VERSION:
+    if (
+        not isinstance(spec, Mapping)
+        or spec.get("schema_version")
+        not in {CALIBRATION_SPEC_VERSION_V1, CALIBRATION_SPEC_VERSION}
+    ):
         raise SemanticCalibrationError("invalid semantic calibration spec version")
     _verify_hash(spec, field="spec_sha256", label="semantic calibration spec")
     blind_content = _without_hash(spec, "spec_sha256")
     blind_content.pop("route_contract", None)
     _reject_machine_output_fields(blind_content)
-    _reject_unknown_fields(spec, _SPEC_FIELDS, label="calibration spec")
+    spec_fields = (
+        _SPEC_FIELDS
+        if spec.get("schema_version") == CALIBRATION_SPEC_VERSION
+        else _SPEC_FIELDS - {"required_adjudication_version"}
+    )
+    _reject_unknown_fields(spec, spec_fields, label="calibration spec")
+    if (
+        spec.get("schema_version") == CALIBRATION_SPEC_VERSION
+        and spec.get("required_adjudication_version")
+        != CALIBRATION_ADJUDICATION_VERSION
+    ):
+        raise SemanticCalibrationError(
+            "calibration spec v2 must require adjudication v2"
+        )
     if not _nonempty(spec.get("full_source_sha256")):
         raise SemanticCalibrationError("calibration spec lacks full_source_sha256")
     if spec.get("method_version") != METHOD_VERSION_V5:
@@ -901,6 +920,22 @@ def evaluate_semantic_calibration(
     failures: list[dict[str, Any]] = []
     blockers: list[dict[str, Any]] = []
     warnings: list[dict[str, Any]] = []
+    required_adjudication_version = normalized.get(
+        "required_adjudication_version"
+    )
+    if required_adjudication_version is not None and (
+        adjudicated is None
+        or adjudicated.get("schema_version") != required_adjudication_version
+    ):
+        blockers.append(
+            {
+                "code": "ADJUDICATION_VERSION_REQUIRED",
+                "required_version": required_adjudication_version,
+                "observed_version": (
+                    None if adjudicated is None else adjudicated.get("schema_version")
+                ),
+            }
+        )
     if receipt != expected_prepared["receipt"]:
         failures.append({"code": "PREPARATION_RECEIPT_MISMATCH"})
     case_results: list[dict[str, Any]] = []
@@ -1459,6 +1494,7 @@ __all__ = [
     "CALIBRATION_PREPARATION_VERSION",
     "CALIBRATION_REPORT_VERSION",
     "CALIBRATION_SPEC_VERSION",
+    "CALIBRATION_SPEC_VERSION_V1",
     "SemanticCalibrationError",
     "build_calibration_source",
     "evaluate_semantic_calibration",
