@@ -163,7 +163,7 @@ run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
-As of 2026-08-10, contract v13 and the no-provider runner implement the bounded
+As of 2026-08-10, contract v14 and the no-provider runner implement the bounded
 calibration gate. A real Summer Fridays dogfood projected 127 primary rows into
 one seven-row core prompt and the complete 120-row historical stress carrier,
 then repacked four predeclared cases into one selective cold-repeat prompt. The

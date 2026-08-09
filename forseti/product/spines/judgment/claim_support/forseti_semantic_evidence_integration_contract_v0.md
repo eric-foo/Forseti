@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v13
+version: v14
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v13
+# Semantic Evidence Integration Contract v14
 
 ## Purpose
 
@@ -317,12 +317,25 @@ repurchase, or stated purchase intent is `first_hand`. `strategy_statement` is
 reserved for company, creator, or other organizational strategy; it never
 relabels customer shopping or use behavior.
 
+Every atomic `statement` remains truthful when read without its structured
+fields. Negation and direction such as `not`, `never`, and `less` stay in the
+statement; `polarity` repeats that direction and never supplies or reverses
+words omitted from the statement. Reconciliation preserves the same explicit
+direction in terminal `bounded_meaning`; it may not turn a negated child into a
+positive claim.
+
 Every detailed leaf is decomposed into the smallest complete set of atomic
 meanings. Meanings that can be independently true, or differ in product, axis,
 behavior, comparison, condition, polarity, or posture, remain separate; a
 condition stays with the proposition it qualifies. Axis candidates provide
 vocabulary only. Each assigned axis must be semantically supported by the
 atomic unit and leaf; context may resolve a referent but cannot donate an axis.
+Generic approval embedded beside a bounded judgment adds no unit: `good, but
+not worth $24` yields the value judgment only. Ownership is preserved as
+behavior. Every explicit contrast in a two-product passage remains present,
+including a hydration contrast stated through the comparator. `More like a
+gloss than a balm` is an axis-free category judgment unless the leaf separately
+states a texture attribute.
 
 For bundle v5 reconciliation, each candidate carries its exact set of leaf
 evidence postures through every level. The prompt exposes that set, and level
@@ -740,6 +753,15 @@ new frontier.
 
 ## Changelog
 
+- `v14` / 2026-08-10 — required every atomic statement and terminal bounded
+  meaning to remain truth-complete without relying on `polarity`, preventing
+  negated children from becoming positive reconciliation claims. Clarified the
+  already-required boundaries for embedded generic praise, ownership behavior,
+  secondary two-product contrasts, and axis-free gloss-versus-balm category
+  judgments. Added `meaning_direction_preserved` as a calibration relation
+  obligation so independent adjudication can hard-fail final-view polarity
+  loss. Added no lexical classifier, runtime schema, provider call, or corpus
+  execution authority.
 - `v13` / 2026-08-10 — corrected the context boundary for a short reply that
   uniquely adopts a bounded preference or product choice. The real chain
   `which is your favorite?` -> `Vanilla Beige!` -> `My fav!` is claim-bearing

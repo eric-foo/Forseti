@@ -421,6 +421,7 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         "counterevidence_retained",
         "independent_origin_preserved",
         "engagement_not_promoted",
+        "meaning_direction_preserved",
     }
     for relation in relations:
         if not isinstance(relation, Mapping) or not _nonempty(relation.get("relation_id")):

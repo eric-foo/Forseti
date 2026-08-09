@@ -3048,6 +3048,30 @@ def test_relation_adjudication_requires_a_rebuilt_final_view() -> None:
     assert with_view["status"] == "SEMANTIC_CALIBRATION_PASS"
 
 
+def test_calibration_spec_accepts_meaning_direction_relation() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    case_id = spec["slices"][0]["cases"][0]["case_id"]
+    spec["relation_obligations"] = [
+        {
+            "relation_id": "negation-survives-final-view",
+            "relation_type": "meaning_direction_preserved",
+            "case_ids": [case_id],
+            "critical": True,
+            "meaning": "The final meaning preserves the child's negation.",
+        }
+    ]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    normalized = validate_calibration_spec(spec)
+
+    assert normalized["relation_obligations"][0]["relation_type"] == (
+        "meaning_direction_preserved"
+    )
+
+
 def _rehash_spec(spec: dict) -> None:
     spec["spec_sha256"] = _canonical_hash(
         {key: value for key, value in spec.items() if key != "spec_sha256"}
@@ -3415,7 +3439,7 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "exactly one context-aware relevance and accounting judgment" in text
     # Referential agreement keeps parent meaning without inheriting credit.
     assert '"same" may adopt the specific parent complaint' in text
-    assert "Context\nmay fill omissions but cannot donate attributes" in text
+    assert "Context may fill omissions,\nnever unsupported attributes" in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
     assert "personal_agreement adopts a specific parent proposition" in text
     assert "attribution_or_echo\nmerely reports the parent" in text
@@ -3426,38 +3450,44 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "Evidence posture describes support, not the verb" in text
     assert "value judgment, or category\njudgment is first_hand" in text
     assert "never customer shopping or use behavior" in text
-    assert '"is drying" is affirmed; "is not drying"\nis negated' in text
+    assert 'write "is not drying", never "is drying" plus negated' in text
+    assert "Polarity repeats direction" in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
     assert "Never make ambiguity cheap" in text
     assert "routing it to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
     assert '"Love it" with only a known product remains context_only' in text
-    assert "smallest complete set of in-scope atomic\nmeanings" in text
+    assert "smallest complete set of in-scope atomic meanings" in text
     assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
     assert "later product called better after target use is a target\ncomparison" in text
     assert "When a result is what the author wanted" in text
     assert "preserve both the result and preference" in text
     assert "Generic approval" in text and "dislike adds no atom" in text
+    assert '"good, but not worth $24" yields only the value atom' in text
+    assert "Preserve ownership as behavior" in text
+    assert "including one product being more moisturizing" in text
     assert '"Vanilla Beige!" -> "My fav!"' in text
     assert "claim_bearing personal_agreement with no axis" in text
     assert "Praise tied to a named result" in text
-    assert "application, is specific evidence" in text
+    assert "application, is specific\nevidence" in text
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
     assert "include every existing axis it does express" in text
     assert "Dry lips do not make smoothing\na hydration claim" in text
-    assert "Category labels and prestige impressions do not imply\nlatent" in text
-    assert "Formula resemblance or change\nsupports formula_consistency_and_change" in text
+    assert '"More like a gloss than a balm" is an axis-free category' in text
+    assert "Terminal bounded_meaning must repeat" in text
+    assert "never rewrite a negated child as a positive claim" in text
+    assert "Formula\nresemblance or change supports formula_consistency_and_change" in text
     assert "Every unit must concern a verified subject product" in text
-    assert "Never create their standalone units" in text
-    assert "category maps to exactly one catalog product" in text
+    assert "Never create their standalone\nunits" in text
+    assert "map its category to exactly one catalog product" in text
     # Variant wording is preserved rather than dropped.
     assert "Bounded variant or formula wording stays\nclaim_bearing" in text
-    assert "ambiguous variant or formula binding is unresolved" in text
+    assert "ambiguous binding is unresolved" in text
     # Grouping is transport compression only.
-    assert "never a sample, default, implicit\nremainder, wildcard" in text
+    assert "never a sample, default, implicit remainder,\nwildcard" in text
 
 
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
