@@ -248,10 +248,9 @@ to the leaf author. Split different meanings, products, variants, conditions,
 directions, or uncertainty into separate semantic units.
 
 Every supplied leaf receives exactly one context-aware relevance and
-accounting judgment. Read the leaf together with its parent, container, and
-product context before deciding. There is no keyword rule, phrase list, or
-length rule: a short reply can be fully claim-bearing and a long one can carry
-no bounded proposition.
+accounting judgment after reading its parent, container, and product context.
+There is no keyword rule, phrase list, or length rule: short can be
+claim-bearing and long can lack a bounded proposition.
 
 Choose exactly one disposition for each leaf:
 
@@ -281,8 +280,12 @@ Worked boundaries:
 - A short reply with several plausible parent propositions, or with
   insufficient binding, is unresolved rather than out_of_scope.
 
-Referential agreement uses evidence_posture personal_agreement. It never
-inherits the parent's first-hand posture and receives no original-source
+personal_agreement applies only when a reply adopts a specific parent
+proposition. attribution_or_echo applies when it only repeats or reports the
+parent and adds no independent origin. A direct answer to a specific parent
+question is its own bounded proposition -- first_hand when answered from the
+author's experience. Context fills an omitted predicate, not posture. Neither
+agreement nor echo inherits the parent's first-hand posture or original-source
 credit.
 
 Evidence posture describes support, not the verb. The author's own purchase,
@@ -290,33 +293,24 @@ use, return, reach, repurchase, or purchase intent is first_hand.
 strategy_statement is only organizational strategy, never customer shopping or
 use behavior.
 
-Product candidates are hypotheses. A stable product id in source-pinned
-context is the run's identity anchor; wording inside a review or comment may
-mention another product without changing which product page, post, or thread
-owns that leaf. Bind the mentioned product only as a comparator or adjacent
-subject unless the leaf and context establish that the experience itself is
-about it. Never merge leaves merely because their product names or phrases
-look similar.
+Product candidates are hypotheses; source-pinned context anchors stable
+identity. Mentioning another product does not rebind a leaf: treat it as a
+comparator or adjacent subject unless leaf plus context establish experience
+about it. Similar product names or phrases never justify a merge.
 
-When a PRODUCT_IDENTITY_CATALOG is supplied, use it only as the run's verified
-product vocabulary. Its names and aliases do not prove what a leaf is about.
-Bind one of its stable product ids only when the leaf plus its supplied thread,
-parent, post, or product-page context establishes that identity. Catalog v1
-does not verify variant identities: preserve variant or formula wording in the
-bounded statement or conditions and return product_version_ids as an empty
-list. Bounded variant or formula wording stays claim_bearing; ambiguous
-variant or formula binding is unresolved.
+PRODUCT_IDENTITY_CATALOG is verified vocabulary, not proof of a leaf's subject.
+Bind a stable product only when leaf plus supplied context establish it.
+Catalog v1 verifies no variants: preserve variant or formula wording in the
+statement or conditions and return empty product_version_ids. Bounded variant
+or formula wording stays claim_bearing; ambiguous variant or formula binding
+is unresolved.
 
-Report every claim_bearing and unresolved leaf individually in `evidence`. You
-may compress context_only and out_of_scope leaves into `terminal_groups` only
-after judging each listed leaf individually and finding that they genuinely
-share one disposition and one semantic reason. A group lists every evidence id
-explicitly and carries one agent-authored reason. Grouping is transport
-compression only: it is never a sample, a default, an implicit remainder, a
-wildcard, or an exclusion filter. A nuanced context_only or out_of_scope
-judgment may stay in `evidence`, and a single terminal decision may stay there
-too. Every supplied evidence id must appear exactly once across `evidence` and
-`terminal_groups`.
+Report every claim_bearing and unresolved leaf in `evidence`. Compress
+context_only or out_of_scope leaves into `terminal_groups` only after judging
+each leaf and confirming one disposition and reason. List every grouped id and
+one authored reason. Grouping is transport compression only: never a sample,
+default, implicit remainder, wildcard, or filter. Terminal judgments may stay
+in `evidence`. Every supplied id appears exactly once across both populations.
 
 For each detailed leaf, extract the smallest complete set of atomic meanings.
 Split meanings that could be true independently, or concern different
@@ -324,13 +318,18 @@ products, axes, behaviors, comparisons, conditions, polarities, or postures.
 Keep a condition with the proposition it qualifies; do not make a condition
 its own unit. Never hide several meanings behind a generic wrapper such as
 "the author reports". Check that removing any clause would not discard a
-separately useful meaning.
+separately useful meaning. Account for every explicit attribute, behavior,
+reason, comparison, and product-or-formula relationship, including secondary
+comparisons.
 
 Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
 must be directly supported by that unit's atomic statement and by the leaf.
 Context may resolve the product or referent, but it must not donate an
 attribute or axis. Never copy all available or candidate axes onto a unit; if
-an axis cannot be explained from that unit alone, omit it.
+an axis cannot be explained from that unit alone, omit it. Include every
+existing axis the atomic meaning does express; owning every shade supports
+shade or color fit. A condition constrains but does not donate an axis: dry
+lips do not make a smoothing result a hydration claim.
 
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and

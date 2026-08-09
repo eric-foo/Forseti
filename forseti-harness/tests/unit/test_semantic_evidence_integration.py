@@ -3416,7 +3416,11 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert '"same" may adopt the specific parent complaint' in text
     assert 'Context may resolve what "it" refers to' in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
-    assert "receives no original-source\ncredit" in text
+    assert "personal_agreement applies only when a reply adopts" in text
+    assert "attribution_or_echo applies when it only repeats" in text
+    assert "A direct answer to a specific parent\nquestion is its own bounded" in text
+    assert "Context fills an omitted predicate, not posture" in text
+    assert "original-source\ncredit" in text
     assert "Evidence posture describes support, not the verb" in text
     assert "never customer shopping or\nuse behavior" in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
@@ -3425,18 +3429,22 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     # Empty standalone reaction may terminate as context_only.
     assert "adds no specific attribute, condition" in text
     assert "smallest complete set of atomic meanings" in text
+    assert "every explicit attribute, behavior" in text
+    assert "including secondary\ncomparisons" in text
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "must not donate an\nattribute or axis" in text
+    assert "Include every\nexisting axis the atomic meaning does express" in text
+    assert "condition constrains but does not donate an axis" in text
     # Variant wording is preserved rather than dropped.
-    assert "Bounded variant or formula wording stays claim_bearing" in text
-    assert "ambiguous\nvariant or formula binding is unresolved" in text
+    assert "Bounded variant\nor formula wording stays claim_bearing" in text
+    assert "ambiguous variant or formula binding\nis unresolved" in text
     # Grouping is transport compression only.
-    assert "never a sample, a default, an implicit remainder, a\nwildcard" in text
+    assert "never a sample,\ndefault, implicit remainder, wildcard" in text
 
 
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     text = METHOD_TEXT_V5
-    assert "There is no keyword rule, phrase list, or\nlength rule" in text
+    assert "There is no keyword rule, phrase list, or length rule" in text
     # The worked examples describe semantic boundaries, not matchable input
     # filters. Short inputs can still be detailed, terminal, or unresolved.
     for phrase in ('"same"', '"my fav"', '"I always reach for it"'):
