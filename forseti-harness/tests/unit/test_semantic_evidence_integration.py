@@ -9,22 +9,30 @@ from pathlib import Path
 import pytest
 
 from judgment.semantic_evidence_integration import (
+    BATCH_COMPILATION_VERSION_V2,
+    BATCH_COMPILATION_VERSION_V3,
     BATCH_RESPONSE_VERSION,
     BATCH_RESPONSE_VERSION_V2,
+    BATCH_RESPONSE_VERSION_V3,
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
     BUNDLE_VERSION_V3,
     BUNDLE_VERSION_V4,
+    BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
+    METHOD_TEXT_V5,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
     METHOD_VERSION_V4,
+    METHOD_VERSION_V5,
+    PROMPT_ENCODING_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
+    WORK_UNIT_PROJECTION_VERSION_V2,
     build_batch_prompts,
     build_bundle,
     build_reconciliation_prompt,
@@ -35,6 +43,7 @@ from judgment.semantic_evidence_integration import (
     prepare_reconciliation_stage,
     validate_batch_responses,
     validate_reconciliation_stage,
+    verify_bundle_context,
 )
 from runners.run_semantic_evidence_integration import (
     prepare_batches,
@@ -2270,3 +2279,613 @@ def test_route_1_6_multisource_dogfood_rebuilds_exactly() -> None:
     assert isinstance(sensitivity, dict)
     assert sensitivity["partitions_differ"] is True
     assert sensitivity["flattened_membership_and_counts_equal"] is True
+
+
+# --- New generation: bundle v5 / projection v2 / method v5 / response v3 ---
+#
+# Frozen legacy expectations below were observed from the pre-change module at
+# revision 27b3c56d. They are byte-level regression anchors for the legacy v4
+# path, not semantic ground truth.
+_FROZEN_V4_PLAIN = {
+    "bundle_sha256": "3478626e9e8296250969ff83f648ae71b09f475eb68eedf9107488539efebf1b",
+    "corpus_sha256": "c344feb0b7741fcf76ac83784091a076cfe8a1b591e59575eeecb5c00640971d",
+    "projection_sha256": "710685030cdbdd417411d3d75531d9ad96609931d5fbe3eaef17af5afc035887",
+    "prompt_utf8_bytes": 7174,
+    "prompt_sha256": "1f6e556f3d79933756a32421d21802bb07018e27ca6605e406e513b655028aa2",
+    "compilation_sha256": "248c87617f6a2101bb382eb28a61d369d7064ff84930c04fd52aa19cd99e85eb",
+}
+_FROZEN_V4_CATALOG = {
+    "bundle_sha256": "b69d975f4bf2b84696050543e877988f8cd2c7b775e42a44da69d85380464a51",
+    "corpus_sha256": "1f407c04a777ff1e00fb8fa27ec1ecfff02a323fba1927b91989a8d307fe43a9",
+    "prompt_utf8_bytes": 8333,
+    "prompt_sha256": "ae56141d2837b71dedd6ab336d81f1b7bc75844b5f655b11e9b19a2f17f14382",
+}
+
+
+def _joined_prompt_digest(prompts: list[dict]) -> tuple[int, str]:
+    joined = "\n".join(row["prompt"] for row in prompts).encode("utf-8")
+    return len(joined), hashlib.sha256(joined).hexdigest()
+
+
+def _source_v5(*, count: int = 7, catalog: bool = False) -> dict:
+    source = _source_v3(count=count)
+    source["semantic_method_version"] = METHOD_VERSION_V5
+    if catalog:
+        source["product_identity_catalog"] = _product_catalog()
+    return source
+
+
+def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
+    return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
+
+
+def _claim_row(evidence_id: str) -> dict:
+    return {
+        "evidence_id": evidence_id,
+        "disposition": "claim_bearing",
+        "disposition_reason": "direct first-hand experience",
+        "semantic_units": [
+            {
+                "semantic_unit_key": "drying-after-week",
+                "statement": "The balm became drying after one week of use.",
+                "subject_product_ids": ["sf-lbb"],
+                "comparator_product_ids": [],
+                "product_version_ids": [],
+                "axis_ids": ["wear"],
+                "emerging_axis_labels": [],
+                "conditions": ["after one week of use"],
+                "polarity": "affirmed",
+                "evidence_posture": "first_hand",
+                "uncertainty_posture": "asserted",
+            }
+        ],
+    }
+
+
+def _v5_responses(
+    bundle: dict, *, detailed_per_batch: int = 1, group_disposition: str = "context_only"
+) -> list[dict]:
+    """Detailed head plus one explicit-id terminal group per work unit."""
+    responses = []
+    for batch in bundle["batches"]:
+        ids = batch["evidence_ids"]
+        detailed, grouped = ids[:detailed_per_batch], ids[detailed_per_batch:]
+        responses.append(
+            {
+                "schema_version": BATCH_RESPONSE_VERSION_V3,
+                "bundle_sha256": bundle["bundle_sha256"],
+                "batch_id": batch["batch_id"],
+                "evidence": [_claim_row(row) for row in detailed],
+                "terminal_groups": (
+                    [
+                        {
+                            "disposition": group_disposition,
+                            "disposition_reason": (
+                                "no bounded proposition remains after reading context"
+                            ),
+                            "evidence_ids": list(grouped),
+                        }
+                    ]
+                    if grouped
+                    else []
+                ),
+            }
+        )
+    return responses
+
+
+def test_legacy_v4_bundle_prompt_and_compilation_bytes_are_unchanged() -> None:
+    bundle = build_bundle(_source_v3(count=7), max_prompt_bytes=8_000)
+    assert bundle["schema_version"] == BUNDLE_VERSION_V4
+    assert bundle["bundle_sha256"] == _FROZEN_V4_PLAIN["bundle_sha256"]
+    assert bundle["corpus_sha256"] == _FROZEN_V4_PLAIN["corpus_sha256"]
+    assert (
+        bundle["semantic_work_unit_projection"]["projection_sha256"]
+        == _FROZEN_V4_PLAIN["projection_sha256"]
+    )
+    prompt_bytes, prompt_sha = _joined_prompt_digest(build_batch_prompts(bundle))
+    assert prompt_bytes == _FROZEN_V4_PLAIN["prompt_utf8_bytes"]
+    assert prompt_sha == _FROZEN_V4_PLAIN["prompt_sha256"]
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V2
+    assert compiled["compilation_sha256"] == _FROZEN_V4_PLAIN["compilation_sha256"]
+    # The legacy compilation gains no new-generation lineage field.
+    assert "raw_response_manifest" not in compiled
+
+
+def test_legacy_v4_catalog_prompt_bytes_are_unchanged() -> None:
+    source = _source_v3(count=7)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["product_identity_catalog"] = _product_catalog()
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    assert bundle["bundle_sha256"] == _FROZEN_V4_CATALOG["bundle_sha256"]
+    assert bundle["corpus_sha256"] == _FROZEN_V4_CATALOG["corpus_sha256"]
+    prompt_bytes, prompt_sha = _joined_prompt_digest(build_batch_prompts(bundle))
+    assert prompt_bytes == _FROZEN_V4_CATALOG["prompt_utf8_bytes"]
+    assert prompt_sha == _FROZEN_V4_CATALOG["prompt_sha256"]
+
+
+def test_v5_projection_binds_execution_identity_without_worker_topology() -> None:
+    bundle = _bundle_v5()
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    projection = bundle["semantic_work_unit_projection"]
+    assert projection["schema_version"] == WORK_UNIT_PROJECTION_VERSION_V2
+    identity = projection["semantic_execution_identity"]
+    assert identity["method_version"] == METHOD_VERSION_V5
+    assert identity["method_sha256"] == bundle["method_sha256"]
+    assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert identity["compilation_schema_version"] == BATCH_COMPILATION_VERSION_V3
+    assert identity["prompt_encoding_version"] == PROMPT_ENCODING_VERSION
+    assert identity["corpus_scope"] == bundle["corpus_scope"]
+    assert identity["corpus_cutoff"] == bundle["corpus_cutoff"]
+    assert projection["max_prompt_bytes"] == bundle["max_prompt_bytes"]
+    # No static worker topology anywhere in the new semantic identity.
+    assert "worker_count" not in projection
+    assert all("worker_partition" not in row for row in projection["work_units"])
+    assert all("worker_partition" not in row for row in bundle["batches"])
+    prompts = build_batch_prompts(bundle)
+    assert all("worker_partition" not in row for row in prompts)
+    # Complete assessable-denominator coverage is still proven exactly.
+    assert projection["coverage_proof"]["bijection_complete"] is True
+    assert projection["coverage_proof"]["admitted_evidence_count"] == 7
+
+
+def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> None:
+    prompt = build_batch_prompts(_bundle_v5())[0]["prompt"]
+    assert "SEMANTIC EVIDENCE INTEGRATION METHOD V5" in prompt
+    assert '"terminal_groups"' in prompt
+    assert '"schema_version": "semantic_evidence_batch_response_v3"' in prompt
+    # Pretty, indented encoding is retained; no compact separators appear.
+    assert '"evidence": [' in prompt
+    assert '{"evidence_id"' not in prompt
+
+
+def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
+    text = METHOD_TEXT_V5
+    for disposition in (
+        "claim_bearing",
+        "unresolved",
+        "context_only",
+        "out_of_scope",
+    ):
+        assert disposition in text
+    assert "exactly one context-aware relevance and\naccounting judgment" in text
+    # Referential agreement keeps parent meaning without inheriting credit.
+    assert '"same" may adopt the specific parent complaint' in text
+    assert '"Facts" may be a personal agreement' in text
+    assert '"my fav" may adopt a specifically identified parent product' in text
+    assert "receives no original-source\ncredit" in text
+    # Ambiguity routes to unresolved, never to cheap out_of_scope.
+    assert "is unresolved rather than out_of_scope" in text
+    assert "Never route ambiguity to out_of_scope" in text
+    # Empty standalone reaction may terminate as context_only.
+    assert "resolvable referent is context_only" in text
+    # Variant wording is preserved rather than dropped.
+    assert "Bounded variant or formula wording stays claim_bearing" in text
+    assert "ambiguous\nvariant or formula binding is unresolved" in text
+    # Grouping is transport compression only.
+    assert "never a sample, a default, an implicit remainder, a\nwildcard" in text
+
+
+def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
+    text = METHOD_TEXT_V5
+    assert "There is no keyword rule, phrase list, or\nlength rule" in text
+    # The worked examples are boundaries, never a matchable terminal list: each
+    # quoted phrase is shown with both a detailed and a terminal outcome.
+    for phrase in ('"same"', '"Facts"', '"my fav"'):
+        assert phrase in text
+    assert '"love it" or "my fav" carrying no specific attribute' in text
+    assert "claim_bearing, not a generic reaction" in text
+
+
+def test_v5_terminal_grouping_expands_to_one_row_per_evidence_id() -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle)
+    compiled = validate_batch_responses(bundle, responses)
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V3
+    dispositions = compiled["evidence_dispositions"]
+    # Exact one-row-per-evidence-id expansion over the whole denominator.
+    assert len(dispositions) == 7
+    assert [row["evidence_id"] for row in dispositions] == bundle["batches"][0][
+        "evidence_ids"
+    ]
+    assert sum(row["disposition"] == "claim_bearing" for row in dispositions) == 1
+    assert sum(row["disposition"] == "context_only" for row in dispositions) == 6
+    # Disposition reason survives expansion unchanged for every grouped id.
+    grouped_reasons = {
+        row["disposition_reason"]
+        for row in dispositions
+        if row["disposition"] == "context_only"
+    }
+    assert grouped_reasons == {
+        "no bounded proposition remains after reading context"
+    }
+    # A terminal leaf emits no semantic unit, so it costs nothing downstream.
+    assert len(compiled["semantic_units"]) == 1
+
+
+def test_v5_grouped_and_detailed_terminal_decisions_agree_exactly() -> None:
+    """Grouping is transport only: it must not change the compiled meaning."""
+    bundle = _bundle_v5()
+    grouped = validate_batch_responses(bundle, _v5_responses(bundle))
+    reason = "no bounded proposition remains after reading context"
+    detailed_responses = []
+    for batch in bundle["batches"]:
+        ids = batch["evidence_ids"]
+        rows = [_claim_row(ids[0])] + [
+            {
+                "evidence_id": row,
+                "disposition": "context_only",
+                "disposition_reason": reason,
+                "semantic_units": [],
+            }
+            for row in ids[1:]
+        ]
+        detailed_responses.append(
+            {
+                "schema_version": BATCH_RESPONSE_VERSION_V3,
+                "bundle_sha256": bundle["bundle_sha256"],
+                "batch_id": batch["batch_id"],
+                "evidence": rows,
+                "terminal_groups": [],
+            }
+        )
+    detailed = validate_batch_responses(bundle, detailed_responses)
+    assert grouped["evidence_dispositions"] == detailed["evidence_dispositions"]
+    assert grouped["semantic_units"] == detailed["semantic_units"]
+    # Lineage still distinguishes the two durable raw artifacts.
+    assert (
+        grouped["raw_response_manifest"]["manifest_sha256"]
+        != detailed["raw_response_manifest"]["manifest_sha256"]
+    )
+    assert grouped["compilation_sha256"] != detailed["compilation_sha256"]
+
+
+def test_v5_compilation_binds_canonical_raw_response_hashes() -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle)
+    compiled = validate_batch_responses(bundle, responses)
+    manifest = compiled["raw_response_manifest"]
+    assert manifest["schema_version"] == "semantic_evidence_raw_response_manifest_v1"
+    assert [row["batch_id"] for row in manifest["responses"]] == sorted(
+        row["batch_id"] for row in responses
+    )
+    assert manifest["responses"][0]["raw_response_sha256"] == _canonical_hash(
+        responses[0]
+    )
+    # Re-authoring the same decisions as a different raw artifact changes the
+    # proven lineage even though the expansion is identical.
+    reworded = deepcopy(responses)
+    reworded[0]["terminal_groups"][0]["evidence_ids"] = list(
+        reversed(reworded[0]["terminal_groups"][0]["evidence_ids"])
+    )
+    relineaged = validate_batch_responses(bundle, reworded)
+    assert (
+        relineaged["evidence_dispositions"] == compiled["evidence_dispositions"]
+    )
+    assert (
+        relineaged["raw_response_manifest"]["manifest_sha256"]
+        != manifest["manifest_sha256"]
+    )
+
+
+def test_v5_reconciliation_requires_compilation_v3_lineage() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    assert stage["batch_compilation_sha256"] == compiled["compilation_sha256"]
+    stripped = deepcopy(compiled)
+    stripped.pop("raw_response_manifest")
+    stripped["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in stripped.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="raw response lineage"):
+        prepare_reconciliation_stage(bundle, stripped)
+
+
+def test_v5_rejects_legacy_compilation_generation_at_reconciliation() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    downgraded = deepcopy(compiled)
+    downgraded["schema_version"] = BATCH_COMPILATION_VERSION_V2
+    downgraded["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in downgraded.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="compilation generation"):
+        prepare_reconciliation_stage(bundle, downgraded)
+
+
+@pytest.mark.parametrize(
+    ("mutate", "match"),
+    [
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0]["evidence_ids"].append(ids[-1]),
+            "repeats an evidence id",
+            id="duplicate_inside_one_group",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"].append(
+                {
+                    "disposition": "out_of_scope",
+                    "disposition_reason": "second reason",
+                    "evidence_ids": [ids[-1]],
+                }
+            ),
+            "across terminal groups",
+            id="duplicate_across_groups",
+        ),
+        pytest.param(
+            lambda r, ids: r["evidence"].append(_claim_row(ids[-1])),
+            "both detailed and grouped",
+            id="detailed_and_grouped_overlap",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0]["evidence_ids"].append(
+                "reddit:nonexistent:comment"
+            ),
+            "unexpected evidence id",
+            id="unexpected_evidence_id",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0]["evidence_ids"].pop(),
+            "every alias exactly once",
+            id="silently_omitted_evidence_id",
+        ),
+        pytest.param(
+            lambda r, ids: r.__setitem__("terminal_groups", []),
+            "every alias exactly once",
+            id="implicit_remainder",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].__setitem__(
+                "disposition", "claim_bearing"
+            ),
+            "may only group",
+            id="claim_bearing_cannot_be_grouped",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].__setitem__(
+                "disposition", "unresolved"
+            ),
+            "may only group",
+            id="unresolved_cannot_be_grouped",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].__setitem__(
+                "disposition_reason", "  "
+            ),
+            "lacks an explicit reason",
+            id="group_without_reason",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].pop("evidence_ids"),
+            "list its evidence ids explicitly",
+            id="group_without_explicit_ids",
+        ),
+    ],
+)
+def test_v5_raw_evidence_id_accounting_fails_closed(mutate, match) -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle)
+    ids = bundle["batches"][0]["evidence_ids"]
+    mutate(responses[0], ids)
+    with pytest.raises(SemanticIntegrationError, match=match):
+        validate_batch_responses(bundle, responses)
+
+
+def test_v5_duplicate_detailed_record_is_not_masked_by_dictionary_collapse() -> None:
+    """A repeated detailed id must fail rather than silently collapse to one."""
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    ids = bundle["batches"][0]["evidence_ids"]
+    # Replace a grouped id with a repeat of an already-detailed id so the total
+    # occurrence count still equals the expected denominator.
+    responses[0]["terminal_groups"][0]["evidence_ids"].pop()
+    responses[0]["evidence"].append(_claim_row(ids[0]))
+    with pytest.raises(SemanticIntegrationError, match="detailed records"):
+        validate_batch_responses(bundle, responses)
+
+
+def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
+    new_bundle = _bundle_v5()
+    legacy_response = deepcopy(_v5_responses(new_bundle)[0])
+    legacy_response["schema_version"] = BATCH_RESPONSE_VERSION_V2
+    with pytest.raises(SemanticIntegrationError, match="invalid batch response version"):
+        validate_batch_responses(new_bundle, [legacy_response], require_all=False)
+
+    legacy_bundle = build_bundle(_source_v3(count=7), max_prompt_bytes=8_000)
+    new_response = deepcopy(_v3_batch_responses(legacy_bundle)[0])
+    new_response["schema_version"] = BATCH_RESPONSE_VERSION_V3
+    with pytest.raises(SemanticIntegrationError, match="invalid batch response version"):
+        validate_batch_responses(legacy_bundle, [new_response], require_all=False)
+
+
+@pytest.mark.parametrize(
+    ("method_version", "target_bundle_version", "match"),
+    [
+        (METHOD_VERSION_V5, BUNDLE_VERSION_V4, "method v5 requires bundle v5"),
+        (METHOD_VERSION_V4, BUNDLE_VERSION_V5, "method v4 requires bundle v4"),
+        (METHOD_VERSION_V3, BUNDLE_VERSION_V5, "bundle v5 requires semantic method v5"),
+        (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
+    ],
+)
+def test_incoherent_generation_combinations_fail_closed(
+    method_version, target_bundle_version, match
+) -> None:
+    source = _source_v3(count=3)
+    source["semantic_method_version"] = method_version
+    with pytest.raises(SemanticIntegrationError, match=match):
+        build_bundle(
+            source,
+            max_prompt_bytes=12_000,
+            target_bundle_version=target_bundle_version,
+        )
+
+
+def test_coherent_generations_are_both_accepted() -> None:
+    legacy = build_bundle(_source_v3(count=3), max_prompt_bytes=8_000)
+    assert legacy["schema_version"] == BUNDLE_VERSION_V4
+    assert legacy["method_version"] == METHOD_VERSION_V3
+    new = _bundle_v5(count=3)
+    assert new["schema_version"] == BUNDLE_VERSION_V5
+    assert new["method_version"] == METHOD_VERSION_V5
+
+
+def test_v5_final_acquisition_still_requires_a_verified_catalog() -> None:
+    source = _source_v5(count=3)
+    source["corpus_profile"] = "phase_a_final_acquisition"
+    with pytest.raises(SemanticIntegrationError, match="lacks product catalog"):
+        build_bundle(source, max_prompt_bytes=12_000)
+    source["product_identity_catalog"] = _product_catalog()
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert (
+        identity["product_identity_catalog_sha256"]
+        == bundle["product_identity_catalog"]["catalog_sha256"]
+    )
+
+
+def test_v5_projection_rejects_forged_execution_identity() -> None:
+    bundle = _bundle_v5()
+    tampered = deepcopy(bundle)
+    projection = tampered["semantic_work_unit_projection"]
+    projection["semantic_execution_identity"]["prompt_encoding_version"] = (
+        "semantic_prompt_encoding_compact_json_v1"
+    )
+    projection["projection_sha256"] = _canonical_hash(
+        {k: v for k, v in projection.items() if k != "projection_sha256"}
+    )
+    tampered["bundle_sha256"] = _canonical_hash(
+        {k: v for k, v in tampered.items() if k != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="prompt_encoding_version"):
+        build_batch_prompts(tampered)
+
+
+def test_v5_projection_rejects_reintroduced_worker_topology() -> None:
+    bundle = _bundle_v5()
+    tampered = deepcopy(bundle)
+    projection = tampered["semantic_work_unit_projection"]
+    projection["worker_count"] = 3
+    projection["projection_sha256"] = _canonical_hash(
+        {k: v for k, v in projection.items() if k != "projection_sha256"}
+    )
+    tampered["bundle_sha256"] = _canonical_hash(
+        {k: v for k, v in tampered.items() if k != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="static worker topology"):
+        build_batch_prompts(tampered)
+
+
+def test_reused_bundle_context_cannot_be_applied_to_another_bundle() -> None:
+    bundle = _bundle_v5()
+    other = _bundle_v5(count=3)
+    context = verify_bundle_context(bundle)
+    with pytest.raises(SemanticIntegrationError, match="does not match this bundle"):
+        validate_batch_responses(
+            other, _v5_responses(other), require_all=False, context=context
+        )
+
+
+def test_v5_prepare_runner_writes_no_static_worker_assignment(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    source = _source_v5(count=7)
+    for index in range(7):
+        (repo_root / f"thread-{index + 1}.json").write_text(
+            f"thread-{index + 1}\n", encoding="utf-8"
+        )
+    source_path = tmp_path / "source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    result = prepare_batches(
+        source_path=source_path,
+        repo_root=repo_root,
+        bundle_out=tmp_path / "bundle.json",
+        prompt_dir=tmp_path / "prompts",
+        max_batch_chars=80_000,
+        max_prompt_bytes=12_000,
+    )
+    assert result["model_api_calls"] == 0
+    assert not (tmp_path / "prompts" / "worker_assignments.json").exists()
+    assert sorted(p.name for p in (tmp_path / "prompts").glob("*")) == ["batch-0001.md"]
+
+
+def test_v5_lineage_must_cover_every_work_unit() -> None:
+    """A manifest that names fewer raw artifacts than work units fails closed."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    assert len(bundle["batches"]) > 1
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    thinned = deepcopy(compiled)
+    manifest = thinned["raw_response_manifest"]
+    manifest["responses"] = manifest["responses"][:-1]
+    manifest["manifest_sha256"] = _canonical_hash(
+        {k: v for k, v in manifest.items() if k != "manifest_sha256"}
+    )
+    thinned["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in thinned.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="does not cover every work unit"):
+        prepare_reconciliation_stage(bundle, thinned)
+
+
+def test_v5_lineage_manifest_hash_is_verified() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    forged = deepcopy(compiled)
+    forged["raw_response_manifest"]["responses"][0]["raw_response_sha256"] = "0" * 64
+    forged["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in forged.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="raw response manifest"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
+def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
+    """Exact denominator coverage across several prompt-bounded work units."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    assert len(bundle["batches"]) > 1
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    accounted = [row["evidence_id"] for row in compiled["evidence_dispositions"]]
+    assert len(accounted) == 40
+    assert sorted(accounted) == sorted(row["evidence_id"] for row in bundle["evidence_units"])
+    assert len(compiled["raw_response_manifest"]["responses"]) == len(bundle["batches"])
+
+
+def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
+    """Reconciliation v2, node v2, view v2, and packet v1 consume compilation v3."""
+    bundle = _bundle_v5()
+    responses = [
+        {
+            "schema_version": BATCH_RESPONSE_VERSION_V3,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch["batch_id"],
+            "evidence": [_claim_row(row) for row in batch["evidence_ids"]],
+            "terminal_groups": [],
+        }
+        for batch in bundle["batches"]
+    ]
+    compiled = validate_batch_responses(bundle, responses)
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V3
+
+    stage_one, _ = prepare_reconciliation_stage(bundle, compiled)
+    level_one = validate_reconciliation_stage(
+        bundle, stage_one, _group_level_responses(stage_one, terminal=False)
+    )
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    level_two = validate_reconciliation_stage(
+        bundle, stage_two, _group_level_responses(stage_two, terminal=True)
+    )
+    assert level_one["schema_version"] == "semantic_evidence_node_compilation_v2"
+
+    view = finalize_v3_view(bundle, compiled, level_two)
+    assert view["schema_version"] == "semantic_evidence_integration_view_v2"
+    packet = project_evidence_packet(
+        view, bundle, compiled, level_two, axis_ids=["wear"]
+    )
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION
+    # Lineage still resolves to the new compilation generation, unmodified.
+    assert packet["source_bindings"]["compilation_sha256"] == (
+        compiled["compilation_sha256"]
+    )
+    assert packet["source_bindings"]["bundle_sha256"] == bundle["bundle_sha256"]
+    assert packet["model_api_calls"] == 0

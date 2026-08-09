@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v9
+version: v10
 effective_date: 2026-08-09
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v9
+# Semantic Evidence Integration Contract v10
 
 ## Purpose
 
@@ -259,6 +259,102 @@ The verified-catalog claim applies to the sanctioned source materializer that
 derives this catalog from the bound run spec. A directly hand-authored
 final-acquisition source is only internally self-consistent; until the runner
 binds it back to a run spec, it must not be described as spec-verified.
+
+Contract v10 adds a separate semantic generation for full-corpus execution:
+`phase_a_semantic_integration_run_v3`, `semantic_evidence_bundle_v5`,
+`semantic_work_unit_projection_v2`,
+`semantic_evidence_integration_method_v5`,
+`semantic_evidence_batch_response_v3`, and
+`semantic_evidence_batch_compilation_v3`. Source v3, product identity catalog
+v1, reconciliation response v2, node compilation v2, integration view v2,
+evidence packet v1, and every route and seal version are unchanged. The
+generations are mutually exclusive and fail closed in both directions: method
+v5 requires bundle v5, bundle v5 requires method v5, and a response or
+compilation from the wrong generation is rejected rather than coerced. The
+legacy v4 generation remains readable, validatable, and byte-reproducible; its
+paused artifacts are never mutated, restamped, migrated, or reinterpreted.
+
+Method v5 requires exactly one context-aware relevance and accounting judgment
+for every assessable leaf, made after reading the leaf with its parent,
+container, and product context. A uniquely bounded direct or referential
+in-scope proposition receives detailed processing, normally `claim_bearing`.
+An ambiguous referent, product, variant, formula, or proposition receives
+detailed `unresolved`; ambiguity is never routed to a cheaper `out_of_scope`.
+A leaf clearly established as outside the governed semantic scope may
+terminate as `out_of_scope`. A leaf clearly inside the relevant context that
+carries no bounded proposition once that context is read may terminate as
+`context_only`. No lexical phrase blacklist, keyword relevance gate, or length
+rule is permitted. Referential agreement uses the `personal_agreement`
+posture: it does not inherit the parent's first-hand posture and receives no
+original-source credit. Bounded variant or formula wording stays detailed
+while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
+formula binding is detailed `unresolved`.
+
+After a leaf is validly classified as terminal `context_only` or clearly
+established `out_of_scope`, it incurs no bespoke extraction, semantic-unit
+construction, axis assignment, reconciliation candidacy, proposition
+rewriting, or downstream evidence-packet delivery. The unavoidable cost per
+leaf remains loading it with its necessary context, making the one
+meaning-aware judgment, and publishing its exact evidence ID under an explicit
+terminal disposition.
+
+Batch response v3 carries two explicit populations: detailed evidence records
+and terminal disposition groups. `claim_bearing` and `unresolved` are always
+detailed. `context_only` and `out_of_scope` may be grouped only when every
+listed leaf has already been contextually judged eligible and they genuinely
+share one disposition and one semantic reason; a nuanced or singleton terminal
+judgment may remain detailed. Each group carries an ordered, explicit evidence-ID
+list and one agent-authored reason. Grouping is response transport compression:
+there is no implicit remainder, default disposition, wildcard, exclusion
+filter, omitted-ID behavior, sample, or semantic census. Raw response v3 is the
+durable agent-authored artifact of record.
+
+Raw evidence-ID occurrences are validated before any dictionary or set is
+constructed, so a duplicate cannot be masked by collapsing: no duplicate inside
+one group, none across groups, no overlap between grouped and detailed records,
+no unexpected ID, and an exact union with the work unit's expected IDs. Only
+then is the response deterministically expanded into the normalized
+one-row-per-evidence-ID representation existing validation consumes. Expansion
+preserves every original evidence ID, its disposition and reason, and the
+bundle's immutable source text, context references, product bindings, and
+provenance; it emits rows in expected work-unit order, fails closed on
+malformed, duplicated, missing, or unexpected identifiers, and never
+deduplicates silently.
+
+Deterministic expansion must not erase the identity of the raw response-v3
+artifacts. Batch compilation v3 binds the exact accepted response set through
+canonical raw-response hashes in a deterministic sorted manifest. The compiled
+semantic representation may remain expanded, but its lineage proves which
+durable raw grouped responses produced it, and downstream reconciliation
+rejects a compilation v3 that lacks that lineage.
+
+Projection v2 binds semantic execution identity: source, corpus, and catalog
+bindings; method v5 identity and hash; response-schema version; prompt-encoding
+version; exact work-unit membership; evidence and context references; prompt and
+leaf caps; and complete assessable-denominator coverage. It must not encode a
+worker count or static worker partition, because who executes a work unit is a
+controller runtime decision, not part of semantic identity. The new generation
+keeps the existing pretty, indented JSON prompt encoding, bound by name so a
+later compact encoding cannot silently reuse a projection packed under this one.
+
+For the new generation the controller verifies the immutable bundle and
+projection once per invocation and reuses that verified context across all
+response validation in that invocation. Status reports global expected,
+accepted, staged, invalid, and missing work-unit state; it reports no static
+worker partitions, and the legacy partition report remains only on the
+projection-v1 path. Available fresh workers take globally missing work through
+controller-local, in-memory active assignment. Deterministic atomic
+no-overwrite publication remains the only durable truth boundary, and
+publication collisions plus invalid or staged artifacts stay visible rather
+than silently successful. No daemon, queue database, lease protocol, heartbeat,
+persistent claim-marker system, persistent verification cache, new registry,
+automated loser deletion, or response winner selection is introduced.
+
+High-watermark repacking, larger prompt or leaf caps, persistent
+method/catalog/context transport, compact prompt JSON, a two-stage semantic
+census, additional worker infrastructure, and reconciliation redesign remain
+out of this generation. Contract v10 adds no provider API, no semantic
+calibration, no latency or token claim, and no route or seal obligation.
 
 `build-product-axis-proof-source` creates a bounded regression source from an
 already materialized full source by selecting the complete captured union for
@@ -546,6 +642,18 @@ new frontier.
 
 ## Changelog
 
+- `v10` / 2026-08-09 — added the run-v3 / bundle-v5 / projection-v2 / method-v5
+  / response-v3 / compilation-v3 semantic generation for full-corpus execution.
+  Required one mandatory context-aware relevance and accounting judgment per
+  assessable leaf across a four-way boundary, made clearly empty generic
+  reactions terminal at near-zero marginal cost, and added explicit-ID terminal
+  grouping as transport compression with raw-occurrence validation before any
+  dictionary or set construction. Bound the accepted raw response-v3 set through
+  canonical hashes in compilation v3, removed static worker topology from the
+  new projection, and made bundle/projection verification invocation-scoped with
+  global work state and controller-local active assignment. Preserved the legacy
+  v4 generation byte-exactly, added no queue service or persistent coordination
+  subsystem, and made no latency, token, calibration, readiness, or seal claim.
 - `v9` / 2026-08-09 — added the hash-bound product-identity catalog to each
   method-v4 final-acquisition work unit, required response subject/comparator
   product IDs to come from that catalog, barred unverified identity-bearing

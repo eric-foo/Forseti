@@ -12,16 +12,26 @@ import yaml
 
 from harness_utils import hash_file
 from judgment.semantic_evidence_integration import (
+    METHOD_VERSION_V4,
+    METHOD_VERSION_V5,
     SemanticIntegrationError,
     materialize_source_v3,
     validate_batch_responses,
     validate_reconciliation_stage,
+    verify_bundle_context,
 )
 from source_capture.reddit_consolidation import build_thread_content_record
 
 
 RUN_SPEC_VERSION = "phase_a_semantic_integration_run_v1"
 RUN_SPEC_VERSION_V2 = "phase_a_semantic_integration_run_v2"
+RUN_SPEC_VERSION_V3 = "phase_a_semantic_integration_run_v3"
+RUN_SPEC_VERSIONS = {RUN_SPEC_VERSION, RUN_SPEC_VERSION_V2, RUN_SPEC_VERSION_V3}
+# A run spec selects the semantic generation its sources will be built under.
+_RUN_SPEC_METHOD_VERSIONS = {
+    RUN_SPEC_VERSION_V2: METHOD_VERSION_V4,
+    RUN_SPEC_VERSION_V3: METHOD_VERSION_V5,
+}
 AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
 CORPUS_CENSUS_VERSION = "phase_a_customer_corpus_census_v1"
@@ -1294,8 +1304,9 @@ def _phase_a_source_shell(spec: Mapping[str, Any]) -> dict[str, Any]:
         "corpus_cutoff": spec["corpus_cutoff"],
         "axes": spec["axes"],
     }
-    if spec["schema_version"] == RUN_SPEC_VERSION_V2:
-        source["semantic_method_version"] = "semantic_evidence_integration_method_v4"
+    method_version = _RUN_SPEC_METHOD_VERSIONS.get(spec["schema_version"])
+    if method_version is not None:
+        source["semantic_method_version"] = method_version
     return source
 
 
@@ -1307,11 +1318,12 @@ def _product_binding_indexes(
     dict[str, Any] | None,
 ]:
     """Verify and index run-local product identity without installing a registry."""
-    if spec.get("schema_version") != RUN_SPEC_VERSION_V2:
+    spec_version = spec.get("schema_version")
+    if spec_version not in _RUN_SPEC_METHOD_VERSIONS:
         return {}, [], None
     bindings = spec.get("product_bindings")
     if not isinstance(bindings, list) or not bindings:
-        raise SemanticIntegrationError("v2 run spec requires product_bindings")
+        raise SemanticIntegrationError(f"{spec_version} requires product_bindings")
     token_index: dict[str, Mapping[str, Any]] = {}
     stable_ids: set[str] = set()
     artifacts: list[dict[str, str]] = []
@@ -1470,7 +1482,7 @@ def build_phase_a_product_axis_proof_source(
     normalization_source = dict(full_source)
     if (
         normalization_source.get("semantic_method_version")
-        == "semantic_evidence_integration_method_v4"
+        in {METHOD_VERSION_V4, METHOD_VERSION_V5}
         and normalization_source.get("corpus_profile") == "phase_a_final_acquisition"
         and "product_identity_catalog" not in normalization_source
     ):
@@ -2523,7 +2535,7 @@ def _verify_v3_source_artifacts(
 
 
 def _validate_run_spec_shape(spec: Mapping[str, Any]) -> None:
-    if spec.get("schema_version") not in {RUN_SPEC_VERSION, RUN_SPEC_VERSION_V2}:
+    if spec.get("schema_version") not in RUN_SPEC_VERSIONS:
         raise SemanticIntegrationError("invalid Phase A semantic run spec version")
     for field in (
         "run_id",
@@ -2553,10 +2565,12 @@ def _validate_run_spec_shape(spec: Mapping[str, Any]) -> None:
         or len(set(axis_ids)) != len(axis_ids)
     ):
         raise SemanticIntegrationError("run spec axes must have unique non-empty ids")
-    if spec.get("schema_version") == RUN_SPEC_VERSION_V2:
+    if spec.get("schema_version") in _RUN_SPEC_METHOD_VERSIONS:
         bindings = spec.get("product_bindings")
         if not isinstance(bindings, list) or not bindings:
-            raise SemanticIntegrationError("v2 run spec requires product_bindings")
+            raise SemanticIntegrationError(
+                f"{spec['schema_version']} requires product_bindings"
+            )
 
 
 def audit_phase_a_source(
@@ -2798,9 +2812,14 @@ def materialize_phase_a_v3(
 
 
 def validate_one_batch_response(
-    bundle: Mapping[str, Any], response: Mapping[str, Any]
+    bundle: Mapping[str, Any],
+    response: Mapping[str, Any],
+    *,
+    context: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    return validate_batch_responses(bundle, [response], require_all=False)
+    return validate_batch_responses(
+        bundle, [response], require_all=False, context=context
+    )
 
 
 def validate_one_reconciliation_response(
@@ -2819,10 +2838,13 @@ def run_status(
     batch_responses: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
     """Return honest resumability status without compiling a partial result."""
-    # Verify the bundle even when zero response files exist. Otherwise an
-    # interrupted run could report a workload derived from an unchecked file.
-    validate_batch_responses(bundle, [], require_all=False)
+    # Verify the immutable bundle and projection exactly once per invocation,
+    # even when zero response files exist, then reuse that verified context for
+    # every response. Re-verifying per response re-hashed the whole bundle once
+    # per accepted batch and dominated status wall-clock on a full corpus.
+    context = verify_bundle_context(bundle)
     expected = {row["batch_id"] for row in bundle.get("batches", [])}
+    new_generation = context["new_generation"]
     partition_by_batch = {
         row["batch_id"]: row.get("worker_partition")
         for row in bundle.get("batches", [])
@@ -2831,18 +2853,30 @@ def run_status(
     valid: set[str] = set()
     invalid: list[dict[str, str]] = []
     duplicates: set[str] = set()
+    staged: list[str] = []
     for response in batch_responses:
         batch_id = response.get("batch_id") if isinstance(response, Mapping) else None
         if isinstance(batch_id, str) and batch_id in valid:
             duplicates.add(batch_id)
             continue
+        if (
+            isinstance(response, Mapping)
+            and response.get("staged_artifact") is True
+            # Only the runner's own marker, never a published response that
+            # happens to carry the same key, may be reported as staged.
+            and "schema_version" not in response
+        ):
+            # A staged, unpublished artifact is neither accepted work nor a
+            # silent success; it stays separately visible.
+            staged.append(str(batch_id))
+            continue
         try:
-            receipt = validate_one_batch_response(bundle, response)
+            receipt = validate_one_batch_response(bundle, response, context=context)
         except SemanticIntegrationError as exc:
             invalid.append({"batch_id": str(batch_id), "error": str(exc)})
             continue
         valid.update(receipt["validated_batch_ids"])
-    complete = valid == expected and not invalid and not duplicates
+    complete = valid == expected and not invalid and not duplicates and not staged
     result = {
         "schema_version": "phase_a_semantic_run_status_v1",
         "bundle_sha256": bundle.get("bundle_sha256"),
@@ -2850,6 +2884,7 @@ def run_status(
         "valid_batch_count": len(valid),
         "missing_batch_ids": sorted(expected - valid),
         "duplicate_batch_ids": sorted(duplicates),
+        "staged_batch_ids": sorted(staged),
         "invalid_responses": invalid,
         "batch_stage_complete": complete,
         "next_status": (
@@ -2857,8 +2892,15 @@ def run_status(
             if complete
             else "SEMANTIC_BATCH_JUDGMENT_REQUIRED"
         ),
+        "bundle_verifications": 1,
         "model_api_calls": 0,
     }
+    if new_generation:
+        # Global work state only. The new projection carries no static
+        # partition, so reporting one here would reinvent the topology the
+        # generation removed.
+        result["work_selection"] = "global"
+        return result
     partitions = sorted(
         {
             value
@@ -2891,12 +2933,57 @@ def run_status(
     return result
 
 
+def select_open_work_units(
+    status: Mapping[str, Any],
+    *,
+    worker_id: str,
+    limit: int,
+    active_assignments: Mapping[str, Sequence[str]] | None = None,
+) -> dict[str, Any]:
+    """Hand a fresh worker globally missing work, without static partitions.
+
+    This is controller-local and in-memory by design: `active_assignments` is
+    the controller's own view of what it has already handed out in this
+    session. Nothing is written, leased, or claimed on disk, so a dead worker
+    simply stops appearing and its units return to the missing set on the next
+    status read. Atomic no-overwrite publication remains the only durable
+    truth boundary.
+    """
+    if status.get("work_selection") != "global":
+        raise SemanticIntegrationError(
+            "global work selection requires a new-generation run status"
+        )
+    if not _nonempty(worker_id):
+        raise SemanticIntegrationError("work selection requires a worker id")
+    if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
+        raise SemanticIntegrationError("work selection limit must be positive")
+    missing = status.get("missing_batch_ids")
+    if not isinstance(missing, list):
+        raise SemanticIntegrationError("run status lacks missing work units")
+    assigned_elsewhere: set[str] = set()
+    for holder, batch_ids in (active_assignments or {}).items():
+        if holder == worker_id:
+            continue
+        assigned_elsewhere.update(batch_ids)
+    selected = [row for row in missing if row not in assigned_elsewhere][:limit]
+    return {
+        "schema_version": "phase_a_semantic_work_selection_v1",
+        "bundle_sha256": status.get("bundle_sha256"),
+        "worker_id": worker_id,
+        "assigned_work_unit_ids": selected,
+        "globally_missing_count": len(missing),
+        "model_api_calls": 0,
+    }
+
+
 __all__ = [
     "AUDIT_VERSION",
     "CORPUS_CENSUS_VERSION",
     "RUN_RECEIPT_VERSION",
     "RUN_SPEC_VERSION",
     "RUN_SPEC_VERSION_V2",
+    "RUN_SPEC_VERSION_V3",
+    "select_open_work_units",
     "audit_phase_a_source",
     "build_phase_a_product_axis_proof_source",
     "census_phase_a_customer_corpus",

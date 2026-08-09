@@ -54,6 +54,31 @@ then join a Reddit observation and a retailer review when they concern the same
 stable product and bounded meaning. It does not merge them merely because they
 share a phrase.
 
+A full-corpus run uses the run-v3 / bundle-v5 / method-v5 generation. Every
+assessable leaf still receives exactly one context-aware judgment, made after
+reading its parent and container context; there is no keyword or phrase gate,
+and a short referential reply that adopts a specific parent complaint,
+preference, product, or variant stays claim-bearing. What changes is only what a
+leaf costs after that judgment: a leaf that is clearly outside scope, or clearly
+inside the context but carrying no bounded proposition, terminates immediately
+with no semantic unit, axis assignment, reconciliation candidacy, or packet
+delivery. Ambiguous binding stays `unresolved` rather than being pushed into a
+cheaper terminal disposition.
+
+Workers report those terminal decisions either individually or as explicit-ID
+groups sharing one agent-authored reason. Grouping is transport compression, not
+a sample or a default: every evidence ID is listed, raw occurrences are checked
+for duplicates and unexpected or omitted IDs before anything is normalized, and
+the durable raw response stays the record of evidence through hash-bound
+compilation lineage. The new projection carries no static worker partition, so
+any available worker takes globally missing work and atomic no-overwrite
+publication remains the only durable truth boundary. Bundle and projection
+verification happens once per controller invocation rather than once per
+response.
+
+The legacy v4 generation is unchanged and remains byte-reproducible; the paused
+v4 run's artifacts are not migrated or restamped.
+
 The final Phase A evidence packet is a retrieval surface. Asking for an axis or
 bounded proposition returns the complete linked evidence union, including
 counterevidence and unresolved adjacent material. Deliver owns any later
@@ -100,3 +125,14 @@ adjudicated and its material findings closed; a clean closure pass remains due
 because the commissioned code-review method was unavailable to that receiver.
 The 59,225-leaf full-corpus semantic completion and terminal convergence remain
 later observed work, not a current claim.
+
+The run-v3 / bundle-v5 / method-v5 generation is implemented and covered by
+repository fixtures and unit tests only. Its structural accounting, version
+compatibility, raw-occurrence validation, expansion, lineage, and status
+behavior are proven at repository scale; its latency, token, and full-corpus
+compatibility effects are not. No measurement against the paused full run's
+frozen artifacts has been performed, so the generation carries no latency
+claim, no token claim, no full-corpus execution readiness, and no
+run-resumption authority. Method v5 has not been semantically calibrated: its
+four-way boundary is proven as instructions and routing structure, never as
+model recall.

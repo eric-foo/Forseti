@@ -127,6 +127,9 @@ def prepare_batches(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+    # Only the legacy v4 projection carries a static partition. The new
+    # generation selects work globally at run time, so writing an assignment
+    # manifest here would reintroduce the topology it removed.
     if bundle.get("schema_version") == BUNDLE_VERSION_V4:
         _write_json(
             prompt_dir / "worker_assignments.json",
@@ -537,6 +540,12 @@ def semantic_run_status(
                 responses.append(_load_object(path))
             except (OSError, ValueError, json.JSONDecodeError) as exc:
                 responses.append({"batch_id": path.stem, "invalid_file_error": str(exc)})
+        # A staged artifact is work in flight, not accepted output. Report it
+        # rather than letting an interrupted publish look like missing work.
+        for path in sorted(response_dir.glob("*.json.tmp")):
+            responses.append(
+                {"batch_id": path.name[: -len(".json.tmp")], "staged_artifact": True}
+            )
     return run_status(bundle=_load_object(bundle_path), batch_responses=responses)
 
 

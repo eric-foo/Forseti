@@ -10,6 +10,7 @@ import pytest
 from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION,
     RUN_SPEC_VERSION_V2,
+    RUN_SPEC_VERSION_V3,
     _product_binding_indexes,
     audit_phase_a_source,
     build_phase_a_reddit_source_v3,
@@ -23,16 +24,21 @@ from judgment.phase_a_semantic_run import (
     prepare_serp_source_frontier_inventory,
     reconcile_serp_frontier_targets,
     run_status,
+    select_open_work_units,
     validate_one_batch_response,
     validate_one_reconciliation_response,
 )
 from judgment.semantic_evidence_integration import (
+    BATCH_RESPONSE_VERSION_V3,
+    BUNDLE_VERSION_V5,
+    METHOD_VERSION_V5,
     SemanticIntegrationError,
     build_bundle,
     materialize_source_v3,
     prepare_reconciliation_stage,
     validate_batch_responses,
 )
+import judgment.phase_a_semantic_run as phase_a_semantic_run
 
 
 def _sha(path: Path) -> str:
@@ -1829,3 +1835,204 @@ def test_serp_target_reconciliation_links_only_exact_native_object_ids(
         "historical_capture_unavailable": 1,
     }
     assert result["new_source_acquisition_performed"] is False
+
+
+# --- New-generation controller, status, and publication behavior ---
+
+
+def _spec_v3(tmp_path: Path) -> dict:
+    """The controlled run-spec fixture upgraded to the new generation."""
+    spec, _ = _spec(tmp_path)
+    authority = tmp_path / "product-authority-v3.json"
+    _write_json(authority, {"product": "Summer Fridays Lip Butter Balm"})
+    spec["schema_version"] = RUN_SPEC_VERSION_V3
+    spec["product_bindings"] = [
+        {
+            "stable_product_id": "summer-fridays-lip-butter-balm",
+            "display_name": "Summer Fridays Lip Butter Balm",
+            "source_product_ids": ["sf-lbb"],
+            "aliases": ["Lip Butter Balm"],
+            "evidence_refs": [{"locator": str(authority), "sha256": _sha(authority)}],
+        }
+    ]
+    return spec
+
+
+def _v5_bundle(tmp_path: Path) -> dict:
+    """Build the new generation from the same controlled run-spec fixture."""
+    spec = _spec_v3(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    assert source["semantic_method_version"] == METHOD_VERSION_V5
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    return bundle
+
+
+def _v5_batch_response(bundle: dict, *, group_all: bool = False) -> dict:
+    legacy = _batch_response(bundle)
+    rows = legacy["evidence"]
+    response = {
+        "schema_version": BATCH_RESPONSE_VERSION_V3,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_id": legacy["batch_id"],
+        "evidence": [] if group_all else rows,
+        "terminal_groups": (
+            [
+                {
+                    "disposition": "context_only",
+                    "disposition_reason": "no bounded proposition after context",
+                    "evidence_ids": [row["evidence_id"] for row in rows],
+                }
+            ]
+            if group_all
+            else []
+        ),
+    }
+    return response
+
+
+def test_run_spec_v3_selects_the_new_semantic_generation(tmp_path: Path) -> None:
+    spec = _spec_v3(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    assert source["semantic_method_version"] == METHOD_VERSION_V5
+    assert source["product_identity_catalog"]["schema_version"] == (
+        "product_identity_catalog_v1"
+    )
+    spec.pop("product_bindings", None)
+    with pytest.raises(SemanticIntegrationError, match="requires product_bindings"):
+        materialize_phase_a_v3(spec, repo_root=tmp_path)
+
+
+def test_new_generation_status_is_global_not_partition_owned(tmp_path: Path) -> None:
+    bundle = _v5_bundle(tmp_path)
+    interrupted = run_status(bundle=bundle, batch_responses=[])
+    assert interrupted["work_selection"] == "global"
+    # The removed static topology must not reappear in the status surface.
+    assert "worker_partitions" not in interrupted
+    assert interrupted["missing_batch_ids"] == ["batch-0001"]
+    assert interrupted["batch_stage_complete"] is False
+
+    accepted = run_status(
+        bundle=bundle, batch_responses=[_v5_batch_response(bundle, group_all=True)]
+    )
+    assert accepted["batch_stage_complete"] is True
+    assert accepted["missing_batch_ids"] == []
+
+
+def test_legacy_projection_v1_partition_report_is_unchanged(tmp_path: Path) -> None:
+    spec, _ = _spec(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=8_000)
+    status = run_status(bundle=bundle, batch_responses=[])
+    assert status["worker_partitions"] == [
+        {
+            "worker_partition": 1,
+            "expected_batch_count": 1,
+            "valid_batch_count": 0,
+            "missing_batch_ids": ["batch-0001"],
+        }
+    ]
+    assert "work_selection" not in status
+
+
+def test_status_verifies_the_immutable_bundle_once_per_invocation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    bundle = _v5_bundle(tmp_path)
+    responses = [_v5_batch_response(bundle, group_all=True)]
+    # Add three more distinct response objects so any per-response verification
+    # would multiply the observed count.
+    for suffix in ("a", "b", "c"):
+        stale = deepcopy(responses[0])
+        stale["batch_id"] = f"batch-000{suffix}"
+        responses.append(stale)
+
+    calls = {"count": 0}
+    real = phase_a_semantic_run.verify_bundle_context
+
+    def counting(passed_bundle):
+        calls["count"] += 1
+        return real(passed_bundle)
+
+    monkeypatch.setattr(phase_a_semantic_run, "verify_bundle_context", counting)
+    status = run_status(bundle=bundle, batch_responses=responses)
+    assert calls["count"] == 1
+    assert status["bundle_verifications"] == 1
+    # Accounting still separates valid from invalid work.
+    assert status["valid_batch_count"] == 1
+    assert len(status["invalid_responses"]) == 3
+
+
+def test_status_keeps_staged_artifacts_visible_and_incomplete(tmp_path: Path) -> None:
+    bundle = _v5_bundle(tmp_path)
+    staged = run_status(
+        bundle=bundle,
+        batch_responses=[{"batch_id": "batch-0001", "staged_artifact": True}],
+    )
+    assert staged["staged_batch_ids"] == ["batch-0001"]
+    assert staged["batch_stage_complete"] is False
+    assert staged["missing_batch_ids"] == ["batch-0001"]
+
+
+def test_global_work_selection_is_not_partition_exclusive(tmp_path: Path) -> None:
+    bundle = _v5_bundle(tmp_path)
+    status = run_status(bundle=bundle, batch_responses=[])
+    # Any fresh worker may take globally missing work.
+    first = select_open_work_units(status, worker_id="worker-a", limit=5)
+    second = select_open_work_units(status, worker_id="worker-b", limit=5)
+    assert first["assigned_work_unit_ids"] == ["batch-0001"]
+    assert second["assigned_work_unit_ids"] == ["batch-0001"]
+    assert first["globally_missing_count"] == 1
+    # Controller-local active assignment keeps two live workers off one unit
+    # without any durable lease, claim marker, or queue service.
+    third = select_open_work_units(
+        status,
+        worker_id="worker-b",
+        limit=5,
+        active_assignments={"worker-a": ["batch-0001"]},
+    )
+    assert third["assigned_work_unit_ids"] == []
+
+
+def test_global_work_selection_refuses_a_legacy_status(tmp_path: Path) -> None:
+    spec, _ = _spec(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=8_000)
+    status = run_status(bundle=bundle, batch_responses=[])
+    with pytest.raises(SemanticIntegrationError, match="new-generation run status"):
+        select_open_work_units(status, worker_id="worker-a", limit=1)
+
+
+def test_new_generation_publication_still_fails_visibly_on_collision(
+    tmp_path: Path,
+) -> None:
+    from runners.run_semantic_evidence_integration import publish_batch_response_file
+
+    bundle = _v5_bundle(tmp_path)
+    bundle_path = tmp_path / "bundle_v5.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    response_dir = tmp_path / "responses_v5"
+    response_dir.mkdir()
+    response = _v5_batch_response(bundle, group_all=True)
+
+    staged = response_dir / "batch-0001.json.tmp"
+    staged.write_text(json.dumps(response), encoding="utf-8")
+    published = publish_batch_response_file(
+        bundle_path=bundle_path,
+        staged_response_path=staged,
+        response_dir=response_dir,
+    )
+    assert published["status"] == "SEMANTIC_BATCH_RESPONSE_PUBLISHED"
+    assert not staged.exists()
+    # The raw agent-authored artifact stays the durable record of evidence.
+    assert json.loads(
+        (response_dir / "batch-0001.json").read_text(encoding="utf-8")
+    ) == response
+
+    staged.write_text(json.dumps(response), encoding="utf-8")
+    with pytest.raises(ValueError, match="refusing to overwrite existing response"):
+        publish_batch_response_file(
+            bundle_path=bundle_path,
+            staged_response_path=staged,
+            response_dir=response_dir,
+        )
