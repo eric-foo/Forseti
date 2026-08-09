@@ -3412,7 +3412,7 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
         "out_of_scope",
     ):
         assert disposition in text
-    assert "exactly one context-aware relevance and\naccounting judgment" in text
+    assert "exactly one context-aware relevance and accounting judgment" in text
     # Referential agreement keeps parent meaning without inheriting credit.
     assert '"same" may adopt the specific parent complaint' in text
     assert 'Context may resolve what "it" refers to' in text
@@ -3423,31 +3423,35 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "Context fills an omitted predicate, not posture" in text
     assert "original-source\ncredit" in text
     assert "Evidence posture describes support, not the verb" in text
-    assert "never customer shopping or\nuse behavior" in text
+    assert "value judgment, or category\njudgment is first_hand" in text
+    assert "never customer shopping or use behavior" in text
+    assert '"is drying" is affirmed; "is not drying"\nis negated' in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
     assert "Never route ambiguity to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
     assert "adds no specific attribute, condition" in text
-    assert "smallest complete set of atomic meanings" in text
-    assert "every explicit attribute, behavior" in text
+    assert "smallest complete set of in-scope atomic\nmeanings" in text
+    assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
+    assert "Generic approval or dislike adds no atom" in text
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "must not donate an\nattribute or axis" in text
     assert "Include every\nexisting axis the atomic meaning does express" in text
     assert "condition constrains but does not donate an axis" in text
-    assert "every unit\nneeds a subject_product_id" in text
-    assert "never invent ids or rebind the leaf" in text
+    assert "Category labels and\nprestige impressions do not imply latent" in text
+    assert "Every unit must concern a verified subject product" in text
+    assert "Never create their standalone units" in text
     # Variant wording is preserved rather than dropped.
     assert "Bounded variant\nor formula wording stays claim_bearing" in text
     assert "ambiguous variant or formula binding\nis unresolved" in text
     # Grouping is transport compression only.
-    assert "never a sample,\ndefault, implicit remainder, wildcard" in text
+    assert "never a sample, default, implicit\nremainder, wildcard" in text
 
 
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     text = METHOD_TEXT_V5
-    assert "There is no keyword rule, phrase list, or length rule" in text
+    assert "There is no keyword, phrase, or length rule" in text
     # The worked examples describe semantic boundaries, not matchable input
     # filters. Short inputs can still be detailed, terminal, or unresolved.
     for phrase in ('"same"', '"my fav"', '"I always reach for it"'):
