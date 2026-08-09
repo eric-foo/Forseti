@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v14
+version: v15
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v14
+# Semantic Evidence Integration Contract v15
 
 ## Purpose
 
@@ -320,9 +320,11 @@ relabels customer shopping or use behavior.
 Every atomic `statement` remains truthful when read without its structured
 fields. Negation and direction such as `not`, `never`, and `less` stay in the
 statement; `polarity` repeats that direction and never supplies or reverses
-words omitted from the statement. Reconciliation preserves the same explicit
-direction in terminal `bounded_meaning`; it may not turn a negated child into a
-positive claim.
+words omitted from the statement. A support child and terminal
+`bounded_meaning` have compatible direction. A negated child may validly be
+`counter` to the inverse positive meaning, but it may never support that
+positive meaning. `meaning_direction_preserved` adjudication checks the child,
+relation, and terminal wording together.
 
 Every detailed leaf is decomposed into the smallest complete set of atomic
 meanings. Meanings that can be independently true, or differ in product, axis,
@@ -336,6 +338,12 @@ behavior. Every explicit contrast in a two-product passage remains present,
 including a hydration contrast stated through the comparator. `More like a
 gloss than a balm` is an axis-free category judgment unless the leaf separately
 states a texture attribute.
+
+An `attribution_or_echo` unit's standalone statement names the attribution; the
+posture field cannot carry words omitted from an otherwise first-hand-sounding
+sentence. A shade-ownership unit carries `shade_and_color_fit`. `I have the
+Poppy flavor` is an ownership atom, while `reaches for other formulas` is an
+affirmed switching behavior rather than a negated target-use statement.
 
 For bundle v5 reconciliation, each candidate carries its exact set of leaf
 evidence postures through every level. The prompt exposes that set, and level
@@ -753,6 +761,14 @@ new frontier.
 
 ## Changelog
 
+- `v15` / 2026-08-10 — narrowed direction preservation to the semantically
+  correct relation rule: support must match terminal direction, while a
+  negated child may remain counterevidence to the inverse positive proposition.
+  Required attribution to remain visible in echo statements, shade ownership
+  to carry its supported axis, explicit ownership to remain atomic, and
+  switching-to-other-formulas wording to remain affirmed. Reinforced retention
+  of target/comparator hydration contrasts. Added no schema or corpus-run
+  authority.
 - `v14` / 2026-08-10 — required every atomic statement and terminal bounded
   meaning to remain truth-complete without relying on `polarity`, preventing
   negated children from becoming positive reconciliation claims. Clarified the

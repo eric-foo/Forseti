@@ -3443,8 +3443,9 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert '"I always reach for it" carries a bounded customer-behavior' in text
     assert "personal_agreement adopts a specific parent proposition" in text
     assert "attribution_or_echo\nmerely reports the parent" in text
-    assert "A direct answer to a specific\nquestion is its own bounded" in text
-    assert "Context fills an omitted predicate, not posture" in text
+    assert "its statement must name that\nattribution" in text
+    assert "A direct answer to a specific question is its own bounded" in text
+    assert "Context fills\nan omitted predicate, not posture" in text
     assert "may add same-thread recurrence" in text
     assert "never award cross-venue credit" in text
     assert "Evidence posture describes support, not the verb" in text
@@ -3455,7 +3456,7 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
     assert "Never make ambiguity cheap" in text
-    assert "routing it to out_of_scope" in text
+    assert "routing to out_of_scope" in text
     # Empty standalone reaction may terminate as context_only.
     assert '"Love it" with only a known product remains context_only' in text
     assert "smallest complete set of in-scope atomic meanings" in text
@@ -3466,8 +3467,9 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "preserve both the result and preference" in text
     assert "Generic approval" in text and "dislike adds no atom" in text
     assert '"good, but not worth $24" yields only the value atom' in text
-    assert "Preserve ownership as behavior" in text
-    assert "including one product being more moisturizing" in text
+    assert '"I have the Poppy flavor" is an ownership atom' in text
+    assert '"Reaches for other\nformulas" is affirmed switching behavior' in text
+    assert "other deeply moisturizing" in text
     assert '"Vanilla Beige!" -> "My fav!"' in text
     assert "claim_bearing personal_agreement with no axis" in text
     assert "Praise tied to a named result" in text
@@ -3475,11 +3477,13 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
     assert "include every existing axis it does express" in text
-    assert "Dry lips do not make smoothing\na hydration claim" in text
-    assert '"More like a gloss than a balm" is an axis-free category' in text
-    assert "Terminal bounded_meaning must repeat" in text
-    assert "never rewrite a negated child as a positive claim" in text
-    assert "Formula\nresemblance or change supports formula_consistency_and_change" in text
+    assert "shade-ownership unit carries shade_and_color_fit" in text
+    assert "Dry lips do not make\nsmoothing a hydration claim" in text
+    assert '"More like a gloss than a balm" is an axis-free\ncategory' in text
+    assert "A support child must match bounded_meaning direction" in text
+    assert "counter to the inverse positive meaning" in text
+    assert "never attach it as support there" in text
+    assert "Formula resemblance or change supports formula_consistency_and_change" in text
     assert "Every unit must concern a verified subject product" in text
     assert "Never create their standalone\nunits" in text
     assert "map its category to exactly one catalog product" in text
@@ -3498,7 +3502,7 @@ def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     for phrase in ('"same"', '"My fav!"', '"I always reach for it"'):
         assert phrase in text
     assert '"Love it" with only a known product remains context_only' in text
-    assert "Adopting a specific parent proposition is claim-bearing" in text
+    assert "specific parent proposition is claim-bearing" in text
 
 
 def test_v5_terminal_grouping_expands_to_one_row_per_evidence_id() -> None:

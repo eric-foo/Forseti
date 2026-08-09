@@ -251,11 +251,11 @@ be claim-bearing and long can lack a bounded proposition.
 
 Choose exactly one disposition for each leaf:
 
-- claim_bearing: leaf plus context yields a unique in-scope proposition, direct
-  or referential. Adopting a specific parent proposition is claim-bearing.
-- unresolved: referent, product, variant, formula, or proposition has several
-  plausible bindings. Never make ambiguity cheap by routing it to out_of_scope.
-- context_only: relevant but adds no bounded attribute, condition, comparison,
+- claim_bearing: unique in-scope direct or referential proposition. Adopting a
+  specific parent proposition is claim-bearing.
+- unresolved: several plausible referent, product, variant, formula, or
+  proposition bindings. Never make ambiguity cheap by routing to out_of_scope.
+- context_only: relevant but no bounded attribute, condition, comparison,
   behavior, preference, reason, or referent.
 - out_of_scope: clearly outside governed semantic scope.
 
@@ -271,9 +271,10 @@ Choose exactly one disposition for each leaf:
 personal_agreement adopts a specific parent proposition without inheriting
 first_hand. A distinctly credited agreeing actor may add same-thread recurrence
 only; disclose the thread and never award cross-venue credit. attribution_or_echo
-merely reports the parent and adds no origin. A direct answer to a specific
-question is its own bounded proposition -- first_hand when based on the author's
-experience. Context fills an omitted predicate, not posture.
+merely reports the parent and adds no origin; its statement must name that
+attribution. A direct answer to a specific question is its own bounded
+proposition -- first_hand when based on the author's experience. Context fills
+an omitted predicate, not posture.
 
 Evidence posture describes support, not the verb. The author's own purchase,
 use, return, reach, repurchase, purchase intent, value judgment, or category
@@ -307,18 +308,20 @@ comparison when the referent is clear. When a result is what the author wanted,
 preserve both the result and preference, combined or split. Generic approval
 or dislike adds no atom: "good, but not worth $24" yields only the value atom.
 Praise tied to a named result, such as pleasant application, is specific
-evidence. Preserve ownership as behavior. In an explicit two-product passage,
-keep every stated contrast, including one product being more moisturizing.
+evidence. "I have the Poppy flavor" is an ownership atom. "Reaches for other
+formulas" is affirmed switching behavior. In an explicit two-product passage,
+retain a target/comparator hydration contrast when one is nonhydrating and the
+other deeply moisturizing.
 
-Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
-must be directly supported by that unit's atomic statement and by the leaf.
+Axis candidates are vocabulary, not assignments. Each `axis_id` must be
+directly supported by its atomic statement and leaf.
 Context may resolve product or referent but cannot donate an attribute or axis;
 neither can another unit or clause. Never copy candidate axes: omit any axis
 the unit alone cannot explain, and include every existing axis it does express.
-Owning every shade supports shade or color fit. Dry lips do not make smoothing
-a hydration claim. "More like a gloss than a balm" is an axis-free category
-judgment, not texture. Prestige impressions imply no latent axis. Formula
-resemblance or change supports formula_consistency_and_change.
+A shade-ownership unit carries shade_and_color_fit. Dry lips do not make
+smoothing a hydration claim. "More like a gloss than a balm" is an axis-free
+category judgment, not texture. Prestige impressions imply no latent axis.
+Formula resemblance or change supports formula_consistency_and_change.
 
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and
@@ -326,13 +329,12 @@ retailer reviews may support the same bounded customer-experience meaning;
 their separate source roles and origins remain intact. Keep opposition,
 variant differences, causal attributions, and adjacent comparisons distinct.
 Preserve every child reference, original emerging-axis label, and direction.
-Terminal bounded_meaning must repeat each child's explicit not, never, or less;
-never rewrite a negated child as a positive claim.
+A support child must match bounded_meaning direction. A negated child may be
+counter to the inverse positive meaning; never attach it as support there.
 
-Do not infer provenance, people, source-role competence, support levels,
-prevalence, causation, conclusions, or recommendations. Code owns accounting,
-identity credit, lineage, hashes, cycles, duplicates, byte bounds, and
-impossible combinations.
+Do not infer provenance, people, source competence, support levels, prevalence,
+causation, conclusions, or recommendations. Code owns accounting, identity,
+lineage, hashes, duplicates, byte bounds, and impossible combinations.
 """
 
 _METHOD_TEXTS = {
