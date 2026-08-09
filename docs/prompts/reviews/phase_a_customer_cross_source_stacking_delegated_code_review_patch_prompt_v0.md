@@ -1,9 +1,9 @@
 ---
 retrieval_header_version: 1
 artifact_role: Delegated code review-and-patch prompt
-scope: Phase A run-local product binding and customer-side community-plus-retailer evidence stacking at implementation checkpoint b3f62cba
+scope: Phase A run-local product binding and customer-side community-plus-retailer evidence stacking as landed at merge revision 87fd7f5
 use_when:
-  - Couriering the frozen customer cross-source stacking implementation to an eligible Anthropic controller with direct access to the bound worktree.
+  - Couriering the landed customer cross-source stacking implementation to an eligible different-vendor controller with direct access to the bound worktree.
 authority_boundary: retrieval_only
 ---
 
@@ -24,17 +24,17 @@ access: repo
 target_kind: delegated_code_review_and_patch
 delegate_eligibility: different_vendor_lineage_with_direct_repo_access
 author_vendor: OpenAI
-delegate_vendor: Anthropic
+delegate_vendor: operator_to_fill
 output_mode: paste-ready-chat
 edit_permission: patch-only
-required_revision: b3f62cba70b8785a9aca9ab5599feaa34bcc663b
+required_revision: 87fd7f5625745f0ab9e8800703e971291c2b7e92
 revision_mode: ancestor
-branch: codex/phase-a-customer-cross-source-stacking
+branch: claude/cross-vendor-review-routing-ykb4js
 receiver_binding:
   receiver_class: external_direct_write
   launch_checkout: receiver_to_observe
-  effective_target_worktree: C:\tmp\forseti-phase-a-customer-cross-source-stacking-20260809
-  required_revision: b3f62cba70b8785a9aca9ab5599feaa34bcc663b
+  effective_target_worktree: receiver_to_bind
+  required_revision: 87fd7f5625745f0ab9e8800703e971291c2b7e92
   revision_mode: ancestor
   clean_at_bind: required
   direct_write_capability: receiver_to_verify
@@ -153,13 +153,34 @@ At minimum attack:
 - test validity: ensure new tests fail for the intended defect and cannot pass
   because fixtures omit the dangerous state.
 
-## Unadjudicated same-vendor leads
+## Prior rounds — context only, not accepted findings
 
-An in-session OpenAI reviewer was launched by mistake and stopped when the
-owner clarified that the delegated patch must be performed by a different
-model vendor. Its patch was removed completely; the target was restored to the
-required revision. Nothing below is an accepted finding or an authorized fix.
-Independently reproduce or reject each lead from primary sources:
+Two earlier passes touched this work. Neither filed a durable review report;
+treat both as context and re-derive everything from primary sources.
+
+**Prior different-vendor round (Anthropic).** A delegated round ran against
+the pre-merge revision `b3f62cba` and was adjudicated in chat only. The sole
+durable record is the merge-commit trailer of `87fd7f5`:
+
+> `review_routing_status: routed -- chat_only_adjudicated: Anthropic review
+> accepted F1 and F2, rejected F3 after Windows real-proof rebuild`
+
+The accepted fixes landed as `fix(phase-a): preserve v4 method and verify
+proof lineage` inside the merged revision you are now reviewing. No filed
+artifact records what F1, F2, and F3 actually were, and their mapping onto the
+three same-vendor leads below is **not** recorded anywhere — do not assume one.
+That round is therefore not a substitute for this review and grants no finding
+immunity: a defect it may have missed is still in scope, and an area it may
+have cleared still needs your own evidence.
+
+**Prior same-vendor leads (OpenAI, unadjudicated).** An in-session OpenAI
+reviewer was launched by mistake and stopped when the owner clarified that the
+delegated patch must be performed by a different model vendor. Its patch was
+removed completely; the target was restored to the then-required revision.
+Nothing below is an accepted finding or an authorized fix. Note that these
+leads were written against `b3f62cba`, before the accepted fixes landed, so
+some may already be closed in your target. Independently reproduce or reject
+each lead from primary sources:
 
 1. **Proof-input integrity.** It suspected
    `build_phase_a_product_axis_proof_source` accepts a rehashed or tampered full
@@ -184,12 +205,27 @@ regression test. A rejected lead should be listed under
 
 ## Required real checks
 
-The external proof lineage is read-only at:
+The external proof lineage is read-only and, on the authoring machine, lived at:
 
 `C:\tmp\forseti-phase-a-customer-cross-source-proof-20260809`
 
-Rebuild or independently inspect enough primary artifacts to verify, rather
-than merely copy, these recorded facts:
+**Operator precondition — this path is machine-local and is not in the
+repository.** The in-repo proof directory carries only `README.md` and
+`run_spec_v2.json`; every large artifact the checks below reference (the five
+prompts, the level-one/level-two responses, the preserved failed response, the
+final view, and the evidence packet) lives outside the repo. The operator must
+supply that directory to the receiver before this section can be executed.
+
+If the directory is not available to you, do **not** infer these facts from the
+README prose, and do not treat the README's own recitation of them as
+verification — the README is the claim under test, not evidence for it. Report
+every item in this section as `blocked`, name the missing path, and continue
+with the rest of the review. A return that marks this section blocked is a
+valid return; a return that silently reports these facts as verified from the
+README is not.
+
+With the directory available, rebuild or independently inspect enough primary
+artifacts to verify, rather than merely copy, these recorded facts:
 
 - deterministic proof selection: 300 assessable leaves, 216 community and 84
   retailer, across 255 containers;
@@ -230,6 +266,17 @@ python .agents/hooks/check_review_routing.py --strict --base origin/main
 python .agents/hooks/check_map_links.py --strict --base origin/main
 git diff --check
 ```
+
+Observed baseline at `87fd7f5` before any patch of yours, so you can separate a
+pre-existing failure from one you introduce: the three targeted test files pass
+(323 tests); the full `tests/unit` suite collects 4751 tests with exactly one
+failure, `test_install_local_hooks.py::test_installer_repairs_foreign_worktree_hook_binding`,
+which fails only where `pwsh` is absent and is outside the patchable set. On a
+Windows host with PowerShell present that test is expected to pass — if it fails
+there, that is a real finding, not this disclosure. The six hook gates above and
+`git diff --check` were observed green against the landed diff. This baseline was
+taken on Linux with Python 3.12; the harness requires Python >= 3.12, and the
+teardown path uses `shutil.rmtree(onexc=...)`, which does not exist on 3.11.
 
 If a confirmed defect requires changing the frozen architecture boundary,
 return `NEEDS_ARCHITECTURE_PASS`, leave no partial diff for that defect, and
