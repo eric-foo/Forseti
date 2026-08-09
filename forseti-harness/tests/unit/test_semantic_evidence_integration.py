@@ -2857,6 +2857,26 @@ def test_v5_lineage_manifest_requires_each_raw_response_hash() -> None:
         prepare_reconciliation_stage(bundle, forged)
 
 
+def test_v5_lineage_rejects_duplicate_raw_response_hashes() -> None:
+    """Rehashing cannot alias two work units to one raw response artifact."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    assert len(bundle["batches"]) > 1
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    forged = deepcopy(compiled)
+    manifest = forged["raw_response_manifest"]
+    manifest["responses"][1]["raw_response_sha256"] = manifest["responses"][0][
+        "raw_response_sha256"
+    ]
+    manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in manifest.items() if key != "manifest_sha256"}
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="repeats a digest"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
 def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
     """Exact denominator coverage across several prompt-bounded work units."""
     bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)

@@ -2773,6 +2773,7 @@ def prepare_reconciliation_stage(
                     "batch compilation v3 has an invalid raw response manifest"
                 )
             manifest_batches: list[str] = []
+            manifest_digests: list[str] = []
             for row in manifest["responses"]:
                 if not isinstance(row, Mapping) or set(row) != {
                     "batch_id",
@@ -2794,6 +2795,14 @@ def prepare_reconciliation_stage(
                         "raw response manifest row has invalid identity"
                     )
                 manifest_batches.append(batch_id)
+                manifest_digests.append(digest)
+            # The canonical raw response includes its batch_id, so two work
+            # units cannot legitimately share a response digest. Reject a
+            # self-consistently rehashed manifest that aliases their lineage.
+            if len(manifest_digests) != len(set(manifest_digests)):
+                raise SemanticIntegrationError(
+                    "batch compilation v3 raw response manifest repeats a digest"
+                )
             # An expanded compilation must name one durable raw artifact per
             # work unit, otherwise the lineage silently covers less than the
             # corpus it claims to compile.
