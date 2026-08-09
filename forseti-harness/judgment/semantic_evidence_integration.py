@@ -314,7 +314,9 @@ axis, behavior, comparison, condition, polarity, or posture. Attach conditions
 to their proposition; never make them standalone. Never hide meanings behind
 "the author reports". Account for every explicit in-scope attribute, behavior,
 reason, comparison, and product-or-formula relationship, including secondary
-comparisons. Generic approval or dislike adds no atom.
+comparisons. A later product called better after target use is a target
+comparison when the referent is clear. Generic approval or dislike adds no
+atom.
 
 Axis candidates are vocabulary, not assignments. Every `axis_id` on a unit
 must be directly supported by that unit's atomic statement and by the leaf.
@@ -323,7 +325,8 @@ neither can another unit or clause. Never copy candidate axes: omit any axis
 the unit alone cannot explain, and include every existing axis it does express.
 Owning every shade supports shade or color fit. Dry lips do not make smoothing
 a hydration claim. Category labels and prestige impressions do not imply
-latent texture, originality, or trust axes.
+latent texture, originality, or trust axes. Formula resemblance or change
+supports formula_consistency_and_change.
 
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and

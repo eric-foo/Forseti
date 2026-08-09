@@ -3435,12 +3435,14 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "smallest complete set of in-scope atomic\nmeanings" in text
     assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
-    assert "Generic approval or dislike adds no atom" in text
+    assert "later product called better after target use is a target\ncomparison" in text
+    assert "Generic approval or dislike adds no\natom" in text
     assert "Axis candidates are vocabulary, not assignments" in text
     assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
     assert "include every existing axis it does express" in text
     assert "Dry lips do not make smoothing\na hydration claim" in text
     assert "Category labels and prestige impressions do not imply\nlatent" in text
+    assert "Formula resemblance or change\nsupports formula_consistency_and_change" in text
     assert "Every unit must concern a verified subject product" in text
     assert "Never create their standalone units" in text
     assert "category maps to exactly one catalog product" in text
