@@ -1,6 +1,6 @@
 ---
 retrieval_header_version: 1
-artifact_role: Operator-couriered delegated code review-and-patch commission
+artifact_role: Operator-couriered delegated code review-and-patch closure commission
 scope: Product-identity catalog reach and mixed-product semantic binding in Phase A method v4
 use_when:
   - Couriering the frozen product-catalog implementation to an eligible different-vendor repository controller.
@@ -10,7 +10,7 @@ open_next:
   - .agents/workflow-overlay/review-lanes.md
 ---
 
-# Delegated code review and patch: Phase A product-catalog reach
+# Delegated code review and patch: Phase A product-catalog closure
 
 This prompt is preparation-only until an external direct-write receiver proves
 the binding below. Do not load target sources before that binding passes.
@@ -32,7 +32,7 @@ receiver_binding:
   binding_state: receiver_to_bind
   launch_checkout: receiver_to_observe
   effective_target_worktree: C:\tmp\forseti-phase-a-product-catalog-v4-20260809
-  required_revision: 05cec89ddf72501e3470e7d00eba11d75ba66e97
+  required_revision: fd265689c169b746803a35bf1e5355b9e61b8f24
   revision_mode: ancestor
   capability_proof: receiver_to_observe
   no_concurrent_writer_state: receiver_to_observe
@@ -55,6 +55,24 @@ unverified catalog, or silently losing the catalog on the real full-run path.
 Ordinary author validation cannot independently close that class, so this is a
 commissioned full-diff discovery-and-patch pass.
 
+## Closure context
+
+One different-vendor receiver reviewed the earlier revision but could not load
+the commissioned `workflow-code-review` method. Its findings were useful but did
+not close this review gate. Home adjudication then:
+
+- fixed duplicate product-binding artifacts in bounded-proof projection;
+- barred identity-bearing `product_version_ids` under catalog v1 while keeping
+  variant language in statements and conditions;
+- recorded that only the sanctioned run-spec materializer is spec-verified;
+- recorded the method-v4 prompt-hash discontinuity; and
+- reran the four-leaf proof through cold extraction and reconciliation.
+
+Re-derive these closures from code and artifacts; do not inherit the prior
+reviewer's findings as premises. If `workflow-code-review` is unavailable, stop
+with `BLOCKED_METHOD_UNAVAILABLE`: do not substitute another method or emit a
+clean/patched verdict.
+
 ## Binding intake
 
 Before source review:
@@ -62,7 +80,7 @@ Before source review:
 1. Record the observed delegate vendor and stop as ineligible if it is OpenAI,
    unknown, or undisclosed, or if direct repository write access is absent.
 2. Verify the effective target exists and is clean; verify
-   `git merge-base --is-ancestor 05cec89ddf72501e3470e7d00eba11d75ba66e97 HEAD`.
+   `git merge-base --is-ancestor fd265689c169b746803a35bf1e5355b9e61b8f24 HEAD`.
 3. Prove direct write capability without a synthetic mutation when ordinary
    commissioned patching already proves it; verify no concurrent writer.
 4. Record the current `HEAD` as immutable `reviewed_revision`, then inspect
@@ -122,11 +140,14 @@ return `NEEDS_ARCHITECTURE_PASS`; quarantine any partial design-level diff.
   unknown response product IDs, and a catalog removed after materialization.
 - Attack accounting: the same public actor or leaf must not gain independent
   credit twice merely because product contexts overlap.
-- Re-derive the bounded real proof from the external lineage when available.
+- Re-derive the bounded real proof from
+  `C:\tmp\forseti-summer-fridays-product-catalog-reach-dogfood-20260809-v3`
+  when available.
   Dereference all four evidence IDs, verify that both Reddit rows truly have
   empty candidates, and recompute every count and hash claimed by the receipt.
-  If that external root is unavailable, mark each real-proof claim not run; do
-  not infer it from the README.
+  Verify the preserved three failed finalization attempts as well as the final
+  accepted response. If that external root is unavailable, mark each real-proof
+  claim not run; do not infer it from the README.
 - Prove historical method-v3 behavior and the earlier 300-leaf bounded proof
   remain byte/hash exact where claimed.
 - Check that the docs say only what the code and real artifacts establish and
