@@ -310,6 +310,9 @@ def test_v2_full_materialization_preserves_method_v4_marker(tmp_path: Path) -> N
     assert source["semantic_method_version"] == (
         "semantic_evidence_integration_method_v4"
     )
+    assert source["product_identity_catalog"]["schema_version"] == (
+        "product_identity_catalog_v1"
+    )
     assert build_bundle(source, max_prompt_bytes=8_000)["method_version"] == (
         "semantic_evidence_integration_method_v4"
     )
@@ -1094,7 +1097,7 @@ def test_v2_product_bindings_are_pinned_run_local_and_unambiguous(
         ],
     }
 
-    index, artifacts = _product_binding_indexes(spec, repo_root=tmp_path)
+    index, artifacts, catalog = _product_binding_indexes(spec, repo_root=tmp_path)
 
     assert index["p455936"]["stable_product_id"] == (
         "summer-fridays-lip-butter-balm"
@@ -1104,6 +1107,14 @@ def test_v2_product_bindings_are_pinned_run_local_and_unambiguous(
     )
     assert len(artifacts) == 1
     assert artifacts[0]["sha256"] == _raw_sha(authority)
+    assert catalog is not None
+    assert catalog["schema_version"] == "product_identity_catalog_v1"
+    assert catalog["products"][0]["stable_product_id"] == (
+        "summer-fridays-lip-butter-balm"
+    )
+    assert catalog["products"][0]["authority_artifact_ids"] == [
+        artifacts[0]["artifact_id"]
+    ]
 
     forged = deepcopy(spec)
     forged["product_bindings"].append(

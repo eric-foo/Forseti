@@ -943,6 +943,23 @@ def _source_v3(*, actor_mode: str = "distinct", count: int = 7) -> dict:
     }
 
 
+def _product_catalog(*, artifact_id: str = "thread-1") -> dict:
+    catalog = {
+        "schema_version": "product_identity_catalog_v1",
+        "products": [
+            {
+                "stable_product_id": "summer-fridays-lip-butter-balm",
+                "display_name": "Summer Fridays Lip Butter Balm",
+                "source_product_ids": ["P455936", "sf-lbb"],
+                "aliases": ["Lip Butter Balm"],
+                "authority_artifact_ids": [artifact_id],
+            }
+        ],
+    }
+    catalog["catalog_sha256"] = _canonical_hash(catalog)
+    return catalog
+
+
 def _v3_batch_responses(bundle: dict) -> list[dict]:
     responses = []
     for batch in bundle["batches"]:
@@ -1316,9 +1333,9 @@ def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> N
 
     source = deepcopy(historical_source)
     source["semantic_method_version"] = METHOD_VERSION_V4
-    source["captured_items"][0]["product_candidates"] = [
-        "summer-fridays-lip-butter-balm"
-    ]
+    source["corpus_profile"] = "phase_a_final_acquisition"
+    source["product_identity_catalog"] = _product_catalog()
+    source["captured_items"][0]["product_candidates"] = []
     source["captured_items"][0]["text"] = (
         "Dream Lip Oil fades quickly, unlike this balm."
     )
@@ -1334,6 +1351,8 @@ def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> N
     assert bundle["semantic_method_version"] == METHOD_VERSION_V4
     assert "wording inside a review or comment may" in prompt
     assert "mention another product without changing" in prompt
+    assert prompt.count("\n\nPRODUCT_IDENTITY_CATALOG\n") == 1
+    assert "use it only as the run's verified" in prompt
     assert "summer-fridays-lip-butter-balm" in prompt
     assert materialize_source_v3(source)["semantic_method_version"] == METHOD_VERSION_V4
 
@@ -1343,6 +1362,177 @@ def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> N
             max_prompt_bytes=8_000,
             target_bundle_version=BUNDLE_VERSION_V3,
         )
+
+
+def test_method_v4_final_acquisition_catalog_fails_closed() -> None:
+    source = _source_v3(count=1)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["corpus_profile"] = "phase_a_final_acquisition"
+
+    with pytest.raises(SemanticIntegrationError, match="lacks product catalog"):
+        build_bundle(source, max_prompt_bytes=12_000)
+
+    source["product_identity_catalog"] = _product_catalog()
+    tampered = deepcopy(source)
+    tampered["product_identity_catalog"]["products"][0]["display_name"] = (
+        "Altered product"
+    )
+    with pytest.raises(SemanticIntegrationError, match="stored catalog_sha256"):
+        build_bundle(tampered, max_prompt_bytes=12_000)
+
+    collision = deepcopy(source)
+    collision["product_identity_catalog"]["products"].append(
+        {
+            "stable_product_id": "summer-fridays-second-balm",
+            "display_name": "Summer Fridays Second Balm",
+            "source_product_ids": ["second-balm"],
+            "aliases": ["Lip Butter Balm"],
+            "authority_artifact_ids": ["thread-1"],
+        }
+    )
+    collision["product_identity_catalog"]["products"] = sorted(
+        collision["product_identity_catalog"]["products"],
+        key=lambda row: row["stable_product_id"],
+    )
+    collision["product_identity_catalog"]["catalog_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in collision["product_identity_catalog"].items()
+            if key != "catalog_sha256"
+        }
+    )
+    with pytest.raises(SemanticIntegrationError, match="multiple stable products"):
+        build_bundle(collision, max_prompt_bytes=12_000)
+
+
+def test_method_v4_mixed_product_thread_keeps_leaf_product_roles() -> None:
+    source = _source_v3(count=1)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["corpus_profile"] = "phase_a_final_acquisition"
+    source["containers"][0]["captured_leaf_count"] = 3
+    body = source["captured_items"][0]
+    body["evidence_id"] = "reddit:t1:body"
+    body["text"] = "Which Summer Fridays products are worth buying?"
+    body["product_candidates"] = []
+    comment = deepcopy(body)
+    comment["evidence_id"] = "reddit:t1:comment"
+    comment["source_ref"] = "https://reddit.test/t1/comment"
+    comment["text"] = "Lip Butter Balm feels better, but Jet Lag Mask broke me out."
+    comment["conversation_depth"] = 1
+    comment["parent_context"] = [
+        {"source_ref": body["source_ref"], "text": body["text"]}
+    ]
+    reply = deepcopy(comment)
+    reply["evidence_id"] = "reddit:t1:reply"
+    reply["source_ref"] = "https://reddit.test/t1/reply"
+    reply["text"] = "Same, the mask broke me out too."
+    reply["conversation_depth"] = 2
+    reply["parent_context"] = [
+        {"source_ref": body["source_ref"], "text": body["text"]},
+        {"source_ref": comment["source_ref"], "text": comment["text"]},
+    ]
+    source["captured_items"] = [body, comment, reply]
+    catalog = _product_catalog()
+    catalog["products"].insert(
+        0,
+        {
+            "stable_product_id": "summer-fridays-jet-lag-mask",
+            "display_name": "Summer Fridays Jet Lag Mask",
+            "source_product_ids": ["jet-lag-mask"],
+            "aliases": ["Jet Lag Mask"],
+            "authority_artifact_ids": ["thread-1"],
+        },
+    )
+    catalog["catalog_sha256"] = _canonical_hash(
+        {key: value for key, value in catalog.items() if key != "catalog_sha256"}
+    )
+    source["product_identity_catalog"] = catalog
+
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    prompt = build_batch_prompts(bundle)[0]["prompt"]
+    assert prompt.count("\n\nPRODUCT_IDENTITY_CATALOG\n") == 1
+    assert all(row["product_candidates"] == [] for row in bundle["evidence_units"])
+
+    response = {
+        "schema_version": BATCH_RESPONSE_VERSION_V2,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_id": bundle["batches"][0]["batch_id"],
+        "evidence": [
+            {
+                "evidence_id": "reddit:t1:body",
+                "disposition": "context_only",
+                "disposition_reason": "brand-level question without a product experience",
+                "semantic_units": [],
+            },
+            {
+                "evidence_id": "reddit:t1:comment",
+                "disposition": "claim_bearing",
+                "disposition_reason": "two distinct product experiences",
+                "semantic_units": [
+                    {
+                        "semantic_unit_key": "balm-comfort",
+                        "statement": "Lip Butter Balm felt comparatively comfortable.",
+                        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": ["wear"],
+                        "emerging_axis_labels": [],
+                        "conditions": [],
+                        "polarity": "affirmed",
+                        "evidence_posture": "first_hand",
+                        "uncertainty_posture": "asserted",
+                    },
+                    {
+                        "semantic_unit_key": "mask-reaction",
+                        "statement": "Jet Lag Mask was associated with a breakout.",
+                        "subject_product_ids": ["summer-fridays-jet-lag-mask"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": [],
+                        "emerging_axis_labels": ["skin reaction"],
+                        "conditions": [],
+                        "polarity": "affirmed",
+                        "evidence_posture": "first_hand",
+                        "uncertainty_posture": "asserted",
+                    },
+                ],
+            },
+            {
+                "evidence_id": "reddit:t1:reply",
+                "disposition": "claim_bearing",
+                "disposition_reason": "personal agreement about the mask",
+                "semantic_units": [
+                    {
+                        "semantic_unit_key": "mask-agreement",
+                        "statement": "The reply author also associated the mask with a breakout.",
+                        "subject_product_ids": ["summer-fridays-jet-lag-mask"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": [],
+                        "emerging_axis_labels": ["skin reaction"],
+                        "conditions": [],
+                        "polarity": "affirmed",
+                        "evidence_posture": "personal_agreement",
+                        "uncertainty_posture": "asserted",
+                    }
+                ],
+            },
+        ],
+    }
+    compiled = validate_batch_responses(bundle, [response])
+    assert {
+        tuple(row["subject_product_ids"]) for row in compiled["semantic_units"]
+    } == {
+        ("summer-fridays-lip-butter-balm",),
+        ("summer-fridays-jet-lag-mask",),
+    }
+
+    forged = deepcopy(response)
+    forged["evidence"][1]["semantic_units"][0]["subject_product_ids"] = [
+        "summer-fridays-invented-product"
+    ]
+    with pytest.raises(SemanticIntegrationError, match="unknown catalog product"):
+        validate_batch_responses(bundle, [forged])
 
 
 def test_v4_prepare_runner_writes_deterministic_three_worker_assignment(

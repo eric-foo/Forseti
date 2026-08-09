@@ -19,6 +19,7 @@ BUNDLE_VERSION_V2 = "semantic_evidence_bundle_v2"
 BUNDLE_VERSION_V3 = "semantic_evidence_bundle_v3"
 BUNDLE_VERSION_V4 = "semantic_evidence_bundle_v4"
 WORK_UNIT_PROJECTION_VERSION = "semantic_work_unit_projection_v1"
+PRODUCT_IDENTITY_CATALOG_VERSION = "product_identity_catalog_v1"
 BATCH_RESPONSE_VERSION = "semantic_evidence_batch_response_v1"
 BATCH_RESPONSE_VERSION_V2 = "semantic_evidence_batch_response_v2"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
@@ -199,6 +200,11 @@ subject unless the leaf and context establish that the experience itself is
 about it. If identity remains ambiguous, use unresolved or out_of_scope. Never
 merge leaves merely because their product names or phrases look similar.
 
+When a PRODUCT_IDENTITY_CATALOG is supplied, use it only as the run's verified
+product vocabulary. Its names and aliases do not prove what a leaf is about.
+Bind one of its stable product ids only when the leaf plus its supplied thread,
+parent, post, or product-page context establishes that identity.
+
 Reconcile by meaning across customer venues when stable product identity,
 direction, conditions, and uncertainty are compatible. Community posts and
 retailer reviews may support the same bounded customer-experience meaning;
@@ -287,6 +293,81 @@ def _validate_source_artifacts(rows: Any) -> list[dict[str, Any]]:
         seen.add(artifact_id)
         normalized.append(dict(row))
     return normalized
+
+
+def _validate_product_identity_catalog(
+    value: Any, *, artifact_ids: set[str]
+) -> dict[str, Any]:
+    """Validate run-local product vocabulary without treating it as evidence."""
+    if not isinstance(value, Mapping) or value.get(
+        "schema_version"
+    ) != PRODUCT_IDENTITY_CATALOG_VERSION:
+        raise SemanticIntegrationError("method v4 final acquisition lacks product catalog")
+    _verify_stored_hash(value, field="catalog_sha256", label="product identity catalog")
+    products = value.get("products")
+    if not isinstance(products, list) or not products:
+        raise SemanticIntegrationError("product identity catalog has no products")
+    stable_ids: set[str] = set()
+    token_owners: dict[str, str] = {}
+    normalized_products: list[dict[str, Any]] = []
+    for row in products:
+        if not isinstance(row, Mapping):
+            raise SemanticIntegrationError("product identity catalog has invalid product")
+        stable_id = row.get("stable_product_id")
+        display_name = row.get("display_name")
+        source_ids = row.get("source_product_ids")
+        aliases = row.get("aliases")
+        authority_ids = row.get("authority_artifact_ids")
+        if (
+            not _nonempty(stable_id)
+            or stable_id != stable_id.strip()
+            or not _nonempty(display_name)
+            or display_name != display_name.strip()
+            or not isinstance(source_ids, list)
+            or not source_ids
+            or not isinstance(aliases, list)
+            or not isinstance(authority_ids, list)
+            or not authority_ids
+        ):
+            raise SemanticIntegrationError("product identity catalog has incomplete product")
+        for label, values in (
+            ("source product ids", source_ids),
+            ("aliases", aliases),
+            ("authority artifact ids", authority_ids),
+        ):
+            if (
+                any(not _nonempty(item) or item != item.strip() for item in values)
+                or values != sorted(set(values))
+            ):
+                raise SemanticIntegrationError(
+                    f"product identity catalog has invalid {label}: {stable_id}"
+                )
+        if stable_id in stable_ids:
+            raise SemanticIntegrationError(
+                f"product identity catalog duplicates stable product id: {stable_id}"
+            )
+        stable_ids.add(stable_id)
+        unknown_authorities = set(authority_ids) - artifact_ids
+        if unknown_authorities:
+            raise SemanticIntegrationError(
+                "product identity catalog cites unknown authority artifacts: "
+                f"{sorted(unknown_authorities)}"
+            )
+        for token in (stable_id, display_name, *source_ids, *aliases):
+            key = token.casefold()
+            owner = token_owners.get(key)
+            if owner is not None and owner != stable_id:
+                raise SemanticIntegrationError(
+                    "product identity token maps to multiple stable products: "
+                    f"{token}"
+                )
+            token_owners[key] = stable_id
+        normalized_products.append(dict(row))
+    if products != sorted(
+        normalized_products, key=lambda row: row["stable_product_id"]
+    ):
+        raise SemanticIntegrationError("product identity catalog products are not sorted")
+    return dict(value)
 
 
 def _validate_product_context(
@@ -693,6 +774,18 @@ def _context_index(bundle: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
 def _validate_v4_projection(bundle: Mapping[str, Any]) -> None:
     if bundle.get("schema_version") != BUNDLE_VERSION_V4:
         return
+    if (
+        bundle.get("method_version") == METHOD_VERSION_V4
+        and bundle.get("corpus_profile") == "phase_a_final_acquisition"
+    ):
+        _validate_product_identity_catalog(
+            bundle.get("product_identity_catalog"),
+            artifact_ids={
+                row["artifact_id"]
+                for row in bundle.get("source_artifacts", [])
+                if isinstance(row, Mapping) and _nonempty(row.get("artifact_id"))
+            },
+        )
     projection = bundle.get("semantic_work_unit_projection")
     if not isinstance(projection, Mapping) or projection.get(
         "schema_version"
@@ -1019,10 +1112,17 @@ def _render_v4_batch_prompt(
     axes: Sequence[Mapping[str, Any]],
     evidence: Sequence[Mapping[str, Any]],
     context_registry: Mapping[str, Mapping[str, Any]],
+    product_identity_catalog: Mapping[str, Any] | None = None,
     method_text: str = METHOD_TEXT_V3,
 ) -> str:
     prompt_units = [_v4_prompt_unit(row) for row in evidence]
     prompt_contexts = _v4_prompt_contexts(evidence, context_registry)
+    catalog_section = (
+        ""
+        if product_identity_catalog is None
+        else "\n\nPRODUCT_IDENTITY_CATALOG\n"
+        + json.dumps(product_identity_catalog, ensure_ascii=False, indent=2)
+    )
     return (
         method_text
         + "\nReturn only JSON matching this shape:\n"
@@ -1033,6 +1133,7 @@ def _render_v4_batch_prompt(
         )
         + "\n\nCURRENT_AXES\n"
         + json.dumps(axes, ensure_ascii=False, indent=2)
+        + catalog_section
         + "\n\nCONTEXT_TABLE\n"
         + json.dumps(prompt_contexts, ensure_ascii=False, indent=2)
         + "\n\nEVIDENCE_BATCH\n"
@@ -1048,6 +1149,7 @@ def _pack_v4_work_units(
     max_prompt_bytes: int,
     max_evidence_per_work_unit: int,
     worker_count: int,
+    product_identity_catalog: Mapping[str, Any] | None = None,
     method_text: str = METHOD_TEXT_V3,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if max_evidence_per_work_unit < 1:
@@ -1077,6 +1179,7 @@ def _pack_v4_work_units(
             axes=axes,
             evidence=chunk,
             context_registry=contexts,
+            product_identity_catalog=product_identity_catalog,
             method_text=method_text,
         )
         if len(rendered.encode("utf-8")) <= max_prompt_bytes:
@@ -1199,6 +1302,18 @@ def build_bundle(
         normalized_axes.append(dict(row))
     artifacts = _validate_source_artifacts(source.get("source_artifacts"))
     artifact_ids = {row["artifact_id"] for row in artifacts}
+    product_identity_catalog: dict[str, Any] | None = None
+    if source_version == SOURCE_VERSION_V3 and "product_identity_catalog" in source:
+        product_identity_catalog = _validate_product_identity_catalog(
+            source.get("product_identity_catalog"), artifact_ids=artifact_ids
+        )
+    if (
+        source_version == SOURCE_VERSION_V3
+        and method_version == METHOD_VERSION_V4
+        and source.get("corpus_profile") == "phase_a_final_acquisition"
+        and product_identity_catalog is None
+    ):
+        raise SemanticIntegrationError("method v4 final acquisition lacks product catalog")
     containers: list[dict[str, Any]] = []
     captured_items: list[dict[str, Any]] = []
     context_registry: list[dict[str, Any]] = []
@@ -1253,6 +1368,7 @@ def build_bundle(
                 max_prompt_bytes=prompt_ceiling,
                 max_evidence_per_work_unit=max_evidence_per_work_unit,
                 worker_count=worker_count,
+                product_identity_catalog=product_identity_catalog,
                 method_text=method_text,
             )
         elif _pack_batches:
@@ -1324,6 +1440,8 @@ def build_bundle(
     }
     if source_version == SOURCE_VERSION_V3 and "semantic_method_version" in source:
         core["semantic_method_version"] = method_version
+    if product_identity_catalog is not None:
+        core["product_identity_catalog"] = product_identity_catalog
     if source_version == SOURCE_VERSION_V3:
         accounting_rows = (
             _accounting_by_reference(captured_items)
@@ -1376,6 +1494,11 @@ def build_bundle(
                     "corpus_profile": source["corpus_profile"],
                     "corpus_scope": source["corpus_scope"],
                     "corpus_cutoff": source["corpus_cutoff"],
+                    **(
+                        {"product_identity_catalog": product_identity_catalog}
+                        if product_identity_catalog is not None
+                        else {}
+                    ),
                 }
                 if source_version == SOURCE_VERSION_V3
                 else {}
@@ -1435,6 +1558,10 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
     }
     if "semantic_method_version" in bundle:
         normalized["semantic_method_version"] = bundle["semantic_method_version"]
+    if "product_identity_catalog" in bundle:
+        normalized["product_identity_catalog"] = bundle[
+            "product_identity_catalog"
+        ]
     normalized["source_sha256"] = _sha256(normalized)
     return normalized
 
@@ -1488,6 +1615,7 @@ def build_batch_prompts(bundle: Mapping[str, Any]) -> list[dict[str, Any]]:
                 axes=bundle["axes"],
                 evidence=evidence,
                 context_registry=contexts,
+                product_identity_catalog=bundle.get("product_identity_catalog"),
                 method_text=method_text,
             )
             prompt_bytes = len(prompt.encode("utf-8"))
@@ -1579,6 +1707,11 @@ def validate_batch_responses(
     semantic_units: list[dict[str, Any]] = []
     dispositions: list[dict[str, Any]] = []
     axis_ids = {row["axis_id"] for row in bundle["axes"]}
+    catalog_product_ids = {
+        row["stable_product_id"]
+        for row in bundle.get("product_identity_catalog", {}).get("products", [])
+        if isinstance(row, Mapping) and _nonempty(row.get("stable_product_id"))
+    }
     evidence_index = _unit_index(bundle)
     for response in responses:
         if not isinstance(response, Mapping):
@@ -1628,6 +1761,12 @@ def validate_batch_responses(
                 local_keys.add(key)
                 subjects = _string_list(unit.get("subject_product_ids"), field=f"{evidence_id}.{key}.subjects", allow_empty=False)
                 comparators = _string_list(unit.get("comparator_product_ids", []), field=f"{evidence_id}.{key}.comparators")
+                if catalog_product_ids and not (
+                    set(subjects) | set(comparators)
+                ) <= catalog_product_ids:
+                    raise SemanticIntegrationError(
+                        f"semantic unit {evidence_id}:{key} cites unknown catalog product"
+                    )
                 axes = _string_list(unit.get("axis_ids", []), field=f"{evidence_id}.{key}.axes")
                 if not set(axes) <= axis_ids:
                     raise SemanticIntegrationError(f"semantic unit {evidence_id}:{key} cites unknown axis")
