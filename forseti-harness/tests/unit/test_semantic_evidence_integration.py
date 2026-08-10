@@ -2419,6 +2419,7 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
                     "minimum_axis_count": 1,
                     "minimum_repeated_units": 2,
                 },
+                "semantic_unit_density_audit": {"top_non_gold_rows": 1},
                 "cases": [
                     {
                         "case_id": "drying-after-week",
@@ -2457,6 +2458,41 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
 
 
 def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
+    warning_adjudications = [
+        {
+            "warning_id": "repeated-large-axis-signature:semantic-core",
+            "compilation_sha256": compilation_sha256,
+            "outcome": "reviewed_benign",
+        }
+    ]
+    gold_evidence_ids = {
+        case["evidence_id"] for case in spec["slices"][0]["cases"]
+    }
+    non_gold_evidence_ids = [
+        evidence_id
+        for evidence_id in spec["slices"][0]["evidence_ids"]
+        if evidence_id not in gold_evidence_ids
+    ]
+    if (
+        spec["slices"][0].get("semantic_unit_density_audit") is not None
+        and non_gold_evidence_ids
+    ):
+        warning_adjudications.append(
+            {
+                "warning_id": (
+                    "semantic-unit-density-audit:semantic-core:"
+                    f"{non_gold_evidence_ids[0]}"
+                ),
+                "compilation_sha256": compilation_sha256,
+                "outcome": "reviewed_benign",
+                "checks": {
+                    "all_units_source_supported": True,
+                    "all_units_independently_meaningful": True,
+                    "no_duplicate_or_redundant_units": True,
+                    "split_granularity_supported": True,
+                },
+            }
+        )
     adjudication = {
         "schema_version": CALIBRATION_ADJUDICATION_VERSION,
         "spec_sha256": spec["spec_sha256"],
@@ -2477,13 +2513,7 @@ def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
         ],
         "relation_adjudications": [],
         "cold_repeat_adjudications": [],
-        "warning_adjudications": [
-            {
-                "warning_id": "repeated-large-axis-signature:semantic-core",
-                "compilation_sha256": compilation_sha256,
-                "outcome": "reviewed_benign",
-            }
-        ],
+        "warning_adjudications": warning_adjudications,
     }
     adjudication["adjudication_sha256"] = _canonical_hash(adjudication)
     return adjudication
@@ -2705,6 +2735,7 @@ def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -
     spec = _calibration_spec(source)
     spec["schema_version"] = CALIBRATION_SPEC_VERSION_V1
     del spec["required_adjudication_version"]
+    del spec["slices"][0]["semantic_unit_density_audit"]
     spec["spec_sha256"] = _canonical_hash(
         {key: value for key, value in spec.items() if key != "spec_sha256"}
     )
@@ -2736,11 +2767,26 @@ def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
 
 
+def test_calibration_v2_spec_remains_readable_without_density_audit() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["schema_version"] = "semantic_calibration_spec_v2"
+    del spec["slices"][0]["semantic_unit_density_audit"]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    assert validate_calibration_spec(spec)["schema_version"] == (
+        "semantic_calibration_spec_v2"
+    )
+
+
 def test_calibration_v2_adjudication_remains_readable_for_historical_reports() -> None:
     source = materialize_source_v3(_source_v5(count=2))
     spec = _calibration_spec(source)
     spec["schema_version"] = CALIBRATION_SPEC_VERSION_V1
     del spec["required_adjudication_version"]
+    del spec["slices"][0]["semantic_unit_density_audit"]
     spec["spec_sha256"] = _canonical_hash(
         {key: value for key, value in spec.items() if key != "spec_sha256"}
     )
@@ -2868,6 +2914,81 @@ def test_calibration_passes_matching_semantic_atom_and_warns_on_repetition() -> 
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
     assert report["case_results"][0]["status"] == "pass"
     assert report["warnings"][0]["code"] == "REPEATED_LARGE_AXIS_SIGNATURE"
+
+
+def test_calibration_density_audit_requires_a_bound_semantic_judgment() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["warning_adjudications"] = adjudication[
+        "warning_adjudications"
+    ][:1]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "WARNING_ADJUDICATION_MISSING_OR_STALE"
+        and row["warning_id"].startswith("semantic-unit-density-audit:")
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_density_audit_confirmed_defect_is_a_hard_failure() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["warning_adjudications"][1]["outcome"] = "reviewed_defect"
+    adjudication["warning_adjudications"][1]["checks"][
+        "split_granularity_supported"
+    ] = False
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        row["code"] == "SEMANTIC_ANOMALY_CONFIRMED"
+        and row["warning_id"].startswith("semantic-unit-density-audit:")
+        for row in report["hard_failures"]
+    )
 
 
 def test_calibration_rejects_structurally_valid_wrong_known_product() -> None:

@@ -28,7 +28,8 @@ from judgment.semantic_evidence_integration import (
 
 
 CALIBRATION_SPEC_VERSION_V1 = "semantic_calibration_spec_v1"
-CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v2"
+CALIBRATION_SPEC_VERSION_V2 = "semantic_calibration_spec_v2"
+CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v3"
 CALIBRATION_ADJUDICATION_VERSION_V1 = "semantic_calibration_adjudication_v1"
 CALIBRATION_ADJUDICATION_VERSION_V2 = "semantic_calibration_adjudication_v2"
 CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v3"
@@ -78,6 +79,7 @@ _SLICE_FIELDS = {
     "max_evidence_per_work_unit",
     "minimum_largest_prompt_bytes",
     "axis_repetition_warning",
+    "semantic_unit_density_audit",
     "cases",
 }
 _CASE_FIELDS = {
@@ -100,6 +102,13 @@ _COLD_REPEAT_FIELDS = {
     "minimum_largest_prompt_bytes",
 }
 _AXIS_REPETITION_FIELDS = {"minimum_axis_count", "minimum_repeated_units"}
+_SEMANTIC_UNIT_DENSITY_AUDIT_FIELDS = {"top_non_gold_rows"}
+_SEMANTIC_UNIT_DENSITY_CHECK_FIELDS = {
+    "all_units_source_supported",
+    "all_units_independently_meaningful",
+    "no_duplicate_or_redundant_units",
+    "split_granularity_supported",
+}
 _AXIS_SUPPORT_FIELDS_V2 = {"supported_axis_ids", "unsupported_axis_ids"}
 _AXIS_SUPPORT_FIELDS = _AXIS_SUPPORT_FIELDS_V2 | {"statement_direction_supported"}
 # The route fields that have an observable in-process counterpart.  Runner
@@ -207,7 +216,11 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     if (
         not isinstance(spec, Mapping)
         or spec.get("schema_version")
-        not in {CALIBRATION_SPEC_VERSION_V1, CALIBRATION_SPEC_VERSION}
+        not in {
+            CALIBRATION_SPEC_VERSION_V1,
+            CALIBRATION_SPEC_VERSION_V2,
+            CALIBRATION_SPEC_VERSION,
+        }
     ):
         raise SemanticCalibrationError("invalid semantic calibration spec version")
     _verify_hash(spec, field="spec_sha256", label="semantic calibration spec")
@@ -215,18 +228,18 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     blind_content.pop("route_contract", None)
     _reject_machine_output_fields(blind_content)
     spec_fields = (
-        _SPEC_FIELDS
-        if spec.get("schema_version") == CALIBRATION_SPEC_VERSION
-        else _SPEC_FIELDS - {"required_adjudication_version"}
+        _SPEC_FIELDS - {"required_adjudication_version"}
+        if spec.get("schema_version") == CALIBRATION_SPEC_VERSION_V1
+        else _SPEC_FIELDS
     )
     _reject_unknown_fields(spec, spec_fields, label="calibration spec")
     if (
-        spec.get("schema_version") == CALIBRATION_SPEC_VERSION
+        spec.get("schema_version") != CALIBRATION_SPEC_VERSION_V1
         and spec.get("required_adjudication_version")
         != CALIBRATION_ADJUDICATION_VERSION
     ):
         raise SemanticCalibrationError(
-            "calibration spec v2 must require adjudication v2"
+            "current calibration specs must require the current adjudication version"
         )
     if not _nonempty(spec.get("full_source_sha256")):
         raise SemanticCalibrationError("calibration spec lacks full_source_sha256")
@@ -395,6 +408,26 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
                 label=f"slice {slice_id} axis_repetition_warning",
             )
             anomaly = dict(anomaly)
+        density_audit = raw_slice.get("semantic_unit_density_audit")
+        if density_audit is not None:
+            if spec.get("schema_version") != CALIBRATION_SPEC_VERSION:
+                raise SemanticCalibrationError(
+                    "semantic_unit_density_audit requires calibration spec v3"
+                )
+            if (
+                not isinstance(density_audit, Mapping)
+                or not isinstance(density_audit.get("top_non_gold_rows"), int)
+                or density_audit["top_non_gold_rows"] < 1
+            ):
+                raise SemanticCalibrationError(
+                    f"slice {slice_id} has invalid semantic_unit_density_audit"
+                )
+            _reject_unknown_fields(
+                density_audit,
+                _SEMANTIC_UNIT_DENSITY_AUDIT_FIELDS,
+                label=f"slice {slice_id} semantic_unit_density_audit",
+            )
+            density_audit = dict(density_audit)
         normalized_slices.append(
             {
                 "slice_id": slice_id,
@@ -405,6 +438,7 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
                 "minimum_largest_prompt_bytes": min_prompt_bytes,
                 "cases": normalized_cases,
                 "axis_repetition_warning": anomaly,
+                "semantic_unit_density_audit": density_audit,
             }
         )
 
@@ -919,6 +953,15 @@ def evaluate_semantic_calibration(
             for row in normalized["slices"]
             if row.get("axis_repetition_warning") is not None
         }
+        for row in normalized["slices"]:
+            if row.get("semantic_unit_density_audit") is None:
+                continue
+            gold_evidence_ids = {case["evidence_id"] for case in row["cases"]}
+            expected_warning_ids.update(
+                f"semantic-unit-density-audit:{row['slice_id']}:{evidence_id}"
+                for evidence_id in row["evidence_ids"]
+                if evidence_id not in gold_evidence_ids
+            )
         if set(warning_adjudications) - expected_warning_ids:
             raise SemanticCalibrationError("adjudication cites an unknown warning")
     failures: list[dict[str, Any]] = []
@@ -1050,6 +1093,98 @@ def evaluate_semantic_calibration(
                     != compiled["compilation_sha256"]
                     or warning_outcome
                     not in {"reviewed_benign", "reviewed_defect", "unresolved"}
+                ):
+                    blockers.append(
+                        {
+                            "code": "WARNING_ADJUDICATION_MISSING_OR_STALE",
+                            "warning_id": warning_id,
+                        }
+                    )
+                elif warning_outcome == "reviewed_defect":
+                    failures.append(
+                        {
+                            "code": "SEMANTIC_ANOMALY_CONFIRMED",
+                            "warning_id": warning_id,
+                            "critical": True,
+                        }
+                    )
+                elif warning_outcome == "unresolved":
+                    blockers.append(
+                        {
+                            "code": "SEMANTIC_ANOMALY_UNRESOLVED",
+                            "warning_id": warning_id,
+                        }
+                    )
+        density_audit = slice_spec.get("semantic_unit_density_audit")
+        if density_audit:
+            gold_evidence_ids = {
+                case["evidence_id"] for case in slice_spec["cases"]
+            }
+            ranked_rows = sorted(
+                (
+                    (evidence_id, len(row["semantic_units"]))
+                    for evidence_id, row in rows.items()
+                    if evidence_id not in gold_evidence_ids
+                    and row["semantic_units"]
+                ),
+                key=lambda item: (-item[1], item[0]),
+            )[: density_audit["top_non_gold_rows"]]
+            for evidence_id, unit_count in ranked_rows:
+                warning_id = (
+                    f"semantic-unit-density-audit:{slice_id}:{evidence_id}"
+                )
+                warning_adjudication = warning_adjudications.get(warning_id)
+                warning_outcome = (
+                    warning_adjudication.get("outcome")
+                    if isinstance(warning_adjudication, Mapping)
+                    else None
+                )
+                density_checks = (
+                    warning_adjudication.get("checks")
+                    if isinstance(warning_adjudication, Mapping)
+                    else None
+                )
+                valid_density_checks = (
+                    isinstance(warning_adjudication, Mapping)
+                    and set(warning_adjudication)
+                    == {
+                        "warning_id",
+                        "compilation_sha256",
+                        "outcome",
+                        "checks",
+                    }
+                    and isinstance(density_checks, Mapping)
+                    and set(density_checks)
+                    == _SEMANTIC_UNIT_DENSITY_CHECK_FIELDS
+                    and all(
+                        value is None or isinstance(value, bool)
+                        for value in density_checks.values()
+                    )
+                )
+                derived_outcome = None
+                if valid_density_checks:
+                    if any(value is None for value in density_checks.values()):
+                        derived_outcome = "unresolved"
+                    elif all(density_checks.values()):
+                        derived_outcome = "reviewed_benign"
+                    else:
+                        derived_outcome = "reviewed_defect"
+                warnings.append(
+                    {
+                        "warning_id": warning_id,
+                        "code": "SEMANTIC_UNIT_DENSITY_AUDIT",
+                        "slice_id": slice_id,
+                        "evidence_id": evidence_id,
+                        "semantic_unit_count": unit_count,
+                        "adjudication_outcome": warning_outcome or "missing",
+                    }
+                )
+                if (
+                    not isinstance(warning_adjudication, Mapping)
+                    or warning_adjudication.get("compilation_sha256")
+                    != compiled["compilation_sha256"]
+                    or not valid_density_checks
+                    or warning_outcome != derived_outcome
                 ):
                     blockers.append(
                         {
@@ -1520,6 +1655,7 @@ __all__ = [
     "CALIBRATION_REPORT_VERSION",
     "CALIBRATION_SPEC_VERSION",
     "CALIBRATION_SPEC_VERSION_V1",
+    "CALIBRATION_SPEC_VERSION_V2",
     "SemanticCalibrationError",
     "build_calibration_source",
     "evaluate_semantic_calibration",

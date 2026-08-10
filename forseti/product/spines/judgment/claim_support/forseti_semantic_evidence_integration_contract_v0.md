@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v18
+version: v19
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v18
+# Semantic Evidence Integration Contract v19
 
 ## Purpose
 
@@ -649,7 +649,9 @@ assigned axes into supported and unsupported lists and judge whether its
 statement plus polarity preserve what the source actually asserted. Missing
 units, axes, direction judgments, extra keys, overlap, or malformed judgments
 block; an explicitly unsupported axis or false direction judgment fails the
-case. Calibration spec v2 binds adjudication v3 and cannot pass with v1 or v2.
+case. Calibration specs v2 and v3 bind adjudication v3 and cannot pass with v1
+or v2 adjudication. Spec v3 adds the closed density audit below; historical
+spec v2 remains readable without acquiring that later obligation.
 The older versions remain readable with historical specs only; v2 proves its
 per-axis obligation but not the v16 per-unit direction obligation.
 
@@ -683,6 +685,20 @@ semantic verdict, and must receive a compilation-bound adjudication before a
 pass is possible. Selective second reads repack only the predeclared cases into
 one separately hash-bound route-native slice; their consistency judgment binds
 both the primary compilation for each case and the compact repeat compilation.
+
+Spec v3 may additionally require a `semantic_unit_density_audit` on a slice.
+The evaluator deterministically ranks non-gold evidence rows that emitted at
+least one semantic unit by descending unit count, breaks ties by evidence ID,
+and selects the declared number of rows. Every selected row receives its own
+compilation-bound adjudication. The adjudicator checks whether the row's units
+are source-supported, independently meaningful, non-duplicative, and no more
+finely split than the source warrants. All four checks are explicit and closed:
+all true derives `reviewed_benign`, any false derives `reviewed_defect`, and any
+unknown derives `unresolved`; a stated outcome that disagrees with those checks
+is invalid. A confirmed defect fails; missing, stale, invalid, or unresolved
+judgment blocks. This is an anomaly audit, not a new gold case, a prevalence
+sample, a deterministic semantic verdict, or a license to relax the
+pre-authored cases after seeing output.
 
 The controller is the active agent task. It assigns immutable batch IDs to at
 most three no-API semantic subagents and treats the response directory as the
@@ -788,6 +804,15 @@ new frontier.
 
 ## Changelog
 
+- `v19` / 2026-08-10 — kept method-v5/v18 semantic wording and blind gold
+  unchanged while adding calibration spec v3's closed audit of the highest
+  semantic-unit-density non-gold rows. Each selected row now requires an exact
+  compilation-bound semantic bloat judgment; a confirmed defect fails and a
+  missing, stale, or unresolved judgment blocks. Bound the Summer Fridays
+  production carrier to two count- and byte-balanced prompts as a route probe,
+  not a prompt-tuning pass. Preserved historical spec-v2 readability and added
+  no provider call, prevalence estimate, full-corpus execution, readiness, or
+  resume authority.
 - `v18` / 2026-08-10 — tightened six general boundaries exposed by v17: a
   leading yes/no answer retains the parent question's predicate; generic praise
   is removed from a bounded value statement; logical negative constructions

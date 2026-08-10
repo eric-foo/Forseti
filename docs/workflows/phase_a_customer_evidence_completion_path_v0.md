@@ -166,7 +166,7 @@ run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
-As of 2026-08-10, contract v18 and the no-provider runner implement the bounded
+As of 2026-08-10, contract v19 and the no-provider runner implement the bounded
 calibration gate. The latest completed Summer Fridays dogfood was v18: 13 of 17
 gold cases passed, six of seven selective cold repeats were consistent, all
 seven relation obligations passed, and no anomaly warning fired. Four critical
@@ -179,3 +179,12 @@ do not keep accreting prompt examples; test a smaller complexity-balanced
 production work-unit shape under unchanged v18 semantics. V18 does not
 authorize corpus resumption, estimate defect prevalence, or change the
 still-incomplete full-corpus boundary above.
+
+The bound follow-up is an architecture probe under unchanged v18 semantic
+wording and unchanged blind gold: the same 121-row production carrier is packed
+into exactly two near-balanced prompts, and calibration spec v3 selects the ten
+highest-unit-density non-gold rows for separate compilation-bound bloat
+adjudication. Any confirmed defect fails; any missing, stale, or unresolved
+audit judgment blocks. This records the executable probe shape only. Until a
+new hash-bound report exists, it makes no calibration verdict or route-readiness
+claim.
