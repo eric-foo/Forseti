@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v20
+version: v23
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v20
+# Semantic Evidence Integration Contract v23
 
 ## Purpose
 
@@ -103,6 +103,30 @@ relation or receives an explicit unmerged disposition. An absent alias, silent
 bulk discard, or unaccounted semantic unit is incomplete. Objective upstream
 metadata may define the admitted set; it may not declare that an item lacks a
 competitor or material meaning merely because an exact token is absent.
+
+Method v7 adds one independent whole-row evidence-integrity check after primary
+extraction and before reconciliation. Every primary `claim_bearing` row is
+checked against its exact leaf text and supplied product/parent context. The
+checker returns exactly one of `accept`, complete-row `replace`, or
+`unresolved`. It never emits a field patch. Deterministic code requires one
+decision per primary claim-bearing evidence ID, validates any replacement
+through the ordinary response validator, preserves the original raw-response
+manifest, binds the verification responses in a separate manifest, and exposes
+the hash of the active dispositions plus semantic units in that manifest so it
+cannot be transferred onto different row content. Reconciliation sees only one
+active result. Its whole-row read must keep direct
+customer use, ownership, preference, and context-adopting answers first-hand;
+must not assign an axis merely because a shade, product, or adjacent clause
+names it; and must not invent a two-sided comparison from one side's stated
+amount. It resolves leading yes/no replies against their parent question,
+accounts for every materially distinct clause, and keeps unqualified preference
+or better/worse language about a product overall axis-free even when it sits
+beside an attribute claim. A stated liking or favorite evaluation of a named
+shade may use `shade_and_color_fit`; ownership, purchase, or repurchase alone
+may not.
+Non-claim rows pass through unchanged.
+Method v5 and v6 remain historical one-pass routes and acquire no retroactive
+verification obligation.
 
 When a captured-but-excluded denominator exists, the completion profile draws
 a deterministic bounded semantic audit sample per screening family. One
@@ -278,7 +302,8 @@ Contract v10 adds a separate semantic generation for full-corpus execution:
 v1, reconciliation response v2, node compilation v2, integration view v2,
 evidence packet v1, and every route and seal version are unchanged. The
 generations are mutually exclusive and fail closed in both directions: method
-v5 requires bundle v5, bundle v5 requires method v5, and a response or
+v5 requires bundle v5, bundle v5 requires method v5 or its versioned semantic
+successor, and a response or
 compilation from the wrong generation is rejected rather than coerced. The
 legacy v4 generation remains readable, validatable, and byte-reproducible; its
 paused artifacts are never mutated, restamped, migrated, or reinterpreted.
@@ -313,6 +338,70 @@ cross-venue credit. A reply that merely repeats or reports the parent remains
 `attribution_or_echo` and adds no independent origin. Bounded variant or formula wording stays detailed
 while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
 formula binding is detailed `unresolved`.
+
+Contract v21 adds `phase_a_semantic_integration_run_v4` and
+`semantic_evidence_integration_method_v6`. Method v6 deliberately reuses
+bundle v5, projection v2, batch response v3, compilation v3, reconciliation
+response v2, view v2, and evidence packet v1. It changes semantic instructions,
+not transport or durable evidence shape. Method v5 text and historical outputs
+remain hash-distinct and reproducible; a run must explicitly select method v6.
+
+Method v6 preserves the complete meaning of each leaf before deciding how to
+split it. It keeps explicit causal and explanatory links in the statement that
+they qualify. It may keep connected ownership and habitual-use behavior in one
+truth-complete statement when that is what the author expressed, but it never
+turns quantity owned into a purchase count or a verified repurchase. Axis
+assignment follows the whole outcome and direction, not an isolated symptom
+word: healing pre-existing dryness or peeling is hydration/repair, while
+product-caused or product-worsened irritation remains reaction. Named shade
+selection, ownership, or preference may carry `shade_and_color_fit` without
+inventing a reason such as undertone or complexion fit.
+
+Contract v22 versions the semantic-calibration adjudication ruler separately
+from the extraction method. New preparation receipts and reports carry the
+ruler's stable ID and full SHA-256. Evaluation accepts only exact known ruler
+hashes, binds a new receipt to its sidecar, and rejects an unknown or substituted
+ruler. Historical preparation-v1 and report-v1 artifacts retain their original
+shape and hashes; they are not rewritten to claim the new binding.
+
+Contract v23 adds `phase_a_semantic_integration_run_v5` and
+`semantic_evidence_integration_method_v7`. Method v7 keeps method v6 extraction
+rules and the existing bundle/response/compilation/reconciliation/view
+transports. Its new execution obligation is the hash-bound whole-row check
+described above. An unverified compilation may still reproduce historical v5
+or v6 behavior, but method v7 reconciliation and finalization fail closed until
+the verification manifest is present and valid.
+
+When one leaf evaluates two alternatives on the same attribute, the relative
+comparison remains evidence even if the observations occupy separate
+sentences. A context-adopting reply keeps a parent's named-shade preference and
+shade axis. Physical thickness, viscosity, or feel remains a texture outcome
+when a formula is merely the comparator; formula consistency requires an
+actual formula identity, change, or resemblance. Generic ingredient or
+category nicknames do not establish an exact catalog product without a bound
+alias or resolving context. Negative behavior stays logically negated unless
+the statement is rewritten as an exact positive equivalent without retaining
+the negative clause. An asserted desire remains affirmed even when it exposes
+an unmet product attribute. A nearby preference supplies no reason, axis, or
+comparison unless the source explicitly connects them.
+
+Explicit contrast wording does not override atomicity. Independently testable
+material sides stay separate, opposite directions are not bundled, and generic
+approval may still be discarded when it carries no bounded evidence.
+Qualifications follow the same atomicity rule. This narrows the
+meaning-preservation rule without weakening its causal, explanatory, or
+connected-behavior cases.
+
+A customer attribute may qualify a result when its meaning makes the attribute
+relevant; an explicit causal phrase is not mandatory, but mere proximity is
+insufficient. Non-worsening dryness is bounded hydration evidence rather than
+proof of strong hydration. Product category, experienced category, price/value,
+and attribute performance remain separate meanings unless the leaf explicitly
+connects them. An unconsolidated semantic unit is not unimportant: it stays
+retrievable with provenance unless deterministically dispositioned under the
+existing rules. These clarifications add no score, high-value-comment
+classifier, phrase table, second semantic pass, provider API, recommendation,
+or conclusion.
 
 Evidence posture describes how a leaf supports its unit, not whether its verb
 sounds like an action or plan. A customer's own purchase, use, return, reach,
@@ -426,7 +515,8 @@ durable raw grouped responses produced it, and downstream reconciliation
 rejects a compilation v3 that lacks that lineage.
 
 Projection v2 binds semantic execution identity: source, corpus, and catalog
-bindings; method v5 identity and hash; response-schema version; prompt-encoding
+bindings; the selected method v5, v6, or v7 identity and hash; response-schema
+version; prompt-encoding
 version; exact work-unit membership; evidence and context references; prompt and
 leaf caps; and complete assessable-denominator coverage. It must not encode a
 worker count or static worker partition, because who executes a work unit is a
@@ -628,19 +718,27 @@ Current-route operations are:
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
    invalid responses so an interrupted run can resume honestly.
 9. `submit-batches` validates all agent responses and exact alias coverage.
-10. `prepare-reconciliation-level` renders one or more byte-bounded prompts
-   from batch units or prior semantic nodes.
-11. `validate-reconciliation-response` validates one returned hierarchy batch
-   before the level is complete.
-12. `submit-reconciliation-level` validates exact child accounting and writes
-    the next node compilation; repeat until one terminal level remains.
-13. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
-    v2.
-14. `prepare-calibration` reads a hash-pinned method-v5 source and blind owner
-    gold, projects exact bounded slices, and writes route-native sources,
-    bundles, fingerprints, and prompts. It makes no model call and cannot
-    authorize a corpus run.
-15. `evaluate-calibration` runs the existing response validator, then evaluates
+10. For method v7, `prepare-row-verification` renders byte-bounded independent
+    checks for every primary claim-bearing row, and
+    `submit-row-verification` requires exactly one `accept`, complete-row
+    `replace`, or `unresolved` decision per row before writing the sole active
+    compilation. Non-claim rows are not reread.
+11. `prepare-reconciliation-level` renders one or more byte-bounded prompts
+    from batch units or prior semantic nodes.
+12. `validate-reconciliation-response` validates one returned hierarchy batch
+    before the level is complete.
+13. `submit-reconciliation-level` validates exact child accounting and writes
+     the next node compilation; repeat until one terminal level remains.
+14. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
+     v2.
+15. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+    owner gold, projects exact bounded slices, and writes route-native sources,
+    bundles, fingerprints, and prompts. The calibration spec deliberately
+    selects the method being tested and may retarget the same pinned evidence
+    from the source's method marker; the route fingerprint binds the selected
+    method and exact method hash, so this is explicit method comparison rather
+    than fallback. It makes no model call and cannot authorize a corpus run.
+16. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
     anomaly, and repeat judgments must be explicit and hash-bound to the exact
@@ -694,6 +792,12 @@ semantic verdict, and must receive a compilation-bound adjudication before a
 pass is possible. Selective second reads repack only the predeclared cases into
 one separately hash-bound route-native slice; their consistency judgment binds
 both the primary compilation for each case and the compact repeat compilation.
+Consistency is semantic rather than count-identical: different supported
+atomic decompositions may be consistent, but a dropped, added, reattributed, or
+directionally changed supported meaning is inconsistent. Judge every unit's
+attribution separately, because one reply may contain attributed parent claims
+alongside its own first-hand shopping reaction. Axis and attribution judgments
+apply to primary cases as well as cold repeats.
 
 Spec v3 may additionally require a `semantic_unit_density_audit` on a slice.
 The evaluator deterministically ranks non-gold evidence rows that emitted at
@@ -813,6 +917,32 @@ new frontier.
 
 ## Changelog
 
+- `v23` / 2026-08-10 — added run v5 / method v7 whole-row evidence
+  verification between primary extraction and reconciliation. Every primary
+  claim-bearing row now receives exactly one independent `accept`, complete-row
+  `replace`, or `unresolved` decision; replacement rows reuse the ordinary
+  semantic validator, original and verification lineage remain separately
+  hash-bound, the manifest binds the exact active dispositions and semantic
+  units, and reconciliation sees only the sole active result. Method v6
+  extraction wording and historical artifacts remain reproducible. Added no
+  provider API, lexical selector, conclusion, full-corpus execution, readiness
+  claim, or resume authority.
+- `v22` / 2026-08-10 — versioned the calibration adjudication ruler and bound
+  its stable ID and full SHA-256 into preparation-v2 and report-v2 artifacts.
+  Preserved preparation-v1 and report-v1 shapes for historical evaluation,
+  accepted only the two exact known historical ruler hashes, and made the
+  mixed-attribution and cold-repeat failure conditions explicit. Changed no
+  extraction method, prompt, evidence schema, provider call, full-corpus state,
+  readiness claim, or resume authority.
+- `v21` / 2026-08-10 — added run v4 / method v6 as a meaning-preservation
+  correction on the existing bundle-v5 transport. The semantic reader now
+  assigns axes from the complete outcome and direction, preserves explicit
+  causal and connected ownership/use meanings, distinguishes relevant customer
+  attributes from nearby but unrelated ones, keeps category and value facts
+  separate, and treats unmerged material as unconsolidated rather than
+  unimportant. Preserved method-v5 text and every transport schema. Added no
+  phrase table, high-value-comment subsystem, second read, provider call,
+  recommendation, full-corpus execution, readiness claim, or resume authority.
 - `v20` / 2026-08-10 — disambiguated logical polarity from comparative
   ordering in this contract's extraction and calibration wording. A directly
   asserted `less` or `more` comparison remains `affirmed`; logical

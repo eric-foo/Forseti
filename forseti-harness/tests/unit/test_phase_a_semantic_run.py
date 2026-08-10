@@ -11,6 +11,8 @@ from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION,
     RUN_SPEC_VERSION_V2,
     RUN_SPEC_VERSION_V3,
+    RUN_SPEC_VERSION_V4,
+    RUN_SPEC_VERSION_V5,
     _product_binding_indexes,
     audit_phase_a_source,
     build_phase_a_reddit_source_v3,
@@ -31,6 +33,8 @@ from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V3,
     BUNDLE_VERSION_V5,
     METHOD_VERSION_V5,
+    METHOD_VERSION_V6,
+    METHOD_VERSION_V7,
     SemanticIntegrationError,
     build_bundle,
     materialize_source_v3,
@@ -1857,6 +1861,20 @@ def _spec_v3(tmp_path: Path) -> dict:
     return spec
 
 
+def _spec_v4(tmp_path: Path) -> dict:
+    """Select method v6 without changing the v5 transport generation."""
+    spec = _spec_v3(tmp_path)
+    spec["schema_version"] = RUN_SPEC_VERSION_V4
+    return spec
+
+
+def _spec_v5(tmp_path: Path) -> dict:
+    """Select mandatory row verification without changing extraction doctrine."""
+    spec = _spec_v4(tmp_path)
+    spec["schema_version"] = RUN_SPEC_VERSION_V5
+    return spec
+
+
 def _v5_bundle(tmp_path: Path) -> dict:
     """Build the new generation from the same controlled run-spec fixture."""
     spec = _spec_v3(tmp_path)
@@ -1900,6 +1918,28 @@ def test_run_spec_v3_selects_the_new_semantic_generation(tmp_path: Path) -> None
     spec.pop("product_bindings", None)
     with pytest.raises(SemanticIntegrationError, match="requires product_bindings"):
         materialize_phase_a_v3(spec, repo_root=tmp_path)
+
+
+def test_run_spec_v4_selects_method_v6_on_the_existing_transport(tmp_path: Path) -> None:
+    spec = _spec_v4(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+
+    assert source["semantic_method_version"] == METHOD_VERSION_V6
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V6
+
+
+def test_run_spec_v5_selects_verified_method_v7_on_the_existing_transport(
+    tmp_path: Path,
+) -> None:
+    spec = _spec_v5(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+
+    assert source["semantic_method_version"] == METHOD_VERSION_V7
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V7
 
 
 def test_new_generation_status_is_global_not_partition_owned(tmp_path: Path) -> None:

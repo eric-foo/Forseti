@@ -17,6 +17,7 @@ from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V3,
     BUNDLE_VERSION_V5,
     METHOD_VERSION_V5,
+    METHOD_VERSION_V6,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
@@ -33,12 +34,22 @@ CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v3"
 CALIBRATION_ADJUDICATION_VERSION_V1 = "semantic_calibration_adjudication_v1"
 CALIBRATION_ADJUDICATION_VERSION_V2 = "semantic_calibration_adjudication_v2"
 CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v3"
-CALIBRATION_PREPARATION_VERSION = "semantic_calibration_preparation_v1"
-CALIBRATION_REPORT_VERSION = "semantic_calibration_report_v1"
+CALIBRATION_PREPARATION_VERSION_V1 = "semantic_calibration_preparation_v1"
+CALIBRATION_PREPARATION_VERSION = "semantic_calibration_preparation_v2"
+CALIBRATION_REPORT_VERSION_V1 = "semantic_calibration_report_v1"
+CALIBRATION_REPORT_VERSION = "semantic_calibration_report_v2"
+
+ADJUDICATION_CONTRACT_ID_V1_INITIAL = (
+    "semantic_calibration_adjudication_contract_v1_initial"
+)
+ADJUDICATION_CONTRACT_ID_V1_FIDELITY = (
+    "semantic_calibration_adjudication_contract_v1_fidelity"
+)
+ADJUDICATION_CONTRACT_ID = "semantic_calibration_adjudication_contract_v2"
 
 SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT = """# Semantic Calibration Adjudication Contract
 
-Contract version: `semantic_calibration_adjudication_contract_v1`
+Contract version: `semantic_calibration_adjudication_contract_v2`
 
 `statement_direction_supported` asks whether the source supports the semantic
 unit's complete truth-conditional direction and whether `polarity` matches the
@@ -56,10 +67,38 @@ judgment.
   polarity that conflicts with the written statement.
 - Do not mark an otherwise supported unit false merely because its asserted
   comparison is unfavorable, lower, or contains the word `less`.
+- An asserted desire such as wanting more pigment is `polarity: affirmed`.
+  The desired state being absent does not negate the customer's desire.
+
+Axis and attribution judgments apply to every unit, not only cold repeats:
+
+- A nearby preference does not supply a reason, axis, or product comparison
+  unless the source explicitly links them.
+- A reply may contain both attributed parent claims and its own first-hand
+  shopping reaction. Judge each unit's posture rather than imposing one
+  posture on the whole leaf.
+
+Cold-repeat consistency compares preserved supported meanings, attribution,
+axes, direction, and unsupported invention. A different number of supported
+atomic units is not by itself inconsistent. A dropped, added, reattributed, or
+directionally changed supported meaning is inconsistent.
 
 Apply this contract to every semantic unit in each gold case, including units
 left explicitly unmerged.
 """
+
+ADJUDICATION_CONTRACT_SHA256 = sha256_bytes(
+    SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
+)
+_KNOWN_ADJUDICATION_CONTRACT_IDS = {
+    "5fd4aeeafa278291943dc6316fe91a8f6b51a79c69f734dc0d29bb63d4286a49": (
+        ADJUDICATION_CONTRACT_ID_V1_INITIAL
+    ),
+    "9b6459531ffe20280a087b1ef254f7302a5ee7d63e1a0efa0533a53fac7562af": (
+        ADJUDICATION_CONTRACT_ID_V1_FIDELITY
+    ),
+    ADJUDICATION_CONTRACT_SHA256: ADJUDICATION_CONTRACT_ID,
+}
 
 _LIST_UNIT_FIELDS = {
     "subject_product_ids",
@@ -151,6 +190,20 @@ _ROUTE_CONTRACT_VERIFIED_FIELDS = (
 
 class SemanticCalibrationError(ValueError):
     """Raised when calibration inputs cannot support an honest result."""
+
+
+def adjudication_contract_identity(contract_bytes: bytes) -> dict[str, str]:
+    """Return the stable identity of one exact supported adjudication ruler."""
+    observed_sha256 = sha256_bytes(contract_bytes)
+    contract_id = _KNOWN_ADJUDICATION_CONTRACT_IDS.get(observed_sha256)
+    if contract_id is None:
+        raise SemanticCalibrationError(
+            "prepared adjudication contract is substituted or unsupported"
+        )
+    return {
+        "adjudication_contract_id": contract_id,
+        "adjudication_contract_sha256": observed_sha256,
+    }
 
 
 def _json_bytes(value: Any) -> bytes:
@@ -269,8 +322,10 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         )
     if not _nonempty(spec.get("full_source_sha256")):
         raise SemanticCalibrationError("calibration spec lacks full_source_sha256")
-    if spec.get("method_version") != METHOD_VERSION_V5:
-        raise SemanticCalibrationError("calibration spec must target semantic method v5")
+    if spec.get("method_version") not in {METHOD_VERSION_V5, METHOD_VERSION_V6}:
+        raise SemanticCalibrationError(
+            "calibration spec must target semantic method v5 or v6"
+        )
     route_contract = spec.get("route_contract")
     required_route_fields = {
         "runner_revision",
@@ -564,7 +619,11 @@ def _verify_full_source(source: Mapping[str, Any], expected_sha256: str) -> None
 
 
 def build_calibration_source(
-    full_source: Mapping[str, Any], *, slice_id: str, evidence_ids: Sequence[str]
+    full_source: Mapping[str, Any],
+    *,
+    slice_id: str,
+    evidence_ids: Sequence[str],
+    method_version: str,
 ) -> dict[str, Any]:
     """Project one exact bounded slice without mutating the full source."""
     selected_ids = list(evidence_ids)
@@ -607,7 +666,7 @@ def build_calibration_source(
         selected_containers.append(row)
     projected = deepcopy(dict(full_source))
     projected.pop("source_sha256", None)
-    projected["semantic_method_version"] = METHOD_VERSION_V5
+    projected["semantic_method_version"] = method_version
     projected["corpus_profile"] = "bounded_regression_slice"
     projected["corpus_scope"] = (
         f"{full_source.get('corpus_scope', 'customer evidence')} | "
@@ -669,6 +728,7 @@ def prepare_semantic_calibration(
             full_source,
             slice_id=slice_spec["slice_id"],
             evidence_ids=slice_spec["evidence_ids"],
+            method_version=normalized["method_version"],
         )
         bundle = build_bundle(
             source,
@@ -720,7 +780,10 @@ def prepare_semantic_calibration(
         )
         cold_bounds = normalized["cold_repeat"]
         cold_source = build_calibration_source(
-            full_source, slice_id="cold-repeat", evidence_ids=cold_evidence_ids
+            full_source,
+            slice_id="cold-repeat",
+            evidence_ids=cold_evidence_ids,
+            method_version=normalized["method_version"],
         )
         cold_bundle = build_bundle(
             cold_source,
@@ -757,6 +820,8 @@ def prepare_semantic_calibration(
         "schema_version": CALIBRATION_PREPARATION_VERSION,
         "spec_sha256": normalized["spec_sha256"],
         "full_source_sha256": normalized["full_source_sha256"],
+        "adjudication_contract_id": ADJUDICATION_CONTRACT_ID,
+        "adjudication_contract_sha256": ADJUDICATION_CONTRACT_SHA256,
         "slices": [
             {
                 "slice_id": row["slice_id"],
@@ -798,6 +863,17 @@ def prepare_semantic_calibration(
         "slices": prepared_slices,
         "cold_repeat": prepared_cold_repeat,
     }
+
+
+def _legacy_preparation_receipt_v1(receipt_v2: Mapping[str, Any]) -> dict[str, Any]:
+    """Project the exact receipt shape emitted before ruler binding."""
+    legacy = deepcopy(dict(receipt_v2))
+    legacy.pop("preparation_sha256", None)
+    legacy.pop("adjudication_contract_id", None)
+    legacy.pop("adjudication_contract_sha256", None)
+    legacy["schema_version"] = CALIBRATION_PREPARATION_VERSION_V1
+    legacy["preparation_sha256"] = _sha256(legacy)
+    return legacy
 
 
 def validate_calibration_adjudication(
@@ -908,11 +984,27 @@ def evaluate_semantic_calibration(
     receipt = prepared.get("receipt") if isinstance(prepared, Mapping) else None
     if not isinstance(receipt, Mapping) or receipt.get("spec_sha256") != normalized["spec_sha256"]:
         raise SemanticCalibrationError("prepared calibration does not match spec")
+    receipt_version = receipt.get("schema_version")
+    if receipt_version not in {
+        CALIBRATION_PREPARATION_VERSION_V1,
+        CALIBRATION_PREPARATION_VERSION,
+    }:
+        raise SemanticCalibrationError("invalid semantic calibration preparation version")
     _verify_hash(
         receipt,
         field="preparation_sha256",
         label="semantic calibration preparation",
     )
+    if receipt_version == CALIBRATION_PREPARATION_VERSION:
+        contract_sha256 = receipt.get("adjudication_contract_sha256")
+        contract_id = receipt.get("adjudication_contract_id")
+        if (
+            not isinstance(contract_sha256, str)
+            or _KNOWN_ADJUDICATION_CONTRACT_IDS.get(contract_sha256) != contract_id
+        ):
+            raise SemanticCalibrationError(
+                "prepared calibration lacks a supported adjudication contract binding"
+            )
     if receipt.get("full_source_sha256") != normalized["full_source_sha256"]:
         raise SemanticCalibrationError("prepared calibration cites another full source")
     prepared_slices = {
@@ -1009,7 +1101,10 @@ def evaluate_semantic_calibration(
                 ),
             }
         )
-    if receipt != expected_prepared["receipt"]:
+    expected_receipt = expected_prepared["receipt"]
+    if receipt_version == CALIBRATION_PREPARATION_VERSION_V1:
+        expected_receipt = _legacy_preparation_receipt_v1(expected_receipt)
+    if receipt != expected_receipt:
         failures.append({"code": "PREPARATION_RECEIPT_MISMATCH"})
     case_results: list[dict[str, Any]] = []
     compiled_by_slice: dict[str, Any] = {}
@@ -1637,7 +1732,11 @@ def evaluate_semantic_calibration(
     else:
         status = "SEMANTIC_CALIBRATION_PASS"
     report = {
-        "schema_version": CALIBRATION_REPORT_VERSION,
+        "schema_version": (
+            CALIBRATION_REPORT_VERSION
+            if receipt_version == CALIBRATION_PREPARATION_VERSION
+            else CALIBRATION_REPORT_VERSION_V1
+        ),
         "status": status,
         "spec_sha256": normalized["spec_sha256"],
         "preparation_sha256": receipt.get("preparation_sha256"),
@@ -1669,21 +1768,33 @@ def evaluate_semantic_calibration(
             "full-corpus result, readiness claim, or corpus-resume authority"
         ),
     }
+    if receipt_version == CALIBRATION_PREPARATION_VERSION:
+        report["adjudication_contract_id"] = receipt[
+            "adjudication_contract_id"
+        ]
+        report["adjudication_contract_sha256"] = receipt[
+            "adjudication_contract_sha256"
+        ]
     report["report_sha256"] = _sha256(report)
     return report
 
 
 __all__ = [
+    "ADJUDICATION_CONTRACT_ID",
+    "ADJUDICATION_CONTRACT_SHA256",
     "CALIBRATION_ADJUDICATION_VERSION",
     "CALIBRATION_ADJUDICATION_VERSION_V1",
     "CALIBRATION_ADJUDICATION_VERSION_V2",
     "CALIBRATION_PREPARATION_VERSION",
+    "CALIBRATION_PREPARATION_VERSION_V1",
     "CALIBRATION_REPORT_VERSION",
+    "CALIBRATION_REPORT_VERSION_V1",
     "CALIBRATION_SPEC_VERSION",
     "CALIBRATION_SPEC_VERSION_V1",
     "CALIBRATION_SPEC_VERSION_V2",
     "SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT",
     "SemanticCalibrationError",
+    "adjudication_contract_identity",
     "build_calibration_source",
     "evaluate_semantic_calibration",
     "prepare_semantic_calibration",

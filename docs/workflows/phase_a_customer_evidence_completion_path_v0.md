@@ -267,3 +267,222 @@ the full corpus paused. The next semantic change, if any, must target a
 reproduced remaining defect class and preserve matched clean controls; this
 run supplies no authority for a universal second read, polarity redesign,
 prompt-example accretion, readiness, prevalence, or corpus resumption.
+
+The method-v6 controlled replay at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-replay-20260810-v1`
+then exercised the smallest meaning-preservation correction on the same real
+calibration carrier: seven semantic-core leaves, 121 production-shaped leaves,
+seven selective cold repeats, and both terminal reconciliation views. It kept
+the bundle-v5 transport and all downstream schemas unchanged. It corrected the
+observed healed-peeling axis, named-shade axis, causal preference reason,
+connected ownership-plus-go-to meaning, omitted ownership, sensitive-lip
+condition leakage, advertised-balm value, and two surrounding density-audit
+defects. It also preserved non-drying as bounded hydration evidence and kept
+experienced category separate from value.
+
+The resulting report is `SEMANTIC_CALIBRATION_PASS`: 17 of 17 gold cases, all
+seven selective repeats, all seven relationship obligations, and all ten
+production density-audit rows passed with zero blockers and zero hard failures.
+The report is bound by
+`report_sha256: 414c961fc13fc41de971ee2dca925ff2534cdc19cb06ef6222b17030ef3c02c9`.
+All 128 primary leaves remained exactly accounted, terminal views completed,
+and no model API was called.
+
+This is a controlled replay, not fresh-reader semantic proof. The v20 response
+corpus was the baseline and the affected meanings were corrected under method
+v6 before recompilation; cold-repeat uncertainty was also reconciled by the
+same operator. The result proves that the new general rules, existing schemas,
+compiler, reconciliation, evidence retrieval, and calibration gates can carry
+the intended meanings without contradiction. It does not prove that an
+independent cold reader will apply the v6 wording unaided, estimate corpus
+prevalence, authorize the full-corpus run, or make the route seal-ready. Keep
+the full corpus paused until the code change receives de-correlated review and
+a fresh blind v6 reader reproduces the bounded result or exposes the next real
+defect class.
+
+The delegated v6 code review then found a real ambiguity in those instructions:
+the retained v5 rule forbade bundled mixed directions while the v6 appendix
+said to keep every explicit contrast together. Home adjudication accepted that
+finding and the delegate's method-hash pin. It clarified that contrast and
+qualification still obey atomicity, corrected the stale bundle-v5 error text,
+and documented that calibration may deliberately retarget the same hash-pinned
+source evidence to the spec-selected method; the exact method hash in the route
+fingerprint makes that a visible comparison, not a fallback.
+
+Fresh blind dogfood did not reproduce the controlled pass. The first corrected
+read at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-review-fix-20260810-v3`
+accounted all 128 primary leaves, completed both terminal views, and satisfied
+all seven cross-source relations, but passed only 14 of 17 gold cases and five
+of seven cold repeats. It exposed missing same-attribute comparison, shade-axis,
+texture-versus-formula, exact-product nickname, and logical-negation behavior.
+A compact general correction addressed those classes without adding a field,
+second read, product phrase table, or extra production-shaped prompt.
+
+The resulting fresh blind run at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-review-fix-20260810-v4`
+again accounted 7/7 semantic-core and 121/121 production-shaped leaves, used
+the original two production prompts (largest 89,904 bytes), completed terminal
+reconciliation, and satisfied all seven relation obligations. It passed 16 of
+17 gold cases, four of seven cold repeats, and seven of ten density audits. The
+one remaining gold failure split weeks-long peeling from repeated-use worsening
+instead of preserving their causal relationship. The cold repeat also
+over-decomposed two dense rows and miscredited one reported deterrent; three
+other dense production rows retained polarity or comparison defects. The
+evaluator therefore returned `SEMANTIC_CALIBRATION_FAIL`, with report hash
+`74009baaedadc3e5e170012586b383179f2d1b60664bc211015187321f0e1ae3`.
+
+This is useful negative proof: the compact general rules corrected all five
+defect classes they targeted, but one-pass prompt wording alone has not produced
+stable calibration behavior. Do not resume the full corpus, claim method-v6
+readiness, or keep accreting case-like prompt clauses. The next decision must
+address selective semantic verification or another bounded consistency
+mechanism against these preserved fresh failures; it remains separate from any
+campaign bridge, Deliver conclusion, prevalence estimate, or seal adoption.
+
+A final bounded fidelity correction then separated calibration-ruler defects
+from reader defects. It made asserted desires affirmative, prohibited a nearby
+preference from inventing an axis, reason, or comparison, allowed different
+supported atomic decompositions in the cold repeat, allowed one reply to carry
+both attributed parent claims and its own shopping reaction, and split the
+retailer peeling gold into its two independently supported facts. These are
+general meaning rules; they add no field, second read, example table, or new
+production work unit.
+
+The fresh blind run at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-review-fix-20260810-v5`
+used method hash
+`9ff5c8a8be460ef2b599d08ec08485ebbd698ef12ad2db9eb9cf8bad38090805`,
+kept the two production-shaped prompts (largest 89,958 bytes), accounted all
+7/7 semantic-core and 121/121 production-shaped leaves, and completed both
+terminal views. The pigment defect was absent: the desire for more pigment kept
+affirmed direction. The original-Glossier row changed shape but did not close
+its defect class. It no longer bundled an unsupported `less hydrating than`
+degree claim with the supported `not the most hydrating` statement, so its
+density adjudication moved from confirmed defect to benign. It still emits
+`reddit:13aw1sp:jj95w9s::u081`, which turns the nearby Glossier preference into
+a hydration comparison. The blind adjudicator accepted the parenthetical as a
+link; owner adjudication treats it as insufficient to establish the comparison.
+All seven relation obligations also held.
+
+The run still returned `SEMANTIC_CALIBRATION_FAIL`. The deterministic report
+passed 15 of 17 gold cases, five of seven cold repeats, and eight of ten density
+audits; its canonical report hash is
+`b3e1477c4596fc0da38fbc9e048ba64f8e2519b357e06072262f16877a724a26`.
+The remaining failures are different classes: one direct scent answer was
+miscast as agreement, a non-repurchase unit inherited a neighboring shade axis,
+one cold read preserved a material balm-value observation the primary omitted,
+and a production row invented a two-product per-use comparison from a one-sided
+quantity statement. Preserve this run as proof that the requested correction
+worked and that method-v6 is still not ready for the full corpus. Do not turn
+these residuals into more case-specific prompt clauses; route them through the
+planned selective semantic verification decision.
+
+The delegated review also found that v5 changed the adjudication instructions
+without changing their self-declared `v1` version. The v5 sidecar hash is
+`9b6459531ffe20280a087b1ef254f7302a5ee7d63e1a0efa0533a53fac7562af`,
+while the earlier preserved runs use
+`5fd4aeeafa278291943dc6316fe91a8f6b51a79c69f734dc0d29bb63d4286a49`;
+neither `preparation_receipt.json` nor `report.json` stores that ruler hash.
+Therefore
+the score deltas between those runs cannot be attributed solely to the semantic
+method. Freeze the preserved reports under their exact sidecars. Before another
+calibration, version the revised ruler and persist its full hash in both the
+preparation receipt and final report; do not rewrite the existing report hashes.
+
+The production-shaped prompt also finished only 42 bytes below its 90,000-byte
+ceiling. No further method-text growth should use that preserved slice without
+an explicit repacking or ceiling decision, because the next small change may
+turn two prompts into three and end direct prompt-shape comparability.
+
+Contract v22 closes the ruler-lineage defect for future calibration without
+rewriting history. Preparation v2 and report v2 now carry
+`semantic_calibration_adjudication_contract_v2` plus full SHA-256
+`186a0022397d35ca5ee6a464742155a6e55e606d1ad0da636611d404c838ab78`.
+Evaluation accepts only that ruler and the two exact preserved v1 sidecar
+hashes; an unknown or receipt-mismatched sidecar fails closed. Re-evaluating the
+preserved v5 run through the new code reproduced its report-v1 object and
+canonical hash
+`b3e1477c4596fc0da38fbc9e048ba64f8e2519b357e06072262f16877a724a26`
+exactly. A fresh preparation-v2 proof at
+`C:\tmp\forseti-calibration-ruler-v2-proof-20260810` wrote the same ruler ID and
+hash into both its receipt and report; with no new adjudication, it correctly
+stopped at `SEMANTIC_CALIBRATION_BLOCKED`. This proof changes no extraction
+method or prompt and grants no full-corpus resume authority.
+
+Contract v23 adds the smallest complete independent whole-row check between
+primary extraction and reconciliation. Run v5 selects method v7. Every primary
+claim-bearing evidence row receives exactly one `accept`, complete-row
+`replace`, or `unresolved` decision against its leaf and supplied context.
+Replacements pass through the ordinary semantic validator; non-claim rows pass
+through unchanged. The compiler preserves the original raw-response manifest,
+binds the verifier responses separately, and gives reconciliation exactly one
+active result. Method v7 fails closed at reconciliation and finalization when
+that verification manifest is absent or invalid. The extraction wording and
+transport schemas remain unchanged from method v6.
+
+The final fresh blind Summer Fridays dogfood at
+`C:\tmp\forseti-summer-fridays-row-verification-v1-20260810-v3` checked all 91
+claim-bearing rows from the preserved 121-leaf production-shaped compilation.
+It packed six verifier prompts, the largest 89,720 bytes under the 90,000-byte
+ceiling, and made no model API call. The independent readers returned 43
+accepts, 47 complete-row replacements, and one unresolved row. The runner
+rejected no hidden partial result and wrote a 264-unit active compilation with
+`compilation_sha256:
+7d04a4bcd827f7d9d1f01fcbadca806e1c7a923badc7e8ec78281ff285386a95`.
+The same persisted compilation then prepared reconciliation successfully as two
+prompts with 264 candidates; its stage hash is
+`55ed039e170fbeef7cbd5db61bf441816194f2102214e46d3185a0580892df62`.
+
+The blind pass corrected five of the six preserved residual rows: it removed
+hydration borrowed by unqualified Glossier/Laneige preferences, made the short
+Cherry-scent answer first-hand, removed shade-fit from ownership and repurchase,
+kept the pigment desire affirmed, restored omitted sale purchases, and removed
+the invented two-product per-use quantity comparison. It also preserved the
+important boundary that an actual named-shade favorite may use
+`shade_and_color_fit` while ownership or repurchase alone may not. The one
+unresolved row stayed out of the active semantic units rather than being forced
+into a claim.
+
+One material semantic residual remains visible. On
+`reddit:13aw1sp:jj8kde7`, this final reader accepted the proposed row even though
+it omitted the parent-linked negative judgment that the product was not really
+worth $24 when judged as a balm and retained sensitivity as a hydration
+condition. Earlier independent reads and a final targeted cold check did catch
+the omitted value meaning, so the representation and replacement path can carry
+the correction; the repeated disagreement proves that one verifier read is not
+a perfect completeness oracle. Do not hide this with more case-shaped prompt
+clauses or treat the row-verification pass as semantic readiness. It is a
+material quality improvement and a fail-closed integration boundary, not a
+replacement for bounded semantic calibration. The real dogfood reused the
+preserved method-v6 bundle to test the new optional pass; focused tests prove
+that method v7 makes the pass mandatory. No full-corpus run, prevalence claim,
+Deliver conclusion, seal, or resume authority follows.
+
+The different-vendor patch review then found two mechanical gaps in the v7
+claim. First, the legacy flat finalizer did not call the v7 verification gate;
+it now carries the same fail-closed check as the staged and v3 finalizers.
+Second, the manifest bound the active evidence-ID list but not the active row
+content. It could therefore be copied from an honest verified compilation onto
+different dispositions and semantic units over the same bundle. Contract v23
+now binds `active_rows_sha256` over both active dispositions and semantic units,
+and every consumer recomputes it before accepting the compilation. Malformed
+manifest-bearing compilations now raise a controlled semantic error rather than
+a raw missing-key exception.
+
+The fresh blind readings remain preserved unchanged under the `v3` dogfood
+root. A deterministic post-review re-derivation at
+`C:\tmp\forseti-summer-fridays-row-verification-v1-20260810-v4` reused that exact
+stage and the same six verifier responses; no semantic row was reread or edited.
+The 43/47/1 decisions, 264 semantic units, evidence dispositions, and original
+raw-response manifest are object-identical to `v3`. Only the strengthened
+manifest and its downstream identities changed. The current verified
+compilation hash is
+`694015e53ea96188a56dcef9c4cca95272ed42a13230956d802543a3c26603eb`,
+its active-row-content hash is
+`ab178a2f8a16be8716e51131bc85b787707089af8d8b8a5cdd1b91e7b9e1a0b7`,
+and the resulting two-prompt reconciliation stage hash is
+`6e962e4d9640353df0e144eaa451e02603fa06115722c27eedcc2152ea48d223`.
+The earlier `7d04a4bc...` compilation and `55ed039e...` stage remain historical
+pre-content-binding receipts; current code correctly refuses to treat their old
+manifest shape as sufficient v7 verification.
