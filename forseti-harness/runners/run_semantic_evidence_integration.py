@@ -26,6 +26,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     validate_reconciliation_stage,
 )
 from judgment.semantic_calibration import (  # noqa: E402
+    SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT,
     SemanticCalibrationError,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
@@ -141,6 +142,11 @@ def prepare_semantic_calibration_run(
     spec = _load_object(spec_path)
     prepared = prepare_semantic_calibration(source, spec)
     _write_json(output_dir / "preparation_receipt.json", prepared["receipt"])
+    adjudication_contract_path = output_dir / "adjudication_contract.md"
+    _write_new(
+        adjudication_contract_path,
+        SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8"),
+    )
     for slice_row in prepared["slices"]:
         slice_dir = output_dir / slice_row["slice_id"]
         _write_json(slice_dir / "source.json", slice_row["source"])
@@ -168,6 +174,7 @@ def prepare_semantic_calibration_run(
     return {
         "status": "SEMANTIC_CALIBRATION_PREPARED",
         "preparation_sha256": prepared["receipt"]["preparation_sha256"],
+        "adjudication_contract_sha256": hash_file(adjudication_contract_path),
         "spec_sha256": prepared["receipt"]["spec_sha256"],
         "slice_count": len(prepared["slices"]),
         "work_unit_count": sum(
@@ -194,6 +201,21 @@ def evaluate_semantic_calibration_run(
     report_out: Path,
 ) -> dict[str, Any]:
     """Evaluate returned calibration slices; a non-pass remains visible."""
+    # The sidecar is the adjudicator-facing statement of the direction rule, so
+    # a prepared copy that no longer matches the bound contract means the
+    # adjudication was governed by unknown wording. Fail loud rather than let a
+    # substituted or superseded contract pass silently. Absence stays tolerated:
+    # preparations frozen before the sidecar existed carry no copy at all, and
+    # re-evaluating them is an accepted workflow.
+    adjudication_contract_path = prepared_dir / "adjudication_contract.md"
+    if adjudication_contract_path.is_file() and (
+        adjudication_contract_path.read_bytes()
+        != SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
+    ):
+        raise ValueError(
+            "prepared adjudication contract does not match the bound contract "
+            f"(substituted or superseded): {adjudication_contract_path}"
+        )
     source = _load_object(source_path)
     spec = _load_object(spec_path)
     normalized = validate_calibration_spec(spec)

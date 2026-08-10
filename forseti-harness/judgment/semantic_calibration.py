@@ -36,6 +36,31 @@ CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v3"
 CALIBRATION_PREPARATION_VERSION = "semantic_calibration_preparation_v1"
 CALIBRATION_REPORT_VERSION = "semantic_calibration_report_v1"
 
+SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT = """# Semantic Calibration Adjudication Contract
+
+Contract version: `semantic_calibration_adjudication_contract_v1`
+
+`statement_direction_supported` asks whether the source supports the semantic
+unit's complete truth-conditional direction and whether `polarity` matches the
+logical form written in `statement`. It is not a sentiment or lower-is-negative
+judgment.
+
+- An affirmative comparison remains `polarity: affirmed` even when it uses
+  `less`, `lower`, or another downward comparison. For example,
+  `A is less moisturising than B` is an affirmed ordering claim.
+- A statement with logical negation such as “A is not as moisturising as B”,
+  “never repurchases”, or “does not dry the lips” is `polarity: negated`.
+- Comparative direction is carried by the complete statement plus its subject
+  and comparator roles. Mark the judgment false when the unit reverses that
+  ordering, swaps the products, drops a comparison or negation, or assigns a
+  polarity that conflicts with the written statement.
+- Do not mark an otherwise supported unit false merely because its asserted
+  comparison is unfavorable, lower, or contains the word `less`.
+
+Apply this contract to every semantic unit in each gold case, including units
+left explicitly unmerged.
+"""
+
 _LIST_UNIT_FIELDS = {
     "subject_product_ids",
     "comparator_product_ids",
@@ -1657,6 +1682,7 @@ __all__ = [
     "CALIBRATION_SPEC_VERSION",
     "CALIBRATION_SPEC_VERSION_V1",
     "CALIBRATION_SPEC_VERSION_V2",
+    "SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT",
     "SemanticCalibrationError",
     "build_calibration_source",
     "evaluate_semantic_calibration",
