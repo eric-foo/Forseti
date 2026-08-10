@@ -559,3 +559,23 @@ verification refuses a mismatched stage, but a later reconciliation consuming a
 stored verified compilation does not itself embed or re-derive the verifier
 method identity. That provenance hardening is not part of this semantic-method
 fix.
+
+Contract v25 closes that stored-compilation residual with
+`semantic_evidence_row_verification_manifest_v2`. The active compilation now
+carries the verifier method version and exact method-text SHA-256 inside the
+manifest hash; every current reconciliation/finalization entry point re-checks
+both. A legacy-v1, missing, substituted, or rehashed mismatched binding fails
+closed and must replay row verification. This changes only the manifest schema;
+the verifier stage, response, prompt, and semantic method stay unchanged.
+
+The same 91-row production-shaped input was also repacked without executing new
+semantic responses to measure the prompt-size tradeoff. A 90,000-byte ceiling
+uses 6 prompts and 488,963 total rendered bytes; 60,000 uses 11 and 635,473;
+50,000 uses 17 and 811,285; 45,000 uses 23 and 987,097; 40,000 uses 37 and
+1,397,325; and 37,500 uses 50 and 1,778,251. One-row prompts range from 31,375
+to 37,216 bytes, so 37,500 is the current corpus's mechanical floor and 35,000
+cannot carry every row. The successful final three-row blind replay rendered at
+43,757 bytes, making 45,000 the smallest semantically evidenced operating
+candidate. It is not yet the full-corpus default: it roughly doubles prompt
+bytes versus 90,000 and still needs the complete 91-row semantic replay to
+measure quality and latency under that packing.
