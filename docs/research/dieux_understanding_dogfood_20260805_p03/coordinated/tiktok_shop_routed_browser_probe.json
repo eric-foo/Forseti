@@ -1,0 +1,136 @@
+{
+  "artifact_kind": "tiktok_shop_routed_browser_probe_v1",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "captured_at_utc": "2026-08-05T17:23:12.208Z",
+  "route": {
+    "browser": "operator-connected external Chrome through the browser extension",
+    "proxy_posture": "operator_reported_decodo_extension_connected",
+    "proxy_egress_identity": "not_independently_recorded",
+    "credential_or_session_export": false,
+    "navigation": "official Dieux TikTok Shop storefront to Instant Angel PDP by one source-native product-link click",
+    "storefront_url": "https://shop.tiktok.com/us/store/dieux/7495181901565626705",
+    "pdp_canonical_url": "https://shop.tiktok.com/us/pdp/nourishing-moisturizer-instant-angel-by-dieux-50ml-for-glowing-skin/1729397664481972561"
+  },
+  "storefront_observation": {
+    "shop_name": "dieux",
+    "official_shop_badge_visible": true,
+    "followers_visible": "114.7K+",
+    "videos_visible": 1815,
+    "instant_angel_card": {
+      "rating_visible": 4.7,
+      "sold_visible": "41.6K sold",
+      "price_visible_usd": 32
+    }
+  },
+  "pdp_observation": {
+    "product": "Instant Angel Lipid-Rich Nourishing Moisturizer - Fragrance-Free, Deeply Hydrating, Firming Cream",
+    "product_id": "1729397664481972561",
+    "sold_by": "dieux",
+    "seller_business_name_visible": "Cultskin Apothecary Inc.",
+    "aggregate_rating_visible": 4.7,
+    "global_review_count_visible": 1664,
+    "rating_distribution_visible": {
+      "5": 1443,
+      "4": 87,
+      "3": 60,
+      "2": 37,
+      "1": 37
+    },
+    "display_state_visible": "Displaying 1664 of 1664 reviews",
+    "pagination_last_page_visible": 555,
+    "default_sort": "Recommended",
+    "default_filter": "All"
+  },
+  "bounded_review_window": {
+    "pages_captured": [1, 2],
+    "rows_visible": 6,
+    "all_rows_verified_purchase_visible": true,
+    "all_rows_market_visible": "US",
+    "native_review_ids_visible": false,
+    "rows": [
+      {
+        "unit_id": "TTS-INSTANT-ANGEL-P1-R1",
+        "page": 1,
+        "reviewer_visible": "J**n",
+        "rating": 5,
+        "verified_purchase": true,
+        "market": "US",
+        "item": "100mL",
+        "date_visible": "2024-07-13",
+        "body": "I just finished my first tube from the Sephora sale earlier this year. I bought the bigger one this time because I love it so much. It isn’t scented, it’s the perfect texture on my skin and it has never irritated my skin at all. I love it so much and unfortunately it’s worth the price. 😅"
+      },
+      {
+        "unit_id": "TTS-INSTANT-ANGEL-P1-R2",
+        "page": 1,
+        "reviewer_visible": "k**5",
+        "rating": 5,
+        "verified_purchase": true,
+        "market": "US",
+        "item": "100mL",
+        "date_visible": "2026-06-09",
+        "body": "On my second big girl 100 oz tube. This WILL BE your favorite moisturizer hands down. Comes with a metal turn key to get every bit of this Dieux instant angel glow. I use day and night and it’s instant radiance in the morning not maybe I see something….YOU SEE THE DIFFERENCE! 😍 LOVE Dieux"
+      },
+      {
+        "unit_id": "TTS-INSTANT-ANGEL-P1-R3",
+        "page": 1,
+        "reviewer_visible": "**",
+        "rating": 5,
+        "verified_purchase": true,
+        "market": "US",
+        "item": "50mL",
+        "date_visible": "2026-05-25",
+        "body": "Yes, this works very well on my skin. I also like the texture of it than the Prequel ointment one. However, this packaging is not the best. If I not careful enough, the product will get push out when put the cab on"
+      },
+      {
+        "unit_id": "TTS-INSTANT-ANGEL-P2-R1",
+        "page": 2,
+        "reviewer_visible": "a**e",
+        "rating": 5,
+        "verified_purchase": true,
+        "market": "US",
+        "item": "100mL",
+        "date_visible": "2025-03-16",
+        "body": "This product has saved my very dry skin. I will never go without it because tretinion dried my skin out but this product saved it."
+      },
+      {
+        "unit_id": "TTS-INSTANT-ANGEL-P2-R2",
+        "page": 2,
+        "reviewer_visible": "R**a R**h",
+        "rating": 5,
+        "verified_purchase": true,
+        "market": "US",
+        "item": "100mL",
+        "date_visible": "2024-05-07",
+        "body": "This is my second bottle was getting really low and was afraid I was going to run out. Absolutely love this stuff do not want to live without it."
+      },
+      {
+        "unit_id": "TTS-INSTANT-ANGEL-P2-R3",
+        "page": 2,
+        "reviewer_visible": "M**🍉",
+        "rating": 5,
+        "verified_purchase": true,
+        "market": "US",
+        "item": "100mL",
+        "date_visible": "2024-01-12",
+        "body": "Best purchase of the year! This moisturizer kicks ass! I'm always glowing now Before and after picture"
+      }
+    ]
+  },
+  "adjudication": {
+    "prior_disposition": "ROUTE_BLOCKED_REQUIRED_ROUTED_HEADED_SESSION_NOT_AVAILABLE",
+    "current_disposition": "ROUTE_COMPLETE_BOUNDED_BODY_WINDOW",
+    "route_block_superseded": true,
+    "corpus_credit": 0,
+    "corpus_credit_reason": "The six rows prove source-native body access but use the default Recommended sort, are all five-star, expose no native review IDs, and were not cross-source deduplicated. Existing retailer floors do not depend on them.",
+    "authorized_claim": "The official US TikTok Shop storefront and Instant Angel PDP were reachable through storefront-native headed-browser navigation, and two bounded Recommended pages exposed six body-bearing verified-purchase review rows.",
+    "non_claims": [
+      "No review-corpus exhaustion claim.",
+      "No representativeness or prevalence claim.",
+      "No additive retailer-review count.",
+      "No claim that 1664 review bodies were captured.",
+      "No claim that the visible result proves the proxy's exit geography; the `/us/` storefront and US row labels were source-visible."
+    ]
+  },
+  "deliver_started": false
+}

@@ -340,8 +340,6 @@ def _capture_www_grid(
         content_extraction=spec,
         capture_screenshot=False,
         keep_raw_audit_sample=keep_raw_audit_sample,
-        target_identity_check=lambda final_url: same_grid_listing_url(final_url, url),
-        target_identity_description="same Reddit grid host, path, and query",
         limitations=[
             SOURCE_POLICY_POSTURE_RECEIPT,
             f"grid runner listing={listing} time_window={time_window or 'n/a'} transport=www_realchrome",
@@ -538,7 +536,6 @@ def run_reddit_grid_capture(
                 # can bank a login wall and still report success.
                 validate_in_raw_mode=True,
             )
-        capture_started_monotonic = time.monotonic()
         try:
             row["capture_started_at"] = utc_now_z_microseconds()
             capture_exit, capture_message = run_source_capture_http_packet(
@@ -586,16 +583,9 @@ def run_reddit_grid_capture(
         finally:
             row["capture_finished_at"] = utc_now_z_microseconds()
 
-        elapsed = time.monotonic() - capture_started_monotonic
-        row["capture_elapsed_seconds"] = round(elapsed, 3)
         results.append(row)
         if index < len(cadence_plan.planned_waits_seconds):
-            wait_seconds = _paced_wait(
-                planned=cadence_plan.planned_waits_seconds[index],
-                elapsed=elapsed,
-                basis=cadence_basis,
-                row=row,
-            )
+            wait_seconds = cadence_plan.planned_waits_seconds[index]
             if wait_seconds > 0:
                 time.sleep(wait_seconds)
 

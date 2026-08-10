@@ -114,8 +114,10 @@ canonical phases are:
    shorthand); problem framing survives as the phase's first synthesis step.
 
 Do not commission future work with an unqualified `Phase 1` or `Phase 2` label.
-Historical filenames, reports, handoffs, and receipts retain their original
-phase language because changing it would falsify provenance.
+Reading rule for this document: a bare `Phase 2` always denotes the internal
+SERP Phase 2 lane, never the Deliver phase. Historical filenames, reports,
+handoffs, and receipts retain their original phase language because changing
+it would falsify provenance.
 
 Each phase has two possible operator/model turns, but a phase name does not
 commission both. Within the Forseti Intelligence Cycle, an owner instruction
@@ -181,12 +183,24 @@ preflight; run or validly reuse SERP Phase 1; feed its typed ledger and queues
 into the `CO1`-`CO3` specialist
 fan-out; wait for their terminal returns; run SERP Phase 2 from the combined
 findings; then seal. Reddit/community capture is `CO3` fan-out work, not a
-Phase 2 responsibility. A missing or materially blocked Phase 2 result remains
+SERP Phase 2 responsibility. A missing or materially blocked SERP Phase 2 result remains
 visible in the existing route, receipt, provenance, and gap fields and forces
 the blocked seal state; a non-material typed Phase 2 limitation stays honestly
 recorded without being promoted into a material blocker. The SERP phase
 labels are lane-local and do not replace the canonical Understanding and
 Deliver phase names.
+
+Treat the Phase 1-to-fan-out boundary as a hard dispatch lock. `CO1`-`CO3` work
+must not be dispatched or started until `CO0` fresh-reads durable artifacts for
+the same commission and cycle and verifies all of the following: the capability
+preflight says it preceded the first network capture; SERP Phase 1 is terminal
+or has a validly adjudicated reuse receipt; and its typed ledger plus every
+required role queue are present and non-empty. Role descriptions elsewhere in a
+commission or handoff are future work, not authority to bypass this lock. If
+specialist work starts early, interrupt it, quarantine its outputs, and record
+the sequencing incident. Excluding those outputs prevents their admission but
+does not make the preflight chronologically prior; that cycle cannot receive a
+passing seal under a false pre-capture claim.
 
 The commission-stage coverage ledger always carries required rows for Google
 Ads Transparency Center, Meta Ads Library, and the current Reddit weekly Data
@@ -269,9 +283,13 @@ passing seal. Decision-bearing references must already be valid support
 references for that axis; the validator proves shape and traceability, while
 human review judges whether the synthesis is strategically warranted.
 
-Before a broad consumer-brand Phase A seal is accepted for synthesis or landed,
+Before a broad consumer-brand Understanding Acquire & Seal artifact
+(historically a "Phase A seal") is accepted for synthesis or landed,
 commission the final delegated review-and-patch under the project-owned
-delegated-review convention. The reviewer reads every
+delegated-review convention. This requirement is deliberately bound to the
+broad consumer-brand completion profile, whose citation surface motivated it;
+extending it to another completion profile is an owner decision taken when
+that profile first carries decision-bearing source-native citations. The reviewer reads every
 `decision_bearing_support_ref` in its source-native body and verifies that the
 subject product or brand is locally anchored, the cited body supports the
 assigned axis and role, alternative-product returns/repurchases/preferences are
@@ -286,6 +304,27 @@ corpus rereading is not the default. Any bounded patch must be revalidated
 against the acquisition seal and separately adjudicated by the Chief Architect.
 This semantic review catches valid-but-misattributed citations that mechanical
 shape and hash checks cannot.
+
+The same semantic pass scans decision-bearing axis labels and prose for a
+price, affordability, usable-quantity, or value comparison even when the
+machine-visible axis ID does not contain `price`, `value`, `quantity`, or
+`cost`. Signals include cheaper, premium, worth it, better deal, cost per use,
+more product, less product, lasts longer, and needing less product. When one is
+present, the reviewer verifies that both products carry the required
+`price_size_context`, or an explicit unavailable/not-directly-normalized
+disposition. This is a language-model semantic catch for missed concepts, not
+permission to invent a conversion, infer equal value from sticker price, or
+upgrade a validator pass into semantic proof.
+
+When an adjudicated re-derivation or semantic remediation proves that no
+subject-owned counterevidence survives on an axis, that axis records
+`counterevidence_absent_verified: true` in its decision usefulness beside
+prose naming the disposition; the counterevidence-role reference requirement
+is waived for exactly that axis, which otherwise keeps its evidence-supported
+closure and true strength. Fabricating a counterevidence reference, or
+downgrading a strong axis to `source_exhausted_but_weak` solely to evade the
+requirement, are both defects; carrying the marker while also citing a
+counterevidence-role reference is a contradiction the validator rejects.
 
 Call this terminal boundary the **decision frontier**. Do not call it a value
 frontier: `value` remains the customer-facing product proposition (benefit,
@@ -399,11 +438,17 @@ exact duplicates collapse and do not inflate distinct-origin spread.
 
 Community support is comment-coded: thread and comment identity, product
 context, axis, contribution, choice, alternative brand when present, explicit
-outcome, source reference, and parser limitation. Every usable independent
-Reddit/forum thread has at least one such row, and an axis support reference
-into a community thread must be backed by a coding row for that axis and
-thread carrying the same contribution, choice, and alternative brand; a
-support claim no coded comment states is invalid. SERP or search-registry
+outcome, source reference, source-native creation timestamp
+(`comment_created_utc`, read from the preserved raw body or source metadata at
+coding time, never inferred), and parser limitation. The timestamp is an
+acquisition-time obligation because the coder is already reading the raw body;
+it is what lets later synthesis attribute evidence to eras (formula
+generations, attention cycles) without reopening raw files. Synthesis
+deliverables may consume dates but are not required to display them. Every
+usable independent Reddit/forum thread has at least one such row, and an axis
+support reference into a community thread must be backed by a coding row for
+that axis and thread carrying the same contribution, choice, and alternative
+brand; a support claim no coded comment states is invalid. SERP or search-registry
 artifacts never satisfy a native-body reference. A useful new thread is
 informational yield, not an automatic reopen. A material addition is limited to
 a new axis, evidence-tier change, mechanism, segment or condition, behavior
@@ -546,6 +591,448 @@ five different objects in one artifact: commission intake, venue playbook,
 source registry, forecast-target schema, and graph retrieval schema. Installing
 that bundle as authority would silently decide product, Judgment, Data Capture,
 and prompt-packaging questions that are not all settled.
+
+## Understanding Acquire & Seal Route Revision Contracts (Route 1.1.0+)
+
+These contracts bind the versioned company-Understanding route revision whose
+operating sequence, version block, and append-only changelog live in the CSB
+playbook (`understanding_acquire_seal_route`). The acquisition seal records
+the route version actually used in an `understanding_route` block, and
+`run_phase_acquisition_seal_validation.py` enforces the deterministic shapes
+below at the seal boundary. Relationship interpretation, campaign clustering,
+and competitor directness remain evidence-backed judgment under the existing
+review lanes; the validator proves shape and traceability, never semantic
+truth.
+
+### Campaign-Evidence Integration View
+
+One controller-owned post-fan-out integration job (route
+`campaign_evidence_integration`, phase `campaign_integration`) joins already
+captured evidence — CO1 owned posts and Google/Meta ad observations, CO3
+creator-authored units with separately preserved audience comments, CO2
+canonical product/SKU, retailer/market, and landing-destination identity —
+into one hash-pinned `campaign_evidence_view_v1` JSON artifact. There is no
+standing `CO4` specialist, no creator crawl, no second evidence lake, and no
+standing monitor. Creator-registry records contribute identity and
+source-visible metric inputs only, never campaign membership or
+commercial-effect proof. The view is derived run-scoped acquisition
+accounting over already captured typed evidence (ledger social/external rows,
+ad-transparency projections, CO2 identity); it is not a Silver Vault entity
+type, a campaign object contract, or a coordination/manufactured-demand
+judgment, which the data-lake Silver Vault contract reserves for
+Gold/Judgment.
+
+The route-accounting row is required and material. A passing seal requires its
+planned integration job set to be fully completed, not merely named alongside
+a completed-looking view block.
+
+Each view unit carries: `unit_id`; `source_role` from
+`owned_post | paid_ad | creator_authored | audience_comment | retailer_review
+| retailer_qa | community_post` — creator-authored content and audience or
+customer evidence never merge into one role, and a post's engagement never
+transfers to its comments; publisher/creator/account identity; the brand
+binding plus product/SKU and claim bindings as string lists (empty when none
+were observed); source surface
+and raw source references; `published_at`, `observed_at`, and `captured_at`
+(`captured_at` required; unknown source timestamps stay null, never
+invented); `relationship_posture` from
+`owned | retailer_operated | disclosed_paid_or_affiliate |
+partnership_byline_observed | apparently_independent | relationship_unknown`
+— missing disclosure stays `relationship_unknown` and is never treated as
+organic; a creative/message fingerprint or bounded cluster reference when
+derived; ad/creator/landing-page `linkage_posture` from
+`direct | inferred | unknown`; `independent_origin_key`;
+`independent_origin_credit`; and claim ceiling, conflicts, and missingness.
+
+Independence rules: `independent_origin_credit: true` requires
+`apparently_independent`, and one `independent_origin_key` receives at most
+one credit regardless of repeated units — same-origin echoes are citable but
+never independence. Engagement facts remain observation context and never
+become evidence weight.
+
+Clusters: do not force a durable `campaign_id` that public evidence cannot
+establish. A message/episode cluster is `basis: direct` only when every
+member unit's linkage posture is `direct`; otherwise it is `basis: inferred`
+and must carry explicit provenance and a reversal condition. Each cluster's
+member list contains unique unit IDs.
+
+The integrator may emit targeted capture requests for exact posts, ads,
+landing pages, or dates that would resolve a material link; each request is
+terminally dispositioned (`captured | blocked | no_longer_material`) before a
+passing seal, and fulfilled requests run as ordinary jobs in the owning
+routes. The integrator does not launch broad crawls, infer spend or
+conversion, or issue market conclusions: campaign integration is post-fan-out
+synthesis for acquisition control, not Deliver synthesis.
+
+### Competitor-Set Closure
+
+The route installs three explicit comparator states; no separate standing
+competitor lane is created:
+
+1. `candidate_comparator_frame` after SERP Phase 1: typed, provisional, and
+   sufficient to guide fan-out. The frame's candidate and competing-product
+   identities scope the existing `CO1`-`CO3` fan-out capsules. The frame is
+   never frozen: complaint-, retailer-, creator-, and substitute-borne
+   candidates remain discoverable during fan-out.
+2. `adjudicated_comparator_set` after specialist returns plus SERP Phase 2:
+   exact subject/product identities, evidence origins, axis-level explanation
+   of why and under which observed conditions customers choose either product,
+   price/size context where observed, an evidence-derived terminal comparator
+   role, and claim ceiling.
+3. `phase_a_competitor_context_closed` at the acquisition seal: every
+   material candidate is terminally dispositioned; no candidate silently
+   disappears.
+
+Route 1.2.0 makes "sufficient to guide fan-out" falsifiable. Every Phase 1
+frame candidate carries a `prefanout_qualification` posture:
+`core_fanout | bounded_watch | rejected_before_fanout`, plus its comparator
+role from `direct_peer | value_substitute | adjacent | unresolved |
+non_competitor`. SERP is the discovery map, not confirmation. Every frame row
+points to the open-comparator SERP observation that surfaced it. A
+`core_fanout` candidate additionally binds both exact product identities, the
+shared customer job, exact-product identity evidence recorded separately for
+the subject and for the competitor from an owned page or exact PDP, and at
+least two independent comparison origins across at least two
+of these source roles: Reddit/community, retailer review, creator-authored, or
+independent editorial. Two rows from one origin, two origins from only one
+source role, and two origins that re-cite the same evidence unit under
+different keys do not meet the core bar. SERP snippets, retailer co-placement,
+owned comparison claims, and ad positioning never count as those independent
+comparison origins.
+
+Candidates that fit the product shape but do not meet that recurrence and
+source-role bar remain `bounded_watch` with the exact gap; obvious entity,
+format, or job mismatches close as `rejected_before_fanout`. This is bounded
+shortlist confirmation inside Phase 1, not a miniature competitor commission
+and not a second Phase A. Later lanes may still add or correct candidates.
+Route 1.2.0 does not add a creator-coverage parity gate. The creator-value
+assessment handoff tests whether the existing route changes any material
+judgment before a recurring creator obligation is considered.
+
+Route 1.3.0 adds one light public-identity check to the origins used for that
+core bar. Each origin records a source-visible `public_actor_key` (for example,
+a normalized platform handle, retailer reviewer ID, or publication/author
+key) and its posture relative to the other credited origins from
+`no_match_observed |
+possible_same_actor | confirmed_same_actor | unavailable`. Only
+`no_match_observed` with a non-placeholder key earns independence credit;
+duplicate keys, possible/confirmed overlap, and unavailable identity remain
+usable evidence but cannot together manufacture two independent origins.
+The semantic pass compares exact/normalized usernames, profile URLs, and
+source-visible disclosed links or codes. A display name alone can raise a
+possible overlap but cannot prove one. This is deliberately a light public
+check, not a complete cross-platform identity graph.
+
+For every material candidate, the existing lanes owe comparator evidence or a
+typed gap — never silence: `CO2` retailer/category adjacency and exact
+product identity (retailer co-placement alone is never directness proof);
+`CO3` retailer-review and Reddit/community comparison evidence, kept as two
+separate evidence roles — explicit comparisons, substitutes,
+switch/return/repurchase destinations, and complaint-borne alternatives;
+campaign-integration creator comparison
+evidence — head-to-heads, dupe claims, and repeated claim propagation,
+relationship-typed; and `CO1` owned/advertiser positioning and named
+comparisons as actor-strategy evidence, never independent customer proof.
+An `observed` lane points to its evidence references. `None_found` and
+`blocked` are valid bounded outcomes only with a gap reason. Retailer reviews
+and Reddit/community observations are public customer-language samples, not
+representative sentiment or population polling.
+
+For a `core_fanout` competitor, retailer work has two scopes inside the same
+Phase A and the same `CO2`/`CO3` fan-out; it is not a separate rival Phase A:
+
+1. **Exact competing product** — capture the full selected,
+   comparable-retailer corpus for that product: exact PDP/product state in
+   `CO2` and the exposed retailer-review/Q&A corpus in the separate `CO3`
+   customer role. A blocked or unavailable selected retailer remains a typed
+   gap.
+2. **Relevant franchise** — map the source-visible sibling products and their
+   retailer/owned prominence only far enough to establish whether the exact
+   product is hero, likely major, supporting, or unclear. A sibling receives
+   full exact-product capture only when its observed role or customer-choice
+   evidence could change the comparison.
+
+A full rival-company assortment is not a standing third scope. It is licensed
+only when the bound question is itself brand/portfolio-level. This rule changes
+acquisition volume, not phase count. No percentage-of-focal quota substitutes
+for the evidence need.
+
+Each material candidate also binds an evidence-backed local portfolio-role
+assessment for the exact competitor product or named franchise:
+`explicit_hero | likely_major | supporting | unclear`. `Explicit_hero`
+requires an explicit source; `likely_major` requires a multi-source inference;
+`supporting` requires positive evidence rather than absence; and `unclear`
+preserves the unresolved gap. Where a source exposes an ordered position, the
+seal records the source or retailer, list/category scope, market, observation
+time, evidence references, and either the numeric rank plus list size or the
+source-visible relative label. An empty observation set carries its gap reason.
+No source-local observation may be promoted into a universal product rank,
+sales rank, market share, or cross-retailer league table. Review volume alone
+does not establish portfolio role. A promoted direct competitor binds at least
+one shared axis so its stronger evidence is decision-comparable to the subject
+product rather than merely voluminous.
+
+Observable brand positioning is context, not the primary competitor verdict.
+`CO1` owned/ad evidence and relationship-typed campaign evidence show what each
+actor emphasizes; customer and retailer-review lanes show whether people
+repeat, reject, or ignore it. Phase 2 may use that context to explain an axis,
+but must not relabel actor strategy as customer choice. The highest-value
+comparator record therefore joins exact-product choice, franchise importance,
+and observable positioning without collapsing those evidence roles.
+
+When price parity, value, or usable quantity is compared, the cited observation
+must carry price, currency, size, unit, market, and observation time for both
+products, or state which element is unavailable. Different mass and volume
+units remain `not_directly_normalized` unless a source-backed conversion is
+licensed, and a posture that licenses direct comparison (`same_unit` or
+`source_normalized`) cannot span two currencies. Equal sticker price alone is
+never equal quantity or equal value.
+
+The seal validator mechanically requests this context only on a material
+candidate whose `shared_axis_ids` contains `price`, `value`, `quantity`, or
+`cost`. Alternative axis names and price/value comparisons outside that
+machine-visible shape are caught by the final semantic review described above;
+validator pass does not prove that every semantic price comparison was detected.
+
+SERP Phase 2 first consolidates the specialist and campaign-integration
+returns into an evidence-only `competitive_choice_explanation` for every
+material candidate. Its primary output is the axis-level answer: what observed
+evidence favors the subject, favors the competitor, splits by condition, or
+remains unresolved; why; under which conditions; and the exact evidence
+references. Only then does it derive the terminal comparator role from
+`direct_peer | value_substitute | adjacent | unresolved | non_competitor`.
+The role is a compact consequence of the explanation, not a substitute for it.
+
+Each axis finding consumes the intelligence-cycle-wide contract at
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+The finding binds one bounded proposition and records its support posture,
+independent-origin count, source roles, engagement and behavior references,
+counterevidence, conflict posture, and causal ceiling. `Isolated` testimonial
+or interpretive evidence cannot set a directional advantage. A competent
+`directly_observed` trace may establish only its bounded descriptive fact.
+`Resonance_supported` requires source-native engagement evidence and may claim
+audience endorsement, never an independent-experience count. `Mixed` evidence
+must remain `split_or_conditional`, and an unchecked conflict posture cannot
+carry a directional finding.
+
+Route 1.4.0 adds the Judgment-owned Semantic Evidence Integration closure job
+after every selected acquisition and Phase 2-triggered job is terminal and
+before the seal. Follow
+`forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`.
+The controller verifies and hash-pins the admitted evidence set, renders
+bounded prompts, and gives them to a fresh agent; no runner calls a model API.
+The agent reads for meaning, splits multi-product or multi-axis statements,
+preserves conditions and opposition, and reconciles paraphrases. Deterministic
+code alone accounts every alias, resolves source artifacts, de-duplicates
+origins, checks source-role competence, derives support posture, and writes
+`semantic_evidence_integration_view_v1`.
+
+Route 1.5.0 keeps the 1.4 closure job but requires
+`semantic_evidence_source_v2` and method v2.
+Every admitted unit carries surrounding product context that cites one of the
+bundle's hash-pinned source artifacts;
+`product_candidates` are search/coding hypotheses, never identity proof. The
+semantic pass binds an exact subject and comparator from the item plus its
+context or leaves the item unresolved/out of scope. Context may identify the
+product but may not be rephrased as though the evidence author made its
+claims.
+
+Route 1.6.0 keeps that source-pinned product binding and widens the admitted
+denominator to the declared final captured Phase A corpus. The controller uses
+`semantic_evidence_source_v3` to account every captured source-native leaf as
+semantically assessed, mechanically excluded with an exact reason, or blocked.
+It preserves conversations, creator/audience threads, individual retailer
+reviews, and published objects as containers with capture-envelope facts.
+
+Route 1.7.0 keeps the full-corpus method but corrects its acquisition boundary.
+Only Reddit/community conversation text and retailer review text are exhaustive
+semantic sources. Owned pages, PDP facts, advertising, creator posts,
+editorial, and other acquired materials stay hash-verified structured
+references and remain available to judgment without pretending they are one
+customer-language denominator. Retailer membership is proven from source-native
+review records under raw-byte-pinned files, never from a whole-file substring.
+
+The evidence-depth ledger also carries one `phase_a_serp_source_frontier_v1`.
+Terminal-return-selected, hash-pinned Phase 1 and Phase 2 queue-state receipts generate the exact
+successful job-to-packet inventory; an operator-selected subset is invalid.
+Recovery runtime job IDs may map to sealed parent IDs only through an explicit
+one-to-one alias.
+Focused-search records separately own their exact job packet sets. For those
+producer-owned surfaces, a fresh agent reads each source-bearing result row for
+meaning and marks it `routed`, `duplicate`, or `excluded` in one explicit
+row-identified decision; a bulk/default route is invalid. Deterministic code
+checks exact row coverage, one packet-file identity across all surfaces, and
+target resolution. One identity may serve multiple jobs, but two identities
+may not enumerate the same packet twice. It does not infer relevance
+from keywords. Routed rows bind to an existing native-capture or
+locator-recovery target. Google people-also-ask and related-search prompts are
+not external sources. This is a bounded search-surface census, not permission
+to paginate or crawl the web.
+
+The semantic runner bounds actual rendered UTF-8 bytes, including prompt
+instructions, schemas, axes, context, and formatting. It may reconcile in
+child-referenced levels. At every level deterministic code owns exact child
+accounting, product/comparator/version binding, condition and polarity lineage,
+stale hashes, acyclic provenance, and duplicate-credit prevention; the agent
+owns meaning equivalence. Batch response v2 distinguishes first-hand report,
+personal agreement, attribution/echo, question, speculation, observable fact,
+and actor strategy while keeping uncertainty separate. Echoes, questions,
+creator framing, and unknown or overlapping actors cannot manufacture
+independent customer experience.
+
+Before seal, the agent consolidates meaning-equivalent emerging labels and the
+compiler preserves every original label. Every parent preserves the exact
+union of its children's emerging labels, and every validated consolidation is
+carried unchanged through later levels. A lower-level blocker therefore stays
+visible and blocks seal. Every stage and node compilation also carries the
+root batch-compilation hash, which finalization must match exactly.
+Integration view v2 exposes separate
+semantic-unit, evidence-item, container, independent-origin, source-role,
+engagement, support, opposition, and mixed-container counts. A seven-thread
+count is therefore never silently restated as seven independent people. This
+is evidence structuring only, not prevalence, safety, market conclusion,
+causation, or recommendation.
+
+After the final view exists, Phase A may project a
+`phase_a_evidence_packet_v1` for an exact proposition set or axis set. If the
+request begins in natural language, an agent selects the relevant IDs by
+meaning from that view; the deterministic projector then returns the complete
+linked union rather than a keyword match or a convenient top-k sample. Shared
+records appear once while keeping every relation, and support, counter,
+adjacent, unresolved, and unmerged axis candidates remain distinguishable.
+Linked semantic units retain posture, uncertainty, and polarity. The packet
+also exposes the full unmerged denominator and any no-axis unmerged meanings;
+per-relation counts are explicit non-disjoint unions.
+This is a read-only tail-end Phase A retrieval surface: it adds no acquisition
+job or seal field, creates no second evidence authority, and cannot issue the
+conclusion or recommendation that belongs to Deliver.
+
+Current axes guide but do not cap discovery. A material emerging axis reopens
+only the affected work and invalidates the prior view; a nonmaterial candidate
+is explicitly dispositioned. Route-1.4-and-later axis findings carry `proposition_refs`
+to the view. Each material comparator carries distinct stable
+`subject_product_id` and `competitor_product_id` values at route 1.5.0, and each referenced
+competitive-choice proposition must bind exactly those IDs in that
+orientation. Any retained inline claim-support display is a mechanically
+derived compatibility projection and never a second authority. A passing seal
+requires a current view whose admitted and accounted evidence counts match,
+no unresolved material evidence, and terminal dispositions for emerging axes.
+
+Phase 2 runs targeted/J5 delta probes only for a named material gap left by the
+combined returns; it does not reacquire the fan-out corpus. A `promoted`
+(decision-ready) candidate requires both exact product identities and an
+`observed` choice explanation with at least one shared axis. `Partial` and
+`unresolved` records preserve their gap and cannot be promoted. The seal's
+comparator closure gives every frame or lane-emitted candidate one terminal
+disposition from
+`promoted | rejected | watch_listed | role_bounded | explicit_gap`.
+Watch/validate-once/parked decision outcomes map to `watch_listed`;
+harvest-junk and adjudicated non-competitors map to `rejected`;
+self-variants, mediators, and corroborative-only surfaces map to
+`role_bounded`; sub-finding-grade or unresolved candidates close as
+`explicit_gap`. This remains acquisition evidence, not a recommendation,
+market conclusion, or Deliver artifact. Phase A promises decision-usable
+comparator context, never an
+exhaustive-direct-competitor claim, representative market sentiment, or
+rival-by-rival depth; a separate competitor commission is triggered only when
+a named downstream decision needs depth beyond the closed Phase A context.
+
+### Conditional Product/Claim Verification
+
+```text
+verification_request = reconciled product identity
+                     × material evidence axis or contradiction
+                     × publicly verifiable unresolved claim
+```
+
+Candidate products before CO2 are discovery anchors only. CO2 breadth plus
+customer/creator/external evidence selects material product contexts; a
+non-hero product enters only through a material axis, condition, consequence,
+competitor destination, contradiction, or sampling-risk trigger. Verification
+is a conditional adjustment job, not a catalog-wide first-wave specialist and
+not a requirement to run every instrument for every product. Each request
+carries the reconciled product identity, its trigger kind
+(`material_axis | contradiction | condition_or_consequence |
+competitor_destination | sampling_risk`), the trigger's evidence references,
+and the unresolved claim; a request without that material trigger is a
+defect. A completed return attaches instrument-level verdicts, provenance,
+failures, and claim ceilings to the shared evidence model and may reopen the
+affected acquisition axis; it may not start Deliver. An emitted request left
+`not_run` blocks a passing seal.
+
+### Retailer State And Movement Semantics
+
+CO2 captures the point-in-time current-state baseline. Route semantics, with
+no new schema for terminology alone:
+
+- one comparable observation = `retailer_state_snapshot`;
+- two observations with stable retailer/product/market/scope identity —
+  stable retailer-local product identity plus confirmed storefront, currency,
+  and variant pins under the retail-PDP capture authorities — may derive a
+  `retailer_state_change` carrying distinct old and new evidence references
+  plus a non-empty change summary;
+- no prior comparable observation = `movement_unresolved_baseline_only`;
+- stockout, review velocity, assortment presence, and promotion remain
+  proxies, never sales or productivity;
+- refresh is commissioned by a material event or change question, never a
+  standing monitoring obligation.
+
+A movement or trend event from one observation is a defect: one observation
+is a state snapshot.
+
+### Seal Accounting For The Versioned Route
+
+The v3 seal's `understanding_route` block carries `route_version`,
+`comparator_closure`, `campaign_evidence_integration`,
+`semantic_evidence_integration`, `verification_requests`, and
+`retailer_state_accounting`; the playbook's seal
+template shows the field shapes. The seal validator enforces: known route
+version; the `campaign_evidence_integration` route accounting and
+`campaign_integration` phase at route 1.1.0 and later; at route 1.2.0,
+per-frame-candidate pre-fanout posture, open-comparator discovery references,
+and the core exact-identity/shared-job/two-origin/two-source-role bar; at route
+1.3.0, public-actor identity de-duplication for credited origins and one
+axis-level competitive-choice explanation for every material candidate; at
+route 1.4.0, a material terminal semantic-integration job, current hash-pinned
+view, exact evidence coverage, proposition-to-axis resolution, source-role
+competence, and material unresolved/emerging-axis closure; at route 1.5.0,
+contextual semantic method v2, distinct stable product IDs for material
+comparators, and exact candidate-to-proposition product binding; at route
+1.6.0, view v2/method v3, complete captured-item accounting with no blocked
+leaf, exact capture-envelope/container shape, consolidated emerging-axis
+lineage, and per-proposition evidence-stack counts; at route 1.7.0, the
+semantic-source/structured-reference boundary, raw-byte retailer source
+manifest, and exact bounded SERP-row frontier; view schema/subject/cycle
+binding and per-unit enums; independent-origin credit rules; cluster
+linkage/provenance rules; terminal comparator dispositions with exact-product
+identity binding and shared axes for `promoted` candidates;
+per-material-candidate product/franchise role, source-local observed-position
+or explicit-gap accounting, and separately sourced retailer-review and
+Reddit/community lane evidence; verification triggers and terminal statuses;
+and distinct old/new retailer-observation references plus a non-empty change
+summary. Stable retailer/product/market/scope comparability remains
+evidence-backed judgment over the cited CO2 observations; the validator does
+not prove it from opaque reference strings. A seal sealed before route
+versioning began
+(2026-08-07) has no stamped version and is audited with
+`--allow-preversion-route`; recording `1.0.0` retrospectively never claims it
+was historically stamped. A seal stamped with a known older route version (a
+recorded route retention) is likewise audit-only under the same switch and
+never satisfies the current route contract. That audit is version-symmetric in
+both directions: the older seal still owes every obligation its own stamped
+version introduced — a `1.1.0` seal owes the full 1.1.0 accounting above, not
+only its campaign-integration row — and owes no obligation a later version
+introduced. Route 1.2.0's pre-fanout and price/size checks are therefore never
+back-claimed onto a `1.1.0` or `1.0.0` seal, and route 1.3.0's identity and
+choice-explanation fields are never back-claimed onto a 1.2.0 seal. Route
+1.4.0's semantic-integration job and proposition references are never
+back-claimed onto a 1.3.0 seal, and 1.5.0's contextual product-binding
+requirements are never back-claimed onto a 1.4.0 seal. Route 1.6.0's full-
+corpus, hierarchy, capture-envelope, consolidated-axis, and evidence-stack
+requirements are never back-claimed onto a 1.5.0 seal.
+Route 1.7.0's source boundary, retailer manifest, producer-owned packet
+inventory, and SERP frontier are never
+back-claimed onto a 1.6.0 seal.
 
 ## Company Competitive-Intelligence Extension
 
@@ -1007,6 +1494,65 @@ CSB source-route row
 -> Scanning exact-query / frontier selection
 -> Capture P1 direct-source acquisition when concrete URLs or surfaces exist
 ```
+
+### Category-Benchmark Search-Interest Read (Consumer-Brand Phase A)
+
+Owner decision (2026-08-06): every future broad consumer-brand Phase A run
+includes one bounded category-benchmark search-interest read, so Deliver can
+separate brand-specific attention decline from category-wide decline instead
+of assuming the difference. Shape: one one-shot pull in the run's primary geo
+plus a worldwide check, 5-year window, **web-search property**, comparing the
+subject brand term against the head terms of each product category the
+subject competes in.
+
+Category terms must be bound from the run's own artifacts before capture; this
+card does not authorize the operator to coin a head term. In the run's
+`coordinated/` directory, use the acquisition record's product-specific search
+coverage rows for hero and secondary product names, `community_axis_coding.json`
+`product_context` values when present, and
+`evidence_depth_ledger.json` `product_axes[].decision_usefulness` for named
+alternatives and the product conditions they serve. The hash-pinned
+`consumer_brand_axis_inventory.json` `axes[]` is a customer pain/delight-axis
+inventory, not a product or category-term source.
+
+Before the pull, record in the run commission or capture handoff a
+term-derivation table with product family, exact candidate term, the source
+phrase that supports it, and artifact locator. A term is usable only when that
+exact generic category phrase appears in a run artifact or the run's explicit
+commission binds it; a product name or alternative brand name alone is not
+permission to invent an adjacent synonym. If any material product family lacks
+a bound head term, record the read as `unresolved — category terms unbound` and
+do not pull. The founding commission bound lip balm / lip mask / lip butter /
+lip oil and skin tint / tinted sunscreen / tinted moisturizer; those examples
+are not a reusable derivation rule.
+
+Record the verdict explicitly against this decision rule: subject curve
+declining while its category curves rise or hold → brand-specific decline;
+category curves deflating alongside the subject → category-wide decline;
+mixed or below-threshold → unresolved, never forced. Founding instance,
+decision rule, and report shape:
+`docs/research/summer_fridays_ci_inputs_20260806/search_interest_addendum_return.md`.
+
+Boundaries: this is a bounded per-run one-shot authorization class only — the
+standing search-interest series, cadence machinery, and vendor selection
+remain unsourced (AR-04 open); capture obligations and limits-visibility
+follow
+`forseti/product/spines/capture/core/demand_durability_indicators/search_interest/demand_durability_indicator_search_interest_capture_profile_v0.md`;
+values are the source's 0–100 relative index only (no sales, share,
+prevalence, or population claims; below-threshold rows use the exact phrase
+"below the Google Trends reporting threshold under the recorded geo/window").
+Shopping-property purchase-leaning checks are not part of this read (it is
+web-search property, above) and are not relied upon until a run demonstrates
+above-threshold coverage (2026-08-06 outcome:
+inconclusive-below-threshold).
+
+Before capture, the run commission or term-derivation table must bind one exact
+subject-plus-hero-product query as the anchor and cite the source product name;
+the operator does not choose it ad hoc. Carry that exact query in every batch
+so cross-batch comparison is bridgeable. If it is unbound, record the read as
+`unresolved — anchor unbound` and do not pull. The founding anchor was "summer
+fridays lip butter balm"; it sat near the reporting threshold against category
+head terms, so the resulting bridge was weak.
 
 ## Graph-Light Contract
 

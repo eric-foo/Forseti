@@ -1,0 +1,62 @@
+{
+  "artifact_kind": "meta_ads_library_routed_browser_probe_v1",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "captured_at_utc": "2026-08-05T17:16:45.949Z",
+  "route": {
+    "surface": "Meta Ads Library public web UI",
+    "browser": "operator-connected external Chrome through the browser extension",
+    "proxy_posture": "operator_reported_decodo_extension_connected",
+    "proxy_egress_identity": "not_independently_recorded",
+    "credential_or_session_export": false
+  },
+  "positive_control": {
+    "advertiser": "Nike",
+    "requested_url": "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&view_all_page_id=15087023444&search_type=page&media_type=all",
+    "page_id": "15087023444",
+    "country_filter_visible": "United States",
+    "active_filter_visible": true,
+    "result_label_visible": "~110 results",
+    "visible_distinct_library_id_count": 29,
+    "sample_visible_library_ids": [
+      "1249043200627555",
+      "1016451784037642",
+      "1027378886582333",
+      "2152335108960644",
+      "2486211508522217",
+      "2135280564036026",
+      "1416874570502326",
+      "1058601193799457",
+      "3618910338256208",
+      "1826866092013072",
+      "1069301042186207",
+      "1684174392843424"
+    ],
+    "outcome": "POSITIVE_CONTROL_PASSED"
+  },
+  "dieux_probe": {
+    "advertiser_page_identity": "100054637651151",
+    "identity_binding_source": "docs/research/dieux_understanding_dogfood_20260805_p03/specialists/co1_official_and_source_neutral.md",
+    "requested_url": "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&view_all_page_id=100054637651151&search_type=page&media_type=all",
+    "landed_url": "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=total_impressions&sort_data[direction]=desc&view_all_page_id=100054637651151",
+    "country_filter_visible": "United States",
+    "active_filter_visible": true,
+    "exact_zero_state_visible": "No ads match your search criteria",
+    "visible_library_id_count": 0,
+    "outcome": "NO_ACTIVE_US_ADS_VISIBLE_AT_CAPTURE"
+  },
+  "adjudication": {
+    "instrument_validated_for_point_in_time_visible_inventory": true,
+    "prior_disposition": "blocked_instrument_not_validated",
+    "current_disposition": "bounded_zero_observation",
+    "authorized_claim": "At the recorded capture time, the exact Dieux page-identity route with United States, active, all-ad, all-media filters displayed 'No ads match your search criteria' and no Library IDs after the same session exposed active inventory and source-native Library IDs for the positive control.",
+    "non_claims": [
+      "No historical absence claim.",
+      "No other-market absence claim.",
+      "No inactive-ad absence claim.",
+      "No claim about creator-branded content, spend, targeting, delivery, reach, performance, or strategy.",
+      "No claim that the visible result proves the proxy's exit geography; the United States source filter was visible."
+    ]
+  },
+  "deliver_started": false
+}

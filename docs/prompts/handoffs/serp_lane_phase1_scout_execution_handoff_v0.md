@@ -133,6 +133,19 @@ target and a review axis-to-attack, not a review pass bar.
    terminal return, `CO0` invokes
    `docs/prompts/handoffs/serp_lane_phase2_native_return_execution_handoff_v0.md`
    with the combined findings.
+6. **Return the complete bounded SERP surface index.** For every sealed Phase 1
+   job, return every packet artifact ID produced by that job, including a
+   packet whose source-bearing row later proves irrelevant. Do not pre-filter
+   rows by keyword or hand only selected links to the controller. `CO0` places
+   the job-to-packet mapping in the evidence-depth ledger's
+   `serp_source_frontier`; a later semantic pass classifies every source-bearing
+   row exactly once. Also return the queue-state receipt(s) selected by the
+   terminal return that contain those successful attempts. The controller hash-pins those receipts and
+   generates the job-to-packet inventory from their successful attempts; a
+   hand-selected packet list cannot establish completeness. People-also-ask and related-search prompts are retained in
+   the packet but are not external-source rows. Each later decision must name
+   one row identity and reason; a bulk/default routed decision is not a
+   semantic disposition.
 
 ## If unsure, proceed like this
 

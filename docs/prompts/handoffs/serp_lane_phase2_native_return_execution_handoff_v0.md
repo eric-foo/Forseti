@@ -159,6 +159,19 @@ routes; it does not claim that the whole internet was searched.
    selected candidate as `used`, `captured_excluded`, `no_material_yield`,
    `blocked`, or `unavailable`; `captured` requires a native body and a final
    evidence-unit reference, never a SERP artifact alone.
+   Also return the complete job-to-packet mapping for every bounded Phase 2 and
+   product-axis search plus the Phase 2 queue-state receipt(s) selected by the
+   terminal return that contain those successful attempts. A recovery runtime
+   job may map to its sealed parent only through an explicit one-to-one alias.
+   `CO0` hash-pins those receipts and generates the Phase 2 packet membership
+   from their successful attempts; each product-axis search separately
+   reconciles to the exact packet IDs in its search record. `CO0` must semantically disposition every source-bearing
+   row as `routed`, `duplicate`, or `excluded`; relevance is decided from the
+   row's meaning, not an exact-word rule. A relevant row without a canonical
+   URL routes to one bounded locator-recovery target rather than disappearing.
+   Each decision names its row identity and reason; a bulk/default route is
+   invalid. A routed target preserves the source URL, or the deterministic
+   recovery locator when the URL is absent, and a job from that packet surface.
 6. **Seal and consolidate.** Seal through the lifecycle adapter using only the
    persisted claims and store-supplied prior receipts. Persist the decision
    receipt and lifecycle provenance. Update the typed ledger, unmet-value map

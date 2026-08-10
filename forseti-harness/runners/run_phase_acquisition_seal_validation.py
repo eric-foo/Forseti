@@ -16,6 +16,12 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from harness_utils import hash_file, sha256_bytes  # noqa: E402
+from judgment.phase_a_semantic_run import (  # noqa: E402
+    SemanticIntegrationError,
+    derive_serp_job_packet_inventory,
+    eligible_serp_source_rows,
+    load_google_serp_rows,
+)
 
 
 SEAL_VERSION = "phase_acquisition_seal_v3"
@@ -216,10 +222,251 @@ MANDATORY_ROUTE_PHASES = {
     "reddit_weekly_lake": "co3",
     "reddit_community_scout": "co3",
     "serp_phase2": "serp_phase2",
+    # Required only when the seal records route version 1.1.0 or later; it
+    # joins the required set via the conditional-route mechanism, not
+    # MANDATORY_ROUTE_IDS.
+    "campaign_evidence_integration": "campaign_integration",
+    "semantic_evidence_integration": "semantic_integration",
+}
+# Understanding Acquire & Seal route versioning (owning authority: CSB
+# playbook `understanding_acquire_seal_route`). Versioning started
+# 2026-08-07; seals sealed before that carry no stamped version and are
+# audited with --allow-preversion-route.
+UNDERSTANDING_ROUTE_VERSIONS = {
+    "1.0.0",
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+}
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.0"
+CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
+SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
+    "semantic_evidence_integration_view_v1"
+)
+SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V2 = (
+    "semantic_evidence_integration_view_v2"
+)
+SEMANTIC_EVIDENCE_METHOD_VERSION_V2 = (
+    "semantic_evidence_integration_method_v2"
+)
+SEMANTIC_EVIDENCE_METHOD_SHA256_V2 = (
+    "044e34d41f28c8a98baf0677d227703690b79765db63822808765e23778ed205"
+)
+SEMANTIC_EVIDENCE_METHOD_VERSION_V3 = (
+    "semantic_evidence_integration_method_v3"
+)
+SEMANTIC_EVIDENCE_METHOD_SHA256_V3 = (
+    "c1a3fde85acf10f6be6ad9078f0341aa7000dbddf40786261406b6fa79db3e3c"
+)
+# Historical compatibility aliases used by route-1.5 fixtures. New route
+# validation selects an explicit version tuple and never treats these as the
+# route-1.6 current method.
+CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION = SEMANTIC_EVIDENCE_METHOD_VERSION_V2
+CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 = SEMANTIC_EVIDENCE_METHOD_SHA256_V2
+SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION = (
+    SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1
+)
+_CAMPAIGN_INTEGRATION_ROUTE_ID = "campaign_evidence_integration"
+_CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+}
+_SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+# Route 1.1.0 introduced comparator closure, campaign-evidence integration,
+# conditional verification, and retailer-state accounting together, so a
+# historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
+# qualification and price/size context entered at 1.2.0 and are never
+# back-claimed onto an earlier stamped seal. 1.0.0 owes none of them.
+_ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+}
+_ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0"}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0"}
+_CAMPAIGN_SOURCE_ROLES = {
+    "owned_post",
+    "paid_ad",
+    "creator_authored",
+    "audience_comment",
+    "retailer_review",
+    "retailer_qa",
+    "community_post",
+}
+_CAMPAIGN_RELATIONSHIP_POSTURES = {
+    "owned",
+    "retailer_operated",
+    "disclosed_paid_or_affiliate",
+    "partnership_byline_observed",
+    "apparently_independent",
+    "relationship_unknown",
+}
+_CAMPAIGN_LINKAGE_POSTURES = {"direct", "inferred", "unknown"}
+_CAMPAIGN_CLUSTER_BASES = {"direct", "inferred"}
+_CAMPAIGN_CAPTURE_REQUEST_STATES = {
+    "captured",
+    "blocked",
+    "no_longer_material",
+}
+_COMPARATOR_CLOSURE_STATES = {
+    "phase_a_competitor_context_closed",
+    "blocked_open_comparator_candidates",
+}
+_COMPARATOR_DISPOSITIONS = {
+    "promoted",
+    "rejected",
+    "watch_listed",
+    "role_bounded",
+    "explicit_gap",
+}
+_COMPARATOR_PREFANOUT_POSTURES = {
+    "core_fanout",
+    "bounded_watch",
+    "rejected_before_fanout",
+}
+_COMPARATOR_PREFANOUT_ROLES = {
+    "direct_peer",
+    "value_substitute",
+    "adjacent",
+    "unresolved",
+    "non_competitor",
+}
+_COMPARATOR_PREFANOUT_SOURCE_ROLES = {
+    "reddit_community",
+    "retailer_review",
+    "creator_authored",
+    "independent_editorial",
+}
+_COMPARATOR_ACTOR_OVERLAP_POSTURES = {
+    "no_match_observed",
+    "possible_same_actor",
+    "confirmed_same_actor",
+    "unavailable",
+}
+_COMPARATOR_CHOICE_STATUSES = {"observed", "partial", "unresolved"}
+_COMPARATOR_CHOICE_POSTURES = {
+    "subject_advantage",
+    "competitor_advantage",
+    "split_or_conditional",
+    "parity_or_unresolved",
+}
+_INTELLIGENCE_CLAIM_SUPPORT_POSTURES = {
+    "isolated",
+    "directly_observed",
+    "resonance_supported",
+    "independently_repeated",
+    "cross_venue_corroborated",
+}
+_INTELLIGENCE_CLAIM_CONFLICT_POSTURES = {
+    "not_checked",
+    "none_observed",
+    "mixed",
+    "contradicted",
+}
+_INTELLIGENCE_CLAIM_SOURCE_ROLES = {
+    "owned_source",
+    "paid_ad",
+    "retailer_product",
+    "retailer_review",
+    "reddit_community",
+    "creator_authored",
+    "independent_editorial",
+    "direct_measurement",
+    "other_public_source",
+}
+_COMPARATOR_PRICE_SIZE_STATUSES = {"observed", "partial", "unavailable"}
+_COMPARATOR_SIZE_NORMALIZATION_POSTURES = {
+    "same_unit",
+    "source_normalized",
+    "not_directly_normalized",
+    "unavailable",
+}
+_COMPARATOR_LANE_KEYS = (
+    "co1_owned_ad_positioning",
+    "co2_retailer_product",
+    "co3_retailer_review",
+    "co3_reddit_community",
+    "campaign_creator_comparison",
+)
+_COMPARATOR_LANE_STATES = {"observed", "none_found", "blocked"}
+_COMPARATOR_PORTFOLIO_ROLES = {
+    "explicit_hero",
+    "likely_major",
+    "supporting",
+    "unclear",
+}
+_COMPARATOR_PORTFOLIO_ROLE_SCOPES = {"product", "franchise"}
+_COMPARATOR_PORTFOLIO_ROLE_BASES = {
+    "explicit_source",
+    "multi_source_inference",
+    "observed_position",
+    "unresolved",
+}
+_COMPARATOR_POSITION_SCOPES = {
+    "brand_portfolio",
+    "retailer_category",
+    "retailer_collection",
+    "market_list",
+}
+_COMPARATOR_FORBIDDEN_SYNTHETIC_FIELDS = {
+    "rank",
+    "overall_rank",
+    "sales_rank",
+    "market_share",
+    "sentiment_score",
+    "reddit_sentiment",
+}
+_VERIFICATION_TRIGGER_KINDS = {
+    "material_axis",
+    "contradiction",
+    "condition_or_consequence",
+    "competitor_destination",
+    "sampling_risk",
+}
+_VERIFICATION_STATUSES = {"completed", "blocked", "not_run"}
+_RETAILER_STATE_KINDS = {
+    "retailer_state_snapshot",
+    "retailer_state_change",
+    "movement_unresolved_baseline_only",
 }
 _YAML_FENCE = re.compile(r"```yaml\s*(.*?)```", re.DOTALL | re.IGNORECASE)
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
+
+
+def _is_enum_value(value: Any, allowed: set[str]) -> bool:
+    """Enum membership that survives unhashable YAML values.
+
+    A seal is operator-authored YAML, so any field can arrive as a list or
+    mapping. Bare ``value in allowed`` raises ``TypeError`` on those shapes,
+    which would crash the run instead of emitting a finding.
+    """
+    return isinstance(value, str) and value in allowed
 
 
 def validate_phase_acquisition_seal(
@@ -229,6 +476,7 @@ def validate_phase_acquisition_seal(
     allow_legacy_v2: bool = False,
     allow_legacy_consumer_v1: bool = False,
     allow_legacy_consumer_v2: bool = False,
+    allow_preversion_route: bool = False,
 ) -> list[str]:
     seal = _load_seal(seal_path)
     findings: list[str] = []
@@ -258,6 +506,32 @@ def validate_phase_acquisition_seal(
     conditional_routes = _validate_capability_preflight(
         seal, valid_pass=valid_pass, findings=findings
     )
+    route_block = seal.get("understanding_route")
+    if (
+        schema_version == SEAL_VERSION
+        and isinstance(route_block, dict)
+        and _is_enum_value(
+            route_block.get("route_version"),
+            _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS,
+        )
+    ):
+        # Campaign integration entered the route at 1.1.0 and remains a
+        # mandatory accounted job in later revisions. Historical audits retain
+        # the obligations of the version stamped on the seal.
+        conditional_routes = conditional_routes | {
+            _CAMPAIGN_INTEGRATION_ROUTE_ID
+        }
+    if (
+        schema_version == SEAL_VERSION
+        and isinstance(route_block, dict)
+        and _is_enum_value(
+            route_block.get("route_version"),
+            _SEMANTIC_INTEGRATION_ROUTE_VERSIONS,
+        )
+    ):
+        conditional_routes = conditional_routes | {
+            _SEMANTIC_INTEGRATION_ROUTE_ID
+        }
     _validate_specialist_returns(
         seal, repo_root=repo_root, findings=findings
     )
@@ -283,6 +557,13 @@ def validate_phase_acquisition_seal(
             valid_pass=valid_pass,
             allow_legacy_consumer_v1=allow_legacy_consumer_v1,
             allow_legacy_consumer_v2=allow_legacy_consumer_v2,
+            findings=findings,
+        )
+        _validate_understanding_route(
+            seal,
+            repo_root=repo_root,
+            valid_pass=valid_pass,
+            allow_preversion_route=allow_preversion_route,
             findings=findings,
         )
     continuation = seal.get("post_phase1_continuation_mode")
@@ -377,6 +658,26 @@ def _validate_understanding_evidence_depth(
     consumer_brand = (
         legacy_consumer_brand or previous_consumer_brand or current_consumer_brand
     )
+    route_version = (
+        seal.get("understanding_route", {}).get("route_version")
+        if isinstance(seal.get("understanding_route"), dict)
+        else None
+    )
+    serp_link_contract = (
+        isinstance(route_version, str)
+        and route_version in _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS
+    )
+    serp_route_job_ids: dict[str, set[str]] = {
+        "serp_phase1": set(),
+        "serp_phase2": set(),
+    }
+    for row in seal.get("route_job_accounting", []):
+        if isinstance(row, dict) and row.get("route_id") in serp_route_job_ids:
+            planned = row.get("planned_job_ids")
+            if isinstance(planned, list):
+                serp_route_job_ids[row["route_id"]] = {
+                    str(job_id) for job_id in planned
+                }
     if legacy_consumer_brand and not allow_legacy_consumer_v1:
         findings.append("legacy_consumer_v1_requires_explicit_historical_audit")
     if previous_consumer_brand and not allow_legacy_consumer_v2:
@@ -450,6 +751,8 @@ def _validate_understanding_evidence_depth(
             require_complete=valid_pass,
             current_contract=(previous_consumer_brand or current_consumer_brand),
             decision_contract=current_consumer_brand,
+            serp_link_contract=serp_link_contract,
+            serp_route_job_ids=serp_route_job_ids,
             findings=findings,
         )
     closure_complete = _validate_depth_closure(
@@ -1686,6 +1989,296 @@ def _validate_target_reconciliation(
     return targets, complete
 
 
+def _load_google_serp_rows(path: Path) -> list[Mapping[str, Any]]:
+    return load_google_serp_rows(path)
+
+
+def _eligible_serp_source_rows(
+    artifact_id: str, rows: Sequence[Mapping[str, Any]]
+) -> dict[tuple[str, str, int], Mapping[str, Any]]:
+    return eligible_serp_source_rows(artifact_id, rows)
+
+
+def _validate_serp_source_frontier(
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    targets: Mapping[str, Mapping[str, Any]],
+    phase_job_ids: Mapping[str, set[str]],
+    focused_searches: Mapping[tuple[str, str], Mapping[str, Any]],
+    findings: list[str],
+) -> bool:
+    """Require one semantic disposition for every bounded source-bearing SERP row."""
+    if not isinstance(value, dict):
+        findings.append("missing_serp_source_frontier")
+        return False
+    complete = True
+    if value.get("schema_version") != "phase_a_serp_source_frontier_v1":
+        findings.append("invalid_serp_source_frontier_version")
+        complete = False
+    if value.get("status") != "complete":
+        findings.append("incomplete_serp_source_frontier")
+        complete = False
+    if value.get("review_method") != "agent_semantic_judgment":
+        findings.append("invalid_serp_source_frontier_review_method")
+        complete = False
+    if value.get("model_api_calls") != 0:
+        findings.append("serp_source_frontier_used_model_api")
+        complete = False
+    surfaces = value.get("search_surfaces")
+    if not isinstance(surfaces, list):
+        findings.append("missing_serp_source_frontier_surfaces")
+        return False
+    observed_phase_jobs = {phase: set() for phase in phase_job_ids}
+    admitted_artifacts: set[str] = set()
+    artifact_jobs: dict[str, set[str]] = {}
+    surface_artifacts_by_job: dict[str, list[set[str]]] = {}
+    adjustment_jobs: set[str] = set()
+    for row in surfaces:
+        if not isinstance(row, dict):
+            findings.append("invalid_serp_source_frontier_surface")
+            complete = False
+            continue
+        phase = row.get("phase")
+        job_id = row.get("job_id")
+        artifact_ids = row.get("artifact_ids")
+        if phase in observed_phase_jobs:
+            if not isinstance(job_id, str) or job_id in observed_phase_jobs[phase]:
+                findings.append("invalid_or_duplicate_serp_source_frontier_job")
+                complete = False
+            else:
+                observed_phase_jobs[phase].add(job_id)
+        elif phase != "phase_a_adjustment":
+            findings.append("invalid_serp_source_frontier_phase")
+            complete = False
+        elif isinstance(job_id, str):
+            adjustment_jobs.add(job_id)
+        if (
+            not isinstance(artifact_ids, list)
+            or not artifact_ids
+            or any(
+                not isinstance(artifact_id, str) or artifact_id not in artifacts
+                for artifact_id in artifact_ids
+            )
+        ):
+            findings.append(f"invalid_serp_source_frontier_artifacts:{job_id}")
+            complete = False
+            continue
+        admitted_artifacts.update(artifact_ids)
+        if isinstance(job_id, str):
+            surface_artifacts_by_job.setdefault(job_id, []).append(set(artifact_ids))
+            for artifact_id in artifact_ids:
+                if isinstance(artifact_id, str):
+                    artifact_jobs.setdefault(artifact_id, set()).add(job_id)
+    for phase, expected in phase_job_ids.items():
+        if observed_phase_jobs[phase] != expected:
+            findings.append(f"incomplete_serp_source_frontier_jobs:{phase}")
+            complete = False
+    focused_job_ids: set[str] = set()
+    for record in focused_searches.values():
+        job_id = record.get("job_id")
+        packet_ids = record.get("serp_packet_artifact_ids")
+        if not isinstance(job_id, str) or not isinstance(packet_ids, list):
+            continue
+        focused_job_ids.add(job_id)
+        expected_packet_ids = {
+            artifact_id for artifact_id in packet_ids if isinstance(artifact_id, str)
+        }
+        matches = surface_artifacts_by_job.get(job_id, [])
+        if len(matches) != 1 or matches[0] != expected_packet_ids:
+            findings.append(f"focused_search_serp_source_surface_mismatch:{job_id}")
+            complete = False
+    if not adjustment_jobs.issubset(focused_job_ids):
+        findings.append("orphan_phase_a_adjustment_serp_source_surface")
+        complete = False
+
+    packet_ids_by_path: dict[Path, str] = {}
+    for artifact_id in sorted(admitted_artifacts):
+        if artifact_id not in artifacts:
+            continue
+        packet_path = artifacts[artifact_id].resolve()
+        owner = packet_ids_by_path.setdefault(packet_path, artifact_id)
+        if owner != artifact_id:
+            findings.append(
+                "serp_source_frontier_packet_file_has_multiple_artifact_ids:"
+                f"{owner}:{artifact_id}"
+            )
+            complete = False
+
+    producer_states = value.get("producer_queue_states")
+    declared_inventory = value.get("producer_job_packet_inventory")
+    inventory_sha256 = value.get("producer_job_packet_inventory_sha256")
+    if not isinstance(producer_states, list) or not isinstance(declared_inventory, list):
+        findings.append("missing_serp_producer_job_packet_inventory")
+        complete = False
+    else:
+        observed_bindings: list[tuple[str, str, Path, Mapping[str, str]]] = []
+        seen_receipts: set[str] = set()
+        for row in producer_states:
+            if not isinstance(row, Mapping):
+                findings.append("invalid_serp_producer_queue_state")
+                complete = False
+                continue
+            phase = row.get("phase")
+            artifact_id = row.get("artifact_id")
+            # A registered receipt whose bytes are unreadable is a finding, not
+            # a traceback that would suppress every remaining seal finding.
+            try:
+                observed_sha256 = (
+                    hash_file(artifacts[artifact_id])
+                    if isinstance(artifact_id, str) and artifact_id in artifacts
+                    else None
+                )
+            except OSError:
+                observed_sha256 = None
+            if (
+                phase not in {"serp_phase1", "serp_phase2"}
+                or not isinstance(artifact_id, str)
+                or artifact_id in seen_receipts
+                or artifact_id not in artifacts
+                or row.get("raw_sha256") != observed_sha256
+            ):
+                findings.append(f"invalid_serp_producer_queue_state:{artifact_id}")
+                complete = False
+                continue
+            seen_receipts.add(artifact_id)
+            aliases = row.get("job_id_aliases", {})
+            if not isinstance(aliases, Mapping) or any(
+                not isinstance(key, str)
+                or not key.strip()
+                or not isinstance(target, str)
+                or not target.strip()
+                for key, target in aliases.items()
+            ):
+                findings.append(f"invalid_serp_producer_job_aliases:{artifact_id}")
+                complete = False
+                continue
+            observed_bindings.append(
+                (phase, artifact_id, artifacts[artifact_id], aliases)
+            )
+        try:
+            observed_inventory = derive_serp_job_packet_inventory(
+                search_surfaces=surfaces,
+                packet_artifact_paths=artifacts,
+                queue_state_bindings=observed_bindings,
+            )
+        except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:
+            findings.append(
+                f"invalid_serp_producer_job_packet_inventory:{type(exc).__name__}"
+            )
+            complete = False
+        else:
+            canonical = json.dumps(
+                declared_inventory,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+            if inventory_sha256 != sha256_bytes(canonical):
+                findings.append("stale_serp_producer_job_packet_inventory_hash")
+                complete = False
+            if observed_inventory != declared_inventory:
+                findings.append("serp_producer_job_packet_inventory_mismatch")
+                complete = False
+    eligible: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for artifact_id in sorted(admitted_artifacts):
+        try:
+            artifact_rows = _eligible_serp_source_rows(
+                artifact_id, _load_google_serp_rows(artifacts[artifact_id])
+            )
+        except (OSError, ValueError, json.JSONDecodeError, SemanticIntegrationError) as exc:
+            findings.append(
+                f"invalid_serp_source_frontier_artifact:{artifact_id}:{type(exc).__name__}"
+            )
+            complete = False
+            continue
+        overlap = set(eligible).intersection(artifact_rows)
+        if overlap:
+            findings.append("duplicate_serp_source_frontier_row_identity")
+            complete = False
+        eligible.update(artifact_rows)
+    classifications = value.get("row_classifications")
+    if not isinstance(classifications, list):
+        findings.append("missing_serp_source_frontier_classifications")
+        return False
+    classified: dict[tuple[str, str, int], Mapping[str, Any]] = {}
+    for row in classifications:
+        if not isinstance(row, dict):
+            findings.append("invalid_serp_source_frontier_classification")
+            complete = False
+            continue
+        key = (row.get("artifact_id"), row.get("module_type"), row.get("order_in_module"))
+        if key in classified:
+            findings.append("duplicate_serp_source_frontier_classification")
+            complete = False
+            continue
+        classified[key] = row
+        disposition = row.get("disposition")
+        if disposition not in {"routed", "duplicate", "excluded"}:
+            findings.append("invalid_serp_source_frontier_disposition")
+            complete = False
+        if not str(row.get("reason", "")).strip():
+            findings.append("missing_serp_source_frontier_reason")
+            complete = False
+        if disposition == "routed":
+            target = targets.get(row.get("target_id"))
+            if target is None:
+                findings.append("unresolved_serp_source_frontier_target")
+                complete = False
+            else:
+                source_row = eligible.get(key)
+                expected_locator = (
+                    source_row.get("canonical_url")
+                    if isinstance(source_row, Mapping)
+                    and isinstance(source_row.get("canonical_url"), str)
+                    and source_row["canonical_url"].strip()
+                    else f"serp-locator-recovery:{key[0]}:{key[1]}:{key[2]}"
+                )
+                if target.get("locator") != expected_locator:
+                    findings.append("serp_source_frontier_target_locator_mismatch")
+                    complete = False
+                if target.get("discovered_by_job_id") not in artifact_jobs.get(key[0], set()):
+                    findings.append("serp_source_frontier_target_job_mismatch")
+                    complete = False
+        if disposition == "duplicate":
+            duplicate = row.get("duplicate_of")
+            if not isinstance(duplicate, dict):
+                findings.append("invalid_serp_source_frontier_duplicate")
+                complete = False
+            else:
+                owner_key = (
+                    duplicate.get("artifact_id"),
+                    duplicate.get("module_type"),
+                    duplicate.get("order_in_module"),
+                )
+                owner = classified.get(owner_key)
+                if owner is None:
+                    # Forward references are checked after the index is built.
+                    pass
+        if disposition != "routed" and row.get("target_id") is not None:
+            findings.append("nonrouted_serp_row_has_target")
+            complete = False
+    if set(classified) != set(eligible):
+        findings.append("serp_source_frontier_row_set_mismatch")
+        complete = False
+    for row in classifications:
+        if not isinstance(row, dict) or row.get("disposition") != "duplicate":
+            continue
+        duplicate = row.get("duplicate_of")
+        if isinstance(duplicate, dict):
+            owner = classified.get(
+                (
+                    duplicate.get("artifact_id"),
+                    duplicate.get("module_type"),
+                    duplicate.get("order_in_module"),
+                )
+            )
+            if owner is None or owner.get("disposition") != "routed":
+                findings.append("serp_source_frontier_duplicate_lacks_routed_owner")
+                complete = False
+    return complete
+
+
 def _validate_focused_search_jobs(
     axis: Mapping[str, Any],
     *,
@@ -1841,6 +2434,8 @@ def _validate_consumer_brand_product_axes(
     require_complete: bool,
     current_contract: bool,
     decision_contract: bool,
+    serp_link_contract: bool,
+    serp_route_job_ids: Mapping[str, set[str]],
     findings: list[str],
 ) -> bool:
     axes = ledger.get("product_axes")
@@ -2009,6 +2604,18 @@ def _validate_consumer_brand_product_axes(
             and searches_complete
             and targets_complete
         )
+        if serp_link_contract:
+            complete = (
+                _validate_serp_source_frontier(
+                    ledger.get("serp_source_frontier"),
+                    artifacts=artifacts,
+                    targets=targets,
+                    phase_job_ids=serp_route_job_ids,
+                    focused_searches=search_jobs,
+                    findings=findings,
+                )
+                and complete
+            )
     for axis_id, axis in axis_rows.items():
         refs = axis.get("support_refs")
         family_origins: dict[str, set[str]] = {}
@@ -2193,7 +2800,25 @@ def _validate_consumer_brand_product_axes(
                         )
                         complete = False
                 if closure_basis == "evidence_supported":
-                    if "counterevidence" not in decision_roles:
+                    absence_marker = usefulness.get(
+                        "counterevidence_absent_verified"
+                    )
+                    if absence_marker not in (None, True):
+                        findings.append(
+                            "invalid_product_axis_counterevidence_absence_marker"
+                            f":{axis_id}"
+                        )
+                        complete = False
+                    if absence_marker is True and "counterevidence" in decision_roles:
+                        findings.append(
+                            "contradictory_counterevidence_absence_marker"
+                            f":{axis_id}"
+                        )
+                        complete = False
+                    if (
+                        "counterevidence" not in decision_roles
+                        and absence_marker is not True
+                    ):
                         findings.append(
                             f"missing_product_axis_counterevidence_ref:{axis_id}"
                         )
@@ -3631,6 +4256,2107 @@ def _validate_resume_contract(
         )
 
 
+def _validate_understanding_route(
+    seal: Mapping[str, Any],
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    allow_preversion_route: bool,
+    findings: list[str],
+) -> None:
+    """Enforce the seal-recorded route version and its current obligations.
+
+    Shape checks only: relationship interpretation, campaign clustering, and
+    competitor directness remain evidence-backed judgment.
+    """
+    route = seal.get("understanding_route")
+    if not isinstance(route, dict) or not route.get("route_version"):
+        if not allow_preversion_route:
+            findings.append("missing_understanding_route_version")
+        return
+    version = route.get("route_version")
+    if not _is_enum_value(version, UNDERSTANDING_ROUTE_VERSIONS):
+        findings.append("invalid_understanding_route_version")
+        return
+    if version != CURRENT_UNDERSTANDING_ROUTE_VERSION:
+        # Like the legacy seal and ledger switches, reading an older recorded
+        # route is an explicit historical audit, never a flag-free
+        # current-contract pass.
+        if not allow_preversion_route:
+            findings.append(
+                "noncurrent_route_version_requires_explicit_historical_audit"
+            )
+            return
+    if version not in _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS:
+        # Pre-1.1.0 routes carried none of the obligations below.
+        return
+    # An authorized historical audit still enforces the obligations the
+    # stamped version itself carried; later-version obligations are gated
+    # per-check below and are never back-claimed onto an older seal.
+    rows = seal.get("route_job_accounting")
+    if isinstance(rows, list):
+        campaign_row = next(
+            (
+                item
+                for item in rows
+                if isinstance(item, dict)
+                and item.get("route_id") == _CAMPAIGN_INTEGRATION_ROUTE_ID
+            ),
+            None,
+        )
+        # Presence, phase, required-flag, and completion accounting flow
+        # through the mandatory-route machinery via conditional_routes; the
+        # integration row must additionally be material so blocked jobs
+        # cannot ride a non-material waiver into a passing seal.
+        if campaign_row is not None and campaign_row.get("material") is not True:
+            findings.append("campaign_integration_route_not_material")
+    proposition_index: dict[str, Mapping[str, Any]] = {}
+    if version in _ROUTE_REVISION_1_4_OBLIGATION_VERSIONS:
+        proposition_index = _validate_semantic_evidence_integration(
+            route.get("semantic_evidence_integration"),
+            seal=seal,
+            repo_root=repo_root,
+            valid_pass=valid_pass,
+            route_version=version,
+            findings=findings,
+        )
+        if isinstance(rows, list):
+            semantic_row = next(
+                (
+                    item
+                    for item in rows
+                    if isinstance(item, dict)
+                    and item.get("route_id") == _SEMANTIC_INTEGRATION_ROUTE_ID
+                ),
+                None,
+            )
+            if semantic_row is not None and semantic_row.get("material") is not True:
+                findings.append("semantic_integration_route_not_material")
+    _validate_comparator_closure(
+        route.get("comparator_closure"),
+        repo_root=repo_root,
+        valid_pass=valid_pass,
+        route_version=version,
+        proposition_index=proposition_index,
+        findings=findings,
+    )
+    _validate_campaign_integration(
+        route.get("campaign_evidence_integration"),
+        seal=seal,
+        repo_root=repo_root,
+        valid_pass=valid_pass,
+        findings=findings,
+    )
+    _validate_verification_requests(
+        route.get("verification_requests"),
+        repo_root=repo_root,
+        valid_pass=valid_pass,
+        findings=findings,
+    )
+    _validate_retailer_state_accounting(
+        route.get("retailer_state_accounting"), findings=findings
+    )
+
+
+def _validate_semantic_evidence_integration(
+    value: Any,
+    *,
+    seal: Mapping[str, Any],
+    repo_root: Path,
+    valid_pass: bool,
+    route_version: str,
+    findings: list[str],
+) -> dict[str, Mapping[str, Any]]:
+    """Verify the route-1.4 bridge without re-performing semantic judgment."""
+    if not isinstance(value, dict):
+        findings.append("missing_semantic_evidence_integration")
+        return {}
+    status = value.get("status")
+    if status not in {"completed", "blocked"}:
+        findings.append("invalid_semantic_evidence_integration_status")
+        return {}
+    if status == "blocked":
+        if not isinstance(value.get("gap_reason"), str) or not value.get("gap_reason"):
+            findings.append("blocked_semantic_integration_without_gap_reason")
+        if valid_pass:
+            findings.append("passing_seal_without_semantic_evidence_integration")
+        return {}
+    unresolved_material = value.get("unresolved_material_evidence_ids")
+    if not isinstance(unresolved_material, list) or any(
+        not isinstance(item, str) or not item for item in unresolved_material
+    ):
+        findings.append("invalid_semantic_integration_unresolved_material_evidence")
+        unresolved_material = []
+    if valid_pass and unresolved_material:
+        findings.append("passing_seal_with_unresolved_material_semantic_evidence")
+    view_ref = value.get("view")
+    if not isinstance(view_ref, dict):
+        findings.append("missing_semantic_integration_view")
+        return {}
+    before = len(findings)
+    _verify_artifact(
+        view_ref.get("locator"),
+        view_ref.get("sha256"),
+        repo_root=repo_root,
+        code="semantic_integration_view",
+        findings=findings,
+    )
+    if len(findings) != before:
+        return {}
+    locator = Path(view_ref["locator"])
+    path = locator if locator.is_absolute() else repo_root / locator
+    try:
+        view = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        findings.append("invalid_semantic_integration_view_json")
+        return {}
+    if not isinstance(view, dict):
+        findings.append("invalid_semantic_integration_view")
+        return {}
+    expected_view_version = (
+        SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V2
+        if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS
+        else SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1
+    )
+    if view.get("schema_version") != expected_view_version:
+        findings.append("invalid_semantic_integration_view_version")
+    if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+        expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V3
+        expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V3
+    elif route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS:
+        expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V2
+        expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V2
+    else:
+        expected_method_version = None
+        expected_method_hash = None
+    if expected_method_version is not None and view.get("method_version") != expected_method_version:
+        findings.append("invalid_semantic_integration_method_version")
+    if expected_method_hash is not None and view.get("method_sha256") != expected_method_hash:
+        findings.append("invalid_semantic_integration_method_hash")
+    for field in ("bundle_sha256", "corpus_sha256", "method_sha256"):
+        if not isinstance(view.get(field), str) or not _DIGEST.fullmatch(
+            view[field].casefold()
+        ):
+            findings.append(f"invalid_semantic_integration_{field}")
+    expected_corpus = value.get("corpus_sha256")
+    if not isinstance(expected_corpus, str) or expected_corpus != view.get("corpus_sha256"):
+        findings.append("semantic_integration_corpus_hash_mismatch")
+    internal_hash = view.get("view_sha256")
+    core = {key: item for key, item in view.items() if key != "view_sha256"}
+    observed_internal = sha256_bytes(
+        json.dumps(
+            core,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    )
+    if internal_hash != observed_internal:
+        findings.append("semantic_integration_internal_hash_mismatch")
+    coverage = view.get("coverage")
+    # Disclosed container postures are the only independent statement of which
+    # containers exist and what type each one is, so keep them for the
+    # evidence-stack container checks below.
+    envelope_container_types: dict[str, str] | None = None
+    if not isinstance(coverage, dict):
+        findings.append("missing_semantic_integration_coverage")
+    elif route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+        if view.get("corpus_profile") != "phase_a_final_acquisition":
+            findings.append("invalid_semantic_integration_corpus_profile")
+        count_fields = (
+            "captured_item_count",
+            "semantically_assessed_item_count",
+            "mechanically_excluded_item_count",
+            "blocked_item_count",
+            "accounted_item_count",
+            "captured_container_count",
+        )
+        counts = {field: coverage.get(field) for field in count_fields}
+        if any(
+            not isinstance(value, int) or isinstance(value, bool) or value < 0
+            for value in counts.values()
+        ):
+            findings.append("invalid_semantic_integration_full_corpus_counts")
+        elif (
+            counts["captured_item_count"] < 1
+            or counts["captured_container_count"] < 1
+            or counts["accounted_item_count"]
+            != counts["semantically_assessed_item_count"]
+            + counts["mechanically_excluded_item_count"]
+            + counts["blocked_item_count"]
+            or counts["accounted_item_count"] != counts["captured_item_count"]
+            or counts["blocked_item_count"] != 0
+            or coverage.get("complete") is not True
+        ):
+            findings.append("incomplete_semantic_integration_coverage")
+        if valid_pass and isinstance(counts.get("blocked_item_count"), int) and counts[
+            "blocked_item_count"
+        ]:
+            findings.append("passing_seal_with_blocked_semantic_corpus_items")
+        unresolved_view = coverage.get("unresolved_evidence_ids")
+        if not isinstance(unresolved_view, list) or any(
+            not isinstance(item, str) or not item for item in unresolved_view
+        ):
+            findings.append("invalid_semantic_integration_unresolved_evidence_ids")
+            unresolved_view = []
+        if set(unresolved_material) - set(unresolved_view):
+            findings.append("semantic_integration_unresolved_material_not_in_view")
+        envelopes = view.get("capture_envelopes")
+        if not isinstance(envelopes, list) or len(envelopes) != counts.get(
+            "captured_container_count"
+        ):
+            findings.append("invalid_semantic_integration_capture_envelopes")
+        else:
+            envelope_ids: set[str] = set()
+            envelope_leaf_total = 0
+            for envelope in envelopes:
+                if not isinstance(envelope, dict):
+                    findings.append("invalid_semantic_integration_capture_envelope")
+                    continue
+                container_id = envelope.get("container_id")
+                captured = envelope.get("captured_leaf_count")
+                visible = envelope.get("source_visible_total")
+                if (
+                    not isinstance(container_id, str)
+                    or not container_id
+                    or container_id in envelope_ids
+                    or not isinstance(envelope.get("container_type"), str)
+                    or not envelope["container_type"]
+                    or envelope.get("completeness")
+                    not in {"complete", "partial", "unavailable"}
+                    or not isinstance(envelope.get("capture_boundary"), str)
+                    or not envelope["capture_boundary"]
+                    or not isinstance(captured, int)
+                    or isinstance(captured, bool)
+                    or captured < 1
+                    or (
+                        visible != "unavailable"
+                        and (
+                            not isinstance(visible, int)
+                            or isinstance(visible, bool)
+                            or visible < captured
+                        )
+                    )
+                ):
+                    findings.append("invalid_semantic_integration_capture_envelope")
+                else:
+                    envelope_ids.add(container_id)
+                    envelope_leaf_total += captured
+            # Container accounting is exact only when the disclosed envelopes
+            # carry the same leaves the corpus counts declare.
+            if len(envelope_ids) == len(envelopes) and envelope_leaf_total != counts.get(
+                "captured_item_count"
+            ):
+                findings.append("semantic_integration_capture_envelope_leaf_mismatch")
+            if len(envelope_ids) == len(envelopes):
+                envelope_container_types = {
+                    envelope["container_id"]: envelope["container_type"]
+                    for envelope in envelopes
+                }
+    else:
+        admitted = coverage.get("admitted_evidence_unit_count")
+        accounted = coverage.get("accounted_evidence_unit_count")
+        if (
+            not isinstance(admitted, int)
+            or isinstance(admitted, bool)
+            or admitted < 1
+            or not isinstance(accounted, int)
+            or isinstance(accounted, bool)
+            or accounted != admitted
+            or coverage.get("complete") is not True
+        ):
+            findings.append("incomplete_semantic_integration_coverage")
+        unresolved_view = coverage.get("unresolved_evidence_ids")
+        if not isinstance(unresolved_view, list) or any(
+            not isinstance(item, str) or not item for item in unresolved_view
+        ):
+            findings.append("invalid_semantic_integration_unresolved_evidence_ids")
+            unresolved_view = []
+        # The seal's materiality claim may only reference evidence the view
+        # actually left unresolved; anything else is a stale or invented id.
+        if set(unresolved_material) - set(unresolved_view):
+            findings.append("semantic_integration_unresolved_material_not_in_view")
+    emerging = view.get("emerging_axis_candidates")
+    if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+        if not isinstance(emerging, list):
+            findings.append("invalid_semantic_integration_emerging_axes")
+            emerging = []
+        candidate_keys: set[str] = set()
+        for row in emerging:
+            if (
+                not isinstance(row, dict)
+                or not isinstance(row.get("candidate_key"), str)
+                or not row["candidate_key"]
+                or row["candidate_key"] in candidate_keys
+                or not isinstance(row.get("canonical_label"), str)
+                or not row["canonical_label"]
+                or not isinstance(row.get("original_labels"), list)
+                or not row["original_labels"]
+                or any(
+                    not isinstance(label, str) or not label
+                    for label in row["original_labels"]
+                )
+                or row.get("disposition") not in {"accepted", "nonmaterial", "blocker"}
+            ):
+                findings.append("invalid_semantic_integration_emerging_axis_candidate")
+                continue
+            candidate_keys.add(row["candidate_key"])
+            if valid_pass and row["disposition"] == "blocker":
+                findings.append(
+                    f"passing_seal_with_blocked_emerging_axis:{row['candidate_key']}"
+                )
+    elif not isinstance(emerging, list) or any(
+        not isinstance(item, str) or not item for item in emerging
+    ):
+        findings.append("invalid_semantic_integration_emerging_axes")
+        emerging = []
+    dispositions = value.get("emerging_axis_dispositions", [])
+    if route_version not in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS and emerging:
+        if not isinstance(dispositions, list):
+            findings.append("missing_semantic_integration_emerging_axis_dispositions")
+        else:
+            labels = [
+                row.get("label")
+                for row in dispositions
+                if isinstance(row, dict) and isinstance(row.get("label"), str)
+            ]
+            if len(labels) != len(set(labels)):
+                findings.append(
+                    "duplicate_semantic_integration_emerging_axis_disposition"
+                )
+            by_label = {
+                row.get("label"): row
+                for row in dispositions
+                if isinstance(row, dict) and isinstance(row.get("label"), str)
+            }
+            if set(by_label) != set(emerging):
+                findings.append("semantic_integration_emerging_axis_disposition_mismatch")
+            for label, row in by_label.items():
+                if row.get("status") not in {
+                    "integrated_nonmaterial",
+                    "axis_inventory_reconciled",
+                    "blocked_material",
+                }:
+                    findings.append(
+                        f"invalid_semantic_integration_emerging_axis_disposition:{label}"
+                    )
+                if valid_pass and row.get("status") == "blocked_material":
+                    findings.append(
+                        f"passing_seal_with_blocked_emerging_axis:{label}"
+                    )
+    propositions = view.get("propositions")
+    if not isinstance(propositions, list):
+        findings.append("invalid_semantic_integration_propositions")
+        return {}
+    index: dict[str, Mapping[str, Any]] = {}
+    competence = {
+        "customer_experience": {"community_post", "retailer_review", "audience_comment"},
+        "reported_behavior": {"community_post", "retailer_review", "audience_comment"},
+        "observable_fact": {"retailer_product", "editorial", "measured_test", "owned_source"},
+        "actor_strategy": {"creator_authored", "owned_source", "paid_ad"},
+    }
+    for proposition in propositions:
+        if not isinstance(proposition, dict):
+            findings.append("invalid_semantic_integration_proposition")
+            continue
+        proposition_id = proposition.get("proposition_id")
+        if not isinstance(proposition_id, str) or not proposition_id or proposition_id in index:
+            findings.append("invalid_or_duplicate_semantic_integration_proposition_id")
+            continue
+        index[proposition_id] = proposition
+        axis_ids = proposition.get("axis_ids")
+        if not isinstance(axis_ids, list) or any(
+            not isinstance(axis_id, str) or not axis_id for axis_id in axis_ids
+        ):
+            findings.append(f"invalid_semantic_integration_proposition_axes:{proposition_id}")
+        for product_field in ("subject_product_ids", "comparator_product_ids"):
+            product_ids = proposition.get(product_field)
+            if not isinstance(product_ids, list) or any(
+                not isinstance(product_id, str) or not product_id
+                for product_id in product_ids
+            ):
+                findings.append(
+                    "invalid_semantic_integration_proposition_products:"
+                    + f"{proposition_id}:{product_field}"
+                )
+        support = proposition.get("claim_support")
+        if not isinstance(support, dict):
+            findings.append(f"missing_semantic_integration_claim_support:{proposition_id}")
+            continue
+        roles = support.get("source_roles")
+        kind = proposition.get("claim_kind")
+        if kind not in competence or not isinstance(roles, list) or not roles:
+            findings.append(f"invalid_semantic_integration_source_roles:{proposition_id}")
+        elif set(roles) - competence[kind]:
+            findings.append(f"incompetent_semantic_integration_source_role:{proposition_id}")
+        evidence_refs = support.get("evidence_refs")
+        if not isinstance(evidence_refs, list) or not evidence_refs or any(
+            not isinstance(ref, str) or not ref for ref in evidence_refs
+        ):
+            findings.append(f"missing_semantic_integration_evidence_refs:{proposition_id}")
+        counter_refs = support.get("counterevidence_refs")
+        if not isinstance(counter_refs, list) or any(
+            not isinstance(ref, str) or not ref for ref in counter_refs
+        ):
+            findings.append(f"invalid_semantic_integration_counterevidence:{proposition_id}")
+            counter_refs = []
+        conflict = support.get("conflict_posture")
+        if conflict in {"mixed", "contradicted"} and not counter_refs:
+            findings.append(f"semantic_integration_conflict_without_counterevidence:{proposition_id}")
+        posture = support.get("support_posture")
+        origins = support.get("independent_origin_count")
+        if posture in {"independently_repeated", "cross_venue_corroborated"} and (
+            not isinstance(origins, int)
+            or isinstance(origins, bool)
+            or origins < 2
+        ):
+            findings.append(f"semantic_integration_repetition_without_two_origins:{proposition_id}")
+        if posture == "cross_venue_corroborated" and len(set(roles or [])) < 2:
+            findings.append(f"semantic_integration_cross_venue_without_two_roles:{proposition_id}")
+        if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+            stack = proposition.get("evidence_stack")
+            if not isinstance(stack, dict):
+                findings.append(f"missing_semantic_integration_evidence_stack:{proposition_id}")
+            else:
+                for field in (
+                    "support_semantic_unit_count",
+                    "support_evidence_item_count",
+                    "support_container_count",
+                    "counter_evidence_item_count",
+                    "independent_origin_count",
+                    "source_role_count",
+                    "engagement_evidence_count",
+                ):
+                    count = stack.get(field)
+                    if not isinstance(count, int) or isinstance(count, bool) or count < 0:
+                        findings.append(
+                            f"invalid_semantic_integration_evidence_stack:{proposition_id}:{field}"
+                        )
+                _check_evidence_stack_dimensions(
+                    stack,
+                    proposition=proposition,
+                    support=support,
+                    proposition_id=proposition_id,
+                    container_types=envelope_container_types,
+                    findings=findings,
+                )
+    return index
+
+
+def _stack_id_list(value: Any) -> list[str] | None:
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item for item in value
+    ):
+        return None
+    return value
+
+
+def _check_evidence_stack_dimensions(
+    stack: Mapping[str, Any],
+    *,
+    proposition: Mapping[str, Any],
+    support: Mapping[str, Any],
+    proposition_id: str,
+    container_types: Mapping[str, str] | None,
+    findings: list[str],
+) -> None:
+    """Bind each route-1.6 stack dimension to the block it claims to count.
+
+    Evidence items, containers, independent origins, roles, and engagement are
+    separate dimensions, so an untethered count could inflate one of them into
+    another without contradicting any other seal check.
+    """
+    relations = proposition.get("semantic_relations")
+    support_units = (
+        _stack_id_list(relations.get("support"))
+        if isinstance(relations, Mapping)
+        else None
+    )
+    expected: dict[str, int] = {}
+    if support_units is not None:
+        expected["support_semantic_unit_count"] = len(set(support_units))
+    for field, source in (
+        ("support_evidence_item_count", support.get("evidence_refs")),
+        ("counter_evidence_item_count", support.get("counterevidence_refs")),
+        ("source_role_count", support.get("source_roles")),
+        ("engagement_evidence_count", support.get("engagement_evidence_refs")),
+    ):
+        values = _stack_id_list(source)
+        if values is not None:
+            expected[field] = len(set(values))
+    origins = support.get("independent_origin_count")
+    if isinstance(origins, int) and not isinstance(origins, bool):
+        expected["independent_origin_count"] = origins
+    for field, value in expected.items():
+        if stack.get(field) != value:
+            findings.append(
+                f"semantic_integration_evidence_stack_mismatch:{proposition_id}:{field}"
+            )
+    support_containers = _stack_id_list(stack.get("support_container_ids"))
+    counter_containers = _stack_id_list(stack.get("counter_container_ids"))
+    mixed_containers = _stack_id_list(stack.get("mixed_container_ids"))
+    if support_containers is None or counter_containers is None or mixed_containers is None:
+        findings.append(
+            f"invalid_semantic_integration_container_ids:{proposition_id}"
+        )
+        return
+    if stack.get("support_container_count") != len(set(support_containers)):
+        findings.append(
+            "semantic_integration_evidence_stack_mismatch:"
+            + f"{proposition_id}:support_container_count"
+        )
+    # One evidence item sits in exactly one container, so containers can never
+    # outnumber the supporting evidence items they were drawn from.
+    item_count = stack.get("support_evidence_item_count")
+    if isinstance(item_count, int) and not isinstance(item_count, bool) and len(
+        set(support_containers)
+    ) > item_count:
+        findings.append(
+            f"semantic_integration_containers_exceed_evidence_items:{proposition_id}"
+        )
+    if set(mixed_containers) != set(support_containers) & set(counter_containers):
+        findings.append(
+            f"semantic_integration_mixed_container_mismatch:{proposition_id}"
+        )
+    # A stack may only cite containers the capture envelopes disclose, and its
+    # per-type breakdown is a restatement of those same containers. Left
+    # untethered, either one could assert breadth -- more containers, or a more
+    # independent container type -- that the disclosed corpus never captured.
+    by_type = stack.get("support_container_counts_by_type")
+    if not isinstance(by_type, Mapping) or any(
+        not isinstance(name, str)
+        or not name
+        or not isinstance(count, int)
+        or isinstance(count, bool)
+        or count < 1
+        for name, count in by_type.items()
+    ):
+        findings.append(
+            f"invalid_semantic_integration_container_type_counts:{proposition_id}"
+        )
+        return
+    if container_types is None:
+        return
+    cited = set(support_containers) | set(counter_containers)
+    if cited - set(container_types):
+        findings.append(
+            f"semantic_integration_container_not_in_capture_envelopes:{proposition_id}"
+        )
+        return
+    expected_by_type: dict[str, int] = {}
+    for container_id in set(support_containers):
+        name = container_types[container_id]
+        expected_by_type[name] = expected_by_type.get(name, 0) + 1
+    if dict(by_type) != expected_by_type:
+        findings.append(
+            f"semantic_integration_container_type_count_mismatch:{proposition_id}"
+        )
+
+
+def _forbidden_synthetic_keys(
+    value: Any, *, exempt: frozenset[str] = frozenset()
+) -> set[str]:
+    """Recursively collect forbidden synthetic-conclusion field names.
+
+    ``exempt`` names are permitted at the top level of ``value`` only (the
+    source-local ``rank`` inside one observed position); nested shapes never
+    inherit the exemption, so a renested rank/share field cannot bypass the
+    source-local limitation.
+    """
+    found: set[str] = set()
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            if (
+                key in _COMPARATOR_FORBIDDEN_SYNTHETIC_FIELDS
+                and key not in exempt
+            ):
+                found.add(key)
+            found |= _forbidden_synthetic_keys(nested)
+    elif isinstance(value, list):
+        for item in value:
+            found |= _forbidden_synthetic_keys(item)
+    return found
+
+
+def _validate_comparator_prefanout_qualification(
+    row: Mapping[str, Any],
+    *,
+    candidate_id: str,
+    route_version: str,
+    findings: list[str],
+) -> None:
+    qualification = row.get("prefanout_qualification")
+    if not isinstance(qualification, dict):
+        findings.append(
+            f"missing_comparator_prefanout_qualification:{candidate_id}"
+        )
+        return
+
+    posture = qualification.get("posture")
+    if not _is_enum_value(posture, _COMPARATOR_PREFANOUT_POSTURES):
+        findings.append(f"invalid_comparator_prefanout_posture:{candidate_id}")
+    comparator_role = qualification.get("comparator_role")
+    if not _is_enum_value(comparator_role, _COMPARATOR_PREFANOUT_ROLES):
+        findings.append(f"invalid_comparator_prefanout_role:{candidate_id}")
+
+    # Every frame row points to the open-comparator SERP observation that
+    # surfaced it, so discovery provenance survives a weaker posture too.
+    search_refs = qualification.get("open_comparator_search_refs")
+    if (
+        not isinstance(search_refs, list)
+        or not search_refs
+        or any(not isinstance(ref, str) or not ref for ref in search_refs)
+    ):
+        findings.append(
+            "invalid_comparator_prefanout_open_comparator_search:"
+            + candidate_id
+        )
+
+    # Identity evidence is typed per product: an untyped list cannot show that
+    # both named products were bound, because two refs to the same product
+    # would satisfy a bar that names both.
+    identity_evidence = qualification.get("identity_evidence_refs")
+    identity_sides: dict[str, list[str]] = {}
+    if not isinstance(identity_evidence, dict):
+        findings.append(
+            f"invalid_comparator_prefanout_identity_evidence:{candidate_id}"
+        )
+    else:
+        for side in ("subject", "competitor"):
+            refs = identity_evidence.get(side)
+            if not isinstance(refs, list) or any(
+                not isinstance(ref, str) or not ref for ref in refs
+            ):
+                findings.append(
+                    "invalid_comparator_prefanout_identity_evidence:"
+                    + f"{candidate_id}:{side}"
+                )
+                continue
+            identity_sides[side] = list(refs)
+
+    origins = qualification.get("independent_comparison_origins")
+    valid_origin_keys: set[str] = set()
+    valid_source_roles: set[str] = set()
+    credited_origin_evidence: set[str] = set()
+    public_actor_keys: set[str] = set()
+    identity_check_required = (
+        route_version in _ROUTE_REVISION_1_3_OBLIGATION_VERSIONS
+    )
+    if not isinstance(origins, list):
+        findings.append(f"invalid_comparator_prefanout_origins:{candidate_id}")
+        origins = []
+    for origin in origins:
+        if not isinstance(origin, dict):
+            findings.append(f"invalid_comparator_prefanout_origin:{candidate_id}")
+            continue
+        origin_key = origin.get("origin_key")
+        valid_origin_key = isinstance(origin_key, str) and bool(origin_key)
+        if not valid_origin_key:
+            findings.append(
+                f"missing_comparator_prefanout_origin_key:{candidate_id}"
+            )
+        elif origin_key in valid_origin_keys:
+            findings.append(
+                f"duplicate_comparator_prefanout_origin_key:{candidate_id}"
+            )
+        else:
+            valid_origin_keys.add(origin_key)
+        source_role = origin.get("source_role")
+        valid_source_role = _is_enum_value(
+            source_role, _COMPARATOR_PREFANOUT_SOURCE_ROLES
+        )
+        if not valid_source_role:
+            findings.append(
+                f"invalid_comparator_prefanout_source_role:{candidate_id}"
+            )
+        identity_credited = True
+        if identity_check_required:
+            public_actor_key = origin.get("public_actor_key")
+            overlap_posture = origin.get("identity_overlap_posture")
+            normalized_actor_key = (
+                public_actor_key.strip().casefold()
+                if isinstance(public_actor_key, str)
+                else ""
+            )
+            valid_public_actor_key = (
+                bool(normalized_actor_key)
+                and normalized_actor_key != "unavailable"
+            )
+            if not isinstance(public_actor_key, str) or not public_actor_key:
+                findings.append(
+                    "missing_comparator_prefanout_public_actor_key:"
+                    + candidate_id
+                )
+            if not _is_enum_value(
+                overlap_posture, _COMPARATOR_ACTOR_OVERLAP_POSTURES
+            ):
+                findings.append(
+                    "invalid_comparator_prefanout_identity_overlap_posture:"
+                    + candidate_id
+                )
+                identity_credited = False
+            elif overlap_posture != "no_match_observed":
+                identity_credited = False
+            elif not valid_public_actor_key:
+                findings.append(
+                    "comparator_prefanout_identity_credit_without_actor_key:"
+                    + candidate_id
+                )
+                identity_credited = False
+            elif normalized_actor_key in public_actor_keys:
+                findings.append(
+                    "duplicate_comparator_prefanout_public_actor_key:"
+                    + f"{candidate_id}:{normalized_actor_key}"
+                )
+                identity_credited = False
+            else:
+                public_actor_keys.add(normalized_actor_key)
+        evidence_refs = origin.get("evidence_refs")
+        if (
+            not isinstance(evidence_refs, list)
+            or not evidence_refs
+            or any(
+                not isinstance(evidence_ref, str) or not evidence_ref
+                for evidence_ref in evidence_refs
+            )
+        ):
+            findings.append(
+                f"missing_comparator_prefanout_origin_evidence:{candidate_id}"
+            )
+            continue
+        # An origin that re-cites another origin's evidence unit is an alias
+        # of one underlying origin, not independent repeated comparison.
+        shared = credited_origin_evidence.intersection(evidence_refs)
+        if shared:
+            findings.append(
+                "shared_comparator_prefanout_origin_evidence:"
+                + f"{candidate_id}:{','.join(sorted(shared))}"
+            )
+            identity_credited = False
+        credited_origin_evidence.update(evidence_refs)
+        if identity_credited and valid_origin_key and valid_source_role:
+            valid_source_roles.add(source_role)
+        elif identity_check_required and valid_origin_key:
+            valid_origin_keys.discard(origin_key)
+
+    if posture == "core_fanout":
+        for identity_key in (
+            "subject_product_identity",
+            "competitor_product_identity",
+        ):
+            identity = row.get(identity_key)
+            if not isinstance(identity, str) or not identity:
+                findings.append(
+                    "comparator_core_fanout_without_exact_identity:"
+                    + candidate_id
+                )
+                break
+        for side in ("subject", "competitor"):
+            if side in identity_sides and not identity_sides[side]:
+                findings.append(
+                    "insufficient_comparator_prefanout_identity_evidence:"
+                    + f"{candidate_id}:{side}"
+                )
+        if _is_enum_value(
+            comparator_role, {"adjacent", "unresolved", "non_competitor"}
+        ):
+            findings.append(
+                f"invalid_comparator_core_fanout_role:{candidate_id}"
+            )
+        shared_job = qualification.get("shared_job")
+        if not isinstance(shared_job, str) or not shared_job:
+            findings.append(
+                f"missing_comparator_prefanout_shared_job:{candidate_id}"
+            )
+        if len(valid_origin_keys) < 2:
+            findings.append(
+                f"insufficient_comparator_prefanout_origins:{candidate_id}"
+            )
+        if len(valid_source_roles) < 2:
+            findings.append(
+                "insufficient_comparator_prefanout_source_roles:"
+                + candidate_id
+            )
+    elif _is_enum_value(posture, {"bounded_watch", "rejected_before_fanout"}):
+        gap_reason = qualification.get("gap_reason")
+        if not isinstance(gap_reason, str) or not gap_reason:
+            findings.append(
+                f"comparator_prefanout_gap_without_reason:{candidate_id}"
+            )
+        if (
+            posture == "rejected_before_fanout"
+            and comparator_role != "non_competitor"
+        ):
+            findings.append(
+                f"invalid_comparator_prefanout_rejection_role:{candidate_id}"
+            )
+
+
+def _validate_comparator_choice_explanation(
+    explanation: Any,
+    *,
+    candidate_id: str,
+    shared_axis_ids: Any,
+    promoted: bool,
+    subject_product_id: Any,
+    competitor_product_id: Any,
+    proposition_index: Mapping[str, Mapping[str, Any]] | None,
+    findings: list[str],
+) -> None:
+    if not isinstance(explanation, dict):
+        findings.append(f"missing_comparator_choice_explanation:{candidate_id}")
+        return
+
+    status = explanation.get("status")
+    if not _is_enum_value(status, _COMPARATOR_CHOICE_STATUSES):
+        findings.append(f"invalid_comparator_choice_status:{candidate_id}")
+    summary = explanation.get("summary")
+    if not isinstance(summary, str) or not summary:
+        findings.append(f"missing_comparator_choice_summary:{candidate_id}")
+
+    final_role = explanation.get("final_comparator_role")
+    if not _is_enum_value(final_role, _COMPARATOR_PREFANOUT_ROLES):
+        findings.append(f"invalid_comparator_final_role:{candidate_id}")
+    role_rationale = explanation.get("role_rationale")
+    if not isinstance(role_rationale, str) or not role_rationale:
+        findings.append(f"missing_comparator_final_role_rationale:{candidate_id}")
+    role_refs = explanation.get("role_evidence_refs")
+    valid_role_refs = (
+        isinstance(role_refs, list)
+        and bool(role_refs)
+        and all(isinstance(ref, str) and ref for ref in role_refs)
+    )
+    if final_role != "unresolved" and not valid_role_refs:
+        findings.append(f"missing_comparator_final_role_evidence:{candidate_id}")
+
+    axis_findings = explanation.get("axis_findings")
+    if not isinstance(axis_findings, list):
+        findings.append(f"invalid_comparator_choice_axes:{candidate_id}")
+        axis_findings = []
+    if status == "observed" and not axis_findings:
+        findings.append(f"observed_comparator_choice_without_axes:{candidate_id}")
+    seen_axis_ids: set[str] = set()
+    shared_axis_set = (
+        {axis_id for axis_id in shared_axis_ids if isinstance(axis_id, str)}
+        if isinstance(shared_axis_ids, list)
+        else set()
+    )
+    for axis_row in axis_findings:
+        if not isinstance(axis_row, dict):
+            findings.append(f"invalid_comparator_choice_axis:{candidate_id}")
+            continue
+        axis_id = axis_row.get("axis_id")
+        if (
+            not isinstance(axis_id, str)
+            or not axis_id
+            or axis_id in seen_axis_ids
+        ):
+            findings.append(f"invalid_comparator_choice_axis_id:{candidate_id}")
+        else:
+            seen_axis_ids.add(axis_id)
+            if shared_axis_set and axis_id not in shared_axis_set:
+                findings.append(
+                    f"comparator_choice_axis_not_shared:{candidate_id}:{axis_id}"
+                )
+        if not _is_enum_value(
+            axis_row.get("choice_posture"), _COMPARATOR_CHOICE_POSTURES
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_posture:{candidate_id}"
+            )
+        if not isinstance(axis_row.get("why"), str) or not axis_row.get("why"):
+            findings.append(f"missing_comparator_choice_axis_why:{candidate_id}")
+        conditions = axis_row.get("conditions")
+        if not isinstance(conditions, list) or any(
+            not isinstance(condition, str) or not condition
+            for condition in conditions
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_conditions:{candidate_id}"
+            )
+        evidence_refs = axis_row.get("evidence_refs")
+        if (
+            not isinstance(evidence_refs, list)
+            or not evidence_refs
+            or any(not isinstance(ref, str) or not ref for ref in evidence_refs)
+        ):
+            findings.append(
+                f"missing_comparator_choice_axis_evidence:{candidate_id}"
+            )
+
+        if proposition_index is not None:
+            proposition_refs = axis_row.get("proposition_refs")
+            if (
+                not isinstance(proposition_refs, list)
+                or not proposition_refs
+                or any(not isinstance(ref, str) or not ref for ref in proposition_refs)
+            ):
+                findings.append(
+                    f"missing_comparator_choice_axis_proposition_refs:{candidate_id}"
+                )
+                proposition_refs = []
+            resolved: list[Mapping[str, Any]] = []
+            for ref in proposition_refs:
+                proposition = proposition_index.get(ref)
+                if proposition is None:
+                    findings.append(
+                        f"unknown_comparator_choice_axis_proposition:{candidate_id}:{ref}"
+                    )
+                    continue
+                resolved.append(proposition)
+                if axis_id not in proposition.get("axis_ids", []):
+                    findings.append(
+                        f"comparator_choice_proposition_axis_mismatch:{candidate_id}:{ref}"
+                    )
+                proposition_subject_ids = proposition.get("subject_product_ids")
+                proposition_comparator_ids = proposition.get("comparator_product_ids")
+                valid_proposition_products = (
+                    isinstance(proposition_subject_ids, list)
+                    and all(
+                        isinstance(product_id, str) and product_id
+                        for product_id in proposition_subject_ids
+                    )
+                    and isinstance(proposition_comparator_ids, list)
+                    and all(
+                        isinstance(product_id, str) and product_id
+                        for product_id in proposition_comparator_ids
+                    )
+                )
+                if (
+                    isinstance(subject_product_id, str)
+                    and subject_product_id
+                    and isinstance(competitor_product_id, str)
+                    and competitor_product_id
+                    and (
+                        not valid_proposition_products
+                        or set(proposition_subject_ids) != {subject_product_id}
+                        or set(proposition_comparator_ids) != {competitor_product_id}
+                    )
+                ):
+                    findings.append(
+                        "comparator_choice_proposition_product_mismatch:"
+                        + f"{candidate_id}:{ref}"
+                    )
+            choice_posture = axis_row.get("choice_posture")
+            directional_choice = choice_posture in {
+                "subject_advantage",
+                "competitor_advantage",
+            }
+            supports = [
+                proposition.get("claim_support", {}) for proposition in resolved
+            ]
+            if directional_choice and any(
+                support.get("support_posture") == "isolated" for support in supports
+            ):
+                findings.append(
+                    f"isolated_comparator_choice_axis_direction:{candidate_id}"
+                )
+            if directional_choice and any(
+                support.get("conflict_posture") == "not_checked" for support in supports
+            ):
+                findings.append(
+                    "directional_comparator_choice_axis_without_conflict_check:"
+                    + candidate_id
+                )
+            if any(
+                support.get("conflict_posture") == "mixed" for support in supports
+            ) and choice_posture != "split_or_conditional":
+                findings.append(
+                    f"mixed_comparator_choice_axis_not_split:{candidate_id}"
+                )
+            # The inline claim_support block is a derived compatibility
+            # projection of a referenced proposition and must not diverge
+            # from it on any field both carry.
+            inline_support = axis_row.get("claim_support")
+            if resolved and isinstance(inline_support, dict):
+                matched = next(
+                    (
+                        proposition["claim_support"]
+                        for proposition in resolved
+                        if isinstance(proposition.get("claim_support"), dict)
+                        and proposition["claim_support"].get("bounded_proposition")
+                        == inline_support.get("bounded_proposition")
+                    ),
+                    None,
+                )
+                if matched is None:
+                    findings.append(
+                        "comparator_choice_claim_support_projection_unmatched:"
+                        + candidate_id
+                    )
+                else:
+                    diverged = sorted(
+                        key
+                        for key, value in inline_support.items()
+                        if key in matched and matched[key] != value
+                    )
+                    if diverged:
+                        findings.append(
+                            "comparator_choice_claim_support_projection_divergence:"
+                            + f"{candidate_id}:{','.join(diverged)}"
+                        )
+
+        claim_support = axis_row.get("claim_support")
+        if not isinstance(claim_support, dict):
+            findings.append(
+                f"missing_comparator_choice_axis_claim_support:{candidate_id}"
+            )
+            continue
+        bounded_proposition = claim_support.get("bounded_proposition")
+        if not isinstance(bounded_proposition, str) or not bounded_proposition:
+            findings.append(
+                f"missing_comparator_choice_axis_proposition:{candidate_id}"
+            )
+        support_posture = claim_support.get("support_posture")
+        if not _is_enum_value(
+            support_posture, _INTELLIGENCE_CLAIM_SUPPORT_POSTURES
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_support_posture:{candidate_id}"
+            )
+        independent_origin_count = claim_support.get("independent_origin_count")
+        if (
+            not isinstance(independent_origin_count, int)
+            or isinstance(independent_origin_count, bool)
+            or independent_origin_count < 1
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_origin_count:{candidate_id}"
+            )
+        source_roles = claim_support.get("source_roles")
+        valid_source_roles = (
+            isinstance(source_roles, list)
+            and bool(source_roles)
+            and all(
+                _is_enum_value(role, _INTELLIGENCE_CLAIM_SOURCE_ROLES)
+                for role in source_roles
+            )
+        )
+        if not valid_source_roles:
+            findings.append(
+                f"invalid_comparator_choice_axis_source_roles:{candidate_id}"
+            )
+
+        ref_fields: dict[str, list[str]] = {}
+        for field_name in (
+            "engagement_evidence_refs",
+            "behavior_evidence_refs",
+            "counterevidence_refs",
+        ):
+            refs = claim_support.get(field_name)
+            if not isinstance(refs, list) or any(
+                not isinstance(ref, str) or not ref for ref in refs
+            ):
+                findings.append(
+                    f"invalid_comparator_choice_axis_{field_name}:{candidate_id}"
+                )
+                ref_fields[field_name] = []
+            else:
+                ref_fields[field_name] = refs
+
+        conflict_posture = claim_support.get("conflict_posture")
+        if not _is_enum_value(
+            conflict_posture, _INTELLIGENCE_CLAIM_CONFLICT_POSTURES
+        ):
+            findings.append(
+                f"invalid_comparator_choice_axis_conflict_posture:{candidate_id}"
+            )
+        causal_ceiling = claim_support.get("causal_ceiling")
+        if not isinstance(causal_ceiling, str) or not causal_ceiling:
+            findings.append(
+                f"missing_comparator_choice_axis_causal_ceiling:{candidate_id}"
+            )
+
+        choice_posture = axis_row.get("choice_posture")
+        directional_choice = choice_posture in {
+            "subject_advantage",
+            "competitor_advantage",
+        }
+        if support_posture == "isolated" and directional_choice:
+            findings.append(
+                f"isolated_comparator_choice_axis_direction:{candidate_id}"
+            )
+        if (
+            support_posture == "resonance_supported"
+            and not ref_fields.get("engagement_evidence_refs")
+        ):
+            findings.append(
+                f"resonant_comparator_choice_axis_without_engagement:{candidate_id}"
+            )
+        if support_posture in {
+            "independently_repeated",
+            "cross_venue_corroborated",
+        } and (
+            not isinstance(independent_origin_count, int)
+            or isinstance(independent_origin_count, bool)
+            or independent_origin_count < 2
+        ):
+            findings.append(
+                f"repeated_comparator_choice_axis_without_two_origins:{candidate_id}"
+            )
+        if (
+            support_posture == "cross_venue_corroborated"
+            and (not valid_source_roles or len(set(source_roles)) < 2)
+        ):
+            findings.append(
+                f"cross_venue_comparator_choice_axis_without_two_roles:{candidate_id}"
+            )
+        if conflict_posture in {"mixed", "contradicted"} and not ref_fields.get(
+            "counterevidence_refs"
+        ):
+            findings.append(
+                f"comparator_choice_axis_conflict_without_counterevidence:{candidate_id}"
+            )
+        if conflict_posture == "mixed" and choice_posture != "split_or_conditional":
+            findings.append(
+                f"mixed_comparator_choice_axis_not_split:{candidate_id}"
+            )
+        if (
+            conflict_posture == "contradicted"
+            and choice_posture != "parity_or_unresolved"
+        ):
+            findings.append(
+                f"contradicted_comparator_choice_axis_still_directional:{candidate_id}"
+            )
+        if conflict_posture == "not_checked" and status == "observed":
+            findings.append(
+                f"observed_comparator_choice_axis_without_conflict_check:{candidate_id}"
+            )
+        if conflict_posture == "not_checked" and directional_choice:
+            # `not_checked` caps a claim at an unresolved/provisional posture, so
+            # a partial or unresolved explanation cannot carry a directional axis
+            # advantage on evidence never checked for material opposition.
+            findings.append(
+                "directional_comparator_choice_axis_without_conflict_check:"
+                + candidate_id
+            )
+
+    if _is_enum_value(status, {"partial", "unresolved"}) and (
+        not isinstance(explanation.get("gap_reason"), str)
+        or not explanation.get("gap_reason")
+    ):
+        findings.append(f"comparator_choice_gap_without_reason:{candidate_id}")
+    if promoted and status != "observed":
+        findings.append(
+            f"promoted_comparator_without_observed_choice:{candidate_id}"
+        )
+    if promoted and _is_enum_value(
+        final_role, {"adjacent", "unresolved", "non_competitor"}
+    ):
+        findings.append(f"invalid_promoted_comparator_final_role:{candidate_id}")
+
+
+def _validate_comparator_price_size_context(
+    context: Any,
+    *,
+    candidate_id: str,
+    findings: list[str],
+) -> None:
+    if not isinstance(context, dict):
+        findings.append(f"missing_comparator_price_size_context:{candidate_id}")
+        return
+    status = context.get("status")
+    if not _is_enum_value(status, _COMPARATOR_PRICE_SIZE_STATUSES):
+        findings.append(f"invalid_comparator_price_size_status:{candidate_id}")
+        return
+    normalization = context.get("normalization_posture")
+    if not _is_enum_value(
+        normalization, _COMPARATOR_SIZE_NORMALIZATION_POSTURES
+    ):
+        findings.append(
+            f"invalid_comparator_size_normalization_posture:{candidate_id}"
+        )
+    if status != "observed":
+        if (
+            not isinstance(context.get("gap_reason"), str)
+            or not context.get("gap_reason")
+        ):
+            findings.append(f"comparator_price_size_gap_without_reason:{candidate_id}")
+        return
+
+    observations: dict[str, Mapping[str, Any]] = {}
+    for side in ("subject", "competitor"):
+        observation = context.get(side)
+        if not isinstance(observation, dict):
+            findings.append(
+                f"missing_comparator_price_size_observation:{candidate_id}:{side}"
+            )
+            continue
+        observations[side] = observation
+        for field in (
+            "product_identity",
+            "currency",
+            "size_unit",
+            "market_scope",
+            "observed_at",
+        ):
+            if (
+                not isinstance(observation.get(field), str)
+                or not observation.get(field)
+            ):
+                findings.append(
+                    "missing_comparator_price_size_field:"
+                    + f"{candidate_id}:{side}:{field}"
+                )
+        for field in ("price_amount", "size_value"):
+            value = observation.get(field)
+            if (
+                not isinstance(value, (int, float))
+                or isinstance(value, bool)
+                or value <= 0
+            ):
+                findings.append(
+                    "invalid_comparator_price_size_number:"
+                    + f"{candidate_id}:{side}:{field}"
+                )
+        observed_at = observation.get("observed_at")
+        if (
+            isinstance(observed_at, str)
+            and observed_at
+            and _parse_iso_datetime(observed_at) is None
+        ):
+            findings.append(
+                f"invalid_comparator_price_size_observed_at:{candidate_id}:{side}"
+            )
+        evidence_refs = observation.get("evidence_refs")
+        if (
+            not isinstance(evidence_refs, list)
+            or not evidence_refs
+            or any(not isinstance(ref, str) or not ref for ref in evidence_refs)
+        ):
+            findings.append(
+                f"missing_comparator_price_size_evidence:{candidate_id}:{side}"
+            )
+
+    if normalization == "same_unit" and len(observations) == 2:
+        if (
+            observations["subject"].get("size_unit")
+            != observations["competitor"].get("size_unit")
+        ):
+            findings.append(f"comparator_size_unit_mismatch:{candidate_id}")
+    if (
+        _is_enum_value(normalization, {"same_unit", "source_normalized"})
+        and len(observations) == 2
+        and observations["subject"].get("currency")
+        != observations["competitor"].get("currency")
+    ):
+        # A posture that licenses direct comparison cannot span two
+        # currencies: the sticker numbers would otherwise read as equal price.
+        findings.append(f"comparator_price_currency_mismatch:{candidate_id}")
+    if normalization == "source_normalized":
+        normalization_refs = context.get("normalization_evidence_refs")
+        if (
+            not isinstance(normalization_refs, list)
+            or not normalization_refs
+            or any(
+                not isinstance(ref, str) or not ref
+                for ref in normalization_refs
+            )
+        ):
+            findings.append(
+                f"missing_comparator_size_normalization_evidence:{candidate_id}"
+            )
+
+
+def _validate_comparator_closure(
+    closure: Any,
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    route_version: str,
+    proposition_index: Mapping[str, Mapping[str, Any]],
+    findings: list[str],
+) -> None:
+    if not isinstance(closure, dict):
+        findings.append("missing_comparator_closure")
+        return
+    state = closure.get("state")
+    if state not in _COMPARATOR_CLOSURE_STATES:
+        findings.append("invalid_comparator_closure_state")
+    elif valid_pass and state != "phase_a_competitor_context_closed":
+        findings.append("passing_seal_without_comparator_context_closure")
+    for key, code in (
+        ("candidate_frame", "comparator_candidate_frame"),
+        ("adjudicated_set", "comparator_adjudicated_set"),
+    ):
+        reference = closure.get(key)
+        if not isinstance(reference, dict):
+            findings.append(f"missing_{code}")
+            continue
+        _verify_artifact(
+            reference.get("locator"),
+            reference.get("sha256"),
+            repo_root=repo_root,
+            code=code,
+            findings=findings,
+        )
+    raw_frame_ids = closure.get("frame_candidate_ids")
+    frame_ids = _string_set(
+        raw_frame_ids,
+        code="invalid_comparator_frame_candidate_ids",
+        findings=findings,
+    )
+    if (
+        isinstance(raw_frame_ids, list)
+        and all(isinstance(item, str) for item in raw_frame_ids)
+        and len(raw_frame_ids) != len(frame_ids)
+    ):
+        findings.append("duplicate_comparator_frame_candidate_ids")
+    candidates = closure.get("candidates")
+    if not isinstance(candidates, list):
+        findings.append("invalid_comparator_candidates")
+        candidates = []
+    seen: set[str] = set()
+    for row in candidates:
+        if not isinstance(row, dict):
+            findings.append("invalid_comparator_candidate")
+            continue
+        candidate_id = row.get("candidate_id")
+        if not isinstance(candidate_id, str) or not candidate_id:
+            findings.append("missing_comparator_candidate_id")
+            continue
+        if candidate_id in seen:
+            findings.append("duplicate_comparator_candidate_id")
+            continue
+        seen.add(candidate_id)
+        if (
+            candidate_id in frame_ids
+            and route_version in _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS
+        ):
+            _validate_comparator_prefanout_qualification(
+                row,
+                candidate_id=candidate_id,
+                route_version=route_version,
+                findings=findings,
+            )
+        material = row.get("material")
+        if not isinstance(material, bool):
+            findings.append(
+                f"invalid_comparator_candidate_material_flag:{candidate_id}"
+            )
+            material = False
+        disposition = row.get("disposition")
+        if disposition not in _COMPARATOR_DISPOSITIONS:
+            findings.append(f"invalid_comparator_disposition:{candidate_id}")
+        decision_ready = row.get("decision_ready")
+        if not isinstance(decision_ready, bool):
+            findings.append(
+                f"invalid_comparator_decision_ready_flag:{candidate_id}"
+            )
+            decision_ready = False
+        if decision_ready and disposition != "promoted":
+            findings.append(
+                f"inconsistent_comparator_decision_ready:{candidate_id}"
+            )
+        if disposition == "promoted" or decision_ready:
+            # The Phase 2 decision contract requires both exact product
+            # identities before a candidate may be direct/decision-ready.
+            for identity_key in (
+                "subject_product_identity",
+                "competitor_product_identity",
+            ):
+                value = row.get(identity_key)
+                if not isinstance(value, str) or not value:
+                    findings.append(
+                        "comparator_promoted_without_exact_identity:"
+                        + candidate_id
+                    )
+                    break
+        ceiling = row.get("claim_ceiling")
+        if not isinstance(ceiling, str) or not ceiling:
+            findings.append(f"missing_comparator_claim_ceiling:{candidate_id}")
+        if (disposition == "promoted" or decision_ready) and not material:
+            # A promoted/decision-ready direct competitor cannot waive the
+            # material-candidate evidence obligations by self-declaring
+            # non-materiality.
+            findings.append(
+                f"promoted_comparator_not_material:{candidate_id}"
+            )
+        # The synthetic-conclusion ban is doctrine-wide: it applies to every
+        # candidate row and every nested shape, not only material ones. The
+        # observed_positions subtree is scanned separately with its
+        # source-local rank exemption.
+        forbidden_fields = sorted(
+            _forbidden_synthetic_keys(
+                {
+                    key: nested
+                    for key, nested in row.items()
+                    if key != "observed_positions"
+                }
+            )
+        )
+        if forbidden_fields:
+            findings.append(
+                "forbidden_synthetic_comparator_field:"
+                + f"{candidate_id}:{','.join(forbidden_fields)}"
+            )
+        if material:
+            subject_product_id = row.get("subject_product_id")
+            competitor_product_id = row.get("competitor_product_id")
+            if route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS:
+                if not isinstance(subject_product_id, str) or not subject_product_id:
+                    findings.append(
+                        f"missing_comparator_product_id:{candidate_id}:subject"
+                    )
+                if (
+                    not isinstance(competitor_product_id, str)
+                    or not competitor_product_id
+                ):
+                    findings.append(
+                        f"missing_comparator_product_id:{candidate_id}:competitor"
+                    )
+                if (
+                    isinstance(subject_product_id, str)
+                    and subject_product_id
+                    and subject_product_id == competitor_product_id
+                ):
+                    findings.append(
+                        f"duplicate_comparator_product_ids:{candidate_id}"
+                    )
+            portfolio_role = row.get("portfolio_role")
+            if not isinstance(portfolio_role, dict):
+                findings.append(f"missing_comparator_portfolio_role:{candidate_id}")
+            else:
+                role_scope = portfolio_role.get("scope")
+                role_status = portfolio_role.get("status")
+                role_basis = portfolio_role.get("basis")
+                assessed_identity = portfolio_role.get("assessed_identity")
+                role_refs = portfolio_role.get("evidence_refs")
+                valid_role_refs = (
+                    isinstance(role_refs, list)
+                    and bool(role_refs)
+                    and all(isinstance(ref, str) and ref for ref in role_refs)
+                )
+                if role_scope not in _COMPARATOR_PORTFOLIO_ROLE_SCOPES:
+                    findings.append(
+                        f"invalid_comparator_portfolio_role_scope:{candidate_id}"
+                    )
+                if role_status not in _COMPARATOR_PORTFOLIO_ROLES:
+                    findings.append(
+                        f"invalid_comparator_portfolio_role_status:{candidate_id}"
+                    )
+                if role_basis not in _COMPARATOR_PORTFOLIO_ROLE_BASES:
+                    findings.append(
+                        f"invalid_comparator_portfolio_role_basis:{candidate_id}"
+                    )
+                if not isinstance(assessed_identity, str) or not assessed_identity:
+                    findings.append(
+                        f"missing_comparator_portfolio_role_identity:{candidate_id}"
+                    )
+                elif (
+                    role_scope == "product"
+                    and isinstance(row.get("competitor_product_identity"), str)
+                    and assessed_identity != row.get("competitor_product_identity")
+                ):
+                    findings.append(
+                        f"comparator_portfolio_product_identity_mismatch:{candidate_id}"
+                    )
+                if role_status == "explicit_hero" and (
+                    role_basis != "explicit_source" or not valid_role_refs
+                ):
+                    findings.append(
+                        f"comparator_explicit_hero_without_explicit_evidence:{candidate_id}"
+                    )
+                elif role_status == "likely_major" and (
+                    role_basis != "multi_source_inference"
+                    or not valid_role_refs
+                    or len(set(role_refs)) < 2
+                ):
+                    findings.append(
+                        f"comparator_likely_major_without_multisource_evidence:{candidate_id}"
+                    )
+                elif role_status == "supporting" and (
+                    role_basis
+                    not in {
+                        "explicit_source",
+                        "multi_source_inference",
+                        "observed_position",
+                    }
+                    or not valid_role_refs
+                ):
+                    findings.append(
+                        f"comparator_supporting_role_without_positive_evidence:{candidate_id}"
+                    )
+                elif role_status == "unclear" and (
+                    role_basis != "unresolved"
+                    or not isinstance(portfolio_role.get("gap_reason"), str)
+                    or not portfolio_role.get("gap_reason")
+                ):
+                    findings.append(
+                        f"comparator_unclear_role_without_gap_reason:{candidate_id}"
+                    )
+
+            positions = row.get("observed_positions")
+            if not isinstance(positions, list):
+                findings.append(f"invalid_comparator_observed_positions:{candidate_id}")
+            else:
+                if not positions and (
+                    not isinstance(row.get("position_gap_reason"), str)
+                    or not row.get("position_gap_reason")
+                ):
+                    findings.append(
+                        f"comparator_position_gap_without_reason:{candidate_id}"
+                    )
+                position_ids: set[str] = set()
+                for position in positions:
+                    if not isinstance(position, dict):
+                        findings.append(
+                            f"invalid_comparator_observed_position:{candidate_id}"
+                        )
+                        continue
+                    position_id = position.get("position_id")
+                    if (
+                        not isinstance(position_id, str)
+                        or not position_id
+                        or position_id in position_ids
+                    ):
+                        findings.append(
+                            f"invalid_comparator_position_id:{candidate_id}"
+                        )
+                    else:
+                        position_ids.add(position_id)
+                    if position.get("scope_kind") not in _COMPARATOR_POSITION_SCOPES:
+                        findings.append(
+                            f"invalid_comparator_position_scope:{candidate_id}"
+                        )
+                    for field in (
+                        "source_or_retailer",
+                        "market_scope",
+                        "observed_at",
+                    ):
+                        if (
+                            not isinstance(position.get(field), str)
+                            or not position.get(field)
+                        ):
+                            findings.append(
+                                "missing_comparator_position_context:"
+                                + f"{candidate_id}:{field}"
+                            )
+                    observed_at = position.get("observed_at")
+                    if (
+                        isinstance(observed_at, str)
+                        and observed_at
+                        and _parse_iso_datetime(observed_at) is None
+                    ):
+                        # A malformed observation time must not earn
+                        # source-local position credit.
+                        findings.append(
+                            "invalid_comparator_position_observed_at:"
+                            + candidate_id
+                        )
+                    position_refs = position.get("evidence_refs")
+                    if (
+                        not isinstance(position_refs, list)
+                        or not position_refs
+                        or any(
+                            not isinstance(ref, str) or not ref
+                            for ref in position_refs
+                        )
+                    ):
+                        findings.append(
+                            f"missing_comparator_position_evidence:{candidate_id}"
+                        )
+                    rank = position.get("rank")
+                    list_size = position.get("list_size")
+                    label = position.get("label")
+                    has_numeric_position = rank is not None or list_size is not None
+                    if has_numeric_position and (
+                        not isinstance(rank, int)
+                        or isinstance(rank, bool)
+                        or not isinstance(list_size, int)
+                        or isinstance(list_size, bool)
+                        or rank < 1
+                        or list_size < 1
+                        or rank > list_size
+                    ):
+                        findings.append(
+                            f"invalid_comparator_source_local_rank:{candidate_id}"
+                        )
+                    if not has_numeric_position and (
+                        not isinstance(label, str) or not label
+                    ):
+                        findings.append(
+                            f"comparator_position_without_rank_or_label:{candidate_id}"
+                        )
+                    forbidden_position_fields = sorted(
+                        _forbidden_synthetic_keys(
+                            position, exempt=frozenset({"rank"})
+                        )
+                    )
+                    if forbidden_position_fields:
+                        findings.append(
+                            "forbidden_synthetic_comparator_position_field:"
+                            + f"{candidate_id}:{','.join(forbidden_position_fields)}"
+                        )
+
+            shared_axis_ids = row.get("shared_axis_ids")
+            if disposition == "promoted" or decision_ready:
+                if (
+                    not isinstance(shared_axis_ids, list)
+                    or not shared_axis_ids
+                    or any(
+                        not isinstance(axis_id, str) or not axis_id
+                        for axis_id in shared_axis_ids
+                    )
+                ):
+                    findings.append(
+                        f"promoted_comparator_without_shared_axes:{candidate_id}"
+                    )
+            elif shared_axis_ids is not None and (
+                not isinstance(shared_axis_ids, list)
+                or any(
+                    not isinstance(axis_id, str) or not axis_id
+                    for axis_id in shared_axis_ids
+                )
+            ):
+                findings.append(f"invalid_comparator_shared_axes:{candidate_id}")
+            if route_version in _ROUTE_REVISION_1_3_OBLIGATION_VERSIONS:
+                _validate_comparator_choice_explanation(
+                    row.get("competitive_choice_explanation"),
+                    candidate_id=candidate_id,
+                    shared_axis_ids=shared_axis_ids,
+                    promoted=disposition == "promoted" or decision_ready,
+                    subject_product_id=(
+                        row.get("subject_product_id")
+                        if route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS
+                        else None
+                    ),
+                    competitor_product_id=(
+                        row.get("competitor_product_id")
+                        if route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS
+                        else None
+                    ),
+                    proposition_index=(
+                        proposition_index
+                        if route_version in _ROUTE_REVISION_1_4_OBLIGATION_VERSIONS
+                        else None
+                    ),
+                    findings=findings,
+                )
+            if (
+                route_version in _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS
+                and isinstance(shared_axis_ids, list)
+                and any(
+                    isinstance(axis_id, str)
+                    and any(
+                        token in axis_id.lower()
+                        for token in ("price", "value", "quantity", "cost")
+                    )
+                    for axis_id in shared_axis_ids
+                )
+            ):
+                _validate_comparator_price_size_context(
+                    row.get("price_size_context"),
+                    candidate_id=candidate_id,
+                    findings=findings,
+                )
+
+            lanes = row.get("lane_evidence")
+            if not isinstance(lanes, dict):
+                findings.append(
+                    f"missing_comparator_lane_evidence:{candidate_id}"
+                )
+            else:
+                if "co3_customer_comparison" in lanes:
+                    findings.append(
+                        f"combined_comparator_customer_lane_not_allowed:{candidate_id}"
+                    )
+                for lane in _COMPARATOR_LANE_KEYS:
+                    lane_row = lanes.get(lane)
+                    if (
+                        not isinstance(lane_row, dict)
+                        or lane_row.get("status") not in _COMPARATOR_LANE_STATES
+                    ):
+                        findings.append(
+                            "invalid_comparator_lane_evidence:"
+                            + f"{candidate_id}:{lane}"
+                        )
+                        continue
+                    lane_status = lane_row.get("status")
+                    lane_refs = lane_row.get("evidence_refs")
+                    if lane_status == "observed" and (
+                        not isinstance(lane_refs, list)
+                        or not lane_refs
+                        or any(
+                            not isinstance(ref, str) or not ref
+                            for ref in lane_refs
+                        )
+                    ):
+                        findings.append(
+                            "observed_comparator_lane_without_evidence:"
+                            + f"{candidate_id}:{lane}"
+                        )
+                    elif lane_status in {"none_found", "blocked"} and (
+                        not isinstance(lane_row.get("gap_reason"), str)
+                        or not lane_row.get("gap_reason")
+                    ):
+                        findings.append(
+                            "comparator_lane_gap_without_reason:"
+                            + f"{candidate_id}:{lane}"
+                        )
+    dropped = sorted(frame_ids - seen)
+    if dropped:
+        findings.append(
+            "comparator_candidate_silently_dropped:" + ",".join(dropped)
+        )
+
+
+def _validate_campaign_integration(
+    block: Any,
+    *,
+    seal: Mapping[str, Any],
+    repo_root: Path,
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(block, dict):
+        findings.append("missing_campaign_evidence_integration")
+        return
+    status = block.get("status")
+    if status not in {"completed", "blocked"}:
+        findings.append("invalid_campaign_integration_status")
+    elif valid_pass and status != "completed":
+        findings.append("passing_seal_without_campaign_integration")
+    requests = block.get("targeted_capture_requests")
+    if not isinstance(requests, list):
+        findings.append("invalid_campaign_capture_requests")
+        requests = []
+    request_ids: set[str] = set()
+    for row in requests:
+        if not isinstance(row, dict):
+            findings.append("invalid_campaign_capture_request")
+            continue
+        request_id = row.get("request_id")
+        if not isinstance(request_id, str) or not request_id:
+            findings.append("missing_campaign_capture_request_id")
+            continue
+        if request_id in request_ids:
+            findings.append("duplicate_campaign_capture_request_id")
+            continue
+        request_ids.add(request_id)
+        target = row.get("target")
+        if not isinstance(target, str) or not target:
+            findings.append(f"missing_campaign_capture_request_target:{request_id}")
+        if row.get("disposition") not in _CAMPAIGN_CAPTURE_REQUEST_STATES:
+            findings.append(
+                f"invalid_campaign_capture_request_disposition:{request_id}"
+            )
+    reference = block.get("view")
+    if not isinstance(reference, dict):
+        findings.append("missing_campaign_evidence_view")
+        return
+    locator = reference.get("locator")
+    before = len(findings)
+    _verify_artifact(
+        locator,
+        reference.get("sha256"),
+        repo_root=repo_root,
+        code="campaign_evidence_view",
+        findings=findings,
+    )
+    if len(findings) != before:
+        return
+    view_path = Path(str(locator))
+    if not view_path.is_absolute():
+        view_path = repo_root / view_path
+    try:
+        view = json.loads(view_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"invalid_campaign_evidence_view:{type(exc).__name__}")
+        return
+    if not isinstance(view, dict):
+        findings.append("invalid_campaign_evidence_view_shape")
+        return
+    _validate_campaign_view(view, seal=seal, findings=findings)
+
+
+def _validate_campaign_view(
+    view: Mapping[str, Any],
+    *,
+    seal: Mapping[str, Any],
+    findings: list[str],
+) -> None:
+    if view.get("schema_version") != CAMPAIGN_EVIDENCE_VIEW_VERSION:
+        findings.append("invalid_campaign_evidence_view_version")
+    if view.get("subject") != seal.get("subject"):
+        findings.append("campaign_view_subject_mismatch")
+    if view.get("cycle_id") != seal.get("cycle_id"):
+        findings.append("campaign_view_cycle_id_mismatch")
+    units = view.get("units")
+    if not isinstance(units, list):
+        findings.append("invalid_campaign_view_units")
+        units = []
+    unit_ids: set[str] = set()
+    credited_origins: set[str] = set()
+    for row in units:
+        if not isinstance(row, dict):
+            findings.append("invalid_campaign_view_unit")
+            continue
+        unit_id = row.get("unit_id")
+        if not isinstance(unit_id, str) or not unit_id:
+            findings.append("missing_campaign_unit_id")
+            continue
+        if unit_id in unit_ids:
+            findings.append("duplicate_campaign_unit_id")
+            continue
+        unit_ids.add(unit_id)
+        if row.get("source_role") not in _CAMPAIGN_SOURCE_ROLES:
+            # Creator-authored and audience/customer evidence keep distinct
+            # roles; a merged or unknown role is a defect, never a default.
+            findings.append(f"invalid_campaign_unit_source_role:{unit_id}")
+        for key, code in (
+            ("publisher_identity", "publisher_identity"),
+            ("brand_binding", "brand_binding"),
+            ("source_surface", "source_surface"),
+            ("captured_at", "captured_at"),
+            ("independent_origin_key", "origin_key"),
+            ("claim_ceiling", "claim_ceiling"),
+        ):
+            value = row.get(key)
+            if not isinstance(value, str) or not value:
+                findings.append(f"missing_campaign_unit_{code}:{unit_id}")
+        for key in ("published_at", "observed_at"):
+            value = row.get(key)
+            if value is None:
+                # Unknown source timestamps stay null, never invented.
+                continue
+            if (
+                not isinstance(value, str)
+                or not value
+                or _parse_iso_datetime(value) is None
+            ):
+                findings.append(f"invalid_campaign_unit_{key}:{unit_id}")
+        captured_at = row.get("captured_at")
+        if (
+            isinstance(captured_at, str)
+            and captured_at
+            and _parse_iso_datetime(captured_at) is None
+        ):
+            findings.append(f"invalid_campaign_unit_captured_at:{unit_id}")
+        for key in ("product_bindings", "claim_bindings"):
+            bindings = row.get(key)
+            if not isinstance(bindings, list) or any(
+                not isinstance(item, str) or not item for item in bindings
+            ):
+                findings.append(f"invalid_campaign_unit_{key}:{unit_id}")
+        refs = row.get("source_refs")
+        if not isinstance(refs, list) or not refs or any(
+            not isinstance(item, str) or not item for item in refs
+        ):
+            findings.append(f"missing_campaign_unit_source_refs:{unit_id}")
+        relationship = row.get("relationship_posture")
+        if relationship not in _CAMPAIGN_RELATIONSHIP_POSTURES:
+            findings.append(
+                f"invalid_campaign_unit_relationship_posture:{unit_id}"
+            )
+        if row.get("linkage_posture") not in _CAMPAIGN_LINKAGE_POSTURES:
+            findings.append(f"invalid_campaign_unit_linkage_posture:{unit_id}")
+        credit = row.get("independent_origin_credit")
+        if not isinstance(credit, bool):
+            findings.append(f"invalid_campaign_unit_origin_credit:{unit_id}")
+            continue
+        if credit:
+            if relationship != "apparently_independent":
+                findings.append(
+                    f"campaign_credit_without_independent_relationship:{unit_id}"
+                )
+            origin_key = row.get("independent_origin_key")
+            if isinstance(origin_key, str) and origin_key:
+                if origin_key in credited_origins:
+                    findings.append(
+                        f"duplicate_independent_origin_credit:{origin_key}"
+                    )
+                credited_origins.add(origin_key)
+    linkage_by_unit = {
+        str(row.get("unit_id")): row.get("linkage_posture")
+        for row in units
+        if isinstance(row, dict)
+    }
+    clusters = view.get("clusters", [])
+    if not isinstance(clusters, list):
+        findings.append("invalid_campaign_clusters")
+        clusters = []
+    cluster_ids: set[str] = set()
+    for cluster in clusters:
+        if not isinstance(cluster, dict):
+            findings.append("invalid_campaign_cluster")
+            continue
+        cluster_id = cluster.get("cluster_id")
+        if not isinstance(cluster_id, str) or not cluster_id:
+            findings.append("missing_campaign_cluster_id")
+            continue
+        if cluster_id in cluster_ids:
+            findings.append("duplicate_campaign_cluster_id")
+            continue
+        cluster_ids.add(cluster_id)
+        members = cluster.get("member_unit_ids")
+        if not isinstance(members, list) or not members or any(
+            not isinstance(item, str) or not item for item in members
+        ):
+            findings.append(f"invalid_campaign_cluster_members:{cluster_id}")
+            members = []
+        elif len(members) != len(set(members)):
+            findings.append(f"duplicate_campaign_cluster_member:{cluster_id}")
+        unresolved = [item for item in members if item not in unit_ids]
+        if unresolved:
+            findings.append(f"unresolved_campaign_cluster_member:{cluster_id}")
+        basis = cluster.get("basis")
+        if basis not in _CAMPAIGN_CLUSTER_BASES:
+            findings.append(f"invalid_campaign_cluster_basis:{cluster_id}")
+        elif basis == "direct":
+            if any(
+                linkage_by_unit.get(item) != "direct"
+                for item in members
+                if item in unit_ids
+            ):
+                findings.append(
+                    f"campaign_cluster_overstated_linkage:{cluster_id}"
+                )
+        elif basis == "inferred":
+            for key in ("provenance", "reversal_condition"):
+                value = cluster.get(key)
+                if not isinstance(value, str) or not value:
+                    findings.append(
+                        "campaign_cluster_inference_without_provenance:"
+                        + cluster_id
+                    )
+                    break
+
+
+def _validate_verification_requests(
+    requests: Any,
+    *,
+    repo_root: Path,
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(requests, list):
+        findings.append("missing_verification_requests")
+        return
+    request_ids: set[str] = set()
+    for row in requests:
+        if not isinstance(row, dict):
+            findings.append("invalid_verification_request")
+            continue
+        request_id = row.get("request_id")
+        if not isinstance(request_id, str) or not request_id:
+            findings.append("missing_verification_request_id")
+            continue
+        if request_id in request_ids:
+            findings.append("duplicate_verification_request_id")
+            continue
+        request_ids.add(request_id)
+        product = row.get("product_identity")
+        claim = row.get("claim")
+        trigger_kind = row.get("trigger_kind")
+        trigger_refs = row.get("trigger_evidence_refs")
+        has_trigger = (
+            isinstance(product, str)
+            and product
+            and trigger_kind in _VERIFICATION_TRIGGER_KINDS
+            and isinstance(trigger_refs, list)
+            and trigger_refs
+            and all(
+                isinstance(item, str) and item for item in trigger_refs
+            )
+            and isinstance(claim, str)
+            and claim
+        )
+        if not has_trigger:
+            # Verification is conditional: reconciled product identity ×
+            # material axis/contradiction × verifiable claim, never
+            # catalog-wide.
+            findings.append(
+                f"verification_request_without_material_trigger:{request_id}"
+            )
+        status = row.get("status")
+        if status not in _VERIFICATION_STATUSES:
+            findings.append(f"invalid_verification_status:{request_id}")
+            continue
+        if valid_pass and status == "not_run":
+            findings.append(
+                f"passing_seal_with_unrun_verification_request:{request_id}"
+            )
+        if status == "completed":
+            reference = row.get("return")
+            if not isinstance(reference, dict):
+                findings.append(f"missing_verification_return:{request_id}")
+                continue
+            _verify_artifact(
+                reference.get("locator"),
+                reference.get("sha256"),
+                repo_root=repo_root,
+                code="verification_return",
+                findings=findings,
+            )
+
+
+def _validate_retailer_state_accounting(
+    block: Any, *, findings: list[str]
+) -> None:
+    if not isinstance(block, dict):
+        findings.append("missing_retailer_state_accounting")
+        return
+    claims = block.get("claims")
+    if not isinstance(claims, list):
+        findings.append("invalid_retailer_state_claims")
+        return
+    claim_ids: set[str] = set()
+    for row in claims:
+        if not isinstance(row, dict):
+            findings.append("invalid_retailer_state_claim")
+            continue
+        claim_id = row.get("claim_id")
+        if not isinstance(claim_id, str) or not claim_id:
+            findings.append("missing_retailer_state_claim_id")
+            continue
+        if claim_id in claim_ids:
+            findings.append("duplicate_retailer_state_claim_id")
+            continue
+        claim_ids.add(claim_id)
+        kind = row.get("kind")
+        if kind not in _RETAILER_STATE_KINDS:
+            findings.append(f"invalid_retailer_state_kind:{claim_id}")
+            continue
+        for key in ("retailer", "product_identity", "market_scope"):
+            value = row.get(key)
+            if not isinstance(value, str) or not value:
+                findings.append(
+                    f"missing_retailer_state_identity:{claim_id}:{key}"
+                )
+        current_ref = row.get("current_observation_ref")
+        if not isinstance(current_ref, str) or not current_ref:
+            findings.append(
+                f"missing_retailer_state_observation_ref:{claim_id}"
+            )
+            current_ref = ""
+        prior_ref = row.get("prior_observation_ref")
+        if kind == "retailer_state_change":
+            # A movement event requires two comparable observations; one
+            # snapshot is a state, never a change.
+            if (
+                not isinstance(prior_ref, str)
+                or not prior_ref
+                or prior_ref == current_ref
+            ):
+                findings.append(
+                    f"retailer_state_change_without_two_observations:{claim_id}"
+                )
+            change_summary = row.get("change_summary")
+            if not isinstance(change_summary, str) or not change_summary:
+                findings.append(
+                    f"retailer_state_change_without_summary:{claim_id}"
+                )
+        else:
+            if prior_ref not in (None, "") or row.get("change_summary") not in (
+                None,
+                "",
+            ):
+                findings.append(
+                    f"movement_claim_from_single_snapshot:{claim_id}"
+                )
+
+
 def _verify_artifact(
     locator: Any,
     digest: Any,
@@ -3702,6 +6428,16 @@ def _parser() -> argparse.ArgumentParser:
             "It does not satisfy the current decision-maturity Phase A contract."
         ),
     )
+    parser.add_argument(
+        "--allow-preversion-route",
+        action="store_true",
+        help=(
+            "Audit a seal sealed before Understanding route versioning began "
+            "(2026-08-07) - such seals carry no stamped route version - or a "
+            "seal stamped with a known older route version. This switch "
+            "never satisfies the current route contract."
+        ),
+    )
     return parser
 
 
@@ -3716,6 +6452,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             allow_legacy_v2=args.allow_legacy_v2,
             allow_legacy_consumer_v1=args.allow_legacy_consumer_v1,
             allow_legacy_consumer_v2=args.allow_legacy_consumer_v2,
+            allow_preversion_route=args.allow_preversion_route,
         )
     except Exception as exc:  # noqa: BLE001 - controlled validator diagnostic
         parser.exit(

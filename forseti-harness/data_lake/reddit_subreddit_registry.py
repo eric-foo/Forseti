@@ -530,6 +530,8 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             row["status"] = status["status"]
         row["status_observed_at"] = status["status_observed_at"]
     if capture_state is not None:
+        # Both lanes independently reached monotonic-floor semantics for a
+        # replayed observation effect; this is the shared-helper form of it.
         _raise_capture_state_floor(row, capture_state)
     register_pointers = row.setdefault("register_pointers", [])
     if pointer not in register_pointers:

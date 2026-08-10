@@ -1,0 +1,12 @@
+{
+  "schema_version": "serp_phase2_settlement_provenance_v0",
+  "subject_entity_key": "dieux skin|company|brand",
+  "settlement_sha256": "791c5d3d197caa169e1dcdeabb7cc479c1c866d5518764915a2fb8424ccd2b19",
+  "receipt_sha256": "ef80b209356f53dced7b2957d01cb42a1a19d056ec27b603e7ec99dd1636503a",
+  "claim_ids": [],
+  "prior_receipt_sha256s": [],
+  "store_root": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co0\\serp_phase2\\lifecycle_store",
+  "lifecycle_disposition": "sealed_without_automatic_validation_claims",
+  "reason": "Every settlement entry remained watch_for_new_source; no validate_once licence was claimed or consumed.",
+  "deliver_started": false
+}

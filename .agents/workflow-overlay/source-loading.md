@@ -491,6 +491,28 @@ ratified, ready for Evidence-Unit binding, or that JSG-01 is unfrozen (the gate
 stays FROZEN). This pack must not fork the source-loading rule; the submap
 routes, the owner docs decide.
 
+## Intelligence Claim-Support Read Pack
+
+Use this pack whenever evidence is synthesized, compared, weighted, or promoted
+into a finding, explanation, memo input, or recommendation anywhere in the
+intelligence cycle. Capture-only work does not need this pack until it interprets
+what captured material proves.
+
+Start with:
+
+- `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
+  for provenance, engagement-as-resonance, independent recurrence, cross-venue
+  corroboration, counterevidence, scope, and causal ceilings.
+- `forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`
+  for compiling one completed acquisition corpus into the meaning-aware
+  proposition view; it defers claim-support semantics to the contract above.
+
+Then open only the source that owns the consuming schema or decision. This pack
+does not replace source-family capture rules or the Judgment Spine Evidence
+Ladder Read Pack below. The claim-support contract governs what sources support
+about the subject; the evidence ladder governs what a completed Forseti run or
+proof artifact may claim about its own tier.
+
 ## Judgment Spine Evidence Ladder Read Pack
 
 Use this pack when classifying what a Judgment Spine run, case, model answer,

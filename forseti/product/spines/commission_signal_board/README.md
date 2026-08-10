@@ -14,6 +14,8 @@ open_next:
   - forseti/product/spines/commission_signal_board/spine.yaml
   - forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md
   - forseti/product/spines/commission_signal_board/prompts/forseti_commission_signal_board_prompt_structure_v0.md
+  - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
+  - forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
   - forseti/product/spines/commission_signal_board/migrations/moved_paths_index.md
 stale_if:
   - The Commission Signal Board spine is renamed, retired, or merged into another spine.
@@ -91,6 +93,12 @@ The two possible turns are:
    substrate; Deliver synthesis produces the explicitly commissioned
    decision-bearing artifact under the Deliver decision-memorandum method.
 
+Both turns consume the shared intelligence claim-support contract before they
+turn evidence into a finding. Acquire & Seal preserves the support and conflict
+postures needed downstream; Synthesize and Deliver may not silently promote an
+isolated or resonance-only observation into independent recurrence,
+cross-venue corroboration, representative prevalence, or causation.
+
 Inside an Understanding Acquire & Seal turn, every company commission uses one
 evidence-acquisition order:
 
@@ -98,9 +106,14 @@ evidence-acquisition order:
 2. run or validly reuse the SERP Phase 1 competitor scout;
 3. feed its typed outputs into the `CO1`-`CO3` specialist fan-out, where `CO3`
    owns Reddit/community acquisition;
-4. wait for the specialist terminal returns, then run the targeted SERP Phase 2
-   return from their combined findings;
-5. write the Understanding seal only after the Phase 2 terminal result; a
+4. wait for the specialist terminal returns, then use SERP Phase 2 to explain
+   the observed product choice by shared axis and condition, run only named
+   material delta probes, and derive the terminal comparator role afterward;
+5. after every selected acquisition job is terminal, run the Judgment-owned
+   Semantic Evidence Integration job against the final corpus; reopen only an
+   affected family when it exposes a material gap, then regenerate the view;
+6. write the Understanding seal only after the Phase 2 terminal result and a
+   current, complete semantic-integration view; a
    material Phase 2 block forces a blocked seal and forbids Deliver.
 
 `SERP Phase 1` and `SERP Phase 2` are internal lane labels, not additional

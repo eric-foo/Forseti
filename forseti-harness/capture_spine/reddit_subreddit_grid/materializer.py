@@ -68,8 +68,10 @@ GRID_OBSERVATION_SOURCE_SURFACE = "old_reddit_grid_packet"
 TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "old_reddit_top_week_packet"
 # A real-Chrome www capture is a different surface reached by a different
 # transport; its observation ledger line names that surface directly (trunk
-# vocabulary, PR #1424). The weekly-vs-live distinction for www packets lives
-# in the packet's admitted listing URL, which admission pins to the locator.
+# vocabulary, PR #1424). Admission pins the content record's listing URL to the
+# packet locator, so the host faithfully names the surface that produced the
+# counts, and the weekly-vs-live distinction for a www packet is readable from
+# that locator rather than from a second ledger name.
 WWW_REDDIT_REALCHROME_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 
 
@@ -312,6 +314,8 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
         expected_hash=metadata_file["sha256"],
         error_code="http_metadata_hash_mismatch",
     )
+    # One verifier for both transports (ours), grafted below with the two
+    # checks trunk's separate www verifier added.
     _verify_successful_grid_response(
         packet=packet,
         metadata_path=metadata_path,
@@ -545,6 +549,12 @@ def _verify_successful_grid_response(
                 "http_metadata_shape",
                 "real-Chrome grid metadata must carry a boolean access_blocked value",
             )
+        if access_blocked or classification == "access_blocked":
+            raise RegistryRefreshError(
+                "grid_access_unsuccessful",
+                "grid packet records an access block: "
+                f"{metadata.get('access_block_reason')!r}",
+            )
         # Grafted from the trunk verifier (PR #1424): the packet must declare
         # its capture method, and the REQUESTED url must match the locator too
         # -- a redirect-to-lookalike would otherwise pass on final_url alone.
@@ -561,12 +571,6 @@ def _verify_successful_grid_response(
                 "grid_final_locator_mismatch",
                 "real-Chrome requested URL does not match the packet locator: "
                 f"{requested_url!r}",
-            )
-        if access_blocked or classification == "access_blocked":
-            raise RegistryRefreshError(
-                "grid_access_unsuccessful",
-                "grid packet records an access block: "
-                f"{metadata.get('access_block_reason')!r}",
             )
         # Absent classification is the trunk metadata shape (five keys); only
         # an unknown *string* is refused.

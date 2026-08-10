@@ -1,0 +1,1258 @@
+{
+  "artifact": "co1_native_social_floor_composition_v1_corrected",
+  "generated_at": "2026-08-05T17:14:39.229711Z",
+  "terminal_status": "floor_met",
+  "scope": "Corrected non-Reddit native-social evidence floor only; no Phase A closure, seal, or Deliver authority.",
+  "correction_notice": "The rejected draft relabeled Reddit forum comments as native social. This corrected artifact contains no Reddit rows and credits only Instagram and YouTube native surfaces.",
+  "admission_rule": "Admit only a distinct TikTok/Instagram/YouTube post with a captured source-native body or transcript, Dieux/product anchoring, creator/post identity, relationship posture, one or more final axis IDs, and a unique dedupe key. Snippets and discovery metadata alone are never evidence.",
+  "relationship_enum": [
+    "owned",
+    "retailer_operated",
+    "disclosed_paid_or_affiliate",
+    "apparently_independent",
+    "relationship_unknown"
+  ],
+  "axis_id_enum": [
+    "hydration_barrier_visible_results",
+    "irritation_breakout_active_condition_fit",
+    "texture_finish_makeup_routine_fit",
+    "packaging_dispensing_usability",
+    "price_value_hype_product_trust",
+    "segment_portfolio_product_fit",
+    "repeat_purchase_switching_destinations",
+    "service_fulfillment_support_trust"
+  ],
+  "capture_packets": {
+    "youtube:8uZKNMnXImI": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\8uZKNMnXImI_watch",
+      "watch_packet_id": "01KZ9EFF2S2SSFF30HCHW67ZEY",
+      "watch_manifest_sha256": "4b6ba0791291b1063055d88081e65aa3338b6acbb9a3d07a2963707756e3672b",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\8uZKNMnXImI_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "e9efa1fa1731dcc7a5436a77d1839a089ded1acaf1e983984e884fa6d2c540c9",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\8uZKNMnXImI_caption",
+      "caption_packet_id": "01KZ9EAR96N3SPKWBB0RZNP321",
+      "caption_manifest_sha256": "db6ddec717dc3497f45d6f8475f9b2c90b9509d387434c7abb47046a0b50fbfb",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\8uZKNMnXImI_caption\\raw\\01_8uZKNMnXImI.captions.en.json3",
+      "caption_body_sha256": "9ee20116f9aed93fa63688680d32222e0ad18ee0f0d9474512b6fb4af9e8dd6a"
+    },
+    "youtube:aKfppmQ5-qc": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\aKfppmQ5-qc_watch",
+      "watch_packet_id": "01KZ9EFHCF9HA90Y45GF02S1TP",
+      "watch_manifest_sha256": "90f00e9254a92d600585f1f4af2f51347148d5898c04c87012d2f6a372074af8",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\aKfppmQ5-qc_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "c2c51d4f0251ac4ffe4e56d3800c47b6fabda61807ea9fe3828ec22e134cdb31",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\aKfppmQ5-qc_caption",
+      "caption_packet_id": "01KZ9EAXZPQWJWS76G4PR1H33E",
+      "caption_manifest_sha256": "c5786e65502155705b1ff5349d2a3437e90066137f7b599c06b8f4a00834f0b0",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\aKfppmQ5-qc_caption\\raw\\01_aKfppmQ5-qc.captions.en.json3",
+      "caption_body_sha256": "3deede067fbbb699c2e4104e2333e17b73f5e40d2dc3d4056fb212dc3051b636"
+    },
+    "youtube:cpaUJL3SSW4": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\cpaUJL3SSW4_watch",
+      "watch_packet_id": "01KZ9EFQM2ETEJRC7RB24ZFBAG",
+      "watch_manifest_sha256": "96e516a9f70e17ccb2149a06939a8d94bf888829141e7283c0fa2f392b01fa30",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\cpaUJL3SSW4_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "da831f0be1097c16d8aa4f20e5946c3d0d1a65160aa9308a6f5bd35ded1ad263",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\cpaUJL3SSW4_caption",
+      "caption_packet_id": "01KZ9EB5AG4DT6E57J2T05607D",
+      "caption_manifest_sha256": "12f81505ac8ac45f3e8f64c29899f7d3caa59077a59a160732be46fdd27e7bd6",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\cpaUJL3SSW4_caption\\raw\\01_cpaUJL3SSW4.captions.en.json3",
+      "caption_body_sha256": "af129a8dc3ce6260d9149aada17c8a9a4dd7a987354b65eb5033ca718eae1c7d"
+    },
+    "youtube:Cu-tfd7MhHo": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Cu-tfd7MhHo_watch",
+      "watch_packet_id": "01KZ9EES9VJZ3DWHNJBF5B8VCH",
+      "watch_manifest_sha256": "20c339514ac930276df61f0dd2b2a6f2682e785c9387bb7713e24b138fefda02",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Cu-tfd7MhHo_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "e02c230735a628337cb8bf84a4c5854c72e73581715a5eb901e79aa9b3274bf7",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Cu-tfd7MhHo_caption",
+      "caption_packet_id": "01KZ9E91PSZBEE574KEH4YNYES",
+      "caption_manifest_sha256": "f18fe77acee23323fa696df6303a3d83c5c2ce20da31f3e0bf58728488ed5870",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Cu-tfd7MhHo_caption\\raw\\01_Cu-tfd7MhHo.captions.en.json3",
+      "caption_body_sha256": "fea64d25733e24c0e306249271459ebda03333b3ef148e8ef9c4d7fe2d21900b"
+    },
+    "youtube:DHtS-2dYyME": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\DHtS-2dYyME_watch",
+      "watch_packet_id": "01KZ9EE59HEX63QBV5HKVCD82H",
+      "watch_manifest_sha256": "ab409cea057c831612a0f87f55dd36f9faafd07fd1e9dbf2673f7bfcdf169672",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\DHtS-2dYyME_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "18d8873e06980f4ef36018120f685e7450e8ab67ca7b54793ac805fc380fe798",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\DHtS-2dYyME_caption",
+      "caption_packet_id": "01KZ9E80E0TSK1S598CHQSK3BV",
+      "caption_manifest_sha256": "aa8ca0efc01d787b50530a8c7edd10081b9805989e988f2790effcf1d4370f75",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\DHtS-2dYyME_caption\\raw\\01_DHtS-2dYyME.captions.en.json3",
+      "caption_body_sha256": "cf68be5519e3b299dfd001a72639466719ee3e93874ffe3cde29e8118add8e24"
+    },
+    "youtube:eejwDCxfZgE": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\eejwDCxfZgE_watch",
+      "watch_packet_id": "01KZ9EEVCA2KH1Y9JXY6862PB5",
+      "watch_manifest_sha256": "6dc107a47d0462fa6779be89e23f4988c20b51690038375cfd0499d65727d863",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\eejwDCxfZgE_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "828c1fae48401c6d2ee7adf68ad3fa7b8c4dafb70d91bb5e07b16b452233f36d",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\eejwDCxfZgE_caption",
+      "caption_packet_id": "01KZ9E95YBRFKVADK1X22F4K0F",
+      "caption_manifest_sha256": "8199f21f5222829279637495b1806c63b89e47245e9a2fe906d88c144cacd31d",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\eejwDCxfZgE_caption\\raw\\01_eejwDCxfZgE.captions.en.json3",
+      "caption_body_sha256": "86f08f52e950f3fa22ef6a8093261452c05847ad14ae05f07d6604b78387e62d"
+    },
+    "youtube:Fo_FiGKnnaA": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Fo_FiGKnnaA_watch",
+      "watch_packet_id": "01KZ9EE9MB7M2T29ZHKBQAYN0V",
+      "watch_manifest_sha256": "ef67724735a228ad94321bb32217706bd862aae696e75eb1286c1099be351a29",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Fo_FiGKnnaA_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "85a27086f1f985824e3051ab89b347ba93844bacd91f8e9f70eacda46d1d5cd4",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Fo_FiGKnnaA_caption",
+      "caption_packet_id": "01KZ9E88VG34XDQ76G8T9QARBG",
+      "caption_manifest_sha256": "7abe3bc890bc71ef39d998a9d2b470ab430bd4962dbf0666ecab87421ff971bb",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Fo_FiGKnnaA_caption\\raw\\01_Fo_FiGKnnaA.captions.en.json3",
+      "caption_body_sha256": "53b12517dfc8a2376cf44d153545aa99de068b8a40add522c86d3c45893fc06d"
+    },
+    "youtube:G0iZgwx-xQo": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\G0iZgwx-xQo_watch",
+      "watch_packet_id": "01KZ9DTBSCHTZYPME7M0VQ2HKY",
+      "watch_manifest_sha256": "5519b5d567c749a16856b498f1ee9919f1762c0bc896a7b00bb6b16eedb5a8b9",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\G0iZgwx-xQo_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "a8b4d452225cb2970514ce3a4b80fcbe6d7daba65dfeb4b0799d0400b4f280cf",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\G0iZgwx-xQo_caption",
+      "caption_packet_id": "01KZ9DTFHPZM6BW6TR9E94RA5K",
+      "caption_manifest_sha256": "d228826b5a3e5554e182d54dfdc735f87f1409a4a78611d9e5a58cec3e2d5cc6",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\G0iZgwx-xQo_caption\\raw\\01_G0iZgwx-xQo.captions.en.json3",
+      "caption_body_sha256": "4942a0af13cb45b85ca9ec17a7a31a3b6c567692b354cec8bc42ee1b62307689"
+    },
+    "youtube:g5ioorHD7nk": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\g5ioorHD7nk_watch",
+      "watch_packet_id": "01KZ9EEPXSF7P82369PCP9X291",
+      "watch_manifest_sha256": "bb278505dad6b0ed55743b8f5392d87d030216fcace6d7e2e1fdf85b9b2b7a18",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\g5ioorHD7nk_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "c2e57291058b22da949d42ffca4c72225fb61ee3cef82a9e7cc57974f2c577d7",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\g5ioorHD7nk_caption",
+      "caption_packet_id": "01KZ9E8XHP86YKAGVHMAK8N296",
+      "caption_manifest_sha256": "95f140eedfb1962d760b75304eba2acd1c55e96858fa027e118149e4275e8019",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\g5ioorHD7nk_caption\\raw\\01_g5ioorHD7nk.captions.en.json3",
+      "caption_body_sha256": "01fefb6637934f16cad39d4cd161e10c517a8e9a0da1183dc787cb8cd8391e36"
+    },
+    "youtube:Gf9L04hRzaw": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Gf9L04hRzaw_watch",
+      "watch_packet_id": "01KZ9EFZW7N3N7PV6RQTMXZQ21",
+      "watch_manifest_sha256": "23e7489c3a5df02b7d7b92c987dbb65f3a1dcc698d4c01ee77af97da6403d4c9",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Gf9L04hRzaw_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "a2921ac3e5b87e73e847b85390dc0faf63efa73b71bdd93a3d8afdec35e12a3b",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Gf9L04hRzaw_caption",
+      "caption_packet_id": "01KZ9EBKTBJ3DDGG9340JBWGF1",
+      "caption_manifest_sha256": "4e3537b1ca04e5c95f525a2733448e5ad9fe9d805b5d6d68189e9aba47f6f6f2",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Gf9L04hRzaw_caption\\raw\\01_Gf9L04hRzaw.captions.en.json3",
+      "caption_body_sha256": "231f5fbac1965c976f8564e846ecbb86a551f0c5862fb274236786581d5eab74"
+    },
+    "youtube:HyZgxtFIalA": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\HyZgxtFIalA_watch",
+      "watch_packet_id": "01KZ9EEBJQRTJ1J86CG05PYG6R",
+      "watch_manifest_sha256": "a3bcbd2577629f951308ac7208b0e9d23921704977c20edea6f97cbc516155a4",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\HyZgxtFIalA_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "753f4706c037966535d36ab36fc834983ea6d63cd5d6c3593586cb0bea0e863d",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\HyZgxtFIalA_caption",
+      "caption_packet_id": "01KZ9E8CWXMPAP2GTXNWV2A9CW",
+      "caption_manifest_sha256": "bae83fd346a2167e4b4fbbbbb1e2a46839def9a70194f54f4872a2b035c56fcf",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\HyZgxtFIalA_caption\\raw\\01_HyZgxtFIalA.captions.en.json3",
+      "caption_body_sha256": "1edb73ffa4633d500d2d559da9d33c58110db6cebcd9fecc92f76415764ede24"
+    },
+    "youtube:IhaRA1G5VVg": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\IhaRA1G5VVg_watch",
+      "watch_packet_id": "01KZ9EEGGB2B9JY9S1ZTFHAX56",
+      "watch_manifest_sha256": "0d04ee9989c6351945f640e3ab5fede8f450fd19a4f71124ac1a71d7eb8ce938",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\IhaRA1G5VVg_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "a354cb61a381ddbc11d2e90cbd188fa09b5f018d4cca75fcaec48a5f0521ca74",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\IhaRA1G5VVg_caption",
+      "caption_packet_id": "01KZ9E8GQTEYYMWKBEKVVYPAWX",
+      "caption_manifest_sha256": "558db80b920681e8aacb06d5040f83b9cb5611140c11345ab6bee002ec7e1b2a",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\IhaRA1G5VVg_caption\\raw\\01_IhaRA1G5VVg.captions.en.json3",
+      "caption_body_sha256": "7c515b87935ebcb184552de7ef73d4f74ec54851763d826eb34df07824e82beb"
+    },
+    "youtube:iLskmNqTvyI": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\iLskmNqTvyI_watch",
+      "watch_packet_id": "01KZ9EFVHRP87Q40T65EFYA8MV",
+      "watch_manifest_sha256": "c0a95f3be168c669fa537fc11d00d4f663c5440aef1fa978b36e09f4b30be2db",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\iLskmNqTvyI_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "739090a0c97ee25c004dda741cd35e8a6e51288e4e4fb19441cb364187ce85fc",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\iLskmNqTvyI_caption",
+      "caption_packet_id": "01KZ9EBCTP313YXH88R4E7PKZ7",
+      "caption_manifest_sha256": "fef5074d6271147be41929d07585dddb5600a37a47e2f6df8f4c378223e4623c",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\iLskmNqTvyI_caption\\raw\\01_iLskmNqTvyI.captions.en.json3",
+      "caption_body_sha256": "37e6c60271563a08f93dd6b02dfbc46b8fca3c8ed18c67be1d0371d4664a6e93"
+    },
+    "youtube:lHt5e_iG2kc": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lHt5e_iG2kc_watch",
+      "watch_packet_id": "01KZ9EFSFB415TGJASZY1NPM3Y",
+      "watch_manifest_sha256": "df22767b7927500d3d84893b9c4f98031077713af4b588c2cfc2d316b812a2d2",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lHt5e_iG2kc_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "2e9bef1706c5e83ce505803da6f1f85b86b004a0cd23cae09b31822e878b02d4",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lHt5e_iG2kc_caption",
+      "caption_packet_id": "01KZ9EB8VD737F7SHKVPCP04TH",
+      "caption_manifest_sha256": "9f238e21cb0320bdb22db291f09a1f6b9f1d9226fce4c940ea9d7d5e013867a4",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lHt5e_iG2kc_caption\\raw\\01_lHt5e_iG2kc.captions.en.json3",
+      "caption_body_sha256": "30c2fc00c53fad6ba1c220b44b3a9ec863f082c4bd387823a17532403007fff9"
+    },
+    "youtube:lYjAYyyfz18": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lYjAYyyfz18_watch",
+      "watch_packet_id": "01KZ9EEMNG5GP6CCVY4B8YCXWV",
+      "watch_manifest_sha256": "45d231119879f3b08b58471ebd48cb2f2f2cca99bd15a64f2f0ef66ab4cbc763",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lYjAYyyfz18_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "59899359bfabbe282357ff5631408764e9d1bde051a406b82317d128b63e1b80",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lYjAYyyfz18_caption",
+      "caption_packet_id": "01KZ9E8S5ECGWC73Z0DG3ZAN19",
+      "caption_manifest_sha256": "3c30aafbd42635fc2642b0341773284a6b79069d45ab3e2d596ba1fd0cb74597",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\lYjAYyyfz18_caption\\raw\\01_lYjAYyyfz18.captions.en.json3",
+      "caption_body_sha256": "77e9f3ca40cc8e9392bd79f9c05daace0848e9cf52313edfa849ae346cd242a9"
+    },
+    "youtube:MSm2kUbrakc": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\MSm2kUbrakc_watch",
+      "watch_packet_id": "01KZ9EG9PHV71XG41JX8C4P3GP",
+      "watch_manifest_sha256": "d22bfb20d87ab84106806623f30186721c29a2220161b33bd11f57ba89895eb7",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\MSm2kUbrakc_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "d106a17b42e603443c95c25a63a289ad1e2b448fd16c1d9c983ad2c45f9e4b48",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\MSm2kUbrakc_caption",
+      "caption_packet_id": "01KZ9ECB79XXXGK4DF4P7MRDG8",
+      "caption_manifest_sha256": "8478193995a26761dfcca37e1b232f62d63c435d1acc633b66a04b6879233c96",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\MSm2kUbrakc_caption\\raw\\01_MSm2kUbrakc.captions.en.json3",
+      "caption_body_sha256": "1332e81a5523046c632fdcd182f426c79204846b8b6a129fac293013de6baca1"
+    },
+    "youtube:NMKDmUuGBqE": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\NMKDmUuGBqE_watch",
+      "watch_packet_id": "01KZ9EEXN7TS3X95EAAGDWHEDJ",
+      "watch_manifest_sha256": "1b36b605020a2d888f4b8f3aeaad6d9741ad13e274241702286b2e455bc58e60",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\NMKDmUuGBqE_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "47ac46b76ed08cc4acc1deffd09af155915f57caa769c61a2b60f651b63d7205",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\NMKDmUuGBqE_caption",
+      "caption_packet_id": "01KZ9E99YNHD9GKC8EWH8REYQE",
+      "caption_manifest_sha256": "78f510100429a5db49ad3b83d5b98720bb8450f1a58a660f97473a0ea2bf5625",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\NMKDmUuGBqE_caption\\raw\\01_NMKDmUuGBqE.captions.en.json3",
+      "caption_body_sha256": "ef5057ed91f59bde9285830eb761c46ebd7712bf1f8b7f9495324f7733dc31be"
+    },
+    "youtube:nooD7eEJtqs": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\nooD7eEJtqs_watch",
+      "watch_packet_id": "01KZ9EF6MMVMV9FYD88XGVK01K",
+      "watch_manifest_sha256": "8d6b74fe67b2402cde86c4acb2c5b29ac35c891334c420a8ff8a367041ac1013",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\nooD7eEJtqs_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "b28c1a6bed5e7d7b6a5d8524ceace9092036984f4da56e4fcf1d14cce034ff62",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\nooD7eEJtqs_caption",
+      "caption_packet_id": "01KZ9EAMFM7MYVT32XNC8MHBZX",
+      "caption_manifest_sha256": "bb88b62ca48b3f5c3a5e5de4666bd1519aac9244b7e02a8f74af64e6b7eebb0e",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\nooD7eEJtqs_caption\\raw\\01_nooD7eEJtqs.captions.en.json3",
+      "caption_body_sha256": "f68488a8ca346b65239a9fa00edefd9c3c36ab5c7c776543c4ec376ce1efd5f6"
+    },
+    "youtube:o3_xv3_t3nA": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\o3_xv3_t3nA_watch",
+      "watch_packet_id": "01KZ9DTRV2RV71HWCY5KNW22EN",
+      "watch_manifest_sha256": "f217ba4e3701c8e81d0efdca031a6fe650d4dc5a5f6f73c76a9e032873a28db2",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\o3_xv3_t3nA_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "fd6b83d93e2ac89457aecce5dfc10b13a74ff537228fabf15c42da917a81e859",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\o3_xv3_t3nA_caption",
+      "caption_packet_id": "01KZ9DTWXR9Q4M7BBMDY98BFDB",
+      "caption_manifest_sha256": "0161af3f5723e5ad8305fb613130d52e905e9002486a86699491e43ad05914e9",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\o3_xv3_t3nA_caption\\raw\\01_o3_xv3_t3nA.captions.en.json3",
+      "caption_body_sha256": "074c4d44cca102e10f4d95ada225747dec3e5bf984a4873e6e181fcc464e2c09"
+    },
+    "youtube:P75XGeL3umw": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\P75XGeL3umw_watch",
+      "watch_packet_id": "01KZ9EE7D1GX9C4REVSHSDT37H",
+      "watch_manifest_sha256": "aac27d0398f0ad0afaf4b22f3aed7ed1ccc6ff311e9ad29eae858d6552356b45",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\P75XGeL3umw_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "e1e2482ea8cf89363747f68f62b8aa97a0cb1a74e3fd8cb555af0dea02b7d729",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\P75XGeL3umw_caption",
+      "caption_packet_id": "01KZ9E84KT1G9D09K6FAFWSNVX",
+      "caption_manifest_sha256": "8801c14a2d6202c363977d8f3a94491fa425c15a2ffd4e5ae593cb81c6c53978",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\P75XGeL3umw_caption\\raw\\01_P75XGeL3umw.captions.en.json3",
+      "caption_body_sha256": "d4daf90e5382a71661d60cd325a01278bacacd35388e4bff5c40cafd6190763e"
+    },
+    "youtube:pKokm-uNkuo": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\pKokm-uNkuo_watch",
+      "watch_packet_id": "01KZ9EF1Z683GZ32DPJ55K0P8D",
+      "watch_manifest_sha256": "038ab5f5413ffdc7ea1d80106033466c65b2643b15d2fa2165c2159c5aa72e4c",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\pKokm-uNkuo_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "441eb6e0cdfeea43d9e5483542c3477cca1dc45f42ea483769eb6b224222a69a",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\pKokm-uNkuo_caption",
+      "caption_packet_id": "01KZ9E9JJV4MD5FEDPBS2SZDF4",
+      "caption_manifest_sha256": "3c544dacf0eeb6b5ec325c900aadd7675a3de144898edf90a716593b87b135cf",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\pKokm-uNkuo_caption\\raw\\01_pKokm-uNkuo.captions.en.json3",
+      "caption_body_sha256": "5d10ef4bde2240d336a930fc0294f42952a4f4cde4628ff83841c5141837779d"
+    },
+    "youtube:q5l9Lo1kIhY": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\q5l9Lo1kIhY_watch",
+      "watch_packet_id": "01KZ9DTJ4J8EY8HW1G828T0WPQ",
+      "watch_manifest_sha256": "bb62d3f507fc5035b883a9188c3d0ebbf26e0575ca5f4cd6b7353c2a0b68aa23",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\q5l9Lo1kIhY_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "0c035ec80517ae1c4c441c2ac70d3b8efdb31c00a9699f177fe16ac7830f0b66",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\q5l9Lo1kIhY_caption",
+      "caption_packet_id": "01KZ9DTP254D51H7JKR4YPGMEE",
+      "caption_manifest_sha256": "ff479a8dfc088add789e332735dc9fa8ef063c059688e4ec60e452a16f605e94",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\q5l9Lo1kIhY_caption\\raw\\01_q5l9Lo1kIhY.captions.en.json3",
+      "caption_body_sha256": "db3b530b5cb766bfd24399109c121b11aa5da13d60735763c50e5287adc1a662"
+    },
+    "youtube:qYPdISwPJyQ": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\qYPdISwPJyQ_watch",
+      "watch_packet_id": "01KZ9EFNEG8KW0VQXAACF6SY5C",
+      "watch_manifest_sha256": "512fb922d42e0f644ab8e9b4f3f8b375b5a1bd5315c5fbcd65183b01df2fb673",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\qYPdISwPJyQ_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "946ca5d753dc8f628fd5f4d1001a63e2e34c38056d553036e0ac903f67354560",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\qYPdISwPJyQ_caption",
+      "caption_packet_id": "01KZ9EB1RC9SM4QXA9H6C5SZWV",
+      "caption_manifest_sha256": "bd455edd7a18bc1787202c05ea81c51e19943dddf92222efdbf2bbebb042bd8d",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\qYPdISwPJyQ_caption\\raw\\01_qYPdISwPJyQ.captions.en.json3",
+      "caption_body_sha256": "42bca0a518e2d8719d76774d63f87db3f72e8a1de18fe6e0c012488f9cd526f3"
+    },
+    "youtube:rP31w4-z-nw": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\rP31w4-z-nw_watch",
+      "watch_packet_id": "01KZ9EG213R5XRY1F6XSTH3J3A",
+      "watch_manifest_sha256": "fa58f0b3fddca2eb235f04e3ff4c4a86379006bdf000ce11addc3ce96b951c9e",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\rP31w4-z-nw_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "ef96647e7d89cd68176dad5a031dbbf4d6493c7a52907d3c9db9a6a0e4a212d4",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\rP31w4-z-nw_caption",
+      "caption_packet_id": "01KZ9EBQQGYEWK05GHKGF4TB2M",
+      "caption_manifest_sha256": "85283b601c214b11e6a67b9a7830995adc63cbd01b37bc2c3de43f545d9c8097",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\rP31w4-z-nw_caption\\raw\\01_rP31w4-z-nw.captions.en.json3",
+      "caption_body_sha256": "ee56ab04db4621d64dd85fc514598dc64bd0e21577490e8fdf988736deee17db"
+    },
+    "youtube:trEUPp53GqA": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\trEUPp53GqA_watch",
+      "watch_packet_id": "01KZ9EF4D2B3K41X5FNZ09PBF7",
+      "watch_manifest_sha256": "545a65fb268f8e75e7d40baa6a450bab1c1ebd4a4a2cb7e330440c3e3895fc21",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\trEUPp53GqA_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "3f0f09fdfa1f96c3fcd347c7f09f389f8b4098aba4e5e8802c1834a5462d951b",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\trEUPp53GqA_caption",
+      "caption_packet_id": "01KZ9E9PMYRMG8J4HHQP35CZFG",
+      "caption_manifest_sha256": "4a3f791dd00e7c29a797b0883835ff5cf9a1e475da6e71a98eaff1c12279ed69",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\trEUPp53GqA_caption\\raw\\01_trEUPp53GqA.captions.en.json3",
+      "caption_body_sha256": "9a7d3070aac6e93e3e5f9441095e4695d2ed930169b0041815dba2a4e0411143"
+    },
+    "youtube:U5dSfGQZOLc": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\U5dSfGQZOLc_watch",
+      "watch_packet_id": "01KZ9EEJRRZ364YN4ZC7PVZH2G",
+      "watch_manifest_sha256": "c0dde8561384ac34e2f5d1d9dcd014fff9b812c363a2ea0911ecf66afe5823dc",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\U5dSfGQZOLc_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "6c18a5e12c3f1553f79d501b3f9f46843ba950282caec21c0abea8d12604873c",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\U5dSfGQZOLc_caption",
+      "caption_packet_id": "01KZ9E8N300F86JSCTBHWK3M89",
+      "caption_manifest_sha256": "52a4211959b33faace5c54240bf331d6a8d178bd322debb4634e58e749c9b0ac",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\U5dSfGQZOLc_caption\\raw\\01_U5dSfGQZOLc.captions.en.json3",
+      "caption_body_sha256": "114f61dc18ba9a6149f6e242a1ed47ea78f71ca473741f08345bacb1b1659926"
+    },
+    "youtube:Vkp-n13WVJg": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Vkp-n13WVJg_watch",
+      "watch_packet_id": "01KZ9EEZQ99PDDS7A74Y2SNTCW",
+      "watch_manifest_sha256": "98f124da4a2dfb4943f20a2211b775b0481ae1275f005fbd012e63c4f7036950",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Vkp-n13WVJg_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "65a7f3a19867f54cf8383270acda57fca01195c4ef96b885691c8f687cae0f98",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Vkp-n13WVJg_caption",
+      "caption_packet_id": "01KZ9E9ED526QXXB88KT588DCT",
+      "caption_manifest_sha256": "f6c28996d0e3d75d0ece1ad2f4d25c6f647d9d7aba2b61476ed3c2a91fb89cc0",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\Vkp-n13WVJg_caption\\raw\\01_Vkp-n13WVJg.captions.en.json3",
+      "caption_body_sha256": "fcae3b355691a39914081c1fad1a3ad4aa49879544fc303e044e4cc3cecb95df"
+    },
+    "youtube:ZCrE-EhTk7s": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\ZCrE-EhTk7s_watch",
+      "watch_packet_id": "01KZ9EH9SY7ZCBM8J3XBDJ9XM0",
+      "watch_manifest_sha256": "e0ce96f6cb8d12c427446e2014416bbfc6bde9a106317c01ce11d986f4ca8743",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\ZCrE-EhTk7s_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "418b978e94226f1fbf93eefc712e202499f4620203951ec0553d79bc548cc90f",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\ZCrE-EhTk7s_caption",
+      "caption_packet_id": "01KZ9EHD9Z69PNFD96CWVCS20R",
+      "caption_manifest_sha256": "d55ee7a372031a1b71efa7d1c7efaccc91005a4fbcb046408767f868cf28a73c",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\ZCrE-EhTk7s_caption\\raw\\01_ZCrE-EhTk7s.captions.en.json3",
+      "caption_body_sha256": "3e8cc080570414f82cc866f92a02d4216861ff4f03c4c1bf6efc40201bf6ca8a"
+    },
+    "youtube:zxNrQP8V4K8": {
+      "watch_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\zxNrQP8V4K8_watch",
+      "watch_packet_id": "01KZ9EFXPFHDGB6GX5CVAXDC0W",
+      "watch_manifest_sha256": "3dd1407f252370f04074bfc9c6c11443bb92fe5c348525213ed663eabfdfb368",
+      "watch_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\zxNrQP8V4K8_watch\\raw\\01_youtube_watch_capture.json",
+      "watch_body_sha256": "3dfdfd24c9776b47e10aa80cd4a80c90d1e9d61d28ed23f18b38f5efbd2c9caf",
+      "caption_packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\zxNrQP8V4K8_caption",
+      "caption_packet_id": "01KZ9EBGF1CBKFC6P7CJE3KWES",
+      "caption_manifest_sha256": "4568ec447427b59c5d2cea7ad13692323b705ae81b09d320485344c44b05d25c",
+      "caption_body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\youtube\\zxNrQP8V4K8_caption\\raw\\01_zxNrQP8V4K8.captions.en-US.json3",
+      "caption_body_sha256": "4927857f1716da9a18b4df38f7b8468ff75b0ae6ab09287af80f6b67d8496ee4"
+    },
+    "instagram:DTIbKoKkteA": {
+      "packet_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\instagram\\DTIbKoKkteA_http",
+      "packet_id": "01KZ9E6P339XZ6Z9PP2577WBZX",
+      "manifest_sha256": "39f3ba229ae27301181a3b708d9c7e75c8d72d08da9811af1a8da8a0ff405aa7",
+      "body_locator": "C:\\tmp\\forseti-dieux-phase-a-completion-20260805-p03\\co1\\native_social\\instagram\\DTIbKoKkteA_http\\raw\\01_http_response_body.bin",
+      "body_sha256": "390f85eb62ca37f3a679a3289f1d35aa46b5c4c1b4cf2bc34815abecd78ee753"
+    }
+  },
+  "posts": [
+    {
+      "native_post_id": "instagram:DTIbKoKkteA",
+      "platform": "instagram",
+      "creator": "dieuxskin",
+      "creator_platform_id": "2135387020",
+      "published_at": null,
+      "published_at_posture": "not visible in the captured source-native body",
+      "source_locator": "https://www.instagram.com/p/DTIbKoKkteA/",
+      "title": "Skin Mercy ingredient/direction carousel",
+      "product_anchors": [
+        "Skin Mercy"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "owned",
+      "relationship_basis": "The preserved native body identifies owner username dieuxskin and creator id 2135387020.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit"
+      ],
+      "independence_group": "instagram:account:2135387020",
+      "dedupe_key": "instagram:shortcode:DTIbKoKkteA",
+      "capture_packet": "instagram:DTIbKoKkteA",
+      "owned_use_ceiling": "Direction/documentation only; does not substitute for creator-distributed breadth."
+    },
+    {
+      "native_post_id": "youtube:8uZKNMnXImI",
+      "platform": "youtube",
+      "creator": "Sincerely Chany",
+      "creator_platform_id": "UCPeEnRT-g4d7IdL1MpVLOtg",
+      "published_at": "2022-04-24T17:52:22-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=8uZKNMnXImI",
+      "title": "SKINCARE HAUL OF MY DREAMS (ft Dieux, Good Light, Twelve Beauty, & Glossier)",
+      "product_anchors": [
+        "Deliverance"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCPeEnRT-g4d7IdL1MpVLOtg",
+      "dedupe_key": "youtube:video:8uZKNMnXImI",
+      "capture_packet": "youtube:8uZKNMnXImI"
+    },
+    {
+      "native_post_id": "youtube:Cu-tfd7MhHo",
+      "platform": "youtube",
+      "creator": "Claudia Glows",
+      "creator_platform_id": "UCFdKqC_y0MRssn9Me2NM1Ow",
+      "published_at": "2026-01-27T07:00:30-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=Cu-tfd7MhHo",
+      "title": "What I am LOVING right now: New Skincare & Haircare,  Ziip Halo 2.0.......",
+      "product_anchors": [
+        "Skin Mercy"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "relationship_unknown",
+      "relationship_basis": "Native watch-page description exposes a commercial-style outbound link but does not establish the Dieux relationship in the captured text.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCFdKqC_y0MRssn9Me2NM1Ow",
+      "dedupe_key": "youtube:video:Cu-tfd7MhHo",
+      "capture_packet": "youtube:Cu-tfd7MhHo"
+    },
+    {
+      "native_post_id": "youtube:DHtS-2dYyME",
+      "platform": "youtube",
+      "creator": "Chemist Confessions",
+      "creator_platform_id": "UC_oJUYInCjcw9czSRqMUKCA",
+      "published_at": "2025-10-21T10:00:06-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=DHtS-2dYyME",
+      "title": "#156) EAST VS WEST! 10 Barrier Creams Reviewed & Ranked! | Chemist Confessions Podcast",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UC_oJUYInCjcw9czSRqMUKCA",
+      "dedupe_key": "youtube:video:DHtS-2dYyME",
+      "capture_packet": "youtube:DHtS-2dYyME"
+    },
+    {
+      "native_post_id": "youtube:Fo_FiGKnnaA",
+      "platform": "youtube",
+      "creator": "Hyram",
+      "creator_platform_id": "UC2sYit3cZ2CuD_8FHYH7O_Q",
+      "published_at": "2025-12-19T10:21:39-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=Fo_FiGKnnaA",
+      "title": "I Tried Every Allure 2025 Beauty Winner (here are the best 👀)",
+      "product_anchors": [
+        "Deliverance"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UC2sYit3cZ2CuD_8FHYH7O_Q",
+      "dedupe_key": "youtube:video:Fo_FiGKnnaA",
+      "capture_packet": "youtube:Fo_FiGKnnaA"
+    },
+    {
+      "native_post_id": "youtube:G0iZgwx-xQo",
+      "platform": "youtube",
+      "creator": "alex greyson",
+      "creator_platform_id": "UCanwF_Eifej-7wzqUJ3PdIg",
+      "published_at": "2023-10-29T13:32:29-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=G0iZgwx-xQo",
+      "title": "dieux air angel gel cream | trial + review",
+      "product_anchors": [
+        "Instant Angel",
+        "Air Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCanwF_Eifej-7wzqUJ3PdIg",
+      "dedupe_key": "youtube:video:G0iZgwx-xQo",
+      "capture_packet": "youtube:G0iZgwx-xQo"
+    },
+    {
+      "native_post_id": "youtube:Gf9L04hRzaw",
+      "platform": "youtube",
+      "creator": "MamaG-SkinJourney",
+      "creator_platform_id": "UCw1SNFQnu-BCutuhaKu6RxA",
+      "published_at": "2025-09-02T14:02:34-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=Gf9L04hRzaw",
+      "title": "Dieux Instant Angel Review",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "segment_portfolio_product_fit"
+      ],
+      "independence_group": "youtube:channel:UCw1SNFQnu-BCutuhaKu6RxA",
+      "dedupe_key": "youtube:video:Gf9L04hRzaw",
+      "capture_packet": "youtube:Gf9L04hRzaw"
+    },
+    {
+      "native_post_id": "youtube:HyZgxtFIalA",
+      "platform": "youtube",
+      "creator": "Matt Johnson",
+      "creator_platform_id": "UC6U66jiOy8wIlnHtfGzkdsA",
+      "published_at": "2021-01-05T12:32:16-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=HyZgxtFIalA",
+      "title": "Best Under Eye Mask 2021 | Grant's Favorite Reusable Eye Patches | Dieux Skin Forever Eye Mask",
+      "product_anchors": [
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UC6U66jiOy8wIlnHtfGzkdsA",
+      "dedupe_key": "youtube:video:HyZgxtFIalA",
+      "capture_packet": "youtube:HyZgxtFIalA"
+    },
+    {
+      "native_post_id": "youtube:IhaRA1G5VVg",
+      "platform": "youtube",
+      "creator": "No BS Beauty",
+      "creator_platform_id": "UC7zemE5pZ5lhDeW4Fs2u74g",
+      "published_at": "2023-08-26T13:51:48-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=IhaRA1G5VVg",
+      "title": "Dieux Instant Angel Skin Restoring Moisturizer First Impressions Review",
+      "product_anchors": [
+        "Instant Angel",
+        "Ethereal"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "price_value_hype_product_trust"
+      ],
+      "independence_group": "youtube:channel:UC7zemE5pZ5lhDeW4Fs2u74g",
+      "dedupe_key": "youtube:video:IhaRA1G5VVg",
+      "capture_packet": "youtube:IhaRA1G5VVg"
+    },
+    {
+      "native_post_id": "youtube:MSm2kUbrakc",
+      "platform": "youtube",
+      "creator": "Makeup By Nikki La Rose",
+      "creator_platform_id": "UCCydBRF6RjrT58FV6KO-wwg",
+      "published_at": "2025-05-24T06:00:40-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=MSm2kUbrakc",
+      "title": "MY SKINCARE HOLY GRAILS!",
+      "product_anchors": [
+        "Instant Angel",
+        "Deliverance"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCCydBRF6RjrT58FV6KO-wwg",
+      "dedupe_key": "youtube:video:MSm2kUbrakc",
+      "capture_packet": "youtube:MSm2kUbrakc"
+    },
+    {
+      "native_post_id": "youtube:NMKDmUuGBqE",
+      "platform": "youtube",
+      "creator": "AliceintheRabbitHole",
+      "creator_platform_id": "UCGkltVA9P07m4G-XveUqdxw",
+      "published_at": "2024-04-05T16:00:16-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=NMKDmUuGBqE",
+      "title": "Dieux Skin is dieuxing skincare right (...sorry)",
+      "product_anchors": [
+        "Instant Angel",
+        "Auracle"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "independence_group": "youtube:channel:UCGkltVA9P07m4G-XveUqdxw",
+      "dedupe_key": "youtube:video:NMKDmUuGBqE",
+      "capture_packet": "youtube:NMKDmUuGBqE"
+    },
+    {
+      "native_post_id": "youtube:P75XGeL3umw",
+      "platform": "youtube",
+      "creator": "Amanda Rose",
+      "creator_platform_id": "UC--ewnyXKBQqQ0ZQ3rk01pg",
+      "published_at": "2026-01-15T14:01:56-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=P75XGeL3umw",
+      "title": "Does this work? Dieux Mini Instant Angel Lipid",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "mixed",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust"
+      ],
+      "independence_group": "youtube:channel:UC--ewnyXKBQqQ0ZQ3rk01pg",
+      "dedupe_key": "youtube:video:P75XGeL3umw",
+      "capture_packet": "youtube:P75XGeL3umw"
+    },
+    {
+      "native_post_id": "youtube:U5dSfGQZOLc",
+      "platform": "youtube",
+      "creator": "Skin Obsessed Mary",
+      "creator_platform_id": "UC8xYaEtDMT2KNCCZhsaDQUw",
+      "published_at": "2022-08-02T04:00:18-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=U5dSfGQZOLc",
+      "title": "Dieux Forever Eye Mask | Best Beauty Products | Skin Obsessed Mary",
+      "product_anchors": [
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UC8xYaEtDMT2KNCCZhsaDQUw",
+      "dedupe_key": "youtube:video:U5dSfGQZOLc",
+      "capture_packet": "youtube:U5dSfGQZOLc"
+    },
+    {
+      "native_post_id": "youtube:Vkp-n13WVJg",
+      "platform": "youtube",
+      "creator": "Jordan Samuel Skin",
+      "creator_platform_id": "UCGLFr0k_gy8TYPcvKrIiTIw",
+      "published_at": "2023-07-13T13:00:09-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=Vkp-n13WVJg",
+      "title": "My Most Used Eye Products!",
+      "product_anchors": [
+        "Auracle"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCGLFr0k_gy8TYPcvKrIiTIw",
+      "dedupe_key": "youtube:video:Vkp-n13WVJg",
+      "capture_packet": "youtube:Vkp-n13WVJg"
+    },
+    {
+      "native_post_id": "youtube:ZCrE-EhTk7s",
+      "platform": "youtube",
+      "creator": "James Welsh",
+      "creator_platform_id": "UCPP291gN79qI1QZY1znOscg",
+      "published_at": "2025-05-19T11:30:45-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=ZCrE-EhTk7s",
+      "title": "One Year Later… These Products Still Have Me in a Chokehold",
+      "product_anchors": [
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCPP291gN79qI1QZY1znOscg",
+      "dedupe_key": "youtube:video:ZCrE-EhTk7s",
+      "capture_packet": "youtube:ZCrE-EhTk7s"
+    },
+    {
+      "native_post_id": "youtube:aKfppmQ5-qc",
+      "platform": "youtube",
+      "creator": "Fortune",
+      "creator_platform_id": "UCQZiLDP5jcT9CcWnqTDA18w",
+      "published_at": "2025-05-14T13:00:06-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=aKfppmQ5-qc",
+      "title": "Sephora Picks: Summer Haircare, Skincare & Zero 'Anti-Aging' 🫶🏼 Dieux Products | FORTUNE",
+      "product_anchors": [
+        "Instant Angel",
+        "Air Angel",
+        "Deliverance",
+        "Ethereal",
+        "Baptism"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCQZiLDP5jcT9CcWnqTDA18w",
+      "dedupe_key": "youtube:video:aKfppmQ5-qc",
+      "capture_packet": "youtube:aKfppmQ5-qc"
+    },
+    {
+      "native_post_id": "youtube:cpaUJL3SSW4",
+      "platform": "youtube",
+      "creator": "J Scott Beauty",
+      "creator_platform_id": "UCrBRAhrIIcGtN0RM7NciVIQ",
+      "published_at": "2023-03-29T07:00:20-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=cpaUJL3SSW4",
+      "title": "Dieux Skin Full Brand Review | ft. Instant Angel Moisturizer, Auracle Eye Gel and Deliverance Serum",
+      "product_anchors": [
+        "Instant Angel",
+        "Deliverance",
+        "Auracle",
+        "Ethereal"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCrBRAhrIIcGtN0RM7NciVIQ",
+      "dedupe_key": "youtube:video:cpaUJL3SSW4",
+      "capture_packet": "youtube:cpaUJL3SSW4"
+    },
+    {
+      "native_post_id": "youtube:eejwDCxfZgE",
+      "platform": "youtube",
+      "creator": "Niralee",
+      "creator_platform_id": "UCFJwBW5wKB-3xzqJa9_6JMA",
+      "published_at": "2025-09-27T21:34:44-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=eejwDCxfZgE",
+      "title": "dieux instant angel - available in canada now! - try on",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "segment_portfolio_product_fit"
+      ],
+      "independence_group": "youtube:channel:UCFJwBW5wKB-3xzqJa9_6JMA",
+      "dedupe_key": "youtube:video:eejwDCxfZgE",
+      "capture_packet": "youtube:eejwDCxfZgE"
+    },
+    {
+      "native_post_id": "youtube:g5ioorHD7nk",
+      "platform": "youtube",
+      "creator": "Bekah Sun",
+      "creator_platform_id": "UCEGvymaXApYywLrkHz1_fVA",
+      "published_at": "2024-02-16T05:00:29-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=g5ioorHD7nk",
+      "title": "NEW AT SEPHORA | Full Brand Reviews: Dieux and Soft Services",
+      "product_anchors": [
+        "Instant Angel",
+        "Air Angel",
+        "Deliverance",
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "relationship_unknown",
+      "relationship_basis": "Native watch-page description exposes a commercial-style outbound link but does not establish the Dieux relationship in the captured text.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCEGvymaXApYywLrkHz1_fVA",
+      "dedupe_key": "youtube:video:g5ioorHD7nk",
+      "capture_packet": "youtube:g5ioorHD7nk"
+    },
+    {
+      "native_post_id": "youtube:iLskmNqTvyI",
+      "platform": "youtube",
+      "creator": "Manan Tutorial",
+      "creator_platform_id": "UCsl_7xmFRw0NQ34pF4iNFkg",
+      "published_at": "2023-08-28T07:04:31-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=iLskmNqTvyI",
+      "title": "Dieux  Instant Angel moisturizer |Dieux Instant Angel Skin Restoring Moisturizer",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "mixed",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "independence_group": "youtube:channel:UCsl_7xmFRw0NQ34pF4iNFkg",
+      "dedupe_key": "youtube:video:iLskmNqTvyI",
+      "capture_packet": "youtube:iLskmNqTvyI"
+    },
+    {
+      "native_post_id": "youtube:lHt5e_iG2kc",
+      "platform": "youtube",
+      "creator": "Leanna Dalton",
+      "creator_platform_id": "UCScUZX8BOpBc60z2juNrfVA",
+      "published_at": "2021-02-01T15:15:38-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=lHt5e_iG2kc",
+      "title": "Dieux Skin Forever Eye Masks /2022",
+      "product_anchors": [
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "mixed",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "packaging_dispensing_usability"
+      ],
+      "independence_group": "youtube:channel:UCScUZX8BOpBc60z2juNrfVA",
+      "dedupe_key": "youtube:video:lHt5e_iG2kc",
+      "capture_packet": "youtube:lHt5e_iG2kc"
+    },
+    {
+      "native_post_id": "youtube:lYjAYyyfz18",
+      "platform": "youtube",
+      "creator": "alex greyson",
+      "creator_platform_id": "UCanwF_Eifej-7wzqUJ3PdIg",
+      "published_at": "2024-10-06T09:00:45-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=lYjAYyyfz18",
+      "title": "dieux baptism gentle gel cleanser | trial + review",
+      "product_anchors": [
+        "Air Angel",
+        "Baptism"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCanwF_Eifej-7wzqUJ3PdIg",
+      "dedupe_key": "youtube:video:lYjAYyyfz18",
+      "capture_packet": "youtube:lYjAYyyfz18"
+    },
+    {
+      "native_post_id": "youtube:nooD7eEJtqs",
+      "platform": "youtube",
+      "creator": "Digital Marketing Digest",
+      "creator_platform_id": "UCOwTJ-OyJeosUDROb-aSCxw",
+      "published_at": "2025-05-27T05:12:48-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=nooD7eEJtqs",
+      "title": "Dieux Ethereal Facial Cleansing Oil Review: Game-Changing Skincare?",
+      "product_anchors": [
+        "Forever Eye Mask",
+        "Ethereal"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "relationship_unknown",
+      "relationship_basis": "Native watch-page description exposes a commercial-style outbound link but does not establish the Dieux relationship in the captured text.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "independence_group": "youtube:channel:UCOwTJ-OyJeosUDROb-aSCxw",
+      "dedupe_key": "youtube:video:nooD7eEJtqs",
+      "capture_packet": "youtube:nooD7eEJtqs"
+    },
+    {
+      "native_post_id": "youtube:o3_xv3_t3nA",
+      "platform": "youtube",
+      "creator": "Doctorly",
+      "creator_platform_id": "UCHCZnC9akNA9pBP7aJGNKdg",
+      "published_at": "2024-08-13T08:00:45-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=o3_xv3_t3nA",
+      "title": "Rating Viral Skincare: Solawave Wand, Hydrogel Masks, Dieux Eye Masks, Make-up Wipes",
+      "product_anchors": [
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "relationship_unknown",
+      "relationship_basis": "Native watch-page description exposes a commercial-style outbound link but does not establish the Dieux relationship in the captured text.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCHCZnC9akNA9pBP7aJGNKdg",
+      "dedupe_key": "youtube:video:o3_xv3_t3nA",
+      "capture_packet": "youtube:o3_xv3_t3nA"
+    },
+    {
+      "native_post_id": "youtube:pKokm-uNkuo",
+      "platform": "youtube",
+      "creator": "Cate the Great Beauty",
+      "creator_platform_id": "UCjL2p6oo6awxl6WQL2c8zbQ",
+      "published_at": "2024-09-19T13:47:06-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=pKokm-uNkuo",
+      "title": "BEAUTY EMPTIES | MINI SPEED REVIEWS",
+      "product_anchors": [
+        "Instant Angel",
+        "Deliverance"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "relationship_unknown",
+      "relationship_basis": "Native watch-page description exposes a commercial-style outbound link but does not establish the Dieux relationship in the captured text.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCjL2p6oo6awxl6WQL2c8zbQ",
+      "dedupe_key": "youtube:video:pKokm-uNkuo",
+      "capture_packet": "youtube:pKokm-uNkuo"
+    },
+    {
+      "native_post_id": "youtube:q5l9Lo1kIhY",
+      "platform": "youtube",
+      "creator": "Eglé | Scented stories",
+      "creator_platform_id": "UCNaKqWwvAkHz_8_ou7YCIaA",
+      "published_at": "2022-08-23T06:06:11-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=q5l9Lo1kIhY",
+      "title": "#QUICKIE | DIEUX FOREVER EYE MASK review 2022",
+      "product_anchors": [
+        "Forever Eye Mask"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "relationship_unknown",
+      "relationship_basis": "Native watch-page description exposes a commercial-style outbound link but does not establish the Dieux relationship in the captured text.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCNaKqWwvAkHz_8_ou7YCIaA",
+      "dedupe_key": "youtube:video:q5l9Lo1kIhY",
+      "capture_packet": "youtube:q5l9Lo1kIhY"
+    },
+    {
+      "native_post_id": "youtube:qYPdISwPJyQ",
+      "platform": "youtube",
+      "creator": "Sam [By the Counter]",
+      "creator_platform_id": "UCR4417UtFsN5U24RXhb7Fjw",
+      "published_at": "2024-02-14T01:50:29-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=qYPdISwPJyQ",
+      "title": "Finally, a truly perfect serum at Sephora! Dieux Deliverance Review",
+      "product_anchors": [
+        "Deliverance"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "price_value_hype_product_trust",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCR4417UtFsN5U24RXhb7Fjw",
+      "dedupe_key": "youtube:video:qYPdISwPJyQ",
+      "capture_packet": "youtube:qYPdISwPJyQ"
+    },
+    {
+      "native_post_id": "youtube:rP31w4-z-nw",
+      "platform": "youtube",
+      "creator": "Frugalista Beauty",
+      "creator_platform_id": "UCZ8zD1ruMvjrJqs9lsQ9NuA",
+      "published_at": "2022-11-06T12:00:11-08:00",
+      "source_locator": "https://www.youtube.com/watch?v=rP31w4-z-nw",
+      "title": "WORTH THE HYPE- These Moisturizers Save My Skin 💦",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCZ8zD1ruMvjrJqs9lsQ9NuA",
+      "dedupe_key": "youtube:video:rP31w4-z-nw",
+      "capture_packet": "youtube:rP31w4-z-nw"
+    },
+    {
+      "native_post_id": "youtube:trEUPp53GqA",
+      "platform": "youtube",
+      "creator": "TheGarsowTwins",
+      "creator_platform_id": "UCm57sLYybcFhTxmyp7OrOIg",
+      "published_at": "2022-07-06T06:00:26-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=trEUPp53GqA",
+      "title": "June Favorites 2022",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "disclosed_paid_or_affiliate",
+      "relationship_basis": "Native watch-page description contains an explicit affiliate, commission, sponsorship, gifted-product, PR, referral, or ad disclosure.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCm57sLYybcFhTxmyp7OrOIg",
+      "dedupe_key": "youtube:video:trEUPp53GqA",
+      "capture_packet": "youtube:trEUPp53GqA"
+    },
+    {
+      "native_post_id": "youtube:zxNrQP8V4K8",
+      "platform": "youtube",
+      "creator": "RuthlessJEE",
+      "creator_platform_id": "UCuUk41i1Cx4THrdMGer41cg",
+      "published_at": "2024-09-29T10:48:04-07:00",
+      "source_locator": "https://www.youtube.com/watch?v=zxNrQP8V4K8",
+      "title": "Can Face Patches REALLY Erase Fine Lines? Dieux Skincare Review",
+      "product_anchors": [
+        "Instant Angel"
+      ],
+      "evidence_class": "product",
+      "perspective": "positive",
+      "relationship": "apparently_independent",
+      "relationship_basis": "No commercial relationship or disclosure was observed in the captured native watch metadata or transcript; this is appearance-based, not proof of independence.",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "independence_group": "youtube:channel:UCuUk41i1Cx4THrdMGer41cg",
+      "dedupe_key": "youtube:video:zxNrQP8V4K8",
+      "capture_packet": "youtube:zxNrQP8V4K8"
+    }
+  ],
+  "typed_exclusions": [
+    {
+      "native_post_id": "youtube:fZB6OGZIV-Q",
+      "reason": "native metadata and transcript contain no Dieux/product anchor"
+    },
+    {
+      "native_post_id": "youtube:si1MGWcoS-M",
+      "reason": "native metadata and transcript contain no Dieux/product anchor"
+    },
+    {
+      "family": "reddit",
+      "reason": "Forum evidence is excluded from the native_social family and contributes zero posts/platforms."
+    }
+  ],
+  "floor_accounting": {
+    "distinct_source_native_posts": 30,
+    "distinct_creators": 29,
+    "native_platforms": [
+      "instagram",
+      "youtube"
+    ],
+    "native_platform_count": 2,
+    "perspectives": [
+      "mixed",
+      "positive"
+    ],
+    "perspective_count": 2,
+    "relationship_counts": {
+      "owned": 1,
+      "retailer_operated": 0,
+      "disclosed_paid_or_affiliate": 10,
+      "apparently_independent": 13,
+      "relationship_unknown": 6
+    },
+    "product_evidence_posts": 30,
+    "service_or_transaction_posts": 0,
+    "owned_posts": 1,
+    "creator_distributed_non_owned_posts": 29,
+    "apparently_independent_posts": 13,
+    "unique_dedupe_keys": 30,
+    "unique_independence_groups": 29
+  },
+  "threshold_adjudication": {
+    "at_least_30_non_reddit_native_social_posts": "PASS",
+    "at_least_20_creators": "PASS",
+    "at_least_2_native_platforms": "PASS",
+    "at_least_2_perspectives": "PASS",
+    "product_anchor_and_native_body_for_every_row": "PASS",
+    "relationship_posture_for_every_row": "PASS",
+    "axis_ids_for_every_product_row": "PASS",
+    "owned_not_substituting_for_breadth": "PASS",
+    "service_kept_separate": "PASS"
+  },
+  "claim_ceiling": "This composition establishes only the commissioned evidence-floor counts. It does not prove platform or market representativeness, creator independence beyond the coded posture, product efficacy, Phase A closure, seal readiness, or authorization to start Dieux Deliver."
+}

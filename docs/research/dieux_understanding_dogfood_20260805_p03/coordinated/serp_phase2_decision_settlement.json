@@ -1,0 +1,132 @@
+{
+  "schema_version": "serp_phase2_decision_settlement_v0",
+  "subject": {
+    "name": "Dieux Skin",
+    "entity_key": "dieux skin|company|brand"
+  },
+  "entries": [
+    {
+      "name": "Aestura",
+      "entity_key": "aestura|atobarrier moisturizer|standard",
+      "subject_entity_key": "dieux skin|company|brand",
+      "rung": "candidate",
+      "sources": [
+        {
+          "source_id": "P2-A01-V:rendered-composition",
+          "surface_class": "serp_rendered_snippet",
+          "entity_key": "aestura|atobarrier moisturizer|standard",
+          "subject_entity_key": "dieux skin|company|brand"
+        }
+      ],
+      "automatic_validation_attempts": 0,
+      "decision": {
+        "action": "watch_for_new_source",
+        "confidence": "weak",
+        "decision_ready": false
+      }
+    },
+    {
+      "name": "COSRX",
+      "entity_key": "cosrx|ceramide moisturizer|standard",
+      "subject_entity_key": "dieux skin|company|brand",
+      "rung": "candidate",
+      "sources": [
+        {
+          "source_id": "P2-A05-V:rendered-composition",
+          "surface_class": "serp_rendered_snippet",
+          "entity_key": "cosrx|ceramide moisturizer|standard",
+          "subject_entity_key": "dieux skin|company|brand"
+        },
+        {
+          "source_id": "strategist-cosrx-replacement:editorial-body",
+          "surface_class": "editorial_body",
+          "entity_key": "cosrx|ceramide moisturizer|standard",
+          "subject_entity_key": "dieux skin|company|brand"
+        }
+      ],
+      "automatic_validation_attempts": 0,
+      "decision": {
+        "action": "watch_for_new_source",
+        "confidence": "weak",
+        "decision_ready": false
+      }
+    },
+    {
+      "name": "Experiment",
+      "entity_key": "experiment|molecular mesh moisturizer|standard",
+      "subject_entity_key": "dieux skin|company|brand",
+      "rung": "candidate",
+      "sources": [
+        {
+          "source_id": "P2-A05-V:third-name-rendered-composition",
+          "surface_class": "serp_rendered_snippet",
+          "entity_key": "experiment|molecular mesh moisturizer|standard",
+          "subject_entity_key": "dieux skin|company|brand"
+        }
+      ],
+      "automatic_validation_attempts": 0,
+      "decision": {
+        "action": "watch_for_new_source",
+        "confidence": "weak",
+        "decision_ready": false
+      }
+    },
+    {
+      "name": "Skinfix",
+      "entity_key": "skinfix|triple lipid peptide cream|standard",
+      "subject_entity_key": "dieux skin|company|brand",
+      "rung": "candidate",
+      "sources": [
+        {
+          "source_id": "P2-A07-V:rendered-composition",
+          "surface_class": "serp_rendered_snippet",
+          "entity_key": "skinfix|triple lipid peptide cream|standard",
+          "subject_entity_key": "dieux skin|company|brand"
+        }
+      ],
+      "automatic_validation_attempts": 0,
+      "decision": {
+        "action": "watch_for_new_source",
+        "confidence": "weak",
+        "decision_ready": false
+      }
+    }
+  ],
+  "return_probes": [
+    {
+      "job_id": "P2-A01-V",
+      "entry_entity_key": "aestura|atobarrier moisturizer|standard",
+      "partial": false,
+      "automatic_validation": false
+    },
+    {
+      "job_id": "P2-A05-V-COSRX",
+      "entry_entity_key": "cosrx|ceramide moisturizer|standard",
+      "partial": false,
+      "automatic_validation": false
+    },
+    {
+      "job_id": "P2-A05-V-EXPERIMENT",
+      "entry_entity_key": "experiment|molecular mesh moisturizer|standard",
+      "partial": false,
+      "automatic_validation": false
+    },
+    {
+      "job_id": "P2-A07-V",
+      "entry_entity_key": "skinfix|triple lipid peptide cream|standard",
+      "partial": false,
+      "automatic_validation": false
+    }
+  ],
+  "capture_accounting": {
+    "partial_probes": 0
+  },
+  "summary": {
+    "entry_count": 4,
+    "decision_ready_names": [],
+    "validate_once_names": [],
+    "watch_names": ["Aestura", "COSRX", "Experiment", "Skinfix"],
+    "parked_names": [],
+    "identity_correction_names": []
+  }
+}

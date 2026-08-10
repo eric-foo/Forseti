@@ -199,63 +199,6 @@ def test_www_capture_reuses_one_persistent_tab(monkeypatch, tmp_path) -> None:
     assert len(markers) == 1
 
 
-def test_www_capture_binds_the_declared_listing_identity(monkeypatch, tmp_path) -> None:
-    import runners.run_reddit_grid_capture as module
-
-    seen: dict[str, object] = {}
-
-    def _fake(**kwargs):
-        seen.update(kwargs)
-        return 0, str(tmp_path / "packet")
-
-    monkeypatch.setattr(
-        "runners.run_source_capture_realchrome_cdp_packet."
-        "run_source_capture_realchrome_cdp_packet",
-        _fake,
-    )
-    run_reddit_grid_capture(
-        subreddits=["alpha"],
-        listing="top",
-        time_window="week",
-        output_root=tmp_path / "out",
-        decision_question="q",
-        transport="www_realchrome",
-        delay_seconds=0,
-    )
-    check = seen["target_identity_check"]
-    assert callable(check)
-    assert check("https://www.reddit.com/r/alpha/top/?t=week")
-    assert not check("https://www.reddit.com/r/beta/top/?t=week")
-    assert not check("https://www.reddit.com/r/alpha/hot/")
-
-
-def test_old_http_cycle_basis_subtracts_capture_duration(monkeypatch, tmp_path) -> None:
-    import runners.run_reddit_grid_capture as module
-
-    now = [0.0]
-    sleeps: list[float] = []
-
-    def _capture(**_kwargs):
-        now[0] += 25.0
-        return 0, "packet"
-
-    monkeypatch.setattr(module, "run_source_capture_http_packet", _capture)
-    monkeypatch.setattr(module.time, "monotonic", lambda: now[0])
-    monkeypatch.setattr(module.time, "sleep", sleeps.append)
-    run_reddit_grid_capture(
-        subreddits=["alpha", "beta"],
-        listing="top",
-        time_window="week",
-        output_root=tmp_path / "out",
-        decision_question="q",
-        transport="old_http",
-        cadence_mode="fixed",
-        cadence_basis="cycle",
-        delay_seconds=40.0,
-    )
-    assert sleeps == [15.0]
-
-
 def test_www_unrecognized_zero_row_shell_fails_projection_validation() -> None:
     with pytest.raises(GridProjectionAnomalyError, match="no_thread_rows"):
         build_validated_www_grid_content_record(

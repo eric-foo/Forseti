@@ -53,15 +53,6 @@ def test_wrong_page_error_is_typed_and_breaker_invisible():
     assert not hasattr(exc, "http_status")
 
 
-def test_thread_identity_rejects_a_matching_path_on_another_host():
-    lookalike = f"https://example.com/?next={WWW_URL}"
-    assert not batch._same_www_thread_identity(lookalike, WWW_URL)
-    assert batch._same_www_thread_identity(
-        "https://www.reddit.com/r/elsewhere/comments/1v8wez7/renamed/?share=1",
-        WWW_URL,
-    )
-
-
 def test_mismatched_final_url_raises_before_any_packet_is_written(tmp_path):
     out = tmp_path / "packets"
     with pytest.raises(cdp.RealChromeWrongPageError) as excinfo:
@@ -109,10 +100,10 @@ def test_no_pattern_keeps_todays_unchecked_behavior(tmp_path):
 
 
 def test_www_batch_binds_the_thread_identity(tmp_path, monkeypatch):
-    seen: dict[str, object] = {}
+    seen: dict[str, str | None] = {}
 
     def spy(**kwargs):
-        seen["target_identity_check"] = kwargs.get("target_identity_check")
+        seen["target_identity_pattern"] = kwargs.get("target_identity_pattern")
         raise cdp.RealChromeCDPUnavailable("stop here; only the binding is under test")
 
     monkeypatch.setattr(cdp, "run_source_capture_realchrome_cdp_packet", spy)
@@ -124,11 +115,7 @@ def test_www_batch_binds_the_thread_identity(tmp_path, monkeypatch):
         cadence_mode="fixed",
         delay_seconds=0.0,
     )
-    check = seen["target_identity_check"]
-    assert callable(check)
-    assert check(WWW_URL)
-    assert not check(WRONG_URL)
-    assert not check(f"https://example.com/?next={WWW_URL}")
+    assert seen["target_identity_pattern"] == r"/comments/1v8wez7(?:[/?#]|$)"
 
 
 def test_batch_row_records_wrong_page_without_breaker_pressure(tmp_path, monkeypatch):

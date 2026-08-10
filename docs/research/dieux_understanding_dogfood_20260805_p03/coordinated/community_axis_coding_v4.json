@@ -1,0 +1,1877 @@
+{
+  "schema_version": "community_axis_coding_v1",
+  "subject": "Dieux Skin",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "rows": [
+    {
+      "thread_id": "11naqw4",
+      "comment_id": "jbqgxoi",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/11naqw4/product_request_iso_a_rosaceafriendly_moisturizer/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "129uppa",
+      "comment_id": "jepl9ni",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/129uppa/serum_for_everyday_redness/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "17yyp96",
+      "comment_id": "kaaf6lj",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/AsianBeauty/comments/17yyp96/people_with_clogprone_dry_skin_how_do_you_keep/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1823590",
+      "comment_id": "kaj2a18",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/NYCinfluencersnark/comments/1823590/deux_skincare/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "18wuj9l",
+      "comment_id": "post",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/18wuj9l/personal_how_i_fixed_my_damaged_skin_barrier_a_3/",
+      "parser_limitation": null,
+      "alternative_brand": "Avène"
+    },
+    {
+      "thread_id": "1akpyc4",
+      "comment_id": "kpajnwk",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1akpyc4/it_looks_like_dieux_is_coming_soon_this_is_one_of/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1amdk3g",
+      "comment_id": "kpkz3x7",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1amdk3g/ive_spent_hundreds_trying_to_find_a_face/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1c04hgv",
+      "comment_id": "kyyrnyt",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1c04hgv/warning_wrinkles_shminkles/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ciiz1i",
+      "comment_id": "l2lyoqy",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1ciiz1i/best_retinol_option_for_eczema_prone_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1cioa58",
+      "comment_id": "l2d32b1",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1cioa58/popular_products_that_irritated_my_skindamaged_my/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1dd2xc0",
+      "comment_id": "l85xkgr",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1dd2xc0/best_soothing_serum_recommendations/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1dujfy6",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1dujfy6/product_request_non_oily_face_moisturizer_im/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1gguwv9",
+      "comment_id": "luspysv",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/45PlusSkincare/comments/1gguwv9/hi_friends_i_have_bone_dry_skin_so_dry_i_no/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1gti140",
+      "comment_id": "lxmy17t",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1gti140/one_holy_grail_one_dud_just_for_fun_lets_list_our/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1i70d7p",
+      "comment_id": "m8jc734",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/PaleMUA/comments/1i70d7p/skincare_for_evening_tone_and_redness/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1i7lpz7",
+      "comment_id": "m8ng8hx",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1i7lpz7/dieux_deliverance_or_niod_modulating_glucosides/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1j6c4zo",
+      "comment_id": "mgol9vs",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "contradicts",
+      "choice": "neither",
+      "explicit_outcome": "switched_or_replaced",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1j6c4zo/opinion/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1jcuc1s",
+      "comment_id": "mi9dm2q",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit",
+        "hydration_barrier_visible_results"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/bitcheswithtaste/comments/1jcuc1s/bwt_skin_care_milky_cleansers_hydration_rosacea/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ji7hgy",
+      "comment_id": "mpdowa7",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1ji7hgy/moisturizers_for_oily_sensitive_acne_prone_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1jk3win",
+      "comment_id": "mju20ds",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/bitcheswithtaste/comments/1jk3win/bwt_for_the_product_junkieswhat_hygiene_products/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1jx4zpd",
+      "comment_id": "post",
+      "product_context": "Forever Eye Masks",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1jx4zpd/my_sale_purchases_and_reviews/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1kxd9uh",
+      "comment_id": "mupr23a",
+      "product_context": "Baptism",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1kxd9uh/help_deciding_between_luxury_face_washes/",
+      "parser_limitation": null,
+      "alternative_brand": "Experiment"
+    },
+    {
+      "thread_id": "1l75a2i",
+      "comment_id": "mwufusd",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1l75a2i/tatcha_dewyindigo_vs_dieux_instant_angel/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ldrs69",
+      "comment_id": "post",
+      "product_context": "Ethereal",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ldrs69/dieux_ethereal_cleansing_oil_for_acne_prone_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1llfn40",
+      "comment_id": "n000kvk",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/ZeroWaste/comments/1llfn40/low_plastic_no_plastic_moisturiser/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1lpxe21",
+      "comment_id": "n0yvp4o",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1lpxe21/need_good_budget_friendly_products_read_body_text/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1lqur3o",
+      "comment_id": "n1acid7",
+      "product_context": "Ethereal",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1lqur3o/holy_grail_cleanser_where_are_you/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1mve4m3",
+      "comment_id": "n9pm69x",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/40PlusSkinCare/comments/1mve4m3/good_moisturizer_not_in_a_jar/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1mvnkd8",
+      "comment_id": "n9tiwe2",
+      "product_context": "Ethereal",
+      "axis_ids": [
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "contradicts",
+      "choice": "neither",
+      "explicit_outcome": "no_future_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1mvnkd8/cleansing_oil_recs/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1n1k3t8",
+      "comment_id": "naypmhv",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1n1k3t8/need_a_daytime_moisturizer_that_does_not_remain/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ogz43a",
+      "comment_id": "nlm1j35",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1ogz43a/product_request_barrier_creams_that_feel_like_my/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1oj41eu",
+      "comment_id": "nm8yill",
+      "product_context": "Ethereal",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "compares",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/BeautyUnlocked/comments/1oj41eu/makeup_remover/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ojfkov",
+      "comment_id": "nm4shuc",
+      "product_context": "Baptism",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1ojfkov/cleanser_for_mature_but_oily_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1oqa3lm",
+      "comment_id": "nnhyjpv",
+      "product_context": "Baptism",
+      "axis_ids": [
+        "segment_portfolio_product_fit",
+        "hydration_barrier_visible_results"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1oqa3lm/looking_for_an_antiaging_lux_gentle_cleanser_for/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1osnes5",
+      "comment_id": "no0ds9h",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1osnes5/moisturizers_suggestions/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1p6ij8l",
+      "comment_id": "nrmxq23",
+      "product_context": "Forever Eye Masks",
+      "axis_ids": [
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/workingmoms/comments/1p6ij8l/under_eye_bags_and_looking_put_together/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1p6uasb",
+      "comment_id": "nqtzrs4",
+      "product_context": "Baptism",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1p6uasb/cleanser_recs/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1pbjy67",
+      "comment_id": "nrsjnvn",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/40and45PlusSkinCare/comments/1pbjy67/unbelievably_dry_face/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1pmz2zm",
+      "comment_id": "nu4u3a5",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkinbarrierLovers/comments/1pmz2zm/best_products_for_calming_redness/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1q1ampp",
+      "comment_id": "nx499hp",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1q1ampp/product_request_finding_a_good_facial_lotion_for/",
+      "parser_limitation": null,
+      "alternative_brand": "Aquaphor"
+    },
+    {
+      "thread_id": "1q1hff9",
+      "comment_id": "nxaq059",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Skincare_Addiction/comments/1q1hff9/i_need_help_finding_a_good_moisturizer_to_use/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1q9ldjq",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/Rosacea/comments/1q9ldjq/i_love_my_skincare_routine_but_i_still_have/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qctulv",
+      "comment_id": "nzq6up9",
+      "product_context": "Ethereal",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/KoreanBeauty/comments/1qctulv/cleaning_oil_for_sensitive_dry_skin_that_removes/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qd6fve",
+      "comment_id": "nznup21",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Skincare_Addiction/comments/1qd6fve/heeeeavy_moisturizer_suggestions/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qd6i9d",
+      "comment_id": "post",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1qd6i9d/product_request_heeeeavy_moisturizer_suggestions/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qhvq2e",
+      "comment_id": "o0n2r74",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1qhvq2e/best_daytimefriendly_hydrating_moisturizing_serum/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qk99z4",
+      "comment_id": "o14uy33",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1qk99z4/has_anyone_tried_the_new_dieux_mercy_cream/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qo08hs",
+      "comment_id": "o1xwzcf",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/45PlusSkincare/comments/1qo08hs/rosacea_suggestions/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1qtkicz",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/rhodeskin/comments/1qtkicz/moment_of_silence/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1r3hvp9",
+      "comment_id": "o54pih3",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/tretinoin/comments/1r3hvp9/soooo_i_only_ever_peel_around_my_mouth_does/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1r9pjf5",
+      "comment_id": "o6e94xv",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/EuroSkincare/comments/1r9pjf5/dieux_alternatives_in_eu/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rc85bl",
+      "comment_id": "o6z30q5",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "contradicts",
+      "choice": "neither",
+      "explicit_outcome": "rejected_or_not_recommended",
+      "source_ref": "https://old.reddit.com/r/ProjectPan/comments/1rc85bl/can_you_guys_tell_i_love_this_moisturizer_still/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rfyl70",
+      "comment_id": "o7q86m5",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "neither",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1rfyl70/routine_help_very_oily_but_extremely_dehydrated/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rlm09d",
+      "comment_id": "o8t15gl",
+      "product_context": "Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1rlm09d/sephora_therapy_what_would_you_buy_for_a_surgery/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rot8pc",
+      "comment_id": "o9gfcww",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1rot8pc/routine_help_urgent_all_moisturizers_burn_my_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rpgrjl",
+      "comment_id": "o9nh1n4",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/SkinbarrierLovers/comments/1rpgrjl/suggest_me_a_moisturizer_for_an_oily_dehydrated/",
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search"
+    },
+    {
+      "thread_id": "1rqbes7",
+      "comment_id": "o9r4572",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1rqbes7/dupe_for_dieux_air_angel/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rrnm9r",
+      "comment_id": "oa230n5",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1rrnm9r/product_question_dieux_vs_la_roche_posay_for/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1rvj5go",
+      "comment_id": "oawcoon",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "neither",
+      "explicit_outcome": "returned_or_refunded",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1rvj5go/skin_mercy_back_in_stock/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ryctlx",
+      "comment_id": "obenqiv",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddictionLux/comments/1ryctlx/tatcha_indigo_overnight_vs_dieux_skin_mercy/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ryzom2",
+      "comment_id": "post",
+      "product_context": "Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkinbarrierLovers/comments/1ryzom2/please_help_my_angry_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1s0kr63",
+      "comment_id": "obwdlfe",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1s0kr63/rate_my_proposed_skin_flooding_routine_routine/",
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search"
+    },
+    {
+      "thread_id": "1s2et4k",
+      "comment_id": "oc7ndwm",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkinbarrierLovers/comments/1s2et4k/am_moisturizer_search/",
+      "parser_limitation": null,
+      "alternative_brand": "Aestura"
+    },
+    {
+      "thread_id": "1s5vv4b",
+      "comment_id": "ocxoep6",
+      "product_context": "Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkinbarrierLovers/comments/1s5vv4b/prequel_may_be_the_barrier_cream_for_those_who/",
+      "parser_limitation": null,
+      "alternative_brand": "Farmacy"
+    },
+    {
+      "thread_id": "1s8wrmq",
+      "comment_id": "odmrq87",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/OliveMUA/comments/1s8wrmq/i_have_always_had_a_lot_of_redness_and_i_havent/",
+      "parser_limitation": null,
+      "alternative_brand": "Cetaphil"
+    },
+    {
+      "thread_id": "1sdkqsm",
+      "comment_id": "oejoclk",
+      "product_context": "Baptism",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1sdkqsm/influencedeinfluence_me/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1sfteu2",
+      "comment_id": "post",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1sfteu2/influence_de_influence_me/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1sumnoa",
+      "comment_id": "om03ens",
+      "product_context": "Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/MatureBeauty/comments/1sumnoa/moisturizer_for_women_50/",
+      "parser_limitation": null,
+      "alternative_brand": "Farmacy"
+    },
+    {
+      "thread_id": "1t04kst",
+      "comment_id": "oj6kbz8",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "contradicts",
+      "choice": "neither",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1t04kst/whats_been_your_experience_with_metal_tubes/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1t63rdj",
+      "comment_id": "okg5bej",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "contradicts",
+      "choice": "neither",
+      "explicit_outcome": "switched_or_replaced",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1t63rdj/face_moisturizer/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1tfaynk",
+      "comment_id": "oma8k9u",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust"
+      ],
+      "contribution": "contradicts",
+      "choice": "neither",
+      "explicit_outcome": "rejected_or_not_recommended",
+      "source_ref": "https://old.reddit.com/r/45PlusSkincare/comments/1tfaynk/newer_lines_under_eyes_need_advice/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1tfdynn",
+      "comment_id": "p1ml9wv",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1tfdynn/very_frustrated_with_dehydrated_skin_and_damaged/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1tqa7r2",
+      "comment_id": "oooske4",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/40PlusSkinCare/comments/1tqa7r2/looking_for_a_moisturizer_similar_to_dieuxs/",
+      "parser_limitation": null,
+      "alternative_brand": "Aestura"
+    },
+    {
+      "thread_id": "1ttcqc6",
+      "comment_id": "op1on7o",
+      "product_context": "Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1ttcqc6/this_stuff_is_amazing/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1tzetov",
+      "comment_id": "oqa5yv4",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1tzetov/holy_grail_moisturizer/",
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search",
+      "alternative_brand": "COSRX"
+    },
+    {
+      "thread_id": "1u34vnx",
+      "comment_id": "or2l1yt",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "repeat_purchase_switching_destinations",
+        "hydration_barrier_visible_results"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/Sephora/comments/1u34vnx/which_moisturizer_is_the_best/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1u6usna",
+      "comment_id": "orw7yl3",
+      "product_context": "Forever Eye Masks",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddicts/comments/1u6usna/dieux_forever_eye_mask/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1ugdf3q",
+      "comment_id": "ou14ph4",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "compares",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1ugdf3q/im_using_3_different_moisturizers_but_my_skin/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1v4latf",
+      "comment_id": "ozcxlls",
+      "product_context": "Air Angel",
+      "axis_ids": [
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1v4latf/gel_moisturizers_product_request/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1vcxb2r",
+      "comment_id": "p16c79t",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "corroborates",
+      "choice": "subject",
+      "explicit_outcome": "recommended_or_would_purchase",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/1vcxb2r/sending_out_a_distress_signal/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "1vdb1qa",
+      "comment_id": "p187itw",
+      "product_context": "Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "neither",
+      "explicit_outcome": "switched_or_replaced",
+      "source_ref": "https://old.reddit.com/r/SkinbarrierLovers/comments/1vdb1qa/if_you_had_to_pick_one_tough_i_know/",
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search"
+    },
+    {
+      "thread_id": "1ve3egl",
+      "comment_id": "p1e2er6",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/1ve3egl/dieux_calling_its_new_retinal_level_1_made_me/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "jsyvqf",
+      "comment_id": "post",
+      "product_context": "Forever Eye Masks",
+      "axis_ids": [
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/30PlusSkinCare/comments/jsyvqf/forever_eye_mask_by_dieux/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "ndon3g",
+      "comment_id": "gyc39ia",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/ndon3g/routine_help_niacinamide_causes_small_bumps/",
+      "parser_limitation": "excerpt_not_byte_locatable_in_preserved_visible_text: the window drops inline link text and may start or end mid-token; dereference this row by comment_id inside packet_locator rather than by string search"
+    },
+    {
+      "thread_id": "oey6lx",
+      "comment_id": "jj67atf",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/oey6lx/anyone_tried_the_dieux_skin_serum_product_question/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "qkuono",
+      "comment_id": "hiyuuho",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Rosacea/comments/qkuono/gentle_vitamin_c_and_niacinamide_products_that/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "t2v4b5",
+      "comment_id": "hzix9zx",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "compares",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/t2v4b5/dieux_instant_angel_product_question/",
+      "parser_limitation": null,
+      "alternative_brand": "CeraVe"
+    },
+    {
+      "thread_id": "t3eqlm",
+      "comment_id": "hyv1utk",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/t3eqlm/skin_concern_after_a_long_time_i_finally_god_rid/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "wigtum",
+      "comment_id": "ijc71vq",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Rosacea/comments/wigtum/hypochlorous_acid_spray_has_cured_my_rosacea/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "yck3in",
+      "comment_id": "itpr18s",
+      "product_context": "Forever Eye Masks",
+      "axis_ids": [
+        "segment_portfolio_product_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/SkincareAddiction/comments/yck3in/misc_why_do_people_put_on_their_eye_masks_wayy/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "ygkr0l",
+      "comment_id": "iuixahe",
+      "product_context": "Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "conditional",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/Rosacea/comments/ygkr0l/dieux_skin_products/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "zz6nqz",
+      "comment_id": "j29rcf5",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "unstated",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://old.reddit.com/r/tretinoin/comments/zz6nqz/small_bumps_on_cheeks_not_cystic_almost_like/",
+      "parser_limitation": null
+    },
+    {
+      "thread_id": "181lihq",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products, Instant Angel, Air Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/181lihq/thoughts_on_dieux_skin_product_request/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1abr0vm",
+      "comment_id": "post",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1abr0vm/dieux_instant_angel_replacement/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1ax6ivq",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products, Instant Angel, Air Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1ax6ivq/thoughts_on_dieux_skin/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1ep1hty",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products, Instant Angel, Air Angel, Deliverance, Forever Eye Masks, Auracle",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1ep1hty/have_you_tried_dieux/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1hpp7we",
+      "comment_id": "post",
+      "product_context": "Instant Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "repeat_purchase_switching_destinations",
+        "segment_portfolio_product_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "switched_or_replaced",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1hpp7we/suggested_alternative_to_dieux_instant_angel/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1mg3y29",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1mg3y29/instant_angel_comparison/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1mw43hu",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1mw43hu/instant_angel_breakout/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1nziq8l",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1nziq8l/does_dieux_instant_angel_lipid_cream_actually/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1ovsqzr",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1ovsqzr/dieuxspecific_irritation/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1ovsype",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Deliverance, Baptism",
+      "axis_ids": [
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/1ovsype/product_question_dieux_adverse_reactions/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1pzrseg",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1pzrseg/dieux_instant_angel_honest_review/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1q7m9f2",
+      "comment_id": "post",
+      "product_context": "Skin Mercy, Instant Angel, Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "returned_or_refunded",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1q7m9f2/has_anyone_tried_out_dieuxs_skin_mercy/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1qim4xl",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel, Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1qim4xl/instant_angel_vs_air_angel/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1qs3yv1",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "irritation_breakout_active_condition_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "switched_or_replaced",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1qs3yv1/dieux_instant_angel_vs_experiment_molecular_mesh/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1u7bawb",
+      "comment_id": "post",
+      "product_context": "Air Angel, Instant Angel, Skin Mercy",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1u7bawb/dieux_air_angel/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1vb0td1",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel, Baptism",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "returned_or_refunded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1vb0td1/instant_angel_holy_stink_anyone_else/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "tah4ez",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "stopped_or_discarded",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/tah4ez/product_question_anyone_else_having_issues_with/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "vc7kso",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations",
+        "texture_finish_makeup_routine_fit"
+      ],
+      "contribution": "sharpens",
+      "choice": "subject",
+      "explicit_outcome": "retained_or_repurchased",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/vc7kso/good_dupe_for_dieux_instant_angel/",
+      "parser_limitation": "One conservative thread-level row retained where the nominated comment set was absent."
+    },
+    {
+      "thread_id": "1l8evw5",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "sharpens",
+      "choice": "alternative",
+      "explicit_outcome": "returned_or_refunded",
+      "source_ref": "https://www.reddit.com/r/Sephora/comments/1l8evw5/best_moisturizer_for_dry_sensitive_skin/",
+      "parser_limitation": "Focused return is coded at the thread level; the source-native packet remains controlling for individual comment attribution.",
+      "alternative_brand": "Dr. Jart Ceramidin"
+    },
+    {
+      "thread_id": "1omfgsp",
+      "comment_id": "post",
+      "product_context": "Dieux Skin brand / products",
+      "axis_ids": [
+        "service_fulfillment_support_trust"
+      ],
+      "contribution": "sharpens",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/1omfgsp/misc_dieux_shipping_issues_poor_customer_service/",
+      "parser_limitation": "Focused return is coded at the thread level; the source-native packet remains controlling for individual comment attribution.",
+      "alternative_brand": "Sephora"
+    },
+    {
+      "thread_id": "o28gng",
+      "comment_id": "post",
+      "product_context": "Deliverance, Instant Angel, Air Angel",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "sharpens",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://www.reddit.com/r/SkincareAddiction/comments/o28gng/product_question_thoughts_on_deliverance_serum/",
+      "parser_limitation": "Focused return is coded at the thread level; the source-native packet remains controlling for individual comment attribution.",
+      "alternative_brand": "Chuda Healing Hydrating Cream"
+    },
+    {
+      "thread_id": "1f9ys6t",
+      "comment_id": "post",
+      "product_context": "Instant Angel, Air Angel, Baptism",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "packaging_dispensing_usability",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "sharpens",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1f9ys6t/ordered_dieux_instant_angel_finally/",
+      "parser_limitation": "Focused return is coded at the thread level; the source-native packet remains controlling for individual comment attribution.",
+      "alternative_brand": "Instant Angel"
+    },
+    {
+      "thread_id": "1gzqa62",
+      "comment_id": "post",
+      "product_context": "Air Angel, Baptism, Instant Angel, Deliverance",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_makeup_routine_fit",
+        "price_value_hype_product_trust",
+        "segment_portfolio_product_fit",
+        "repeat_purchase_switching_destinations"
+      ],
+      "contribution": "sharpens",
+      "choice": "alternative",
+      "explicit_outcome": "none_explicit",
+      "source_ref": "https://www.reddit.com/r/SkincareAddictionLux/comments/1gzqa62/usspecific_products/",
+      "parser_limitation": "Focused return is coded at the thread level; the source-native packet remains controlling for individual comment attribution.",
+      "alternative_brand": "Le Mieux Sheer Hydration"
+    }
+  ]
+}

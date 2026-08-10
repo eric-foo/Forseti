@@ -1,0 +1,389 @@
+{
+  "bundle_sha256": "11e36d2ceec5ab1a410fc7a7678a05d2d1b9037a442cfca8e7641cd8c0faab2e",
+  "corpus_sha256": "77dbc951da6dfa1fcc286e0d02e2c86ec8db2a7ad89e4b5da2d4b3f9fe516d12",
+  "coverage": {
+    "accounted_evidence_unit_count": 2,
+    "admitted_evidence_unit_count": 2,
+    "complete": true,
+    "source_family_counts": {
+      "reddit_community": 2
+    },
+    "unresolved_evidence_ids": []
+  },
+  "cycle_id": "summer-fridays-understanding-dogfood-p11r7",
+  "emerging_axis_candidates": [
+    "habitual_product_use",
+    "perceived_product_effect",
+    "product_replacement_or_abandonment"
+  ],
+  "method_sha256": "044e34d41f28c8a98baf0677d227703690b79765db63822808765e23778ed205",
+  "method_version": "semantic_evidence_integration_method_v2",
+  "propositions": [
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "bounded_proposition": "One customer found Laneige Lip Glowy Balm smooth with a balanced thickness.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One customer found Laneige Lip Glowy Balm smooth with a balanced thickness.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1h0wfao:lz75gqx"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "individual reported experience"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "conditions": [
+        "individual reported experience"
+      ],
+      "emerging_axis_labels": [],
+      "proposition_id": "prop_1284f6731742563602d6",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1h0wfao:lz75gqx::laneige-texture-positive"
+        ]
+      },
+      "subject_product_ids": [
+        "laneige-lip-glowy-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [],
+      "bounded_proposition": "One customer reported no perceived benefit from Summer Fridays Lip Butter Balm without identifying the expected benefit.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One customer reported no perceived benefit from Summer Fridays Lip Butter Balm without identifying the expected benefit.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1h0wfao:lz75gqx"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "benefit type was not specified"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "conditions": [
+        "benefit type was not specified"
+      ],
+      "emerging_axis_labels": [
+        "perceived_product_effect"
+      ],
+      "proposition_id": "prop_2ae64557576599a42717",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1h0wfao:lz75gqx::sf-no-perceived-benefit"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "bounded_proposition": "Captured comments describe Summer Fridays Lip Butter Balm as disappearing too quickly or requiring frequent reapplication.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "Captured comments describe Summer Fridays Lip Butter Balm as disappearing too quickly or requiring frequent reapplication.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1ft1w8d:lppwb5s",
+          "reddit:1h0wfao:lz75gqx"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "captured Reddit comments",
+          "public actor identity unavailable"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "conditions": [
+        "captured Reddit comments",
+        "public actor identity unavailable"
+      ],
+      "emerging_axis_labels": [],
+      "proposition_id": "prop_3658afeeb107a7458f3d",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1ft1w8d:lppwb5s::sf-wear-still-short",
+          "reddit:1h0wfao:lz75gqx::sf-frequent-reapplication"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "wear_and_longevity"
+      ],
+      "bounded_proposition": "The captured customer accounts disagree on whether Summer Fridays Lip Butter Balm or Laneige Lip Glowy Balm lasts longer.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "The captured customer accounts disagree on whether Summer Fridays Lip Butter Balm or Laneige Lip Glowy Balm lasts longer.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "mixed",
+        "counterevidence_refs": [
+          "reddit:1h0wfao:lz75gqx"
+        ],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1ft1w8d:lppwb5s"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "two captured Reddit comments",
+          "public actor identity unavailable"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [
+        "laneige-lip-glowy-balm"
+      ],
+      "conditions": [
+        "two captured Reddit comments",
+        "public actor identity unavailable"
+      ],
+      "emerging_axis_labels": [],
+      "proposition_id": "prop_82cb69102c6c9276b85c",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [
+          "reddit:1h0wfao:lz75gqx::sf-wear-worse-vs-laneige"
+        ],
+        "support": [
+          "reddit:1ft1w8d:lppwb5s::sf-wear-vs-laneige"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [],
+      "bounded_proposition": "One customer described Laneige Lip Glowy Balm as their routinely used lip product.",
+      "claim_kind": "reported_behavior",
+      "claim_support": {
+        "behavior_evidence_refs": [
+          "reddit:1h0wfao:lz75gqx"
+        ],
+        "bounded_proposition": "One customer described Laneige Lip Glowy Balm as their routinely used lip product.",
+        "causal_ceiling": "single_actor_self_attribution",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1h0wfao:lz75gqx"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "individual self-reported use"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "conditions": [
+        "individual self-reported use"
+      ],
+      "emerging_axis_labels": [
+        "habitual_product_use"
+      ],
+      "proposition_id": "prop_b0e2f607215d9f11030d",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1h0wfao:lz75gqx::laneige-daily-driver"
+        ]
+      },
+      "subject_product_ids": [
+        "laneige-lip-glowy-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "texture_and_skin_finish"
+      ],
+      "bounded_proposition": "One captured customer found Summer Fridays Lip Butter Balm more comfortable than Ole Henriksen Pout Preserve.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured customer found Summer Fridays Lip Butter Balm more comfortable than Ole Henriksen Pout Preserve.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1ft1w8d:lppwb5s"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "individual reported lip use"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [
+        "ole-henriksen-pout-preserve"
+      ],
+      "conditions": [
+        "individual reported lip use"
+      ],
+      "emerging_axis_labels": [],
+      "proposition_id": "prop_ca2c28630dc6cb10ab0c",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1ft1w8d:lppwb5s::sf-comfort-vs-ole"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [],
+      "bounded_proposition": "One customer reported formerly using a Summer Fridays Vanilla balm habitually and later finding other lip treatments they considered better.",
+      "claim_kind": "reported_behavior",
+      "claim_support": {
+        "behavior_evidence_refs": [
+          "reddit:1ft1w8d:lppwb5s"
+        ],
+        "bounded_proposition": "One customer reported formerly using a Summer Fridays Vanilla balm habitually and later finding other lip treatments they considered better.",
+        "causal_ceiling": "single_actor_self_attribution",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1ft1w8d:lppwb5s"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "alternative treatments were not identified"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "conditions": [
+        "alternative treatments were not identified"
+      ],
+      "emerging_axis_labels": [
+        "product_replacement_or_abandonment"
+      ],
+      "proposition_id": "prop_ee9ab189776f19bd735c",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1ft1w8d:lppwb5s::sf-former-habit-replaced"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    },
+    {
+      "adjacent_evidence_refs": [],
+      "axis_ids": [
+        "scent_and_flavor"
+      ],
+      "bounded_proposition": "One captured customer liked the smell of Summer Fridays Lip Butter Balm.",
+      "claim_kind": "customer_experience",
+      "claim_support": {
+        "behavior_evidence_refs": [],
+        "bounded_proposition": "One captured customer liked the smell of Summer Fridays Lip Butter Balm.",
+        "causal_ceiling": "descriptive_only",
+        "conflict_posture": "none_observed",
+        "counterevidence_refs": [],
+        "engagement_evidence_refs": [],
+        "evidence_refs": [
+          "reddit:1ft1w8d:lppwb5s"
+        ],
+        "independent_origin_count": 1,
+        "scope_conditions": [
+          "individual reported experience"
+        ],
+        "source_roles": [
+          "community_post"
+        ],
+        "support_posture": "isolated"
+      },
+      "comparator_product_ids": [],
+      "conditions": [
+        "individual reported experience"
+      ],
+      "emerging_axis_labels": [],
+      "proposition_id": "prop_f63dbd8e22a128d8881e",
+      "semantic_relations": {
+        "adjacent": [],
+        "counter": [],
+        "support": [
+          "reddit:1ft1w8d:lppwb5s::sf-scent-positive"
+        ]
+      },
+      "subject_product_ids": [
+        "summer-fridays-lip-butter-balm"
+      ]
+    }
+  ],
+  "question_id": "phase-a-semantic-integration-dogfood",
+  "schema_version": "semantic_evidence_integration_view_v1",
+  "unmerged_semantic_units": [],
+  "view_sha256": "41b90d5b084d77bc483e870d44d2172159ba9187fb82ed2c47d8cdf1b47f3212"
+}

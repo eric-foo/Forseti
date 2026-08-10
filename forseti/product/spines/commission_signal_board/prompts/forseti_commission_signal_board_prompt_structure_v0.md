@@ -66,6 +66,14 @@ fan-out; Reddit/community acquisition stays inside `CO3`; and the targeted SERP
 Phase 2 return begins only after the specialist terminal returns. These SERP
 labels are internal acquisition steps, not Intelligence Cycle phase names.
 
+The Phase 1-to-fan-out boundary is a hard dispatch lock. Before any `CO1`-`CO3`
+task starts, the dispatcher must fresh-read same-cycle durable artifacts showing
+that capability preflight preceded the first network capture, SERP Phase 1 is
+terminal or validly reused, and the typed ledger plus required role queues are
+present. Role-task sections describe later work; they never authorize early
+dispatch. Apply the incident and seal consequences in the playbook when this
+lock is violated.
+
 Before claiming a full board is mechanically safe for classifier handoff, save
 the exact board output to a temporary or bound artifact file and run:
 
@@ -854,6 +862,47 @@ decision through a typed new axis, tier, mechanism, segment/condition, behavior
 consequence, competitor destination, contradiction, sampling-risk, or
 competitive-action addition; reopen only affected and justified adjacent axes.
 
+For comparator candidates, treat SERP as the map and the fan-out lanes as the
+evidence acquisition. Before core fan-out, require the authority's two-origin,
+two-source-role bar plus its route-1.3.0 light public-identity de-duplication;
+different rows or handles do not prove different people when exact public
+identity evidence indicates overlap. For a core rival, capture the exact
+competing product across the selected comparable retailers and map only the
+relevant franchise far enough to establish its local portfolio role. Do not
+launch a second Phase A or a full rival-company assortment unless the bound
+question is brand/portfolio-level.
+
+After specialist returns, make the primary Phase 2 comparator output the
+evidence-only choice explanation: which exact product the observed evidence
+favors on each shared axis, why, and under which conditions. Derive the final
+comparator role only after that explanation. Keep owned/ad and campaign
+positioning evidence separate from customer evidence: what a brand emphasizes
+may explain context, but it is not proof that customers choose for that reason.
+For every axis finding, apply
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`:
+bind the exact proposition; preserve support posture, origin count, source
+roles, engagement, behavior, counterevidence, conflict, scope, and causal
+ceiling; do not let an isolated testimonial set an advantage; and keep mixed
+evidence split or conditional. A directly observed bounded fact may carry only
+that fact. Audience engagement is resonance corroboration, not an independent
+experience count.
+
+For a new broad consumer-brand run, use Route 1.4's semantic evidence
+integration after the admitted evidence corpus and all selected acquisition
+jobs, including SERP Phase 2, are terminal. Follow
+`forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`.
+The integration agent groups evidence by meaning rather than keyword match,
+but it may use only the admitted evidence units and provenance supplied in the
+bundle. It must account for every claim-bearing unit, keep exact products and
+comparators attached to the right proposition, preserve conditions and
+counterevidence, and expose emerging axes instead of silently forcing them
+into the provisional inventory. Its versioned integration view is the shared
+proposition source for final axis findings; the inline `claim_support` block is
+a compatibility projection of those referenced propositions, not a second
+independent judgment. No model-provider API call is licensed by this route.
+Run targeted delta queries only for a named material gap left by the combined
+returns. Do not issue a recommendation, market conclusion, or Deliver output.
+
 Every material axis must be decision-mature through either strong evidence with
 a strong qualitative ceiling or route-bounded source exhaustion with a bounded
 observation ceiling. On that same axis row, write the compact
@@ -875,15 +924,23 @@ bars; do not reconstruct them from this prompt.
 
 Sequence the judgment correctly: use a lightweight provisional maturity scan
 to direct the evidence-floor and material-exhaustion loop, terminally account
-the resulting corpus, and only then perform final semantic adjudication and its
-delegated source check. The provisional scan is routing input, not a finished
-competitive-intelligence conclusion.
+the resulting corpus, compile the admitted evidence into the Route 1.4 shared
+semantic proposition view, and only then perform final decision-usefulness and
+competitor adjudication plus its delegated source check. The provisional scan
+is routing input, not a finished competitive-intelligence conclusion, and the
+semantic view is evidence structure, not a recommendation or market
+conclusion.
 
 Before accepting the completed Phase A seal for synthesis or landing it, run the
 authority's final delegated semantic review-and-patch. Require the reviewer to
 read every decision-bearing reference in its source-native body and two
 independent spot checks per material axis; verify local subject anchoring,
-axis/role fit, competitor-event attribution, and genuine counterevidence. Use
+axis/role fit, competitor-event attribution, and genuine counterevidence. Also
+scan axis labels and decision-bearing prose for affordability, premium,
+worth-it, deal, cost-per-use, quantity, duration, and use-rate comparisons; if
+present, require both products' price/size context or an explicit unavailable
+or not-directly-normalized disposition. Never invent a conversion or infer
+equal value from sticker price. Use
 the authority's affected-axis-first escalation rule rather than defaulting to a
 full-corpus reread. Revalidate any bounded patch against the seal, and require
 separate Chief Architect adjudication before keeping it.
@@ -1410,7 +1467,9 @@ the board precedes the scout and cannot claim its results. During specialist
 fan-out, consume the SERP Phase 1 ledger rather than re-deriving comparators.
 For a completed Understanding report, consume the final Phase 2 consolidated
 ledger and decision receipt, including the provenance that shows which
-specialist finding caused each targeted query. Do not stop at the Phase 1
+specialist finding caused each targeted query. Lead with the axis-level
+competitive-choice explanation and its conditions; treat the terminal
+comparator role as the derived secondary field. Do not stop at the Phase 1
 ledger or rerun its discovery from memory. Carry each entry's type, ladder rung,
 and provenance, and ship rungs below finding-grade as `status: gap`. Comparator
 names must trace to a harvested surface or a typed gap — never to an unsourced

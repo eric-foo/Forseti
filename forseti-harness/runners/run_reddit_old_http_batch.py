@@ -166,8 +166,15 @@ def run_reddit_old_http_batch(
         transport=transport,
     )
     summary_path = output_root / "batch_summary.json"
-    if summary_path.exists() and not resume:
-        raise ValueError(f"batch summary already exists: {summary_path}")
+    if summary_path.exists():
+        if not resume:
+            raise ValueError(f"batch summary already exists: {summary_path}")
+        # A circuit-breaker trip (or any partial run) writes an honest partial
+        # summary; a resume must not be blocked by it, and must not erase it.
+        superseded_count = len(list(output_root.glob("batch_summary.superseded_*.json")))
+        summary_path.rename(
+            output_root / f"batch_summary.superseded_{superseded_count + 1:02d}.json"
+        )
 
     # The summary alone is written at end-of-run, so an external kill --
     # session teardown, machine sleep, operator interrupt -- used to erase
@@ -184,14 +191,6 @@ def run_reddit_old_http_batch(
     if resume and not pending_slots:
         raise ValueError(
             f"nothing to resume: all {len(slots)} slot(s) already journaled in {progress_path}"
-        )
-    if summary_path.exists():
-        # A circuit-breaker trip (or any partial run) writes an honest partial
-        # summary; a valid resume must not be blocked by it, and must not erase
-        # it. Validate the journal and prove work remains before moving it.
-        superseded_count = len(list(output_root.glob("batch_summary.superseded_*.json")))
-        summary_path.rename(
-            output_root / f"batch_summary.superseded_{superseded_count + 1:02d}.json"
         )
 
     if cadence_mode == "bounded_jitter" and cadence_window_seconds is None:
@@ -241,7 +240,6 @@ def run_reddit_old_http_batch(
             "access_diagnostic_receipt": None,
             "access_diagnostic_error": None,
         }
-        slot_is_navigation_refusal = False
 
         extraction_spec = ContentExtractionSpec(
             requested_retention_mode=requested_retention_mode,
@@ -309,11 +307,6 @@ def run_reddit_old_http_batch(
                 row["packet_dir"] = str(packet_dir)
             if packet_dir is not None:
                 row["content_record_preserved"] = _packet_preserves_content_record(packet_dir)
-                if transport == WWW_REALCHROME_TRANSPORT:
-                    navigation_status = _packet_navigation_http_status(packet_dir)
-                    if navigation_status is not None:
-                        row["navigation_http_status"] = navigation_status
-                        slot_is_navigation_refusal = True
             if capture_exit == CONTENT_EXTRACTION_FAILED_EXIT_CODE and packet_dir is not None:
                 try:
                     diagnostic = _preserve_block_shell_diagnostic(
@@ -343,14 +336,13 @@ def run_reddit_old_http_batch(
             # Only a typed server-side refusal feeds the circuit breaker;
             # timeouts and local failures never do.
             if hasattr(exc, "http_status"):
-                slot_is_navigation_refusal = True
-        finally:
-            row["capture_finished_at"] = utc_now_z_microseconds()
-
-        if slot_is_navigation_refusal:
-            consecutive_refusals += 1
+                consecutive_refusals += 1
+            else:
+                consecutive_refusals = 0
         else:
             consecutive_refusals = 0
+        finally:
+            row["capture_finished_at"] = utc_now_z_microseconds()
 
         elapsed = time.monotonic() - capture_started_monotonic
         row["capture_elapsed_seconds"] = round(elapsed, 3)
@@ -495,8 +487,10 @@ def _capture_www_thread(
     # The persistent capture tab lives in the operator's real Chrome, where a
     # human can navigate it mid-capture; the snapshot must be provably the
     # requested thread, not whatever page the tab held (21 wrong-page packets
-    # committed as success on 2026-08-03 before this bind).  Compare parsed
-    # host+thread identity so a lookalike path on another host cannot pass.
+    # committed as success on 2026-08-03 before this bind).
+    thread_id_match = re.search(r"/comments/([A-Za-z0-9]+)", slot.url)
+    if thread_id_match is None:  # _validate_thread_url already guarantees this
+        raise ValueError(f"slot url carries no /comments/ thread id: {slot.url}")
     return run_source_capture_realchrome_cdp_packet(
         url=slot.url,
         source_family="reddit_thread",
@@ -523,10 +517,9 @@ def _capture_www_thread(
         content_extraction=spec,
         capture_screenshot=False,
         keep_raw_audit_sample=keep_raw_audit_sample,
-        target_identity_check=lambda final_url: _same_www_thread_identity(
-            final_url, slot.url
+        target_identity_pattern=(
+            rf"/comments/{re.escape(thread_id_match.group(1))}(?:[/?#]|$)"
         ),
-        target_identity_description="same www.reddit.com thread id",
         limitations=[
             f"batch runner accepts exact {TRANSPORT_HOSTS[WWW_REALCHROME_TRANSPORT]} URLs only",
             f"batch runner cadence_mode={cadence_plan.mode}",
@@ -555,27 +548,6 @@ def _packet_preserves_content_record(packet_dir: Path) -> bool:
     )
 
 
-def _same_www_thread_identity(actual_url: str, expected_url: str) -> bool:
-    """Match one www Reddit thread by host and base-36 thread id."""
-    actual = urlparse(actual_url)
-    expected = urlparse(expected_url)
-    expected_host = TRANSPORT_HOSTS[WWW_REALCHROME_TRANSPORT]
-    if (
-        actual.scheme.casefold() != "https"
-        or expected.scheme.casefold() != "https"
-        or actual.hostname != expected_host
-        or expected.hostname != expected_host
-    ):
-        return False
-    actual_match = re.search(r"/comments/([A-Za-z0-9]+)(?:/|$)", actual.path)
-    expected_match = re.search(r"/comments/([A-Za-z0-9]+)(?:/|$)", expected.path)
-    return bool(
-        actual_match
-        and expected_match
-        and actual_match.group(1).casefold() == expected_match.group(1).casefold()
-    )
-
-
 def _packet_artifact(packet_dir: Path, filename: str) -> Path:
     matches = []
     for path in packet_dir.rglob(f"*{filename}"):
@@ -592,34 +564,6 @@ def _packet_artifact(packet_dir: Path, filename: str) -> Path:
             f"{packet_dir}"
         )
     return matches[0]
-
-
-def _packet_navigation_http_status(packet_dir: Path) -> int | None:
-    """Read a preserved non-success status from a real-Chrome packet.
-
-    Retention renumbering stacks more than one numeric prefix on preserved
-    filenames (a real raw-failure packet carries
-    ``03_04_realchrome_snapshot_metadata.json``), so this match strips any
-    number of ``NN_`` groups; _packet_artifact's single-prefix rule would
-    silently never match a real packet here.
-    """
-    filename = "realchrome_snapshot_metadata.json"
-    name_pattern = re.compile(rf"(?:\d+_)*{re.escape(filename)}\Z")
-    matches = [
-        path
-        for path in packet_dir.rglob(f"*{filename}")
-        if path.is_file() and name_pattern.fullmatch(path.name)
-    ]
-    if len(matches) != 1:
-        return None
-    try:
-        metadata = json.loads(matches[0].read_text(encoding="utf-8"))
-    except (OSError, ValueError, json.JSONDecodeError):
-        return None
-    status = metadata.get("http_response_status")
-    if type(status) is int and not 200 <= status < 300:
-        return status
-    return None
 
 
 class _VisibleTextParser(HTMLParser):

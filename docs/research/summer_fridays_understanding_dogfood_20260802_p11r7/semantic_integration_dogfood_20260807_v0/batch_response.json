@@ -1,0 +1,111 @@
+{
+  "schema_version": "semantic_evidence_batch_response_v1",
+  "bundle_sha256": "11e36d2ceec5ab1a410fc7a7678a05d2d1b9037a442cfca8e7641cd8c0faab2e",
+  "batch_id": "batch-0001",
+  "evidence": [
+    {
+      "evidence_id": "reddit:1ft1w8d:lppwb5s",
+      "disposition": "claim_bearing",
+      "disposition_reason": "The source-pinned context resolves 'These' to Lip Butter Balm; the body then contains distinct scent, comfort, wear-time, and replacement meanings and names the Ole Henriksen and Laneige comparisons.",
+      "semantic_units": [
+        {
+          "semantic_unit_key": "sf-scent-positive",
+          "statement": "The customer liked the smell of the Summer Fridays balm.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": ["scent_and_flavor"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported experience"]
+        },
+        {
+          "semantic_unit_key": "sf-comfort-vs-ole",
+          "statement": "The customer found Summer Fridays more comfortable than Ole Henriksen.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": ["ole-henriksen-pout-preserve"],
+          "axis_ids": ["texture_and_skin_finish"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported lip use"]
+        },
+        {
+          "semantic_unit_key": "sf-wear-vs-laneige",
+          "statement": "The customer found Summer Fridays longer-lasting on the lips than Laneige Lip Glowy Balm.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": ["laneige-lip-glowy-balm"],
+          "axis_ids": ["wear_and_longevity"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported lip use"]
+        },
+        {
+          "semantic_unit_key": "sf-wear-still-short",
+          "statement": "Despite that comparison, the customer still found Summer Fridays to disappear too quickly.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": ["wear_and_longevity"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported lip use"]
+        },
+        {
+          "semantic_unit_key": "sf-former-habit-replaced",
+          "statement": "The customer described formerly using the Vanilla balm habitually and later finding other lip treatments they considered better.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": [],
+          "emerging_axis_labels": ["product_replacement_or_abandonment"],
+          "conditions": ["alternative treatments were not identified"]
+        }
+      ]
+    },
+    {
+      "evidence_id": "reddit:1h0wfao:lz75gqx",
+      "disposition": "claim_bearing",
+      "disposition_reason": "The comment contains distinct habitual-use, texture, comparative wear-time, and reapplication meanings.",
+      "semantic_units": [
+        {
+          "semantic_unit_key": "laneige-daily-driver",
+          "statement": "The customer described Laneige as their routinely used lip product.",
+          "subject_product_ids": ["laneige-lip-glowy-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": [],
+          "emerging_axis_labels": ["habitual_product_use"],
+          "conditions": ["individual self-reported use"]
+        },
+        {
+          "semantic_unit_key": "laneige-texture-positive",
+          "statement": "The customer found Laneige smooth with a balanced thickness.",
+          "subject_product_ids": ["laneige-lip-glowy-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": ["texture_and_skin_finish"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported experience"]
+        },
+        {
+          "semantic_unit_key": "sf-wear-worse-vs-laneige",
+          "statement": "The customer found Summer Fridays shorter-lasting than Laneige.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": ["laneige-lip-glowy-balm"],
+          "axis_ids": ["wear_and_longevity"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported lip use"]
+        },
+        {
+          "semantic_unit_key": "sf-no-perceived-benefit",
+          "statement": "The customer reported no perceived benefit from Summer Fridays.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": [],
+          "emerging_axis_labels": ["perceived_product_effect"],
+          "conditions": ["benefit type was not specified"]
+        },
+        {
+          "semantic_unit_key": "sf-frequent-reapplication",
+          "statement": "The customer felt Summer Fridays required constant reapplication.",
+          "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+          "comparator_product_ids": [],
+          "axis_ids": ["wear_and_longevity"],
+          "emerging_axis_labels": [],
+          "conditions": ["individual reported lip use"]
+        }
+      ]
+    }
+  ]
+}

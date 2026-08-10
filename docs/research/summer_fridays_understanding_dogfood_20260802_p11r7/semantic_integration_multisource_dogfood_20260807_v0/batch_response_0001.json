@@ -1,0 +1,574 @@
+{
+  "batch_id": "batch-0001",
+  "bundle_sha256": "013851d703f6f721223dc1621837d1030b172c8beea6677c4a9491253842f9a5",
+  "evidence": [
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The question concerns a plumping gloss discussed in the thread, not a Summer Fridays reaction.",
+      "evidence_id": "reddit:13aw1sp:jja2rx6",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The first-hand reaction is attributed to Rhode, not Summer Fridays.",
+      "evidence_id": "reddit:13end3f:jjsqcoj",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The first-hand reaction is attributed to Lanolips, not Summer Fridays.",
+      "evidence_id": "reddit:15qtzd8:jw6ecej",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report of a similar reaction after switching from Rhode to Summer Fridays.",
+      "evidence_id": "reddit:166j6zu:l9d0ja7",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "reaction symptoms were not specified",
+            "Summer Fridays variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-similar-reaction",
+          "statement": "The customer reported experiencing the same adverse reaction with Summer Fridays lip products that they had experienced with Rhode lip products.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct Sweet Mint use report explicitly distinguishes its sensation from burning.",
+      "evidence_id": "reddit:16old70:k1p6c8q",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Sweet Mint variant",
+            "individual self-reported experience"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sweet-mint-not-burning",
+          "statement": "The customer reported that Summer Fridays Sweet Mint felt good and did not reach a burning sensation.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report attributes a lip rash or allergy experience to the product family.",
+      "evidence_id": "reddit:171ciwt:k3sk0fh",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-rash-allergy",
+          "statement": "The customer described Summer Fridays Lip Butter Balm as the only lip product that had given them an allergy-like rash.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "Uses 'burns' to describe cuts or skin injuries treated with another product; no lip-balm reaction.",
+      "evidence_id": "reddit:1742rj9:k47xo36",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct sensitivity history lists Summer Fridays among lip products associated with contact-cheilitis episodes.",
+      "evidence_id": "reddit:17585yg:nv5vqin",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "multiple other product and dietary sensitivities were reported",
+            "customer-described condition; no clinical attribution established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-contact-cheilitis-history",
+          "statement": "A customer with broad lip-product sensitivities listed Summer Fridays among products they associate with contact-cheilitis episodes.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct conditional-use report says outdoor use intensified burning.",
+      "evidence_id": "reddit:176msij:k4ph1fs",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "outdoor use",
+            "customer attributed the effect to shiny reflection",
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-outdoor-burning",
+          "statement": "The customer reported that wearing Summer Fridays Lip Butter Balm outdoors appeared to make their lips burn more.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Speculates that an ingredient allergy might explain another person's experience; no first-hand Summer Fridays use or reaction is asserted.",
+      "evidence_id": "reddit:17p8me8:k848qmb",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "'Burning cherry' is a perfume name inside a fantasy product set, not a reaction.",
+      "evidence_id": "reddit:193h7hu:khal87h",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The no-burn answer responds to a question about the new Summer Fridays lip oil reviewed in the captured thread, not the Lip Butter Balm.",
+      "evidence_id": "reddit:199wb9b:kimed09",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report describes an allergy-like peeling reaction.",
+      "evidence_id": "reddit:1ahn26w:kop3sbr",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-allergy-peeling",
+          "statement": "The customer reported being allergic to Summer Fridays Lip Butter Balm and said it made their lips peel severely.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The chemical-burn report concerns Rhode; the Summer Fridays mention does not explicitly assert tolerance.",
+      "evidence_id": "reddit:1akf6oh:kp7oa4h",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The non-irritation report concerns Summer Fridays facial moisturizers, not Lip Butter Balm.",
+      "evidence_id": "reddit:1aoorwz:kq4asxf",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report describes a severe, prolonged allergy-like lip reaction.",
+      "evidence_id": "reddit:1asnsu0:kqsq5lb",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Summer Fridays product binding comes from the captured thread context",
+            "variant was not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-allergy-prolonged",
+          "statement": "The customer reported an allergy-like reaction that damaged their lips for weeks.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Provides ingredient commentary and the actor's general fragrance or mint sensitivity but does not report a Summer Fridays reaction.",
+      "evidence_id": "reddit:1bm9izm:kwapzrw",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "Discusses lanolin allergy and price without a Summer Fridays use experience.",
+      "evidence_id": "reddit:1bsww9d:kxirfnr",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Reports Summer Fridays as hydrating for an eczema-prone user but does not explicitly assert absence of irritation or burning.",
+      "evidence_id": "reddit:1ceemxn:l1iao4w",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The reaction concerns Laneige and the actor explicitly had not tried the balm being discussed.",
+      "evidence_id": "reddit:1ddzt09:l8bvc0m",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "Makes generic marketplace-chemical claims and recommends lip products without a Summer Fridays reaction experience.",
+      "evidence_id": "reddit:1ee21xh:loloacl",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Makes a general claim about tinted-balm irritation risk without a Summer Fridays experience.",
+      "evidence_id": "reddit:1eizw8l:lgcfqof",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "Counterfeit-market warning mentions fake Summer Fridays but contains no reaction to the captured genuine product family.",
+      "evidence_id": "reddit:1fk0zu0:post",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Describes the actor's general lip sensitivity and ingredient preferences without a Summer Fridays experience.",
+      "evidence_id": "reddit:1fu32im:lpxamer",
+      "semantic_units": []
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The possible reaction concerns Kosas lip oil, not Summer Fridays.",
+      "evidence_id": "reddit:1fvevie:lq79h2b",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report describes throat itching under heavier application.",
+      "evidence_id": "reddit:1hpgjxj:m4k6dwg",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "heavier application",
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-throat-itch",
+          "statement": "The customer reported that applying too much Summer Fridays Lip Butter Balm made their throat feel slightly itchy.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "out_of_scope",
+      "disposition_reason": "The reaction discussion concerns Dior lip oil, not Summer Fridays.",
+      "evidence_id": "reddit:1i7jaw4:m8lbtwd",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report says the customer is allergic to Summer Fridays.",
+      "evidence_id": "reddit:1i7of0b:m8nmm10",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "reaction symptoms and variant were not identified",
+            "customer-described allergy; no clinical diagnosis established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-allergy-unspecified",
+          "statement": "The customer reported being allergic to Summer Fridays Lip Butter Balm.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Reports choosing Summer Fridays because Laneige caused an allergy, but does not explicitly describe Summer Fridays tolerance or reaction.",
+      "evidence_id": "reddit:1j6xhqb:mgsi6qw",
+      "semantic_units": []
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Recommends Summer Fridays after another product caused a reaction but provides no first-hand Summer Fridays reaction or tolerance statement.",
+      "evidence_id": "reddit:1k562e8:moffpaj",
+      "semantic_units": []
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct use report explicitly says Summer Fridays was not among the products causing the customer's allergic reactions.",
+      "evidence_id": "reddit:1kq0492:mt21uxw",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "individual self-reported tolerance"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-not-allergic-hydrating",
+          "statement": "A customer who reports reactions to many lip products said Summer Fridays did not cause one and felt hydrating.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct use report says most Summer Fridays balms were tolerated while naming a variant exception.",
+      "evidence_id": "reddit:1m07jmq:n37cif6",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "individual self-reported tolerance"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-most-variants-tolerated",
+          "statement": "A customer with contact dermatitis said Summer Fridays was generally among the few balm families they tolerated.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Birthday Cake variant",
+            "reaction details were not specified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "birthday-cake-exception",
+          "statement": "The same customer identified the Birthday Cake variant as an exception to their usual Summer Fridays tolerance.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "First-person post reports delayed Mint-variant burning, dryness, flaking, discontinuation, and continuing sensitivity.",
+      "evidence_id": "reddit:1mzokbt:post",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Mint variant",
+            "reaction appeared after several weeks of use"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "mint-delayed-burning-flaking",
+          "statement": "The customer reported burning, dryness, and flaking after several weeks of using the Summer Fridays Mint Lip Butter Balm.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Mint variant",
+            "reported behavior following the reaction"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "mint-stopped-use",
+          "statement": "The customer reported stopping the Summer Fridays Mint Lip Butter Balm after the reaction developed.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Mint variant was the earlier exposure",
+            "continuing symptoms are self-reported and causation is not established"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "mint-persistent-sensitivity",
+          "statement": "The customer reported recurring dryness, flaking, and burning with other lip products after stopping the Summer Fridays Mint balm.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct self-report describes peeling and irritation and separately offers an ingredient hypothesis.",
+      "evidence_id": "reddit:1oatxkp:nkd50vp",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-peeling-irritation",
+          "statement": "The customer reported that Summer Fridays Lip Butter Balm left their lips peeling and irritated.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "unverified customer attribution",
+            "oral stevia consumption was reportedly tolerated"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "stevia-cause-speculation",
+          "statement": "The customer speculated that stevia might explain their reaction based on reactions they associate with other stevia-containing lip products.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "First-person Iced Coffee post reports rapid flaking and dryness plus a future purchase decision.",
+      "evidence_id": "reddit:1oh26y0:post",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Iced Coffee variant",
+            "single first-use account"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "iced-coffee-rapid-flaking",
+          "statement": "The customer reported that Iced Coffee made their lips flake within about fifteen minutes and required repeated reapplication.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "Iced Coffee variant prompted the decision",
+            "reported future purchase behavior"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "iced-coffee-no-future-purchase",
+          "statement": "The customer said this experience led them to rule out buying another Summer Fridays lip product.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Direct use report describes irritation, lack of moisture, and refusal to recommend.",
+      "evidence_id": "reddit:1ougkua:nod3nek",
+      "semantic_units": [
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-irritated-not-moisturizing",
+          "statement": "The customer reported that Summer Fridays Lip Butter Balm irritated their lips and did not moisturize them.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        },
+        {
+          "axis_ids": [
+            "reaction_and_breakout"
+          ],
+          "comparator_product_ids": [],
+          "conditions": [
+            "variant was not identified",
+            "reported recommendation behavior"
+          ],
+          "emerging_axis_labels": [],
+          "semantic_unit_key": "sf-cannot-recommend",
+          "statement": "The customer said the irritation and lack of moisture meant they could not recommend the product.",
+          "subject_product_ids": [
+            "summer-fridays-lip-butter-balm"
+          ]
+        }
+      ]
+    }
+  ],
+  "schema_version": "semantic_evidence_batch_response_v1"
+}

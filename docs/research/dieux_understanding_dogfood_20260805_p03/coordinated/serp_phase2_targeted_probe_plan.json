@@ -1,0 +1,218 @@
+{
+  "schema_version": "consumer_brand_phase2_probe_plan_v1",
+  "commission_id": "BEAUTY-DIEUX-PHASEA-COMPLETION-003",
+  "cycle_id": "DIEUX-UNDERSTANDING-20260805-003",
+  "subject": "Dieux Skin",
+  "axis_inventory_locator": "docs/research/dieux_understanding_dogfood_20260805_p03/coordinated/consumer_brand_axis_inventory.json",
+  "axis_inventory_sha256": "665807354020822ecf0f387b3f5c35ae0ac156f96532e88fe40619881ee654e9",
+  "planned_at": "2026-08-05T16:12:30.8461715Z",
+  "transport": {
+    "route": "persistent_realchrome",
+    "reason": "The same-cycle lower Google route already produced a preserved block and selected the persistent operator-visible route. Do not re-probe the lower route.",
+    "persistent_tab_marker": "DIEUX-PHASE2-003",
+    "cadence_seconds": 60,
+    "source_surface": "google_serp_us_parameterized_realchrome_cdp",
+    "native_capture_owned_by_phase2": false
+  },
+  "jobs": [
+    {
+      "job_id": "P2-A01-C",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Instant Angel\" dry dehydrated not moisturizing barrier review",
+      "source_finding": "CO3 coded mixed hydration/barrier outcomes across 93 provisional threads; CO1 editorials add condition-bound positive use tests.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A01-V",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" switched to Aestura Skinfix COSRX moisturizer",
+      "source_finding": "CO3 records executed or considered destinations including Aestura, Skinfix, and COSRX; CO1 reused an Instant Angel-to-COSRX switch account.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A01-D",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Instant Angel\" best moisturizer holy grail repurchase",
+      "source_finding": "CO3's strongest counterweight is retained/repurchased behavior; the query tests whether source discovery exposes a stronger delight case.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A02-C",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Deliverance\" irritation breakout niacinamide sensitive rosacea",
+      "source_finding": "CO3 coded reaction and active/post-procedure fit as overlapping condition-dependent tensions; CO1's The Cut reuse explicitly conditions fit on niacinamide tolerance.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A02-V",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Deliverance\" stopped switched alternative serum redness",
+      "source_finding": "CO3 records stopped/discarded and serum-preference behaviors; this tests genuine destination or switching evidence rather than mentions.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A02-D",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Deliverance\" redness calm sensitive skin love review",
+      "source_finding": "CO1 and CO3 contain bounded redness-reduction and calming counterevidence that must remain visible against irritation reports.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A03-C",
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Instant Angel\" pilling makeup greasy heavy sunscreen",
+      "source_finding": "CO3 and editorial evidence expose pilling, richness, makeup, and sunscreen compatibility as condition-dependent rather than universal.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A03-V",
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Air Angel\" vs \"Instant Angel\" makeup oily dry skin",
+      "source_finding": "CO3 records internal Air Angel/Instant Angel choice by skin state and routine slot; the query tests the discriminating comparison.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A03-D",
+      "axis_id": "texture_finish_makeup_routine_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Instant Angel\" makeup primer texture elegant review",
+      "source_finding": "CO1 and CO3 contain favorable texture and layering accounts that counter the heavy/pilling tension.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A04-C",
+      "axis_id": "packaging_dispensing_usability",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin\" pump packaging broken leaking hard to empty",
+      "source_finding": "CO3 codes 33 packaging/dispensing threads and Trustpilot adds one product-specific Air Angel packaging observation.",
+      "source_artifacts": ["co3_community_terminal", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A04-V",
+      "axis_id": "packaging_dispensing_usability",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" packaging switched moisturizer",
+      "source_finding": "The gap is whether packaging frustration causes an executed purchase consequence or only inconvenience.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A04-D",
+      "axis_id": "packaging_dispensing_usability",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" packaging easy pump customer service replacement",
+      "source_finding": "The strongest counter-case would be reliable use or successful remediation, neither of which can be inferred from complaint-only rows.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_terminal"]
+    },
+    {
+      "job_id": "P2-A05-C",
+      "axis_id": "price_value_hype_product_trust",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Instant Angel\" worth it overpriced value",
+      "source_finding": "CO3 codes price/value/hype across 69 provisional threads; the search tests condition and product specificity.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A05-V",
+      "axis_id": "price_value_hype_product_trust",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" COSRX Aestura dupe cheaper switched",
+      "source_finding": "CO1 verifies one source-native COSRX switch account; CO3 contains lower-cost alternatives and executed replacements requiring attribution checks.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A05-D",
+      "axis_id": "price_value_hype_product_trust",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Instant Angel\" worth price repurchase luxurious",
+      "source_finding": "CO1's switch account still calls Instant Angel more luxurious, while CO3 records accepted-premium repeat purchase.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A06-C",
+      "axis_id": "segment_portfolio_product_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin Mercy\" vs \"Instant Angel\" dry sensitive",
+      "source_finding": "CO1 and CO3 surface an internal richness/repair ladder and sensitive-skin condition questions.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A06-V",
+      "axis_id": "segment_portfolio_product_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Air Angel\" vs \"Instant Angel\" vs \"Skin Mercy\"",
+      "source_finding": "The specialist set identifies internal product switching; the search tests whether the portfolio choice is legible across all three moisturizers.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A06-D",
+      "axis_id": "segment_portfolio_product_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" moisturizer which one skin type",
+      "source_finding": "A strong counter-case is that customers can articulate the intended internal choice without leaving the portfolio.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A07-C",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin\" stopped using switched moisturizer repurchase",
+      "source_finding": "CO3 records both retention and departure behaviors; the gap is which conditions distinguish them.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A07-V",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Instant Angel\" switched to Aestura Skinfix COSRX",
+      "source_finding": "CO3 names these destinations but separates executed replacements from mentions; CO1 verifies the COSRX account.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A07-D",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" holy grail repurchased years",
+      "source_finding": "CO3's retention evidence is the strongest counterweight and must be searched explicitly rather than letting complaint queries dominate.",
+      "source_artifacts": ["co3_community_axis_coding"]
+    },
+    {
+      "job_id": "P2-A08-C",
+      "axis_id": "service_fulfillment_support_trust",
+      "goal": "corroborate_or_segment",
+      "query": "\"Dieux Skin\" shipping customer service refund order",
+      "source_finding": "CO3's nine-review Trustpilot window contains fulfillment, order-accuracy, support, and refund complaints; official policy supplies the company-side process.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_terminal"]
+    },
+    {
+      "job_id": "P2-A08-V",
+      "axis_id": "service_fulfillment_support_trust",
+      "goal": "compare_switch_or_value",
+      "query": "\"Dieux Skin\" shipping service compared Sephora Soko Glam",
+      "source_finding": "CO1 authorizes Sephora and Soko Glam; the query tests whether service friction changes purchase venue without treating retailers as product-review independence.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co2_retailer_breadth", "co3_community_terminal"]
+    },
+    {
+      "job_id": "P2-A08-D",
+      "axis_id": "service_fulfillment_support_trust",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Dieux Skin\" customer service resolved shipping positive",
+      "source_finding": "The captured Trustpilot window is complaint-heavy and self-selected; an explicit favorable-resolution search is required to avoid complaint-only closure.",
+      "source_artifacts": ["co1_official_and_source_neutral", "co3_community_terminal"]
+    }
+  ],
+  "job_accounting": {
+    "planned": 24,
+    "completed": 0,
+    "blocked": 0,
+    "unrun": 24
+  },
+  "deliver_started": false
+}
