@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v24
+version: v25
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v24
+# Semantic Evidence Integration Contract v25
 
 ## Purpose
 
@@ -147,6 +147,16 @@ never silently replace it. Every returned field must be supported by the source
 or supplied context.
 Historical verifier-v1 stages remain hash-distinguishable and are not relabelled
 as verifier v2.
+
+Contract v25 versions the row-verification manifest to v2 and binds the exact
+verifier method version and method-text SHA-256 into the active compilation.
+Every reconciliation and finalization entry point that consumes that compilation
+re-checks both fields against the current method. A missing, legacy-v1,
+substituted, or rehashed mismatched manifest therefore fails closed instead of
+letting a stored compilation inherit current verifier authority. Historical
+manifest-v1 compilations remain historical artifacts and require a fresh
+row-verification application before current reconciliation. The stage and
+response schemas do not change.
 
 When a captured-but-excluded denominator exists, the completion profile draws
 a deterministic bounded semantic audit sample per screening family. One
@@ -937,6 +947,13 @@ new frontier.
 
 ## Changelog
 
+- `v25` / 2026-08-11 — versioned the row-verification manifest to v2, added the
+  verifier method version and exact method-text SHA-256 to its hash-bound
+  content, and required current reconciliation/finalization consumers to match
+  both. Legacy-v1 or tampered method bindings now fail closed and must replay
+  row verification. Added no response/stage field, semantic rule, provider API,
+  extra verifier pass, conclusion, full-corpus execution, readiness claim, or
+  resume authority.
 - `v24` / 2026-08-10 — versioned the whole-row verifier method to v2 and made
   meaning inventory precede field checking. The verifier now restates each leaf
   as standalone meanings, preserves simultaneous or qualified judgments unless

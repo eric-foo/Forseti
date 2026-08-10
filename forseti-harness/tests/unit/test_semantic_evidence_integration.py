@@ -2527,6 +2527,15 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
         "replace": 1,
         "unresolved": 1,
     }
+    assert verified["row_verification_manifest"]["schema_version"] == (
+        "semantic_evidence_row_verification_manifest_v2"
+    )
+    assert verified["row_verification_manifest"]["verification_method_version"] == (
+        "semantic_evidence_row_verification_method_v2"
+    )
+    assert verified["row_verification_manifest"]["verification_method_sha256"] == (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT)
+    )
     reconciliation, _ = prepare_reconciliation_stage(bundle, verified)
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
@@ -2668,6 +2677,58 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
         match="lacks active compilation content",
     ):
         prepare_reconciliation_stage(bundle, malformed)
+
+    for field, value in (
+        ("verification_method_version", "semantic_evidence_row_verification_method_v1"),
+        ("verification_method_sha256", "0" * 64),
+    ):
+        wrong_method = deepcopy(verified)
+        wrong_method["row_verification_manifest"][field] = value
+        wrong_method["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+            {
+                key: item
+                for key, item in wrong_method["row_verification_manifest"].items()
+                if key != "manifest_sha256"
+            }
+        )
+        wrong_method["compilation_sha256"] = _canonical_hash(
+            {
+                key: item
+                for key, item in wrong_method.items()
+                if key != "compilation_sha256"
+            }
+        )
+        with pytest.raises(
+            SemanticIntegrationError,
+            match="does not bind the current verification method",
+        ):
+            prepare_reconciliation_stage(bundle, wrong_method)
+
+    legacy_manifest = deepcopy(verified)
+    legacy_manifest["row_verification_manifest"]["schema_version"] = (
+        "semantic_evidence_row_verification_manifest_v1"
+    )
+    del legacy_manifest["row_verification_manifest"]["verification_method_version"]
+    del legacy_manifest["row_verification_manifest"]["verification_method_sha256"]
+    legacy_manifest["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in legacy_manifest["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    legacy_manifest["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in legacy_manifest.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="invalid row verification manifest shape",
+    ):
+        prepare_reconciliation_stage(bundle, legacy_manifest)
 
 
 def test_row_verification_runner_writes_stage_prompts_and_verified_compilation(

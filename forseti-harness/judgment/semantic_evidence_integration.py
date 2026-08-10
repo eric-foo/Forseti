@@ -31,7 +31,7 @@ BATCH_COMPILATION_VERSION_V3 = "semantic_evidence_batch_compilation_v3"
 RAW_RESPONSE_MANIFEST_VERSION = "semantic_evidence_raw_response_manifest_v1"
 ROW_VERIFICATION_STAGE_VERSION = "semantic_evidence_row_verification_stage_v1"
 ROW_VERIFICATION_RESPONSE_VERSION = "semantic_evidence_row_verification_response_v1"
-ROW_VERIFICATION_MANIFEST_VERSION = "semantic_evidence_row_verification_manifest_v1"
+ROW_VERIFICATION_MANIFEST_VERSION = "semantic_evidence_row_verification_manifest_v2"
 ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v2"
 # The new generation deliberately keeps the legacy pretty-printed prompt
 # encoding. It is bound by name so a future compact encoding cannot silently
@@ -3136,6 +3136,8 @@ def apply_row_verification(
     manifest = {
         "schema_version": ROW_VERIFICATION_MANIFEST_VERSION,
         "stage_sha256": stage["stage_sha256"],
+        "verification_method_version": stage["verification_method_version"],
+        "verification_method_sha256": stage["verification_method_sha256"],
         "input_compilation_sha256": compilation["compilation_sha256"],
         "original_raw_response_manifest_sha256": compilation[
             "raw_response_manifest"
@@ -3181,6 +3183,8 @@ def _verify_row_verification_manifest(
     if set(manifest) != {
         "schema_version",
         "stage_sha256",
+        "verification_method_version",
+        "verification_method_sha256",
         "input_compilation_sha256",
         "original_raw_response_manifest_sha256",
         "verification_responses",
@@ -3192,6 +3196,7 @@ def _verify_row_verification_manifest(
         raise SemanticIntegrationError("invalid row verification manifest shape")
     for field in (
         "stage_sha256",
+        "verification_method_sha256",
         "input_compilation_sha256",
         "original_raw_response_manifest_sha256",
         "active_evidence_ids_sha256",
@@ -3207,6 +3212,15 @@ def _verify_row_verification_manifest(
             raise SemanticIntegrationError(
                 f"row verification manifest has invalid {field}"
             )
+    if (
+        manifest.get("verification_method_version")
+        != ROW_VERIFICATION_METHOD_VERSION
+        or manifest["verification_method_sha256"]
+        != _sha256(ROW_VERIFICATION_METHOD_TEXT)
+    ):
+        raise SemanticIntegrationError(
+            "row verification manifest does not bind the current verification method"
+        )
     raw_manifest = compilation.get("raw_response_manifest")
     dispositions = compilation.get("evidence_dispositions")
     semantic_units = compilation.get("semantic_units")
