@@ -41,6 +41,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any, Iterable
 
+from harness_utils import int_or_none
 from source_capture.reddit_consolidation.consolidator import (
     NON_CLAIMS,
     THREAD_CONTENT_RECORD_KIND,
@@ -262,7 +263,7 @@ def _parse_comment(node: HtmlNode, *, row_index: int) -> ParsedComment:
         row_id=f"comment_{row_index:04d}",
         comment_id=_normalize_thing_id(node.attrs.get("thingid")),
         parent_id=_normalize_thing_id(node.attrs.get("parentid")),
-        depth=_int_or_none(node.attrs.get("depth")),
+        depth=int_or_none(node.attrs.get("depth")),
         author_state=_author_state(node),
         timestamp_state=_state_from_attr(
             node, "created", "timestamp not stated on the comment element"
@@ -328,7 +329,7 @@ def _post_body_text(root: HtmlNode, post_node: HtmlNode) -> str:
 def _declared_total_comments(tree: HtmlNode | None) -> int | None:
     if tree is None:
         return None
-    return _int_or_none(tree.attrs.get(_COMMENT_TREE_TOTAL_ATTR))
+    return int_or_none(tree.attrs.get(_COMMENT_TREE_TOTAL_ATTR))
 
 
 def _count_continuation_links(comment_scope: HtmlNode) -> int:
@@ -373,18 +374,6 @@ def _state_from_attr(node: HtmlNode, attr: str, absent_reason: str) -> str:
 def _attr_or_none(node: HtmlNode, attr: str) -> str | None:
     value = (node.attrs.get(attr) or "").strip()
     return value or None
-
-
-def _int_or_none(value: str | None) -> int | None:
-    if value is None:
-        return None
-    text = value.strip()
-    if not text:
-        return None
-    try:
-        return int(text)
-    except ValueError:
-        return None
 
 
 def _normalize_thing_id(value: str | None) -> str | None:
