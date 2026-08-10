@@ -486,3 +486,76 @@ and the resulting two-prompt reconciliation stage hash is
 The earlier `7d04a4bc...` compilation and `55ed039e...` stage remain historical
 pre-content-binding receipts; current code correctly refuses to treat their old
 manifest shape as sufficient v7 verification.
+
+Contract v24 keeps the same whole-row verification architecture and versions
+its verifier method to v2. The change is deliberately procedural: before
+checking axes or other fields, the reader privately reconstructs every
+standalone meaning, preserves simultaneous positive and negative judgments,
+and maps each material meaning to a proposed unit. Later context may qualify an
+earlier answer but cannot erase it without an explicit withdrawal. Every field
+must remain supported by the source or supplied context. A customer attribute
+conditions a result only when it states or unambiguously entails the same
+baseline or the source explicitly scopes that result to it. A possible bias,
+caveat, or different product response stays a separate meaning, and a conjoined
+attribute phrase splits so that only the part whose baseline the result reports
+qualifies it. Sensitivity alone establishes no moisture baseline; product-linked
+sensitivity remains reaction/tolerance context, while dry or dehydrated context
+may qualify moisture. The private inventory adds no response field, parser,
+extra worker, or Deliver judgment. Verifier-v1 stages remain historical
+artifacts rather than being silently replayed under the new method text.
+
+The verifier-v2 calibration used the preserved 121-leaf Summer Fridays
+production-shaped compilation. An initial full blind pass at
+`C:\tmp\forseti-summer-fridays-row-verification-v2-20260810-v0` checked all 91
+claim-bearing rows in six prompts and compiled 35 accepts, 54 complete-row
+replacements, two unresolved rows, and 285 active semantic units with no model
+API calls. It restored the omitted `reddit:13aw1sp:jj8kde7` judgment that the
+product was not worth $24 as a balm, but still attached sensitivity to hydration.
+That near-miss kept the calibration open rather than allowing prompt structure
+or a valid compilation to stand in for semantic success.
+
+The final bounded repeat at
+`C:\tmp\forseti-summer-fridays-row-verification-v2-20260810-v5` used method hash
+`037ac8e7256cda9ffce258cab0738ff76b2395bf1ec666217419f068a6901faa`.
+Its full 91-row preparation still packed into six prompts under the existing
+90,000-byte ceiling; the largest was 89,787 bytes. Three fresh blind readers
+then independently checked the same real three-row boundary. All three restored
+the balm-value judgment, kept the hydration result condition-free, and preserved
+sensitivity as a separate reaction/tolerance meaning. All three retained very
+dry lips as the hydration baseline on `reddit:13aw1sp:jj93sc5`; all retained
+natural wrinkles as the smoothing baseline on `reddit:13aw1sp:jj9vrbp`, while
+one of the three also carried lip dryness into that smoothing condition.
+The final targeted responses were fresh-read for exact row order, complete
+replacement shape, statements, and conditions. This proves the bounded semantic
+boundary and production prompt packing, not a completed final-method 91-row
+submission, semantic readiness, full-corpus resume, prevalence, Deliver, or seal.
+
+The delegated code review then treated that one-of-three dryness carryover as a
+live attribute-overbinding residual rather than a settled reader difference:
+the leaf conjoins dryness and wrinkles in one attribute phrase, and only
+wrinkles report the smoothing result's baseline. Home adjudication accepted the
+attribute split, generalized non-cancellation to any later context, and required
+every returned field to remain supported rather than restoring a long field
+checklist.
+
+The adjudicated replay at
+`C:\tmp\forseti-summer-fridays-row-verification-v2-20260810-v6` used method hash
+`0172f560dd83a6f866842c06473d35f9f79633a5e71bf17a84ca95546f08affb` and stage
+hash `b6d35dd65da16e19b9ded1590d3eec06d3da44f30e61c70638c959e5147f0797`.
+A fresh production preparation again covered all 91 claim-bearing rows in six
+prompts; the largest rendered prompt was 89,909 bytes under the unchanged
+90,000-byte ceiling. Three new blind readers then received the same real
+three-row boundary through the actual renderer. All three restored the
+balm-value judgment, left hydration free of sensitivity, retained sensitivity
+as separate reaction/tolerance context, retained very dry lips only for the
+hydration comparison, and retained natural wrinkles—but not dryness—for the
+smoothing result. Their persisted JSON passed fresh checks for exact row order,
+complete replacement shape, statements, axes, and conditions.
+
+This remains a bounded semantic proof, not a completed final-method 91-row
+response submission, semantic readiness, full-corpus resume, prevalence,
+Deliver, or seal. One separate architecture residual also remains: applying row
+verification refuses a mismatched stage, but a later reconciliation consuming a
+stored verified compilation does not itself embed or re-derive the verifier
+method identity. That provenance hardening is not part of this semantic-method
+fix.
