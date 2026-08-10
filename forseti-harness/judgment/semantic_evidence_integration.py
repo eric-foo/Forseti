@@ -43,6 +43,7 @@ METHOD_VERSION_V2 = "semantic_evidence_integration_method_v2"
 METHOD_VERSION_V3 = "semantic_evidence_integration_method_v3"
 METHOD_VERSION_V4 = "semantic_evidence_integration_method_v4"
 METHOD_VERSION_V5 = "semantic_evidence_integration_method_v5"
+METHOD_VERSION_V6 = "semantic_evidence_integration_method_v6"
 SOURCE_VERSION_V2 = "semantic_evidence_source_v2"
 SOURCE_VERSION_V3 = "semantic_evidence_source_v3"
 # "Current" gates the Route 1.6 semantics (postures, polarity, container ids,
@@ -334,12 +335,67 @@ causation, conclusions, or recommendations. Code owns accounting, identity,
 lineage, hashes, duplicates, byte bounds, and impossible combinations.
 """
 
+# Method v6 deliberately reuses the v5 transport and response grammar.  Its
+# change is semantic: preserve relationships that v5's aggressive atomicity
+# could erase, while leaving the frozen v5 prompt bytes reproducible.
+METHOD_TEXT_V6 = METHOD_TEXT_V5.replace(
+    "SEMANTIC EVIDENCE INTEGRATION METHOD V5",
+    "SEMANTIC EVIDENCE INTEGRATION METHOD V6",
+    1,
+) + """
+
+V6 MEANING-PRESERVATION CLARIFICATIONS
+
+These rules govern where the v5 wording above could otherwise split away or
+misplace load-bearing meaning. They add no output fields and no second read.
+
+Atomicity preserves both independently true facts and explicit relationships.
+Split unrelated facts, products, outcomes, comparisons, conditions, directions,
+or uncertainty. But when the source explicitly makes a cause, explanation,
+qualification, contrast, or co-reported behavior part of the assertion, keep
+that relationship truth-complete in one bounded unit rather than deleting the
+link. In particular, a stated reason remains attached to what it explains.
+Connected ownership and habitual-use language may remain one direct behavioral
+statement when their connection is the useful meaning. It may suggest loyalty
+or possible repurchase downstream, but it never proves a purchase count,
+purchase sequence, or repeated purchase event.
+
+Choose an axis from the outcome and its direction, not from an isolated symptom
+word. Relief or repair of pre-existing dryness, cracking, or peeling may support
+hydration or repair. Product-caused or product-worsened peeling, burning,
+irritation, or damage may support reaction or tolerability. Do not force a
+symptom into the same axis in both directions.
+
+A named shade's ownership, selection, or preference supports
+shade_and_color_fit. Preserve only the observed choice or preference; never
+invent complexion match, flattering effect, or a reason the customer did not
+state.
+
+A customer attribute may qualify a result without an explicit causal word when
+it is genuinely relevant to interpreting that result in the domain. Proximity
+alone is insufficient. Attach the attribute only to units it helps interpret;
+do not copy it onto unrelated outcomes. Omission from an unrelated unit does
+not erase it from the source evidence and context.
+
+Non-drying is a bounded hydration observation, not proof of strong hydration.
+Preserve advertised product category, customer-experienced category, and
+price/value comparison as separate direct meanings when the source states
+them. A category-framing judgment may remain axis-free or use an emerging-axis
+label; lack of an accepted axis never means the evidence is unimportant.
+
+Unmerged means not yet consolidated, not low-value or disposable. Preserve
+every source-supported unusual meaning through the existing emerging-axis and
+unmerged-evidence paths. Do not add a value score, recommendation, prevalence,
+or conclusion.
+"""
+
 _METHOD_TEXTS = {
     METHOD_VERSION: METHOD_TEXT,
     METHOD_VERSION_V2: METHOD_TEXT_V2,
     METHOD_VERSION_V3: METHOD_TEXT_V3,
     METHOD_VERSION_V4: METHOD_TEXT_V4,
     METHOD_VERSION_V5: METHOD_TEXT_V5,
+    METHOD_VERSION_V6: METHOD_TEXT_V6,
 }
 
 
@@ -941,8 +997,10 @@ def _validate_v5_execution_identity(
             raise SemanticIntegrationError(
                 f"v5 projection execution identity diverges on {field}"
             )
-    if identity.get("method_version") != METHOD_VERSION_V5:
-        raise SemanticIntegrationError("v5 projection must bind semantic method v5")
+    if identity.get("method_version") not in {METHOD_VERSION_V5, METHOD_VERSION_V6}:
+        raise SemanticIntegrationError(
+            "v5 projection must bind semantic method v5 or v6"
+        )
     if projection.get("max_prompt_bytes") != bundle.get("max_prompt_bytes"):
         raise SemanticIntegrationError("v5 projection prompt ceiling diverges from bundle")
     if "worker_count" in projection or any(
@@ -961,7 +1019,8 @@ def _validate_projection(bundle: Mapping[str, Any]) -> None:
         return
     new_generation = bundle_version == BUNDLE_VERSION_V5
     if (
-        bundle.get("method_version") in {METHOD_VERSION_V4, METHOD_VERSION_V5}
+        bundle.get("method_version")
+        in {METHOD_VERSION_V4, METHOD_VERSION_V5, METHOD_VERSION_V6}
         and bundle.get("corpus_profile") == "phase_a_final_acquisition"
     ):
         _validate_product_identity_catalog(
@@ -1649,11 +1708,12 @@ def build_bundle(
             METHOD_VERSION_V3,
             METHOD_VERSION_V4,
             METHOD_VERSION_V5,
+            METHOD_VERSION_V6,
         }:
             raise SemanticIntegrationError("v3 source has invalid semantic method version")
         default_bundle_version = (
             BUNDLE_VERSION_V5
-            if requested_method == METHOD_VERSION_V5
+            if requested_method in {METHOD_VERSION_V5, METHOD_VERSION_V6}
             else BUNDLE_VERSION_V4
         )
         bundle_version = target_bundle_version or default_bundle_version
@@ -1665,9 +1725,17 @@ def build_bundle(
         # bundle carries response/compilation v3 semantics that method v3/v4
         # prompts never asked for, and method v5 prompts are unreadable under
         # a v4 response schema.
-        if requested_method == METHOD_VERSION_V5 and bundle_version != BUNDLE_VERSION_V5:
-            raise SemanticIntegrationError("semantic method v5 requires bundle v5")
-        if bundle_version == BUNDLE_VERSION_V5 and requested_method != METHOD_VERSION_V5:
+        if (
+            requested_method in {METHOD_VERSION_V5, METHOD_VERSION_V6}
+            and bundle_version != BUNDLE_VERSION_V5
+        ):
+            raise SemanticIntegrationError(
+                f"semantic method v{requested_method.rsplit('_v', 1)[-1]} requires bundle v5"
+            )
+        if bundle_version == BUNDLE_VERSION_V5 and requested_method not in {
+            METHOD_VERSION_V5,
+            METHOD_VERSION_V6,
+        }:
             raise SemanticIntegrationError("bundle v5 requires semantic method v5")
         method_version = requested_method
     else:
@@ -1695,7 +1763,11 @@ def build_bundle(
         )
     if (
         source_version == SOURCE_VERSION_V3
-        and method_version in {METHOD_VERSION_V4, METHOD_VERSION_V5}
+        and method_version in {
+            METHOD_VERSION_V4,
+            METHOD_VERSION_V5,
+            METHOD_VERSION_V6,
+        }
         and source.get("corpus_profile") == "phase_a_final_acquisition"
         and product_identity_catalog is None
     ):
@@ -4296,11 +4368,13 @@ __all__ = [
     "METHOD_TEXT_V3",
     "METHOD_TEXT_V4",
     "METHOD_TEXT_V5",
+    "METHOD_TEXT_V6",
     "METHOD_VERSION",
     "METHOD_VERSION_V2",
     "METHOD_VERSION_V3",
     "METHOD_VERSION_V4",
     "METHOD_VERSION_V5",
+    "METHOD_VERSION_V6",
     "PROMPT_ENCODING_VERSION",
     "RAW_RESPONSE_MANIFEST_VERSION",
     "RECONCILIATION_RESPONSE_VERSION",

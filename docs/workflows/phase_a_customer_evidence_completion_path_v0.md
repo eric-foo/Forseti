@@ -267,3 +267,35 @@ the full corpus paused. The next semantic change, if any, must target a
 reproduced remaining defect class and preserve matched clean controls; this
 run supplies no authority for a universal second read, polarity redesign,
 prompt-example accretion, readiness, prevalence, or corpus resumption.
+
+The method-v6 controlled replay at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-replay-20260810-v1`
+then exercised the smallest meaning-preservation correction on the same real
+calibration carrier: seven semantic-core leaves, 121 production-shaped leaves,
+seven selective cold repeats, and both terminal reconciliation views. It kept
+the bundle-v5 transport and all downstream schemas unchanged. It corrected the
+observed healed-peeling axis, named-shade axis, causal preference reason,
+connected ownership-plus-go-to meaning, omitted ownership, sensitive-lip
+condition leakage, advertised-balm value, and two surrounding density-audit
+defects. It also preserved non-drying as bounded hydration evidence and kept
+experienced category separate from value.
+
+The resulting report is `SEMANTIC_CALIBRATION_PASS`: 17 of 17 gold cases, all
+seven selective repeats, all seven relationship obligations, and all ten
+production density-audit rows passed with zero blockers and zero hard failures.
+The report is bound by
+`report_sha256: 414c961fc13fc41de971ee2dca925ff2534cdc19cb06ef6222b17030ef3c02c9`.
+All 128 primary leaves remained exactly accounted, terminal views completed,
+and no model API was called.
+
+This is a controlled replay, not fresh-reader semantic proof. The v20 response
+corpus was the baseline and the affected meanings were corrected under method
+v6 before recompilation; cold-repeat uncertainty was also reconciled by the
+same operator. The result proves that the new general rules, existing schemas,
+compiler, reconciliation, evidence retrieval, and calibration gates can carry
+the intended meanings without contradiction. It does not prove that an
+independent cold reader will apply the v6 wording unaided, estimate corpus
+prevalence, authorize the full-corpus run, or make the route seal-ready. Keep
+the full corpus paused until the code change receives de-correlated review and
+a fresh blind v6 reader reproduces the bounded result or exposes the next real
+defect class.

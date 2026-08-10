@@ -17,6 +17,7 @@ from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V3,
     BUNDLE_VERSION_V5,
     METHOD_VERSION_V5,
+    METHOD_VERSION_V6,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
@@ -269,8 +270,10 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         )
     if not _nonempty(spec.get("full_source_sha256")):
         raise SemanticCalibrationError("calibration spec lacks full_source_sha256")
-    if spec.get("method_version") != METHOD_VERSION_V5:
-        raise SemanticCalibrationError("calibration spec must target semantic method v5")
+    if spec.get("method_version") not in {METHOD_VERSION_V5, METHOD_VERSION_V6}:
+        raise SemanticCalibrationError(
+            "calibration spec must target semantic method v5 or v6"
+        )
     route_contract = spec.get("route_contract")
     required_route_fields = {
         "runner_revision",
@@ -564,7 +567,11 @@ def _verify_full_source(source: Mapping[str, Any], expected_sha256: str) -> None
 
 
 def build_calibration_source(
-    full_source: Mapping[str, Any], *, slice_id: str, evidence_ids: Sequence[str]
+    full_source: Mapping[str, Any],
+    *,
+    slice_id: str,
+    evidence_ids: Sequence[str],
+    method_version: str,
 ) -> dict[str, Any]:
     """Project one exact bounded slice without mutating the full source."""
     selected_ids = list(evidence_ids)
@@ -607,7 +614,7 @@ def build_calibration_source(
         selected_containers.append(row)
     projected = deepcopy(dict(full_source))
     projected.pop("source_sha256", None)
-    projected["semantic_method_version"] = METHOD_VERSION_V5
+    projected["semantic_method_version"] = method_version
     projected["corpus_profile"] = "bounded_regression_slice"
     projected["corpus_scope"] = (
         f"{full_source.get('corpus_scope', 'customer evidence')} | "
@@ -669,6 +676,7 @@ def prepare_semantic_calibration(
             full_source,
             slice_id=slice_spec["slice_id"],
             evidence_ids=slice_spec["evidence_ids"],
+            method_version=normalized["method_version"],
         )
         bundle = build_bundle(
             source,
@@ -720,7 +728,10 @@ def prepare_semantic_calibration(
         )
         cold_bounds = normalized["cold_repeat"]
         cold_source = build_calibration_source(
-            full_source, slice_id="cold-repeat", evidence_ids=cold_evidence_ids
+            full_source,
+            slice_id="cold-repeat",
+            evidence_ids=cold_evidence_ids,
+            method_version=normalized["method_version"],
         )
         cold_bundle = build_bundle(
             cold_source,

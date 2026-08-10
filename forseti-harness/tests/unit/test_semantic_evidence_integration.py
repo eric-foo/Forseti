@@ -21,11 +21,13 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
     METHOD_TEXT_V5,
+    METHOD_TEXT_V6,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
     METHOD_VERSION_V4,
     METHOD_VERSION_V5,
+    METHOD_VERSION_V6,
     PROMPT_ENCODING_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -2329,6 +2331,12 @@ def _source_v5(*, count: int = 7, catalog: bool = False) -> dict:
     return source
 
 
+def _source_v6(*, count: int = 7, catalog: bool = False) -> dict:
+    source = _source_v5(count=count, catalog=catalog)
+    source["semantic_method_version"] = METHOD_VERSION_V6
+    return source
+
+
 def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
 
@@ -2395,7 +2403,7 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
         "schema_version": CALIBRATION_SPEC_VERSION,
         "required_adjudication_version": CALIBRATION_ADJUDICATION_VERSION,
         "full_source_sha256": source["source_sha256"],
-        "method_version": METHOD_VERSION_V5,
+        "method_version": source["semantic_method_version"],
         "route_contract": {
             "runner_revision": "test-fixture-revision",
             "contract_version": "v11-test",
@@ -2549,6 +2557,23 @@ def test_calibration_preparation_is_exact_and_deterministic() -> None:
         for evidence_id in batch["evidence_ids"]
     ] == spec["slices"][0]["evidence_ids"]
     assert source == materialize_source_v3(_source_v5(count=2))
+
+
+def test_calibration_preparation_uses_the_spec_bound_v6_method() -> None:
+    source = materialize_source_v3(_source_v6(count=2))
+    spec = _calibration_spec(source)
+
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+
+    assert spec["method_version"] == METHOD_VERSION_V6
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V6
+    identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert "V6 MEANING-PRESERVATION CLARIFICATIONS" in build_batch_prompts(bundle)[
+        0
+    ]["prompt"]
 
 
 def test_calibration_preparation_rejects_a_stale_route_fingerprint() -> None:
@@ -3662,6 +3687,44 @@ def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> 
     assert '{"evidence_id"' not in prompt
 
 
+def test_v6_reuses_v5_transport_without_changing_frozen_v5_text() -> None:
+    assert hashlib.sha256(METHOD_TEXT_V5.encode("utf-8")).hexdigest() == (
+        "711d36f03998958f35801722fd6ce759d576eede987d2ff47a78ea5df255a111"
+    )
+    bundle = build_bundle(_source_v6(), max_prompt_bytes=12_000)
+    prompt = build_batch_prompts(bundle)[0]["prompt"]
+
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V6
+    identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert "SEMANTIC EVIDENCE INTEGRATION METHOD V6" in prompt
+    assert "V6 MEANING-PRESERVATION CLARIFICATIONS" in prompt
+
+
+def test_v6_method_uses_general_meaning_rules_not_new_product_examples() -> None:
+    amendment = METHOD_TEXT_V6.split("V6 MEANING-PRESERVATION CLARIFICATIONS", 1)[1]
+    normalized = " ".join(amendment.split())
+    for principle in (
+        "explicit relationships",
+        "stated reason remains attached to what it explains",
+        "never proves a purchase count",
+        "outcome and its direction",
+        "named shade's ownership, selection, or preference",
+        "Proximity alone is insufficient",
+        "Non-drying is a bounded hydration observation",
+        "Unmerged means not yet consolidated",
+    ):
+        assert principle in normalized
+    for product_specific_example in (
+        "Summer Fridays",
+        "Vanilla Beige",
+        "Poppy",
+        "buttercream",
+    ):
+        assert product_specific_example not in amendment
+
+
 def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     normalized = " ".join(METHOD_TEXT_V5.split())
     for disposition in ("claim_bearing", "unresolved", "context_only", "out_of_scope"):
@@ -3947,6 +4010,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
     ("method_version", "target_bundle_version", "match"),
     [
         (METHOD_VERSION_V5, BUNDLE_VERSION_V4, "method v5 requires bundle v5"),
+        (METHOD_VERSION_V6, BUNDLE_VERSION_V4, "method v6 requires bundle v5"),
         (METHOD_VERSION_V4, BUNDLE_VERSION_V5, "method v4 requires bundle v4"),
         (METHOD_VERSION_V3, BUNDLE_VERSION_V5, "bundle v5 requires semantic method v5"),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),

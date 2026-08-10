@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v20
+version: v21
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v20
+# Semantic Evidence Integration Contract v21
 
 ## Purpose
 
@@ -278,7 +278,8 @@ Contract v10 adds a separate semantic generation for full-corpus execution:
 v1, reconciliation response v2, node compilation v2, integration view v2,
 evidence packet v1, and every route and seal version are unchanged. The
 generations are mutually exclusive and fail closed in both directions: method
-v5 requires bundle v5, bundle v5 requires method v5, and a response or
+v5 requires bundle v5, bundle v5 requires method v5 or its versioned semantic
+successor, and a response or
 compilation from the wrong generation is rejected rather than coerced. The
 legacy v4 generation remains readable, validatable, and byte-reproducible; its
 paused artifacts are never mutated, restamped, migrated, or reinterpreted.
@@ -313,6 +314,35 @@ cross-venue credit. A reply that merely repeats or reports the parent remains
 `attribution_or_echo` and adds no independent origin. Bounded variant or formula wording stays detailed
 while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
 formula binding is detailed `unresolved`.
+
+Contract v21 adds `phase_a_semantic_integration_run_v4` and
+`semantic_evidence_integration_method_v6`. Method v6 deliberately reuses
+bundle v5, projection v2, batch response v3, compilation v3, reconciliation
+response v2, view v2, and evidence packet v1. It changes semantic instructions,
+not transport or durable evidence shape. Method v5 text and historical outputs
+remain hash-distinct and reproducible; a run must explicitly select method v6.
+
+Method v6 preserves the complete meaning of each leaf before deciding how to
+split it. It keeps explicit causal and explanatory links in the statement that
+they qualify. It may keep connected ownership and habitual-use behavior in one
+truth-complete statement when that is what the author expressed, but it never
+turns quantity owned into a purchase count or a verified repurchase. Axis
+assignment follows the whole outcome and direction, not an isolated symptom
+word: healing pre-existing dryness or peeling is hydration/repair, while
+product-caused or product-worsened irritation remains reaction. Named shade
+selection, ownership, or preference may carry `shade_and_color_fit` without
+inventing a reason such as undertone or complexion fit.
+
+A customer attribute may qualify a result when its meaning makes the attribute
+relevant; an explicit causal phrase is not mandatory, but mere proximity is
+insufficient. Non-worsening dryness is bounded hydration evidence rather than
+proof of strong hydration. Product category, experienced category, price/value,
+and attribute performance remain separate meanings unless the leaf explicitly
+connects them. An unconsolidated semantic unit is not unimportant: it stays
+retrievable with provenance unless deterministically dispositioned under the
+existing rules. These clarifications add no score, high-value-comment
+classifier, phrase table, second semantic pass, provider API, recommendation,
+or conclusion.
 
 Evidence posture describes how a leaf supports its unit, not whether its verb
 sounds like an action or plan. A customer's own purchase, use, return, reach,
@@ -426,7 +456,7 @@ durable raw grouped responses produced it, and downstream reconciliation
 rejects a compilation v3 that lacks that lineage.
 
 Projection v2 binds semantic execution identity: source, corpus, and catalog
-bindings; method v5 identity and hash; response-schema version; prompt-encoding
+bindings; selected method v5-or-v6 identity and hash; response-schema version; prompt-encoding
 version; exact work-unit membership; evidence and context references; prompt and
 leaf caps; and complete assessable-denominator coverage. It must not encode a
 worker count or static worker partition, because who executes a work unit is a
@@ -813,6 +843,15 @@ new frontier.
 
 ## Changelog
 
+- `v21` / 2026-08-10 — added run v4 / method v6 as a meaning-preservation
+  correction on the existing bundle-v5 transport. The semantic reader now
+  assigns axes from the complete outcome and direction, preserves explicit
+  causal and connected ownership/use meanings, distinguishes relevant customer
+  attributes from nearby but unrelated ones, keeps category and value facts
+  separate, and treats unmerged material as unconsolidated rather than
+  unimportant. Preserved method-v5 text and every transport schema. Added no
+  phrase table, high-value-comment subsystem, second read, provider call,
+  recommendation, full-corpus execution, readiness claim, or resume authority.
 - `v20` / 2026-08-10 — disambiguated logical polarity from comparative
   ordering in this contract's extraction and calibration wording. A directly
   asserted `less` or `more` comparison remains `affirmed`; logical
