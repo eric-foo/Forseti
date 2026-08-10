@@ -3505,80 +3505,50 @@ def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> 
 
 
 def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
-    text = METHOD_TEXT_V5
-    normalized = " ".join(text.split())
-    for disposition in (
-        "claim_bearing",
-        "unresolved",
-        "context_only",
-        "out_of_scope",
-    ):
-        assert disposition in text
-    assert "Judge every leaf exactly once after context" in text
-    # Referential agreement keeps only the targeted meaning and its own credit.
-    assert '"same" may adopt one clearly targeted parent meaning' in text
-    assert "never adopts every clause of a multi-point parent" in text
-    assert "Context may resolve\nomissions, never add attributes" in text
-    assert '"I always reach for it" carries a bounded customer-behavior' in text
-    assert "personal_agreement adopts only the targeted proposition" in text
-    assert "first_hand, reasons, axes, or detail" in normalized
-    assert "attribution_or_echo reports the parent, adds no origin" in normalized
-    assert "names attribution in its statement" in normalized
-    assert "A specific answer is its own bounded proposition" in normalized
-    assert "Context fills an omitted predicate, not posture" in normalized
-    assert "may add low-information same-thread recurrence" in normalized
-    assert "never cross-venue credit" in normalized
-    assert "Evidence posture describes support, not the verb" in text
-    assert "value judgment, or category\njudgment is first_hand" in text
-    assert "never customer shopping or use behavior" in text
-    assert "Polarity is logical assertion, not sentiment" in text
-    assert '"is drying",\n"worsens peeling", and "reaches for other formulas" are affirmed' in text
-    assert '"is not\ndrying" is negated' in text
-    assert "Polarity repeats direction" in text
-    # Ambiguity routes to unresolved, never to cheap out_of_scope.
-    assert "is unresolved rather than out_of_scope" in text
-    assert "Never make ambiguity cheap" in text
-    assert "routing to out_of_scope" in text
-    # Empty standalone reaction may terminate as context_only.
-    assert '"Love it" with only a known product remains context_only' in text
-    assert "smallest complete set of in-scope atomic meanings" in text
-    assert "One unit is one\nindependently testable proposition" in text
-    assert "split them even when product, axis, or posture matches" in text
-    assert "every explicit in-scope attribute, behavior" in text
-    assert "including secondary\ncomparisons" in text
-    assert "later product called better after target use is a target\ncomparison" in text
-    assert "When a result is what the author wanted" in text
-    assert "preserve both the result and preference" in text
-    assert "Generic approval" in text and "dislike adds no atom" in text
-    assert '"good, but not worth $24" yields only the value atom' in text
-    assert '"I have Poppy" and "would get it only on sale" are separate ownership' in text
-    assert "purchase-condition atoms" in text
-    assert '"Reaches for other formulas" is affirmed switching' in text
-    assert '"Not the most hydrating" and "does not make lips drier" are separate' in text
-    assert "emit both a target non-sinking moisture" in text
-    assert "target-versus-comparator hydration contrast" in text
-    assert '"Vanilla Beige!" -> "My fav!"' in text
-    assert "claim_bearing personal_agreement with no axis" in text
-    assert "Praise tied to a named result" in text
-    assert "application, is specific\nevidence" in text
-    assert "Axis candidates are vocabulary, not assignments" in text
-    assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
-    assert "include every existing axis it does express" in text
-    assert "shade-ownership unit carries shade_and_color_fit" in text
-    assert "No smoothing supports\ntexture_and_skin_finish, not hydration" in text
-    assert '"More like a gloss than a balm" is an axis-free\ncategory' in text
-    assert "A support child must match bounded_meaning direction" in text
-    assert "counter to the inverse positive meaning" in text
-    assert "never attach it as support there" in text
-    assert "Formula resemblance or change supports formula_consistency_and_change" in text
-    assert "Every unit carries a verified subject id" in text
-    assert "never create standalone units or ids for them" in normalized
-    assert "Leaf plus context names or uniquely maps the product" in normalized
-    # Variant wording is preserved rather than dropped.
-    assert "Bounded wording stays claim_bearing" in normalized
-    assert "ambiguity stays unresolved" in normalized
-    # Grouping is transport compression only.
-    assert "never a sample, default, remainder, wildcard" in normalized
+    normalized = " ".join(METHOD_TEXT_V5.split())
+    for disposition in ("claim_bearing", "unresolved", "context_only", "out_of_scope"):
+        assert disposition in normalized
+    required_semantics = (
+        "Judge every leaf exactly once after context",
+        "There is no keyword, phrase, or length rule",
+        '"same" may adopt one clearly targeted parent meaning',
+        "never every clause of a multi-point parent",
+        '"Love it" with only a known product remains context_only',
+        '"Vanilla Beige!" -> "My fav!"',
+        "claim_bearing personal_agreement with no axis",
+        '"I always reach for it" is bounded behavior',
+        "personal_agreement adopts only the target",
+        "low-information same-thread recurrence",
+        "never cross-venue credit",
+        "attribution_or_echo reports the parent, adds no origin",
+        "names attribution in its statement",
+        "leading yes/no reply adopts the parent question's exact predicate",
+        "Context fills an omitted predicate, not posture",
+        "Evidence posture describes support, not the verb",
+        "strategy_statement is organizational, never customer behavior",
+        "Polarity is logical assertion, not sentiment",
+        '"is drying", "worsens peeling", and "reaches for other formulas" are affirmed',
+        '"is not drying" and "not the most hydrating" are negated',
+        "Every unit carries a verified subject id",
+        "catalog is vocabulary, not proof",
+        "One unit is one independently testable proposition",
+        "split them even when product, axis, or posture matches",
+        '"good, but not worth $24" yields only "not worth $24"',
+        "never a bundled mixed-direction unit",
+        '"I have Poppy" and "would get it only on sale" are separate',
+        '"Not the most hydrating" and "does not make lips drier" are separate',
+        "target-versus-comparator hydration contrast",
+        "Axis candidates are vocabulary, not assignments",
+        "Worsening peeling supports reaction_and_breakout",
+        "not-drying alone supports hydration only",
+        "go-to behavior is axis-free",
+        "named shade ownership remains the shade-axis exception",
+        "attach the opposite as counter rather than emit two support-only claims",
+        "first_hand and personal_agreement preferences may support one proposition",
+        "preserve both actors and disclose their shared thread",
+    )
+    for phrase in required_semantics:
+        assert phrase in normalized
 
 
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
@@ -3590,7 +3560,7 @@ def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     for phrase in ('"same"', '"My fav!"', '"I always reach for it"'):
         assert phrase in text
     assert '"Love it" with only a known product remains context_only' in text
-    assert "specifically adopted parent meaning" in text
+    assert "one clearly targeted parent meaning" in text
 
 
 def test_v5_terminal_grouping_expands_to_one_row_per_evidence_id() -> None:

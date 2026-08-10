@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v17
+version: v18
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v17
+# Semantic Evidence Integration Contract v18
 
 ## Purpose
 
@@ -335,8 +335,10 @@ behavior, comparison, condition, polarity, or posture, remain separate; a
 condition stays with the proposition it qualifies. Axis candidates provide
 vocabulary only. Each assigned axis must be semantically supported by the
 atomic unit and leaf; context may resolve a referent but cannot donate an axis.
-Generic approval embedded beside a bounded judgment adds no unit: `good, but
-not worth $24` yields the value judgment only. Ownership is preserved as
+Generic approval embedded beside a bounded judgment is absent from the atomic
+statement: `good, but not worth $24` yields only `not worth $24`, never one
+mixed-direction unit. A leading yes/no reply retains the exact predicate of
+the parent question and its own qualification. Ownership is preserved as
 behavior and remains separate from a conditional future purchase. Thus `I
 have Poppy` and `would get it only on sale` are distinct atoms. Different
 hydration truths also remain distinct: `not the most hydrating` does not absorb
@@ -345,6 +347,14 @@ remains present, including a hydration contrast stated through the comparator
 and a separate target non-sinking claim when both are expressed. `More like a
 gloss than a balm` is an axis-free category judgment unless the leaf separately
 states a texture attribute.
+
+Logical polarity repeats the statement's direction: `not the most hydrating`
+and `does not make lips drier` are negated even though the author affirms that
+those statements are true. `Worsens peeling` carries
+`reaction_and_breakout`; not-drying alone carries hydration, not reaction.
+Bare ownership, quantity owned, and go-to behavior are axis-free unless a
+separate attribute is stated; named shade ownership remains the accepted
+shade-axis exception.
 
 An `attribution_or_echo` unit's standalone statement names the attribution; the
 posture field cannot carry words omitted from an otherwise first-hand-sounding
@@ -359,6 +369,14 @@ when any supporting posture is not `first_hand` or `personal_agreement`.
 `strategy_statement` is routed as `actor_strategy`. This check occurs before
 finalization so a known impossible claim-kind/posture combination cannot spend
 another level or masquerade as a valid node compilation.
+
+Reconciliation must expose conflict and exact agreement, not merely keep their
+leaves somewhere in the view. When opposite experiences address the same
+bounded proposition, the opposing child is linked as `counter` rather than
+emitted only as a second support-only proposition with `none_observed`
+conflict. An exact `first_hand` preference and a distinct actor's
+`personal_agreement` may support one bounded proposition while preserving both
+actors, postures, and shared-thread provenance.
 
 After a leaf is validly classified as terminal `context_only` or clearly
 established `out_of_scope`, it incurs no bespoke extraction, semantic-unit
@@ -770,6 +788,15 @@ new frontier.
 
 ## Changelog
 
+- `v18` / 2026-08-10 — tightened six general boundaries exposed by v17: a
+  leading yes/no answer retains the parent question's predicate; generic praise
+  is removed from a bounded value statement; logical negative constructions
+  remain negated; peeling, not-drying, bare go-to behavior, and shade ownership
+  receive only their directly supported axes; opposite experiences receive an
+  explicit counter relation; and exact first-hand plus personal-agreement
+  preferences may reconcile while preserving both actors and their shared
+  thread. Added no phrase classifier, confidence score, schema, provider call,
+  or corpus-run authority.
 - `v17` / 2026-08-10 — made the existing independently-true atomicity rule
   operational in method v5: two clauses remain separate whenever either could
   change truth without the other, even with the same product, axis, or posture.
