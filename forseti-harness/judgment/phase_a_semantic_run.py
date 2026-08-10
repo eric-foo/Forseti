@@ -12,16 +12,26 @@ import yaml
 
 from harness_utils import hash_file
 from judgment.semantic_evidence_integration import (
+    METHOD_VERSION_V4,
+    METHOD_VERSION_V5,
     SemanticIntegrationError,
     materialize_source_v3,
     validate_batch_responses,
     validate_reconciliation_stage,
+    verify_bundle_context,
 )
 from source_capture.reddit_consolidation import build_thread_content_record
 
 
 RUN_SPEC_VERSION = "phase_a_semantic_integration_run_v1"
 RUN_SPEC_VERSION_V2 = "phase_a_semantic_integration_run_v2"
+RUN_SPEC_VERSION_V3 = "phase_a_semantic_integration_run_v3"
+RUN_SPEC_VERSIONS = {RUN_SPEC_VERSION, RUN_SPEC_VERSION_V2, RUN_SPEC_VERSION_V3}
+# A run spec selects the semantic generation its sources will be built under.
+_RUN_SPEC_METHOD_VERSIONS = {
+    RUN_SPEC_VERSION_V2: METHOD_VERSION_V4,
+    RUN_SPEC_VERSION_V3: METHOD_VERSION_V5,
+}
 AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
 CORPUS_CENSUS_VERSION = "phase_a_customer_corpus_census_v1"
@@ -1294,24 +1304,31 @@ def _phase_a_source_shell(spec: Mapping[str, Any]) -> dict[str, Any]:
         "corpus_cutoff": spec["corpus_cutoff"],
         "axes": spec["axes"],
     }
-    if spec["schema_version"] == RUN_SPEC_VERSION_V2:
-        source["semantic_method_version"] = "semantic_evidence_integration_method_v4"
+    method_version = _RUN_SPEC_METHOD_VERSIONS.get(spec["schema_version"])
+    if method_version is not None:
+        source["semantic_method_version"] = method_version
     return source
 
 
 def _product_binding_indexes(
     spec: Mapping[str, Any], *, repo_root: Path
-) -> tuple[dict[str, Mapping[str, Any]], list[dict[str, str]]]:
+) -> tuple[
+    dict[str, Mapping[str, Any]],
+    list[dict[str, str]],
+    dict[str, Any] | None,
+]:
     """Verify and index run-local product identity without installing a registry."""
-    if spec.get("schema_version") != RUN_SPEC_VERSION_V2:
-        return {}, []
+    spec_version = spec.get("schema_version")
+    if spec_version not in _RUN_SPEC_METHOD_VERSIONS:
+        return {}, [], None
     bindings = spec.get("product_bindings")
     if not isinstance(bindings, list) or not bindings:
-        raise SemanticIntegrationError("v2 run spec requires product_bindings")
+        raise SemanticIntegrationError(f"{spec_version} requires product_bindings")
     token_index: dict[str, Mapping[str, Any]] = {}
     stable_ids: set[str] = set()
     artifacts: list[dict[str, str]] = []
     artifact_ids: set[str] = set()
+    catalog_products: list[dict[str, Any]] = []
     for ordinal, row in enumerate(bindings, start=1):
         if not isinstance(row, Mapping):
             raise SemanticIntegrationError("v2 run spec has invalid product binding")
@@ -1319,6 +1336,8 @@ def _product_binding_indexes(
         display_name = row.get("display_name")
         if not _nonempty(stable_id) or not _nonempty(display_name):
             raise SemanticIntegrationError("product binding lacks stable id or display name")
+        stable_id = stable_id.strip()
+        display_name = display_name.strip()
         if stable_id in stable_ids:
             raise SemanticIntegrationError(f"duplicate stable product id: {stable_id}")
         stable_ids.add(stable_id)
@@ -1336,10 +1355,20 @@ def _product_binding_indexes(
         ):
             raise SemanticIntegrationError(f"product binding {stable_id} is incomplete")
         normalized = dict(row)
-        normalized["stable_product_id"] = stable_id.strip()
-        normalized["display_name"] = display_name.strip()
+        normalized["stable_product_id"] = stable_id
+        normalized["display_name"] = display_name
+        normalized["source_product_ids"] = sorted(
+            {value.strip() for value in source_ids}
+        )
+        normalized["aliases"] = sorted({value.strip() for value in aliases})
         normalized["_evidence_context"] = []
-        tokens = [stable_id, display_name, *source_ids, *aliases]
+        authority_artifact_ids: list[str] = []
+        tokens = [
+            stable_id,
+            display_name,
+            *normalized["source_product_ids"],
+            *normalized["aliases"],
+        ]
         for token in tokens:
             key = token.strip().casefold()
             owner = token_index.get(key)
@@ -1367,6 +1396,7 @@ def _product_binding_indexes(
             artifact_ids.add(artifact_id)
             artifact = _source_artifact(artifact_id, path, repo_root=repo_root)
             artifacts.append(artifact)
+            authority_artifact_ids.append(artifact_id)
             normalized["_evidence_context"].append(
                 {
                     "context_type": "source_scope",
@@ -1378,7 +1408,23 @@ def _product_binding_indexes(
                     "source_ref": artifact["locator"],
                 }
             )
-    return token_index, artifacts
+        catalog_products.append(
+            {
+                "stable_product_id": stable_id,
+                "display_name": display_name,
+                "source_product_ids": normalized["source_product_ids"],
+                "aliases": normalized["aliases"],
+                "authority_artifact_ids": sorted(authority_artifact_ids),
+            }
+        )
+    catalog = {
+        "schema_version": "product_identity_catalog_v1",
+        "products": sorted(
+            catalog_products, key=lambda product: product["stable_product_id"]
+        ),
+    }
+    catalog["catalog_sha256"] = _canonical_hash(catalog)
+    return token_index, artifacts, catalog
 
 
 def _resolve_product_candidates(
@@ -1406,7 +1452,7 @@ def build_phase_a_product_axis_proof_source(
     """Project one complete product/axis slice for a bounded semantic proof."""
     spec = _load_json_object(run_spec_path, label="Phase A run spec")
     _validate_run_spec_shape(spec)
-    product_index, binding_artifacts = _product_binding_indexes(
+    product_index, binding_artifacts, product_catalog = _product_binding_indexes(
         spec, repo_root=repo_root
     )
     binding = product_index.get(stable_product_id.strip().casefold())
@@ -1433,7 +1479,15 @@ def build_phase_a_product_axis_proof_source(
     _verify_v3_source_artifacts(
         full_source, repo_root=repo_root, binding_id="product-axis proof full source"
     )
-    normalized = materialize_source_v3(full_source)
+    normalization_source = dict(full_source)
+    if (
+        normalization_source.get("semantic_method_version")
+        in {METHOD_VERSION_V4, METHOD_VERSION_V5}
+        and normalization_source.get("corpus_profile") == "phase_a_final_acquisition"
+        and "product_identity_catalog" not in normalization_source
+    ):
+        normalization_source["product_identity_catalog"] = product_catalog
+    normalized = materialize_source_v3(normalization_source)
     if (
         normalized["cycle_id"] != spec["cycle_id"]
         or normalized["question_id"] != spec["question_id"]
@@ -1491,6 +1545,17 @@ def build_phase_a_product_axis_proof_source(
             f"leaves coded to {', '.join(sorted(requested_axes))}"
         )
         containers.append(projected)
+    source_artifacts = list(normalized["source_artifacts"])
+    artifacts_by_id = {row["artifact_id"]: row for row in source_artifacts}
+    for artifact in binding_artifacts:
+        existing = artifacts_by_id.get(artifact["artifact_id"])
+        if existing is None:
+            source_artifacts.append(artifact)
+            artifacts_by_id[artifact["artifact_id"]] = artifact
+        elif existing != artifact:
+            raise SemanticIntegrationError(
+                f"conflicting product binding artifact: {artifact['artifact_id']}"
+            )
     source = {
         "schema_version": "semantic_evidence_source_v3",
         "semantic_method_version": "semantic_evidence_integration_method_v4",
@@ -1506,7 +1571,7 @@ def build_phase_a_product_axis_proof_source(
         "axes": [
             row for row in normalized["axes"] if row["axis_id"] in requested_axes
         ],
-        "source_artifacts": [*normalized["source_artifacts"], *binding_artifacts],
+        "source_artifacts": source_artifacts,
         "containers": containers,
         "captured_items": selected,
     }
@@ -1597,9 +1662,11 @@ def build_phase_a_reddit_source_v3(
     """Build the complete packet-backed Reddit v3 fragment without model calls."""
     spec = _load_json_object(run_spec_path, label="Phase A run spec")
     source = _phase_a_source_shell(spec)
-    product_index, product_binding_artifacts = _product_binding_indexes(
+    product_index, product_binding_artifacts, product_catalog = _product_binding_indexes(
         spec, repo_root=repo_root
     )
+    if product_catalog is not None:
+        source["product_identity_catalog"] = product_catalog
     ledger = _load_json_object(evidence_ledger_path, label="evidence depth ledger")
     if ledger.get("cycle_id") != spec["cycle_id"]:
         raise SemanticIntegrationError("Reddit ledger cycle does not match run spec")
@@ -1986,9 +2053,11 @@ def build_phase_a_retailer_source_v3(
     """Build the full deduplicated retailer-review v3 fragment."""
     spec = _load_json_object(run_spec_path, label="Phase A run spec")
     source = _phase_a_source_shell(spec)
-    product_index, product_binding_artifacts = _product_binding_indexes(
+    product_index, product_binding_artifacts, product_catalog = _product_binding_indexes(
         spec, repo_root=repo_root
     )
+    if product_catalog is not None:
+        source["product_identity_catalog"] = product_catalog
     coding = _load_json_object(retailer_coding_path, label="retailer axis coding")
     coding_rows = coding.get("rows")
     if not isinstance(coding_rows, list):
@@ -2466,7 +2535,7 @@ def _verify_v3_source_artifacts(
 
 
 def _validate_run_spec_shape(spec: Mapping[str, Any]) -> None:
-    if spec.get("schema_version") not in {RUN_SPEC_VERSION, RUN_SPEC_VERSION_V2}:
+    if spec.get("schema_version") not in RUN_SPEC_VERSIONS:
         raise SemanticIntegrationError("invalid Phase A semantic run spec version")
     for field in (
         "run_id",
@@ -2496,10 +2565,12 @@ def _validate_run_spec_shape(spec: Mapping[str, Any]) -> None:
         or len(set(axis_ids)) != len(axis_ids)
     ):
         raise SemanticIntegrationError("run spec axes must have unique non-empty ids")
-    if spec.get("schema_version") == RUN_SPEC_VERSION_V2:
+    if spec.get("schema_version") in _RUN_SPEC_METHOD_VERSIONS:
         bindings = spec.get("product_bindings")
         if not isinstance(bindings, list) or not bindings:
-            raise SemanticIntegrationError("v2 run spec requires product_bindings")
+            raise SemanticIntegrationError(
+                f"{spec['schema_version']} requires product_bindings"
+            )
 
 
 def audit_phase_a_source(
@@ -2696,7 +2767,19 @@ def materialize_phase_a_v3(
                         f"conflicting duplicate {key} across source bindings: {row_id}"
                     )
                 index[row_id] = dict(row)
+    _, product_binding_artifacts, product_catalog = _product_binding_indexes(
+        spec, repo_root=repo_root
+    )
+    for row in product_binding_artifacts:
+        artifact_id = row["artifact_id"]
+        if artifact_id in artifacts and artifacts[artifact_id] != row:
+            raise SemanticIntegrationError(
+                f"conflicting product binding artifact: {artifact_id}"
+            )
+        artifacts[artifact_id] = row
     source = _phase_a_source_shell(spec)
+    if product_catalog is not None:
+        source["product_identity_catalog"] = product_catalog
     source.update(
         {
             "source_artifacts": sorted(
@@ -2729,9 +2812,14 @@ def materialize_phase_a_v3(
 
 
 def validate_one_batch_response(
-    bundle: Mapping[str, Any], response: Mapping[str, Any]
+    bundle: Mapping[str, Any],
+    response: Mapping[str, Any],
+    *,
+    context: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    return validate_batch_responses(bundle, [response], require_all=False)
+    return validate_batch_responses(
+        bundle, [response], require_all=False, context=context
+    )
 
 
 def validate_one_reconciliation_response(
@@ -2750,10 +2838,13 @@ def run_status(
     batch_responses: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
     """Return honest resumability status without compiling a partial result."""
-    # Verify the bundle even when zero response files exist. Otherwise an
-    # interrupted run could report a workload derived from an unchecked file.
-    validate_batch_responses(bundle, [], require_all=False)
+    # Verify the immutable bundle and projection exactly once per invocation,
+    # even when zero response files exist, then reuse that verified context for
+    # every response. Re-verifying per response re-hashed the whole bundle once
+    # per accepted batch and dominated status wall-clock on a full corpus.
+    context = verify_bundle_context(bundle)
     expected = {row["batch_id"] for row in bundle.get("batches", [])}
+    new_generation = context["new_generation"]
     partition_by_batch = {
         row["batch_id"]: row.get("worker_partition")
         for row in bundle.get("batches", [])
@@ -2762,18 +2853,30 @@ def run_status(
     valid: set[str] = set()
     invalid: list[dict[str, str]] = []
     duplicates: set[str] = set()
+    staged: list[str] = []
     for response in batch_responses:
         batch_id = response.get("batch_id") if isinstance(response, Mapping) else None
         if isinstance(batch_id, str) and batch_id in valid:
             duplicates.add(batch_id)
             continue
+        if (
+            isinstance(response, Mapping)
+            and response.get("staged_artifact") is True
+            # Only the runner's own marker, never a published response that
+            # happens to carry the same key, may be reported as staged.
+            and "schema_version" not in response
+        ):
+            # A staged, unpublished artifact is neither accepted work nor a
+            # silent success; it stays separately visible.
+            staged.append(str(batch_id))
+            continue
         try:
-            receipt = validate_one_batch_response(bundle, response)
+            receipt = validate_one_batch_response(bundle, response, context=context)
         except SemanticIntegrationError as exc:
             invalid.append({"batch_id": str(batch_id), "error": str(exc)})
             continue
         valid.update(receipt["validated_batch_ids"])
-    complete = valid == expected and not invalid and not duplicates
+    complete = valid == expected and not invalid and not duplicates and not staged
     result = {
         "schema_version": "phase_a_semantic_run_status_v1",
         "bundle_sha256": bundle.get("bundle_sha256"),
@@ -2781,6 +2884,7 @@ def run_status(
         "valid_batch_count": len(valid),
         "missing_batch_ids": sorted(expected - valid),
         "duplicate_batch_ids": sorted(duplicates),
+        "staged_batch_ids": sorted(staged),
         "invalid_responses": invalid,
         "batch_stage_complete": complete,
         "next_status": (
@@ -2788,8 +2892,15 @@ def run_status(
             if complete
             else "SEMANTIC_BATCH_JUDGMENT_REQUIRED"
         ),
+        "bundle_verifications": 1,
         "model_api_calls": 0,
     }
+    if new_generation:
+        # Global work state only. The new projection carries no static
+        # partition, so reporting one here would reinvent the topology the
+        # generation removed.
+        result["work_selection"] = "global"
+        return result
     partitions = sorted(
         {
             value
@@ -2828,6 +2939,7 @@ __all__ = [
     "RUN_RECEIPT_VERSION",
     "RUN_SPEC_VERSION",
     "RUN_SPEC_VERSION_V2",
+    "RUN_SPEC_VERSION_V3",
     "audit_phase_a_source",
     "build_phase_a_product_axis_proof_source",
     "census_phase_a_customer_corpus",

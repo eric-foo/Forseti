@@ -9,22 +9,30 @@ from pathlib import Path
 import pytest
 
 from judgment.semantic_evidence_integration import (
+    BATCH_COMPILATION_VERSION_V2,
+    BATCH_COMPILATION_VERSION_V3,
     BATCH_RESPONSE_VERSION,
     BATCH_RESPONSE_VERSION_V2,
+    BATCH_RESPONSE_VERSION_V3,
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
     BUNDLE_VERSION_V3,
     BUNDLE_VERSION_V4,
+    BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
+    METHOD_TEXT_V5,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
     METHOD_VERSION_V4,
+    METHOD_VERSION_V5,
+    PROMPT_ENCODING_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
+    WORK_UNIT_PROJECTION_VERSION_V2,
     build_batch_prompts,
     build_bundle,
     build_reconciliation_prompt,
@@ -35,9 +43,23 @@ from judgment.semantic_evidence_integration import (
     prepare_reconciliation_stage,
     validate_batch_responses,
     validate_reconciliation_stage,
+    verify_bundle_context,
+)
+from judgment.semantic_calibration import (
+    CALIBRATION_ADJUDICATION_VERSION,
+    CALIBRATION_ADJUDICATION_VERSION_V1,
+    CALIBRATION_ADJUDICATION_VERSION_V2,
+    CALIBRATION_SPEC_VERSION,
+    CALIBRATION_SPEC_VERSION_V1,
+    SemanticCalibrationError,
+    evaluate_semantic_calibration,
+    prepare_semantic_calibration,
+    validate_calibration_spec,
 )
 from runners.run_semantic_evidence_integration import (
+    evaluate_semantic_calibration_run,
     prepare_batches,
+    prepare_semantic_calibration_run,
     publish_batch_response_file,
 )
 
@@ -943,6 +965,23 @@ def _source_v3(*, actor_mode: str = "distinct", count: int = 7) -> dict:
     }
 
 
+def _product_catalog(*, artifact_id: str = "thread-1") -> dict:
+    catalog = {
+        "schema_version": "product_identity_catalog_v1",
+        "products": [
+            {
+                "stable_product_id": "summer-fridays-lip-butter-balm",
+                "display_name": "Summer Fridays Lip Butter Balm",
+                "source_product_ids": ["P455936", "sf-lbb"],
+                "aliases": ["Lip Butter Balm"],
+                "authority_artifact_ids": [artifact_id],
+            }
+        ],
+    }
+    catalog["catalog_sha256"] = _canonical_hash(catalog)
+    return catalog
+
+
 def _v3_batch_responses(bundle: dict) -> list[dict]:
     responses = []
     for batch in bundle["batches"]:
@@ -1316,9 +1355,9 @@ def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> N
 
     source = deepcopy(historical_source)
     source["semantic_method_version"] = METHOD_VERSION_V4
-    source["captured_items"][0]["product_candidates"] = [
-        "summer-fridays-lip-butter-balm"
-    ]
+    source["corpus_profile"] = "phase_a_final_acquisition"
+    source["product_identity_catalog"] = _product_catalog()
+    source["captured_items"][0]["product_candidates"] = []
     source["captured_items"][0]["text"] = (
         "Dream Lip Oil fades quickly, unlike this balm."
     )
@@ -1334,6 +1373,8 @@ def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> N
     assert bundle["semantic_method_version"] == METHOD_VERSION_V4
     assert "wording inside a review or comment may" in prompt
     assert "mention another product without changing" in prompt
+    assert prompt.count("\n\nPRODUCT_IDENTITY_CATALOG\n") == 1
+    assert "use it only as the run's verified" in prompt
     assert "summer-fridays-lip-butter-balm" in prompt
     assert materialize_source_v3(source)["semantic_method_version"] == METHOD_VERSION_V4
 
@@ -1343,6 +1384,186 @@ def test_method_v4_binds_stable_product_identity_and_preserves_v3_history() -> N
             max_prompt_bytes=8_000,
             target_bundle_version=BUNDLE_VERSION_V3,
         )
+
+
+def test_method_v4_final_acquisition_catalog_fails_closed() -> None:
+    source = _source_v3(count=1)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["corpus_profile"] = "phase_a_final_acquisition"
+
+    with pytest.raises(SemanticIntegrationError, match="lacks product catalog"):
+        build_bundle(source, max_prompt_bytes=12_000)
+
+    source["product_identity_catalog"] = _product_catalog()
+    tampered = deepcopy(source)
+    tampered["product_identity_catalog"]["products"][0]["display_name"] = (
+        "Altered product"
+    )
+    with pytest.raises(SemanticIntegrationError, match="stored catalog_sha256"):
+        build_bundle(tampered, max_prompt_bytes=12_000)
+
+    collision = deepcopy(source)
+    collision["product_identity_catalog"]["products"].append(
+        {
+            "stable_product_id": "summer-fridays-second-balm",
+            "display_name": "Summer Fridays Second Balm",
+            "source_product_ids": ["second-balm"],
+            "aliases": ["Lip Butter Balm"],
+            "authority_artifact_ids": ["thread-1"],
+        }
+    )
+    collision["product_identity_catalog"]["products"] = sorted(
+        collision["product_identity_catalog"]["products"],
+        key=lambda row: row["stable_product_id"],
+    )
+    collision["product_identity_catalog"]["catalog_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in collision["product_identity_catalog"].items()
+            if key != "catalog_sha256"
+        }
+    )
+    with pytest.raises(SemanticIntegrationError, match="multiple stable products"):
+        build_bundle(collision, max_prompt_bytes=12_000)
+
+
+def test_method_v4_mixed_product_thread_keeps_leaf_product_roles() -> None:
+    source = _source_v3(count=1)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["corpus_profile"] = "phase_a_final_acquisition"
+    source["containers"][0]["captured_leaf_count"] = 3
+    body = source["captured_items"][0]
+    body["evidence_id"] = "reddit:t1:body"
+    body["text"] = "Which Summer Fridays products are worth buying?"
+    body["product_candidates"] = []
+    comment = deepcopy(body)
+    comment["evidence_id"] = "reddit:t1:comment"
+    comment["source_ref"] = "https://reddit.test/t1/comment"
+    comment["text"] = "Lip Butter Balm feels better, but Jet Lag Mask broke me out."
+    comment["conversation_depth"] = 1
+    comment["parent_context"] = [
+        {"source_ref": body["source_ref"], "text": body["text"]}
+    ]
+    reply = deepcopy(comment)
+    reply["evidence_id"] = "reddit:t1:reply"
+    reply["source_ref"] = "https://reddit.test/t1/reply"
+    reply["text"] = "Same, the mask broke me out too."
+    reply["conversation_depth"] = 2
+    reply["parent_context"] = [
+        {"source_ref": body["source_ref"], "text": body["text"]},
+        {"source_ref": comment["source_ref"], "text": comment["text"]},
+    ]
+    source["captured_items"] = [body, comment, reply]
+    catalog = _product_catalog()
+    catalog["products"].insert(
+        0,
+        {
+            "stable_product_id": "summer-fridays-jet-lag-mask",
+            "display_name": "Summer Fridays Jet Lag Mask",
+            "source_product_ids": ["jet-lag-mask"],
+            "aliases": ["Jet Lag Mask"],
+            "authority_artifact_ids": ["thread-1"],
+        },
+    )
+    catalog["catalog_sha256"] = _canonical_hash(
+        {key: value for key, value in catalog.items() if key != "catalog_sha256"}
+    )
+    source["product_identity_catalog"] = catalog
+
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    prompt = build_batch_prompts(bundle)[0]["prompt"]
+    assert prompt.count("\n\nPRODUCT_IDENTITY_CATALOG\n") == 1
+    assert all(row["product_candidates"] == [] for row in bundle["evidence_units"])
+
+    response = {
+        "schema_version": BATCH_RESPONSE_VERSION_V2,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_id": bundle["batches"][0]["batch_id"],
+        "evidence": [
+            {
+                "evidence_id": "reddit:t1:body",
+                "disposition": "context_only",
+                "disposition_reason": "brand-level question without a product experience",
+                "semantic_units": [],
+            },
+            {
+                "evidence_id": "reddit:t1:comment",
+                "disposition": "claim_bearing",
+                "disposition_reason": "two distinct product experiences",
+                "semantic_units": [
+                    {
+                        "semantic_unit_key": "balm-comfort",
+                        "statement": "Lip Butter Balm felt comparatively comfortable.",
+                        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": ["wear"],
+                        "emerging_axis_labels": [],
+                        "conditions": [],
+                        "polarity": "affirmed",
+                        "evidence_posture": "first_hand",
+                        "uncertainty_posture": "asserted",
+                    },
+                    {
+                        "semantic_unit_key": "mask-reaction",
+                        "statement": "Jet Lag Mask was associated with a breakout.",
+                        "subject_product_ids": ["summer-fridays-jet-lag-mask"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": [],
+                        "emerging_axis_labels": ["skin reaction"],
+                        "conditions": [],
+                        "polarity": "affirmed",
+                        "evidence_posture": "first_hand",
+                        "uncertainty_posture": "asserted",
+                    },
+                ],
+            },
+            {
+                "evidence_id": "reddit:t1:reply",
+                "disposition": "claim_bearing",
+                "disposition_reason": "personal agreement about the mask",
+                "semantic_units": [
+                    {
+                        "semantic_unit_key": "mask-agreement",
+                        "statement": "The reply author also associated the mask with a breakout.",
+                        "subject_product_ids": ["summer-fridays-jet-lag-mask"],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": [],
+                        "emerging_axis_labels": ["skin reaction"],
+                        "conditions": [],
+                        "polarity": "affirmed",
+                        "evidence_posture": "personal_agreement",
+                        "uncertainty_posture": "asserted",
+                    }
+                ],
+            },
+        ],
+    }
+    compiled = validate_batch_responses(bundle, [response])
+    assert {
+        tuple(row["subject_product_ids"]) for row in compiled["semantic_units"]
+    } == {
+        ("summer-fridays-lip-butter-balm",),
+        ("summer-fridays-jet-lag-mask",),
+    }
+
+    forged = deepcopy(response)
+    forged["evidence"][1]["semantic_units"][0]["subject_product_ids"] = [
+        "summer-fridays-invented-product"
+    ]
+    with pytest.raises(SemanticIntegrationError, match="unknown catalog product"):
+        validate_batch_responses(bundle, [forged])
+
+    invented_variant = deepcopy(response)
+    invented_variant["evidence"][1]["semantic_units"][0][
+        "product_version_ids"
+    ] = ["summer-fridays-lip-butter-balm-brown-sugar"]
+    with pytest.raises(
+        SemanticIntegrationError, match="unverified catalog product version"
+    ):
+        validate_batch_responses(bundle, [invented_variant])
 
 
 def test_v4_prepare_runner_writes_deterministic_three_worker_assignment(
@@ -2071,3 +2292,2148 @@ def test_route_1_6_multisource_dogfood_rebuilds_exactly() -> None:
     assert isinstance(sensitivity, dict)
     assert sensitivity["partitions_differ"] is True
     assert sensitivity["flattened_membership_and_counts_equal"] is True
+
+
+# --- New generation: bundle v5 / projection v2 / method v5 / response v3 ---
+#
+# Frozen legacy expectations below were observed from the pre-change module at
+# revision 27b3c56d. They are byte-level regression anchors for the legacy v4
+# path, not semantic ground truth.
+_FROZEN_V4_PLAIN = {
+    "bundle_sha256": "3478626e9e8296250969ff83f648ae71b09f475eb68eedf9107488539efebf1b",
+    "corpus_sha256": "c344feb0b7741fcf76ac83784091a076cfe8a1b591e59575eeecb5c00640971d",
+    "projection_sha256": "710685030cdbdd417411d3d75531d9ad96609931d5fbe3eaef17af5afc035887",
+    "prompt_utf8_bytes": 7174,
+    "prompt_sha256": "1f6e556f3d79933756a32421d21802bb07018e27ca6605e406e513b655028aa2",
+    "compilation_sha256": "248c87617f6a2101bb382eb28a61d369d7064ff84930c04fd52aa19cd99e85eb",
+}
+_FROZEN_V4_CATALOG = {
+    "bundle_sha256": "b69d975f4bf2b84696050543e877988f8cd2c7b775e42a44da69d85380464a51",
+    "corpus_sha256": "1f407c04a777ff1e00fb8fa27ec1ecfff02a323fba1927b91989a8d307fe43a9",
+    "prompt_utf8_bytes": 8333,
+    "prompt_sha256": "ae56141d2837b71dedd6ab336d81f1b7bc75844b5f655b11e9b19a2f17f14382",
+}
+
+
+def _joined_prompt_digest(prompts: list[dict]) -> tuple[int, str]:
+    joined = "\n".join(row["prompt"] for row in prompts).encode("utf-8")
+    return len(joined), hashlib.sha256(joined).hexdigest()
+
+
+def _source_v5(*, count: int = 7, catalog: bool = False) -> dict:
+    source = _source_v3(count=count)
+    source["semantic_method_version"] = METHOD_VERSION_V5
+    if catalog:
+        source["product_identity_catalog"] = _product_catalog()
+    return source
+
+
+def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
+    return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
+
+
+def _claim_row(evidence_id: str) -> dict:
+    return {
+        "evidence_id": evidence_id,
+        "disposition": "claim_bearing",
+        "disposition_reason": "direct first-hand experience",
+        "semantic_units": [
+            {
+                "semantic_unit_key": "drying-after-week",
+                "statement": "The balm became drying after one week of use.",
+                "subject_product_ids": ["sf-lbb"],
+                "comparator_product_ids": [],
+                "product_version_ids": [],
+                "axis_ids": ["wear"],
+                "emerging_axis_labels": [],
+                "conditions": ["after one week of use"],
+                "polarity": "affirmed",
+                "evidence_posture": "first_hand",
+                "uncertainty_posture": "asserted",
+            }
+        ],
+    }
+
+
+def _v5_responses(
+    bundle: dict, *, detailed_per_batch: int = 1, group_disposition: str = "context_only"
+) -> list[dict]:
+    """Detailed head plus one explicit-id terminal group per work unit."""
+    responses = []
+    for batch in bundle["batches"]:
+        ids = batch["evidence_ids"]
+        detailed, grouped = ids[:detailed_per_batch], ids[detailed_per_batch:]
+        responses.append(
+            {
+                "schema_version": BATCH_RESPONSE_VERSION_V3,
+                "bundle_sha256": bundle["bundle_sha256"],
+                "batch_id": batch["batch_id"],
+                "evidence": [_claim_row(row) for row in detailed],
+                "terminal_groups": (
+                    [
+                        {
+                            "disposition": group_disposition,
+                            "disposition_reason": (
+                                "no bounded proposition remains after reading context"
+                            ),
+                            "evidence_ids": list(grouped),
+                        }
+                    ]
+                    if grouped
+                    else []
+                ),
+            }
+        )
+    return responses
+
+
+def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> dict:
+    evidence_ids = [row["evidence_id"] for row in source["captured_items"]]
+    route_bundle = build_bundle(source, max_prompt_bytes=12_000)
+    spec = {
+        "schema_version": CALIBRATION_SPEC_VERSION,
+        "required_adjudication_version": CALIBRATION_ADJUDICATION_VERSION,
+        "full_source_sha256": source["source_sha256"],
+        "method_version": METHOD_VERSION_V5,
+        "route_contract": {
+            "runner_revision": "test-fixture-revision",
+            "contract_version": "v11-test",
+            "method_sha256": route_bundle["method_sha256"],
+            "bundle_schema_version": BUNDLE_VERSION_V5,
+            "response_schema_version": BATCH_RESPONSE_VERSION_V3,
+            "prompt_encoding_version": PROMPT_ENCODING_VERSION,
+            "axes_sha256": _canonical_hash(source["axes"]),
+            "product_identity_catalog_sha256": source.get(
+                "product_identity_catalog", {}
+            ).get("catalog_sha256"),
+        },
+        "slices": [
+            {
+                "slice_id": "semantic-core",
+                "purpose": "controlled semantic calibration fixture",
+                "evidence_ids": evidence_ids,
+                "max_prompt_bytes": 12_000,
+                "max_evidence_per_work_unit": 120,
+                "minimum_largest_prompt_bytes": 1_000,
+                "axis_repetition_warning": {
+                    "minimum_axis_count": 1,
+                    "minimum_repeated_units": 2,
+                },
+                "semantic_unit_density_audit": {"top_non_gold_rows": 1},
+                "cases": [
+                    {
+                        "case_id": "drying-after-week",
+                        "evidence_id": evidence_ids[0],
+                        "archetype": "first-hand conditioned claim",
+                        "critical": True,
+                        "expected_disposition": "claim_bearing",
+                        "min_semantic_units": 1,
+                        "max_semantic_units": 1,
+                        "required_atoms": [
+                            {
+                                "atom_id": "drying",
+                                "meaning": "The balm became drying after a week of use.",
+                                "expected_fields": {
+                                    "subject_product_ids": ["sf-lbb"],
+                                    "axis_ids": ["wear"],
+                                    "evidence_posture": "first_hand",
+                                },
+                            }
+                        ],
+                        "forbidden_values": (
+                            {"subject_product_ids": [forbidden_product]}
+                            if forbidden_product
+                            else {}
+                        ),
+                        "allow_unmatched_units": False,
+                    }
+                ],
+            }
+        ],
+        "relation_obligations": [],
+        "cold_repeat_case_ids": [],
+    }
+    spec["spec_sha256"] = _canonical_hash(spec)
+    return spec
+
+
+def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
+    warning_adjudications = [
+        {
+            "warning_id": "repeated-large-axis-signature:semantic-core",
+            "compilation_sha256": compilation_sha256,
+            "outcome": "reviewed_benign",
+        }
+    ]
+    gold_evidence_ids = {
+        case["evidence_id"] for case in spec["slices"][0]["cases"]
+    }
+    non_gold_evidence_ids = [
+        evidence_id
+        for evidence_id in spec["slices"][0]["evidence_ids"]
+        if evidence_id not in gold_evidence_ids
+    ]
+    if (
+        spec["slices"][0].get("semantic_unit_density_audit") is not None
+        and non_gold_evidence_ids
+    ):
+        warning_adjudications.append(
+            {
+                "warning_id": (
+                    "semantic-unit-density-audit:semantic-core:"
+                    f"{non_gold_evidence_ids[0]}"
+                ),
+                "compilation_sha256": compilation_sha256,
+                "outcome": "reviewed_benign",
+                "checks": {
+                    "all_units_source_supported": True,
+                    "all_units_independently_meaningful": True,
+                    "no_duplicate_or_redundant_units": True,
+                    "split_granularity_supported": True,
+                },
+            }
+        )
+    adjudication = {
+        "schema_version": CALIBRATION_ADJUDICATION_VERSION,
+        "spec_sha256": spec["spec_sha256"],
+        "adjudicator": "cold-test-adjudicator",
+        "case_adjudications": [
+            {
+                "case_id": "drying-after-week",
+                "compilation_sha256": compilation_sha256,
+                "atom_matches": {"drying": "drying-after-week"},
+                "axis_support_by_unit": {
+                    "drying-after-week": {
+                        "supported_axis_ids": ["wear"],
+                        "unsupported_axis_ids": [],
+                        "statement_direction_supported": True,
+                    }
+                },
+            }
+        ],
+        "relation_adjudications": [],
+        "cold_repeat_adjudications": [],
+        "warning_adjudications": warning_adjudications,
+    }
+    adjudication["adjudication_sha256"] = _canonical_hash(adjudication)
+    return adjudication
+
+
+def test_calibration_spec_rejects_machine_output_leakage() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["slices"][0]["cases"][0]["observed_disposition"] = "claim_bearing"
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    with pytest.raises(SemanticCalibrationError, match="machine-output field"):
+        validate_calibration_spec(spec)
+
+
+def test_calibration_preparation_is_exact_and_deterministic() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+
+    first = prepare_semantic_calibration(source, spec)
+    second = prepare_semantic_calibration(source, spec)
+
+    assert first == second
+    assert first["receipt"]["full_source_sha256"] == source["source_sha256"]
+    prepared = first["slices"][0]
+    assert prepared["bundle"]["schema_version"] == BUNDLE_VERSION_V5
+    assert [
+        evidence_id
+        for batch in prepared["bundle"]["batches"]
+        for evidence_id in batch["evidence_ids"]
+    ] == spec["slices"][0]["evidence_ids"]
+    assert source == materialize_source_v3(_source_v5(count=2))
+
+
+def test_calibration_preparation_rejects_a_stale_route_fingerprint() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["route_contract"]["method_sha256"] = "0" * 64
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    with pytest.raises(SemanticCalibrationError, match="method_sha256"):
+        prepare_semantic_calibration(source, spec)
+
+
+def test_calibration_blocks_without_semantic_adjudication() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": _v5_responses(bundle)},
+        None,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "SEMANTIC_ADJUDICATION_MISSING"
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_treats_explicit_atom_no_match_as_failure() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"][0]["atom_matches"]["drying"] = None
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        "has no equivalent semantic unit" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_v2_rejects_a_semantically_unsupported_axis() -> None:
+    raw_source = _source_v5(count=2)
+    raw_source["axes"].append({"axis_id": "hydration", "label": "Hydration"})
+    raw_source["captured_items"][0]["axis_candidates"].append("hydration")
+    source = materialize_source_v3(raw_source)
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    responses[0]["evidence"][0]["semantic_units"][0]["axis_ids"].append(
+        "hydration"
+    )
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    axis_judgment = adjudication["case_adjudications"][0][
+        "axis_support_by_unit"
+    ]["drying-after-week"]
+    axis_judgment["unsupported_axis_ids"].append("hydration")
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        "semantically unsupported axes ['hydration']" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_v3_rejects_bad_direction_on_an_unmerged_unit() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"][0]["axis_support_by_unit"][
+        "drying-after-week"
+    ]["statement_direction_supported"] = False
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        "does not preserve its asserted meaning direction" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_v2_blocks_when_axis_judgment_is_missing() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        "units lack per-axis semantic adjudication" in row["detail"]
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["schema_version"] = CALIBRATION_SPEC_VERSION_V1
+    del spec["required_adjudication_version"]
+    del spec["slices"][0]["semantic_unit_density_audit"]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V1
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
+def test_calibration_v2_spec_remains_readable_without_density_audit() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["schema_version"] = "semantic_calibration_spec_v2"
+    del spec["slices"][0]["semantic_unit_density_audit"]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    assert validate_calibration_spec(spec)["schema_version"] == (
+        "semantic_calibration_spec_v2"
+    )
+
+
+def test_calibration_v2_adjudication_remains_readable_for_historical_reports() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["schema_version"] = CALIBRATION_SPEC_VERSION_V1
+    del spec["required_adjudication_version"]
+    del spec["slices"][0]["semantic_unit_density_audit"]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V2
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"][
+        "drying-after-week"
+    ]["statement_direction_supported"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
+def test_calibration_v2_cannot_pass_with_historical_v1_adjudication() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V1
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "ADJUDICATION_VERSION_REQUIRED"
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_cannot_satisfy_two_atoms_with_one_broad_unit() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    second_atom = deepcopy(spec["slices"][0]["cases"][0]["required_atoms"][0])
+    second_atom["atom_id"] = "week-condition"
+    second_atom["meaning"] = "The drying appeared after one week of use."
+    spec["slices"][0]["cases"][0]["required_atoms"].append(second_atom)
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"][0]["atom_matches"][
+        "week-condition"
+    ] = "drying-after-week"
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any("reuses unit key" in row["detail"] for row in report["hard_failures"])
+
+
+def test_calibration_passes_matching_semantic_atom_and_warns_on_repetition() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert report["case_results"][0]["status"] == "pass"
+    assert report["warnings"][0]["code"] == "REPEATED_LARGE_AXIS_SIGNATURE"
+
+
+def test_calibration_density_audit_requires_a_bound_semantic_judgment() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["warning_adjudications"] = adjudication[
+        "warning_adjudications"
+    ][:1]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "WARNING_ADJUDICATION_MISSING_OR_STALE"
+        and row["warning_id"].startswith("semantic-unit-density-audit:")
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_density_audit_confirmed_defect_is_a_hard_failure() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["warning_adjudications"][1]["outcome"] = "reviewed_defect"
+    adjudication["warning_adjudications"][1]["checks"][
+        "split_granularity_supported"
+    ] = False
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        row["code"] == "SEMANTIC_ANOMALY_CONFIRMED"
+        and row["warning_id"].startswith("semantic-unit-density-audit:")
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_rejects_structurally_valid_wrong_known_product() -> None:
+    raw_source = _source_v5(count=2, catalog=True)
+    catalog = raw_source["product_identity_catalog"]
+    catalog.pop("catalog_sha256")
+    catalog["products"].append(
+        {
+            "stable_product_id": "other-balm",
+            "display_name": "Other Balm",
+            "source_product_ids": ["other-balm"],
+            "aliases": ["Other"],
+            "authority_artifact_ids": ["thread-1"],
+        }
+    )
+    catalog["products"].sort(key=lambda row: row["stable_product_id"])
+    catalog["catalog_sha256"] = _canonical_hash(catalog)
+    source = materialize_source_v3(raw_source)
+    spec = _calibration_spec(source, forbidden_product="other-balm")
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    responses[0]["evidence"][0]["semantic_units"][0]["subject_product_ids"] = [
+        "other-balm"
+    ]
+
+    # The route validator accepts the catalog-valid substitution; calibration
+    # must still reject its meaning and binding.
+    validate_batch_responses(bundle, responses)
+    compilation = validate_batch_responses(bundle, responses)
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any("forbidden subject_product_ids" in row["detail"] for row in report["hard_failures"])
+
+
+def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
+    tmp_path: Path,
+) -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    source_path = tmp_path / "source.json"
+    spec_path = tmp_path / "spec.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    prepared_dir = tmp_path / "prepared"
+
+    result = prepare_semantic_calibration_run(
+        source_path=source_path,
+        spec_path=spec_path,
+        output_dir=prepared_dir,
+    )
+    assert result["status"] == "SEMANTIC_CALIBRATION_PREPARED"
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        prepare_semantic_calibration_run(
+            source_path=source_path,
+            spec_path=spec_path,
+            output_dir=prepared_dir,
+        )
+
+    bundle = json.loads(
+        (prepared_dir / "semantic-core" / "bundle.json").read_text(encoding="utf-8")
+    )
+    responses = _v5_responses(bundle)
+    response_dir = tmp_path / "responses" / "semantic-core"
+    response_dir.mkdir(parents=True)
+    (response_dir / "batch-0001.json").write_text(
+        json.dumps(responses[0]), encoding="utf-8"
+    )
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication_path = tmp_path / "adjudication.json"
+    adjudication_path.write_text(json.dumps(adjudication), encoding="utf-8")
+
+    report = evaluate_semantic_calibration_run(
+        source_path=source_path,
+        prepared_dir=prepared_dir,
+        spec_path=spec_path,
+        response_root=tmp_path / "responses",
+        cold_response_root=None,
+        reconciliation_root=None,
+        adjudication_path=adjudication_path,
+        report_out=tmp_path / "report.json",
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert (tmp_path / "report.json").is_file()
+
+
+def test_cold_repeat_adjudication_is_bound_to_both_compilations() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["cold_repeat_case_ids"] = ["drying-after-week"]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    cold_bundle = prepared["cold_repeat"]["bundle"]
+    assert [row["evidence_id"] for row in cold_bundle["evidence_units"]] == [
+        source["captured_items"][0]["evidence_id"]
+    ]
+    primary = _v5_responses(bundle)
+    repeat = _v5_responses(cold_bundle)
+    primary_compilation = validate_batch_responses(bundle, primary)
+    repeat_compilation = validate_batch_responses(cold_bundle, repeat)
+    adjudication = _calibration_adjudication(
+        spec, primary_compilation["compilation_sha256"]
+    )
+    adjudication["cold_repeat_adjudications"] = [
+        {
+            "case_id": "drying-after-week",
+            "primary_compilation_sha256": primary_compilation["compilation_sha256"],
+            "repeat_compilation_sha256": repeat_compilation["compilation_sha256"],
+            "outcome": "consistent",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": primary},
+        adjudication,
+        {"cold-repeat": repeat},
+        full_source=source,
+    )
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+    stale = deepcopy(adjudication)
+    stale["cold_repeat_adjudications"][0]["repeat_compilation_sha256"] = "0" * 64
+    stale["adjudication_sha256"] = _canonical_hash(
+        {key: value for key, value in stale.items() if key != "adjudication_sha256"}
+    )
+    blocked = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": primary},
+        stale,
+        {"cold-repeat": repeat},
+        full_source=source,
+    )
+    assert blocked["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "COLD_REPEAT_ADJUDICATION_STALE"
+        for row in blocked["blockers"]
+    )
+
+
+def test_relation_adjudication_requires_a_rebuilt_final_view() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    second_case = deepcopy(spec["slices"][0]["cases"][0])
+    second_case["case_id"] = "drying-after-week-second-origin"
+    second_case["evidence_id"] = source["captured_items"][1]["evidence_id"]
+    spec["slices"][0]["cases"].append(second_case)
+    spec["relation_obligations"] = [
+        {
+            "relation_id": "same-meaning-independent-origins",
+            "relation_type": "independent_origin_preserved",
+            "case_ids": ["drying-after-week", "drying-after-week-second-origin"],
+            "critical": True,
+            "meaning": "Both origins remain visible in one reconciled meaning.",
+        }
+    ]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compilation = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_reconciliation_stage(bundle, compilation)
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+    view = finalize_v3_view(bundle, compilation, terminal)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"].append(
+        {
+            "case_id": "drying-after-week-second-origin",
+            "compilation_sha256": compilation["compilation_sha256"],
+            "atom_matches": {"drying": "drying-after-week"},
+            "axis_support_by_unit": {
+                "drying-after-week": {
+                    "supported_axis_ids": ["wear"],
+                    "unsupported_axis_ids": [],
+                    "statement_direction_supported": True,
+                }
+            },
+        }
+    )
+    adjudication["relation_adjudications"] = [
+        {
+            "relation_id": "same-meaning-independent-origins",
+            "compilation_sha256_by_slice": {
+                "semantic-core": compilation["compilation_sha256"]
+            },
+            "view_sha256_by_slice": {"semantic-core": view["view_sha256"]},
+            "outcome": "satisfied",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    without_view = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+    assert without_view["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert any(
+        row["code"] == "RECONCILIATION_OUTPUT_MISSING"
+        for row in without_view["blockers"]
+    )
+
+    with_view = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        reconciliation_by_slice={
+            "semantic-core": {"node_compilation": terminal, "view": view}
+        },
+        full_source=source,
+    )
+    assert with_view["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
+def test_calibration_spec_accepts_meaning_direction_relation() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    case_id = spec["slices"][0]["cases"][0]["case_id"]
+    spec["relation_obligations"] = [
+        {
+            "relation_id": "negation-survives-final-view",
+            "relation_type": "meaning_direction_preserved",
+            "case_ids": [case_id],
+            "critical": True,
+            "meaning": "The final meaning preserves the child's negation.",
+        }
+    ]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+    normalized = validate_calibration_spec(spec)
+
+    assert normalized["relation_obligations"][0]["relation_type"] == (
+        "meaning_direction_preserved"
+    )
+
+
+def _rehash_spec(spec: dict) -> None:
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+
+
+def test_calibration_spec_rejects_a_misspelled_obligation_field() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["slices"][0]["casses"] = spec["slices"][0].pop("cases")
+    _rehash_spec(spec)
+
+    # A silently ignored obligation key would delete every case from the gate
+    # while the report still read as a pass.
+    with pytest.raises(SemanticCalibrationError, match="unknown gold fields"):
+        validate_calibration_spec(spec)
+
+
+def test_calibration_spec_requires_at_least_one_case() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["slices"][0]["cases"] = []
+    _rehash_spec(spec)
+
+    with pytest.raises(SemanticCalibrationError, match="at least one case"):
+        validate_calibration_spec(spec)
+
+
+def test_claim_bearing_calibration_case_requires_an_atomic_meaning() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["slices"][0]["cases"][0]["required_atoms"] = []
+    _rehash_spec(spec)
+
+    with pytest.raises(SemanticCalibrationError, match="atomic meaning"):
+        validate_calibration_spec(spec)
+
+
+def test_calibration_spec_closes_every_gold_container() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    case_id = spec["slices"][0]["cases"][0]["case_id"]
+    spec["relation_obligations"] = [
+        {
+            "relation_id": "self-retrieval",
+            "relation_type": "must_co_retrieve",
+            "case_ids": [case_id],
+            "critical": True,
+            "meaning": "fixture relation",
+        }
+    ]
+    spec["cold_repeat_case_ids"] = [case_id]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    containers = (
+        (),
+        ("slices", 0),
+        ("slices", 0, "cases", 0),
+        ("slices", 0, "cases", 0, "required_atoms", 0),
+        ("relation_obligations", 0),
+        ("cold_repeat",),
+        ("slices", 0, "axis_repetition_warning"),
+    )
+
+    for path in containers:
+        candidate = deepcopy(spec)
+        target = candidate
+        for key in path:
+            target = target[key]
+        target["unexpected_gold_field"] = True
+        _rehash_spec(candidate)
+        with pytest.raises(SemanticCalibrationError, match="unknown gold fields"):
+            validate_calibration_spec(candidate)
+
+
+def test_calibration_evaluation_rejects_a_substituted_prepared_bundle() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+
+    narrow_spec = deepcopy(spec)
+    narrow_spec["slices"][0]["evidence_ids"] = spec["slices"][0]["evidence_ids"][:1]
+    _rehash_spec(narrow_spec)
+    narrow = prepare_semantic_calibration(source, narrow_spec)["slices"][0]
+
+    # A substituted prepared directory can always be made self-consistent: the
+    # preparation receipt is self-hashed, so on its own it proves nothing about
+    # which route and which evidence the gate actually judged.
+    forged = deepcopy(prepared)
+    forged["slices"][0]["source"] = narrow["source"]
+    forged["slices"][0]["bundle"] = narrow["bundle"]
+    forged["slices"][0]["route_fingerprint"] = narrow["route_fingerprint"]
+    receipt = deepcopy(prepared["receipt"])
+    receipt["slices"][0]["source_sha256"] = narrow["source"]["source_sha256"]
+    receipt["slices"][0]["bundle_sha256"] = narrow["bundle"]["bundle_sha256"]
+    receipt["slices"][0]["route_fingerprint"] = narrow["route_fingerprint"]
+    receipt["slices"][0]["evidence_count"] = len(narrow["bundle"]["evidence_units"])
+    receipt["slices"][0]["work_unit_count"] = len(narrow["bundle"]["batches"])
+    receipt["slices"][0]["largest_prompt_bytes"] = narrow["largest_prompt_bytes"]
+    receipt.pop("preparation_sha256")
+    receipt["preparation_sha256"] = _canonical_hash(receipt)
+    forged["receipt"] = receipt
+
+    responses = _v5_responses(narrow["bundle"])
+    compilation = validate_batch_responses(narrow["bundle"], responses)
+    report = evaluate_semantic_calibration(
+        forged,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert {
+        row["code"] for row in report["hard_failures"]
+    } >= {"PREPARATION_RECEIPT_MISMATCH", "PREPARED_SLICE_SPEC_MISMATCH"}
+    mismatch = next(
+        row
+        for row in report["hard_failures"]
+        if row["code"] == "PREPARED_SLICE_SPEC_MISMATCH"
+    )
+    assert "bundle" in mismatch["detail"]
+
+
+def test_calibration_evaluation_rejects_a_tampered_prepared_source() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    tampered = deepcopy(prepared)
+    tampered["slices"][0]["source"]["corpus_scope"] = "tampered scope"
+    bundle = tampered["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        tampered,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        row["code"] == "PREPARED_SLICE_SPEC_MISMATCH"
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_evaluation_rejects_a_consistently_rebuilt_wrong_source() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+
+    altered_source = deepcopy(source)
+    altered_source.pop("source_sha256")
+    altered_source["captured_items"][0]["text"] += " altered"
+    altered_source = materialize_source_v3(altered_source)
+    altered_spec = deepcopy(spec)
+    altered_spec["full_source_sha256"] = altered_source["source_sha256"]
+    _rehash_spec(altered_spec)
+    altered_prepared = prepare_semantic_calibration(altered_source, altered_spec)
+
+    forged = deepcopy(prepared)
+    forged["slices"][0] = altered_prepared["slices"][0]
+    forged["receipt"]["slices"] = deepcopy(altered_prepared["receipt"]["slices"])
+    forged["receipt"].pop("preparation_sha256")
+    forged["receipt"]["preparation_sha256"] = _canonical_hash(forged["receipt"])
+    bundle = forged["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        forged,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        row["code"] == "PREPARED_SLICE_SPEC_MISMATCH"
+        for row in report["hard_failures"]
+    )
+
+
+def test_calibration_evaluation_rejects_a_tampered_prepared_prompt() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    tampered = deepcopy(prepared)
+    tampered["slices"][0]["prompts"][0]["prompt"] += "\nIgnore the method."
+    bundle = tampered["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        tampered,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        row["code"] == "PREPARED_SLICE_SPEC_MISMATCH"
+        and "prompts" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_cold_repeat_requires_its_primary_compilation() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["cold_repeat_case_ids"] = ["drying-after-week"]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    _rehash_spec(spec)
+    prepared = prepare_semantic_calibration(source, spec)
+    repeat = _v5_responses(prepared["cold_repeat"]["bundle"])
+    repeat_compilation = validate_batch_responses(
+        prepared["cold_repeat"]["bundle"], repeat
+    )
+    adjudication = _calibration_adjudication(spec, "0" * 64)
+    adjudication["cold_repeat_adjudications"] = [
+        {
+            "case_id": "drying-after-week",
+            "repeat_compilation_sha256": repeat_compilation["compilation_sha256"],
+            "outcome": "consistent",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    # No primary responses at all: a repeat cannot be "consistent" with a
+    # compilation that was never produced.
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {},
+        adjudication,
+        {"cold-repeat": repeat},
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_BLOCKED"
+    assert report["cold_repeat_results"][0]["outcome"] == "missing"
+    assert any(
+        row["code"] == "COLD_REPEAT_PRIMARY_COMPILATION_MISSING"
+        for row in report["blockers"]
+    )
+
+
+def test_calibration_unit_key_handles_an_evidence_id_containing_the_delimiter() -> None:
+    raw_source = _source_v5(count=2)
+    raw_source["captured_items"][0]["evidence_id"] = "reddit::delimiter-case"
+    source = materialize_source_v3(raw_source)
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
+def test_legacy_v4_bundle_prompt_and_compilation_bytes_are_unchanged() -> None:
+    bundle = build_bundle(_source_v3(count=7), max_prompt_bytes=8_000)
+    assert bundle["schema_version"] == BUNDLE_VERSION_V4
+    assert bundle["bundle_sha256"] == _FROZEN_V4_PLAIN["bundle_sha256"]
+    assert bundle["corpus_sha256"] == _FROZEN_V4_PLAIN["corpus_sha256"]
+    assert (
+        bundle["semantic_work_unit_projection"]["projection_sha256"]
+        == _FROZEN_V4_PLAIN["projection_sha256"]
+    )
+    prompt_bytes, prompt_sha = _joined_prompt_digest(build_batch_prompts(bundle))
+    assert prompt_bytes == _FROZEN_V4_PLAIN["prompt_utf8_bytes"]
+    assert prompt_sha == _FROZEN_V4_PLAIN["prompt_sha256"]
+    compiled = validate_batch_responses(bundle, _v3_batch_responses(bundle))
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V2
+    assert compiled["compilation_sha256"] == _FROZEN_V4_PLAIN["compilation_sha256"]
+    # The legacy compilation gains no new-generation lineage field.
+    assert "raw_response_manifest" not in compiled
+
+
+def test_legacy_v4_catalog_prompt_bytes_are_unchanged() -> None:
+    source = _source_v3(count=7)
+    source["semantic_method_version"] = METHOD_VERSION_V4
+    source["product_identity_catalog"] = _product_catalog()
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    assert bundle["bundle_sha256"] == _FROZEN_V4_CATALOG["bundle_sha256"]
+    assert bundle["corpus_sha256"] == _FROZEN_V4_CATALOG["corpus_sha256"]
+    prompt_bytes, prompt_sha = _joined_prompt_digest(build_batch_prompts(bundle))
+    assert prompt_bytes == _FROZEN_V4_CATALOG["prompt_utf8_bytes"]
+    assert prompt_sha == _FROZEN_V4_CATALOG["prompt_sha256"]
+
+
+def test_v5_projection_binds_execution_identity_without_worker_topology() -> None:
+    bundle = _bundle_v5()
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    projection = bundle["semantic_work_unit_projection"]
+    assert projection["schema_version"] == WORK_UNIT_PROJECTION_VERSION_V2
+    identity = projection["semantic_execution_identity"]
+    assert identity["method_version"] == METHOD_VERSION_V5
+    assert identity["method_sha256"] == bundle["method_sha256"]
+    assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert identity["compilation_schema_version"] == BATCH_COMPILATION_VERSION_V3
+    assert identity["prompt_encoding_version"] == PROMPT_ENCODING_VERSION
+    assert identity["corpus_scope"] == bundle["corpus_scope"]
+    assert identity["corpus_cutoff"] == bundle["corpus_cutoff"]
+    assert projection["max_prompt_bytes"] == bundle["max_prompt_bytes"]
+    # No static worker topology anywhere in the new semantic identity.
+    assert "worker_count" not in projection
+    assert all("worker_partition" not in row for row in projection["work_units"])
+    assert all("worker_partition" not in row for row in bundle["batches"])
+    prompts = build_batch_prompts(bundle)
+    assert all("worker_partition" not in row for row in prompts)
+    # Complete assessable-denominator coverage is still proven exactly.
+    assert projection["coverage_proof"]["bijection_complete"] is True
+    assert projection["coverage_proof"]["admitted_evidence_count"] == 7
+
+
+def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> None:
+    prompt = build_batch_prompts(_bundle_v5())[0]["prompt"]
+    assert "SEMANTIC EVIDENCE INTEGRATION METHOD V5" in prompt
+    assert '"terminal_groups"' in prompt
+    assert '"schema_version": "semantic_evidence_batch_response_v3"' in prompt
+    assert '"required stable product id"' in prompt
+    # Pretty, indented encoding is retained; no compact separators appear.
+    assert '"evidence": [' in prompt
+    assert '{"evidence_id"' not in prompt
+
+
+def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
+    normalized = " ".join(METHOD_TEXT_V5.split())
+    for disposition in ("claim_bearing", "unresolved", "context_only", "out_of_scope"):
+        assert disposition in normalized
+    required_semantics = (
+        "Judge every leaf exactly once after context",
+        "There is no keyword, phrase, or length rule",
+        '"same" may adopt one clearly targeted parent meaning',
+        "never every clause of a multi-point parent",
+        '"Love it" with only a known product remains context_only',
+        '"Vanilla Beige!" -> "My fav!"',
+        "claim_bearing personal_agreement with no axis",
+        '"I always reach for it" is bounded behavior',
+        "personal_agreement adopts only the target",
+        "low-information same-thread recurrence",
+        "never cross-venue credit",
+        "attribution_or_echo reports the parent, adds no origin",
+        "names attribution in its statement",
+        "leading yes/no reply adopts the parent question's exact predicate",
+        "Context fills an omitted predicate, not posture",
+        "Evidence posture describes support, not the verb",
+        "strategy_statement is organizational, never customer behavior",
+        "Polarity is logical assertion, not sentiment",
+        '"is drying", "worsens peeling", and "reaches for other formulas" are affirmed',
+        '"is not drying" and "not the most hydrating" are negated',
+        "Every unit carries a verified subject id",
+        "catalog is vocabulary, not proof",
+        "One unit is one independently testable proposition",
+        "split them even when product, axis, or posture matches",
+        '"good, but not worth $24" yields only "not worth $24"',
+        "never a bundled mixed-direction unit",
+        '"I have Poppy" and "would get it only on sale" are separate',
+        '"Not the most hydrating" and "does not make lips drier" are separate',
+        "target-versus-comparator hydration contrast",
+        "Axis candidates are vocabulary, not assignments",
+        "Worsening peeling supports reaction_and_breakout",
+        "not-drying alone supports hydration only",
+        "go-to behavior is axis-free",
+        "named shade ownership remains the shade-axis exception",
+        "attach the opposite as counter rather than emit two support-only claims",
+        "first_hand and personal_agreement preferences may support one proposition",
+        "preserve both actors and disclose their shared thread",
+    )
+    for phrase in required_semantics:
+        assert phrase in normalized
+
+
+def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
+    text = METHOD_TEXT_V5
+    normalized = " ".join(text.split())
+    assert "There is no keyword, phrase, or length rule" in normalized
+    # The worked examples describe semantic boundaries, not matchable input
+    # filters. Short inputs can still be detailed, terminal, or unresolved.
+    for phrase in ('"same"', '"My fav!"', '"I always reach for it"'):
+        assert phrase in text
+    assert '"Love it" with only a known product remains context_only' in text
+    assert "one clearly targeted parent meaning" in text
+
+
+def test_v5_terminal_grouping_expands_to_one_row_per_evidence_id() -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle)
+    compiled = validate_batch_responses(bundle, responses)
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V3
+    dispositions = compiled["evidence_dispositions"]
+    # Exact one-row-per-evidence-id expansion over the whole denominator.
+    assert len(dispositions) == 7
+    assert [row["evidence_id"] for row in dispositions] == bundle["batches"][0][
+        "evidence_ids"
+    ]
+    assert sum(row["disposition"] == "claim_bearing" for row in dispositions) == 1
+    assert sum(row["disposition"] == "context_only" for row in dispositions) == 6
+    # Disposition reason survives expansion unchanged for every grouped id.
+    grouped_reasons = {
+        row["disposition_reason"]
+        for row in dispositions
+        if row["disposition"] == "context_only"
+    }
+    assert grouped_reasons == {
+        "no bounded proposition remains after reading context"
+    }
+    # A terminal leaf emits no semantic unit, so it costs nothing downstream.
+    assert len(compiled["semantic_units"]) == 1
+
+
+def test_v5_grouped_and_detailed_terminal_decisions_agree_exactly() -> None:
+    """Grouping is transport only: it must not change the compiled meaning."""
+    bundle = _bundle_v5()
+    grouped = validate_batch_responses(bundle, _v5_responses(bundle))
+    reason = "no bounded proposition remains after reading context"
+    detailed_responses = []
+    for batch in bundle["batches"]:
+        ids = batch["evidence_ids"]
+        rows = [_claim_row(ids[0])] + [
+            {
+                "evidence_id": row,
+                "disposition": "context_only",
+                "disposition_reason": reason,
+                "semantic_units": [],
+            }
+            for row in ids[1:]
+        ]
+        detailed_responses.append(
+            {
+                "schema_version": BATCH_RESPONSE_VERSION_V3,
+                "bundle_sha256": bundle["bundle_sha256"],
+                "batch_id": batch["batch_id"],
+                "evidence": rows,
+                "terminal_groups": [],
+            }
+        )
+    detailed = validate_batch_responses(bundle, detailed_responses)
+    assert grouped["evidence_dispositions"] == detailed["evidence_dispositions"]
+    assert grouped["semantic_units"] == detailed["semantic_units"]
+    # Lineage still distinguishes the two durable raw artifacts.
+    assert (
+        grouped["raw_response_manifest"]["manifest_sha256"]
+        != detailed["raw_response_manifest"]["manifest_sha256"]
+    )
+    assert grouped["compilation_sha256"] != detailed["compilation_sha256"]
+
+
+def test_v5_compilation_binds_canonical_raw_response_hashes() -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle)
+    compiled = validate_batch_responses(bundle, responses)
+    manifest = compiled["raw_response_manifest"]
+    assert manifest["schema_version"] == "semantic_evidence_raw_response_manifest_v1"
+    assert [row["batch_id"] for row in manifest["responses"]] == sorted(
+        row["batch_id"] for row in responses
+    )
+    assert manifest["responses"][0]["raw_response_sha256"] == _canonical_hash(
+        responses[0]
+    )
+    # Re-authoring the same decisions as a different raw artifact changes the
+    # proven lineage even though the expansion is identical.
+    reworded = deepcopy(responses)
+    reworded[0]["terminal_groups"][0]["evidence_ids"] = list(
+        reversed(reworded[0]["terminal_groups"][0]["evidence_ids"])
+    )
+    relineaged = validate_batch_responses(bundle, reworded)
+    assert (
+        relineaged["evidence_dispositions"] == compiled["evidence_dispositions"]
+    )
+    assert (
+        relineaged["raw_response_manifest"]["manifest_sha256"]
+        != manifest["manifest_sha256"]
+    )
+
+
+def test_v5_reconciliation_requires_compilation_v3_lineage() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    assert stage["batch_compilation_sha256"] == compiled["compilation_sha256"]
+    stripped = deepcopy(compiled)
+    stripped.pop("raw_response_manifest")
+    stripped["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in stripped.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="raw response lineage"):
+        prepare_reconciliation_stage(bundle, stripped)
+
+
+def test_v5_rejects_legacy_compilation_generation_at_reconciliation() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    downgraded = deepcopy(compiled)
+    downgraded["schema_version"] = BATCH_COMPILATION_VERSION_V2
+    downgraded["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in downgraded.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="compilation generation"):
+        prepare_reconciliation_stage(bundle, downgraded)
+
+
+@pytest.mark.parametrize(
+    ("mutate", "match"),
+    [
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0]["evidence_ids"].append(ids[-1]),
+            "repeats an evidence id",
+            id="duplicate_inside_one_group",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"].append(
+                {
+                    "disposition": "out_of_scope",
+                    "disposition_reason": "second reason",
+                    "evidence_ids": [ids[-1]],
+                }
+            ),
+            "across terminal groups",
+            id="duplicate_across_groups",
+        ),
+        pytest.param(
+            lambda r, ids: r["evidence"].append(_claim_row(ids[-1])),
+            "both detailed and grouped",
+            id="detailed_and_grouped_overlap",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0]["evidence_ids"].append(
+                "reddit:nonexistent:comment"
+            ),
+            "unexpected evidence id",
+            id="unexpected_evidence_id",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0]["evidence_ids"].pop(),
+            "every alias exactly once",
+            id="silently_omitted_evidence_id",
+        ),
+        pytest.param(
+            lambda r, ids: r.__setitem__("terminal_groups", []),
+            "every alias exactly once",
+            id="implicit_remainder",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].__setitem__(
+                "disposition", "claim_bearing"
+            ),
+            "may only group",
+            id="claim_bearing_cannot_be_grouped",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].__setitem__(
+                "disposition", "unresolved"
+            ),
+            "may only group",
+            id="unresolved_cannot_be_grouped",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].__setitem__(
+                "disposition_reason", "  "
+            ),
+            "lacks an explicit reason",
+            id="group_without_reason",
+        ),
+        pytest.param(
+            lambda r, ids: r["terminal_groups"][0].pop("evidence_ids"),
+            "list its evidence ids explicitly",
+            id="group_without_explicit_ids",
+        ),
+    ],
+)
+def test_v5_raw_evidence_id_accounting_fails_closed(mutate, match) -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle)
+    ids = bundle["batches"][0]["evidence_ids"]
+    mutate(responses[0], ids)
+    with pytest.raises(SemanticIntegrationError, match=match):
+        validate_batch_responses(bundle, responses)
+
+
+def test_v5_duplicate_detailed_record_is_not_masked_by_dictionary_collapse() -> None:
+    """A repeated detailed id must fail rather than silently collapse to one."""
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    ids = bundle["batches"][0]["evidence_ids"]
+    # Replace a grouped id with a repeat of an already-detailed id so the total
+    # occurrence count still equals the expected denominator.
+    responses[0]["terminal_groups"][0]["evidence_ids"].pop()
+    responses[0]["evidence"].append(_claim_row(ids[0]))
+    with pytest.raises(SemanticIntegrationError, match="detailed records"):
+        validate_batch_responses(bundle, responses)
+
+
+def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
+    new_bundle = _bundle_v5()
+    legacy_response = deepcopy(_v5_responses(new_bundle)[0])
+    legacy_response["schema_version"] = BATCH_RESPONSE_VERSION_V2
+    with pytest.raises(SemanticIntegrationError, match="invalid batch response version"):
+        validate_batch_responses(new_bundle, [legacy_response], require_all=False)
+
+    legacy_bundle = build_bundle(_source_v3(count=7), max_prompt_bytes=8_000)
+    new_response = deepcopy(_v3_batch_responses(legacy_bundle)[0])
+    new_response["schema_version"] = BATCH_RESPONSE_VERSION_V3
+    with pytest.raises(SemanticIntegrationError, match="invalid batch response version"):
+        validate_batch_responses(legacy_bundle, [new_response], require_all=False)
+
+
+@pytest.mark.parametrize(
+    ("method_version", "target_bundle_version", "match"),
+    [
+        (METHOD_VERSION_V5, BUNDLE_VERSION_V4, "method v5 requires bundle v5"),
+        (METHOD_VERSION_V4, BUNDLE_VERSION_V5, "method v4 requires bundle v4"),
+        (METHOD_VERSION_V3, BUNDLE_VERSION_V5, "bundle v5 requires semantic method v5"),
+        (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
+    ],
+)
+def test_incoherent_generation_combinations_fail_closed(
+    method_version, target_bundle_version, match
+) -> None:
+    source = _source_v3(count=3)
+    source["semantic_method_version"] = method_version
+    with pytest.raises(SemanticIntegrationError, match=match):
+        build_bundle(
+            source,
+            max_prompt_bytes=12_000,
+            target_bundle_version=target_bundle_version,
+        )
+
+
+def test_coherent_generations_are_both_accepted() -> None:
+    legacy = build_bundle(_source_v3(count=3), max_prompt_bytes=8_000)
+    assert legacy["schema_version"] == BUNDLE_VERSION_V4
+    assert legacy["method_version"] == METHOD_VERSION_V3
+    new = _bundle_v5(count=3)
+    assert new["schema_version"] == BUNDLE_VERSION_V5
+    assert new["method_version"] == METHOD_VERSION_V5
+
+
+def test_v5_final_acquisition_still_requires_a_verified_catalog() -> None:
+    source = _source_v5(count=3)
+    source["corpus_profile"] = "phase_a_final_acquisition"
+    with pytest.raises(SemanticIntegrationError, match="lacks product catalog"):
+        build_bundle(source, max_prompt_bytes=12_000)
+    source["product_identity_catalog"] = _product_catalog()
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert (
+        identity["product_identity_catalog_sha256"]
+        == bundle["product_identity_catalog"]["catalog_sha256"]
+    )
+
+
+def test_v5_projection_rejects_forged_execution_identity() -> None:
+    bundle = _bundle_v5()
+    tampered = deepcopy(bundle)
+    projection = tampered["semantic_work_unit_projection"]
+    projection["semantic_execution_identity"]["prompt_encoding_version"] = (
+        "semantic_prompt_encoding_compact_json_v1"
+    )
+    projection["projection_sha256"] = _canonical_hash(
+        {k: v for k, v in projection.items() if k != "projection_sha256"}
+    )
+    tampered["bundle_sha256"] = _canonical_hash(
+        {k: v for k, v in tampered.items() if k != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="prompt_encoding_version"):
+        build_batch_prompts(tampered)
+
+
+def test_v5_projection_rejects_reintroduced_worker_topology() -> None:
+    bundle = _bundle_v5()
+    tampered = deepcopy(bundle)
+    projection = tampered["semantic_work_unit_projection"]
+    projection["worker_count"] = 3
+    projection["projection_sha256"] = _canonical_hash(
+        {k: v for k, v in projection.items() if k != "projection_sha256"}
+    )
+    tampered["bundle_sha256"] = _canonical_hash(
+        {k: v for k, v in tampered.items() if k != "bundle_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="static worker topology"):
+        build_batch_prompts(tampered)
+
+
+def test_reused_bundle_context_cannot_be_applied_to_another_bundle() -> None:
+    bundle = _bundle_v5()
+    other = _bundle_v5(count=3)
+    context = verify_bundle_context(bundle)
+    with pytest.raises(SemanticIntegrationError, match="does not match this bundle"):
+        validate_batch_responses(
+            other, _v5_responses(other), require_all=False, context=context
+        )
+
+
+def test_v5_prepare_runner_writes_no_static_worker_assignment(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    source = _source_v5(count=7)
+    for index in range(7):
+        (repo_root / f"thread-{index + 1}.json").write_bytes(
+            f"thread-{index + 1}\n".encode("utf-8")
+        )
+    source_path = tmp_path / "source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    result = prepare_batches(
+        source_path=source_path,
+        repo_root=repo_root,
+        bundle_out=tmp_path / "bundle.json",
+        prompt_dir=tmp_path / "prompts",
+        max_batch_chars=80_000,
+        max_prompt_bytes=12_000,
+    )
+    assert result["model_api_calls"] == 0
+    assert not (tmp_path / "prompts" / "worker_assignments.json").exists()
+    assert sorted(p.name for p in (tmp_path / "prompts").glob("*")) == ["batch-0001.md"]
+
+
+def test_v5_lineage_must_cover_every_work_unit() -> None:
+    """A manifest that names fewer raw artifacts than work units fails closed."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    assert len(bundle["batches"]) > 1
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    thinned = deepcopy(compiled)
+    manifest = thinned["raw_response_manifest"]
+    manifest["responses"] = manifest["responses"][:-1]
+    manifest["manifest_sha256"] = _canonical_hash(
+        {k: v for k, v in manifest.items() if k != "manifest_sha256"}
+    )
+    thinned["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in thinned.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="does not cover every work unit"):
+        prepare_reconciliation_stage(bundle, thinned)
+
+
+def test_v5_lineage_manifest_hash_is_verified() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    forged = deepcopy(compiled)
+    forged["raw_response_manifest"]["responses"][0]["raw_response_sha256"] = "0" * 64
+    forged["compilation_sha256"] = _canonical_hash(
+        {k: v for k, v in forged.items() if k != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="raw response manifest"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
+def test_v5_lineage_manifest_requires_each_raw_response_hash() -> None:
+    """Rehashing a manifest cannot make a missing raw artifact binding valid."""
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    forged = deepcopy(compiled)
+    manifest = forged["raw_response_manifest"]
+    manifest["responses"][0].pop("raw_response_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in manifest.items() if key != "manifest_sha256"}
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="raw response manifest row"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
+def test_v5_lineage_rejects_duplicate_raw_response_hashes() -> None:
+    """Rehashing cannot alias two work units to one raw response artifact."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    assert len(bundle["batches"]) > 1
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    forged = deepcopy(compiled)
+    manifest = forged["raw_response_manifest"]
+    manifest["responses"][1]["raw_response_sha256"] = manifest["responses"][0][
+        "raw_response_sha256"
+    ]
+    manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in manifest.items() if key != "manifest_sha256"}
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(SemanticIntegrationError, match="repeats a digest"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
+def test_v5_reconciliation_carries_posture_and_rejects_customer_proof_early() -> None:
+    bundle = _bundle_v5()
+    responses = _v5_responses(bundle, detailed_per_batch=7)
+    responses[0]["evidence"][0]["semantic_units"][0][
+        "evidence_posture"
+    ] = "strategy_statement"
+    compiled = validate_batch_responses(bundle, responses)
+    stage, prompts = prepare_reconciliation_stage(bundle, compiled)
+
+    assert stage["candidates"][0]["evidence_postures"] == ["strategy_statement"]
+    assert '"evidence_postures": [' in prompts[0]["prompt"]
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="uses non-experience posture as customer proof",
+    ):
+        validate_reconciliation_stage(
+            bundle,
+            stage,
+            _group_level_responses(stage, terminal=True),
+        )
+
+
+def test_v5_reconciliation_rejects_incompetent_source_role_before_finalization() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    reconciliation = _group_level_responses(stage, terminal=True)
+    reconciliation[0]["semantic_nodes"][0]["claim_kind"] = "observable_fact"
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="uses source roles incompetent for observable_fact",
+    ):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+
+def _staged_node_responses(
+    stage: dict,
+    groups: list[list[tuple[str, str]]],
+    *,
+    terminal: bool,
+    claim_kind: str | None = None,
+) -> list[dict]:
+    """One node per group with explicit per-child stances, not blanket support."""
+    index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    responses = []
+    for batch in stage["batches"]:
+        nodes = []
+        for position, group in enumerate(groups):
+            selected = [
+                (ref, stance) for ref, stance in group if ref in batch["candidate_refs"]
+            ]
+            if not selected:
+                continue
+            polarities = {index[ref]["polarity"] for ref, _ in selected}
+            nodes.append(
+                {
+                    "semantic_node_key": f"{batch['batch_id']}-node-{position}",
+                    "bounded_meaning": (
+                        f"Bounded meaning {position} of {batch['batch_id']}."
+                    ),
+                    "terminal_proposition": terminal,
+                    "claim_kind": claim_kind if terminal else None,
+                    "subject_product_ids": ["sf-lbb"],
+                    "comparator_product_ids": [],
+                    "product_version_ids": [],
+                    "axis_ids": ["wear"],
+                    "emerging_axis_labels": sorted(
+                        {
+                            label
+                            for ref, _ in selected
+                            for label in index[ref]["emerging_axis_labels"]
+                        }
+                    ),
+                    "conditions": sorted(
+                        {
+                            condition
+                            for ref, _ in selected
+                            for lineage in index[ref]["condition_lineage"]
+                            for condition in lineage["conditions"]
+                        }
+                    ),
+                    "polarity": (
+                        next(iter(polarities)) if len(polarities) == 1 else "mixed"
+                    ),
+                    "uncertainty_posture": "asserted",
+                    "child_relations": [
+                        {"child_ref": ref, "relation": stance}
+                        for ref, stance in selected
+                    ],
+                    "opposition_checked": True if terminal else None,
+                    "causal_ceiling": "descriptive_only" if terminal else None,
+                }
+            )
+        responses.append(
+            {
+                "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "semantic_nodes": nodes,
+                "unmerged_children": [],
+                "emerging_axis_consolidations": [],
+            }
+        )
+    return responses
+
+
+def _node_ref_carrying(compilation: dict, unit_ref: str) -> str:
+    [node_ref] = [
+        row["semantic_node_ref"]
+        for row in compilation["semantic_nodes"]
+        if any(leaf["semantic_unit_ref"] == unit_ref for leaf in row["leaf_relations"])
+    ]
+    return node_ref
+
+
+def _v5_mixed_role_stage() -> tuple[dict, dict, list[str]]:
+    """Three claim-bearing units; only the first carries an observable-fact role."""
+    source = _source_v5()
+    source["captured_items"][0]["source_role"] = "owned_source"
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=3)
+    )
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    refs = [row["candidate_ref"] for row in stage["candidates"]]
+    assert refs[0].startswith("reddit:t1:comment::")
+    assert len(refs) == 3
+    return bundle, stage, refs
+
+
+def test_v5_reconciliation_checks_only_supporting_source_roles_for_competence() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    reconciliation = _staged_node_responses(
+        stage,
+        [[(refs[0], "support"), (refs[1], "counter"), (refs[2], "adjacent")]],
+        terminal=True,
+        claim_kind="observable_fact",
+    )
+
+    terminal = validate_reconciliation_stage(bundle, stage, reconciliation)
+
+    node = terminal["semantic_nodes"][0]
+    assert node["claim_kind"] == "observable_fact"
+    # The community_post leaves are present and carry the non-support stances,
+    # so acceptance is not an artifact of an empty counter/adjacent set.
+    assert node["leaf_relations"] == [
+        {"semantic_unit_ref": refs[0], "relation": "support"},
+        {"semantic_unit_ref": refs[1], "relation": "counter"},
+        {"semantic_unit_ref": refs[2], "relation": "adjacent"},
+    ]
+
+
+def test_v5_reconciliation_rejects_incompetent_support_beside_competent_support() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    reconciliation = _staged_node_responses(
+        stage,
+        [[(refs[0], "support"), (refs[1], "support"), (refs[2], "adjacent")]],
+        terminal=True,
+        claim_kind="observable_fact",
+    )
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match=r"incompetent for observable_fact: \['community_post'\]",
+    ):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+
+def test_v5_reconciliation_composes_relations_before_judging_competence() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    level_one = validate_reconciliation_stage(
+        bundle,
+        stage,
+        _staged_node_responses(
+            stage,
+            [[(refs[0], "support")], [(refs[1], "counter")], [(refs[2], "counter")]],
+            terminal=False,
+        ),
+    )
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    competent = _node_ref_carrying(level_one, refs[0])
+    community_one = _node_ref_carrying(level_one, refs[1])
+    community_two = _node_ref_carrying(level_one, refs[2])
+
+    # counter x counter composes to support, so the community leaf reaches the
+    # terminal claim as support even though level one recorded it as counter.
+    with pytest.raises(
+        SemanticIntegrationError,
+        match=r"incompetent for observable_fact: \['community_post'\]",
+    ):
+        validate_reconciliation_stage(
+            bundle,
+            stage_two,
+            _staged_node_responses(
+                stage_two,
+                [
+                    [
+                        (competent, "support"),
+                        (community_one, "counter"),
+                        (community_two, "support"),
+                    ]
+                ],
+                terminal=True,
+                claim_kind="observable_fact",
+            ),
+        )
+
+    # support x counter stays counter, so the same community leaves do not
+    # contaminate competence when nothing flips them back to support.
+    accepted = validate_reconciliation_stage(
+        bundle,
+        stage_two,
+        _staged_node_responses(
+            stage_two,
+            [
+                [
+                    (competent, "support"),
+                    (community_one, "support"),
+                    (community_two, "support"),
+                ]
+            ],
+            terminal=True,
+            claim_kind="observable_fact",
+        ),
+    )
+
+    assert accepted["semantic_nodes"][0]["leaf_relations"] == [
+        {"semantic_unit_ref": refs[0], "relation": "support"},
+        {"semantic_unit_ref": refs[1], "relation": "counter"},
+        {"semantic_unit_ref": refs[2], "relation": "counter"},
+    ]
+
+
+def test_v5_reconciliation_rejects_terminal_node_without_effective_support() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    reconciliation = _staged_node_responses(
+        stage,
+        [[(refs[0], "counter"), (refs[1], "counter"), (refs[2], "adjacent")]],
+        terminal=True,
+        claim_kind="observable_fact",
+    )
+
+    with pytest.raises(SemanticIntegrationError, match="lacks support"):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+
+def test_v5_reconciliation_rejects_ambiguous_leaf_source_lineage() -> None:
+    source = _source_v5()
+    source["captured_items"][0]["evidence_id"] = "reddit:t1"
+    source["captured_items"][1]["evidence_id"] = "reddit:t1::comment"
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+
+    # 'reddit:t1::comment::drying-after-week' decomposes at two '::' boundaries
+    # that both name real evidence units, so its owning source is unknowable
+    # from the ref alone and must not be resolved by guess.
+    with pytest.raises(
+        SemanticIntegrationError,
+        match=(
+            "ambiguous source lineage for "
+            "reddit:t1::comment::drying-after-week"
+        ),
+    ):
+        validate_reconciliation_stage(
+            bundle, stage, _group_level_responses(stage, terminal=True)
+        )
+
+
+def test_v5_finalization_retains_source_role_competence_backstop() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+    forged = deepcopy(terminal)
+    forged["semantic_nodes"][0]["claim_kind"] = "observable_fact"
+    _rehash_node_compilation(forged)
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="uses source roles incompetent for observable_fact",
+    ):
+        finalize_v3_view(bundle, compiled, forged)
+
+
+def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
+    """Exact denominator coverage across several prompt-bounded work units."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    assert len(bundle["batches"]) > 1
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    accounted = [row["evidence_id"] for row in compiled["evidence_dispositions"]]
+    assert len(accounted) == 40
+    assert sorted(accounted) == sorted(row["evidence_id"] for row in bundle["evidence_units"])
+    assert len(compiled["raw_response_manifest"]["responses"]) == len(bundle["batches"])
+
+
+def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
+    """Reconciliation v2, node v2, view v2, and packet v1 consume compilation v3."""
+    bundle = _bundle_v5()
+    responses = [
+        {
+            "schema_version": BATCH_RESPONSE_VERSION_V3,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch["batch_id"],
+            "evidence": [_claim_row(row) for row in batch["evidence_ids"]],
+            "terminal_groups": [],
+        }
+        for batch in bundle["batches"]
+    ]
+    compiled = validate_batch_responses(bundle, responses)
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V3
+
+    stage_one, prompts_one = prepare_reconciliation_stage(bundle, compiled)
+    assert stage_one["emerging_axis_owner_batch_id"] == stage_one["batches"][0][
+        "batch_id"
+    ]
+    assert all('"leaf_relations"' not in row["prompt"] for row in prompts_one)
+    assert all('"condition_lineage"' not in row["prompt"] for row in prompts_one)
+    level_one = validate_reconciliation_stage(
+        bundle, stage_one, _group_level_responses(stage_one, terminal=False)
+    )
+    stage_two, prompts_two = prepare_reconciliation_stage(bundle, level_one)
+    assert stage_two["emerging_axis_owner_batch_id"] == stage_two["batches"][0][
+        "batch_id"
+    ]
+    assert all('"leaf_relations"' not in row["prompt"] for row in prompts_two)
+    assert all('"condition_lineage"' not in row["prompt"] for row in prompts_two)
+    level_two = validate_reconciliation_stage(
+        bundle, stage_two, _group_level_responses(stage_two, terminal=True)
+    )
+    assert level_one["schema_version"] == "semantic_evidence_node_compilation_v2"
+
+    view = finalize_v3_view(bundle, compiled, level_two)
+    assert view["schema_version"] == "semantic_evidence_integration_view_v2"
+    packet = project_evidence_packet(
+        view, bundle, compiled, level_two, axis_ids=["wear"]
+    )
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION
+    # Lineage still resolves to the new compilation generation, unmodified.
+    assert packet["source_bindings"]["compilation_sha256"] == (
+        compiled["compilation_sha256"]
+    )
+    assert packet["source_bindings"]["bundle_sha256"] == bundle["bundle_sha256"]
+    assert packet["evidence"]
+    assert all("product_context" in row for row in packet["evidence"])
+    assert all("parent_context" in row for row in packet["evidence"])
+    assert all("product_context_refs" not in row for row in packet["evidence"])
+    assert all("parent_context_refs" not in row for row in packet["evidence"])
+    assert packet["model_api_calls"] == 0

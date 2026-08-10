@@ -1,0 +1,94 @@
+{
+  "schema_version": "phase_a_product_catalog_reach_proof_receipt_v1",
+  "status": "complete_bounded_shadow_proof",
+  "cycle_id": "summer_fridays_product_catalog_reach_20260809_v0",
+  "authority_boundary": "evidence_only",
+  "external_run_root": "C:\\tmp\\forseti-summer-fridays-product-catalog-reach-dogfood-20260809-v3",
+  "input_lineage": {
+    "full_source_locator": "C:\\tmp\\forseti-phase-a-semantic-work-units-v4-dogfood-20260808\\phase_a_source_v3.json",
+    "full_source_sha256": "156cb1659e418f8ba2e7e4534cceeacac880f2f0e2efe3f7ccea2f6933bad252",
+    "product_binding_spec": "docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/semantic_integration_customer_cross_source_proof_20260809_v0/run_spec_v2.json"
+  },
+  "selection": {
+    "captured_item_count": 4,
+    "accounted_item_count": 4,
+    "reddit_item_count": 2,
+    "retailer_review_item_count": 2,
+    "empty_candidate_reddit_item_count": 2,
+    "evidence_ids": [
+      "reddit:10suhy5:j75cl57",
+      "reddit:171ciwt:k3r1zda",
+      "retailer:sephora_product_group_reviews:205416444",
+      "retailer:sephora_product_group_reviews:207164623"
+    ]
+  },
+  "product_catalog": {
+    "catalog_sha256": "a95c1a57a30c8e82c832762e98038d02fddfaee8dcf378c1798be075d613dcda",
+    "stable_product_ids": [
+      "summer-fridays-lip-butter-balm"
+    ],
+    "source_product_ids": [
+      "B0C42HJRBF",
+      "P455936",
+      "SUMR-WU110",
+      "SUMR-WU121",
+      "SUMR-WU76",
+      "SUMR-WU93"
+    ],
+    "authority_artifact_count": 3
+  },
+  "execution": {
+    "source_sha256": "9b3823bfe8f46f6afc2c18f328da38de8d3ea88b9ef16edfb64dd3a4498cfa22",
+    "bundle_sha256": "ac9846d824fa803c72b123ed93716969bf1e50fb4b23f1c9cda7079c239bf15d",
+    "corpus_sha256": "a918a84717f818d7462fe2ad31d898aa00baed03bdf2cfddb21228cd6072df36",
+    "method_sha256": "27fbb4a367c3d2decffca495c28b36e2807fb626ff5bd5d9e1891f573c76b016",
+    "prompt_count": 1,
+    "largest_prompt_bytes": 9898,
+    "model_api_calls": 0,
+    "batch_validation_sha256": "972c9608d0bd38dd22cc94a3589f3af8a56a07c1340e0a568ee1728e68aa10ed",
+    "batch_compilation_sha256": "b5fc39430d2df6ae032bf97e9517da86f8c7a46b4c58f4fb8c34047647094d77",
+    "reconciliation_stage_sha256": "19b26095d8fddd2d0982c9d7296c33af136ee6a08c61a295c896281336938fb0",
+    "reconciliation_validation_sha256": "1804012c629c5251afab65cb5831977179412a0eb74148c82342535caa84fe51",
+    "node_compilation_sha256": "e412b3de14fb599247fca754fa263bc64243fca74d88e4026e083e7fc732b55f",
+    "view_sha256": "6576320d88ce2032241e1681f014f5dd03803f220ddecb788cb1869f8216acb2",
+    "evidence_packet_sha256": "7543ec72a65c8ed7b6a41a25c2cebf74972033a1c6b568f93fd1dcb37c762178",
+    "failed_finalization_attempt_count": 3
+  },
+  "observed_stack": {
+    "proposition_id": "prop_f254dac66ecab1d9013e",
+    "axis_ids": [
+      "wear_and_longevity"
+    ],
+    "subject_product_ids": [
+      "summer-fridays-lip-butter-balm"
+    ],
+    "support_posture": "cross_venue_corroborated",
+    "independent_origin_count": 2,
+    "source_roles": [
+      "community_post",
+      "retailer_review"
+    ],
+    "support_evidence_ids": [
+      "reddit:171ciwt:k3r1zda",
+      "retailer:sephora_product_group_reviews:207164623"
+    ],
+    "terminal_proposition_count": 17,
+    "unmerged_semantic_unit_count": 1,
+    "nonempty_product_version_id_count": 0,
+    "packet_selected_proposition_count": 2,
+    "packet_returned_evidence_item_count": 3,
+    "packet_truncated": false
+  },
+  "historical_exactness": {
+    "bounded_300_leaf_source_sha256": "540b5f9211a44da915ad32ea22f6f6e3c28f663dc783904c76683c15d2b3ee2f",
+    "object_equal": true
+  },
+  "claims_not_made": [
+    "full_59225_leaf_completion",
+    "prevalence",
+    "causation",
+    "market_conclusion",
+    "deliver_recommendation",
+    "seal_eligibility"
+  ]
+}

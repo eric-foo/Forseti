@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v8
-effective_date: 2026-08-09
+version: v19
+effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v8
+# Semantic Evidence Integration Contract v19
 
 ## Purpose
 
@@ -22,6 +22,15 @@ pre-seal closure job, but does not own or redefine its claim-support semantics.
 The existing intelligence claim-support contract remains the authority for
 support posture, independence, conflict, source-role fitness, and causal
 ceiling.
+
+Semantic Evidence Integration is the runtime capability inside the named
+**Evidence Consolidation** stage. That stage starts from an immutable,
+completely accounted acquisition corpus and owns semantic leaf triage, atomic
+evidence structuring, meaning-based cross-source reconciliation, and
+evidence-packet projection. Its output is the complete evidence retrieval
+surface consumed by the acquisition seal and later Deliver work. This stage
+boundary does not create or rename a globally numbered phase; historical Phase
+A, Phase B, Turn B, Understanding, and Deliver vocabulary remains unchanged.
 
 It is not a market conclusion, recommendation, sentiment score, representative
 estimate, causal model, custom-trained model, embeddings service, vector store,
@@ -240,6 +249,203 @@ conditions, and uncertainty are compatible. Source roles and origins remain
 separate. Method v4 adds no conclusion, recommendation, prevalence estimate,
 provider API, embeddings service, or campaign-evidence bridge.
 
+Contract v9 carries that verified run-local identity table into every method-v4
+final-acquisition work unit as one hash-bound `product_identity_catalog_v1`.
+The catalog is vocabulary, not evidence and not an automatic classifier. A
+worker still binds each Reddit body or comment from its own text plus supplied
+thread and parent context; a retailer review remains owned by its product page.
+One thread may therefore contain different product subjects, and one comment
+may yield separate subject/comparator meanings without creating extra customer
+identity credit. A missing, altered, conflicting, or authority-unbound catalog
+fails before final-acquisition prompts are accepted. Bounded historical proof
+sources remain reproducible without acquiring the new final-run obligation.
+Catalog v1 verifies product identities but carries no verified variant
+vocabulary. Catalog-backed responses therefore keep `product_version_ids`
+empty and preserve variant or formula wording in the bounded statement and
+conditions. A later catalog revision is required before variants may become
+durable cross-leaf identities.
+The verified-catalog claim applies to the sanctioned source materializer that
+derives this catalog from the bound run spec. A directly hand-authored
+final-acquisition source is only internally self-consistent; until the runner
+binds it back to a run spec, it must not be described as spec-verified.
+
+Contract v10 adds a separate semantic generation for full-corpus execution:
+`phase_a_semantic_integration_run_v3`, `semantic_evidence_bundle_v5`,
+`semantic_work_unit_projection_v2`,
+`semantic_evidence_integration_method_v5`,
+`semantic_evidence_batch_response_v3`, and
+`semantic_evidence_batch_compilation_v3`. Source v3, product identity catalog
+v1, reconciliation response v2, node compilation v2, integration view v2,
+evidence packet v1, and every route and seal version are unchanged. The
+generations are mutually exclusive and fail closed in both directions: method
+v5 requires bundle v5, bundle v5 requires method v5, and a response or
+compilation from the wrong generation is rejected rather than coerced. The
+legacy v4 generation remains readable, validatable, and byte-reproducible; its
+paused artifacts are never mutated, restamped, migrated, or reinterpreted.
+
+Method v5 requires exactly one context-aware relevance and accounting judgment
+for every assessable leaf, made after reading the leaf with its parent,
+container, and product context. A uniquely bounded direct or referential
+in-scope proposition receives detailed processing, normally `claim_bearing`.
+An ambiguous referent, product, variant, formula, or proposition receives
+detailed `unresolved`; ambiguity is never routed to a cheaper `out_of_scope`.
+A leaf clearly established as outside the governed semantic scope may
+terminate as `out_of_scope`. A leaf clearly inside the relevant context that
+carries no bounded proposition once that context is read may terminate as
+`context_only`. No lexical phrase blacklist, keyword relevance gate, or length
+rule is permitted. Context may resolve an omitted referent or predicate, but it
+cannot donate an attribute or axis. Generic approval or dislike remains
+`context_only` when context supplies only the product. A reply that uniquely
+adopts a bounded parent complaint, comparison, behavior, preference, product
+choice, condition, or variant remains detailed. For example, in the chain
+`which is your favorite?` -> `Vanilla Beige!` -> `My fav!`, the final reply
+adopts the Vanilla Beige preference; it is not an empty reaction.
+
+Referential agreement uses the `personal_agreement` posture and does not
+inherit the parent's first-hand experience. When a distinctly credited reply
+actually asserts the same bounded proposition, it may contribute that actor's
+same-thread recurrence under the intelligence claim-support contract. Bare
+agreement is low-information recurrence: it adds no reason, attribute, axis,
+condition, or explanatory detail. A reply such as `same` adopts only the
+clearly targeted bounded meaning; it does not silently adopt every clause of a
+multi-point parent. The shared thread remains disclosed and cannot earn
+cross-venue credit. A reply that merely repeats or reports the parent remains
+`attribution_or_echo` and adds no independent origin. Bounded variant or formula wording stays detailed
+while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
+formula binding is detailed `unresolved`.
+
+Evidence posture describes how a leaf supports its unit, not whether its verb
+sounds like an action or plan. A customer's own purchase, use, return, reach,
+repurchase, or stated purchase intent is `first_hand`. `strategy_statement` is
+reserved for company, creator, or other organizational strategy; it never
+relabels customer shopping or use behavior.
+
+Every atomic `statement` remains truthful when read without its structured
+fields. Negation and direction such as `not`, `never`, and `less` stay in the
+statement; `polarity` repeats that direction and never supplies or reverses
+words omitted from the statement. A support child and terminal
+`bounded_meaning` have compatible direction. A negated child may validly be
+`counter` to the inverse positive meaning, but it may never support that
+positive meaning. `meaning_direction_preserved` adjudication checks the child,
+relation, and terminal wording together.
+
+Every detailed leaf is decomposed into the smallest complete set of atomic
+meanings. Meanings that can be independently true, or differ in product, axis,
+behavior, comparison, condition, polarity, or posture, remain separate; a
+condition stays with the proposition it qualifies. Axis candidates provide
+vocabulary only. Each assigned axis must be semantically supported by the
+atomic unit and leaf; context may resolve a referent but cannot donate an axis.
+Generic approval embedded beside a bounded judgment is absent from the atomic
+statement: `good, but not worth $24` yields only `not worth $24`, never one
+mixed-direction unit. A leading yes/no reply retains the exact predicate of
+the parent question and its own qualification. Ownership is preserved as
+behavior and remains separate from a conditional future purchase. Thus `I
+have Poppy` and `would get it only on sale` are distinct atoms. Different
+hydration truths also remain distinct: `not the most hydrating` does not absorb
+`does not make lips drier`. Every explicit contrast in a two-product passage
+remains present, including a hydration contrast stated through the comparator
+and a separate target non-sinking claim when both are expressed. `More like a
+gloss than a balm` is an axis-free category judgment unless the leaf separately
+states a texture attribute.
+
+Logical polarity repeats the statement's direction: `not the most hydrating`
+and `does not make lips drier` are negated even though the author affirms that
+those statements are true. `Worsens peeling` carries
+`reaction_and_breakout`; not-drying alone carries hydration, not reaction.
+Bare ownership, quantity owned, and go-to behavior are axis-free unless a
+separate attribute is stated; named shade ownership remains the accepted
+shade-axis exception.
+
+An `attribution_or_echo` unit's standalone statement names the attribution; the
+posture field cannot carry words omitted from an otherwise first-hand-sounding
+sentence. A shade-ownership unit carries `shade_and_color_fit`. `I have the
+Poppy flavor` is an ownership atom, while `reaches for other formulas` is an
+affirmed switching behavior rather than a negated target-use statement.
+
+For bundle v5 reconciliation, each candidate carries its exact set of leaf
+evidence postures through every level. The prompt exposes that set, and level
+validation rejects `customer_experience` or `reported_behavior` terminal proof
+when any supporting posture is not `first_hand` or `personal_agreement`.
+`strategy_statement` is routed as `actor_strategy`. This check occurs before
+finalization so a known impossible claim-kind/posture combination cannot spend
+another level or masquerade as a valid node compilation.
+
+Reconciliation must expose conflict and exact agreement, not merely keep their
+leaves somewhere in the view. When opposite experiences address the same
+bounded proposition, the opposing child is linked as `counter` rather than
+emitted only as a second support-only proposition with `none_observed`
+conflict. An exact `first_hand` preference and a distinct actor's
+`personal_agreement` may support one bounded proposition while preserving both
+actors, postures, and shared-thread provenance.
+
+After a leaf is validly classified as terminal `context_only` or clearly
+established `out_of_scope`, it incurs no bespoke extraction, semantic-unit
+construction, axis assignment, reconciliation candidacy, proposition
+rewriting, or downstream evidence-packet delivery. The unavoidable cost per
+leaf remains loading it with its necessary context, making the one
+meaning-aware judgment, and publishing its exact evidence ID under an explicit
+terminal disposition.
+
+Batch response v3 carries two explicit populations: detailed evidence records
+and terminal disposition groups. `claim_bearing` and `unresolved` are always
+detailed. `context_only` and `out_of_scope` may be grouped only when every
+listed leaf has already been contextually judged eligible and they genuinely
+share one disposition and one semantic reason; a nuanced or singleton terminal
+judgment may remain detailed. Each group carries an ordered, explicit evidence-ID
+list and one agent-authored reason. Grouping is response transport compression:
+there is no implicit remainder, default disposition, wildcard, exclusion
+filter, omitted-ID behavior, sample, or semantic census. Raw response v3 is the
+durable agent-authored artifact of record.
+
+Raw evidence-ID occurrences are validated before any dictionary or set is
+constructed, so a duplicate cannot be masked by collapsing: no duplicate inside
+one group, none across groups, no overlap between grouped and detailed records,
+no unexpected ID, and an exact union with the work unit's expected IDs. Only
+then is the response deterministically expanded into the normalized
+one-row-per-evidence-ID representation existing validation consumes. Expansion
+preserves every original evidence ID, its disposition and reason, and the
+bundle's immutable source text, context references, product bindings, and
+provenance; it emits rows in expected work-unit order, fails closed on
+malformed, duplicated, missing, or unexpected identifiers, and never
+deduplicates silently.
+
+Deterministic expansion must not erase the identity of the raw response-v3
+artifacts. Batch compilation v3 binds the exact accepted response set through
+canonical raw-response hashes in a deterministic sorted manifest. The compiled
+semantic representation may remain expanded, but its lineage proves which
+durable raw grouped responses produced it, and downstream reconciliation
+rejects a compilation v3 that lacks that lineage.
+
+Projection v2 binds semantic execution identity: source, corpus, and catalog
+bindings; method v5 identity and hash; response-schema version; prompt-encoding
+version; exact work-unit membership; evidence and context references; prompt and
+leaf caps; and complete assessable-denominator coverage. It must not encode a
+worker count or static worker partition, because who executes a work unit is a
+controller runtime decision, not part of semantic identity. The new generation
+keeps the existing pretty, indented JSON prompt encoding, bound by name so a
+later compact encoding cannot silently reuse a projection packed under this one.
+
+For the new generation the controller verifies the immutable bundle and
+projection once per invocation and reuses that verified context across all
+response validation in that invocation. Status reports global expected,
+accepted, staged, invalid, and missing work-unit state; it reports no static
+worker partitions, and the legacy partition report remains only on the
+projection-v1 path. The global missing-work list is the repository interface
+consumed by the invoking controller. Any active assignment bookkeeping belongs
+only to that controller's in-memory execution state; this contract installs no
+repository scheduler or otherwise-unused assignment API. Deterministic atomic
+no-overwrite publication remains the only durable truth boundary, and
+publication collisions plus invalid or staged artifacts stay visible rather
+than silently successful. No daemon, queue database, lease protocol, heartbeat,
+persistent claim-marker system, persistent verification cache, new registry,
+automated loser deletion, or response winner selection is introduced.
+
+High-watermark repacking, larger prompt or leaf caps, persistent
+method/catalog/context transport, compact prompt JSON, a two-stage semantic
+census, additional worker infrastructure, and reconciliation redesign remain
+out of this generation. Contract v10 adds no provider API, no semantic
+calibration, no latency or token claim, and no route or seal obligation.
+
 `build-product-axis-proof-source` creates a bounded regression source from an
 already materialized full source by selecting the complete captured union for
 one stable product and one or more exact axes. It replaces mapped source IDs
@@ -421,6 +627,78 @@ Current-route operations are:
     the next node compilation; repeat until one terminal level remains.
 13. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
     v2.
+14. `prepare-calibration` reads a hash-pinned method-v5 source and blind owner
+    gold, projects exact bounded slices, and writes route-native sources,
+    bundles, fingerprints, and prompts. It makes no model call and cannot
+    authorize a corpus run.
+15. `evaluate-calibration` runs the existing response validator, then evaluates
+    disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
+    anomaly, and selective cold-repeat obligations. Semantic atom, relation,
+    anomaly, and repeat judgments must be explicit and hash-bound to the exact
+    compiled responses they judge. Cross-source relation judgments additionally
+    bind a final reconciliation view that the evaluator rebuilds from the
+    supplied terminal node compilation; extraction output alone cannot satisfy
+    a merge or counterevidence obligation. Missing or stale adjudication blocks;
+    a critical mismatch fails. The report is a bounded calibration result only,
+    never a prevalence estimate, readiness claim, or corpus-resume authority.
+
+Adjudication v3 closes both the unsupported-axis gap and the unmerged-unit
+direction gap without a phrase or field-value blacklist. For every semantic
+unit in every gold case, the adjudicator must partition the unit's exact
+assigned axes into supported and unsupported lists and judge whether its
+statement plus polarity preserve what the source actually asserted. Missing
+units, axes, direction judgments, extra keys, overlap, or malformed judgments
+block; an explicitly unsupported axis or false direction judgment fails the
+case. Calibration specs v2 and v3 bind adjudication v3 and cannot pass with v1
+or v2 adjudication. Spec v3 adds the closed density audit below; historical
+spec v2 remains readable without acquiring that later obligation.
+The older versions remain readable with historical specs only; v2 proves its
+per-axis obligation but not the v16 per-unit direction obligation.
+
+The calibration spec is authored from source text, required context, and the
+run-local catalog before the evaluated responses are read. Fields representing
+observed or predicted machine output are forbidden in that gold artifact. Every
+gold container — spec, slice, case, atom, relation obligation, repeat bound, and
+anomaly threshold — is a closed key set, and the gold must declare at least one
+case: an unrecognized or misspelled obligation field is rejected rather than
+ignored, so an obligation cannot silently disappear from the gate while the
+report still reads as a pass. A `route_contract` pins the method hash,
+bundle/response/prompt generations, rendered axes hash, and run-local catalog
+hash; preparation fails if the actual route differs on any of those. The same
+`route_contract` also records the semantic runner revision and contract version,
+but those two are operator-declared provenance only: no observable in-process
+value is supplied by the current execution interface to check them against, so
+they are carried into the route fingerprint unverified and must not be read as
+machine-enforced pins. A
+calibration slice may be compact or production-shaped, but every selected
+evidence ID must project exactly once, and a claim-bearing gold case must name
+at least one required atomic meaning. Evaluation requires the hash-pinned full
+source and deterministically rebuilds the expected bounded sources, bundles,
+prompts, route fingerprints, and preparation receipt. The supplied preparation
+must match those rebuilt artifacts exactly; its self-hash proves internal
+consistency only and is not accepted as provenance. Clearly empty reactions
+remain accounted as `context_only` with zero semantic units; no phrase blacklist
+or deterministic meaning matcher substitutes for the one context-aware
+relevance judgment.
+Repeated large axis signatures are a deterministic warning, not an automatic
+semantic verdict, and must receive a compilation-bound adjudication before a
+pass is possible. Selective second reads repack only the predeclared cases into
+one separately hash-bound route-native slice; their consistency judgment binds
+both the primary compilation for each case and the compact repeat compilation.
+
+Spec v3 may additionally require a `semantic_unit_density_audit` on a slice.
+The evaluator deterministically ranks non-gold evidence rows that emitted at
+least one semantic unit by descending unit count, breaks ties by evidence ID,
+and selects the declared number of rows. Every selected row receives its own
+compilation-bound adjudication. The adjudicator checks whether the row's units
+are source-supported, independently meaningful, non-duplicative, and no more
+finely split than the source warrants. All four checks are explicit and closed:
+all true derives `reviewed_benign`, any false derives `reviewed_defect`, and any
+unknown derives `unresolved`; a stated outcome that disagrees with those checks
+is invalid. A confirmed defect fails; missing, stale, invalid, or unresolved
+judgment blocks. This is an anomaly audit, not a new gold case, a prevalence
+sample, a deterministic semantic verdict, or a license to relax the
+pre-authored cases after seeing output.
 
 The controller is the active agent task. It assigns immutable batch IDs to at
 most three no-API semantic subagents and treats the response directory as the
@@ -526,6 +804,115 @@ new frontier.
 
 ## Changelog
 
+- `v19` / 2026-08-10 — kept method-v5/v18 semantic wording and blind gold
+  unchanged while adding calibration spec v3's closed audit of the highest
+  semantic-unit-density non-gold rows. Each selected row now requires an exact
+  compilation-bound semantic bloat judgment; a confirmed defect fails and a
+  missing, stale, or unresolved judgment blocks. Bound the Summer Fridays
+  production carrier to two count- and byte-balanced prompts as a route probe,
+  not a prompt-tuning pass. Preserved historical spec-v2 readability and added
+  no provider call, prevalence estimate, full-corpus execution, readiness, or
+  resume authority.
+- `v18` / 2026-08-10 — tightened six general boundaries exposed by v17: a
+  leading yes/no answer retains the parent question's predicate; generic praise
+  is removed from a bounded value statement; logical negative constructions
+  remain negated; peeling, not-drying, bare go-to behavior, and shade ownership
+  receive only their directly supported axes; opposite experiences receive an
+  explicit counter relation; and exact first-hand plus personal-agreement
+  preferences may reconcile while preserving both actors and their shared
+  thread. Added no phrase classifier, confidence score, schema, provider call,
+  or corpus-run authority.
+- `v17` / 2026-08-10 — made the existing independently-true atomicity rule
+  operational in method v5: two clauses remain separate whenever either could
+  change truth without the other, even with the same product, axis, or posture.
+  Named the three v16 failure boundaries directly: target non-sinking versus
+  target/comparator hydration contrast, not-most-hydrating versus not-drying,
+  and present ownership versus sale-only future purchase. Added no new schema,
+  universal evidence score, provider call, or corpus-run authority.
+- `v16` / 2026-08-10 — added adjudication v3's closed per-unit meaning-direction
+  judgment so an explicit unmerged unit cannot evade calibration merely because
+  it creates no final proposition relation. Preserved v1/v2 read compatibility
+  for historical reports while requiring v3 for current spec-v2 runs. Clarified
+  that bare distinct-actor agreement is valid but low-information same-thread
+  recurrence, and that `same` adopts only a clearly targeted bounded meaning,
+  never every clause or reason in a multi-point parent. Tightened degree,
+  non-sinking-versus-comparator decomposition, logical polarity, and smoothing
+  axis instructions from observed v15 failures. Added no universal evidence
+  score, provider call, route generation, or corpus-run authority.
+- `v15` / 2026-08-10 — narrowed direction preservation to the semantically
+  correct relation rule: support must match terminal direction, while a
+  negated child may remain counterevidence to the inverse positive proposition.
+  Required attribution to remain visible in echo statements, shade ownership
+  to carry its supported axis, explicit ownership to remain atomic, and
+  switching-to-other-formulas wording to remain affirmed. Reinforced retention
+  of target/comparator hydration contrasts. Added no schema or corpus-run
+  authority.
+- `v14` / 2026-08-10 — required every atomic statement and terminal bounded
+  meaning to remain truth-complete without relying on `polarity`, preventing
+  negated children from becoming positive reconciliation claims. Clarified the
+  already-required boundaries for embedded generic praise, ownership behavior,
+  secondary two-product contrasts, and axis-free gloss-versus-balm category
+  judgments. Added `meaning_direction_preserved` as a calibration relation
+  obligation so independent adjudication can hard-fail final-view polarity
+  loss. Added no lexical classifier, runtime schema, provider call, or corpus
+  execution authority.
+- `v13` / 2026-08-10 — corrected the context boundary for a short reply that
+  uniquely adopts a bounded preference or product choice. The real chain
+  `which is your favorite?` -> `Vanilla Beige!` -> `My fav!` is claim-bearing
+  `personal_agreement`, with no axis donated by context. A distinctly credited
+  agreeing actor may add same-thread recurrence for that exact preference,
+  while the shared thread stays disclosed and neither first-hand experience nor
+  cross-venue credit is inherited. Generic approval with only a known product
+  remains `context_only`; no lexical blacklist or runtime schema was added.
+- `v12` / 2026-08-10 — corrected method-v5's context boundary so a resolved
+  product referent cannot upgrade generic approval or dislike into a detailed
+  claim; added an explicit atomic-splitting self-check and made axis candidates
+  vocabulary rather than assignments. Added hash-bound adjudication v2, which
+  accounts for every assigned axis on every gold-case unit and fails explicit
+  semantic non-support while retaining v1 read compatibility for historical
+  reports. Calibration spec v2 explicitly requires adjudication v2 so a newly
+  authored run cannot select the historical schema and skip the new gate. Added
+  no phrase blacklist, provider API, full-corpus replay, route revision, seal
+  obligation, or product-version vocabulary. A real calibration dogfood also
+  exposed reconciliation dropping extraction posture before claim-kind choice;
+  bundle v5 now carries posture through reconciliation and rejects an invalid
+  customer-proof binding at level validation rather than only at finalization.
+- `v11` / 2026-08-10 — added fail-closed bounded semantic calibration for the
+  method-v5 route: blind hash-pinned gold, exact source projection, route
+  fingerprints, production-shaped sentinel slices, deterministic validator
+  reuse, explicit atom/relation/anomaly adjudication, and selectively repeated
+  cold reads bound to both response compilations. Missing or stale semantic
+  judgment blocks, critical mismatch fails, and every report disclaims
+  prevalence, readiness, full-corpus completion, and resume authority. Gold
+  containers are closed key sets, at least one case is required, and every
+  claim-bearing case names an atomic meaning; evaluation rebuilds the expected
+  preparation from the hash-pinned full source instead of trusting a self-hashed
+  preparation receipt; a cold repeat cannot be judged consistent without its
+  primary compilation. Runner revision and contract version are recorded as
+  declared provenance, not enforced pins. Added no provider API, phrase
+  blacklist, full-corpus replay, queue service, or product version vocabulary.
+- `v10` / 2026-08-09 — added the run-v3 / bundle-v5 / projection-v2 / method-v5
+  / response-v3 / compilation-v3 semantic generation for full-corpus execution.
+  Required one mandatory context-aware relevance and accounting judgment per
+  assessable leaf across a four-way boundary, made clearly empty generic
+  reactions terminal at near-zero marginal cost, and added explicit-ID terminal
+  grouping as transport compression with raw-occurrence validation before any
+  dictionary or set construction. Bound the accepted raw response-v3 set through
+  canonical hashes in compilation v3, removed static worker topology from the
+  new projection, and made bundle/projection verification invocation-scoped with
+  a global missing-work interface and controller-owned ephemeral coordination.
+  Preserved the legacy v4 generation byte-exactly, added no queue service or
+  persistent coordination subsystem, and made no latency, token, calibration,
+  readiness, or seal claim.
+- `v9` / 2026-08-09 — added the hash-bound product-identity catalog to each
+  method-v4 final-acquisition work unit, required response subject/comparator
+  product IDs to come from that catalog, barred unverified identity-bearing
+  version IDs under catalog v1, and preserved per-leaf subject/comparator roles
+  in mixed-product conversations. The catalog supplies vocabulary only: it
+  adds no lexical product assignment, global registry, customer duplication,
+  conclusion, campaign bridge, or historical bounded-proof rewrite. The v9
+  method-text hash supersedes earlier method-v4 prompt bytes; older v4 bundles
+  remain hash-distinguishable but are not reproducible under the current code.
 - `v8` / 2026-08-09 — added a hash-pinned, run-local product identity table,
   method v4 cross-source customer-evidence semantics, and a deterministic
   bounded product/axis proof-source projection. Preserved wrong-product
