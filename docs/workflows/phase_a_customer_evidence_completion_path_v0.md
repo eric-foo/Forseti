@@ -355,9 +355,15 @@ used method hash
 `9ff5c8a8be460ef2b599d08ec08485ebbd698ef12ad2db9eb9cf8bad38090805`,
 kept the two production-shaped prompts (largest 89,958 bytes), accounted all
 7/7 semantic-core and 121/121 production-shaped leaves, and completed both
-terminal views. The targeted defects were absent: the desire for more pigment
-kept affirmed direction, and the nearby original-Glossier preference did not
-become a hydration comparison. All seven relation obligations also held.
+terminal views. The pigment defect was absent: the desire for more pigment kept
+affirmed direction. The original-Glossier row changed shape but did not close
+its defect class. It no longer bundled an unsupported `less hydrating than`
+degree claim with the supported `not the most hydrating` statement, so its
+density adjudication moved from confirmed defect to benign. It still emits
+`reddit:13aw1sp:jj95w9s::u081`, which turns the nearby Glossier preference into
+a hydration comparison. The blind adjudicator accepted the parenthetical as a
+link; owner adjudication treats it as insufficient to establish the comparison.
+All seven relation obligations also held.
 
 The run still returned `SEMANTIC_CALIBRATION_FAIL`. The deterministic report
 passed 15 of 17 gold cases, five of seven cold repeats, and eight of ten density
@@ -371,3 +377,20 @@ quantity statement. Preserve this run as proof that the requested correction
 worked and that method-v6 is still not ready for the full corpus. Do not turn
 these residuals into more case-specific prompt clauses; route them through the
 planned selective semantic verification decision.
+
+The delegated review also found that v5 changed the adjudication instructions
+without changing their self-declared `v1` version. The v5 sidecar hash is
+`9b6459531ffe20280a087b1ef254f7302a5ee7d63e1a0efa0533a53fac7562af`,
+while the earlier preserved runs use
+`5fd4aeeafa278291943dc6316fe91a8f6b51a79c69f734dc0d29bb63d4286a49`;
+neither
+`preparation_receipt.json` nor `report.json` stores that ruler hash. Therefore
+the score deltas between those runs cannot be attributed solely to the semantic
+method. Freeze the preserved reports under their exact sidecars. Before another
+calibration, version the revised ruler and persist its full hash in both the
+preparation receipt and final report; do not rewrite the existing report hashes.
+
+The production-shaped prompt also finished only 42 bytes below its 90,000-byte
+ceiling. No further method-text growth should use that preserved slice without
+an explicit repacking or ceiling decision, because the next small change may
+turn two prompts into three and end direct prompt-shape comparability.
