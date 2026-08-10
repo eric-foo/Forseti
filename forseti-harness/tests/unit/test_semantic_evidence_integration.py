@@ -21,18 +21,25 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
     METHOD_TEXT_V5,
+    METHOD_TEXT_V6,
+    METHOD_TEXT_V7,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
     METHOD_VERSION_V4,
     METHOD_VERSION_V5,
+    METHOD_VERSION_V6,
+    METHOD_VERSION_V7,
     PROMPT_ENCODING_VERSION,
+    ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
+    VIEW_VERSION,
     WORK_UNIT_PROJECTION_VERSION_V2,
+    apply_row_verification,
     build_batch_prompts,
     build_bundle,
     build_reconciliation_prompt,
@@ -41,18 +48,26 @@ from judgment.semantic_evidence_integration import (
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
+    prepare_row_verification,
     validate_batch_responses,
     validate_reconciliation_stage,
     verify_bundle_context,
 )
 from judgment.semantic_calibration import (
+    ADJUDICATION_CONTRACT_ID,
+    ADJUDICATION_CONTRACT_SHA256,
     CALIBRATION_ADJUDICATION_VERSION,
     CALIBRATION_ADJUDICATION_VERSION_V1,
     CALIBRATION_ADJUDICATION_VERSION_V2,
+    CALIBRATION_PREPARATION_VERSION,
+    CALIBRATION_PREPARATION_VERSION_V1,
+    CALIBRATION_REPORT_VERSION,
+    CALIBRATION_REPORT_VERSION_V1,
     CALIBRATION_SPEC_VERSION,
     CALIBRATION_SPEC_VERSION_V1,
     SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT,
     SemanticCalibrationError,
+    adjudication_contract_identity,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
     validate_calibration_spec,
@@ -61,7 +76,9 @@ from runners.run_semantic_evidence_integration import (
     evaluate_semantic_calibration_run,
     prepare_batches,
     prepare_semantic_calibration_run,
+    prepare_row_verification_run,
     publish_batch_response_file,
+    submit_row_verification_run,
 )
 
 
@@ -2329,6 +2346,18 @@ def _source_v5(*, count: int = 7, catalog: bool = False) -> dict:
     return source
 
 
+def _source_v6(*, count: int = 7, catalog: bool = False) -> dict:
+    source = _source_v5(count=count, catalog=catalog)
+    source["semantic_method_version"] = METHOD_VERSION_V6
+    return source
+
+
+def _source_v7(*, count: int = 7, catalog: bool = False) -> dict:
+    source = _source_v6(count=count, catalog=catalog)
+    source["semantic_method_version"] = METHOD_VERSION_V7
+    return source
+
+
 def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
 
@@ -2388,6 +2417,320 @@ def _v5_responses(
     return responses
 
 
+def _row_verification_responses(
+    stage: dict, decisions: dict[str, dict] | None = None
+) -> list[dict]:
+    decisions = decisions or {}
+    return [
+        {
+            "schema_version": ROW_VERIFICATION_RESPONSE_VERSION,
+            "stage_sha256": stage["stage_sha256"],
+            "batch_id": batch["batch_id"],
+            "decisions": [
+                {
+                    "evidence_id": evidence_id,
+                    "decision": decisions.get(evidence_id, {}).get(
+                        "decision", "accept"
+                    ),
+                    "reason": decisions.get(evidence_id, {}).get(
+                        "reason", "the proposed row is complete and source-supported"
+                    ),
+                    "replacement": decisions.get(evidence_id, {}).get(
+                        "replacement"
+                    ),
+                }
+                for evidence_id in batch["evidence_ids"]
+            ],
+        }
+        for batch in stage["batches"]
+    ]
+
+
+def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -> None:
+    bundle = _bundle_v5(count=4)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=3)
+    )
+    stage, prompts = prepare_row_verification(bundle, compiled)
+    claim_ids = [row["evidence_id"] for row in stage["verification_rows"]]
+    assert len(claim_ids) == 3
+    assert stage["coverage_proof"]["bijection_complete"] is True
+    assert all(row["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] for row in prompts)
+    assert all("ROWS_TO_VERIFY" in row["prompt"] for row in prompts)
+    assert all("direct short answer" in row["prompt"] for row in prompts)
+    assert all("Resolve a leading yes/no" in row["prompt"] for row in prompts)
+    assert all("does not make ownership, purchase, repurchase" in row["prompt"] for row in prompts)
+    assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
+    assert all("Unqualified liking, preference" in row["prompt"] for row in prompts)
+    assert all("favorite evaluation of a named shade" in row["prompt"] for row in prompts)
+    assert all("One side's quantity cannot create" in row["prompt"] for row in prompts)
+
+    replacement = _claim_row(claim_ids[1])
+    replacement["semantic_units"][0]["semantic_unit_key"] = "corrected-value"
+    replacement["semantic_units"][0]["statement"] = (
+        "The balm is not worth its advertised price."
+    )
+    replacement["semantic_units"][0]["axis_ids"] = []
+    decisions = {
+        claim_ids[1]: {
+            "decision": "replace",
+            "reason": "the original overstated the source",
+            "replacement": replacement,
+        },
+        claim_ids[2]: {
+            "decision": "unresolved",
+            "reason": "the source supports multiple plausible meanings",
+            "replacement": None,
+        },
+    }
+    responses = _row_verification_responses(stage, decisions)
+    verified = apply_row_verification(bundle, compiled, stage, responses)
+
+    refs = {row["semantic_unit_ref"] for row in verified["semantic_units"]}
+    assert f"{claim_ids[0]}::drying-after-week" in refs
+    assert f"{claim_ids[1]}::corrected-value" in refs
+    assert f"{claim_ids[1]}::drying-after-week" not in refs
+    assert not any(ref.startswith(f"{claim_ids[2]}::") for ref in refs)
+    dispositions = {
+        row["evidence_id"]: row["disposition"]
+        for row in verified["evidence_dispositions"]
+    }
+    assert dispositions[claim_ids[2]] == "unresolved"
+    assert list(dispositions.values()).count("context_only") == 1
+    assert verified["raw_response_manifest"] == compiled["raw_response_manifest"]
+    assert verified["row_verification_manifest"]["decision_counts"] == {
+        "accept": 1,
+        "replace": 1,
+        "unresolved": 1,
+    }
+    reconciliation, _ = prepare_reconciliation_stage(bundle, verified)
+    assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
+
+
+def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> None:
+    bundle = _bundle_v5(count=3)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=3)
+    )
+    stage_one, prompts_one = prepare_row_verification(bundle, compiled)
+    stage_two, prompts_two = prepare_row_verification(bundle, compiled)
+    assert stage_one == stage_two
+    assert prompts_one == prompts_two
+
+    complete = _row_verification_responses(stage_one)
+    assert apply_row_verification(bundle, compiled, stage_one, complete) == (
+        apply_row_verification(bundle, compiled, stage_two, complete)
+    )
+    missing = deepcopy(complete)
+    missing[0]["decisions"].pop()
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not decide every row exactly once",
+    ):
+        apply_row_verification(bundle, compiled, stage_one, missing)
+
+
+def test_row_verification_rejects_a_patched_accept_and_invalid_replacement() -> None:
+    bundle = _bundle_v5(count=1)
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_row_verification(bundle, compiled)
+    evidence_id = stage["verification_rows"][0]["evidence_id"]
+
+    patched_accept = _row_verification_responses(stage)
+    patched_accept[0]["decisions"][0]["replacement"] = _claim_row(evidence_id)
+    with pytest.raises(
+        SemanticIntegrationError, match="accept decision.*must not carry"
+    ):
+        apply_row_verification(bundle, compiled, stage, patched_accept)
+
+    invalid = _claim_row(evidence_id)
+    invalid["semantic_units"][0]["axis_ids"] = ["not-a-real-axis"]
+    invalid_response = _row_verification_responses(
+        stage,
+        {
+            evidence_id: {
+                "decision": "replace",
+                "reason": "replacement exercises the shared validator",
+                "replacement": invalid,
+            }
+        },
+    )
+    with pytest.raises(SemanticIntegrationError, match="cites unknown axis"):
+        apply_row_verification(bundle, compiled, stage, invalid_response)
+
+
+def test_row_verification_manifest_binds_the_active_compilation_content() -> None:
+    bundle = _bundle_v5(count=2)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_row_verification(bundle, compiled)
+    rejected_id = stage["verification_rows"][-1]["evidence_id"]
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        stage,
+        _row_verification_responses(
+            stage,
+            {
+                rejected_id: {
+                    "decision": "unresolved",
+                    "reason": "the source cannot support one safe complete result",
+                    "replacement": None,
+                }
+            },
+        ),
+    )
+
+    # A real verifier rejected one row, but the original compilation still
+    # carries it. Stapling the honest manifest onto that original compilation
+    # must not turn the rejected row back into active evidence.
+    forged = deepcopy(compiled)
+    forged["row_verification_manifest"] = deepcopy(
+        verified["row_verification_manifest"]
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the active row content",
+    ):
+        prepare_reconciliation_stage(bundle, forged)
+
+    malformed = deepcopy(verified)
+    del malformed["raw_response_manifest"]
+    malformed["compilation_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in malformed.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="lacks active compilation content",
+    ):
+        prepare_reconciliation_stage(bundle, malformed)
+
+
+def test_row_verification_runner_writes_stage_prompts_and_verified_compilation(
+    tmp_path: Path,
+) -> None:
+    bundle = _bundle_v5(count=2)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    bundle_path = tmp_path / "bundle.json"
+    compiled_path = tmp_path / "compiled.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    compiled_path.write_text(json.dumps(compiled), encoding="utf-8")
+    stage_path = tmp_path / "verification-stage.json"
+    prompt_dir = tmp_path / "verification-prompts"
+    prepared = prepare_row_verification_run(
+        bundle_path=bundle_path,
+        compiled_path=compiled_path,
+        stage_out=stage_path,
+        prompt_dir=prompt_dir,
+    )
+    assert prepared["status"] == "SEMANTIC_ROW_VERIFICATION_REQUIRED"
+    stage = json.loads(stage_path.read_text(encoding="utf-8"))
+    responses = _row_verification_responses(stage)
+    response_paths = []
+    for row in responses:
+        path = tmp_path / f"{row['batch_id']}.json"
+        path.write_text(json.dumps(row), encoding="utf-8")
+        response_paths.append(path)
+    verified_path = tmp_path / "verified.json"
+    submitted = submit_row_verification_run(
+        bundle_path=bundle_path,
+        compiled_path=compiled_path,
+        stage_path=stage_path,
+        response_paths=response_paths,
+        verified_out=verified_path,
+    )
+    assert submitted["status"] == "SEMANTIC_ROW_VERIFICATION_APPLIED"
+    assert verified_path.exists()
+
+
+def test_method_v7_requires_verification_without_rewriting_v6_extraction_rules() -> None:
+    v6_bundle = build_bundle(_source_v6(count=2), max_prompt_bytes=12_000)
+    v7_bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=12_000)
+    assert METHOD_TEXT_V7.replace("METHOD V7", "METHOD V6", 1) == METHOD_TEXT_V6
+    assert [row["prompt_utf8_bytes"] for row in build_batch_prompts(v7_bundle)] == [
+        row["prompt_utf8_bytes"] for row in build_batch_prompts(v6_bundle)
+    ]
+
+    v6_compiled = validate_batch_responses(v6_bundle, _v5_responses(v6_bundle))
+    prepare_reconciliation_stage(v6_bundle, v6_compiled)
+
+    v7_compiled = validate_batch_responses(v7_bundle, _v5_responses(v7_bundle))
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="method v7 requires row verification",
+    ):
+        prepare_reconciliation_stage(v7_bundle, v7_compiled)
+    stage, _ = prepare_row_verification(
+        v7_bundle, v7_compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        v7_bundle, v7_compiled, stage, _row_verification_responses(stage)
+    )
+    reconciliation, _ = prepare_reconciliation_stage(v7_bundle, verified)
+    assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
+
+
+def _flat_reconciliation(bundle: dict, compiled: dict) -> dict:
+    return {
+        "schema_version": RECONCILIATION_RESPONSE_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "compilation_sha256": compiled["compilation_sha256"],
+        "propositions": [
+            {
+                "proposition_key": f"prop-{index}",
+                "bounded_proposition": unit["statement"],
+                "claim_kind": "customer_experience",
+                "subject_product_ids": unit["subject_product_ids"],
+                "comparator_product_ids": unit["comparator_product_ids"],
+                "axis_ids": unit["axis_ids"],
+                "emerging_axis_labels": unit["emerging_axis_labels"],
+                "conditions": unit["conditions"],
+                "causal_ceiling": "descriptive_only",
+                "opposition_checked": True,
+                "relations": [
+                    {
+                        "semantic_unit_ref": unit["semantic_unit_ref"],
+                        "relation": "support",
+                    }
+                ],
+            }
+            for index, unit in enumerate(compiled["semantic_units"])
+        ],
+        "unmerged_semantic_units": [],
+    }
+
+
+def test_method_v7_flat_finalization_also_refuses_an_unverified_compilation() -> None:
+    bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+
+    # The flat v1 reconciliation route is a second terminal finalization path.
+    # It must not become the way an unverified v7 compilation reaches a view.
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="method v7 requires row verification",
+    ):
+        finalize_view(bundle, compiled, _flat_reconciliation(bundle, compiled))
+
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    view = finalize_view(bundle, verified, _flat_reconciliation(bundle, verified))
+    assert view["schema_version"] == VIEW_VERSION
+    assert len(view["propositions"]) == len(verified["semantic_units"])
+
+
 def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> dict:
     evidence_ids = [row["evidence_id"] for row in source["captured_items"]]
     route_bundle = build_bundle(source, max_prompt_bytes=12_000)
@@ -2395,7 +2738,7 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
         "schema_version": CALIBRATION_SPEC_VERSION,
         "required_adjudication_version": CALIBRATION_ADJUDICATION_VERSION,
         "full_source_sha256": source["source_sha256"],
-        "method_version": METHOD_VERSION_V5,
+        "method_version": source["semantic_method_version"],
         "route_contract": {
             "runner_revision": "test-fixture-revision",
             "contract_version": "v11-test",
@@ -2549,6 +2892,23 @@ def test_calibration_preparation_is_exact_and_deterministic() -> None:
         for evidence_id in batch["evidence_ids"]
     ] == spec["slices"][0]["evidence_ids"]
     assert source == materialize_source_v3(_source_v5(count=2))
+
+
+def test_calibration_preparation_uses_the_spec_bound_v6_method() -> None:
+    source = materialize_source_v3(_source_v6(count=2))
+    spec = _calibration_spec(source)
+
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+
+    assert spec["method_version"] == METHOD_VERSION_V6
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V6
+    identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert "V6 MEANING-PRESERVATION CLARIFICATIONS" in build_batch_prompts(bundle)[
+        0
+    ]["prompt"]
 
 
 def test_calibration_preparation_rejects_a_stale_route_fingerprint() -> None:
@@ -3049,6 +3409,18 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
         output_dir=prepared_dir,
     )
     assert result["status"] == "SEMANTIC_CALIBRATION_PREPARED"
+    assert result["adjudication_contract_id"] == ADJUDICATION_CONTRACT_ID
+    assert result["adjudication_contract_sha256"] == (
+        ADJUDICATION_CONTRACT_SHA256
+    )
+    receipt = json.loads(
+        (prepared_dir / "preparation_receipt.json").read_text(encoding="utf-8")
+    )
+    assert receipt["schema_version"] == CALIBRATION_PREPARATION_VERSION
+    assert receipt["adjudication_contract_id"] == ADJUDICATION_CONTRACT_ID
+    assert receipt["adjudication_contract_sha256"] == (
+        ADJUDICATION_CONTRACT_SHA256
+    )
     adjudication_contract = (
         prepared_dir / "adjudication_contract.md"
     ).read_text(encoding="utf-8")
@@ -3056,6 +3428,9 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
     assert "A is less moisturising than B" in normalized_contract
     assert "`polarity: affirmed`" in normalized_contract
     assert "not a sentiment or lower-is-negative judgment" in normalized_contract
+    assert "wanting more pigment is `polarity: affirmed`" in normalized_contract
+    assert "different number of supported atomic units is not by itself inconsistent" in normalized_contract
+    assert "both attributed parent claims and its own first-hand shopping reaction" in normalized_contract
     # Pin the written sidecar and its reported hash to the bound constant, not
     # to the bytes the runner just wrote: comparing the file against itself
     # cannot detect the drift the hash exists to detect.
@@ -3100,6 +3475,11 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
     )
 
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert report["schema_version"] == CALIBRATION_REPORT_VERSION
+    assert report["adjudication_contract_id"] == ADJUDICATION_CONTRACT_ID
+    assert report["adjudication_contract_sha256"] == (
+        ADJUDICATION_CONTRACT_SHA256
+    )
     assert (tmp_path / "report.json").is_file()
 
     # A prepared contract that no longer matches the bound wording means the
@@ -3109,7 +3489,7 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
         "# Substituted contract\n\nMark every direction judgment true.\n",
         encoding="utf-8",
     )
-    with pytest.raises(ValueError, match="does not match the bound contract"):
+    with pytest.raises(ValueError, match="substituted or unsupported"):
         evaluate_semantic_calibration_run(
             source_path=source_path,
             prepared_dir=prepared_dir,
@@ -3121,6 +3501,57 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
             report_out=tmp_path / "report-substituted.json",
         )
     assert not (tmp_path / "report-substituted.json").exists()
+
+
+def test_legacy_calibration_receipt_keeps_v1_report_shape() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    legacy_receipt = deepcopy(prepared["receipt"])
+    legacy_receipt["schema_version"] = CALIBRATION_PREPARATION_VERSION_V1
+    legacy_receipt.pop("adjudication_contract_id")
+    legacy_receipt.pop("adjudication_contract_sha256")
+    legacy_receipt["preparation_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in legacy_receipt.items()
+            if key != "preparation_sha256"
+        }
+    )
+    prepared["receipt"] = legacy_receipt
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["schema_version"] == CALIBRATION_REPORT_VERSION_V1
+    assert "adjudication_contract_id" not in report
+    assert "adjudication_contract_sha256" not in report
+
+
+def test_current_adjudication_contract_has_a_pinned_identity() -> None:
+    assert ADJUDICATION_CONTRACT_SHA256 == (
+        "186a0022397d35ca5ee6a464742155a6e55e606d1ad0da636611d404c838ab78"
+    )
+    identity = adjudication_contract_identity(
+        SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
+    )
+
+    assert identity == {
+        "adjudication_contract_id": ADJUDICATION_CONTRACT_ID,
+        "adjudication_contract_sha256": ADJUDICATION_CONTRACT_SHA256,
+    }
+    with pytest.raises(
+        SemanticCalibrationError, match="substituted or unsupported"
+    ):
+        adjudication_contract_identity(b"# unknown ruler\n")
 
 
 def test_cold_repeat_adjudication_is_bound_to_both_compilations() -> None:
@@ -3662,6 +4093,60 @@ def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> 
     assert '{"evidence_id"' not in prompt
 
 
+def test_v6_reuses_v5_transport_without_changing_frozen_v5_text() -> None:
+    assert hashlib.sha256(METHOD_TEXT_V5.encode("utf-8")).hexdigest() == (
+        "711d36f03998958f35801722fd6ce759d576eede987d2ff47a78ea5df255a111"
+    )
+    bundle = build_bundle(_source_v6(), max_prompt_bytes=12_000)
+    prompt = build_batch_prompts(bundle)[0]["prompt"]
+
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V6
+    # v6 is derived from the v5 constant, so an edit to either text silently
+    # moves the bound method hash.  Pin the value the durable calibration
+    # route contract binds so drift fails here instead of quietly orphaning
+    # the frozen replay evidence from the prompt that produced it.
+    assert bundle["method_sha256"] == (
+        "9ff5c8a8be460ef2b599d08ec08485ebbd698ef12ad2db9eb9cf8bad38090805"
+    )
+    identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert identity["method_sha256"] == bundle["method_sha256"]
+    assert "SEMANTIC EVIDENCE INTEGRATION METHOD V6" in prompt
+    assert "V6 MEANING-PRESERVATION CLARIFICATIONS" in prompt
+
+
+def test_v6_amendment_uses_general_meaning_rules_not_new_product_examples() -> None:
+    amendment = METHOD_TEXT_V6.split("V6 MEANING-PRESERVATION CLARIFICATIONS", 1)[1]
+    normalized = " ".join(amendment.split())
+    for principle in (
+        "explicit relationships",
+        "Contrast and qualification still follow atomicity",
+        "split opposite directions and discard generic approval",
+        "stated reason remains attached",
+        "never proves a purchase count",
+        "retain the relative comparison",
+        "outcome and direction",
+        "named shade's ownership, selection, or preference",
+        "adopting a parent's named-shade choice or preference",
+        "Proximity alone is insufficient",
+        "Non-drying is bounded hydration",
+        "Physical thickness, viscosity, or feel is texture",
+        "generic nickname proves no exact product",
+        "asserted desire is affirmed",
+        "Nearby preference supplies no reason, axis, or comparison",
+        "Unmerged means unconsolidated",
+    ):
+        assert principle in normalized
+    for product_specific_example in (
+        "Summer Fridays",
+        "Vanilla Beige",
+        "Poppy",
+        "buttercream",
+    ):
+        assert product_specific_example not in amendment
+
+
 def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     normalized = " ".join(METHOD_TEXT_V5.split())
     for disposition in ("claim_bearing", "unresolved", "context_only", "out_of_scope"):
@@ -3947,8 +4432,14 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
     ("method_version", "target_bundle_version", "match"),
     [
         (METHOD_VERSION_V5, BUNDLE_VERSION_V4, "method v5 requires bundle v5"),
+        (METHOD_VERSION_V6, BUNDLE_VERSION_V4, "method v6 requires bundle v5"),
+        (METHOD_VERSION_V7, BUNDLE_VERSION_V4, "method v7 requires bundle v5"),
         (METHOD_VERSION_V4, BUNDLE_VERSION_V5, "method v4 requires bundle v4"),
-        (METHOD_VERSION_V3, BUNDLE_VERSION_V5, "bundle v5 requires semantic method v5"),
+        (
+            METHOD_VERSION_V3,
+            BUNDLE_VERSION_V5,
+            "bundle v5 requires semantic method v5, v6, or v7",
+        ),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],
 )

@@ -14,6 +14,7 @@ if __package__ in {None, ""}:
 from judgment.semantic_evidence_integration import (  # noqa: E402
     BUNDLE_VERSION_V4,
     SemanticIntegrationError,
+    apply_row_verification,
     build_batch_prompts,
     build_bundle,
     build_reconciliation_prompt,
@@ -22,12 +23,15 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
+    prepare_row_verification,
     validate_batch_responses,
     validate_reconciliation_stage,
 )
 from judgment.semantic_calibration import (  # noqa: E402
+    CALIBRATION_PREPARATION_VERSION,
     SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT,
     SemanticCalibrationError,
+    adjudication_contract_identity,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
     validate_calibration_spec,
@@ -137,7 +141,7 @@ def _verify_sources(source: dict[str, Any], *, repo_root: Path) -> None:
 def prepare_semantic_calibration_run(
     *, source_path: Path, spec_path: Path, output_dir: Path
 ) -> dict[str, Any]:
-    """Prepare exact method-v5 calibration slices and their prompts."""
+    """Prepare exact spec-selected calibration slices and their prompts."""
     source = _load_object(source_path)
     spec = _load_object(spec_path)
     prepared = prepare_semantic_calibration(source, spec)
@@ -174,6 +178,9 @@ def prepare_semantic_calibration_run(
     return {
         "status": "SEMANTIC_CALIBRATION_PREPARED",
         "preparation_sha256": prepared["receipt"]["preparation_sha256"],
+        "adjudication_contract_id": prepared["receipt"][
+            "adjudication_contract_id"
+        ],
         "adjudication_contract_sha256": hash_file(adjudication_contract_path),
         "spec_sha256": prepared["receipt"]["spec_sha256"],
         "slice_count": len(prepared["slices"]),
@@ -201,26 +208,29 @@ def evaluate_semantic_calibration_run(
     report_out: Path,
 ) -> dict[str, Any]:
     """Evaluate returned calibration slices; a non-pass remains visible."""
-    # The sidecar is the adjudicator-facing statement of the direction rule, so
-    # a prepared copy that no longer matches the bound contract means the
-    # adjudication was governed by unknown wording. Fail loud rather than let a
-    # substituted or superseded contract pass silently. Absence stays tolerated:
-    # preparations frozen before the sidecar existed carry no copy at all, and
-    # re-evaluating them is an accepted workflow.
+    # The sidecar is the adjudicator-facing ruler. New preparations bind its
+    # stable id and full hash in the receipt; legacy preparations may carry one
+    # of the two exact preserved v1 rulers or no sidecar at all.
     adjudication_contract_path = prepared_dir / "adjudication_contract.md"
-    if adjudication_contract_path.is_file() and (
-        adjudication_contract_path.read_bytes()
-        != SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
-    ):
-        raise ValueError(
-            "prepared adjudication contract does not match the bound contract "
-            f"(substituted or superseded): {adjudication_contract_path}"
-        )
+    contract_identity = (
+        adjudication_contract_identity(adjudication_contract_path.read_bytes())
+        if adjudication_contract_path.is_file()
+        else None
+    )
+    receipt = _load_object(prepared_dir / "preparation_receipt.json")
+    if receipt.get("schema_version") == CALIBRATION_PREPARATION_VERSION:
+        if contract_identity is None:
+            raise ValueError("bound calibration preparation lacks its ruler sidecar")
+        for field, observed in contract_identity.items():
+            if receipt.get(field) != observed:
+                raise ValueError(
+                    f"prepared adjudication contract does not match receipt: {field}"
+                )
     source = _load_object(source_path)
     spec = _load_object(spec_path)
     normalized = validate_calibration_spec(spec)
     prepared: dict[str, Any] = {
-        "receipt": _load_object(prepared_dir / "preparation_receipt.json"),
+        "receipt": receipt,
         "slices": [],
         "cold_repeat": None,
     }
@@ -761,6 +771,71 @@ def submit_batches(
     }
 
 
+def prepare_row_verification_run(
+    *,
+    bundle_path: Path,
+    compiled_path: Path,
+    stage_out: Path,
+    prompt_dir: Path,
+    max_prompt_bytes: int | None = None,
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    compiled = _load_object(compiled_path)
+    stage, prompts = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=max_prompt_bytes
+    )
+    if prompt_dir.exists():
+        raise ValueError(
+            f"refusing to write into existing verification prompt directory: {prompt_dir}"
+        )
+    _write_json(stage_out, stage)
+    prompt_dir.mkdir(parents=True)
+    for row in prompts:
+        _write_new(
+            prompt_dir / f"{row['batch_id']}.md",
+            row["prompt"].encode("utf-8") + b"\n",
+        )
+    return {
+        "status": "SEMANTIC_ROW_VERIFICATION_REQUIRED",
+        "stage_sha256": stage["stage_sha256"],
+        "input_compilation_sha256": stage["input_compilation_sha256"],
+        "claim_bearing_count": stage["coverage_proof"]["claim_bearing_count"],
+        "verification_batch_count": len(prompts),
+        "largest_rendered_prompt_bytes": max(
+            (row["prompt_utf8_bytes"] for row in prompts), default=0
+        ),
+        "stage_out": str(stage_out),
+        "prompt_dir": str(prompt_dir),
+        "model_api_calls": 0,
+    }
+
+
+def submit_row_verification_run(
+    *,
+    bundle_path: Path,
+    compiled_path: Path,
+    stage_path: Path,
+    response_paths: list[Path],
+    verified_out: Path,
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    compiled = _load_object(compiled_path)
+    stage = _load_object(stage_path)
+    responses = [_load_object(path) for path in response_paths]
+    verified = apply_row_verification(bundle, compiled, stage, responses)
+    _write_json(verified_out, verified)
+    manifest = verified["row_verification_manifest"]
+    return {
+        "status": "SEMANTIC_ROW_VERIFICATION_APPLIED",
+        "compilation_sha256": verified["compilation_sha256"],
+        "input_compilation_sha256": manifest["input_compilation_sha256"],
+        "decision_counts": manifest["decision_counts"],
+        "semantic_unit_count": len(verified["semantic_units"]),
+        "verified_out": str(verified_out),
+        "model_api_calls": 0,
+    }
+
+
 def prepare_reconciliation(
     *, bundle_path: Path, compiled_path: Path, prompt_out: Path
 ) -> dict[str, Any]:
@@ -1007,6 +1082,22 @@ def _parser() -> argparse.ArgumentParser:
     submit.add_argument("--response", type=Path, action="append", required=True)
     submit.add_argument("--compiled-out", type=Path, required=True)
 
+    prepare_verification = sub.add_parser("prepare-row-verification")
+    prepare_verification.add_argument("--bundle", type=Path, required=True)
+    prepare_verification.add_argument("--compiled", type=Path, required=True)
+    prepare_verification.add_argument("--stage-out", type=Path, required=True)
+    prepare_verification.add_argument("--prompt-dir", type=Path, required=True)
+    prepare_verification.add_argument("--max-prompt-bytes", type=int)
+
+    submit_verification = sub.add_parser("submit-row-verification")
+    submit_verification.add_argument("--bundle", type=Path, required=True)
+    submit_verification.add_argument("--compiled", type=Path, required=True)
+    submit_verification.add_argument("--stage", type=Path, required=True)
+    submit_verification.add_argument(
+        "--response", type=Path, action="append", default=[]
+    )
+    submit_verification.add_argument("--verified-out", type=Path, required=True)
+
     validate_batch = sub.add_parser("validate-batch-response")
     validate_batch.add_argument("--bundle", type=Path, required=True)
     validate_batch.add_argument("--response", type=Path, required=True)
@@ -1179,6 +1270,22 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 response_paths=args.response,
                 compiled_out=args.compiled_out,
+            )
+        elif args.command == "prepare-row-verification":
+            result = prepare_row_verification_run(
+                bundle_path=args.bundle,
+                compiled_path=args.compiled,
+                stage_out=args.stage_out,
+                prompt_dir=args.prompt_dir,
+                max_prompt_bytes=args.max_prompt_bytes,
+            )
+        elif args.command == "submit-row-verification":
+            result = submit_row_verification_run(
+                bundle_path=args.bundle,
+                compiled_path=args.compiled,
+                stage_path=args.stage,
+                response_paths=args.response,
+                verified_out=args.verified_out,
             )
         elif args.command == "validate-batch-response":
             result = validate_batch_response_file(
