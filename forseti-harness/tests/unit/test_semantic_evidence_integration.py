@@ -4119,21 +4119,240 @@ def test_v5_reconciliation_rejects_incompetent_source_role_before_finalization()
         validate_reconciliation_stage(bundle, stage, reconciliation)
 
 
-def test_v5_reconciliation_checks_only_supporting_source_roles_for_competence() -> None:
+def _staged_node_responses(
+    stage: dict,
+    groups: list[list[tuple[str, str]]],
+    *,
+    terminal: bool,
+    claim_kind: str | None = None,
+) -> list[dict]:
+    """One node per group with explicit per-child stances, not blanket support."""
+    index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    responses = []
+    for batch in stage["batches"]:
+        nodes = []
+        for position, group in enumerate(groups):
+            selected = [
+                (ref, stance) for ref, stance in group if ref in batch["candidate_refs"]
+            ]
+            if not selected:
+                continue
+            polarities = {index[ref]["polarity"] for ref, _ in selected}
+            nodes.append(
+                {
+                    "semantic_node_key": f"{batch['batch_id']}-node-{position}",
+                    "bounded_meaning": (
+                        f"Bounded meaning {position} of {batch['batch_id']}."
+                    ),
+                    "terminal_proposition": terminal,
+                    "claim_kind": claim_kind if terminal else None,
+                    "subject_product_ids": ["sf-lbb"],
+                    "comparator_product_ids": [],
+                    "product_version_ids": [],
+                    "axis_ids": ["wear"],
+                    "emerging_axis_labels": sorted(
+                        {
+                            label
+                            for ref, _ in selected
+                            for label in index[ref]["emerging_axis_labels"]
+                        }
+                    ),
+                    "conditions": sorted(
+                        {
+                            condition
+                            for ref, _ in selected
+                            for lineage in index[ref]["condition_lineage"]
+                            for condition in lineage["conditions"]
+                        }
+                    ),
+                    "polarity": (
+                        next(iter(polarities)) if len(polarities) == 1 else "mixed"
+                    ),
+                    "uncertainty_posture": "asserted",
+                    "child_relations": [
+                        {"child_ref": ref, "relation": stance}
+                        for ref, stance in selected
+                    ],
+                    "opposition_checked": True if terminal else None,
+                    "causal_ceiling": "descriptive_only" if terminal else None,
+                }
+            )
+        responses.append(
+            {
+                "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "semantic_nodes": nodes,
+                "unmerged_children": [],
+                "emerging_axis_consolidations": [],
+            }
+        )
+    return responses
+
+
+def _node_ref_carrying(compilation: dict, unit_ref: str) -> str:
+    [node_ref] = [
+        row["semantic_node_ref"]
+        for row in compilation["semantic_nodes"]
+        if any(leaf["semantic_unit_ref"] == unit_ref for leaf in row["leaf_relations"])
+    ]
+    return node_ref
+
+
+def _v5_mixed_role_stage() -> tuple[dict, dict, list[str]]:
+    """Three claim-bearing units; only the first carries an observable-fact role."""
     source = _source_v5()
     source["captured_items"][0]["source_role"] = "owned_source"
     bundle = build_bundle(source, max_prompt_bytes=12_000)
-    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=3)
+    )
     stage, _ = prepare_reconciliation_stage(bundle, compiled)
-    reconciliation = _group_level_responses(stage, terminal=True)
-    node = reconciliation[0]["semantic_nodes"][0]
-    node["claim_kind"] = "observable_fact"
-    for index, relation in enumerate(node["child_relations"]):
-        relation["relation"] = "support" if index == 0 else "counter"
+    refs = [row["candidate_ref"] for row in stage["candidates"]]
+    assert refs[0].startswith("reddit:t1:comment::")
+    assert len(refs) == 3
+    return bundle, stage, refs
+
+
+def test_v5_reconciliation_checks_only_supporting_source_roles_for_competence() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    reconciliation = _staged_node_responses(
+        stage,
+        [[(refs[0], "support"), (refs[1], "counter"), (refs[2], "adjacent")]],
+        terminal=True,
+        claim_kind="observable_fact",
+    )
 
     terminal = validate_reconciliation_stage(bundle, stage, reconciliation)
 
-    assert terminal["semantic_nodes"][0]["claim_kind"] == "observable_fact"
+    node = terminal["semantic_nodes"][0]
+    assert node["claim_kind"] == "observable_fact"
+    # The community_post leaves are present and carry the non-support stances,
+    # so acceptance is not an artifact of an empty counter/adjacent set.
+    assert node["leaf_relations"] == [
+        {"semantic_unit_ref": refs[0], "relation": "support"},
+        {"semantic_unit_ref": refs[1], "relation": "counter"},
+        {"semantic_unit_ref": refs[2], "relation": "adjacent"},
+    ]
+
+
+def test_v5_reconciliation_rejects_incompetent_support_beside_competent_support() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    reconciliation = _staged_node_responses(
+        stage,
+        [[(refs[0], "support"), (refs[1], "support"), (refs[2], "adjacent")]],
+        terminal=True,
+        claim_kind="observable_fact",
+    )
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match=r"incompetent for observable_fact: \['community_post'\]",
+    ):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+
+def test_v5_reconciliation_composes_relations_before_judging_competence() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    level_one = validate_reconciliation_stage(
+        bundle,
+        stage,
+        _staged_node_responses(
+            stage,
+            [[(refs[0], "support")], [(refs[1], "counter")], [(refs[2], "counter")]],
+            terminal=False,
+        ),
+    )
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    competent = _node_ref_carrying(level_one, refs[0])
+    community_one = _node_ref_carrying(level_one, refs[1])
+    community_two = _node_ref_carrying(level_one, refs[2])
+
+    # counter x counter composes to support, so the community leaf reaches the
+    # terminal claim as support even though level one recorded it as counter.
+    with pytest.raises(
+        SemanticIntegrationError,
+        match=r"incompetent for observable_fact: \['community_post'\]",
+    ):
+        validate_reconciliation_stage(
+            bundle,
+            stage_two,
+            _staged_node_responses(
+                stage_two,
+                [
+                    [
+                        (competent, "support"),
+                        (community_one, "counter"),
+                        (community_two, "support"),
+                    ]
+                ],
+                terminal=True,
+                claim_kind="observable_fact",
+            ),
+        )
+
+    # support x counter stays counter, so the same community leaves do not
+    # contaminate competence when nothing flips them back to support.
+    accepted = validate_reconciliation_stage(
+        bundle,
+        stage_two,
+        _staged_node_responses(
+            stage_two,
+            [
+                [
+                    (competent, "support"),
+                    (community_one, "support"),
+                    (community_two, "support"),
+                ]
+            ],
+            terminal=True,
+            claim_kind="observable_fact",
+        ),
+    )
+
+    assert accepted["semantic_nodes"][0]["leaf_relations"] == [
+        {"semantic_unit_ref": refs[0], "relation": "support"},
+        {"semantic_unit_ref": refs[1], "relation": "counter"},
+        {"semantic_unit_ref": refs[2], "relation": "counter"},
+    ]
+
+
+def test_v5_reconciliation_rejects_terminal_node_without_effective_support() -> None:
+    bundle, stage, refs = _v5_mixed_role_stage()
+    reconciliation = _staged_node_responses(
+        stage,
+        [[(refs[0], "counter"), (refs[1], "counter"), (refs[2], "adjacent")]],
+        terminal=True,
+        claim_kind="observable_fact",
+    )
+
+    with pytest.raises(SemanticIntegrationError, match="lacks support"):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+
+def test_v5_reconciliation_rejects_ambiguous_leaf_source_lineage() -> None:
+    source = _source_v5()
+    source["captured_items"][0]["evidence_id"] = "reddit:t1"
+    source["captured_items"][1]["evidence_id"] = "reddit:t1::comment"
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+
+    # 'reddit:t1::comment::drying-after-week' decomposes at two '::' boundaries
+    # that both name real evidence units, so its owning source is unknowable
+    # from the ref alone and must not be resolved by guess.
+    with pytest.raises(
+        SemanticIntegrationError,
+        match=(
+            "ambiguous source lineage for "
+            "reddit:t1::comment::drying-after-week"
+        ),
+    ):
+        validate_reconciliation_stage(
+            bundle, stage, _group_level_responses(stage, terminal=True)
+        )
 
 
 def test_v5_finalization_retains_source_role_competence_backstop() -> None:

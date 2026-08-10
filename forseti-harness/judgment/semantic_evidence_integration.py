@@ -1991,6 +1991,30 @@ def _unit_index(bundle: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
     return {row["evidence_id"]: row for row in bundle["evidence_units"]}
 
 
+def _leaf_evidence_id(
+    ref: str, evidence_index: Mapping[str, Any], *, node_key: str
+) -> str:
+    """Resolve one `evidence_id::unit_key` leaf ref back to its evidence unit.
+
+    Testing every evidence id against every support leaf is quadratic and the
+    terminal level carries the whole flattened corpus, so decompose the ref at
+    its own `::` boundaries instead. Evidence ids are operator data and may
+    themselves contain `::`, so two boundaries can name real evidence units;
+    that lineage is genuinely ambiguous from the ref alone and fails closed
+    rather than crediting one source role by guess.
+    """
+    matches = [
+        ref[:index]
+        for index in range(len(ref) - 1)
+        if ref[index : index + 2] == "::" and ref[:index] in evidence_index
+    ]
+    if len(matches) != 1:
+        raise SemanticIntegrationError(
+            f"semantic node {node_key} has ambiguous source lineage for {ref}"
+        )
+    return matches[0]
+
+
 def _method_text(bundle: Mapping[str, Any]) -> str:
     version = bundle.get("method_version")
     text = _METHOD_TEXTS.get(version)
@@ -3217,20 +3241,17 @@ def validate_reconciliation_stage(
                     raise SemanticIntegrationError(
                         f"terminal semantic node {key} lacks claim metadata"
                     )
-                support_evidence: set[str] = set()
-                for ref, stance in leaf_relations.items():
-                    if stance != "support":
-                        continue
-                    matches = [
-                        evidence_id
-                        for evidence_id in evidence_index
-                        if ref.startswith(f"{evidence_id}::")
-                    ]
-                    if len(matches) != 1:
-                        raise SemanticIntegrationError(
-                            f"semantic node {key} has ambiguous source lineage for {ref}"
-                        )
-                    support_evidence.add(matches[0])
+                support_evidence = {
+                    _leaf_evidence_id(ref, evidence_index, node_key=key)
+                    for ref, stance in leaf_relations.items()
+                    if stance == "support"
+                }
+                # No effective support means no source role competently supports
+                # the claim, so the role check below would pass vacuously.
+                if not support_evidence:
+                    raise SemanticIntegrationError(
+                        f"terminal semantic node {key} lacks support"
+                    )
                 roles = sorted(
                     {evidence_index[ref]["source_role"] for ref in support_evidence}
                 )
