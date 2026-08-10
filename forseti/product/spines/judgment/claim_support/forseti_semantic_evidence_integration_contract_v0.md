@@ -112,7 +112,9 @@ checker returns exactly one of `accept`, complete-row `replace`, or
 decision per primary claim-bearing evidence ID, validates any replacement
 through the ordinary response validator, preserves the original raw-response
 manifest, binds the verification responses in a separate manifest, and exposes
-only one active result to reconciliation. Its whole-row read must keep direct
+the hash of the active dispositions plus semantic units in that manifest so it
+cannot be transferred onto different row content. Reconciliation sees only one
+active result. Its whole-row read must keep direct
 customer use, ownership, preference, and context-adopting answers first-hand;
 must not assign an axis merely because a shade, product, or adjacent clause
 names it; and must not invent a two-sided comparison from one side's stated
@@ -513,7 +515,8 @@ durable raw grouped responses produced it, and downstream reconciliation
 rejects a compilation v3 that lacks that lineage.
 
 Projection v2 binds semantic execution identity: source, corpus, and catalog
-bindings; selected method v5-or-v6 identity and hash; response-schema version; prompt-encoding
+bindings; the selected method v5, v6, or v7 identity and hash; response-schema
+version; prompt-encoding
 version; exact work-unit membership; evidence and context references; prompt and
 leaf caps; and complete assessable-denominator coverage. It must not encode a
 worker count or static worker partition, because who executes a work unit is a
@@ -919,7 +922,8 @@ new frontier.
   claim-bearing row now receives exactly one independent `accept`, complete-row
   `replace`, or `unresolved` decision; replacement rows reuse the ordinary
   semantic validator, original and verification lineage remain separately
-  hash-bound, and reconciliation sees only the sole active result. Method v6
+  hash-bound, the manifest binds the exact active dispositions and semantic
+  units, and reconciliation sees only the sole active result. Method v6
   extraction wording and historical artifacts remain reproducible. Added no
   provider API, lexical selector, conclusion, full-corpus execution, readiness
   claim, or resume authority.

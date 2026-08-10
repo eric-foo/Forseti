@@ -3145,6 +3145,12 @@ def apply_row_verification(
         "active_evidence_ids_sha256": _sha256(
             [row["evidence_id"] for row in verified["evidence_dispositions"]]
         ),
+        "active_rows_sha256": _sha256(
+            {
+                "evidence_dispositions": verified["evidence_dispositions"],
+                "semantic_units": verified["semantic_units"],
+            }
+        ),
     }
     manifest["manifest_sha256"] = _sha256(manifest)
     verified["row_verification_manifest"] = manifest
@@ -3178,6 +3184,7 @@ def _verify_row_verification_manifest(
         "verification_responses",
         "decision_counts",
         "active_evidence_ids_sha256",
+        "active_rows_sha256",
         "manifest_sha256",
     } or manifest.get("schema_version") != ROW_VERIFICATION_MANIFEST_VERSION:
         raise SemanticIntegrationError("invalid row verification manifest shape")
@@ -3186,6 +3193,7 @@ def _verify_row_verification_manifest(
         "input_compilation_sha256",
         "original_raw_response_manifest_sha256",
         "active_evidence_ids_sha256",
+        "active_rows_sha256",
     ):
         digest = manifest.get(field)
         if (
@@ -3197,16 +3205,45 @@ def _verify_row_verification_manifest(
             raise SemanticIntegrationError(
                 f"row verification manifest has invalid {field}"
             )
-    if manifest["original_raw_response_manifest_sha256"] != compilation[
-        "raw_response_manifest"
-    ]["manifest_sha256"]:
+    raw_manifest = compilation.get("raw_response_manifest")
+    dispositions = compilation.get("evidence_dispositions")
+    semantic_units = compilation.get("semantic_units")
+    if (
+        not isinstance(raw_manifest, Mapping)
+        or not _nonempty(raw_manifest.get("manifest_sha256"))
+        or not isinstance(dispositions, list)
+        or not isinstance(semantic_units, list)
+    ):
+        raise SemanticIntegrationError(
+            "row verification manifest lacks active compilation content"
+        )
+    if (
+        manifest["original_raw_response_manifest_sha256"]
+        != raw_manifest["manifest_sha256"]
+    ):
         raise SemanticIntegrationError(
             "row verification manifest does not bind the original responses"
         )
-    active_ids = [row["evidence_id"] for row in compilation["evidence_dispositions"]]
+    if any(
+        not isinstance(row, Mapping) or not _nonempty(row.get("evidence_id"))
+        for row in dispositions
+    ):
+        raise SemanticIntegrationError(
+            "row verification manifest has invalid active evidence rows"
+        )
+    active_ids = [row["evidence_id"] for row in dispositions]
     if manifest["active_evidence_ids_sha256"] != _sha256(active_ids):
         raise SemanticIntegrationError(
             "row verification manifest does not bind the active evidence rows"
+        )
+    if manifest["active_rows_sha256"] != _sha256(
+        {
+            "evidence_dispositions": dispositions,
+            "semantic_units": semantic_units,
+        }
+    ):
+        raise SemanticIntegrationError(
+            "row verification manifest does not bind the active row content"
         )
     counts = manifest.get("decision_counts")
     if (
@@ -4808,6 +4845,10 @@ def finalize_view(
     """Compile the agent's reconciliation into one authoritative proposition view."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
     _verify_stored_hash(compiled, field="compilation_sha256", label="batch compilation")
+    # This is a terminal finalization consumer, so it carries the same v7
+    # obligation as the v3 path; gating only the reconciliation entry points
+    # would leave a legacy route that finalizes an unverified v7 compilation.
+    _verify_row_verification_manifest(bundle, compiled)
     if response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION:
         raise SemanticIntegrationError("invalid reconciliation response version")
     if response.get("bundle_sha256") != bundle.get("bundle_sha256"):

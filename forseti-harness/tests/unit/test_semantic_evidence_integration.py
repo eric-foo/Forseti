@@ -37,6 +37,7 @@ from judgment.semantic_evidence_integration import (
     SOURCE_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
+    VIEW_VERSION,
     WORK_UNIT_PROJECTION_VERSION_V2,
     apply_row_verification,
     build_batch_prompts,
@@ -2558,6 +2559,61 @@ def test_row_verification_rejects_a_patched_accept_and_invalid_replacement() -> 
         apply_row_verification(bundle, compiled, stage, invalid_response)
 
 
+def test_row_verification_manifest_binds_the_active_compilation_content() -> None:
+    bundle = _bundle_v5(count=2)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_row_verification(bundle, compiled)
+    rejected_id = stage["verification_rows"][-1]["evidence_id"]
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        stage,
+        _row_verification_responses(
+            stage,
+            {
+                rejected_id: {
+                    "decision": "unresolved",
+                    "reason": "the source cannot support one safe complete result",
+                    "replacement": None,
+                }
+            },
+        ),
+    )
+
+    # A real verifier rejected one row, but the original compilation still
+    # carries it. Stapling the honest manifest onto that original compilation
+    # must not turn the rejected row back into active evidence.
+    forged = deepcopy(compiled)
+    forged["row_verification_manifest"] = deepcopy(
+        verified["row_verification_manifest"]
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the active row content",
+    ):
+        prepare_reconciliation_stage(bundle, forged)
+
+    malformed = deepcopy(verified)
+    del malformed["raw_response_manifest"]
+    malformed["compilation_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in malformed.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="lacks active compilation content",
+    ):
+        prepare_reconciliation_stage(bundle, malformed)
+
+
 def test_row_verification_runner_writes_stage_prompts_and_verified_compilation(
     tmp_path: Path,
 ) -> None:
@@ -2622,6 +2678,57 @@ def test_method_v7_requires_verification_without_rewriting_v6_extraction_rules()
     )
     reconciliation, _ = prepare_reconciliation_stage(v7_bundle, verified)
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
+
+
+def _flat_reconciliation(bundle: dict, compiled: dict) -> dict:
+    return {
+        "schema_version": RECONCILIATION_RESPONSE_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "compilation_sha256": compiled["compilation_sha256"],
+        "propositions": [
+            {
+                "proposition_key": f"prop-{index}",
+                "bounded_proposition": unit["statement"],
+                "claim_kind": "customer_experience",
+                "subject_product_ids": unit["subject_product_ids"],
+                "comparator_product_ids": unit["comparator_product_ids"],
+                "axis_ids": unit["axis_ids"],
+                "emerging_axis_labels": unit["emerging_axis_labels"],
+                "conditions": unit["conditions"],
+                "causal_ceiling": "descriptive_only",
+                "opposition_checked": True,
+                "relations": [
+                    {
+                        "semantic_unit_ref": unit["semantic_unit_ref"],
+                        "relation": "support",
+                    }
+                ],
+            }
+            for index, unit in enumerate(compiled["semantic_units"])
+        ],
+        "unmerged_semantic_units": [],
+    }
+
+
+def test_method_v7_flat_finalization_also_refuses_an_unverified_compilation() -> None:
+    bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+
+    # The flat v1 reconciliation route is a second terminal finalization path.
+    # It must not become the way an unverified v7 compilation reaches a view.
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="method v7 requires row verification",
+    ):
+        finalize_view(bundle, compiled, _flat_reconciliation(bundle, compiled))
+
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    view = finalize_view(bundle, verified, _flat_reconciliation(bundle, verified))
+    assert view["schema_version"] == VIEW_VERSION
+    assert len(view["propositions"]) == len(verified["semantic_units"])
 
 
 def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> dict:

@@ -458,3 +458,31 @@ replacement for bounded semantic calibration. The real dogfood reused the
 preserved method-v6 bundle to test the new optional pass; focused tests prove
 that method v7 makes the pass mandatory. No full-corpus run, prevalence claim,
 Deliver conclusion, seal, or resume authority follows.
+
+The different-vendor patch review then found two mechanical gaps in the v7
+claim. First, the legacy flat finalizer did not call the v7 verification gate;
+it now carries the same fail-closed check as the staged and v3 finalizers.
+Second, the manifest bound the active evidence-ID list but not the active row
+content. It could therefore be copied from an honest verified compilation onto
+different dispositions and semantic units over the same bundle. Contract v23
+now binds `active_rows_sha256` over both active dispositions and semantic units,
+and every consumer recomputes it before accepting the compilation. Malformed
+manifest-bearing compilations now raise a controlled semantic error rather than
+a raw missing-key exception.
+
+The fresh blind readings remain preserved unchanged under the `v3` dogfood
+root. A deterministic post-review re-derivation at
+`C:\tmp\forseti-summer-fridays-row-verification-v1-20260810-v4` reused that exact
+stage and the same six verifier responses; no semantic row was reread or edited.
+The 43/47/1 decisions, 264 semantic units, evidence dispositions, and original
+raw-response manifest are object-identical to `v3`. Only the strengthened
+manifest and its downstream identities changed. The current verified
+compilation hash is
+`694015e53ea96188a56dcef9c4cca95272ed42a13230956d802543a3c26603eb`,
+its active-row-content hash is
+`ab178a2f8a16be8716e51131bc85b787707089af8d8b8a5cdd1b91e7b9e1a0b7`,
+and the resulting two-prompt reconciliation stage hash is
+`6e962e4d9640353df0e144eaa451e02603fa06115722c27eedcc2152ea48d223`.
+The earlier `7d04a4bc...` compilation and `55ed039e...` stage remain historical
+pre-content-binding receipts; current code correctly refuses to treat their old
+manifest shape as sufficient v7 verification.
