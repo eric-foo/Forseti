@@ -180,11 +180,21 @@ production work-unit shape under unchanged v18 semantics. V18 does not
 authorize corpus resumption, estimate defect prevalence, or change the
 still-incomplete full-corpus boundary above.
 
-The bound follow-up is an architecture probe under unchanged v18 semantic
-wording and unchanged blind gold: the same 121-row production carrier is packed
-into exactly two near-balanced prompts, and calibration spec v3 selects the ten
-highest-unit-density non-gold rows for separate compilation-bound bloat
-adjudication. Any confirmed defect fails; any missing, stale, or unresolved
-audit judgment blocks. This records the executable probe shape only. Until a
-new hash-bound report exists, it makes no calibration verdict or route-readiness
-claim.
+The follow-up v19 architecture probe kept v18 semantic wording and blind gold
+unchanged, packed the same 121-row production carrier into near-balanced 61-row
+and 60-row prompts, and applied spec v3's compilation-bound audit to the ten
+highest-unit-density non-gold rows. Its hash-bound report is
+`SEMANTIC_CALIBRATION_FAIL`: 11 of 17 gold cases passed, all seven cold repeats
+were materially consistent, and three of ten audited non-gold rows contained
+confirmed unsupported or over-split meanings. The split emitted 289 production
+units, up from v18's 260. Core and production reconciliation also independently
+failed finalization after community evidence was promoted to
+`observable_fact`, so no final views existed and all seven relation obligations
+remained blocked rather than adjudicated satisfied.
+
+This fires the architecture-probe stop condition. Do not add another prompt
+example, delegate a post-pass patch review, resume the 561-prompt corpus, or
+claim route readiness from v19. The next decision belongs to selective
+verification or a changed execution route that addresses semantic instability
+and final-view claim-kind competence; v19 is evidence for that decision, not
+authority to implement it.
