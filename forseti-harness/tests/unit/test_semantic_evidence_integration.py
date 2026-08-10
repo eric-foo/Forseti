@@ -31,6 +31,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
     PROMPT_ENCODING_VERSION,
+    ROW_VERIFICATION_METHOD_TEXT,
     ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -2457,14 +2458,37 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert stage["coverage_proof"]["bijection_complete"] is True
     assert all(row["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] for row in prompts)
     assert all("ROWS_TO_VERIFY" in row["prompt"] for row in prompts)
+    assert stage["verification_method_version"] == (
+        "semantic_evidence_row_verification_method_v2"
+    )
+    normalized_prompts = [" ".join(row["prompt"].split()) for row in prompts]
+    assert all("Before checking fields, privately restate" in row for row in normalized_prompts)
+    assert all(
+        "does not cancel or replace an earlier judgment" in row
+        for row in normalized_prompts
+    )
+    assert all("Map each meaning to the proposed units" in row for row in normalized_prompts)
+    assert all("before field checking" in row for row in normalized_prompts)
     assert all("direct short answer" in row["prompt"] for row in prompts)
     assert all("Resolve a leading yes/no" in row["prompt"] for row in prompts)
     assert all("does not make ownership, purchase, repurchase" in row["prompt"] for row in prompts)
     assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
+    assert all(
+        "A customer attribute conditions a result only if" in row["prompt"]
+        for row in prompts
+    )
+    assert all("unambiguously entails the same baseline" in row for row in normalized_prompts)
+    assert all("source explicitly scopes that result" in row for row in normalized_prompts)
+    assert all("possible bias, caveat, or separate product response" in row for row in normalized_prompts)
+    assert all("separate meaning, not a condition" in row for row in normalized_prompts)
+    assert all("Conjunction or shared body area" in row for row in normalized_prompts)
+    assert all("Sensitivity alone is not a moisture baseline" in row for row in normalized_prompts)
+    assert all("product-linked sensitivity is reaction or tolerance context" in row for row in normalized_prompts)
+    assert all("dry or dehydrated may condition moisture" in row for row in normalized_prompts)
+    assert all("leave the result unconditioned" in row for row in normalized_prompts)
     assert all("Unqualified liking, preference" in row["prompt"] for row in prompts)
     assert all("favorite evaluation of a named shade" in row["prompt"] for row in prompts)
     assert all("One side's quantity cannot create" in row["prompt"] for row in prompts)
-
     replacement = _claim_row(claim_ids[1])
     replacement["semantic_units"][0]["semantic_unit_key"] = "corrected-value"
     replacement["semantic_units"][0]["statement"] = (
@@ -2505,6 +2529,34 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     }
     reconciliation, _ = prepare_reconciliation_stage(bundle, verified)
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
+
+
+def test_row_verification_v2_installs_general_coverage_order_not_case_phrases() -> None:
+    normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
+    for principle in (
+        "smallest complete set of standalone meanings",
+        "direct answers, evaluations, results, comparisons, reasons, contrasts",
+        "explicitly withdraws or corrects it",
+        "Shared product, axis, or topic does not make one unit cover another",
+        "Map each meaning to the proposed units before field checking",
+        "states or unambiguously entails the same baseline",
+        "source explicitly scopes that result to the attribute",
+        "possible bias, caveat, or separate product response is a separate meaning",
+        "Conjunction or shared body area is not enough",
+        "Sensitivity alone is not a moisture baseline",
+        "product-linked sensitivity is reaction or tolerance context",
+        "dry or dehydrated may condition moisture",
+        "If uncertain, leave the result unconditioned",
+    ):
+        assert principle in normalized
+    for case_phrase in (
+        "Summer Fridays",
+        "Vanilla Beige",
+        "worth $24",
+        "lip balm",
+        "lip gloss",
+    ):
+        assert case_phrase not in ROW_VERIFICATION_METHOD_TEXT
 
 
 def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> None:

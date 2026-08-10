@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v23
+version: v24
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v23
+# Semantic Evidence Integration Contract v24
 
 ## Purpose
 
@@ -127,6 +127,22 @@ may not.
 Non-claim rows pass through unchanged.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
+
+Contract v24 versions the whole-row verifier method to v2 without changing its
+response or manifest schemas. The verifier first constructs a private inventory
+of standalone meanings, resolving ellipsis only from supplied context; preserves
+coexisting judgments unless the source explicitly withdraws one; maps every
+material meaning to the proposed units; and only then checks fields. This is an
+execution order for the existing completeness doctrine, not a phrase table,
+clause parser, extra response field, conclusion pass, or mandatory second
+verifier. A customer attribute qualifies a result only when it states or
+unambiguously entails the same baseline or the source explicitly scopes that
+result to it. A possible bias, caveat, or different product response remains a
+separate meaning rather than becoming the result's condition. Sensitivity alone
+establishes no moisture baseline; product-linked sensitivity remains reaction or
+tolerance context, while dry or dehydrated context may qualify moisture.
+Historical verifier-v1 stages remain hash-distinguishable and are not relabelled
+as verifier v2.
 
 When a captured-but-excluded denominator exists, the completion profile draws
 a deterministic bounded semantic audit sample per screening family. One
@@ -917,6 +933,19 @@ new frontier.
 
 ## Changelog
 
+- `v24` / 2026-08-10 — versioned the whole-row verifier method to v2 and made
+  meaning inventory precede field checking. The verifier now restates each leaf
+  as standalone meanings, preserves simultaneous or qualified judgments unless
+  explicitly withdrawn, and maps every material meaning to a proposed unit
+  before checking axes or other fields. Customer attributes condition only the
+  same stated or unambiguously entailed baseline or one explicitly scoped by the
+  source. A possible bias, caveat, or different response stays separate rather
+  than becoming a condition. Sensitivity alone is not a moisture baseline;
+  product-linked sensitivity is reaction/tolerance context, while dry or
+  dehydrated context may qualify moisture.
+  Added no response/schema field, parser, phrase table, provider API, conclusion,
+  mandatory second verifier, full-corpus execution, readiness claim, or resume
+  authority.
 - `v23` / 2026-08-10 — added run v5 / method v7 whole-row evidence
   verification between primary extraction and reconciliation. Every primary
   claim-bearing row now receives exactly one independent `accept`, complete-row
