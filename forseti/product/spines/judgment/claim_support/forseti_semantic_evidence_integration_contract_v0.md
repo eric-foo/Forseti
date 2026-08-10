@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v22
+version: v23
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v22
+# Semantic Evidence Integration Contract v23
 
 ## Purpose
 
@@ -103,6 +103,28 @@ relation or receives an explicit unmerged disposition. An absent alias, silent
 bulk discard, or unaccounted semantic unit is incomplete. Objective upstream
 metadata may define the admitted set; it may not declare that an item lacks a
 competitor or material meaning merely because an exact token is absent.
+
+Method v7 adds one independent whole-row evidence-integrity check after primary
+extraction and before reconciliation. Every primary `claim_bearing` row is
+checked against its exact leaf text and supplied product/parent context. The
+checker returns exactly one of `accept`, complete-row `replace`, or
+`unresolved`. It never emits a field patch. Deterministic code requires one
+decision per primary claim-bearing evidence ID, validates any replacement
+through the ordinary response validator, preserves the original raw-response
+manifest, binds the verification responses in a separate manifest, and exposes
+only one active result to reconciliation. Its whole-row read must keep direct
+customer use, ownership, preference, and context-adopting answers first-hand;
+must not assign an axis merely because a shade, product, or adjacent clause
+names it; and must not invent a two-sided comparison from one side's stated
+amount. It resolves leading yes/no replies against their parent question,
+accounts for every materially distinct clause, and keeps unqualified preference
+or better/worse language about a product overall axis-free even when it sits
+beside an attribute claim. A stated liking or favorite evaluation of a named
+shade may use `shade_and_color_fit`; ownership, purchase, or repurchase alone
+may not.
+Non-claim rows pass through unchanged.
+Method v5 and v6 remain historical one-pass routes and acquire no retroactive
+verification obligation.
 
 When a captured-but-excluded denominator exists, the completion profile draws
 a deterministic bounded semantic audit sample per screening family. One
@@ -339,6 +361,14 @@ ruler's stable ID and full SHA-256. Evaluation accepts only exact known ruler
 hashes, binds a new receipt to its sidecar, and rejects an unknown or substituted
 ruler. Historical preparation-v1 and report-v1 artifacts retain their original
 shape and hashes; they are not rewritten to claim the new binding.
+
+Contract v23 adds `phase_a_semantic_integration_run_v5` and
+`semantic_evidence_integration_method_v7`. Method v7 keeps method v6 extraction
+rules and the existing bundle/response/compilation/reconciliation/view
+transports. Its new execution obligation is the hash-bound whole-row check
+described above. An unverified compilation may still reproduce historical v5
+or v6 behavior, but method v7 reconciliation and finalization fail closed until
+the verification manifest is present and valid.
 
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
@@ -685,22 +715,27 @@ Current-route operations are:
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
    invalid responses so an interrupted run can resume honestly.
 9. `submit-batches` validates all agent responses and exact alias coverage.
-10. `prepare-reconciliation-level` renders one or more byte-bounded prompts
-   from batch units or prior semantic nodes.
-11. `validate-reconciliation-response` validates one returned hierarchy batch
-   before the level is complete.
-12. `submit-reconciliation-level` validates exact child accounting and writes
-    the next node compilation; repeat until one terminal level remains.
-13. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
-    v2.
-14. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+10. For method v7, `prepare-row-verification` renders byte-bounded independent
+    checks for every primary claim-bearing row, and
+    `submit-row-verification` requires exactly one `accept`, complete-row
+    `replace`, or `unresolved` decision per row before writing the sole active
+    compilation. Non-claim rows are not reread.
+11. `prepare-reconciliation-level` renders one or more byte-bounded prompts
+    from batch units or prior semantic nodes.
+12. `validate-reconciliation-response` validates one returned hierarchy batch
+    before the level is complete.
+13. `submit-reconciliation-level` validates exact child accounting and writes
+     the next node compilation; repeat until one terminal level remains.
+14. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
+     v2.
+15. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
-15. `evaluate-calibration` runs the existing response validator, then evaluates
+16. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
     anomaly, and repeat judgments must be explicit and hash-bound to the exact
@@ -879,6 +914,15 @@ new frontier.
 
 ## Changelog
 
+- `v23` / 2026-08-10 — added run v5 / method v7 whole-row evidence
+  verification between primary extraction and reconciliation. Every primary
+  claim-bearing row now receives exactly one independent `accept`, complete-row
+  `replace`, or `unresolved` decision; replacement rows reuse the ordinary
+  semantic validator, original and verification lineage remain separately
+  hash-bound, and reconciliation sees only the sole active result. Method v6
+  extraction wording and historical artifacts remain reproducible. Added no
+  provider API, lexical selector, conclusion, full-corpus execution, readiness
+  claim, or resume authority.
 - `v22` / 2026-08-10 — versioned the calibration adjudication ruler and bound
   its stable ID and full SHA-256 into preparation-v2 and report-v2 artifacts.
   Preserved preparation-v1 and report-v1 shapes for historical evaluation,

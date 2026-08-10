@@ -409,3 +409,52 @@ exactly. A fresh preparation-v2 proof at
 hash into both its receipt and report; with no new adjudication, it correctly
 stopped at `SEMANTIC_CALIBRATION_BLOCKED`. This proof changes no extraction
 method or prompt and grants no full-corpus resume authority.
+
+Contract v23 adds the smallest complete independent whole-row check between
+primary extraction and reconciliation. Run v5 selects method v7. Every primary
+claim-bearing evidence row receives exactly one `accept`, complete-row
+`replace`, or `unresolved` decision against its leaf and supplied context.
+Replacements pass through the ordinary semantic validator; non-claim rows pass
+through unchanged. The compiler preserves the original raw-response manifest,
+binds the verifier responses separately, and gives reconciliation exactly one
+active result. Method v7 fails closed at reconciliation and finalization when
+that verification manifest is absent or invalid. The extraction wording and
+transport schemas remain unchanged from method v6.
+
+The final fresh blind Summer Fridays dogfood at
+`C:\tmp\forseti-summer-fridays-row-verification-v1-20260810-v3` checked all 91
+claim-bearing rows from the preserved 121-leaf production-shaped compilation.
+It packed six verifier prompts, the largest 89,720 bytes under the 90,000-byte
+ceiling, and made no model API call. The independent readers returned 43
+accepts, 47 complete-row replacements, and one unresolved row. The runner
+rejected no hidden partial result and wrote a 264-unit active compilation with
+`compilation_sha256:
+7d04a4bcd827f7d9d1f01fcbadca806e1c7a923badc7e8ec78281ff285386a95`.
+The same persisted compilation then prepared reconciliation successfully as two
+prompts with 264 candidates; its stage hash is
+`55ed039e170fbeef7cbd5db61bf441816194f2102214e46d3185a0580892df62`.
+
+The blind pass corrected five of the six preserved residual rows: it removed
+hydration borrowed by unqualified Glossier/Laneige preferences, made the short
+Cherry-scent answer first-hand, removed shade-fit from ownership and repurchase,
+kept the pigment desire affirmed, restored omitted sale purchases, and removed
+the invented two-product per-use quantity comparison. It also preserved the
+important boundary that an actual named-shade favorite may use
+`shade_and_color_fit` while ownership or repurchase alone may not. The one
+unresolved row stayed out of the active semantic units rather than being forced
+into a claim.
+
+One material semantic residual remains visible. On
+`reddit:13aw1sp:jj8kde7`, this final reader accepted the proposed row even though
+it omitted the parent-linked negative judgment that the product was not really
+worth $24 when judged as a balm and retained sensitivity as a hydration
+condition. Earlier independent reads and a final targeted cold check did catch
+the omitted value meaning, so the representation and replacement path can carry
+the correction; the repeated disagreement proves that one verifier read is not
+a perfect completeness oracle. Do not hide this with more case-shaped prompt
+clauses or treat the row-verification pass as semantic readiness. It is a
+material quality improvement and a fail-closed integration boundary, not a
+replacement for bounded semantic calibration. The real dogfood reused the
+preserved method-v6 bundle to test the new optional pass; focused tests prove
+that method v7 makes the pass mandatory. No full-corpus run, prevalence claim,
+Deliver conclusion, seal, or resume authority follows.
