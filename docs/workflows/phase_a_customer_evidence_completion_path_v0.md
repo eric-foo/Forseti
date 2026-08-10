@@ -84,7 +84,10 @@ the final author also prefers Vanilla Beige. The leaf is claim-bearing
 `personal_agreement`, not first-hand product experience. Because the two
 visible handles are distinct, the pair may support same-thread recurrence for
 that exact preference, with thread co-location disclosed; it is not
-cross-venue corroboration and supplies no product axis.
+cross-venue corroboration and supplies no product axis. This is valid but
+low-information recurrence: the child adds no reason, attribute, condition, or
+explanatory detail. A reply such as `same` adopts only the clearly targeted
+bounded meaning, not every clause of a multi-point parent.
 
 Workers report those terminal decisions either individually or as explicit-ID
 groups sharing one agent-authored reason. Grouping is transport compression, not
@@ -163,20 +166,15 @@ run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
-As of 2026-08-10, contract v15 and the no-provider runner implement the bounded
-calibration gate. A real Summer Fridays dogfood projected 127 primary rows into
-one seven-row core prompt and the complete 120-row historical stress carrier,
-then repacked four predeclared cases into one selective cold-repeat prompt. The
-core also reached a hash-bound terminal reconciliation view. The final bounded
-report is `SEMANTIC_CALIBRATION_FAIL`: eight of twelve cases passed, four failed,
-three of four cold repeats were materially inconsistent, all four final-view
-relation obligations were satisfied, and no adjudication blocker remained.
-The failures originally included treating `My fav!` as claim-bearing, but the
-owner later corrected that gold after reviewing the full root-parent-leaf
-chain: in this thread it does assert a bounded Vanilla Beige preference. That
-invalidates the earlier compact-pass interpretation and requires a fresh
-hash-bound calibration. The remaining observed failures, including collapsing
-several multi-point comments into too few units, remain historical evidence
-about that run. Neither the earlier report nor this correction proves
-method-v5 fitness, authorizes corpus resumption, estimates defect prevalence,
-or changes the still-incomplete full-corpus boundary above.
+As of 2026-08-10, contract v16 and the no-provider runner implement the bounded
+calibration gate. The latest completed Summer Fridays dogfood was v15: 14 of 17
+gold cases passed, three failed, and only two of seven selective cold repeats
+were consistent. All seven final-view relation obligations passed, including
+the corrected `My fav!` same-thread recurrence, but the adjudication found
+missing atomic meanings, one missing supported axis, and several polarity
+inversions. It also exposed that a direction relation cannot inspect an
+explicit unit left unmerged. Contract v16 therefore requires a closed
+per-unit direction judgment in adjudication v3; that new gate has not yet
+received a completed dogfood verdict. Neither v15 nor this implementation
+authorizes corpus resumption, estimates defect prevalence, or changes the
+still-incomplete full-corpus boundary above.

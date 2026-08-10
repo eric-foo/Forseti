@@ -48,6 +48,7 @@ from judgment.semantic_evidence_integration import (
 from judgment.semantic_calibration import (
     CALIBRATION_ADJUDICATION_VERSION,
     CALIBRATION_ADJUDICATION_VERSION_V1,
+    CALIBRATION_ADJUDICATION_VERSION_V2,
     CALIBRATION_SPEC_VERSION,
     CALIBRATION_SPEC_VERSION_V1,
     SemanticCalibrationError,
@@ -2469,6 +2470,7 @@ def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
                     "drying-after-week": {
                         "supported_axis_ids": ["wear"],
                         "unsupported_axis_ids": [],
+                        "statement_direction_supported": True,
                     }
                 },
             }
@@ -2628,6 +2630,42 @@ def test_calibration_v2_rejects_a_semantically_unsupported_axis() -> None:
     )
 
 
+def test_calibration_v3_rejects_bad_direction_on_an_unmerged_unit() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["case_adjudications"][0]["axis_support_by_unit"][
+        "drying-after-week"
+    ]["statement_direction_supported"] = False
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        "does not preserve its asserted meaning direction" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
 def test_calibration_v2_blocks_when_axis_judgment_is_missing() -> None:
     source = materialize_source_v3(_source_v5(count=2))
     spec = _calibration_spec(source)
@@ -2679,6 +2717,44 @@ def test_calibration_v1_adjudication_remains_readable_for_historical_reports() -
     )
     adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V1
     del adjudication["case_adjudications"][0]["axis_support_by_unit"]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        adjudication,
+        full_source=source,
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+
+
+def test_calibration_v2_adjudication_remains_readable_for_historical_reports() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    spec["schema_version"] = CALIBRATION_SPEC_VERSION_V1
+    del spec["required_adjudication_version"]
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+    adjudication = _calibration_adjudication(
+        spec, compilation["compilation_sha256"]
+    )
+    adjudication["schema_version"] = CALIBRATION_ADJUDICATION_VERSION_V2
+    del adjudication["case_adjudications"][0]["axis_support_by_unit"][
+        "drying-after-week"
+    ]["statement_direction_supported"]
     adjudication["adjudication_sha256"] = _canonical_hash(
         {
             key: value
@@ -3000,6 +3076,7 @@ def test_relation_adjudication_requires_a_rebuilt_final_view() -> None:
                 "drying-after-week": {
                     "supported_axis_ids": ["wear"],
                     "unsupported_axis_ids": [],
+                    "statement_direction_supported": True,
                 }
             },
         }
@@ -3436,22 +3513,26 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
         "out_of_scope",
     ):
         assert disposition in text
-    assert "exactly one context-aware relevance and accounting judgment" in text
-    # Referential agreement keeps parent meaning without inheriting credit.
-    assert '"same" may adopt the specific parent complaint' in text
-    assert "Context may fill omissions,\nnever unsupported attributes" in text
+    assert "Judge every leaf exactly once after context" in text
+    # Referential agreement keeps only the targeted meaning and its own credit.
+    assert '"same" may adopt one clearly targeted parent meaning' in text
+    assert "never adopts every clause of a multi-point parent" in text
+    assert "Context may resolve\nomissions, never add attributes" in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
-    assert "personal_agreement adopts a specific parent proposition" in text
+    assert "personal_agreement adopts only the targeted proposition" in text
+    assert "reasons, axes, or explanatory detail" in text
     assert "attribution_or_echo\nmerely reports the parent" in text
     assert "its statement must name that\nattribution" in text
     assert "A direct answer to a specific question is its own bounded" in text
     assert "Context fills\nan omitted predicate, not posture" in text
-    assert "may add same-thread recurrence" in text
+    assert "may add low-information same-thread recurrence" in text
     assert "never award cross-venue credit" in text
     assert "Evidence posture describes support, not the verb" in text
     assert "value judgment, or category\njudgment is first_hand" in text
     assert "never customer shopping or use behavior" in text
-    assert 'write "is not drying", never "is drying" plus negated' in text
+    assert "Polarity is logical assertion, not sentiment" in text
+    assert '"is drying",\n"worsens peeling", and "reaches for other formulas" are affirmed' in text
+    assert '"is not\ndrying" is negated' in text
     assert "Polarity repeats direction" in text
     # Ambiguity routes to unresolved, never to cheap out_of_scope.
     assert "is unresolved rather than out_of_scope" in text
@@ -3469,7 +3550,9 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert '"good, but not worth $24" yields only the value atom' in text
     assert '"I have the Poppy flavor" is an ownership atom' in text
     assert '"Reaches for other\nformulas" is affirmed switching behavior' in text
-    assert "other deeply moisturizing" in text
+    assert '"not the most\nhydrating" is not "not hydrating enough"' in text
+    assert "Split a non-sinking moisture claim" in text
+    assert "target/comparator hydration contrast" in text
     assert '"Vanilla Beige!" -> "My fav!"' in text
     assert "claim_bearing personal_agreement with no axis" in text
     assert "Praise tied to a named result" in text
@@ -3478,31 +3561,32 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "cannot donate an attribute or axis;\nneither can another unit or clause" in text
     assert "include every existing axis it does express" in text
     assert "shade-ownership unit carries shade_and_color_fit" in text
-    assert "Dry lips do not make\nsmoothing a hydration claim" in text
+    assert "No smoothing supports\ntexture_and_skin_finish, not hydration" in text
     assert '"More like a gloss than a balm" is an axis-free\ncategory' in text
     assert "A support child must match bounded_meaning direction" in text
     assert "counter to the inverse positive meaning" in text
     assert "never attach it as support there" in text
     assert "Formula resemblance or change supports formula_consistency_and_change" in text
-    assert "Every unit must concern a verified subject product" in text
-    assert "Never create their standalone\nunits" in text
+    assert "Every unit carries a verified subject id" in text
+    assert "never create their standalone units" in text
     assert "map its category to exactly one catalog product" in text
     # Variant wording is preserved rather than dropped.
-    assert "Bounded variant or formula wording stays\nclaim_bearing" in text
-    assert "ambiguous binding is unresolved" in text
+    assert "Bounded wording stays claim_bearing" in text
+    assert "ambiguity is unresolved" in text
     # Grouping is transport compression only.
-    assert "never a sample, default, implicit remainder,\nwildcard" in text
+    assert "never a sample, default, remainder, wildcard" in text
 
 
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
     text = METHOD_TEXT_V5
-    assert "There is no keyword, phrase, or length rule" in text
+    normalized = " ".join(text.split())
+    assert "There is no keyword, phrase, or length rule" in normalized
     # The worked examples describe semantic boundaries, not matchable input
     # filters. Short inputs can still be detailed, terminal, or unresolved.
     for phrase in ('"same"', '"My fav!"', '"I always reach for it"'):
         assert phrase in text
     assert '"Love it" with only a known product remains context_only' in text
-    assert "specific parent proposition is claim-bearing" in text
+    assert "specifically adopted parent meaning" in text
 
 
 def test_v5_terminal_grouping_expands_to_one_row_per_evidence_id() -> None:

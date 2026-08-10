@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v15
+version: v16
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v15
+# Semantic Evidence Integration Contract v16
 
 ## Purpose
 
@@ -304,10 +304,13 @@ adopts the Vanilla Beige preference; it is not an empty reaction.
 Referential agreement uses the `personal_agreement` posture and does not
 inherit the parent's first-hand experience. When a distinctly credited reply
 actually asserts the same bounded proposition, it may contribute that actor's
-same-thread recurrence under the intelligence claim-support contract. The
-shared thread remains disclosed and cannot earn cross-venue credit. A reply
-that merely repeats or reports the parent remains `attribution_or_echo` and
-adds no independent origin. Bounded variant or formula wording stays detailed
+same-thread recurrence under the intelligence claim-support contract. Bare
+agreement is low-information recurrence: it adds no reason, attribute, axis,
+condition, or explanatory detail. A reply such as `same` adopts only the
+clearly targeted bounded meaning; it does not silently adopt every clause of a
+multi-point parent. The shared thread remains disclosed and cannot earn
+cross-venue credit. A reply that merely repeats or reports the parent remains
+`attribution_or_echo` and adds no independent origin. Bounded variant or formula wording stays detailed
 while catalog v1 keeps `product_version_ids` empty; ambiguous variant or
 formula binding is detailed `unresolved`.
 
@@ -617,14 +620,16 @@ Current-route operations are:
     a critical mismatch fails. The report is a bounded calibration result only,
     never a prevalence estimate, readiness claim, or corpus-resume authority.
 
-Adjudication v2 closes the unsupported-axis gap without a phrase or field-value
-blacklist. For every semantic unit in every gold case, the adjudicator must
-partition the unit's exact assigned axes into supported and unsupported lists.
-Missing units, missing axes, extra axes, overlap, or malformed judgments block;
-any explicitly unsupported axis fails the case. Calibration spec v2 binds this
-requirement explicitly and cannot pass with adjudication v1. The spec-v1 plus
-adjudication-v1 pair remains readable only for historical report reproduction
-and cannot establish the v12 axis-support obligation.
+Adjudication v3 closes both the unsupported-axis gap and the unmerged-unit
+direction gap without a phrase or field-value blacklist. For every semantic
+unit in every gold case, the adjudicator must partition the unit's exact
+assigned axes into supported and unsupported lists and judge whether its
+statement plus polarity preserve what the source actually asserted. Missing
+units, axes, direction judgments, extra keys, overlap, or malformed judgments
+block; an explicitly unsupported axis or false direction judgment fails the
+case. Calibration spec v2 binds adjudication v3 and cannot pass with v1 or v2.
+The older versions remain readable with historical specs only; v2 proves its
+per-axis obligation but not the v16 per-unit direction obligation.
 
 The calibration spec is authored from source text, required context, and the
 run-local catalog before the evaluated responses are read. Fields representing
@@ -761,6 +766,16 @@ new frontier.
 
 ## Changelog
 
+- `v16` / 2026-08-10 — added adjudication v3's closed per-unit meaning-direction
+  judgment so an explicit unmerged unit cannot evade calibration merely because
+  it creates no final proposition relation. Preserved v1/v2 read compatibility
+  for historical reports while requiring v3 for current spec-v2 runs. Clarified
+  that bare distinct-actor agreement is valid but low-information same-thread
+  recurrence, and that `same` adopts only a clearly targeted bounded meaning,
+  never every clause or reason in a multi-point parent. Tightened degree,
+  non-sinking-versus-comparator decomposition, logical polarity, and smoothing
+  axis instructions from observed v15 failures. Added no universal evidence
+  score, provider call, route generation, or corpus-run authority.
 - `v15` / 2026-08-10 — narrowed direction preservation to the semantically
   correct relation rule: support must match terminal direction, while a
   negated child may remain counterevidence to the inverse positive proposition.

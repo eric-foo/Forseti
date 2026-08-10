@@ -30,7 +30,8 @@ from judgment.semantic_evidence_integration import (
 CALIBRATION_SPEC_VERSION_V1 = "semantic_calibration_spec_v1"
 CALIBRATION_SPEC_VERSION = "semantic_calibration_spec_v2"
 CALIBRATION_ADJUDICATION_VERSION_V1 = "semantic_calibration_adjudication_v1"
-CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v2"
+CALIBRATION_ADJUDICATION_VERSION_V2 = "semantic_calibration_adjudication_v2"
+CALIBRATION_ADJUDICATION_VERSION = "semantic_calibration_adjudication_v3"
 CALIBRATION_PREPARATION_VERSION = "semantic_calibration_preparation_v1"
 CALIBRATION_REPORT_VERSION = "semantic_calibration_report_v1"
 
@@ -99,7 +100,8 @@ _COLD_REPEAT_FIELDS = {
     "minimum_largest_prompt_bytes",
 }
 _AXIS_REPETITION_FIELDS = {"minimum_axis_count", "minimum_repeated_units"}
-_AXIS_SUPPORT_FIELDS = {"supported_axis_ids", "unsupported_axis_ids"}
+_AXIS_SUPPORT_FIELDS_V2 = {"supported_axis_ids", "unsupported_axis_ids"}
+_AXIS_SUPPORT_FIELDS = _AXIS_SUPPORT_FIELDS_V2 | {"statement_direction_supported"}
 # The route fields that have an observable in-process counterpart.  Runner
 # revision and contract version are operator-declared provenance with nothing
 # to check them against, so they are deliberately absent here.
@@ -746,6 +748,7 @@ def validate_calibration_adjudication(
         or adjudication.get("schema_version")
         not in {
             CALIBRATION_ADJUDICATION_VERSION_V1,
+            CALIBRATION_ADJUDICATION_VERSION_V2,
             CALIBRATION_ADJUDICATION_VERSION,
         }
     ):
@@ -1114,12 +1117,15 @@ def evaluate_semantic_calibration(
                 ): unit
                 for unit in units
             }
-            if (
-                adjudication is not None
-                and adjudication.get("schema_version")
-                == CALIBRATION_ADJUDICATION_VERSION
-                and units_by_key
-            ):
+            adjudication_version = (
+                adjudication.get("schema_version")
+                if adjudication is not None
+                else None
+            )
+            if adjudication_version in {
+                CALIBRATION_ADJUDICATION_VERSION_V2,
+                CALIBRATION_ADJUDICATION_VERSION,
+            } and units_by_key:
                 axis_support = (
                     adjudicated_case.get("axis_support_by_unit")
                     if isinstance(adjudicated_case, Mapping)
@@ -1138,9 +1144,14 @@ def evaluate_semantic_calibration(
                         )
                     for unit_key in sorted(actual_keys & judged_keys):
                         axis_judgment = axis_support[unit_key]
+                        required_fields = (
+                            _AXIS_SUPPORT_FIELDS
+                            if adjudication_version == CALIBRATION_ADJUDICATION_VERSION
+                            else _AXIS_SUPPORT_FIELDS_V2
+                        )
                         if (
                             not isinstance(axis_judgment, Mapping)
-                            or set(axis_judgment) != _AXIS_SUPPORT_FIELDS
+                            or set(axis_judgment) != required_fields
                         ):
                             case_blockers.append(
                                 f"unit {unit_key} has invalid per-axis semantic adjudication"
@@ -1167,6 +1178,18 @@ def evaluate_semantic_calibration(
                                 f"unit {unit_key} carries semantically unsupported axes "
                                 f"{sorted(unsupported)}"
                             )
+                        if adjudication_version == CALIBRATION_ADJUDICATION_VERSION:
+                            direction_supported = axis_judgment.get(
+                                "statement_direction_supported"
+                            )
+                            if not isinstance(direction_supported, bool):
+                                case_blockers.append(
+                                    f"unit {unit_key} lacks a valid semantic direction judgment"
+                                )
+                            elif not direction_supported:
+                                case_failures.append(
+                                    f"unit {unit_key} does not preserve its asserted meaning direction"
+                                )
             matched_keys: set[str] = set()
             for atom_id, atom in required_atoms.items():
                 if not isinstance(atom_matches, Mapping) or atom_id not in atom_matches:
@@ -1492,6 +1515,7 @@ def evaluate_semantic_calibration(
 __all__ = [
     "CALIBRATION_ADJUDICATION_VERSION",
     "CALIBRATION_ADJUDICATION_VERSION_V1",
+    "CALIBRATION_ADJUDICATION_VERSION_V2",
     "CALIBRATION_PREPARATION_VERSION",
     "CALIBRATION_REPORT_VERSION",
     "CALIBRATION_SPEC_VERSION",
