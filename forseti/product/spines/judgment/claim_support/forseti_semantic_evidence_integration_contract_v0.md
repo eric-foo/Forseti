@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v16
+version: v17
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v16
+# Semantic Evidence Integration Contract v17
 
 ## Purpose
 
@@ -337,8 +337,12 @@ vocabulary only. Each assigned axis must be semantically supported by the
 atomic unit and leaf; context may resolve a referent but cannot donate an axis.
 Generic approval embedded beside a bounded judgment adds no unit: `good, but
 not worth $24` yields the value judgment only. Ownership is preserved as
-behavior. Every explicit contrast in a two-product passage remains present,
-including a hydration contrast stated through the comparator. `More like a
+behavior and remains separate from a conditional future purchase. Thus `I
+have Poppy` and `would get it only on sale` are distinct atoms. Different
+hydration truths also remain distinct: `not the most hydrating` does not absorb
+`does not make lips drier`. Every explicit contrast in a two-product passage
+remains present, including a hydration contrast stated through the comparator
+and a separate target non-sinking claim when both are expressed. `More like a
 gloss than a balm` is an axis-free category judgment unless the leaf separately
 states a texture attribute.
 
@@ -766,6 +770,13 @@ new frontier.
 
 ## Changelog
 
+- `v17` / 2026-08-10 — made the existing independently-true atomicity rule
+  operational in method v5: two clauses remain separate whenever either could
+  change truth without the other, even with the same product, axis, or posture.
+  Named the three v16 failure boundaries directly: target non-sinking versus
+  target/comparator hydration contrast, not-most-hydrating versus not-drying,
+  and present ownership versus sale-only future purchase. Added no new schema,
+  universal evidence score, provider call, or corpus-run authority.
 - `v16` / 2026-08-10 — added adjudication v3's closed per-unit meaning-direction
   judgment so an explicit unmerged unit cannot evade calibration merely because
   it creates no final proposition relation. Preserved v1/v2 read compatibility

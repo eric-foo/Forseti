@@ -268,14 +268,13 @@ Choose exactly one disposition for each leaf:
 - A short reply with several plausible parent propositions, or with
   insufficient binding, is unresolved rather than out_of_scope.
 
-personal_agreement adopts only the targeted proposition, never the parent's
-first_hand posture, reasons, axes, or explanatory detail. A distinctly credited
-actor may add low-information same-thread recurrence only; disclose the thread
-and never award cross-venue credit. attribution_or_echo
-merely reports the parent and adds no origin; its statement must name that
-attribution. A direct answer to a specific question is its own bounded
-proposition -- first_hand when based on the author's experience. Context fills
-an omitted predicate, not posture.
+personal_agreement adopts only the targeted proposition, not the parent's
+first_hand, reasons, axes, or detail. A distinct actor may add low-information
+same-thread recurrence; disclose the thread, never cross-venue credit.
+attribution_or_echo reports the parent, adds no origin, and names attribution
+in its statement. A specific answer is its own bounded proposition --
+first_hand when based on the author's experience. Context fills an omitted
+predicate, not posture.
 
 Evidence posture describes support, not the verb. The author's own purchase,
 use, return, reach, repurchase, purchase intent, value judgment, or category
@@ -286,20 +285,22 @@ without its fields. Polarity is logical assertion, not sentiment: "is drying",
 drying" is negated. Polarity repeats direction; it never repairs the statement.
 
 Every unit carries a verified subject id. Uncataloged products are comparators
-or conditions only: never create their standalone units, invent ids, or rebind
-them. PRODUCT_IDENTITY_CATALOG is vocabulary, not proof. Leaf plus context must
-name the product or map its category to exactly one catalog product. Catalog v1
-verifies no variants: preserve variant/formula wording and return empty
-product_version_ids. Bounded wording stays claim_bearing; ambiguity is unresolved.
+or conditions only; never create standalone units or ids for them.
+PRODUCT_IDENTITY_CATALOG is vocabulary, not proof. Leaf plus context names or
+uniquely maps the product. Catalog v1 verifies no variants: preserve wording,
+return empty product_version_ids. Bounded wording stays claim_bearing;
+ambiguity stays unresolved.
 
 Report detailed leaves in `evidence`; use `terminal_groups` only after judging
-each leaf and sharing one disposition and reason. List every id. Groups are
-transport only, never a sample, default, remainder, wildcard, or filter. Each
-id appears once across both.
+each leaf and sharing one disposition and reason. List every id once across
+both. Groups are transport only, never a sample, default, remainder, wildcard,
+or filter.
 
-Extract the smallest complete set of in-scope atomic meanings. Split meanings
-that differ by product, axis, behavior, comparison, condition, polarity, or
-posture. Attach conditions to their proposition; never standalone. Never hide meanings behind
+Extract the smallest complete set of in-scope atomic meanings. One unit is one
+independently testable proposition: if either clause could change truth without
+the other, split them even when product, axis, or posture matches. Also split
+differences in behavior, comparison, condition, polarity, or posture. Attach
+conditions to their proposition; never standalone. Never hide meanings behind
 "the author reports". Account for every explicit in-scope attribute, behavior,
 reason, comparison, and product-or-formula relationship, including secondary
 comparisons. A later product called better after target use is a target
@@ -307,10 +308,11 @@ comparison when the referent is clear. When a result is what the author wanted,
 preserve both the result and preference, combined or split. Generic approval
 or dislike adds no atom: "good, but not worth $24" yields only the value atom.
 Praise tied to a named result, such as pleasant application, is specific
-evidence. "I have the Poppy flavor" is an ownership atom. "Reaches for other
-formulas" is affirmed switching behavior. Preserve degree: "not the most
-hydrating" is not "not hydrating enough". Split a non-sinking moisture claim
-from a target/comparator hydration contrast when both are explicit.
+evidence. "I have Poppy" and "would get it only on sale" are separate ownership
+and purchase-condition atoms. "Reaches for other formulas" is affirmed switching
+behavior. "Not the most hydrating" and "does not make lips drier" are separate;
+preserve their degree. When explicit, emit both a target non-sinking moisture
+unit and a target-versus-comparator hydration contrast.
 
 Axis candidates are vocabulary, not assignments. Each `axis_id` must be
 directly supported by its atomic statement and leaf.

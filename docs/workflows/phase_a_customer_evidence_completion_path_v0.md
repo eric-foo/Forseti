@@ -166,15 +166,16 @@ run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
-As of 2026-08-10, contract v16 and the no-provider runner implement the bounded
-calibration gate. The latest completed Summer Fridays dogfood was v15: 14 of 17
-gold cases passed, three failed, and only two of seven selective cold repeats
-were consistent. All seven final-view relation obligations passed, including
-the corrected `My fav!` same-thread recurrence, but the adjudication found
-missing atomic meanings, one missing supported axis, and several polarity
-inversions. It also exposed that a direction relation cannot inspect an
-explicit unit left unmerged. Contract v16 therefore requires a closed
-per-unit direction judgment in adjudication v3; that new gate has not yet
-received a completed dogfood verdict. Neither v15 nor this implementation
+As of 2026-08-10, contract v17 and the no-provider runner implement the bounded
+calibration gate. The latest completed Summer Fridays dogfood was v16: 14 of 17
+gold cases passed, four of seven selective cold repeats were consistent, and
+all seven final-view relation obligations passed. Adjudication v3 inspected
+every gold-case unit, including explicitly unmerged units, and found no
+unsupported axis or meaning-direction failure. Three critical over-compression
+failures remained: a target/comparator hydration contrast was omitted, two
+independent hydration meanings were fused, and ownership was fused with a
+sale-only future purchase. Contract v17 makes the already-owned
+independently-true atomicity rule explicit at those boundaries; it has not yet
+received a completed dogfood verdict. Neither v16 nor this implementation
 authorizes corpus resumption, estimates defect prevalence, or changes the
 still-incomplete full-corpus boundary above.

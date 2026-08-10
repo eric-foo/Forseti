@@ -3506,6 +3506,7 @@ def test_v5_prompt_keeps_pretty_json_encoding_and_asks_for_two_populations() -> 
 
 def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     text = METHOD_TEXT_V5
+    normalized = " ".join(text.split())
     for disposition in (
         "claim_bearing",
         "unresolved",
@@ -3520,13 +3521,13 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "Context may resolve\nomissions, never add attributes" in text
     assert '"I always reach for it" carries a bounded customer-behavior' in text
     assert "personal_agreement adopts only the targeted proposition" in text
-    assert "reasons, axes, or explanatory detail" in text
-    assert "attribution_or_echo\nmerely reports the parent" in text
-    assert "its statement must name that\nattribution" in text
-    assert "A direct answer to a specific question is its own bounded" in text
-    assert "Context fills\nan omitted predicate, not posture" in text
-    assert "may add low-information same-thread recurrence" in text
-    assert "never award cross-venue credit" in text
+    assert "first_hand, reasons, axes, or detail" in normalized
+    assert "attribution_or_echo reports the parent, adds no origin" in normalized
+    assert "names attribution in its statement" in normalized
+    assert "A specific answer is its own bounded proposition" in normalized
+    assert "Context fills an omitted predicate, not posture" in normalized
+    assert "may add low-information same-thread recurrence" in normalized
+    assert "never cross-venue credit" in normalized
     assert "Evidence posture describes support, not the verb" in text
     assert "value judgment, or category\njudgment is first_hand" in text
     assert "never customer shopping or use behavior" in text
@@ -3541,6 +3542,8 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     # Empty standalone reaction may terminate as context_only.
     assert '"Love it" with only a known product remains context_only' in text
     assert "smallest complete set of in-scope atomic meanings" in text
+    assert "One unit is one\nindependently testable proposition" in text
+    assert "split them even when product, axis, or posture matches" in text
     assert "every explicit in-scope attribute, behavior" in text
     assert "including secondary\ncomparisons" in text
     assert "later product called better after target use is a target\ncomparison" in text
@@ -3548,11 +3551,12 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "preserve both the result and preference" in text
     assert "Generic approval" in text and "dislike adds no atom" in text
     assert '"good, but not worth $24" yields only the value atom' in text
-    assert '"I have the Poppy flavor" is an ownership atom' in text
-    assert '"Reaches for other\nformulas" is affirmed switching behavior' in text
-    assert '"not the most\nhydrating" is not "not hydrating enough"' in text
-    assert "Split a non-sinking moisture claim" in text
-    assert "target/comparator hydration contrast" in text
+    assert '"I have Poppy" and "would get it only on sale" are separate ownership' in text
+    assert "purchase-condition atoms" in text
+    assert '"Reaches for other formulas" is affirmed switching' in text
+    assert '"Not the most hydrating" and "does not make lips drier" are separate' in text
+    assert "emit both a target non-sinking moisture" in text
+    assert "target-versus-comparator hydration contrast" in text
     assert '"Vanilla Beige!" -> "My fav!"' in text
     assert "claim_bearing personal_agreement with no axis" in text
     assert "Praise tied to a named result" in text
@@ -3568,13 +3572,13 @@ def test_v5_method_states_the_mandatory_four_way_boundary() -> None:
     assert "never attach it as support there" in text
     assert "Formula resemblance or change supports formula_consistency_and_change" in text
     assert "Every unit carries a verified subject id" in text
-    assert "never create their standalone units" in text
-    assert "map its category to exactly one catalog product" in text
+    assert "never create standalone units or ids for them" in normalized
+    assert "Leaf plus context names or uniquely maps the product" in normalized
     # Variant wording is preserved rather than dropped.
-    assert "Bounded wording stays claim_bearing" in text
-    assert "ambiguity is unresolved" in text
+    assert "Bounded wording stays claim_bearing" in normalized
+    assert "ambiguity stays unresolved" in normalized
     # Grouping is transport compression only.
-    assert "never a sample, default, remainder, wildcard" in text
+    assert "never a sample, default, remainder, wildcard" in normalized
 
 
 def test_v5_method_installs_no_phrase_blacklist_or_keyword_gate() -> None:
