@@ -814,13 +814,18 @@ new frontier.
 ## Changelog
 
 - `v20` / 2026-08-10 — disambiguated logical polarity from comparative
-  ordering for semantic extraction and calibration. A directly asserted
-  `less` or `more` comparison remains `affirmed`; logical constructions such
-  as `not as`, `never`, and `does not` remain `negated`. The generated bounded
-  calibration preparation now carries the same adjudication contract as a
-  hash-reported sidecar without changing the frozen preparation identity.
-  Added no sentiment classifier, phrase blacklist, provider call, full-corpus
-  execution, readiness claim, or resume authority.
+  ordering in this contract's extraction and calibration wording. A directly
+  asserted `less` or `more` comparison remains `affirmed`; logical
+  constructions such as `not as`, `never`, and `does not` remain `negated`.
+  The generated bounded calibration preparation now carries the same
+  adjudication contract as a hash-reported sidecar, and calibration
+  evaluation refuses a prepared sidecar whose bytes no longer match that
+  bound contract. Extraction-side effect is doctrine only: the method-v5
+  prompt text the extraction model actually reads is unchanged, which is why
+  the frozen preparation identity is unchanged and why no extraction run
+  behavior changed under this version. Added no sentiment classifier, phrase
+  blacklist, provider call, full-corpus execution, readiness claim, or resume
+  authority.
 - `v19` / 2026-08-10 — kept method-v5/v18 semantic wording and blind gold
   unchanged while adding calibration spec v3's closed audit of the highest
   semantic-unit-density non-gold rows. Each selected row now requires an exact

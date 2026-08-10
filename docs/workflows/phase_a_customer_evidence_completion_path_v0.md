@@ -206,9 +206,13 @@ adjudication sidecar now distinguish a directly asserted lower comparison
 as moisturising as B`, `negated`). Three fresh read-only adjudications produced
 the same 13-of-13 results across five v19 lower comparisons, matched clean
 controls, a reversed comparator, a contradicted negation, and a polarity
-conflict. Re-evaluating the frozen v19 responses with only the five affected
-per-unit judgments corrected removed all five direction failures and raised
-gold passage from 11 of 17 to 14 of 17. The result remains
+conflict; those three adjudications were not frozen as durable artifacts, so
+that 13-of-13 result is reported, not independently checkable. Re-evaluating
+the frozen v19 responses with only the five affected per-unit judgments
+corrected removed all five direction failures and raised gold passage from 11
+of 17 to 14 of 17. That corrected re-evaluation edited five recorded judgments
+rather than re-adjudicating under the generated sidecar, so it measures the
+direction rule, not the sidecar's effect on an adjudicator. The result remains
 `SEMANTIC_CALIBRATION_FAIL`: three unrelated gold cases still fail, three of
 the ten density-audit rows remain confirmed defects, no final views exist, and
 all seven relationship obligations remain blocked. This replay is bounded

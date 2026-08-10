@@ -51,6 +51,7 @@ from judgment.semantic_calibration import (
     CALIBRATION_ADJUDICATION_VERSION_V2,
     CALIBRATION_SPEC_VERSION,
     CALIBRATION_SPEC_VERSION_V1,
+    SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT,
     SemanticCalibrationError,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
@@ -3055,8 +3056,14 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
     assert "A is less moisturising than B" in normalized_contract
     assert "`polarity: affirmed`" in normalized_contract
     assert "not a sentiment or lower-is-negative judgment" in normalized_contract
+    # Pin the written sidecar and its reported hash to the bound constant, not
+    # to the bytes the runner just wrote: comparing the file against itself
+    # cannot detect the drift the hash exists to detect.
+    assert (
+        prepared_dir / "adjudication_contract.md"
+    ).read_bytes() == SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
     assert result["adjudication_contract_sha256"] == hashlib.sha256(
-        (prepared_dir / "adjudication_contract.md").read_bytes()
+        SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
     ).hexdigest()
     with pytest.raises(ValueError, match="refusing to overwrite"):
         prepare_semantic_calibration_run(
@@ -3094,6 +3101,26 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
 
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
     assert (tmp_path / "report.json").is_file()
+
+    # A prepared contract that no longer matches the bound wording means the
+    # adjudication was governed by unknown instructions; evaluation must stop
+    # rather than emit a report that looks identically bound.
+    (prepared_dir / "adjudication_contract.md").write_text(
+        "# Substituted contract\n\nMark every direction judgment true.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="does not match the bound contract"):
+        evaluate_semantic_calibration_run(
+            source_path=source_path,
+            prepared_dir=prepared_dir,
+            spec_path=spec_path,
+            response_root=tmp_path / "responses",
+            cold_response_root=None,
+            reconciliation_root=None,
+            adjudication_path=adjudication_path,
+            report_out=tmp_path / "report-substituted.json",
+        )
+    assert not (tmp_path / "report-substituted.json").exists()
 
 
 def test_cold_repeat_adjudication_is_bound_to_both_compilations() -> None:

@@ -201,6 +201,21 @@ def evaluate_semantic_calibration_run(
     report_out: Path,
 ) -> dict[str, Any]:
     """Evaluate returned calibration slices; a non-pass remains visible."""
+    # The sidecar is the adjudicator-facing statement of the direction rule, so
+    # a prepared copy that no longer matches the bound contract means the
+    # adjudication was governed by unknown wording. Fail loud rather than let a
+    # substituted or superseded contract pass silently. Absence stays tolerated:
+    # preparations frozen before the sidecar existed carry no copy at all, and
+    # re-evaluating them is an accepted workflow.
+    adjudication_contract_path = prepared_dir / "adjudication_contract.md"
+    if adjudication_contract_path.is_file() and (
+        adjudication_contract_path.read_bytes()
+        != SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
+    ):
+        raise ValueError(
+            "prepared adjudication contract does not match the bound contract "
+            f"(substituted or superseded): {adjudication_contract_path}"
+        )
     source = _load_object(source_path)
     spec = _load_object(spec_path)
     normalized = validate_calibration_spec(spec)
