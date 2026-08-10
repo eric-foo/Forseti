@@ -106,6 +106,32 @@ def canonical_old_reddit_thread_url(href: str) -> str | None:
     return stripped
 
 
+def canonical_www_reddit_thread_url(href: str) -> str | None:
+    """Canonicalize a new-Reddit thread href to a trailing-slash comments URL.
+
+    Same contract as the old-Reddit sibling above, against ``www.reddit.com``.
+    New-Reddit listing rows carry both a relative ``permalink`` and an absolute
+    ``content-href``, and a cross-posted row's href legitimately names another
+    subreddit, which is honest provenance rather than traversal.
+
+    Deliberately NOT folded into the old-Reddit function with a host parameter:
+    the two hosts are different capture surfaces with different block postures,
+    and a shared host-switching helper would let a caller silently emit one
+    surface's URLs from the other's capture.
+    """
+    stripped = href.strip()
+    if stripped.startswith("/r/"):
+        stripped = f"https://www.reddit.com{stripped}"
+    if not stripped.startswith("https://www.reddit.com/r/"):
+        return None
+    stripped = stripped.split("#", 1)[0].split("?", 1)[0]
+    if "/comments/" not in stripped:
+        return None
+    if not stripped.endswith("/"):
+        stripped += "/"
+    return stripped
+
+
 def resolve_preserved_file_path(packet_dir: Path, file_id: str, relative_packet_path: str) -> Path:
     """Resolve a preserved file strictly INSIDE the packet directory.
 

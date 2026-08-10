@@ -34,6 +34,9 @@ from data_lake.reddit_subreddit_registry import (
 )
 from data_lake.root import DataLakeRoot
 from capture_spine.reddit_subreddit_grid.grid_projection import (
+    GRID_LISTING_HOSTS,
+    OLD_REDDIT_LISTING_HOST,
+    WWW_REDDIT_LISTING_HOST,
     GridView,
     RedditGridProjectionError,
     grid_view_from_record,
@@ -63,17 +66,25 @@ GRID_OBSERVATION_SOURCE_SURFACE = "old_reddit_grid_packet"
 # Weekly demand-radar listing (top/?t=week): same grid family, distinguishable
 # ledger line so readers can tell a weekly consolidated pass from a live pass.
 TOP_WEEK_OBSERVATION_SOURCE_SURFACE = "old_reddit_top_week_packet"
+# A real-Chrome www capture is a different surface reached by a different
+# transport; its observation ledger line names that surface directly (trunk
+# vocabulary, PR #1424). Admission pins the content record's listing URL to the
+# packet locator, so the host faithfully names the surface that produced the
+# counts, and the weekly-vs-live distinction for a www packet is readable from
+# that locator rather than from a second ledger name.
 WWW_REDDIT_REALCHROME_SOURCE_SURFACE = "www_reddit_realchrome_cdp"
 
 
 def _observation_surface_for(listing_url: str) -> str:
     parsed = urlparse(listing_url)
-    # Admission pins the content record's listing URL to the packet locator, so
-    # the host faithfully names the surface that produced the counts. A
-    # real-Chrome www capture is not an old-Reddit packet and must not be
-    # recorded in the observation ledger as one.
-    if parsed.netloc.lower() == "www.reddit.com":
+    host = parsed.netloc.lower()
+    if host == WWW_REDDIT_LISTING_HOST:
         return WWW_REDDIT_REALCHROME_SOURCE_SURFACE
+    if host != OLD_REDDIT_LISTING_HOST:
+        raise RegistryRefreshError(
+            "grid_listing_host_unknown",
+            f"cannot assign a grid observation surface to host {host!r}",
+        )
     parts = [part for part in parsed.path.split("/") if part]
     if parts and parts[-1] == "top" and "t=week" in (parsed.query or "").split("&"):
         return TOP_WEEK_OBSERVATION_SOURCE_SURFACE
@@ -240,6 +251,12 @@ def refresh_lake_registry_from_grid_packets(
             source_surface=_observation_surface_for(view.listing_url),
             provenance_pointer=read.manifest_path,
             absent_reason_or_none=view.visible_volume_signal_absent_reason_or_none,
+            # www states weekly reach; old Reddit has no equivalent and leaves
+            # these None, so the same call serves both surfaces.
+            weekly_visitor_count_or_none=_normalized_count(view.weekly_visitor_count_or_none),
+            weekly_contribution_count_or_none=_normalized_count(
+                view.weekly_contribution_count_or_none
+            ),
             dry_run=dry_run,
         )
         if result["status"] == "already_current":
@@ -282,12 +299,10 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
     if subreddit is None:
         raise RegistryRefreshError("locator_unparseable", f"cannot parse subreddit from locator: {locator!r}")
 
-    metadata_file_name = (
-        "realchrome_snapshot_metadata.json"
-        if packet.source_surface == WWW_REDDIT_REALCHROME_SOURCE_SURFACE
-        else "http_response_metadata.json"
+    metadata_file = _resolve_grid_metadata_file(
+        packet,
+        expected_locator=locator,
     )
-    metadata_file = _resolve_preserved_file(packet, file_name=metadata_file_name)
     metadata_path = _resolve_packet_file_path(
         packet_dir=manifest_path.parent,
         relative_packet_path=metadata_file["relative_packet_path"],
@@ -299,19 +314,14 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
         expected_hash=metadata_file["sha256"],
         error_code="http_metadata_hash_mismatch",
     )
-    if packet.source_surface == WWW_REDDIT_REALCHROME_SOURCE_SURFACE:
-        _verify_successful_realchrome_grid_response(
-            packet=packet,
-            metadata_path=metadata_path,
-            expected_subreddit=subreddit,
-            expected_locator=locator,
-        )
-    else:
-        _verify_successful_grid_response(
-            packet=packet,
-            metadata_path=metadata_path,
-            expected_subreddit=subreddit,
-        )
+    # One verifier for both transports (ours), grafted below with the two
+    # checks trunk's separate www verifier added.
+    _verify_successful_grid_response(
+        packet=packet,
+        metadata_path=metadata_path,
+        expected_locator=locator,
+        expected_subreddit=subreddit,
+    )
 
     # Content-mode packets preserve the capture-time derived record instead of
     # raw HTML (storage-and-retention doctrine, 2026-07-17); sample packets
@@ -346,17 +356,19 @@ def read_grid_packet(*, packet_or_manifest_path: Path) -> PacketGridRead:
                 "content_record_subreddit_mismatch",
                 f"content record names subreddit {grid_view.subreddit!r}, expected {subreddit!r}",
             )
-        if not _same_supported_listing_url(
-            grid_view.listing_url,
-            locator,
-            expected_host=expected_host,
-        ):
+        if not same_grid_listing_url(grid_view.listing_url, locator):
             raise RegistryRefreshError(
-                "content_record_locator_mismatch",
+                "content_record_listing_url_mismatch",
                 "content record listing URL does not match the packet locator: "
-                f"record={grid_view.listing_url!r} locator={locator!r}",
+                f"content={grid_view.listing_url!r} packet={locator!r}",
             )
     else:
+        if urlparse(locator).netloc.lower() == WWW_REDDIT_LISTING_HOST:
+            raise RegistryRefreshError(
+                "www_content_record_required",
+                "www Reddit grid packets require an admitted content record; "
+                "a raw fallback remains failure evidence, not registry evidence",
+            )
         raw_file = _resolve_preserved_file(packet, file_name="http_response_body.bin")
         raw_path = _resolve_packet_file_path(
             packet_dir=manifest_path.parent,
@@ -402,7 +414,7 @@ def _apply_two_speed_refresh(
             "observed_at": read.observed_at,
             "subscriber_count_or_none": _normalized_count(view.visible_subscriber_count_or_none),
             "active_user_count_or_none": _normalized_count(view.visible_active_user_count_or_none),
-            "source_surface": GRID_OBSERVATION_SOURCE_SURFACE,
+            "source_surface": _observation_surface_for(view.listing_url),
             "provenance_pointer": read.manifest_path,
             "absent_reason_or_none": view.visible_volume_signal_absent_reason_or_none,
         }
@@ -443,6 +455,32 @@ def _resolve_preserved_file(packet, *, file_name: str, required: bool = True) ->
     return matching_files[0]
 
 
+def _resolve_grid_metadata_file(
+    packet, *, expected_locator: str
+) -> dict[str, str]:
+    """Resolve the metadata transport the declared listing host requires.
+
+    A packet may preserve additional transport metadata alongside the required
+    one (trunk runner shape, PR #1424); only the declared host's metadata is
+    load-bearing here, so extras are ignored rather than refused.
+    """
+    is_www = urlparse(expected_locator).netloc.lower() == WWW_REDDIT_LISTING_HOST
+    expected_name = (
+        "realchrome_snapshot_metadata.json"
+        if is_www
+        else "http_response_metadata.json"
+    )
+    expected = _resolve_preserved_file(
+        packet, file_name=expected_name, required=False
+    )
+    if expected is None:
+        raise RegistryRefreshError(
+            "preserved_file_unresolved",
+            f"expected exactly one preserved {expected_name}, found 0",
+        )
+    return expected
+
+
 def _resolve_packet_file_path(
     *,
     packet_dir: Path,
@@ -473,6 +511,7 @@ def _verify_successful_grid_response(
     *,
     packet,
     metadata_path: Path,
+    expected_locator: str,
     expected_subreddit: str,
 ) -> None:
     try:
@@ -487,42 +526,103 @@ def _verify_successful_grid_response(
             "http_metadata_shape",
             "preserved HTTP metadata is not a JSON object",
         )
-    status = metadata.get("status")
-    if status is not None and (not isinstance(status, int) or not 200 <= status < 300):
+    is_www = urlparse(expected_locator).netloc.lower() == WWW_REDDIT_LISTING_HOST
+    status_key = "http_response_status" if is_www else "status"
+    unexpected_status_key = "status" if is_www else "http_response_status"
+    if unexpected_status_key in metadata:
+        raise RegistryRefreshError(
+            "http_metadata_shape",
+            f"grid metadata carries unexpected status key {unexpected_status_key!r} "
+            f"for its declared listing transport",
+        )
+    status = metadata.get(status_key)
+    if type(status) is not int or not 200 <= status < 300:
         raise RegistryRefreshError(
             "grid_access_unsuccessful",
-            f"grid packet HTTP status is not successful: {status!r}",
+            f"grid packet {status_key} is not a successful integer status: {status!r}",
         )
+    if is_www:
+        access_blocked = metadata.get("access_blocked")
+        classification = metadata.get("rendered_access_classification")
+        if type(access_blocked) is not bool:
+            raise RegistryRefreshError(
+                "http_metadata_shape",
+                "real-Chrome grid metadata must carry a boolean access_blocked value",
+            )
+        if access_blocked or classification == "access_blocked":
+            raise RegistryRefreshError(
+                "grid_access_unsuccessful",
+                "grid packet records an access block: "
+                f"{metadata.get('access_block_reason')!r}",
+            )
+        # Grafted from the trunk verifier (PR #1424): the packet must declare
+        # its capture method, and the REQUESTED url must match the locator too
+        # -- a redirect-to-lookalike would otherwise pass on final_url alone.
+        if metadata.get("method_category") != "real_browser_cdp":
+            raise RegistryRefreshError(
+                "grid_access_unsuccessful",
+                "real-Chrome grid packet metadata does not declare real_browser_cdp",
+            )
+        requested_url = metadata.get("requested_url")
+        if not isinstance(requested_url, str) or not same_grid_listing_url(
+            requested_url, expected_locator
+        ):
+            raise RegistryRefreshError(
+                "grid_final_locator_mismatch",
+                "real-Chrome requested URL does not match the packet locator: "
+                f"{requested_url!r}",
+            )
+        # Absent classification is the trunk metadata shape (five keys); only
+        # an unknown *string* is refused.
+        if classification not in {
+            None,
+            "no_block_marker",
+            "residual_challenge_marker",
+        }:
+            raise RegistryRefreshError(
+                "http_metadata_shape",
+                "real-Chrome grid metadata carries an unknown rendered access "
+                f"classification: {classification!r}",
+            )
     final_url = metadata.get("final_url")
     if (
         final_url is not None
         and (
             not isinstance(final_url, str)
-            or _subreddit_from_listing_url(final_url) != expected_subreddit
+            or not same_grid_listing_url(final_url, expected_locator)
         )
     ):
         raise RegistryRefreshError(
             "grid_final_locator_mismatch",
-            f"grid packet final URL does not match subreddit {expected_subreddit!r}: {final_url!r}",
+            "grid packet final URL does not match its declared listing locator: "
+            f"final={final_url!r} declared={expected_locator!r}",
         )
     for source_slice in packet.source_slices:
         locator = source_slice.locator.value
         access_posture = source_slice.access_posture.value or ""
+        successful_posture = (
+            access_posture.startswith(
+                "real_browser_cdp preserved rendered public page artifacts"
+            )
+            if is_www
+            else access_posture.startswith("direct_http succeeded with HTTP 2")
+        )
         if (
             isinstance(locator, str)
-            and _subreddit_from_listing_url(locator) == expected_subreddit
-            and access_posture.startswith("direct_http succeeded with HTTP 2")
+            and same_grid_listing_url(locator, expected_locator)
+            and _subreddit_from_listing_url(
+                locator,
+                expected_host=(
+                    WWW_REDDIT_LISTING_HOST if is_www else OLD_REDDIT_LISTING_HOST
+                ),
+            )
+            == expected_subreddit
+            and successful_posture
         ):
-            if final_url is not None and not same_grid_listing_url(final_url, locator):
-                raise RegistryRefreshError(
-                    "grid_final_locator_mismatch",
-                    f"grid packet final URL does not match requested listing: "
-                    f"final={final_url!r} requested={locator!r}",
-                )
             return
     raise RegistryRefreshError(
         "grid_access_unsuccessful",
-        "grid packet carries no successful old-Reddit source slice for the declared subreddit",
+        "grid packet carries no successful source slice for its declared Reddit listing",
     )
 
 

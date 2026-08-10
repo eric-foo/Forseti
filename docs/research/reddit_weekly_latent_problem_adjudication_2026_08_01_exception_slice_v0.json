@@ -1,0 +1,771 @@
+{
+ "review_pass": "sub_floor_exception_slice_v0",
+ "basis": "owner-adopted sub-floor exception rule (gate 1) applied retroactively to the 2026-07-31 pool via the tuned reader pattern; rows at 4-9 comments whose titles carry explicit failure/authenticity/discontinuation/dupe signals",
+ "rows_reviewed": 44,
+ "admission_counts": {
+  "yes": 37,
+  "no": 7
+ },
+ "high_priority_count": 3,
+ "records": [
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1v908qd/decants_from_decantified_42_decants_reviews_and/",
+   "subreddit": "fragranceclones",
+   "listing_snapshot": {
+    "captured_at": "1785249175068",
+    "score": 28,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "comparative_review_density"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v9gj9t/longshot_but_looking_for_a_dupe_for_this/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "captured_at": "1785285388449",
+    "score": 24,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand",
+    "vintage_or_discontinued_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v6jq2o/looking_for_a_lipstick_similar_to_my_favorite/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "captured_at": "1785012994907",
+    "score": 20,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand",
+    "vintage_or_discontinued_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Fragrances/comments/1v6xyhx/my_dupes_collection/",
+   "subreddit": "fragrances",
+   "listing_snapshot": {
+    "captured_at": "1785054476229",
+    "score": 6,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "collection_or_haul_format"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1vab41t/routine_help_my_hydratingbarrier_repair_routine/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "captured_at": "1785363823287",
+    "score": 3,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_performance_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/koreanskincare/comments/1v86nct/do_those_morning_lemon_and_oil_routine_things/",
+   "subreddit": "koreanskincare",
+   "listing_snapshot": {
+    "captured_at": "1785172481370",
+    "score": 0,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_performance_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v76ixp/nabla_eyeshadow_dupe_iris_notes/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "captured_at": "1785078660946",
+    "score": 28,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v9yxt1/need_drugstore_dupes/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "captured_at": "1785337785469",
+    "score": 12,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Sunscreenreddit/comments/1v7f7s7/sunburn_calculator_customized_to_skin_type_and/",
+   "subreddit": "sunscreenreddit",
+   "listing_snapshot": {
+    "captured_at": "1785097912631",
+    "score": 10,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "tool_self_promotion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/curlyhair/comments/1vb4l2i/help_hair_ruined_curl_recovery_tips/",
+   "subreddit": "curlyhair",
+   "listing_snapshot": {
+    "captured_at": "1785441860937",
+    "score": 7,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "service_failure_recovery"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v6n55k/product_request_looking_for_alternative_to/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "captured_at": "1785021673730",
+    "score": 4,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1vbo9ol/product_question_azelaic_sting_normal_or_allergy/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "captured_at": "1785497254065",
+    "score": 3,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_performance_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1v9qmun/anyone_know_any_dupes_for_thebalm_frat_boy_blush/",
+   "subreddit": "drugstoremua",
+   "listing_snapshot": {
+    "captured_at": "1785315626014",
+    "score": 29,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1v6cxcg/replacement_for_multipeptide_body_wash/",
+   "subreddit": "30plusskincare",
+   "listing_snapshot": {
+    "captured_at": "1784997121159",
+    "score": 11,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand",
+    "vintage_or_discontinued_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Sephora/comments/1v6mqtw/as_a_very_pale_cool_toned_individual_who_was/",
+   "subreddit": "sephora",
+   "listing_snapshot": {
+    "captured_at": "1785020614363",
+    "score": 6,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "vintage_or_discontinued_demand",
+    "shade_gap_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Minoxbeards/comments/1v9mf5j/is_this_legit_in_germany/",
+   "subreddit": "minoxbeards",
+   "listing_snapshot": {
+    "captured_at": "1785301735068",
+    "score": 3,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "counterfeit_or_authenticity_risk"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1v9vvlh/vanilla_powder_dupe/",
+   "subreddit": "fragranceclones",
+   "listing_snapshot": {
+    "captured_at": "1785330852643",
+    "score": 2,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v84cku/starting_adapalene_and_applied_it_2_days_in_a_row/",
+   "subreddit": "skincare_addiction",
+   "listing_snapshot": {
+    "captured_at": "1785167628767",
+    "score": 0,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_performance_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1v6eap5/is_the_fenty_midnight_collection_no_longer/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1785000315283",
+    "score": 8,
+    "comments": 6
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "vintage_or_discontinued_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1v9lq59/cetaphil_gentle_skin_cleanser_crazy_reaction_has/",
+   "subreddit": "30plusskincare",
+   "listing_snapshot": {
+    "captured_at": "1785299638233",
+    "score": 2,
+    "comments": 6
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "named_product_failure",
+    "counterfeit_or_authenticity_risk",
+    "corroborated_cluster"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/eczema/comments/1v5h5gw/how_best_to_introduce_eggs_and_peanut_to_eczema/",
+   "subreddit": "eczema",
+   "listing_snapshot": {
+    "captured_at": "1784912345567",
+    "score": 2,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/tretinoin/comments/1v5e50h/tretinoin_reaction/",
+   "subreddit": "tretinoin",
+   "listing_snapshot": {
+    "captured_at": "1784905843029",
+    "score": 2,
+    "comments": 6
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_performance_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1vbe5lr/revision_d_e_j_boosting_serum_dupes/",
+   "subreddit": "skincareaddictionlux",
+   "listing_snapshot": {
+    "captured_at": "1785465562531",
+    "score": 1,
+    "comments": 6
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/eyelashextensions/comments/1v76zf3/if_youve_had_an_allergic_reaction_and_got_them/",
+   "subreddit": "eyelashextensions",
+   "listing_snapshot": {
+    "captured_at": "1785079703564",
+    "score": 1,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1vb1eva/dupe_for_ud_tonic/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "captured_at": "1785435000538",
+    "score": 9,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Sephora/comments/1vb2m14/need_recommendations_for_foundations_similar_to/",
+   "subreddit": "sephora",
+   "listing_snapshot": {
+    "captured_at": "1785437576211",
+    "score": 7,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand",
+    "vintage_or_discontinued_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/eczema/comments/1vbjr11/save_me_from_protopic_burn/",
+   "subreddit": "eczema",
+   "listing_snapshot": {
+    "captured_at": "1785482269597",
+    "score": 5,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/fragranceclones/comments/1v6jj8d/riifss_cruise_dupe_of/",
+   "subreddit": "fragranceclones",
+   "listing_snapshot": {
+    "captured_at": "1785012509122",
+    "score": 5,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v7f578/sun_care_sunburn_calculator_customized_to_skin/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "captured_at": "1785097748916",
+    "score": 4,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "tool_self_promotion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1vb5uya/red_bumpy_burning_patches/",
+   "subreddit": "skincareaddicts",
+   "listing_snapshot": {
+    "captured_at": "1785444629619",
+    "score": 2,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v5onpg/timeless_vitamin_c_serum_is_making_my_eyes_burn/",
+   "subreddit": "skincare_addiction",
+   "listing_snapshot": {
+    "captured_at": "1784928502094",
+    "score": 1,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "named_product_failure"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/fragrance/comments/1v7sgpa/was_the_vs_midnight_bloom_formula_changed/",
+   "subreddit": "fragrance",
+   "listing_snapshot": {
+    "captured_at": "1785134230797",
+    "score": 0,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "reformulation_complaint",
+    "corroborated_cluster"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeupdupes/comments/1v65zmy/possible_bobbi_brown_crushed_lip_colour_dupe_but/",
+   "subreddit": "makeupdupes",
+   "listing_snapshot": {
+    "captured_at": "1784979305910",
+    "score": 19,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v7vfyo/acne_in_which_order_should_i_layer_tretinoin_with/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "captured_at": "1785144611030",
+    "score": 6,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "compatibility_question"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Haircare/comments/1vbb8dl/is_there_a_nonboar_derived_bristle_brush/",
+   "subreddit": "haircare",
+   "listing_snapshot": {
+    "captured_at": "1785457648502",
+    "score": 5,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Perfumes/comments/1v6j0rd/recommendation_for_discontinued_scent/",
+   "subreddit": "perfumes",
+   "listing_snapshot": {
+    "captured_at": "1785011286917",
+    "score": 4,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "vintage_or_discontinued_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1v9o3af/anyone_know_any_good_dupes_for_mac_greige_lip/",
+   "subreddit": "drugstoremua",
+   "listing_snapshot": {
+    "captured_at": "1785307000162",
+    "score": 3,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1v6h35q/dupe_for_my_favorite_sunscreen/",
+   "subreddit": "skincareaddicts",
+   "listing_snapshot": {
+    "captured_at": "1785006701918",
+    "score": 2,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Sunscreenreddit/comments/1vaee8w/need_an_alternative_to_shiseido_ultra_sun/",
+   "subreddit": "sunscreenreddit",
+   "listing_snapshot": {
+    "captured_at": "1785372020822",
+    "score": 2,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Fragrances/comments/1vb8e19/is_glin_dee_fragrances_legit/",
+   "subreddit": "fragrances",
+   "listing_snapshot": {
+    "captured_at": "1785450470161",
+    "score": 1,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "counterfeit_or_authenticity_risk",
+    "channel_trust_signal"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Makeup/comments/1v8ythh/does_anyone_know_dupe_for_fenty_pink_ice/",
+   "subreddit": "makeup",
+   "listing_snapshot": {
+    "captured_at": "1785245969747",
+    "score": 1,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/KoreanBeauty/comments/1v75fnh/beauty_of_joeson_products_causing_a_weird_reaction/",
+   "subreddit": "koreanbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785076157233",
+    "score": 0,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "named_product_failure",
+    "counterfeit_or_authenticity_risk",
+    "corroborated_cluster"
+   ],
+   "priority_band": "high"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/eczema/comments/1valep9/any_recommendations_of_a_trustworthy_clean_tallow/",
+   "subreddit": "eczema",
+   "listing_snapshot": {
+    "captured_at": "1785392364453",
+    "score": 0,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_request_specific"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_exception_slice_v0",
+   "thread_url": "https://www.reddit.com/r/fragrance/comments/1v6kzzr/looking_for_a_dioriviera_dupe/",
+   "subreddit": "fragrance",
+   "listing_snapshot": {
+    "captured_at": "1785016147638",
+    "score": 0,
+    "comments": 4
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "dupe_or_substitute_demand"
+   ],
+   "priority_band": "normal"
+  }
+ ]
+}

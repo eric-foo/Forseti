@@ -49,7 +49,13 @@ from source_capture import (
     unknown_with_reason,
     write_local_source_capture_packet,
 )
+from source_capture.content_extraction import (
+    CONTENT_EXTRACTION_FAILED_EXIT_CODE,
+    CONTENT_RECORD_FILENAME,
+    RenderedContentExtractionSpec,
+)
 from source_capture.rendered_access import RenderedAccessClass, classify_rendered_access
+from source_capture.rendered_retention import resolve_rendered_retention
 from source_capture.source_detail_sufficiency import (
     SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE,
     SourceDetailSufficiencyRequirements,
@@ -89,6 +95,28 @@ REALCHROME_CDP_NON_CLAIMS = [
 # scoped to this runner's plain-text metadata/DOM; not a shared helper in harness_utils.
 _SECRET_LIKE = re.compile(r"\b(Set-Cookie|cf_clearance|storage_state|user_data_dir)\b", re.IGNORECASE)
 
+# Click every eligible in-place expansion control inside the caller's selector
+# whose visible text matches the caller's pattern, and report how many were
+# clicked. Anchors carrying an href are deliberately excluded: those navigate
+# to another page, and following them would turn one bounded capture into a
+# crawl.
+_EXPAND_CONTROLS_JS = """
+(payload) => {
+  const re = new RegExp(payload.pattern, 'i');
+  const controls = Array.from(document.querySelectorAll(payload.selector))
+    .filter(el => !(el.tagName === 'A' && el.getAttribute('href')))
+    .filter(el => el.isConnected && el.getClientRects().length > 0)
+    .filter(el => !el.disabled && el.getAttribute('aria-disabled') !== 'true')
+    .filter(el => re.test(el.textContent || ''));
+  if (!payload.click) return {eligible: controls.length, clicked: 0};
+  let clicked = 0;
+  for (const control of controls) {
+    try { control.click(); clicked += 1; } catch (err) { /* one dead control must not stop the round */ }
+  }
+  return {eligible: controls.length, clicked};
+}
+"""
+
 
 @dataclass(frozen=True)
 class RealChromeCDPCaptureResult:
@@ -97,13 +125,24 @@ class RealChromeCDPCaptureResult:
     title: str | None
     rendered_dom: str
     visible_text: str
-    screenshot_png: bytes
+    # ``None`` when the caller suppressed the screenshot.  Suppression is not
+    # capture-then-discard: on a tall viewport the raster is the single largest
+    # artifact (9.40 MB of 12.0 MB on a measured Reddit listing) and nothing
+    # reads it -- the projection reads DOM and visible text, and the access
+    # classifier reads the response.
+    screenshot_png: bytes | None
     http_status: int | None
     warm_hop_url: str | None
     warm_hop_blocked: bool | None
     viewport_width: int | None = None
     viewport_height: int | None = None
     warning_notes: list[str] = field(default_factory=list)
+    # In-place expansion accounting. ``expansion_exhausted`` is the honest
+    # distinction a later reader needs: False means the round bound stopped the
+    # loop while controls remained, so the DOM is short by an unknown amount.
+    expansion_rounds: int = 0
+    expansion_clicks: int = 0
+    expansion_exhausted: bool | None = None
 
 
 class RealChromeCDPEngine(Protocol):
@@ -121,11 +160,58 @@ class RealChromeCDPEngine(Protocol):
         viewport_height: int,
         persistent_tab_marker: str | None,
         fit_viewport_to_window: bool,
+        capture_screenshot: bool = True,
+        ready_selector: str | None = None,
+        expand_control_pattern: str | None = None,
+        expand_control_selector: str = "button, a",
+        expand_max_rounds: int = 0,
+        expand_settle_ms: int = 6000,
     ) -> RealChromeCDPCaptureResult: ...
 
 
 class RealChromeCDPUnavailable(RuntimeError):
     pass
+
+
+class RealChromeNavigationHTTPError(RealChromeCDPUnavailable):
+    """The target navigation reached the server and was refused with an HTTP
+    error response. Subclasses RealChromeCDPUnavailable so every existing
+    handler keeps its exit behavior; the distinct type exists because a
+    server-side refusal (throttling burst, 5xx) must never read as local
+    Chrome/CDP unavailability -- that misread hid an 11-slot refusal burst in
+    the 2026-08-01 batch. ``http_status`` is the refused status when the
+    response listener observed it, else None.
+    """
+
+    def __init__(self, message: str, *, http_status: int | None):
+        super().__init__(message)
+        self.http_status = http_status
+
+
+class RealChromeWrongPageError(RealChromeCDPUnavailable):
+    """The snapshot was taken on a page other than the requested target.
+
+    A persistent tab lives in the operator's real Chrome, so a human can
+    navigate it while a capture is settling or expanding; the snapshot then
+    honestly preserves the wrong page while the batch row reads success. The
+    2026-08-03 wave committed 21 such packets (old unrelated threads) before
+    this guard existed. Subclasses RealChromeCDPUnavailable so existing
+    handlers keep their exit behavior; carries no ``http_status`` so refusal
+    circuit breakers ignore it (a local race, not a server refusal).
+    """
+
+    def __init__(self, message: str, *, requested_url: str, final_url: str):
+        super().__init__(message)
+        self.requested_url = requested_url
+        self.final_url = final_url
+
+
+def _is_navigation_http_error(exc: BaseException, observed_status: int | None) -> bool:
+    """A navigation failure is an HTTP refusal when Chromium says so or when
+    the main-frame navigation response itself carried an error status."""
+    if "ERR_HTTP_RESPONSE_CODE_FAILURE" in str(exc):
+        return True
+    return observed_status is not None and observed_status >= 400
 
 
 def _capture_viewport_screenshot(*, page, context, timeout_ms: float, warnings: list[str]) -> bytes:
@@ -213,6 +299,12 @@ class _LiveRealChromeCDPEngine:
         viewport_height: int,
         persistent_tab_marker: str | None,
         fit_viewport_to_window: bool,
+        capture_screenshot: bool = True,
+        ready_selector: str | None = None,
+        expand_control_pattern: str | None = None,
+        expand_control_selector: str = "button, a",
+        expand_max_rounds: int = 0,
+        expand_settle_ms: int = 6000,
     ) -> RealChromeCDPCaptureResult:
         try:
             from playwright.sync_api import sync_playwright
@@ -279,12 +371,46 @@ class _LiveRealChromeCDPEngine:
                 # navigation. A raw Playwright error here must become a clean exit-3, not an
                 # uncaught traceback. page.close() in the finally still runs either way.
                 try:
-                    response = _navigate_target(
-                        page=page,
-                        url=url,
-                        timeout_ms=timeout_ms,
-                        persistent_tab_marker=persistent_tab_marker,
-                    )
+                    navigation_statuses: list[int] = []
+
+                    def _record_navigation_status(resp, _page=page):
+                        # Failure-path listener: when goto raises (e.g.
+                        # net::ERR_HTTP_RESPONSE_CODE_FAILURE) it returns no
+                        # Response object, and this is the only place the
+                        # refused status can still be read.
+                        try:
+                            if (
+                                resp.request.is_navigation_request()
+                                and resp.frame == _page.main_frame
+                            ):
+                                navigation_statuses.append(resp.status)
+                        except Exception:
+                            pass
+
+                    page.on("response", _record_navigation_status)
+                    try:
+                        response = _navigate_target(
+                            page=page,
+                            url=url,
+                            timeout_ms=timeout_ms,
+                            persistent_tab_marker=persistent_tab_marker,
+                        )
+                    except Exception as exc:
+                        observed = (
+                            navigation_statuses[-1] if navigation_statuses else None
+                        )
+                        if _is_navigation_http_error(exc, observed):
+                            raise RealChromeNavigationHTTPError(
+                                f"target navigation for {url} was refused with an "
+                                "HTTP error response "
+                                f"(status={'unknown' if observed is None else observed}); "
+                                "server-side refusal, not CDP unavailability. "
+                                f"Underlying error: {type(exc).__name__}: {exc}",
+                                http_status=observed,
+                            ) from exc
+                        raise
+                    finally:
+                        page.remove_listener("response", _record_navigation_status)
                     http_status = response.status if response is not None else None
                     settle_block_signal = None
                     remaining_settle_ms = int(settle_seconds * 1000)
@@ -312,6 +438,99 @@ class _LiveRealChromeCDPEngine:
                             "transient_access_block_observed_during_settle: "
                             f"{settle_block_signal}"
                         )
+                    if ready_selector:
+                        # A fixed settle is a guess about render time, and a
+                        # wrong guess is indistinguishable from an empty page:
+                        # 8 of 91 captures on 2026-07-31 snapshotted a rendered
+                        # shell whose feed had not arrived, or rows whose
+                        # attributes had not populated. Waiting on a caller-named
+                        # readiness condition replaces the guess. A timeout is
+                        # recorded and capture continues, so the packet still
+                        # exists as evidence and the projection guard is what
+                        # decides whether it may be admitted.
+                        try:
+                            page.wait_for_selector(
+                                ready_selector, timeout=min(timeout_ms, 60000)
+                            )
+                        except Exception as exc:
+                            warnings.append(
+                                f"ready_selector {ready_selector!r} did not appear "
+                                f"before snapshot: {type(exc).__name__}"
+                            )
+                    expansion_rounds = 0
+                    expansion_clicks = 0
+                    expansion_exhausted: bool | None = None
+                    if expand_control_pattern and expand_max_rounds > 0:
+                        # Some surfaces paint only a fraction of their content
+                        # and hide the rest behind in-place expansion controls
+                        # (a measured Reddit thread served 35 of 198 comments on
+                        # first paint). Click every matching control, settle, and
+                        # repeat until none remain. Only IN-PLACE controls are
+                        # clicked: this never follows a link to another page, so
+                        # it stays one bounded capture rather than a crawl.
+                        expansion_exhausted = False
+                        for _ in range(expand_max_rounds):
+                            try:
+                                outcome = page.evaluate(
+                                    _EXPAND_CONTROLS_JS,
+                                    {
+                                        "pattern": expand_control_pattern,
+                                        "selector": expand_control_selector,
+                                        "click": True,
+                                    },
+                                )
+                            except Exception as exc:
+                                warnings.append(
+                                    f"expansion round failed (continuing): {type(exc).__name__}: {exc}"
+                                )
+                                expansion_exhausted = None
+                                break
+                            eligible = int(outcome.get("eligible", 0))
+                            clicked = int(outcome.get("clicked", 0))
+                            if not eligible:
+                                expansion_exhausted = True
+                                break
+                            if not clicked:
+                                warnings.append(
+                                    f"expansion round found {eligible} eligible control(s) "
+                                    "but clicked none; exhaustion is unknown"
+                                )
+                                expansion_exhausted = None
+                                break
+                            expansion_rounds += 1
+                            expansion_clicks += clicked
+                            if clicked < eligible:
+                                warnings.append(
+                                    f"expansion round clicked {clicked} of {eligible} eligible control(s)"
+                                )
+                            page.wait_for_timeout(expand_settle_ms)
+                        else:
+                            # Probe after the final settle without another click.
+                            # The old loop always reported False when the final
+                            # allowed click actually removed the last control.
+                            try:
+                                remaining = page.evaluate(
+                                    _EXPAND_CONTROLS_JS,
+                                    {
+                                        "pattern": expand_control_pattern,
+                                        "selector": expand_control_selector,
+                                        "click": False,
+                                    },
+                                )
+                                remaining_count = int(remaining.get("eligible", 0))
+                                expansion_exhausted = remaining_count == 0
+                                if remaining_count:
+                                    warnings.append(
+                                        f"expansion stopped at the {expand_max_rounds}-round bound "
+                                        f"with {remaining_count} eligible control(s) still present; "
+                                        "captured DOM is short by an unknown amount"
+                                    )
+                            except Exception as exc:
+                                expansion_exhausted = None
+                                warnings.append(
+                                    "expansion exhaustion probe failed: "
+                                    f"{type(exc).__name__}: {exc}"
+                                )
                     if scroll_step_px > 0:
                         position = 0
                         for _ in range(_MAX_PROGRESSIVE_SCROLL_STEPS):
@@ -331,18 +550,29 @@ class _LiveRealChromeCDPEngine:
                     except Exception as exc:
                         visible_text = ""
                         warnings.append(f"visible_text extraction failed: {exc}")
-                    screenshot_png = _capture_viewport_screenshot(
-                        page=page,
-                        context=context,
-                        timeout_ms=(
-                            min(timeout_ms, 5_000)
-                            if persistent_tab_marker is not None
-                            else timeout_ms
-                        ),
-                        warnings=warnings,
+                    # Trunk's CDP screenshot fallback, kept under our
+                    # suppression flag: the Reddit lanes capture no raster.
+                    screenshot_png = (
+                        _capture_viewport_screenshot(
+                            page=page,
+                            context=context,
+                            timeout_ms=(
+                                min(timeout_ms, 5_000)
+                                if persistent_tab_marker is not None
+                                else timeout_ms
+                            ),
+                            warnings=warnings,
+                        )
+                        if capture_screenshot
+                        else None
                     )
                     final_url = page.url
                     title = page.title()
+                except RealChromeCDPUnavailable:
+                    # Already typed (e.g. RealChromeNavigationHTTPError); the
+                    # blanket wrap below must not relabel it as generic
+                    # CDP failure.
+                    raise
                 except Exception as exc:
                     raise RealChromeCDPUnavailable(
                         f"real Chrome target capture failed for {url}: {type(exc).__name__}: {exc}"
@@ -363,6 +593,9 @@ class _LiveRealChromeCDPEngine:
             viewport_width=actual_viewport_width,
             viewport_height=actual_viewport_height,
             warning_notes=warnings,
+            expansion_rounds=expansion_rounds,
+            expansion_clicks=expansion_clicks,
+            expansion_exhausted=expansion_exhausted,
         )
 
 
@@ -428,10 +661,36 @@ def run_source_capture_realchrome_cdp_packet(
     persistent_profile_loaded: bool = False,
     persistent_tab_marker: str | None = None,
     fit_viewport_to_window: bool = False,
+    # Both default to today's behavior, so no existing caller changes shape.
+    # Content mode is deliberately reachable only programmatically -- the
+    # extractor is a Python callable, so there is no CLI flag for it and the
+    # command surface other lanes use is untouched.
+    content_extraction: RenderedContentExtractionSpec | None = None,
+    capture_screenshot: bool = True,
+    keep_raw_audit_sample: bool = False,
+    # A CSS selector the page must satisfy before the snapshot is taken, so a
+    # caller can name what "rendered" means for its own surface instead of
+    # trusting a fixed settle to have been long enough.
+    ready_selector: str | None = None,
+    # A JS-regex source matched against the visible text of in-place expansion
+    # controls (buttons and href-less anchors). Left None, nothing is clicked.
+    expand_control_pattern: str | None = None,
+    expand_control_selector: str = "button, a",
+    expand_max_rounds: int = 0,
+    expand_settle_ms: int = 6000,
+    # A Python regex the FINAL url must match for the snapshot to count as the
+    # requested target. Left None, nothing is checked (some lanes legitimately
+    # follow redirects whose shape the caller cannot predict). A mismatch is a
+    # typed RealChromeWrongPageError raised before any packet is written --
+    # never a committed packet whose manifest quietly names a different page.
+    target_identity_pattern: str | None = None,
     engine: RealChromeCDPEngine | None = None,
 ) -> tuple[int, str]:
     if (output_directory is None) == (data_root is None):
         raise ValueError("exactly one of output_directory or data_root is required")
+    compiled_target_identity = (
+        re.compile(target_identity_pattern) if target_identity_pattern is not None else None
+    )
     if browser_provisioning not in {"operator_provided", "unattended_xvfb"}:
         raise ValueError("browser_provisioning must be operator_provided or unattended_xvfb")
     if persistent_tab_marker is not None:
@@ -462,7 +721,26 @@ def run_source_capture_realchrome_cdp_packet(
         viewport_height=viewport_height,
         persistent_tab_marker=persistent_tab_marker,
         fit_viewport_to_window=fit_viewport_to_window,
+        capture_screenshot=capture_screenshot,
+        ready_selector=ready_selector,
+        expand_control_pattern=expand_control_pattern,
+        expand_control_selector=expand_control_selector,
+        expand_max_rounds=expand_max_rounds,
+        expand_settle_ms=expand_settle_ms,
     )
+
+    if compiled_target_identity is not None and not compiled_target_identity.search(
+        result.final_url or ""
+    ):
+        raise RealChromeWrongPageError(
+            f"snapshot landed on {result.final_url!r}, which does not match the "
+            f"target identity pattern {target_identity_pattern!r} for requested "
+            f"{url!r}; the persistent capture tab was likely navigated away "
+            "mid-capture. No packet was written; recapture in a fresh bounded "
+            "batch.",
+            requested_url=url,
+            final_url=result.final_url or "",
+        )
 
     access = classify_rendered_access(
         title=result.title, rendered_dom=result.rendered_dom, visible_text=result.visible_text
@@ -496,10 +774,24 @@ def run_source_capture_realchrome_cdp_packet(
         "persistent_tab": persistent_tab_marker is not None,
         "persistent_tab_marker": persistent_tab_marker,
         "fit_viewport_to_window": fit_viewport_to_window,
-        "screenshot_mode": "viewport",
+        "ready_selector": ready_selector,
+        "expand_control_pattern": expand_control_pattern,
+        "expand_control_selector": expand_control_selector,
+        "expand_max_rounds": expand_max_rounds,
+        "expansion_rounds": result.expansion_rounds,
+        "expansion_clicks": result.expansion_clicks,
+        # None when no expansion was requested; False is the load-bearing value
+        # -- it means the round bound stopped the loop with controls remaining.
+        "expansion_controls_exhausted": result.expansion_exhausted,
+        # "not_captured" rather than "viewport"/0: a packet that reports a
+        # viewport screenshot of zero bytes claims a capture posture it does not
+        # have, and a later reader cannot tell suppression from a failed raster.
+        "screenshot_mode": "viewport" if result.screenshot_png is not None else "not_captured",
         "rendered_dom_byte_count": len(result.rendered_dom.encode("utf-8")),
         "visible_text_byte_count": len(result.visible_text.encode("utf-8")),
-        "screenshot_byte_count": len(result.screenshot_png),
+        "screenshot_byte_count": (
+            len(result.screenshot_png) if result.screenshot_png is not None else None
+        ),
     }
 
     dom_bytes = result.rendered_dom.encode("utf-8")
@@ -521,6 +813,14 @@ def run_source_capture_realchrome_cdp_packet(
         packet_limitations.append(
             "access_failed: the real Chrome rendered an access-block/interstitial page instead of "
             f"source content: {access_block_reason}; block artifacts preserved"
+        )
+    http_admission_failed = result.http_status is not None and (
+        type(result.http_status) is not int or not 200 <= result.http_status < 300
+    )
+    if http_admission_failed:
+        packet_limitations.append(
+            "access_failed: the real Chrome navigation did not return a successful "
+            f"HTTP status ({result.http_status!r}); raw artifacts preserved"
         )
 
     sufficiency = evaluate_source_detail_sufficiency(
@@ -545,23 +845,67 @@ def run_source_capture_realchrome_cdp_packet(
     if sufficiency_mode is not None:
         packet_mode_changes.append(sufficiency_mode)
 
+    # Retention is decided BEFORE staging, because the decision determines which
+    # artifacts exist in the packet at all.  ``admission_failed`` folds every
+    # reason this capture must not be admitted as clean source content, so a
+    # clean projection of a block shell is withheld rather than published.
+    retention = resolve_rendered_retention(
+        spec=content_extraction,
+        rendered_dom=dom_bytes,
+        visible_text=text_bytes,
+        final_url=result.final_url,
+        admission_failed=(
+            blocked
+            or http_admission_failed
+            or (sufficiency.enabled and not sufficiency.passed)
+        ),
+        keep_raw_audit_sample=keep_raw_audit_sample,
+    )
+    if retention.extraction_failure_or_none is not None:
+        packet_limitations.append(
+            f"content extraction failed in flight; raw response preserved as fallback: "
+            f"{retention.extraction_failure_or_none}"
+        )
+    if content_extraction is not None:
+        packet_limitations.append(
+            "retention_outcome="
+            f"{retention.retention_outcome}; provenance={json.dumps(retention.provenance, sort_keys=True)}"
+        )
+        packet_mode_changes.append(f"rendered_retention_{retention.retention_outcome}")
+
     staged_root = Path(_stage_dir())
     staged_root.mkdir(parents=True, exist_ok=True)
-    f_dom = staged_root / "01_realchrome_rendered_dom.html"
-    f_txt = staged_root / "02_realchrome_visible_text.txt"
-    f_png = staged_root / "03_realchrome_viewport_screenshot.png"
     f_meta = staged_root / "04_realchrome_snapshot_metadata.json"
-    f_dom.write_bytes(dom_bytes)
-    f_txt.write_bytes(text_bytes)
-    f_png.write_bytes(result.screenshot_png)
     f_meta.write_bytes(meta_bytes)
+    staged_files = []
+    f_dom = f_txt = f_png = None
+    if retention.raw_inputs_preserved:
+        f_dom = staged_root / "01_realchrome_rendered_dom.html"
+        f_txt = staged_root / "02_realchrome_visible_text.txt"
+        f_dom.write_bytes(dom_bytes)
+        f_txt.write_bytes(text_bytes)
+        staged_files += [f_dom, f_txt]
+        if result.screenshot_png is not None:
+            f_png = staged_root / "03_realchrome_viewport_screenshot.png"
+            f_png.write_bytes(result.screenshot_png)
+            staged_files.append(f_png)
+    if retention.content_record_bytes is not None:
+        f_content = staged_root / CONTENT_RECORD_FILENAME
+        f_content.write_bytes(retention.content_record_bytes)
+        staged_files.append(f_content)
+    staged_files.append(f_meta)
 
     access_posture_value = (
         f"real_browser_cdp access_failed with access block {access_block_reason}; block artifacts "
         f"preserved via {browser_description} over CDP; content sufficiency is not asserted"
         if blocked
-        else f"real_browser_cdp preserved rendered public page artifacts via {browser_description} "
-        "over CDP; genuine-browser fingerprint; content is retailer/source-owned public page state"
+        else (
+            f"real_browser_cdp access_failed with HTTP {result.http_status!r}; raw artifacts "
+            f"preserved via {browser_description} over CDP; content sufficiency is not asserted"
+            if http_admission_failed
+            else f"real_browser_cdp preserved rendered public page artifacts via {browser_description} "
+            "over CDP; genuine-browser fingerprint; content is retailer/source-owned public page state"
+        )
     )
 
     timing = PacketTiming(
@@ -579,18 +923,23 @@ def run_source_capture_realchrome_cdp_packet(
         archive_history_posture=not_attempted("real_browser_cdp does not query archive or history services"),
         media_modality_posture=known_fact(
             "preserved a viewport screenshot; linked media files were not independently preserved"
+            if result.screenshot_png is not None
+            else "no screenshot captured; linked media files were not independently preserved"
         ),
         re_capture_relationship=not_applicable("no prior source capture packet supplied"),
         limitations=packet_limitations,
         warning_notes=list(result.warning_notes),
-        preserved_file_ids=["file_01", "file_02", "file_03", "file_04"],
+        # Derived from what was actually staged: the retention decision changes
+        # how many artifacts exist, and a fixed four-id list would reference
+        # files the packet no longer carries.
+        preserved_file_ids=[f"file_{index:02d}" for index in range(1, len(staged_files) + 1)],
     )
 
     try:
         write_result = write_local_source_capture_packet(
             output_directory=output_directory,
             data_root=data_root,
-            input_files=[f_dom, f_txt, f_png, f_meta],
+            input_files=staged_files,
             source_family=source_family,
             source_surface=source_surface,
             source_locator=known_fact(url),
@@ -614,6 +963,8 @@ def run_source_capture_realchrome_cdp_packet(
             archive_history_posture=not_attempted("real_browser_cdp does not query archive or history services"),
             media_modality_posture=known_fact(
                 "preserved a viewport screenshot; linked media files were not independently preserved"
+                if result.screenshot_png is not None
+                else "no screenshot captured; linked media files were not independently preserved"
             ),
             re_capture_relationship=not_applicable("no prior source capture packet supplied"),
             source_slices=[slice_],
@@ -621,17 +972,18 @@ def run_source_capture_realchrome_cdp_packet(
             limitations=packet_limitations,
             receipt_summary=(
                 f"Real-Chrome CDP packet for {source_family}: "
-                f"{'ACCESS BLOCKED' if blocked else 'rendered public page content'} for one URL "
+                f"{'ACCESS BLOCKED' if blocked else 'HTTP RESPONSE NOT SUCCESSFUL' if http_admission_failed else 'rendered public page content'} for one URL "
                 f"(HTTP {result.http_status})."
             ),
             receipt_non_claims=(
-                ["not source-content capture; access-block page artifacts only"] + REALCHROME_CDP_NON_CLAIMS
-                if blocked
+                ["not admitted source-content capture; access-failure artifacts only"]
+                + REALCHROME_CDP_NON_CLAIMS
+                if blocked or http_admission_failed
                 else list(REALCHROME_CDP_NON_CLAIMS)
             ),
         )
     finally:
-        for f in (f_dom, f_txt, f_png, f_meta):
+        for f in staged_files:
             try:
                 f.unlink()
             except FileNotFoundError:
@@ -642,6 +994,8 @@ def run_source_capture_realchrome_cdp_packet(
         return SOURCE_DETAIL_SUFFICIENCY_EXIT_CODE, source_detail_sufficiency_failure_message(
             output_directory=write_result.output_directory, result=sufficiency
         )
+    if content_extraction is not None and retention.retention_outcome == "raw_failure":
+        return CONTENT_EXTRACTION_FAILED_EXIT_CODE, write_result.output_directory
     return 0, write_result.output_directory
 
 
@@ -708,6 +1062,14 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Fit the emulated page viewport to the visible Chrome window.",
     )
+    parser.add_argument(
+        "--no-screenshot",
+        action="store_true",
+        help=(
+            "Skip the viewport screenshot entirely -- not captured rather than "
+            "captured and discarded, so the raster cost is not paid at all."
+        ),
+    )
     parser.add_argument("--session-id", default=None)
     parser.add_argument("--warning", action="append", default=[])
     parser.add_argument("--limitation", action="append", default=[])
@@ -764,6 +1126,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             viewport_height=args.viewport_height,
             persistent_tab_marker=args.persistent_tab_marker,
             fit_viewport_to_window=args.fit_viewport_to_window,
+            capture_screenshot=not args.no_screenshot,
             warnings=args.warning,
             limitations=args.limitation,
             visible_mode_changes=args.visible_mode_change,

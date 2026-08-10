@@ -276,7 +276,25 @@ def _validate_field_values(field: str, value: Any) -> Any:
     return value
 
 
+def _weekly_normalized(observation: Mapping[str, Any]) -> dict[str, Any]:
+    """An omitted weekly key and an explicit null are the same observation.
+
+    The weekly reach fields are nullable additions with no migration, so two
+    observations that differ only in whether those keys are present must
+    compare equal; otherwise a replay of an already-folded packet fails closed.
+    """
+    normalized = dict(observation)
+    normalized.setdefault("weekly_visitor_count_or_none", None)
+    normalized.setdefault("weekly_contribution_count_or_none", None)
+    return normalized
+
+
 def _apply_capture_state(row: dict[str, Any], candidate: str) -> None:
+    """Assign capture_state for an operator-authored roster change.
+
+    A roster change naming a lower state is an operator error worth refusing,
+    so this stays strict.  Replayed observation effects use the floor below.
+    """
     current = row.get("capture_state", "no_packet_recorded")
     if CAPTURE_STATE_RANK[candidate] < CAPTURE_STATE_RANK.get(current, 0):
         raise RedditSubredditRegistryLakeError(
@@ -286,22 +304,45 @@ def _apply_capture_state(row: dict[str, Any], candidate: str) -> None:
     row["capture_state"] = candidate
 
 
+def _raise_capture_state_floor(row: dict[str, Any], candidate: str) -> None:
+    """Apply an observation's capture_state effect as a floor, never a ceiling.
+
+    The writer records this effect against the fold as it stood at write time,
+    and the fold replays roster changes before observations regardless of which
+    was written first.  A thread-driven roster upgrade written after a packet's
+    observation therefore replays first, and assigning the recorded value would
+    drive the row backwards on a state that is defined monotonic.  The effect
+    only ever asserts "at least this much capture exists for this packet", so a
+    floor is its real meaning; a strict assignment made the fold refuse to read
+    at all (68 backfilled upgrades, 46 subreddits, 2026-07-30).
+    """
+    current = row.get("capture_state", "no_packet_recorded")
+    if CAPTURE_STATE_RANK[candidate] > CAPTURE_STATE_RANK.get(current, 0):
+        row["capture_state"] = candidate
+
+
 def should_apply_status_observation(*, row: Mapping[str, Any], observed_at: str) -> bool:
     """The registry spec's two-speed liveness rule, evaluated against the fold.
 
     Mirrors ``capture_spine.reddit_subreddit_grid.materializer`` so the lake
     writer records the same decision the Git materializer would have made.
     """
+    try:
+        incoming_date = date.fromisoformat(observed_at)
+    except (TypeError, ValueError) as exc:
+        raise RedditSubredditRegistryLakeError(
+            "status_date_invalid",
+            f"non-ISO status date in observation: {observed_at!r}",
+        ) from exc
     current_value = row.get("status_observed_at")
     if not isinstance(current_value, str) or not current_value:
         return True
     try:
         current_date = date.fromisoformat(current_value)
-        incoming_date = date.fromisoformat(observed_at)
     except ValueError as exc:
         raise RedditSubredditRegistryLakeError(
             "status_date_invalid",
-            f"non-ISO status date in fold or observation: {current_value!r} / {observed_at!r}",
+            f"non-ISO status date in fold: {current_value!r}",
         ) from exc
     if incoming_date > current_date:
         return True
@@ -429,6 +470,39 @@ def _apply_roster_change(row: dict[str, Any], record: Mapping[str, Any]) -> None
 def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
     observation = record["observation"]
     pointer = observation["provenance_pointer"]
+    effects = record.get("row_effects", {})
+    if not isinstance(effects, Mapping):
+        raise RedditSubredditRegistryLakeError(
+            "observation_effects_shape",
+            f"observation row_effects must be an object: {effects!r}",
+        )
+    unknown_effects = sorted(set(effects) - {"status", "capture_state"})
+    if unknown_effects:
+        raise RedditSubredditRegistryLakeError(
+            "observation_effect_unknown",
+            f"observation carries unknown row effects: {unknown_effects}",
+        )
+    status = effects.get("status")
+    expected_status = {
+        "status": "active",
+        "status_observed_at": observation["observed_at"],
+    }
+    if status is not None and status != expected_status:
+        raise RedditSubredditRegistryLakeError(
+            "observation_status_effect_invalid",
+            f"grid observation status effect must equal {expected_status!r}: {status!r}",
+        )
+    capture_state = effects.get("capture_state")
+    if capture_state not in {None, "grid_packets_recorded"}:
+        raise RedditSubredditRegistryLakeError(
+            "observation_capture_state_effect_invalid",
+            "grid observation capture_state effect must be "
+            f"'grid_packets_recorded' or None: {capture_state!r}",
+        )
+    status_should_apply = should_apply_status_observation(
+        row=row,
+        observed_at=observation["observed_at"],
+    )
     for existing in row.setdefault("observations", []):
         if existing.get("provenance_pointer") == pointer:
             if existing != observation:
@@ -439,9 +513,12 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             return
     row["observations"].append(deepcopy(observation))
 
-    effects = record.get("row_effects", {})
-    status = effects.get("status")
-    if status is not None:
+    # Re-evaluate the two-speed rule at replay time for the same reason the
+    # capture_state floor exists: the recorded decision was made against the
+    # fold at write time, and a roster change written later replays earlier.
+    # Applying it unconditionally would let an older observation revert a newer
+    # roster-authored status and append a spurious descriptive_changes entry.
+    if status is not None and status_should_apply:
         if row.get("status") != status.get("status"):
             row.setdefault("descriptive_changes", []).append(
                 {
@@ -452,16 +529,10 @@ def _apply_observation(row: dict[str, Any], record: Mapping[str, Any]) -> None:
             )
             row["status"] = status["status"]
         row["status_observed_at"] = status["status_observed_at"]
-    if effects.get("capture_state") is not None:
-        capture_state = _validate_field_values("capture_state", effects["capture_state"])
-        # Observation effects are historical facts replayed after the current
-        # roster chain. A lower effect may predate a later explicit upgrade, so
-        # merge it monotonically instead of treating cross-lane replay order as
-        # an attempted downgrade.
-        if CAPTURE_STATE_RANK[capture_state] > CAPTURE_STATE_RANK.get(
-            row.get("capture_state"), 0
-        ):
-            _apply_capture_state(row, capture_state)
+    if capture_state is not None:
+        # Both lanes independently reached monotonic-floor semantics for a
+        # replayed observation effect; this is the shared-helper form of it.
+        _raise_capture_state_floor(row, capture_state)
     register_pointers = row.setdefault("register_pointers", [])
     if pointer not in register_pointers:
         register_pointers.append(pointer)
@@ -544,6 +615,8 @@ def append_grid_observation(
     source_surface: str,
     provenance_pointer: str,
     absent_reason_or_none: str | None,
+    weekly_visitor_count_or_none: str | None = None,
+    weekly_contribution_count_or_none: str | None = None,
     dry_run: bool = False,
 ) -> dict[str, Any]:
     """Append one grid observation plus the row effects the same packet implies.
@@ -563,13 +636,23 @@ def append_grid_observation(
         "provenance_pointer": provenance_pointer,
         "absent_reason_or_none": absent_reason_or_none,
     }
+    # Only surfaces that actually state weekly reach carry the keys. old Reddit
+    # has no equivalent, so its observations keep the shape they have always
+    # had rather than gaining two permanent nulls.
+    if weekly_visitor_count_or_none is not None or weekly_contribution_count_or_none is not None:
+        observation["weekly_visitor_count_or_none"] = weekly_visitor_count_or_none
+        observation["weekly_contribution_count_or_none"] = weekly_contribution_count_or_none
     for existing in row.get("observations", []):
         if existing.get("provenance_pointer") == provenance_pointer:
             # Same rule as the fold: an exact replay is idempotent, but the same
             # packet yielding different values is a conflict, not a duplicate.
             # Returning already_current here would silently drop the new values
             # and leave the writer laxer than the reader that has to fold them.
-            if existing != observation:
+            # BOTH sides are normalized because the weekly keys are nullable
+            # with no migration: an omitted key and an explicit null are the
+            # same observation, and comparing raw dicts would make re-feeding an
+            # already-folded packet fail closed instead of being idempotent.
+            if _weekly_normalized(existing) != _weekly_normalized(observation):
                 raise RedditSubredditRegistryLakeError(
                     "observation_provenance_conflict",
                     f"provenance pointer {provenance_pointer} is already recorded for "

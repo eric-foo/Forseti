@@ -939,7 +939,7 @@ def test_weekly_capture_list_output_fails_closed(
     assert not capture_list.exists()
 
 
-def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
+def test_weekly_listing_policy_routes_only_ten_plus_to_model_review() -> None:
     from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
 
     rows = [
@@ -960,9 +960,14 @@ def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
                 ("Opaque head D", 9, 50),
                 ("This product irritated my skin", 3, 40),
                 ("Routine update", 4, 30),
-                ("Opaque tail A", 6, 4),
-                ("Opaque tail B", 7, 3),
-                ("Zero comments", 200, 0),
+                # 10 is the first admitted count; 9 and below are the floor's
+                # own boundary and must stay out.
+                ("Opaque tail A", 6, 10),
+                ("Opaque tail B", 7, 9),
+                ("Thin thread", 8, 4),
+                # Below the engagement branch's score bar; a sub-floor thread
+                # that clears it is admitted and tested separately.
+                ("Zero comments", 30, 0),
             ],
             start=1,
         )
@@ -972,7 +977,7 @@ def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
         rows=rows,
     )
 
-    assert all(row["comments"] >= 4 for row in selected)
+    assert all(row["comments"] >= 10 for row in selected)
     assert len(selected) == 7
     assert all(
         row["selection_reason"] == "comment_floor_cleared" for row in selected
@@ -985,8 +990,168 @@ def test_weekly_listing_policy_routes_only_four_plus_to_model_review() -> None:
     assert selected[-1]["listing_context_state"] == "listing_context_insufficient"
 
 
+def test_sub_floor_exception_admits_explicit_failure_titles_only() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
+
+    def row(index: int, title: str, comments: int) -> dict:
+        return {
+            "subreddit": "example",
+            "thread_url": f"https://old.reddit.com/r/example/comments/ex{index}/post/",
+            "title_or_none": title,
+            "flair_or_none": None,
+            "timestamp_utc_ms_or_none": None,
+            "score": 1,
+            "comments": comments,
+        }
+
+    rows = [
+        # Above the floor: admitted regardless, reason stays floor_cleared.
+        row(1, "Best moisturizer?", 25),
+        # Sub-floor with explicit failure/authenticity/dupe/discontinuation
+        # signals: admitted via the exception.
+        row(2, "Cetaphil cleanser crazy reaction... anyone else?", 6),
+        row(3, "Is this minoxidil legit? In Germany", 7),
+        row(4, "Need a dupe for my discontinued lip stain", 5),
+        # Sub-floor without a signal: stays out.
+        row(5, "My everyday routine", 8),
+        # Signal but below the exception's own 4-comment floor: stays out.
+        row(6, "Fake sunscreen warning", 3),
+        # Swap administration is excluded by title prefix even with a match.
+        row(7, "[WTS] Dupe Dump (Bottle)", 8),
+    ]
+
+    selected = _build_listing_review_rows(rows=rows)
+    by_title = {r["title_or_none"]: r for r in selected}
+    assert set(by_title) == {
+        "Best moisturizer?",
+        "Cetaphil cleanser crazy reaction... anyone else?",
+        "Is this minoxidil legit? In Germany",
+        "Need a dupe for my discontinued lip stain",
+    }
+    assert by_title["Best moisturizer?"]["selection_reason"] == "comment_floor_cleared"
+    for title in (
+        "Cetaphil cleanser crazy reaction... anyone else?",
+        "Is this minoxidil legit? In Germany",
+        "Need a dupe for my discontinued lip stain",
+    ):
+        assert by_title[title]["selection_reason"] == "sub_floor_exception_signal"
+        assert by_title[title]["policy_stage"] == "requires_commission_model_adjudication"
+
+
+def test_sub_floor_engagement_admits_silent_resonance_in_discussion_venues_only() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
+
+    def row(index: int, subreddit: str, title: str, score, comments: int) -> dict:
+        return {
+            "subreddit": subreddit,
+            "thread_url": f"https://old.reddit.com/r/{subreddit}/comments/en{index}/post/",
+            "title_or_none": title,
+            "flair_or_none": None,
+            "timestamp_utc_ms_or_none": None,
+            "score": score,
+            "comments": comments,
+        }
+
+    rows = [
+        # Silent resonance in a discussion venue: many upvotes, few comments,
+        # ordinary title the title-branch cannot see. Admitted.
+        row(1, "eczema", "eczema in summer sucks (small comic i made :D)", 122, 3),
+        # Same shape in a visual-showcase venue: upvote-and-scroll, excluded.
+        row(2, "nails", "My current manicure :)", 394, 8),
+        # Discussion venue but below the score bar: excluded.
+        row(3, "eczema", "flare update", 39, 3),
+        # Missing score can never clear an engagement bar: excluded.
+        row(4, "eczema", "another ordinary title", None, 3),
+        # Title branch still wins the selection_reason when both match.
+        row(5, "eczema", "LaRoche reaction ruined my week", 90, 6),
+    ]
+
+    selected = _build_listing_review_rows(rows=rows)
+    by_title = {r["title_or_none"]: r for r in selected}
+    assert set(by_title) == {
+        "eczema in summer sucks (small comic i made :D)",
+        "LaRoche reaction ruined my week",
+    }
+    assert (
+        by_title["eczema in summer sucks (small comic i made :D)"]["selection_reason"]
+        == "sub_floor_engagement_signal"
+    )
+    assert (
+        by_title["LaRoche reaction ruined my week"]["selection_reason"]
+        == "sub_floor_exception_signal"
+    )
+
+
+def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_leaderboard_lane
+
+    def cand(index: int, title: str, comments: int) -> dict:
+        return {
+            "subreddit": "example",
+            "thread_url": f"https://old.reddit.com/r/example/comments/lb{index}/post/",
+            "title_or_none": title,
+            "comments": comments,
+        }
+
+    candidates = [
+        cand(1, "what's your holy grail concealer?", 259),
+        cand(2, "Best cologne for summer?", 120),
+        # Praise vocabulary but an appearance poll: excluded.
+        cand(3, "Which hair suits me the best?", 445),
+        # Praise-shaped but below the lane's 50-comment floor: excluded.
+        cand(4, "favorite drugstore mascara?", 49),
+        # No praise vocabulary: excluded.
+        cand(5, "My serum stopped working", 300),
+    ]
+
+    slots = _build_leaderboard_lane(candidates)
+    assert [s["title_or_none"] for s in slots] == [
+        "what's your holy grail concealer?",
+        "Best cologne for summer?",
+    ]
+    # Ordered by comments, slot ids stable for capture-list use.
+    assert [s["slot_id"] for s in slots] == ["lb_001", "lb_002"]
+
+
+def test_census_lane_selects_daily_census_formats_with_venue_cap() -> None:
+    from runners.run_reddit_weekly_demand_read import _build_census_lane
+
+    def cand(index: int, subreddit: str, title: str, comments: int) -> dict:
+        return {
+            "subreddit": subreddit,
+            "thread_url": f"https://old.reddit.com/r/{subreddit}/comments/cs{index}/post/",
+            "title_or_none": title,
+            "comments": comments,
+        }
+
+    candidates = [
+        cand(1, "fragrance", "SOTD - Scent of the Day - July 29 2026", 56),
+        cand(2, "fragrance", "SOTD - Scent of the Day - July 28 2026", 52),
+        cand(3, "fragrance", "SOTD - Scent of the Day - July 27 2026", 87),
+        # Fourth same-venue census day: dropped by the per-venue cap (3),
+        # lowest-commented first.
+        cand(4, "fragrance", "SOTD - Scent of the Day - July 26 2026", 48),
+        cand(5, "Indiemakeupandmore", "Indies of the Day - Friday July 31", 46),
+        # Measured near-zero census density: no pattern match, not selected.
+        cand(6, "fragrance", "Daily Discussion & Advice - post here", 68),
+        # Census shape below the lane floor: excluded.
+        cand(7, "Colognes", "Daily SOTD post", 19),
+        # Problem thread with no census shape: untouched by this lane.
+        cand(8, "fragrance", "My serum stopped working", 300),
+    ]
+
+    slots = _build_census_lane(candidates)
+    assert [s["title_or_none"] for s in slots] == [
+        "SOTD - Scent of the Day - July 27 2026",
+        "SOTD - Scent of the Day - July 29 2026",
+        "SOTD - Scent of the Day - July 28 2026",
+        "Indies of the Day - Friday July 31",
+    ]
+    assert [s["slot_id"] for s in slots] == ["cs_001", "cs_002", "cs_003", "cs_004"]
+
+
 @pytest.mark.parametrize("score", [0, None])
-def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_four_comments(
+def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_ten_comments(
     score: int | None,
 ) -> None:
     from runners.run_reddit_weekly_demand_read import _build_listing_review_rows
@@ -999,13 +1164,13 @@ def test_weekly_listing_policy_keeps_nonpositive_or_missing_score_at_four_commen
             "flair_or_none": None,
             "timestamp_utc_ms_or_none": None,
             "score": score,
-            "comments": 4,
+            "comments": 10,
         }
     ]
 
     (selected,) = _build_listing_review_rows(rows=rows)
     assert selected["score"] == score
-    assert selected["comments"] == 4
+    assert selected["comments"] == 10
     assert selected["listing_context_state"] == "listing_context_present"
 
 

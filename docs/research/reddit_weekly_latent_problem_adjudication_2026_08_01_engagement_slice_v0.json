@@ -1,0 +1,1238 @@
+{
+ "review_pass": "sub_floor_engagement_slice_v0",
+ "basis": "owner-adopted engagement branch of the sub-floor exception (score 40+ at 0-9 comments, discussion venues only) applied retroactively to the 2026-07-31 pool",
+ "rows_reviewed": 72,
+ "admission_counts": {
+  "yes": 14,
+  "borderline": 4,
+  "no": 54
+ },
+ "high_priority_count": 0,
+ "records": [
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/eczema/comments/1v9v35i/eczema_in_summer_sucks_small_comic_i_made_d/",
+   "subreddit": "eczema",
+   "listing_snapshot": {
+    "captured_at": "1785328919229",
+    "score": 122,
+    "comments": 3
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "category_gap_unmet_format"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v7barg/about_7_months/",
+   "subreddit": "femalehairloss",
+   "listing_snapshot": {
+    "captured_at": "1785089213884",
+    "score": 114,
+    "comments": 8
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "progress_format_stack_unclear"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/tressless/comments/1va4do9/choose_your_daily_trending_post/",
+   "subreddit": "tressless",
+   "listing_snapshot": {
+    "captured_at": "1785349161883",
+    "score": 112,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "no_visible_commercial_object"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/whybrows/comments/1v9x10d/more_tadpole_brows/",
+   "subreddit": "whybrows",
+   "listing_snapshot": {
+    "captured_at": "1785333568739",
+    "score": 108,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v8f4w0/perfumes_that_smell_like_you_dropped_your_mood/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785190610959",
+    "score": 107,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v9qmar/love_this_blue/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1785315573151",
+    "score": 106,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v8soxe/wonderskin_wonder_blading_allday_blush_stain/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785229116157",
+    "score": 94,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/whybrows/comments/1v5u6ch/disney_influencer/",
+   "subreddit": "whybrows",
+   "listing_snapshot": {
+    "captured_at": "1784942423773",
+    "score": 94,
+    "comments": 0
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Minoxbeards/comments/1v64qd7/3_years_ago_i_found_this_sub_heres_the_results/",
+   "subreddit": "minoxbeards",
+   "listing_snapshot": {
+    "captured_at": "1784975356665",
+    "score": 93,
+    "comments": 6
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "regimen_disclosure_success"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Perfumes/comments/1v80qc7/what_is_this_perfume_please/",
+   "subreddit": "perfumes",
+   "listing_snapshot": {
+    "captured_at": "1785159604216",
+    "score": 84,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "product_identification_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Colognes/comments/1va10ae/this_review_of_sospiro_vibrato_had_me_dying/",
+   "subreddit": "colognes",
+   "listing_snapshot": {
+    "captured_at": "1785342120466",
+    "score": 83,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/DIYGelNails/comments/1va0oew/my_summery_nails/",
+   "subreddit": "diygelnails",
+   "listing_snapshot": {
+    "captured_at": "1785341445923",
+    "score": 83,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1vaal7j/grandmas_signature_scent/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "captured_at": "1785362594057",
+    "score": 83,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddiction/comments/1v5h55e/psa_in_memory_of_dr_lorraine_meisner_the_badass/",
+   "subreddit": "skincareaddiction",
+   "listing_snapshot": {
+    "captured_at": "1784912325829",
+    "score": 80,
+    "comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "no_visible_commercial_object"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v9eof7/baked_potatoes/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785280788105",
+    "score": 75,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1v5kysa/one_of_my_best_hauls_yet/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1784920391415",
+    "score": 74,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v9hqnn/my_stinky_smelly_dog_who_passed_away_a_few_weeks/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785288565223",
+    "score": 73,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v7kyjd/ilnp_barefoot/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1785111934127",
+    "score": 69,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v8qct0/gooey_banana_bread_with_a_side_of_almond_milk/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785221205778",
+    "score": 69,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "recommendation_vibe_format"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v6ueo5/blue_are_the_words_i_say_and_what_i_think_blue/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1785042709261",
+    "score": 69,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupAddicts/comments/1v9qej0/silver_eyeshadow/",
+   "subreddit": "makeupaddicts",
+   "listing_snapshot": {
+    "captured_at": "1785314819082",
+    "score": 67,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/drugstoreMUA/comments/1vae56j/fotd_vamp_glam/",
+   "subreddit": "drugstoremua",
+   "listing_snapshot": {
+    "captured_at": "1785371348201",
+    "score": 65,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v6jezo/my_entire_sample_collection_thingy_i_made_to_hold/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785012230719",
+    "score": 65,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v9jhmn/cheerflor_dream_melody_box_collection_eyeshadow/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785293244248",
+    "score": 65,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v5tjbd/memento_mori/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1784940696449",
+    "score": 64,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/BeautyGuruChatter/comments/1vbchqr/steak_too_juicy_lobster_too_buttery/",
+   "subreddit": "beautyguruchatter",
+   "listing_snapshot": {
+    "captured_at": "1785460999298",
+    "score": 63,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1vbccr1/keep_progress_photos/",
+   "subreddit": "femalehairloss",
+   "listing_snapshot": {
+    "captured_at": "1785460622016",
+    "score": 63,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v61k6v/pink_plush/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1784964576775",
+    "score": 61,
+    "comments": 3
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1vahxhz/made_an_ulta_gift_basket/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1785381670927",
+    "score": 58,
+    "comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1vae796/adding_my_pierrot_perfume_reviews_to_the_pile/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785371505433",
+    "score": 57,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "completed_use_review"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1va2tjw/fyrinnae_samples_just_a_nip_mediterranean_merman/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785345886556",
+    "score": 57,
+    "comments": 2
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "comparative_review_density"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1va0dck/my_literal_dream_perfume/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785340822406",
+    "score": 56,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v6mc6g/silent_hill_f/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785019544448",
+    "score": 56,
+    "comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v91t3m/from_the_front/",
+   "subreddit": "femalehairloss",
+   "listing_snapshot": {
+    "captured_at": "1785252598029",
+    "score": 55,
+    "comments": 6
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "progress_format_stack_unclear"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1vbrtc7/vintage_retro_ulta_circa_2000s/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1785506484682",
+    "score": 54,
+    "comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v5yd8t/kathleen_kellys_apartment_in_youve_got_mail/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1784954488265",
+    "score": 54,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v7dumi/osmofolia_upcoming_markets_mn/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785094842564",
+    "score": 53,
+    "comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1v6k4f2/current_display/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "captured_at": "1785013957717",
+    "score": 51,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1vbacgy/tip_for_the_deal_for_today/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1785455385977",
+    "score": 51,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemaleHairLoss/comments/1v7qwd4/started_minoxidil_today_heres_hoping_for_a/",
+   "subreddit": "femalehairloss",
+   "listing_snapshot": {
+    "captured_at": "1785129031702",
+    "score": 51,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v6x5o3/perfumes_with_this_vibe/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785051770601",
+    "score": 50,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/PaleMUA/comments/1v5xhkw/lip_swatches/",
+   "subreddit": "palemua",
+   "listing_snapshot": {
+    "captured_at": "1784951850330",
+    "score": 49,
+    "comments": 8
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "swatch_product_map"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/MakeupRehab/comments/1v6g1ft/advice_for_staying_strong_while_working_in_beauty/",
+   "subreddit": "makeuprehab",
+   "listing_snapshot": {
+    "captured_at": "1785004281516",
+    "score": 49,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "behavior_shift_signal",
+    "corroborated_cluster"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1v5sjjt/shoutout_to_the_ulta_team_member_in_orlando_who/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1784938073489",
+    "score": 48,
+    "comments": 8
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v7fgv2/bright_blue_sky_ocean_breeze/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1785098482563",
+    "score": 48,
+    "comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1vbbqrj/costco_for_the_win/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "captured_at": "1785458993542",
+    "score": 47,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v7wpjy/pink_bear_sunshine_orchard_collection/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785148826185",
+    "score": 47,
+    "comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1vb5xq4/mediterranean_sorceress_by_the_sea/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785444798748",
+    "score": 46,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v7atnc/my_inaugural_review_post_sorce_scents_along_with/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785088157866",
+    "score": 46,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "completed_use_review"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v9huwi/by_rosie_jane_mixtape_body_hair_mist/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785288866874",
+    "score": 46,
+    "comments": 1
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1va3d32/which_perfume_would_queen_penelope_wear/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785347018554",
+    "score": 45,
+    "comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1vaawww/morari_studio_clear_out_event/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785363350151",
+    "score": 45,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1vagptx/perfumes_with_this_vibe/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785378284330",
+    "score": 44,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1v78bq0/cosmic_polish_australis/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1785082649363",
+    "score": 44,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v7ueyo/farmacy_lemon_mint_lip_smoothie_vitamin_c_peptide/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785141034755",
+    "score": 44,
+    "comments": 2
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/SkincareAddicts/comments/1vabps6/90_days_of_adapalene_changed_my_life/",
+   "subreddit": "skincareaddicts",
+   "listing_snapshot": {
+    "captured_at": "1785365269016",
+    "score": 44,
+    "comments": 1
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "regimen_disclosure_success"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v7wsmz/oddly_specific_descriptions_of_people_as_reviews/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785149093515",
+    "score": 43,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "comparative_review_density"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/makeuptips/comments/1vb7wtx/my_attempt_at_soft_glam_how_did_i_do_any_tips/",
+   "subreddit": "makeuptips",
+   "listing_snapshot": {
+    "captured_at": "1785449325992",
+    "score": 43,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "appearance_validation"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v8iue9/woman_that_studies_film_a_metropolitan_area_of_a/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785199665325",
+    "score": 43,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v68wdq/round_about_midnight_backstreet_barclub_in_90s_nyc/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1784987292189",
+    "score": 42,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v94plg/arab_the_aroma_of_a_freshly_split_madagascar/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785258787334",
+    "score": 42,
+    "comments": 7
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "recommendation_vibe_format"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/DIYGelNails/comments/1v7etew/first_time_using_builder_gel_with_nail_forms/",
+   "subreddit": "diygelnails",
+   "listing_snapshot": {
+    "captured_at": "1785097008126",
+    "score": 42,
+    "comments": 6
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "possible_product_demand"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Nailpolish/comments/1vav2sv/scale_lacquer_aconitum/",
+   "subreddit": "nailpolish",
+   "listing_snapshot": {
+    "captured_at": "1785421374808",
+    "score": 42,
+    "comments": 6
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/1v8ea2g/cardinal_scents_review_new_and_original_scents/",
+   "subreddit": "indiemakeupandmore",
+   "listing_snapshot": {
+    "captured_at": "1785188662707",
+    "score": 41,
+    "comments": 9
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "completed_use_review"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Rosacea/comments/1v6fdq5/2_months_of_doxy_clindamycin_and_selenium_sulfide/",
+   "subreddit": "rosacea",
+   "listing_snapshot": {
+    "captured_at": "1785002778209",
+    "score": 41,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "crowd_diagnosis_or_clinical"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/Ulta/comments/1v6n6ei/in_ha_mood_i_paid_26_for_it_and_paid_1cent_for/",
+   "subreddit": "ulta",
+   "listing_snapshot": {
+    "captured_at": "1785021774686",
+    "score": 41,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/tressless/comments/1v5g45l/ditch_the_pills_and_surgery_gentlemen/",
+   "subreddit": "tressless",
+   "listing_snapshot": {
+    "captured_at": "1784910122401",
+    "score": 41,
+    "comments": 4
+   },
+   "admission": "borderline",
+   "reason_codes": [
+    "insufficient_listing_context"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/MUAontheCheap/comments/1v7d050/ulta_20_off_one_qualifying_item_with_code_score/",
+   "subreddit": "muaonthecheap",
+   "listing_snapshot": {
+    "captured_at": "1785092941157",
+    "score": 40,
+    "comments": 9
+   },
+   "admission": "no",
+   "reason_codes": [
+    "retailer_promotion_or_showcase"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1vbb1o5/my_shelves_are_maxed_out_but_im_happy_about_it/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "captured_at": "1785457141349",
+    "score": 40,
+    "comments": 7
+   },
+   "admission": "no",
+   "reason_codes": [
+    "praise_or_sentimental_discussion"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/FemFragLab/comments/1vaji8p/influxious_first_impressions/",
+   "subreddit": "femfraglab",
+   "listing_snapshot": {
+    "captured_at": "1785386333185",
+    "score": 40,
+    "comments": 5
+   },
+   "admission": "yes",
+   "reason_codes": [
+    "completed_use_review"
+   ],
+   "priority_band": "normal"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/perfumesthatfeellike/comments/1v7hc7k/the_musician_judee_sill/",
+   "subreddit": "perfumesthatfeellike",
+   "listing_snapshot": {
+    "captured_at": "1785102784547",
+    "score": 40,
+    "comments": 5
+   },
+   "admission": "no",
+   "reason_codes": [
+    "low_expected_decision_contribution"
+   ],
+   "priority_band": "suppressed"
+  },
+  {
+   "policy_version": "reddit_listing_efficiency_v0",
+   "decision_frame": "weekly_latent_problem_gtm_discovery_v0",
+   "review_pass": "sub_floor_engagement_slice_v0",
+   "thread_url": "https://www.reddit.com/r/newinbeauty/comments/1v9olex/ulta_national_lipstick_day_sale_discount_up_to_50/",
+   "subreddit": "newinbeauty",
+   "listing_snapshot": {
+    "captured_at": "1785308648409",
+    "score": 40,
+    "comments": 4
+   },
+   "admission": "no",
+   "reason_codes": [
+    "news_release_only"
+   ],
+   "priority_band": "suppressed"
+  }
+ ]
+}

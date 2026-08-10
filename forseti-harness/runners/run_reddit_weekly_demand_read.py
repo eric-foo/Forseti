@@ -35,7 +35,93 @@ from runners._scaffold import exit_on_failure
 
 GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
 LISTING_EFFICIENCY_POLICY_VERSION = "reddit_listing_efficiency_v0"
-GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 3
+# Raised from 3 to 9 (review admits 10+) by owner decision 2026-08-01, on the
+# measured brand-evidence yield of the 414 already-dived threads: of dives that
+# landed in the 4-9 comment band, 9% carried three or more named brands against
+# a 39% corpus baseline, and the band averaged 0.7 brands per thread. A thread
+# that small has not held a conversation yet, so there is nothing to deep-read.
+# See docs/research/reddit_dive_yield_calibration_2026_08_01_v0.md.
+GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 9
+
+# Sub-floor exception, owner decision 2026-08-01. The 10+ floor is a budget
+# rule, and its measured cost concentrates in threads whose titles already
+# state the frame's highest-value signals: explicit failure, adverse reaction,
+# authenticity doubt, discontinuation, or dupe demand. In the 2026-07-31 pool
+# this pattern matched 47 of the 1,654 threads in the 4-9 band and they read
+# as direct extensions of that week's clusters (a Cetaphil "crazy reaction"
+# beside a fake-Cetaphil find, a Beauty of Joseon "weird reaction",
+# discontinued-product dupe requests). Matching sub-floor threads continue to
+# model adjudication; the pattern gates nothing above the floor and admits
+# nothing by itself. Swap/WTS administration is excluded by title prefix
+# because gate 6 suppresses it regardless.
+# Leaderboard lane, owner decision 2026-08-01 (floor lowered from 100 to 50
+# the same day). Praise/holy-grail threads are weak for the problem queue but
+# their top-scored comments are crowd-validated who-owns-the-category
+# evidence, so they are selected mechanically for a separate shallow-read
+# lane: no model adjudication, no gate sequence. The exclusion pattern exists
+# because appearance polls ("which hair suits me best?") match the praise
+# vocabulary while carrying no product census at all.
+LEADERBOARD_MIN_COMMENTS = 50
+LEADERBOARD_TITLE_PATTERN = re.compile(
+    r"holy grail\b|\bhg\b|top \d|favorite|favourite|\bbest\b|compliment"
+    r"|most (?:worn|complimented|used)|can.?t live without|obsessed"
+    r"|greatest|\bgoat\b|\bgrail\b|staple",
+    re.IGNORECASE,
+)
+LEADERBOARD_EXCLUDE_PATTERN = re.compile(
+    r"suits? me|on me\b|do i look|looks? i.?ve|my favou?rite look"
+    r"|which .*(?:suits|better on)",
+    re.IGNORECASE,
+)
+
+# Daily wear-census lane, owner decision 2026-08-03: SOTD-type and indie-daily
+# threads are a behavioral worn-share census -- commenters report what they
+# actually put on that day, the honest counterpart to the leaderboard lane's
+# stated favorites, with a steady trickle of embedded signal (6
+# discontinuation mentions in the measured week). Measured on the 2026-08-03
+# test batch (9 usable dailies, 107 wear reports): SOTD and indie-daily
+# shapes carried 91 of 107 reports, while daily discussion/advice/help
+# threads yielded 8 qualifying reports across 68 comments -- so only the
+# census shapes are selected. Tally-only shallow read, read layer only,
+# never adjudication input. The per-venue cap keeps a format that recurs
+# daily from flooding the lane; the most-commented days carry the most
+# census.
+CENSUS_MIN_COMMENTS = 20
+CENSUS_MAX_PER_VENUE = 3
+CENSUS_TITLE_PATTERN = re.compile(
+    r"\bsotd\b|scent of the day|indies of the day",
+    re.IGNORECASE,
+)
+
+# Engagement branch of the sub-floor exception, owner decision 2026-08-01:
+# high score at low comment count is the silent-resonance shape -- many felt
+# it, nobody had an answer -- which is the latent-problem archetype the title
+# branch cannot see when the title is ordinary. Raw score fails as an
+# instrument (the 2026-07-31 band's top scorers were ~90% visual showcases:
+# upvote-and-scroll), so the branch is scoped to discussion venues; the
+# excluded-venue set is a named maintenance point that must track the roster.
+# Measured at score>=40: 72 rows that week, ~19% adjudicated yes. The owner
+# accepts the false-positive cost: adjudication reads a title, gate 5 does
+# the rest.
+SUB_FLOOR_ENGAGEMENT_MIN_SCORE = 40
+SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES = frozenset((
+    "nails nailart redditlaqueristas redditlaqueristaswap panporn projectpan "
+    "makeupflatlays skincareflatlays blackhair naturalhair curlyhair curlygirl "
+    "locs fancyfollicles hairdye hair makeupaddiction blkgrlbeauty "
+    "malegrooming wicked_edge beautyboxes"
+).split())
+
+SUB_FLOOR_EXCEPTION_MIN_COMMENTS = 4
+SUB_FLOOR_EXCEPTION_EXCLUDED_PREFIXES = ("[wts", "[wtt", "[iso", "[sell")
+SUB_FLOOR_EXCEPTION_PATTERN = re.compile(
+    r"fake|counterfeit|authentic|legit|scam|discontinu|reformulat|recall"
+    r"|dupe|clone of|alternative to|replacement for|ruined|broke me out"
+    r"|reaction|allerg|burn(?:ed|s|ing)?\b|irritat|stopped working"
+    r"|doesn'?t work|not working|wasted? (?:of )?money|regret"
+    r"|smells? different|formula changed|no longer (?:available|made|sold)"
+    r"|out of stock everywhere",
+    re.IGNORECASE,
+)
 # Page-1 score floor above which a subreddit genuinely overflows one page
 # (top-10 carries 65% of weekly score on the measured distribution; a floor
 # past 50 means real traction ran off the page and the next pass should
@@ -251,12 +337,44 @@ def _listing_review_sort_key(item: dict[str, Any]) -> tuple[int, bool, int, str]
     )
 
 
+def _sub_floor_exception(item: dict[str, Any]) -> bool:
+    comments = item["comments"]
+    if comments is None or not (
+        SUB_FLOOR_EXCEPTION_MIN_COMMENTS <= comments <= GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
+    ):
+        return False
+    title = (item["title_or_none"] or "").strip()
+    if title.casefold().startswith(SUB_FLOOR_EXCEPTION_EXCLUDED_PREFIXES):
+        return False
+    return SUB_FLOOR_EXCEPTION_PATTERN.search(title) is not None
+
+
+def _sub_floor_engagement(item: dict[str, Any]) -> bool:
+    comments = item["comments"]
+    if comments is None or comments > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS:
+        return False
+    if item["subreddit"] in SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES:
+        return False
+    score = item["score"]
+    return score is not None and score >= SUB_FLOOR_ENGAGEMENT_MIN_SCORE
+
+
+def _selection_reason(item: dict[str, Any]) -> str:
+    if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS:
+        return "comment_floor_cleared"
+    if _sub_floor_exception(item):
+        return "sub_floor_exception_signal"
+    return "sub_floor_engagement_signal"
+
+
 def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ranked = sorted(
         (
             item
             for item in rows
             if item["comments"] > GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS
+            or _sub_floor_exception(item)
+            or _sub_floor_engagement(item)
         ),
         key=_listing_review_sort_key,
     )
@@ -284,11 +402,61 @@ def _build_listing_review_rows(*, rows: list[dict[str, Any]]) -> list[dict[str, 
                 "title_signal_reasons": title_reasons,
                 "title_context_reasons": title_context_reasons,
                 "listing_context_state": context_state,
-                "selection_reason": "comment_floor_cleared",
+                "selection_reason": _selection_reason(item),
                 "policy_stage": "requires_commission_model_adjudication",
             }
         )
     return review_rows
+
+
+def _build_leaderboard_lane(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    lane = [
+        item
+        for item in candidates
+        if item["comments"] is not None
+        and item["comments"] >= LEADERBOARD_MIN_COMMENTS
+        and LEADERBOARD_TITLE_PATTERN.search(item["title_or_none"] or "")
+        and not LEADERBOARD_EXCLUDE_PATTERN.search(item["title_or_none"] or "")
+    ]
+    lane.sort(key=lambda item: (-item["comments"], item["thread_url"]))
+    return [
+        {
+            "slot_id": f"lb_{position:03d}",
+            "url": item["thread_url"],
+            "subreddit": item["subreddit"],
+            "comments": item["comments"],
+            "title_or_none": item["title_or_none"],
+        }
+        for position, item in enumerate(lane, start=1)
+    ]
+
+
+def _build_census_lane(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    lane = [
+        item
+        for item in candidates
+        if item["comments"] is not None
+        and item["comments"] >= CENSUS_MIN_COMMENTS
+        and CENSUS_TITLE_PATTERN.search(item["title_or_none"] or "")
+    ]
+    lane.sort(key=lambda item: (-item["comments"], item["thread_url"]))
+    per_venue: Counter[str] = Counter()
+    capped: list[dict[str, Any]] = []
+    for item in lane:
+        if per_venue[item["subreddit"]] >= CENSUS_MAX_PER_VENUE:
+            continue
+        per_venue[item["subreddit"]] += 1
+        capped.append(item)
+    return [
+        {
+            "slot_id": f"cs_{position:03d}",
+            "url": item["thread_url"],
+            "subreddit": item["subreddit"],
+            "comments": item["comments"],
+            "title_or_none": item["title_or_none"],
+        }
+        for position, item in enumerate(capped, start=1)
+    ]
 
 
 def run_weekly_demand_read(
@@ -438,6 +606,8 @@ def run_weekly_demand_read(
     selection_reason_counts = Counter(
         item["selection_reason"] for item in candidates
     )
+    leaderboard_slots = _build_leaderboard_lane(candidates)
+    census_slots = _build_census_lane(candidates)
     return {
         "reader": "reddit_weekly_demand_read",
         "as_of": as_of.isoformat(),
@@ -446,12 +616,21 @@ def run_weekly_demand_read(
             "policy_version": LISTING_EFFICIENCY_POLICY_VERSION,
             "general_discussion_floor_max_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS,
             "review_min_comments": GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS + 1,
+            "sub_floor_exception_min_comments": SUB_FLOOR_EXCEPTION_MIN_COMMENTS,
+            "sub_floor_exception_pattern": SUB_FLOOR_EXCEPTION_PATTERN.pattern,
+            "sub_floor_engagement_min_score": SUB_FLOOR_ENGAGEMENT_MIN_SCORE,
+            "sub_floor_engagement_excluded_venues": sorted(
+                SUB_FLOOR_ENGAGEMENT_EXCLUDED_VENUES
+            ),
             "zero_or_negative_score_is_veto": False,
             "missing_counts_are_unparsed": True,
             "engagement_rank_primary": "comments",
             "engagement_rank_tiebreakers": ["score", "thread_url"],
             "title_signals_are_binding": False,
-            "admission_decision": "commission_conditioned_model_yes_borderline_no",
+            # borderline routes to capture since the owner decision of
+            # 2026-08-03: the measured borderline batch (55 correctly captured)
+            # ran ~85% real signal, so only a model "no" suppresses capture.
+            "admission_decision": "commission_conditioned_model_yes_or_borderline",
             "page_overflow_score_floor": PAGE_OVERFLOW_SCORE_FLOOR,
         },
         "roster_count": len(roster),
@@ -485,6 +664,31 @@ def run_weekly_demand_read(
         ),
         "capture_list_status": "blocked_pending_commission_model_adjudication",
         "capture_slots": [],
+        # The leaderboard lane is mechanically selected by policy (no model
+        # adjudication, no gate sequence), so unlike the problem queue its
+        # slots are emitted directly. Selection only: capture still runs at
+        # the standard cadence and queues after the week's problem dives.
+        "leaderboard_lane": {
+            "lane": "weekly_category_leaderboard_v0",
+            "min_comments": LEADERBOARD_MIN_COMMENTS,
+            "title_pattern": LEADERBOARD_TITLE_PATTERN.pattern,
+            "exclude_pattern": LEADERBOARD_EXCLUDE_PATTERN.pattern,
+            "threads_found": len(leaderboard_slots),
+            "slots": leaderboard_slots,
+        },
+        # Same mechanics as the leaderboard lane: mechanically selected by
+        # policy, tally-only shallow read, read layer only. The wear census is
+        # behavioral (what commenters put on today), so it complements the
+        # leaderboard's stated favorites and surfaces indie houses stated-
+        # favorite formats never rank.
+        "census_lane": {
+            "lane": "weekly_wear_census_v0",
+            "min_comments": CENSUS_MIN_COMMENTS,
+            "max_per_venue": CENSUS_MAX_PER_VENUE,
+            "title_pattern": CENSUS_TITLE_PATTERN.pattern,
+            "threads_found": len(census_slots),
+            "slots": census_slots,
+        },
         "page_overflow_tripwire": floor_tripwire,
         "non_claims": [
             "not metric authority",
@@ -515,6 +719,27 @@ def _build_parser() -> argparse.ArgumentParser:
             "fails closed while the reader output is unadjudicated."
         ),
     )
+    parser.add_argument(
+        "--leaderboard-capture-list-output",
+        type=Path,
+        default=None,
+        help=(
+            "Write the mechanically selected leaderboard lane as a "
+            "run_reddit_old_http_batch.py URL list. Unlike the problem queue "
+            "this lane needs no model adjudication, so emitting it is not a "
+            "capture authorization shortcut for admitted threads."
+        ),
+    )
+    parser.add_argument(
+        "--census-capture-list-output",
+        type=Path,
+        default=None,
+        help=(
+            "Write the mechanically selected daily wear-census lane as a "
+            "run_reddit_old_http_batch.py URL list; same standing as the "
+            "leaderboard list (policy-selected, no adjudication required)."
+        ),
+    )
     return parser
 
 
@@ -537,6 +762,24 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise ValueError(
                 "--capture-list-output is blocked pending commission-conditioned "
                 "model adjudication; the weekly reader does not authorize capture"
+            )
+        if args.leaderboard_capture_list_output is not None:
+            slots = [
+                {"slot_id": slot["slot_id"], "url": slot["url"]}
+                for slot in payload["leaderboard_lane"]["slots"]
+            ]
+            args.leaderboard_capture_list_output.parent.mkdir(parents=True, exist_ok=True)
+            args.leaderboard_capture_list_output.write_text(
+                json.dumps(slots, indent=2) + "\n", encoding="utf-8"
+            )
+        if args.census_capture_list_output is not None:
+            slots = [
+                {"slot_id": slot["slot_id"], "url": slot["url"]}
+                for slot in payload["census_lane"]["slots"]
+            ]
+            args.census_capture_list_output.parent.mkdir(parents=True, exist_ok=True)
+            args.census_capture_list_output.write_text(
+                json.dumps(slots, indent=2) + "\n", encoding="utf-8"
             )
         if args.output is not None:
             args.output.parent.mkdir(parents=True, exist_ok=True)

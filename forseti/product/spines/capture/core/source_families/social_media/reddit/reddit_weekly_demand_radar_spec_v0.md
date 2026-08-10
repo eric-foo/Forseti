@@ -90,24 +90,62 @@ output to the lake.
   content record, hash and drop raw. Projection row carries: fullname,
   permalink, title, score, comments, timestamp_utc_ms, stickied,
   flair_or_none; venue envelope carries created_utc.
+- **Never raw-only** (owner direction, 2026-07-31). Every admitted packet
+  carries a content record. There is no operator-selectable raw-only mode on
+  this lane, and no screenshot is captured at all — the projection reads DOM and
+  visible text, the access classifier reads the response, and nothing consumes
+  the image.
+- At this revision the shared decision helper and its matrix tests exist, but no
+  capture runner calls that helper. Never-raw-only is therefore the bound lane
+  behavior, not yet observed runtime enforcement; runner integration is required
+  before claiming the lane enforces it.
 - Two raw-retention rules, no schedule, no decay curve:
-  1. One rotating subreddit per weekly pass keeps raw (audit sample).
+  1. One rotating subreddit per weekly pass keeps raw **in addition to** its
+     content record (audit sample; DOM and visible text only). Raw *instead of*
+     content is what the earlier rule said and is now forbidden: on 2026-07-30
+     the rotating raw-only packet was the single capture in a 91-subreddit pass
+     that banked a Reddit login wall and still exited 0, because with no
+     projection to fail there was nothing to fail. A content-bearing sample
+     cannot do that.
   2. Any packet whose projection returns an anomaly keeps raw (row count
-     mismatch vs things seen, zero timestamps, zero permalinks).
+     mismatch vs things seen, zero timestamps, zero permalinks). This is the
+     fail-loud fallback, not a retention choice, and it stays.
+- Extraction or admission failure is not an admitted packet. Exact DOM and
+  visible-text inputs survive; when extraction itself succeeded, the attempted
+  content-record digest also survives, but its bytes are withheld so downstream
+  readers cannot consume a clean projection of a block shell as source content.
 - Accepted residual: a projection gap not caught by either rule loses at most
   the sub-50-point tail for the affected weeks; the head stays recoverable
   via a one-shot `t=month` capture for a month.
-- Fleet cost basis: at 250 subreddits, raw-always is ~9.1 GB/yr for this lane;
-  project-default with samples is roughly 0.5-0.6 GB/yr.
+- Fleet cost basis, measured on a real 102-row www capture (2026-07-31):
+  content record 48.7 KB; DOM + visible text 2.62 MB; the discarded viewport
+  screenshot was 9.40 MB, 78% of raw bytes, and contributed nothing to a
+  projection audit. At the current 91-subreddit roster that is 0.231 GB/yr for
+  content plus 0.136 GB/yr for the weekly audit sample — 0.367 GB/yr against a
+  0.5-0.6 GB/yr target. Raw-always on this surface would be 56.9 GB/yr.
+- Scope: this never-raw-only rule binds the Reddit lane only. Extending it to
+  other rendered capture surfaces is a separate owner decision.
 
 ### C. Registry coupling (extend materializer)
 
 - The refresh accepts grid-family packets of either listing and records an
-  observation per packet: `source_surface` is `old_reddit_grid_packet` for hot
-  and `old_reddit_top_week_packet` for top/week, provenance pointer to the
-  packet manifest, capture_state advance per the registry spec.
-- The materializer learns to project raw-preserved grid packets in-read (today
-  it only accepts pre-projected content records).
+  observation per packet. `source_surface` is `old_reddit_grid_packet` or
+  `old_reddit_top_week_packet` on `old.reddit.com`, and
+  `www_reddit_grid_packet` or `www_reddit_top_week_packet` on
+  `www.reddit.com`; the durable label makes the host cutover visible.
+  `source_surface` is provenance, not a grid-observation type discriminator:
+  downstream readers must not use the `old_reddit_` prefix as that proxy.
+  Each observation also carries the packet-manifest provenance pointer and
+  capture-state advance required by the registry spec.
+- The materializer may re-project legacy raw-preserved `old.reddit.com` grid
+  packets in-read. A `www.reddit.com` packet must carry an admitted content
+  record; a raw failure is retained as diagnostic evidence but cannot ledger an
+  observation. The packet locator, successful source slice, response final URL,
+  and content-record listing URL must all name the same host, path, and query.
+- Host-safe projection and ledger parameterization does not itself provide the
+  rendered capture runner. The current packet reader recognizes its existing
+  successful direct-HTTP slice posture; a rendered caller and packet path remain
+  unimplemented at this revision.
 - The five 2026-07-22 experiment packets (family `reddit_subreddit_venue`)
   stay unledgered as an accepted residual; the first real weekly pass
   supersedes them.
@@ -146,8 +184,10 @@ output to the lake.
   parseable score and comment count. Listing evidence remains preserved whether
   or not a thread is selected.
 - Apply only the stable mechanical floor in code. A fresh visible count of
-  0–3 comments is suppressed from the general deep-dive queue. A fresh visible
-  count of 4+ comments enters model review. A zero or negative score is not a
+  0–9 comments is suppressed from the general deep-dive queue. A fresh visible
+  count of 10+ comments enters model review (raised from 4+ by owner decision
+  2026-08-01 on measured dive yield; the policy owns the rationale and the
+  do-not-raise-further bound). A zero or negative score is not a
   veto, and an absent/unparseable comment or score cell is recorded as
   unparsed, never coerced to zero.
 - Rank review rows within each subreddit by comments descending, then score
@@ -156,7 +196,9 @@ output to the lake.
   calculate a numeric title-rescue score or auto-select an engagement head.
 - The model applies the governing policy in
   `reddit_listing_efficiency_policy_v0.md` against a named Decision Frame and
-  records `yes`, `borderline`, or `no` plus reason codes and priority.
+  records `yes`, `borderline`, or `no` plus reason codes and priority. This
+  radar's standing frame is `weekly_latent_problem_gtm_discovery_v0`, defined
+  in that policy; it owns the frame-scoped gate readings and the dive budget.
   Opaque/deictic/image-dependent rows remain `borderline` until a cheap
   listing-level preview resolves the missing context; opacity is a reason, not
   a fourth disposition.
@@ -255,8 +297,9 @@ Query shape:
 - On a gate: STOP the sweep, bank everything already gathered, and ping the
   owner to clear the challenge. The agent never solves it.
 
-Admission gate per find (adds are effectively permanent — `--roster` captures
-every tracked subreddit forever, and there is no paused capture state yet):
+Admission gate per find (an add costs one request per weekly pass until it is
+retired; `discovery_state: retired` drops a subreddit from `capture_roster`
+without deleting its history):
 
 - **Add** on clear beauty-topic fit plus a visible band. No follower floor —
   the density finding says small subreddits punch above their size.
@@ -290,10 +333,9 @@ automatically because the runner reads `--roster` from the fold.
 - Roster expansion beyond 100: the owner set the first target at 100
   (reached 2026-07-22, 38 -> 100 across two sweeps). Further growth uses
   section F unchanged; it is owner-paced and bounded, never a crawler.
-- Roster pruning / a paused capture posture: no vocabulary value exists for
-  "tracked but not captured", so a dropped subreddit today means living with
-  its weekly request. Trigger to add one: the first prune pass that wants to
-  keep a subreddit's history while stopping its capture.
+- Roster pruning: no longer deferred. The trigger fired on the 2026-07-22
+  prune, and `discovery_state: retired` plus `capture_roster` landed with it
+  (21 rows retired as of 2026-07-30). See the admission gate in section F.
 
 ## Verification bound to implementation
 
@@ -301,8 +343,8 @@ automatically because the runner reads `--roster` from the fold.
   rules (rotating sample selection, anomaly triggers); materializer surface
   stamping for both listings; projection fields (timestamp, stickied, flair)
   against a stored fixture page.
-- Reader policy: verify `0–3` comments are omitted from the model-review queue,
-  exactly four comments enter it, score zero does not veto, listing cues remain
+- Reader policy: verify `0–9` comments are omitted from the model-review queue,
+  exactly ten comments enter it, score zero does not veto, listing cues remain
   non-binding, `capture_slots` stays empty, and `--capture-list-output` fails
   closed before writing.
 - Live dogfood in the implementing session: backfill the six observations via
