@@ -166,7 +166,7 @@ run-resumption authority. Method v5 has not been semantically calibrated: its
 four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
-As of 2026-08-10, contract v19 and the no-provider runner implement the bounded
+As of 2026-08-10, contract v20 and the no-provider runner implement the bounded
 calibration gate. The latest completed Summer Fridays dogfood was v18: 13 of 17
 gold cases passed, six of seven selective cold repeats were consistent, all
 seven relation obligations passed, and no anomaly warning fired. Four critical
@@ -198,3 +198,19 @@ claim route readiness from v19. The next decision belongs to selective
 verification or a changed execution route that addresses semantic instability
 and final-view claim-kind competence; v19 is evidence for that decision, not
 authority to implement it.
+
+The bounded v20 direction-adjudication replay isolates one v19 measurement
+error without reopening that stop. Contract wording and the generated
+adjudication sidecar now distinguish a directly asserted lower comparison
+(`A is less moisturising than B`, `affirmed`) from logical negation (`A is not
+as moisturising as B`, `negated`). Three fresh read-only adjudications produced
+the same 13-of-13 results across five v19 lower comparisons, matched clean
+controls, a reversed comparator, a contradicted negation, and a polarity
+conflict. Re-evaluating the frozen v19 responses with only the five affected
+per-unit judgments corrected removed all five direction failures and raised
+gold passage from 11 of 17 to 14 of 17. The result remains
+`SEMANTIC_CALIBRATION_FAIL`: three unrelated gold cases still fail, three of
+the ten density-audit rows remain confirmed defects, no final views exist, and
+all seven relationship obligations remain blocked. This replay is bounded
+same-provider evidence, not independent cross-vendor review, prevalence,
+readiness, or authority to resume the 561-prompt corpus.

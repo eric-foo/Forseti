@@ -3048,6 +3048,16 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
         output_dir=prepared_dir,
     )
     assert result["status"] == "SEMANTIC_CALIBRATION_PREPARED"
+    adjudication_contract = (
+        prepared_dir / "adjudication_contract.md"
+    ).read_text(encoding="utf-8")
+    normalized_contract = " ".join(adjudication_contract.split())
+    assert "A is less moisturising than B" in normalized_contract
+    assert "`polarity: affirmed`" in normalized_contract
+    assert "not a sentiment or lower-is-negative judgment" in normalized_contract
+    assert result["adjudication_contract_sha256"] == hashlib.sha256(
+        (prepared_dir / "adjudication_contract.md").read_bytes()
+    ).hexdigest()
     with pytest.raises(ValueError, match="refusing to overwrite"):
         prepare_semantic_calibration_run(
             source_path=source_path,

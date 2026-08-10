@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v19
+version: v20
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v19
+# Semantic Evidence Integration Contract v20
 
 ## Purpose
 
@@ -321,9 +321,13 @@ reserved for company, creator, or other organizational strategy; it never
 relabels customer shopping or use behavior.
 
 Every atomic `statement` remains truthful when read without its structured
-fields. Negation and direction such as `not`, `never`, and `less` stay in the
-statement; `polarity` repeats that direction and never supplies or reverses
-words omitted from the statement. A support child and terminal
+fields. Logical negation such as `not` and `never`, and comparative ordering
+such as `less`, stay in the statement; `polarity` repeats the statement's
+logical assertion form and never supplies or reverses words omitted from the
+statement. A directly asserted comparison such as `A is less moisturising than
+B` is `affirmed`: `less` carries comparative ordering, not logical negation.
+`A is not as moisturising as B` is `negated`. Subject and comparator roles plus
+the complete wording carry the comparison's direction. A support child and terminal
 `bounded_meaning` have compatible direction. A negated child may validly be
 `counter` to the inverse positive meaning, but it may never support that
 positive meaning. `meaning_direction_preserved` adjudication checks the child,
@@ -348,9 +352,14 @@ and a separate target non-sinking claim when both are expressed. `More like a
 gloss than a balm` is an axis-free category judgment unless the leaf separately
 states a texture attribute.
 
-Logical polarity repeats the statement's direction: `not the most hydrating`
-and `does not make lips drier` are negated even though the author affirms that
-those statements are true. `Worsens peeling` carries
+Logical polarity repeats the statement's assertion form: `not the most
+hydrating` and `does not make lips drier` are negated even though the author
+affirms that those statements are true. Direct `less` or `more` comparisons are
+affirmed when asserted without logical negation; their lower or higher ordering
+remains explicit in the statement and product roles. Calibration field
+`statement_direction_supported` judges source entailment of that complete
+direction and polarity consistency, not sentiment or whether the comparison is
+favorable. `Worsens peeling` carries
 `reaction_and_breakout`; not-drying alone carries hydration, not reaction.
 Bare ownership, quantity owned, and go-to behavior are axis-free unless a
 separate attribute is stated; named shade ownership remains the accepted
@@ -804,6 +813,14 @@ new frontier.
 
 ## Changelog
 
+- `v20` / 2026-08-10 — disambiguated logical polarity from comparative
+  ordering for semantic extraction and calibration. A directly asserted
+  `less` or `more` comparison remains `affirmed`; logical constructions such
+  as `not as`, `never`, and `does not` remain `negated`. The generated bounded
+  calibration preparation now carries the same adjudication contract as a
+  hash-reported sidecar without changing the frozen preparation identity.
+  Added no sentiment classifier, phrase blacklist, provider call, full-corpus
+  execution, readiness claim, or resume authority.
 - `v19` / 2026-08-10 — kept method-v5/v18 semantic wording and blind gold
   unchanged while adding calibration spec v3's closed audit of the highest
   semantic-unit-density non-gold rows. Each selected row now requires an exact
