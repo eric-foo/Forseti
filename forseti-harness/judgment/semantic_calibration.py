@@ -57,6 +57,16 @@ judgment.
   polarity that conflicts with the written statement.
 - Do not mark an otherwise supported unit false merely because its asserted
   comparison is unfavorable, lower, or contains the word `less`.
+- An asserted desire such as wanting more pigment is `polarity: affirmed`.
+  The desired state being absent does not negate the customer's desire.
+- A nearby preference does not supply a reason, axis, or product comparison
+  unless the source explicitly links them.
+
+Cold-repeat consistency compares preserved supported meanings, attribution,
+axes, direction, and unsupported invention. A different number of supported
+atomic units is not by itself inconsistent. A reply may also contain both
+attributed parent claims and its own first-hand shopping reaction; judge each
+unit's posture rather than imposing one posture on the whole leaf.
 
 Apply this contract to every semantic unit in each gold case, including units
 left explicitly unmerged.

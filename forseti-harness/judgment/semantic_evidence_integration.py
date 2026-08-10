@@ -346,47 +346,49 @@ METHOD_TEXT_V6 = METHOD_TEXT_V5.replace(
 
 V6 MEANING-PRESERVATION CLARIFICATIONS
 
-These rules govern where the v5 wording above could otherwise split away or
-misplace load-bearing meaning. They add no output fields and no second read.
+These rules clarify where v5 could split or misplace meaning. They add no field
+or second read.
 
-Atomicity preserves both independently true facts and explicit relationships.
-Split unrelated facts, products, outcomes, comparisons, conditions, directions,
-or uncertainty. But when the source explicitly makes a cause, explanation,
-qualification, contrast, or co-reported behavior part of the assertion, keep
-that relationship truth-complete in one bounded unit rather than deleting the
-link. In particular, a stated reason remains attached to what it explains.
-Connected ownership and habitual-use language may remain one direct behavioral
-statement when their connection is the useful meaning. It may suggest loyalty
-or possible repurchase downstream, but it never proves a purchase count,
-purchase sequence, or repeated purchase event.
+Atomicity preserves independent facts and explicit relationships. Split
+unrelated facts, products, outcomes, comparisons, conditions, directions, and
+uncertainty. Keep an explicit cause, explanation, or connected behavior with
+what it explains; a stated reason remains attached. Contrast and qualification
+still follow atomicity: split opposite directions and discard generic approval.
+Connected ownership and habitual use may stay one statement when that link is
+the meaning. It may suggest loyalty or possible repurchase, but never proves a
+purchase count, sequence, or repeated purchase. When one leaf evaluates two
+alternatives on the same attribute, retain the relative comparison even across
+sentences.
 
-Choose an axis from the outcome and its direction, not from an isolated symptom
-word. Relief or repair of pre-existing dryness, cracking, or peeling may support
-hydration or repair. Product-caused or product-worsened peeling, burning,
-irritation, or damage may support reaction or tolerability. Do not force a
-symptom into the same axis in both directions.
+Choose an axis from the outcome and direction, not an isolated word. Relief or
+repair of pre-existing dryness, cracking, or peeling may support hydration;
+product-caused or worsened peeling, burning, irritation, or damage may support
+reaction. The same symptom need not map to the same axis in both directions.
 
 A named shade's ownership, selection, or preference supports
-shade_and_color_fit. Preserve only the observed choice or preference; never
-invent complexion match, flattering effect, or a reason the customer did not
-state.
+shade_and_color_fit. A reply adopting a parent's named-shade choice or
+preference keeps that axis. Preserve the observed choice only; never invent fit
+or its reason.
 
-A customer attribute may qualify a result without an explicit causal word when
-it is genuinely relevant to interpreting that result in the domain. Proximity
-alone is insufficient. Attach the attribute only to units it helps interpret;
-do not copy it onto unrelated outcomes. Omission from an unrelated unit does
-not erase it from the source evidence and context.
+A customer attribute may qualify a result without a causal word when it is
+domain-relevant. Proximity alone is insufficient. Attach it only where it helps
+interpret the result; do not copy it to unrelated outcomes.
 
-Non-drying is a bounded hydration observation, not proof of strong hydration.
-Preserve advertised product category, customer-experienced category, and
-price/value comparison as separate direct meanings when the source states
-them. A category-framing judgment may remain axis-free or use an emerging-axis
-label; lack of an accepted axis never means the evidence is unimportant.
+Non-drying is bounded hydration, not proof of strong hydration. Physical
+thickness, viscosity, or feel is texture even when its comparator is called a
+formula; formula consistency requires actual formula identity, change, or
+resemblance. A generic nickname proves no exact product without a bound alias
+or context. Use negated polarity for negative behavior, or state an exact
+positive equivalent. An asserted desire is affirmed; its unmet object does not
+negate it. Nearby preference supplies no reason, axis, or comparison without an
+explicit link.
 
-Unmerged means not yet consolidated, not low-value or disposable. Preserve
-every source-supported unusual meaning through the existing emerging-axis and
-unmerged-evidence paths. Do not add a value score, recommendation, prevalence,
-or conclusion.
+Keep advertised category, experienced category, price/value, and attribute
+performance separate unless the leaf connects them. Category framing may be
+axis-free or emerging-axis evidence; no accepted axis never means unimportant.
+Unmerged means unconsolidated, not disposable. Preserve unusual supported
+meaning through existing emerging-axis and unmerged paths. Add no value score,
+recommendation, prevalence, or conclusion.
 """
 
 _METHOD_TEXTS = {
@@ -1736,7 +1738,7 @@ def build_bundle(
             METHOD_VERSION_V5,
             METHOD_VERSION_V6,
         }:
-            raise SemanticIntegrationError("bundle v5 requires semantic method v5")
+            raise SemanticIntegrationError("bundle v5 requires semantic method v5 or v6")
         method_version = requested_method
     else:
         raise SemanticIntegrationError("invalid semantic evidence source version")

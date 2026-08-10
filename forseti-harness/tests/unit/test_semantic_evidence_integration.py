@@ -3081,6 +3081,9 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
     assert "A is less moisturising than B" in normalized_contract
     assert "`polarity: affirmed`" in normalized_contract
     assert "not a sentiment or lower-is-negative judgment" in normalized_contract
+    assert "wanting more pigment is `polarity: affirmed`" in normalized_contract
+    assert "different number of supported atomic units is not by itself inconsistent" in normalized_contract
+    assert "both attributed parent claims and its own first-hand shopping reaction" in normalized_contract
     # Pin the written sidecar and its reported hash to the bound constant, not
     # to the bytes the runner just wrote: comparing the file against itself
     # cannot detect the drift the hash exists to detect.
@@ -3696,24 +3699,40 @@ def test_v6_reuses_v5_transport_without_changing_frozen_v5_text() -> None:
 
     assert bundle["schema_version"] == BUNDLE_VERSION_V5
     assert bundle["method_version"] == METHOD_VERSION_V6
+    # v6 is derived from the v5 constant, so an edit to either text silently
+    # moves the bound method hash.  Pin the value the durable calibration
+    # route contract binds so drift fails here instead of quietly orphaning
+    # the frozen replay evidence from the prompt that produced it.
+    assert bundle["method_sha256"] == (
+        "9ff5c8a8be460ef2b599d08ec08485ebbd698ef12ad2db9eb9cf8bad38090805"
+    )
     identity = bundle["semantic_work_unit_projection"]["semantic_execution_identity"]
     assert identity["response_schema_version"] == BATCH_RESPONSE_VERSION_V3
+    assert identity["method_sha256"] == bundle["method_sha256"]
     assert "SEMANTIC EVIDENCE INTEGRATION METHOD V6" in prompt
     assert "V6 MEANING-PRESERVATION CLARIFICATIONS" in prompt
 
 
-def test_v6_method_uses_general_meaning_rules_not_new_product_examples() -> None:
+def test_v6_amendment_uses_general_meaning_rules_not_new_product_examples() -> None:
     amendment = METHOD_TEXT_V6.split("V6 MEANING-PRESERVATION CLARIFICATIONS", 1)[1]
     normalized = " ".join(amendment.split())
     for principle in (
         "explicit relationships",
-        "stated reason remains attached to what it explains",
+        "Contrast and qualification still follow atomicity",
+        "split opposite directions and discard generic approval",
+        "stated reason remains attached",
         "never proves a purchase count",
-        "outcome and its direction",
+        "retain the relative comparison",
+        "outcome and direction",
         "named shade's ownership, selection, or preference",
+        "adopting a parent's named-shade choice or preference",
         "Proximity alone is insufficient",
-        "Non-drying is a bounded hydration observation",
-        "Unmerged means not yet consolidated",
+        "Non-drying is bounded hydration",
+        "Physical thickness, viscosity, or feel is texture",
+        "generic nickname proves no exact product",
+        "asserted desire is affirmed",
+        "Nearby preference supplies no reason, axis, or comparison",
+        "Unmerged means unconsolidated",
     ):
         assert principle in normalized
     for product_specific_example in (
@@ -4012,7 +4031,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
         (METHOD_VERSION_V5, BUNDLE_VERSION_V4, "method v5 requires bundle v5"),
         (METHOD_VERSION_V6, BUNDLE_VERSION_V4, "method v6 requires bundle v5"),
         (METHOD_VERSION_V4, BUNDLE_VERSION_V5, "method v4 requires bundle v4"),
-        (METHOD_VERSION_V3, BUNDLE_VERSION_V5, "bundle v5 requires semantic method v5"),
+        (METHOD_VERSION_V3, BUNDLE_VERSION_V5, "bundle v5 requires semantic method v5 or v6"),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],
 )

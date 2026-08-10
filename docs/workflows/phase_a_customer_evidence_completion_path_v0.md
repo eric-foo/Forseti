@@ -299,3 +299,75 @@ prevalence, authorize the full-corpus run, or make the route seal-ready. Keep
 the full corpus paused until the code change receives de-correlated review and
 a fresh blind v6 reader reproduces the bounded result or exposes the next real
 defect class.
+
+The delegated v6 code review then found a real ambiguity in those instructions:
+the retained v5 rule forbade bundled mixed directions while the v6 appendix
+said to keep every explicit contrast together. Home adjudication accepted that
+finding and the delegate's method-hash pin. It clarified that contrast and
+qualification still obey atomicity, corrected the stale bundle-v5 error text,
+and documented that calibration may deliberately retarget the same hash-pinned
+source evidence to the spec-selected method; the exact method hash in the route
+fingerprint makes that a visible comparison, not a fallback.
+
+Fresh blind dogfood did not reproduce the controlled pass. The first corrected
+read at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-review-fix-20260810-v3`
+accounted all 128 primary leaves, completed both terminal views, and satisfied
+all seven cross-source relations, but passed only 14 of 17 gold cases and five
+of seven cold repeats. It exposed missing same-attribute comparison, shade-axis,
+texture-versus-formula, exact-product nickname, and logical-negation behavior.
+A compact general correction addressed those classes without adding a field,
+second read, product phrase table, or extra production-shaped prompt.
+
+The resulting fresh blind run at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-review-fix-20260810-v4`
+again accounted 7/7 semantic-core and 121/121 production-shaped leaves, used
+the original two production prompts (largest 89,904 bytes), completed terminal
+reconciliation, and satisfied all seven relation obligations. It passed 16 of
+17 gold cases, four of seven cold repeats, and seven of ten density audits. The
+one remaining gold failure split weeks-long peeling from repeated-use worsening
+instead of preserving their causal relationship. The cold repeat also
+over-decomposed two dense rows and miscredited one reported deterrent; three
+other dense production rows retained polarity or comparison defects. The
+evaluator therefore returned `SEMANTIC_CALIBRATION_FAIL`, with report hash
+`74009baaedadc3e5e170012586b383179f2d1b60664bc211015187321f0e1ae3`.
+
+This is useful negative proof: the compact general rules corrected all five
+defect classes they targeted, but one-pass prompt wording alone has not produced
+stable calibration behavior. Do not resume the full corpus, claim method-v6
+readiness, or keep accreting case-like prompt clauses. The next decision must
+address selective semantic verification or another bounded consistency
+mechanism against these preserved fresh failures; it remains separate from any
+campaign bridge, Deliver conclusion, prevalence estimate, or seal adoption.
+
+A final bounded fidelity correction then separated calibration-ruler defects
+from reader defects. It made asserted desires affirmative, prohibited a nearby
+preference from inventing an axis, reason, or comparison, allowed different
+supported atomic decompositions in the cold repeat, allowed one reply to carry
+both attributed parent claims and its own shopping reaction, and split the
+retailer peeling gold into its two independently supported facts. These are
+general meaning rules; they add no field, second read, example table, or new
+production work unit.
+
+The fresh blind run at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v21-review-fix-20260810-v5`
+used method hash
+`9ff5c8a8be460ef2b599d08ec08485ebbd698ef12ad2db9eb9cf8bad38090805`,
+kept the two production-shaped prompts (largest 89,958 bytes), accounted all
+7/7 semantic-core and 121/121 production-shaped leaves, and completed both
+terminal views. The targeted defects were absent: the desire for more pigment
+kept affirmed direction, and the nearby original-Glossier preference did not
+become a hydration comparison. All seven relation obligations also held.
+
+The run still returned `SEMANTIC_CALIBRATION_FAIL`. The deterministic report
+passed 15 of 17 gold cases, five of seven cold repeats, and eight of ten density
+audits; its canonical report hash is
+`b3e1477c4596fc0da38fbc9e048ba64f8e2519b357e06072262f16877a724a26`.
+The remaining failures are different classes: one direct scent answer was
+miscast as agreement, a non-repurchase unit inherited a neighboring shade axis,
+one cold read preserved a material balm-value observation the primary omitted,
+and a production row invented a two-product per-use comparison from a one-sided
+quantity statement. Preserve this run as proof that the requested correction
+worked and that method-v6 is still not ready for the full corpus. Do not turn
+these residuals into more case-specific prompt clauses; route them through the
+planned selective semantic verification decision.

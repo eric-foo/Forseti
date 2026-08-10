@@ -333,6 +333,26 @@ product-caused or product-worsened irritation remains reaction. Named shade
 selection, ownership, or preference may carry `shade_and_color_fit` without
 inventing a reason such as undertone or complexion fit.
 
+When one leaf evaluates two alternatives on the same attribute, the relative
+comparison remains evidence even if the observations occupy separate
+sentences. A context-adopting reply keeps a parent's named-shade preference and
+shade axis. Physical thickness, viscosity, or feel remains a texture outcome
+when a formula is merely the comparator; formula consistency requires an
+actual formula identity, change, or resemblance. Generic ingredient or
+category nicknames do not establish an exact catalog product without a bound
+alias or resolving context. Negative behavior stays logically negated unless
+the statement is rewritten as an exact positive equivalent without retaining
+the negative clause. An asserted desire remains affirmed even when it exposes
+an unmet product attribute. A nearby preference supplies no reason, axis, or
+comparison unless the source explicitly connects them.
+
+Explicit contrast wording does not override atomicity. Independently testable
+material sides stay separate, opposite directions are not bundled, and generic
+approval may still be discarded when it carries no bounded evidence.
+Qualifications follow the same atomicity rule. This narrows the
+meaning-preservation rule without weakening its causal, explanatory, or
+connected-behavior cases.
+
 A customer attribute may qualify a result when its meaning makes the attribute
 relevant; an explicit causal phrase is not mandatory, but mere proximity is
 insufficient. Non-worsening dryness is bounded hydration evidence rather than
@@ -666,10 +686,13 @@ Current-route operations are:
     the next node compilation; repeat until one terminal level remains.
 13. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
     v2.
-14. `prepare-calibration` reads a hash-pinned method-v5 source and blind owner
-    gold, projects exact bounded slices, and writes route-native sources,
-    bundles, fingerprints, and prompts. It makes no model call and cannot
-    authorize a corpus run.
+14. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+    owner gold, projects exact bounded slices, and writes route-native sources,
+    bundles, fingerprints, and prompts. The calibration spec deliberately
+    selects the method being tested and may retarget the same pinned evidence
+    from the source's method marker; the route fingerprint binds the selected
+    method and exact method hash, so this is explicit method comparison rather
+    than fallback. It makes no model call and cannot authorize a corpus run.
 15. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
@@ -724,6 +747,10 @@ semantic verdict, and must receive a compilation-bound adjudication before a
 pass is possible. Selective second reads repack only the predeclared cases into
 one separately hash-bound route-native slice; their consistency judgment binds
 both the primary compilation for each case and the compact repeat compilation.
+Consistency is semantic rather than count-identical: different supported
+atomic decompositions may be consistent. Judge each unit's attribution
+separately, because one reply may contain attributed parent claims alongside
+its own first-hand shopping reaction.
 
 Spec v3 may additionally require a `semantic_unit_density_audit` on a slice.
 The evaluator deterministically ranks non-gold evidence rows that emitted at
