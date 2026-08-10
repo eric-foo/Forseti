@@ -220,31 +220,39 @@ same-provider evidence, not independent cross-vendor review, prevalence,
 readiness, or authority to resume the 561-prompt corpus.
 
 The subsequent architecture adjudication withdrew the proposed polarity
-removal and selective whole-row verifier. The frozen v18/v19 comparison units
-already used the same `affirmed` polarity, while the calibration adjudications
-disagreed about their direction. The architecture review also measured the
-proposed structural selector as nominating at least 73 of 92 claim-bearing
-production rows (79.3%) before all
-candidate triggers were applied, so it was a near-full reread rather than a
-selective route. The retained provisional architecture is one-pass extraction,
-deterministic validation, reconciliation-time source-role/claim-kind competence
-enforcement, and finalization.
+removal and selective whole-row verifier. The five v19 lower-comparison gold
+units at issue already used `affirmed` polarity, while the calibration
+adjudications disagreed about their direction. The architecture review also
+measured the proposed structural selector as nominating at least 73 of 92
+claim-bearing
+production rows (at least 79.3%) before all candidate triggers were applied,
+so it was a near-full reread rather than a selective route. The 92-row
+claim-bearing denominator is checkable in the frozen v19 compilation; the
+73-row nomination count was not frozen as a durable artifact, so it is
+reported, not independently checkable. The retained provisional architecture is
+one-pass extraction, deterministic validation, reconciliation-time
+source-role/claim-kind competence enforcement, and finalization.
 
-A fresh bounded v20 replay at
+A fresh bounded v20 adjudication-and-reconciliation replay at
 `C:\tmp\forseti-summer-fridays-semantic-calibration-v20-replay-20260810-v0`
-then exercised that retained route rather than editing v19 judgments. It reused
-the frozen preparation identity
+then exercised that retained route rather than editing v19 judgments. It used
+the frozen v19 preparation rather than new v20 extraction prompts, reusing the
+preparation identity
 `4067e7c51e31ffaf35e51874705a471044833ec506813aa08b0d0699e108531f`,
 carried the integrity-checked v20 adjudication sidecar, and used four blind
 extraction work units plus crossed and fresh reconciliation readers. The run
 made zero model API calls and did not touch the 561-prompt corpus. All judgment
 readers were OpenAI-family agents, so this is fresh role separation rather than
-cross-vendor semantic proof.
+cross-vendor semantic proof. Reader blindness, reader crossing, vendor family,
+and the zero-API-call condition are operator-reported: replay artifacts do not
+record reader identity, reader role, or API-use provenance, so those
+operational facts are not independently checkable.
 
 The fresh report remains `SEMANTIC_CALIBRATION_FAIL`. It produced 234 primary
-semantic units (down from v19's 289), completed both terminal views, passed 11
-of 17 gold cases, held four of seven cold repeats consistent, satisfied four of
-seven relationship obligations, and confirmed two of ten density-audit rows as
+semantic units, of which 205 came from the production slice, down from v19's
+289 on that same slice; it completed both terminal views, passed 11 of 17 gold
+cases, held four of seven cold repeats consistent, satisfied four of seven
+relationship obligations, and confirmed two of ten density-audit rows as
 defective. All fifty adjudicated statement-direction checks passed, so the five
 v19 lower-comparison failures did not recur. The remaining failures are real
 and different: unsupported reaction or shade axes, missed narrow preference,
