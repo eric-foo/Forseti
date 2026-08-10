@@ -167,14 +167,15 @@ four-way boundary is proven as instructions and routing structure, never as
 model recall.
 
 As of 2026-08-10, contract v18 and the no-provider runner implement the bounded
-calibration gate. The latest completed Summer Fridays dogfood was v17: 13 of 17
-gold cases passed, five of seven selective cold repeats were consistent, five
-of seven relation obligations passed, and no anomaly warning fired. The v16
-over-compression defects were recovered, but adjacent failures remained:
-localized axis leakage, one logical-polarity error, generic praise bundled into
-a value atom, opposing hydration views left as support-only propositions, and
-the exact Vanilla Beige parent/child preference left unreconciled. Contract v18
-states those general boundaries without a phrase classifier; it has not yet
-received a completed dogfood verdict. Neither v17 nor this implementation
-authorizes corpus resumption, estimates defect prevalence, or changes the
+calibration gate. The latest completed Summer Fridays dogfood was v18: 13 of 17
+gold cases passed, six of seven selective cold repeats were consistent, all
+seven relation obligations passed, and no anomaly warning fired. Four critical
+cases still failed through over-splitting, localized unsupported axes, an
+inflated contextual favorite, and loss of the bounded ownership-plus-go-to
+meaning. The 121-row production-shaped response expanded from 179 v17 units to
+260 v18 units, while 235 non-gold units remained outside adjudication-v3's
+per-unit checks. This triggers the calibration design's route-change condition:
+do not keep accreting prompt examples; test a smaller complexity-balanced
+production work-unit shape under unchanged v18 semantics. V18 does not
+authorize corpus resumption, estimate defect prevalence, or change the
 still-incomplete full-corpus boundary above.
