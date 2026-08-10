@@ -3062,6 +3062,7 @@ def validate_reconciliation_stage(
         raise SemanticIntegrationError(
             "reconciliation stage lacks root batch compilation lineage"
         )
+    evidence_index = _unit_index(bundle)
     candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
     expected_batches = {row["batch_id"]: row for row in stage["batches"]}
     emerging_axis_owner_batch_id = stage.get("emerging_axis_owner_batch_id")
@@ -3215,6 +3216,28 @@ def validate_reconciliation_stage(
                 if kind not in CLAIM_KINDS or causal not in CAUSAL_CEILINGS or not isinstance(opposition, bool):
                     raise SemanticIntegrationError(
                         f"terminal semantic node {key} lacks claim metadata"
+                    )
+                support_evidence: set[str] = set()
+                for ref, stance in leaf_relations.items():
+                    if stance != "support":
+                        continue
+                    matches = [
+                        evidence_id
+                        for evidence_id in evidence_index
+                        if ref.startswith(f"{evidence_id}::")
+                    ]
+                    if len(matches) != 1:
+                        raise SemanticIntegrationError(
+                            f"semantic node {key} has ambiguous source lineage for {ref}"
+                        )
+                    support_evidence.add(matches[0])
+                roles = sorted(
+                    {evidence_index[ref]["source_role"] for ref in support_evidence}
+                )
+                incompetent = set(roles) - _competent_roles(kind)
+                if incompetent:
+                    raise SemanticIntegrationError(
+                        f"terminal semantic node {key} uses source roles incompetent for {kind}: {sorted(incompetent)!r}"
                     )
                 if kind in {"customer_experience", "reported_behavior"} and (
                     child_evidence_postures - {"first_hand", "personal_agreement"}

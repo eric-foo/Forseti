@@ -4105,6 +4105,55 @@ def test_v5_reconciliation_carries_posture_and_rejects_customer_proof_early() ->
         )
 
 
+def test_v5_reconciliation_rejects_incompetent_source_role_before_finalization() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    reconciliation = _group_level_responses(stage, terminal=True)
+    reconciliation[0]["semantic_nodes"][0]["claim_kind"] = "observable_fact"
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="uses source roles incompetent for observable_fact",
+    ):
+        validate_reconciliation_stage(bundle, stage, reconciliation)
+
+
+def test_v5_reconciliation_checks_only_supporting_source_roles_for_competence() -> None:
+    source = _source_v5()
+    source["captured_items"][0]["source_role"] = "owned_source"
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    reconciliation = _group_level_responses(stage, terminal=True)
+    node = reconciliation[0]["semantic_nodes"][0]
+    node["claim_kind"] = "observable_fact"
+    for index, relation in enumerate(node["child_relations"]):
+        relation["relation"] = "support" if index == 0 else "counter"
+
+    terminal = validate_reconciliation_stage(bundle, stage, reconciliation)
+
+    assert terminal["semantic_nodes"][0]["claim_kind"] == "observable_fact"
+
+
+def test_v5_finalization_retains_source_role_competence_backstop() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+    forged = deepcopy(terminal)
+    forged["semantic_nodes"][0]["claim_kind"] = "observable_fact"
+    _rehash_node_compilation(forged)
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="uses source roles incompetent for observable_fact",
+    ):
+        finalize_v3_view(bundle, compiled, forged)
+
+
 def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
     """Exact denominator coverage across several prompt-bounded work units."""
     bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
