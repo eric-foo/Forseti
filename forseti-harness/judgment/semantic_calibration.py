@@ -7,12 +7,12 @@ adjudication is therefore a blocker, never an implicit pass.
 """
 from __future__ import annotations
 
-import hashlib
 import json
 from collections import Counter, defaultdict
 from copy import deepcopy
 from typing import Any, Mapping, Sequence
 
+from harness_utils import sha256_bytes
 from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V3,
     BUNDLE_VERSION_V5,
@@ -135,7 +135,8 @@ def _json_bytes(value: Any) -> bytes:
 
 
 def _sha256(value: Any) -> str:
-    return hashlib.sha256(_json_bytes(value)).hexdigest()
+    # helper-delta: canonical JSON encoding before shared byte hashing.
+    return sha256_bytes(_json_bytes(value))
 
 
 def _without_hash(value: Mapping[str, Any], field: str) -> dict[str, Any]:
