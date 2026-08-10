@@ -218,3 +218,44 @@ the ten density-audit rows remain confirmed defects, no final views exist, and
 all seven relationship obligations remain blocked. This replay is bounded
 same-provider evidence, not independent cross-vendor review, prevalence,
 readiness, or authority to resume the 561-prompt corpus.
+
+The subsequent architecture adjudication withdrew the proposed polarity
+removal and selective whole-row verifier. The frozen v18/v19 comparison units
+already used the same `affirmed` polarity, while the calibration adjudications
+disagreed about their direction. The architecture review also measured the
+proposed structural selector as nominating at least 73 of 92 claim-bearing
+production rows (79.3%) before all
+candidate triggers were applied, so it was a near-full reread rather than a
+selective route. The retained provisional architecture is one-pass extraction,
+deterministic validation, reconciliation-time source-role/claim-kind competence
+enforcement, and finalization.
+
+A fresh bounded v20 replay at
+`C:\tmp\forseti-summer-fridays-semantic-calibration-v20-replay-20260810-v0`
+then exercised that retained route rather than editing v19 judgments. It reused
+the frozen preparation identity
+`4067e7c51e31ffaf35e51874705a471044833ec506813aa08b0d0699e108531f`,
+carried the integrity-checked v20 adjudication sidecar, and used four blind
+extraction work units plus crossed and fresh reconciliation readers. The run
+made zero model API calls and did not touch the 561-prompt corpus. All judgment
+readers were OpenAI-family agents, so this is fresh role separation rather than
+cross-vendor semantic proof.
+
+The fresh report remains `SEMANTIC_CALIBRATION_FAIL`. It produced 234 primary
+semantic units (down from v19's 289), completed both terminal views, passed 11
+of 17 gold cases, held four of seven cold repeats consistent, satisfied four of
+seven relationship obligations, and confirmed two of ten density-audit rows as
+defective. All fifty adjudicated statement-direction checks passed, so the five
+v19 lower-comparison failures did not recur. The remaining failures are real
+and different: unsupported reaction or shade axes, missed narrow preference,
+ownership, and go-to atoms, three cold-repeat inconsistencies, and three broken
+cross-evidence relationships. The report is bound by
+`report_sha256: 36ca06321f537fc12d1b464eb6bc42dfc0711f99f7f107c6219422f6cb8e2a25`;
+the observed preparation-to-report wall time was 36.7 minutes.
+
+This fresh replay supersedes the edited 14-of-17 result as the current behavior
+observation; it does not erase that earlier direction-rule measurement. Keep
+the full corpus paused. The next semantic change, if any, must target a
+reproduced remaining defect class and preserve matched clean controls; this
+run supplies no authority for a universal second read, polarity redesign,
+prompt-example accretion, readiness, prevalence, or corpus resumption.
