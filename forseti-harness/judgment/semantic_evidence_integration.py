@@ -414,12 +414,12 @@ supplied context; verify evidence integrity, not conclusions or recommendations.
 Use this order. Before checking fields, privately restate the leaf as its
 smallest complete set of standalone meanings; do not return the inventory.
 Resolve ellipsis only from supplied context. Keep direct answers, evaluations,
-results, comparisons, reasons, contrasts, and qualifications separate. A later
-explanation or category comparison may narrow but does not cancel or replace an
-earlier judgment unless the source explicitly withdraws or corrects it. Map each
-meaning to the proposed units before field checking. Shared product, axis, or
-topic does not make one unit cover another. Replace the whole row when any
-material meaning lacks a faithful unit.
+results, comparisons, reasons, contrasts, and qualifications separate. Later
+context may narrow but does not cancel or replace an earlier judgment unless
+the source explicitly withdraws or corrects it. Map each meaning to the proposed
+units before field checking.
+Shared product, axis, or topic does not make one unit cover another. Replace
+the whole row when any material meaning lacks a faithful unit.
 
 Then apply these field boundaries to the whole row:
 - A customer's own use, ownership, preference, result, or direct short answer
@@ -434,20 +434,21 @@ Then apply these field boundaries to the whole row:
 - A customer attribute conditions a result only if it states or unambiguously
   entails the same baseline, or the source explicitly scopes that result to the
   attribute. A possible bias, caveat, or separate product response is a separate
-  meaning, not a condition. Conjunction or shared body area is not enough.
-  Sensitivity alone is not a moisture baseline; product-linked sensitivity is
-  reaction or tolerance context, while dry or dehydrated may condition moisture.
-  If uncertain, leave the result unconditioned.
+  meaning, not a condition. Conjunction or shared body area is not enough. Split
+  a conjoined attribute phrase and keep only the part whose baseline that result
+  reports. Sensitivity alone is not a moisture baseline; product-linked
+  sensitivity is reaction or tolerance context, while dry or dehydrated may
+  condition moisture. If uncertain, leave the result unconditioned.
 - Unqualified liking, preference, better, or worse about a product overall
   has no axis. A stated liking or favorite evaluation of a named shade may carry
   shade-and-color fit; merely buying, owning, or repurchasing that shade may not.
 - One side's quantity cannot create a relative quantity claim. Do not import an
   unstated attribute, reason, cause, or comparison from nearby wording.
 
-Accept only complete supported rows. Replace with one complete row, never a
-field patch or old/new union; use unresolved if no safe result exists. Do not
-infer provenance, independence, prevalence, causation, conclusions, scores, or
-recommendations.
+Accept only complete rows whose every field is supported by the source or
+supplied context. Replace with one complete row, never a field patch or old/new
+union; use unresolved if no safe result exists. Do not infer provenance,
+independence, prevalence, causation, conclusions, scores, or recommendations.
 """
 
 _METHOD_TEXTS = {

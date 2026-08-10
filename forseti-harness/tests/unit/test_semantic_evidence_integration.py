@@ -2537,16 +2537,20 @@ def test_row_verification_v2_installs_general_coverage_order_not_case_phrases() 
         "smallest complete set of standalone meanings",
         "direct answers, evaluations, results, comparisons, reasons, contrasts",
         "explicitly withdraws or corrects it",
+        "Later context may narrow but does not cancel or replace",
         "Shared product, axis, or topic does not make one unit cover another",
         "Map each meaning to the proposed units before field checking",
         "states or unambiguously entails the same baseline",
         "source explicitly scopes that result to the attribute",
         "possible bias, caveat, or separate product response is a separate meaning",
         "Conjunction or shared body area is not enough",
+        "Split a conjoined attribute phrase and keep only the part whose baseline"
+        " that result reports",
         "Sensitivity alone is not a moisture baseline",
         "product-linked sensitivity is reaction or tolerance context",
         "dry or dehydrated may condition moisture",
         "If uncertain, leave the result unconditioned",
+        "every field is supported by the source or supplied context",
     ):
         assert principle in normalized
     for case_phrase in (

@@ -25,7 +25,7 @@ edit_permission: patch-only
 target_kind: delegated_code_review_and_patch
 template_kind: none
 doctrine_change: none
-review_routing_status: routed_pending_fresh_different_vendor_return
+review_routing_status: adjudicated_patched
 receiver_binding:
   receiver_class: receiver_to_bind
   launch_checkout: receiver_to_observe

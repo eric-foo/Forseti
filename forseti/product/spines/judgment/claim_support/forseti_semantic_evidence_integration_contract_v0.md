@@ -138,9 +138,13 @@ clause parser, extra response field, conclusion pass, or mandatory second
 verifier. A customer attribute qualifies a result only when it states or
 unambiguously entails the same baseline or the source explicitly scopes that
 result to it. A possible bias, caveat, or different product response remains a
-separate meaning rather than becoming the result's condition. Sensitivity alone
-establishes no moisture baseline; product-linked sensitivity remains reaction or
-tolerance context, while dry or dehydrated context may qualify moisture.
+separate meaning rather than becoming the result's condition. A conjoined
+attribute phrase splits: only the part whose baseline the result reports
+qualifies it. Sensitivity alone establishes no moisture baseline; product-linked
+sensitivity remains reaction or tolerance context, while dry or dehydrated
+context may qualify moisture. Later context may narrow an earlier judgment but
+never silently replace it. Every returned field must be supported by the source
+or supplied context.
 Historical verifier-v1 stages remain hash-distinguishable and are not relabelled
 as verifier v2.
 
@@ -940,9 +944,12 @@ new frontier.
   before checking axes or other fields. Customer attributes condition only the
   same stated or unambiguously entailed baseline or one explicitly scoped by the
   source. A possible bias, caveat, or different response stays separate rather
-  than becoming a condition. Sensitivity alone is not a moisture baseline;
-  product-linked sensitivity is reaction/tolerance context, while dry or
-  dehydrated context may qualify moisture.
+  than becoming a condition. A conjoined attribute phrase splits so that only
+  the part whose baseline the result reports qualifies it. Sensitivity alone is
+  not a moisture baseline; product-linked sensitivity is reaction/tolerance
+  context, while dry or dehydrated context may qualify moisture. Later context
+  may narrow an earlier judgment but never silently replace it. Every returned
+  field must be supported by the source or supplied context.
   Added no response/schema field, parser, phrase table, provider API, conclusion,
   mandatory second verifier, full-corpus execution, readiness claim, or resume
   authority.
