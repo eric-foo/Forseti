@@ -26,8 +26,10 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     validate_reconciliation_stage,
 )
 from judgment.semantic_calibration import (  # noqa: E402
+    CALIBRATION_PREPARATION_VERSION,
     SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT,
     SemanticCalibrationError,
+    adjudication_contract_identity,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
     validate_calibration_spec,
@@ -137,7 +139,7 @@ def _verify_sources(source: dict[str, Any], *, repo_root: Path) -> None:
 def prepare_semantic_calibration_run(
     *, source_path: Path, spec_path: Path, output_dir: Path
 ) -> dict[str, Any]:
-    """Prepare exact method-v5 calibration slices and their prompts."""
+    """Prepare exact spec-selected calibration slices and their prompts."""
     source = _load_object(source_path)
     spec = _load_object(spec_path)
     prepared = prepare_semantic_calibration(source, spec)
@@ -174,6 +176,9 @@ def prepare_semantic_calibration_run(
     return {
         "status": "SEMANTIC_CALIBRATION_PREPARED",
         "preparation_sha256": prepared["receipt"]["preparation_sha256"],
+        "adjudication_contract_id": prepared["receipt"][
+            "adjudication_contract_id"
+        ],
         "adjudication_contract_sha256": hash_file(adjudication_contract_path),
         "spec_sha256": prepared["receipt"]["spec_sha256"],
         "slice_count": len(prepared["slices"]),
@@ -201,26 +206,29 @@ def evaluate_semantic_calibration_run(
     report_out: Path,
 ) -> dict[str, Any]:
     """Evaluate returned calibration slices; a non-pass remains visible."""
-    # The sidecar is the adjudicator-facing statement of the direction rule, so
-    # a prepared copy that no longer matches the bound contract means the
-    # adjudication was governed by unknown wording. Fail loud rather than let a
-    # substituted or superseded contract pass silently. Absence stays tolerated:
-    # preparations frozen before the sidecar existed carry no copy at all, and
-    # re-evaluating them is an accepted workflow.
+    # The sidecar is the adjudicator-facing ruler. New preparations bind its
+    # stable id and full hash in the receipt; legacy preparations may carry one
+    # of the two exact preserved v1 rulers or no sidecar at all.
     adjudication_contract_path = prepared_dir / "adjudication_contract.md"
-    if adjudication_contract_path.is_file() and (
-        adjudication_contract_path.read_bytes()
-        != SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
-    ):
-        raise ValueError(
-            "prepared adjudication contract does not match the bound contract "
-            f"(substituted or superseded): {adjudication_contract_path}"
-        )
+    contract_identity = (
+        adjudication_contract_identity(adjudication_contract_path.read_bytes())
+        if adjudication_contract_path.is_file()
+        else None
+    )
+    receipt = _load_object(prepared_dir / "preparation_receipt.json")
+    if receipt.get("schema_version") == CALIBRATION_PREPARATION_VERSION:
+        if contract_identity is None:
+            raise ValueError("bound calibration preparation lacks its ruler sidecar")
+        for field, observed in contract_identity.items():
+            if receipt.get(field) != observed:
+                raise ValueError(
+                    f"prepared adjudication contract does not match receipt: {field}"
+                )
     source = _load_object(source_path)
     spec = _load_object(spec_path)
     normalized = validate_calibration_spec(spec)
     prepared: dict[str, Any] = {
-        "receipt": _load_object(prepared_dir / "preparation_receipt.json"),
+        "receipt": receipt,
         "slices": [],
         "cold_repeat": None,
     }

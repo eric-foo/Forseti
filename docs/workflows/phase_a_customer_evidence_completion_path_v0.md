@@ -383,8 +383,8 @@ without changing their self-declared `v1` version. The v5 sidecar hash is
 `9b6459531ffe20280a087b1ef254f7302a5ee7d63e1a0efa0533a53fac7562af`,
 while the earlier preserved runs use
 `5fd4aeeafa278291943dc6316fe91a8f6b51a79c69f734dc0d29bb63d4286a49`;
-neither
-`preparation_receipt.json` nor `report.json` stores that ruler hash. Therefore
+neither `preparation_receipt.json` nor `report.json` stores that ruler hash.
+Therefore
 the score deltas between those runs cannot be attributed solely to the semantic
 method. Freeze the preserved reports under their exact sidecars. Before another
 calibration, version the revised ruler and persist its full hash in both the
@@ -394,3 +394,18 @@ The production-shaped prompt also finished only 42 bytes below its 90,000-byte
 ceiling. No further method-text growth should use that preserved slice without
 an explicit repacking or ceiling decision, because the next small change may
 turn two prompts into three and end direct prompt-shape comparability.
+
+Contract v22 closes the ruler-lineage defect for future calibration without
+rewriting history. Preparation v2 and report v2 now carry
+`semantic_calibration_adjudication_contract_v2` plus full SHA-256
+`186a0022397d35ca5ee6a464742155a6e55e606d1ad0da636611d404c838ab78`.
+Evaluation accepts only that ruler and the two exact preserved v1 sidecar
+hashes; an unknown or receipt-mismatched sidecar fails closed. Re-evaluating the
+preserved v5 run through the new code reproduced its report-v1 object and
+canonical hash
+`b3e1477c4596fc0da38fbc9e048ba64f8e2519b357e06072262f16877a724a26`
+exactly. A fresh preparation-v2 proof at
+`C:\tmp\forseti-calibration-ruler-v2-proof-20260810` wrote the same ruler ID and
+hash into both its receipt and report; with no new adjudication, it correctly
+stopped at `SEMANTIC_CALIBRATION_BLOCKED`. This proof changes no extraction
+method or prompt and grants no full-corpus resume authority.

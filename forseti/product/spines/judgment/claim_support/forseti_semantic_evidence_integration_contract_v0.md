@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v21
+version: v22
 effective_date: 2026-08-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v21
+# Semantic Evidence Integration Contract v22
 
 ## Purpose
 
@@ -332,6 +332,13 @@ word: healing pre-existing dryness or peeling is hydration/repair, while
 product-caused or product-worsened irritation remains reaction. Named shade
 selection, ownership, or preference may carry `shade_and_color_fit` without
 inventing a reason such as undertone or complexion fit.
+
+Contract v22 versions the semantic-calibration adjudication ruler separately
+from the extraction method. New preparation receipts and reports carry the
+ruler's stable ID and full SHA-256. Evaluation accepts only exact known ruler
+hashes, binds a new receipt to its sidecar, and rejects an unknown or substituted
+ruler. Historical preparation-v1 and report-v1 artifacts retain their original
+shape and hashes; they are not rewritten to claim the new binding.
 
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
@@ -748,9 +755,11 @@ pass is possible. Selective second reads repack only the predeclared cases into
 one separately hash-bound route-native slice; their consistency judgment binds
 both the primary compilation for each case and the compact repeat compilation.
 Consistency is semantic rather than count-identical: different supported
-atomic decompositions may be consistent. Judge each unit's attribution
-separately, because one reply may contain attributed parent claims alongside
-its own first-hand shopping reaction.
+atomic decompositions may be consistent, but a dropped, added, reattributed, or
+directionally changed supported meaning is inconsistent. Judge every unit's
+attribution separately, because one reply may contain attributed parent claims
+alongside its own first-hand shopping reaction. Axis and attribution judgments
+apply to primary cases as well as cold repeats.
 
 Spec v3 may additionally require a `semantic_unit_density_audit` on a slice.
 The evaluator deterministically ranks non-gold evidence rows that emitted at
@@ -870,6 +879,13 @@ new frontier.
 
 ## Changelog
 
+- `v22` / 2026-08-10 — versioned the calibration adjudication ruler and bound
+  its stable ID and full SHA-256 into preparation-v2 and report-v2 artifacts.
+  Preserved preparation-v1 and report-v1 shapes for historical evaluation,
+  accepted only the two exact known historical ruler hashes, and made the
+  mixed-attribution and cold-repeat failure conditions explicit. Changed no
+  extraction method, prompt, evidence schema, provider call, full-corpus state,
+  readiness claim, or resume authority.
 - `v21` / 2026-08-10 — added run v4 / method v6 as a meaning-preservation
   correction on the existing bundle-v5 transport. The semantic reader now
   assigns axes from the complete outcome and direction, preserves explicit

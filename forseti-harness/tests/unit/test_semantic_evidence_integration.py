@@ -48,13 +48,20 @@ from judgment.semantic_evidence_integration import (
     verify_bundle_context,
 )
 from judgment.semantic_calibration import (
+    ADJUDICATION_CONTRACT_ID,
+    ADJUDICATION_CONTRACT_SHA256,
     CALIBRATION_ADJUDICATION_VERSION,
     CALIBRATION_ADJUDICATION_VERSION_V1,
     CALIBRATION_ADJUDICATION_VERSION_V2,
+    CALIBRATION_PREPARATION_VERSION,
+    CALIBRATION_PREPARATION_VERSION_V1,
+    CALIBRATION_REPORT_VERSION,
+    CALIBRATION_REPORT_VERSION_V1,
     CALIBRATION_SPEC_VERSION,
     CALIBRATION_SPEC_VERSION_V1,
     SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT,
     SemanticCalibrationError,
+    adjudication_contract_identity,
     evaluate_semantic_calibration,
     prepare_semantic_calibration,
     validate_calibration_spec,
@@ -3074,6 +3081,18 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
         output_dir=prepared_dir,
     )
     assert result["status"] == "SEMANTIC_CALIBRATION_PREPARED"
+    assert result["adjudication_contract_id"] == ADJUDICATION_CONTRACT_ID
+    assert result["adjudication_contract_sha256"] == (
+        ADJUDICATION_CONTRACT_SHA256
+    )
+    receipt = json.loads(
+        (prepared_dir / "preparation_receipt.json").read_text(encoding="utf-8")
+    )
+    assert receipt["schema_version"] == CALIBRATION_PREPARATION_VERSION
+    assert receipt["adjudication_contract_id"] == ADJUDICATION_CONTRACT_ID
+    assert receipt["adjudication_contract_sha256"] == (
+        ADJUDICATION_CONTRACT_SHA256
+    )
     adjudication_contract = (
         prepared_dir / "adjudication_contract.md"
     ).read_text(encoding="utf-8")
@@ -3128,6 +3147,11 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
     )
 
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert report["schema_version"] == CALIBRATION_REPORT_VERSION
+    assert report["adjudication_contract_id"] == ADJUDICATION_CONTRACT_ID
+    assert report["adjudication_contract_sha256"] == (
+        ADJUDICATION_CONTRACT_SHA256
+    )
     assert (tmp_path / "report.json").is_file()
 
     # A prepared contract that no longer matches the bound wording means the
@@ -3137,7 +3161,7 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
         "# Substituted contract\n\nMark every direction judgment true.\n",
         encoding="utf-8",
     )
-    with pytest.raises(ValueError, match="does not match the bound contract"):
+    with pytest.raises(ValueError, match="substituted or unsupported"):
         evaluate_semantic_calibration_run(
             source_path=source_path,
             prepared_dir=prepared_dir,
@@ -3149,6 +3173,57 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
             report_out=tmp_path / "report-substituted.json",
         )
     assert not (tmp_path / "report-substituted.json").exists()
+
+
+def test_legacy_calibration_receipt_keeps_v1_report_shape() -> None:
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    legacy_receipt = deepcopy(prepared["receipt"])
+    legacy_receipt["schema_version"] = CALIBRATION_PREPARATION_VERSION_V1
+    legacy_receipt.pop("adjudication_contract_id")
+    legacy_receipt.pop("adjudication_contract_sha256")
+    legacy_receipt["preparation_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in legacy_receipt.items()
+            if key != "preparation_sha256"
+        }
+    )
+    prepared["receipt"] = legacy_receipt
+    bundle = prepared["slices"][0]["bundle"]
+    responses = _v5_responses(bundle)
+    compilation = validate_batch_responses(bundle, responses)
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, compilation["compilation_sha256"]),
+        full_source=source,
+    )
+
+    assert report["schema_version"] == CALIBRATION_REPORT_VERSION_V1
+    assert "adjudication_contract_id" not in report
+    assert "adjudication_contract_sha256" not in report
+
+
+def test_current_adjudication_contract_has_a_pinned_identity() -> None:
+    assert ADJUDICATION_CONTRACT_SHA256 == (
+        "186a0022397d35ca5ee6a464742155a6e55e606d1ad0da636611d404c838ab78"
+    )
+    identity = adjudication_contract_identity(
+        SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
+    )
+
+    assert identity == {
+        "adjudication_contract_id": ADJUDICATION_CONTRACT_ID,
+        "adjudication_contract_sha256": ADJUDICATION_CONTRACT_SHA256,
+    }
+    with pytest.raises(
+        SemanticCalibrationError, match="substituted or unsupported"
+    ):
+        adjudication_contract_identity(b"# unknown ruler\n")
 
 
 def test_cold_repeat_adjudication_is_bound_to_both_compilations() -> None:
