@@ -899,6 +899,18 @@ def test_weekly_demand_read_gates_and_reports(
     assert payload["general_floor_suppressed_threads"] == 0
     assert payload["candidates_found"] == 2
     assert payload["selection_reason_counts"] == {"comment_floor_cleared": 2}
+    assert payload["methodology"] == {
+        "id": "reddit_weekly_top100_per_subreddit_v0",
+        "shorthand": "Reddit Top100",
+        "full_name": "Reddit Weekly Top-100-per-Subreddit",
+        "listing_depth_target_per_subreddit": 100,
+        "global_thread_cap": None,
+        "depth_note": (
+            "Up to the weekly listing depth the source exposes per active "
+            "subreddit; fewer rows may exist or render, and www.reddit.com "
+            "does not enforce a numeric listing limit."
+        ),
+    }
     assert payload["capture_list_status"] == (
         "blocked_pending_commission_model_adjudication"
     )
@@ -1102,15 +1114,35 @@ def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls()
         cand(4, "favorite drugstore mascara?", 49),
         # No praise vocabulary: excluded.
         cand(5, "My serum stopped working", 300),
+        # Audited category-favorite phrasings: included.
+        cand(6, "What’s the blush you reach for the most?", 663),
+        cand(7, "What's everyone's go-to office grabs?", 393),
+        # Audited broad-"best" false positives: excluded.
+        cand(8, "This is the best guide on olive skin color theory", 103),
+        cand(9, "Tips for looking your best in a swimsuit", 72),
+        cand(10, "What treatment would be best for me?", 57),
+        # "go to" as a bare verb phrase carries no category favorite: excluded.
+        cand(11, "Where do you go to get your brows done?", 210),
+        # An unhyphenated possessive still states a category favorite: included.
+        cand(12, "What's your go to office scent?", 200),
     ]
 
     slots = _build_leaderboard_lane(candidates)
     assert [s["title_or_none"] for s in slots] == [
+        "What’s the blush you reach for the most?",
+        "What's everyone's go-to office grabs?",
         "what's your holy grail concealer?",
+        "What's your go to office scent?",
         "Best cologne for summer?",
     ]
     # Ordered by comments, slot ids stable for capture-list use.
-    assert [s["slot_id"] for s in slots] == ["lb_001", "lb_002"]
+    assert [s["slot_id"] for s in slots] == [
+        "lb_001",
+        "lb_002",
+        "lb_003",
+        "lb_004",
+        "lb_005",
+    ]
 
 
 def test_census_lane_selects_daily_census_formats_with_venue_cap() -> None:

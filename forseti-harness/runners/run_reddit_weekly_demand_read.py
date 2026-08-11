@@ -60,17 +60,22 @@ GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 9
 # evidence, so they are selected mechanically for a separate shallow-read
 # lane: no model adjudication, no gate sequence. The exclusion pattern exists
 # because appearance polls ("which hair suits me best?") match the praise
-# vocabulary while carrying no product census at all.
+# vocabulary while carrying no product census at all. "go-to" is admitted only
+# hyphenated or after a possessive: the bare verb phrase ("where do you go to
+# get your brows done?") is a venue or service question, not a stated favorite.
 LEADERBOARD_MIN_COMMENTS = 50
 LEADERBOARD_TITLE_PATTERN = re.compile(
     r"holy grail\b|\bhg\b|top \d|favorite|favourite|\bbest\b|compliment"
     r"|most (?:worn|complimented|used)|can.?t live without|obsessed"
+    r"|reach for (?:the )?most|\bgo-to\b"
+    r"|\b(?:my|your|our|their|everyone['’]s) go to\b"
     r"|greatest|\bgoat\b|\bgrail\b|staple",
     re.IGNORECASE,
 )
 LEADERBOARD_EXCLUDE_PATTERN = re.compile(
     r"suits? me|on me\b|do i look|looks? i.?ve|my favou?rite look"
-    r"|which .*(?:suits|better on)",
+    r"|which .*(?:suits|better on)|\bbest guide\b|\blook(?:ing)? your best\b"
+    r"|\bwhat treatment (?:would be|is) best\b",
     re.IGNORECASE,
 )
 
@@ -657,6 +662,18 @@ def run_weekly_demand_read(
         "candidates_found": len(candidates),
         "selection_reason_counts": dict(sorted(selection_reason_counts.items())),
         "title_signal_counts": dict(sorted(title_signal_counts.items())),
+        "methodology": {
+            "id": "reddit_weekly_top100_per_subreddit_v0",
+            "shorthand": "Reddit Top100",
+            "full_name": "Reddit Weekly Top-100-per-Subreddit",
+            "listing_depth_target_per_subreddit": 100,
+            "global_thread_cap": None,
+            "depth_note": (
+                "Up to the weekly listing depth the source exposes per active "
+                "subreddit; fewer rows may exist or render, and www.reddit.com "
+                "does not enforce a numeric listing limit."
+            ),
+        },
         "candidates": candidates,
         "missing_engagement_rows": sorted(
             missing_engagement_rows,
