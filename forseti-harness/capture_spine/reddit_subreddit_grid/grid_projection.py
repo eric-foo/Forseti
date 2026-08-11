@@ -58,6 +58,12 @@ class GridThreadRow:
     timestamp_utc_ms_or_none: str | None = None
     stickied: bool = False
     flair_or_none: str | None = None
+    # Optional listing-visible context. Defaults preserve older content records.
+    listing_post_type_or_none: str | None = None
+    listing_content_url_or_none: str | None = None
+    listing_content_domain_or_none: str | None = None
+    listing_preview_image_url_or_none: str | None = None
+    listing_preview_alt_text_or_none: str | None = None
 
 
 @dataclass(frozen=True)

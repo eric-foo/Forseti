@@ -89,7 +89,9 @@ output to the lake.
 - Default `capture_artifact_mode=content`: project in flight, preserve the
   content record, hash and drop raw. Projection row carries: fullname,
   permalink, title, score, comments, timestamp_utc_ms, stickied,
-  flair_or_none; venue envelope carries created_utc.
+  flair_or_none, plus the listing-visible post type, content URL, and content
+  domain, first non-avatar preview image URL, and preview alt text when Reddit
+  supplies them; venue envelope carries created_utc.
 - **Never raw-only** (owner direction, 2026-07-31). Every admitted packet
   carries a content record. There is no operator-selectable raw-only mode on
   this lane, and no screenshot is captured at all — the projection reads DOM and

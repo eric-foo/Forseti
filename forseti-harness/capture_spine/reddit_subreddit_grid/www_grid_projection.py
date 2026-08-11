@@ -56,7 +56,7 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
 # ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-5"
+WWW_GRID_PROJECTION_PARSER_VERSION = "www-6"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a
@@ -163,6 +163,8 @@ class _WwwRedditGridParser(HTMLParser):
         self._open_promoted = False
         self._open_flair: str | None = None
         self._open_stickied = False
+        self._open_preview_image_url: str | None = None
+        self._open_preview_alt_text: str | None = None
         self._depth = 0
         self.weekly_visitors: str | None = None
         self.weekly_contributions: str | None = None
@@ -187,6 +189,8 @@ class _WwwRedditGridParser(HTMLParser):
             self._open_promoted = tag == _AD_TAG
             self._open_flair = None
             self._open_stickied = False
+            self._open_preview_image_url = None
+            self._open_preview_alt_text = None
             self._depth = 1
             # Ads are deliberately outside the thing count.  New-Reddit ad
             # elements carry no thread permalink, so they can never become
@@ -205,6 +209,21 @@ class _WwwRedditGridParser(HTMLParser):
             # The flair element's own attributes do not carry the name; it is
             # read from the child link in handle_startendtag/starttag below.
             return
+        if tag == "img":
+            image_url = (attributes.get("src") or "").strip()
+            alt_text = (attributes.get("alt") or "").strip()
+            is_avatar = "redditstatic.com/avatars/" in image_url or alt_text.casefold().endswith(
+                " avatar"
+            )
+            if image_url and not is_avatar:
+                if self._open_preview_image_url is None:
+                    self._open_preview_image_url = image_url
+                if (
+                    self._open_preview_alt_text is None
+                    and alt_text
+                    and image_url == self._open_preview_image_url
+                ):
+                    self._open_preview_alt_text = alt_text
         href = attributes.get("href", "")
         if self._open_flair is None and "flair_name%3A%22" in href:
             match = _FLAIR_HREF_RE.search(href)
@@ -254,6 +273,11 @@ class _WwwRedditGridParser(HTMLParser):
                 timestamp_utc_ms_or_none=_timestamp_utc_ms(attributes.get("created-timestamp")),
                 stickied=self._open_stickied,
                 flair_or_none=self._open_flair,
+                listing_post_type_or_none=(attributes.get("post-type") or "").strip() or None,
+                listing_content_url_or_none=(attributes.get("content-href") or "").strip() or None,
+                listing_content_domain_or_none=(attributes.get("domain") or "").strip() or None,
+                listing_preview_image_url_or_none=self._open_preview_image_url,
+                listing_preview_alt_text_or_none=self._open_preview_alt_text,
             )
         )
 

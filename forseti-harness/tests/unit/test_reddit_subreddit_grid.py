@@ -961,6 +961,17 @@ def test_weekly_listing_policy_routes_only_ten_plus_to_model_review() -> None:
             "title_or_none": title,
             "flair_or_none": None,
             "timestamp_utc_ms_or_none": None,
+            "listing_post_type_or_none": "image" if index == 1 else "self",
+            "listing_content_url_or_none": (
+                "https://i.redd.it/listing-context.jpeg" if index == 1 else None
+            ),
+            "listing_content_domain_or_none": "i.redd.it" if index == 1 else None,
+            "listing_preview_image_url_or_none": (
+                "https://preview.redd.it/listing-context.jpeg?width=640"
+                if index == 1
+                else None
+            ),
+            "listing_preview_alt_text_or_none": "r/example - Opaque head A" if index == 1 else None,
             "score": score,
             "comments": comments,
         }
@@ -1000,6 +1011,13 @@ def test_weekly_listing_policy_routes_only_ten_plus_to_model_review() -> None:
     )
     assert selected[-1]["title_or_none"] == "Opaque tail A"
     assert selected[-1]["listing_context_state"] == "listing_context_insufficient"
+    assert selected[0]["listing_post_type_or_none"] == "image"
+    assert selected[0]["listing_content_url_or_none"] == "https://i.redd.it/listing-context.jpeg"
+    assert selected[0]["listing_content_domain_or_none"] == "i.redd.it"
+    assert selected[0]["listing_preview_image_url_or_none"] == (
+        "https://preview.redd.it/listing-context.jpeg?width=640"
+    )
+    assert selected[0]["listing_preview_alt_text_or_none"] == "r/example - Opaque head A"
 
 
 def test_sub_floor_exception_admits_explicit_failure_titles_only() -> None:
