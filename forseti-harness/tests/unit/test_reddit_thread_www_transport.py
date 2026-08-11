@@ -195,6 +195,7 @@ def test_www_thread_explicitly_forwards_the_bounded_expansion_policy(
         cdp_endpoint="http://127.0.0.1:9222",
         keep_raw_audit_sample=False,
         expand_comments=True,
+        expand_progress_target=85,
         timeout_seconds=20.0,
         cadence_plan=SimpleNamespace(mode="fixed", planned_offsets_seconds=[0.0]),
         index=0,
@@ -202,7 +203,7 @@ def test_www_thread_explicitly_forwards_the_bounded_expansion_policy(
 
     assert seen["expand_max_clicks_per_round"] == 4
     assert seen["expand_progress_selector"] == "shreddit-comment"
-    assert seen["expand_progress_target"] == 150
+    assert seen["expand_progress_target"] == 85
     assert seen["expand_max_no_progress_rounds"] == 2
     assert seen["expand_max_rounds"] == 8
 
@@ -224,6 +225,7 @@ def test_thread_cli_uses_capture_cycle_and_surface_only_defaults():
     assert args.cadence_basis == batch.THREAD_CAPTURE_CADENCE_BASIS
     assert args.cadence_basis == "cycle"
     assert args.expand_comments is False
+    assert args.expand_progress_target == 150
 
 
 def test_thread_cli_enables_expansion_only_when_explicit():
@@ -236,3 +238,17 @@ def test_thread_cli_enables_expansion_only_when_explicit():
         ]
     )
     assert args.expand_comments is True
+
+
+def test_thread_cli_accepts_a_lighter_expansion_target():
+    args = batch._build_parser().parse_args(
+        [
+            "--url-list", "urls.json",
+            "--output-root", "out",
+            "--decision-question", "q",
+            "--expand-comments",
+            "--expand-progress-target", "85",
+        ]
+    )
+    assert args.expand_comments is True
+    assert args.expand_progress_target == 85

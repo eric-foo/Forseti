@@ -146,6 +146,7 @@ def run_reddit_old_http_batch(
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
     keep_raw_audit_sample: bool = False,
     expand_comments: bool = False,
+    expand_progress_target: int = WWW_EXPAND_PROGRESS_TARGET,
     resume: bool = False,
     refusal_circuit_breaker: int = DEFAULT_REFUSAL_CIRCUIT_BREAKER,
 ) -> tuple[int, str]:
@@ -272,6 +273,7 @@ def run_reddit_old_http_batch(
                     cdp_endpoint=cdp_endpoint,
                     keep_raw_audit_sample=keep_raw_audit_sample,
                     expand_comments=expand_comments,
+                    expand_progress_target=expand_progress_target,
                     timeout_seconds=timeout_seconds,
                     cadence_plan=cadence_plan,
                     index=index,
@@ -484,6 +486,7 @@ def _capture_www_thread(
     cdp_endpoint: str,
     keep_raw_audit_sample: bool,
     expand_comments: bool,
+    expand_progress_target: int = WWW_EXPAND_PROGRESS_TARGET,
     timeout_seconds: float,
     cadence_plan: Any,
     index: int,
@@ -548,7 +551,7 @@ def _capture_www_thread(
         expand_settle_ms=WWW_EXPAND_SETTLE_MS,
         expand_max_clicks_per_round=WWW_EXPAND_MAX_CLICKS_PER_ROUND,
         expand_progress_selector=WWW_EXPAND_PROGRESS_SELECTOR,
-        expand_progress_target=(WWW_EXPAND_PROGRESS_TARGET if expand_comments else None),
+        expand_progress_target=(expand_progress_target if expand_comments else None),
         expand_max_no_progress_rounds=(
             WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS if expand_comments else 0
         ),
@@ -910,7 +913,17 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help=(
             "Explicit second pass only: click bounded in-place comment controls up to "
-            "the 150-comment ceiling. The default surface pass clicks none."
+            "the configured rendered-comment target (150 by default). The default "
+            "surface pass clicks none."
+        ),
+    )
+    parser.add_argument(
+        "--expand-progress-target",
+        type=int,
+        default=WWW_EXPAND_PROGRESS_TARGET,
+        help=(
+            "Rendered-comment stopping target for an explicit --expand-comments pass "
+            f"(default: {WWW_EXPAND_PROGRESS_TARGET})."
         ),
     )
     parser.add_argument(
@@ -998,6 +1011,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             cdp_endpoint=args.cdp_endpoint,
             keep_raw_audit_sample=args.keep_raw_audit_sample,
             expand_comments=args.expand_comments,
+            expand_progress_target=args.expand_progress_target,
             decision_question=args.decision_question,
             data_root=data_root,
             delay_seconds=args.delay_seconds,
