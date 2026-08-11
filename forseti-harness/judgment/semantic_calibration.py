@@ -18,12 +18,14 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V5,
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
+    METHOD_VERSION_V7,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
     finalize_v3_view,
     materialize_source_v3,
     validate_batch_responses,
+    validate_row_verified_compilation,
     verify_bundle_context,
 )
 
@@ -322,9 +324,13 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         )
     if not _nonempty(spec.get("full_source_sha256")):
         raise SemanticCalibrationError("calibration spec lacks full_source_sha256")
-    if spec.get("method_version") not in {METHOD_VERSION_V5, METHOD_VERSION_V6}:
+    if spec.get("method_version") not in {
+        METHOD_VERSION_V5,
+        METHOD_VERSION_V6,
+        METHOD_VERSION_V7,
+    }:
         raise SemanticCalibrationError(
-            "calibration spec must target semantic method v5 or v6"
+            "calibration spec must target semantic method v5, v6, or v7"
         )
     route_contract = spec.get("route_contract")
     required_route_fields = {
@@ -944,10 +950,9 @@ def _forbidden_values(unit: Mapping[str, Any], forbidden: Mapping[str, Any]) -> 
     return violations
 
 
-def _response_rows(
-    bundle: Mapping[str, Any], responses: Sequence[Mapping[str, Any]]
-) -> tuple[dict[str, Mapping[str, Any]], dict[str, Any]]:
-    compiled = validate_batch_responses(bundle, responses)
+def _compilation_rows(
+    compiled: Mapping[str, Any],
+) -> dict[str, Mapping[str, Any]]:
     disposition_by_id = {
         row["evidence_id"]: row for row in compiled["evidence_dispositions"]
     }
@@ -961,7 +966,14 @@ def _response_rows(
         }
         for evidence_id, disposition in disposition_by_id.items()
     }
-    return rows, compiled
+    return rows
+
+
+def _response_rows(
+    bundle: Mapping[str, Any], responses: Sequence[Mapping[str, Any]]
+) -> tuple[dict[str, Mapping[str, Any]], dict[str, Any]]:
+    compiled = validate_batch_responses(bundle, responses)
+    return _compilation_rows(compiled), compiled
 
 
 def evaluate_semantic_calibration(
@@ -971,6 +983,7 @@ def evaluate_semantic_calibration(
     adjudication: Mapping[str, Any] | None,
     cold_responses_by_slice: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
     reconciliation_by_slice: Mapping[str, Mapping[str, Any]] | None = None,
+    verified_compilations_by_slice: Mapping[str, Mapping[str, Any]] | None = None,
     *,
     full_source: Mapping[str, Any],
 ) -> dict[str, Any]:
@@ -1116,12 +1129,17 @@ def evaluate_semantic_calibration(
     }
     cold_responses = cold_responses_by_slice or {}
     reconciliations = reconciliation_by_slice or {}
+    verified_compilations = verified_compilations_by_slice or {}
     allowed_cold_keys = {"cold-repeat"} if normalized["cold_repeat"] is not None else set()
     if set(cold_responses) - allowed_cold_keys:
         raise SemanticCalibrationError("cold responses contain an unknown calibration slice")
     if set(reconciliations) - expected_slice_ids:
         raise SemanticCalibrationError(
             "reconciliation outputs contain an unknown calibration slice"
+        )
+    if set(verified_compilations) - (expected_slice_ids | allowed_cold_keys):
+        raise SemanticCalibrationError(
+            "verified compilations contain an unknown calibration slice"
         )
     for slice_spec in normalized["slices"]:
         slice_id = slice_spec["slice_id"]
@@ -1170,6 +1188,20 @@ def evaluate_semantic_calibration(
             continue
         try:
             rows, compiled = _response_rows(bundle, responses)
+            verified_compilation = verified_compilations.get(slice_id)
+            if (
+                bundle.get("method_version") == METHOD_VERSION_V7
+                and verified_compilation is None
+            ):
+                raise SemanticIntegrationError(
+                    "method v7 calibration requires a row-verified compilation"
+                )
+            if verified_compilation is not None:
+                validate_row_verified_compilation(
+                    bundle, compiled, verified_compilation
+                )
+                compiled = dict(verified_compilation)
+                rows = _compilation_rows(compiled)
         except SemanticIntegrationError as exc:
             failures.append(
                 {
@@ -1559,6 +1591,19 @@ def evaluate_semantic_calibration(
                         _, cold_compilation = _response_rows(
                             cold_bundle, cold_responses["cold-repeat"]
                         )
+                        verified_cold = verified_compilations.get("cold-repeat")
+                        if (
+                            cold_bundle.get("method_version") == METHOD_VERSION_V7
+                            and verified_cold is None
+                        ):
+                            raise SemanticIntegrationError(
+                                "method v7 cold repeat requires a row-verified compilation"
+                            )
+                        if verified_cold is not None:
+                            validate_row_verified_compilation(
+                                cold_bundle, cold_compilation, verified_cold
+                            )
+                            cold_compilation = dict(verified_cold)
                     except SemanticIntegrationError as exc:
                         failures.append(
                             {
@@ -1697,6 +1742,20 @@ def evaluate_semantic_calibration(
             blockers.append(
                 {
                     "code": "COLD_REPEAT_PRIMARY_COMPILATION_MISSING",
+                    "case_id": case_id,
+                }
+            )
+            outcome = "missing"
+        elif ("row_verification_manifest" in primary_compiled) != (
+            "row_verification_manifest" in repeat_compiled
+        ):
+            # The cold repeat has no verified-compilation intake, so a primary
+            # slice graded on row-verified rows would be compared against
+            # unverified ones. That is not a repeat of the same artifact, and a
+            # consistent outcome over it would not mean what it reads as.
+            blockers.append(
+                {
+                    "code": "COLD_REPEAT_VERIFICATION_LINEAGE_MISMATCH",
                     "case_id": case_id,
                 }
             )
