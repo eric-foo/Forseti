@@ -42,6 +42,9 @@ ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v8"
 # encoding. It is bound by name so a future compact encoding cannot silently
 # reuse a projection that was packed and byte-bounded under this one.
 PROMPT_ENCODING_VERSION = "semantic_prompt_encoding_pretty_json_v1"
+PROMPT_EXECUTION_PACK_VERSION = "semantic_prompt_execution_pack_v1"
+PROMPT_EXECUTION_PAYLOAD_VERSION = "semantic_prompt_execution_payload_v1"
+PROMPT_FRAME_BATCH_ID_TOKEN = "__FORSETI_BATCH_ID__"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
 VIEW_VERSION = "semantic_evidence_integration_view_v1"
@@ -1659,6 +1662,32 @@ def _render_v4_batch_prompt(
 ) -> str:
     prompt_units = [_v4_prompt_unit(row) for row in evidence]
     prompt_contexts = _v4_prompt_contexts(evidence, context_registry)
+    frame = _render_v4_prompt_frame(
+        bundle_sha256=bundle_sha256,
+        batch_id=batch_id,
+        axes=axes,
+        product_identity_catalog=product_identity_catalog,
+        method_text=method_text,
+        response_shape=response_shape,
+    )
+    return (
+        frame
+        + json.dumps(prompt_contexts, ensure_ascii=False, indent=2)
+        + "\n\nEVIDENCE_BATCH\n"
+        + json.dumps(prompt_units, ensure_ascii=False, indent=2)
+    )
+
+
+def _render_v4_prompt_frame(
+    *,
+    bundle_sha256: str,
+    batch_id: str,
+    axes: Sequence[Mapping[str, Any]],
+    product_identity_catalog: Mapping[str, Any] | None = None,
+    method_text: str = METHOD_TEXT_V3,
+    response_shape: Mapping[str, Any] | None = None,
+) -> str:
+    """Render the invariant prompt prefix through the context-table heading."""
     catalog_section = (
         ""
         if product_identity_catalog is None
@@ -1681,9 +1710,6 @@ def _render_v4_batch_prompt(
         + json.dumps(axes, ensure_ascii=False, indent=2)
         + catalog_section
         + "\n\nCONTEXT_TABLE\n"
-        + json.dumps(prompt_contexts, ensure_ascii=False, indent=2)
-        + "\n\nEVIDENCE_BATCH\n"
-        + json.dumps(prompt_units, ensure_ascii=False, indent=2)
     )
 
 
@@ -2481,6 +2507,111 @@ def build_batch_prompts(bundle: Mapping[str, Any]) -> list[dict[str, Any]]:
         )
         prompts.append({"batch_id": batch["batch_id"], "prompt": text})
     return prompts
+
+
+def reconstruct_prompt_execution_payload(
+    frame_template: str, payload: Mapping[str, Any]
+) -> str:
+    """Rebuild one historical standalone prompt from a shared frame and payload."""
+    core = {key: value for key, value in payload.items() if key != "payload_sha256"}
+    if payload.get("payload_sha256") != _sha256(core):
+        raise SemanticIntegrationError("prompt payload content does not match its hash")
+    if payload.get("schema_version") != PROMPT_EXECUTION_PAYLOAD_VERSION:
+        raise SemanticIntegrationError("unsupported prompt execution payload")
+    batch_id = payload.get("batch_id")
+    if not _nonempty(batch_id) or frame_template.count(PROMPT_FRAME_BATCH_ID_TOKEN) != 1:
+        raise SemanticIntegrationError("prompt execution frame has invalid batch token")
+    prompt = (
+        frame_template.replace(PROMPT_FRAME_BATCH_ID_TOKEN, batch_id, 1)
+        + json.dumps(payload.get("context_table"), ensure_ascii=False, indent=2)
+        + "\n\nEVIDENCE_BATCH\n"
+        + json.dumps(payload.get("evidence_batch"), ensure_ascii=False, indent=2)
+    )
+    if len(prompt.encode("utf-8")) != payload.get("standalone_prompt_utf8_bytes"):
+        raise SemanticIntegrationError("reconstructed prompt byte count diverges")
+    if _sha256(prompt) != payload.get("standalone_prompt_sha256"):
+        raise SemanticIntegrationError("reconstructed prompt content diverges")
+    return prompt
+
+
+def build_prompt_execution_pack(
+    bundle: Mapping[str, Any],
+) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
+    """Share an invariant frame while retaining exact standalone reconstruction.
+
+    Context remains batch-local in v1.  Sharing it safely would change which
+    source text is visible to a judgment and therefore requires separate
+    calibration rather than transport-only optimization.
+    """
+    if bundle.get("schema_version") not in {BUNDLE_VERSION_V4, BUNDLE_VERSION_V5}:
+        raise SemanticIntegrationError("prompt execution packs require bundle v4 or v5")
+    prompts = build_batch_prompts(bundle)
+    prompt_by_batch = {row["batch_id"]: row for row in prompts}
+    new_generation = bundle.get("schema_version") == BUNDLE_VERSION_V5
+    method_text = _method_text(bundle)
+    frame_template = _render_v4_prompt_frame(
+        bundle_sha256=bundle["bundle_sha256"],
+        batch_id=PROMPT_FRAME_BATCH_ID_TOKEN,
+        axes=bundle["axes"],
+        product_identity_catalog=bundle.get("product_identity_catalog"),
+        method_text=method_text,
+        response_shape=(
+            _v5_response_shape(bundle["bundle_sha256"], PROMPT_FRAME_BATCH_ID_TOKEN)
+            if new_generation
+            else None
+        ),
+    )
+    if frame_template.count(PROMPT_FRAME_BATCH_ID_TOKEN) != 1:
+        raise SemanticIntegrationError("prompt execution frame has invalid batch token")
+
+    units = _unit_index(bundle)
+    contexts = _context_index(bundle)
+    payloads: list[dict[str, Any]] = []
+    manifest_batches: list[dict[str, Any]] = []
+    for batch in bundle["batches"]:
+        batch_id = batch["batch_id"]
+        evidence = [units[evidence_id] for evidence_id in batch["evidence_ids"]]
+        standalone = prompt_by_batch[batch_id]["prompt"]
+        payload_core = {
+            "schema_version": PROMPT_EXECUTION_PAYLOAD_VERSION,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch_id,
+            "context_table": _v4_prompt_contexts(evidence, contexts),
+            "evidence_batch": [_v4_prompt_unit(row) for row in evidence],
+            "standalone_prompt_utf8_bytes": len(standalone.encode("utf-8")),
+            "standalone_prompt_sha256": _sha256(standalone),
+        }
+        payload = {**payload_core, "payload_sha256": _sha256(payload_core)}
+        if reconstruct_prompt_execution_payload(frame_template, payload) != standalone:
+            raise SemanticIntegrationError(
+                f"prompt execution payload {batch_id} is not byte-exact"
+            )
+        payloads.append(payload)
+        manifest_batches.append(
+            {
+                "batch_id": batch_id,
+                "payload_file": f"payloads/{batch_id}.json",
+                "payload_sha256": payload["payload_sha256"],
+                "standalone_prompt_sha256": payload["standalone_prompt_sha256"],
+                "standalone_prompt_utf8_bytes": payload[
+                    "standalone_prompt_utf8_bytes"
+                ],
+            }
+        )
+
+    manifest_core = {
+        "schema_version": PROMPT_EXECUTION_PACK_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "frame_file": "shared-frame.md",
+        "frame_sha256": _sha256(frame_template),
+        "batch_count": len(payloads),
+        "original_total_prompt_bytes": sum(
+            row["prompt_utf8_bytes"] for row in prompts
+        ),
+        "batches": manifest_batches,
+    }
+    manifest = {**manifest_core, "manifest_sha256": _sha256(manifest_core)}
+    return frame_template, manifest, payloads
 
 
 def verify_bundle_context(bundle: Mapping[str, Any]) -> dict[str, Any]:

@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v32
+version: v33
 effective_date: 2026-08-12
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v32
+# Semantic Evidence Integration Contract v33
 
 ## Purpose
 
@@ -658,6 +658,18 @@ controller runtime decision, not part of semantic identity. The new generation
 keeps the existing pretty, indented JSON prompt encoding, bound by name so a
 later compact encoding cannot silently reuse a projection packed under this one.
 
+Contract v33 adds an optional `semantic_prompt_execution_pack_v1` transport for
+long-lived workers. It stores the method, response shape, axes, and product
+catalog in one hash-bound shared frame and stores each work unit's exact context
+table and evidence rows in a separately hashed payload. Every payload must
+reconstruct the existing standalone prompt byte-for-byte before it is usable;
+the bundle, method, response, compilation, work-unit, prompt ceiling, and
+evidence-accounting identities do not change. Context remains batch-local in
+v1 because exposing neighboring context or relying on model memory would change
+the judgment surface and requires separate calibration. The pack is execution
+transport only: it adds no static worker topology, provider API, semantic cache,
+evidence filter, or resume/readiness claim.
+
 For the new generation the controller verifies the immutable bundle and
 projection once per invocation and reuses that verified context across all
 response validation in that invocation. Status reports global expected,
@@ -1051,6 +1063,13 @@ new frontier.
 
 ## Changelog
 
+- `v33` / 2026-08-12 — added the optional load-once prompt execution pack for
+  long-lived workers. The pack hash-binds one shared method/schema/axes/catalog
+  frame and one exact context-plus-evidence payload per existing work unit, and
+  requires byte-identical reconstruction of every standalone prompt. Context
+  stays batch-local; no semantic method, response, compilation, evidence
+  denominator, prompt ceiling, worker topology, provider call, or readiness
+  claim changed.
 - `v32` / 2026-08-12 — versioned the whole-row verifier method to v8, prevented
   reaction-susceptibility traits from becoming unsupported hydration conditions,
   and preserved explicit usable-product loss or waste as separately retrievable

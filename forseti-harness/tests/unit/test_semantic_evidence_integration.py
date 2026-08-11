@@ -54,6 +54,7 @@ from judgment.semantic_evidence_integration import (
     apply_row_verification,
     build_batch_prompts,
     build_bundle,
+    build_prompt_execution_pack,
     build_reconciliation_prompt,
     finalize_view,
     finalize_v3_view,
@@ -61,6 +62,7 @@ from judgment.semantic_evidence_integration import (
     project_evidence_packet,
     prepare_reconciliation_stage,
     prepare_row_verification,
+    reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_row_verified_compilation,
     validate_reconciliation_stage,
@@ -88,10 +90,12 @@ from judgment.semantic_calibration import (
 from runners.run_semantic_evidence_integration import (
     evaluate_semantic_calibration_run,
     prepare_batches,
+    prepare_prompt_execution_pack,
     prepare_semantic_calibration_run,
     prepare_row_verification_run,
     publish_batch_response_file,
     submit_row_verification_run,
+    verify_prompt_execution_pack,
 )
 
 
@@ -5351,6 +5355,74 @@ def test_v5_prepare_runner_writes_no_static_worker_assignment(tmp_path: Path) ->
     assert result["model_api_calls"] == 0
     assert not (tmp_path / "prompts" / "worker_assignments.json").exists()
     assert sorted(p.name for p in (tmp_path / "prompts").glob("*")) == ["batch-0001.md"]
+
+
+def test_v5_execution_pack_reconstructs_every_standalone_prompt_exactly() -> None:
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    prompts = {row["batch_id"]: row["prompt"] for row in build_batch_prompts(bundle)}
+    assert len(prompts) > 1
+
+    frame, manifest, payloads = build_prompt_execution_pack(bundle)
+    assert manifest["batch_count"] == len(prompts)
+    assert frame.count("__FORSETI_BATCH_ID__") == 1
+    assert [row["batch_id"] for row in payloads] == [
+        row["batch_id"] for row in bundle["batches"]
+    ]
+    assert {
+        evidence_id
+        for payload in payloads
+        for evidence_id in (
+            row["evidence_id"] for row in payload["evidence_batch"]
+        )
+    } == {row["evidence_id"] for row in bundle["evidence_units"]}
+    for payload in payloads:
+        assert reconstruct_prompt_execution_payload(frame, payload) == prompts[
+            payload["batch_id"]
+        ]
+
+    original_bytes = sum(len(prompt.encode("utf-8")) for prompt in prompts.values())
+    thin_bytes = len(frame.encode("utf-8")) + sum(
+        len(json.dumps(row, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8"))
+        + 1
+        for row in payloads
+    )
+    assert thin_bytes < original_bytes
+
+    tampered = deepcopy(payloads[0])
+    tampered["context_table"] = []
+    with pytest.raises(SemanticIntegrationError, match="does not match its hash"):
+        reconstruct_prompt_execution_payload(frame, tampered)
+
+
+def test_prepare_prompt_execution_pack_writes_load_once_frame(tmp_path: Path) -> None:
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    pack_dir = tmp_path / "execution-pack"
+
+    result = prepare_prompt_execution_pack(
+        bundle_path=bundle_path,
+        pack_dir=pack_dir,
+    )
+
+    assert result["status"] == "SEMANTIC_PROMPT_EXECUTION_PACK_PREPARED"
+    assert result["verification_status"] == "SEMANTIC_PROMPT_EXECUTION_PACK_VERIFIED"
+    assert result["batch_count"] == len(bundle["batches"])
+    assert result["stored_byte_reduction"] > 0
+    assert (pack_dir / "shared-frame.md").is_file()
+    assert (pack_dir / "manifest.json").is_file()
+    assert len(list((pack_dir / "payloads").glob("batch-*.json"))) == len(
+        bundle["batches"]
+    )
+    with pytest.raises(ValueError, match="existing execution pack"):
+        prepare_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+    first_payload = pack_dir / "payloads" / "batch-0001.json"
+    tampered = json.loads(first_payload.read_text(encoding="utf-8"))
+    tampered["context_table"] = []
+    first_payload.write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match bundle"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
 
 
 def test_v5_lineage_must_cover_every_work_unit() -> None:

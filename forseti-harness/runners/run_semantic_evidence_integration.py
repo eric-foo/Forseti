@@ -17,6 +17,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     apply_row_verification,
     build_batch_prompts,
     build_bundle,
+    build_prompt_execution_pack,
     build_reconciliation_prompt,
     finalize_v3_view,
     finalize_view,
@@ -24,6 +25,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     project_evidence_packet,
     prepare_reconciliation_stage,
     prepare_row_verification,
+    reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_reconciliation_stage,
 )
@@ -398,6 +400,93 @@ def prepare_batches(
             }
             else {}
         ),
+    }
+
+
+def prepare_prompt_execution_pack(
+    *, bundle_path: Path, pack_dir: Path
+) -> dict[str, Any]:
+    """Write a load-once frame plus exact per-batch semantic payloads."""
+    if pack_dir.exists():
+        raise ValueError(f"refusing to write into existing execution pack: {pack_dir}")
+    bundle = _load_object(bundle_path)
+    frame, manifest, payloads = build_prompt_execution_pack(bundle)
+    pack_dir.mkdir(parents=True)
+    _write_new(pack_dir / manifest["frame_file"], frame.encode("utf-8"))
+    for payload in payloads:
+        # Field order is part of the historical pretty-JSON prompt bytes.
+        # The generic writer sorts nested keys, so payloads use their bound
+        # insertion order and are reconstructed again after the fresh read.
+        _write_new(
+            pack_dir / "payloads" / f"{payload['batch_id']}.json",
+            json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+            + b"\n",
+        )
+    _write_json(pack_dir / "manifest.json", manifest)
+    verified = verify_prompt_execution_pack(
+        bundle_path=bundle_path,
+        pack_dir=pack_dir,
+    )
+    return {
+        "status": "SEMANTIC_PROMPT_EXECUTION_PACK_PREPARED",
+        **verified,
+    }
+
+
+def verify_prompt_execution_pack(
+    *, bundle_path: Path, pack_dir: Path
+) -> dict[str, Any]:
+    """Fresh-read one stored pack and compare it to its immutable bundle."""
+    bundle = _load_object(bundle_path)
+    expected_frame, expected_manifest, expected_payloads = (
+        build_prompt_execution_pack(bundle)
+    )
+    observed_frame = (pack_dir / expected_manifest["frame_file"]).read_text(
+        encoding="utf-8"
+    )
+    if observed_frame != expected_frame:
+        raise ValueError("stored execution frame does not match bundle")
+    observed_manifest = _load_object(pack_dir / "manifest.json")
+    if observed_manifest != expected_manifest:
+        raise ValueError("stored execution manifest does not match bundle")
+    payload_dir = pack_dir / "payloads"
+    observed_paths = {
+        path.name: path for path in payload_dir.glob("batch-*.json") if path.is_file()
+    }
+    expected_names = {f"{row['batch_id']}.json" for row in expected_payloads}
+    if set(observed_paths) != expected_names:
+        raise ValueError("stored execution payload set does not match bundle")
+    for expected in expected_payloads:
+        observed = _load_object(observed_paths[f"{expected['batch_id']}.json"])
+        if observed != expected:
+            raise ValueError(
+                f"stored execution payload {expected['batch_id']} does not match bundle"
+            )
+        # Dict equality does not consider key order, but prompt bytes do.
+        # Reconstructing the freshly read object closes that serialization gap.
+        try:
+            reconstruct_prompt_execution_payload(observed_frame, observed)
+        except SemanticIntegrationError as exc:
+            raise ValueError(
+                f"stored execution payload {expected['batch_id']} cannot reconstruct"
+            ) from exc
+    stored_bytes = sum(
+        path.stat().st_size for path in pack_dir.rglob("*") if path.is_file()
+    )
+    original_bytes = expected_manifest["original_total_prompt_bytes"]
+    return {
+        "verification_status": "SEMANTIC_PROMPT_EXECUTION_PACK_VERIFIED",
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_count": expected_manifest["batch_count"],
+        "pack_dir": str(pack_dir),
+        "manifest_sha256": expected_manifest["manifest_sha256"],
+        "original_total_prompt_bytes": original_bytes,
+        "execution_pack_stored_bytes": stored_bytes,
+        "stored_byte_reduction": original_bytes - stored_bytes,
+        "stored_byte_reduction_pct": round(
+            100 * (original_bytes - stored_bytes) / original_bytes, 2
+        ),
+        "model_api_calls": 0,
     }
 
 
@@ -1095,6 +1184,14 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("--max-prompt-bytes", type=int)
     prepare.add_argument("--max-evidence-per-work-unit", type=int, default=120)
 
+    execution_pack = sub.add_parser("prepare-prompt-execution-pack")
+    execution_pack.add_argument("--bundle", type=Path, required=True)
+    execution_pack.add_argument("--pack-dir", type=Path, required=True)
+
+    verify_execution_pack = sub.add_parser("verify-prompt-execution-pack")
+    verify_execution_pack.add_argument("--bundle", type=Path, required=True)
+    verify_execution_pack.add_argument("--pack-dir", type=Path, required=True)
+
     submit = sub.add_parser("submit-batches")
     submit.add_argument("--bundle", type=Path, required=True)
     submit.add_argument("--response", type=Path, action="append", required=True)
@@ -1283,6 +1380,16 @@ def main(argv: list[str] | None = None) -> int:
                 max_batch_chars=args.max_batch_chars,
                 max_prompt_bytes=args.max_prompt_bytes,
                 max_evidence_per_work_unit=args.max_evidence_per_work_unit,
+            )
+        elif args.command == "prepare-prompt-execution-pack":
+            result = prepare_prompt_execution_pack(
+                bundle_path=args.bundle,
+                pack_dir=args.pack_dir,
+            )
+        elif args.command == "verify-prompt-execution-pack":
+            result = verify_prompt_execution_pack(
+                bundle_path=args.bundle,
+                pack_dir=args.pack_dir,
             )
         elif args.command == "submit-batches":
             result = submit_batches(
