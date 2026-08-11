@@ -47,11 +47,12 @@ ADJUDICATION_CONTRACT_ID_V1_INITIAL = (
 ADJUDICATION_CONTRACT_ID_V1_FIDELITY = (
     "semantic_calibration_adjudication_contract_v1_fidelity"
 )
-ADJUDICATION_CONTRACT_ID = "semantic_calibration_adjudication_contract_v2"
+ADJUDICATION_CONTRACT_ID_V2 = "semantic_calibration_adjudication_contract_v2"
+ADJUDICATION_CONTRACT_ID = "semantic_calibration_adjudication_contract_v3"
 
 SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT = """# Semantic Calibration Adjudication Contract
 
-Contract version: `semantic_calibration_adjudication_contract_v2`
+Contract version: `semantic_calibration_adjudication_contract_v3`
 
 `statement_direction_supported` asks whether the source supports the semantic
 unit's complete truth-conditional direction and whether `polarity` matches the
@@ -87,6 +88,47 @@ directionally changed supported meaning is inconsistent.
 
 Apply this contract to every semantic unit in each gold case, including units
 left explicitly unmerged.
+
+## Required JSON shape
+
+Write one JSON object with `schema_version`, `spec_sha256`, `adjudicator`,
+`case_adjudications`, `relation_adjudications`,
+`cold_repeat_adjudications`, `warning_adjudications`, and
+`adjudication_sha256`. The hash is the canonical JSON SHA-256 after removing
+only `adjudication_sha256`.
+
+Each case adjudication has exactly these evaluator inputs:
+
+- `case_id` and the owning slice's `compilation_sha256`;
+- `atom_matches`, mapping every required atom id to one semantic-unit key or
+  `null`; the key is `semantic_unit_ref` with the exact `<evidence_id>::`
+  prefix removed, and one key cannot satisfy two atoms;
+- `axis_support_by_unit`, mapping every actual unit key in the case to exactly
+  `supported_axis_ids`, `unsupported_axis_ids`, and
+  `statement_direction_supported`. The two axis lists must be a disjoint,
+  complete partition of that unit's actual `axis_ids`.
+
+Each relation adjudication has `relation_id`,
+`compilation_sha256_by_slice`, `view_sha256_by_slice`, and `outcome`, where
+outcome is `satisfied`, `violated`, or `unresolved`.
+
+Each cold-repeat adjudication has `case_id`,
+`primary_compilation_sha256`, `repeat_compilation_sha256`, and `outcome`,
+where outcome is `consistent`, `inconsistent`, or `unresolved`.
+
+Each warning adjudication has `warning_id`, `compilation_sha256`, and
+`outcome`, where outcome is `reviewed_benign`, `reviewed_defect`, or
+`unresolved`. A `semantic-unit-density-audit:` warning also has `checks` with
+exactly these Boolean-or-null fields: `all_units_source_supported`,
+`all_units_independently_meaningful`, `no_duplicate_or_redundant_units`, and
+`split_granularity_supported`. Its outcome is `reviewed_benign` only when all
+four are true, `reviewed_defect` when any is false, and `unresolved` when any
+is null. Do not add `checks` to a `repeated-large-axis-signature:` warning.
+
+Use the exact expected case, relation, cold-repeat, and emitted-warning ids.
+Do not rename these four top-level adjudication lists: the evaluator reads
+`case_adjudications`, `relation_adjudications`,
+`cold_repeat_adjudications`, and `warning_adjudications` literally.
 """
 
 ADJUDICATION_CONTRACT_SHA256 = sha256_bytes(
@@ -98,6 +140,9 @@ _KNOWN_ADJUDICATION_CONTRACT_IDS = {
     ),
     "9b6459531ffe20280a087b1ef254f7302a5ee7d63e1a0efa0533a53fac7562af": (
         ADJUDICATION_CONTRACT_ID_V1_FIDELITY
+    ),
+    "186a0022397d35ca5ee6a464742155a6e55e606d1ad0da636611d404c838ab78": (
+        ADJUDICATION_CONTRACT_ID_V2
     ),
     ADJUDICATION_CONTRACT_SHA256: ADJUDICATION_CONTRACT_ID,
 }
