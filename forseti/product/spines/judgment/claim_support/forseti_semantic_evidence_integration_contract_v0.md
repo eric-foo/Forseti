@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v27
+version: v28
 effective_date: 2026-08-11
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v27
+# Semantic Evidence Integration Contract v28
 
 ## Purpose
 
@@ -122,8 +122,13 @@ amount. It resolves leading yes/no replies against their parent question,
 accounts for every materially distinct clause, and keeps unqualified preference
 or better/worse language about a product overall axis-free even when it sits
 beside an attribute claim. A stated liking or favorite evaluation of a named
-shade may use `shade_and_color_fit`; ownership, purchase, or repurchase alone
-may not.
+shade uses `shade_and_color_fit`. Ownership, purchase, selection, or repurchase
+of a named shade or an all/every-shade collection also carries
+`shade_and_color_fit` because the observed behavior is shade-specific; this
+records the behavioral subject and does not infer that the shade fit well. When
+sale timing or price is expressly a condition of an intended or hypothetical
+purchase, it also carries `value_and_quantity`; an incidental past sale mention
+does not create that judgment.
 Non-claim rows pass through unchanged.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
@@ -174,6 +179,26 @@ one but carrying no row-verification manifest is rejected, not graded. A
 method-v7 slice fails closed when no verified compilation is supplied; only
 historical-method slices without a supplied verified compilation retain the
 historical evaluation path.
+
+Contract v28 versions the whole-row verifier method to v4 and makes correction
+preserving by default. A replacement remains a complete row, but it is not a
+fresh regeneration: every proposed meaning and field that the source supports
+must survive, and the verifier's reason must identify any source-based removal,
+change, or addition. Drying, becoming drier, loss of moisture, and non-drying
+belong to `hydration_and_moisture`; burning, irritation, peeling, breakout, or
+damage belong to `reaction_and_breakout`, and drying severity alone does not
+move a moisture claim into reaction. A unit solely about an adjacent or
+comparator product cannot bind the target product unless it states a relationship
+to the target. Named-shade behavior follows the shade rule above. Historical
+verifier-v3 manifests remain identifiable by their pinned verifier-v3 text but
+cannot authorize current reconciliation; they must replay row verification and
+are not relabelled as verifier-v4 output.
+
+For method v7, `personal_agreement` may remain support for a bounded meaning but
+never adds a credited independent origin and must not be described as another
+first-hand customer. This is enforced both in reconciliation instructions and
+in deterministic final claim-support projection. Historical semantic methods
+retain their frozen output behavior.
 
 Two boundaries of that intake are stated because they are not obvious from the
 rule above. Versioning the verifier method to v3 also retires every
@@ -979,6 +1004,16 @@ new frontier.
 
 ## Changelog
 
+- `v28` / 2026-08-11 — versioned the whole-row verifier method to v4, made
+  complete-row replacement preserve all source-supported proposed content by
+  default, aligned drying/non-drying with hydration, made named-shade behavior
+  shade-specific, and blocked comparator-only statements from binding the
+  target. Method-v7 claim-support projection now prevents
+  `personal_agreement` from adding independent-origin credit. Historical
+  verifier-v3 receipts remain identifiable but require replay, while historical
+  semantic-method output remains frozen. Added no response, stage, manifest,
+  bundle, or report schema; no
+  second verifier, provider API, conclusion, or full-corpus execution.
 - `v27` / 2026-08-11 — extended the existing verified-compilation intake to
   the reserved `cold-repeat` slice id. The evaluator now rebuilds and binds the
   raw cold compilation before grading its verified rows; method v7 requires a

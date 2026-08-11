@@ -647,3 +647,59 @@ predates the settled attribute, ownership-axis, and comparison boundaries, so a
 fresh adjudication must grade this exact verified compilation and its terminal
 view before the full corpus resumes. The run makes no prevalence, Deliver,
 campaign, seal, or readiness claim.
+
+Contract v28 keeps the same single whole-row verifier and versions only its
+method text to v4. The verifier now treats replacement as a correction of the
+proposed row rather than an invitation to rewrite it from scratch: supported
+meanings, axes, product bindings, conditions, posture, and direction stay unless
+the source justifies a named correction. It also aligns drying and non-drying
+with hydration, records named-shade or all/every-shade ownership as
+shade-specific behavior, records an expressly sale-conditioned future purchase
+as value evidence, and prevents a statement solely about a comparator from becoming a
+Summer Fridays statement. At finalization, method-v7 personal agreement may
+support the meaning but cannot count as another independent first-hand customer.
+Historical verifier-v3 receipts remain identifiable but require replay before
+current reconciliation, and historical semantic views rebuild exactly.
+
+The bounded v28 dogfood reuses the frozen v27 extraction responses so the test
+isolates the verifier and claim-support changes. Its fresh prompts use a
+50,000-byte ceiling and cover semantic-core, cold-repeat, and the complete
+production-shaped verification slice. This replay is calibration evidence only;
+it does not authorize the full corpus until its blind responses validate and a
+fresh adjudication passes the existing gate.
+
+The final-hash replay is recorded at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v4-dogfood-20260811-v1`.
+It checked all 103 claim-bearing rows: 86 were accepted, 17 received bounded
+complete-row corrections, none were unresolved, and all three verified
+compilations validated with zero model API calls. The verifier corrected drying
+without moving peeling out of reaction, kept customer sensitivity separate from
+hydration conditions, retained all/every-shade behavior, added value only when
+future purchase was expressly sale- or price-conditioned, and removed
+comparator-only target bindings. The current compilation hashes are
+`a4a56aaf2400ffe670cf1f1d45f1569a22ad3bcbacfbd25eed6a8a68e8e09a47`
+for semantic core,
+`dd5d70e7a88273c737b194c02709bfe2a80bbc2b5c9e014cef073cab05592a41`
+for cold repeat, and
+`d85142112dc2850cf98fd39278046a9efc7a59f3ac5ea7515a6cdf78ba9f046e`
+for the production-shaped slice.
+
+Reconciliation accounts for all 7 core and 121 production-shaped items. The
+core view contains 25 propositions and retains two echo-only meanings as
+unmerged attribution (`view_sha256:
+b37be3fdaeccf2f17f7332ac850d152bf31c0689ebff5313ef340b738fe45fed`).
+The production view contains 17 genuinely stacked propositions and preserves
+202 distinct meanings explicitly as unmerged retrieval evidence rather than
+manufacturing consensus (`view_sha256:
+82e530edc20be48cc78cdfc76fb197612cdc537ca32eaf20cf47d89bde1c3121`).
+
+Fresh blind adjudication remains `SEMANTIC_CALIBRATION_FAIL`: 15 of 17 gold
+cases pass, all 7 relation obligations are satisfied, 4 of 7 cold repeats are
+consistent, and all 10 density rows are benign. The remaining semantic defects
+are one omitted target-versus-Lanolips moisture comparison and one primary row
+that invents a product-linked sensitivity reaction; the latter also creates an
+eighth unit beyond the ruler's 4..7 range. Three cold cases remain inconsistent.
+The evaluator separately reports `PREPARATION_RECEIPT_MISMATCH` even though the
+rebound receipt and stored spec bind the same `spec_sha256`; that mechanical
+residual is not hidden or counted as semantic success. Full-corpus execution
+therefore remains paused.
