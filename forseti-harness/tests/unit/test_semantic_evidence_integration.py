@@ -1935,6 +1935,117 @@ def test_personal_agreement_support_never_adds_independent_origin_credit() -> No
     assert support["support_posture"] == "isolated"
 
 
+def _agreement_bundle_and_units() -> tuple[dict, dict]:
+    """One method-v7 verified compilation with one first-hand and one agreement unit."""
+    source = _source_v7(count=2)
+    source["captured_items"][1]["conversation_depth"] = 1
+    source["captured_items"][1]["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t2",
+            "text": "The parent reported the balm becoming drying after one week.",
+        }
+    ]
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    responses[0]["evidence"][1]["semantic_units"][0]["evidence_posture"] = (
+        "personal_agreement"
+    )
+    compiled = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    return bundle, verified
+
+
+def test_personal_agreement_adds_no_origin_through_flat_finalization() -> None:
+    # The flat v1 route is a second live terminal finalization consumer for a
+    # method-v7 compilation, so agreement must not become a second independent
+    # customer there either.
+    bundle, verified = _agreement_bundle_and_units()
+    units = verified["semantic_units"]
+    assert {row["evidence_posture"] for row in units} == {
+        "first_hand",
+        "personal_agreement",
+    }
+    merged = _flat_reconciliation(bundle, verified)
+    merged["propositions"] = [
+        {
+            **merged["propositions"][0],
+            "relations": [
+                {"semantic_unit_ref": row["semantic_unit_ref"], "relation": "support"}
+                for row in units
+            ],
+        }
+    ]
+
+    support = finalize_view(bundle, verified, merged)["propositions"][0][
+        "claim_support"
+    ]
+
+    assert len(support["evidence_refs"]) == 2
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def test_method_v7_flat_finalization_uses_credited_public_origins() -> None:
+    # The flat finalizer must apply the same conservative actor-credit rule as
+    # the hierarchical finalizer: a public identity seen through two scoped
+    # origins is one credited origin, not two customers.
+    source = _source_v7(count=2)
+    source["captured_items"][0]["independence_key"] = "reddit:same-handle"
+    source["captured_items"][1]["independence_key"] = "retailer:same-handle"
+    for row in source["captured_items"]:
+        row["public_identity_key"] = "public_handle:same-handle"
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    units = verified["semantic_units"]
+    merged = _flat_reconciliation(bundle, verified)
+    merged["propositions"] = [
+        {
+            **merged["propositions"][0],
+            "relations": [
+                {"semantic_unit_ref": row["semantic_unit_ref"], "relation": "support"}
+                for row in units
+            ],
+        }
+    ]
+
+    support = finalize_view(bundle, verified, merged)["propositions"][0][
+        "claim_support"
+    ]
+
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def test_historical_methods_keep_their_frozen_reconciliation_posture_wording() -> None:
+    # The agreement/origin sentence states a method-v7 rule. Methods v5 and v6
+    # still credit personal_agreement in finalization, so emitting it for them
+    # would instruct against their own projection and rewrite a frozen prompt.
+    agreement_rule = "never use it to claim an additional independent origin"
+    carried = "may use only first_hand or personal_agreement"
+    for source in (_source_v5(count=2), _source_v6(count=2)):
+        bundle = build_bundle(source, max_prompt_bytes=20_000)
+        compiled = validate_batch_responses(
+            bundle, _v5_responses(bundle, detailed_per_batch=2)
+        )
+        _, prompts = prepare_reconciliation_stage(bundle, compiled)
+        assert prompts
+        assert all(carried in row["prompt"] for row in prompts)
+        assert not any(agreement_rule in row["prompt"] for row in prompts)
+
+    bundle, verified = _agreement_bundle_and_units()
+    _, v7_prompts = prepare_reconciliation_stage(bundle, verified)
+    assert all(agreement_rule in row["prompt"] for row in v7_prompts)
+
+
 def test_v3_full_corpus_accounting_fails_closed_on_missing_leaf() -> None:
     source = _source_v3()
     source["captured_items"].pop()
@@ -2600,6 +2711,13 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
 
 def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
+    # The active text is derived from the v3 text by literal replacement, so a
+    # silently non-matching replacement would ship a v3-titled method under the
+    # v4 version and hash.
+    assert ROW_VERIFICATION_METHOD_TEXT.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
+    )
+    assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
     for principle in (
         "smallest complete set of standalone meanings",
         "direct answers, evaluations, results, comparisons, reasons, contrasts",

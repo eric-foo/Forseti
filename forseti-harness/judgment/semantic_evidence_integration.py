@@ -3614,17 +3614,27 @@ def _render_v3_reconciliation_prompt(
     compact_lineage: bool = False,
     emerging_axis_labels: Sequence[str] | None = None,
     emerging_axis_owner: bool = True,
+    agreement_origin_rule: bool = False,
 ) -> str:
     posture_instruction = (
         "For candidates carrying evidence_postures, customer_experience and "
         "reported_behavior support may use only first_hand or personal_agreement; "
-        "strategy_statement requires actor_strategy. A personal_agreement may support "
-        "the bounded meaning but remains agreement: never describe it as first-hand, "
-        "and never use it to claim an additional independent origin. When first_hand "
-        "and personal_agreement children merge, use posture-neutral bounded wording. "
+        "strategy_statement requires actor_strategy. "
         if any("evidence_postures" in candidate for candidate in candidates)
         else ""
     )
+    # The agreement sentence is the prompt half of a method-v7-only rule whose
+    # deterministic half lives in finalization. Historical method v5 and v6 keep
+    # crediting personal_agreement there, so emitting it for them would instruct
+    # against an outcome their own projection still produces and would rewrite a
+    # frozen historical prompt.
+    if posture_instruction and agreement_origin_rule:
+        posture_instruction += (
+            "A personal_agreement may support "
+            "the bounded meaning but remains agreement: never describe it as first-hand, "
+            "and never use it to claim an additional independent origin. When first_hand "
+            "and personal_agreement children merge, use posture-neutral bounded wording. "
+        )
     if emerging_axis_labels is None:
         axis_instruction = (
             "Consolidate every emerging label exactly once while preserving originals. "
@@ -3816,6 +3826,7 @@ def prepare_reconciliation_stage(
         BUNDLE_VERSION_V4,
         BUNDLE_VERSION_V5,
     }
+    agreement_origin_rule = bundle.get("method_version") == METHOD_VERSION_V7
     current_emerging_labels = sorted(
         {
             label
@@ -3849,6 +3860,7 @@ def prepare_reconciliation_stage(
                 else None
             ),
             emerging_axis_owner=not batches,
+            agreement_origin_rule=agreement_origin_rule,
         )
         if len(prompt.encode("utf-8")) > max_bytes:
             if not current:
@@ -3867,6 +3879,7 @@ def prepare_reconciliation_stage(
                 compact_lineage=compact_lineage,
                 emerging_axis_labels=([] if compact_lineage else None),
                 emerging_axis_owner=False,
+                agreement_origin_rule=agreement_origin_rule,
             )
             if len(single.encode("utf-8")) > max_bytes:
                 raise SemanticIntegrationError(
@@ -3913,6 +3926,7 @@ def prepare_reconciliation_stage(
                 else ([] if compact_lineage else None)
             ),
             emerging_axis_owner=batch_index == 0,
+            agreement_origin_rule=agreement_origin_rule,
         )
         prompt_bytes = len(prompt.encode("utf-8"))
         if prompt_bytes > max_bytes:
@@ -5073,18 +5087,46 @@ def finalize_view(
             raise SemanticIntegrationError(
                 f"proposition {key} uses source roles incompetent for {kind}: {sorted(incompetent)!r}"
             )
-        origin_keys = {
-            evidence_index[ref].get("independence_key", "").strip().casefold()
+        # This flat v1 route is a live terminal finalization consumer for a
+        # method-v7 compilation, so the v7 rule that agreement never becomes
+        # another independent first-hand origin has to hold here too.
+        first_hand_support_evidence = (
+            {
+                semantic_index[ref]["evidence_id"]
+                for ref in related["support"]
+                if semantic_index[ref]["evidence_posture"] == "first_hand"
+            }
+            if bundle.get("method_version") == METHOD_VERSION_V7
+            else set(support_evidence)
+        )
+        credited_support = [
+            ref
             for ref in support_evidence
-            if _nonempty(evidence_index[ref].get("independence_key"))
-        }
+            if ref in first_hand_support_evidence
+            and _nonempty(evidence_index[ref].get("independence_key"))
+            and (
+                bundle.get("method_version") != METHOD_VERSION_V7
+                or evidence_index[ref].get("independence_posture") == "credited"
+            )
+        ]
+        origin_keys = (
+            {
+                key
+                for ref in credited_support
+                if (key := _credited_origin_key(evidence_index[ref])) is not None
+            }
+            if bundle.get("method_version") == METHOD_VERSION_V7
+            else {
+                evidence_index[ref].get("independence_key", "").strip().casefold()
+                for ref in credited_support
+            }
+        )
         # Cross-venue credit requires at least one independently credited
         # origin in each counted source role, so roles carried only by
         # uncredited evidence must not widen the venue count.
         credited_roles = {
             evidence_index[ref]["source_role"]
-            for ref in support_evidence
-            if _nonempty(evidence_index[ref].get("independence_key"))
+            for ref in credited_support
         }
         engagement_refs = [
             ref
