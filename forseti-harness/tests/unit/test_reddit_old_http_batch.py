@@ -116,7 +116,7 @@ def test_batch_failure_stays_visible_and_has_no_retry(
         decision_question="What source-visible content was present?",
         delay_seconds=0,
     )
-    assert exit_code == 0
+    assert exit_code == 2
     assert calls == 1
     row = json.loads(Path(message).read_text(encoding="utf-8"))["results"][0]
     assert row["capture_exit"] == 3
@@ -154,7 +154,7 @@ def test_block_shell_failure_preserves_no_refetch_diagnostic(
         delay_seconds=0,
     )
 
-    assert exit_code == 0
+    assert exit_code == 2
     summary = json.loads(Path(message).read_text(encoding="utf-8"))
     row = summary["results"][0]
     assert row["capture_exit"] == CONTENT_EXTRACTION_FAILED_EXIT_CODE

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -144,6 +145,35 @@ def test_www_summary_does_not_claim_it_avoided_browser_automation():
     assert batch.TRANSPORT_HOSTS["www_realchrome"] == "www.reddit.com"
 
 
+def test_www_thread_forwards_the_bounded_expansion_policy(tmp_path, monkeypatch):
+    from runners import run_source_capture_realchrome_cdp_packet as cdp
+
+    seen: dict = {}
+    monkeypatch.setattr(
+        cdp,
+        "run_source_capture_realchrome_cdp_packet",
+        lambda **kwargs: (seen.update(kwargs), (0, "ok"))[1],
+    )
+
+    batch._capture_www_thread(
+        slot=batch.BatchSlot(slot_id="s1", url=WWW_URL),
+        decision_question="q",
+        output_directory=tmp_path / "packet",
+        data_root=None,
+        cdp_endpoint="http://127.0.0.1:9222",
+        keep_raw_audit_sample=False,
+        timeout_seconds=20.0,
+        cadence_plan=SimpleNamespace(mode="fixed", planned_offsets_seconds=[0.0]),
+        index=0,
+    )
+
+    assert seen["expand_max_clicks_per_round"] == 4
+    assert seen["expand_progress_selector"] == "shreddit-comment"
+    assert seen["expand_progress_target"] == 150
+    assert seen["expand_max_no_progress_rounds"] == 2
+    assert seen["expand_max_rounds"] == 8
+
+
 def test_grid_cli_preserves_the_lane_cadence_defaults():
     from runners import run_reddit_grid_capture as grid
 
@@ -152,3 +182,11 @@ def test_grid_cli_preserves_the_lane_cadence_defaults():
     )
     assert args.cadence_mode == grid.DEFAULT_CADENCE_MODE
     assert args.cadence_basis == grid.DEFAULT_CADENCE_BASIS
+
+
+def test_thread_cli_uses_a_true_post_capture_gap():
+    args = batch._build_parser().parse_args(
+        ["--url-list", "urls.json", "--output-root", "out", "--decision-question", "q"]
+    )
+    assert args.cadence_basis == batch.THREAD_DEEP_CAPTURE_CADENCE_BASIS
+    assert args.cadence_basis == "gap"

@@ -59,12 +59,14 @@ def test_batch_row_records_the_refused_status(tmp_path, monkeypatch):
         cadence_mode="fixed",
         delay_seconds=0.0,
     )
-    assert exit_code == 0
+    assert exit_code == batch.REDDIT_CIRCUIT_BREAK_EXIT_CODE
     summary = json.loads((tmp_path / "out" / "batch_summary.json").read_text(encoding="utf-8"))
     (row,) = summary["results"]
     assert row["capture_exit"] == 2
     assert row["navigation_http_status"] == 429
     assert row["capture_message"].startswith("RealChromeNavigationHTTPError:")
+    assert summary["circuit_breaker"]["tripped"] is True
+    assert summary["circuit_breaker"]["reason"] == "http_429"
     # The journal row carries the same field, so a killed run keeps it too.
     (journal_row,) = [
         json.loads(line)

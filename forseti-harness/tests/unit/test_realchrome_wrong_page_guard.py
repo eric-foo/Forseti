@@ -138,7 +138,7 @@ def test_batch_row_records_wrong_page_without_breaker_pressure(tmp_path, monkeyp
         cadence_mode="fixed",
         delay_seconds=0.0,
     )
-    assert exit_code == 0
+    assert exit_code == 2
     summary = json.loads(
         (tmp_path / "out" / "batch_summary.json").read_text(encoding="utf-8")
     )

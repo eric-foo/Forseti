@@ -4,8 +4,8 @@ The 2026-08-01 www batch was killed externally between slots 75 and 76 of 127
 (session teardown, not a runner defect). Because the summary was written only
 after the final slot, the run's entire record vanished even though every
 captured packet was already safely in the lake. The journal makes each slot's
-outcome durable the moment it finishes; --resume makes recovery cost zero
-additional Reddit requests for slots already attempted.
+outcome durable the moment it finishes; --resume never re-requests successful
+slots and may retry a recorded failure after an explicit cooldown.
 """
 from __future__ import annotations
 
@@ -93,8 +93,7 @@ def test_resume_carries_journaled_slots_and_requests_only_the_rest(tmp_path, mon
     )
     exit_code, message = _run(tmp_path, resume=True)
     assert exit_code == 0
-    # Exactly one request: the slot with no journal row. Journaled slots are
-    # never re-requested regardless of their exit code (no retry escalation).
+    # Exactly one request: the slot with no completed journal row.
     assert calls == [URLS[2]]
 
     summary = json.loads(Path(message).read_text(encoding="utf-8"))

@@ -128,6 +128,35 @@ def test_content_capture_writes_packet_and_passes(tmp_path: Path) -> None:
     assert engine.calls[0]["warm_hop_url"] == "https://www.kohls.com/"
 
 
+def test_expansion_bounds_are_forwarded_and_preserved(tmp_path: Path) -> None:
+    engine = _FakeEngine(dom=_CONTENT_DOM, text=_CONTENT_TEXT, status=200, title="t")
+    out = tmp_path / "pkt"
+    code, _ = run_source_capture_realchrome_cdp_packet(
+        url=PDP_URL,
+        source_family="retail_pdp",
+        source_surface="realchrome_cdp_snapshot",
+        decision_question="q",
+        output_directory=out,
+        expand_control_pattern="more comments?",
+        expand_max_rounds=8,
+        expand_max_clicks_per_round=4,
+        expand_progress_selector="shreddit-comment",
+        expand_progress_target=150,
+        expand_max_no_progress_rounds=2,
+        engine=engine,
+    )
+
+    assert code == 0
+    assert engine.calls[0]["expand_max_clicks_per_round"] == 4
+    assert engine.calls[0]["expand_progress_target"] == 150
+    metadata_file = next(out.glob("raw/*metadata.json"))
+    metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+    assert metadata["expand_max_clicks_per_round"] == 4
+    assert metadata["expand_progress_selector"] == "shreddit-comment"
+    assert metadata["expand_progress_target"] == 150
+    assert metadata["expand_max_no_progress_rounds"] == 2
+
+
 def test_unattended_provisioning_is_preserved_truthfully(tmp_path: Path) -> None:
     engine = _FakeEngine(dom=_CONTENT_DOM, text=_CONTENT_TEXT, status=200, title="Tower 28 LipSoftie")
     out = tmp_path / "pkt"

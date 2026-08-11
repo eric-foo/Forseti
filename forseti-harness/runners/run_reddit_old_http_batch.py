@@ -24,7 +24,6 @@ from harness_utils import utc_now_z_microseconds
 from runners.run_source_capture_http_packet import run_source_capture_http_packet
 from source_capture import CaptureModeCategory
 from capture_spine.reddit_capture_cadence import (
-    REDDIT_CADENCE_BASIS,
     REDDIT_CADENCE_MAX_GAP_SECONDS,
     REDDIT_CADENCE_MIN_GAP_SECONDS,
     REDDIT_CADENCE_MODE,
@@ -63,22 +62,33 @@ TRANSPORT_SOURCE_SURFACES = {
     WWW_REALCHROME_TRANSPORT: "www_reddit_realchrome_cdp",
 }
 
-# Measured on r/Sephora thread 1v87d9j (198 declared comments, 2026-08-01):
-# 35 comments on first paint, 119 after one expansion round, 152 after two,
-# zero controls remaining. The bound is set well above the observed
-# convergence so a larger thread is not silently truncated; when the bound
-# does stop the loop the runner records that fact rather than implying the
-# tree was exhausted.
+# The value ceiling was backtested on two completed weekly corpora plus the
+# current 41-thread read. In the completed 2026-08-01 extracts, the first 150
+# comments retained 1,888/1,894 matched evidence quotes and every published
+# cluster/card conclusion; the current read retained all 81 material evidence
+# references by comment 125. Expansion is therefore incremental and stops at
+# 150 comments, after two no-growth rounds, or at the existing round bound.
+# Four controls per round prevents one page from firing every visible "more"
+# control synchronously (the 2026-08-11 rate-limited batch reached 112 clicks
+# on one thread and then navigated the next slot with a zero-second gap).
 WWW_EXPAND_CONTROL_PATTERN = r"more repl(?:y|ies)|more comments?|load more comments?"
 WWW_EXPAND_CONTROL_SELECTOR = "shreddit-comment-tree button, shreddit-comment-tree a"
 WWW_EXPAND_MAX_ROUNDS = 8
 WWW_EXPAND_SETTLE_MS = 6000
+WWW_EXPAND_MAX_CLICKS_PER_ROUND = 4
+WWW_EXPAND_PROGRESS_SELECTOR = "shreddit-comment"
+WWW_EXPAND_PROGRESS_TARGET = 150
+WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS = 2
 WWW_READY_SELECTOR = "shreddit-comment"
 WWW_VIEWPORT_WIDTH = 1280
 WWW_VIEWPORT_HEIGHT = 20000
 WWW_SETTLE_SECONDS = 12.0
 WWW_PERSISTENT_TAB_MARKER = "forseti-reddit-thread"
 DEFAULT_CDP_ENDPOINT = "http://127.0.0.1:9223"
+# Thread expansion can itself take longer than the shared 31-46 second cycle.
+# Deep capture therefore needs a true post-capture gap; otherwise a long tree
+# produces a zero-second wait before the next navigation.
+THREAD_DEEP_CAPTURE_CADENCE_BASIS = "gap"
 
 
 class ThreadProjectionAnomalyError(ValueError):
@@ -101,14 +111,14 @@ ACCESS_DIAGNOSTIC_DIRECTORY = "access_diagnostics"
 # discarded. Raw remains the explicit operator-selected evidence posture.
 DEFAULT_RETENTION_MODE = "content"
 
-# Circuit breaker, owner decision 2026-08-01. When the server refuses this
-# many CONSECUTIVE navigations with an HTTP error (a confirmed refusal, not a
-# timeout or local failure), the batch stops instead of marching the rest of
-# the queue into the same rate-limit window: the 2026-08-01 leaderboard run
-# spent 8 refused requests learning what the first 2 already said. Slots never
-# attempted get no journal row, so a later --resume run picks up exactly
-# there. 0 disables. This is a stop, not a retry: no request is reissued.
+# Circuit breaker, owner decisions 2026-08-01 and 2026-08-11. Any first 429
+# stops immediately; other confirmed HTTP refusals stop at this consecutive
+# threshold. Timeouts and local failures do not feed the breaker. An explicit
+# later --resume retries the failed slot and untouched tail while carrying
+# successful packets, so cooldown recovery never recaptures completed work.
+# Zero disables only the generic consecutive-refusal threshold, not first-429.
 DEFAULT_REFUSAL_CIRCUIT_BREAKER = 3
+REDDIT_CIRCUIT_BREAK_EXIT_CODE = 4
 
 
 @dataclass(frozen=True)
@@ -132,7 +142,7 @@ def run_reddit_old_http_batch(
     cadence_min_gap_seconds: float | None = REDDIT_CADENCE_MIN_GAP_SECONDS,
     cadence_max_gap_seconds: float | None = REDDIT_CADENCE_MAX_GAP_SECONDS,
     cadence_random_seed: int | None = None,
-    cadence_basis: str = REDDIT_CADENCE_BASIS,
+    cadence_basis: str = THREAD_DEEP_CAPTURE_CADENCE_BASIS,
     requested_retention_mode: str = DEFAULT_RETENTION_MODE,
     transport: str = OLD_HTTP_TRANSPORT,
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
@@ -213,6 +223,7 @@ def run_reddit_old_http_batch(
     results: list[dict[str, Any]] = list(carried_rows)
     consecutive_refusals = 0
     breaker_tripped_after_slot: str | None = None
+    breaker_reason: str | None = None
     slots_not_attempted: list[str] = []
     for index, slot in enumerate(pending_slots):
         packet_dir = None if data_root is not None else output_root / f"{slot.slot_id}_packet"
@@ -250,6 +261,7 @@ def run_reddit_old_http_batch(
             ),
         )
         capture_started_monotonic = time.monotonic()
+        rate_limit_refusal = False
         try:
             row["capture_started_at"] = utc_now_z_microseconds()
             if transport == WWW_REALCHROME_TRANSPORT:
@@ -333,6 +345,7 @@ def run_reddit_old_http_batch(
             navigation_status = getattr(exc, "http_status", None)
             if isinstance(navigation_status, int):
                 row["navigation_http_status"] = navigation_status
+                rate_limit_refusal = navigation_status == 429
             # Only a typed server-side refusal feeds the circuit breaker;
             # timeouts and local failures never do.
             if hasattr(exc, "http_status"):
@@ -348,8 +361,14 @@ def run_reddit_old_http_batch(
         row["capture_elapsed_seconds"] = round(elapsed, 3)
         results.append(row)
         _append_progress_row(progress_path=progress_path, row=row)
+        if rate_limit_refusal:
+            breaker_tripped_after_slot = slot.slot_id
+            breaker_reason = "http_429"
+            slots_not_attempted = [s.slot_id for s in pending_slots[index + 1:]]
+            break
         if refusal_circuit_breaker and consecutive_refusals >= refusal_circuit_breaker:
             breaker_tripped_after_slot = slot.slot_id
+            breaker_reason = "consecutive_http_refusals"
             slots_not_attempted = [s.slot_id for s in pending_slots[index + 1:]]
             break
         if index < len(cadence_plan.planned_waits_seconds):
@@ -380,7 +399,7 @@ def run_reddit_old_http_batch(
             "not source discovery",
             "not monitoring",
             "not proxy use",
-            "not retry escalation",
+            "not in-run retry escalation",
             "not broad Reddit crawl",
             "not link following",
             *(
@@ -403,6 +422,7 @@ def run_reddit_old_http_batch(
             "consecutive_refusal_threshold": refusal_circuit_breaker,
             "tripped": breaker_tripped_after_slot is not None,
             "tripped_after_slot": breaker_tripped_after_slot,
+            "reason": breaker_reason,
             "slots_not_attempted": slots_not_attempted,
         },
         "capture_success_count": sum(1 for row in results if row["capture_exit"] == 0),
@@ -419,6 +439,10 @@ def run_reddit_old_http_batch(
         encoding="utf-8",
         newline="\n",
     )
+    if breaker_tripped_after_slot is not None:
+        return REDDIT_CIRCUIT_BREAK_EXIT_CODE, str(summary_path)
+    if any(row.get("capture_exit") != 0 for row in results):
+        return 2, str(summary_path)
     return 0, str(summary_path)
 
 
@@ -510,6 +534,10 @@ def _capture_www_thread(
         expand_control_selector=WWW_EXPAND_CONTROL_SELECTOR,
         expand_max_rounds=WWW_EXPAND_MAX_ROUNDS,
         expand_settle_ms=WWW_EXPAND_SETTLE_MS,
+        expand_max_clicks_per_round=WWW_EXPAND_MAX_CLICKS_PER_ROUND,
+        expand_progress_selector=WWW_EXPAND_PROGRESS_SELECTOR,
+        expand_progress_target=WWW_EXPAND_PROGRESS_TARGET,
+        expand_max_no_progress_rounds=WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS,
         viewport_width=WWW_VIEWPORT_WIDTH,
         viewport_height=WWW_VIEWPORT_HEIGHT,
         settle_seconds=WWW_SETTLE_SECONDS,
@@ -709,11 +737,10 @@ def _load_resume_rows(
 ) -> list[dict[str, Any]]:
     """Load journaled rows for a resumed run; refuse ambiguous states loudly.
 
-    A journaled slot counts as attempted regardless of its exit code: the
-    batch contract is one request per thread with no retry escalation, so a
-    resume never re-requests a slot that already reached Reddit. Only slots
-    with no journal row at all -- never started, or killed mid-capture before
-    the row was written -- are (re)run.
+    A successful journaled slot is carried and never re-requested. A failed
+    slot remains visible in the append-only journal but is pending on a later
+    explicit ``--resume`` invocation; this lets a cooled-down run recover the
+    429 slot without recapturing prior successes.
     """
     if not progress_path.exists():
         if resume:
@@ -726,8 +753,7 @@ def _load_resume_rows(
             "--output-root."
         )
     url_by_slot_id = {slot.slot_id: slot.url for slot in slots}
-    rows: list[dict[str, Any]] = []
-    seen: set[str] = set()
+    latest_by_slot_id: dict[str, dict[str, Any]] = {}
     for line_number, line in enumerate(
         progress_path.read_text(encoding="utf-8").splitlines(), start=1
     ):
@@ -747,13 +773,13 @@ def _load_resume_rows(
                 f"supplied URL list for slot_id {slot_id!r}; refusing to resume "
                 "a different batch in this output_root"
             )
-        if slot_id in seen:
-            raise ValueError(
-                f"progress journal repeats slot_id {slot_id!r}; refusing ambiguous resume"
-            )
-        seen.add(slot_id)
-        rows.append(row)
-    return rows
+        latest_by_slot_id[slot_id] = row
+    return [
+        latest_by_slot_id[slot.slot_id]
+        for slot in slots
+        if slot.slot_id in latest_by_slot_id
+        and latest_by_slot_id[slot.slot_id].get("capture_exit") == 0
+    ]
 
 
 def load_slots(path: Path, *, transport: str = OLD_HTTP_TRANSPORT) -> list[BatchSlot]:
@@ -885,7 +911,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--cadence-basis",
         choices=list(CADENCE_BASES),
-        default=REDDIT_CADENCE_BASIS,
+        default=THREAD_DEEP_CAPTURE_CADENCE_BASIS,
         help=(
             "gap: the cadence numbers are the wait BETWEEN captures. cycle: they "
             "are the target start-to-start interval and the capture duration is "
@@ -909,9 +935,9 @@ def _build_parser() -> argparse.ArgumentParser:
         type=int,
         default=DEFAULT_REFUSAL_CIRCUIT_BREAKER,
         help=(
-            "Stop the batch after this many consecutive server-side HTTP "
-            "refusals instead of marching into the rate-limit window; "
-            "unattempted slots stay resumable. 0 disables."
+            "Stop after this many consecutive non-429 server-side HTTP "
+            "refusals; the first 429 always stops immediately. Failed and "
+            "unattempted slots stay resumable. 0 disables only this generic threshold."
         ),
     )
     parser.add_argument(
