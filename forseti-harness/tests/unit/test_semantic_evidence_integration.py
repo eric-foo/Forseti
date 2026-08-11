@@ -3784,6 +3784,12 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
     assert "wanting more pigment is `polarity: affirmed`" in normalized_contract
     assert "different number of supported atomic units is not by itself inconsistent" in normalized_contract
     assert "both attributed parent claims and its own first-hand shopping reaction" in normalized_contract
+    assert "`case_adjudications`, `relation_adjudications`," in normalized_contract
+    assert "`cold_repeat_adjudications`, and `warning_adjudications` literally" in normalized_contract
+    assert "mapping every required atom id to one semantic-unit key or" in normalized_contract
+    assert "a disjoint, complete partition of that unit's actual `axis_ids`" in normalized_contract
+    assert "`primary_compilation_sha256`, `repeat_compilation_sha256`" in normalized_contract
+    assert "`all_units_source_supported`" in normalized_contract
     # Pin the written sidecar and its reported hash to the bound constant, not
     # to the bytes the runner just wrote: comparing the file against itself
     # cannot detect the drift the hash exists to detect.
@@ -3963,7 +3969,7 @@ def test_legacy_calibration_receipt_keeps_v1_report_shape() -> None:
 
 def test_current_adjudication_contract_has_a_pinned_identity() -> None:
     assert ADJUDICATION_CONTRACT_SHA256 == (
-        "186a0022397d35ca5ee6a464742155a6e55e606d1ad0da636611d404c838ab78"
+        "2ffa9d5fcc0f040406c0ab61dd1d0694f78660daa638d6c0eaac36d7f1d91796"
     )
     identity = adjudication_contract_identity(
         SEMANTIC_CALIBRATION_ADJUDICATION_CONTRACT.encode("utf-8")
