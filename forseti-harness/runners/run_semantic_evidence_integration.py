@@ -206,6 +206,7 @@ def evaluate_semantic_calibration_run(
     reconciliation_root: Path | None,
     adjudication_path: Path | None,
     report_out: Path,
+    verified_compilation_root: Path | None = None,
 ) -> dict[str, Any]:
     """Evaluate returned calibration slices; a non-pass remains visible."""
     # The sidecar is the adjudicator-facing ruler. New preparations bind its
@@ -297,6 +298,22 @@ def evaluate_semantic_calibration_run(
             if (reconciliation_root / slice_spec["slice_id"] / "view.json").is_file()
         }
     )
+    verified_slice_ids = [row["slice_id"] for row in normalized["slices"]]
+    if normalized["cold_repeat"] is not None:
+        verified_slice_ids.append("cold-repeat")
+    verified_compilations_by_slice = (
+        {}
+        if verified_compilation_root is None
+        else {
+            slice_id: _load_object(
+                verified_compilation_root / slice_id / "batch_compilation.json"
+            )
+            for slice_id in verified_slice_ids
+            if (
+                verified_compilation_root / slice_id / "batch_compilation.json"
+            ).is_file()
+        }
+    )
     report = evaluate_semantic_calibration(
         prepared,
         spec,
@@ -304,6 +321,7 @@ def evaluate_semantic_calibration_run(
         adjudication,
         cold_responses_by_slice,
         reconciliation_by_slice,
+        verified_compilations_by_slice,
         full_source=source,
     )
     _write_json(report_out, report)
@@ -1169,6 +1187,7 @@ def _parser() -> argparse.ArgumentParser:
     calibration_evaluate.add_argument("--response-root", type=Path, required=True)
     calibration_evaluate.add_argument("--cold-response-root", type=Path)
     calibration_evaluate.add_argument("--reconciliation-root", type=Path)
+    calibration_evaluate.add_argument("--verified-compilation-root", type=Path)
     calibration_evaluate.add_argument("--adjudication", type=Path)
     calibration_evaluate.add_argument("--report-out", type=Path, required=True)
     return parser
@@ -1369,6 +1388,7 @@ def main(argv: list[str] | None = None) -> int:
                 response_root=args.response_root,
                 cold_response_root=args.cold_response_root,
                 reconciliation_root=args.reconciliation_root,
+                verified_compilation_root=args.verified_compilation_root,
                 adjudication_path=args.adjudication,
                 report_out=args.report_out,
             )
