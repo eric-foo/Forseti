@@ -95,22 +95,29 @@ REALCHROME_CDP_NON_CLAIMS = [
 # scoped to this runner's plain-text metadata/DOM; not a shared helper in harness_utils.
 _SECRET_LIKE = re.compile(r"\b(Set-Cookie|cf_clearance|storage_state|user_data_dir)\b", re.IGNORECASE)
 
-# Click every eligible in-place expansion control inside the caller's selector
-# whose visible text matches the caller's pattern, and report how many were
-# clicked. Anchors carrying an href are deliberately excluded: those navigate
-# to another page, and following them would turn one bounded capture into a
-# crawl.
+# Click eligible in-place expansion controls inside the caller's selector whose
+# visible text matches the caller's pattern, and report how many were clicked.
+# A caller may cap each round; zero preserves the historical click-all shape.
+# Anchors carrying an href are deliberately excluded: those navigate to another
+# page, and following them would turn one bounded capture into a crawl.
 _EXPAND_CONTROLS_JS = """
 (payload) => {
   const re = new RegExp(payload.pattern, 'i');
+  if (!(window.__forsetiExpansionSeen instanceof WeakSet)) {
+    window.__forsetiExpansionSeen = new WeakSet();
+  }
   const controls = Array.from(document.querySelectorAll(payload.selector))
     .filter(el => !(el.tagName === 'A' && el.getAttribute('href')))
     .filter(el => el.isConnected && el.getClientRects().length > 0)
     .filter(el => !el.disabled && el.getAttribute('aria-disabled') !== 'true')
-    .filter(el => re.test(el.textContent || ''));
+    .filter(el => re.test(el.textContent || ''))
+    .filter(el => !window.__forsetiExpansionSeen.has(el));
   if (!payload.click) return {eligible: controls.length, clicked: 0};
+  const clickLimit = Number(payload.maxClicks || 0);
+  const selected = clickLimit > 0 ? controls.slice(0, clickLimit) : controls;
   let clicked = 0;
-  for (const control of controls) {
+  for (const control of selected) {
+    window.__forsetiExpansionSeen.add(control);
     try { control.click(); clicked += 1; } catch (err) { /* one dead control must not stop the round */ }
   }
   return {eligible: controls.length, clicked};
@@ -143,6 +150,8 @@ class RealChromeCDPCaptureResult:
     expansion_rounds: int = 0
     expansion_clicks: int = 0
     expansion_exhausted: bool | None = None
+    expansion_progress_count: int | None = None
+    expansion_stop_reason: str | None = None
 
 
 class RealChromeCDPEngine(Protocol):
@@ -166,6 +175,10 @@ class RealChromeCDPEngine(Protocol):
         expand_control_selector: str = "button, a",
         expand_max_rounds: int = 0,
         expand_settle_ms: int = 6000,
+        expand_max_clicks_per_round: int = 0,
+        expand_progress_selector: str | None = None,
+        expand_progress_target: int | None = None,
+        expand_max_no_progress_rounds: int = 0,
     ) -> RealChromeCDPCaptureResult: ...
 
 
@@ -305,6 +318,10 @@ class _LiveRealChromeCDPEngine:
         expand_control_selector: str = "button, a",
         expand_max_rounds: int = 0,
         expand_settle_ms: int = 6000,
+        expand_max_clicks_per_round: int = 0,
+        expand_progress_selector: str | None = None,
+        expand_progress_target: int | None = None,
+        expand_max_no_progress_rounds: int = 0,
     ) -> RealChromeCDPCaptureResult:
         try:
             from playwright.sync_api import sync_playwright
@@ -412,6 +429,12 @@ class _LiveRealChromeCDPEngine:
                     finally:
                         page.remove_listener("response", _record_navigation_status)
                     http_status = response.status if response is not None else None
+                    if http_status == 429:
+                        raise RealChromeNavigationHTTPError(
+                            f"target navigation for {url} was rate-limited (status=429); "
+                            "stop the batch and cool down before an explicit resume",
+                            http_status=429,
+                        )
                     settle_block_signal = None
                     remaining_settle_ms = int(settle_seconds * 1000)
                     while remaining_settle_ms > 0:
@@ -460,6 +483,8 @@ class _LiveRealChromeCDPEngine:
                     expansion_rounds = 0
                     expansion_clicks = 0
                     expansion_exhausted: bool | None = None
+                    expansion_progress_count: int | None = None
+                    expansion_stop_reason: str | None = None
                     if expand_control_pattern and expand_max_rounds > 0:
                         # Some surfaces paint only a fraction of their content
                         # and hide the rest behind in-place expansion controls
@@ -469,7 +494,20 @@ class _LiveRealChromeCDPEngine:
                         # clicked: this never follows a link to another page, so
                         # it stays one bounded capture rather than a crawl.
                         expansion_exhausted = False
+                        no_progress_rounds = 0
+                        if expand_progress_selector:
+                            expansion_progress_count = page.locator(
+                                expand_progress_selector
+                            ).count()
                         for _ in range(expand_max_rounds):
+                            if (
+                                expand_progress_target is not None
+                                and expansion_progress_count is not None
+                                and expansion_progress_count >= expand_progress_target
+                            ):
+                                expansion_stop_reason = "progress_target_reached"
+                                break
+                            progress_before = expansion_progress_count
                             try:
                                 outcome = page.evaluate(
                                     _EXPAND_CONTROLS_JS,
@@ -477,6 +515,7 @@ class _LiveRealChromeCDPEngine:
                                         "pattern": expand_control_pattern,
                                         "selector": expand_control_selector,
                                         "click": True,
+                                        "maxClicks": expand_max_clicks_per_round,
                                     },
                                 )
                             except Exception as exc:
@@ -484,11 +523,13 @@ class _LiveRealChromeCDPEngine:
                                     f"expansion round failed (continuing): {type(exc).__name__}: {exc}"
                                 )
                                 expansion_exhausted = None
+                                expansion_stop_reason = "expansion_error"
                                 break
                             eligible = int(outcome.get("eligible", 0))
                             clicked = int(outcome.get("clicked", 0))
                             if not eligible:
                                 expansion_exhausted = True
+                                expansion_stop_reason = "controls_exhausted"
                                 break
                             if not clicked:
                                 warnings.append(
@@ -496,14 +537,35 @@ class _LiveRealChromeCDPEngine:
                                     "but clicked none; exhaustion is unknown"
                                 )
                                 expansion_exhausted = None
+                                expansion_stop_reason = "controls_not_clickable"
                                 break
                             expansion_rounds += 1
                             expansion_clicks += clicked
                             if clicked < eligible:
                                 warnings.append(
-                                    f"expansion round clicked {clicked} of {eligible} eligible control(s)"
+                                    f"expansion round clicked {clicked} of {eligible} eligible "
+                                    "control(s) at the per-round bound"
                                 )
                             page.wait_for_timeout(expand_settle_ms)
+                            if expand_progress_selector:
+                                expansion_progress_count = page.locator(
+                                    expand_progress_selector
+                                ).count()
+                                if expansion_progress_count > (progress_before or 0):
+                                    no_progress_rounds = 0
+                                else:
+                                    no_progress_rounds += 1
+                                if (
+                                    expand_max_no_progress_rounds > 0
+                                    and no_progress_rounds
+                                    >= expand_max_no_progress_rounds
+                                ):
+                                    expansion_stop_reason = "no_progress_bound_reached"
+                                    warnings.append(
+                                        "expansion stopped after "
+                                        f"{no_progress_rounds} consecutive no-growth round(s)"
+                                    )
+                                    break
                         else:
                             # Probe after the final settle without another click.
                             # The old loop always reported False when the final
@@ -515,18 +577,23 @@ class _LiveRealChromeCDPEngine:
                                         "pattern": expand_control_pattern,
                                         "selector": expand_control_selector,
                                         "click": False,
+                                        "maxClicks": 0,
                                     },
                                 )
                                 remaining_count = int(remaining.get("eligible", 0))
                                 expansion_exhausted = remaining_count == 0
                                 if remaining_count:
+                                    expansion_stop_reason = "round_bound_reached"
                                     warnings.append(
                                         f"expansion stopped at the {expand_max_rounds}-round bound "
                                         f"with {remaining_count} eligible control(s) still present; "
                                         "captured DOM is short by an unknown amount"
                                     )
+                                else:
+                                    expansion_stop_reason = "controls_exhausted"
                             except Exception as exc:
                                 expansion_exhausted = None
+                                expansion_stop_reason = "exhaustion_probe_error"
                                 warnings.append(
                                     "expansion exhaustion probe failed: "
                                     f"{type(exc).__name__}: {exc}"
@@ -596,6 +663,8 @@ class _LiveRealChromeCDPEngine:
             expansion_rounds=expansion_rounds,
             expansion_clicks=expansion_clicks,
             expansion_exhausted=expansion_exhausted,
+            expansion_progress_count=expansion_progress_count,
+            expansion_stop_reason=expansion_stop_reason,
         )
 
 
@@ -678,6 +747,10 @@ def run_source_capture_realchrome_cdp_packet(
     expand_control_selector: str = "button, a",
     expand_max_rounds: int = 0,
     expand_settle_ms: int = 6000,
+    expand_max_clicks_per_round: int = 0,
+    expand_progress_selector: str | None = None,
+    expand_progress_target: int | None = None,
+    expand_max_no_progress_rounds: int = 0,
     # A Python regex the FINAL url must match for the snapshot to count as the
     # requested target. Left None, nothing is checked (some lanes legitimately
     # follow redirects whose shape the caller cannot predict). A mismatch is a
@@ -693,6 +766,16 @@ def run_source_capture_realchrome_cdp_packet(
     )
     if browser_provisioning not in {"operator_provided", "unattended_xvfb"}:
         raise ValueError("browser_provisioning must be operator_provided or unattended_xvfb")
+    if expand_max_clicks_per_round < 0:
+        raise ValueError("expand_max_clicks_per_round must be non-negative")
+    if expand_progress_target is not None and expand_progress_target <= 0:
+        raise ValueError("expand_progress_target must be positive when supplied")
+    if expand_progress_target is not None and not expand_progress_selector:
+        raise ValueError("expand_progress_target requires expand_progress_selector")
+    if expand_max_no_progress_rounds < 0:
+        raise ValueError("expand_max_no_progress_rounds must be non-negative")
+    if expand_max_no_progress_rounds and not expand_progress_selector:
+        raise ValueError("expand_max_no_progress_rounds requires expand_progress_selector")
     if persistent_tab_marker is not None:
         if browser_provisioning != "operator_provided":
             raise ValueError("persistent tabs require operator_provided browser provisioning")
@@ -727,6 +810,10 @@ def run_source_capture_realchrome_cdp_packet(
         expand_control_selector=expand_control_selector,
         expand_max_rounds=expand_max_rounds,
         expand_settle_ms=expand_settle_ms,
+        expand_max_clicks_per_round=expand_max_clicks_per_round,
+        expand_progress_selector=expand_progress_selector,
+        expand_progress_target=expand_progress_target,
+        expand_max_no_progress_rounds=expand_max_no_progress_rounds,
     )
 
     if compiled_target_identity is not None and not compiled_target_identity.search(
@@ -778,8 +865,14 @@ def run_source_capture_realchrome_cdp_packet(
         "expand_control_pattern": expand_control_pattern,
         "expand_control_selector": expand_control_selector,
         "expand_max_rounds": expand_max_rounds,
+        "expand_max_clicks_per_round": expand_max_clicks_per_round,
+        "expand_progress_selector": expand_progress_selector,
+        "expand_progress_target": expand_progress_target,
+        "expand_max_no_progress_rounds": expand_max_no_progress_rounds,
         "expansion_rounds": result.expansion_rounds,
         "expansion_clicks": result.expansion_clicks,
+        "expansion_progress_count": result.expansion_progress_count,
+        "expansion_stop_reason": result.expansion_stop_reason,
         # None when no expansion was requested; False is the load-bearing value
         # -- it means the round bound stopped the loop with controls remaining.
         "expansion_controls_exhausted": result.expansion_exhausted,

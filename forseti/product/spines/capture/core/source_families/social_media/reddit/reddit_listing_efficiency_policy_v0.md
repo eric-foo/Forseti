@@ -389,10 +389,13 @@ week over week.
 
 ## After admission
 
-Deep-read all captured comments for an admitted thread; do not stop at the top
-comment. Separate independent voices from the original poster, bots, author
-replies, and nested repetition. Comment points order presentation; they do not
-establish truth.
+Deep-read the post body and all comments retained by the bounded capture for an
+admitted thread; do not stop at the top comment. The normal capture ceiling is
+150 rendered comments. If the read remains decision-unresolved but plausibly
+material at that point, perform one targeted revisit for the missing branch or
+post detail rather than expanding the whole tree by default. Separate
+independent voices from the original poster, bots, author replies, and nested
+repetition. Comment points order presentation; they do not establish truth.
 
 Extract product mentions only in their stated context: performance, failure,
 preference, purchase, switching, price, access, substitution, or neutral
@@ -440,14 +443,20 @@ card-first shape is overhead and cluster synthesis leads again.
 ## Accepted residuals and non-claims
 
 - Captured threads are depth-bounded, not exhaustive. On the www surface the
-  in-place comment tree is expanded until no control remains, and the deep tail
-  below that bound sits behind `Continue this thread` anchors that are
-  `rel="nofollow"` links to separate pages, which this lane does not follow.
-  Two measured captures reached 152 of 198 and 174 of 209 declared comments.
-  Every thread record therefore carries `comment_completeness` stating the
-  declared total, the captured count, and the gap. "Deep-read all captured
-  comments" above means exactly that: all comments the record contains, with
-  the shortfall visible rather than assumed away.
+  in-place tree expands at most four controls per round and stops at the first
+  of 150 rendered comments, two consecutive no-growth rounds, no remaining
+  control, or eight rounds. The retained metadata records the click count,
+  rendered-comment count, and stop reason. The 150 ceiling was backtested on
+  948 substantive prior-week extracts: it retained 1,888 of 1,894 matched
+  evidence quotes (99.68%), and manual review of the six late quotes found no
+  lost published cluster or target-card conclusion. The current 41-thread read
+  retained all 81 cited material-evidence references by comment 125. The raw
+  click count was not a valid value bound -- prior captures included 80-144
+  clicks for only 25-35 retained comments -- so no standalone click-total gate
+  is claimed. `Continue this thread` anchors remain `rel="nofollow"` links to
+  separate pages and are not followed. Every thread record carries
+  `comment_completeness` stating the declared total, captured count, and gap;
+  the shortfall is visible rather than assumed away.
 - Some useful poster-only threads below four comments will be missed.
 - Some promising listings will produce no decision-bearing evidence.
 - Opaque titles remain unresolved when no cheap listing context exists.
