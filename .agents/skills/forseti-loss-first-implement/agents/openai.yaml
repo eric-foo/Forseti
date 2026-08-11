@@ -1,0 +1,4 @@
+interface:
+  display_name: "Forseti Loss-First Implement"
+  short_description: "Implement against the highest-loss false green"
+  default_prompt: "Use $forseti-loss-first-implement to make this authorized Forseti change with a loss-first falsifier."

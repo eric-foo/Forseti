@@ -18,11 +18,13 @@ authority_boundary: retrieval_only
   on 2026-07-05; DEPLOYED/ACTIVATED for the Claude Code runtime,
   project-scoped — not user-global). See `## Accepted Forseti-Local Candidate
   Skills` below.
-- Forseti has two additional owner-authorized local candidate sources:
+- Forseti has three additional owner-authorized local candidate sources:
   `creator-audience-triangulation`, which supplies the narrow
   onboarding/on-demand firing point; and `forseti-worktree-retirement`, which
-  supplies the guarded high-concurrency worktree-retirement procedure. Neither
-  is accepted/frozen or externally deployed.
+  supplies the guarded high-concurrency worktree-retirement procedure; and
+  `forseti-loss-first-implement`, which supplies an explicit-only implementation
+  method that targets the highest-loss plausible false green. None is
+  accepted/frozen or externally deployed.
 - Forseti retains `orca-product-lead` as a legacy compatibility wrapper for one
   transition window. It is an alias into `forseti-product-lead`, not the primary
   skill identity.
@@ -189,6 +191,42 @@ behavior was not proven in-thread.
     claim.
   - Rollback: remove this source and this candidate record. Do not modify the
     generic plugin skill, installed cache, user-level, or external skill source.
+
+- `forseti-loss-first-implement`
+  - Source path: `.agents/skills/forseti-loss-first-implement/SKILL.md`.
+  - Normalized LF sha256: `2d9169900610e353bd7c19ddeed1d6e2459072aa665be31ebedf5369340f5009`
+    (observed 2026-08-11 after source creation).
+  - Scope: explicit-only authorized Forseti implementation. It binds the
+    highest-loss plausible false green, the minimum applicable authority,
+    transition, and representation-closure invariants, one loss-first
+    falsifier, and the repository-owned validation route. Ordinary
+    implementation, planning-only work, review-only work, method discussion,
+    non-invoked mechanical edits, and work without implementation authority are
+    negative triggers.
+  - Failure prevented: selecting an easy falsifier while a higher-loss false
+    green remains possible, then adding unnecessary broad validation or receipt
+    machinery that increases latency without catching a distinct defect class.
+  - Trigger examples: `$forseti-loss-first-implement`;
+    `/forseti-loss-first-implement`; `loss-first implement this authorized
+    Forseti change`.
+  - Collision: no same-name Forseti project, Claude project, user
+    Codex/Agents/Claude, or installed plugin-cache skill directory was observed
+    before creation on 2026-08-11. The distinct Forseti-prefixed name avoids
+    shadowing upstream `success-implement`.
+  - Validation: the external Codex system skill-creator `quick_validate.py`
+    passed after the source was made Windows-codepage portable. Two disposable
+    fresh-task forward tests also passed: one recomputed a stored content ID and
+    rejected three tampering shapes; the other required semantic agreement
+    across human and JSON historical projections. Repository contradiction,
+    leakage, hash-pin, DCP, retrieval, placement, header-index, and link checks
+    passed at source-change closeout. This is bounded source evidence, not
+    deployment, resolver, or untouched-holdout proof.
+  - Boundary: Forseti-local source only; not accepted/frozen, not user-global,
+    not plugin-installed, not copied into `.claude/skills`, and no deployment or
+    resolver-visibility claim.
+  - Rollback: remove this candidate directory and this record; revert its
+    behavioral-changelog entry. Do not modify upstream Success Implement,
+    plugin, cache, user-level, or Claude deployment copies.
 
 ## Accepted Forseti-Local Candidate Skills
 

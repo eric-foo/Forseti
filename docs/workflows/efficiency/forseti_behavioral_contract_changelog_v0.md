@@ -17,6 +17,7 @@ open_next:
   - .agents/workflow-overlay/README.md
   - docs/decisions/forseti_doctrine_index_v0.md
   - docs/workflows/efficiency/success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md
+  - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - A named in-scope behavior changes owner, status, or operating shape without an update here.
 ```
@@ -28,7 +29,7 @@ the current owner before acting. A historical PR explains a transition but
 cannot override current source.
 
 Snapshot basis: Forseti `main` at
-[`03854eaf`](https://github.com/eric-foo/forseti/commit/03854eafb7bc00c6e669697811da5ac531657af0),
+[`2772264c`](https://github.com/eric-foo/forseti/commit/2772264c29474b38000414c6946fc53c4124b0fe),
 observed 2026-08-11. External Agent Workflow and installed resolver state
 require their own fresh check when load-bearing.
 
@@ -53,6 +54,7 @@ require their own fresh check when load-bearing.
 | Delegated review-and-patch | Active explicit commission | [`delegated-review-patch.md`](../../../.agents/workflow-overlay/delegated-review-patch.md) | Bound different-family reviewer-patcher and home adjudication |
 | Safety and authorization | Active overlay | [`safety-rules.md`](../../../.agents/workflow-overlay/safety-rules.md) | Protected actions, destructive boundaries, implementation authority |
 | Skill adoption | Active overlay | [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | External source, shadow, collision, adoption, and project precedence |
+| Loss-First Implement | Owner-authorized candidate; not accepted or deployed | [`forseti-loss-first-implement/SKILL.md`](../../../.agents/skills/forseti-loss-first-implement/SKILL.md) via [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | Explicit-only hypothesis: select the highest-loss false green and avoid unrequired broad validation |
 | Deletion evidence | Active decision/gate | [`deletion_evidence_doctrine_v0.md`](../../decisions/deletion_evidence_doctrine_v0.md) | Governed deletion evidence and fail-closed enforcement |
 | Ontology/runtime drift checking | Active decision/gate | [`ontology_runtime_drift_check_contract_v0.md`](../../decisions/ontology_runtime_drift_check_contract_v0.md) | W2b leak-surface drift semantics |
 | Repo-map architecture and reachability | Active owner-locked stack | [`forseti_repo_map_architecture_mgt_v0.md`](../../decisions/forseti_repo_map_architecture_mgt_v0.md) | Map/submap/header tiers, generated health, link coverage |
@@ -79,6 +81,14 @@ lower median tokens. The candidate tested in that study was not deployed. See
 Fused, Assumption Gate, Implementation Scoping, Spec Writing, and
 Micro-decision Locking are preserved. They are not erased, retired, or claimed
 inferior by the owner preference.
+
+The owner-authorized Forseti-local
+[`forseti-loss-first-implement`](../../../.agents/skills/forseti-loss-first-implement/SKILL.md)
+candidate tests the next hypothesis directly: keep one implementation method,
+choose the decisive falsifier by maximum plausible loss, bind only applicable
+authority/transition/closure invariants, and run no broader validation than the
+repository requires. It is explicit-only, not accepted/frozen or deployed, and
+has not yet demonstrated superiority on an untouched holdout.
 
 ## Four separate evidence records
 
@@ -122,6 +132,11 @@ inferior by the owner preference.
 
 ### 2026-08
 
+- **2026-08-11 — Loss-First Implement added as a Forseti-local candidate.** It
+  converts the 36-case study's critical false-pass and latency-outlier lessons
+  into an explicit-only source without replacing upstream Success Implement or
+  claiming deployment. [Candidate source](../../../.agents/skills/forseti-loss-first-implement/SKILL.md),
+  [adoption boundary](../../../.agents/workflow-overlay/skill-adoption.md)
 - **2026-08-11 — Success Implement vs Full Chain returned NO_WIN.** The
   12-case tuning revision improved within-tuning performance, but the untouched
   24-case holdout found Success Implement worse on critical defects and median
