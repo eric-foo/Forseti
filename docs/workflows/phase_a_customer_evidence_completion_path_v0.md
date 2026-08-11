@@ -747,11 +747,22 @@ conflict with settled doctrine: the named-shade favorite correctly carries
 `shade_and_color_fit` beside its scent reason, and an explicit overall favorite
 reaction remains evidence rather than disappearing. On the settled rules the
 gold meanings are 17 of 17. Cold repeat is 4 of 7 field-exact; two additional
-pairs preserve the same propositions with only asserted-versus-qualified drift,
-and one genuinely broadens Poppy-specific sale intent to the product family.
+pairs preserve the same propositions with only asserted-versus-qualified drift.
+The apparent Poppy-specific broadening was later found to be a ruler error, not
+a semantic regression: the parent asks whether the product range is worth USD 24,
+while Poppy identifies the option the customer owns.
 The density audit is 9 of 10 clean and finds one omitted material conversion
 context. These residuals show that more verifier prompt wording is no longer the
 smallest correct move: the governing rules are already present but one-pass
 readers apply them unevenly. Keep full-corpus execution paused pending an
 architecture decision on semantic disagreement/coverage handling, a corrected
 hash-bound ruler, and the still-open preparation-receipt mismatch.
+
+Verifier v7 corrects that referent-scope error without adding a variant catalog.
+It resolves pronouns and evaluation scope from the whole exchange, retains the
+named option as a separate ownership or experience meaning, and does not
+automatically narrow later product-level judgments to that option. In two fresh
+blind rounds, all three readers selected a product-level sale judgment; after a
+completeness clarification, all three also retained Poppy ownership, sale value,
+switching, smoothing failure, and no-repurchase evidence. This bounded check
+does not resume the full corpus or close the other recorded residuals.

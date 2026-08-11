@@ -35,7 +35,8 @@ ROW_VERIFICATION_MANIFEST_VERSION = "semantic_evidence_row_verification_manifest
 ROW_VERIFICATION_METHOD_VERSION_V3 = "semantic_evidence_row_verification_method_v3"
 ROW_VERIFICATION_METHOD_VERSION_V4 = "semantic_evidence_row_verification_method_v4"
 ROW_VERIFICATION_METHOD_VERSION_V5 = "semantic_evidence_row_verification_method_v5"
-ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v6"
+ROW_VERIFICATION_METHOD_VERSION_V6 = "semantic_evidence_row_verification_method_v6"
+ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v7"
 # The new generation deliberately keeps the legacy pretty-printed prompt
 # encoding. It is bound by name so a future compact encoding cannot silently
 # reuse a projection that was packed and byte-bounded under this one.
@@ -560,7 +561,7 @@ ROW_VERIFICATION_METHOD_TEXT_V5 = (
     )
 )
 
-ROW_VERIFICATION_METHOD_TEXT = (
+ROW_VERIFICATION_METHOD_TEXT_V6 = (
     ROW_VERIFICATION_METHOD_TEXT_V5.replace(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5",
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6",
@@ -578,6 +579,29 @@ ROW_VERIFICATION_METHOD_TEXT = (
         "subject scope exact: variant-specific behavior cannot broaden to the product\n"
         "family. Preserve an explicit overall evaluation separately from attribute facts\n"
         "and from the disposition reason.\n",
+        1,
+    )
+)
+
+ROW_VERIFICATION_METHOD_TEXT = (
+    ROW_VERIFICATION_METHOD_TEXT_V6.replace(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6",
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7",
+        1,
+    ).replace(
+        "Keep\n"
+        "subject scope exact: variant-specific behavior cannot broaden to the product\n"
+        "family. Preserve an explicit overall evaluation separately from attribute facts\n"
+        "and from the disposition reason.\n",
+        "Resolve pronouns, omitted subjects, and evaluation scope from the whole leaf and\n"
+        "supplied parent context, not from the nearest named option alone. A named option\n"
+        "may establish what the customer owns or experienced without limiting every later\n"
+        "evaluation to that option. Preserve explicit ownership or experience as its own\n"
+        "meaning, but do not automatically copy that option into later product-level\n"
+        "meanings. Keep a meaning option-specific when the full conversation supports that\n"
+        "scope. Earlier extraction examples identify separate atoms; they do not decide\n"
+        "referent scope. Preserve an explicit overall evaluation separately from attribute\n"
+        "facts and from the disposition reason.\n",
         1,
     )
 )
@@ -5349,10 +5373,12 @@ __all__ = [
     "ROW_VERIFICATION_METHOD_TEXT_V3",
     "ROW_VERIFICATION_METHOD_TEXT_V4",
     "ROW_VERIFICATION_METHOD_TEXT_V5",
+    "ROW_VERIFICATION_METHOD_TEXT_V6",
     "ROW_VERIFICATION_METHOD_VERSION",
     "ROW_VERIFICATION_METHOD_VERSION_V3",
     "ROW_VERIFICATION_METHOD_VERSION_V4",
     "ROW_VERIFICATION_METHOD_VERSION_V5",
+    "ROW_VERIFICATION_METHOD_VERSION_V6",
     "ROW_VERIFICATION_RESPONSE_VERSION",
     "ROW_VERIFICATION_STAGE_VERSION",
     "RECONCILIATION_RESPONSE_VERSION",

@@ -35,10 +35,12 @@ from judgment.semantic_evidence_integration import (
     ROW_VERIFICATION_METHOD_TEXT_V3,
     ROW_VERIFICATION_METHOD_TEXT_V4,
     ROW_VERIFICATION_METHOD_TEXT_V5,
+    ROW_VERIFICATION_METHOD_TEXT_V6,
     ROW_VERIFICATION_METHOD_VERSION,
     ROW_VERIFICATION_METHOD_VERSION_V3,
     ROW_VERIFICATION_METHOD_VERSION_V4,
     ROW_VERIFICATION_METHOD_VERSION_V5,
+    ROW_VERIFICATION_METHOD_VERSION_V6,
     ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -2712,10 +2714,10 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
-def test_row_verification_v6_installs_general_completeness_and_context_boundaries() -> None:
+def test_row_verification_v7_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
     assert ROW_VERIFICATION_METHOD_TEXT.startswith(
-        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6"
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7"
     )
     assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
@@ -2725,6 +2727,12 @@ def test_row_verification_v6_installs_general_completeness_and_context_boundarie
     )
     assert ROW_VERIFICATION_METHOD_TEXT_V5.startswith(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V6.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6"
+    )
+    assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V6) == (
+        "fdf78f437e99275719bec13c32379ed83717f7551f128975d0017760e0e77f0f"
     )
     for principle in (
         "smallest complete set of standalone meanings",
@@ -2769,8 +2777,11 @@ def test_row_verification_v6_installs_general_completeness_and_context_boundarie
         "Use unresolved only when no safe complete row exists",
         "uncertain variant referent only to its verified shared product",
         "ambiguous echo as axis-free, detail-free personal agreement",
-        "variant-specific behavior cannot broaden to the product family",
         "Preserve an explicit overall evaluation separately from attribute facts",
+        "Resolve pronouns, omitted subjects, and evaluation scope from the whole leaf",
+        "not from the nearest named option alone",
+        "Preserve explicit ownership or experience as its own meaning",
+        "Earlier extraction examples identify separate atoms; they do not decide",
     ):
         assert principle in normalized
     normalized_v4 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V4.split())
@@ -3008,6 +3019,33 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
         match="does not bind the current verification method",
     ):
         prepare_reconciliation_stage(bundle, historical_v5)
+
+    historical_v6 = deepcopy(verified)
+    historical_v6["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V6
+    )
+    historical_v6["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V6)
+    )
+    historical_v6["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v6["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v6["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v6.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v6)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (

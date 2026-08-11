@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v30
+version: v31
 effective_date: 2026-08-11
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v30
+# Semantic Evidence Integration Contract v31
 
 ## Purpose
 
@@ -221,6 +221,16 @@ from a disposition reason. Whole-row unresolved remains available only when no
 safe complete row exists. This adds no response field, parser, second verifier,
 or conclusion surface. Historical verifier-v5 manifests remain identifiable but
 require replay before current reconciliation or calibration.
+
+Contract v31 versions the verifier method to v7 and corrects referent scope.
+Pronouns, omitted subjects, and evaluation scope resolve from the whole leaf and
+its supplied parent context rather than the nearest named option alone. A named
+option may establish ownership or experience without narrowing every later
+product evaluation to that option. Explicit ownership remains separately
+visible, while the option is not copied automatically into later conditions.
+Earlier extraction examples identify separate meanings but do not decide their
+referent scope. This adds no variant catalog, response field, parser, second
+verifier, conclusion, or full-corpus resume authority.
 
 For method v7, `personal_agreement` may remain support for a bounded meaning but
 never adds a credited independent origin and must not be described as another
@@ -1032,6 +1042,11 @@ new frontier.
 
 ## Changelog
 
+- `v31` / 2026-08-11 — versioned the whole-row verifier method to v7, resolved
+  pronouns and evaluation scope from the whole conversation, separated explicit
+  named-option ownership from later product-level judgments, and prevented
+  extraction examples from fixing referent scope. Added no schema, variant
+  catalog, parser, second verifier, provider call, or full-corpus resume authority.
 - `v30` / 2026-08-11 — versioned the whole-row verifier method to v6, prevented
   local ambiguity from erasing safe row content, bounded ambiguous variant and
   echo meanings without guessing, preserved exact variant-versus-family scope,
