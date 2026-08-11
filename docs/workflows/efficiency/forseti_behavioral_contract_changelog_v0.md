@@ -54,7 +54,7 @@ require their own fresh check when load-bearing.
 | Delegated review-and-patch | Active explicit commission | [`delegated-review-patch.md`](../../../.agents/workflow-overlay/delegated-review-patch.md) | Bound different-family reviewer-patcher and home adjudication |
 | Safety and authorization | Active overlay | [`safety-rules.md`](../../../.agents/workflow-overlay/safety-rules.md) | Protected actions, destructive boundaries, implementation authority |
 | Skill adoption | Active overlay | [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | External source, shadow, collision, adoption, and project precedence |
-| Loss-First Implement | Owner-authorized candidate; not accepted or deployed | [`forseti-loss-first-implement/SKILL.md`](../../../.agents/skills/forseti-loss-first-implement/SKILL.md) via [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | Explicit-only hypothesis: select the highest-loss false green and avoid unrequired broad validation |
+| Loss-First Implement | Owner-authorized explicit-only candidate; post-hoc backtest did not support promotion | [`forseti-loss-first-implement/SKILL.md`](../../../.agents/skills/forseti-loss-first-implement/SKILL.md) via [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | Experimental mechanic: select the highest-loss false green and avoid unrequired broad validation; not the default implementation entry |
 | Deletion evidence | Active decision/gate | [`deletion_evidence_doctrine_v0.md`](../../decisions/deletion_evidence_doctrine_v0.md) | Governed deletion evidence and fail-closed enforcement |
 | Ontology/runtime drift checking | Active decision/gate | [`ontology_runtime_drift_check_contract_v0.md`](../../decisions/ontology_runtime_drift_check_contract_v0.md) | W2b leak-surface drift semantics |
 | Repo-map architecture and reachability | Active owner-locked stack | [`forseti_repo_map_architecture_mgt_v0.md`](../../decisions/forseti_repo_map_architecture_mgt_v0.md) | Map/submap/header tiers, generated health, link coverage |
@@ -87,8 +87,11 @@ The owner-authorized Forseti-local
 candidate tests the next hypothesis directly: keep one implementation method,
 choose the decisive falsifier by maximum plausible loss, bind only applicable
 authority/transition/closure invariants, and run no broader validation than the
-repository requires. It is explicit-only, not accepted/frozen or deployed, and
-has not yet demonstrated superiority on an untouched holdout.
+repository requires. Its exposed-corpus 36-case replay used the fewest median
+tokens but lost quality to Success Implement and latency to Full Chain. It
+remains explicit-only and experimental; it has not demonstrated superiority on
+an untouched holdout. See
+[`loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md`](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md).
 
 ## Four separate evidence records
 
@@ -114,6 +117,10 @@ has not yet demonstrated superiority on an untouched holdout.
    holdout candidate; it did not decide deployment.
 4. **Confirmatory holdout — 24 recent cases.** Frozen rule result `NO_WIN`;
    candidate not deployed.
+5. **Loss-First post-hoc replay — the same 36 exposed cases.** Loss-First had
+   the lowest median token count, Success Implement had the best quality, and
+   Full Chain had the lowest median latency. This is regression evidence, not a
+   new holdout. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -132,6 +139,11 @@ has not yet demonstrated superiority on an untouched holdout.
 
 ### 2026-08
 
+- **2026-08-11 — Loss-First Implement post-hoc replay did not support
+  promotion.** Over the same exposed 36 cases, it saved median tokens but lost
+  quality to Success Implement and latency to Full Chain. Ten stale/drifted
+  A/B worktree cases also established that future studies must freeze exact
+  candidate diff bytes before judging. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
 - **2026-08-11 — Loss-First Implement added as a Forseti-local candidate.** It
   converts the 36-case study's critical false-pass and latency-outlier lessons
   into an explicit-only source without replacing upstream Success Implement or
