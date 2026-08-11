@@ -2724,6 +2724,8 @@ def test_row_verification_v8_installs_general_completeness_and_context_boundarie
     assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V5" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V6" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V7" not in ROW_VERIFICATION_METHOD_TEXT
     assert ROW_VERIFICATION_METHOD_TEXT_V4.startswith(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
     )
@@ -2733,8 +2735,14 @@ def test_row_verification_v8_installs_general_completeness_and_context_boundarie
     assert ROW_VERIFICATION_METHOD_TEXT_V6.startswith(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6"
     )
+    assert ROW_VERIFICATION_METHOD_TEXT_V7.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7"
+    )
     assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V6) == (
         "fdf78f437e99275719bec13c32379ed83717f7551f128975d0017760e0e77f0f"
+    )
+    assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V7) == (
+        "a2387611eb8dfd89a0266a1e9b9ab3c4ffe1bf1466fe7e5d2b40c92005bc361c"
     )
     for principle in (
         "smallest complete set of standalone meanings",

@@ -778,8 +778,19 @@ Contract v32 versions the verifier to v8 with those two general clarifications.
 The bounded blind replay at
 `C:\tmp\forseti-summer-fridays-semantic-verifier-v8-delta-20260812-v0`
 applied verifier v8 independently to the primary and cold compilations. Both
-verified outputs left hydration unconditioned by sensitivity, retained explicit
-sponge/product loss under `value_and_quantity`, and completed with zero
-unresolved rows. The runner accepted both full verified compilations. This
-closes the two-comment verifier boundary; no historical result is relabelled and
-the replay alone does not claim full-corpus completion.
+stages bind method hash
+`96237f5b5a407727f2ee338e9c6838a577e91de6ceb609d165d6906b437dabd8`.
+Both verified outputs left hydration unconditioned by sensitivity, retained
+explicit sponge/product loss under `value_and_quantity`, and completed with zero
+unresolved rows. The runner accepted both full verified compilations:
+`bd14adcf131ddfbd630b75fd64778e7869d6984da5c6588e77b85d47147ca567`
+for primary (36 active units, 0 accept / 4 replace / 0 unresolved) and
+`f387ac008c345a252dcafd705a3a9cad849402a0e5a9a05f875884706d2148cf`
+for cold (32 active units, 1 accept / 3 replace / 0 unresolved), with zero model
+API calls. The two legs differ on the separability half of the new value rule:
+the primary leg carried the sponge product-loss meaning as its own unit, while
+the cold leg kept it fused with the thin-texture and tool meanings in a single
+three-axis unit. That axis retention is proven on both legs; independent
+separation is proven on the primary leg only. This closes the two-comment
+verifier boundary at axis retention; no historical result is relabelled and the
+replay alone does not claim full-corpus completion.
