@@ -49,6 +49,10 @@ def _post(
     score: str,
     comments: str,
     content_href: str | None = None,
+    post_type: str = "self",
+    domain: str = "self.testsub",
+    preview_image_url: str | None = None,
+    preview_alt_text: str = "",
     flair: str | None = None,
     sticky: bool = False,
 ) -> str:
@@ -60,12 +64,21 @@ def _post(
         if flair
         else ""
     )
+    preview_markup = (
+        f'<img src="{preview_image_url}" alt="{preview_alt_text}">'
+        if preview_image_url
+        else ""
+    )
     return (
         f'<shreddit-post permalink="{permalink}" content-href="{href}"'
+        f' post-type="{post_type}" domain="{domain}"'
         f' post-title="{title}" score="{score}" comment-count="{comments}"'
         f' created-timestamp="2026-07-24T01:11:13.173000+0000"'
         f' subreddit-prefixed-name="r/testsub" id="t3_{slug}">'
         f"{_SHOWN_STICKY if sticky else _HIDDEN_STICKY}"
+        '<img src="https://www.redditstatic.com/avatars/defaults/v2/avatar_default_1.png"'
+        ' alt="u/example avatar">'
+        f"{preview_markup}"
         f"{flair_markup}"
         f"<shreddit-post-overflow-menu></shreddit-post-overflow-menu>"
         f"</shreddit-post>"
@@ -81,6 +94,10 @@ DOM = (
         score="258",
         comments="173",
         content_href="https://i.redd.it/m57ff44vggfh1.jpeg",
+        post_type="image",
+        domain="i.redd.it",
+        preview_image_url="https://preview.redd.it/m57ff44vggfh1.jpeg?width=640",
+        preview_alt_text="r/testsub - Image post",
     )
     + _post(
         slug="ccc",
@@ -88,6 +105,8 @@ DOM = (
         score="14",
         comments="2",
         content_href="https://www.reddit.com/gallery/1v5nfk2",
+        post_type="gallery",
+        domain="reddit.com",
     )
     + '<shreddit-ad-post content-href="https://samsung.com" post-title="Ad"></shreddit-ad-post>'
     + "</body></html>"
@@ -110,6 +129,21 @@ def test_permalink_wins_over_media_content_href() -> None:
         "https://www.reddit.com/r/testsub/comments/bbb/bbb_title/",
         "https://www.reddit.com/r/testsub/comments/ccc/ccc_title/",
     ]
+
+
+def test_listing_visible_content_context_is_retained() -> None:
+    rows = _record()["grid_view"]["thread_rows"]
+
+    assert rows[0]["listing_post_type_or_none"] == "self"
+    assert rows[0]["listing_content_url_or_none"].endswith("/comments/aaa/aaa_title/")
+    assert rows[0]["listing_content_domain_or_none"] == "self.testsub"
+    assert rows[1]["listing_post_type_or_none"] == "image"
+    assert rows[1]["listing_content_url_or_none"] == "https://i.redd.it/m57ff44vggfh1.jpeg"
+    assert rows[1]["listing_content_domain_or_none"] == "i.redd.it"
+    assert rows[1]["listing_preview_image_url_or_none"] == (
+        "https://preview.redd.it/m57ff44vggfh1.jpeg?width=640"
+    )
+    assert rows[1]["listing_preview_alt_text_or_none"] == "r/testsub - Image post"
 
 
 def test_ads_are_excluded_from_rows_and_thing_count() -> None:

@@ -575,6 +575,11 @@ def run_weekly_demand_read(
                     "title_or_none": row.visible_title_or_none,
                     "flair_or_none": row.flair_or_none,
                     "timestamp_utc_ms_or_none": row.timestamp_utc_ms_or_none,
+                    "listing_post_type_or_none": row.listing_post_type_or_none,
+                    "listing_content_url_or_none": row.listing_content_url_or_none,
+                    "listing_content_domain_or_none": row.listing_content_domain_or_none,
+                    "listing_preview_image_url_or_none": row.listing_preview_image_url_or_none,
+                    "listing_preview_alt_text_or_none": row.listing_preview_alt_text_or_none,
                     "score": score,
                     "comments": comments,
                 }
