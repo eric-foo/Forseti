@@ -3635,7 +3635,6 @@ def prepare_reconciliation_stage(
         raise SemanticIntegrationError("reconciliation stages require a current bundle")
     if compilation.get("bundle_sha256") != bundle["bundle_sha256"]:
         raise SemanticIntegrationError("reconciliation input has stale bundle hash")
-    _verify_row_verification_manifest(bundle, compilation)
     if compilation.get("schema_version") != _expected_compilation_version(bundle) and (
         compilation.get("schema_version")
         in {BATCH_COMPILATION_VERSION_V2, BATCH_COMPILATION_VERSION_V3}
@@ -3647,6 +3646,11 @@ def prepare_reconciliation_stage(
         BATCH_COMPILATION_VERSION_V2,
         BATCH_COMPILATION_VERSION_V3,
     }:
+        # Method v7's verified batch compilation is the root of the
+        # reconciliation lineage. Later levels carry its hash through their
+        # validator-produced node compilation, so they must not be mistaken
+        # for a fresh, unverified batch compilation.
+        _verify_row_verification_manifest(bundle, compilation)
         _verify_stored_hash(
             compilation, field="compilation_sha256", label="batch compilation"
         )
