@@ -43,6 +43,12 @@ entry because it is simpler and materially lowers workflow burden. That is an
 operating preference, recorded separately from the measured result. This study
 does not establish that Success Implement beat the full chain.
 
+A later exposed-corpus replay added Loss-First Implement as a third arm. It did
+not change this frozen two-arm result or create a new holdout: Loss-First used
+the fewest median tokens, Success Implement had the best three-way quality, and
+Full Chain had the lowest median latency. See
+[`loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md`](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md).
+
 ## ELI5
 
 Success Implement usually carried a smaller backpack and made fewer ordinary
