@@ -60,12 +60,16 @@ GENERAL_DISCUSSION_FLOOR_MAX_COMMENTS = 9
 # evidence, so they are selected mechanically for a separate shallow-read
 # lane: no model adjudication, no gate sequence. The exclusion pattern exists
 # because appearance polls ("which hair suits me best?") match the praise
-# vocabulary while carrying no product census at all.
+# vocabulary while carrying no product census at all. "go-to" is admitted only
+# hyphenated or after a possessive: the bare verb phrase ("where do you go to
+# get your brows done?") is a venue or service question, not a stated favorite.
 LEADERBOARD_MIN_COMMENTS = 50
 LEADERBOARD_TITLE_PATTERN = re.compile(
     r"holy grail\b|\bhg\b|top \d|favorite|favourite|\bbest\b|compliment"
     r"|most (?:worn|complimented|used)|can.?t live without|obsessed"
-    r"|reach for (?:the )?most|\bgo[- ]?to\b|greatest|\bgoat\b|\bgrail\b|staple",
+    r"|reach for (?:the )?most|\bgo-to\b"
+    r"|\b(?:my|your|our|their|everyone['’]s) go to\b"
+    r"|greatest|\bgoat\b|\bgrail\b|staple",
     re.IGNORECASE,
 )
 LEADERBOARD_EXCLUDE_PATTERN = re.compile(

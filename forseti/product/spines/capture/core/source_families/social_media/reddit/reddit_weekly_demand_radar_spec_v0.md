@@ -184,11 +184,11 @@ output to the lake.
 name is **Reddit Weekly Top-100-per-Subreddit**. `100` names the weekly listing
 depth target for each active subreddit. It is never a global thread cap, roster
 size, adjudication-pass count, or capture quota. A subreddit may expose or
-render fewer rows. On `www.reddit.com`, depth remains bounded by the rendered
-viewport because the surface does not enforce a numeric listing limit. Reader
-artifacts carry `methodology.id: reddit_weekly_top100_per_subreddit_v0`, the
-depth target, and `global_thread_cap: null` so the shorthand cannot silently
-change downstream count semantics.
+render fewer rows. On `www.reddit.com`, available depth is bounded by the
+rendered viewport; that surface does not enforce a numeric listing limit. The
+weekly reader JSON carries the depth target, `global_thread_cap: null`, and
+methodology ID `reddit_weekly_top100_per_subreddit_v0` so the shorthand cannot
+silently change downstream count semantics.
 
 - The selection pool is every non-stickied, non-promoted listing row with
   parseable score and comment count. Listing evidence remains preserved whether

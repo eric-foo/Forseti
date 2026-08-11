@@ -1121,6 +1121,10 @@ def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls()
         cand(8, "This is the best guide on olive skin color theory", 103),
         cand(9, "Tips for looking your best in a swimsuit", 72),
         cand(10, "What treatment would be best for me?", 57),
+        # "go to" as a bare verb phrase carries no category favorite: excluded.
+        cand(11, "Where do you go to get your brows done?", 210),
+        # An unhyphenated possessive still states a category favorite: included.
+        cand(12, "What's your go to office scent?", 200),
     ]
 
     slots = _build_leaderboard_lane(candidates)
@@ -1128,6 +1132,7 @@ def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls()
         "What’s the blush you reach for the most?",
         "What's everyone's go-to office grabs?",
         "what's your holy grail concealer?",
+        "What's your go to office scent?",
         "Best cologne for summer?",
     ]
     # Ordered by comments, slot ids stable for capture-list use.
@@ -1136,6 +1141,7 @@ def test_leaderboard_lane_selects_praise_formats_and_excludes_appearance_polls()
         "lb_002",
         "lb_003",
         "lb_004",
+        "lb_005",
     ]
 
 
