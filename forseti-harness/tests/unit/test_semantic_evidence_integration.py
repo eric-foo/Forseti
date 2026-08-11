@@ -51,6 +51,7 @@ from judgment.semantic_evidence_integration import (
     prepare_reconciliation_stage,
     prepare_row_verification,
     validate_batch_responses,
+    validate_row_verified_compilation,
     validate_reconciliation_stage,
     verify_bundle_context,
 )
@@ -2459,7 +2460,7 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert all(row["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] for row in prompts)
     assert all("ROWS_TO_VERIFY" in row["prompt"] for row in prompts)
     assert stage["verification_method_version"] == (
-        "semantic_evidence_row_verification_method_v2"
+        "semantic_evidence_row_verification_method_v3"
     )
     normalized_prompts = [" ".join(row["prompt"].split()) for row in prompts]
     assert all("Before checking fields, privately restate" in row for row in normalized_prompts)
@@ -2486,6 +2487,10 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert all("product-linked sensitivity is reaction or tolerance context" in row for row in normalized_prompts)
     assert all("dry or dehydrated may condition moisture" in row for row in normalized_prompts)
     assert all("leave the result unconditioned" in row for row in normalized_prompts)
+    assert all(
+        "not retained as a result's condition" in row for row in normalized_prompts
+    )
+    assert all("omit it from that result's statement too" in row for row in normalized_prompts)
     assert all("Unqualified liking, preference" in row["prompt"] for row in prompts)
     assert all("favorite evaluation of a named shade" in row["prompt"] for row in prompts)
     assert all("One side's quantity cannot create" in row["prompt"] for row in prompts)
@@ -2531,7 +2536,7 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
         "semantic_evidence_row_verification_manifest_v2"
     )
     assert verified["row_verification_manifest"]["verification_method_version"] == (
-        "semantic_evidence_row_verification_method_v2"
+        "semantic_evidence_row_verification_method_v3"
     )
     assert verified["row_verification_manifest"]["verification_method_sha256"] == (
         _canonical_hash(ROW_VERIFICATION_METHOD_TEXT)
@@ -2540,7 +2545,7 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
-def test_row_verification_v2_installs_general_coverage_order_not_case_phrases() -> None:
+def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
     for principle in (
         "smallest complete set of standalone meanings",
@@ -2559,6 +2564,12 @@ def test_row_verification_v2_installs_general_coverage_order_not_case_phrases() 
         "product-linked sensitivity is reaction or tolerance context",
         "dry or dehydrated may condition moisture",
         "If uncertain, leave the result unconditioned",
+        "If a customer attribute is not retained as a result's condition, omit it"
+        " from that result's statement too",
+        "When the source separately links that attribute to a product response,"
+        " preserve it as its own qualified meaning",
+        "do not discard it merely because it does not condition the neighboring"
+        " result",
         "every field is supported by the source or supplied context",
     ):
         assert principle in normalized
@@ -2729,6 +2740,222 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
         match="invalid row verification manifest shape",
     ):
         prepare_reconciliation_stage(bundle, legacy_manifest)
+
+
+def test_verified_calibration_compilation_binds_its_exact_primary_input() -> None:
+    bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=12_000)
+    primary = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_row_verification(bundle, primary, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, primary, stage, _row_verification_responses(stage)
+    )
+    validate_row_verified_compilation(bundle, primary, verified)
+
+    forged = deepcopy(verified)
+    forged["row_verification_manifest"]["input_compilation_sha256"] = "0" * 64
+    forged["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in forged["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    forged["compilation_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "compilation_sha256"}
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="cites another input compilation",
+    ):
+        validate_row_verified_compilation(bundle, primary, forged)
+
+
+def test_unverified_compilation_supplied_as_verified_stays_a_visible_failure() -> None:
+    # A historical-method slice tolerates a compilation with no row
+    # verification manifest, so the v7 gate does not fire. Supplying such a
+    # compilation as the verified one must still fail as a modeled semantic
+    # error the calibration report can carry.
+    source = materialize_source_v3(_source_v5(count=2))
+    spec = _calibration_spec(source)
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    assert bundle["method_version"] == "semantic_evidence_integration_method_v5"
+    responses = _v5_responses(bundle)
+    primary = validate_batch_responses(bundle, responses)
+    assert "row_verification_manifest" not in primary
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="lacks a row verification manifest",
+    ):
+        validate_row_verified_compilation(bundle, primary, deepcopy(primary))
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, primary["compilation_sha256"]),
+        None,
+        None,
+        {"semantic-core": primary},
+        full_source=source,
+    )
+    assert any(
+        row["code"] == "STRUCTURAL_VALIDATION_FAILED"
+        and "lacks a row verification manifest" in row["detail"]
+        for row in report["hard_failures"]
+    )
+
+
+def test_cold_repeat_blocks_a_verified_primary_against_an_unverified_repeat() -> None:
+    # A method-v7 repeat without its own verified compilation must not be
+    # compared against the verified primary.
+    source = materialize_source_v3(_source_v7(count=2))
+    spec = _calibration_spec(source)
+    spec["cold_repeat_case_ids"] = ["drying-after-week"]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    cold_bundle = prepared["cold_repeat"]["bundle"]
+    primary_responses = _v5_responses(bundle)
+    repeat_responses = _v5_responses(cold_bundle)
+    primary = validate_batch_responses(bundle, primary_responses)
+    repeat = validate_batch_responses(cold_bundle, repeat_responses)
+    stage, _ = prepare_row_verification(bundle, primary, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, primary, stage, _row_verification_responses(stage)
+    )
+    assert "row_verification_manifest" not in repeat
+
+    adjudication = _calibration_adjudication(spec, verified["compilation_sha256"])
+    adjudication["cold_repeat_adjudications"] = [
+        {
+            "case_id": "drying-after-week",
+            "primary_compilation_sha256": verified["compilation_sha256"],
+            "repeat_compilation_sha256": repeat["compilation_sha256"],
+            "outcome": "consistent",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": primary_responses},
+        adjudication,
+        {"cold-repeat": repeat_responses},
+        None,
+        {"semantic-core": verified},
+        full_source=source,
+    )
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(
+        row["code"] == "COLD_STRUCTURAL_VALIDATION_FAILED"
+        and "requires a row-verified compilation" in row["detail"]
+        for row in report["hard_failures"]
+    )
+    assert any(
+        row["code"] == "COLD_REPEAT_VERIFICATION_LINEAGE_MISMATCH"
+        and row["case_id"] == "drying-after-week"
+        for row in report["blockers"]
+    )
+    assert report["cold_repeat_results"] == [
+        {"case_id": "drying-after-week", "outcome": "missing"}
+    ]
+
+
+def test_cold_repeat_uses_its_own_row_verified_compilation() -> None:
+    source = materialize_source_v3(_source_v7(count=2))
+    spec = _calibration_spec(source)
+    spec["cold_repeat_case_ids"] = ["drying-after-week"]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    bundle = prepared["slices"][0]["bundle"]
+    cold_bundle = prepared["cold_repeat"]["bundle"]
+    primary_responses = _v5_responses(bundle)
+    repeat_responses = _v5_responses(cold_bundle)
+    primary = validate_batch_responses(bundle, primary_responses)
+    repeat = validate_batch_responses(cold_bundle, repeat_responses)
+    primary_stage, _ = prepare_row_verification(
+        bundle, primary, max_prompt_bytes=20_000
+    )
+    repeat_stage, _ = prepare_row_verification(
+        cold_bundle, repeat, max_prompt_bytes=20_000
+    )
+    verified_primary = apply_row_verification(
+        bundle,
+        primary,
+        primary_stage,
+        _row_verification_responses(primary_stage),
+    )
+    verified_repeat = apply_row_verification(
+        cold_bundle,
+        repeat,
+        repeat_stage,
+        _row_verification_responses(repeat_stage),
+    )
+
+    adjudication = _calibration_adjudication(
+        spec, verified_primary["compilation_sha256"]
+    )
+    adjudication["cold_repeat_adjudications"] = [
+        {
+            "case_id": "drying-after-week",
+            "primary_compilation_sha256": verified_primary["compilation_sha256"],
+            "repeat_compilation_sha256": verified_repeat["compilation_sha256"],
+            "outcome": "consistent",
+        }
+    ]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in adjudication.items()
+            if key != "adjudication_sha256"
+        }
+    )
+
+    report = evaluate_semantic_calibration(
+        prepared,
+        spec,
+        {"semantic-core": primary_responses},
+        adjudication,
+        {"cold-repeat": repeat_responses},
+        None,
+        {
+            "semantic-core": verified_primary,
+            "cold-repeat": verified_repeat,
+        },
+        full_source=source,
+    )
+    assert not any(
+        row["code"] == "COLD_REPEAT_VERIFICATION_LINEAGE_MISMATCH"
+        for row in report["blockers"]
+    )
+    assert report["cold_repeat_results"] == [
+        {"case_id": "drying-after-week", "outcome": "consistent"}
+    ]
 
 
 def test_row_verification_runner_writes_stage_prompts_and_verified_compilation(
@@ -3618,6 +3845,78 @@ def test_calibration_runner_writes_once_and_evaluates_bound_outputs(
             report_out=tmp_path / "report-substituted.json",
         )
     assert not (tmp_path / "report-substituted.json").exists()
+
+
+def test_calibration_runner_evaluates_the_bound_row_verified_compilation(
+    tmp_path: Path,
+) -> None:
+    source = materialize_source_v3(_source_v7(count=2))
+    spec = _calibration_spec(source)
+    source_path = tmp_path / "source.json"
+    spec_path = tmp_path / "spec.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    prepared_dir = tmp_path / "prepared"
+    prepare_semantic_calibration_run(
+        source_path=source_path,
+        spec_path=spec_path,
+        output_dir=prepared_dir,
+    )
+
+    bundle = json.loads(
+        (prepared_dir / "semantic-core" / "bundle.json").read_text(encoding="utf-8")
+    )
+    responses = _v5_responses(bundle)
+    response_dir = tmp_path / "responses" / "semantic-core"
+    response_dir.mkdir(parents=True)
+    for response in responses:
+        (response_dir / f"{response['batch_id']}.json").write_text(
+            json.dumps(response), encoding="utf-8"
+        )
+    primary = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_row_verification(bundle, primary, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, primary, stage, _row_verification_responses(stage)
+    )
+    without_verified = evaluate_semantic_calibration(
+        prepare_semantic_calibration(source, spec),
+        spec,
+        {"semantic-core": responses},
+        _calibration_adjudication(spec, primary["compilation_sha256"]),
+        full_source=source,
+    )
+    assert any(
+        row["code"] == "STRUCTURAL_VALIDATION_FAILED"
+        and "requires a row-verified compilation" in row["detail"]
+        for row in without_verified["hard_failures"]
+    )
+    verified_dir = tmp_path / "verified" / "semantic-core"
+    verified_dir.mkdir(parents=True)
+    (verified_dir / "batch_compilation.json").write_text(
+        json.dumps(verified), encoding="utf-8"
+    )
+    adjudication_path = tmp_path / "adjudication.json"
+    adjudication_path.write_text(
+        json.dumps(_calibration_adjudication(spec, verified["compilation_sha256"])),
+        encoding="utf-8",
+    )
+
+    report = evaluate_semantic_calibration_run(
+        source_path=source_path,
+        prepared_dir=prepared_dir,
+        spec_path=spec_path,
+        response_root=tmp_path / "responses",
+        cold_response_root=None,
+        reconciliation_root=None,
+        verified_compilation_root=tmp_path / "verified",
+        adjudication_path=adjudication_path,
+        report_out=tmp_path / "report.json",
+    )
+
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS"
+    assert report["slice_compilation_sha256"] == {
+        "semantic-core": verified["compilation_sha256"]
+    }
 
 
 def test_legacy_calibration_receipt_keeps_v1_report_shape() -> None:

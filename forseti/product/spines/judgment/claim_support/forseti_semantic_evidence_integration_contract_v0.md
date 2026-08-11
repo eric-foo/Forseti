@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v25
-effective_date: 2026-08-10
+version: v27
+effective_date: 2026-08-11
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v25
+# Semantic Evidence Integration Contract v27
 
 ## Purpose
 
@@ -157,6 +157,38 @@ letting a stored compilation inherit current verifier authority. Historical
 manifest-v1 compilations remain historical artifacts and require a fresh
 row-verification application before current reconciliation. The stage and
 response schemas do not change.
+
+Contract v26 versions the whole-row verifier method to v3. When an attribute is
+not retained as a result's condition, the verifier must also omit that attribute
+from the result statement; it may preserve the attribute separately only when
+the source separately links it to a product response, in which case that
+qualified meaning must not disappear merely because it does not condition the
+neighboring result. This closes the path by
+which a structurally correct condition list could coexist with an overbound
+sentence. Current calibration may consume a provenance-bound row-verified
+compilation for a slice. The evaluator first rebuilds the primary compilation
+from the pinned responses, then requires the verified manifest to cite that
+exact compilation and preserve its raw-response lineage before grading the
+verified rows or their reconciliation. A compilation supplied as the verified
+one but carrying no row-verification manifest is rejected, not graded. A
+method-v7 slice fails closed when no verified compilation is supplied; only
+historical-method slices without a supplied verified compilation retain the
+historical evaluation path.
+
+Two boundaries of that intake are stated because they are not obvious from the
+rule above. Versioning the verifier method to v3 also retires every
+method-v2-verified compilation: the manifest binds the exact method version and
+method-text SHA-256, so a v2-verified compilation requires a fresh
+row-verification application before current reconciliation or calibration, on
+the same terms v25 set for manifest-v1 artifacts. The cold-repeat lane accepts
+the same provenance-bound verified-compilation shape under the reserved
+`cold-repeat` slice id. It rebuilds the raw cold compilation, requires the
+supplied verified manifest to cite that exact input, and grades the verified
+cold rows. Method v7 requires this like-for-like verified repeat whenever cold
+repeat is configured; a missing or mismatched verified cold compilation fails
+closed. Historical methods may compare raw primary and raw repeat, or verified
+primary and verified repeat, but never mix those lineages in one consistency
+judgment.
 
 When a captured-but-excluded denominator exists, the completion profile draws
 a deterministic bounded semantic audit sample per screening family. One
@@ -947,6 +979,23 @@ new frontier.
 
 ## Changelog
 
+- `v27` / 2026-08-11 — extended the existing verified-compilation intake to
+  the reserved `cold-repeat` slice id. The evaluator now rebuilds and binds the
+  raw cold compilation before grading its verified rows; method v7 requires a
+  verified cold compilation whenever cold repeat is configured, and all
+  methods block mixed verified/unverified consistency comparisons. Added no
+  response, stage, manifest, bundle, adjudication, or report schema and no
+  second verifier type.
+- `v26` / 2026-08-11 — versioned the whole-row verifier method to v3 and made
+  statement text obey the same customer-attribute boundary as structured
+  conditions. Added optional calibration intake for an exact provenance-bound
+  verified compilation; evaluation rebuilds and validates its primary input
+  before using the active rows, rejects a supplied compilation that carries no
+  row-verification manifest, and blocks a cold repeat when the primary and
+  repeat do not share row-verification lineage. Retires method-v2-verified compilations,
+  which must replay row verification. Added no response, stage, manifest,
+  bundle, or adjudication schema; no provider API, mandatory second verifier,
+  conclusion, full-corpus execution, readiness claim, or resume authority.
 - `v25` / 2026-08-11 — versioned the row-verification manifest to v2, added the
   verifier method version and exact method-text SHA-256 to its hash-bound
   content, and required current reconciliation/finalization consumers to match
