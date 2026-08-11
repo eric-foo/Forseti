@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import math
 import re
 import shutil
 import sys
@@ -125,6 +126,14 @@ _EXPAND_CONTROLS_JS = """
 """
 
 
+def _resolve_expansion_progress_target(
+    *, cap: int | None, declared_total: int | None, declared_fraction: float | None
+) -> int | None:
+    if cap is None or declared_total is None or declared_fraction is None:
+        return cap
+    return min(cap, max(1, math.ceil(declared_total * declared_fraction)))
+
+
 @dataclass(frozen=True)
 class RealChromeCDPCaptureResult:
     requested_url: str
@@ -151,6 +160,8 @@ class RealChromeCDPCaptureResult:
     expansion_clicks: int = 0
     expansion_exhausted: bool | None = None
     expansion_progress_count: int | None = None
+    expansion_progress_target: int | None = None
+    expansion_declared_total: int | None = None
     expansion_stop_reason: str | None = None
 
 
@@ -178,6 +189,9 @@ class RealChromeCDPEngine(Protocol):
         expand_max_clicks_per_round: int = 0,
         expand_progress_selector: str | None = None,
         expand_progress_target: int | None = None,
+        expand_declared_total_selector: str | None = None,
+        expand_declared_total_attribute: str | None = None,
+        expand_declared_fraction: float | None = None,
         expand_max_no_progress_rounds: int = 0,
     ) -> RealChromeCDPCaptureResult: ...
 
@@ -321,6 +335,9 @@ class _LiveRealChromeCDPEngine:
         expand_max_clicks_per_round: int = 0,
         expand_progress_selector: str | None = None,
         expand_progress_target: int | None = None,
+        expand_declared_total_selector: str | None = None,
+        expand_declared_total_attribute: str | None = None,
+        expand_declared_fraction: float | None = None,
         expand_max_no_progress_rounds: int = 0,
     ) -> RealChromeCDPCaptureResult:
         try:
@@ -484,6 +501,8 @@ class _LiveRealChromeCDPEngine:
                     expansion_clicks = 0
                     expansion_exhausted: bool | None = None
                     expansion_progress_count: int | None = None
+                    expansion_progress_target = expand_progress_target
+                    expansion_declared_total: int | None = None
                     expansion_stop_reason: str | None = None
                     if expand_control_pattern and expand_max_rounds > 0:
                         # Some surfaces paint only a fraction of their content
@@ -499,11 +518,34 @@ class _LiveRealChromeCDPEngine:
                             expansion_progress_count = page.locator(
                                 expand_progress_selector
                             ).count()
+                        if expand_declared_fraction is not None:
+                            try:
+                                raw_declared_total = page.locator(
+                                    expand_declared_total_selector
+                                ).first.get_attribute(expand_declared_total_attribute)
+                                normalized_declared_total = re.sub(
+                                    r"[\s,]", "", raw_declared_total or ""
+                                )
+                                if not normalized_declared_total.isdigit():
+                                    raise ValueError(
+                                        f"non-numeric declared total {raw_declared_total!r}"
+                                    )
+                                expansion_declared_total = int(normalized_declared_total)
+                                expansion_progress_target = _resolve_expansion_progress_target(
+                                    cap=expand_progress_target,
+                                    declared_total=expansion_declared_total,
+                                    declared_fraction=expand_declared_fraction,
+                                )
+                            except Exception as exc:
+                                warnings.append(
+                                    "declared-total expansion target unavailable; using the "
+                                    f"absolute cap: {type(exc).__name__}: {exc}"
+                                )
                         for _ in range(expand_max_rounds):
                             if (
-                                expand_progress_target is not None
+                                expansion_progress_target is not None
                                 and expansion_progress_count is not None
-                                and expansion_progress_count >= expand_progress_target
+                                and expansion_progress_count >= expansion_progress_target
                             ):
                                 expansion_stop_reason = "progress_target_reached"
                                 break
@@ -664,6 +706,8 @@ class _LiveRealChromeCDPEngine:
             expansion_clicks=expansion_clicks,
             expansion_exhausted=expansion_exhausted,
             expansion_progress_count=expansion_progress_count,
+            expansion_progress_target=expansion_progress_target,
+            expansion_declared_total=expansion_declared_total,
             expansion_stop_reason=expansion_stop_reason,
         )
 
@@ -750,6 +794,9 @@ def run_source_capture_realchrome_cdp_packet(
     expand_max_clicks_per_round: int = 0,
     expand_progress_selector: str | None = None,
     expand_progress_target: int | None = None,
+    expand_declared_total_selector: str | None = None,
+    expand_declared_total_attribute: str | None = None,
+    expand_declared_fraction: float | None = None,
     expand_max_no_progress_rounds: int = 0,
     # A Python regex the FINAL url must match for the snapshot to count as the
     # requested target. Left None, nothing is checked (some lanes legitimately
@@ -772,6 +819,16 @@ def run_source_capture_realchrome_cdp_packet(
         raise ValueError("expand_progress_target must be positive when supplied")
     if expand_progress_target is not None and not expand_progress_selector:
         raise ValueError("expand_progress_target requires expand_progress_selector")
+    if expand_declared_fraction is not None and not 0 < expand_declared_fraction <= 1:
+        raise ValueError("expand_declared_fraction must be greater than 0 and at most 1")
+    if expand_declared_fraction is not None and expand_progress_target is None:
+        raise ValueError("expand_declared_fraction requires expand_progress_target")
+    if expand_declared_fraction is not None and (
+        not expand_declared_total_selector or not expand_declared_total_attribute
+    ):
+        raise ValueError(
+            "expand_declared_fraction requires a declared-total selector and attribute"
+        )
     if expand_max_no_progress_rounds < 0:
         raise ValueError("expand_max_no_progress_rounds must be non-negative")
     if expand_max_no_progress_rounds and not expand_progress_selector:
@@ -813,6 +870,9 @@ def run_source_capture_realchrome_cdp_packet(
         expand_max_clicks_per_round=expand_max_clicks_per_round,
         expand_progress_selector=expand_progress_selector,
         expand_progress_target=expand_progress_target,
+        expand_declared_total_selector=expand_declared_total_selector,
+        expand_declared_total_attribute=expand_declared_total_attribute,
+        expand_declared_fraction=expand_declared_fraction,
         expand_max_no_progress_rounds=expand_max_no_progress_rounds,
     )
 
@@ -868,10 +928,15 @@ def run_source_capture_realchrome_cdp_packet(
         "expand_max_clicks_per_round": expand_max_clicks_per_round,
         "expand_progress_selector": expand_progress_selector,
         "expand_progress_target": expand_progress_target,
+        "expand_declared_total_selector": expand_declared_total_selector,
+        "expand_declared_total_attribute": expand_declared_total_attribute,
+        "expand_declared_fraction": expand_declared_fraction,
         "expand_max_no_progress_rounds": expand_max_no_progress_rounds,
         "expansion_rounds": result.expansion_rounds,
         "expansion_clicks": result.expansion_clicks,
         "expansion_progress_count": result.expansion_progress_count,
+        "expansion_progress_target": result.expansion_progress_target,
+        "expansion_declared_total": result.expansion_declared_total,
         "expansion_stop_reason": result.expansion_stop_reason,
         # None when no expansion was requested; False is the load-bearing value
         # -- it means the round bound stopped the loop with controls remaining.
