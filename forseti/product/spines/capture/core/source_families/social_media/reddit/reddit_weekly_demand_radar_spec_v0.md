@@ -211,6 +211,12 @@ silently change downstream count semantics.
   records `yes`, `borderline`, or `no` plus reason codes and priority. This
   radar's standing frame is `weekly_latent_problem_gtm_discovery_v0`, defined
   in that policy; it owns the frame-scoped gate readings and the dive budget.
+  Its evidence-precedence rule is binding: concrete comparison, failure,
+  switching, compatibility, consumption, or specific-demand evidence outranks
+  a weaker collection/routine/haul/favorite/praise format prior. The format
+  alone still admits nothing. When that distinction remains plausibly hidden,
+  retain `borderline` for the listing-preview or selective OP-text fallback;
+  do not convert missing context into a confident `no`.
   Opaque/deictic/image-dependent rows remain `borderline` until a cheap
   listing-level preview resolves the missing context; opacity is a reason, not
   a fourth disposition.
