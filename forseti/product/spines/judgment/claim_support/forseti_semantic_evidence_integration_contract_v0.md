@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v28
+version: v30
 effective_date: 2026-08-11
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v28
+# Semantic Evidence Integration Contract v30
 
 ## Purpose
 
@@ -193,6 +193,34 @@ to the target. Named-shade behavior follows the shade rule above. Historical
 verifier-v3 manifests remain identifiable by their pinned verifier-v3 text but
 cannot authorize current reconciliation; they must replay row verification and
 are not relabelled as verifier-v4 output.
+
+Contract v29 versions the same whole-row verifier method to v5. Its final
+completeness pass maps each independently usable source meaning to exactly one
+unit and maps every unit back to supported source meaning. A paired comparison
+may yield a separate relational meaning only when the source establishes the
+same dimension and direction on both sides; proximity alone cannot create it.
+Supported adjacent-product meanings remain under their own subject. A customer
+attribute qualifies a result only when it is the directly relevant baseline or
+the source explicitly scopes the result to it. It becomes a separate
+bound-product response only when the source explicitly identifies that product
+as causing, worsening, changing, or eliciting the response; ambiguous antecedents
+and vague category wording remain context. This adds no response field, second
+verifier, parser, phrase table, conclusion, or recommendation. Historical
+verifier-v4 manifests remain hash-identifiable but require replay before current
+reconciliation or calibration.
+
+Contract v30 versions that verifier method to v6 and closes the overcorrection
+found by its first blind replay. Ambiguity in one clause cannot discard supported
+unambiguous meanings elsewhere in the row. When a variant referent is genuinely
+ambiguous, the verifier may retain the uncertain meaning only at the verified
+shared-product scope; it cannot select a variant. An ambiguous echo remains
+axis-free and detail-free rather than importing one possible parent predicate.
+Variant-specific behavior cannot broaden to the whole product family, and an
+explicit overall evaluation remains separate from specific attribute facts and
+from a disposition reason. Whole-row unresolved remains available only when no
+safe complete row exists. This adds no response field, parser, second verifier,
+or conclusion surface. Historical verifier-v5 manifests remain identifiable but
+require replay before current reconciliation or calibration.
 
 For method v7, `personal_agreement` may remain support for a bounded meaning but
 never adds a credited independent origin and must not be described as another
@@ -1004,6 +1032,17 @@ new frontier.
 
 ## Changelog
 
+- `v30` / 2026-08-11 — versioned the whole-row verifier method to v6, prevented
+  local ambiguity from erasing safe row content, bounded ambiguous variant and
+  echo meanings without guessing, preserved exact variant-versus-family scope,
+  and kept explicit overall evaluations separate. Added no schema, field,
+  parser, second verifier, provider call, or full-corpus resume authority.
+- `v29` / 2026-08-11 — versioned the whole-row verifier method to v5, added a
+  final source-to-unit completeness bijection, preserved same-dimension paired
+  comparisons as separate relational meanings when textually established, and
+  prevented baseline traits, vague category wording, or ambiguous antecedents
+  from becoming product-caused outcomes. Added no schema, field, second read,
+  parser, provider call, conclusion, or full-corpus resume authority.
 - `v28` / 2026-08-11 — versioned the whole-row verifier method to v4, made
   complete-row replacement preserve all source-supported proposed content by
   default, aligned drying/non-drying with hydration, made named-shade behavior

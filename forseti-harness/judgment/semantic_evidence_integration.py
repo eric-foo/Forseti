@@ -33,7 +33,9 @@ ROW_VERIFICATION_STAGE_VERSION = "semantic_evidence_row_verification_stage_v1"
 ROW_VERIFICATION_RESPONSE_VERSION = "semantic_evidence_row_verification_response_v1"
 ROW_VERIFICATION_MANIFEST_VERSION = "semantic_evidence_row_verification_manifest_v2"
 ROW_VERIFICATION_METHOD_VERSION_V3 = "semantic_evidence_row_verification_method_v3"
-ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v4"
+ROW_VERIFICATION_METHOD_VERSION_V4 = "semantic_evidence_row_verification_method_v4"
+ROW_VERIFICATION_METHOD_VERSION_V5 = "semantic_evidence_row_verification_method_v5"
+ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v6"
 # The new generation deliberately keeps the legacy pretty-printed prompt
 # encoding. It is bound by name so a future compact encoding cannot silently
 # reuse a projection that was packed and byte-bounded under this one.
@@ -456,7 +458,7 @@ union; use unresolved if no safe result exists. Do not infer provenance,
 independence, prevalence, causation, conclusions, scores, or recommendations.
 """
 
-ROW_VERIFICATION_METHOD_TEXT = (
+ROW_VERIFICATION_METHOD_TEXT_V4 = (
     ROW_VERIFICATION_METHOD_TEXT_V3.replace(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V3",
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4",
@@ -505,6 +507,77 @@ ROW_VERIFICATION_METHOD_TEXT = (
         "Accept only complete rows whose every field is supported by the source or\n"
         "supplied context. Replace with one complete row, never a field patch or old/new\n"
         "union; use unresolved if no safe result exists.",
+        1,
+    )
+)
+
+ROW_VERIFICATION_METHOD_TEXT_V5 = (
+    ROW_VERIFICATION_METHOD_TEXT_V4.replace(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4",
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5",
+        1,
+    )
+    .replace(
+        "Shared product, axis, or topic does not make one unit cover another. Replace\n"
+        "the whole row when any material meaning lacks a faithful unit.\n",
+        "Shared product, axis, or topic does not make one unit cover another. Replace\n"
+        "the whole row when any material meaning lacks a faithful unit. Then make one\n"
+        "source-to-unit completeness pass: for every clause and every explicit relation\n"
+        "between clauses, ask whether it yields an independently usable supported meaning\n"
+        "that no unit carries. A comparison may yield side observations and a separate\n"
+        "relational comparison only when the source text establishes the same dimension\n"
+        "and direction for both sides; adjacency alone cannot create the relation. Preserve\n"
+        "a supported adjacent-product meaning under its own subject instead of deleting it\n"
+        "or binding it to the target. Every supported independently usable meaning maps to\n"
+        "exactly one unit, and every unit maps back to one supported meaning.\n",
+        1,
+    )
+    .replace(
+        "- A customer attribute conditions a result only if it states or unambiguously\n"
+        "  entails the same baseline, or the source explicitly scopes that result to the\n"
+        "  attribute. A possible bias, caveat, or separate product response is a separate\n"
+        "  meaning, not a condition. Conjunction or shared body area is not enough. Split\n"
+        "  a conjoined attribute phrase and keep only the part whose baseline that result\n"
+        "  reports. Sensitivity alone is not a moisture baseline; product-linked\n"
+        "  sensitivity is reaction or tolerance context, while dry or dehydrated may\n"
+        "  condition moisture. If uncertain, leave the result unconditioned.\n"
+        "- If a customer attribute is not retained as a result's condition, omit it from\n"
+        "  that result's statement too. When the source separately links that attribute\n"
+        "  to a product response, preserve it as its own qualified meaning; do not discard\n"
+        "  it merely because it does not condition the neighboring result.\n",
+        "- A customer attribute conditions a result only when it states or unambiguously\n"
+        "  entails the directly relevant baseline for that result, or the source explicitly\n"
+        "  scopes that result to the attribute. Conjunction, proximity, or shared body area\n"
+        "  is not enough. Split a conjoined attribute phrase and keep only the part whose\n"
+        "  baseline that result reports. If uncertain, leave the result unconditioned.\n"
+        "- If a customer attribute is not retained as a result's condition, omit it from\n"
+        "  that result's statement too. Create a separate product response only when the\n"
+        "  source explicitly identifies the bound product as causing, worsening, changing,\n"
+        "  or eliciting that response. A baseline trait, vague product-category wording, or\n"
+        "  ambiguous antecedent remains context and must not become a bound-product outcome.\n"
+        "  Preserve a separately and explicitly linked response as its own qualified meaning.\n",
+        1,
+    )
+)
+
+ROW_VERIFICATION_METHOD_TEXT = (
+    ROW_VERIFICATION_METHOD_TEXT_V5.replace(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5",
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6",
+        1,
+    ).replace(
+        "Every supported independently usable meaning maps to\n"
+        "exactly one unit, and every unit maps back to one supported meaning.\n",
+        "Every supported independently usable meaning maps to\n"
+        "exactly one unit, and every unit maps back to one supported meaning. Local\n"
+        "ambiguity does not erase unambiguous meanings elsewhere in the row. Use\n"
+        "unresolved only when no safe complete row exists. Otherwise keep every safe\n"
+        "meaning: bind an uncertain variant referent only to its verified shared product,\n"
+        "never to a guessed variant; retain an ambiguous echo as axis-free, detail-free\n"
+        "personal agreement rather than importing a candidate parent predicate. Keep\n"
+        "subject scope exact: variant-specific behavior cannot broaden to the product\n"
+        "family. Preserve an explicit overall evaluation separately from attribute facts\n"
+        "and from the disposition reason.\n",
         1,
     )
 )
@@ -5274,8 +5347,12 @@ __all__ = [
     "ROW_VERIFICATION_MANIFEST_VERSION",
     "ROW_VERIFICATION_METHOD_TEXT",
     "ROW_VERIFICATION_METHOD_TEXT_V3",
+    "ROW_VERIFICATION_METHOD_TEXT_V4",
+    "ROW_VERIFICATION_METHOD_TEXT_V5",
     "ROW_VERIFICATION_METHOD_VERSION",
     "ROW_VERIFICATION_METHOD_VERSION_V3",
+    "ROW_VERIFICATION_METHOD_VERSION_V4",
+    "ROW_VERIFICATION_METHOD_VERSION_V5",
     "ROW_VERIFICATION_RESPONSE_VERSION",
     "ROW_VERIFICATION_STAGE_VERSION",
     "RECONCILIATION_RESPONSE_VERSION",

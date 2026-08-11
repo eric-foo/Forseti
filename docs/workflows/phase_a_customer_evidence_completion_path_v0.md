@@ -703,3 +703,55 @@ The evaluator separately reports `PREPARATION_RECEIPT_MISMATCH` even though the
 rebound receipt and stored spec bind the same `spec_sha256`; that mechanical
 residual is not hidden or counted as semantic success. Full-corpus execution
 therefore remains paused.
+
+Contract v29 installs the smallest general correction for those remaining
+semantic defects without adding another verifier. The active verifier-v5 method
+now performs one final source-to-unit completeness check, preserves an explicit
+same-dimension relational comparison separately from its side observations,
+and requires an explicit bound-product link before turning a nearby customer
+attribute into a product response. It also keeps supported adjacent-product
+meanings under their own subject. Historical verifier-v4 results remain evidence
+about the prior method and must not be relabelled. A fresh blind verifier-v5
+replay and adjudication still owe proof; until that run passes, the full corpus
+remains paused and the independent preparation-receipt mismatch remains open.
+
+The fresh verifier-v5 row replay at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v5-dogfood-20260811-v0`
+proved both targeted corrections at the row boundary: all 40 required gold
+meanings were present, including the missing hydration comparison, and the
+sensitive-lips row returned seven supported meanings without inventing a
+product-caused sensitivity reaction. A blind precheck found 16 of 17 strict
+gold rows, 6 of 7 cold repeats, and 9 of 10 density rows clean. The strict gold
+miss is a stale ruler boundary: its scent-causal named-shade preference allowed
+only `scent_and_flavor`, while the settled named-shade rule also requires
+`shade_and_color_fit`. Verifier v5 nevertheless remains insufficient because
+one reader made two partially ambiguous rows wholly unresolved, one cold repeat
+broadened shade-specific sale intent to the product family, and one density row
+lost an explicit overall positive evaluation.
+
+Contract v30 versions the same verifier to v6 for those general residuals.
+Local ambiguity may no longer erase independently safe meanings; ambiguous
+variant and echo meanings stay bounded without guessing; variant-specific
+behavior cannot broaden to the family; and explicit overall evaluations remain
+separate. Verifier-v5 artifacts remain preserved as negative proof. A fresh
+blind v6 replay, corrected gold-ruler binding, terminal reconciliation, and
+formal adjudication remain required before full-corpus execution resumes.
+
+That blind row replay is recorded at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v6-dogfood-20260811-v0`.
+All 103 rows compiled under verifier-v6 with zero unresolved decisions and zero
+model API calls. Both original defects remain corrected, both formerly dropped
+ambiguous rows retain their safe meanings, and all 40 required gold meanings are
+present. The strict stored ruler reports 15 of 17 cases, but both disagreements
+conflict with settled doctrine: the named-shade favorite correctly carries
+`shade_and_color_fit` beside its scent reason, and an explicit overall favorite
+reaction remains evidence rather than disappearing. On the settled rules the
+gold meanings are 17 of 17. Cold repeat is 4 of 7 field-exact; two additional
+pairs preserve the same propositions with only asserted-versus-qualified drift,
+and one genuinely broadens Poppy-specific sale intent to the product family.
+The density audit is 9 of 10 clean and finds one omitted material conversion
+context. These residuals show that more verifier prompt wording is no longer the
+smallest correct move: the governing rules are already present but one-pass
+readers apply them unevenly. Keep full-corpus execution paused pending an
+architecture decision on semantic disagreement/coverage handling, a corrected
+hash-bound ruler, and the still-open preparation-receipt mismatch.
