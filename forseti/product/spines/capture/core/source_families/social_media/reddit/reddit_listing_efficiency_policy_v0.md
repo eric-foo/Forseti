@@ -391,12 +391,15 @@ week over week.
 
 Read the post body and all comments already rendered by the bounded surface
 capture for an admitted thread; do not stop at the top comment. Do not click
-comment-expansion controls by default. If that surface read remains
-decision-unresolved but plausibly material, perform one explicit bounded deep
-pass. That pass stops at 150 rendered comments, two consecutive no-growth
-rounds, no remaining control, or eight rounds. If the deep read is still
-unresolved, perform one targeted revisit for the missing branch or post detail
-rather than expanding the whole tree. Separate
+comment-expansion controls on an obvious `no`. For a likely-material thread,
+perform one explicit bounded expansion pass targeting 90% of its declared
+comments with an 85-rendered-comment absolute cap. If a high-value thread is
+still decision-unresolved, one escalation may target 95% with a 103-comment
+cap. A 149-comment pass is exceptional and requires a specific unresolved
+branch or unusually valuable thread; it is not the default. Every pass also
+stops at two consecutive no-growth rounds, no remaining control, or eight
+rounds. If the read is still unresolved, perform one targeted revisit for the
+missing branch or post detail rather than expanding the whole tree. Separate
 independent voices from the original poster, bots, author replies, and nested
 repetition. Comment points order presentation; they do not establish truth.
 
@@ -446,15 +449,24 @@ card-first shape is overhead and cluster synthesis leads again.
 ## Accepted residuals and non-claims
 
 - Captured threads are depth-bounded, not exhaustive. The default www surface
-  pass clicks zero comment-expansion controls. An explicit plausibly-material
-  deep pass expands at most four controls per round and stops at the first of
-  150 rendered comments, two consecutive no-growth rounds, no remaining
-  control, or eight rounds. The retained metadata records the click count,
-  rendered-comment count, and stop reason. The 150 ceiling was backtested on
-  948 substantive prior-week extracts: it retained 1,888 of 1,894 matched
-  evidence quotes (99.68%), and manual review of the six late quotes found no
-  lost published cluster or target-card conclusion. The current 41-thread read
-  retained all 81 cited material-evidence references by comment 125. The raw
+  pass clicks zero comment-expansion controls, and obvious `no` threads stay at
+  that surface. A likely-material pass expands at most four controls per round
+  and stops at the first of 90% of declared comments or 85 rendered comments;
+  the unresolved high-value escalation uses 95%/103, and 149 is exceptional.
+  Every tier also stops at two consecutive no-growth rounds, no remaining
+  control, or eight rounds. The retained metadata records the declared total,
+  effective target, click count, rendered-comment count, and stop reason. The
+  absolute evidence-retention backtest found 85 comments retained about 85% of
+  cited decision evidence, 103 retained about 90%, and 149 retained about 95%.
+  A nine-thread live pilot then showed why the declared-comment share is also
+  necessary: a fixed target of 85 drove small 41–55-comment threads to roughly
+  full capture, adding 109 comments through 66 clicks with no refusal and no
+  admission flip. The extra comments materially enriched several conclusions,
+  but the fixed target overcaptured small threads. The first live relative-cap
+  batch then added 74 comments across ten threads through 45 clicks, stopped
+  each thread after one or two rounds, and produced ten successful captures
+  with no refusal -- about 39% fewer clicks per expanded thread than the fixed
+  pilot. The raw
   click count was not a valid value bound -- prior captures included 80-144
   clicks for only 25-35 retained comments -- so no standalone click-total gate
   is claimed. `Continue this thread` anchors remain `rel="nofollow"` links to

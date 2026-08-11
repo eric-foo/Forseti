@@ -64,17 +64,20 @@ TRANSPORT_SOURCE_SURFACES = {
 
 # Comment expansion is an explicit second-pass operation. The default surface
 # pass retains the post and already-rendered comments with zero expansion
-# clicks; an unresolved but plausibly valuable thread may opt into the bounded
-# deep pass below. Its 150-comment ceiling was backtested on two completed
-# weekly corpora plus the current 41-thread read and retained 1,888/1,894
-# matched prior-week evidence quotes plus every published conclusion.
+# clicks; a likely-material thread may opt into the bounded pass below. The
+# normal pass aims at 90% of the thread's declared comments, capped at 85. A
+# 95%/103 escalation is reserved for unresolved high-value threads; 149 is an
+# exceptional ceiling rather than the default.
 WWW_EXPAND_CONTROL_PATTERN = r"more repl(?:y|ies)|more comments?|load more comments?"
 WWW_EXPAND_CONTROL_SELECTOR = "shreddit-comment-tree button, shreddit-comment-tree a"
 WWW_EXPAND_MAX_ROUNDS = 8
 WWW_EXPAND_SETTLE_MS = 6000
 WWW_EXPAND_MAX_CLICKS_PER_ROUND = 4
 WWW_EXPAND_PROGRESS_SELECTOR = "shreddit-comment"
-WWW_EXPAND_PROGRESS_TARGET = 150
+WWW_EXPAND_DECLARED_TOTAL_SELECTOR = "shreddit-comment-tree"
+WWW_EXPAND_DECLARED_TOTAL_ATTRIBUTE = "totalcomments"
+WWW_EXPAND_PROGRESS_TARGET = 85
+WWW_EXPAND_DECLARED_FRACTION = 0.90
 WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS = 2
 WWW_READY_SELECTOR = "shreddit-comment"
 WWW_VIEWPORT_WIDTH = 1280
@@ -147,6 +150,7 @@ def run_reddit_old_http_batch(
     keep_raw_audit_sample: bool = False,
     expand_comments: bool = False,
     expand_progress_target: int = WWW_EXPAND_PROGRESS_TARGET,
+    expand_declared_fraction: float = WWW_EXPAND_DECLARED_FRACTION,
     resume: bool = False,
     refusal_circuit_breaker: int = DEFAULT_REFUSAL_CIRCUIT_BREAKER,
 ) -> tuple[int, str]:
@@ -274,6 +278,7 @@ def run_reddit_old_http_batch(
                     keep_raw_audit_sample=keep_raw_audit_sample,
                     expand_comments=expand_comments,
                     expand_progress_target=expand_progress_target,
+                    expand_declared_fraction=expand_declared_fraction,
                     timeout_seconds=timeout_seconds,
                     cadence_plan=cadence_plan,
                     index=index,
@@ -419,6 +424,12 @@ def run_reddit_old_http_batch(
             ),
         ],
         "comment_expansion_requested": expand_comments,
+        "comment_expansion_progress_cap": (
+            expand_progress_target if expand_comments else None
+        ),
+        "comment_expansion_declared_fraction": (
+            expand_declared_fraction if expand_comments else None
+        ),
         "delay_seconds": cadence_plan.delay_seconds,
         "cadence": cadence_plan.to_dict(),
         "max_urls": max_urls,
@@ -487,6 +498,7 @@ def _capture_www_thread(
     keep_raw_audit_sample: bool,
     expand_comments: bool,
     expand_progress_target: int = WWW_EXPAND_PROGRESS_TARGET,
+    expand_declared_fraction: float = WWW_EXPAND_DECLARED_FRACTION,
     timeout_seconds: float,
     cadence_plan: Any,
     index: int,
@@ -552,6 +564,13 @@ def _capture_www_thread(
         expand_max_clicks_per_round=WWW_EXPAND_MAX_CLICKS_PER_ROUND,
         expand_progress_selector=WWW_EXPAND_PROGRESS_SELECTOR,
         expand_progress_target=(expand_progress_target if expand_comments else None),
+        expand_declared_total_selector=(
+            WWW_EXPAND_DECLARED_TOTAL_SELECTOR if expand_comments else None
+        ),
+        expand_declared_total_attribute=(
+            WWW_EXPAND_DECLARED_TOTAL_ATTRIBUTE if expand_comments else None
+        ),
+        expand_declared_fraction=(expand_declared_fraction if expand_comments else None),
         expand_max_no_progress_rounds=(
             WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS if expand_comments else 0
         ),
@@ -913,7 +932,7 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help=(
             "Explicit second pass only: click bounded in-place comment controls up to "
-            "the configured rendered-comment target (150 by default). The default "
+            "the configured share of declared comments and absolute cap. The default "
             "surface pass clicks none."
         ),
     )
@@ -922,8 +941,17 @@ def _build_parser() -> argparse.ArgumentParser:
         type=int,
         default=WWW_EXPAND_PROGRESS_TARGET,
         help=(
-            "Rendered-comment stopping target for an explicit --expand-comments pass "
-            f"(default: {WWW_EXPAND_PROGRESS_TARGET})."
+            "Absolute rendered-comment cap for an explicit --expand-comments pass "
+            f"(normal default: {WWW_EXPAND_PROGRESS_TARGET})."
+        ),
+    )
+    parser.add_argument(
+        "--expand-declared-fraction",
+        type=float,
+        default=WWW_EXPAND_DECLARED_FRACTION,
+        help=(
+            "Share of the thread's declared comments to target before applying the "
+            f"absolute cap (normal default: {WWW_EXPAND_DECLARED_FRACTION:.2f})."
         ),
     )
     parser.add_argument(
@@ -1012,6 +1040,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             keep_raw_audit_sample=args.keep_raw_audit_sample,
             expand_comments=args.expand_comments,
             expand_progress_target=args.expand_progress_target,
+            expand_declared_fraction=args.expand_declared_fraction,
             decision_question=args.decision_question,
             data_root=data_root,
             delay_seconds=args.delay_seconds,

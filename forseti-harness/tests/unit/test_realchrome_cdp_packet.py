@@ -10,6 +10,7 @@ from runners.run_source_capture_realchrome_cdp_packet import (
     RealChromeCDPCaptureResult,
     _capture_viewport_screenshot,
     _navigate_target,
+    _resolve_expansion_progress_target,
     _select_or_create_page,
     run_source_capture_realchrome_cdp_packet,
 )
@@ -142,6 +143,9 @@ def test_expansion_bounds_are_forwarded_and_preserved(tmp_path: Path) -> None:
         expand_max_clicks_per_round=4,
         expand_progress_selector="shreddit-comment",
         expand_progress_target=150,
+        expand_declared_total_selector="shreddit-comment-tree",
+        expand_declared_total_attribute="totalcomments",
+        expand_declared_fraction=0.9,
         expand_max_no_progress_rounds=2,
         engine=engine,
     )
@@ -149,12 +153,37 @@ def test_expansion_bounds_are_forwarded_and_preserved(tmp_path: Path) -> None:
     assert code == 0
     assert engine.calls[0]["expand_max_clicks_per_round"] == 4
     assert engine.calls[0]["expand_progress_target"] == 150
+    assert engine.calls[0]["expand_declared_fraction"] == 0.9
     metadata_file = next(out.glob("raw/*metadata.json"))
     metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
     assert metadata["expand_max_clicks_per_round"] == 4
     assert metadata["expand_progress_selector"] == "shreddit-comment"
     assert metadata["expand_progress_target"] == 150
+    assert metadata["expand_declared_total_selector"] == "shreddit-comment-tree"
+    assert metadata["expand_declared_total_attribute"] == "totalcomments"
+    assert metadata["expand_declared_fraction"] == 0.9
     assert metadata["expand_max_no_progress_rounds"] == 2
+
+
+@pytest.mark.parametrize(
+    ("cap", "declared_total", "declared_fraction", "expected"),
+    [
+        (85, 55, 0.9, 50),
+        (85, 198, 0.9, 85),
+        (103, 55, 0.95, 53),
+        (149, 198, 1.0, 149),
+        (85, None, 0.9, 85),
+        (85, 55, None, 85),
+    ],
+)
+def test_relative_expansion_target_is_bounded_by_the_absolute_cap(
+    cap, declared_total, declared_fraction, expected
+) -> None:
+    assert _resolve_expansion_progress_target(
+        cap=cap,
+        declared_total=declared_total,
+        declared_fraction=declared_fraction,
+    ) == expected
 
 
 def test_unattended_provisioning_is_preserved_truthfully(tmp_path: Path) -> None:
