@@ -3023,6 +3023,15 @@ def test_method_v7_requires_verification_without_rewriting_v6_extraction_rules()
     reconciliation, _ = prepare_reconciliation_stage(v7_bundle, verified)
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
+    level_one = validate_reconciliation_stage(
+        v7_bundle,
+        reconciliation,
+        _group_level_responses(reconciliation, terminal=False),
+    )
+    level_two, _ = prepare_reconciliation_stage(v7_bundle, level_one)
+    assert level_two["level"] == 2
+    assert level_two["batch_compilation_sha256"] == verified["compilation_sha256"]
+
 
 def _flat_reconciliation(bundle: dict, compiled: dict) -> dict:
     return {
