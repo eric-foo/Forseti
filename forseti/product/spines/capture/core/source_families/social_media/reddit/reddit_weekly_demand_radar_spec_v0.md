@@ -180,6 +180,16 @@ output to the lake.
 
 ### E. Thread deep-dive gate
 
+**Methodology name.** The operator shorthand is **Reddit Top100**; the full
+name is **Reddit Weekly Top-100-per-Subreddit**. `100` names the weekly listing
+depth target for each active subreddit. It is never a global thread cap, roster
+size, adjudication-pass count, or capture quota. A subreddit may expose or
+render fewer rows. On `www.reddit.com`, depth remains bounded by the rendered
+viewport because the surface does not enforce a numeric listing limit. Reader
+artifacts carry `methodology.id: reddit_weekly_top100_per_subreddit_v0`, the
+depth target, and `global_thread_cap: null` so the shorthand cannot silently
+change downstream count semantics.
+
 - The selection pool is every non-stickied, non-promoted listing row with
   parseable score and comment count. Listing evidence remains preserved whether
   or not a thread is selected.
@@ -202,12 +212,14 @@ output to the lake.
   Opaque/deictic/image-dependent rows remain `borderline` until a cheap
   listing-level preview resolves the missing context; opacity is a reason, not
   a fourth disposition.
-- Only a recorded `yes` may become a
+- Only a recorded `yes` or `borderline` may become a
   `run_reddit_old_http_batch.py`-compatible capture slot. The weekly reader
   emits `capture_slots=[]` and
   `capture_list_status=blocked_pending_commission_model_adjudication`.
   Its `--capture-list-output` option fails loudly while that status holds.
   This prevents a mechanical shortlist from masquerading as authorization.
+  A model `no` is the only adjudication state that suppresses capture; captured
+  `borderline` uncertainty resolves in extraction under the governing policy.
 - Once selected, capture the complete exposed thread and analyse all captured
   comments. Comment points order evidence for presentation; they are not a
   within-thread stopping rule. Record explicitly named brands, products, and
