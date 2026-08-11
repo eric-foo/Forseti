@@ -33,8 +33,12 @@ from judgment.semantic_evidence_integration import (
     PROMPT_ENCODING_VERSION,
     ROW_VERIFICATION_METHOD_TEXT,
     ROW_VERIFICATION_METHOD_TEXT_V3,
+    ROW_VERIFICATION_METHOD_TEXT_V4,
+    ROW_VERIFICATION_METHOD_TEXT_V5,
     ROW_VERIFICATION_METHOD_VERSION,
     ROW_VERIFICATION_METHOD_VERSION_V3,
+    ROW_VERIFICATION_METHOD_VERSION_V4,
+    ROW_VERIFICATION_METHOD_VERSION_V5,
     ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -2635,22 +2639,21 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     )
     assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
     assert all(
-        "A customer attribute conditions a result only if" in row["prompt"]
+        "A customer attribute conditions a result only when" in row["prompt"]
         for row in prompts
     )
-    assert all("unambiguously entails the same baseline" in row for row in normalized_prompts)
+    assert all("directly relevant baseline" in row for row in normalized_prompts)
     assert all("source explicitly scopes that result" in row for row in normalized_prompts)
-    assert all("possible bias, caveat, or separate product response" in row for row in normalized_prompts)
-    assert all("separate meaning, not a condition" in row for row in normalized_prompts)
-    assert all("Conjunction or shared body area" in row for row in normalized_prompts)
-    assert all("Sensitivity alone is not a moisture baseline" in row for row in normalized_prompts)
-    assert all("product-linked sensitivity is reaction or tolerance context" in row for row in normalized_prompts)
-    assert all("dry or dehydrated may condition moisture" in row for row in normalized_prompts)
+    assert all("Conjunction, proximity, or shared body area" in row for row in normalized_prompts)
     assert all("leave the result unconditioned" in row for row in normalized_prompts)
     assert all(
         "not retained as a result's condition" in row for row in normalized_prompts
     )
     assert all("omit it from that result's statement too" in row for row in normalized_prompts)
+    assert all("explicitly identifies the bound product" in row for row in normalized_prompts)
+    assert all("ambiguous antecedent remains context" in row for row in normalized_prompts)
+    assert all("source-to-unit completeness pass" in row for row in normalized_prompts)
+    assert all("same dimension and direction" in row for row in normalized_prompts)
     assert all("Unqualified liking, preference" in row["prompt"] for row in prompts)
     assert all("favorite evaluation of a named shade carries" in row["prompt"] for row in prompts)
     assert all("Drying, becoming drier, or losing moisture" in row["prompt"] for row in prompts)
@@ -2709,15 +2712,20 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
-def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() -> None:
+def test_row_verification_v6_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
-    # The active text is derived from the v3 text by literal replacement, so a
-    # silently non-matching replacement would ship a v3-titled method under the
-    # v4 version and hash.
     assert ROW_VERIFICATION_METHOD_TEXT.startswith(
-        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6"
     )
     assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V5" not in ROW_VERIFICATION_METHOD_TEXT
+    assert ROW_VERIFICATION_METHOD_TEXT_V4.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V5.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5"
+    )
     for principle in (
         "smallest complete set of standalone meanings",
         "direct answers, evaluations, results, comparisons, reasons, contrasts",
@@ -2725,22 +2733,13 @@ def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() 
         "Later context may narrow but does not cancel or replace",
         "Shared product, axis, or topic does not make one unit cover another",
         "Map each meaning to the proposed units before field checking",
-        "states or unambiguously entails the same baseline",
         "source explicitly scopes that result to the attribute",
-        "possible bias, caveat, or separate product response is a separate meaning",
-        "Conjunction or shared body area is not enough",
+        "Conjunction, proximity, or shared body area is not enough",
         "Split a conjoined attribute phrase and keep only the part whose baseline"
         " that result reports",
-        "Sensitivity alone is not a moisture baseline",
-        "product-linked sensitivity is reaction or tolerance context",
-        "dry or dehydrated may condition moisture",
         "If uncertain, leave the result unconditioned",
         "If a customer attribute is not retained as a result's condition, omit it"
         " from that result's statement too",
-        "When the source separately links that attribute to a product response,"
-        " preserve it as its own qualified meaning",
-        "do not discard it merely because it does not condition the neighboring"
-        " result",
         "repurchase of a named shade, or of an all/every-shade collection, carries"
         " shade_and_color_fit",
         "sale timing or price is expressly a condition of an intended or hypothetical"
@@ -2755,8 +2754,28 @@ def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() 
         "restore every supported meaning, axis, product binding, condition,"
         " posture, and direction",
         "every field is supported by the source or supplied context",
+        "source-to-unit completeness pass",
+        "every clause and every explicit relation between clauses",
+        "same dimension and direction for both sides",
+        "adjacency alone cannot create the relation",
+        "supported adjacent-product meaning under its own subject",
+        "Every supported independently usable meaning maps to exactly one unit",
+        "directly relevant baseline for that result",
+        "explicitly identifies the bound product as causing, worsening, changing,"
+        " or eliciting that response",
+        "vague product-category wording",
+        "ambiguous antecedent remains context",
+        "Local ambiguity does not erase unambiguous meanings elsewhere in the row",
+        "Use unresolved only when no safe complete row exists",
+        "uncertain variant referent only to its verified shared product",
+        "ambiguous echo as axis-free, detail-free personal agreement",
+        "variant-specific behavior cannot broaden to the product family",
+        "Preserve an explicit overall evaluation separately from attribute facts",
     ):
         assert principle in normalized
+    normalized_v4 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V4.split())
+    assert "Sensitivity alone is not a moisture baseline" in normalized_v4
+    assert "product-linked sensitivity is reaction or tolerance context" in normalized_v4
     assert "merely buying, owning, or repurchasing that shade may not" not in normalized
     for case_phrase in (
         "Summer Fridays",
@@ -2764,6 +2783,11 @@ def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() 
         "worth $24",
         "lip balm",
         "lip gloss",
+        "Lanolips",
+        "sensitive lips",
+        "Fenty",
+        "YSL",
+        "Hourglass",
     ):
         assert case_phrase not in ROW_VERIFICATION_METHOD_TEXT
 
@@ -2930,6 +2954,60 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
         match="does not bind the current verification method",
     ):
         prepare_reconciliation_stage(bundle, historical_v3)
+
+    historical_v4 = deepcopy(verified)
+    historical_v4["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V4
+    )
+    historical_v4["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V4)
+    )
+    historical_v4["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v4["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v4["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v4.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v4)
+
+    historical_v5 = deepcopy(verified)
+    historical_v5["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V5
+    )
+    historical_v5["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V5)
+    )
+    historical_v5["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v5["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v5["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v5.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v5)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (
