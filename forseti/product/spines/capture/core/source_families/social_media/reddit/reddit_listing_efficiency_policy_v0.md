@@ -389,11 +389,14 @@ week over week.
 
 ## After admission
 
-Deep-read the post body and all comments retained by the bounded capture for an
-admitted thread; do not stop at the top comment. The normal capture ceiling is
-150 rendered comments. If the read remains decision-unresolved but plausibly
-material at that point, perform one targeted revisit for the missing branch or
-post detail rather than expanding the whole tree by default. Separate
+Read the post body and all comments already rendered by the bounded surface
+capture for an admitted thread; do not stop at the top comment. Do not click
+comment-expansion controls by default. If that surface read remains
+decision-unresolved but plausibly material, perform one explicit bounded deep
+pass. That pass stops at 150 rendered comments, two consecutive no-growth
+rounds, no remaining control, or eight rounds. If the deep read is still
+unresolved, perform one targeted revisit for the missing branch or post detail
+rather than expanding the whole tree. Separate
 independent voices from the original poster, bots, author replies, and nested
 repetition. Comment points order presentation; they do not establish truth.
 
@@ -442,9 +445,10 @@ card-first shape is overhead and cluster synthesis leads again.
 
 ## Accepted residuals and non-claims
 
-- Captured threads are depth-bounded, not exhaustive. On the www surface the
-  in-place tree expands at most four controls per round and stops at the first
-  of 150 rendered comments, two consecutive no-growth rounds, no remaining
+- Captured threads are depth-bounded, not exhaustive. The default www surface
+  pass clicks zero comment-expansion controls. An explicit plausibly-material
+  deep pass expands at most four controls per round and stops at the first of
+  150 rendered comments, two consecutive no-growth rounds, no remaining
   control, or eight rounds. The retained metadata records the click count,
   rendered-comment count, and stop reason. The 150 ceiling was backtested on
   948 substantive prior-week extracts: it retained 1,888 of 1,894 matched

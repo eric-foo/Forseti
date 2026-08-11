@@ -62,15 +62,12 @@ TRANSPORT_SOURCE_SURFACES = {
     WWW_REALCHROME_TRANSPORT: "www_reddit_realchrome_cdp",
 }
 
-# The value ceiling was backtested on two completed weekly corpora plus the
-# current 41-thread read. In the completed 2026-08-01 extracts, the first 150
-# comments retained 1,888/1,894 matched evidence quotes and every published
-# cluster/card conclusion; the current read retained all 81 material evidence
-# references by comment 125. Expansion is therefore incremental and stops at
-# 150 comments, after two no-growth rounds, or at the existing round bound.
-# Four controls per round prevents one page from firing every visible "more"
-# control synchronously (the 2026-08-11 rate-limited batch reached 112 clicks
-# on one thread and then navigated the next slot with a zero-second gap).
+# Comment expansion is an explicit second-pass operation. The default surface
+# pass retains the post and already-rendered comments with zero expansion
+# clicks; an unresolved but plausibly valuable thread may opt into the bounded
+# deep pass below. Its 150-comment ceiling was backtested on two completed
+# weekly corpora plus the current 41-thread read and retained 1,888/1,894
+# matched prior-week evidence quotes plus every published conclusion.
 WWW_EXPAND_CONTROL_PATTERN = r"more repl(?:y|ies)|more comments?|load more comments?"
 WWW_EXPAND_CONTROL_SELECTOR = "shreddit-comment-tree button, shreddit-comment-tree a"
 WWW_EXPAND_MAX_ROUNDS = 8
@@ -85,10 +82,11 @@ WWW_VIEWPORT_HEIGHT = 20000
 WWW_SETTLE_SECONDS = 12.0
 WWW_PERSISTENT_TAB_MARKER = "forseti-reddit-thread"
 DEFAULT_CDP_ENDPOINT = "http://127.0.0.1:9223"
-# Thread expansion can itself take longer than the shared 31-46 second cycle.
-# Deep capture therefore needs a true post-capture gap; otherwise a long tree
-# produces a zero-second wait before the next navigation.
-THREAD_DEEP_CAPTURE_CADENCE_BASIS = "gap"
+# Capture duration counts toward the shared 31-46 second interval. Expansion
+# is exceptional rather than the default, so a forced second wait after each
+# rendered page would add latency without reducing the ordinary interaction
+# count.
+THREAD_CAPTURE_CADENCE_BASIS = "cycle"
 
 
 class ThreadProjectionAnomalyError(ValueError):
@@ -142,11 +140,12 @@ def run_reddit_old_http_batch(
     cadence_min_gap_seconds: float | None = REDDIT_CADENCE_MIN_GAP_SECONDS,
     cadence_max_gap_seconds: float | None = REDDIT_CADENCE_MAX_GAP_SECONDS,
     cadence_random_seed: int | None = None,
-    cadence_basis: str = THREAD_DEEP_CAPTURE_CADENCE_BASIS,
+    cadence_basis: str = THREAD_CAPTURE_CADENCE_BASIS,
     requested_retention_mode: str = DEFAULT_RETENTION_MODE,
     transport: str = OLD_HTTP_TRANSPORT,
     cdp_endpoint: str = DEFAULT_CDP_ENDPOINT,
     keep_raw_audit_sample: bool = False,
+    expand_comments: bool = False,
     resume: bool = False,
     refusal_circuit_breaker: int = DEFAULT_REFUSAL_CIRCUIT_BREAKER,
 ) -> tuple[int, str]:
@@ -272,6 +271,7 @@ def run_reddit_old_http_batch(
                     data_root=data_root,
                     cdp_endpoint=cdp_endpoint,
                     keep_raw_audit_sample=keep_raw_audit_sample,
+                    expand_comments=expand_comments,
                     timeout_seconds=timeout_seconds,
                     cadence_plan=cadence_plan,
                     index=index,
@@ -392,8 +392,8 @@ def run_reddit_old_http_batch(
         ),
         "lake_committed": data_root is not None,
         # "not browser automation" holds only on the direct-HTTP transport. The
-        # www transport drives the operator's real Chrome and clicks in-place
-        # expansion controls, so keeping that claim here would be false.
+        # www transport drives the operator's real Chrome. Expansion controls
+        # are clicked only on an explicit bounded second pass.
         "non_claims": [
             "not crawler",
             "not source discovery",
@@ -406,12 +406,17 @@ def run_reddit_old_http_batch(
                 ["not browser automation"]
                 if transport == OLD_HTTP_TRANSPORT
                 else [
-                    "browser automation IS used: the operator's real Chrome renders the "
-                    "thread and in-place comment expansion controls are clicked",
+                    "browser automation IS used: the operator's real Chrome renders the thread",
+                    *(
+                        ["in-place comment expansion controls are clicked"]
+                        if expand_comments
+                        else ["no comment expansion controls are clicked"]
+                    ),
                     "not continuation-page fetch",
                 ]
             ),
         ],
+        "comment_expansion_requested": expand_comments,
         "delay_seconds": cadence_plan.delay_seconds,
         "cadence": cadence_plan.to_dict(),
         "max_urls": max_urls,
@@ -478,6 +483,7 @@ def _capture_www_thread(
     data_root: "DataLakeRoot | None",
     cdp_endpoint: str,
     keep_raw_audit_sample: bool,
+    expand_comments: bool,
     timeout_seconds: float,
     cadence_plan: Any,
     index: int,
@@ -523,21 +529,29 @@ def _capture_www_thread(
         output_directory=output_directory,
         data_root=data_root,
         capture_context=(
-            "bounded reddit thread deep-read capture over the www surface; one declared "
-            "thread page per slot; in-place comment expansion only, with no link "
-            "following, continuation-page fetch, user/profile capture, or self-scheduling"
+            "bounded reddit thread capture over the www surface; one declared thread "
+            "page per slot; "
+            + (
+                "explicit bounded in-place comment expansion"
+                if expand_comments
+                else "surface-only read with no comment expansion"
+            )
+            + "; no link following, continuation-page fetch, user/profile capture, "
+            "or self-scheduling"
         ),
         cdp_endpoint=cdp_endpoint,
         persistent_tab_marker=WWW_PERSISTENT_TAB_MARKER,
         ready_selector=WWW_READY_SELECTOR,
-        expand_control_pattern=WWW_EXPAND_CONTROL_PATTERN,
+        expand_control_pattern=(WWW_EXPAND_CONTROL_PATTERN if expand_comments else None),
         expand_control_selector=WWW_EXPAND_CONTROL_SELECTOR,
-        expand_max_rounds=WWW_EXPAND_MAX_ROUNDS,
+        expand_max_rounds=(WWW_EXPAND_MAX_ROUNDS if expand_comments else 0),
         expand_settle_ms=WWW_EXPAND_SETTLE_MS,
         expand_max_clicks_per_round=WWW_EXPAND_MAX_CLICKS_PER_ROUND,
         expand_progress_selector=WWW_EXPAND_PROGRESS_SELECTOR,
-        expand_progress_target=WWW_EXPAND_PROGRESS_TARGET,
-        expand_max_no_progress_rounds=WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS,
+        expand_progress_target=(WWW_EXPAND_PROGRESS_TARGET if expand_comments else None),
+        expand_max_no_progress_rounds=(
+            WWW_EXPAND_MAX_NO_PROGRESS_ROUNDS if expand_comments else 0
+        ),
         viewport_width=WWW_VIEWPORT_WIDTH,
         viewport_height=WWW_VIEWPORT_HEIGHT,
         settle_seconds=WWW_SETTLE_SECONDS,
@@ -881,8 +895,8 @@ def _build_parser() -> argparse.ArgumentParser:
         default=OLD_HTTP_TRANSPORT,
         help=(
             "old_http: direct HTTP against old.reddit.com. www_realchrome: render "
-            "www.reddit.com in the operator's real Chrome over CDP and expand the "
-            "in-place comment tree before projecting."
+            "www.reddit.com in the operator's real Chrome over CDP; the default "
+            "projects already-rendered comments without expansion."
         ),
     )
     parser.add_argument("--cdp-endpoint", default=DEFAULT_CDP_ENDPOINT)
@@ -890,6 +904,14 @@ def _build_parser() -> argparse.ArgumentParser:
         "--keep-raw-audit-sample",
         action="store_true",
         help="www transport only: keep the rendered DOM alongside the content record.",
+    )
+    parser.add_argument(
+        "--expand-comments",
+        action="store_true",
+        help=(
+            "Explicit second pass only: click bounded in-place comment controls up to "
+            "the 150-comment ceiling. The default surface pass clicks none."
+        ),
     )
     parser.add_argument(
         "--data-root",
@@ -911,7 +933,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--cadence-basis",
         choices=list(CADENCE_BASES),
-        default=THREAD_DEEP_CAPTURE_CADENCE_BASIS,
+        default=THREAD_CAPTURE_CADENCE_BASIS,
         help=(
             "gap: the cadence numbers are the wait BETWEEN captures. cycle: they "
             "are the target start-to-start interval and the capture duration is "
@@ -975,6 +997,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             transport=args.transport,
             cdp_endpoint=args.cdp_endpoint,
             keep_raw_audit_sample=args.keep_raw_audit_sample,
+            expand_comments=args.expand_comments,
             decision_question=args.decision_question,
             data_root=data_root,
             delay_seconds=args.delay_seconds,

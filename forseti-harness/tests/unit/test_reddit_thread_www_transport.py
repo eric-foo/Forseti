@@ -82,6 +82,7 @@ def test_main_forwards_the_transport_to_the_runner(tmp_path, monkeypatch):
     assert exit_code == 0
     assert seen["transport"] == "www_realchrome"
     assert seen["cdp_endpoint"] == "http://127.0.0.1:9999"
+    assert seen["expand_comments"] is False
     # The slot list must be validated against the www host, not old.reddit.
     assert [slot.url for slot in seen["slots"]] == [WWW_URL]
 
@@ -145,7 +146,7 @@ def test_www_summary_does_not_claim_it_avoided_browser_automation():
     assert batch.TRANSPORT_HOSTS["www_realchrome"] == "www.reddit.com"
 
 
-def test_www_thread_forwards_the_bounded_expansion_policy(tmp_path, monkeypatch):
+def test_www_thread_defaults_to_zero_comment_expansion(tmp_path, monkeypatch):
     from runners import run_source_capture_realchrome_cdp_packet as cdp
 
     seen: dict = {}
@@ -162,6 +163,38 @@ def test_www_thread_forwards_the_bounded_expansion_policy(tmp_path, monkeypatch)
         data_root=None,
         cdp_endpoint="http://127.0.0.1:9222",
         keep_raw_audit_sample=False,
+        expand_comments=False,
+        timeout_seconds=20.0,
+        cadence_plan=SimpleNamespace(mode="fixed", planned_offsets_seconds=[0.0]),
+        index=0,
+    )
+
+    assert seen["expand_control_pattern"] is None
+    assert seen["expand_max_rounds"] == 0
+    assert seen["expand_progress_target"] is None
+    assert seen["expand_max_no_progress_rounds"] == 0
+
+
+def test_www_thread_explicitly_forwards_the_bounded_expansion_policy(
+    tmp_path, monkeypatch
+):
+    from runners import run_source_capture_realchrome_cdp_packet as cdp
+
+    seen: dict = {}
+    monkeypatch.setattr(
+        cdp,
+        "run_source_capture_realchrome_cdp_packet",
+        lambda **kwargs: (seen.update(kwargs), (0, "ok"))[1],
+    )
+
+    batch._capture_www_thread(
+        slot=batch.BatchSlot(slot_id="s1", url=WWW_URL),
+        decision_question="q",
+        output_directory=tmp_path / "packet",
+        data_root=None,
+        cdp_endpoint="http://127.0.0.1:9222",
+        keep_raw_audit_sample=False,
+        expand_comments=True,
         timeout_seconds=20.0,
         cadence_plan=SimpleNamespace(mode="fixed", planned_offsets_seconds=[0.0]),
         index=0,
@@ -184,9 +217,22 @@ def test_grid_cli_preserves_the_lane_cadence_defaults():
     assert args.cadence_basis == grid.DEFAULT_CADENCE_BASIS
 
 
-def test_thread_cli_uses_a_true_post_capture_gap():
+def test_thread_cli_uses_capture_cycle_and_surface_only_defaults():
     args = batch._build_parser().parse_args(
         ["--url-list", "urls.json", "--output-root", "out", "--decision-question", "q"]
     )
-    assert args.cadence_basis == batch.THREAD_DEEP_CAPTURE_CADENCE_BASIS
-    assert args.cadence_basis == "gap"
+    assert args.cadence_basis == batch.THREAD_CAPTURE_CADENCE_BASIS
+    assert args.cadence_basis == "cycle"
+    assert args.expand_comments is False
+
+
+def test_thread_cli_enables_expansion_only_when_explicit():
+    args = batch._build_parser().parse_args(
+        [
+            "--url-list", "urls.json",
+            "--output-root", "out",
+            "--decision-question", "q",
+            "--expand-comments",
+        ]
+    )
+    assert args.expand_comments is True
