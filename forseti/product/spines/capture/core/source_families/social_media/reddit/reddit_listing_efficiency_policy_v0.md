@@ -61,6 +61,17 @@ customer. Under it:
   already works, not where the gap is. Failure, disappointment, workaround,
   substitution, compatibility conflict, and unmet-need questions carry the
   admission.
+- **Concrete evidence outranks the outer format.** Collection, routine, haul,
+  favorite, praise, Project Pan, and current-use labels are weak priors, never
+  vetoes. When listing-visible context or the captured OP supplies a concrete
+  comparison/substitute, product failure or performance tradeoff, price/access
+  switch, compatibility conflict, abandonment/regret, consumption problem, or
+  specific recommendation demand, adjudicate that evidence instead of the
+  format label. At listing time, a weak-format title with a visible commercial
+  object that could plausibly conceal such evidence is `borderline`, not `no`,
+  until the cheap preview or selective OP-text fallback resolves it. A pure
+  showcase, generic favorites prompt, ordinary haul, or routine list with no
+  concrete decision promise remains `no`.
 - **Opacity is weak evidence of low value.** A latent problem is by definition
   unnamed, so it is described in ordinary language rather than product
   vocabulary; and established community formats carry purchase, acquisition,
@@ -247,6 +258,39 @@ Raise admission when the listing visibly promises:
 
 Strong language without a visible commercial object does not qualify.
 
+**Evidence-precedence rule (owner decision 2026-08-11).** Apply the strongest
+supported decision evidence in the available context; do not let a weaker
+format prior override it. In particular:
+
+- `collection` plus clone/original, substitute, or product-to-product judgment
+  is comparison evidence, not a collection showcase;
+- `routine` plus breakouts, irritation, overload, a product swap, or a specific
+  missing product is compatibility, failure, or demand evidence;
+- `haul` plus retailer/price comparison, access friction, switching, or a
+  specific next-purchase request is purchase evidence, not an ordinary haul;
+- praise plus prior failures, a named comparator, material performance detail,
+  or a price/access tradeoff is product evidence, not praise-only content; and
+- Project Pan, empties, or decluttering plus overbuying, giveaways,
+  non-repurchase, allergy, poor longevity, regret, or an impractical use-up
+  horizon is consumption/abandonment evidence, not a progress showcase.
+
+The negative control is equally binding: the format alone does not admit. A
+plain collection, product list, swatch gallery, routine, haul, favorite prompt,
+or progress update remains suppressed when the available context contains no
+specific comparison, failure, tradeoff, switching, compatibility, consumption,
+or demand evidence. If the listing cannot distinguish those two states and a
+commercial object is visible, use `borderline` and the listing-preview/OP-text
+fallback rather than inventing either a pass or a suppression.
+
+This rule closes the repeated failure measured in the 2026-08-11 weekly tail
+audit: selective OP fallback corrected 31 `no` decisions and one `borderline`
+across 17 subreddits in the 2,690-thread adjudicated pool. The corrected cases
+spanned clone comparisons, skincare incompatibility, retailer price switching,
+shaving performance, sunscreen failures, and product abandonment; inspected
+pure showcases, generic favorites, ordinary hauls, and progress posts remained
+suppressed. The audit supports semantic precedence and bounded fallback, not a
+new title-keyword classifier.
+
 ### 5. Objective suppression
 
 Return `no` by default for:
@@ -266,6 +310,10 @@ High score or comment count cannot rescue the wrong objective.
 ### 6. Format and source priors
 
 Normalize the format before deciding:
+
+- Apply the evidence-precedence rule above before any format prior. A format
+  prior may break a genuine tie or lower priority; it may not erase concrete
+  decision evidence already present in the listing preview or captured OP.
 
 - Swatches are product-map evidence, not generic showcases, when products,
   undertones, discontinuation, price, wear, or substitutes are likely.
