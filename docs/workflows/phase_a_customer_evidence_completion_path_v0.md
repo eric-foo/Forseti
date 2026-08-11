@@ -579,3 +579,71 @@ cannot carry every row. The successful final three-row blind replay rendered at
 candidate. It is not yet the full-corpus default: it roughly doubles prompt
 bytes versus 90,000 and still needs the complete 91-row semantic replay to
 measure quality and latency under that packing.
+
+Contract v27 keeps the one-reader whole-row architecture and versions its
+verifier method to v3. A customer attribute excluded from a result's structured
+conditions must also disappear from that result's sentence. When the source
+separately links the excluded attribute to another product response, that
+separate meaning remains evidence instead of disappearing with the neighboring
+condition. Calibration can now grade an explicitly supplied verified
+compilation, but only after rebuilding its primary compilation and proving that
+the verifier manifest cites that exact input and preserves its raw-response
+lineage. Method-v7 calibration fails closed when no verified compilation is
+supplied. When cold repeat is configured, its raw responses pass through the
+same row-verification application and exact-input lineage check under the
+reserved `cold-repeat` slice id; method v7 therefore compares verified primary
+rows only with verified repeat rows.
+
+The final boundary replay at
+`C:\tmp\forseti-summer-fridays-row-verification-v3-boundary-20260811-v1`
+rendered the same three real Summer Fridays rows in one 44,047-byte prompt. All
+three fresh blind readers preserved lip sensitivity as its own product-linked
+reaction, excluded sensitivity from hydration, retained very dry lips as the
+hydration baseline, and retained natural wrinkles—but not dryness—as the
+smoothing baseline. This closed the repeated statement-versus-condition leak
+without adding a second standing verifier, case-specific field, parser, or
+provider call.
+
+The complete 91-row replay at
+`C:\tmp\forseti-summer-fridays-semantic-final-v3-50k-20260811-v1` then used a
+50,000-byte verifier ceiling. The final method text packed 91 claim-bearing rows
+into 18 prompts, with a 49,674-byte largest prompt and 846,131 rendered bytes in
+total. Three blind workers returned 37 accepts, 54 complete-row replacements,
+and zero unresolved verification decisions. The active compilation contains
+278 semantic units and has `compilation_sha256:
+c90fd3a7fdc4addffa2aac905ad9a7964301ace0985985543b5852f2ce627230`.
+The five previously load-bearing rows now preserve the settled boundaries: the
+balm-value judgment and separate sensitivity reaction survive; sensitivity does
+not enter hydration; dryness does not enter smoothing; ownership and repurchase
+do not borrow shade fit; and the Ole Henriksen comparison does not invent a
+Summer Fridays quantity claim.
+
+Reconciliation completed in four levels over 25 observed minutes from verifier
+preparation to final view. A level-one competence correction demoted six
+community-authored observable statements from established facts to non-terminal
+attributed evidence; their meaning and provenance remained available. The
+terminal `semantic_evidence_integration_view_v2` accounts for all 121 captured
+items, contains 10 consolidated propositions—nine independently repeated and
+one resonance-supported—plus 242 distinct unmerged semantic units, and keeps
+three source leaves explicitly unresolved. Its
+`view_sha256` is
+`701602c002fdc056b4faf7cdae7f2efc7024462feaf8b05a4f6208be6e105a51`.
+The 161-plus-1 split at reconciliation level three is an observed latency
+inefficiency, not a semantic omission or a reason to mutate the route inside
+this proof.
+
+What that run does not establish is the new calibration gate itself. Its bundle
+is `semantic_evidence_integration_method_v6`, recorded as `method_version` on
+the terminal view, so the method-v7 fail-closed path above has unit coverage
+only and no real-run evidence. The same lineage carries a second gap the run
+cannot close: because row verification is permitted but not required below v7,
+this exact v6 lineage can still be graded on its unverified primary compilation
+by omitting the verified-compilation root, and the calibration report records
+only a compilation hash, never which of the two it graded.
+
+This completes the production-shaped 121-leaf batch's accounted semantic path;
+it does not yet authorize the 59,225-leaf corpus. The existing calibration gold
+predates the settled attribute, ownership-axis, and comparison boundaries, so a
+fresh adjudication must grade this exact verified compilation and its terminal
+view before the full corpus resumes. The run makes no prevalence, Deliver,
+campaign, seal, or readiness claim.
