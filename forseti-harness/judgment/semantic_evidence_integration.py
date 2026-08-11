@@ -36,7 +36,8 @@ ROW_VERIFICATION_METHOD_VERSION_V3 = "semantic_evidence_row_verification_method_
 ROW_VERIFICATION_METHOD_VERSION_V4 = "semantic_evidence_row_verification_method_v4"
 ROW_VERIFICATION_METHOD_VERSION_V5 = "semantic_evidence_row_verification_method_v5"
 ROW_VERIFICATION_METHOD_VERSION_V6 = "semantic_evidence_row_verification_method_v6"
-ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v7"
+ROW_VERIFICATION_METHOD_VERSION_V7 = "semantic_evidence_row_verification_method_v7"
+ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v8"
 # The new generation deliberately keeps the legacy pretty-printed prompt
 # encoding. It is bound by name so a future compact encoding cannot silently
 # reuse a projection that was packed and byte-bounded under this one.
@@ -583,7 +584,7 @@ ROW_VERIFICATION_METHOD_TEXT_V6 = (
     )
 )
 
-ROW_VERIFICATION_METHOD_TEXT = (
+ROW_VERIFICATION_METHOD_TEXT_V7 = (
     ROW_VERIFICATION_METHOD_TEXT_V6.replace(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6",
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7",
@@ -602,6 +603,30 @@ ROW_VERIFICATION_METHOD_TEXT = (
         "scope. Earlier extraction examples identify separate atoms; they do not decide\n"
         "referent scope. Preserve an explicit overall evaluation separately from attribute\n"
         "facts and from the disposition reason.\n",
+        1,
+    )
+)
+
+ROW_VERIFICATION_METHOD_TEXT = (
+    ROW_VERIFICATION_METHOD_TEXT_V7.replace(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7",
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8",
+        1,
+    ).replace(
+        "If uncertain, leave the result unconditioned.\n",
+        "If uncertain, leave the result unconditioned. A trait that describes\n"
+        "susceptibility to irritation or reaction does not by itself establish a\n"
+        "hydration or moisture baseline; keep a neighboring hydration result\n"
+        "unconditioned unless the source explicitly links that trait to hydration.\n",
+        1,
+    ).replace(
+        "- One side's quantity cannot create a relative quantity claim. Do not import an\n"
+        "  unstated attribute, reason, cause, or comparison from nearby wording.\n",
+        "- One side's quantity cannot create a relative quantity claim. Explicit loss,\n"
+        "absorption, or waste of usable product supports value_and_quantity even when\n"
+        "it occurs through a tool or texture; preserve it separately when its truth can\n"
+        "vary independently. Do not import an unstated attribute, reason, cause, or\n"
+        "comparison from nearby wording.\n",
         1,
     )
 )
@@ -5374,11 +5399,13 @@ __all__ = [
     "ROW_VERIFICATION_METHOD_TEXT_V4",
     "ROW_VERIFICATION_METHOD_TEXT_V5",
     "ROW_VERIFICATION_METHOD_TEXT_V6",
+    "ROW_VERIFICATION_METHOD_TEXT_V7",
     "ROW_VERIFICATION_METHOD_VERSION",
     "ROW_VERIFICATION_METHOD_VERSION_V3",
     "ROW_VERIFICATION_METHOD_VERSION_V4",
     "ROW_VERIFICATION_METHOD_VERSION_V5",
     "ROW_VERIFICATION_METHOD_VERSION_V6",
+    "ROW_VERIFICATION_METHOD_VERSION_V7",
     "ROW_VERIFICATION_RESPONSE_VERSION",
     "ROW_VERIFICATION_STAGE_VERSION",
     "RECONCILIATION_RESPONSE_VERSION",

@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v31
-effective_date: 2026-08-11
+version: v32
+effective_date: 2026-08-12
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v31
+# Semantic Evidence Integration Contract v32
 
 ## Purpose
 
@@ -231,6 +231,15 @@ visible, while the option is not copied automatically into later conditions.
 Earlier extraction examples identify separate meanings but do not decide their
 referent scope. This adds no variant catalog, response field, parser, second
 verifier, conclusion, or full-corpus resume authority.
+
+Contract v32 versions the verifier method to v8 and closes the two residuals
+found by the four-comment delta replay. A reaction-susceptibility trait does not
+by itself become a hydration baseline; a neighboring hydration result remains
+unconditioned unless the source links that trait to hydration. Explicit loss,
+absorption, or waste of usable product remains `value_and_quantity` evidence
+even when the mechanism is a tool or texture, and it stays separately usable
+when its truth can vary independently. This adds no category registry, response
+field, parser, second verifier, conclusion, or full-corpus resume authority.
 
 For method v7, `personal_agreement` may remain support for a bounded meaning but
 never adds a credited independent origin and must not be described as another
@@ -1042,6 +1051,11 @@ new frontier.
 
 ## Changelog
 
+- `v32` / 2026-08-12 — versioned the whole-row verifier method to v8, prevented
+  reaction-susceptibility traits from becoming unsupported hydration conditions,
+  and preserved explicit usable-product loss or waste as separately retrievable
+  `value_and_quantity` evidence. Added no category registry, schema, field,
+  parser, second verifier, provider call, or full-corpus resume authority.
 - `v31` / 2026-08-11 — versioned the whole-row verifier method to v7, resolved
   pronouns and evaluation scope from the whole conversation, separated explicit
   named-option ownership from later product-level judgments, and prevented

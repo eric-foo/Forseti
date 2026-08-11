@@ -766,3 +766,20 @@ blind rounds, all three readers selected a product-level sale judgment; after a
 completeness clarification, all three also retained Poppy ownership, sale value,
 switching, smoothing failure, and no-repurchase evidence. This bounded check
 does not resume the full corpus or close the other recorded residuals.
+
+The four-comment verifier-v7 delta at
+`C:\tmp\forseti-summer-fridays-semantic-delta-v1-20260811-v0` confirmed the
+referent-scope correction: independent reads retained Poppy as ownership context
+while keeping the sale-only judgment at product scope, and both retained the
+skin-tint conversion context. It also exposed two narrower verifier residuals:
+one verifier reused reaction susceptibility as a hydration condition, and one
+lost the value meaning of explicit product waste through an application tool.
+Contract v32 versions the verifier to v8 with those two general clarifications.
+The bounded blind replay at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v8-delta-20260812-v0`
+applied verifier v8 independently to the primary and cold compilations. Both
+verified outputs left hydration unconditioned by sensitivity, retained explicit
+sponge/product loss under `value_and_quantity`, and completed with zero
+unresolved rows. The runner accepted both full verified compilations. This
+closes the two-comment verifier boundary; no historical result is relabelled and
+the replay alone does not claim full-corpus completion.

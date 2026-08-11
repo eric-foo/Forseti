@@ -36,11 +36,13 @@ from judgment.semantic_evidence_integration import (
     ROW_VERIFICATION_METHOD_TEXT_V4,
     ROW_VERIFICATION_METHOD_TEXT_V5,
     ROW_VERIFICATION_METHOD_TEXT_V6,
+    ROW_VERIFICATION_METHOD_TEXT_V7,
     ROW_VERIFICATION_METHOD_VERSION,
     ROW_VERIFICATION_METHOD_VERSION_V3,
     ROW_VERIFICATION_METHOD_VERSION_V4,
     ROW_VERIFICATION_METHOD_VERSION_V5,
     ROW_VERIFICATION_METHOD_VERSION_V6,
+    ROW_VERIFICATION_METHOD_VERSION_V7,
     ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -2714,10 +2716,10 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
-def test_row_verification_v7_installs_general_completeness_and_context_boundaries() -> None:
+def test_row_verification_v8_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
     assert ROW_VERIFICATION_METHOD_TEXT.startswith(
-        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7"
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8"
     )
     assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
@@ -2782,11 +2784,19 @@ def test_row_verification_v7_installs_general_completeness_and_context_boundarie
         "not from the nearest named option alone",
         "Preserve explicit ownership or experience as its own meaning",
         "Earlier extraction examples identify separate atoms; they do not decide",
+        "susceptibility to irritation or reaction does not by itself establish a",
+        "hydration or moisture baseline",
+        "Explicit loss, absorption, or waste of usable product supports",
+        "value_and_quantity even when it occurs through a tool or texture",
     ):
         assert principle in normalized
     normalized_v4 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V4.split())
+    normalized_v7 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V7.split())
     assert "Sensitivity alone is not a moisture baseline" in normalized_v4
     assert "product-linked sensitivity is reaction or tolerance context" in normalized_v4
+    assert "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7" in normalized_v7
+    assert "susceptibility to irritation or reaction" not in normalized_v7
+    assert "waste of usable product supports" not in normalized_v7
     assert "merely buying, owning, or repurchasing that shade may not" not in normalized
     for case_phrase in (
         "Summer Fridays",
@@ -3046,6 +3056,33 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
         match="does not bind the current verification method",
     ):
         prepare_reconciliation_stage(bundle, historical_v6)
+
+    historical_v7 = deepcopy(verified)
+    historical_v7["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V7
+    )
+    historical_v7["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V7)
+    )
+    historical_v7["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v7["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v7["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v7.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v7)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (
