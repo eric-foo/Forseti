@@ -113,11 +113,14 @@ Implement remains unchanged. See
 
 Current disposition: retain unchanged Success Implement only as the
 least-disproven incumbent; reject the inert P2 placebo, budget-neutral P3, and
-budget-neutral P4 owner-outcome anchor; claim no reliable improvement. P4 made
-the two-run diagnostic cheaper and slightly faster in median but worsened
-quality, still collapsed both #1267 completions, and repeated a
-`missing_required_seam` regression. No next mechanism is selected and no
-current behavior or authority changed. See
+the exact budget-neutral P4 wording package; claim no reliable improvement
+among the tested mechanisms. P4 made
+the two-run diagnostic lower in median comparison tokens and wall time but
+worsened quality, still collapsed both #1267 completions, and repeated a
+`missing_required_seam` regression. The result rejects the exact P4 wording
+package on those two runs; it does not isolate the anchor or generalize across
+cases or model versions. No next mechanism is selected and no current behavior
+or authority changed. See
 [`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
 
 ## Eight separate evidence records
@@ -180,13 +183,15 @@ current behavior or authority changed. See
 
 ### 2026-08
 
-- **2026-08-12 — Budget-neutral owner-outcome conservation rejected.** Two
-  repeated P1/P4 blocks on PR #1267 found P4 cheaper and slightly faster in
-  median but worse on quality: two accepted critical defects versus one, more
-  majors, two broad completion collapses, and a repeated
+- **2026-08-12 — Exact budget-neutral P4 package rejected.** Two
+  repeated P1/P4 blocks on PR #1267 found P4 lower in two-run median comparison
+  tokens and wall time but worse on quality: two accepted critical defects
+  versus one, more majors, two broad completion collapses, and a repeated
   `missing_required_seam` regression. The diagnostic stopped before its three
-  contrasting exposed cases. Success Implement and all runtime/install copies
-  remain unchanged. [Diagnostic
+  contrasting exposed cases. A same-vendor adversarial audit then narrowed the
+  causal claim: the experiment rejects the exact P4 package, not the anchor in
+  isolation or every outcome-conservation mechanism. Success Implement and all
+  runtime/install copies remain unchanged. [Diagnostic
   record](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md)
 - **2026-08-12 — Instruction-budget causal screen stopped at Stage A.** Two
   repeated P1/P2/P3 blocks on four cases showed that unchanged Success
