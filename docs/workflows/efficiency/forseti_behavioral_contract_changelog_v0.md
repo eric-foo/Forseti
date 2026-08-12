@@ -21,6 +21,7 @@ open_next:
   - docs/workflows/efficiency/success_implement_instruction_budget_causal_screen_2026_08_12_v0.md
   - docs/workflows/efficiency/success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md
   - docs/workflows/efficiency/success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md
+  - docs/workflows/efficiency/success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md
   - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - A named in-scope behavior changes owner, status, or operating shape without an update here.
@@ -33,8 +34,8 @@ the current owner before acting. A historical PR explains a transition but
 cannot override current source.
 
 Snapshot basis: Forseti `main` at
-[`dd5a9252`](https://github.com/eric-foo/forseti/commit/dd5a92526bc6485549f4d3dce824a4249fc8e377),
-observed 2026-08-12. External Agent Workflow and installed resolver state
+[`cd49c600`](https://github.com/eric-foo/forseti/commit/cd49c600ee347bf6c25c50cc351a2c131c9fee04),
+observed 2026-08-13. External Agent Workflow and installed resolver state
 require their own fresh check when load-bearing.
 
 ## Current behavioral authority inventory
@@ -130,6 +131,16 @@ three runs. The pre-registered gate rejected E2; Success Implement remains
 unchanged. See
 [`success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md`](success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md).
 
+The E3 follow-on kept Success Implement unchanged and added a fresh
+completion-admission check after the initial closeout. All three checkers
+approved; oracle-backed decision adjudication said all three should have
+returned `CONTINUE`; and no continuation or patch change occurred. E3's lower
+weighted harm and resource medians therefore describe initial-run variance,
+not a causal mechanism gain. Exact evaluator packets also disclosed arm paths,
+so comparative quality scoring is de-blinded same-family evidence, not blind
+proof. The exact checker is rejected; Success Implement remains unchanged. See
+[`success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md`](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md).
+
 Current disposition: retain unchanged Success Implement only as the
 least-disproven incumbent; reject the inert P2 placebo, budget-neutral P3, and
 the exact budget-neutral P4 wording package; claim no reliable improvement
@@ -142,12 +153,13 @@ cases or model versions. The exact controller-owned boundary probe is also
 rejected after two runs. One transparent task-owned acceptance example was
 subsequently tested as E2: it observed its matching request in all three
 submitted Python commands but did not prevent broader premature completion. It
-is rejected as a general Success
-Implement improvement. No next mechanism is selected and no current behavior
-or authority changed. See
+is rejected as a general Success Implement improvement. The later E3
+fresh-context checker also failed: it admitted all three incomplete patches and
+caused zero patch changes. No tested mechanism is a reliable Success Implement
+improvement, and no current behavior or authority changed. See
 [`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
 
-## Ten separate evidence records
+## Eleven separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -199,6 +211,11 @@ or authority changed. See
     times, removed P1's pooled critical, lowered weighted harm and median tokens,
     but repeated broad completion collapse three times. The frozen gate rejected
     it. [E2 record](success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md)
+11. **Fresh-context completion-admission diagnostic — one broad case, three
+    repeated P1/E3 blocks.** Every E3 checker wrongly returned
+    `ADMIT_COMPLETE`; no builder continuation or patch change occurred. The
+    exact mechanism was rejected. [E3
+    record](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -217,6 +234,14 @@ or authority changed. See
 
 ### 2026-08
 
+- **2026-08-13 — Fresh-context E3 completion admission rejected.** Three
+  repeated P1/E3 blocks on PR #1267 found every fresh checker approving an
+  incomplete initial patch. Oracle-backed decision adjudication required
+  `CONTINUE` all three times, but no continuation ran and no E3 patch changed.
+  Lower weighted harm and resource medians were therefore initial-run variance,
+  not an intervention gain. No standing checker or Success Implement change was
+  installed. [Diagnostic
+  record](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md)
 - **2026-08-12 — Transparent E2 acceptance example rejected.** Three repeated
   P1/E2 blocks on PR #1267 showed that a constrained transparent request
   example can elicit its matching boundary: E2 passed all three
