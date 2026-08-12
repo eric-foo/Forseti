@@ -18,6 +18,7 @@ open_next:
   - docs/decisions/forseti_doctrine_index_v0.md
   - docs/workflows/efficiency/success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md
   - docs/workflows/efficiency/success_implement_per_axis_mechanism_screen_2026_08_12_v0.md
+  - docs/workflows/efficiency/success_implement_instruction_budget_causal_screen_2026_08_12_v0.md
   - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - A named in-scope behavior changes owner, status, or operating shape without an update here.
@@ -30,7 +31,7 @@ the current owner before acting. A historical PR explains a transition but
 cannot override current source.
 
 Snapshot basis: Forseti `main` at
-[`536768a5`](https://github.com/eric-foo/forseti/commit/536768a58f77bbb1aa9559e2add8c600f2277231),
+[`5c8dafeb`](https://github.com/eric-foo/forseti/commit/5c8dafebcec7fd490f04cd131dd0a6ff013c0813),
 observed 2026-08-12. External Agent Workflow and installed resolver state
 require their own fresh check when load-bearing.
 
@@ -98,12 +99,19 @@ The later exposed-corpus per-axis screen tested four latency, four token, and
 four quality additions independently. None advanced. The token and quality
 additions all produced a new critical defect on PR #1267, while the latency
 additions each missed at least one frozen resource or quality gate. No new
-skill was created and current behavior did not change. The next hypothesis is
-an unrun causal test of baseline variance versus append-length interference
-versus budget-neutral integration. See
+skill was created and current behavior did not change. See
 [`success_implement_per_axis_mechanism_screen_2026_08_12_v0.md`](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md).
 
-## Six separate evidence records
+The follow-on P1/P2/P3 causal screen then ran two repetitions across four
+cases. It supported baseline variance because unchanged Success Implement also
+collapsed twice on PR #1267; it did not support append interference because
+the required stable P1 contrast was absent. Budget-neutral obligation coverage
+reduced criticals but increased majors, still collapsed in both #1267 runs,
+and cost slightly more median tokens and time. It stopped at Stage A; Success
+Implement remains unchanged. See
+[`success_implement_instruction_budget_causal_screen_2026_08_12_v0.md`](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md).
+
+## Seven separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -135,6 +143,11 @@ versus budget-neutral integration. See
    quality Stage 1 screens.** All 12 narrow additions were rejected; no Stage
    2, combination, or deployment followed. [Per-axis
    record](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md)
+7. **Instruction-budget causal screen — four cases, two repeated three-arm
+   blocks per case.** Baseline variance was supported, append interference was
+   not supported, and budget-neutral obligation coverage failed its Stage A
+   gate. [Causal-screen
+   record](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -153,6 +166,13 @@ versus budget-neutral integration. See
 
 ### 2026-08
 
+- **2026-08-12 — Instruction-budget causal screen stopped at Stage A.** Two
+  repeated P1/P2/P3 blocks on four cases showed that unchanged Success
+  Implement itself can reproduce the broad PR #1267 completion collapse.
+  Append interference was not supported. Budget-neutral obligation coverage
+  reduced pooled criticals but increased majors, failed both #1267 obligation
+  checks, and used slightly more median tokens and time. Stages B/C and
+  deployment did not run. [Causal-screen record](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md)
 - **2026-08-12 — Per-axis Success Implement additions all rejected.** Four
   latency mechanisms failed their frozen gates; four token and four quality
   mechanisms all introduced a critical defect on the broad PR #1267 case.
