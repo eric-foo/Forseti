@@ -13,6 +13,7 @@ if __package__ in {None, ""}:
 
 from judgment.semantic_evidence_integration import (  # noqa: E402
     BUNDLE_VERSION_V4,
+    RECONCILIATION_POLICY_VERSION_V2,
     SemanticIntegrationError,
     apply_row_verification,
     build_batch_prompts,
@@ -21,6 +22,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     build_reconciliation_prompt,
     finalize_v3_view,
     finalize_view,
+    is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
@@ -991,11 +993,20 @@ def finalize(
 
 
 def prepare_reconciliation_level(
-    *, bundle_path: Path, compilation_path: Path, stage_out: Path, prompt_dir: Path
+    *,
+    bundle_path: Path,
+    compilation_path: Path,
+    stage_out: Path,
+    prompt_dir: Path,
+    reconciliation_policy_version: str | None = None,
 ) -> dict[str, Any]:
     bundle = _load_object(bundle_path)
     compilation = _load_object(compilation_path)
-    stage, prompts = prepare_reconciliation_stage(bundle, compilation)
+    stage, prompts = prepare_reconciliation_stage(
+        bundle,
+        compilation,
+        reconciliation_policy_version=reconciliation_policy_version,
+    )
     if prompt_dir.exists():
         raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
     _write_json(stage_out, stage)
@@ -1011,6 +1022,8 @@ def prepare_reconciliation_level(
         "level": stage["level"],
         "batch_count": len(prompts),
         "candidate_count": len(stage["candidates"]),
+        "reconciliation_policy_version": stage.get("reconciliation_policy_version"),
+        "reconciliation_mode": stage.get("reconciliation_mode"),
         "largest_rendered_prompt_bytes": max(
             row["prompt_utf8_bytes"] for row in prompts
         ),
@@ -1032,14 +1045,7 @@ def submit_reconciliation_level(
     responses = [_load_object(path) for path in response_paths]
     compilation = validate_reconciliation_stage(bundle, stage, responses)
     _write_json(compilation_out, compilation)
-    terminal = (
-        compilation["input_batch_count"] == 1
-        and bool(compilation["semantic_nodes"])
-        and all(
-            row["terminal_proposition"] is True
-            for row in compilation["semantic_nodes"]
-        )
-    )
+    terminal = is_terminal_reconciliation_compilation(compilation)
     return {
         "status": (
             "SEMANTIC_FINALIZATION_READY"
@@ -1252,6 +1258,10 @@ def _parser() -> argparse.ArgumentParser:
     reconcile_level.add_argument("--compilation", type=Path, required=True)
     reconcile_level.add_argument("--stage-out", type=Path, required=True)
     reconcile_level.add_argument("--prompt-dir", type=Path, required=True)
+    reconcile_level.add_argument(
+        "--reconciliation-policy",
+        choices=[RECONCILIATION_POLICY_VERSION_V2],
+    )
 
     submit_level = sub.add_parser("submit-reconciliation-level")
     submit_level.add_argument("--bundle", type=Path, required=True)
@@ -1457,6 +1467,7 @@ def main(argv: list[str] | None = None) -> int:
                 compilation_path=args.compilation,
                 stage_out=args.stage_out,
                 prompt_dir=args.prompt_dir,
+                reconciliation_policy_version=args.reconciliation_policy,
             )
         elif args.command == "submit-reconciliation-level":
             result = submit_reconciliation_level(

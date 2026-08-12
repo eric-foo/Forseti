@@ -30,6 +30,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
+    RECONCILIATION_POLICY_VERSION_V2,
     PROMPT_ENCODING_VERSION,
     ROW_VERIFICATION_METHOD_TEXT,
     ROW_VERIFICATION_METHOD_TEXT_V3,
@@ -58,6 +59,7 @@ from judgment.semantic_evidence_integration import (
     build_reconciliation_prompt,
     finalize_view,
     finalize_v3_view,
+    is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
@@ -3413,6 +3415,213 @@ def test_method_v7_requires_verification_without_rewriting_v6_extraction_rules()
     level_two, _ = prepare_reconciliation_stage(v7_bundle, level_one)
     assert level_two["level"] == 2
     assert level_two["batch_compilation_sha256"] == verified["compilation_sha256"]
+
+
+def _verified_policy_compilation(
+    *, count: int, max_prompt_bytes: int = 12_000
+) -> tuple[dict, dict]:
+    bundle = build_bundle(
+        _source_v7(count=count), max_prompt_bytes=max_prompt_bytes
+    )
+    compiled = validate_batch_responses(
+        bundle,
+        _v5_responses(bundle, detailed_per_batch=count),
+    )
+    verification_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        verification_stage,
+        _row_verification_responses(verification_stage),
+    )
+    return bundle, verified
+
+
+def _singleton_reconciliation_responses(stage: dict) -> list[dict]:
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    responses = []
+    for batch in stage["batches"]:
+        nodes = []
+        for index, child_ref in enumerate(batch["candidate_refs"], start=1):
+            candidate = candidate_index[child_ref]
+            nodes.append(
+                {
+                    # Keys deliberately repeat in other prompt batches. They
+                    # are local response handles, not corpus-global identity.
+                    "semantic_node_key": f"node-{index}",
+                    "bounded_meaning": candidate["statement"],
+                    "terminal_proposition": False,
+                    "claim_kind": None,
+                    "subject_product_ids": candidate["subject_product_ids"],
+                    "comparator_product_ids": candidate["comparator_product_ids"],
+                    "product_version_ids": candidate["product_version_ids"],
+                    "axis_ids": candidate["axis_ids"],
+                    "emerging_axis_labels": candidate["emerging_axis_labels"],
+                    "conditions": candidate["conditions"],
+                    "polarity": candidate["polarity"],
+                    "uncertainty_posture": candidate["uncertainty_posture"],
+                    "child_relations": [
+                        {"child_ref": child_ref, "relation": "support"}
+                    ],
+                    "opposition_checked": None,
+                    "causal_ceiling": None,
+                }
+            )
+        responses.append(
+            {
+                "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "semantic_nodes": nodes,
+                "unmerged_children": [],
+                "emerging_axis_consolidations": [],
+            }
+        )
+    return responses
+
+
+def test_policy_v2_node_keys_are_local_to_each_prompt_batch() -> None:
+    bundle, verified = _verified_policy_compilation(
+        count=40, max_prompt_bytes=12_000
+    )
+    stage, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    assert len(stage["batches"]) > 1
+
+    compiled = validate_reconciliation_stage(
+        bundle, stage, _singleton_reconciliation_responses(stage)
+    )
+
+    assert len(compiled["semantic_nodes"]) == len(stage["candidates"])
+    assert len({row["semantic_node_ref"] for row in compiled["semantic_nodes"]}) == len(
+        compiled["semantic_nodes"]
+    )
+
+    duplicate_within_one_batch = _singleton_reconciliation_responses(stage)
+    first_with_two_nodes = next(
+        row for row in duplicate_within_one_batch if len(row["semantic_nodes"]) > 1
+    )
+    first_with_two_nodes["semantic_nodes"][1]["semantic_node_key"] = (
+        first_with_two_nodes["semantic_nodes"][0]["semantic_node_key"]
+    )
+    with pytest.raises(SemanticIntegrationError, match="duplicate or empty semantic node"):
+        validate_reconciliation_stage(bundle, stage, duplicate_within_one_batch)
+
+
+def test_policy_v2_normal_mode_cannot_drop_a_customer_singleton() -> None:
+    bundle, verified = _verified_policy_compilation(count=1)
+    stage, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    assert stage["reconciliation_mode"] == "normal"
+    response = _singleton_reconciliation_responses(stage)[0]
+    response["semantic_nodes"] = []
+    response["unmerged_children"] = [
+        {
+            "child_ref": stage["candidates"][0]["candidate_ref"],
+            "reason": "Only one customer reported it.",
+        }
+    ]
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="normal reconciliation cannot unmerge customer finding",
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+
+def test_policy_v2_still_requires_the_verified_row_compilation() -> None:
+    bundle = build_bundle(_source_v7(count=1), max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=1)
+    )
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="method v7 requires row verification",
+    ):
+        prepare_reconciliation_stage(
+            bundle,
+            compiled,
+            reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+        )
+
+
+def test_policy_v2_enters_convergence_and_enforces_source_row_support() -> None:
+    bundle, verified = _verified_policy_compilation(count=2)
+    stage_one, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    level_one = validate_reconciliation_stage(
+        bundle, stage_one, _singleton_reconciliation_responses(stage_one)
+    )
+
+    stage_two, prompts_two = prepare_reconciliation_stage(bundle, level_one)
+    assert stage_two["reconciliation_mode"] == "convergence"
+    assert all('"supporting_evidence_row_count": 1' in row["prompt"] for row in prompts_two)
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="lacks repeated source-row support",
+    ):
+        validate_reconciliation_stage(
+            bundle, stage_two, _singleton_reconciliation_responses(stage_two)
+        )
+
+    level_two = validate_reconciliation_stage(
+        bundle,
+        stage_two,
+        _group_level_responses(stage_two, terminal=False),
+    )
+    stage_three, prompts_three = prepare_reconciliation_stage(bundle, level_two)
+    assert stage_three["reconciliation_mode"] == "convergence"
+    assert '"supporting_evidence_row_count": 2' in prompts_three[0]["prompt"]
+
+    response = _group_level_responses(stage_three, terminal=False)[0]
+    response["semantic_nodes"] = []
+    response["unmerged_children"] = [
+        {
+            "child_ref": stage_three["candidates"][0]["candidate_ref"],
+            "reason": "Retained only as retrieval evidence.",
+        }
+    ]
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="convergence cannot unmerge repeated customer finding",
+    ):
+        validate_reconciliation_stage(bundle, stage_three, [response])
+
+
+def test_policy_v2_multi_batch_fixed_point_is_terminal() -> None:
+    compilation = {
+        "input_batch_count": 2,
+        "input_candidate_count": 2,
+        "reconciliation_policy_version": RECONCILIATION_POLICY_VERSION_V2,
+        "reconciliation_mode": "convergence",
+        "semantic_nodes": [
+            {"terminal_proposition": True},
+            {"terminal_proposition": True},
+        ],
+    }
+
+    assert is_terminal_reconciliation_compilation(compilation)
+
+    changed = deepcopy(compilation)
+    changed["input_candidate_count"] = 3
+    assert not is_terminal_reconciliation_compilation(changed)
+
+    normal = deepcopy(compilation)
+    normal["reconciliation_mode"] = "normal"
+    assert not is_terminal_reconciliation_compilation(normal)
 
 
 def _flat_reconciliation(bundle: dict, compiled: dict) -> dict:

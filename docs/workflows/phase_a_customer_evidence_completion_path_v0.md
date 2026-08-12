@@ -794,3 +794,39 @@ three-axis unit. That axis retention is proven on both legs; independent
 separation is proven on the primary leg only. This closes the two-comment
 verifier boundary at axis retention; no historical result is relabelled and the
 replay alone does not claim full-corpus completion.
+
+Contract v33 adds an opt-in reconciliation-policy v2 without changing semantic
+method v7, its extraction prompts, or its mandatory row-verification artifacts.
+The policy is selected once when preparing the first reconciliation level and
+is then carried in each validator-produced node compilation. Reconciliation
+node keys are local to their prompt batch; compiler identity continues to
+combine the stage, batch, and local key, so identical local handles in different
+responses cannot collide. Normal mode must retain every valid first-hand or
+personal-agreement customer finding as a semantic node, including a one-row
+finding. After a completed normal level removes less than one percent of its
+input candidates, the next level enters convergence mode. Convergence prompts
+receive only the compiler-counted number of distinct supporting evidence rows:
+a one-row finding stays retained as unmerged retrieval evidence, while a
+candidate or exact-equivalence merge spanning more than one source row must
+remain a node. The validator enforces all three boundaries independently of the
+prompt and preserves exact child accounting. Historical preparation without
+the policy remains byte-stable; the completed verified method-v7 compilation
+can therefore be replayed under the new reconciliation policy without
+re-extraction or row re-verification.
+
+A convergence pass is terminal when every surviving candidate remains a
+terminal node and the pass produces exactly as many nodes as it received
+candidates. This fixed-point rule may span multiple prompt-bounded batches:
+prompt byte size is a transport constraint, not a semantic requirement to
+invent another merge. Historical reconciliation without policy v2 retains its
+single-batch terminal rule.
+
+The full-corpus policy-v2 replay reused the existing verified method-v7
+compilation and reached a fixed point at level 8. The terminal compilation has
+107 repeated findings supported by 320 semantic units; 7,700 one-off or
+otherwise non-converged units remain explicitly retrievable, so all 8,020
+captured semantic units are accounted exactly once. The finalized view accounts
+all 60,901 captured corpus items (59,225 semantically assessed and 1,676
+mechanically excluded), reports zero blocked items, and preserves the 96
+explicitly unresolved evidence rows. Its stored view SHA-256 is
+`b50dda4370b2c98ce4ac2553aa9c2cb84b5cb23f1c91fa55567c7f9607b31c42`.
