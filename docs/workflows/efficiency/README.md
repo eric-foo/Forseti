@@ -23,6 +23,7 @@ claim that any documented result has been reproduced.
 | Review the repeated P1/P4 diagnostic that rejected the exact budget-neutral owner-outcome wording package after it worsened quality despite lower two-run median resources | `success_implement_goal_conservation_diagnostic_2026_08_12_v0.md` |
 | Review the repeated controller-boundary-probe diagnostic that stopped after E1 failed coverage, completion-collapse, and executable-probe gates twice | `success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md` |
 | Review the three-repetition transparent-acceptance diagnostic where E2 passed the exact provider request three times but was rejected after broad-completion collapse repeated three times | `success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md` |
+| Review the three-repetition fresh-context completion-admission diagnostic where every checker wrongly approved an incomplete #1267 patch and caused no continuation or patch change | `success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md` |
 | Trace current owners and cited material history for named Forseti actor/workflow behavior contracts | `forseti_behavioral_contract_changelog_v0.md` |
 | Record an observed recurring tooling or workflow failure and its corrective pointers | `../technical_difficulties_log_v0.md` |
 | Follow the dated 2026-07-09 hygiene-audit checklist and its execution waves | `../../hygiene/efficiency_audit_wave_plan_v0.md` |
