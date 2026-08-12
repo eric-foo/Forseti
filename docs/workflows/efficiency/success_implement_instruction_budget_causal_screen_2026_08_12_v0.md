@@ -36,6 +36,24 @@ tokens and time stayed within the 15% guards, but both were higher than P1.
 No weighted-severity rescue was applied. Actual billed cost was not observed;
 token counters are comparison measures, not billed-cost claims.
 
+## Arm disposition and current conclusion
+
+- **P1 — retain only as the incumbent control.** P1 is the unchanged current
+  Success Implement source. It remains the least-disproven operating choice
+  because no tested candidate reliably improved it, not because this screen
+  validated it. Its two #1267 collapses are a material reliability warning.
+- **P2 — reject.** P2 is deliberately inert and supplies no behavior worth
+  adopting. Its lower critical count cannot be attributed to a mechanism;
+  baseline variance was observed, while P2 added 5.5% median tokens, 32.2%
+  median time, and more major/minor defects than P1.
+- **P3 — reject.** P3 failed its diagnostic obligation and repeated-regression
+  gates despite a lower pooled critical count.
+
+**No reliable improvement to Success Implement has been found.** The current
+evidence rejects the tested appended, per-axis, Loss-First, and budget-neutral
+obligation-coverage changes as replacements. Success Implement remains the
+least-disproven incumbent, not a proven optimum.
+
 ## ELI5
 
 We wanted to know why adding a sensible reminder had previously made the
@@ -133,6 +151,35 @@ problem demonstrated here, and this obligation-coverage wording is not a
 reliable cure.** A later hypothesis should target how the goal is bound before
 decomposition, not add or reshuffle more standing clauses without a new causal
 mechanism.
+
+## Next quality-axis hypothesis: conserve the owner outcome before decomposition
+
+The strongest remaining hypothesis is not another obligation list. It is one
+earlier mechanism: freeze a lossless owner-outcome anchor before repository
+interpretation, then prevent later implementation choices from narrowing it.
+
+The candidate behavior would be:
+
+1. Before source exploration can redefine the task, preserve the requested
+   owner-visible act and the condition under which it must hold.
+2. Treat fixtures, operator-supplied inputs, manual prerequisites, existing
+   partial code, and unavailable live state as evidence or residual facts;
+   none may silently replace a requested production capability.
+3. Before a complete claim, compare the implementation boundary back to that
+   anchor. If a requested act became supplied input, fixture-only behavior,
+   manual work, or a residual, the claim stays incomplete.
+
+This differs from P3 at the decisive point. P3 mapped obligations from the
+model-authored `Goal`; in #1267 that goal had already been narrowed from
+four-vendor acquisition to local-payload ingestion. Goal conservation would
+make the owner request, not the model's summary, the comparison anchor.
+
+This is a plausible quality-axis hypothesis, not a validated improvement. It
+should be tested alone and budget-neutrally against unchanged P1, with quality
+as the target and tokens/latency only as guards. A claim-honesty-only rule is
+insufficient because it would label incomplete work correctly without making
+the implementation complete. Multi-sample voting may reduce variance but is
+too expensive to install before a cheaper single-run mechanism is tested.
 
 ## Block results
 

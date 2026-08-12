@@ -31,7 +31,7 @@ the current owner before acting. A historical PR explains a transition but
 cannot override current source.
 
 Snapshot basis: Forseti `main` at
-[`5c8dafeb`](https://github.com/eric-foo/forseti/commit/5c8dafebcec7fd490f04cd131dd0a6ff013c0813),
+[`c2ba19b3`](https://github.com/eric-foo/forseti/commit/c2ba19b3e1b207cf459fcbb882d60dad481e3762),
 observed 2026-08-12. External Agent Workflow and installed resolver state
 require their own fresh check when load-bearing.
 
@@ -111,6 +111,14 @@ and cost slightly more median tokens and time. It stopped at Stage A; Success
 Implement remains unchanged. See
 [`success_implement_instruction_budget_causal_screen_2026_08_12_v0.md`](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md).
 
+Current disposition: retain unchanged Success Implement only as the
+least-disproven incumbent; reject the inert P2 placebo and budget-neutral P3;
+claim no reliable improvement. The next unvalidated quality-axis hypothesis is
+pre-decomposition owner-outcome conservation: preserve the requested act before
+repository interpretation and prevent fixtures, supplied inputs, manual work,
+or residuals from silently replacing it under a complete claim. This is a test
+direction, not current behavior or authority.
+
 ## Seven separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
@@ -172,7 +180,9 @@ Implement remains unchanged. See
   Append interference was not supported. Budget-neutral obligation coverage
   reduced pooled criticals but increased majors, failed both #1267 obligation
   checks, and used slightly more median tokens and time. Stages B/C and
-  deployment did not run. [Causal-screen record](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md)
+  deployment did not run. P1 remains only the least-disproven incumbent; P2
+  and P3 are rejected, and no reliable Success Implement improvement is
+  claimed. [Causal-screen record](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md)
 - **2026-08-12 — Per-axis Success Implement additions all rejected.** Four
   latency mechanisms failed their frozen gates; four token and four quality
   mechanisms all introduced a critical defect on the broad PR #1267 case.
