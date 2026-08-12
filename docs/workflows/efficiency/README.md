@@ -18,6 +18,7 @@ claim that any documented result has been reproduced.
 | Review the frozen aggregation showing delegated review-and-patch episodes paid at 10/11, the lane's bound status supported, and the open-commission triage that found no backlog | `delegated_review_patch_yield_backtest_2026_08_08_v0.md` |
 | Review the 12-case tuning plus 24-case confirmatory comparison that returned NO_WIN for Success Implement versus the Full Chain | `success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md` |
 | Review the post-hoc three-way replay where Loss-First saved tokens but lost quality to Success Implement and latency to Full Chain | `loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md` |
+| Review the per-axis screen that rejected all 12 narrow Success Implement additions and defined the next instruction-budget probe | `success_implement_per_axis_mechanism_screen_2026_08_12_v0.md` |
 | Trace current owners and cited material history for named Forseti actor/workflow behavior contracts | `forseti_behavioral_contract_changelog_v0.md` |
 | Record an observed recurring tooling or workflow failure and its corrective pointers | `../technical_difficulties_log_v0.md` |
 | Follow the dated 2026-07-09 hygiene-audit checklist and its execution waves | `../../hygiene/efficiency_audit_wave_plan_v0.md` |
