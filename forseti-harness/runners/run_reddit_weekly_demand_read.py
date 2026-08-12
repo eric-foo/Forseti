@@ -620,6 +620,7 @@ def run_weekly_demand_read(
     census_slots = _build_census_lane(candidates)
     return {
         "reader": "reddit_weekly_demand_read",
+        "run_name": f"Reddit Top100 {as_of.isoformat()}",
         "as_of": as_of.isoformat(),
         "window_start": window_start.isoformat(),
         "selection_policy": {
