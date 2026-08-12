@@ -17,6 +17,7 @@ open_next:
   - .agents/workflow-overlay/README.md
   - docs/decisions/forseti_doctrine_index_v0.md
   - docs/workflows/efficiency/success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md
+  - docs/workflows/efficiency/success_implement_per_axis_mechanism_screen_2026_08_12_v0.md
   - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - A named in-scope behavior changes owner, status, or operating shape without an update here.
@@ -29,8 +30,8 @@ the current owner before acting. A historical PR explains a transition but
 cannot override current source.
 
 Snapshot basis: Forseti `main` at
-[`2772264c`](https://github.com/eric-foo/forseti/commit/2772264c29474b38000414c6946fc53c4124b0fe),
-observed 2026-08-11. External Agent Workflow and installed resolver state
+[`536768a5`](https://github.com/eric-foo/forseti/commit/536768a58f77bbb1aa9559e2add8c600f2277231),
+observed 2026-08-12. External Agent Workflow and installed resolver state
 require their own fresh check when load-bearing.
 
 ## Current behavioral authority inventory
@@ -93,7 +94,16 @@ remains explicit-only and experimental; it has not demonstrated superiority on
 an untouched holdout. See
 [`loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md`](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md).
 
-## Four separate evidence records
+The later exposed-corpus per-axis screen tested four latency, four token, and
+four quality additions independently. None advanced. The token and quality
+additions all produced a new critical defect on PR #1267, while the latency
+additions each missed at least one frozen resource or quality gate. No new
+skill was created and current behavior did not change. The next hypothesis is
+an unrun causal test of baseline variance versus append-length interference
+versus budget-neutral integration. See
+[`success_implement_per_axis_mechanism_screen_2026_08_12_v0.md`](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md).
+
+## Six separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -121,6 +131,10 @@ an untouched holdout. See
    the lowest median token count, Success Implement had the best quality, and
    Full Chain had the lowest median latency. This is regression evidence, not a
    new holdout. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
+6. **Per-axis mechanism screen — 12 latency cases plus six-case token and
+   quality Stage 1 screens.** All 12 narrow additions were rejected; no Stage
+   2, combination, or deployment followed. [Per-axis
+   record](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -139,6 +153,13 @@ an untouched holdout. See
 
 ### 2026-08
 
+- **2026-08-12 — Per-axis Success Implement additions all rejected.** Four
+  latency mechanisms failed their frozen gates; four token and four quality
+  mechanisms all introduced a critical defect on the broad PR #1267 case.
+  Stage 2, combination, and deployment correctly did not run. Success
+  Implement remains unchanged; the next proposed experiment isolates
+  instruction-budget interference rather than adding another standing chain.
+  [Per-axis record](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md)
 - **2026-08-11 — Loss-First Implement post-hoc replay did not support
   promotion.** Over the same exposed 36 cases, it saved median tokens but lost
   quality to Success Implement and latency to Full Chain. Ten stale/drifted
