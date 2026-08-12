@@ -54,6 +54,12 @@ evidence rejects the tested appended, per-axis, Loss-First, and budget-neutral
 obligation-coverage changes as replacements. Success Implement remains the
 least-disproven incumbent, not a proven optimum.
 
+**Subsequent diagnostic:** the budget-neutral owner-outcome-conservation
+hypothesis named below was later tested twice on #1267 and rejected. It was
+cheaper and slightly faster in median but worse on pooled quality; both runs
+still collapsed the owner outcome. See
+[`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
+
 ## ELI5
 
 We wanted to know why adding a sensible reminder had previously made the
@@ -152,7 +158,7 @@ reliable cure.** A later hypothesis should target how the goal is bound before
 decomposition, not add or reshuffle more standing clauses without a new causal
 mechanism.
 
-## Next quality-axis hypothesis: conserve the owner outcome before decomposition
+## Historical next quality-axis hypothesis: conserve the owner outcome before decomposition
 
 The strongest remaining hypothesis is not another obligation list. It is one
 earlier mechanism: freeze a lossless owner-outcome anchor before repository
@@ -174,12 +180,12 @@ model-authored `Goal`; in #1267 that goal had already been narrowed from
 four-vendor acquisition to local-payload ingestion. Goal conservation would
 make the owner request, not the model's summary, the comparison anchor.
 
-This is a plausible quality-axis hypothesis, not a validated improvement. It
-should be tested alone and budget-neutrally against unchanged P1, with quality
-as the target and tokens/latency only as guards. A claim-honesty-only rule is
-insufficient because it would label incomplete work correctly without making
-the implementation complete. Multi-sample voting may reduce variance but is
-too expensive to install before a cheaper single-run mechanism is tested.
+At this screen's close, this was a plausible quality-axis hypothesis rather
+than a validated improvement. The subsequent P1/P4 diagnostic tested it alone
+and budget-neutrally, with quality as the target and tokens/latency as guards;
+P4 failed and was rejected. A claim-honesty-only rule remains insufficient
+because it would label incomplete work correctly without making the
+implementation complete.
 
 ## Block results
 
