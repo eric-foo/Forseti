@@ -19,6 +19,7 @@ open_next:
   - docs/workflows/efficiency/success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md
   - docs/workflows/efficiency/success_implement_per_axis_mechanism_screen_2026_08_12_v0.md
   - docs/workflows/efficiency/success_implement_instruction_budget_causal_screen_2026_08_12_v0.md
+  - docs/workflows/efficiency/success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md
   - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - A named in-scope behavior changes owner, status, or operating shape without an update here.
@@ -31,7 +32,7 @@ the current owner before acting. A historical PR explains a transition but
 cannot override current source.
 
 Snapshot basis: Forseti `main` at
-[`c2ba19b3`](https://github.com/eric-foo/forseti/commit/c2ba19b3e1b207cf459fcbb882d60dad481e3762),
+[`fea39cf7`](https://github.com/eric-foo/forseti/commit/fea39cf7197c798ebb2e062e587125dea7eb6d5e),
 observed 2026-08-12. External Agent Workflow and installed resolver state
 require their own fresh check when load-bearing.
 
@@ -111,6 +112,14 @@ and cost slightly more median tokens and time. It stopped at Stage A; Success
 Implement remains unchanged. See
 [`success_implement_instruction_budget_causal_screen_2026_08_12_v0.md`](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md).
 
+The next controller-owned boundary-probe diagnostic also stopped. E1 avoided
+P1's one critical defect and stayed inside the resource guards, but both E1
+runs still missed owner obligations, claimed broad completion, and failed the
+independently executed probe. This rejects the exact external-probe mechanism
+as a standing Success Implement addition; it does not reject repository-owned
+task acceptance tests used as ordinary validation. See
+[`success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md`](success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md).
+
 Current disposition: retain unchanged Success Implement only as the
 least-disproven incumbent; reject the inert P2 placebo, budget-neutral P3, and
 the exact budget-neutral P4 wording package; claim no reliable improvement
@@ -119,11 +128,13 @@ the two-run diagnostic lower in median comparison tokens and wall time but
 worsened quality, still collapsed both #1267 completions, and repeated a
 `missing_required_seam` regression. The result rejects the exact P4 wording
 package on those two runs; it does not isolate the anchor or generalize across
-cases or model versions. No next mechanism is selected and no current behavior
+cases or model versions. The exact controller-owned boundary probe is also
+rejected after two runs. One transparent task-owned acceptance example remains
+an unranked hypothesis, not a selected experiment. No next mechanism is selected and no current behavior
 or authority changed. See
 [`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
 
-## Eight separate evidence records
+## Nine separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -165,6 +176,11 @@ or authority changed. See
    failed coverage and collapse checks twice, and stopped before the contrasting
    exposed cases. [Diagnostic
    record](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md)
+9. **Controller-owned boundary-probe diagnostic — one broad case, two repeated
+   P1/E1 blocks.** E1 removed P1's one critical defect and lowered two-run median
+   resources, but missed obligations, collapsed completion, and failed the
+   executable boundary probe twice. It stopped before contrasting cases.
+   [Boundary-probe record](success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -183,6 +199,14 @@ or authority changed. See
 
 ### 2026-08
 
+- **2026-08-12 — Controller-owned boundary probe rejected.** Two repeated
+  P1/E1 blocks on PR #1267 found E1 lexicographically better only because it
+  avoided P1's one critical defect; E1 had two more majors, and both E1 runs
+  still missed owner obligations, collapsed broad completion, and failed the
+  controller's final executable probe. E1 used fewer median comparison tokens
+  and time, but the mechanism-defining gates failed. Contrasting cases and all
+  deployment correctly did not run; Success Implement remains unchanged.
+  [Diagnostic record](success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md)
 - **2026-08-12 — Exact budget-neutral P4 package rejected.** Two
   repeated P1/P4 blocks on PR #1267 found P4 lower in two-run median comparison
   tokens and wall time but worse on quality: two accepted critical defects
