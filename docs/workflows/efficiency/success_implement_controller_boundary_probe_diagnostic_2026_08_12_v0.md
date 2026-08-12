@@ -21,6 +21,11 @@ stale_if:
   - A later controlled replay supersedes this mechanism result.
 ```
 
+Later evidence: the transparent E2 follow-on observed the exact Greenhouse
+request from three submitted repository-Python commands, but still repeated
+broad completion collapse three times and was rejected. See the
+[E2 diagnostic](success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md).
+
 ## Decision
 
 **Reject E1 and stop after the two-run diagnostic. Keep Success Implement
@@ -174,7 +179,10 @@ consideration only where that acceptance surface is already legitimate task
 evidence; otherwise creating it would be new ceremony and solution design
 rather than a skill improvement.
 
-That hypothesis is untested and is not selected as standing behavior. A later
+At the time of this record, that hypothesis was untested and was not selected
+as standing behavior. The later E2 diagnostic tested it three times: the exact
+request passed three times, but the overall completion-discipline gate failed
+three times. A later
 study must first show that the acceptance example admits multiple valid
 interfaces, fails the known substitution, and does not encode the historical
 patch. The alternate controller-owned obligation-state hypothesis from the P4
