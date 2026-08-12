@@ -190,7 +190,10 @@ render fewer rows. On `www.reddit.com`, available depth is bounded by the
 rendered viewport; that surface does not enforce a numeric listing limit. The
 weekly reader JSON carries the depth target, `global_thread_cap: null`, and
 methodology ID `reddit_weekly_top100_per_subreddit_v0` so the shorthand cannot
-silently change downstream count semantics.
+silently change downstream count semantics. Every emitted weekly reader
+artifact is named `Reddit Top100 YYYY-MM-DD`, using its `as_of` date, and
+carries that value in `run_name`. The date is the durable run identity; do not
+invent an ordinal that would require a separate sequence registry.
 
 - The selection pool is every non-stickied, non-promoted listing row with
   parseable score and comment count. Listing evidence remains preserved whether
