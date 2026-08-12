@@ -13,6 +13,7 @@ use_when:
 authority_boundary: retrieval_only
 open_next:
   - docs/workflows/efficiency/success_implement_instruction_budget_causal_screen_2026_08_12_v0.md
+  - docs/review-outputs/adversarial-artifact-reviews/success_implement_goal_conservation_diagnostic_adversarial_artifact_review_v0.md
   - docs/workflows/efficiency/forseti_behavioral_contract_changelog_v0.md
 stale_if:
   - A scored finding or metric in this diagnostic is re-adjudicated.
@@ -25,8 +26,8 @@ stale_if:
 unchanged. Do not run the three contrasting exposed cases, create a skill, or
 deploy this wording.**
 
-P4 was cheaper and slightly faster, but it was worse on the study's only target:
-quality. Across two repetitions of broad feature case
+P4 had lower two-run median comparison tokens and wall time, but it was worse
+on the study's only target: quality. Across two repetitions of broad feature case
 [#1267](https://github.com/eric-foo/forseti/pull/1267), unchanged P1 had accepted
 defects `1 critical / 11 major / 1 minor`; P4 had `2 / 13 / 0`. Both P4 runs
 still omitted owner obligations and still claimed a narrowed substitute as a
@@ -39,14 +40,15 @@ token counters are comparison measures, not billed-cost claims.
 ## ELI5
 
 We put a label on the original destination before the builder looked at the
-code: “Do not swap this destination for an easier one.” The builder then made
-the cheaper route more often, but still delivered a local-file intake tool in
-place of the requested four-provider acquisition capability.
+code: “Do not swap this destination for an easier one.” In both trials, the
+builder still delivered a local-file intake tool in place of the requested
+four-provider acquisition capability.
 
-So the label did not function as a guardrail. It changed the wording and the
-amount of work, but it did not reliably stop the model from taking the same
-shortcut. A written anchor that the same model can reinterpret or ignore is not
-an effective conservation mechanism.
+That exact rewrite did not work well enough to keep testing. We cannot tell
+whether the new label was ineffective, the nearby compressed wording changed
+how the model behaved, ordinary run-to-run variance mattered, or several of
+those things happened together. The experiment rejects this complete P4
+wording package; it does not isolate the label by itself.
 
 ## Frozen arms
 
@@ -56,7 +58,7 @@ an effective conservation mechanism.
 | P4 | P1 with a pre-decomposition owner-outcome anchor and pre-edit boundary comparison | 15,514 | 3,110 | `e8fdcfb451796af4df4c9ce973dc37fe9396c4dbf538d8d6899f47e7d7385a4c` |
 
 P4 was 31 bytes larger (`+0.20%`) and had the same tokenizer count as P1. Its
-only behavioral delta was:
+only *intended* behavioral delta was:
 
 - preserve the owner-visible act and holding condition before repository
   interpretation;
@@ -66,10 +68,12 @@ only behavioral delta was:
   existing partial behavior, or residual as unmet, requiring implementation or
   a lowered claim/status.
 
-Equivalent prose was compressed to fund the change. The pre-dispatch audit
-confirmed that every existing authority, invariant, signal, falsifier, safety,
-validation, and review requirement remained; P4 added no section, artifact,
-checklist, reviewer, checker, second falsifier, or lifecycle step.
+Nearby prose was compressed to fund the change. The pre-dispatch audit judged
+the existing authority, invariant, signal, falsifier, safety, validation, and
+review requirements semantically preserved; P4 added no section, artifact,
+checklist, reviewer, checker, second falsifier, or lifecycle step. That audit
+did not prove that the exact wording changes were behaviorally inert for a
+stochastic model, so the anchor was not component-isolated.
 
 ## Design and pre-registered gate
 
@@ -112,23 +116,55 @@ The pre-registered endpoint is therefore `STOP_AFTER_STAGE_D`.
 | #1267 r2 | 1/5/0 | 1/6/0 | Not all | Yes | 9,409,086 / 6,455,339 | 1,333.937s / 886.907s |
 
 The repetitions also show why the median efficiency result cannot rescue the
-mechanism. P4 was dramatically cheaper/faster once and materially more
-expensive/slower once. With only two stochastic blocks, the quality failure is
-decisive while the direction of the resource effect is unstable.
+mechanism. P4 used far fewer tokens and time once and materially more once.
+With only two stochastic blocks, the quality failure is decisive while the
+direction of the resource effect is unstable. Actual billed cost was not
+observed.
 
 ## Finding and next boundary
 
-The experiment rejects this specific hypothesis: **adding a same-model,
-budget-neutral owner-outcome anchor does not reliably conserve the owner
-outcome.** It does not prove that outcome conservation is impossible; it shows
-that prose carried by the implementation actor is too weak in this form.
+The experiment rejects the **exact frozen P4 wording package** for
+`gpt-5.6-sol` at high reasoning on two repetitions of broad feature case #1267.
+Both runs failed the pre-registered coverage and collapse gates, so the
+protocol-mandated stop is supported. The result does not estimate cross-case
+reliability, generalize to other model versions, isolate the anchor from its
+companion wording changes, or reject other outcome-conservation mechanisms.
+P4's internal failure cause remains undetermined.
 
-No reliable Success Implement improvement has now been found across Loss-First,
-12 isolated per-axis additions, the P2 placebo, budget-neutral P3 obligation
-coverage, or P4 owner-outcome conservation. Success Implement remains only the
-least-disproven incumbent. A later experiment must introduce a genuinely
-different causal mechanism rather than another synonymous reminder; this
-record selects no next mechanism and creates no standing process.
+No reliable Success Implement improvement has been found *among the mechanisms
+tested* across Loss-First, 12 isolated per-axis additions, the P2 placebo,
+budget-neutral P3 obligation coverage, and the exact P4 package. Success
+Implement remains only the least-disproven incumbent. A later experiment must
+introduce a genuinely different causal mechanism rather than another
+synonymous reminder; this record selects no next mechanism and creates no
+standing process.
+
+## Ranked next hypotheses — experiment only
+
+These are not supported improvements, deployment recommendations, or standing
+workflow additions. They are the two smallest mechanisms the adversarial
+review found that change the actor's observable environment or authority rather
+than merely changing prose.
+
+1. **Controller-owned boundary probe.** Before implementation, freeze one
+   solution-neutral black-box check of the owner-visible act. For #1267 it must
+   exercise acquisition from provider coordinates, so an already-supplied
+   payload or local fixture cannot pass. Compare unchanged P1 with P1 plus that
+   probe in two randomized repetitions. Reject the hypothesis if obligation
+   coverage and pooled quality do not improve; a more honest incomplete status
+   alone is not success. Main risk: the probe can leak the historical solution
+   or overfit one boundary.
+2. **Immutable owner-obligation state.** Freeze only the distinct owner-visible
+   acts before repository interpretation; let the implementer attach direct
+   evidence or report an unmet residual, but not rename or delete an obligation.
+   Compare this controller-owned state with P1's actor-editable success contract
+   on #1267. Reject it if it merely blocks completion without increasing
+   implemented coverage, or if accepted defects are no better. Main risk:
+   ceremony, false blocking, and solution leakage during obligation extraction.
+
+Neither mechanism has been tested. The first is the cleaner next experiment
+because one external boundary observation adds less standing process than a
+controller-owned obligation lifecycle.
 
 ## Integrity and limits
 
@@ -144,9 +180,11 @@ record selects no next mechanism and creates no standing process.
   parseable final-status token. Their exact patches, validation evidence,
   closeouts, token counters, and durations were retained and scored; neither
   was rerun.
-- The aggregate SHA-256 is
+- The aggregate JSON SHA-256 is
   `a75d69d788d5e9b78324cf5abea4e61b41213ba0528b8ce359ca80a6f98a333d`.
-  Full evidence is preserved outside merged navigation at
-  `C:\tmp\forseti-goal-conservation-evidence-2026-08-12`.
+  The full packet was freshly readable during the 2026-08-12 adversarial review
+  at `C:\tmp\forseti-goal-conservation-evidence-2026-08-12`, but that temporary
+  path is not an immutable archive and the aggregate hash is not a packet-wide
+  manifest. Durable packet reproducibility is therefore `NOT_PROVEN`.
 - No production skill, Forseti-local skill, plugin, package, cache, installed
   copy, or user shadow changed. Stage X did not run.

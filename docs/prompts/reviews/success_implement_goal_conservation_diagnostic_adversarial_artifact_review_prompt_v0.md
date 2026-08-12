@@ -165,4 +165,3 @@ Then include:
 
 If the exact report cannot be written, return a blocked result and do not imply
 that chat output substituted for the durable report.
-
