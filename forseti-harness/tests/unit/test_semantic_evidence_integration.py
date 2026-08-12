@@ -32,6 +32,13 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V7,
     PROMPT_ENCODING_VERSION,
     ROW_VERIFICATION_METHOD_TEXT,
+    ROW_VERIFICATION_METHOD_TEXT_V3,
+    ROW_VERIFICATION_METHOD_TEXT_V4,
+    ROW_VERIFICATION_METHOD_TEXT_V5,
+    ROW_VERIFICATION_METHOD_VERSION,
+    ROW_VERIFICATION_METHOD_VERSION_V3,
+    ROW_VERIFICATION_METHOD_VERSION_V4,
+    ROW_VERIFICATION_METHOD_VERSION_V5,
     ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -1890,6 +1897,159 @@ def test_v4_exact_public_handle_match_across_scoped_origins_gets_one_credit() ->
     assert view["propositions"][0]["claim_support"]["independent_origin_count"] == 1
 
 
+def test_personal_agreement_support_never_adds_independent_origin_credit() -> None:
+    source = _source_v7(count=2)
+    source["captured_items"][1]["conversation_depth"] = 1
+    source["captured_items"][1]["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t2",
+            "text": "The parent reported the balm becoming drying after one week.",
+        }
+    ]
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    responses[0]["evidence"][1]["semantic_units"][0]["evidence_posture"] = (
+        "personal_agreement"
+    )
+    compiled = validate_batch_responses(bundle, responses)
+    verification_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        verification_stage,
+        _row_verification_responses(verification_stage),
+    )
+    stage, prompts = prepare_reconciliation_stage(bundle, verified)
+    assert all("never describe it as first-hand" in row["prompt"] for row in prompts)
+    assert all(
+        "posture-neutral bounded wording" in " ".join(row["prompt"].split())
+        for row in prompts
+    )
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+
+    view = finalize_v3_view(bundle, verified, terminal)
+
+    support = view["propositions"][0]["claim_support"]
+    assert len(support["evidence_refs"]) == 2
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def _agreement_bundle_and_units() -> tuple[dict, dict]:
+    """One method-v7 verified compilation with one first-hand and one agreement unit."""
+    source = _source_v7(count=2)
+    source["captured_items"][1]["conversation_depth"] = 1
+    source["captured_items"][1]["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t2",
+            "text": "The parent reported the balm becoming drying after one week.",
+        }
+    ]
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    responses[0]["evidence"][1]["semantic_units"][0]["evidence_posture"] = (
+        "personal_agreement"
+    )
+    compiled = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    return bundle, verified
+
+
+def test_personal_agreement_adds_no_origin_through_flat_finalization() -> None:
+    # The flat v1 route is a second live terminal finalization consumer for a
+    # method-v7 compilation, so agreement must not become a second independent
+    # customer there either.
+    bundle, verified = _agreement_bundle_and_units()
+    units = verified["semantic_units"]
+    assert {row["evidence_posture"] for row in units} == {
+        "first_hand",
+        "personal_agreement",
+    }
+    merged = _flat_reconciliation(bundle, verified)
+    merged["propositions"] = [
+        {
+            **merged["propositions"][0],
+            "relations": [
+                {"semantic_unit_ref": row["semantic_unit_ref"], "relation": "support"}
+                for row in units
+            ],
+        }
+    ]
+
+    support = finalize_view(bundle, verified, merged)["propositions"][0][
+        "claim_support"
+    ]
+
+    assert len(support["evidence_refs"]) == 2
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def test_method_v7_flat_finalization_uses_credited_public_origins() -> None:
+    # The flat finalizer must apply the same conservative actor-credit rule as
+    # the hierarchical finalizer: a public identity seen through two scoped
+    # origins is one credited origin, not two customers.
+    source = _source_v7(count=2)
+    source["captured_items"][0]["independence_key"] = "reddit:same-handle"
+    source["captured_items"][1]["independence_key"] = "retailer:same-handle"
+    for row in source["captured_items"]:
+        row["public_identity_key"] = "public_handle:same-handle"
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    units = verified["semantic_units"]
+    merged = _flat_reconciliation(bundle, verified)
+    merged["propositions"] = [
+        {
+            **merged["propositions"][0],
+            "relations": [
+                {"semantic_unit_ref": row["semantic_unit_ref"], "relation": "support"}
+                for row in units
+            ],
+        }
+    ]
+
+    support = finalize_view(bundle, verified, merged)["propositions"][0][
+        "claim_support"
+    ]
+
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def test_historical_methods_keep_their_frozen_reconciliation_posture_wording() -> None:
+    # The agreement/origin sentence states a method-v7 rule. Methods v5 and v6
+    # still credit personal_agreement in finalization, so emitting it for them
+    # would instruct against their own projection and rewrite a frozen prompt.
+    agreement_rule = "never use it to claim an additional independent origin"
+    carried = "may use only first_hand or personal_agreement"
+    for source in (_source_v5(count=2), _source_v6(count=2)):
+        bundle = build_bundle(source, max_prompt_bytes=20_000)
+        compiled = validate_batch_responses(
+            bundle, _v5_responses(bundle, detailed_per_batch=2)
+        )
+        _, prompts = prepare_reconciliation_stage(bundle, compiled)
+        assert prompts
+        assert all(carried in row["prompt"] for row in prompts)
+        assert not any(agreement_rule in row["prompt"] for row in prompts)
+
+    bundle, verified = _agreement_bundle_and_units()
+    _, v7_prompts = prepare_reconciliation_stage(bundle, verified)
+    assert all(agreement_rule in row["prompt"] for row in v7_prompts)
+
+
 def test_v3_full_corpus_accounting_fails_closed_on_missing_leaf() -> None:
     source = _source_v3()
     source["captured_items"].pop()
@@ -2453,15 +2613,15 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     compiled = validate_batch_responses(
         bundle, _v5_responses(bundle, detailed_per_batch=3)
     )
-    stage, prompts = prepare_row_verification(bundle, compiled)
+    stage, prompts = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
     claim_ids = [row["evidence_id"] for row in stage["verification_rows"]]
     assert len(claim_ids) == 3
     assert stage["coverage_proof"]["bijection_complete"] is True
     assert all(row["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] for row in prompts)
     assert all("ROWS_TO_VERIFY" in row["prompt"] for row in prompts)
-    assert stage["verification_method_version"] == (
-        "semantic_evidence_row_verification_method_v3"
-    )
+    assert stage["verification_method_version"] == ROW_VERIFICATION_METHOD_VERSION
     normalized_prompts = [" ".join(row["prompt"].split()) for row in prompts]
     assert all("Before checking fields, privately restate" in row for row in normalized_prompts)
     assert all(
@@ -2472,27 +2632,34 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert all("before field checking" in row for row in normalized_prompts)
     assert all("direct short answer" in row["prompt"] for row in prompts)
     assert all("Resolve a leading yes/no" in row["prompt"] for row in prompts)
-    assert all("does not make ownership, purchase, repurchase" in row["prompt"] for row in prompts)
-    assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
     assert all(
-        "A customer attribute conditions a result only if" in row["prompt"]
+        "repurchase of a named shade, or of an all/every-shade collection"
+        in row["prompt"]
         for row in prompts
     )
-    assert all("unambiguously entails the same baseline" in row for row in normalized_prompts)
+    assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
+    assert all(
+        "A customer attribute conditions a result only when" in row["prompt"]
+        for row in prompts
+    )
+    assert all("directly relevant baseline" in row for row in normalized_prompts)
     assert all("source explicitly scopes that result" in row for row in normalized_prompts)
-    assert all("possible bias, caveat, or separate product response" in row for row in normalized_prompts)
-    assert all("separate meaning, not a condition" in row for row in normalized_prompts)
-    assert all("Conjunction or shared body area" in row for row in normalized_prompts)
-    assert all("Sensitivity alone is not a moisture baseline" in row for row in normalized_prompts)
-    assert all("product-linked sensitivity is reaction or tolerance context" in row for row in normalized_prompts)
-    assert all("dry or dehydrated may condition moisture" in row for row in normalized_prompts)
+    assert all("Conjunction, proximity, or shared body area" in row for row in normalized_prompts)
     assert all("leave the result unconditioned" in row for row in normalized_prompts)
     assert all(
         "not retained as a result's condition" in row for row in normalized_prompts
     )
     assert all("omit it from that result's statement too" in row for row in normalized_prompts)
+    assert all("explicitly identifies the bound product" in row for row in normalized_prompts)
+    assert all("ambiguous antecedent remains context" in row for row in normalized_prompts)
+    assert all("source-to-unit completeness pass" in row for row in normalized_prompts)
+    assert all("same dimension and direction" in row for row in normalized_prompts)
     assert all("Unqualified liking, preference" in row["prompt"] for row in prompts)
-    assert all("favorite evaluation of a named shade" in row["prompt"] for row in prompts)
+    assert all("favorite evaluation of a named shade carries" in row["prompt"] for row in prompts)
+    assert all("Drying, becoming drier, or losing moisture" in row["prompt"] for row in prompts)
+    assert all("adjacent or comparator product is not a target-product" in row["prompt"] for row in prompts)
+    assert all("Preserve the proposed row by default" in row["prompt"] for row in prompts)
+    assert all("Replacement is correction, not fresh regeneration" in row for row in normalized_prompts)
     assert all("One side's quantity cannot create" in row["prompt"] for row in prompts)
     replacement = _claim_row(claim_ids[1])
     replacement["semantic_units"][0]["semantic_unit_key"] = "corrected-value"
@@ -2536,7 +2703,7 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
         "semantic_evidence_row_verification_manifest_v2"
     )
     assert verified["row_verification_manifest"]["verification_method_version"] == (
-        "semantic_evidence_row_verification_method_v3"
+        ROW_VERIFICATION_METHOD_VERSION
     )
     assert verified["row_verification_manifest"]["verification_method_sha256"] == (
         _canonical_hash(ROW_VERIFICATION_METHOD_TEXT)
@@ -2545,8 +2712,20 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
-def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() -> None:
+def test_row_verification_v6_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
+    assert ROW_VERIFICATION_METHOD_TEXT.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6"
+    )
+    assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V5" not in ROW_VERIFICATION_METHOD_TEXT
+    assert ROW_VERIFICATION_METHOD_TEXT_V4.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V5.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5"
+    )
     for principle in (
         "smallest complete set of standalone meanings",
         "direct answers, evaluations, results, comparisons, reasons, contrasts",
@@ -2554,31 +2733,61 @@ def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() 
         "Later context may narrow but does not cancel or replace",
         "Shared product, axis, or topic does not make one unit cover another",
         "Map each meaning to the proposed units before field checking",
-        "states or unambiguously entails the same baseline",
         "source explicitly scopes that result to the attribute",
-        "possible bias, caveat, or separate product response is a separate meaning",
-        "Conjunction or shared body area is not enough",
+        "Conjunction, proximity, or shared body area is not enough",
         "Split a conjoined attribute phrase and keep only the part whose baseline"
         " that result reports",
-        "Sensitivity alone is not a moisture baseline",
-        "product-linked sensitivity is reaction or tolerance context",
-        "dry or dehydrated may condition moisture",
         "If uncertain, leave the result unconditioned",
         "If a customer attribute is not retained as a result's condition, omit it"
         " from that result's statement too",
-        "When the source separately links that attribute to a product response,"
-        " preserve it as its own qualified meaning",
-        "do not discard it merely because it does not condition the neighboring"
-        " result",
+        "repurchase of a named shade, or of an all/every-shade collection, carries"
+        " shade_and_color_fit",
+        "sale timing or price is expressly a condition of an intended or hypothetical"
+        " purchase, it also carries value_and_quantity",
+        "Drying, becoming drier, or losing moisture supports"
+        " hydration_and_moisture",
+        "severity of drying alone does not turn moisture loss into a reaction",
+        "A unit solely about an adjacent or comparator product is not a"
+        " target-product unit",
+        "Preserve the proposed row by default",
+        "Replacement is correction, not fresh regeneration",
+        "restore every supported meaning, axis, product binding, condition,"
+        " posture, and direction",
         "every field is supported by the source or supplied context",
+        "source-to-unit completeness pass",
+        "every clause and every explicit relation between clauses",
+        "same dimension and direction for both sides",
+        "adjacency alone cannot create the relation",
+        "supported adjacent-product meaning under its own subject",
+        "Every supported independently usable meaning maps to exactly one unit",
+        "directly relevant baseline for that result",
+        "explicitly identifies the bound product as causing, worsening, changing,"
+        " or eliciting that response",
+        "vague product-category wording",
+        "ambiguous antecedent remains context",
+        "Local ambiguity does not erase unambiguous meanings elsewhere in the row",
+        "Use unresolved only when no safe complete row exists",
+        "uncertain variant referent only to its verified shared product",
+        "ambiguous echo as axis-free, detail-free personal agreement",
+        "variant-specific behavior cannot broaden to the product family",
+        "Preserve an explicit overall evaluation separately from attribute facts",
     ):
         assert principle in normalized
+    normalized_v4 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V4.split())
+    assert "Sensitivity alone is not a moisture baseline" in normalized_v4
+    assert "product-linked sensitivity is reaction or tolerance context" in normalized_v4
+    assert "merely buying, owning, or repurchasing that shade may not" not in normalized
     for case_phrase in (
         "Summer Fridays",
         "Vanilla Beige",
         "worth $24",
         "lip balm",
         "lip gloss",
+        "Lanolips",
+        "sensitive lips",
+        "Fenty",
+        "YSL",
+        "Hourglass",
     ):
         assert case_phrase not in ROW_VERIFICATION_METHOD_TEXT
 
@@ -2588,8 +2797,12 @@ def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> No
     compiled = validate_batch_responses(
         bundle, _v5_responses(bundle, detailed_per_batch=3)
     )
-    stage_one, prompts_one = prepare_row_verification(bundle, compiled)
-    stage_two, prompts_two = prepare_row_verification(bundle, compiled)
+    stage_one, prompts_one = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    stage_two, prompts_two = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
     assert stage_one == stage_two
     assert prompts_one == prompts_two
 
@@ -2609,7 +2822,7 @@ def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> No
 def test_row_verification_rejects_a_patched_accept_and_invalid_replacement() -> None:
     bundle = _bundle_v5(count=1)
     compiled = validate_batch_responses(bundle, _v5_responses(bundle))
-    stage, _ = prepare_row_verification(bundle, compiled)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
     evidence_id = stage["verification_rows"][0]["evidence_id"]
 
     patched_accept = _row_verification_responses(stage)
@@ -2640,7 +2853,7 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
     compiled = validate_batch_responses(
         bundle, _v5_responses(bundle, detailed_per_batch=2)
     )
-    stage, _ = prepare_row_verification(bundle, compiled)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
     rejected_id = stage["verification_rows"][-1]["evidence_id"]
     verified = apply_row_verification(
         bundle,
@@ -2714,6 +2927,87 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
             match="does not bind the current verification method",
         ):
             prepare_reconciliation_stage(bundle, wrong_method)
+
+    historical_v3 = deepcopy(verified)
+    historical_v3["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V3
+    )
+    historical_v3["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V3)
+    )
+    historical_v3["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v3["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v3["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v3.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v3)
+
+    historical_v4 = deepcopy(verified)
+    historical_v4["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V4
+    )
+    historical_v4["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V4)
+    )
+    historical_v4["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v4["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v4["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v4.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v4)
+
+    historical_v5 = deepcopy(verified)
+    historical_v5["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V5
+    )
+    historical_v5["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V5)
+    )
+    historical_v5["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v5["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v5["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v5.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v5)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (
@@ -2976,6 +3270,7 @@ def test_row_verification_runner_writes_stage_prompts_and_verified_compilation(
         compiled_path=compiled_path,
         stage_out=stage_path,
         prompt_dir=prompt_dir,
+        max_prompt_bytes=20_000,
     )
     assert prepared["status"] == "SEMANTIC_ROW_VERIFICATION_REQUIRED"
     stage = json.loads(stage_path.read_text(encoding="utf-8"))

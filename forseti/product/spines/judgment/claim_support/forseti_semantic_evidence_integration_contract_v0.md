@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v27
+version: v30
 effective_date: 2026-08-11
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v27
+# Semantic Evidence Integration Contract v30
 
 ## Purpose
 
@@ -122,8 +122,13 @@ amount. It resolves leading yes/no replies against their parent question,
 accounts for every materially distinct clause, and keeps unqualified preference
 or better/worse language about a product overall axis-free even when it sits
 beside an attribute claim. A stated liking or favorite evaluation of a named
-shade may use `shade_and_color_fit`; ownership, purchase, or repurchase alone
-may not.
+shade uses `shade_and_color_fit`. Ownership, purchase, selection, or repurchase
+of a named shade or an all/every-shade collection also carries
+`shade_and_color_fit` because the observed behavior is shade-specific; this
+records the behavioral subject and does not infer that the shade fit well. When
+sale timing or price is expressly a condition of an intended or hypothetical
+purchase, it also carries `value_and_quantity`; an incidental past sale mention
+does not create that judgment.
 Non-claim rows pass through unchanged.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
@@ -174,6 +179,54 @@ one but carrying no row-verification manifest is rejected, not graded. A
 method-v7 slice fails closed when no verified compilation is supplied; only
 historical-method slices without a supplied verified compilation retain the
 historical evaluation path.
+
+Contract v28 versions the whole-row verifier method to v4 and makes correction
+preserving by default. A replacement remains a complete row, but it is not a
+fresh regeneration: every proposed meaning and field that the source supports
+must survive, and the verifier's reason must identify any source-based removal,
+change, or addition. Drying, becoming drier, loss of moisture, and non-drying
+belong to `hydration_and_moisture`; burning, irritation, peeling, breakout, or
+damage belong to `reaction_and_breakout`, and drying severity alone does not
+move a moisture claim into reaction. A unit solely about an adjacent or
+comparator product cannot bind the target product unless it states a relationship
+to the target. Named-shade behavior follows the shade rule above. Historical
+verifier-v3 manifests remain identifiable by their pinned verifier-v3 text but
+cannot authorize current reconciliation; they must replay row verification and
+are not relabelled as verifier-v4 output.
+
+Contract v29 versions the same whole-row verifier method to v5. Its final
+completeness pass maps each independently usable source meaning to exactly one
+unit and maps every unit back to supported source meaning. A paired comparison
+may yield a separate relational meaning only when the source establishes the
+same dimension and direction on both sides; proximity alone cannot create it.
+Supported adjacent-product meanings remain under their own subject. A customer
+attribute qualifies a result only when it is the directly relevant baseline or
+the source explicitly scopes the result to it. It becomes a separate
+bound-product response only when the source explicitly identifies that product
+as causing, worsening, changing, or eliciting the response; ambiguous antecedents
+and vague category wording remain context. This adds no response field, second
+verifier, parser, phrase table, conclusion, or recommendation. Historical
+verifier-v4 manifests remain hash-identifiable but require replay before current
+reconciliation or calibration.
+
+Contract v30 versions that verifier method to v6 and closes the overcorrection
+found by its first blind replay. Ambiguity in one clause cannot discard supported
+unambiguous meanings elsewhere in the row. When a variant referent is genuinely
+ambiguous, the verifier may retain the uncertain meaning only at the verified
+shared-product scope; it cannot select a variant. An ambiguous echo remains
+axis-free and detail-free rather than importing one possible parent predicate.
+Variant-specific behavior cannot broaden to the whole product family, and an
+explicit overall evaluation remains separate from specific attribute facts and
+from a disposition reason. Whole-row unresolved remains available only when no
+safe complete row exists. This adds no response field, parser, second verifier,
+or conclusion surface. Historical verifier-v5 manifests remain identifiable but
+require replay before current reconciliation or calibration.
+
+For method v7, `personal_agreement` may remain support for a bounded meaning but
+never adds a credited independent origin and must not be described as another
+first-hand customer. This is enforced both in reconciliation instructions and
+in deterministic final claim-support projection. Historical semantic methods
+retain their frozen output behavior.
 
 Two boundaries of that intake are stated because they are not obvious from the
 rule above. Versioning the verifier method to v3 also retires every
@@ -979,6 +1032,27 @@ new frontier.
 
 ## Changelog
 
+- `v30` / 2026-08-11 — versioned the whole-row verifier method to v6, prevented
+  local ambiguity from erasing safe row content, bounded ambiguous variant and
+  echo meanings without guessing, preserved exact variant-versus-family scope,
+  and kept explicit overall evaluations separate. Added no schema, field,
+  parser, second verifier, provider call, or full-corpus resume authority.
+- `v29` / 2026-08-11 — versioned the whole-row verifier method to v5, added a
+  final source-to-unit completeness bijection, preserved same-dimension paired
+  comparisons as separate relational meanings when textually established, and
+  prevented baseline traits, vague category wording, or ambiguous antecedents
+  from becoming product-caused outcomes. Added no schema, field, second read,
+  parser, provider call, conclusion, or full-corpus resume authority.
+- `v28` / 2026-08-11 — versioned the whole-row verifier method to v4, made
+  complete-row replacement preserve all source-supported proposed content by
+  default, aligned drying/non-drying with hydration, made named-shade behavior
+  shade-specific, and blocked comparator-only statements from binding the
+  target. Method-v7 claim-support projection now prevents
+  `personal_agreement` from adding independent-origin credit. Historical
+  verifier-v3 receipts remain identifiable but require replay, while historical
+  semantic-method output remains frozen. Added no response, stage, manifest,
+  bundle, or report schema; no
+  second verifier, provider API, conclusion, or full-corpus execution.
 - `v27` / 2026-08-11 — extended the existing verified-compilation intake to
   the reserved `cold-repeat` slice id. The evaluator now rebuilds and binds the
   raw cold compilation before grading its verified rows; method v7 requires a
