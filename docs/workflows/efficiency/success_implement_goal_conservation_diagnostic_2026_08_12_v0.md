@@ -12,6 +12,7 @@ use_when:
   - Choosing a later isolated Success Implement quality experiment.
 authority_boundary: retrieval_only
 open_next:
+  - docs/workflows/efficiency/success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md
   - docs/workflows/efficiency/success_implement_instruction_budget_causal_screen_2026_08_12_v0.md
   - docs/review-outputs/adversarial-artifact-reviews/success_implement_goal_conservation_diagnostic_adversarial_artifact_review_v0.md
   - docs/workflows/efficiency/forseti_behavioral_contract_changelog_v0.md
@@ -139,21 +140,21 @@ introduce a genuinely different causal mechanism rather than another
 synonymous reminder; this record selects no next mechanism and creates no
 standing process.
 
-## Ranked next hypotheses — experiment only
+## Follow-on hypothesis disposition
 
 These are not supported improvements, deployment recommendations, or standing
-workflow additions. They are the two smallest mechanisms the adversarial
+workflow additions. They were the two smallest mechanisms the adversarial
 review found that change the actor's observable environment or authority rather
 than merely changing prose.
 
-1. **Controller-owned boundary probe.** Before implementation, freeze one
+1. **Controller-owned boundary probe — tested and rejected.** Before implementation, freeze one
    solution-neutral black-box check of the owner-visible act. For #1267 it must
    exercise acquisition from provider coordinates, so an already-supplied
-   payload or local fixture cannot pass. Compare unchanged P1 with P1 plus that
-   probe in two randomized repetitions. Reject the hypothesis if obligation
-   coverage and pooled quality do not improve; a more honest incomplete status
-   alone is not success. Main risk: the probe can leak the historical solution
-   or overfit one boundary.
+   payload or local fixture cannot pass. The follow-on two-run diagnostic found
+   lower median resources and no E1 critical, but both E1 runs still omitted
+   obligations, collapsed completion, and failed the final probe. The exact E1
+   mechanism is rejected. See
+   [`success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md`](success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md).
 2. **Immutable owner-obligation state.** Freeze only the distinct owner-visible
    acts before repository interpretation; let the implementer attach direct
    evidence or report an unmet residual, but not rename or delete an obligation.
@@ -162,9 +163,9 @@ than merely changing prose.
    implemented coverage, or if accepted defects are no better. Main risk:
    ceremony, false blocking, and solution leakage during obligation extraction.
 
-Neither mechanism has been tested. The first is the cleaner next experiment
-because one external boundary observation adds less standing process than a
-controller-owned obligation lifecycle.
+The second mechanism remains untested and unselected. The first experiment's
+failure increases the burden on any controller-owned lifecycle: it must improve
+implemented coverage rather than merely block or lower a completion claim.
 
 ## Integrity and limits
 
