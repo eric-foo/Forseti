@@ -112,14 +112,15 @@ Implement remains unchanged. See
 [`success_implement_instruction_budget_causal_screen_2026_08_12_v0.md`](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md).
 
 Current disposition: retain unchanged Success Implement only as the
-least-disproven incumbent; reject the inert P2 placebo and budget-neutral P3;
-claim no reliable improvement. The next unvalidated quality-axis hypothesis is
-pre-decomposition owner-outcome conservation: preserve the requested act before
-repository interpretation and prevent fixtures, supplied inputs, manual work,
-or residuals from silently replacing it under a complete claim. This is a test
-direction, not current behavior or authority.
+least-disproven incumbent; reject the inert P2 placebo, budget-neutral P3, and
+budget-neutral P4 owner-outcome anchor; claim no reliable improvement. P4 made
+the two-run diagnostic cheaper and slightly faster in median but worsened
+quality, still collapsed both #1267 completions, and repeated a
+`missing_required_seam` regression. No next mechanism is selected and no
+current behavior or authority changed. See
+[`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
 
-## Seven separate evidence records
+## Eight separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -156,6 +157,11 @@ direction, not current behavior or authority.
    not supported, and budget-neutral obligation coverage failed its Stage A
    gate. [Causal-screen
    record](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md)
+8. **Owner-outcome-conservation diagnostic — one broad case, two repeated
+   P1/P4 blocks.** P4 lowered median tokens and time but worsened pooled quality,
+   failed coverage and collapse checks twice, and stopped before the contrasting
+   exposed cases. [Diagnostic
+   record](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -174,6 +180,14 @@ direction, not current behavior or authority.
 
 ### 2026-08
 
+- **2026-08-12 — Budget-neutral owner-outcome conservation rejected.** Two
+  repeated P1/P4 blocks on PR #1267 found P4 cheaper and slightly faster in
+  median but worse on quality: two accepted critical defects versus one, more
+  majors, two broad completion collapses, and a repeated
+  `missing_required_seam` regression. The diagnostic stopped before its three
+  contrasting exposed cases. Success Implement and all runtime/install copies
+  remain unchanged. [Diagnostic
+  record](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md)
 - **2026-08-12 — Instruction-budget causal screen stopped at Stage A.** Two
   repeated P1/P2/P3 blocks on four cases showed that unchanged Success
   Implement itself can reproduce the broad PR #1267 completion collapse.

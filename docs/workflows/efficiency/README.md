@@ -20,6 +20,7 @@ claim that any documented result has been reproduced.
 | Review the post-hoc three-way replay where Loss-First saved tokens but lost quality to Success Implement and latency to Full Chain | `loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md` |
 | Review the per-axis screen that rejected all 12 narrow Success Implement additions and defined the next instruction-budget probe | `success_implement_per_axis_mechanism_screen_2026_08_12_v0.md` |
 | Review the repeated P1/P2/P3 causal screen that supported baseline variance, did not support append interference, and rejected budget-neutral obligation coverage at Stage A | `success_implement_instruction_budget_causal_screen_2026_08_12_v0.md` |
+| Review the repeated P1/P4 diagnostic that rejected budget-neutral owner-outcome conservation after it worsened quality despite lower median resources | `success_implement_goal_conservation_diagnostic_2026_08_12_v0.md` |
 | Trace current owners and cited material history for named Forseti actor/workflow behavior contracts | `forseti_behavioral_contract_changelog_v0.md` |
 | Record an observed recurring tooling or workflow failure and its corrective pointers | `../technical_difficulties_log_v0.md` |
 | Follow the dated 2026-07-09 hygiene-audit checklist and its execution waves | `../../hygiene/efficiency_audit_wave_plan_v0.md` |
