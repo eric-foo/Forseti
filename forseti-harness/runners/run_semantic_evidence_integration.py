@@ -441,23 +441,36 @@ def verify_prompt_execution_pack(
     expected_frame, expected_manifest, expected_payloads = (
         build_prompt_execution_pack(bundle)
     )
-    observed_frame = (pack_dir / expected_manifest["frame_file"]).read_text(
-        encoding="utf-8"
+    # Text-mode reads translate CRLF, so a frame whose stored bytes are no
+    # longer the hash-bound frame could still compare equal. The frame is
+    # spliced into prompts as raw text, so decode its bytes directly.
+    observed_frame = (
+        (pack_dir / expected_manifest["frame_file"]).read_bytes().decode("utf-8")
     )
     if observed_frame != expected_frame:
         raise ValueError("stored execution frame does not match bundle")
     observed_manifest = _load_object(pack_dir / "manifest.json")
     if observed_manifest != expected_manifest:
         raise ValueError("stored execution manifest does not match bundle")
-    payload_dir = pack_dir / "payloads"
-    observed_paths = {
-        path.name: path for path in payload_dir.glob("batch-*.json") if path.is_file()
+    # The pack is exclusive: a verified pack may hold no file the bundle does
+    # not name, so a stale, renamed, or leftover payload cannot ride along
+    # unverified and cannot inflate the stored-byte total reported below.
+    expected_files = {
+        Path(expected_manifest["frame_file"]),
+        Path("manifest.json"),
+        *(Path(row["payload_file"]) for row in expected_manifest["batches"]),
     }
-    expected_names = {f"{row['batch_id']}.json" for row in expected_payloads}
-    if set(observed_paths) != expected_names:
-        raise ValueError("stored execution payload set does not match bundle")
+    observed_files = {
+        path.relative_to(pack_dir) for path in pack_dir.rglob("*") if path.is_file()
+    }
+    if observed_files != expected_files:
+        raise ValueError("stored execution pack file set does not match bundle")
+    payload_path_by_batch = {
+        row["batch_id"]: pack_dir / row["payload_file"]
+        for row in expected_manifest["batches"]
+    }
     for expected in expected_payloads:
-        observed = _load_object(observed_paths[f"{expected['batch_id']}.json"])
+        observed = _load_object(payload_path_by_batch[expected["batch_id"]])
         if observed != expected:
             raise ValueError(
                 f"stored execution payload {expected['batch_id']} does not match bundle"

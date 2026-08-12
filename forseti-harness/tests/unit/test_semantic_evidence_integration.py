@@ -5425,6 +5425,88 @@ def test_prepare_prompt_execution_pack_writes_load_once_frame(tmp_path: Path) ->
         verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
 
 
+def _prepared_pack(tmp_path: Path) -> tuple[Path, Path]:
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    pack_dir = tmp_path / "execution-pack"
+    prepare_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+    return bundle_path, pack_dir
+
+
+def test_execution_pack_verification_reads_persisted_frame_bytes(
+    tmp_path: Path,
+) -> None:
+    """A frame whose stored bytes changed must not verify as byte-exact.
+
+    Text-mode reads translate CRLF, so line-ending rewrites in transport would
+    otherwise pass while every reconstructed prompt diverged from its hash.
+    """
+    bundle_path, pack_dir = _prepared_pack(tmp_path)
+    frame_path = pack_dir / "shared-frame.md"
+    original = frame_path.read_bytes()
+    frame_path.write_bytes(original.replace(b"\n", b"\r\n"))
+    assert frame_path.read_bytes() != original
+
+    with pytest.raises(ValueError, match="stored execution frame does not match"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "payloads/stale-batch-0001.json",
+        "payloads/superseded/batch-0001.json",
+        "leftover-prompt.md",
+    ],
+)
+def test_execution_pack_verification_rejects_unnamed_stored_files(
+    tmp_path: Path, relative_path: str
+) -> None:
+    """A verified pack may hold no file the bundle does not name."""
+    bundle_path, pack_dir = _prepared_pack(tmp_path)
+    stray = pack_dir / relative_path
+    stray.parent.mkdir(parents=True, exist_ok=True)
+    stray.write_bytes(b'{"stale": true}\n')
+
+    with pytest.raises(ValueError, match="pack file set does not match bundle"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+
+@pytest.mark.parametrize(
+    "escaped",
+    ["../escaped-batch", "CON", "batch-0001.", "batch_0001"],
+)
+def test_execution_pack_refuses_unsafe_batch_id_file_name(
+    tmp_path: Path, escaped: str
+) -> None:
+    """A batch id that is not one safe path component writes nothing."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    original_id = bundle["batches"][0]["batch_id"]
+    bundle["batches"][0]["batch_id"] = escaped
+    for row in bundle["semantic_work_unit_projection"]["work_units"]:
+        if row["work_unit_id"] == original_id:
+            row["work_unit_id"] = escaped
+    for value, field in (
+        (bundle["semantic_work_unit_projection"], "projection_sha256"),
+        (bundle, "bundle_sha256"),
+    ):
+        value[field] = _canonical_hash(
+            {key: item for key, item in value.items() if key != field}
+        )
+
+    with pytest.raises(SemanticIntegrationError, match="not a safe execution pack"):
+        build_prompt_execution_pack(bundle)
+
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    with pytest.raises(SemanticIntegrationError, match="not a safe execution pack"):
+        prepare_prompt_execution_pack(
+            bundle_path=bundle_path, pack_dir=tmp_path / "nested" / "execution-pack"
+        )
+    assert not (tmp_path / "nested" / "execution-pack").exists()
+
+
 def test_v5_lineage_must_cover_every_work_unit() -> None:
     """A manifest that names fewer raw artifacts than work units fails closed."""
     bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)

@@ -670,6 +670,26 @@ the judgment surface and requires separate calibration. The pack is execution
 transport only: it adds no static worker topology, provider API, semantic cache,
 evidence filter, or resume/readiness claim.
 
+The reconstruction target is the rendered standalone prompt string that batch
+prompt building already produces, not the `prompts/<batch_id>.md` file the
+standalone preparation route writes. The rendered string is the canonical
+model-facing prompt and the prompt-ceiling input. The file writer appends one
+trailing newline as a storage delimiter, so a reconstructed prompt is exactly
+one byte shorter than the corresponding stored `.md` artifact. Byte-for-byte
+reconstruction is asserted against the canonical rendered string; consumers
+that deliberately submit raw `.md` file bytes also submit that storage newline.
+
+Pack verification is bundle-relative and exclusive, not self-proving. It
+regenerates the frame, manifest, and payloads from the originating bundle,
+compares them to freshly read stored bytes, requires the stored file set to be
+exactly the frame, the manifest, and one payload per named work unit, and
+re-runs reconstruction on each freshly parsed payload because a hash over
+canonical JSON cannot see the key order that prompt bytes depend on. Without
+the originating bundle the pack proves nothing; the reported stored-byte total
+and reduction cover exactly that verified file set. A batch id must be one safe
+path component, since it names the stored payload file. The pack carries no
+model call, and no observed latency change is attributed to it.
+
 For the new generation the controller verifies the immutable bundle and
 projection once per invocation and reuses that verified context across all
 response validation in that invocation. Status reports global expected,
@@ -1066,10 +1086,12 @@ new frontier.
 - `v33` / 2026-08-12 — added the optional load-once prompt execution pack for
   long-lived workers. The pack hash-binds one shared method/schema/axes/catalog
   frame and one exact context-plus-evidence payload per existing work unit, and
-  requires byte-identical reconstruction of every standalone prompt. Context
-  stays batch-local; no semantic method, response, compilation, evidence
-  denominator, prompt ceiling, worker topology, provider call, or readiness
-  claim changed.
+  requires byte-identical reconstruction of every rendered standalone prompt
+  string, which is one byte shorter than the stored `.md` artifact because the
+  file writer appends a trailing newline. Verification is bundle-relative and
+  admits no stored file the bundle does not name. Context stays batch-local; no
+  semantic method, response, compilation, evidence denominator, prompt ceiling,
+  worker topology, provider call, or readiness claim changed.
 - `v32` / 2026-08-12 — versioned the whole-row verifier method to v8, prevented
   reaction-susceptibility traits from becoming unsupported hydration conditions,
   and preserved explicit usable-product loss or waste as separately retrievable

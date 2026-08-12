@@ -45,6 +45,10 @@ PROMPT_ENCODING_VERSION = "semantic_prompt_encoding_pretty_json_v1"
 PROMPT_EXECUTION_PACK_VERSION = "semantic_prompt_execution_pack_v1"
 PROMPT_EXECUTION_PAYLOAD_VERSION = "semantic_prompt_execution_payload_v1"
 PROMPT_FRAME_BATCH_ID_TOKEN = "__FORSETI_BATCH_ID__"
+# A batch id becomes a stored payload file name. Execution packs accept only
+# the canonical ids emitted by every bundle packer, which also excludes Windows
+# device names, trailing dots, separators, drive markers, and relative parts.
+PACK_BATCH_ID_PREFIX = "batch-"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
 VIEW_VERSION = "semantic_evidence_integration_view_v1"
@@ -2570,6 +2574,19 @@ def build_prompt_execution_pack(
     manifest_batches: list[dict[str, Any]] = []
     for batch in bundle["batches"]:
         batch_id = batch["batch_id"]
+        batch_number = (
+            batch_id.removeprefix(PACK_BATCH_ID_PREFIX)
+            if isinstance(batch_id, str)
+            and batch_id.startswith(PACK_BATCH_ID_PREFIX)
+            else ""
+        )
+        if (
+            not batch_number
+            or any(character not in "0123456789" for character in batch_number)
+        ):
+            raise SemanticIntegrationError(
+                f"batch id {batch_id!r} is not a safe execution pack file name"
+            )
         evidence = [units[evidence_id] for evidence_id in batch["evidence_ids"]]
         standalone = prompt_by_batch[batch_id]["prompt"]
         payload_core = {
