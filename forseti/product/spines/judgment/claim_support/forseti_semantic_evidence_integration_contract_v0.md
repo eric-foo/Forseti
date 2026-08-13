@@ -1160,6 +1160,7 @@ new frontier.
   policy-v2 route and owner-only research reopen trigger explicit. This is
   malformed-artifact containment, not semantic proof against coherent wholesale
   forgery; historical v2 and valid v34 artifacts retain their interfaces.
+  Landed in PR #1496 after its bounded external recheck returned `READY`.
 - `v34` / 2026-08-13 — added opt-in corpus-global relation closure over the
   terminal normal-retention frontier. Exhaustive compiler-counted pair coverage
   now drives partition-independent equivalence classes and symmetric opposition;
