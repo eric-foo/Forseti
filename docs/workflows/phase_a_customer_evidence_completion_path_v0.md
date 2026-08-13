@@ -647,3 +647,205 @@ predates the settled attribute, ownership-axis, and comparison boundaries, so a
 fresh adjudication must grade this exact verified compilation and its terminal
 view before the full corpus resumes. The run makes no prevalence, Deliver,
 campaign, seal, or readiness claim.
+
+Contract v28 keeps the same single whole-row verifier and versions only its
+method text to v4. The verifier now treats replacement as a correction of the
+proposed row rather than an invitation to rewrite it from scratch: supported
+meanings, axes, product bindings, conditions, posture, and direction stay unless
+the source justifies a named correction. It also aligns drying and non-drying
+with hydration, records named-shade or all/every-shade ownership as
+shade-specific behavior, records an expressly sale-conditioned future purchase
+as value evidence, and prevents a statement solely about a comparator from becoming a
+Summer Fridays statement. At finalization, method-v7 personal agreement may
+support the meaning but cannot count as another independent first-hand customer.
+Historical verifier-v3 receipts remain identifiable but require replay before
+current reconciliation, and historical semantic views rebuild exactly.
+
+The bounded v28 dogfood reuses the frozen v27 extraction responses so the test
+isolates the verifier and claim-support changes. Its fresh prompts use a
+50,000-byte ceiling and cover semantic-core, cold-repeat, and the complete
+production-shaped verification slice. This replay is calibration evidence only;
+it does not authorize the full corpus until its blind responses validate and a
+fresh adjudication passes the existing gate.
+
+The final-hash replay is recorded at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v4-dogfood-20260811-v1`.
+It checked all 103 claim-bearing rows: 86 were accepted, 17 received bounded
+complete-row corrections, none were unresolved, and all three verified
+compilations validated with zero model API calls. The verifier corrected drying
+without moving peeling out of reaction, kept customer sensitivity separate from
+hydration conditions, retained all/every-shade behavior, added value only when
+future purchase was expressly sale- or price-conditioned, and removed
+comparator-only target bindings. The current compilation hashes are
+`a4a56aaf2400ffe670cf1f1d45f1569a22ad3bcbacfbd25eed6a8a68e8e09a47`
+for semantic core,
+`dd5d70e7a88273c737b194c02709bfe2a80bbc2b5c9e014cef073cab05592a41`
+for cold repeat, and
+`d85142112dc2850cf98fd39278046a9efc7a59f3ac5ea7515a6cdf78ba9f046e`
+for the production-shaped slice.
+
+Reconciliation accounts for all 7 core and 121 production-shaped items. The
+core view contains 25 propositions and retains two echo-only meanings as
+unmerged attribution (`view_sha256:
+b37be3fdaeccf2f17f7332ac850d152bf31c0689ebff5313ef340b738fe45fed`).
+The production view contains 17 genuinely stacked propositions and preserves
+202 distinct meanings explicitly as unmerged retrieval evidence rather than
+manufacturing consensus (`view_sha256:
+82e530edc20be48cc78cdfc76fb197612cdc537ca32eaf20cf47d89bde1c3121`).
+
+Fresh blind adjudication remains `SEMANTIC_CALIBRATION_FAIL`: 15 of 17 gold
+cases pass, all 7 relation obligations are satisfied, 4 of 7 cold repeats are
+consistent, and all 10 density rows are benign. The remaining semantic defects
+are one omitted target-versus-Lanolips moisture comparison and one primary row
+that invents a product-linked sensitivity reaction; the latter also creates an
+eighth unit beyond the ruler's 4..7 range. Three cold cases remain inconsistent.
+The evaluator separately reports `PREPARATION_RECEIPT_MISMATCH` even though the
+rebound receipt and stored spec bind the same `spec_sha256`; that mechanical
+residual is not hidden or counted as semantic success. Full-corpus execution
+therefore remains paused.
+
+Contract v29 installs the smallest general correction for those remaining
+semantic defects without adding another verifier. The active verifier-v5 method
+now performs one final source-to-unit completeness check, preserves an explicit
+same-dimension relational comparison separately from its side observations,
+and requires an explicit bound-product link before turning a nearby customer
+attribute into a product response. It also keeps supported adjacent-product
+meanings under their own subject. Historical verifier-v4 results remain evidence
+about the prior method and must not be relabelled. A fresh blind verifier-v5
+replay and adjudication still owe proof; until that run passes, the full corpus
+remains paused and the independent preparation-receipt mismatch remains open.
+
+The fresh verifier-v5 row replay at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v5-dogfood-20260811-v0`
+proved both targeted corrections at the row boundary: all 40 required gold
+meanings were present, including the missing hydration comparison, and the
+sensitive-lips row returned seven supported meanings without inventing a
+product-caused sensitivity reaction. A blind precheck found 16 of 17 strict
+gold rows, 6 of 7 cold repeats, and 9 of 10 density rows clean. The strict gold
+miss is a stale ruler boundary: its scent-causal named-shade preference allowed
+only `scent_and_flavor`, while the settled named-shade rule also requires
+`shade_and_color_fit`. Verifier v5 nevertheless remains insufficient because
+one reader made two partially ambiguous rows wholly unresolved, one cold repeat
+broadened shade-specific sale intent to the product family, and one density row
+lost an explicit overall positive evaluation.
+
+Contract v30 versions the same verifier to v6 for those general residuals.
+Local ambiguity may no longer erase independently safe meanings; ambiguous
+variant and echo meanings stay bounded without guessing; variant-specific
+behavior cannot broaden to the family; and explicit overall evaluations remain
+separate. Verifier-v5 artifacts remain preserved as negative proof. A fresh
+blind v6 replay, corrected gold-ruler binding, terminal reconciliation, and
+formal adjudication remain required before full-corpus execution resumes.
+
+That blind row replay is recorded at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v6-dogfood-20260811-v0`.
+All 103 rows compiled under verifier-v6 with zero unresolved decisions and zero
+model API calls. Both original defects remain corrected, both formerly dropped
+ambiguous rows retain their safe meanings, and all 40 required gold meanings are
+present. The strict stored ruler reports 15 of 17 cases, but both disagreements
+conflict with settled doctrine: the named-shade favorite correctly carries
+`shade_and_color_fit` beside its scent reason, and an explicit overall favorite
+reaction remains evidence rather than disappearing. On the settled rules the
+gold meanings are 17 of 17. Cold repeat is 4 of 7 field-exact; two additional
+pairs preserve the same propositions with only asserted-versus-qualified drift.
+The apparent Poppy-specific broadening was later found to be a ruler error, not
+a semantic regression: the parent asks whether the product range is worth USD 24,
+while Poppy identifies the option the customer owns.
+The density audit is 9 of 10 clean and finds one omitted material conversion
+context. These residuals show that more verifier prompt wording is no longer the
+smallest correct move: the governing rules are already present but one-pass
+readers apply them unevenly. Keep full-corpus execution paused pending an
+architecture decision on semantic disagreement/coverage handling, a corrected
+hash-bound ruler, and the still-open preparation-receipt mismatch.
+
+Verifier v7 corrects that referent-scope error without adding a variant catalog.
+It resolves pronouns and evaluation scope from the whole exchange, retains the
+named option as a separate ownership or experience meaning, and does not
+automatically narrow later product-level judgments to that option. In two fresh
+blind rounds, all three readers selected a product-level sale judgment; after a
+completeness clarification, all three also retained Poppy ownership, sale value,
+switching, smoothing failure, and no-repurchase evidence. This bounded check
+does not resume the full corpus or close the other recorded residuals.
+
+The four-comment verifier-v7 delta at
+`C:\tmp\forseti-summer-fridays-semantic-delta-v1-20260811-v0` confirmed the
+referent-scope correction: independent reads retained Poppy as ownership context
+while keeping the sale-only judgment at product scope, and both retained the
+skin-tint conversion context. It also exposed two narrower verifier residuals:
+one verifier reused reaction susceptibility as a hydration condition, and one
+lost the value meaning of explicit product waste through an application tool.
+Contract v32 versions the verifier to v8 with those two general clarifications.
+The bounded blind replay at
+`C:\tmp\forseti-summer-fridays-semantic-verifier-v8-delta-20260812-v0`
+applied verifier v8 independently to the primary and cold compilations. Both
+stages bind method hash
+`96237f5b5a407727f2ee338e9c6838a577e91de6ceb609d165d6906b437dabd8`.
+Both verified outputs left hydration unconditioned by sensitivity, retained
+explicit sponge/product loss under `value_and_quantity`, and completed with zero
+unresolved rows. The runner accepted both full verified compilations:
+`bd14adcf131ddfbd630b75fd64778e7869d6984da5c6588e77b85d47147ca567`
+for primary (36 active units, 0 accept / 4 replace / 0 unresolved) and
+`f387ac008c345a252dcafd705a3a9cad849402a0e5a9a05f875884706d2148cf`
+for cold (32 active units, 1 accept / 3 replace / 0 unresolved), with zero model
+API calls. The two legs differ on the separability half of the new value rule:
+the primary leg carried the sponge product-loss meaning as its own unit, while
+the cold leg kept it fused with the thin-texture and tool meanings in a single
+three-axis unit. That axis retention is proven on both legs; independent
+separation is proven on the primary leg only. This closes the two-comment
+verifier boundary at axis retention; no historical result is relabelled and the
+replay alone does not claim full-corpus completion.
+
+Contract v33 adds an opt-in reconciliation-policy v2 without changing semantic
+method v7, its extraction prompts, or its mandatory row-verification artifacts.
+The policy is selected once when preparing the first reconciliation level and
+is then carried in each validator-produced node compilation. Reconciliation
+node keys are local to their prompt batch; compiler identity continues to
+combine the stage, batch, and local key, so identical local handles in different
+responses cannot collide. Normal mode must retain every valid first-hand or
+personal-agreement customer finding as a semantic node, including a one-row
+finding. After a completed normal level removes less than one percent of its
+input candidates, the next level enters convergence mode. Convergence prompts
+receive only the compiler-counted number of distinct supporting evidence rows:
+a one-row finding stays retained as unmerged retrieval evidence, while a
+candidate or exact-equivalence merge spanning more than one source row must
+remain a node. The validator enforces all three boundaries independently of the
+prompt and preserves exact child accounting. Historical preparation without
+the policy remains byte-stable; the completed verified method-v7 compilation
+can therefore be replayed under the new reconciliation policy without
+re-extraction or row re-verification.
+
+A convergence pass is terminal when every surviving candidate remains a
+terminal node and the pass produces exactly as many nodes as it received
+candidates. This fixed-point rule may span multiple prompt-bounded batches:
+prompt byte size is a transport constraint, not a semantic requirement to
+invent another merge. Historical reconciliation without policy v2 retains its
+single-batch terminal rule.
+
+The full-corpus policy-v2 replay reused the existing verified method-v7
+compilation and reached a fixed point at level 8. The terminal compilation has
+107 repeated findings supported by 320 semantic units; 7,700 one-off or
+otherwise non-converged units remain explicitly retrievable, so all 8,020
+captured semantic units are accounted exactly once. The finalized view accounts
+all 60,901 captured corpus items (59,225 semantically assessed and 1,676
+mechanically excluded), reports zero blocked items, and preserves the 96
+explicitly unresolved evidence rows. Its stored view SHA-256 is
+`b50dda4370b2c98ce4ac2553aa9c2cb84b5cb23f1c91fa55567c7f9607b31c42`.
+
+Contract v34 does not relabel that policy-v2 replay. It adds a separate opt-in
+route that closes relations before one-row findings are retired. Deterministic
+block pairs cover every unordered pair on one terminal normal-retention
+frontier exactly once. Prompt batches remain transport only: equivalent pair
+decisions form transitive classes across partitions, and opposed pair decisions
+form symmetric links between classes. Directional identity comes from a
+deterministically selected truth-complete frontier assertion and excludes axes,
+stage, batch, and local handles. Finalization requires a hash-bound decision for
+every required pair, with zero unresolved pairs, and writes view v3; missing
+coverage cannot appear as `none_observed`.
+
+When closure exposes a bad source-row decomposition or mixed logical polarity,
+`prepare-row-repair` projects only the named evidence rows through the existing
+complete-row verifier. `submit-row-repair` preserves every other active row,
+writes explicit repair lineage, and changes the verified compilation hash.
+Every prior reconciliation and view then fails stale-lineage validation and
+must be regenerated. The route does not permit direct edits to node
+compilations or finalized views.

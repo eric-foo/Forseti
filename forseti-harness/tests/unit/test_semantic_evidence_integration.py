@@ -30,8 +30,22 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
+    RECONCILIATION_POLICY_VERSION_V2,
+    RELATION_CLOSURE_COMPILATION_VERSION,
+    RELATION_CLOSURE_RESPONSE_VERSION,
     PROMPT_ENCODING_VERSION,
     ROW_VERIFICATION_METHOD_TEXT,
+    ROW_VERIFICATION_METHOD_TEXT_V3,
+    ROW_VERIFICATION_METHOD_TEXT_V4,
+    ROW_VERIFICATION_METHOD_TEXT_V5,
+    ROW_VERIFICATION_METHOD_TEXT_V6,
+    ROW_VERIFICATION_METHOD_TEXT_V7,
+    ROW_VERIFICATION_METHOD_VERSION,
+    ROW_VERIFICATION_METHOD_VERSION_V3,
+    ROW_VERIFICATION_METHOD_VERSION_V4,
+    ROW_VERIFICATION_METHOD_VERSION_V5,
+    ROW_VERIFICATION_METHOD_VERSION_V6,
+    ROW_VERIFICATION_METHOD_VERSION_V7,
     ROW_VERIFICATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
@@ -41,18 +55,26 @@ from judgment.semantic_evidence_integration import (
     VIEW_VERSION,
     WORK_UNIT_PROJECTION_VERSION_V2,
     apply_row_verification,
+    apply_row_repair,
     build_batch_prompts,
     build_bundle,
+    build_prompt_execution_pack,
     build_reconciliation_prompt,
     finalize_view,
     finalize_v3_view,
+    finalize_relation_closed_view,
+    is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
+    prepare_relation_closure_stage,
     prepare_row_verification,
+    prepare_row_repair,
+    reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_row_verified_compilation,
     validate_reconciliation_stage,
+    validate_relation_closure_stage,
     verify_bundle_context,
 )
 from judgment.semantic_calibration import (
@@ -75,12 +97,20 @@ from judgment.semantic_calibration import (
     validate_calibration_spec,
 )
 from runners.run_semantic_evidence_integration import (
+    _parser as _semantic_integration_parser,
     evaluate_semantic_calibration_run,
     prepare_batches,
+    prepare_relation_closure_run,
+    prepare_row_repair_run,
+    prepare_prompt_execution_pack,
     prepare_semantic_calibration_run,
     prepare_row_verification_run,
     publish_batch_response_file,
     submit_row_verification_run,
+    submit_relation_closure_run,
+    submit_row_repair_run,
+    validate_relation_closure_response_file,
+    verify_prompt_execution_pack,
 )
 
 
@@ -1890,6 +1920,159 @@ def test_v4_exact_public_handle_match_across_scoped_origins_gets_one_credit() ->
     assert view["propositions"][0]["claim_support"]["independent_origin_count"] == 1
 
 
+def test_personal_agreement_support_never_adds_independent_origin_credit() -> None:
+    source = _source_v7(count=2)
+    source["captured_items"][1]["conversation_depth"] = 1
+    source["captured_items"][1]["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t2",
+            "text": "The parent reported the balm becoming drying after one week.",
+        }
+    ]
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    responses[0]["evidence"][1]["semantic_units"][0]["evidence_posture"] = (
+        "personal_agreement"
+    )
+    compiled = validate_batch_responses(bundle, responses)
+    verification_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        verification_stage,
+        _row_verification_responses(verification_stage),
+    )
+    stage, prompts = prepare_reconciliation_stage(bundle, verified)
+    assert all("never describe it as first-hand" in row["prompt"] for row in prompts)
+    assert all(
+        "posture-neutral bounded wording" in " ".join(row["prompt"].split())
+        for row in prompts
+    )
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+
+    view = finalize_v3_view(bundle, verified, terminal)
+
+    support = view["propositions"][0]["claim_support"]
+    assert len(support["evidence_refs"]) == 2
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def _agreement_bundle_and_units() -> tuple[dict, dict]:
+    """One method-v7 verified compilation with one first-hand and one agreement unit."""
+    source = _source_v7(count=2)
+    source["captured_items"][1]["conversation_depth"] = 1
+    source["captured_items"][1]["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t2",
+            "text": "The parent reported the balm becoming drying after one week.",
+        }
+    ]
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    responses[0]["evidence"][1]["semantic_units"][0]["evidence_posture"] = (
+        "personal_agreement"
+    )
+    compiled = validate_batch_responses(bundle, responses)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    return bundle, verified
+
+
+def test_personal_agreement_adds_no_origin_through_flat_finalization() -> None:
+    # The flat v1 route is a second live terminal finalization consumer for a
+    # method-v7 compilation, so agreement must not become a second independent
+    # customer there either.
+    bundle, verified = _agreement_bundle_and_units()
+    units = verified["semantic_units"]
+    assert {row["evidence_posture"] for row in units} == {
+        "first_hand",
+        "personal_agreement",
+    }
+    merged = _flat_reconciliation(bundle, verified)
+    merged["propositions"] = [
+        {
+            **merged["propositions"][0],
+            "relations": [
+                {"semantic_unit_ref": row["semantic_unit_ref"], "relation": "support"}
+                for row in units
+            ],
+        }
+    ]
+
+    support = finalize_view(bundle, verified, merged)["propositions"][0][
+        "claim_support"
+    ]
+
+    assert len(support["evidence_refs"]) == 2
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def test_method_v7_flat_finalization_uses_credited_public_origins() -> None:
+    # The flat finalizer must apply the same conservative actor-credit rule as
+    # the hierarchical finalizer: a public identity seen through two scoped
+    # origins is one credited origin, not two customers.
+    source = _source_v7(count=2)
+    source["captured_items"][0]["independence_key"] = "reddit:same-handle"
+    source["captured_items"][1]["independence_key"] = "retailer:same-handle"
+    for row in source["captured_items"]:
+        row["public_identity_key"] = "public_handle:same-handle"
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
+    verified = apply_row_verification(
+        bundle, compiled, stage, _row_verification_responses(stage)
+    )
+    units = verified["semantic_units"]
+    merged = _flat_reconciliation(bundle, verified)
+    merged["propositions"] = [
+        {
+            **merged["propositions"][0],
+            "relations": [
+                {"semantic_unit_ref": row["semantic_unit_ref"], "relation": "support"}
+                for row in units
+            ],
+        }
+    ]
+
+    support = finalize_view(bundle, verified, merged)["propositions"][0][
+        "claim_support"
+    ]
+
+    assert support["independent_origin_count"] == 1
+    assert support["support_posture"] == "isolated"
+
+
+def test_historical_methods_keep_their_frozen_reconciliation_posture_wording() -> None:
+    # The agreement/origin sentence states a method-v7 rule. Methods v5 and v6
+    # still credit personal_agreement in finalization, so emitting it for them
+    # would instruct against their own projection and rewrite a frozen prompt.
+    agreement_rule = "never use it to claim an additional independent origin"
+    carried = "may use only first_hand or personal_agreement"
+    for source in (_source_v5(count=2), _source_v6(count=2)):
+        bundle = build_bundle(source, max_prompt_bytes=20_000)
+        compiled = validate_batch_responses(
+            bundle, _v5_responses(bundle, detailed_per_batch=2)
+        )
+        _, prompts = prepare_reconciliation_stage(bundle, compiled)
+        assert prompts
+        assert all(carried in row["prompt"] for row in prompts)
+        assert not any(agreement_rule in row["prompt"] for row in prompts)
+
+    bundle, verified = _agreement_bundle_and_units()
+    _, v7_prompts = prepare_reconciliation_stage(bundle, verified)
+    assert all(agreement_rule in row["prompt"] for row in v7_prompts)
+
+
 def test_v3_full_corpus_accounting_fails_closed_on_missing_leaf() -> None:
     source = _source_v3()
     source["captured_items"].pop()
@@ -2453,15 +2636,15 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     compiled = validate_batch_responses(
         bundle, _v5_responses(bundle, detailed_per_batch=3)
     )
-    stage, prompts = prepare_row_verification(bundle, compiled)
+    stage, prompts = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
     claim_ids = [row["evidence_id"] for row in stage["verification_rows"]]
     assert len(claim_ids) == 3
     assert stage["coverage_proof"]["bijection_complete"] is True
     assert all(row["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] for row in prompts)
     assert all("ROWS_TO_VERIFY" in row["prompt"] for row in prompts)
-    assert stage["verification_method_version"] == (
-        "semantic_evidence_row_verification_method_v3"
-    )
+    assert stage["verification_method_version"] == ROW_VERIFICATION_METHOD_VERSION
     normalized_prompts = [" ".join(row["prompt"].split()) for row in prompts]
     assert all("Before checking fields, privately restate" in row for row in normalized_prompts)
     assert all(
@@ -2472,27 +2655,34 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert all("before field checking" in row for row in normalized_prompts)
     assert all("direct short answer" in row["prompt"] for row in prompts)
     assert all("Resolve a leading yes/no" in row["prompt"] for row in prompts)
-    assert all("does not make ownership, purchase, repurchase" in row["prompt"] for row in prompts)
-    assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
     assert all(
-        "A customer attribute conditions a result only if" in row["prompt"]
+        "repurchase of a named shade, or of an all/every-shade collection"
+        in row["prompt"]
         for row in prompts
     )
-    assert all("unambiguously entails the same baseline" in row for row in normalized_prompts)
+    assert all("Do not carry an axis across a clause boundary" in row["prompt"] for row in prompts)
+    assert all(
+        "A customer attribute conditions a result only when" in row["prompt"]
+        for row in prompts
+    )
+    assert all("directly relevant baseline" in row for row in normalized_prompts)
     assert all("source explicitly scopes that result" in row for row in normalized_prompts)
-    assert all("possible bias, caveat, or separate product response" in row for row in normalized_prompts)
-    assert all("separate meaning, not a condition" in row for row in normalized_prompts)
-    assert all("Conjunction or shared body area" in row for row in normalized_prompts)
-    assert all("Sensitivity alone is not a moisture baseline" in row for row in normalized_prompts)
-    assert all("product-linked sensitivity is reaction or tolerance context" in row for row in normalized_prompts)
-    assert all("dry or dehydrated may condition moisture" in row for row in normalized_prompts)
+    assert all("Conjunction, proximity, or shared body area" in row for row in normalized_prompts)
     assert all("leave the result unconditioned" in row for row in normalized_prompts)
     assert all(
         "not retained as a result's condition" in row for row in normalized_prompts
     )
     assert all("omit it from that result's statement too" in row for row in normalized_prompts)
+    assert all("explicitly identifies the bound product" in row for row in normalized_prompts)
+    assert all("ambiguous antecedent remains context" in row for row in normalized_prompts)
+    assert all("source-to-unit completeness pass" in row for row in normalized_prompts)
+    assert all("same dimension and direction" in row for row in normalized_prompts)
     assert all("Unqualified liking, preference" in row["prompt"] for row in prompts)
-    assert all("favorite evaluation of a named shade" in row["prompt"] for row in prompts)
+    assert all("favorite evaluation of a named shade carries" in row["prompt"] for row in prompts)
+    assert all("Drying, becoming drier, or losing moisture" in row["prompt"] for row in prompts)
+    assert all("adjacent or comparator product is not a target-product" in row["prompt"] for row in prompts)
+    assert all("Preserve the proposed row by default" in row["prompt"] for row in prompts)
+    assert all("Replacement is correction, not fresh regeneration" in row for row in normalized_prompts)
     assert all("One side's quantity cannot create" in row["prompt"] for row in prompts)
     replacement = _claim_row(claim_ids[1])
     replacement["semantic_units"][0]["semantic_unit_key"] = "corrected-value"
@@ -2536,7 +2726,7 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
         "semantic_evidence_row_verification_manifest_v2"
     )
     assert verified["row_verification_manifest"]["verification_method_version"] == (
-        "semantic_evidence_row_verification_method_v3"
+        ROW_VERIFICATION_METHOD_VERSION
     )
     assert verified["row_verification_manifest"]["verification_method_sha256"] == (
         _canonical_hash(ROW_VERIFICATION_METHOD_TEXT)
@@ -2545,8 +2735,90 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
-def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() -> None:
+def test_selective_row_repair_preserves_untouched_rows_and_invalidates_old_lineage() -> None:
+    bundle, verified = _verified_policy_compilation(count=2)
+    selected = verified["evidence_dispositions"][0]["evidence_id"]
+    untouched = verified["evidence_dispositions"][1]["evidence_id"]
+    repair_stage, _ = prepare_row_repair(
+        bundle, verified, evidence_ids=[selected], max_prompt_bytes=20_000
+    )
+    replacement = deepcopy(repair_stage["verification_rows"][0]["proposed_result"])
+    replacement["semantic_units"][0]["statement"] = (
+        "The balm became noticeably drying after one week of use."
+    )
+    repaired = apply_row_repair(
+        bundle,
+        verified,
+        repair_stage,
+        _row_verification_responses(
+            repair_stage,
+            {
+                selected: {
+                    "decision": "replace",
+                    "reason": "the qualified intensity was omitted",
+                    "replacement": replacement,
+                }
+            },
+        ),
+    )
+
+    def active_row(compilation: dict, evidence_id: str) -> tuple[dict, list[dict]]:
+        disposition = next(
+            row
+            for row in compilation["evidence_dispositions"]
+            if row["evidence_id"] == evidence_id
+        )
+        units = [
+            row
+            for row in compilation["semantic_units"]
+            if row["evidence_id"] == evidence_id
+        ]
+        return disposition, units
+
+    assert repaired["compilation_sha256"] != verified["compilation_sha256"]
+    assert active_row(repaired, untouched) == active_row(verified, untouched)
+    assert active_row(repaired, selected) != active_row(verified, selected)
+    assert repaired["row_repair_manifest"]["selected_evidence_ids"] == [selected]
+    prepare_reconciliation_stage(bundle, repaired)
+
+    old_stage, _ = prepare_reconciliation_stage(bundle, verified)
+    old_terminal = validate_reconciliation_stage(
+        bundle,
+        old_stage,
+        _terminal_singleton_reconciliation_responses(old_stage),
+    )
+    with pytest.raises(SemanticIntegrationError, match="stale root batch compilation"):
+        finalize_v3_view(bundle, repaired, old_terminal)
+
+
+def test_row_verification_v8_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
+    assert ROW_VERIFICATION_METHOD_TEXT.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8"
+    )
+    assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V5" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V6" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V7" not in ROW_VERIFICATION_METHOD_TEXT
+    assert ROW_VERIFICATION_METHOD_TEXT_V4.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V5.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V5"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V6.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V6"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V7.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7"
+    )
+    assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V6) == (
+        "fdf78f437e99275719bec13c32379ed83717f7551f128975d0017760e0e77f0f"
+    )
+    assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V7) == (
+        "a2387611eb8dfd89a0266a1e9b9ab3c4ffe1bf1466fe7e5d2b40c92005bc361c"
+    )
     for principle in (
         "smallest complete set of standalone meanings",
         "direct answers, evaluations, results, comparisons, reasons, contrasts",
@@ -2554,31 +2826,72 @@ def test_row_verification_v3_installs_general_coverage_order_not_case_phrases() 
         "Later context may narrow but does not cancel or replace",
         "Shared product, axis, or topic does not make one unit cover another",
         "Map each meaning to the proposed units before field checking",
-        "states or unambiguously entails the same baseline",
         "source explicitly scopes that result to the attribute",
-        "possible bias, caveat, or separate product response is a separate meaning",
-        "Conjunction or shared body area is not enough",
+        "Conjunction, proximity, or shared body area is not enough",
         "Split a conjoined attribute phrase and keep only the part whose baseline"
         " that result reports",
-        "Sensitivity alone is not a moisture baseline",
-        "product-linked sensitivity is reaction or tolerance context",
-        "dry or dehydrated may condition moisture",
         "If uncertain, leave the result unconditioned",
         "If a customer attribute is not retained as a result's condition, omit it"
         " from that result's statement too",
-        "When the source separately links that attribute to a product response,"
-        " preserve it as its own qualified meaning",
-        "do not discard it merely because it does not condition the neighboring"
-        " result",
+        "repurchase of a named shade, or of an all/every-shade collection, carries"
+        " shade_and_color_fit",
+        "sale timing or price is expressly a condition of an intended or hypothetical"
+        " purchase, it also carries value_and_quantity",
+        "Drying, becoming drier, or losing moisture supports"
+        " hydration_and_moisture",
+        "severity of drying alone does not turn moisture loss into a reaction",
+        "A unit solely about an adjacent or comparator product is not a"
+        " target-product unit",
+        "Preserve the proposed row by default",
+        "Replacement is correction, not fresh regeneration",
+        "restore every supported meaning, axis, product binding, condition,"
+        " posture, and direction",
         "every field is supported by the source or supplied context",
+        "source-to-unit completeness pass",
+        "every clause and every explicit relation between clauses",
+        "same dimension and direction for both sides",
+        "adjacency alone cannot create the relation",
+        "supported adjacent-product meaning under its own subject",
+        "Every supported independently usable meaning maps to exactly one unit",
+        "directly relevant baseline for that result",
+        "explicitly identifies the bound product as causing, worsening, changing,"
+        " or eliciting that response",
+        "vague product-category wording",
+        "ambiguous antecedent remains context",
+        "Local ambiguity does not erase unambiguous meanings elsewhere in the row",
+        "Use unresolved only when no safe complete row exists",
+        "uncertain variant referent only to its verified shared product",
+        "ambiguous echo as axis-free, detail-free personal agreement",
+        "Preserve an explicit overall evaluation separately from attribute facts",
+        "Resolve pronouns, omitted subjects, and evaluation scope from the whole leaf",
+        "not from the nearest named option alone",
+        "Preserve explicit ownership or experience as its own meaning",
+        "Earlier extraction examples identify separate atoms; they do not decide",
+        "susceptibility to irritation or reaction does not by itself establish a",
+        "hydration or moisture baseline",
+        "Explicit loss, absorption, or waste of usable product supports",
+        "value_and_quantity even when it occurs through a tool or texture",
     ):
         assert principle in normalized
+    normalized_v4 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V4.split())
+    normalized_v7 = " ".join(ROW_VERIFICATION_METHOD_TEXT_V7.split())
+    assert "Sensitivity alone is not a moisture baseline" in normalized_v4
+    assert "product-linked sensitivity is reaction or tolerance context" in normalized_v4
+    assert "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7" in normalized_v7
+    assert "susceptibility to irritation or reaction" not in normalized_v7
+    assert "waste of usable product supports" not in normalized_v7
+    assert "merely buying, owning, or repurchasing that shade may not" not in normalized
     for case_phrase in (
         "Summer Fridays",
         "Vanilla Beige",
         "worth $24",
         "lip balm",
         "lip gloss",
+        "Lanolips",
+        "sensitive lips",
+        "Fenty",
+        "YSL",
+        "Hourglass",
     ):
         assert case_phrase not in ROW_VERIFICATION_METHOD_TEXT
 
@@ -2588,8 +2901,12 @@ def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> No
     compiled = validate_batch_responses(
         bundle, _v5_responses(bundle, detailed_per_batch=3)
     )
-    stage_one, prompts_one = prepare_row_verification(bundle, compiled)
-    stage_two, prompts_two = prepare_row_verification(bundle, compiled)
+    stage_one, prompts_one = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    stage_two, prompts_two = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
     assert stage_one == stage_two
     assert prompts_one == prompts_two
 
@@ -2609,7 +2926,7 @@ def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> No
 def test_row_verification_rejects_a_patched_accept_and_invalid_replacement() -> None:
     bundle = _bundle_v5(count=1)
     compiled = validate_batch_responses(bundle, _v5_responses(bundle))
-    stage, _ = prepare_row_verification(bundle, compiled)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
     evidence_id = stage["verification_rows"][0]["evidence_id"]
 
     patched_accept = _row_verification_responses(stage)
@@ -2640,7 +2957,7 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
     compiled = validate_batch_responses(
         bundle, _v5_responses(bundle, detailed_per_batch=2)
     )
-    stage, _ = prepare_row_verification(bundle, compiled)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=20_000)
     rejected_id = stage["verification_rows"][-1]["evidence_id"]
     verified = apply_row_verification(
         bundle,
@@ -2714,6 +3031,141 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
             match="does not bind the current verification method",
         ):
             prepare_reconciliation_stage(bundle, wrong_method)
+
+    historical_v3 = deepcopy(verified)
+    historical_v3["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V3
+    )
+    historical_v3["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V3)
+    )
+    historical_v3["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v3["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v3["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v3.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v3)
+
+    historical_v4 = deepcopy(verified)
+    historical_v4["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V4
+    )
+    historical_v4["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V4)
+    )
+    historical_v4["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v4["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v4["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v4.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v4)
+
+    historical_v5 = deepcopy(verified)
+    historical_v5["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V5
+    )
+    historical_v5["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V5)
+    )
+    historical_v5["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v5["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v5["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v5.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v5)
+
+    historical_v6 = deepcopy(verified)
+    historical_v6["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V6
+    )
+    historical_v6["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V6)
+    )
+    historical_v6["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v6["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v6["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v6.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v6)
+
+    historical_v7 = deepcopy(verified)
+    historical_v7["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V7
+    )
+    historical_v7["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V7)
+    )
+    historical_v7["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v7["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v7["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v7.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v7)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (
@@ -2976,6 +3428,7 @@ def test_row_verification_runner_writes_stage_prompts_and_verified_compilation(
         compiled_path=compiled_path,
         stage_out=stage_path,
         prompt_dir=prompt_dir,
+        max_prompt_bytes=20_000,
     )
     assert prepared["status"] == "SEMANTIC_ROW_VERIFICATION_REQUIRED"
     stage = json.loads(stage_path.read_text(encoding="utf-8"))
@@ -3031,6 +3484,490 @@ def test_method_v7_requires_verification_without_rewriting_v6_extraction_rules()
     level_two, _ = prepare_reconciliation_stage(v7_bundle, level_one)
     assert level_two["level"] == 2
     assert level_two["batch_compilation_sha256"] == verified["compilation_sha256"]
+
+
+def _verified_policy_compilation(
+    *, count: int, max_prompt_bytes: int = 12_000
+) -> tuple[dict, dict]:
+    bundle = build_bundle(
+        _source_v7(count=count), max_prompt_bytes=max_prompt_bytes
+    )
+    compiled = validate_batch_responses(
+        bundle,
+        _v5_responses(bundle, detailed_per_batch=count),
+    )
+    verification_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        verification_stage,
+        _row_verification_responses(verification_stage),
+    )
+    return bundle, verified
+
+
+def _singleton_reconciliation_responses(stage: dict) -> list[dict]:
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    responses = []
+    for batch in stage["batches"]:
+        nodes = []
+        for index, child_ref in enumerate(batch["candidate_refs"], start=1):
+            candidate = candidate_index[child_ref]
+            nodes.append(
+                {
+                    # Keys deliberately repeat in other prompt batches. They
+                    # are local response handles, not corpus-global identity.
+                    "semantic_node_key": f"node-{index}",
+                    "bounded_meaning": candidate["statement"],
+                    "terminal_proposition": False,
+                    "claim_kind": None,
+                    "subject_product_ids": candidate["subject_product_ids"],
+                    "comparator_product_ids": candidate["comparator_product_ids"],
+                    "product_version_ids": candidate["product_version_ids"],
+                    "axis_ids": candidate["axis_ids"],
+                    "emerging_axis_labels": candidate["emerging_axis_labels"],
+                    "conditions": candidate["conditions"],
+                    "polarity": candidate["polarity"],
+                    "uncertainty_posture": candidate["uncertainty_posture"],
+                    "child_relations": [
+                        {"child_ref": child_ref, "relation": "support"}
+                    ],
+                    "opposition_checked": None,
+                    "causal_ceiling": None,
+                }
+            )
+        responses.append(
+            {
+                "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "semantic_nodes": nodes,
+                "unmerged_children": [],
+                "emerging_axis_consolidations": [],
+            }
+        )
+    return responses
+
+
+def _terminal_singleton_reconciliation_responses(stage: dict) -> list[dict]:
+    responses = _singleton_reconciliation_responses(stage)
+    for response in responses:
+        for node in response["semantic_nodes"]:
+            node["terminal_proposition"] = True
+            node["claim_kind"] = "customer_experience"
+            node["opposition_checked"] = False
+            node["causal_ceiling"] = "descriptive_only"
+    return responses
+
+
+def _relation_closure_responses(
+    stage: dict,
+    *,
+    default_relation: str = "equivalent",
+    relation_by_pair: dict[tuple[str, str], str] | None = None,
+) -> list[dict]:
+    relation_by_pair = relation_by_pair or {}
+    responses = []
+    for batch in stage["batches"]:
+        left = batch["left_candidate_refs"]
+        right = batch["right_candidate_refs"]
+        pairs = (
+            [
+                tuple(sorted((left[index], left[other])))
+                for index in range(len(left))
+                for other in range(index + 1, len(left))
+            ]
+            if batch["same_block"]
+            else [tuple(sorted((left_ref, right_ref))) for left_ref in left for right_ref in right]
+        )
+        responses.append(
+            {
+                "schema_version": RELATION_CLOSURE_RESPONSE_VERSION,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "relations": [
+                    {
+                        "left_ref": pair[0],
+                        "right_ref": pair[1],
+                        "relation": relation_by_pair.get(pair, default_relation),
+                        "reason": "the pair has the selected semantic relationship",
+                    }
+                    for pair in pairs
+                ],
+            }
+        )
+    return responses
+
+
+def test_policy_v2_node_keys_are_local_to_each_prompt_batch() -> None:
+    bundle, verified = _verified_policy_compilation(
+        count=40, max_prompt_bytes=12_000
+    )
+    stage, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    assert len(stage["batches"]) > 1
+
+    compiled = validate_reconciliation_stage(
+        bundle, stage, _singleton_reconciliation_responses(stage)
+    )
+
+    assert len(compiled["semantic_nodes"]) == len(stage["candidates"])
+    assert len({row["semantic_node_ref"] for row in compiled["semantic_nodes"]}) == len(
+        compiled["semantic_nodes"]
+    )
+
+    duplicate_within_one_batch = _singleton_reconciliation_responses(stage)
+    first_with_two_nodes = next(
+        row for row in duplicate_within_one_batch if len(row["semantic_nodes"]) > 1
+    )
+    first_with_two_nodes["semantic_nodes"][1]["semantic_node_key"] = (
+        first_with_two_nodes["semantic_nodes"][0]["semantic_node_key"]
+    )
+    with pytest.raises(SemanticIntegrationError, match="duplicate or empty semantic node"):
+        validate_reconciliation_stage(bundle, stage, duplicate_within_one_batch)
+
+
+def test_policy_v2_normal_mode_cannot_drop_a_customer_singleton() -> None:
+    bundle, verified = _verified_policy_compilation(count=1)
+    stage, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    assert stage["reconciliation_mode"] == "normal"
+    response = _singleton_reconciliation_responses(stage)[0]
+    response["semantic_nodes"] = []
+    response["unmerged_children"] = [
+        {
+            "child_ref": stage["candidates"][0]["candidate_ref"],
+            "reason": "Only one customer reported it.",
+        }
+    ]
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="normal reconciliation cannot unmerge customer finding",
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+
+def test_policy_v2_still_requires_the_verified_row_compilation() -> None:
+    bundle = build_bundle(_source_v7(count=1), max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=1)
+    )
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="method v7 requires row verification",
+    ):
+        prepare_reconciliation_stage(
+            bundle,
+            compiled,
+            reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+        )
+
+
+def test_policy_v2_enters_convergence_and_enforces_source_row_support() -> None:
+    bundle, verified = _verified_policy_compilation(count=2)
+    stage_one, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    level_one = validate_reconciliation_stage(
+        bundle, stage_one, _singleton_reconciliation_responses(stage_one)
+    )
+
+    stage_two, prompts_two = prepare_reconciliation_stage(bundle, level_one)
+    assert stage_two["reconciliation_mode"] == "convergence"
+    assert all('"supporting_evidence_row_count": 1' in row["prompt"] for row in prompts_two)
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="lacks repeated source-row support",
+    ):
+        validate_reconciliation_stage(
+            bundle, stage_two, _singleton_reconciliation_responses(stage_two)
+        )
+
+    level_two = validate_reconciliation_stage(
+        bundle,
+        stage_two,
+        _group_level_responses(stage_two, terminal=False),
+    )
+    stage_three, prompts_three = prepare_reconciliation_stage(bundle, level_two)
+    assert stage_three["reconciliation_mode"] == "convergence"
+    assert '"supporting_evidence_row_count": 2' in prompts_three[0]["prompt"]
+
+    response = _group_level_responses(stage_three, terminal=False)[0]
+    response["semantic_nodes"] = []
+    response["unmerged_children"] = [
+        {
+            "child_ref": stage_three["candidates"][0]["candidate_ref"],
+            "reason": "Retained only as retrieval evidence.",
+        }
+    ]
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="convergence cannot unmerge repeated customer finding",
+    ):
+        validate_reconciliation_stage(bundle, stage_three, [response])
+
+
+def test_policy_v2_multi_batch_fixed_point_is_terminal() -> None:
+    compilation = {
+        "input_batch_count": 2,
+        "input_candidate_count": 2,
+        "reconciliation_policy_version": RECONCILIATION_POLICY_VERSION_V2,
+        "reconciliation_mode": "convergence",
+        "semantic_nodes": [
+            {"terminal_proposition": True},
+            {"terminal_proposition": True},
+        ],
+    }
+
+    assert is_terminal_reconciliation_compilation(compilation)
+
+    changed = deepcopy(compilation)
+    changed["input_candidate_count"] = 3
+    assert not is_terminal_reconciliation_compilation(changed)
+
+    normal = deepcopy(compilation)
+    normal["reconciliation_mode"] = "normal"
+    assert not is_terminal_reconciliation_compilation(normal)
+
+
+def _relation_closure_fixture(
+    *, count: int = 3, closure_prompt_bytes: int = 12_000
+) -> tuple[dict, dict, dict, dict]:
+    bundle, verified = _verified_policy_compilation(
+        count=count, max_prompt_bytes=12_000
+    )
+    stage, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    frontier = validate_reconciliation_stage(
+        bundle, stage, _terminal_singleton_reconciliation_responses(stage)
+    )
+    closure_stage, _ = prepare_relation_closure_stage(
+        bundle, frontier, max_prompt_bytes=closure_prompt_bytes
+    )
+    return bundle, verified, frontier, closure_stage
+
+
+def test_relation_closure_merges_equivalent_nodes_across_prompt_partitions() -> None:
+    bundle, verified, frontier, small_stage = _relation_closure_fixture(
+        count=8, closure_prompt_bytes=4_500
+    )
+    frontier = deepcopy(frontier)
+    frontier["semantic_nodes"][0]["bounded_meaning"] = (
+        "After a week of use, the balm had become drying."
+    )
+    _rehash_node_compilation(frontier)
+    small_stage, _ = prepare_relation_closure_stage(
+        bundle, frontier, max_prompt_bytes=4_500
+    )
+    large_stage, _ = prepare_relation_closure_stage(
+        bundle, frontier, max_prompt_bytes=30_000
+    )
+    assert len(small_stage["batches"]) > len(large_stage["batches"])
+
+    small = validate_relation_closure_stage(
+        bundle, small_stage, _relation_closure_responses(small_stage)
+    )
+    large = validate_relation_closure_stage(
+        bundle, large_stage, _relation_closure_responses(large_stage)
+    )
+
+    assert small["schema_version"] == RELATION_CLOSURE_COMPILATION_VERSION
+    assert len(small["semantic_nodes"]) == 1
+    assert len(large["semantic_nodes"]) == 1
+    assert small["semantic_nodes"] == large["semantic_nodes"]
+    assert small["relation_coverage"]["complete"] is True
+    small_view = finalize_relation_closed_view(bundle, verified, small)
+    large_view = finalize_relation_closed_view(bundle, verified, large)
+    assert small_view["propositions"] == large_view["propositions"]
+    assert small_view["view_sha256"] == large_view["view_sha256"]
+
+
+def test_relation_closure_unresolved_pair_blocks_finalization() -> None:
+    bundle, verified, _, stage = _relation_closure_fixture(count=2)
+    closed = validate_relation_closure_stage(
+        bundle,
+        stage,
+        _relation_closure_responses(stage, default_relation="unresolved"),
+    )
+
+    assert closed["relation_coverage"]["complete"] is False
+    assert closed["relation_coverage"]["unresolved_pair_count"] == 1
+    assert not is_terminal_reconciliation_compilation(closed)
+    with pytest.raises(SemanticIntegrationError, match="complete global relation closure"):
+        finalize_relation_closed_view(bundle, verified, closed)
+
+
+def test_single_candidate_relation_closure_cli_accepts_zero_pair_responses() -> None:
+    args = _semantic_integration_parser().parse_args(
+        [
+            "submit-relation-closure",
+            "--bundle",
+            "bundle.json",
+            "--stage",
+            "stage.json",
+            "--compilation-out",
+            "closed.json",
+        ]
+    )
+
+    assert args.response == []
+
+
+def test_relation_closure_requires_complete_global_classification() -> None:
+    bundle, _, _, stage = _relation_closure_fixture(count=2)
+    responses = _relation_closure_responses(stage)
+    responses[0]["relations"].pop()
+
+    with pytest.raises(
+        SemanticIntegrationError, match="does not decide every required pair"
+    ):
+        validate_relation_closure_stage(bundle, stage, responses)
+
+
+def test_relation_closure_rejects_mixed_polarity_before_prompting() -> None:
+    bundle, _, frontier, _ = _relation_closure_fixture(count=1)
+    forged = deepcopy(frontier)
+    forged["semantic_nodes"][0]["polarity"] = "mixed"
+    _rehash_node_compilation(forged)
+
+    with pytest.raises(SemanticIntegrationError, match="requires row repair"):
+        prepare_relation_closure_stage(bundle, forged)
+
+
+def test_relation_closure_derives_symmetric_opposition() -> None:
+    bundle, verified, frontier, _ = _relation_closure_fixture(count=2)
+    forged = deepcopy(frontier)
+    forged["semantic_nodes"][1]["polarity"] = "negated"
+    forged["semantic_nodes"][1]["bounded_meaning"] = (
+        "The balm did not become drying after one week of use."
+    )
+    _rehash_node_compilation(forged)
+    stage, _ = prepare_relation_closure_stage(bundle, forged)
+    closed = validate_relation_closure_stage(
+        bundle,
+        stage,
+        _relation_closure_responses(stage, default_relation="opposed"),
+    )
+
+    assert len(closed["semantic_nodes"]) == 2
+    opposition = {
+        node["semantic_node_ref"]: node["opposing_semantic_node_refs"]
+        for node in closed["semantic_nodes"]
+    }
+    left, right = opposition
+    assert opposition[left] == [right]
+    assert opposition[right] == [left]
+    view = finalize_relation_closed_view(bundle, verified, closed)
+    propositions = {row["proposition_id"]: row for row in view["propositions"]}
+    assert len(propositions) == 2
+    for proposition_id, proposition in propositions.items():
+        assert proposition["claim_support"]["conflict_posture"] == "mixed"
+        assert proposition["claim_support"]["counterevidence_refs"]
+        assert len(proposition["opposing_proposition_ids"]) == 1
+        opposite = proposition["opposing_proposition_ids"][0]
+        assert propositions[opposite]["opposing_proposition_ids"] == [proposition_id]
+
+
+def test_relation_closure_and_selective_repair_runner_surfaces(tmp_path: Path) -> None:
+    bundle, verified, frontier, _ = _relation_closure_fixture(count=2)
+    bundle_path = tmp_path / "bundle.json"
+    verified_path = tmp_path / "verified.json"
+    frontier_path = tmp_path / "frontier.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    verified_path.write_text(json.dumps(verified), encoding="utf-8")
+    frontier_path.write_text(json.dumps(frontier), encoding="utf-8")
+
+    closure_stage_path = tmp_path / "closure-stage.json"
+    closure_prompt_dir = tmp_path / "closure-prompts"
+    prepared = prepare_relation_closure_run(
+        bundle_path=bundle_path,
+        node_compilation_path=frontier_path,
+        stage_out=closure_stage_path,
+        prompt_dir=closure_prompt_dir,
+    )
+    assert prepared["status"] == "SEMANTIC_RELATION_CLOSURE_REQUIRED"
+    closure_stage = json.loads(closure_stage_path.read_text(encoding="utf-8"))
+    closure_response_paths = []
+    for response in _relation_closure_responses(closure_stage):
+        path = tmp_path / f"{response['batch_id']}.json"
+        path.write_text(json.dumps(response), encoding="utf-8")
+        closure_response_paths.append(path)
+    validation_receipt = tmp_path / "closure-validation.json"
+    validated = validate_relation_closure_response_file(
+        bundle_path=bundle_path,
+        stage_path=closure_stage_path,
+        response_path=closure_response_paths[0],
+        receipt_out=validation_receipt,
+    )
+    assert validated["status"] == "SEMANTIC_RELATION_CLOSURE_RESPONSE_VALID"
+    assert validation_receipt.exists()
+    closure_out = tmp_path / "closure.json"
+    submitted = submit_relation_closure_run(
+        bundle_path=bundle_path,
+        stage_path=closure_stage_path,
+        response_paths=closure_response_paths,
+        compilation_out=closure_out,
+    )
+    assert submitted["status"] == "SEMANTIC_FINALIZATION_READY"
+    assert submitted["terminal"] is True
+
+    unresolved_response_paths = []
+    for response in _relation_closure_responses(
+        closure_stage, default_relation="unresolved"
+    ):
+        path = tmp_path / f"unresolved-{response['batch_id']}.json"
+        path.write_text(json.dumps(response), encoding="utf-8")
+        unresolved_response_paths.append(path)
+    unresolved = submit_relation_closure_run(
+        bundle_path=bundle_path,
+        stage_path=closure_stage_path,
+        response_paths=unresolved_response_paths,
+        compilation_out=tmp_path / "unresolved-closure.json",
+    )
+    assert unresolved["status"] == "SEMANTIC_RELATION_CLOSURE_REQUIRED"
+    assert unresolved["terminal"] is False
+
+    selected = verified["evidence_dispositions"][0]["evidence_id"]
+    repair_stage_path = tmp_path / "repair-stage.json"
+    repair_prompt_dir = tmp_path / "repair-prompts"
+    repair_prepared = prepare_row_repair_run(
+        bundle_path=bundle_path,
+        verified_path=verified_path,
+        evidence_ids=[selected],
+        stage_out=repair_stage_path,
+        prompt_dir=repair_prompt_dir,
+        max_prompt_bytes=20_000,
+    )
+    assert repair_prepared["status"] == "SEMANTIC_ROW_REPAIR_REQUIRED"
+    repair_stage = json.loads(repair_stage_path.read_text(encoding="utf-8"))
+    repair_response = _row_verification_responses(repair_stage)[0]
+    repair_response_path = tmp_path / "repair-response.json"
+    repair_response_path.write_text(json.dumps(repair_response), encoding="utf-8")
+    repaired_out = tmp_path / "repaired.json"
+    repair_submitted = submit_row_repair_run(
+        bundle_path=bundle_path,
+        verified_path=verified_path,
+        stage_path=repair_stage_path,
+        response_paths=[repair_response_path],
+        repaired_out=repaired_out,
+    )
+    assert repair_submitted["status"] == "SEMANTIC_ROW_REPAIR_APPLIED"
 
 
 def _flat_reconciliation(bundle: dict, compiled: dict) -> dict:
@@ -4973,6 +5910,156 @@ def test_v5_prepare_runner_writes_no_static_worker_assignment(tmp_path: Path) ->
     assert result["model_api_calls"] == 0
     assert not (tmp_path / "prompts" / "worker_assignments.json").exists()
     assert sorted(p.name for p in (tmp_path / "prompts").glob("*")) == ["batch-0001.md"]
+
+
+def test_v5_execution_pack_reconstructs_every_standalone_prompt_exactly() -> None:
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    prompts = {row["batch_id"]: row["prompt"] for row in build_batch_prompts(bundle)}
+    assert len(prompts) > 1
+
+    frame, manifest, payloads = build_prompt_execution_pack(bundle)
+    assert manifest["batch_count"] == len(prompts)
+    assert frame.count("__FORSETI_BATCH_ID__") == 1
+    assert [row["batch_id"] for row in payloads] == [
+        row["batch_id"] for row in bundle["batches"]
+    ]
+    assert {
+        evidence_id
+        for payload in payloads
+        for evidence_id in (
+            row["evidence_id"] for row in payload["evidence_batch"]
+        )
+    } == {row["evidence_id"] for row in bundle["evidence_units"]}
+    for payload in payloads:
+        assert reconstruct_prompt_execution_payload(frame, payload) == prompts[
+            payload["batch_id"]
+        ]
+
+    original_bytes = sum(len(prompt.encode("utf-8")) for prompt in prompts.values())
+    thin_bytes = len(frame.encode("utf-8")) + sum(
+        len(json.dumps(row, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8"))
+        + 1
+        for row in payloads
+    )
+    assert thin_bytes < original_bytes
+
+    tampered = deepcopy(payloads[0])
+    tampered["context_table"] = []
+    with pytest.raises(SemanticIntegrationError, match="does not match its hash"):
+        reconstruct_prompt_execution_payload(frame, tampered)
+
+
+def test_prepare_prompt_execution_pack_writes_load_once_frame(tmp_path: Path) -> None:
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    pack_dir = tmp_path / "execution-pack"
+
+    result = prepare_prompt_execution_pack(
+        bundle_path=bundle_path,
+        pack_dir=pack_dir,
+    )
+
+    assert result["status"] == "SEMANTIC_PROMPT_EXECUTION_PACK_PREPARED"
+    assert result["verification_status"] == "SEMANTIC_PROMPT_EXECUTION_PACK_VERIFIED"
+    assert result["batch_count"] == len(bundle["batches"])
+    assert result["stored_byte_reduction"] > 0
+    assert (pack_dir / "shared-frame.md").is_file()
+    assert (pack_dir / "manifest.json").is_file()
+    assert len(list((pack_dir / "payloads").glob("batch-*.json"))) == len(
+        bundle["batches"]
+    )
+    with pytest.raises(ValueError, match="existing execution pack"):
+        prepare_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+    first_payload = pack_dir / "payloads" / "batch-0001.json"
+    tampered = json.loads(first_payload.read_text(encoding="utf-8"))
+    tampered["context_table"] = []
+    first_payload.write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match bundle"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+
+def _prepared_pack(tmp_path: Path) -> tuple[Path, Path]:
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    pack_dir = tmp_path / "execution-pack"
+    prepare_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+    return bundle_path, pack_dir
+
+
+def test_execution_pack_verification_reads_persisted_frame_bytes(
+    tmp_path: Path,
+) -> None:
+    """A frame whose stored bytes changed must not verify as byte-exact.
+
+    Text-mode reads translate CRLF, so line-ending rewrites in transport would
+    otherwise pass while every reconstructed prompt diverged from its hash.
+    """
+    bundle_path, pack_dir = _prepared_pack(tmp_path)
+    frame_path = pack_dir / "shared-frame.md"
+    original = frame_path.read_bytes()
+    frame_path.write_bytes(original.replace(b"\n", b"\r\n"))
+    assert frame_path.read_bytes() != original
+
+    with pytest.raises(ValueError, match="stored execution frame does not match"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "payloads/stale-batch-0001.json",
+        "payloads/superseded/batch-0001.json",
+        "leftover-prompt.md",
+    ],
+)
+def test_execution_pack_verification_rejects_unnamed_stored_files(
+    tmp_path: Path, relative_path: str
+) -> None:
+    """A verified pack may hold no file the bundle does not name."""
+    bundle_path, pack_dir = _prepared_pack(tmp_path)
+    stray = pack_dir / relative_path
+    stray.parent.mkdir(parents=True, exist_ok=True)
+    stray.write_bytes(b'{"stale": true}\n')
+
+    with pytest.raises(ValueError, match="pack file set does not match bundle"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
+
+
+@pytest.mark.parametrize(
+    "escaped",
+    ["../escaped-batch", "CON", "batch-0001.", "batch_0001"],
+)
+def test_execution_pack_refuses_unsafe_batch_id_file_name(
+    tmp_path: Path, escaped: str
+) -> None:
+    """A batch id that is not one safe path component writes nothing."""
+    bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
+    original_id = bundle["batches"][0]["batch_id"]
+    bundle["batches"][0]["batch_id"] = escaped
+    for row in bundle["semantic_work_unit_projection"]["work_units"]:
+        if row["work_unit_id"] == original_id:
+            row["work_unit_id"] = escaped
+    for value, field in (
+        (bundle["semantic_work_unit_projection"], "projection_sha256"),
+        (bundle, "bundle_sha256"),
+    ):
+        value[field] = _canonical_hash(
+            {key: item for key, item in value.items() if key != field}
+        )
+
+    with pytest.raises(SemanticIntegrationError, match="not a safe execution pack"):
+        build_prompt_execution_pack(bundle)
+
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    with pytest.raises(SemanticIntegrationError, match="not a safe execution pack"):
+        prepare_prompt_execution_pack(
+            bundle_path=bundle_path, pack_dir=tmp_path / "nested" / "execution-pack"
+        )
+    assert not (tmp_path / "nested" / "execution-pack").exists()
 
 
 def test_v5_lineage_must_cover_every_work_unit() -> None:

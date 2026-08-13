@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v27
-effective_date: 2026-08-11
+version: v34
+effective_date: 2026-08-12
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v27
+# Semantic Evidence Integration Contract v34
 
 ## Purpose
 
@@ -122,8 +122,13 @@ amount. It resolves leading yes/no replies against their parent question,
 accounts for every materially distinct clause, and keeps unqualified preference
 or better/worse language about a product overall axis-free even when it sits
 beside an attribute claim. A stated liking or favorite evaluation of a named
-shade may use `shade_and_color_fit`; ownership, purchase, or repurchase alone
-may not.
+shade uses `shade_and_color_fit`. Ownership, purchase, selection, or repurchase
+of a named shade or an all/every-shade collection also carries
+`shade_and_color_fit` because the observed behavior is shade-specific; this
+records the behavioral subject and does not infer that the shade fit well. When
+sale timing or price is expressly a condition of an intended or hypothetical
+purchase, it also carries `value_and_quantity`; an incidental past sale mention
+does not create that judgment.
 Non-claim rows pass through unchanged.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
@@ -174,6 +179,73 @@ one but carrying no row-verification manifest is rejected, not graded. A
 method-v7 slice fails closed when no verified compilation is supplied; only
 historical-method slices without a supplied verified compilation retain the
 historical evaluation path.
+
+Contract v28 versions the whole-row verifier method to v4 and makes correction
+preserving by default. A replacement remains a complete row, but it is not a
+fresh regeneration: every proposed meaning and field that the source supports
+must survive, and the verifier's reason must identify any source-based removal,
+change, or addition. Drying, becoming drier, loss of moisture, and non-drying
+belong to `hydration_and_moisture`; burning, irritation, peeling, breakout, or
+damage belong to `reaction_and_breakout`, and drying severity alone does not
+move a moisture claim into reaction. A unit solely about an adjacent or
+comparator product cannot bind the target product unless it states a relationship
+to the target. Named-shade behavior follows the shade rule above. Historical
+verifier-v3 manifests remain identifiable by their pinned verifier-v3 text but
+cannot authorize current reconciliation; they must replay row verification and
+are not relabelled as verifier-v4 output.
+
+Contract v29 versions the same whole-row verifier method to v5. Its final
+completeness pass maps each independently usable source meaning to exactly one
+unit and maps every unit back to supported source meaning. A paired comparison
+may yield a separate relational meaning only when the source establishes the
+same dimension and direction on both sides; proximity alone cannot create it.
+Supported adjacent-product meanings remain under their own subject. A customer
+attribute qualifies a result only when it is the directly relevant baseline or
+the source explicitly scopes the result to it. It becomes a separate
+bound-product response only when the source explicitly identifies that product
+as causing, worsening, changing, or eliciting the response; ambiguous antecedents
+and vague category wording remain context. This adds no response field, second
+verifier, parser, phrase table, conclusion, or recommendation. Historical
+verifier-v4 manifests remain hash-identifiable but require replay before current
+reconciliation or calibration.
+
+Contract v30 versions that verifier method to v6 and closes the overcorrection
+found by its first blind replay. Ambiguity in one clause cannot discard supported
+unambiguous meanings elsewhere in the row. When a variant referent is genuinely
+ambiguous, the verifier may retain the uncertain meaning only at the verified
+shared-product scope; it cannot select a variant. An ambiguous echo remains
+axis-free and detail-free rather than importing one possible parent predicate.
+Variant-specific behavior cannot broaden to the whole product family, and an
+explicit overall evaluation remains separate from specific attribute facts and
+from a disposition reason. Whole-row unresolved remains available only when no
+safe complete row exists. This adds no response field, parser, second verifier,
+or conclusion surface. Historical verifier-v5 manifests remain identifiable but
+require replay before current reconciliation or calibration.
+
+Contract v31 versions the verifier method to v7 and corrects referent scope.
+Pronouns, omitted subjects, and evaluation scope resolve from the whole leaf and
+its supplied parent context rather than the nearest named option alone. A named
+option may establish ownership or experience without narrowing every later
+product evaluation to that option. Explicit ownership remains separately
+visible, while the option is not copied automatically into later conditions.
+Earlier extraction examples identify separate meanings but do not decide their
+referent scope. This adds no variant catalog, response field, parser, second
+verifier, conclusion, or full-corpus resume authority.
+
+Contract v32 versions the verifier method to v8 and closes the two residuals
+found by the four-comment delta replay. A reaction-susceptibility trait does not
+by itself become a hydration baseline; a neighboring hydration result remains
+unconditioned unless the source links that trait to hydration. Explicit loss,
+absorption, or waste of usable product remains `value_and_quantity` evidence
+even when the mechanism is a tool or texture, and it stays separately usable
+when its truth can vary independently. This adds no category registry, response
+field, parser, second verifier, conclusion, or full-corpus resume authority.
+
+For method v7, `personal_agreement` may remain support for a bounded meaning but
+never adds a credited independent origin and must not be described as another
+first-hand customer. This is enforced both in reconciliation instructions and
+in deterministic final claim-support projection. Historical semantic methods
+retain their frozen output behavior.
 
 Two boundaries of that intake are stated because they are not obvious from the
 rule above. Versioning the verifier method to v3 also retires every
@@ -586,6 +658,38 @@ controller runtime decision, not part of semantic identity. The new generation
 keeps the existing pretty, indented JSON prompt encoding, bound by name so a
 later compact encoding cannot silently reuse a projection packed under this one.
 
+Contract v33 adds an optional `semantic_prompt_execution_pack_v1` transport for
+long-lived workers. It stores the method, response shape, axes, and product
+catalog in one hash-bound shared frame and stores each work unit's exact context
+table and evidence rows in a separately hashed payload. Every payload must
+reconstruct the existing standalone prompt byte-for-byte before it is usable;
+the bundle, method, response, compilation, work-unit, prompt ceiling, and
+evidence-accounting identities do not change. Context remains batch-local in
+v1 because exposing neighboring context or relying on model memory would change
+the judgment surface and requires separate calibration. The pack is execution
+transport only: it adds no static worker topology, provider API, semantic cache,
+evidence filter, or resume/readiness claim.
+
+The reconstruction target is the rendered standalone prompt string that batch
+prompt building already produces, not the `prompts/<batch_id>.md` file the
+standalone preparation route writes. The rendered string is the canonical
+model-facing prompt and the prompt-ceiling input. The file writer appends one
+trailing newline as a storage delimiter, so a reconstructed prompt is exactly
+one byte shorter than the corresponding stored `.md` artifact. Byte-for-byte
+reconstruction is asserted against the canonical rendered string; consumers
+that deliberately submit raw `.md` file bytes also submit that storage newline.
+
+Pack verification is bundle-relative and exclusive, not self-proving. It
+regenerates the frame, manifest, and payloads from the originating bundle,
+compares them to freshly read stored bytes, requires the stored file set to be
+exactly the frame, the manifest, and one payload per named work unit, and
+re-runs reconstruction on each freshly parsed payload because a hash over
+canonical JSON cannot see the key order that prompt bytes depend on. Without
+the originating bundle the pack proves nothing; the reported stored-byte total
+and reduction cover exactly that verified file set. A batch id must be one safe
+path component, since it names the stored payload file. The pack carries no
+model call, and no observed latency change is attributed to it.
+
 For the new generation the controller verifies the immutable bundle and
 projection once per invocation and reuses that verified context across all
 response validation in that invocation. Status reports global expected,
@@ -674,6 +778,28 @@ leaf denominator happens to match. The agent still owns whether meanings are
 equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
+
+Contract v34 adds an opt-in global relation-closure generation after one
+terminal normal-retention frontier. Deterministic block pairs cover every
+unordered frontier-candidate pair exactly once; each pair terminates as
+`equivalent`, `opposed`, `distinct`, `adjacent`, or `unresolved`. Prompt batch
+and local node handles are transport only. Equivalent pairs form transitive
+classes, while opposed pairs form symmetric inter-class links. Directional
+class identity uses a deterministic truth-complete assertion already present
+on a validated frontier node plus product/comparator/version, conditions,
+uncertainty, claim kind, and causal ceiling; axes and raw polarity are not hash
+salt. `mixed` input polarity fails closed for whole-row repair. A hash-bound
+coverage manifest must decide every required pair, with zero unresolved pairs,
+before finalization may report `none_observed`; incomplete coverage is not a
+negative conflict finding. This generation emits integration view v3 and does
+not change policy-v2 artifacts or their finalization behavior.
+
+The same generation adds selective whole-row repair. It projects only named
+evidence rows through the existing complete-row verifier, preserves every
+untouched active row exactly, and writes a repair manifest binding the parent
+verified compilation, selected IDs, responses, and new active-row hash. The
+new compilation hash invalidates every older reconciliation and view. Repair
+never edits semantic nodes or a finalized view directly.
 
 For bundle v4, agent-facing reconciliation prompts carry child references and
 the meaning dimensions needed to judge a merge, but omit expanded
@@ -793,14 +919,21 @@ Current-route operations are:
      the next node compilation; repeat until one terminal level remains.
 14. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
      v2.
-15. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+15. The opt-in v34 route instead runs `prepare-relation-closure` over the
+    terminal normal-retention frontier, validates each large-run response with
+    `validate-relation-closure-response`, runs `submit-relation-closure` only
+    after exact global pair-relation coverage, and uses
+    `finalize-relation-closed` to write view v3. `prepare-row-repair` /
+    `submit-row-repair` may correct named source rows first; any repair restarts
+    reconciliation from its new verified compilation hash.
+16. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
-16. `evaluate-calibration` runs the existing response validator, then evaluates
+17. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
     anomaly, and repeat judgments must be explicit and hash-bound to the exact
@@ -979,6 +1112,53 @@ new frontier.
 
 ## Changelog
 
+- `v34` / 2026-08-13 — added opt-in corpus-global relation closure over the
+  terminal normal-retention frontier. Exhaustive compiler-counted pair coverage
+  now drives partition-independent equivalence classes and symmetric opposition;
+  incomplete or unresolved coverage blocks finalization, and duplicate
+  directional proposition identities fail closed. Added selective whole-row
+  repair with parent verified-compilation lineage and untouched-row preservation.
+  Historical policy-v2 artifacts and view v2 remain frozen.
+- `v33` / 2026-08-12 — added the optional load-once prompt execution pack for
+  long-lived workers. The pack hash-binds one shared method/schema/axes/catalog
+  frame and one exact context-plus-evidence payload per existing work unit, and
+  requires byte-identical reconstruction of every rendered standalone prompt
+  string, which is one byte shorter than the stored `.md` artifact because the
+  file writer appends a trailing newline. Verification is bundle-relative and
+  admits no stored file the bundle does not name. Context stays batch-local; no
+  semantic method, response, compilation, evidence denominator, prompt ceiling,
+  worker topology, provider call, or readiness claim changed.
+- `v32` / 2026-08-12 — versioned the whole-row verifier method to v8, prevented
+  reaction-susceptibility traits from becoming unsupported hydration conditions,
+  and preserved explicit usable-product loss or waste as separately retrievable
+  `value_and_quantity` evidence. Added no category registry, schema, field,
+  parser, second verifier, provider call, or full-corpus resume authority.
+- `v31` / 2026-08-11 — versioned the whole-row verifier method to v7, resolved
+  pronouns and evaluation scope from the whole conversation, separated explicit
+  named-option ownership from later product-level judgments, and prevented
+  extraction examples from fixing referent scope. Added no schema, variant
+  catalog, parser, second verifier, provider call, or full-corpus resume authority.
+- `v30` / 2026-08-11 — versioned the whole-row verifier method to v6, prevented
+  local ambiguity from erasing safe row content, bounded ambiguous variant and
+  echo meanings without guessing, preserved exact variant-versus-family scope,
+  and kept explicit overall evaluations separate. Added no schema, field,
+  parser, second verifier, provider call, or full-corpus resume authority.
+- `v29` / 2026-08-11 — versioned the whole-row verifier method to v5, added a
+  final source-to-unit completeness bijection, preserved same-dimension paired
+  comparisons as separate relational meanings when textually established, and
+  prevented baseline traits, vague category wording, or ambiguous antecedents
+  from becoming product-caused outcomes. Added no schema, field, second read,
+  parser, provider call, conclusion, or full-corpus resume authority.
+- `v28` / 2026-08-11 — versioned the whole-row verifier method to v4, made
+  complete-row replacement preserve all source-supported proposed content by
+  default, aligned drying/non-drying with hydration, made named-shade behavior
+  shade-specific, and blocked comparator-only statements from binding the
+  target. Method-v7 claim-support projection now prevents
+  `personal_agreement` from adding independent-origin credit. Historical
+  verifier-v3 receipts remain identifiable but require replay, while historical
+  semantic-method output remains frozen. Added no response, stage, manifest,
+  bundle, or report schema; no
+  second verifier, provider API, conclusion, or full-corpus execution.
 - `v27` / 2026-08-11 — extended the existing verified-compilation intake to
   the reserved `cold-repeat` slice id. The evaluator now rebuilds and binds the
   raw cold compilation before grading its verified rows; method v7 requires a
