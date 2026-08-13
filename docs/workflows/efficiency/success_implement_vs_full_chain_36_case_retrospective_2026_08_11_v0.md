@@ -50,8 +50,10 @@ disposition remains `NO_WIN`; a post-hoc scorer does not replace a
 preregistered endpoint. But the controlling severity tier did not reproduce
 under the earlier broad rubric, so this result cannot support a comparative-
 strength claim by itself. A later concretized fixed-assertion screen produced
-`12/12` three-judge agreement; the required identical-method builder-variance
-stage then stopped after one of three draws per case and remains unmeasured.
+`12/12` three-judge agreement; the completed identical-method screen then found
+major-tier quality variation in three of four cases, token spread above 15% in
+three, and wall-time spread above 15% in all four. Small one-run differences
+therefore remain below the demonstrated measurement resolution.
 See
 [`success_implement_measurement_calibration_2026_08_13_v0.md`](success_implement_measurement_calibration_2026_08_13_v0.md).
 

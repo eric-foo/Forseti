@@ -87,8 +87,10 @@ That frozen `NO_WIN` remains the historical endpoint, but its controlling
 critical assignment did not reproduce in a later re-adjudication: Success
 Implement's critical moved from #1254 to #1303, and Full Chain gained a
 critical at #1424. A concretized fixed-assertion severity screen later reached
-`12/12` three-judge agreement; the identical-method builder-variance stage
-stopped after one of three draws per case and remains unmeasured. Therefore
+`12/12` three-judge agreement. The completed identical-method screen then found
+material major-tier quality variation in three of four cases, token max/min
+spread above `1.15` in three, and wall-time spread above `1.15` in all four.
+Therefore
 Success Implement is the deployment incumbent by owner preference, not a
 validated strong baseline. See
 [`success_implement_measurement_calibration_2026_08_13_v0.md`](success_implement_measurement_calibration_2026_08_13_v0.md).
@@ -231,12 +233,13 @@ caused zero patch changes. No current behavior or authority changed. See
     `ADMIT_COMPLETE`; no builder continuation or patch change occurred. The
     exact mechanism was rejected. [E3
     record](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md)
-12. **Measurement calibration — 12 fixed assertions plus an incomplete
-    identical-method variance stage.** Three replacement judges agreed on all
-    12 concretized severity ratings. The builder stage produced one valid draw
-    on each of four untouched cases before the usage ceiling rejected the next
-    four launches; the final four were not attempted, so builder variance
-    remains unmeasured.
+12. **Measurement calibration — 12 fixed assertions plus 12 identical-method
+    builds.** Three replacement judges agreed on all 12 concretized severity
+    ratings. Three independent unchanged-Success-Implement draws on each of
+    four untouched cases returned `HIGH_VARIANCE`: three cases changed at the
+    major tier, three exceeded `1.15x` token spread, and all four exceeded
+    `1.15x` wall-time spread. Four pre-agent usage-ceiling rejections remain
+    preserved and were replaced rather than scored.
     [Calibration record](success_implement_measurement_calibration_2026_08_13_v0.md)
 
 ## External reusable mechanics and Forseti binding
@@ -256,15 +259,15 @@ caused zero patch changes. No current behavior or authority changed. See
 
 ### 2026-08
 
-- **2026-08-13 — Severity ruler reproduced; builder variance remains
-  unmeasured.** Three isolated replacement judges agreed on all 12 fixed
+- **2026-08-13 — Severity ruler reproduced; identical-method builder variance
+  measured high.** Three isolated replacement judges agreed on all 12 fixed
   presence-and-severity assertions, including the three historical critical
   boundaries. The first judging trio was excluded for a packet-boundary
-  violation. The subsequent identical-method stage completed only one of three
-  required draws on four untouched cases before the account usage ceiling
-  rejected the next four launches before model action; the final four were not
-  attempted. New challenger studies
-  remain suspended; no skill or runtime behavior changed. [Calibration
+  violation. The subsequent identical-method stage completed three draws on
+  each of four untouched cases. Major-tier quality varied in three cases;
+  tokens varied by more than 15% in three; wall time varied by more than 15% in
+  all four. Small one-run challenger deltas remain non-decision-grade; no skill
+  or runtime behavior changed. [Calibration
   record](success_implement_measurement_calibration_2026_08_13_v0.md)
 - **2026-08-13 — Fresh-context E3 completion admission rejected.** Three
   repeated P1/E3 blocks on PR #1267 found every fresh checker approving an
