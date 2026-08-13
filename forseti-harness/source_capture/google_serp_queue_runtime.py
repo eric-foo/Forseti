@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from threading import get_ident
 from typing import Any, Iterator, Mapping
 from urllib.parse import parse_qs, urlparse
 
@@ -29,6 +31,8 @@ JOBS_VERSION = "google_serp_queue_jobs_v1"
 STATE_VERSION = "google_serp_queue_state_v1"
 AUTOMATED_ROUTE = "primary_route"
 PERSISTENT_ROUTE = "persistent_realchrome"
+_WINDOWS_FILE_RETRY_ATTEMPTS = 10
+_WINDOWS_FILE_RETRY_SECONDS = 0.01
 
 
 class GoogleSerpQueueError(ValueError):
@@ -397,8 +401,20 @@ def _required_text(mapping: Mapping[str, Any], key: str) -> str:
 
 
 def _read_json(path: Path, *, label: str) -> dict[str, Any]:
+    for attempt in range(_WINDOWS_FILE_RETRY_ATTEMPTS):
+        try:
+            text = path.read_text(encoding="utf-8")
+            break
+        except PermissionError as exc:
+            if attempt + 1 == _WINDOWS_FILE_RETRY_ATTEMPTS:
+                raise GoogleSerpQueueError(
+                    f"{label} JSON could not be read: {exc}"
+                ) from exc
+            time.sleep(_WINDOWS_FILE_RETRY_SECONDS)
+        except Exception as exc:
+            raise GoogleSerpQueueError(f"{label} JSON could not be read: {exc}") from exc
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(text)
     except Exception as exc:
         raise GoogleSerpQueueError(f"{label} JSON could not be read: {exc}") from exc
     if not isinstance(value, dict):
@@ -427,12 +443,24 @@ def _write_new_json(path: Path, value: Mapping[str, Any]) -> None:
 
 
 def _atomic_write_json(path: Path, value: Mapping[str, Any]) -> None:
-    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
-    with temporary.open("xb") as handle:
-        handle.write(_json_bytes(value))
-        handle.flush()
-        os.fsync(handle.fileno())
-    os.replace(temporary, path)
+    temporary = path.with_name(
+        f".{path.name}.tmp.{os.getpid()}.{get_ident()}"
+    )
+    try:
+        with temporary.open("xb") as handle:
+            handle.write(_json_bytes(value))
+            handle.flush()
+            os.fsync(handle.fileno())
+        for attempt in range(_WINDOWS_FILE_RETRY_ATTEMPTS):
+            try:
+                os.replace(temporary, path)
+                return
+            except PermissionError:
+                if attempt + 1 == _WINDOWS_FILE_RETRY_ATTEMPTS:
+                    raise
+                time.sleep(_WINDOWS_FILE_RETRY_SECONDS)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _json_bytes(value: Mapping[str, Any]) -> bytes:
