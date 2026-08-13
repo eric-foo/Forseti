@@ -155,6 +155,17 @@ so comparative quality scoring is de-blinded same-family evidence, not blind
 proof. The exact checker is rejected; Success Implement remains unchanged. See
 [`success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md`](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md).
 
+The later hot-path trim screen tested deletion rather than another behavioral
+addition. A 43-clause preservation audit reduced the current source by 10.689%
+and the construction tokenizer count by 11.014%, then ran 12 matched blocks
+over four exact historical cases. The trim improved pooled accepted quality
+from `0C/7M/0m` to `0C/3M/0m`, but used fewer tokens in only `3/12` pairs. Its
+median matched token ratio was `1.412737` and wall ratio was `1.177375`. The
+exact trim therefore failed all three efficiency advancement gates and stopped
+before holdout. This is evidence against that compression package, not against
+all possible trimming. Success Implement remains unchanged. See
+[`success_implement_hot_path_trim_screen_2026_08_13_v0.md`](success_implement_hot_path_trim_screen_2026_08_13_v0.md).
+
 Current disposition: retain unchanged Success Implement as the deployment
 incumbent, not as a validated strong baseline. P2 was inert. The exact P3, P4,
 E1, and E2 packages did not clear their frozen advancement gates; those
@@ -172,10 +183,13 @@ subsequently tested as E2: it observed its matching request in all three
 submitted Python commands but did not prevent broader premature completion. It
 is rejected as a general Success Implement improvement. The later E3
 fresh-context checker also failed: it admitted all three incomplete patches and
-caused zero patch changes. No current behavior or authority changed. See
+caused zero patch changes. The exact 10.689% hot-path trim improved accepted
+quality but failed token-pair, matched-token-ratio, and matched-wall-ratio
+gates, so it also receives no holdout or promotion. No current behavior or
+authority changed. See
 [`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
 
-## Twelve separate evidence records
+## Thirteen separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -241,6 +255,12 @@ caused zero patch changes. No current behavior or authority changed. See
     `1.15x` wall-time spread. Four pre-agent usage-ceiling rejections remain
     preserved and were replaced rather than scored.
     [Calibration record](success_implement_measurement_calibration_2026_08_13_v0.md)
+13. **Hot-path trim — 12 matched baseline/trim blocks across four cases.** A
+    clause-preserving 10.689% source reduction improved pooled accepted quality
+    but used fewer comparison tokens in only 3/12 pairs and exceeded both
+    matched token and wall guards. It stopped before holdout and changed no
+    current skill copy. [Trim-screen
+    record](success_implement_hot_path_trim_screen_2026_08_13_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -259,6 +279,14 @@ caused zero patch changes. No current behavior or authority changed. See
 
 ### 2026-08
 
+- **2026-08-13 — Success Implement hot-path trim stopped before holdout.** A
+  43-clause preservation audit reduced the current source by 10.689%, then 24
+  fresh authored runs compared baseline and trim in 12 matched blocks. The trim
+  improved accepted quality (`0C/3M/0m` versus `0C/7M/0m`) but lost 9/12 token
+  pairs; its median matched token ratio was `1.412737` and wall ratio was
+  `1.177375`. The efficiency gates failed, so no holdout or deployment ran and
+  Success Implement stayed unchanged. [Trim-screen
+  record](success_implement_hot_path_trim_screen_2026_08_13_v0.md)
 - **2026-08-13 — Severity ruler reproduced; identical-method builder variance
   measured high.** Three isolated replacement judges agreed on all 12 fixed
   presence-and-severity assertions, including the three historical critical
