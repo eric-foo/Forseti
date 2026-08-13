@@ -43,6 +43,18 @@ entry because it is simpler and materially lowers workflow burden. That is an
 operating preference, recorded separately from the measured result. This study
 does not establish that Success Implement beat the full chain.
 
+**Subsequent calibration note (2026-08-13):** a later adjudication of the same
+frozen patches moved Success Implement's accepted critical from #1254 to #1303
+and assigned Full Chain a critical at #1424 rather than none. The frozen study
+disposition remains `NO_WIN`; a post-hoc scorer does not replace a
+preregistered endpoint. But the controlling severity tier did not reproduce
+under the earlier broad rubric, so this result cannot support a comparative-
+strength claim by itself. A later concretized fixed-assertion screen produced
+`12/12` three-judge agreement; the required identical-method builder-variance
+stage then stopped after one of three draws per case and remains unmeasured.
+See
+[`success_implement_measurement_calibration_2026_08_13_v0.md`](success_implement_measurement_calibration_2026_08_13_v0.md).
+
 A later exposed-corpus replay added Loss-First Implement as a third arm. It did
 not change this frozen two-arm result or create a new holdout: Loss-First used
 the fewest median tokens, Success Implement had the best three-way quality, and
@@ -52,11 +64,13 @@ Full Chain had the lowest median latency. See
 ## ELI5
 
 Success Implement usually carried a smaller backpack and made fewer ordinary
-mistakes. But once, on PR #1254, it left a serious hole that could let altered
-authority data look valid. The Full Chain made more ordinary mistakes overall,
-but none scored critical. Success Implement also finished more slowly in the
-middle of the distribution. Under the rules fixed before testing, that means it
-did not win.
+mistakes. But once, on PR #1254, this study's scorer said it left a serious hole
+that could let altered authority data look valid. The Full Chain made more
+ordinary mistakes overall, but none scored critical. Success Implement also
+finished more slowly in the middle of the distribution. Under the rules fixed
+before testing, that means it did not win. A later scorer put that one serious
+hole on a different case, so the frozen decision stands but its deciding call
+was not repeatable.
 
 ## The two frozen arms
 

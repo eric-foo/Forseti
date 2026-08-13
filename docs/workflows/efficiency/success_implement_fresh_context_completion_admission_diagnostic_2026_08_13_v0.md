@@ -41,6 +41,17 @@ failed on E3 critical defects, checker accuracy, broad-completion collapse, a
 repeated `missing_required_seam` major regression, and a frozen end-to-end
 latency condition that became `NOT_OBSERVED` after the controller repair.
 
+Because both initial builders used unchanged Success Implement and the checker
+changed zero bytes, the P1/E3 initial difference is also A/A measurement
+evidence: accepted criticals differed `3` versus `1`, weighted harm differed
+`111` versus `80`, median comparison tokens differed by `41.04%`, and median
+active wall differed by `28.04%`. Those initial implementation-quality
+differences are non-causal and cannot count as checker harm or baseline
+strength. They warn that earlier two- or three-run candidate deltas may sit
+inside an unmeasured noise floor. The later measurement-calibration record
+passed a fixed-assertion severity screen but could not finish the required
+three-draw builder-variance stage.
+
 Actual billed cost was `NOT_OBSERVED`. Token counters are comparison measures,
 not billed-cost claims.
 

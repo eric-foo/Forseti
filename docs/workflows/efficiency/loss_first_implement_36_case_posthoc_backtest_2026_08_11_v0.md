@@ -41,6 +41,15 @@ This result is **retrospective regression evidence, not a fresh confirmatory
 holdout**. Loss-First was designed after reading the earlier 36-case result and
 was replayed on that exposed corpus. It cannot establish general superiority.
 
+The reported “Success Implement had the best quality” statement is specific to
+this post-hoc scorer. It did not reproduce the earlier holdout's critical
+assignments: Success Implement's critical moved from #1254 to #1303, and Full
+Chain gained a critical at #1424. This neither overturns nor validates the
+earlier frozen `NO_WIN`; it shows that the prior controlling tier was
+calibration-sensitive. A later fixed-assertion severity screen reproduced a
+concretized ruler, while builder variance remained unmeasured. See
+[`success_implement_measurement_calibration_2026_08_13_v0.md`](success_implement_measurement_calibration_2026_08_13_v0.md).
+
 ## ELI5
 
 Loss-First carried the lightest backpack, but it did not reach the destination
