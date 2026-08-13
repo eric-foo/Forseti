@@ -49,8 +49,10 @@ active wall differed by `28.04%`. Those initial implementation-quality
 differences are non-causal and cannot count as checker harm or baseline
 strength. They warn that earlier two- or three-run candidate deltas may sit
 inside an unmeasured noise floor. The later measurement-calibration record
-passed a fixed-assertion severity screen but could not finish the required
-three-draw builder-variance stage.
+passed a fixed-assertion severity screen and then completed the required
+three-draw builder stage. It found major-tier quality variation in three of
+four cases, token spread above 15% in three, and wall-time spread above 15% in
+all four.
 
 Actual billed cost was `NOT_OBSERVED`. Token counters are comparison measures,
 not billed-cost claims.

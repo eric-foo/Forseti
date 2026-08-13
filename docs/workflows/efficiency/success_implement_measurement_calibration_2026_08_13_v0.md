@@ -5,8 +5,8 @@ retrieval_header_version: 1
 artifact_role: Observed workflow-measurement calibration and stop record
 scope: >
   Tests whether the severity ruler used in Success Implement comparisons can
-  reproduce fixed boundary judgments, then records the incomplete attempt to
-  measure identical-method builder variance.
+  reproduce fixed boundary judgments, then measures identical-method builder
+  variance across three independent draws on four cases.
 use_when:
   - Interpreting prior Success Implement challenger non-promotions.
   - Deciding whether a new Success Implement challenger study is measurable.
@@ -18,15 +18,15 @@ open_next:
   - docs/workflows/efficiency/forseti_behavioral_contract_changelog_v0.md
 stale_if:
   - The fixed severity docket is independently cross-vendor adjudicated.
-  - The blocked three-repetition builder-variance screen completes.
+  - A later identical-method replication materially changes the observed spread.
   - A later calibration supersedes this measurement boundary.
 ```
 
 ## Decision
 
 **The concretized severity ruler passed a narrow same-family reproducibility
-screen. Builder variance remains `NOT_OBSERVED`; do not run or interpret a new
-Success Implement challenger yet.**
+screen. The completed identical-method screen returned `HIGH_VARIANCE`; do not
+interpret a small one-run challenger difference as a skill effect.**
 
 Three fresh isolated judges independently rated the same 12 fixed assertions
 over six exact frozen patches from the three cases where prior decision-driving
@@ -40,13 +40,13 @@ was complete. All three judges were `gpt-5.6-sol` at high reasoning. The result
 only shows that a more concrete impact rubric plus fixed assertions can make
 this model family repeat the boundary on this docket.
 
-The next stage required three identical Success Implement runs on each of four
-untouched cases. One valid run completed per case. The next four launches were
-rejected before model action by the account usage ceiling and changed zero
-bytes; the final four were not attempted after the shared ceiling was known.
-None was scored or substituted. One draw per case cannot estimate
-within-case spread, so no builder-variance, noise-floor, or minimum-detectable-
-effect claim is made.
+The next stage ran three identical Success Implement builds on each of four
+untouched cases. The resumed eight runs used the same frozen method, prompt,
+model, reasoning level, exact bases, and isolation route as the first four.
+Blind three-way evaluation plus home adjudication found material major-tier
+quality variation in three of four cases. Token max/min spread exceeded `1.15`
+in three cases and wall-time spread exceeded `1.15` in all four. Each of those
+resource results independently triggers the frozen `HIGH_VARIANCE` stop rule.
 
 ## ELI5
 
@@ -54,11 +54,11 @@ First we checked the ruler. Three people used the same clearer ruler on the
 same twelve scratches, and all three gave the same answers. Good: the ruler can
 repeat itself in this small test.
 
-Then we tried to learn how much the builder naturally wobbles by asking it to
-build the same thing three times. We only got the first build for each job
-before the run allowance ended. One build cannot show wobble. So the next new
-improvement experiment must wait; otherwise we still would not know whether a
-small difference came from the method or from ordinary variation.
+Then we asked the same builder to do each of four jobs three times. The answers
+really did wobble. Three jobs changed at the major-defect level. Three jobs used
+over 15% more or fewer tokens between repetitions, and all four varied by over
+15% in time. That means a small apparent challenger win can easily be ordinary
+run-to-run variation rather than a better instruction.
 
 ## Why calibration was necessary
 
@@ -125,7 +125,7 @@ This is a passed reproducibility screen, not an independent truth audit. A
 different-vendor review remains valuable precisely because identical models
 can share a blind spot.
 
-## Stage V — builder variance stopped incomplete
+## Stage V — identical-method builder variance
 
 The frozen source was unchanged Success Implement: `15,483` normalized-LF
 bytes, SHA-256
@@ -138,17 +138,50 @@ review work without one reconstructable solution-free request. #1474 replaced
 it and had repository-resident media fixtures, so no lost live state was
 required.
 
-| Case | Valid draws / required | Comparison tokens | Wall | Patch bytes / SHA-256 |
-| --- | ---: | ---: | ---: | --- |
-| #1470 | `1/3` | `1,730,214` | `396.456s` | `10,950` / `d47fb66f…c44d38` |
-| #1472 | `1/3` | `2,557,896` | `393.416s` | `12,566` / `5bb302ef…9998d40` |
-| #1465 | `1/3` | `1,729,209` | `390.204s` | `12,935` / `0078438d…66b2c` |
-| #1474 | `1/3` | `2,886,540` | `346.346s` | `15,963` / `b28edc55…43bf47` |
+The frozen stop rule returned `HIGH_VARIANCE` if any case flipped critical
+presence, at least two cases changed materially at the major tier, or at least
+two cases had a token or wall max/min ratio above `1.15`.
 
-These patches and raw counters are preserved but unscored. They are not a
-four-case quality sample and cannot be compared with each other because the
-tasks differ. The four rejected launches reached no model action and are not
-runs; four additional planned launches never started.
+| Case | Historical PR | Accepted majors across three draws | Token max/min | Wall max/min |
+| --- | ---: | --- | ---: | ---: |
+| V1 | #1470 | `1 / 0 / 1` | `1.119x` | `1.484x` |
+| V2 | #1472 | `0 / 2 / 2` | `1.363x` | `1.335x` |
+| V3 | #1465 | `0 / 0 / 0` | `1.772x` | `1.322x` |
+| V4 | #1474 | `0 / 0 / 4` | `1.447x` | `2.429x` |
+
+There were no accepted critical or minor defects. V1 varied between a clean
+run, unbound lineage provenance, and missing controlled manifest-tamper proof.
+V2 varied between a clean run and two runs that retained the `go-to-market`
+selector error plus the missing binding test. V3 was quality-stable. One V4
+run narrowed the implementation to the www parser and omitted the supported
+old-Reddit path; the other two covered both paths.
+
+| Case | Run | Comparison tokens | Wall | Patch bytes / SHA-256 |
+| --- | --- | ---: | ---: | --- |
+| V1 | B01 | `1,730,214` | `396.456s` | `10,950` / `d47fb66f…c44d38` |
+| V1 | B05R | `1,546,419` | `339.778s` | `3,896` / `6cb81955…787e96` |
+| V1 | B09 | `1,690,914` | `267.102s` | `4,207` / `6dfe8d08…b70c5c` |
+| V2 | B02 | `2,557,896` | `393.416s` | `12,566` / `5bb302ef…9998d40` |
+| V2 | B06R | `2,748,830` | `500.709s` | `15,697` / `89f59634…1b0755` |
+| V2 | B10 | `2,017,439` | `525.350s` | `20,034` / `43b8baa0…37717` |
+| V3 | B03 | `1,729,209` | `390.204s` | `12,935` / `0078438d…66b2c` |
+| V3 | B07R | `1,159,088` | `303.092s` | `8,898` / `04556e8e…425ca7` |
+| V3 | B11 | `2,053,557` | `400.699s` | `9,390` / `f4592d0b…6c86df` |
+| V4 | B04 | `2,886,540` | `346.346s` | `15,963` / `b28edc55…43bf47` |
+| V4 | B08R | `3,962,795` | `841.265s` | `17,544` / `eb8d06e4…d4a32b` |
+| V4 | B12 | `2,738,087` | `437.116s` | `17,005` / `735aede7…aa2df` |
+
+Across the twelve authored runs, comparison tokens totaled `26,820,988` with
+a `2,035,498` median. Wall time totaled `5,141.532s` with a `394.936s` median.
+Input was `26,639,952` tokens (`25,236,736` cached and `1,403,216` uncached),
+output was `181,036`, and reasoning was `78,119`.
+
+The four original B05-B08 launches were usage-ceiling rejections before agent
+work and changed zero bytes. Their receipts remain preserved. B05R-B08R are
+fresh successful replacements and the only replacement outputs scored. Blind
+evaluators received anonymous patches, validation evidence, fixed assertions,
+and hidden historical oracles. Home adjudication disposed every finding. The
+same-family evaluator remains a limitation, not a different-vendor review.
 
 ## Consequences for the existing record
 
@@ -162,8 +195,11 @@ runs; four additional planned launches never started.
   families are ineffective.
 - E3 remains an exact-design failure independently of comparative quality: its
   checker was wrong `3/3` and caused zero continuation and zero patch changes.
-- Suspend new challenger selection until Stage V obtains three valid identical-
-  method draws per frozen case or a superseding variance design is accepted.
+- The observed baseline spread is larger than many earlier candidate deltas.
+  A future challenger needs repeated blocked runs and a predeclared effect bar
+  above that spread; another one-run or tiny-delta screen is not decision-grade.
+- Do not edit Success Implement merely to chase one repetition's omission. This
+  measurement changes the experiment design, not the production skill.
 
 ## Evidence boundary
 
@@ -173,4 +209,7 @@ Run evidence is retained outside the merged navigation surface at:
 - `C:\tmp\forseti-si-builder-variance-2026-08-13-v2`
 
 Mutable temporary paths are evidence locations, not Forseti authority. Actual
-billed cost is `NOT_OBSERVED`; token counters are comparison measures.
+billed cost is `NOT_OBSERVED`; token counters are comparison measures. The
+machine aggregate is `success_implement_builder_variance_aggregate_v1`,
+SHA-256
+`8b1abb436c15f2d6f862940758cf756abd8900375d8b127a3134b8247c0042e3`.
