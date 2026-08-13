@@ -195,6 +195,17 @@ artifact is named `Reddit Top100 YYYY-MM-DD`, using its `as_of` date, and
 carries that value in `run_name`. The date is the durable run identity; do not
 invent an ordinal that would require a separate sequence registry.
 
+After all admitted threads have final deep-dive extracts, run
+`run_reddit_weekly_finalizer.py`. Completion emits exactly two deterministic
+access artifacts: `run.json` and
+`reddit_top100_YYYY-MM-DD_threads.jsonl`. The finalizer must fail unless the
+preliminary manifest's admitted thread IDs, the final extract thread IDs, and
+the readable content-record thread IDs are the same set with no duplicates.
+Final yes/no comes from the extracts; the preliminary manifest supplies only
+listing context and original order. The catalog is a run-scoped agent access
+aid, not neutral Data Lake authority, and retains each thread's exact extract
+and full-text provenance.
+
 - The selection pool is every non-stickied, non-promoted listing row with
   parseable score and comment count. Listing evidence remains preserved whether
   or not a thread is selected.
