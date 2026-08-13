@@ -16,20 +16,25 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     RECONCILIATION_POLICY_VERSION_V2,
     SemanticIntegrationError,
     apply_row_verification,
+    apply_row_repair,
     build_batch_prompts,
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
     finalize_v3_view,
+    finalize_relation_closed_view,
     finalize_view,
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
+    prepare_relation_closure_stage,
+    prepare_row_repair,
     prepare_row_verification,
     reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_reconciliation_stage,
+    validate_relation_closure_stage,
 )
 from judgment.semantic_calibration import (  # noqa: E402
     CALIBRATION_PREPARATION_VERSION,
@@ -958,6 +963,98 @@ def submit_row_verification_run(
     }
 
 
+def validate_relation_closure_response_file(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_path: Path,
+    receipt_out: Path | None,
+) -> dict[str, Any]:
+    receipt = validate_relation_closure_stage(
+        _load_object(bundle_path),
+        _load_object(stage_path),
+        [_load_object(response_path)],
+        require_all=False,
+    )
+    if receipt_out is not None:
+        _write_json(receipt_out, receipt)
+    return {
+        "status": "SEMANTIC_RELATION_CLOSURE_RESPONSE_VALID",
+        **receipt,
+        "receipt_out": str(receipt_out) if receipt_out is not None else None,
+        "model_api_calls": 0,
+    }
+
+
+def prepare_row_repair_run(
+    *,
+    bundle_path: Path,
+    verified_path: Path,
+    evidence_ids: list[str],
+    stage_out: Path,
+    prompt_dir: Path,
+    max_prompt_bytes: int | None = None,
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    verified = _load_object(verified_path)
+    stage, prompts = prepare_row_repair(
+        bundle,
+        verified,
+        evidence_ids=evidence_ids,
+        max_prompt_bytes=max_prompt_bytes,
+    )
+    if prompt_dir.exists():
+        raise ValueError(f"refusing to write into existing repair prompt directory: {prompt_dir}")
+    _write_json(stage_out, stage)
+    prompt_dir.mkdir(parents=True)
+    for row in prompts:
+        _write_new(
+            prompt_dir / f"{row['batch_id']}.md",
+            row["prompt"].encode("utf-8") + b"\n",
+        )
+    return {
+        "status": "SEMANTIC_ROW_REPAIR_REQUIRED",
+        "stage_sha256": stage["stage_sha256"],
+        "input_verified_compilation_sha256": stage[
+            "input_verified_compilation_sha256"
+        ],
+        "selected_evidence_count": len(stage["selected_evidence_ids"]),
+        "repair_batch_count": len(prompts),
+        "stage_out": str(stage_out),
+        "prompt_dir": str(prompt_dir),
+        "model_api_calls": 0,
+    }
+
+
+def submit_row_repair_run(
+    *,
+    bundle_path: Path,
+    verified_path: Path,
+    stage_path: Path,
+    response_paths: list[Path],
+    repaired_out: Path,
+) -> dict[str, Any]:
+    repaired = apply_row_repair(
+        _load_object(bundle_path),
+        _load_object(verified_path),
+        _load_object(stage_path),
+        [_load_object(path) for path in response_paths],
+    )
+    _write_json(repaired_out, repaired)
+    manifest = repaired["row_repair_manifest"]
+    return {
+        "status": "SEMANTIC_ROW_REPAIR_APPLIED",
+        "compilation_sha256": repaired["compilation_sha256"],
+        "input_verified_compilation_sha256": manifest[
+            "input_verified_compilation_sha256"
+        ],
+        "selected_evidence_count": len(manifest["selected_evidence_ids"]),
+        "decision_counts": manifest["decision_counts"],
+        "repaired_out": str(repaired_out),
+        "model_api_calls": 0,
+    }
+
+
 def prepare_reconciliation(
     *, bundle_path: Path, compiled_path: Path, prompt_out: Path
 ) -> dict[str, Any]:
@@ -1061,6 +1158,71 @@ def submit_reconciliation_level(
     }
 
 
+def prepare_relation_closure_run(
+    *,
+    bundle_path: Path,
+    node_compilation_path: Path,
+    stage_out: Path,
+    prompt_dir: Path,
+    max_prompt_bytes: int | None = None,
+) -> dict[str, Any]:
+    stage, prompts = prepare_relation_closure_stage(
+        _load_object(bundle_path),
+        _load_object(node_compilation_path),
+        max_prompt_bytes=max_prompt_bytes,
+    )
+    if prompt_dir.exists():
+        raise ValueError(f"refusing to write into existing closure prompt directory: {prompt_dir}")
+    _write_json(stage_out, stage)
+    prompt_dir.mkdir(parents=True)
+    for row in prompts:
+        _write_new(
+            prompt_dir / f"{row['batch_id']}.md",
+            row["prompt"].encode("utf-8") + b"\n",
+        )
+    return {
+        "status": "SEMANTIC_RELATION_CLOSURE_REQUIRED",
+        "stage_sha256": stage["stage_sha256"],
+        "candidate_count": len(stage["candidates"]),
+        "batch_count": len(prompts),
+        "largest_rendered_prompt_bytes": max(
+            (row["prompt_utf8_bytes"] for row in prompts), default=0
+        ),
+        "stage_out": str(stage_out),
+        "prompt_dir": str(prompt_dir),
+        "model_api_calls": 0,
+    }
+
+
+def submit_relation_closure_run(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_paths: list[Path],
+    compilation_out: Path,
+) -> dict[str, Any]:
+    compilation = validate_relation_closure_stage(
+        _load_object(bundle_path),
+        _load_object(stage_path),
+        [_load_object(path) for path in response_paths],
+    )
+    _write_json(compilation_out, compilation)
+    terminal = is_terminal_reconciliation_compilation(compilation)
+    return {
+        "status": (
+            "SEMANTIC_FINALIZATION_READY"
+            if terminal
+            else "SEMANTIC_RELATION_CLOSURE_REQUIRED"
+        ),
+        "node_compilation_sha256": compilation["node_compilation_sha256"],
+        "node_count": len(compilation["semantic_nodes"]),
+        "terminal": terminal,
+        "coverage": compilation["relation_coverage"],
+        "compilation_out": str(compilation_out),
+        "model_api_calls": 0,
+    }
+
+
 def finalize_v3(
     *,
     bundle_path: Path,
@@ -1072,6 +1234,30 @@ def finalize_v3(
     batch_compilation = _load_object(batch_compilation_path)
     node_compilation = _load_object(node_compilation_path)
     view = finalize_v3_view(bundle, batch_compilation, node_compilation)
+    _write_json(view_out, view)
+    return {
+        "status": "SEMANTIC_EVIDENCE_INTEGRATION_COMPLETE",
+        "view_sha256": view["view_sha256"],
+        "proposition_count": len(view["propositions"]),
+        "captured_item_count": view["coverage"]["captured_item_count"],
+        "accounted_item_count": view["coverage"]["accounted_item_count"],
+        "view_out": str(view_out),
+        "model_api_calls": 0,
+    }
+
+
+def finalize_relation_closed(
+    *,
+    bundle_path: Path,
+    batch_compilation_path: Path,
+    relation_compilation_path: Path,
+    view_out: Path,
+) -> dict[str, Any]:
+    view = finalize_relation_closed_view(
+        _load_object(bundle_path),
+        _load_object(batch_compilation_path),
+        _load_object(relation_compilation_path),
+    )
     _write_json(view_out, view)
     return {
         "status": "SEMANTIC_EVIDENCE_INTEGRATION_COMPLETE",
@@ -1232,6 +1418,21 @@ def _parser() -> argparse.ArgumentParser:
     )
     submit_verification.add_argument("--verified-out", type=Path, required=True)
 
+    prepare_repair = sub.add_parser("prepare-row-repair")
+    prepare_repair.add_argument("--bundle", type=Path, required=True)
+    prepare_repair.add_argument("--verified", type=Path, required=True)
+    prepare_repair.add_argument("--evidence-id", action="append", required=True)
+    prepare_repair.add_argument("--stage-out", type=Path, required=True)
+    prepare_repair.add_argument("--prompt-dir", type=Path, required=True)
+    prepare_repair.add_argument("--max-prompt-bytes", type=int)
+
+    submit_repair = sub.add_parser("submit-row-repair")
+    submit_repair.add_argument("--bundle", type=Path, required=True)
+    submit_repair.add_argument("--verified", type=Path, required=True)
+    submit_repair.add_argument("--stage", type=Path, required=True)
+    submit_repair.add_argument("--response", type=Path, action="append", required=True)
+    submit_repair.add_argument("--repaired-out", type=Path, required=True)
+
     validate_batch = sub.add_parser("validate-batch-response")
     validate_batch.add_argument("--bundle", type=Path, required=True)
     validate_batch.add_argument("--response", type=Path, required=True)
@@ -1275,6 +1476,25 @@ def _parser() -> argparse.ArgumentParser:
     validate_reconciliation.add_argument("--response", type=Path, required=True)
     validate_reconciliation.add_argument("--receipt-out", type=Path)
 
+    prepare_closure = sub.add_parser("prepare-relation-closure")
+    prepare_closure.add_argument("--bundle", type=Path, required=True)
+    prepare_closure.add_argument("--node-compilation", type=Path, required=True)
+    prepare_closure.add_argument("--stage-out", type=Path, required=True)
+    prepare_closure.add_argument("--prompt-dir", type=Path, required=True)
+    prepare_closure.add_argument("--max-prompt-bytes", type=int)
+
+    submit_closure = sub.add_parser("submit-relation-closure")
+    submit_closure.add_argument("--bundle", type=Path, required=True)
+    submit_closure.add_argument("--stage", type=Path, required=True)
+    submit_closure.add_argument("--response", type=Path, action="append", default=[])
+    submit_closure.add_argument("--compilation-out", type=Path, required=True)
+
+    validate_closure = sub.add_parser("validate-relation-closure-response")
+    validate_closure.add_argument("--bundle", type=Path, required=True)
+    validate_closure.add_argument("--stage", type=Path, required=True)
+    validate_closure.add_argument("--response", type=Path, required=True)
+    validate_closure.add_argument("--receipt-out", type=Path)
+
     status = sub.add_parser("status")
     status.add_argument("--bundle", type=Path, required=True)
     status.add_argument("--response-dir", type=Path, required=True)
@@ -1284,6 +1504,12 @@ def _parser() -> argparse.ArgumentParser:
     finish_v3.add_argument("--batch-compilation", type=Path, required=True)
     finish_v3.add_argument("--node-compilation", type=Path, required=True)
     finish_v3.add_argument("--view-out", type=Path, required=True)
+
+    finish_closed = sub.add_parser("finalize-relation-closed")
+    finish_closed.add_argument("--bundle", type=Path, required=True)
+    finish_closed.add_argument("--batch-compilation", type=Path, required=True)
+    finish_closed.add_argument("--relation-compilation", type=Path, required=True)
+    finish_closed.add_argument("--view-out", type=Path, required=True)
 
     evidence_packet = sub.add_parser("project-evidence-packet")
     evidence_packet.add_argument("--view", type=Path, required=True)
@@ -1436,6 +1662,23 @@ def main(argv: list[str] | None = None) -> int:
                 response_paths=args.response,
                 verified_out=args.verified_out,
             )
+        elif args.command == "prepare-row-repair":
+            result = prepare_row_repair_run(
+                bundle_path=args.bundle,
+                verified_path=args.verified,
+                evidence_ids=args.evidence_id,
+                stage_out=args.stage_out,
+                prompt_dir=args.prompt_dir,
+                max_prompt_bytes=args.max_prompt_bytes,
+            )
+        elif args.command == "submit-row-repair":
+            result = submit_row_repair_run(
+                bundle_path=args.bundle,
+                verified_path=args.verified,
+                stage_path=args.stage,
+                response_paths=args.response,
+                repaired_out=args.repaired_out,
+            )
         elif args.command == "validate-batch-response":
             result = validate_batch_response_file(
                 bundle_path=args.bundle,
@@ -1483,6 +1726,28 @@ def main(argv: list[str] | None = None) -> int:
                 response_path=args.response,
                 receipt_out=args.receipt_out,
             )
+        elif args.command == "prepare-relation-closure":
+            result = prepare_relation_closure_run(
+                bundle_path=args.bundle,
+                node_compilation_path=args.node_compilation,
+                stage_out=args.stage_out,
+                prompt_dir=args.prompt_dir,
+                max_prompt_bytes=args.max_prompt_bytes,
+            )
+        elif args.command == "submit-relation-closure":
+            result = submit_relation_closure_run(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_paths=args.response,
+                compilation_out=args.compilation_out,
+            )
+        elif args.command == "validate-relation-closure-response":
+            result = validate_relation_closure_response_file(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_path=args.response,
+                receipt_out=args.receipt_out,
+            )
         elif args.command == "status":
             result = semantic_run_status(
                 bundle_path=args.bundle,
@@ -1493,6 +1758,13 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 batch_compilation_path=args.batch_compilation,
                 node_compilation_path=args.node_compilation,
+                view_out=args.view_out,
+            )
+        elif args.command == "finalize-relation-closed":
+            result = finalize_relation_closed(
+                bundle_path=args.bundle,
+                batch_compilation_path=args.batch_compilation,
+                relation_compilation_path=args.relation_compilation,
                 view_out=args.view_out,
             )
         elif args.command == "project-evidence-packet":

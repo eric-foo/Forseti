@@ -32,6 +32,8 @@ RAW_RESPONSE_MANIFEST_VERSION = "semantic_evidence_raw_response_manifest_v1"
 ROW_VERIFICATION_STAGE_VERSION = "semantic_evidence_row_verification_stage_v1"
 ROW_VERIFICATION_RESPONSE_VERSION = "semantic_evidence_row_verification_response_v1"
 ROW_VERIFICATION_MANIFEST_VERSION = "semantic_evidence_row_verification_manifest_v2"
+ROW_REPAIR_STAGE_VERSION = "semantic_evidence_row_repair_stage_v1"
+ROW_REPAIR_MANIFEST_VERSION = "semantic_evidence_row_repair_manifest_v1"
 ROW_VERIFICATION_METHOD_VERSION_V3 = "semantic_evidence_row_verification_method_v3"
 ROW_VERIFICATION_METHOD_VERSION_V4 = "semantic_evidence_row_verification_method_v4"
 ROW_VERIFICATION_METHOD_VERSION_V5 = "semantic_evidence_row_verification_method_v5"
@@ -51,8 +53,12 @@ PROMPT_FRAME_BATCH_ID_TOKEN = "__FORSETI_BATCH_ID__"
 PACK_BATCH_ID_PREFIX = "batch-"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
+RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
+RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
+RELATION_CLOSURE_COMPILATION_VERSION = "semantic_evidence_relation_closure_compilation_v1"
 VIEW_VERSION = "semantic_evidence_integration_view_v1"
 VIEW_VERSION_V2 = "semantic_evidence_integration_view_v2"
+VIEW_VERSION_V3 = "semantic_evidence_integration_view_v3"
 EVIDENCE_PACKET_VERSION = "phase_a_evidence_packet_v1"
 METHOD_VERSION = "semantic_evidence_integration_method_v1"
 METHOD_VERSION_V2 = "semantic_evidence_integration_method_v2"
@@ -62,6 +68,7 @@ METHOD_VERSION_V5 = "semantic_evidence_integration_method_v5"
 METHOD_VERSION_V6 = "semantic_evidence_integration_method_v6"
 METHOD_VERSION_V7 = "semantic_evidence_integration_method_v7"
 RECONCILIATION_POLICY_VERSION_V2 = "semantic_evidence_reconciliation_policy_v2"
+RELATION_CLOSURE_POLICY_VERSION = "semantic_evidence_relation_closure_policy_v1"
 SOURCE_VERSION_V2 = "semantic_evidence_source_v2"
 SOURCE_VERSION_V3 = "semantic_evidence_source_v3"
 # "Current" gates the Route 1.6 semantics (postures, polarity, container ids,
@@ -3493,6 +3500,299 @@ def apply_row_verification(
     return verified
 
 
+def prepare_row_repair(
+    bundle: Mapping[str, Any],
+    verified_compilation: Mapping[str, Any],
+    *,
+    evidence_ids: Sequence[str],
+    max_prompt_bytes: int | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Prepare a bounded whole-row repair without re-reviewing untouched rows."""
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _verify_stored_hash(
+        verified_compilation,
+        field="compilation_sha256",
+        label="verified batch compilation",
+    )
+    _verify_row_verification_manifest(bundle, verified_compilation)
+    if "row_repair_manifest" in verified_compilation:
+        raise SemanticIntegrationError(
+            "row repair cannot chain; replay one repair from the original verified compilation"
+        )
+    if verified_compilation.get("bundle_sha256") != bundle.get("bundle_sha256"):
+        raise SemanticIntegrationError("row repair has stale bundle lineage")
+    selected = list(evidence_ids)
+    if (
+        not selected
+        or any(not _nonempty(value) for value in selected)
+        or len(selected) != len(set(selected))
+    ):
+        raise SemanticIntegrationError("row repair requires unique evidence ids")
+    dispositions = {
+        row["evidence_id"]: row
+        for row in verified_compilation.get("evidence_dispositions", [])
+    }
+    if not set(selected) <= set(dispositions):
+        raise SemanticIntegrationError("row repair selects unknown evidence ids")
+    evidence_index = _unit_index(bundle)
+    contexts = _context_index(bundle)
+    rows = []
+    for evidence_id in selected:
+        source = _expand_v4_unit(
+            bundle,
+            _v4_prompt_unit(evidence_index[evidence_id]),
+            contexts=contexts,
+        )
+        if _nonempty(evidence_index[evidence_id].get("source_role")):
+            source["source_role"] = evidence_index[evidence_id]["source_role"]
+        rows.append(
+            {
+                "evidence_id": evidence_id,
+                "source": source,
+                "proposed_result": _proposed_result_from_compilation(
+                    verified_compilation, dispositions[evidence_id]
+                ),
+            }
+        )
+    limit = max_prompt_bytes or bundle["max_prompt_bytes"]
+    if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1_000:
+        raise SemanticIntegrationError("row repair max_prompt_bytes must be at least 1000")
+    placeholder = "0" * 64
+    max_rows = bundle["semantic_work_unit_projection"][
+        "max_evidence_per_work_unit"
+    ]
+    chunks: list[list[dict[str, Any]]] = []
+    current: list[dict[str, Any]] = []
+    for row in rows:
+        proposed = [*current, row]
+        batch_id = f"repair-{len(chunks) + 1:04d}"
+        rendered = _render_row_verification_prompt(
+            bundle,
+            stage_sha256=placeholder,
+            batch_id=batch_id,
+            rows=proposed,
+        )
+        if len(proposed) <= max_rows and len(rendered.encode("utf-8")) <= limit:
+            current = proposed
+            continue
+        if not current:
+            raise SemanticIntegrationError(
+                f"repair row {row['evidence_id']} exceeds rendered prompt byte ceiling"
+            )
+        chunks.append(current)
+        current = [row]
+    if current:
+        chunks.append(current)
+    batches = [
+        {
+            "batch_id": f"repair-{index + 1:04d}",
+            "evidence_ids": [row["evidence_id"] for row in chunk],
+        }
+        for index, chunk in enumerate(chunks)
+    ]
+    stage = {
+        "schema_version": ROW_REPAIR_STAGE_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "input_verified_compilation_sha256": verified_compilation["compilation_sha256"],
+        "parent_row_verification_manifest_sha256": verified_compilation[
+            "row_verification_manifest"
+        ]["manifest_sha256"],
+        "verification_method_version": ROW_VERIFICATION_METHOD_VERSION,
+        "verification_method_sha256": _sha256(ROW_VERIFICATION_METHOD_TEXT),
+        "selected_evidence_ids": selected,
+        "max_prompt_bytes": limit,
+        "verification_rows": rows,
+        "batches": batches,
+        "coverage_proof": {
+            "selected_count": len(selected),
+            "projected_count": sum(len(row["evidence_ids"]) for row in batches),
+            "selected_ids_sha256": _sha256(selected),
+            "projected_ids_sha256": _sha256(
+                [ref for batch in batches for ref in batch["evidence_ids"]]
+            ),
+            "bijection_complete": True,
+        },
+    }
+    stage["stage_sha256"] = _sha256(stage)
+    row_index = {row["evidence_id"]: row for row in rows}
+    prompts = []
+    for batch in batches:
+        prompt = _render_row_verification_prompt(
+            bundle,
+            stage_sha256=stage["stage_sha256"],
+            batch_id=batch["batch_id"],
+            rows=[row_index[ref] for ref in batch["evidence_ids"]],
+        )
+        size = len(prompt.encode("utf-8"))
+        if size > limit:
+            raise SemanticIntegrationError(
+                f"repair batch {batch['batch_id']} exceeds rendered prompt byte ceiling"
+            )
+        prompts.append(
+            {
+                "batch_id": batch["batch_id"],
+                "evidence_ids": batch["evidence_ids"],
+                "prompt": prompt,
+                "prompt_utf8_bytes": size,
+            }
+        )
+    return stage, prompts
+
+
+def apply_row_repair(
+    bundle: Mapping[str, Any],
+    verified_compilation: Mapping[str, Any],
+    stage: Mapping[str, Any],
+    responses: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Apply selected whole-row replacements while preserving every untouched row."""
+    expected_stage, _ = prepare_row_repair(
+        bundle,
+        verified_compilation,
+        evidence_ids=stage.get("selected_evidence_ids", []),
+        max_prompt_bytes=stage.get("max_prompt_bytes"),
+    )
+    if stage != expected_stage:
+        raise SemanticIntegrationError("row repair stage does not match its verified input")
+    expected_batches = {row["batch_id"]: row for row in stage["batches"]}
+    decisions: dict[str, dict[str, Any]] = {}
+    seen_batches: set[str] = set()
+    response_hashes: list[dict[str, str]] = []
+    for response in responses:
+        if (
+            not isinstance(response, Mapping)
+            or response.get("schema_version") != ROW_VERIFICATION_RESPONSE_VERSION
+            or response.get("stage_sha256") != stage["stage_sha256"]
+        ):
+            raise SemanticIntegrationError("invalid row repair response")
+        batch_id = response.get("batch_id")
+        if batch_id not in expected_batches or batch_id in seen_batches:
+            raise SemanticIntegrationError("unknown or duplicate row repair batch")
+        expected_ids = expected_batches[batch_id]["evidence_ids"]
+        rows = response.get("decisions")
+        if not isinstance(rows, list):
+            raise SemanticIntegrationError("row repair response lacks decisions")
+        observed_ids = []
+        for row in rows:
+            if not isinstance(row, Mapping) or set(row) != {
+                "evidence_id",
+                "decision",
+                "reason",
+                "replacement",
+            }:
+                raise SemanticIntegrationError("invalid row repair decision shape")
+            ref = row.get("evidence_id")
+            decision = row.get("decision")
+            replacement = row.get("replacement")
+            if (
+                ref not in expected_ids
+                or ref in decisions
+                or decision not in ROW_VERIFICATION_DECISIONS
+                or not _nonempty(row.get("reason"))
+            ):
+                raise SemanticIntegrationError("invalid row repair decision")
+            if decision == "replace":
+                if not isinstance(replacement, Mapping) or replacement.get(
+                    "evidence_id"
+                ) != ref:
+                    raise SemanticIntegrationError(
+                        f"replacement row for {ref} is incomplete or changes identity"
+                    )
+            elif replacement is not None:
+                raise SemanticIntegrationError(
+                    f"{decision} repair decision for {ref} must not carry replacement"
+                )
+            decisions[ref] = dict(row)
+            observed_ids.append(ref)
+        if observed_ids != expected_ids:
+            raise SemanticIntegrationError(
+                f"row repair batch {batch_id} does not decide every row exactly once"
+            )
+        seen_batches.add(batch_id)
+        response_hashes.append(
+            {"batch_id": batch_id, "raw_response_sha256": _sha256(response)}
+        )
+    if seen_batches != set(expected_batches):
+        raise SemanticIntegrationError("row repair coverage is incomplete")
+
+    dispositions = {
+        row["evidence_id"]: row
+        for row in verified_compilation["evidence_dispositions"]
+    }
+    proposed = {
+        row["evidence_id"]: row["proposed_result"]
+        for row in stage["verification_rows"]
+    }
+    active_rows: dict[str, dict[str, Any]] = {}
+    for evidence_id, disposition in dispositions.items():
+        if evidence_id not in decisions:
+            active_rows[evidence_id] = _proposed_result_from_compilation(
+                verified_compilation, disposition
+            )
+            continue
+        decision = decisions[evidence_id]
+        if decision["decision"] == "accept":
+            active_rows[evidence_id] = proposed[evidence_id]
+        elif decision["decision"] == "replace":
+            active_rows[evidence_id] = dict(decision["replacement"])
+        else:
+            active_rows[evidence_id] = {
+                "evidence_id": evidence_id,
+                "disposition": "unresolved",
+                "disposition_reason": decision["reason"].strip(),
+                "semantic_units": [],
+            }
+    active_responses = [
+        {
+            "schema_version": BATCH_RESPONSE_VERSION_V3,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch["batch_id"],
+            "evidence": [active_rows[ref] for ref in batch["evidence_ids"]],
+            "terminal_groups": [],
+        }
+        for batch in bundle["batches"]
+    ]
+    repaired = validate_batch_responses(bundle, active_responses)
+    repaired["raw_response_manifest"] = verified_compilation["raw_response_manifest"]
+    repaired["row_verification_manifest"] = verified_compilation[
+        "row_verification_manifest"
+    ]
+    counts = {decision: 0 for decision in sorted(ROW_VERIFICATION_DECISIONS)}
+    for row in decisions.values():
+        counts[row["decision"]] += 1
+    repair_manifest = {
+        "schema_version": ROW_REPAIR_MANIFEST_VERSION,
+        "stage_sha256": stage["stage_sha256"],
+        "verification_method_version": stage["verification_method_version"],
+        "verification_method_sha256": stage["verification_method_sha256"],
+        "parent_row_verification_manifest_sha256": stage[
+            "parent_row_verification_manifest_sha256"
+        ],
+        "input_verified_compilation_sha256": verified_compilation[
+            "compilation_sha256"
+        ],
+        "selected_evidence_ids": list(stage["selected_evidence_ids"]),
+        "repair_responses": sorted(response_hashes, key=lambda row: row["batch_id"]),
+        "decision_counts": counts,
+        "active_evidence_ids_sha256": _sha256(
+            [row["evidence_id"] for row in repaired["evidence_dispositions"]]
+        ),
+        "active_rows_sha256": _sha256(
+            {
+                "evidence_dispositions": repaired["evidence_dispositions"],
+                "semantic_units": repaired["semantic_units"],
+            }
+        ),
+    }
+    repair_manifest["manifest_sha256"] = _sha256(repair_manifest)
+    repaired["row_repair_manifest"] = repair_manifest
+    repaired["compilation_sha256"] = _sha256(
+        {key: value for key, value in repaired.items() if key != "compilation_sha256"}
+    )
+    _verify_row_verification_manifest(bundle, repaired)
+    return repaired
+
+
 def _verify_row_verification_manifest(
     bundle: Mapping[str, Any], compilation: Mapping[str, Any]
 ) -> None:
@@ -3562,6 +3862,107 @@ def _verify_row_verification_manifest(
         raise SemanticIntegrationError(
             "row verification manifest lacks active compilation content"
         )
+    active_manifest: Mapping[str, Any] = manifest
+    repair_manifest = compilation.get("row_repair_manifest")
+    if repair_manifest is not None:
+        if not isinstance(repair_manifest, Mapping):
+            raise SemanticIntegrationError("invalid row repair manifest")
+        _verify_stored_hash(
+            repair_manifest, field="manifest_sha256", label="row repair manifest"
+        )
+        if set(repair_manifest) != {
+            "schema_version",
+            "stage_sha256",
+            "verification_method_version",
+            "verification_method_sha256",
+            "parent_row_verification_manifest_sha256",
+            "input_verified_compilation_sha256",
+            "selected_evidence_ids",
+            "repair_responses",
+            "decision_counts",
+            "active_evidence_ids_sha256",
+            "active_rows_sha256",
+            "manifest_sha256",
+        } or repair_manifest.get("schema_version") != ROW_REPAIR_MANIFEST_VERSION:
+            raise SemanticIntegrationError("invalid row repair manifest shape")
+        if (
+            repair_manifest.get("parent_row_verification_manifest_sha256")
+            != manifest["manifest_sha256"]
+            or repair_manifest.get("verification_method_version")
+            != ROW_VERIFICATION_METHOD_VERSION
+            or repair_manifest.get("verification_method_sha256")
+            != _sha256(ROW_VERIFICATION_METHOD_TEXT)
+        ):
+            raise SemanticIntegrationError("row repair manifest has stale method lineage")
+        for field in (
+            "stage_sha256",
+            "verification_method_sha256",
+            "parent_row_verification_manifest_sha256",
+            "input_verified_compilation_sha256",
+            "active_evidence_ids_sha256",
+            "active_rows_sha256",
+        ):
+            digest = repair_manifest.get(field)
+            if (
+                not isinstance(digest, str)
+                or len(digest) != 64
+                or digest != digest.casefold()
+                or any(character not in "0123456789abcdef" for character in digest)
+            ):
+                raise SemanticIntegrationError(
+                    f"row repair manifest has invalid {field}"
+                )
+        selected_ids = repair_manifest.get("selected_evidence_ids")
+        repair_responses = repair_manifest.get("repair_responses")
+        repair_counts = repair_manifest.get("decision_counts")
+        if (
+            not isinstance(selected_ids, list)
+            or not selected_ids
+            or any(not _nonempty(value) for value in selected_ids)
+            or len(selected_ids) != len(set(selected_ids))
+            or not isinstance(repair_responses, list)
+            or not isinstance(repair_counts, Mapping)
+            or set(repair_counts) != ROW_VERIFICATION_DECISIONS
+            or any(
+                not isinstance(value, int) or isinstance(value, bool) or value < 0
+                for value in repair_counts.values()
+            )
+            or sum(repair_counts.values()) != len(selected_ids)
+        ):
+            raise SemanticIntegrationError("row repair manifest has invalid coverage")
+        repair_batch_ids: list[str] = []
+        repair_hashes: list[str] = []
+        for row in repair_responses:
+            if not isinstance(row, Mapping) or set(row) != {
+                "batch_id",
+                "raw_response_sha256",
+            }:
+                raise SemanticIntegrationError(
+                    "row repair manifest has invalid response lineage"
+                )
+            batch_id = row.get("batch_id")
+            digest = row.get("raw_response_sha256")
+            if (
+                not _nonempty(batch_id)
+                or not isinstance(digest, str)
+                or len(digest) != 64
+                or digest != digest.casefold()
+                or any(character not in "0123456789abcdef" for character in digest)
+            ):
+                raise SemanticIntegrationError(
+                    "row repair manifest has invalid response identity"
+                )
+            repair_batch_ids.append(batch_id)
+            repair_hashes.append(digest)
+        if (
+            not repair_batch_ids
+            or len(repair_batch_ids) != len(set(repair_batch_ids))
+            or len(repair_hashes) != len(set(repair_hashes))
+        ):
+            raise SemanticIntegrationError(
+                "row repair manifest repeats response lineage"
+            )
+        active_manifest = repair_manifest
     if (
         manifest["original_raw_response_manifest_sha256"]
         != raw_manifest["manifest_sha256"]
@@ -3577,11 +3978,11 @@ def _verify_row_verification_manifest(
             "row verification manifest has invalid active evidence rows"
         )
     active_ids = [row["evidence_id"] for row in dispositions]
-    if manifest["active_evidence_ids_sha256"] != _sha256(active_ids):
+    if active_manifest["active_evidence_ids_sha256"] != _sha256(active_ids):
         raise SemanticIntegrationError(
             "row verification manifest does not bind the active evidence rows"
         )
-    if manifest["active_rows_sha256"] != _sha256(
+    if active_manifest["active_rows_sha256"] != _sha256(
         {
             "evidence_dispositions": dispositions,
             "semantic_units": semantic_units,
@@ -4775,6 +5176,551 @@ def validate_reconciliation_stage(
     return result
 
 
+def _canonical_semantic_text(value: Any, *, field: str) -> str:
+    if not _nonempty(value):
+        raise SemanticIntegrationError(f"{field} must be nonempty")
+    return " ".join(value.strip().casefold().split())
+
+
+def _relation_closure_response_shape(
+    stage_sha256: str, batch_id: str
+) -> dict[str, Any]:
+    return {
+        "schema_version": RELATION_CLOSURE_RESPONSE_VERSION,
+        "stage_sha256": stage_sha256,
+        "batch_id": batch_id,
+        "relations": [
+            {
+                "left_ref": "semantic node ref",
+                "right_ref": "semantic node ref",
+                "relation": "equivalent|opposed|distinct|adjacent|unresolved",
+                "reason": "required semantic reason",
+            }
+        ],
+    }
+
+
+def _render_relation_closure_prompt(
+    *,
+    stage_sha256: str,
+    batch_id: str,
+    left_candidates: Sequence[Mapping[str, Any]],
+    right_candidates: Sequence[Mapping[str, Any]],
+    same_block: bool,
+) -> str:
+    def project(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+        return [
+        {
+            field: row[field]
+            for field in (
+                "candidate_ref",
+                "statement",
+                "claim_kind",
+                "subject_product_ids",
+                "comparator_product_ids",
+                "product_version_ids",
+                "axis_ids",
+                "emerging_axis_labels",
+                "conditions",
+                "polarity",
+                "uncertainty_posture",
+                "causal_ceiling",
+            )
+        }
+            for row in rows
+        ]
+
+    comparison_instruction = (
+        "Compare every unordered pair within CANDIDATES exactly once. "
+        if same_block
+        else "Compare every LEFT_CANDIDATES member with every RIGHT_CANDIDATES member exactly once. "
+    )
+    payload = (
+        "\n\nCANDIDATES\n"
+        + json.dumps(project(left_candidates), ensure_ascii=False, indent=2)
+        if same_block
+        else "\n\nLEFT_CANDIDATES\n"
+        + json.dumps(project(left_candidates), ensure_ascii=False, indent=2)
+        + "\n\nRIGHT_CANDIDATES\n"
+        + json.dumps(project(right_candidates), ensure_ascii=False, indent=2)
+    )
+    return (
+        METHOD_TEXT_V3
+        + "\nClassify every required pair for corpus-global semantic closure. "
+        + comparison_instruction
+        + "Equivalent means the same directional proposition under the same product, "
+        "comparator, version, conditions, uncertainty, claim kind, and causal ceiling; "
+        "wording and axes alone do not make meanings different. Opposed means the two "
+        "supported assertions cannot both be true in the same scope. Adjacent is related "
+        "but neither equivalent nor opposed. Distinct means no material relation. "
+        "Logical polarity is truth-functional, never sentiment. Return one decision for "
+        "every required pair and only JSON matching this shape:\n"
+        + json.dumps(
+            _relation_closure_response_shape(stage_sha256, batch_id),
+            ensure_ascii=False,
+            indent=2,
+        )
+        + payload
+    )
+
+
+def prepare_relation_closure_stage(
+    bundle: Mapping[str, Any],
+    node_compilation: Mapping[str, Any],
+    *,
+    max_prompt_bytes: int | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Prepare global canonical classification over the pre-convergence node frontier."""
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_projection(bundle)
+    _verify_stored_hash(
+        node_compilation,
+        field="node_compilation_sha256",
+        label="node compilation",
+    )
+    if node_compilation.get("bundle_sha256") != bundle.get("bundle_sha256"):
+        raise SemanticIntegrationError("relation closure has stale bundle lineage")
+    if (
+        node_compilation.get("reconciliation_policy_version")
+        != RECONCILIATION_POLICY_VERSION_V2
+        or node_compilation.get("reconciliation_mode") != "normal"
+    ):
+        raise SemanticIntegrationError(
+            "relation closure requires a policy-v2 normal-retention frontier"
+        )
+    nodes = node_compilation.get("semantic_nodes")
+    if not isinstance(nodes, list) or not nodes:
+        raise SemanticIntegrationError("relation closure requires semantic nodes")
+    if any(row.get("terminal_proposition") is not True for row in nodes):
+        raise SemanticIntegrationError(
+            "relation closure requires the terminal pre-convergence node frontier"
+        )
+    _reject_same_level_node_links(nodes)
+    candidates = [
+        {
+            "candidate_ref": row["semantic_node_ref"],
+            "statement": row["bounded_meaning"],
+            "claim_kind": row["claim_kind"],
+            "subject_product_ids": row["subject_product_ids"],
+            "comparator_product_ids": row["comparator_product_ids"],
+            "product_version_ids": row["product_version_ids"],
+            "axis_ids": row["axis_ids"],
+            "emerging_axis_labels": row["emerging_axis_labels"],
+            "conditions": row["conditions"],
+            "polarity": row["polarity"],
+            "uncertainty_posture": row["uncertainty_posture"],
+            "leaf_relations": row["leaf_relations"],
+            "condition_lineage": row["condition_lineage"],
+            "opposition_checked": row["opposition_checked"],
+            "causal_ceiling": row["causal_ceiling"],
+            **(
+                {"evidence_postures": row["evidence_postures"]}
+                if "evidence_postures" in row
+                else {}
+            ),
+        }
+        for row in nodes
+    ]
+    mixed_refs = [row["candidate_ref"] for row in candidates if row["polarity"] == "mixed"]
+    if mixed_refs:
+        raise SemanticIntegrationError(
+            f"relation closure requires row repair for mixed polarity: {mixed_refs!r}"
+        )
+    ceiling = max_prompt_bytes or bundle["max_prompt_bytes"]
+    if not isinstance(ceiling, int) or isinstance(ceiling, bool) or ceiling <= 0:
+        raise SemanticIntegrationError("invalid relation-closure prompt byte ceiling")
+    blocks: list[list[dict[str, Any]]] = []
+    current: list[dict[str, Any]] = []
+    placeholder = "0" * 64
+    for candidate in candidates:
+        proposed = [*current, candidate]
+        batch_id = f"relation-closure-block-{len(blocks) + 1:04d}"
+        if len(
+            _render_relation_closure_prompt(
+                stage_sha256=placeholder,
+                batch_id=batch_id,
+                left_candidates=proposed,
+                right_candidates=proposed,
+                same_block=False,
+            ).encode("utf-8")
+        ) > ceiling:
+            if not current:
+                raise SemanticIntegrationError(
+                    f"relation closure candidate {candidate['candidate_ref']} exceeds prompt byte ceiling"
+                )
+            blocks.append(current)
+            current = [candidate]
+        else:
+            current = proposed
+    if current:
+        blocks.append(current)
+    batches: list[dict[str, Any]] = []
+    for left_index, left in enumerate(blocks):
+        for right_index in range(left_index, len(blocks)):
+            right = blocks[right_index]
+            same_block = left_index == right_index
+            if same_block and len(left) < 2:
+                continue
+            batches.append(
+                {
+                    "batch_id": f"relation-closure-{len(batches) + 1:04d}",
+                    "left_candidate_refs": [row["candidate_ref"] for row in left],
+                    "right_candidate_refs": [row["candidate_ref"] for row in right],
+                    "same_block": same_block,
+                }
+            )
+    stage = {
+        "schema_version": RELATION_CLOSURE_STAGE_VERSION,
+        "policy_version": RELATION_CLOSURE_POLICY_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_compilation_sha256": node_compilation["batch_compilation_sha256"],
+        "input_node_compilation_sha256": node_compilation["node_compilation_sha256"],
+        "candidates": candidates,
+        "batches": batches,
+        "carried_unmerged_semantic_units": list(
+            node_compilation["unmerged_semantic_units"]
+        ),
+        "carried_emerging_axis_consolidations": list(
+            node_compilation["emerging_axis_consolidations"]
+        ),
+        "max_prompt_bytes": ceiling,
+    }
+    stage["stage_sha256"] = _sha256(stage)
+    candidate_index = {row["candidate_ref"]: row for row in candidates}
+    prompts = []
+    for batch in batches:
+        prompt = _render_relation_closure_prompt(
+            stage_sha256=stage["stage_sha256"],
+            batch_id=batch["batch_id"],
+            left_candidates=[
+                candidate_index[ref] for ref in batch["left_candidate_refs"]
+            ],
+            right_candidates=[
+                candidate_index[ref] for ref in batch["right_candidate_refs"]
+            ],
+            same_block=batch["same_block"],
+        )
+        size = len(prompt.encode("utf-8"))
+        if size > ceiling:
+            raise SemanticIntegrationError(
+                f"relation closure batch {batch['batch_id']} exceeds prompt byte ceiling"
+            )
+        prompts.append(
+            {"batch_id": batch["batch_id"], "prompt": prompt, "prompt_utf8_bytes": size}
+        )
+    return stage, prompts
+
+
+def validate_relation_closure_stage(
+    bundle: Mapping[str, Any],
+    stage: Mapping[str, Any],
+    responses: Sequence[Mapping[str, Any]],
+    *,
+    require_all: bool = True,
+) -> dict[str, Any]:
+    """Compile exhaustive pair judgments into global classes and relations."""
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _validate_projection(bundle)
+    _verify_stored_hash(stage, field="stage_sha256", label="relation closure stage")
+    if (
+        stage.get("schema_version") != RELATION_CLOSURE_STAGE_VERSION
+        or stage.get("policy_version") != RELATION_CLOSURE_POLICY_VERSION
+        or stage.get("bundle_sha256") != bundle.get("bundle_sha256")
+    ):
+        raise SemanticIntegrationError("invalid or stale relation closure stage")
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    expected_batches = {row["batch_id"]: row for row in stage["batches"]}
+    required_pairs: set[tuple[str, str]] = set()
+    batch_pairs: dict[str, set[tuple[str, str]]] = {}
+    for batch_id, batch in expected_batches.items():
+        left = batch.get("left_candidate_refs")
+        right = batch.get("right_candidate_refs")
+        same_block = batch.get("same_block")
+        if not isinstance(left, list) or not isinstance(right, list) or not isinstance(
+            same_block, bool
+        ):
+            raise SemanticIntegrationError("invalid relation closure batch shape")
+        pairs = (
+            {
+                tuple(sorted((left[index], left[other])))
+                for index in range(len(left))
+                for other in range(index + 1, len(left))
+            }
+            if same_block
+            else {tuple(sorted((left_ref, right_ref))) for left_ref in left for right_ref in right}
+        )
+        if any(a == b or a not in candidate_index or b not in candidate_index for a, b in pairs):
+            raise SemanticIntegrationError("invalid relation closure pair projection")
+        if required_pairs & pairs:
+            raise SemanticIntegrationError("relation closure stage repeats a required pair")
+        batch_pairs[batch_id] = pairs
+        required_pairs.update(pairs)
+    candidate_refs = sorted(candidate_index)
+    expected_pair_count = len(candidate_refs) * (len(candidate_refs) - 1) // 2
+    if len(required_pairs) != expected_pair_count:
+        raise SemanticIntegrationError("relation closure stage lacks exhaustive pair coverage")
+
+    seen_batches: set[str] = set()
+    pair_decisions: dict[tuple[str, str], str] = {}
+    unresolved_pairs: set[tuple[str, str]] = set()
+    response_hashes: list[dict[str, str]] = []
+    for response in responses:
+        if not isinstance(response, Mapping) or set(response) != {
+            "schema_version",
+            "stage_sha256",
+            "batch_id",
+            "relations",
+        }:
+            raise SemanticIntegrationError("invalid relation closure response shape")
+        if (
+            response.get("schema_version") != RELATION_CLOSURE_RESPONSE_VERSION
+            or response.get("stage_sha256") != stage["stage_sha256"]
+        ):
+            raise SemanticIntegrationError("invalid or stale relation closure response")
+        batch_id = response.get("batch_id")
+        if batch_id not in expected_batches or batch_id in seen_batches:
+            raise SemanticIntegrationError("unknown or duplicate relation closure batch")
+        rows = response.get("relations")
+        if not isinstance(rows, list):
+            raise SemanticIntegrationError("relation closure response lacks relations")
+        observed: set[tuple[str, str]] = set()
+        for row in rows:
+            if not isinstance(row, Mapping) or set(row) != {
+                "left_ref",
+                "right_ref",
+                "relation",
+                "reason",
+            }:
+                raise SemanticIntegrationError("invalid relation closure decision")
+            pair = tuple(sorted((row.get("left_ref"), row.get("right_ref"))))
+            relation = row.get("relation")
+            if (
+                pair not in batch_pairs[batch_id]
+                or pair in observed
+                or pair in pair_decisions
+                or relation not in {"equivalent", "opposed", "distinct", "adjacent", "unresolved"}
+                or not _nonempty(row.get("reason"))
+            ):
+                raise SemanticIntegrationError("unknown or duplicate relation closure pair")
+            if relation == "equivalent":
+                left, right = (candidate_index[ref] for ref in pair)
+                compatibility_fields = (
+                    "claim_kind",
+                    "subject_product_ids",
+                    "comparator_product_ids",
+                    "product_version_ids",
+                    "conditions",
+                    "polarity",
+                    "uncertainty_posture",
+                    "causal_ceiling",
+                )
+                if any(left[field] != right[field] for field in compatibility_fields):
+                    raise SemanticIntegrationError(
+                        "equivalent relation closure pair has incompatible truth conditions"
+                    )
+            pair_decisions[pair] = relation
+            if relation == "unresolved":
+                unresolved_pairs.add(pair)
+            observed.add(pair)
+        if observed != batch_pairs[batch_id]:
+            raise SemanticIntegrationError(
+                f"relation closure batch {batch_id} does not decide every required pair"
+            )
+        seen_batches.add(batch_id)
+        response_hashes.append(
+            {"batch_id": batch_id, "raw_response_sha256": _sha256(response)}
+        )
+    if require_all and (
+        seen_batches != set(expected_batches) or set(pair_decisions) != required_pairs
+    ):
+        raise SemanticIntegrationError("relation closure coverage is incomplete")
+    if not require_all:
+        receipt = {
+            "schema_version": "semantic_evidence_relation_closure_validation_v1",
+            "bundle_sha256": bundle["bundle_sha256"],
+            "stage_sha256": stage["stage_sha256"],
+            "validated_batch_ids": sorted(seen_batches),
+            "decided_pair_count": len(pair_decisions),
+            "unresolved_pair_count": len(unresolved_pairs),
+        }
+        receipt["validation_sha256"] = _sha256(receipt)
+        return receipt
+
+    parents = {ref: ref for ref in candidate_refs}
+
+    def find(ref: str) -> str:
+        while parents[ref] != ref:
+            parents[ref] = parents[parents[ref]]
+            ref = parents[ref]
+        return ref
+
+    def union(left: str, right: str) -> None:
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            keep, move = sorted((left_root, right_root))
+            parents[move] = keep
+
+    for pair, relation in pair_decisions.items():
+        if relation == "equivalent":
+            union(*pair)
+    groups: dict[str, list[str]] = defaultdict(list)
+    for ref in candidate_refs:
+        groups[find(ref)].append(ref)
+    class_relations: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for pair, relation in pair_decisions.items():
+        left_root, right_root = find(pair[0]), find(pair[1])
+        if left_root == right_root:
+            if relation not in {"equivalent", "unresolved"}:
+                raise SemanticIntegrationError(
+                    "one equivalence class contains a contradictory pair relation"
+                )
+            continue
+        if relation not in {"unresolved", "equivalent"}:
+            class_relations[tuple(sorted((left_root, right_root)))].add(relation)
+    if any(len(relations) > 1 for relations in class_relations.values()):
+        raise SemanticIntegrationError(
+            "relation closure assigns inconsistent relations between equivalence classes"
+        )
+
+    nodes: list[dict[str, Any]] = []
+    group_ref_by_candidate: dict[str, str] = {}
+    for refs in sorted(groups.values(), key=lambda values: sorted(values)):
+        canonical_ref = min(
+            refs,
+            key=lambda ref: (
+                _canonical_semantic_text(
+                    candidate_index[ref]["statement"], field=f"{ref}.statement"
+                ),
+                ref,
+            ),
+        )
+        material = candidate_index[canonical_ref]
+        identity_material = {
+            "bounded_meaning": _canonical_semantic_text(
+                material["statement"], field=f"{canonical_ref}.statement"
+            ),
+            "claim_kind": material["claim_kind"],
+            "subject_product_ids": material["subject_product_ids"],
+            "comparator_product_ids": material["comparator_product_ids"],
+            "product_version_ids": material["product_version_ids"],
+            "conditions": material["conditions"],
+            "uncertainty_posture": material["uncertainty_posture"],
+            "causal_ceiling": material["causal_ceiling"],
+        }
+        identity = _sha256(identity_material)
+        node_ref = (
+            f"relation-unresolved::{_sha256([identity, *sorted(refs)])}"
+            if unresolved_pairs
+            else f"relation-class::{identity}"
+        )
+        leaf_relations: dict[str, str] = {}
+        condition_lineage: dict[str, list[str]] = {}
+        axes: set[str] = set()
+        emerging: set[str] = set()
+        postures: set[str] = set()
+        for ref in refs:
+            group_ref_by_candidate[ref] = node_ref
+            candidate = candidate_index[ref]
+            axes.update(candidate["axis_ids"])
+            emerging.update(candidate["emerging_axis_labels"])
+            postures.update(candidate.get("evidence_postures", []))
+            for relation in candidate["leaf_relations"]:
+                leaf_ref = relation["semantic_unit_ref"]
+                prior = leaf_relations.get(leaf_ref)
+                leaf_relations[leaf_ref] = (
+                    relation["relation"]
+                    if prior is None
+                    else _relation_product(prior, relation["relation"])
+                )
+            for row in candidate["condition_lineage"]:
+                prior = condition_lineage.get(row["semantic_unit_ref"])
+                if prior is not None and prior != row["conditions"]:
+                    raise SemanticIntegrationError(
+                        "relation closure has inconsistent condition lineage"
+                    )
+                condition_lineage[row["semantic_unit_ref"]] = row["conditions"]
+        node = {
+            "semantic_node_ref": node_ref,
+            "semantic_identity_sha256": identity,
+            "bounded_meaning": material["statement"],
+            "terminal_proposition": True,
+            "claim_kind": material["claim_kind"],
+            "subject_product_ids": material["subject_product_ids"],
+            "comparator_product_ids": material["comparator_product_ids"],
+            "product_version_ids": material["product_version_ids"],
+            "axis_ids": sorted(axes),
+            "emerging_axis_labels": sorted(emerging),
+            "conditions": material["conditions"],
+            "polarity": material["polarity"],
+            "uncertainty_posture": material["uncertainty_posture"],
+            "child_relations": [
+                {"child_ref": ref, "relation": "support"} for ref in sorted(refs)
+            ],
+            "leaf_relations": [
+                {"semantic_unit_ref": ref, "relation": relation}
+                for ref, relation in sorted(leaf_relations.items())
+            ],
+            "condition_lineage": [
+                {"semantic_unit_ref": ref, "conditions": values}
+                for ref, values in sorted(condition_lineage.items())
+            ],
+            "opposition_checked": not unresolved_pairs,
+            "opposing_semantic_node_refs": [],
+            "causal_ceiling": material["causal_ceiling"],
+        }
+        if postures:
+            node["evidence_postures"] = sorted(postures)
+        nodes.append(node)
+    if not unresolved_pairs and len(
+        {row["semantic_node_ref"] for row in nodes}
+    ) != len(nodes):
+        raise SemanticIntegrationError("relation closure produced duplicate semantic identity")
+    opposition: dict[str, set[str]] = defaultdict(set)
+    for pair, relation in pair_decisions.items():
+        if relation != "opposed":
+            continue
+        left = group_ref_by_candidate[pair[0]]
+        right = group_ref_by_candidate[pair[1]]
+        if left == right:
+            raise SemanticIntegrationError("relation closure collapsed an opposed pair")
+        opposition[left].add(right)
+        opposition[right].add(left)
+    for node in nodes:
+        node["opposing_semantic_node_refs"] = sorted(
+            opposition[node["semantic_node_ref"]]
+        )
+
+    required_pair_rows = [list(pair) for pair in sorted(required_pairs)]
+    decided_pair_rows = [list(pair) for pair in sorted(pair_decisions)]
+    coverage = {
+        "required_candidate_count": len(candidate_refs),
+        "required_pair_count": len(required_pairs),
+        "decided_pair_count": len(pair_decisions),
+        "unresolved_pair_count": len(unresolved_pairs),
+        "required_pairs_sha256": _sha256(required_pair_rows),
+        "decided_pairs_sha256": _sha256(decided_pair_rows),
+        "response_hashes": sorted(response_hashes, key=lambda row: row["batch_id"]),
+        "complete": not unresolved_pairs and set(pair_decisions) == required_pairs,
+    }
+    coverage["coverage_sha256"] = _sha256(coverage)
+    result = {
+        "schema_version": RELATION_CLOSURE_COMPILATION_VERSION,
+        "policy_version": RELATION_CLOSURE_POLICY_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_compilation_sha256": stage["batch_compilation_sha256"],
+        "input_node_compilation_sha256": stage["input_node_compilation_sha256"],
+        "stage_sha256": stage["stage_sha256"],
+        "semantic_nodes": sorted(nodes, key=lambda row: row["semantic_node_ref"]),
+        "unmerged_semantic_units": list(stage["carried_unmerged_semantic_units"]),
+        "emerging_axis_consolidations": list(
+            stage["carried_emerging_axis_consolidations"]
+        ),
+        "relation_coverage": coverage,
+    }
+    result["node_compilation_sha256"] = _sha256(result)
+    return result
+
+
 def _competent_roles(claim_kind: str) -> set[str]:
     if claim_kind in {"customer_experience", "reported_behavior"}:
         return CUSTOMER_EXPERIENCE_ROLES
@@ -4794,6 +5740,16 @@ def is_terminal_reconciliation_compilation(
         return False
     if compilation.get("input_batch_count") == 1:
         return True
+    if compilation.get("schema_version") == RELATION_CLOSURE_COMPILATION_VERSION:
+        coverage = compilation.get("relation_coverage")
+        return (
+            compilation.get("policy_version") == RELATION_CLOSURE_POLICY_VERSION
+            and isinstance(coverage, Mapping)
+            and coverage.get("complete") is True
+            and coverage.get("required_pair_count")
+            == coverage.get("decided_pair_count")
+            and coverage.get("unresolved_pair_count") == 0
+        )
     return (
         compilation.get("reconciliation_policy_version")
         == RECONCILIATION_POLICY_VERSION_V2
@@ -4841,10 +5797,21 @@ def finalize_v3_view(
         raise SemanticIntegrationError(
             "terminal reconciliation has stale root batch compilation lineage"
         )
+    relation_closed = (
+        node_compilation.get("schema_version")
+        == RELATION_CLOSURE_COMPILATION_VERSION
+    )
+    if relation_closed:
+        coverage = node_compilation.get("relation_coverage")
+        if not isinstance(coverage, Mapping):
+            raise SemanticIntegrationError("relation-closed finalization lacks coverage")
+        _verify_stored_hash(
+            coverage, field="coverage_sha256", label="relation closure coverage"
+        )
     if not is_terminal_reconciliation_compilation(node_compilation):
         raise SemanticIntegrationError(
             "terminal reconciliation must be one prompt-bounded batch or a "
-            "policy-v2 convergence fixed point"
+            "policy-v2 convergence fixed point or complete global relation closure"
         )
     nodes = node_compilation.get("semantic_nodes")
     semantic_index = {
@@ -4854,6 +5821,45 @@ def finalize_v3_view(
     container_index = {row["container_id"]: row for row in bundle["containers"]}
     axis_ids = {row["axis_id"] for row in bundle["axes"]}
     compiled_props: list[dict[str, Any]] = []
+    proposition_ids_by_node = {
+        node["semantic_node_ref"]: (
+            _stable_id(
+                "prop",
+                bundle["corpus_sha256"],
+                node["semantic_identity_sha256"],
+            )
+            if relation_closed
+            else _stable_id(
+                "prop",
+                bundle["corpus_sha256"],
+                node["bounded_meaning"],
+                *sorted(node["subject_product_ids"]),
+                *sorted(node["comparator_product_ids"]),
+                *sorted(node["product_version_ids"]),
+                *sorted(node["axis_ids"]),
+                *sorted(node["conditions"]),
+            )
+        )
+        for node in nodes
+    }
+    if len(proposition_ids_by_node) != len(nodes) or len(
+        set(proposition_ids_by_node.values())
+    ) != len(nodes):
+        raise SemanticIntegrationError("terminal reconciliation has duplicate proposition identity")
+    node_by_ref = {row["semantic_node_ref"]: row for row in nodes}
+    if relation_closed:
+        for node_ref, node in node_by_ref.items():
+            for opposing_ref in node.get("opposing_semantic_node_refs", []):
+                if (
+                    opposing_ref not in node_by_ref
+                    or node_ref
+                    not in node_by_ref[opposing_ref].get(
+                        "opposing_semantic_node_refs", []
+                    )
+                ):
+                    raise SemanticIntegrationError(
+                        "relation closure opposition must be symmetric"
+                    )
     evidence_to_props: dict[str, set[str]] = defaultdict(set)
     container_to_props: dict[str, set[str]] = defaultdict(set)
     for node in nodes:
@@ -4873,6 +5879,25 @@ def finalize_v3_view(
                 related[relation["relation"]].append(ref)
         if not related["support"]:
             raise SemanticIntegrationError(f"terminal semantic node {key} lacks support")
+        opposing_node_refs = (
+            _string_list(
+                node.get("opposing_semantic_node_refs", []),
+                field=f"{node['semantic_node_ref']}.opposing_semantic_node_refs",
+            )
+            if relation_closed
+            else []
+        )
+        if any(ref not in proposition_ids_by_node for ref in opposing_node_refs):
+            raise SemanticIntegrationError(
+                f"terminal semantic node {node['semantic_node_ref']} has invalid opposition lineage"
+            )
+        for opposing_ref in opposing_node_refs:
+            for relation in node_by_ref[opposing_ref]["leaf_relations"]:
+                if (
+                    relation["relation"] == "support"
+                    and relation["semantic_unit_ref"] not in related["counter"]
+                ):
+                    related["counter"].append(relation["semantic_unit_ref"])
         support_evidence = sorted(
             {semantic_index[ref]["evidence_id"] for ref in related["support"]}
         )
@@ -4916,9 +5941,9 @@ def finalize_v3_view(
             and _nonempty(evidence_index[ref].get("independence_key"))
         ]
         origin_keys = {
-            key
+            origin_key
             for ref in credited_support
-            if (key := _credited_origin_key(evidence_index[ref])) is not None
+            if (origin_key := _credited_origin_key(evidence_index[ref])) is not None
         }
         credited_roles = {evidence_index[ref]["source_role"] for ref in credited_support}
         engagement_refs = [
@@ -4936,23 +5961,17 @@ def finalize_v3_view(
             posture = "resonance_supported"
         else:
             posture = "isolated"
+        opposing_proposition_ids = sorted(
+            proposition_ids_by_node[ref] for ref in opposing_node_refs
+        )
         conflict = (
             "mixed"
-            if counter_evidence
+            if counter_evidence or opposing_proposition_ids
             else "none_observed"
-            if node["opposition_checked"]
+            if relation_closed or node["opposition_checked"]
             else "not_checked"
         )
-        proposition_id = _stable_id(
-            "prop",
-            bundle["corpus_sha256"],
-            node["bounded_meaning"],
-            *sorted(node["subject_product_ids"]),
-            *sorted(node["comparator_product_ids"]),
-            *sorted(node["product_version_ids"]),
-            *sorted(axes),
-            *sorted(node["conditions"]),
-        )
+        proposition_id = proposition_ids_by_node[node["semantic_node_ref"]]
         support_containers = sorted(
             {evidence_index[ref]["container_id"] for ref in support_evidence}
         )
@@ -5007,6 +6026,8 @@ def finalize_v3_view(
             },
             "adjacent_evidence_refs": adjacent_evidence,
         }
+        if relation_closed:
+            proposition["opposing_proposition_ids"] = opposing_proposition_ids
         compiled_props.append(proposition)
         for evidence_id in sorted(
             set(support_evidence) | set(counter_evidence) | set(adjacent_evidence)
@@ -5072,7 +6093,7 @@ def finalize_v3_view(
         for row in bundle["containers"]
     ]
     view = {
-        "schema_version": VIEW_VERSION_V2,
+        "schema_version": VIEW_VERSION_V3 if relation_closed else VIEW_VERSION_V2,
         "cycle_id": bundle["cycle_id"],
         "question_id": bundle["question_id"],
         "bundle_sha256": bundle["bundle_sha256"],
@@ -5110,6 +6131,19 @@ def finalize_v3_view(
     return view
 
 
+def finalize_relation_closed_view(
+    bundle: Mapping[str, Any],
+    batch_compilation: Mapping[str, Any],
+    relation_compilation: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Finalize only a complete, globally relation-closed semantic frontier."""
+    if relation_compilation.get("schema_version") != RELATION_CLOSURE_COMPILATION_VERSION:
+        raise SemanticIntegrationError(
+            "relation-closed finalization requires relation closure compilation v1"
+        )
+    return finalize_v3_view(bundle, batch_compilation, relation_compilation)
+
+
 def project_evidence_packet(
     view: Mapping[str, Any],
     bundle: Mapping[str, Any],
@@ -5128,8 +6162,8 @@ def project_evidence_packet(
         field="compilation_sha256",
         label="batch compilation",
     )
-    if view.get("schema_version") != VIEW_VERSION_V2:
-        raise SemanticIntegrationError("evidence packet requires integration view v2")
+    if view.get("schema_version") not in {VIEW_VERSION_V2, VIEW_VERSION_V3}:
+        raise SemanticIntegrationError("evidence packet requires integration view v2 or v3")
     if not _is_current_bundle(bundle):
         raise SemanticIntegrationError("evidence packet requires a current semantic bundle")
     if view.get("bundle_sha256") != bundle["bundle_sha256"] or batch_compilation.get(
@@ -5727,9 +6761,15 @@ __all__ = [
     "METHOD_VERSION_V6",
     "METHOD_VERSION_V7",
     "RECONCILIATION_POLICY_VERSION_V2",
+    "RELATION_CLOSURE_COMPILATION_VERSION",
+    "RELATION_CLOSURE_POLICY_VERSION",
+    "RELATION_CLOSURE_RESPONSE_VERSION",
+    "RELATION_CLOSURE_STAGE_VERSION",
     "PROMPT_ENCODING_VERSION",
     "RAW_RESPONSE_MANIFEST_VERSION",
     "ROW_VERIFICATION_MANIFEST_VERSION",
+    "ROW_REPAIR_MANIFEST_VERSION",
+    "ROW_REPAIR_STAGE_VERSION",
     "ROW_VERIFICATION_METHOD_TEXT",
     "ROW_VERIFICATION_METHOD_TEXT_V3",
     "ROW_VERIFICATION_METHOD_TEXT_V4",
@@ -5751,21 +6791,27 @@ __all__ = [
     "SemanticIntegrationError",
     "VIEW_VERSION",
     "VIEW_VERSION_V2",
+    "VIEW_VERSION_V3",
     "WORK_UNIT_PROJECTION_VERSION",
     "WORK_UNIT_PROJECTION_VERSION_V2",
     "apply_row_verification",
+    "apply_row_repair",
     "build_batch_prompts",
     "build_bundle",
     "build_reconciliation_prompt",
     "finalize_view",
     "finalize_v3_view",
+    "finalize_relation_closed_view",
     "is_terminal_reconciliation_compilation",
     "materialize_source_v3",
     "project_evidence_packet",
     "prepare_reconciliation_stage",
+    "prepare_relation_closure_stage",
     "prepare_row_verification",
+    "prepare_row_repair",
     "validate_batch_responses",
     "validate_row_verified_compilation",
     "validate_reconciliation_stage",
+    "validate_relation_closure_stage",
     "verify_bundle_context",
 ]

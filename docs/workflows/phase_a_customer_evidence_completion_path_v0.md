@@ -830,3 +830,22 @@ all 60,901 captured corpus items (59,225 semantically assessed and 1,676
 mechanically excluded), reports zero blocked items, and preserves the 96
 explicitly unresolved evidence rows. Its stored view SHA-256 is
 `b50dda4370b2c98ce4ac2553aa9c2cb84b5cb23f1c91fa55567c7f9607b31c42`.
+
+Contract v34 does not relabel that policy-v2 replay. It adds a separate opt-in
+route that closes relations before one-row findings are retired. Deterministic
+block pairs cover every unordered pair on one terminal normal-retention
+frontier exactly once. Prompt batches remain transport only: equivalent pair
+decisions form transitive classes across partitions, and opposed pair decisions
+form symmetric links between classes. Directional identity comes from a
+deterministically selected truth-complete frontier assertion and excludes axes,
+stage, batch, and local handles. Finalization requires a hash-bound decision for
+every required pair, with zero unresolved pairs, and writes view v3; missing
+coverage cannot appear as `none_observed`.
+
+When closure exposes a bad source-row decomposition or mixed logical polarity,
+`prepare-row-repair` projects only the named evidence rows through the existing
+complete-row verifier. `submit-row-repair` preserves every other active row,
+writes explicit repair lineage, and changes the verified compilation hash.
+Every prior reconciliation and view then fails stale-lineage validation and
+must be regenerated. The route does not permit direct edits to node
+compilations or finalized views.

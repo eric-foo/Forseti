@@ -31,6 +31,8 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
     RECONCILIATION_POLICY_VERSION_V2,
+    RELATION_CLOSURE_COMPILATION_VERSION,
+    RELATION_CLOSURE_RESPONSE_VERSION,
     PROMPT_ENCODING_VERSION,
     ROW_VERIFICATION_METHOD_TEXT,
     ROW_VERIFICATION_METHOD_TEXT_V3,
@@ -53,21 +55,26 @@ from judgment.semantic_evidence_integration import (
     VIEW_VERSION,
     WORK_UNIT_PROJECTION_VERSION_V2,
     apply_row_verification,
+    apply_row_repair,
     build_batch_prompts,
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
     finalize_view,
     finalize_v3_view,
+    finalize_relation_closed_view,
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
     prepare_reconciliation_stage,
+    prepare_relation_closure_stage,
     prepare_row_verification,
+    prepare_row_repair,
     reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_row_verified_compilation,
     validate_reconciliation_stage,
+    validate_relation_closure_stage,
     verify_bundle_context,
 )
 from judgment.semantic_calibration import (
@@ -90,13 +97,19 @@ from judgment.semantic_calibration import (
     validate_calibration_spec,
 )
 from runners.run_semantic_evidence_integration import (
+    _parser as _semantic_integration_parser,
     evaluate_semantic_calibration_run,
     prepare_batches,
+    prepare_relation_closure_run,
+    prepare_row_repair_run,
     prepare_prompt_execution_pack,
     prepare_semantic_calibration_run,
     prepare_row_verification_run,
     publish_batch_response_file,
     submit_row_verification_run,
+    submit_relation_closure_run,
+    submit_row_repair_run,
+    validate_relation_closure_response_file,
     verify_prompt_execution_pack,
 )
 
@@ -2722,6 +2735,62 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert reconciliation["batch_compilation_sha256"] == verified["compilation_sha256"]
 
 
+def test_selective_row_repair_preserves_untouched_rows_and_invalidates_old_lineage() -> None:
+    bundle, verified = _verified_policy_compilation(count=2)
+    selected = verified["evidence_dispositions"][0]["evidence_id"]
+    untouched = verified["evidence_dispositions"][1]["evidence_id"]
+    repair_stage, _ = prepare_row_repair(
+        bundle, verified, evidence_ids=[selected], max_prompt_bytes=20_000
+    )
+    replacement = deepcopy(repair_stage["verification_rows"][0]["proposed_result"])
+    replacement["semantic_units"][0]["statement"] = (
+        "The balm became noticeably drying after one week of use."
+    )
+    repaired = apply_row_repair(
+        bundle,
+        verified,
+        repair_stage,
+        _row_verification_responses(
+            repair_stage,
+            {
+                selected: {
+                    "decision": "replace",
+                    "reason": "the qualified intensity was omitted",
+                    "replacement": replacement,
+                }
+            },
+        ),
+    )
+
+    def active_row(compilation: dict, evidence_id: str) -> tuple[dict, list[dict]]:
+        disposition = next(
+            row
+            for row in compilation["evidence_dispositions"]
+            if row["evidence_id"] == evidence_id
+        )
+        units = [
+            row
+            for row in compilation["semantic_units"]
+            if row["evidence_id"] == evidence_id
+        ]
+        return disposition, units
+
+    assert repaired["compilation_sha256"] != verified["compilation_sha256"]
+    assert active_row(repaired, untouched) == active_row(verified, untouched)
+    assert active_row(repaired, selected) != active_row(verified, selected)
+    assert repaired["row_repair_manifest"]["selected_evidence_ids"] == [selected]
+    prepare_reconciliation_stage(bundle, repaired)
+
+    old_stage, _ = prepare_reconciliation_stage(bundle, verified)
+    old_terminal = validate_reconciliation_stage(
+        bundle,
+        old_stage,
+        _terminal_singleton_reconciliation_responses(old_stage),
+    )
+    with pytest.raises(SemanticIntegrationError, match="stale root batch compilation"):
+        finalize_v3_view(bundle, repaired, old_terminal)
+
+
 def test_row_verification_v8_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
     assert ROW_VERIFICATION_METHOD_TEXT.startswith(
@@ -3482,6 +3551,56 @@ def _singleton_reconciliation_responses(stage: dict) -> list[dict]:
     return responses
 
 
+def _terminal_singleton_reconciliation_responses(stage: dict) -> list[dict]:
+    responses = _singleton_reconciliation_responses(stage)
+    for response in responses:
+        for node in response["semantic_nodes"]:
+            node["terminal_proposition"] = True
+            node["claim_kind"] = "customer_experience"
+            node["opposition_checked"] = False
+            node["causal_ceiling"] = "descriptive_only"
+    return responses
+
+
+def _relation_closure_responses(
+    stage: dict,
+    *,
+    default_relation: str = "equivalent",
+    relation_by_pair: dict[tuple[str, str], str] | None = None,
+) -> list[dict]:
+    relation_by_pair = relation_by_pair or {}
+    responses = []
+    for batch in stage["batches"]:
+        left = batch["left_candidate_refs"]
+        right = batch["right_candidate_refs"]
+        pairs = (
+            [
+                tuple(sorted((left[index], left[other])))
+                for index in range(len(left))
+                for other in range(index + 1, len(left))
+            ]
+            if batch["same_block"]
+            else [tuple(sorted((left_ref, right_ref))) for left_ref in left for right_ref in right]
+        )
+        responses.append(
+            {
+                "schema_version": RELATION_CLOSURE_RESPONSE_VERSION,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "relations": [
+                    {
+                        "left_ref": pair[0],
+                        "right_ref": pair[1],
+                        "relation": relation_by_pair.get(pair, default_relation),
+                        "reason": "the pair has the selected semantic relationship",
+                    }
+                    for pair in pairs
+                ],
+            }
+        )
+    return responses
+
+
 def test_policy_v2_node_keys_are_local_to_each_prompt_batch() -> None:
     bundle, verified = _verified_policy_compilation(
         count=40, max_prompt_bytes=12_000
@@ -3622,6 +3741,233 @@ def test_policy_v2_multi_batch_fixed_point_is_terminal() -> None:
     normal = deepcopy(compilation)
     normal["reconciliation_mode"] = "normal"
     assert not is_terminal_reconciliation_compilation(normal)
+
+
+def _relation_closure_fixture(
+    *, count: int = 3, closure_prompt_bytes: int = 12_000
+) -> tuple[dict, dict, dict, dict]:
+    bundle, verified = _verified_policy_compilation(
+        count=count, max_prompt_bytes=12_000
+    )
+    stage, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    frontier = validate_reconciliation_stage(
+        bundle, stage, _terminal_singleton_reconciliation_responses(stage)
+    )
+    closure_stage, _ = prepare_relation_closure_stage(
+        bundle, frontier, max_prompt_bytes=closure_prompt_bytes
+    )
+    return bundle, verified, frontier, closure_stage
+
+
+def test_relation_closure_merges_equivalent_nodes_across_prompt_partitions() -> None:
+    bundle, verified, frontier, small_stage = _relation_closure_fixture(
+        count=8, closure_prompt_bytes=4_500
+    )
+    frontier = deepcopy(frontier)
+    frontier["semantic_nodes"][0]["bounded_meaning"] = (
+        "After a week of use, the balm had become drying."
+    )
+    _rehash_node_compilation(frontier)
+    small_stage, _ = prepare_relation_closure_stage(
+        bundle, frontier, max_prompt_bytes=4_500
+    )
+    large_stage, _ = prepare_relation_closure_stage(
+        bundle, frontier, max_prompt_bytes=30_000
+    )
+    assert len(small_stage["batches"]) > len(large_stage["batches"])
+
+    small = validate_relation_closure_stage(
+        bundle, small_stage, _relation_closure_responses(small_stage)
+    )
+    large = validate_relation_closure_stage(
+        bundle, large_stage, _relation_closure_responses(large_stage)
+    )
+
+    assert small["schema_version"] == RELATION_CLOSURE_COMPILATION_VERSION
+    assert len(small["semantic_nodes"]) == 1
+    assert len(large["semantic_nodes"]) == 1
+    assert small["semantic_nodes"] == large["semantic_nodes"]
+    assert small["relation_coverage"]["complete"] is True
+    small_view = finalize_relation_closed_view(bundle, verified, small)
+    large_view = finalize_relation_closed_view(bundle, verified, large)
+    assert small_view["propositions"] == large_view["propositions"]
+    assert small_view["view_sha256"] == large_view["view_sha256"]
+
+
+def test_relation_closure_unresolved_pair_blocks_finalization() -> None:
+    bundle, verified, _, stage = _relation_closure_fixture(count=2)
+    closed = validate_relation_closure_stage(
+        bundle,
+        stage,
+        _relation_closure_responses(stage, default_relation="unresolved"),
+    )
+
+    assert closed["relation_coverage"]["complete"] is False
+    assert closed["relation_coverage"]["unresolved_pair_count"] == 1
+    assert not is_terminal_reconciliation_compilation(closed)
+    with pytest.raises(SemanticIntegrationError, match="complete global relation closure"):
+        finalize_relation_closed_view(bundle, verified, closed)
+
+
+def test_single_candidate_relation_closure_cli_accepts_zero_pair_responses() -> None:
+    args = _semantic_integration_parser().parse_args(
+        [
+            "submit-relation-closure",
+            "--bundle",
+            "bundle.json",
+            "--stage",
+            "stage.json",
+            "--compilation-out",
+            "closed.json",
+        ]
+    )
+
+    assert args.response == []
+
+
+def test_relation_closure_requires_complete_global_classification() -> None:
+    bundle, _, _, stage = _relation_closure_fixture(count=2)
+    responses = _relation_closure_responses(stage)
+    responses[0]["relations"].pop()
+
+    with pytest.raises(
+        SemanticIntegrationError, match="does not decide every required pair"
+    ):
+        validate_relation_closure_stage(bundle, stage, responses)
+
+
+def test_relation_closure_rejects_mixed_polarity_before_prompting() -> None:
+    bundle, _, frontier, _ = _relation_closure_fixture(count=1)
+    forged = deepcopy(frontier)
+    forged["semantic_nodes"][0]["polarity"] = "mixed"
+    _rehash_node_compilation(forged)
+
+    with pytest.raises(SemanticIntegrationError, match="requires row repair"):
+        prepare_relation_closure_stage(bundle, forged)
+
+
+def test_relation_closure_derives_symmetric_opposition() -> None:
+    bundle, verified, frontier, _ = _relation_closure_fixture(count=2)
+    forged = deepcopy(frontier)
+    forged["semantic_nodes"][1]["polarity"] = "negated"
+    forged["semantic_nodes"][1]["bounded_meaning"] = (
+        "The balm did not become drying after one week of use."
+    )
+    _rehash_node_compilation(forged)
+    stage, _ = prepare_relation_closure_stage(bundle, forged)
+    closed = validate_relation_closure_stage(
+        bundle,
+        stage,
+        _relation_closure_responses(stage, default_relation="opposed"),
+    )
+
+    assert len(closed["semantic_nodes"]) == 2
+    opposition = {
+        node["semantic_node_ref"]: node["opposing_semantic_node_refs"]
+        for node in closed["semantic_nodes"]
+    }
+    left, right = opposition
+    assert opposition[left] == [right]
+    assert opposition[right] == [left]
+    view = finalize_relation_closed_view(bundle, verified, closed)
+    propositions = {row["proposition_id"]: row for row in view["propositions"]}
+    assert len(propositions) == 2
+    for proposition_id, proposition in propositions.items():
+        assert proposition["claim_support"]["conflict_posture"] == "mixed"
+        assert proposition["claim_support"]["counterevidence_refs"]
+        assert len(proposition["opposing_proposition_ids"]) == 1
+        opposite = proposition["opposing_proposition_ids"][0]
+        assert propositions[opposite]["opposing_proposition_ids"] == [proposition_id]
+
+
+def test_relation_closure_and_selective_repair_runner_surfaces(tmp_path: Path) -> None:
+    bundle, verified, frontier, _ = _relation_closure_fixture(count=2)
+    bundle_path = tmp_path / "bundle.json"
+    verified_path = tmp_path / "verified.json"
+    frontier_path = tmp_path / "frontier.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    verified_path.write_text(json.dumps(verified), encoding="utf-8")
+    frontier_path.write_text(json.dumps(frontier), encoding="utf-8")
+
+    closure_stage_path = tmp_path / "closure-stage.json"
+    closure_prompt_dir = tmp_path / "closure-prompts"
+    prepared = prepare_relation_closure_run(
+        bundle_path=bundle_path,
+        node_compilation_path=frontier_path,
+        stage_out=closure_stage_path,
+        prompt_dir=closure_prompt_dir,
+    )
+    assert prepared["status"] == "SEMANTIC_RELATION_CLOSURE_REQUIRED"
+    closure_stage = json.loads(closure_stage_path.read_text(encoding="utf-8"))
+    closure_response_paths = []
+    for response in _relation_closure_responses(closure_stage):
+        path = tmp_path / f"{response['batch_id']}.json"
+        path.write_text(json.dumps(response), encoding="utf-8")
+        closure_response_paths.append(path)
+    validation_receipt = tmp_path / "closure-validation.json"
+    validated = validate_relation_closure_response_file(
+        bundle_path=bundle_path,
+        stage_path=closure_stage_path,
+        response_path=closure_response_paths[0],
+        receipt_out=validation_receipt,
+    )
+    assert validated["status"] == "SEMANTIC_RELATION_CLOSURE_RESPONSE_VALID"
+    assert validation_receipt.exists()
+    closure_out = tmp_path / "closure.json"
+    submitted = submit_relation_closure_run(
+        bundle_path=bundle_path,
+        stage_path=closure_stage_path,
+        response_paths=closure_response_paths,
+        compilation_out=closure_out,
+    )
+    assert submitted["status"] == "SEMANTIC_FINALIZATION_READY"
+    assert submitted["terminal"] is True
+
+    unresolved_response_paths = []
+    for response in _relation_closure_responses(
+        closure_stage, default_relation="unresolved"
+    ):
+        path = tmp_path / f"unresolved-{response['batch_id']}.json"
+        path.write_text(json.dumps(response), encoding="utf-8")
+        unresolved_response_paths.append(path)
+    unresolved = submit_relation_closure_run(
+        bundle_path=bundle_path,
+        stage_path=closure_stage_path,
+        response_paths=unresolved_response_paths,
+        compilation_out=tmp_path / "unresolved-closure.json",
+    )
+    assert unresolved["status"] == "SEMANTIC_RELATION_CLOSURE_REQUIRED"
+    assert unresolved["terminal"] is False
+
+    selected = verified["evidence_dispositions"][0]["evidence_id"]
+    repair_stage_path = tmp_path / "repair-stage.json"
+    repair_prompt_dir = tmp_path / "repair-prompts"
+    repair_prepared = prepare_row_repair_run(
+        bundle_path=bundle_path,
+        verified_path=verified_path,
+        evidence_ids=[selected],
+        stage_out=repair_stage_path,
+        prompt_dir=repair_prompt_dir,
+        max_prompt_bytes=20_000,
+    )
+    assert repair_prepared["status"] == "SEMANTIC_ROW_REPAIR_REQUIRED"
+    repair_stage = json.loads(repair_stage_path.read_text(encoding="utf-8"))
+    repair_response = _row_verification_responses(repair_stage)[0]
+    repair_response_path = tmp_path / "repair-response.json"
+    repair_response_path.write_text(json.dumps(repair_response), encoding="utf-8")
+    repaired_out = tmp_path / "repaired.json"
+    repair_submitted = submit_row_repair_run(
+        bundle_path=bundle_path,
+        verified_path=verified_path,
+        stage_path=repair_stage_path,
+        response_paths=[repair_response_path],
+        repaired_out=repaired_out,
+    )
+    assert repair_submitted["status"] == "SEMANTIC_ROW_REPAIR_APPLIED"
 
 
 def _flat_reconciliation(bundle: dict, compiled: dict) -> dict:

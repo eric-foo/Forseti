@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v33
+version: v34
 effective_date: 2026-08-12
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v33
+# Semantic Evidence Integration Contract v34
 
 ## Purpose
 
@@ -779,6 +779,28 @@ equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
 
+Contract v34 adds an opt-in global relation-closure generation after one
+terminal normal-retention frontier. Deterministic block pairs cover every
+unordered frontier-candidate pair exactly once; each pair terminates as
+`equivalent`, `opposed`, `distinct`, `adjacent`, or `unresolved`. Prompt batch
+and local node handles are transport only. Equivalent pairs form transitive
+classes, while opposed pairs form symmetric inter-class links. Directional
+class identity uses a deterministic truth-complete assertion already present
+on a validated frontier node plus product/comparator/version, conditions,
+uncertainty, claim kind, and causal ceiling; axes and raw polarity are not hash
+salt. `mixed` input polarity fails closed for whole-row repair. A hash-bound
+coverage manifest must decide every required pair, with zero unresolved pairs,
+before finalization may report `none_observed`; incomplete coverage is not a
+negative conflict finding. This generation emits integration view v3 and does
+not change policy-v2 artifacts or their finalization behavior.
+
+The same generation adds selective whole-row repair. It projects only named
+evidence rows through the existing complete-row verifier, preserves every
+untouched active row exactly, and writes a repair manifest binding the parent
+verified compilation, selected IDs, responses, and new active-row hash. The
+new compilation hash invalidates every older reconciliation and view. Repair
+never edits semantic nodes or a finalized view directly.
+
 For bundle v4, agent-facing reconciliation prompts carry child references and
 the meaning dimensions needed to judge a merge, but omit expanded
 `leaf_relations` and `condition_lineage`. The stage and compiler retain that
@@ -897,14 +919,21 @@ Current-route operations are:
      the next node compilation; repeat until one terminal level remains.
 14. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
      v2.
-15. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+15. The opt-in v34 route instead runs `prepare-relation-closure` over the
+    terminal normal-retention frontier, validates each large-run response with
+    `validate-relation-closure-response`, runs `submit-relation-closure` only
+    after exact global pair-relation coverage, and uses
+    `finalize-relation-closed` to write view v3. `prepare-row-repair` /
+    `submit-row-repair` may correct named source rows first; any repair restarts
+    reconciliation from its new verified compilation hash.
+16. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
-16. `evaluate-calibration` runs the existing response validator, then evaluates
+17. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
     anomaly, and repeat judgments must be explicit and hash-bound to the exact
@@ -1083,6 +1112,13 @@ new frontier.
 
 ## Changelog
 
+- `v34` / 2026-08-13 — added opt-in corpus-global relation closure over the
+  terminal normal-retention frontier. Exhaustive compiler-counted pair coverage
+  now drives partition-independent equivalence classes and symmetric opposition;
+  incomplete or unresolved coverage blocks finalization, and duplicate
+  directional proposition identities fail closed. Added selective whole-row
+  repair with parent verified-compilation lineage and untouched-row preservation.
+  Historical policy-v2 artifacts and view v2 remain frozen.
 - `v33` / 2026-08-12 — added the optional load-once prompt execution pack for
   long-lived workers. The pack hash-binds one shared method/schema/axes/catalog
   frame and one exact context-plus-evidence payload per existing work unit, and
