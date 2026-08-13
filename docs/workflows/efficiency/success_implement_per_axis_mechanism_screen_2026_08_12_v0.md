@@ -21,12 +21,11 @@ stale_if:
 ## Decision
 
 **Keep the tuning-selected Success Implement source unchanged. None of the 12
-tested additions advances. Do not create, combine, or deploy a new skill from
-this screen.**
+tested additions cleared its frozen Stage 1 gate. Do not create, combine, or
+deploy a new skill from this screen.**
 
-Testing one axis at a time was the right correction. It showed that the
-apparently sensible additions did not compose into a stronger method because
-none first survived alone:
+Testing one axis at a time was the right correction for this screen. None of
+the exact additions earned advancement alone, so composition was not tested:
 
 - all four latency mechanisms failed at least one frozen advancement gate;
 - all four token mechanisms introduced one or more critical defects and were

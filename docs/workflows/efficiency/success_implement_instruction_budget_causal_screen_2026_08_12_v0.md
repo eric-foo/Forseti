@@ -49,10 +49,11 @@ token counters are comparison measures, not billed-cost claims.
 - **P3 — reject.** P3 failed its diagnostic obligation and repeated-regression
   gates despite a lower pooled critical count.
 
-**No reliable improvement to Success Implement has been found.** The current
-evidence rejects the tested appended, per-axis, Loss-First, and budget-neutral
-obligation-coverage changes as replacements. Success Implement remains the
-least-disproven incumbent, not a proven optimum.
+**No tested package earned promotion over Success Implement.** The current
+evidence rejects the exact tested appended, per-axis, Loss-First, and
+budget-neutral obligation-coverage packages as replacements. It does not show
+that their mechanism families are ineffective or that Success Implement is an
+optimum. Success Implement remains the deployment incumbent.
 
 **Subsequent diagnostic:** the budget-neutral owner-outcome-conservation
 hypothesis named below was later tested twice on #1267 and rejected. It was

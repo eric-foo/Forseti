@@ -83,6 +83,16 @@ versus zero and slower median latency, despite fewer major/minor defects and
 lower median tokens. The candidate tested in that study was not deployed. See
 [`success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md`](success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md).
 
+That frozen `NO_WIN` remains the historical endpoint, but its controlling
+critical assignment did not reproduce in a later re-adjudication: Success
+Implement's critical moved from #1254 to #1303, and Full Chain gained a
+critical at #1424. A concretized fixed-assertion severity screen later reached
+`12/12` three-judge agreement; the identical-method builder-variance stage
+stopped after one of three draws per case and remains unmeasured. Therefore
+Success Implement is the deployment incumbent by owner preference, not a
+validated strong baseline. See
+[`success_implement_measurement_calibration_2026_08_13_v0.md`](success_implement_measurement_calibration_2026_08_13_v0.md).
+
 Fused, Assumption Gate, Implementation Scoping, Spec Writing, and
 Micro-decision Locking are preserved. They are not erased, retired, or claimed
 inferior by the owner preference.
@@ -93,16 +103,18 @@ candidate tests the next hypothesis directly: keep one implementation method,
 choose the decisive falsifier by maximum plausible loss, bind only applicable
 authority/transition/closure invariants, and run no broader validation than the
 repository requires. Its exposed-corpus 36-case replay used the fewest median
-tokens but lost quality to Success Implement and latency to Full Chain. It
-remains explicit-only and experimental; it has not demonstrated superiority on
-an untouched holdout. See
+tokens and Full Chain had the lowest latency. Success Implement's reported
+quality lead is specific to that replay's post-hoc three-way scorer and is not
+independent proof of baseline strength. Loss-First remains explicit-only and
+experimental; it has
+not demonstrated superiority on an untouched holdout. See
 [`loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md`](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md).
 
 The later exposed-corpus per-axis screen tested four latency, four token, and
-four quality additions independently. None advanced. The token and quality
-additions all produced a new critical defect on PR #1267, while the latency
-additions each missed at least one frozen resource or quality gate. No new
-skill was created and current behavior did not change. See
+four quality additions independently. None cleared its frozen Stage 1 gate. The
+token and quality additions all produced a new critical defect on PR #1267,
+while the latency additions each missed at least one frozen resource or quality
+gate. No new skill was created and current behavior did not change. See
 [`success_implement_per_axis_mechanism_screen_2026_08_12_v0.md`](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md).
 
 The follow-on P1/P2/P3 causal screen then ran two repetitions across four
@@ -141,10 +153,13 @@ so comparative quality scoring is de-blinded same-family evidence, not blind
 proof. The exact checker is rejected; Success Implement remains unchanged. See
 [`success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md`](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md).
 
-Current disposition: retain unchanged Success Implement only as the
-least-disproven incumbent; reject the inert P2 placebo, budget-neutral P3, and
-the exact budget-neutral P4 wording package; claim no reliable improvement
-among the tested mechanisms. P4 made
+Current disposition: retain unchanged Success Implement as the deployment
+incumbent, not as a validated strong baseline. P2 was inert. The exact P3, P4,
+E1, and E2 packages did not clear their frozen advancement gates; those
+package-level non-promotions do not establish that the mechanism families are
+ineffective or that Success Implement is locally or globally optimal. E3 is
+rejected independently because its checker was wrong `3/3` and caused zero
+continuation and zero patch changes. P4 made
 the two-run diagnostic lower in median comparison tokens and wall time but
 worsened quality, still collapsed both #1267 completions, and repeated a
 `missing_required_seam` regression. The result rejects the exact P4 wording
@@ -155,11 +170,10 @@ subsequently tested as E2: it observed its matching request in all three
 submitted Python commands but did not prevent broader premature completion. It
 is rejected as a general Success Implement improvement. The later E3
 fresh-context checker also failed: it admitted all three incomplete patches and
-caused zero patch changes. No tested mechanism is a reliable Success Implement
-improvement, and no current behavior or authority changed. See
+caused zero patch changes. No current behavior or authority changed. See
 [`success_implement_goal_conservation_diagnostic_2026_08_12_v0.md`](success_implement_goal_conservation_diagnostic_2026_08_12_v0.md).
 
-## Eleven separate evidence records
+## Twelve separate evidence records
 
 1. **Birth pilot — four cases/eight blinded implementations.** Task
    `019f7079-6084-7e90-95b8-1dce9348a275`; PRs
@@ -184,12 +198,13 @@ improvement, and no current behavior or authority changed. See
 4. **Confirmatory holdout — 24 recent cases.** Frozen rule result `NO_WIN`;
    candidate not deployed.
 5. **Loss-First post-hoc replay — the same 36 exposed cases.** Loss-First had
-   the lowest median token count, Success Implement had the best quality, and
-   Full Chain had the lowest median latency. This is regression evidence, not a
-   new holdout. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
+   the lowest median token count, Full Chain had the lowest median latency, and
+   that replay's post-hoc three-way scorer ranked Success Implement best on
+   quality. This is scorer-specific regression evidence, not a new holdout.
+   [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
 6. **Per-axis mechanism screen — 12 latency cases plus six-case token and
-   quality Stage 1 screens.** All 12 narrow additions were rejected; no Stage
-   2, combination, or deployment followed. [Per-axis
+   quality Stage 1 screens.** None of the 12 narrow additions cleared Stage 1;
+   no Stage 2, combination, or deployment followed. [Per-axis
    record](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md)
 7. **Instruction-budget causal screen — four cases, two repeated three-arm
    blocks per case.** Baseline variance was supported, append interference was
@@ -216,6 +231,13 @@ improvement, and no current behavior or authority changed. See
     `ADMIT_COMPLETE`; no builder continuation or patch change occurred. The
     exact mechanism was rejected. [E3
     record](success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md)
+12. **Measurement calibration — 12 fixed assertions plus an incomplete
+    identical-method variance stage.** Three replacement judges agreed on all
+    12 concretized severity ratings. The builder stage produced one valid draw
+    on each of four untouched cases before the usage ceiling rejected the next
+    four launches; the final four were not attempted, so builder variance
+    remains unmeasured.
+    [Calibration record](success_implement_measurement_calibration_2026_08_13_v0.md)
 
 ## External reusable mechanics and Forseti binding
 
@@ -234,6 +256,16 @@ improvement, and no current behavior or authority changed. See
 
 ### 2026-08
 
+- **2026-08-13 — Severity ruler reproduced; builder variance remains
+  unmeasured.** Three isolated replacement judges agreed on all 12 fixed
+  presence-and-severity assertions, including the three historical critical
+  boundaries. The first judging trio was excluded for a packet-boundary
+  violation. The subsequent identical-method stage completed only one of three
+  required draws on four untouched cases before the account usage ceiling
+  rejected the next four launches before model action; the final four were not
+  attempted. New challenger studies
+  remain suspended; no skill or runtime behavior changed. [Calibration
+  record](success_implement_measurement_calibration_2026_08_13_v0.md)
 - **2026-08-13 — Fresh-context E3 completion admission rejected.** Three
   repeated P1/E3 blocks on PR #1267 found every fresh checker approving an
   incomplete initial patch. Oracle-backed decision adjudication required
@@ -278,7 +310,7 @@ improvement, and no current behavior or authority changed. See
   deployment did not run. P1 remains only the least-disproven incumbent; P2
   and P3 are rejected, and no reliable Success Implement improvement is
   claimed. [Causal-screen record](success_implement_instruction_budget_causal_screen_2026_08_12_v0.md)
-- **2026-08-12 — Per-axis Success Implement additions all rejected.** Four
+- **2026-08-12 — No per-axis Success Implement addition cleared Stage 1.** Four
   latency mechanisms failed their frozen gates; four token and four quality
   mechanisms all introduced a critical defect on the broad PR #1267 case.
   Stage 2, combination, and deployment correctly did not run. Success
@@ -286,8 +318,10 @@ improvement, and no current behavior or authority changed. See
   instruction-budget interference rather than adding another standing chain.
   [Per-axis record](success_implement_per_axis_mechanism_screen_2026_08_12_v0.md)
 - **2026-08-11 — Loss-First Implement post-hoc replay did not support
-  promotion.** Over the same exposed 36 cases, it saved median tokens but lost
-  quality to Success Implement and latency to Full Chain. Ten stale/drifted
+  promotion.** Over the same exposed 36 cases, it saved median tokens while
+  Full Chain had the lowest latency; that replay's post-hoc three-way scorer
+  ranked Success Implement best on quality. That quality rank is
+  scorer-specific, not independent baseline-strength evidence. Ten stale/drifted
   A/B worktree cases also established that future studies must freeze exact
   candidate diff bytes before judging. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
 - **2026-08-11 — Loss-First Implement added as a Forseti-local candidate.** It
