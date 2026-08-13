@@ -842,14 +842,37 @@ stage, batch, and local handles. Finalization requires a hash-bound decision for
 every required pair, with zero unresolved pairs, and writes view v3; missing
 coverage cannot appear as `none_observed`.
 
-That v34 route is experimental rather than operational for the observed
-7,076-node Summer Fridays frontier. Exhaustive preparation at that scale would
-require millions of decisions; no usable global relation-closure corpus output
-was created. The observed frontier therefore has no v34 basis for
-`none_observed`. Structural finalization guards can reject internally
-inconsistent candidate membership and coverage cardinality, but they are
-containment rather than semantic proof against a coherently forged whole
+That v34 route is experimental rather than operational. On 2026-08-13, a dated
+operator read of
+`C:\tmp\forseti-summer-fridays-full-corpus-v8-20260812-v0\reconciliation-policy-v2\level-0002\node_compilation.json`
+(raw-file SHA-256
+`23b417fde1de678379fabf54ea50fdcaaac7b8e0811b5d21c4227d53c40b7d75`;
+stored `node_compilation_sha256`
+`344e38ac29c0dbe27af397271ed0657b96b983e87e4b679f318cd8ba5311c473`)
+observed 7,076 semantic nodes and 780 carried unmerged units. A read-only name
+scan of that run root observed no relation-closure output. Those statements are
+operator observations scoped to that exact path and date, not repository-backed
+universal absence proof. Exhaustive preparation at that scale would require
+millions of decisions, so v34 must not be run, treated as completion, or used to
+claim global identity, global opposition coverage, or `none_observed` for that
+frontier. Structural finalization guards reject internally inconsistent closure
+schema, candidate membership, all-pairs identity, and coverage cardinality, but
+remain containment rather than semantic proof against a coherently forged whole
 artifact.
+
+The supported completed path for normal Forseti intelligence cycles remains:
+full-corpus extraction -> mandatory row verification -> policy-v2 normal
+reconciliation -> convergence/retention under the existing supported policy ->
+the supported view/output. Preserve one-off and unresolved evidence honestly;
+absence of v34 closure never converts into `none_observed`. Registry-first
+global identity, embeddings/top-k retrieval, deterministic blocking, and
+exhaustive all-pairs closure are deferred research directions. Agents must not
+explore or implement them unless an owner explicitly reopens architecture work
+because a measured customer or intelligence outcome is materially harmed by
+duplicate meaning identity or missing global opposition. On that trigger,
+reorient first to the semantic integration contract's "Supported operating
+route and owner-only reopen boundary" and then this workflow for current run
+history; otherwise continue the supported policy-v2 path.
 
 When closure exposes a bad source-row decomposition or mixed logical polarity,
 `prepare-row-repair` projects only the named evidence rows through the existing

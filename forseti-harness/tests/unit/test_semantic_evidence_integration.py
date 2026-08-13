@@ -3837,6 +3837,34 @@ def test_relation_closure_cannot_take_generic_single_batch_terminal_shortcut() -
         finalize_relation_closed_view(bundle, verified, forged)
 
 
+def test_schema_stripped_relation_closure_cannot_fall_back_to_generic_finalization() -> None:
+    bundle, verified, frontier, _ = _relation_closure_fixture(count=3)
+    frontier = deepcopy(frontier)
+    for index, node in enumerate(frontier["semantic_nodes"], start=1):
+        node["bounded_meaning"] = f"Distinct supported assertion {index}."
+    _rehash_node_compilation(frontier)
+    stage, _ = prepare_relation_closure_stage(bundle, frontier)
+    closed = validate_relation_closure_stage(
+        bundle,
+        stage,
+        _relation_closure_responses(stage, default_relation="opposed"),
+    )
+    assert {
+        proposition["claim_support"]["conflict_posture"]
+        for proposition in finalize_relation_closed_view(bundle, verified, closed)[
+            "propositions"
+        ]
+    } == {"mixed"}
+    forged = deepcopy(closed)
+    forged.pop("schema_version")
+    forged["input_batch_count"] = 1
+    _rehash_node_compilation(forged)
+
+    assert not is_terminal_reconciliation_compilation(forged)
+    with pytest.raises(SemanticIntegrationError, match="invalid relation closure"):
+        finalize_v3_view(bundle, verified, forged)
+
+
 @pytest.mark.parametrize("membership_mutation", ["missing", "duplicate"])
 def test_relation_closure_rejects_tampered_class_membership(
     membership_mutation: str,
@@ -3855,6 +3883,34 @@ def test_relation_closure_rejects_tampered_class_membership(
 
     assert not is_terminal_reconciliation_compilation(forged)
     with pytest.raises(SemanticIntegrationError, match="candidate membership"):
+        finalize_relation_closed_view(bundle, verified, forged)
+
+
+@pytest.mark.parametrize("membership_mutation", ["substitute", "pad"])
+def test_relation_closure_binds_pair_identity_to_exact_candidate_membership(
+    membership_mutation: str,
+) -> None:
+    bundle, verified, _, stage = _relation_closure_fixture(count=3)
+    closed = validate_relation_closure_stage(
+        bundle, stage, _relation_closure_responses(stage)
+    )
+    forged = deepcopy(closed)
+    child_relations = forged["semantic_nodes"][0]["child_relations"]
+    if membership_mutation == "substitute":
+        for index, relation in enumerate(child_relations):
+            relation["child_ref"] = f"substituted-candidate-{index:04d}"
+    else:
+        child_relations.append(
+            {"child_ref": "padded-candidate-0004", "relation": "support"}
+        )
+        coverage = forged["relation_coverage"]
+        coverage["required_candidate_count"] = 4
+        coverage["required_pair_count"] = 6
+        coverage["decided_pair_count"] = 6
+    _rehash_relation_closure_compilation(forged)
+
+    assert not is_terminal_reconciliation_compilation(forged)
+    with pytest.raises(SemanticIntegrationError, match="pair identity"):
         finalize_relation_closed_view(bundle, verified, forged)
 
 

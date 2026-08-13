@@ -794,15 +794,45 @@ before finalization may report `none_observed`; incomplete coverage is not a
 negative conflict finding. This generation emits integration view v3 and does
 not change policy-v2 artifacts or their finalization behavior.
 
-The v34 generation is experimental and is not an operational full-corpus route
-for the observed 7,076-node Summer Fridays frontier. Its exhaustive preparation
-would require millions of pair decisions, and no usable global relation-closure
-corpus output exists. At that scale, v34 therefore cannot support
-`none_observed`; only a complete validated closure compilation may carry that
-posture, and no such compilation has been produced. The structural cardinality
-checks on a closure compilation contain malformed or internally inconsistent
-artifacts; without the source stage and raw responses they do not prove the
-semantic truth of decisions or detect a coherently forged whole artifact.
+The v34 generation is experimental, not an operational full-corpus route. A
+dated operator observation on 2026-08-13 read the machine-local policy-v2 normal
+frontier at
+`C:\tmp\forseti-summer-fridays-full-corpus-v8-20260812-v0\reconciliation-policy-v2\level-0002\node_compilation.json`
+(raw-file SHA-256
+`23b417fde1de678379fabf54ea50fdcaaac7b8e0811b5d21c4227d53c40b7d75`;
+stored `node_compilation_sha256`
+`344e38ac29c0dbe27af397271ed0657b96b983e87e4b679f318cd8ba5311c473`)
+and observed 7,076 semantic nodes plus 780 carried unmerged units. A read-only
+name scan of that run root observed no relation-closure output. These are dated
+operator observations over that exact path, not a repository-backed universal
+absence claim. Exhaustive preparation would require millions of pair decisions;
+v34 must not be run on, or used to claim `none_observed` for, that observed
+frontier. Only a complete validated closure compilation may carry that posture.
+Structural membership, pair-identity, and cardinality checks contain malformed
+or internally inconsistent artifacts; without the source stage and raw
+responses they do not prove semantic truth or detect a coherently forged whole
+artifact.
+
+### Supported operating route and owner-only reopen boundary
+
+The supported completed semantic route for normal Forseti intelligence cycles
+is full-corpus extraction, mandatory row verification, policy-v2 normal
+reconciliation, convergence/retention under that existing policy, and the
+supported view/output. One-off and unresolved evidence remains explicit; lack
+of v34 closure never becomes `none_observed`. Agents must not run v34, treat it
+as completion, or use it to claim global meaning identity, global opposition
+coverage, or global negative conflict coverage.
+
+Registry-first global identity, embeddings or top-k retrieval, deterministic
+semantic blocking, and exhaustive all-pairs closure are deferred research
+directions, not active implementation routes. An owner may explicitly reopen
+architecture work only after a measured customer or intelligence outcome is
+materially harmed by duplicate meaning identity or missing global opposition.
+When that trigger is recorded, reorient first to this section as the semantic
+contract authority and then to
+`docs/workflows/phase_a_customer_evidence_completion_path_v0.md` for the latest
+run history and operating sequence. Until then, preserving the supported route
+and its honest residual evidence is the complete action.
 
 The same generation adds selective whole-row repair. It projects only named
 evidence rows through the existing complete-row verifier, preserves every
@@ -1122,14 +1152,14 @@ new frontier.
 
 ## Changelog
 
-- `v34` containment correction / 2026-08-13 — made closure finalization run
-  closure-specific structural checks before the generic single-batch terminal
-  path and rederive candidate membership and pair cardinality from class
-  children. Marked the 7,076-node Summer Fridays route experimental and
-  non-operational: no global closure corpus output exists and v34 cannot support
-  `none_observed` for that frontier. This is malformed-artifact containment,
-  not semantic proof against coherent wholesale forgery; historical v2 and
-  valid v34 artifacts retain their interfaces.
+- `v34` containment correction / 2026-08-13 — made any artifact carrying
+  closure-only evidence run closure-specific structural checks before generic
+  finalization, and rederive exact candidate membership, all-pairs identity,
+  and pair cardinality from class children. Recorded the 7,076-node Summer
+  Fridays state as a dated, hash-bound operator observation; made the supported
+  policy-v2 route and owner-only research reopen trigger explicit. This is
+  malformed-artifact containment, not semantic proof against coherent wholesale
+  forgery; historical v2 and valid v34 artifacts retain their interfaces.
 - `v34` / 2026-08-13 — added opt-in corpus-global relation closure over the
   terminal normal-retention frontier. Exhaustive compiler-counted pair coverage
   now drives partition-independent equivalence classes and symmetric opposition;

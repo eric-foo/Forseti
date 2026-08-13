@@ -5780,6 +5780,7 @@ def _validate_relation_closure_terminal_structure(
         )
     candidate_count = len(unique_member_refs)
     required_pair_count = candidate_count * (candidate_count - 1) // 2
+    pair_identity_sha256 = _relation_pair_identity_sha256(unique_member_refs)
 
     def exact_nonnegative_int(field: str) -> int:
         value = coverage.get(field)
@@ -5802,6 +5803,42 @@ def _validate_relation_closure_terminal_structure(
         raise SemanticIntegrationError(
             "relation closure coverage does not establish complete global relation closure"
         )
+    if (
+        coverage.get("required_pairs_sha256") != pair_identity_sha256
+        or coverage.get("decided_pairs_sha256") != pair_identity_sha256
+    ):
+        raise SemanticIntegrationError(
+            "relation closure candidate membership does not agree with pair identity"
+        )
+
+
+def _relation_pair_identity_sha256(candidate_refs: Sequence[str]) -> str:
+    """Hash the canonical all-pairs identity without materializing the pair set."""
+    digest = hashlib.sha256(b"[")
+    first = True
+    for index, left_ref in enumerate(candidate_refs):
+        for other in range(index + 1, len(candidate_refs)):
+            if not first:
+                digest.update(b",")
+            digest.update(_json_bytes([left_ref, candidate_refs[other]]))
+            first = False
+    digest.update(b"]")
+    return digest.hexdigest()
+
+
+def _carries_relation_closure_evidence(compilation: Mapping[str, Any]) -> bool:
+    """Return whether generic finalization must defer to closure validation."""
+    if (
+        "relation_coverage" in compilation
+        or "input_node_compilation_sha256" in compilation
+        or compilation.get("policy_version") == RELATION_CLOSURE_POLICY_VERSION
+    ):
+        return True
+    nodes = compilation.get("semantic_nodes")
+    return isinstance(nodes, list) and any(
+        isinstance(node, Mapping) and "opposing_semantic_node_refs" in node
+        for node in nodes
+    )
 
 
 def is_terminal_reconciliation_compilation(
@@ -5813,7 +5850,7 @@ def is_terminal_reconciliation_compilation(
         row.get("terminal_proposition") is not True for row in nodes
     ):
         return False
-    if compilation.get("schema_version") == RELATION_CLOSURE_COMPILATION_VERSION:
+    if _carries_relation_closure_evidence(compilation):
         try:
             _validate_relation_closure_terminal_structure(compilation)
         except SemanticIntegrationError:
@@ -5868,10 +5905,7 @@ def finalize_v3_view(
         raise SemanticIntegrationError(
             "terminal reconciliation has stale root batch compilation lineage"
         )
-    relation_closed = (
-        node_compilation.get("schema_version")
-        == RELATION_CLOSURE_COMPILATION_VERSION
-    )
+    relation_closed = _carries_relation_closure_evidence(node_compilation)
     if relation_closed:
         _validate_relation_closure_terminal_structure(node_compilation)
     if not is_terminal_reconciliation_compilation(node_compilation):
