@@ -3813,6 +3813,63 @@ def test_relation_closure_unresolved_pair_blocks_finalization() -> None:
         finalize_relation_closed_view(bundle, verified, closed)
 
 
+def _rehash_relation_closure_compilation(compilation: dict) -> dict:
+    coverage = compilation["relation_coverage"]
+    coverage["coverage_sha256"] = _canonical_hash(
+        {key: value for key, value in coverage.items() if key != "coverage_sha256"}
+    )
+    return _rehash_node_compilation(compilation)
+
+
+def test_relation_closure_cannot_take_generic_single_batch_terminal_shortcut() -> None:
+    bundle, verified, _, stage = _relation_closure_fixture(count=2)
+    closed = validate_relation_closure_stage(
+        bundle, stage, _relation_closure_responses(stage)
+    )
+    forged = deepcopy(closed)
+    forged["input_batch_count"] = 1
+    forged["relation_coverage"]["decided_pair_count"] = 0
+    forged["relation_coverage"]["complete"] = False
+    _rehash_relation_closure_compilation(forged)
+
+    assert not is_terminal_reconciliation_compilation(forged)
+    with pytest.raises(SemanticIntegrationError, match="relation closure coverage"):
+        finalize_relation_closed_view(bundle, verified, forged)
+
+
+@pytest.mark.parametrize("membership_mutation", ["missing", "duplicate"])
+def test_relation_closure_rejects_tampered_class_membership(
+    membership_mutation: str,
+) -> None:
+    bundle, verified, _, stage = _relation_closure_fixture(count=3)
+    closed = validate_relation_closure_stage(
+        bundle, stage, _relation_closure_responses(stage)
+    )
+    forged = deepcopy(closed)
+    child_relations = forged["semantic_nodes"][0]["child_relations"]
+    if membership_mutation == "missing":
+        child_relations.pop()
+    else:
+        child_relations.append(deepcopy(child_relations[0]))
+    _rehash_relation_closure_compilation(forged)
+
+    assert not is_terminal_reconciliation_compilation(forged)
+    with pytest.raises(SemanticIntegrationError, match="candidate membership"):
+        finalize_relation_closed_view(bundle, verified, forged)
+
+
+def test_relation_closure_structural_cardinality_accepts_valid_happy_path() -> None:
+    bundle, verified, _, stage = _relation_closure_fixture(count=3)
+    closed = validate_relation_closure_stage(
+        bundle, stage, _relation_closure_responses(stage)
+    )
+
+    assert is_terminal_reconciliation_compilation(closed)
+    assert finalize_relation_closed_view(bundle, verified, closed)[
+        "schema_version"
+    ] == "semantic_evidence_integration_view_v3"
+
+
 def test_single_candidate_relation_closure_cli_accepts_zero_pair_responses() -> None:
     args = _semantic_integration_parser().parse_args(
         [

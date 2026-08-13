@@ -842,6 +842,15 @@ stage, batch, and local handles. Finalization requires a hash-bound decision for
 every required pair, with zero unresolved pairs, and writes view v3; missing
 coverage cannot appear as `none_observed`.
 
+That v34 route is experimental rather than operational for the observed
+7,076-node Summer Fridays frontier. Exhaustive preparation at that scale would
+require millions of decisions; no usable global relation-closure corpus output
+was created. The observed frontier therefore has no v34 basis for
+`none_observed`. Structural finalization guards can reject internally
+inconsistent candidate membership and coverage cardinality, but they are
+containment rather than semantic proof against a coherently forged whole
+artifact.
+
 When closure exposes a bad source-row decomposition or mixed logical polarity,
 `prepare-row-repair` projects only the named evidence rows through the existing
 complete-row verifier. `submit-row-repair` preserves every other active row,

@@ -5729,6 +5729,81 @@ def _competent_roles(claim_kind: str) -> set[str]:
     return ACTOR_STRATEGY_ROLES
 
 
+def _validate_relation_closure_terminal_structure(
+    compilation: Mapping[str, Any],
+) -> None:
+    """Cross-check the closure cardinality that the compilation can rederive.
+
+    This is structural containment for a hash-valid compilation.  Without the
+    source stage or raw responses it cannot prove semantic decisions or detect
+    an artifact whose membership, coverage, and hashes were all forged
+    coherently.
+    """
+    if (
+        compilation.get("schema_version") != RELATION_CLOSURE_COMPILATION_VERSION
+        or compilation.get("policy_version") != RELATION_CLOSURE_POLICY_VERSION
+    ):
+        raise SemanticIntegrationError("invalid relation closure compilation")
+    coverage = compilation.get("relation_coverage")
+    if not isinstance(coverage, Mapping):
+        raise SemanticIntegrationError("relation closure coverage is missing")
+    _verify_stored_hash(
+        coverage, field="coverage_sha256", label="relation closure coverage"
+    )
+    nodes = compilation.get("semantic_nodes")
+    if not isinstance(nodes, list) or not nodes:
+        raise SemanticIntegrationError("relation closure candidate membership is missing")
+    member_refs: list[str] = []
+    for node in nodes:
+        child_relations = (
+            node.get("child_relations") if isinstance(node, Mapping) else None
+        )
+        if not isinstance(child_relations, list) or not child_relations:
+            raise SemanticIntegrationError(
+                "relation closure candidate membership is missing"
+            )
+        for relation in child_relations:
+            if (
+                not isinstance(relation, Mapping)
+                or set(relation) != {"child_ref", "relation"}
+                or not _nonempty(relation.get("child_ref"))
+                or relation.get("relation") != "support"
+            ):
+                raise SemanticIntegrationError(
+                    "relation closure candidate membership is invalid"
+                )
+            member_refs.append(relation["child_ref"])
+    unique_member_refs = sorted(set(member_refs))
+    if len(member_refs) != len(unique_member_refs):
+        raise SemanticIntegrationError(
+            "relation closure candidate membership is duplicated"
+        )
+    candidate_count = len(unique_member_refs)
+    required_pair_count = candidate_count * (candidate_count - 1) // 2
+
+    def exact_nonnegative_int(field: str) -> int:
+        value = coverage.get(field)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+            raise SemanticIntegrationError(
+                f"relation closure coverage has invalid {field}"
+            )
+        return value
+
+    if exact_nonnegative_int("required_candidate_count") != candidate_count:
+        raise SemanticIntegrationError(
+            "relation closure candidate membership does not agree with coverage"
+        )
+    if (
+        exact_nonnegative_int("required_pair_count") != required_pair_count
+        or exact_nonnegative_int("decided_pair_count") != required_pair_count
+        or exact_nonnegative_int("unresolved_pair_count") != 0
+        or coverage.get("complete") is not True
+    ):
+        raise SemanticIntegrationError(
+            "relation closure coverage does not establish complete global relation closure"
+        )
+
+
 def is_terminal_reconciliation_compilation(
     compilation: Mapping[str, Any],
 ) -> bool:
@@ -5738,18 +5813,14 @@ def is_terminal_reconciliation_compilation(
         row.get("terminal_proposition") is not True for row in nodes
     ):
         return False
+    if compilation.get("schema_version") == RELATION_CLOSURE_COMPILATION_VERSION:
+        try:
+            _validate_relation_closure_terminal_structure(compilation)
+        except SemanticIntegrationError:
+            return False
+        return True
     if compilation.get("input_batch_count") == 1:
         return True
-    if compilation.get("schema_version") == RELATION_CLOSURE_COMPILATION_VERSION:
-        coverage = compilation.get("relation_coverage")
-        return (
-            compilation.get("policy_version") == RELATION_CLOSURE_POLICY_VERSION
-            and isinstance(coverage, Mapping)
-            and coverage.get("complete") is True
-            and coverage.get("required_pair_count")
-            == coverage.get("decided_pair_count")
-            and coverage.get("unresolved_pair_count") == 0
-        )
     return (
         compilation.get("reconciliation_policy_version")
         == RECONCILIATION_POLICY_VERSION_V2
@@ -5802,12 +5873,7 @@ def finalize_v3_view(
         == RELATION_CLOSURE_COMPILATION_VERSION
     )
     if relation_closed:
-        coverage = node_compilation.get("relation_coverage")
-        if not isinstance(coverage, Mapping):
-            raise SemanticIntegrationError("relation-closed finalization lacks coverage")
-        _verify_stored_hash(
-            coverage, field="coverage_sha256", label="relation closure coverage"
-        )
+        _validate_relation_closure_terminal_structure(node_compilation)
     if not is_terminal_reconciliation_compilation(node_compilation):
         raise SemanticIntegrationError(
             "terminal reconciliation must be one prompt-bounded batch or a "

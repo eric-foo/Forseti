@@ -179,6 +179,49 @@ def test_claim_is_durable_and_prevents_duplicate_navigation(tmp_path: Path) -> N
     assert second["in_flight"]["job_id"] == first["job"]["job_id"]
 
 
+def test_inspect_retries_transient_windows_read_sharing_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    state_path = _initialize(tmp_path)
+    real_read_text = Path.read_text
+    attempts = 0
+
+    def transient_read_text(path: Path, *args, **kwargs) -> str:
+        nonlocal attempts
+        if path == state_path:
+            attempts += 1
+            if attempts < 3:
+                raise PermissionError("simulated Windows read-sharing collision")
+        return real_read_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", transient_read_text)
+
+    assert runtime.inspect_queue(state_path=state_path)["status"] == "running"
+    assert attempts == 3
+
+
+def test_atomic_state_write_retries_transient_windows_replace_sharing_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    state_path = _initialize(tmp_path)
+    real_replace = runtime.os.replace
+    attempts = 0
+
+    def transient_replace(source: Path, destination: Path) -> None:
+        nonlocal attempts
+        if Path(destination) == state_path:
+            attempts += 1
+            if attempts < 3:
+                raise PermissionError("simulated Windows replace-sharing collision")
+        real_replace(source, destination)
+
+    monkeypatch.setattr(runtime.os, "replace", transient_replace)
+
+    assert _claim(state_path)["job"]["job_id"] == "J001"
+    assert attempts == 3
+    assert not list(tmp_path.glob(".queue_state.json.tmp.*"))
+
+
 def test_owner_ping_exists_even_if_terminal_state_write_is_interrupted(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

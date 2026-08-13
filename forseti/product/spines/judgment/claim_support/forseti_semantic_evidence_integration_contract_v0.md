@@ -794,6 +794,16 @@ before finalization may report `none_observed`; incomplete coverage is not a
 negative conflict finding. This generation emits integration view v3 and does
 not change policy-v2 artifacts or their finalization behavior.
 
+The v34 generation is experimental and is not an operational full-corpus route
+for the observed 7,076-node Summer Fridays frontier. Its exhaustive preparation
+would require millions of pair decisions, and no usable global relation-closure
+corpus output exists. At that scale, v34 therefore cannot support
+`none_observed`; only a complete validated closure compilation may carry that
+posture, and no such compilation has been produced. The structural cardinality
+checks on a closure compilation contain malformed or internally inconsistent
+artifacts; without the source stage and raw responses they do not prove the
+semantic truth of decisions or detect a coherently forged whole artifact.
+
 The same generation adds selective whole-row repair. It projects only named
 evidence rows through the existing complete-row verifier, preserves every
 untouched active row exactly, and writes a repair manifest binding the parent
@@ -1112,6 +1122,14 @@ new frontier.
 
 ## Changelog
 
+- `v34` containment correction / 2026-08-13 — made closure finalization run
+  closure-specific structural checks before the generic single-batch terminal
+  path and rederive candidate membership and pair cardinality from class
+  children. Marked the 7,076-node Summer Fridays route experimental and
+  non-operational: no global closure corpus output exists and v34 cannot support
+  `none_observed` for that frontier. This is malformed-artifact containment,
+  not semantic proof against coherent wholesale forgery; historical v2 and
+  valid v34 artifacts retain their interfaces.
 - `v34` / 2026-08-13 — added opt-in corpus-global relation closure over the
   terminal normal-retention frontier. Exhaustive compiler-counted pair coverage
   now drives partition-independent equivalence classes and symmetric opposition;
