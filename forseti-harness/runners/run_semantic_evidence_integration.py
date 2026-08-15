@@ -27,6 +27,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
+    prepare_targeted_benchmark_audit,
     prepare_reconciliation_stage,
     prepare_relation_closure_stage,
     prepare_row_repair,
@@ -35,6 +36,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     validate_batch_responses,
     validate_reconciliation_stage,
     validate_relation_closure_stage,
+    validate_targeted_benchmark_audit,
 )
 from judgment.semantic_calibration import (  # noqa: E402
     CALIBRATION_PREPARATION_VERSION,
@@ -963,6 +965,105 @@ def submit_row_verification_run(
     }
 
 
+def prepare_targeted_benchmark_audit_run(
+    *,
+    bundle_path: Path,
+    verified_path: Path,
+    selection_path: Path,
+    benchmark_path: Path,
+    row_verification_stage_path: Path,
+    stage_out: Path,
+    shared_frame_out: Path,
+    prompt_manifest_out: Path,
+    assignment_manifest_out: Path,
+    prompt_dir: Path,
+    max_prompt_bytes: int | None = None,
+    worker_count: int = 6,
+) -> dict[str, Any]:
+    bundle = _load_object(bundle_path)
+    verified = _load_object(verified_path)
+    selection = _load_object(selection_path)
+    benchmark = _load_object(benchmark_path)
+    row_stage = _load_object(row_verification_stage_path)
+    stage, shared_frame, prompts, prompt_manifest, assignments = (
+        prepare_targeted_benchmark_audit(
+            bundle,
+            verified,
+            selection,
+            benchmark,
+            row_stage,
+            input_raw_sha256={
+                "selection": hash_file(selection_path),
+                "benchmark": hash_file(benchmark_path),
+                "bundle": hash_file(bundle_path),
+                "row_verification_stage": hash_file(row_verification_stage_path),
+                "verified_compilation": hash_file(verified_path),
+            },
+            max_prompt_bytes=max_prompt_bytes,
+            worker_count=worker_count,
+        )
+    )
+    output_files = [
+        stage_out,
+        shared_frame_out,
+        prompt_manifest_out,
+        assignment_manifest_out,
+    ]
+    existing = [str(path) for path in output_files if path.exists()]
+    if prompt_dir.exists():
+        existing.append(str(prompt_dir))
+    if existing:
+        raise ValueError(
+            "refusing to overwrite targeted audit outputs: " + ", ".join(existing)
+        )
+    _write_json(stage_out, stage)
+    _write_new(shared_frame_out, shared_frame.encode("utf-8") + b"\n")
+    _write_json(prompt_manifest_out, prompt_manifest)
+    _write_json(assignment_manifest_out, assignments)
+    prompt_dir.mkdir(parents=True)
+    for row in prompts:
+        _write_new(
+            prompt_dir / f"{row['batch_id']}.md",
+            row["prompt"].encode("utf-8") + b"\n",
+        )
+    return {
+        "status": "TARGETED_BENCHMARK_AUDIT_REQUIRED",
+        "stage_sha256": stage["stage_sha256"],
+        "prompt_manifest_sha256": prompt_manifest["manifest_sha256"],
+        "assignment_manifest_sha256": assignments["manifest_sha256"],
+        "selected_batch_count": stage["coverage_proof"]["selected_batch_count"],
+        "selected_evidence_count": stage["coverage_proof"]["selected_evidence_count"],
+        "worker_count": worker_count,
+        "largest_payload_bytes": max(
+            (row["prompt_utf8_bytes"] for row in prompts), default=0
+        ),
+        "model_api_calls": 0,
+    }
+
+
+def submit_targeted_benchmark_audit_run(
+    *,
+    stage_path: Path,
+    prompt_manifest_path: Path,
+    response_paths: list[Path],
+    audit_out: Path,
+) -> dict[str, Any]:
+    result = validate_targeted_benchmark_audit(
+        _load_object(stage_path),
+        _load_object(prompt_manifest_path),
+        [_load_object(path) for path in response_paths],
+    )
+    _write_json(audit_out, result)
+    return {
+        "status": "TARGETED_BENCHMARK_AUDIT_APPLIED",
+        "result_sha256": result["result_sha256"],
+        "decision_counts": result["decision_counts"],
+        "repair_evidence_count": len(result["repair_evidence_ids"]),
+        "audit_out": str(audit_out),
+        "model_api_calls": 0,
+    }
+
+
 def validate_relation_closure_response_file(
     *,
     bundle_path: Path,
@@ -1433,6 +1534,26 @@ def _parser() -> argparse.ArgumentParser:
     submit_repair.add_argument("--response", type=Path, action="append", required=True)
     submit_repair.add_argument("--repaired-out", type=Path, required=True)
 
+    prepare_audit = sub.add_parser("prepare-targeted-benchmark-audit")
+    prepare_audit.add_argument("--bundle", type=Path, required=True)
+    prepare_audit.add_argument("--verified", type=Path, required=True)
+    prepare_audit.add_argument("--selection", type=Path, required=True)
+    prepare_audit.add_argument("--benchmark", type=Path, required=True)
+    prepare_audit.add_argument("--row-verification-stage", type=Path, required=True)
+    prepare_audit.add_argument("--stage-out", type=Path, required=True)
+    prepare_audit.add_argument("--shared-frame-out", type=Path, required=True)
+    prepare_audit.add_argument("--prompt-manifest-out", type=Path, required=True)
+    prepare_audit.add_argument("--assignment-manifest-out", type=Path, required=True)
+    prepare_audit.add_argument("--prompt-dir", type=Path, required=True)
+    prepare_audit.add_argument("--max-prompt-bytes", type=int)
+    prepare_audit.add_argument("--worker-count", type=int, default=6)
+
+    submit_audit = sub.add_parser("submit-targeted-benchmark-audit")
+    submit_audit.add_argument("--stage", type=Path, required=True)
+    submit_audit.add_argument("--prompt-manifest", type=Path, required=True)
+    submit_audit.add_argument("--response", type=Path, action="append", required=True)
+    submit_audit.add_argument("--audit-out", type=Path, required=True)
+
     validate_batch = sub.add_parser("validate-batch-response")
     validate_batch.add_argument("--bundle", type=Path, required=True)
     validate_batch.add_argument("--response", type=Path, required=True)
@@ -1678,6 +1799,28 @@ def main(argv: list[str] | None = None) -> int:
                 stage_path=args.stage,
                 response_paths=args.response,
                 repaired_out=args.repaired_out,
+            )
+        elif args.command == "prepare-targeted-benchmark-audit":
+            result = prepare_targeted_benchmark_audit_run(
+                bundle_path=args.bundle,
+                verified_path=args.verified,
+                selection_path=args.selection,
+                benchmark_path=args.benchmark,
+                row_verification_stage_path=args.row_verification_stage,
+                stage_out=args.stage_out,
+                shared_frame_out=args.shared_frame_out,
+                prompt_manifest_out=args.prompt_manifest_out,
+                assignment_manifest_out=args.assignment_manifest_out,
+                prompt_dir=args.prompt_dir,
+                max_prompt_bytes=args.max_prompt_bytes,
+                worker_count=args.worker_count,
+            )
+        elif args.command == "submit-targeted-benchmark-audit":
+            result = submit_targeted_benchmark_audit_run(
+                stage_path=args.stage,
+                prompt_manifest_path=args.prompt_manifest,
+                response_paths=args.response,
+                audit_out=args.audit_out,
             )
         elif args.command == "validate-batch-response":
             result = validate_batch_response_file(

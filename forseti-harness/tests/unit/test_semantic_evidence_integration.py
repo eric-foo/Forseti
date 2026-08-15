@@ -47,6 +47,7 @@ from judgment.semantic_evidence_integration import (
     ROW_VERIFICATION_METHOD_VERSION_V6,
     ROW_VERIFICATION_METHOD_VERSION_V7,
     ROW_VERIFICATION_RESPONSE_VERSION,
+    TARGETED_AUDIT_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
@@ -70,11 +71,13 @@ from judgment.semantic_evidence_integration import (
     prepare_relation_closure_stage,
     prepare_row_verification,
     prepare_row_repair,
+    prepare_targeted_benchmark_audit,
     reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_row_verified_compilation,
     validate_reconciliation_stage,
     validate_relation_closure_stage,
+    validate_targeted_benchmark_audit,
     verify_bundle_context,
 )
 from judgment.semantic_calibration import (
@@ -105,6 +108,7 @@ from runners.run_semantic_evidence_integration import (
     prepare_prompt_execution_pack,
     prepare_semantic_calibration_run,
     prepare_row_verification_run,
+    prepare_targeted_benchmark_audit_run,
     publish_batch_response_file,
     submit_row_verification_run,
     submit_relation_closure_run,
@@ -2629,6 +2633,214 @@ def _row_verification_responses(
         }
         for batch in stage["batches"]
     ]
+
+
+def _targeted_audit_fixture() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
+    bundle = _bundle_v5(count=36, max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    row_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        bundle, compiled, row_stage, _row_verification_responses(row_stage)
+    )
+    batch_ids = [row["batch_id"] for row in bundle["batches"]]
+    evidence_count = sum(len(row["evidence_ids"]) for row in bundle["batches"])
+    raw = {
+        "selection": "a" * 64,
+        "benchmark": "b" * 64,
+        "bundle": "c" * 64,
+        "row_verification_stage": "d" * 64,
+        "verified_compilation": "e" * 64,
+    }
+    benchmark = {
+        "schema_version": "forseti_extraction_latency_optimization_benchmark_v2",
+        "identities": {
+            "bundle_stored_canonical_sha256": bundle["bundle_sha256"],
+            "bundle_raw_file_sha256": raw["bundle"],
+        },
+        "benchmark": {
+            "prompt_count": len(batch_ids),
+            "validated_evidence_count": evidence_count,
+        },
+    }
+    midpoint = len(batch_ids) // 2
+    group_ids = [batch_ids[:midpoint], batch_ids[midpoint:]]
+    selection = {
+        "schema_version": "targeted_benchmark_audit_selection_v1",
+        "authority": {
+            "benchmark_raw_sha256": raw["benchmark"],
+            "bundle_stored_canonical_sha256": bundle["bundle_sha256"],
+            "bundle_raw_sha256": raw["bundle"],
+            "row_verification_stage_stored_canonical_sha256": row_stage[
+                "stage_sha256"
+            ],
+            "row_verification_stage_raw_sha256": raw["row_verification_stage"],
+        },
+        "selection_method": {
+            "kind": "complete_benchmark_denominator",
+            "prompt_count": len(batch_ids),
+            "evidence_leaf_count": evidence_count,
+        },
+        "benchmark_groups": [
+            {
+                "source_receipt_worker_id": f"source-worker-{index + 1}",
+                "batch_ids": ids,
+                "evidence_leaf_count": sum(
+                    len(bundle["batches"][batch_ids.index(batch_id)]["evidence_ids"])
+                    for batch_id in ids
+                ),
+            }
+            for index, ids in enumerate(group_ids)
+        ],
+        "constraints": {
+            "manual_full_payload_read": True,
+            "genuine_prompt_local_semantic_judgment": True,
+            "semantic_automation": False,
+            "regex_or_keyword_semantic_rules": False,
+            "templates_or_defaults": False,
+            "external_provider_or_model_api_calls": 0,
+            "prevalence_or_causal_inference": False,
+            "global_absence_identity_or_opposition_claims": False,
+            "customer_ready_conclusions": False,
+        },
+    }
+    return bundle, verified, selection, benchmark, row_stage, raw
+
+
+def test_targeted_benchmark_audit_binds_exact_groups_and_balances_workers() -> None:
+    bundle, verified, selection, benchmark, row_stage, raw = (
+        _targeted_audit_fixture()
+    )
+    prepared = prepare_targeted_benchmark_audit(
+        bundle,
+        verified,
+        selection,
+        benchmark,
+        row_stage,
+        input_raw_sha256=raw,
+        max_prompt_bytes=100_000,
+        worker_count=6,
+    )
+    stage, frame, prompts, prompt_manifest, assignments = prepared
+    assert stage["coverage_proof"]["selected_evidence_count"] == 36
+    assert stage["coverage_proof"]["original_batch_groups_preserved"] is True
+    assert [row["batch_id"] for row in prompts] == [
+        row["batch_id"] for row in bundle["batches"]
+    ]
+    assert "TARGETED BENCHMARK AUDIT METHOD V1" in frame
+    assert prompt_manifest["stage_sha256"] == stage["stage_sha256"]
+    assigned = [
+        prompt["batch_id"]
+        for worker in assignments["workers"]
+        for prompt in worker["prompts"]
+    ]
+    assert sorted(assigned) == sorted(row["batch_id"] for row in prompts)
+    assert len(assignments["workers"]) == 6
+    assert max(len(row["prompts"]) for row in assignments["workers"]) == 2
+    assert prepared == prepare_targeted_benchmark_audit(
+        bundle,
+        verified,
+        selection,
+        benchmark,
+        row_stage,
+        input_raw_sha256=raw,
+        max_prompt_bytes=100_000,
+        worker_count=6,
+    )
+
+    responses = []
+    repair_id = stage["batches"][0]["evidence_ids"][0]
+    for batch in stage["batches"]:
+        responses.append(
+            {
+                "schema_version": TARGETED_AUDIT_RESPONSE_VERSION,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "decisions": [
+                    {
+                        "evidence_id": evidence_id,
+                        "decision": "repair" if evidence_id == repair_id else "accept",
+                        "reason": "manual source comparison found the bounded result",
+                    }
+                    for evidence_id in batch["evidence_ids"]
+                ],
+            }
+        )
+    result = validate_targeted_benchmark_audit(stage, prompt_manifest, responses)
+    assert result["repair_evidence_ids"] == [repair_id]
+    assert result["coverage_proof"]["complete"] is True
+
+
+def test_targeted_benchmark_audit_rejects_identity_substitution() -> None:
+    bundle, verified, selection, benchmark, row_stage, raw = (
+        _targeted_audit_fixture()
+    )
+    forged = deepcopy(selection)
+    forged["authority"]["benchmark_raw_sha256"] = "f" * 64
+    with pytest.raises(SemanticIntegrationError, match="identity mismatch"):
+        prepare_targeted_benchmark_audit(
+            bundle,
+            verified,
+            forged,
+            benchmark,
+            row_stage,
+            input_raw_sha256=raw,
+            max_prompt_bytes=100_000,
+            worker_count=6,
+        )
+
+
+def test_targeted_benchmark_audit_runner_refuses_overwrite(tmp_path: Path) -> None:
+    bundle, verified, selection, benchmark, row_stage, _ = _targeted_audit_fixture()
+    inputs = tmp_path / "inputs"
+    inputs.mkdir()
+    paths = {
+        "bundle": inputs / "bundle.json",
+        "verified": inputs / "verified.json",
+        "row_stage": inputs / "row_stage.json",
+        "benchmark": inputs / "benchmark.json",
+        "selection": inputs / "selection.json",
+    }
+    for key, value in (
+        ("bundle", bundle),
+        ("verified", verified),
+        ("row_stage", row_stage),
+    ):
+        paths[key].write_text(json.dumps(value, sort_keys=True), encoding="utf-8")
+    bundle_raw = _digest(paths["bundle"].read_bytes())
+    row_stage_raw = _digest(paths["row_stage"].read_bytes())
+    benchmark["identities"]["bundle_raw_file_sha256"] = bundle_raw
+    paths["benchmark"].write_text(json.dumps(benchmark, sort_keys=True), encoding="utf-8")
+    selection["authority"].update(
+        {
+            "benchmark_raw_sha256": _digest(paths["benchmark"].read_bytes()),
+            "bundle_raw_sha256": bundle_raw,
+            "row_verification_stage_raw_sha256": row_stage_raw,
+        }
+    )
+    paths["selection"].write_text(json.dumps(selection, sort_keys=True), encoding="utf-8")
+    outputs = tmp_path / "outputs"
+    kwargs = {
+        "bundle_path": paths["bundle"],
+        "verified_path": paths["verified"],
+        "selection_path": paths["selection"],
+        "benchmark_path": paths["benchmark"],
+        "row_verification_stage_path": paths["row_stage"],
+        "stage_out": outputs / "stage.json",
+        "shared_frame_out": outputs / "shared_frame.md",
+        "prompt_manifest_out": outputs / "prompt_manifest.json",
+        "assignment_manifest_out": outputs / "assignments.json",
+        "prompt_dir": outputs / "prompts",
+        "max_prompt_bytes": 100_000,
+        "worker_count": 6,
+    }
+    result = prepare_targeted_benchmark_audit_run(**kwargs)
+    assert result["status"] == "TARGETED_BENCHMARK_AUDIT_REQUIRED"
+    stage_bytes = kwargs["stage_out"].read_bytes()
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        prepare_targeted_benchmark_audit_run(**kwargs)
+    assert kwargs["stage_out"].read_bytes() == stage_bytes
 
 
 def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -> None:
