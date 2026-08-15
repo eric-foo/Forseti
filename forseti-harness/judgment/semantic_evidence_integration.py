@@ -3874,7 +3874,6 @@ def prepare_targeted_benchmark_audit(
         "prompt_manifest_sha256": prompt_manifest["manifest_sha256"],
         "algorithm": "largest-payload-first_least-bytes_with_equal-count-cap_v1",
         "worker_count": worker_count,
-        "lease_payload_limit": 12,
         "max_prompts_per_worker": capacity,
         "workers": workers,
         "balance_proof": {
