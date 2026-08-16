@@ -20,6 +20,7 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V4,
     BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
+    EVIDENCE_PACKET_VERSION_V1,
     METHOD_TEXT_V5,
     METHOD_TEXT_V6,
     METHOD_TEXT_V7,
@@ -67,6 +68,7 @@ from judgment.semantic_evidence_integration import (
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
+    project_evidence_packet_v1,
     prepare_reconciliation_stage,
     prepare_relation_closure_stage,
     prepare_row_verification,
@@ -1216,11 +1218,25 @@ def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() ->
         "unresolved_axis_candidate_count": 0,
         "truncated": False,
     }
-    assert len({row["evidence_id"] for row in packet["evidence"]}) == 7
+    evidence_rows = [
+        evidence
+        for source_group in packet["source_groups"]
+        for evidence in source_group["evidence"]
+    ]
+    assert len({row["evidence_id"] for row in evidence_rows}) == 7
+    assert sum(row["evidence_count"] for row in packet["source_groups"]) == 7
+    assert all("text" not in row for row in evidence_rows)
+    assert all("source_role" not in row for row in evidence_rows)
+    assert all("engagement_kind" in row for row in packet["source_groups"])
+    assert all(
+        {"raw_value", "observed_at", "material_positive"} <= set(row["engagement"])
+        or row["engagement"] == {"status": "engagement_unavailable"}
+        for row in evidence_rows
+    )
     assert len(packet["containers"]) == 7
-    linked_unit = packet["evidence"][0]["proposition_relations"][0][
-        "semantic_units"
-    ][0]
+    linked_unit = next(
+        unit for evidence in evidence_rows for unit in evidence["semantic_units"]
+    )
     assert {
         "evidence_posture",
         "uncertainty_posture",
@@ -1228,7 +1244,22 @@ def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() ->
     } <= set(linked_unit)
     assert all("conclusion" not in row for row in packet["propositions"])
     assert all("recommendation" not in row for row in packet["propositions"])
+    assert packet["propositions"][0]["evidence_relations"]["support"]
+    assert packet["catalogue_coverage"]["inline_full_text_evidence_item_count"] == 0
     assert packet["model_api_calls"] == 0
+
+
+def test_evidence_packet_v1_remains_explicitly_reproducible() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+
+    packet = project_evidence_packet_v1(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION_V1
+    assert len({row["evidence_id"] for row in packet["evidence"]}) == 7
+    assert "source_groups" not in packet
 
 
 def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
@@ -1255,13 +1286,27 @@ def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
 
     assert packet["selection_coverage"]["selected_proposition_count"] == 17
     assert packet["selection_coverage"]["returned_evidence_item_count"] == 44
-    assert len({row["evidence_id"] for row in packet["evidence"]}) == 44
+    evidence_rows = [
+        evidence
+        for source_group in packet["source_groups"]
+        for evidence in source_group["evidence"]
+    ]
+    assert len({row["evidence_id"] for row in evidence_rows}) == 44
     assert len(packet["containers"]) == 30
-    per_proposition_links = sum(
-        sum(row["evidence_item_counts"].values())
-        for row in packet["propositions"]
-    )
+    linked_evidence_ids = [
+        link["evidence_id"]
+        for proposition in packet["propositions"]
+        for relation_links in proposition["evidence_relations"].values()
+        for link in relation_links
+    ]
+    per_proposition_links = len(linked_evidence_ids)
     assert per_proposition_links > 44
+    shared_id = next(
+        evidence_id
+        for evidence_id in set(linked_evidence_ids)
+        if linked_evidence_ids.count(evidence_id) > 1
+    )
+    assert sum(row["evidence_id"] == shared_id for row in evidence_rows) == 1
 
 
 def test_v3_evidence_packet_preserves_counterevidence_and_unresolved_candidates() -> None:
@@ -1293,9 +1338,10 @@ def test_v3_evidence_packet_preserves_counterevidence_and_unresolved_candidates(
 
     assert packet["selection_coverage"]["counter_evidence_item_count"] > 0
     assert packet["selection_coverage"]["unresolved_axis_candidate_count"] == 1
-    assert packet["unresolved_axis_candidates"][0]["evidence"][
-        "evidence_id"
-    ] == unresolved_evidence_id
+    assert (
+        packet["unresolved_axis_candidates"][0]["evidence_id"]
+        == unresolved_evidence_id
+    )
 
 
 def test_v3_evidence_packet_keeps_no_axis_unmerged_meaning_visible() -> None:
@@ -6802,9 +6848,21 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
         compiled["compilation_sha256"]
     )
     assert packet["source_bindings"]["bundle_sha256"] == bundle["bundle_sha256"]
-    assert packet["evidence"]
-    assert all("product_context" in row for row in packet["evidence"])
-    assert all("parent_context" in row for row in packet["evidence"])
-    assert all("product_context_refs" not in row for row in packet["evidence"])
-    assert all("parent_context_refs" not in row for row in packet["evidence"])
+    evidence_rows = [
+        evidence
+        for source_group in packet["source_groups"]
+        for evidence in source_group["evidence"]
+    ]
+    assert evidence_rows
+    assert all("product_context" not in row for row in evidence_rows)
+    assert all("parent_context" not in row for row in evidence_rows)
+    assert all("product_context_refs" not in row for row in evidence_rows)
+    assert all("parent_context_refs" not in row for row in evidence_rows)
+    assert packet["full_evidence_resolution"] == {
+        "source": "bound_semantic_evidence_bundle",
+        "lookup_key": "evidence_id",
+        "bundle_sha256": bundle["bundle_sha256"],
+        "body_field": "text",
+        "context_fields": ["product_context", "parent_context"],
+    }
     assert packet["model_api_calls"] == 0

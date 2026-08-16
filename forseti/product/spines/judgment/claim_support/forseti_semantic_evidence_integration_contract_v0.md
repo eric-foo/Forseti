@@ -754,6 +754,27 @@ downstream conclusion. A changed corpus invalidates the source view and every
 packet derived from it. The projection uses no provider API, embeddings,
 vector store, or new persistent index.
 
+Contract v35 adds `phase_a_evidence_packet_v2` as the default output of the
+existing `project-evidence-packet` route. It preserves v1 selection, lineage,
+coverage, and fail-closed rebuilding, but changes the model-facing layout. Each
+admitted linked, unmerged, unscoped-unmerged, or unresolved evidence item
+appears once in a source-grouped catalogue. A source group owns the repeated
+source family, source role, engagement metric kind, and source-specific
+engagement context; each evidence row retains its raw engagement value,
+observation time, materiality observation, actor and independence data,
+publication time, source reference, container reference, and the selected
+semantic units. Each proposition carries only relation-to-evidence and
+relation-to-semantic-unit references. Full evidence text and parent/product
+context remain resolvable by `evidence_id` from the hash-bound bundle and are
+not duplicated inline.
+
+The catalogue has no evidence-count cap and no top-k admission rule. Source
+grouping is presentation and transport normalization only; it does not merge
+actors, platforms, source roles, meanings, engagement units, or proposition
+relations. `phase_a_evidence_packet_v1` remains available only through the
+explicit legacy packet-version route for historical reproduction. The normal
+runner requires no operator prompt or extra flag to receive v2.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1152,6 +1173,13 @@ new frontier.
 
 ## Changelog
 
+- `v35` / 2026-08-16 — made `phase_a_evidence_packet_v2` the normal
+  source-grouped consolidation output. Evidence and selected semantic units are
+  stored once, propositions link to them by relation, native engagement metadata
+  travels with each evidence row under its source group, and complete bodies
+  remain resolvable from the bound bundle rather than duplicated inline. Kept
+  the complete v1 selection and lineage proof, no evidence-count cap, no
+  conclusion or score, and an explicit legacy-v1 reproduction option.
 - `v34` containment correction / 2026-08-13 — made any artifact carrying
   closure-only evidence run closure-specific structural checks before generic
   finalization, and rederive exact candidate membership, all-pairs identity,

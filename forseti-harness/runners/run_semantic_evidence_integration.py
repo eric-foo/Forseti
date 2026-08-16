@@ -27,6 +27,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
     project_evidence_packet,
+    project_evidence_packet_v1,
     prepare_targeted_benchmark_audit,
     prepare_reconciliation_stage,
     prepare_relation_closure_stage,
@@ -1380,12 +1381,18 @@ def project_evidence_packet_run(
     axis_ids: list[str],
     proposition_ids: list[str],
     packet_out: Path,
+    packet_version: str = "v2",
 ) -> dict[str, Any]:
     view = _load_object(view_path)
     bundle = _load_object(bundle_path)
     batch_compilation = _load_object(batch_compilation_path)
     node_compilation = _load_object(node_compilation_path)
-    packet = project_evidence_packet(
+    if packet_version not in {"v1", "v2"}:
+        raise ValueError("packet_version must be v1 or v2")
+    projector = project_evidence_packet_v1
+    if packet_version == "v2":
+        projector = project_evidence_packet
+    packet = projector(
         view,
         bundle,
         batch_compilation,
@@ -1396,6 +1403,7 @@ def project_evidence_packet_run(
     _write_json(packet_out, packet)
     return {
         "status": "PHASE_A_EVIDENCE_PACKET_READY",
+        "packet_schema_version": packet["schema_version"],
         "packet_sha256": packet["packet_sha256"],
         "selected_proposition_count": packet["selection_coverage"][
             "selected_proposition_count"
@@ -1641,6 +1649,9 @@ def _parser() -> argparse.ArgumentParser:
     selection.add_argument("--axis-id", action="append", default=[])
     selection.add_argument("--proposition-id", action="append", default=[])
     evidence_packet.add_argument("--packet-out", type=Path, required=True)
+    evidence_packet.add_argument(
+        "--packet-version", choices=("v1", "v2"), default="v2"
+    )
 
     calibration_prepare = sub.add_parser("prepare-calibration")
     calibration_prepare.add_argument("--source", type=Path, required=True)
@@ -1919,6 +1930,7 @@ def main(argv: list[str] | None = None) -> int:
                 axis_ids=args.axis_id,
                 proposition_ids=args.proposition_id,
                 packet_out=args.packet_out,
+                packet_version=args.packet_version,
             )
         elif args.command == "prepare-calibration":
             result = prepare_semantic_calibration_run(

@@ -67,7 +67,8 @@ RELATION_CLOSURE_COMPILATION_VERSION = "semantic_evidence_relation_closure_compi
 VIEW_VERSION = "semantic_evidence_integration_view_v1"
 VIEW_VERSION_V2 = "semantic_evidence_integration_view_v2"
 VIEW_VERSION_V3 = "semantic_evidence_integration_view_v3"
-EVIDENCE_PACKET_VERSION = "phase_a_evidence_packet_v1"
+EVIDENCE_PACKET_VERSION_V1 = "phase_a_evidence_packet_v1"
+EVIDENCE_PACKET_VERSION = "phase_a_evidence_packet_v2"
 METHOD_VERSION = "semantic_evidence_integration_method_v1"
 METHOD_VERSION_V2 = "semantic_evidence_integration_method_v2"
 METHOD_VERSION_V3 = "semantic_evidence_integration_method_v3"
@@ -6741,7 +6742,7 @@ def finalize_relation_closed_view(
     return finalize_v3_view(bundle, batch_compilation, relation_compilation)
 
 
-def project_evidence_packet(
+def project_evidence_packet_v1(
     view: Mapping[str, Any],
     bundle: Mapping[str, Any],
     batch_compilation: Mapping[str, Any],
@@ -7023,7 +7024,7 @@ def project_evidence_packet(
         1 for row in evidence_rows if len(row["relations"]) > 1
     )
     packet = {
-        "schema_version": EVIDENCE_PACKET_VERSION,
+        "schema_version": EVIDENCE_PACKET_VERSION_V1,
         "cycle_id": view["cycle_id"],
         "question_id": view["question_id"],
         "selection": selection,
@@ -7076,6 +7077,234 @@ def project_evidence_packet(
     }
     packet["packet_sha256"] = _sha256(packet)
     return packet
+
+
+def _compact_evidence_packet_v2(
+    packet_v1: Mapping[str, Any],
+    bundle: Mapping[str, Any],
+    batch_compilation: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Store each evidence and semantic unit once, with propositions linking by ref."""
+    evidence_index = _unit_index(bundle)
+    semantic_index = {
+        row["semantic_unit_ref"]: row
+        for row in batch_compilation.get("semantic_units", [])
+    }
+
+    evidence_ids: set[str] = {
+        row["evidence_id"] for row in packet_v1.get("evidence", [])
+    }
+    semantic_refs: set[str] = set()
+    proposition_links: dict[str, dict[str, list[dict[str, Any]]]] = {
+        row["proposition_id"]: {relation: [] for relation in sorted(RELATIONS)}
+        for row in packet_v1.get("propositions", [])
+    }
+    for evidence in packet_v1.get("evidence", []):
+        evidence_id = evidence["evidence_id"]
+        for link in evidence.get("proposition_relations", []):
+            refs = sorted(link["semantic_unit_refs"])
+            semantic_refs.update(refs)
+            proposition_links[link["proposition_id"]][link["relation"]].append(
+                {"evidence_id": evidence_id, "semantic_unit_refs": refs}
+            )
+
+    def compact_unmerged(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+        compact: list[dict[str, Any]] = []
+        for row in rows:
+            ref = row["semantic_unit_ref"]
+            evidence_id = row["semantic_unit"]["evidence_id"]
+            evidence_ids.add(evidence_id)
+            semantic_refs.add(ref)
+            compact.append(
+                {
+                    "semantic_unit_ref": ref,
+                    "evidence_id": evidence_id,
+                    "reason": row.get("reason"),
+                }
+            )
+        return sorted(compact, key=lambda row: row["semantic_unit_ref"])
+
+    unmerged_rows = compact_unmerged(packet_v1.get("unmerged_axis_candidates", []))
+    unscoped_unmerged_rows = compact_unmerged(
+        packet_v1.get("unscoped_unmerged_candidates", [])
+    )
+    unresolved_rows: list[dict[str, Any]] = []
+    for row in packet_v1.get("unresolved_axis_candidates", []):
+        evidence_id = row["evidence"]["evidence_id"]
+        evidence_ids.add(evidence_id)
+        unresolved_rows.append(
+            {"evidence_id": evidence_id, "disposition": row["disposition"]}
+        )
+    unresolved_rows.sort(key=lambda row: row["evidence_id"])
+
+    semantic_refs_by_evidence: dict[str, list[str]] = defaultdict(list)
+    for ref in sorted(semantic_refs):
+        semantic = semantic_index.get(ref)
+        if semantic is None:
+            raise SemanticIntegrationError(
+                f"evidence packet v2 cites unknown semantic unit: {ref}"
+            )
+        semantic_refs_by_evidence[semantic["evidence_id"]].append(ref)
+
+    semantic_fields = (
+        "semantic_unit_ref",
+        "statement",
+        "evidence_posture",
+        "uncertainty_posture",
+        "polarity",
+        "subject_product_ids",
+        "comparator_product_ids",
+        "product_version_ids",
+        "axis_ids",
+        "conditions",
+        "emerging_axis_labels",
+    )
+    group_rows: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    for evidence_id in sorted(evidence_ids):
+        source = evidence_index.get(evidence_id)
+        if source is None:
+            raise SemanticIntegrationError(
+                f"evidence packet v2 cites unknown evidence: {evidence_id}"
+            )
+        engagement = source.get("engagement")
+        if isinstance(engagement, Mapping) and _nonempty(engagement.get("kind")):
+            engagement_kind = engagement["kind"]
+            engagement_context = (
+                engagement["context"]
+                if _nonempty(engagement.get("context"))
+                else "unavailable"
+            )
+            row_engagement = {
+                "raw_value": engagement.get("raw_value"),
+                "observed_at": engagement.get("observed_at"),
+                "material_positive": engagement.get("material_positive", False),
+            }
+        else:
+            engagement_kind = "engagement_unavailable"
+            engagement_context = "unavailable"
+            row_engagement = {"status": "engagement_unavailable"}
+        group_key = (
+            source["source_family"],
+            source["source_role"],
+            engagement_kind,
+            engagement_context,
+        )
+        group = group_rows.setdefault(
+            group_key,
+            {
+                "source_group_id": _stable_id("source_group", *group_key),
+                "source_family": source["source_family"],
+                "source_role": source["source_role"],
+                "engagement_kind": engagement_kind,
+                "engagement_context": engagement_context,
+                "evidence": [],
+            },
+        )
+        compact_evidence = {
+            "evidence_id": evidence_id,
+            "source_artifact_id": source["source_artifact_id"],
+            "source_ref": source["source_ref"],
+            "container_id": source["container_id"],
+            "publication_time": source.get("publication_time"),
+            "actor_identity": source.get("actor_identity", "unavailable"),
+            "independence_posture": source.get("independence_posture"),
+            "independence_key": source.get("independence_key"),
+            "engagement": row_engagement,
+            "semantic_units": [
+                {
+                    field: semantic_index[ref][field]
+                    for field in semantic_fields
+                    if field in semantic_index[ref]
+                }
+                for ref in semantic_refs_by_evidence.get(evidence_id, [])
+            ],
+        }
+        if "public_identity_key" in source:
+            compact_evidence["public_identity_key"] = source["public_identity_key"]
+        group["evidence"].append(compact_evidence)
+
+    source_groups: list[dict[str, Any]] = []
+    for group_key in sorted(group_rows):
+        group = group_rows[group_key]
+        group["evidence"].sort(key=lambda row: row["evidence_id"])
+        group["evidence_count"] = len(group["evidence"])
+        source_groups.append(group)
+
+    propositions: list[dict[str, Any]] = []
+    for proposition in packet_v1.get("propositions", []):
+        proposition_id = proposition["proposition_id"]
+        links = proposition_links[proposition_id]
+        propositions.append(
+            {
+                **proposition,
+                "evidence_relations": {
+                    relation: sorted(
+                        links[relation], key=lambda row: row["evidence_id"]
+                    )
+                    for relation in sorted(RELATIONS)
+                },
+            }
+        )
+
+    packet = {
+        "schema_version": EVIDENCE_PACKET_VERSION,
+        "cycle_id": packet_v1["cycle_id"],
+        "question_id": packet_v1["question_id"],
+        "selection": packet_v1["selection"],
+        "source_bindings": packet_v1["source_bindings"],
+        "corpus_coverage": packet_v1["corpus_coverage"],
+        "selection_coverage": packet_v1["selection_coverage"],
+        "catalogue_coverage": {
+            "source_group_count": len(source_groups),
+            "evidence_item_count": len(evidence_ids),
+            "semantic_unit_count": len(semantic_refs),
+            "inline_full_text_evidence_item_count": 0,
+            "truncated": False,
+        },
+        "relation_semantics": {
+            "support": "supports the bounded proposition",
+            "counter": "opposes the bounded proposition",
+            "adjacent": "qualifies or materially bounds the proposition",
+        },
+        "propositions": propositions,
+        "source_groups": source_groups,
+        "containers": packet_v1["containers"],
+        "unmerged_axis_candidates": unmerged_rows,
+        "unscoped_unmerged_candidates": unscoped_unmerged_rows,
+        "unresolved_axis_candidates": unresolved_rows,
+        "full_evidence_resolution": {
+            "source": "bound_semantic_evidence_bundle",
+            "lookup_key": "evidence_id",
+            "bundle_sha256": packet_v1["source_bindings"]["bundle_sha256"],
+            "body_field": "text",
+            "context_fields": ["product_context", "parent_context"],
+        },
+        "output_boundary": packet_v1["output_boundary"],
+        "model_api_calls": 0,
+    }
+    packet["packet_sha256"] = _sha256(packet)
+    return packet
+
+
+def project_evidence_packet(
+    view: Mapping[str, Any],
+    bundle: Mapping[str, Any],
+    batch_compilation: Mapping[str, Any],
+    node_compilation: Mapping[str, Any],
+    *,
+    axis_ids: Sequence[str] = (),
+    proposition_ids: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Project the default source-grouped Phase A evidence packet."""
+    packet_v1 = project_evidence_packet_v1(
+        view,
+        bundle,
+        batch_compilation,
+        node_compilation,
+        axis_ids=axis_ids,
+        proposition_ids=proposition_ids,
+    )
+    return _compact_evidence_packet_v2(packet_v1, bundle, batch_compilation)
 
 
 def finalize_view(
@@ -7343,6 +7572,7 @@ __all__ = [
     "BUNDLE_VERSION_V4",
     "BUNDLE_VERSION_V5",
     "EVIDENCE_PACKET_VERSION",
+    "EVIDENCE_PACKET_VERSION_V1",
     "METHOD_TEXT",
     "METHOD_TEXT_V2",
     "METHOD_TEXT_V3",
@@ -7402,6 +7632,7 @@ __all__ = [
     "is_terminal_reconciliation_compilation",
     "materialize_source_v3",
     "project_evidence_packet",
+    "project_evidence_packet_v1",
     "prepare_reconciliation_stage",
     "prepare_relation_closure_stage",
     "prepare_row_verification",

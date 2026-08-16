@@ -109,6 +109,44 @@ including counterevidence and unresolved adjacent material. Deliver owns any
 later recommendation about price, premiumization, positioning, product work,
 or campaign action.
 
+The normal `project-evidence-packet` command emits
+`phase_a_evidence_packet_v2`. It stores each evidence item once in a catalogue
+grouped by source family, source role, and native engagement kind. Raw
+engagement and its observation time stay on the evidence row; repeated
+engagement semantics stay on the source-group header. Proposition rows link to
+catalogue evidence and semantic-unit references under support, counter, or
+adjacent relations. Full source bodies remain available from the packet's
+hash-bound bundle locator but are not copied into the initial packet. Operators
+do not select examples or supply a top-k cap. The runner's explicit legacy-v1
+option exists only to reproduce historical packet bytes.
+
+### Adopted token-cost baseline
+
+As of 2026-08-16, `phase_a_evidence_packet_v2` is the provisional Phase A
+token-cost baseline. A matched model experiment compared v1 and v2 on three
+frozen Summer Fridays propositions with 43, 20, and 9 evidence items. Each arm
+used the same prompt and output schema for three repetitions, with arm order
+alternated: 18 `gpt-5.6-sol` low-reasoning turns in total. V2 used 121,008
+versus 183,786 input tokens, 85,179 versus 114,462, and 69,995 versus 88,508.
+That is a reduction in every case (34.158%, 25.583%, and 20.917%) and 28.590%
+across the matched set.
+
+The saving is transport normalization, not evidence selection. V1 repeated
+complete evidence content and proposition-local representations; v2 keeps one
+evidence row and one selected semantic-unit representation, moves repeated
+source semantics to a group header, and lets propositions reference those
+units. The experiment returned 18 structurally valid responses with the
+correct proposition IDs, no missing or invented cited references, and the
+required condition, behavior, engagement, and uncertainty fields. Independent
+semantic adjudication was not run, so the experiment establishes a structural
+quality floor rather than semantic equivalence. Latency is explicitly
+non-gating for this baseline; no storage-cost claim is needed.
+
+This baseline must be reversed or revised if representative future cases lose
+required evidence or resolvability, fail the structural citation floor, or no
+longer save input tokens against v1. The legacy-v1 route is the comparison and
+reproduction control, not a second normal operating mode.
+
 ## Evidence-family boundary
 
 - Reddit/community and retailer reviews are customer evidence and may be
