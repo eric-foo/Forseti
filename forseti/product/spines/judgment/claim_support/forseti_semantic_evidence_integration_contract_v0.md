@@ -772,8 +772,26 @@ The catalogue has no evidence-count cap and no top-k admission rule. Source
 grouping is presentation and transport normalization only; it does not merge
 actors, platforms, source roles, meanings, engagement units, or proposition
 relations. `phase_a_evidence_packet_v1` remains available only through the
-explicit legacy packet-version route for historical reproduction. The normal
-runner requires no operator prompt or extra flag to receive v2.
+explicit legacy packet-version route for historical reproduction. Contract
+v35 made v2 the no-flag runner default; contract v36 below supersedes that
+default while retaining explicit v2 reproduction.
+
+Contract v36 makes `phase_a_evidence_packet_v3` the normal output. V3 is a
+lossless transport projection over v2: repeated evidence, engagement, and
+semantic-unit field names are declared once as explicit named columns, while
+values common to every row in a packet or source group are declared once as
+named defaults at that exact scope. Remaining positional values map to those
+human-readable column names. Evidence IDs and semantic-unit references remain
+literal, proposition relations remain explicit, and source-group headers still
+own source-native engagement meaning. This is normalization, not abbreviation
+or evidence selection.
+
+Before v3 is returned or hashed, the projector reconstructs the expected
+column/default layout from v2 and rejects any changed top-level payload,
+source-group evidence row, or proposition relation. V2 remains available
+through the explicit packet-version route as the matched comparison baseline;
+v1 remains historical reproduction. The normal runner needs no new operator
+step, lookup, or retrieval round.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -1173,6 +1191,13 @@ new frontier.
 
 ## Changelog
 
+- `v36` / 2026-08-16 — made lossless named-default/column
+  `phase_a_evidence_packet_v3` the normal Phase A evidence transport. Kept
+  literal evidence and semantic-unit refs, source grouping, every relation and
+  candidate class, native engagement, actor/independence data, conditions,
+  uncertainty, and bundle resolution while removing repeated field labels and
+  values. Added a fail-closed v3-against-v2 preservation boundary and retained
+  explicit v2/v1 comparison routes.
 - `v35` / 2026-08-16 — made `phase_a_evidence_packet_v2` the normal
   source-grouped consolidation output. Evidence and selected semantic units are
   stored once, propositions link to them by relation, native engagement metadata

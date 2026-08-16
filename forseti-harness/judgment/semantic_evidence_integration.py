@@ -68,7 +68,8 @@ VIEW_VERSION = "semantic_evidence_integration_view_v1"
 VIEW_VERSION_V2 = "semantic_evidence_integration_view_v2"
 VIEW_VERSION_V3 = "semantic_evidence_integration_view_v3"
 EVIDENCE_PACKET_VERSION_V1 = "phase_a_evidence_packet_v1"
-EVIDENCE_PACKET_VERSION = "phase_a_evidence_packet_v2"
+EVIDENCE_PACKET_VERSION_V2 = "phase_a_evidence_packet_v2"
+EVIDENCE_PACKET_VERSION = "phase_a_evidence_packet_v3"
 METHOD_VERSION = "semantic_evidence_integration_method_v1"
 METHOD_VERSION_V2 = "semantic_evidence_integration_method_v2"
 METHOD_VERSION_V3 = "semantic_evidence_integration_method_v3"
@@ -7247,7 +7248,7 @@ def _compact_evidence_packet_v2(
         )
 
     packet = {
-        "schema_version": EVIDENCE_PACKET_VERSION,
+        "schema_version": EVIDENCE_PACKET_VERSION_V2,
         "cycle_id": packet_v1["cycle_id"],
         "question_id": packet_v1["question_id"],
         "selection": packet_v1["selection"],
@@ -7286,7 +7287,334 @@ def _compact_evidence_packet_v2(
     return packet
 
 
-def project_evidence_packet(
+_EVIDENCE_PACKET_V3_EVIDENCE_COLUMNS = (
+    "evidence_id",
+    "source_artifact_id",
+    "source_ref",
+    "container_id",
+    "publication_time",
+    "actor_identity",
+    "independence_posture",
+    "independence_key",
+    "public_identity_key",
+    "engagement",
+    "semantic_units",
+)
+_EVIDENCE_PACKET_V3_ENGAGEMENT_COLUMNS = (
+    "status",
+    "raw_value",
+    "observed_at",
+    "material_positive",
+)
+_EVIDENCE_PACKET_V3_SEMANTIC_UNIT_COLUMNS = (
+    "semantic_unit_ref",
+    "statement",
+    "evidence_posture",
+    "uncertainty_posture",
+    "polarity",
+    "subject_product_ids",
+    "comparator_product_ids",
+    "product_version_ids",
+    "axis_ids",
+    "conditions",
+    "emerging_axis_labels",
+)
+_EVIDENCE_PACKET_V3_RELATION_LINK_COLUMNS = (
+    "evidence_id",
+    "semantic_unit_refs",
+)
+
+
+def _packet_v3_common_defaults(
+    rows: Sequence[Mapping[str, Any]], columns: Sequence[str]
+) -> dict[str, Any]:
+    defaults: dict[str, Any] = {}
+    for column in columns:
+        values = [row.get(column) for row in rows]
+        if values and values[0] is not None and all(
+            value == values[0] for value in values[1:]
+        ):
+            defaults[column] = values[0]
+    return defaults
+
+
+def _packet_v3_remaining_columns(
+    rows: Sequence[Mapping[str, Any]],
+    columns: Sequence[str],
+    defaults: Mapping[str, Any],
+) -> list[str]:
+    return [
+        column
+        for column in columns
+        if column not in defaults
+        and any(row.get(column) is not None for row in rows)
+    ]
+
+
+def _packet_v3_semantic_layout(
+    packet_v2: Mapping[str, Any],
+) -> tuple[dict[str, Any], list[str]]:
+    semantic_units = [
+        semantic
+        for source_group in packet_v2.get("source_groups", [])
+        for evidence in source_group.get("evidence", [])
+        for semantic in evidence.get("semantic_units", [])
+    ]
+    defaults = _packet_v3_common_defaults(
+        semantic_units, _EVIDENCE_PACKET_V3_SEMANTIC_UNIT_COLUMNS
+    )
+    columns = _packet_v3_remaining_columns(
+        semantic_units,
+        _EVIDENCE_PACKET_V3_SEMANTIC_UNIT_COLUMNS,
+        defaults,
+    )
+    return defaults, columns
+
+
+def _packet_v3_catalogue_schema(
+    packet_v2: Mapping[str, Any],
+) -> dict[str, Any]:
+    semantic_defaults, semantic_columns = _packet_v3_semantic_layout(packet_v2)
+    return {
+        "format": "named_defaults_and_columns_with_positional_rows",
+        "missing_value": None,
+        "row_semantics": (
+            "named defaults apply to every row in their scope; remaining row "
+            "values map to same-position named columns; null means unavailable"
+        ),
+        "source_group_layout": (
+            "each source group names its evidence and engagement defaults and columns"
+        ),
+        "semantic_unit_defaults": semantic_defaults,
+        "semantic_unit_columns": semantic_columns,
+        "relation_link_columns": list(
+            _EVIDENCE_PACKET_V3_RELATION_LINK_COLUMNS
+        ),
+    }
+
+
+def _packet_v3_group_layout(
+    source_group: Mapping[str, Any],
+) -> tuple[dict[str, Any], list[str], dict[str, Any], list[str]]:
+    evidence = source_group.get("evidence", [])
+    flat_evidence_columns = tuple(
+        column
+        for column in _EVIDENCE_PACKET_V3_EVIDENCE_COLUMNS
+        if column not in {"engagement", "semantic_units"}
+    )
+    evidence_defaults = _packet_v3_common_defaults(
+        evidence, flat_evidence_columns
+    )
+    evidence_columns = _packet_v3_remaining_columns(
+        evidence, flat_evidence_columns, evidence_defaults
+    ) + ["engagement", "semantic_units"]
+    engagement = [row["engagement"] for row in evidence]
+    engagement_defaults = _packet_v3_common_defaults(
+        engagement, _EVIDENCE_PACKET_V3_ENGAGEMENT_COLUMNS
+    )
+    engagement_columns = _packet_v3_remaining_columns(
+        engagement,
+        _EVIDENCE_PACKET_V3_ENGAGEMENT_COLUMNS,
+        engagement_defaults,
+    )
+    return (
+        evidence_defaults,
+        evidence_columns,
+        engagement_defaults,
+        engagement_columns,
+    )
+
+
+def _packet_v3_engagement_row(
+    engagement: Mapping[str, Any], columns: Sequence[str]
+) -> list[Any]:
+    return [engagement.get(column) for column in columns]
+
+
+def _packet_v3_semantic_unit_row(
+    semantic: Mapping[str, Any], columns: Sequence[str]
+) -> list[Any]:
+    return [semantic.get(column) for column in columns]
+
+
+def _packet_v3_evidence_row(
+    evidence: Mapping[str, Any],
+    *,
+    evidence_columns: Sequence[str],
+    engagement_columns: Sequence[str],
+    semantic_columns: Sequence[str],
+) -> list[Any]:
+    values: list[Any] = []
+    for column in evidence_columns:
+        if column == "engagement":
+            values.append(
+                _packet_v3_engagement_row(
+                    evidence[column], engagement_columns
+                )
+            )
+        elif column == "semantic_units":
+            values.append(
+                [
+                    _packet_v3_semantic_unit_row(semantic, semantic_columns)
+                    for semantic in evidence[column]
+                ]
+            )
+        else:
+            values.append(evidence.get(column))
+    return values
+
+
+def _packet_v3_relation_link_row(link: Mapping[str, Any]) -> list[Any]:
+    return [
+        link.get(column)
+        for column in _EVIDENCE_PACKET_V3_RELATION_LINK_COLUMNS
+    ]
+
+
+def _packet_v3_source_group(
+    source_group: Mapping[str, Any], semantic_columns: Sequence[str]
+) -> dict[str, Any]:
+    (
+        evidence_defaults,
+        evidence_columns,
+        engagement_defaults,
+        engagement_columns,
+    ) = _packet_v3_group_layout(source_group)
+    compact_group = {
+        key: value for key, value in source_group.items() if key != "evidence"
+    }
+    compact_group.update(
+        {
+            "evidence_defaults": evidence_defaults,
+            "evidence_columns": evidence_columns,
+            "engagement_defaults": engagement_defaults,
+            "engagement_columns": engagement_columns,
+            "evidence_rows": [
+                _packet_v3_evidence_row(
+                    row,
+                    evidence_columns=evidence_columns,
+                    engagement_columns=engagement_columns,
+                    semantic_columns=semantic_columns,
+                )
+                for row in source_group.get("evidence", [])
+            ],
+        }
+    )
+    return compact_group
+
+
+def _validate_evidence_packet_v3_preserves_v2(
+    packet_v3: Mapping[str, Any], packet_v2: Mapping[str, Any]
+) -> None:
+    """Fail if columnar transport changes any v2 model-facing payload value."""
+    expected_top_level = (set(packet_v2) - {"packet_sha256"}) | {
+        "catalogue_schema"
+    }
+    if set(packet_v3) != expected_top_level:
+        raise SemanticIntegrationError(
+            "evidence packet v3 does not preserve the v2 top-level payload"
+        )
+    if packet_v3.get("schema_version") != EVIDENCE_PACKET_VERSION:
+        raise SemanticIntegrationError("evidence packet v3 has an invalid version")
+    if packet_v3.get("catalogue_schema") != _packet_v3_catalogue_schema(packet_v2):
+        raise SemanticIntegrationError(
+            "evidence packet v3 has an invalid column contract"
+        )
+    for key, value in packet_v2.items():
+        if key in {"schema_version", "packet_sha256", "source_groups", "propositions"}:
+            continue
+        if packet_v3.get(key) != value:
+            raise SemanticIntegrationError(
+                f"evidence packet v3 does not preserve v2 field: {key}"
+            )
+
+    v2_groups = packet_v2.get("source_groups", [])
+    v3_groups = packet_v3.get("source_groups", [])
+    if len(v3_groups) != len(v2_groups):
+        raise SemanticIntegrationError(
+            "evidence packet v3 does not preserve v2 source groups"
+        )
+    semantic_columns = packet_v3["catalogue_schema"]["semantic_unit_columns"]
+    for v2_group, v3_group in zip(v2_groups, v3_groups, strict=True):
+        expected_group = _packet_v3_source_group(v2_group, semantic_columns)
+        if v3_group != expected_group:
+            raise SemanticIntegrationError(
+                "evidence packet v3 does not preserve v2 evidence rows"
+            )
+
+    v2_propositions = packet_v2.get("propositions", [])
+    v3_propositions = packet_v3.get("propositions", [])
+    if len(v3_propositions) != len(v2_propositions):
+        raise SemanticIntegrationError(
+            "evidence packet v3 does not preserve v2 propositions"
+        )
+    for v2_proposition, v3_proposition in zip(
+        v2_propositions, v3_propositions, strict=True
+    ):
+        expected_proposition = {
+            key: value
+            for key, value in v2_proposition.items()
+            if key != "evidence_relations"
+        }
+        expected_proposition["evidence_relations"] = {
+            relation: [
+                _packet_v3_relation_link_row(link)
+                for link in v2_proposition["evidence_relations"][relation]
+            ]
+            for relation in sorted(RELATIONS)
+        }
+        if v3_proposition != expected_proposition:
+            raise SemanticIntegrationError(
+                "evidence packet v3 does not preserve v2 proposition relations"
+            )
+
+
+def _compact_evidence_packet_v3(
+    packet_v2: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Keep v2 meaning while naming repeated row fields once per packet."""
+    catalogue_schema = _packet_v3_catalogue_schema(packet_v2)
+    semantic_columns = catalogue_schema["semantic_unit_columns"]
+    source_groups = [
+        _packet_v3_source_group(source_group, semantic_columns)
+        for source_group in packet_v2.get("source_groups", [])
+    ]
+
+    propositions: list[dict[str, Any]] = []
+    for proposition in packet_v2.get("propositions", []):
+        compact_proposition = {
+            key: value
+            for key, value in proposition.items()
+            if key != "evidence_relations"
+        }
+        compact_proposition["evidence_relations"] = {
+            relation: [
+                _packet_v3_relation_link_row(link)
+                for link in proposition["evidence_relations"][relation]
+            ]
+            for relation in sorted(RELATIONS)
+        }
+        propositions.append(compact_proposition)
+
+    packet = {
+        key: value
+        for key, value in packet_v2.items()
+        if key not in {"schema_version", "packet_sha256", "source_groups", "propositions"}
+    }
+    packet.update(
+        {
+            "schema_version": EVIDENCE_PACKET_VERSION,
+            "catalogue_schema": catalogue_schema,
+            "propositions": propositions,
+            "source_groups": source_groups,
+        }
+    )
+    _validate_evidence_packet_v3_preserves_v2(packet, packet_v2)
+    packet["packet_sha256"] = _sha256(packet)
+    return packet
+
+
+def project_evidence_packet_v2(
     view: Mapping[str, Any],
     bundle: Mapping[str, Any],
     batch_compilation: Mapping[str, Any],
@@ -7295,7 +7623,7 @@ def project_evidence_packet(
     axis_ids: Sequence[str] = (),
     proposition_ids: Sequence[str] = (),
 ) -> dict[str, Any]:
-    """Project the default source-grouped Phase A evidence packet."""
+    """Project the source-grouped v2 packet for matched comparison."""
     packet_v1 = project_evidence_packet_v1(
         view,
         bundle,
@@ -7305,6 +7633,27 @@ def project_evidence_packet(
         proposition_ids=proposition_ids,
     )
     return _compact_evidence_packet_v2(packet_v1, bundle, batch_compilation)
+
+
+def project_evidence_packet(
+    view: Mapping[str, Any],
+    bundle: Mapping[str, Any],
+    batch_compilation: Mapping[str, Any],
+    node_compilation: Mapping[str, Any],
+    *,
+    axis_ids: Sequence[str] = (),
+    proposition_ids: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Project the default columnar source-grouped Phase A evidence packet."""
+    packet_v2 = project_evidence_packet_v2(
+        view,
+        bundle,
+        batch_compilation,
+        node_compilation,
+        axis_ids=axis_ids,
+        proposition_ids=proposition_ids,
+    )
+    return _compact_evidence_packet_v3(packet_v2)
 
 
 def finalize_view(
@@ -7573,6 +7922,7 @@ __all__ = [
     "BUNDLE_VERSION_V5",
     "EVIDENCE_PACKET_VERSION",
     "EVIDENCE_PACKET_VERSION_V1",
+    "EVIDENCE_PACKET_VERSION_V2",
     "METHOD_TEXT",
     "METHOD_TEXT_V2",
     "METHOD_TEXT_V3",
@@ -7633,6 +7983,7 @@ __all__ = [
     "materialize_source_v3",
     "project_evidence_packet",
     "project_evidence_packet_v1",
+    "project_evidence_packet_v2",
     "prepare_reconciliation_stage",
     "prepare_relation_closure_stage",
     "prepare_row_verification",

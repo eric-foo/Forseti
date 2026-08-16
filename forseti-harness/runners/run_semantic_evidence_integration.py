@@ -28,6 +28,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     materialize_source_v3,
     project_evidence_packet,
     project_evidence_packet_v1,
+    project_evidence_packet_v2,
     prepare_targeted_benchmark_audit,
     prepare_reconciliation_stage,
     prepare_relation_closure_stage,
@@ -1381,17 +1382,19 @@ def project_evidence_packet_run(
     axis_ids: list[str],
     proposition_ids: list[str],
     packet_out: Path,
-    packet_version: str = "v2",
+    packet_version: str = "v3",
 ) -> dict[str, Any]:
     view = _load_object(view_path)
     bundle = _load_object(bundle_path)
     batch_compilation = _load_object(batch_compilation_path)
     node_compilation = _load_object(node_compilation_path)
-    if packet_version not in {"v1", "v2"}:
-        raise ValueError("packet_version must be v1 or v2")
-    projector = project_evidence_packet_v1
-    if packet_version == "v2":
-        projector = project_evidence_packet
+    if packet_version not in {"v1", "v2", "v3"}:
+        raise ValueError("packet_version must be v1, v2, or v3")
+    projector = {
+        "v1": project_evidence_packet_v1,
+        "v2": project_evidence_packet_v2,
+        "v3": project_evidence_packet,
+    }[packet_version]
     packet = projector(
         view,
         bundle,
@@ -1650,7 +1653,7 @@ def _parser() -> argparse.ArgumentParser:
     selection.add_argument("--proposition-id", action="append", default=[])
     evidence_packet.add_argument("--packet-out", type=Path, required=True)
     evidence_packet.add_argument(
-        "--packet-version", choices=("v1", "v2"), default="v2"
+        "--packet-version", choices=("v1", "v2", "v3"), default="v3"
     )
 
     calibration_prepare = sub.add_parser("prepare-calibration")

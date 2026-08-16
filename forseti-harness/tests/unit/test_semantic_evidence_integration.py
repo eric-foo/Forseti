@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 from judgment.semantic_evidence_integration import (
+    _validate_evidence_packet_v3_preserves_v2,
     BATCH_COMPILATION_VERSION_V2,
     BATCH_COMPILATION_VERSION_V3,
     BATCH_RESPONSE_VERSION,
@@ -21,6 +22,7 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
     EVIDENCE_PACKET_VERSION_V1,
+    EVIDENCE_PACKET_VERSION_V2,
     METHOD_TEXT_V5,
     METHOD_TEXT_V6,
     METHOD_TEXT_V7,
@@ -69,6 +71,7 @@ from judgment.semantic_evidence_integration import (
     materialize_source_v3,
     project_evidence_packet,
     project_evidence_packet_v1,
+    project_evidence_packet_v2,
     prepare_reconciliation_stage,
     prepare_relation_closure_stage,
     prepare_row_verification,
@@ -108,6 +111,7 @@ from runners.run_semantic_evidence_integration import (
     prepare_relation_closure_run,
     prepare_row_repair_run,
     prepare_prompt_execution_pack,
+    project_evidence_packet_run,
     prepare_semantic_calibration_run,
     prepare_row_verification_run,
     prepare_targeted_benchmark_audit_run,
@@ -1189,6 +1193,32 @@ def _rehash_batch_compilation(compilation: dict) -> dict:
     return compilation
 
 
+def _packet_v3_evidence_rows(packet: dict) -> list[dict]:
+    schema = packet["catalogue_schema"]
+    semantic_columns = schema["semantic_unit_columns"]
+    rows: list[dict] = []
+    for source_group in packet["source_groups"]:
+        evidence_columns = source_group["evidence_columns"]
+        engagement_columns = source_group["engagement_columns"]
+        for values in source_group["evidence_rows"]:
+            evidence = deepcopy(source_group["evidence_defaults"])
+            evidence.update(dict(zip(evidence_columns, values, strict=True)))
+            engagement = deepcopy(source_group["engagement_defaults"])
+            engagement.update(
+                dict(zip(engagement_columns, evidence["engagement"], strict=True))
+            )
+            evidence["engagement"] = engagement
+            evidence["semantic_units"] = [
+                {
+                    **schema["semantic_unit_defaults"],
+                    **dict(zip(semantic_columns, semantic, strict=True)),
+                }
+                for semantic in evidence["semantic_units"]
+            ]
+            rows.append(evidence)
+    return rows
+
+
 def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() -> None:
     bundle, compiled, terminal, view = _v3_complete_view()
     proposition_id = view["propositions"][0]["proposition_id"]
@@ -1218,11 +1248,7 @@ def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() ->
         "unresolved_axis_candidate_count": 0,
         "truncated": False,
     }
-    evidence_rows = [
-        evidence
-        for source_group in packet["source_groups"]
-        for evidence in source_group["evidence"]
-    ]
+    evidence_rows = _packet_v3_evidence_rows(packet)
     assert len({row["evidence_id"] for row in evidence_rows}) == 7
     assert sum(row["evidence_count"] for row in packet["source_groups"]) == 7
     assert all("text" not in row for row in evidence_rows)
@@ -1262,6 +1288,103 @@ def test_evidence_packet_v1_remains_explicitly_reproducible() -> None:
     assert "source_groups" not in packet
 
 
+def test_evidence_packet_v2_remains_explicitly_reproducible() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+
+    packet = project_evidence_packet_v2(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION_V2
+    assert all("evidence" in row for row in packet["source_groups"])
+
+
+def test_evidence_packet_runner_defaults_v3_and_preserves_explicit_v2(
+    tmp_path: Path,
+) -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+    inputs = {
+        "view_path": (tmp_path / "view.json", view),
+        "bundle_path": (tmp_path / "bundle.json", bundle),
+        "batch_compilation_path": (tmp_path / "compiled.json", compiled),
+        "node_compilation_path": (tmp_path / "terminal.json", terminal),
+    }
+    for path, value in inputs.values():
+        path.write_text(json.dumps(value), encoding="utf-8")
+    kwargs = {
+        key: path for key, (path, _) in inputs.items()
+    }
+    kwargs.update(
+        {
+            "axis_ids": [],
+            "proposition_ids": [proposition_id],
+        }
+    )
+
+    default_result = project_evidence_packet_run(
+        **kwargs, packet_out=tmp_path / "default.json"
+    )
+    v2_result = project_evidence_packet_run(
+        **kwargs, packet_out=tmp_path / "v2.json", packet_version="v2"
+    )
+
+    assert default_result["packet_schema_version"] == EVIDENCE_PACKET_VERSION
+    assert v2_result["packet_schema_version"] == EVIDENCE_PACKET_VERSION_V2
+
+
+def test_evidence_packet_v3_preservation_signal_rejects_wrong_cause_mutations() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+    baseline = project_evidence_packet_v2(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+    candidate = project_evidence_packet(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+    candidate.pop("packet_sha256")
+
+    relation_mutation = deepcopy(candidate)
+    relation_mutation["propositions"][0]["evidence_relations"]["support"].pop()
+    with pytest.raises(SemanticIntegrationError, match="proposition relations"):
+        _validate_evidence_packet_v3_preserves_v2(relation_mutation, baseline)
+
+    engagement_mutation = deepcopy(candidate)
+    engagement_index = candidate["source_groups"][0]["evidence_columns"].index(
+        "engagement"
+    )
+    engagement_columns = candidate["source_groups"][0]["engagement_columns"]
+    if "raw_value" in engagement_columns:
+        raw_value_index = engagement_columns.index("raw_value")
+        engagement_mutation["source_groups"][0]["evidence_rows"][0][
+            engagement_index
+        ][raw_value_index] = "removed"
+    else:
+        engagement_mutation["source_groups"][0]["engagement_defaults"][
+            "raw_value"
+        ] = "removed"
+    with pytest.raises(SemanticIntegrationError, match="evidence rows"):
+        _validate_evidence_packet_v3_preserves_v2(engagement_mutation, baseline)
+
+
+def test_evidence_packet_v3_is_byte_deterministic() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+
+    first = project_evidence_packet(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+    second = project_evidence_packet(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+
+    assert first["packet_sha256"] == second["packet_sha256"]
+    assert json.dumps(first, ensure_ascii=False, sort_keys=True) == json.dumps(
+        second, ensure_ascii=False, sort_keys=True
+    )
+
+
 def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
     repo_root = Path(__file__).resolve().parents[3]
     dogfood = (
@@ -1286,15 +1409,15 @@ def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
 
     assert packet["selection_coverage"]["selected_proposition_count"] == 17
     assert packet["selection_coverage"]["returned_evidence_item_count"] == 44
-    evidence_rows = [
-        evidence
-        for source_group in packet["source_groups"]
-        for evidence in source_group["evidence"]
-    ]
+    evidence_rows = _packet_v3_evidence_rows(packet)
     assert len({row["evidence_id"] for row in evidence_rows}) == 44
     assert len(packet["containers"]) == 30
     linked_evidence_ids = [
-        link["evidence_id"]
+        link[
+            packet["catalogue_schema"]["relation_link_columns"].index(
+                "evidence_id"
+            )
+        ]
         for proposition in packet["propositions"]
         for relation_links in proposition["evidence_relations"].values()
         for link in relation_links
@@ -6848,11 +6971,7 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
         compiled["compilation_sha256"]
     )
     assert packet["source_bindings"]["bundle_sha256"] == bundle["bundle_sha256"]
-    evidence_rows = [
-        evidence
-        for source_group in packet["source_groups"]
-        for evidence in source_group["evidence"]
-    ]
+    evidence_rows = _packet_v3_evidence_rows(packet)
     assert evidence_rows
     assert all("product_context" not in row for row in evidence_rows)
     assert all("parent_context" not in row for row in evidence_rows)

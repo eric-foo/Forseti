@@ -110,20 +110,22 @@ later recommendation about price, premiumization, positioning, product work,
 or campaign action.
 
 The normal `project-evidence-packet` command emits
-`phase_a_evidence_packet_v2`. It stores each evidence item once in a catalogue
-grouped by source family, source role, and native engagement kind. Raw
-engagement and its observation time stay on the evidence row; repeated
-engagement semantics stay on the source-group header. Proposition rows link to
-catalogue evidence and semantic-unit references under support, counter, or
-adjacent relations. Full source bodies remain available from the packet's
-hash-bound bundle locator but are not copied into the initial packet. Operators
-do not select examples or supply a top-k cap. The runner's explicit legacy-v1
-option exists only to reproduce historical packet bytes.
+`phase_a_evidence_packet_v3`. It keeps v2's one-copy, source-grouped evidence
+catalogue, but declares repeated evidence, engagement, and semantic-unit field
+names once as named columns. Values shared by every row in a packet or source
+group appear once as named defaults at that scope; all remaining row values map
+positionally to explicit human-readable column names. Proposition rows still
+link literal evidence and semantic-unit references under support, counter, or
+adjacent relations. Raw engagement, observation time, source context, actor and
+independence, conditions, behavior, uncertainty, and full-body bundle
+resolution remain available. Operators do not select examples, supply a top-k
+cap, perform a new lookup, or request v3 through an extra flag. Explicit v2 is
+the matched comparison route; v1 is historical reproduction.
 
 ### Adopted token-cost baseline
 
-As of 2026-08-16, `phase_a_evidence_packet_v2` is the provisional Phase A
-token-cost baseline. A matched model experiment compared v1 and v2 on three
+On 2026-08-16, `phase_a_evidence_packet_v2` was adopted as the provisional
+Phase A token-cost baseline. A matched model experiment compared v1 and v2 on three
 frozen Summer Fridays propositions with 43, 20, and 9 evidence items. Each arm
 used the same prompt and output schema for three repetitions, with arm order
 alternated: 18 `gpt-5.6-sol` low-reasoning turns in total. V2 used 121,008
@@ -146,6 +148,44 @@ This baseline must be reversed or revised if representative future cases lose
 required evidence or resolvability, fail the structural citation floor, or no
 longer save input tokens against v1. The legacy-v1 route is the comparison and
 reproduction control, not a second normal operating mode.
+
+#### Adopted v3 successor
+
+`phase_a_evidence_packet_v3` supersedes v2 as the normal token-cost baseline.
+The pre-bound adoption threshold was lower input tokens in every frozen case
+and at least 10% aggregate reduction, because a smaller gain would not justify
+a new schema generation and consumer surface. Across three alternating matched
+repetitions of the same three Summer Fridays cases, using the same prompt,
+output schema, `gpt-5.6-sol`, and low reasoning, v2 used 121,002, 85,173, and
+72,341 input tokens; v3 used 99,225, 72,461, and 64,673. V3 reduced tokens in
+every case by 17.997%, 14.925%, and 10.600%, and by 15.136% in aggregate
+(278,516 to 236,359).
+
+The saving is lossless transport normalization. The projector first builds v2,
+then hoists only exactly repeated named values and serializes the remaining
+values under explicit columns. A fail-closed preservation boundary rejects any
+changed top-level payload, source-group evidence row, or proposition relation
+before v3 can be returned or hashed. Focused tests deliberately removed one
+relation and changed one engagement value; both failed at that boundary.
+Identical input produced identical bytes and packet hashes.
+
+All 18 model responses were structurally valid, used the correct proposition,
+populated conditions, behavior, engagement, and uncertainty, and cited only
+literal evidence or semantic-unit refs present in the supplied packet. The v2
+and v3 packets preserved exact proposition IDs, admitted evidence IDs, and
+semantic relation refs. Independent semantic adjudication was not run, so this
+is a structural preservation and model-usability floor, not semantic
+equivalence. Latency was non-gating; observed aggregate wall time was 3.013%
+lower and cannot rescue or veto the token decision. Storage cost was not used.
+
+The matched receipt is
+`C:\tmp\forseti-phase-a-columnar-v3-success-test-20260816-v0\model_experiment_result_v1.json`
+(raw SHA-256
+`a1b0126f4eb950c30caf4bdb233723c0fcf1f0113b66679dcc03785916780697`).
+Reverse to explicit v2 or revise v3 if a representative packet loses required
+meaning or resolvability, produces an absent/invented cited ref, or fails to
+save input tokens; a future independent semantic adjudication that finds
+material output degradation also triggers reversal.
 
 ## Evidence-family boundary
 

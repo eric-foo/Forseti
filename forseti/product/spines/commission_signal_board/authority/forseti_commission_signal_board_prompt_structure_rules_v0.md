@@ -894,20 +894,23 @@ is evidence structuring only, not prevalence, safety, market conclusion,
 causation, or recommendation.
 
 After the final view exists, Phase A may project a
-`phase_a_evidence_packet_v2` for an exact proposition set or axis set. If the
+`phase_a_evidence_packet_v3` for an exact proposition set or axis set. If the
 request begins in natural language, an agent selects the relevant IDs by
 meaning from that view; the deterministic projector then returns the complete
 linked union rather than a keyword match or a convenient top-k sample. Shared
 records and selected semantic units appear once in a source-grouped catalogue,
-while proposition rows reference them under every relation. Native engagement
-kind and source-specific context live on the group; raw value and observation
-time stay on the evidence row. Support, counter, adjacent, unresolved, and
-unmerged axis candidates remain distinguishable. Linked semantic units retain
-posture, uncertainty, and polarity. Full source bodies remain resolvable from
-the bound bundle but are not duplicated inline. The packet also exposes the
-full unmerged denominator and any no-axis unmerged meanings; per-relation
-counts are explicit non-disjoint unions. The runner defaults to v2 without an
-operator prompt; its explicit v1 option is historical reproduction only.
+while proposition rows reference literal IDs under every relation. Repeated
+row meanings are declared once as named columns, and exactly shared values are
+declared once as named defaults at packet or source-group scope. Native
+engagement kind and source-specific context live on the group; raw value and
+observation time remain mapped to each evidence row. Support, counter,
+adjacent, unresolved, and unmerged axis candidates remain distinguishable.
+Linked semantic units retain posture, uncertainty, and polarity. Full source
+bodies remain resolvable from the bound bundle but are not duplicated inline.
+The packet also exposes the full unmerged denominator and any no-axis unmerged
+meanings; per-relation counts are explicit non-disjoint unions. The runner
+defaults to v3 without an operator prompt; explicit v2 is the matched
+comparison route and v1 is historical reproduction.
 This is a read-only tail-end Phase A retrieval surface: it adds no acquisition
 job or seal field, creates no second evidence authority, and cannot issue the
 conclusion or recommendation that belongs to Deliver.
