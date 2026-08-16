@@ -187,6 +187,21 @@ meaning or resolvability, produces an absent/invented cited ref, or fails to
 save input tokens; a future independent semantic adjudication that finds
 material output degradation also triggers reversal.
 
+The column-interpretation residual was then tested on three withheld layouts:
+an entirely unfamiliar seven-row fixture with unavailable engagement throughout,
+a Birthday Cake proposition where one evidence item carried two relations, and
+a three-source-group Pink Sugar conflict with heterogeneous engagement values.
+Across three alternating repetitions per v2/v3 arm, both arms reconstructed all
+30 requested rows and all 600 labeled fields exactly. V3 produced zero wrong-
+column, wrong-row, formatting, missing/invented-reference, relation-integrity,
+or synthesis-structure errors and used 180,671 input tokens versus v2's 187,885
+(3.840% lower). This closes the observed model-readability concern and makes v3
+the accepted token baseline for this lane. It remains same-vendor evidence, not
+independent semantic adjudication. The receipt is
+`C:\tmp\forseti-phase-a-columnar-v3-holdout-20260816-v0\holdout_experiment_result_v1.json`
+(raw SHA-256
+`d50aa9691d1ef51d5d92b977306e4648664339d3828b2d740bf5f176c26ba59b`).
+
 ## Evidence-family boundary
 
 - Reddit/community and retailer reviews are customer evidence and may be
