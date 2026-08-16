@@ -65,6 +65,12 @@ from judgment.phase_a_semantic_run import (  # noqa: E402
     validate_one_batch_response,
     validate_one_reconciliation_response,
 )
+from judgment.phase_a_evidence_consumer import (  # noqa: E402
+    EvidenceConsumerError,
+    finalize_decision_batch,
+    load_prepared_cases,
+    prepare_decision_batch,
+)
 from harness_utils import hash_file  # noqa: E402
 
 
@@ -1419,6 +1425,79 @@ def project_evidence_packet_run(
     }
 
 
+def prepare_evidence_consumer_batch_run(
+    *,
+    spec_path: Path,
+    prompt_out: Path,
+    response_schema_out: Path,
+    manifest_out: Path,
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    if spec.get("schema_version") != "phase_a_evidence_consumer_batch_spec_v1":
+        raise ValueError("unsupported evidence consumer batch spec")
+    rows = spec.get("cases")
+    if not isinstance(rows, list):
+        raise ValueError("evidence consumer batch cases must be a list")
+    cases = []
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError("evidence consumer batch case must be an object")
+        packet_path = (spec_path.parent / Path(row["packet_path"])).resolve(strict=True)
+        selectors_path = (spec_path.parent / Path(row["selectors_path"])).resolve(strict=True)
+        cases.append(
+            {
+                "case_id": row.get("case_id"),
+                "packet_path": packet_path,
+                "selectors_path": selectors_path,
+                "packet": _load_object(packet_path),
+                "selectors": _load_object(selectors_path),
+            }
+        )
+    prompt, response_schema, manifest = prepare_decision_batch(cases)
+    for output in (prompt_out, response_schema_out, manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(prompt_out, prompt.encode("utf-8"))
+    _write_json(response_schema_out, response_schema)
+    _write_json(manifest_out, manifest)
+    return {
+        "status": "PHASE_A_EVIDENCE_CONSUMER_BATCH_READY",
+        "case_count": len(cases),
+        "case_order": manifest["case_order"],
+        "manifest_sha256": manifest["manifest_sha256"],
+        "prompt_out": str(prompt_out),
+        "response_schema_out": str(response_schema_out),
+        "manifest_out": str(manifest_out),
+        "model_api_calls": 0,
+    }
+
+
+def finalize_evidence_consumer_batch_run(
+    *,
+    manifest_path: Path,
+    response_path: Path,
+    artifact_dir: Path,
+) -> dict[str, Any]:
+    manifest = _load_object(manifest_path)
+    cases = load_prepared_cases(manifest)
+    response = _load_object(response_path)
+    artifacts = finalize_decision_batch(cases, response)
+    output_paths = [artifact_dir / f"{artifact['case_id']}.json" for artifact in artifacts]
+    existing = [str(path) for path in output_paths if path.exists()]
+    if existing:
+        raise ValueError(f"refusing to overwrite existing output: {existing}")
+    for path, artifact in zip(output_paths, artifacts, strict=True):
+        _write_json(path, artifact)
+    return {
+        "status": "PHASE_A_EVIDENCE_CONSUMER_BATCH_COMPLETE",
+        "case_count": len(artifacts),
+        "case_order": [artifact["case_id"] for artifact in artifacts],
+        "artifact_paths": [str(path) for path in output_paths],
+        "artifact_sha256": [hash_file(path) for path in output_paths],
+        "model_api_calls": 0,
+    }
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -1655,6 +1734,17 @@ def _parser() -> argparse.ArgumentParser:
     evidence_packet.add_argument(
         "--packet-version", choices=("v1", "v2", "v3"), default="v3"
     )
+
+    consumer_prepare = sub.add_parser("prepare-evidence-consumer-batch")
+    consumer_prepare.add_argument("--spec", type=Path, required=True)
+    consumer_prepare.add_argument("--prompt-out", type=Path, required=True)
+    consumer_prepare.add_argument("--response-schema-out", type=Path, required=True)
+    consumer_prepare.add_argument("--manifest-out", type=Path, required=True)
+
+    consumer_finalize = sub.add_parser("finalize-evidence-consumer-batch")
+    consumer_finalize.add_argument("--manifest", type=Path, required=True)
+    consumer_finalize.add_argument("--response", type=Path, required=True)
+    consumer_finalize.add_argument("--artifact-dir", type=Path, required=True)
 
     calibration_prepare = sub.add_parser("prepare-calibration")
     calibration_prepare.add_argument("--source", type=Path, required=True)
@@ -1935,6 +2025,19 @@ def main(argv: list[str] | None = None) -> int:
                 packet_out=args.packet_out,
                 packet_version=args.packet_version,
             )
+        elif args.command == "prepare-evidence-consumer-batch":
+            result = prepare_evidence_consumer_batch_run(
+                spec_path=args.spec,
+                prompt_out=args.prompt_out,
+                response_schema_out=args.response_schema_out,
+                manifest_out=args.manifest_out,
+            )
+        elif args.command == "finalize-evidence-consumer-batch":
+            result = finalize_evidence_consumer_batch_run(
+                manifest_path=args.manifest,
+                response_path=args.response,
+                artifact_dir=args.artifact_dir,
+            )
         elif args.command == "prepare-calibration":
             result = prepare_semantic_calibration_run(
                 source_path=args.source,
@@ -1959,6 +2062,7 @@ def main(argv: list[str] | None = None) -> int:
         json.JSONDecodeError,
         SemanticIntegrationError,
         SemanticCalibrationError,
+        EvidenceConsumerError,
     ) as exc:
         print(json.dumps({"status": "error", "error": str(exc)}, indent=2, sort_keys=True))
         return 2

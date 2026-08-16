@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v34
-effective_date: 2026-08-12
+version: v37
+effective_date: 2026-08-17
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v34
+# Semantic Evidence Integration Contract v37
 
 ## Purpose
 
@@ -793,6 +793,27 @@ through the explicit packet-version route as the matched comparison baseline;
 v1 remains historical reproduction. The normal runner needs no new operator
 step, lookup, or retrieval round.
 
+Contract v37 changes only the downstream evidence-consumer protocol. The
+packet remains `phase_a_evidence_packet_v3`. A no-provider prepare operation
+may place proposition cases in one ordered decision batch only when their
+packets bind the same corpus and bundle and their proposition relations share
+evidence. Unrelated cases remain separate calls. The model returns only its
+synthesis judgment and literal support/counter refs; it does not recopy
+engagement, provenance, actor identity, dates, excerpts, relation inventories,
+or resolution facts. A hash-bound manifest preserves exact case and
+proposition order and the original packet/selector identities.
+
+The no-provider finalize operation rejects missing, duplicate, shuffled, or
+foreign case/proposition results and refs before deterministically reattaching
+the source-owned rows and inventories. It reconstructs v3 named defaults and
+positional columns, including source-native engagement and
+`public_identity_key`, and fails on a missing lookup, wrong row attachment, or
+malformed engagement posture. Preparation and finalization make zero model API
+calls; an external fresh agent still consumes the emitted prompt and response
+schema. This is call-overhead amortization plus deterministic rehydration, not
+packet compression, evidence selection, a caching claim, or a new judgment
+authority.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1191,6 +1212,12 @@ new frontier.
 
 ## Changelog
 
+- `v37` / 2026-08-17 — adopted ordered batching for actually related Phase A
+  proposition cases plus the decision-only response and deterministic v3
+  rehydration seam. The measured six-family workload fell from 18 to 15 calls
+  across three repetitions and from 436,309 to 347,228 logical tokens
+  (20.417%) while the finalist reproduced 18/18 complete artifacts. Kept v3
+  frozen and added fail-closed case/proposition/ref/row/engagement boundaries.
 - `v36` / 2026-08-16 — made lossless named-default/column
   `phase_a_evidence_packet_v3` the normal Phase A evidence transport. Kept
   literal evidence and semantic-unit refs, source grouping, every relation and

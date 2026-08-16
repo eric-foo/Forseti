@@ -202,6 +202,57 @@ independent semantic adjudication. The receipt is
 (raw SHA-256
 `d50aa9691d1ef51d5d92b977306e4648664339d3828b2d740bf5f176c26ba59b`).
 
+#### Adopted decision-only related batching
+
+Keep `phase_a_evidence_packet_v3` as the packet baseline. For downstream
+consumption, run `prepare-evidence-consumer-batch` on the smallest group of
+actually related cases: every multi-case batch must bind the same corpus and
+bundle and share proposition-linked evidence. Do not combine unrelated cases
+to manufacture savings. Non-related cases use singleton preparations. Send the
+emitted prompt and response schema to the external fresh-agent call, then pass
+the response and hash-bound manifest to `finalize-evidence-consumer-batch`.
+The repository runner still makes zero model API calls.
+
+The model response owns only the synthesis judgment and literal support and
+counter refs. Finalization reattaches exact source facts from v3 and rejects
+case/proposition cardinality or order changes, foreign refs, malformed or
+missing engagement, failed lookups, and wrong row/column attachments. Packet
+content, unresolved/unmerged material, adjacent relations, provenance,
+identity, dates, conditions, uncertainty, causal ceiling, and bundle-backed
+full-body resolution remain source-owned rather than model-repeated.
+
+The pre-bound six-family experiment used three alternating repetitions per arm
+with `gpt-5.6-sol` at low reasoning. The current v3 full-response baseline was
+394,189 input plus 42,120 output = 436,309 logical tokens (28,160 cached input;
+2,504 reasoning-output subset). Unbatched decision-only control was 382,056 +
+16,464 = 398,520 (95,488 cached; 901 reasoning subset). The smallest finalist
+batched only the overlapping broad-adverse and burning-conflict cases, leaving
+four singleton cases: 332,493 + 14,735 = 347,228 (33,024 cached; 764 reasoning
+subset). Calls fell from 18 to 15. The finalist saved 20.417% versus v3 and
+12.871% versus unbatched decision-only, without subtracting cached tokens or
+double-counting reasoning.
+
+Finalist and unbatched control artifacts were 18/18 exact. The finalist had
+zero missing/invented refs, attachment or semantic-relation failures,
+cross-proposition contamination, or `public_identity_key` errors; deterministic
+rehydration was idempotent. Shuffled order, duplicate proposition, missing
+result, foreign in-batch ref, cross-batch ref, and another proposition's
+judgment each failed at the intended deterministic boundary. Baseline remained
+15/18 exact, so its copy errors were not credited as candidate savings.
+
+Accepted residuals: provider prefix caching varied and is not a logical-token
+claim; latency and storage were non-gating; the model check used one vendor and
+structural artifact validation rather than independent semantic adjudication;
+and only the measured smallest shared-context pair earns multi-case adoption.
+Reverse to unbatched decision-only responses if a representative related batch
+fails exact reconstruction, contamination/failure-boundary tests, the 1%
+per-family regression tolerance, or the 10% matched aggregate logical-token
+gate. Reverse the whole consumer successor to the v3 full-response baseline if
+deterministic rehydration cannot preserve the complete consumer artifact.
+
+The matched experiment result is
+`C:\tmp\forseti-phase-a-related-batching-20260817-v0\experiment_result_v1.json`.
+
 ## Evidence-family boundary
 
 - Reddit/community and retailer reviews are customer evidence and may be
