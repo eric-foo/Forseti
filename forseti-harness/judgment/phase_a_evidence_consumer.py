@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import json
 from pathlib import Path
 from typing import Any, Mapping, Sequence
+
+from harness_utils import sha256_text
 
 
 DECISION_BATCH_MANIFEST_VERSION = "phase_a_evidence_decision_batch_manifest_v1"
@@ -62,12 +63,14 @@ def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
-def _sha256(value: Any) -> str:
-    return hashlib.sha256(_compact(value).encode("utf-8")).hexdigest()
+def _canonical_json_sha256(value: Any) -> str:
+    return sha256_text(_compact(value))
 
 
 def _canonical_packet_hash(packet: Mapping[str, Any]) -> str:
-    return _sha256({key: value for key, value in packet.items() if key != "packet_sha256"})
+    return _canonical_json_sha256(
+        {key: value for key, value in packet.items() if key != "packet_sha256"}
+    )
 
 
 def _verify_packet(packet: Mapping[str, Any]) -> None:
@@ -412,16 +415,16 @@ def prepare_decision_batch(cases: Sequence[Mapping[str, Any]]) -> tuple[str, dic
                 "packet_path": str(case["packet_path"]),
                 "packet_sha256": case["packet"]["packet_sha256"],
                 "selectors_path": str(case["selectors_path"]),
-                "selectors_sha256": _sha256(case["selectors"]),
+                "selectors_sha256": _canonical_json_sha256(case["selectors"]),
                 "proposition_id": case["selectors"]["proposition_id"],
             }
             for case in cases
         ],
-        "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
-        "response_schema_sha256": _sha256(schema),
+        "prompt_sha256": sha256_text(prompt),
+        "response_schema_sha256": _canonical_json_sha256(schema),
         "model_api_calls": 0,
     }
-    manifest["manifest_sha256"] = _sha256(manifest)
+    manifest["manifest_sha256"] = _canonical_json_sha256(manifest)
     return prompt, schema, manifest
 
 
@@ -554,7 +557,10 @@ def finalize_decision_batch(
 def load_prepared_cases(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
     stored_hash = manifest.get("manifest_sha256")
     payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
-    if manifest.get("schema_version") != DECISION_BATCH_MANIFEST_VERSION or stored_hash != _sha256(payload):
+    if (
+        manifest.get("schema_version") != DECISION_BATCH_MANIFEST_VERSION
+        or stored_hash != _canonical_json_sha256(payload)
+    ):
         raise EvidenceConsumerError("manifest_verification", "manifest hash or version mismatch")
     cases = []
     for row in manifest.get("cases", []):
@@ -562,7 +568,10 @@ def load_prepared_cases(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
         selectors_path = Path(row["selectors_path"])
         packet = json.loads(packet_path.read_text(encoding="utf-8-sig"))
         selectors = json.loads(selectors_path.read_text(encoding="utf-8-sig"))
-        if packet.get("packet_sha256") != row.get("packet_sha256") or _sha256(selectors) != row.get("selectors_sha256"):
+        if (
+            packet.get("packet_sha256") != row.get("packet_sha256")
+            or _canonical_json_sha256(selectors) != row.get("selectors_sha256")
+        ):
             raise EvidenceConsumerError("manifest_verification", "prepared input changed")
         cases.append(
             {
