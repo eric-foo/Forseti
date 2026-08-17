@@ -109,6 +109,150 @@ including counterevidence and unresolved adjacent material. Deliver owns any
 later recommendation about price, premiumization, positioning, product work,
 or campaign action.
 
+The normal `project-evidence-packet` command emits
+`phase_a_evidence_packet_v3`. It keeps v2's one-copy, source-grouped evidence
+catalogue, but declares repeated evidence, engagement, and semantic-unit field
+names once as named columns. Values shared by every row in a packet or source
+group appear once as named defaults at that scope; all remaining row values map
+positionally to explicit human-readable column names. Proposition rows still
+link literal evidence and semantic-unit references under support, counter, or
+adjacent relations. Raw engagement, observation time, source context, actor and
+independence, conditions, behavior, uncertainty, and full-body bundle
+resolution remain available. Operators do not select examples, supply a top-k
+cap, perform a new lookup, or request v3 through an extra flag. Explicit v2 is
+the matched comparison route; v1 is historical reproduction.
+
+### Adopted token-cost baseline
+
+On 2026-08-16, `phase_a_evidence_packet_v2` was adopted as the provisional
+Phase A token-cost baseline. A matched model experiment compared v1 and v2 on three
+frozen Summer Fridays propositions with 43, 20, and 9 evidence items. Each arm
+used the same prompt and output schema for three repetitions, with arm order
+alternated: 18 `gpt-5.6-sol` low-reasoning turns in total. V2 used 121,008
+versus 183,786 input tokens, 85,179 versus 114,462, and 69,995 versus 88,508.
+That is a reduction in every case (34.158%, 25.583%, and 20.917%) and 28.590%
+across the matched set.
+
+The saving is transport normalization, not evidence selection. V1 repeated
+complete evidence content and proposition-local representations; v2 keeps one
+evidence row and one selected semantic-unit representation, moves repeated
+source semantics to a group header, and lets propositions reference those
+units. The experiment returned 18 structurally valid responses with the
+correct proposition IDs, no missing or invented cited references, and the
+required condition, behavior, engagement, and uncertainty fields. Independent
+semantic adjudication was not run, so the experiment establishes a structural
+quality floor rather than semantic equivalence. Latency is explicitly
+non-gating for this baseline; no storage-cost claim is needed.
+
+This baseline must be reversed or revised if representative future cases lose
+required evidence or resolvability, fail the structural citation floor, or no
+longer save input tokens against v1. The legacy-v1 route is the comparison and
+reproduction control, not a second normal operating mode.
+
+#### Adopted v3 successor
+
+`phase_a_evidence_packet_v3` supersedes v2 as the normal token-cost baseline.
+The pre-bound adoption threshold was lower input tokens in every frozen case
+and at least 10% aggregate reduction, because a smaller gain would not justify
+a new schema generation and consumer surface. Across three alternating matched
+repetitions of the same three Summer Fridays cases, using the same prompt,
+output schema, `gpt-5.6-sol`, and low reasoning, v2 used 121,002, 85,173, and
+72,341 input tokens; v3 used 99,225, 72,461, and 64,673. V3 reduced tokens in
+every case by 17.997%, 14.925%, and 10.600%, and by 15.136% in aggregate
+(278,516 to 236,359).
+
+The saving is lossless transport normalization. The projector first builds v2,
+then hoists only exactly repeated named values and serializes the remaining
+values under explicit columns. A fail-closed preservation boundary rejects any
+changed top-level payload, source-group evidence row, or proposition relation
+before v3 can be returned or hashed. Focused tests deliberately removed one
+relation and changed one engagement value; both failed at that boundary.
+Identical input produced identical bytes and packet hashes.
+
+All 18 model responses were structurally valid, used the correct proposition,
+populated conditions, behavior, engagement, and uncertainty, and cited only
+literal evidence or semantic-unit refs present in the supplied packet. The v2
+and v3 packets preserved exact proposition IDs, admitted evidence IDs, and
+semantic relation refs. Independent semantic adjudication was not run, so this
+is a structural preservation and model-usability floor, not semantic
+equivalence. Latency was non-gating; observed aggregate wall time was 3.013%
+lower and cannot rescue or veto the token decision. Storage cost was not used.
+
+The matched receipt is
+`C:\tmp\forseti-phase-a-columnar-v3-success-test-20260816-v0\model_experiment_result_v1.json`
+(raw SHA-256
+`a1b0126f4eb950c30caf4bdb233723c0fcf1f0113b66679dcc03785916780697`).
+Reverse to explicit v2 or revise v3 if a representative packet loses required
+meaning or resolvability, produces an absent/invented cited ref, or fails to
+save input tokens; a future independent semantic adjudication that finds
+material output degradation also triggers reversal.
+
+The column-interpretation residual was then tested on three withheld layouts:
+an entirely unfamiliar seven-row fixture with unavailable engagement throughout,
+a Birthday Cake proposition where one evidence item carried two relations, and
+a three-source-group Pink Sugar conflict with heterogeneous engagement values.
+Across three alternating repetitions per v2/v3 arm, both arms reconstructed all
+30 requested rows and all 600 labeled fields exactly. V3 produced zero wrong-
+column, wrong-row, formatting, missing/invented-reference, relation-integrity,
+or synthesis-structure errors and used 180,671 input tokens versus v2's 187,885
+(3.840% lower). This closes the observed model-readability concern and makes v3
+the accepted token baseline for this lane. It remains same-vendor evidence, not
+independent semantic adjudication. The receipt is
+`C:\tmp\forseti-phase-a-columnar-v3-holdout-20260816-v0\holdout_experiment_result_v1.json`
+(raw SHA-256
+`d50aa9691d1ef51d5d92b977306e4648664339d3828b2d740bf5f176c26ba59b`).
+
+#### Adopted decision-only related batching
+
+Keep `phase_a_evidence_packet_v3` as the packet baseline. For downstream
+consumption, run `prepare-evidence-consumer-batch` on the smallest group of
+actually related cases: every multi-case batch must bind the same corpus and
+bundle and share proposition-linked evidence. Do not combine unrelated cases
+to manufacture savings. Non-related cases use singleton preparations. Send the
+emitted prompt and response schema to the external fresh-agent call, then pass
+the response and hash-bound manifest to `finalize-evidence-consumer-batch`.
+The repository runner still makes zero model API calls.
+
+The model response owns only the synthesis judgment and literal support and
+counter refs. Finalization reattaches exact source facts from v3 and rejects
+case/proposition cardinality or order changes, foreign refs, malformed or
+missing engagement, failed lookups, and wrong row/column attachments. Packet
+content, unresolved/unmerged material, adjacent relations, provenance,
+identity, dates, conditions, uncertainty, causal ceiling, and bundle-backed
+full-body resolution remain source-owned rather than model-repeated.
+
+The pre-bound six-family experiment used three alternating repetitions per arm
+with `gpt-5.6-sol` at low reasoning. The current v3 full-response baseline was
+394,189 input plus 42,120 output = 436,309 logical tokens (28,160 cached input;
+2,504 reasoning-output subset). Unbatched decision-only control was 382,056 +
+16,464 = 398,520 (95,488 cached; 901 reasoning subset). The smallest finalist
+batched only the overlapping broad-adverse and burning-conflict cases, leaving
+four singleton cases: 332,493 + 14,735 = 347,228 (33,024 cached; 764 reasoning
+subset). Calls fell from 18 to 15. The finalist saved 20.417% versus v3 and
+12.871% versus unbatched decision-only, without subtracting cached tokens or
+double-counting reasoning.
+
+Finalist and unbatched control artifacts were 18/18 exact. The finalist had
+zero missing/invented refs, attachment or semantic-relation failures,
+cross-proposition contamination, or `public_identity_key` errors; deterministic
+rehydration was idempotent. Shuffled order, duplicate proposition, missing
+result, foreign in-batch ref, cross-batch ref, and another proposition's
+judgment each failed at the intended deterministic boundary. Baseline remained
+15/18 exact, so its copy errors were not credited as candidate savings.
+
+Accepted residuals: provider prefix caching varied and is not a logical-token
+claim; latency and storage were non-gating; the model check used one vendor and
+structural artifact validation rather than independent semantic adjudication;
+and only the measured smallest shared-context pair earns multi-case adoption.
+Reverse to unbatched decision-only responses if a representative related batch
+fails exact reconstruction, contamination/failure-boundary tests, the 1%
+per-family regression tolerance, or the 10% matched aggregate logical-token
+gate. Reverse the whole consumer successor to the v3 full-response baseline if
+deterministic rehydration cannot preserve the complete consumer artifact.
+
+The matched experiment result is
+`C:\tmp\forseti-phase-a-related-batching-20260817-v0\experiment_result_v1.json`.
+
 ## Evidence-family boundary
 
 - Reddit/community and retailer reviews are customer evidence and may be
@@ -879,5 +1023,47 @@ When closure exposes a bad source-row decomposition or mixed logical polarity,
 complete-row verifier. `submit-row-repair` preserves every other active row,
 writes explicit repair lineage, and changes the verified compilation hash.
 Every prior reconciliation and view then fails stale-lineage validation and
-must be regenerated. The route does not permit direct edits to node
-compilations or finalized views.
+must be regenerated. When a completed old policy-v2 terminal compilation is
+available, run `migrate-repaired-terminal` before commissioning a full replay.
+That no-provider operation is admissible only when it can prove complete
+old/new leaf equality for every reused node, preserve exact unmerged membership,
+and deterministically rederive every changed dependency under the semantic
+contract's narrow polarity-only rule. It writes a new terminal compilation and
+separate hash-bound manifest; it never edits or rebinds an old response. A
+statement, scope, condition, posture, membership, relation, or lineage change
+outside that proof rejects locally and returns the operator to fresh policy-v2
+reconciliation. Run `finalize-v3` and evidence-packet projection only against
+the repaired verified compilation plus the new migrated terminal compilation.
+The route does not permit direct edits to node compilations or finalized views.
+
+The owner-authorized Summer Fridays repair successor at
+`C:\tmp\forseti-summer-fridays-polarity-repair-replay-20260817-v0\incremental-terminal-migration-v9`
+exercised that exact route with zero provider calls. Complete-row repair changed
+five semantic units: three proposition-linked overhyped rows changed polarity,
+while two additional meanings from the same repaired evidence rows changed but
+retained their exact unmerged membership. Those two memberships and their prior
+reasons were preserved rather than freshly adjudicated against the repaired
+meanings; a consumer needing that stronger claim must use fresh reconciliation.
+The migration reused 106 of 107 old terminal nodes, invalidated and rederived
+one, and coalesced two compatible
+exact-identity groups into 105 unique terminal nodes. It preserved 320 terminal
+leaf relations, 7,700 unmerged units, 8,020 total semantic units, 96 unresolved
+evidence rows, and all 60,901 captured/accounted items. The full packet also
+preserved the selected legacy source-native engagement observations instead of
+converting them to unavailable: 3,215 Reddit rows retained their literal score
+state and 132 retailer rows retained their literal positive-helpful count,
+with no inferred values. Stored hashes are
+`3682244e87a8b305f882794575b0fa77f55ef77220c0545b8058eb899388be15`
+for the successor node compilation,
+`61dcbfc4b2426e131b56392c83d10a9096f96ef209c791bcf5552554f2d2f37a`
+for its migration manifest,
+`865dd68cd3c56e13e1369a4c8ef798ac4d3ae6ff36ed4fc52440ec0409f87cdb`
+for the finalized 105-proposition view, and
+`c9d8b5e5d1b199689f9fc0a35c6dc4f19de0a48e4e9815f5ec03ff8ddc62fe34`
+for the full-view `phase_a_evidence_packet_v3`. A second clean output directory
+at `incremental-terminal-migration-v10` reproduced all four artifacts
+byte-for-byte. The earlier v7/v8 runs remain historical evidence but are
+superseded: independent review found that their single rederived node replaced
+its prior-level `child_relations` with flattened leaf refs. The finalized view
+was unaffected, but the node-lineage record and packet source binding were not
+lossless and must not be reused.

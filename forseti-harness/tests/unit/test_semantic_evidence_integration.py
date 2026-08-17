@@ -9,6 +9,10 @@ from pathlib import Path
 import pytest
 
 from judgment.semantic_evidence_integration import (
+    _packet_v2_engagement_observation,
+    _packet_v3_group_layout,
+    _validate_evidence_packet_v3_preserves_v2,
+    _terminal_repair_coalesce_group,
     BATCH_COMPILATION_VERSION_V2,
     BATCH_COMPILATION_VERSION_V3,
     BATCH_RESPONSE_VERSION,
@@ -20,6 +24,8 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V4,
     BUNDLE_VERSION_V5,
     EVIDENCE_PACKET_VERSION,
+    EVIDENCE_PACKET_VERSION_V1,
+    EVIDENCE_PACKET_VERSION_V2,
     METHOD_TEXT_V5,
     METHOD_TEXT_V6,
     METHOD_TEXT_V7,
@@ -47,6 +53,8 @@ from judgment.semantic_evidence_integration import (
     ROW_VERIFICATION_METHOD_VERSION_V6,
     ROW_VERIFICATION_METHOD_VERSION_V7,
     ROW_VERIFICATION_RESPONSE_VERSION,
+    TARGETED_AUDIT_RESPONSE_VERSION,
+    TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION,
     RECONCILIATION_RESPONSE_VERSION,
     RECONCILIATION_RESPONSE_VERSION_V2,
     SOURCE_VERSION_V2,
@@ -65,16 +73,21 @@ from judgment.semantic_evidence_integration import (
     finalize_relation_closed_view,
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
+    migrate_repaired_terminal_compilation,
     project_evidence_packet,
+    project_evidence_packet_v1,
+    project_evidence_packet_v2,
     prepare_reconciliation_stage,
     prepare_relation_closure_stage,
     prepare_row_verification,
     prepare_row_repair,
+    prepare_targeted_benchmark_audit,
     reconstruct_prompt_execution_payload,
     validate_batch_responses,
     validate_row_verified_compilation,
     validate_reconciliation_stage,
     validate_relation_closure_stage,
+    validate_targeted_benchmark_audit,
     verify_bundle_context,
 )
 from judgment.semantic_calibration import (
@@ -99,12 +112,15 @@ from judgment.semantic_calibration import (
 from runners.run_semantic_evidence_integration import (
     _parser as _semantic_integration_parser,
     evaluate_semantic_calibration_run,
+    migrate_repaired_terminal_run,
     prepare_batches,
     prepare_relation_closure_run,
     prepare_row_repair_run,
     prepare_prompt_execution_pack,
+    project_evidence_packet_run,
     prepare_semantic_calibration_run,
     prepare_row_verification_run,
+    prepare_targeted_benchmark_audit_run,
     publish_batch_response_file,
     submit_row_verification_run,
     submit_relation_closure_run,
@@ -1183,6 +1199,121 @@ def _rehash_batch_compilation(compilation: dict) -> dict:
     return compilation
 
 
+def _packet_v3_evidence_rows(packet: dict) -> list[dict]:
+    schema = packet["catalogue_schema"]
+    semantic_columns = schema["semantic_unit_columns"]
+    rows: list[dict] = []
+    for source_group in packet["source_groups"]:
+        evidence_columns = source_group["evidence_columns"]
+        engagement_columns = source_group["engagement_columns"]
+        for values in source_group["evidence_rows"]:
+            evidence = deepcopy(source_group["evidence_defaults"])
+            evidence.update(dict(zip(evidence_columns, values, strict=True)))
+            engagement = deepcopy(source_group["engagement_defaults"])
+            engagement.update(
+                dict(zip(engagement_columns, evidence["engagement"], strict=True))
+            )
+            evidence["engagement"] = engagement
+            evidence["semantic_units"] = [
+                {
+                    **schema["semantic_unit_defaults"],
+                    **dict(zip(semantic_columns, semantic, strict=True)),
+                }
+                for semantic in evidence["semantic_units"]
+            ]
+            rows.append(evidence)
+    return rows
+
+
+@pytest.mark.parametrize(
+    ("engagement", "expected"),
+    [
+        (
+            {
+                "material_positive": True,
+                "materiality_basis": "Reddit score exceeds the self-vote baseline",
+                "raw_score_state": "3 points",
+            },
+            (
+                "score_state",
+                "Reddit score exceeds the self-vote baseline",
+                {
+                    "raw_value": "3 points",
+                    "observed_at": None,
+                    "material_positive": True,
+                },
+            ),
+        ),
+        (
+            {
+                "material_positive": False,
+                "materiality_basis": "positive helpful vote count exceeds zero",
+                "raw_positive_helpful_count": None,
+            },
+            (
+                "positive_helpful_count",
+                "positive helpful vote count exceeds zero",
+                {
+                    "raw_value": None,
+                    "observed_at": None,
+                    "material_positive": False,
+                },
+            ),
+        ),
+    ],
+)
+def test_packet_normalizes_legacy_source_native_engagement_without_loss(
+    engagement: dict, expected: tuple[str, str, dict]
+) -> None:
+    assert _packet_v2_engagement_observation({"engagement": engagement}) == expected
+
+
+def test_packet_v3_keeps_required_available_engagement_field_when_all_values_are_null() -> None:
+    _, _, defaults, columns = _packet_v3_group_layout(
+        {
+            "engagement_kind": "score_state",
+            "evidence": [
+                {
+                    "evidence_id": "reddit:1:comment",
+                    "engagement": {
+                        "raw_value": "3 points",
+                        "observed_at": None,
+                        "material_positive": True,
+                    },
+                    "semantic_units": [],
+                }
+            ],
+        }
+    )
+
+    assert defaults == {"raw_value": "3 points", "material_positive": True}
+    assert columns == ["observed_at"]
+
+
+@pytest.mark.parametrize(
+    "engagement",
+    [
+        {"material_positive": True},
+        {
+            "material_positive": True,
+            "raw_points": 3,
+            "raw_likes": 4,
+        },
+        {
+            "kind": "points",
+            "raw_value": 3,
+            "material_positive": True,
+            "unpreserved_native_field": "loss",
+        },
+    ],
+)
+def test_packet_rejects_engagement_that_cannot_be_losslessly_normalized(
+    engagement: dict,
+) -> None:
+    with pytest.raises(SemanticIntegrationError, match="engagement"):
+        _packet_v2_engagement_observation({"engagement": engagement})
+
+
 def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() -> None:
     bundle, compiled, terminal, view = _v3_complete_view()
     proposition_id = view["propositions"][0]["proposition_id"]
@@ -1212,11 +1343,21 @@ def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() ->
         "unresolved_axis_candidate_count": 0,
         "truncated": False,
     }
-    assert len({row["evidence_id"] for row in packet["evidence"]}) == 7
+    evidence_rows = _packet_v3_evidence_rows(packet)
+    assert len({row["evidence_id"] for row in evidence_rows}) == 7
+    assert sum(row["evidence_count"] for row in packet["source_groups"]) == 7
+    assert all("text" not in row for row in evidence_rows)
+    assert all("source_role" not in row for row in evidence_rows)
+    assert all("engagement_kind" in row for row in packet["source_groups"])
+    assert all(
+        {"raw_value", "observed_at", "material_positive"} <= set(row["engagement"])
+        or row["engagement"] == {"status": "engagement_unavailable"}
+        for row in evidence_rows
+    )
     assert len(packet["containers"]) == 7
-    linked_unit = packet["evidence"][0]["proposition_relations"][0][
-        "semantic_units"
-    ][0]
+    linked_unit = next(
+        unit for evidence in evidence_rows for unit in evidence["semantic_units"]
+    )
     assert {
         "evidence_posture",
         "uncertainty_posture",
@@ -1224,7 +1365,119 @@ def test_v3_evidence_packet_returns_the_complete_stack_without_a_conclusion() ->
     } <= set(linked_unit)
     assert all("conclusion" not in row for row in packet["propositions"])
     assert all("recommendation" not in row for row in packet["propositions"])
+    assert packet["propositions"][0]["evidence_relations"]["support"]
+    assert packet["catalogue_coverage"]["inline_full_text_evidence_item_count"] == 0
     assert packet["model_api_calls"] == 0
+
+
+def test_evidence_packet_v1_remains_explicitly_reproducible() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+
+    packet = project_evidence_packet_v1(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION_V1
+    assert len({row["evidence_id"] for row in packet["evidence"]}) == 7
+    assert "source_groups" not in packet
+
+
+def test_evidence_packet_v2_remains_explicitly_reproducible() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+
+    packet = project_evidence_packet_v2(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION_V2
+    assert all("evidence" in row for row in packet["source_groups"])
+
+
+def test_evidence_packet_runner_defaults_v3_and_preserves_explicit_v2(
+    tmp_path: Path,
+) -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+    inputs = {
+        "view_path": (tmp_path / "view.json", view),
+        "bundle_path": (tmp_path / "bundle.json", bundle),
+        "batch_compilation_path": (tmp_path / "compiled.json", compiled),
+        "node_compilation_path": (tmp_path / "terminal.json", terminal),
+    }
+    for path, value in inputs.values():
+        path.write_text(json.dumps(value), encoding="utf-8")
+    kwargs = {
+        key: path for key, (path, _) in inputs.items()
+    }
+    kwargs.update(
+        {
+            "axis_ids": [],
+            "proposition_ids": [proposition_id],
+        }
+    )
+
+    default_result = project_evidence_packet_run(
+        **kwargs, packet_out=tmp_path / "default.json"
+    )
+    v2_result = project_evidence_packet_run(
+        **kwargs, packet_out=tmp_path / "v2.json", packet_version="v2"
+    )
+
+    assert default_result["packet_schema_version"] == EVIDENCE_PACKET_VERSION
+    assert v2_result["packet_schema_version"] == EVIDENCE_PACKET_VERSION_V2
+
+
+def test_evidence_packet_v3_preservation_signal_rejects_wrong_cause_mutations() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+    baseline = project_evidence_packet_v2(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+    candidate = project_evidence_packet(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+    candidate.pop("packet_sha256")
+
+    relation_mutation = deepcopy(candidate)
+    relation_mutation["propositions"][0]["evidence_relations"]["support"].pop()
+    with pytest.raises(SemanticIntegrationError, match="proposition relations"):
+        _validate_evidence_packet_v3_preserves_v2(relation_mutation, baseline)
+
+    engagement_mutation = deepcopy(candidate)
+    engagement_index = candidate["source_groups"][0]["evidence_columns"].index(
+        "engagement"
+    )
+    engagement_columns = candidate["source_groups"][0]["engagement_columns"]
+    if "raw_value" in engagement_columns:
+        raw_value_index = engagement_columns.index("raw_value")
+        engagement_mutation["source_groups"][0]["evidence_rows"][0][
+            engagement_index
+        ][raw_value_index] = "removed"
+    else:
+        engagement_mutation["source_groups"][0]["engagement_defaults"][
+            "raw_value"
+        ] = "removed"
+    with pytest.raises(SemanticIntegrationError, match="evidence rows"):
+        _validate_evidence_packet_v3_preserves_v2(engagement_mutation, baseline)
+
+
+def test_evidence_packet_v3_is_byte_deterministic() -> None:
+    bundle, compiled, terminal, view = _v3_complete_view()
+    proposition_id = view["propositions"][0]["proposition_id"]
+
+    first = project_evidence_packet(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+    second = project_evidence_packet(
+        view, bundle, compiled, terminal, proposition_ids=[proposition_id]
+    )
+
+    assert first["packet_sha256"] == second["packet_sha256"]
+    assert json.dumps(first, ensure_ascii=False, sort_keys=True) == json.dumps(
+        second, ensure_ascii=False, sort_keys=True
+    )
 
 
 def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
@@ -1243,7 +1496,14 @@ def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
     bundle = load("bundle.json")
     compiled = load("batch_compilation.json")
     terminal = load("node_compilation_2.json")
-    view = load("view.json")
+    historical_view = load("view.json")
+    view = finalize_v3_view(bundle, compiled, terminal)
+    expected_view = deepcopy(historical_view)
+    for proposition in expected_view["propositions"]:
+        if proposition["claim_support"]["conflict_posture"] == "none_observed":
+            proposition["claim_support"]["conflict_posture"] = "not_checked"
+    _rehash_view(expected_view)
+    assert view == expected_view
 
     packet = project_evidence_packet(
         view, bundle, compiled, terminal, axis_ids=["reaction_and_breakout"]
@@ -1251,13 +1511,27 @@ def test_v3_evidence_packet_axis_union_deduplicates_shared_evidence() -> None:
 
     assert packet["selection_coverage"]["selected_proposition_count"] == 17
     assert packet["selection_coverage"]["returned_evidence_item_count"] == 44
-    assert len({row["evidence_id"] for row in packet["evidence"]}) == 44
+    evidence_rows = _packet_v3_evidence_rows(packet)
+    assert len({row["evidence_id"] for row in evidence_rows}) == 44
     assert len(packet["containers"]) == 30
-    per_proposition_links = sum(
-        sum(row["evidence_item_counts"].values())
-        for row in packet["propositions"]
-    )
+    linked_evidence_ids = [
+        link[
+            packet["catalogue_schema"]["relation_link_columns"].index(
+                "evidence_id"
+            )
+        ]
+        for proposition in packet["propositions"]
+        for relation_links in proposition["evidence_relations"].values()
+        for link in relation_links
+    ]
+    per_proposition_links = len(linked_evidence_ids)
     assert per_proposition_links > 44
+    shared_id = next(
+        evidence_id
+        for evidence_id in set(linked_evidence_ids)
+        if linked_evidence_ids.count(evidence_id) > 1
+    )
+    assert sum(row["evidence_id"] == shared_id for row in evidence_rows) == 1
 
 
 def test_v3_evidence_packet_preserves_counterevidence_and_unresolved_candidates() -> None:
@@ -1289,9 +1563,10 @@ def test_v3_evidence_packet_preserves_counterevidence_and_unresolved_candidates(
 
     assert packet["selection_coverage"]["counter_evidence_item_count"] > 0
     assert packet["selection_coverage"]["unresolved_axis_candidate_count"] == 1
-    assert packet["unresolved_axis_candidates"][0]["evidence"][
-        "evidence_id"
-    ] == unresolved_evidence_id
+    assert (
+        packet["unresolved_axis_candidates"][0]["evidence_id"]
+        == unresolved_evidence_id
+    )
 
 
 def test_v3_evidence_packet_keeps_no_axis_unmerged_meaning_visible() -> None:
@@ -2489,7 +2764,14 @@ def test_route_1_6_multisource_dogfood_rebuilds_exactly() -> None:
         bundle, stage_two, [response_two]
     )
     assert nodes_two == load("node_compilation_2.json")
-    assert finalize_v3_view(bundle, compiled, nodes_two) == load("view.json")
+    historical_view = load("view.json")
+    current_view = finalize_v3_view(bundle, compiled, nodes_two)
+    expected_view = deepcopy(historical_view)
+    for proposition in expected_view["propositions"]:
+        if proposition["claim_support"]["conflict_posture"] == "none_observed":
+            proposition["claim_support"]["conflict_posture"] = "not_checked"
+    _rehash_view(expected_view)
+    assert current_view == expected_view
 
     sensitivity = load("partition_sensitivity.json")
     assert isinstance(sensitivity, dict)
@@ -2629,6 +2911,214 @@ def _row_verification_responses(
         }
         for batch in stage["batches"]
     ]
+
+
+def _targeted_audit_fixture() -> tuple[dict, dict, dict, dict, dict, dict[str, str]]:
+    bundle = _bundle_v5(count=36, max_prompt_bytes=12_000)
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    row_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    verified = apply_row_verification(
+        bundle, compiled, row_stage, _row_verification_responses(row_stage)
+    )
+    batch_ids = [row["batch_id"] for row in bundle["batches"]]
+    evidence_count = sum(len(row["evidence_ids"]) for row in bundle["batches"])
+    raw = {
+        "selection": "a" * 64,
+        "benchmark": "b" * 64,
+        "bundle": "c" * 64,
+        "row_verification_stage": "d" * 64,
+        "verified_compilation": "e" * 64,
+    }
+    benchmark = {
+        "schema_version": "forseti_extraction_latency_optimization_benchmark_v2",
+        "identities": {
+            "bundle_stored_canonical_sha256": bundle["bundle_sha256"],
+            "bundle_raw_file_sha256": raw["bundle"],
+        },
+        "benchmark": {
+            "prompt_count": len(batch_ids),
+            "validated_evidence_count": evidence_count,
+        },
+    }
+    midpoint = len(batch_ids) // 2
+    group_ids = [batch_ids[:midpoint], batch_ids[midpoint:]]
+    selection = {
+        "schema_version": "targeted_benchmark_audit_selection_v1",
+        "authority": {
+            "benchmark_raw_sha256": raw["benchmark"],
+            "bundle_stored_canonical_sha256": bundle["bundle_sha256"],
+            "bundle_raw_sha256": raw["bundle"],
+            "row_verification_stage_stored_canonical_sha256": row_stage[
+                "stage_sha256"
+            ],
+            "row_verification_stage_raw_sha256": raw["row_verification_stage"],
+        },
+        "selection_method": {
+            "kind": "complete_benchmark_denominator",
+            "prompt_count": len(batch_ids),
+            "evidence_leaf_count": evidence_count,
+        },
+        "benchmark_groups": [
+            {
+                "source_receipt_worker_id": f"source-worker-{index + 1}",
+                "batch_ids": ids,
+                "evidence_leaf_count": sum(
+                    len(bundle["batches"][batch_ids.index(batch_id)]["evidence_ids"])
+                    for batch_id in ids
+                ),
+            }
+            for index, ids in enumerate(group_ids)
+        ],
+        "constraints": {
+            "manual_full_payload_read": True,
+            "genuine_prompt_local_semantic_judgment": True,
+            "semantic_automation": False,
+            "regex_or_keyword_semantic_rules": False,
+            "templates_or_defaults": False,
+            "external_provider_or_model_api_calls": 0,
+            "prevalence_or_causal_inference": False,
+            "global_absence_identity_or_opposition_claims": False,
+            "customer_ready_conclusions": False,
+        },
+    }
+    return bundle, verified, selection, benchmark, row_stage, raw
+
+
+def test_targeted_benchmark_audit_binds_exact_groups_and_balances_workers() -> None:
+    bundle, verified, selection, benchmark, row_stage, raw = (
+        _targeted_audit_fixture()
+    )
+    prepared = prepare_targeted_benchmark_audit(
+        bundle,
+        verified,
+        selection,
+        benchmark,
+        row_stage,
+        input_raw_sha256=raw,
+        max_prompt_bytes=100_000,
+        worker_count=6,
+    )
+    stage, frame, prompts, prompt_manifest, assignments = prepared
+    assert stage["coverage_proof"]["selected_evidence_count"] == 36
+    assert stage["coverage_proof"]["original_batch_groups_preserved"] is True
+    assert [row["batch_id"] for row in prompts] == [
+        row["batch_id"] for row in bundle["batches"]
+    ]
+    assert "TARGETED BENCHMARK AUDIT METHOD V1" in frame
+    assert prompt_manifest["stage_sha256"] == stage["stage_sha256"]
+    assigned = [
+        prompt["batch_id"]
+        for worker in assignments["workers"]
+        for prompt in worker["prompts"]
+    ]
+    assert sorted(assigned) == sorted(row["batch_id"] for row in prompts)
+    assert len(assignments["workers"]) == 6
+    assert max(len(row["prompts"]) for row in assignments["workers"]) == 2
+    assert prepared == prepare_targeted_benchmark_audit(
+        bundle,
+        verified,
+        selection,
+        benchmark,
+        row_stage,
+        input_raw_sha256=raw,
+        max_prompt_bytes=100_000,
+        worker_count=6,
+    )
+
+    responses = []
+    repair_id = stage["batches"][0]["evidence_ids"][0]
+    for batch in stage["batches"]:
+        responses.append(
+            {
+                "schema_version": TARGETED_AUDIT_RESPONSE_VERSION,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": batch["batch_id"],
+                "decisions": [
+                    {
+                        "evidence_id": evidence_id,
+                        "decision": "repair" if evidence_id == repair_id else "accept",
+                        "reason": "manual source comparison found the bounded result",
+                    }
+                    for evidence_id in batch["evidence_ids"]
+                ],
+            }
+        )
+    result = validate_targeted_benchmark_audit(stage, prompt_manifest, responses)
+    assert result["repair_evidence_ids"] == [repair_id]
+    assert result["coverage_proof"]["complete"] is True
+
+
+def test_targeted_benchmark_audit_rejects_identity_substitution() -> None:
+    bundle, verified, selection, benchmark, row_stage, raw = (
+        _targeted_audit_fixture()
+    )
+    forged = deepcopy(selection)
+    forged["authority"]["benchmark_raw_sha256"] = "f" * 64
+    with pytest.raises(SemanticIntegrationError, match="identity mismatch"):
+        prepare_targeted_benchmark_audit(
+            bundle,
+            verified,
+            forged,
+            benchmark,
+            row_stage,
+            input_raw_sha256=raw,
+            max_prompt_bytes=100_000,
+            worker_count=6,
+        )
+
+
+def test_targeted_benchmark_audit_runner_refuses_overwrite(tmp_path: Path) -> None:
+    bundle, verified, selection, benchmark, row_stage, _ = _targeted_audit_fixture()
+    inputs = tmp_path / "inputs"
+    inputs.mkdir()
+    paths = {
+        "bundle": inputs / "bundle.json",
+        "verified": inputs / "verified.json",
+        "row_stage": inputs / "row_stage.json",
+        "benchmark": inputs / "benchmark.json",
+        "selection": inputs / "selection.json",
+    }
+    for key, value in (
+        ("bundle", bundle),
+        ("verified", verified),
+        ("row_stage", row_stage),
+    ):
+        paths[key].write_text(json.dumps(value, sort_keys=True), encoding="utf-8")
+    bundle_raw = _digest(paths["bundle"].read_bytes())
+    row_stage_raw = _digest(paths["row_stage"].read_bytes())
+    benchmark["identities"]["bundle_raw_file_sha256"] = bundle_raw
+    paths["benchmark"].write_text(json.dumps(benchmark, sort_keys=True), encoding="utf-8")
+    selection["authority"].update(
+        {
+            "benchmark_raw_sha256": _digest(paths["benchmark"].read_bytes()),
+            "bundle_raw_sha256": bundle_raw,
+            "row_verification_stage_raw_sha256": row_stage_raw,
+        }
+    )
+    paths["selection"].write_text(json.dumps(selection, sort_keys=True), encoding="utf-8")
+    outputs = tmp_path / "outputs"
+    kwargs = {
+        "bundle_path": paths["bundle"],
+        "verified_path": paths["verified"],
+        "selection_path": paths["selection"],
+        "benchmark_path": paths["benchmark"],
+        "row_verification_stage_path": paths["row_stage"],
+        "stage_out": outputs / "stage.json",
+        "shared_frame_out": outputs / "shared_frame.md",
+        "prompt_manifest_out": outputs / "prompt_manifest.json",
+        "assignment_manifest_out": outputs / "assignments.json",
+        "prompt_dir": outputs / "prompts",
+        "max_prompt_bytes": 100_000,
+        "worker_count": 6,
+    }
+    result = prepare_targeted_benchmark_audit_run(**kwargs)
+    assert result["status"] == "TARGETED_BENCHMARK_AUDIT_REQUIRED"
+    stage_bytes = kwargs["stage_out"].read_bytes()
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        prepare_targeted_benchmark_audit_run(**kwargs)
+    assert kwargs["stage_out"].read_bytes() == stage_bytes
 
 
 def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -> None:
@@ -2789,6 +3279,385 @@ def test_selective_row_repair_preserves_untouched_rows_and_invalidates_old_linea
     )
     with pytest.raises(SemanticIntegrationError, match="stale root batch compilation"):
         finalize_v3_view(bundle, repaired, old_terminal)
+
+
+def _terminal_repair_migration_fixture(
+    *,
+    repaired_statement: str | None = None,
+    repaired_conditions: list[str] | None = None,
+    source_levels: int = 1,
+) -> tuple[dict, dict, dict, dict]:
+    bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=20_000)
+    compiled = validate_batch_responses(
+        bundle, _v5_responses(bundle, detailed_per_batch=2)
+    )
+    verification_stage, _ = prepare_row_verification(
+        bundle, compiled, max_prompt_bytes=20_000
+    )
+    selected = verification_stage["verification_rows"][0]["evidence_id"]
+    old_replacement = deepcopy(
+        verification_stage["verification_rows"][0]["proposed_result"]
+    )
+    old_replacement["semantic_units"][0]["polarity"] = "negated"
+    source_verified = apply_row_verification(
+        bundle,
+        compiled,
+        verification_stage,
+        _row_verification_responses(
+            verification_stage,
+            {
+                selected: {
+                    "decision": "replace",
+                    "reason": "seed one historical polarity defect",
+                    "replacement": old_replacement,
+                }
+            },
+        ),
+    )
+    source_stage, _ = prepare_reconciliation_stage(
+        bundle,
+        source_verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    if source_levels == 1:
+        source_terminal = validate_reconciliation_stage(
+            bundle,
+            source_stage,
+            _terminal_singleton_reconciliation_responses(source_stage),
+        )
+    else:
+        # One 1:1 normal level first, so the terminal level's children are
+        # prior-level semantic nodes rather than leaves.
+        level_one = validate_reconciliation_stage(
+            bundle,
+            source_stage,
+            _singleton_reconciliation_responses(source_stage),
+        )
+        source_stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+        source_terminal = validate_reconciliation_stage(
+            bundle,
+            source_stage_two,
+            _group_level_responses(source_stage_two, terminal=True),
+        )
+    repair_stage, _ = prepare_row_repair(
+        bundle,
+        source_verified,
+        evidence_ids=[selected],
+        max_prompt_bytes=20_000,
+    )
+    repaired_replacement = deepcopy(
+        repair_stage["verification_rows"][0]["proposed_result"]
+    )
+    repaired_replacement["semantic_units"][0]["polarity"] = "affirmed"
+    if repaired_statement is not None:
+        repaired_replacement["semantic_units"][0]["statement"] = repaired_statement
+    if repaired_conditions is not None:
+        repaired_replacement["semantic_units"][0]["conditions"] = repaired_conditions
+    repaired = apply_row_repair(
+        bundle,
+        source_verified,
+        repair_stage,
+        _row_verification_responses(
+            repair_stage,
+            {
+                selected: {
+                    "decision": "replace",
+                    "reason": "repair the historical row",
+                    "replacement": repaired_replacement,
+                }
+            },
+        ),
+    )
+    return bundle, source_verified, repaired, source_terminal
+
+
+def _migrate_terminal_fixture(
+    bundle: dict,
+    source_verified: dict,
+    repaired: dict,
+    source_terminal: dict,
+) -> dict:
+    return migrate_repaired_terminal_compilation(
+        bundle,
+        source_verified,
+        repaired,
+        source_terminal,
+        raw_file_sha256s={
+            "bundle": "1" * 64,
+            "source_batch_compilation": "2" * 64,
+            "repaired_batch_compilation": "3" * 64,
+            "source_node_compilation": "4" * 64,
+        },
+    )
+
+
+def _rehash_node_compilation(compilation: dict) -> None:
+    compilation.pop("node_compilation_sha256", None)
+    compilation["node_compilation_sha256"] = _canonical_hash(compilation)
+
+
+def test_terminal_repair_migration_reuses_only_unchanged_leaves_and_coalesces() -> None:
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture()
+    )
+    with pytest.raises(SemanticIntegrationError, match="duplicate proposition identity"):
+        finalize_v3_view(bundle, source_verified, source_terminal)
+    with pytest.raises(SemanticIntegrationError, match="stale root batch compilation"):
+        finalize_v3_view(bundle, repaired, source_terminal)
+
+    migrated = _migrate_terminal_fixture(
+        bundle, source_verified, repaired, source_terminal
+    )
+    repeated = _migrate_terminal_fixture(
+        bundle, source_verified, repaired, source_terminal
+    )
+    assert migrated == repeated
+    assert migrated["schema_version"] == TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION
+    assert len(migrated["semantic_nodes"]) == 1
+    manifest = migrated["terminal_repair_migration_manifest"]
+    assert manifest["source_node_count"] == 2
+    assert manifest["output_node_count"] == 1
+    assert len(manifest["reused_source_semantic_node_refs"]) == 1
+    assert len(manifest["invalidated_source_semantic_node_refs"]) == 1
+    assert len(manifest["coalesced_node_groups"]) == 1
+    assert manifest["provider_calls"] == 0
+    assert manifest["relation_closure_claimed"] is False
+    assert "input_node_compilation_sha256" not in migrated
+    node = migrated["semantic_nodes"][0]
+    assert node["polarity"] == "affirmed"
+    assert len(node["leaf_relations"]) == 2
+    view = finalize_v3_view(bundle, repaired, migrated)
+    assert len(view["propositions"]) == 1
+    assert view["propositions"][0]["claim_support"]["conflict_posture"] == (
+        "not_checked"
+    )
+    assert len(view["propositions"][0]["claim_support"]["evidence_refs"]) == 2
+    packet = project_evidence_packet(
+        view,
+        bundle,
+        repaired,
+        migrated,
+        proposition_ids=[view["propositions"][0]["proposition_id"]],
+    )
+    assert packet["schema_version"] == EVIDENCE_PACKET_VERSION
+
+
+@pytest.mark.parametrize(
+    ("statement", "conditions", "error"),
+    [
+        (
+            "The balm became severely drying after one week of use.",
+            None,
+            "non-polarity leaf changes",
+        ),
+        (None, ["after two weeks of use"], "non-polarity leaf changes"),
+    ],
+)
+def test_terminal_repair_migration_rejects_same_id_semantic_changes(
+    statement: str | None,
+    conditions: list[str] | None,
+    error: str,
+) -> None:
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture(
+            repaired_statement=statement,
+            repaired_conditions=conditions,
+        )
+    )
+    with pytest.raises(SemanticIntegrationError, match=error):
+        _migrate_terminal_fixture(
+            bundle, source_verified, repaired, source_terminal
+        )
+
+
+def test_terminal_repair_migration_rederivation_keeps_source_child_node_lineage() -> None:
+    """A rederived node must keep its own children, not its flattened leaves."""
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture(source_levels=2)
+    )
+    assert source_terminal["level"] == 2
+    migrated = _migrate_terminal_fixture(
+        bundle, source_verified, repaired, source_terminal
+    )
+    manifest = migrated["terminal_repair_migration_manifest"]
+    invalidated = set(manifest["invalidated_source_semantic_node_refs"])
+    assert invalidated
+
+    source_by_ref = {
+        node["semantic_node_ref"]: node for node in source_terminal["semantic_nodes"]
+    }
+    expected_children = {
+        relation["child_ref"]
+        for ref in invalidated
+        for relation in source_by_ref[ref]["child_relations"]
+    }
+    leaf_refs = set(manifest["terminal_leaf_semantic_unit_refs"]) | set(
+        manifest["unmerged_semantic_unit_refs"]
+    )
+    # Above level 0 a child ref names a prior-level node, never a leaf unit.
+    assert expected_children
+    assert not expected_children & leaf_refs
+
+    migrated_children = {
+        relation["child_ref"]
+        for node in migrated["semantic_nodes"]
+        for relation in node["child_relations"]
+    }
+    assert expected_children <= migrated_children
+    assert not migrated_children & leaf_refs
+
+
+def test_terminal_repair_migration_rejects_relation_and_condition_conflicts() -> None:
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture()
+    )
+    migrated = _migrate_terminal_fixture(
+        bundle, source_verified, repaired, source_terminal
+    )
+    first = deepcopy(migrated["semantic_nodes"][0])
+    second = deepcopy(first)
+    first["semantic_node_ref"] = "first"
+    second["semantic_node_ref"] = "second"
+    second["leaf_relations"][0]["relation"] = "counter"
+    with pytest.raises(SemanticIntegrationError, match="leaf relation"):
+        _terminal_repair_coalesce_group(
+            [first, second],
+            repaired_compilation_sha256=repaired["compilation_sha256"],
+        )
+
+    second = deepcopy(first)
+    second["semantic_node_ref"] = "second"
+    second["condition_lineage"][0]["conditions"] = ["different condition"]
+    with pytest.raises(SemanticIntegrationError, match="condition-lineage conflict"):
+        _terminal_repair_coalesce_group(
+            [first, second],
+            repaired_compilation_sha256=repaired["compilation_sha256"],
+        )
+
+
+def test_terminal_repair_migration_rejects_tampering_missing_and_stale_lineage() -> None:
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture()
+    )
+    tampered = deepcopy(source_terminal)
+    tampered["semantic_nodes"][0]["bounded_meaning"] = "tampered"
+    with pytest.raises(SemanticIntegrationError, match="stored node_compilation_sha256"):
+        _migrate_terminal_fixture(bundle, source_verified, repaired, tampered)
+
+    missing = deepcopy(source_terminal)
+    missing["semantic_nodes"][0]["leaf_relations"] = []
+    _rehash_node_compilation(missing)
+    with pytest.raises(SemanticIntegrationError, match="lacks leaf lineage"):
+        _migrate_terminal_fixture(bundle, source_verified, repaired, missing)
+
+    stale = deepcopy(source_terminal)
+    stale["batch_compilation_sha256"] = "0" * 64
+    _rehash_node_compilation(stale)
+    with pytest.raises(SemanticIntegrationError, match="source node lineage is stale"):
+        _migrate_terminal_fixture(bundle, source_verified, repaired, stale)
+
+
+def test_terminal_repair_migration_finalizer_rejects_seeded_wrong_causes_first() -> None:
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture()
+    )
+    migrated = _migrate_terminal_fixture(
+        bundle, source_verified, repaired, source_terminal
+    )
+
+    wrong_polarity = deepcopy(migrated)
+    wrong_polarity["semantic_nodes"][0]["polarity"] = "negated"
+    _rehash_node_compilation(wrong_polarity)
+    with pytest.raises(SemanticIntegrationError, match="current leaf polarity"):
+        finalize_v3_view(bundle, repaired, wrong_polarity)
+
+    changed_unmerged = deepcopy(migrated)
+    changed_unmerged["unmerged_semantic_units"] = [
+        {
+            "semantic_unit_ref": migrated["semantic_nodes"][0]["leaf_relations"][0][
+                "semantic_unit_ref"
+            ],
+            "reason": "forged membership",
+        }
+    ]
+    _rehash_node_compilation(changed_unmerged)
+    with pytest.raises(SemanticIntegrationError, match="both used and unmerged"):
+        finalize_v3_view(bundle, repaired, changed_unmerged)
+
+    closure_trapdoor = deepcopy(migrated)
+    closure_trapdoor["relation_coverage"] = {"complete": True}
+    _rehash_node_compilation(closure_trapdoor)
+    with pytest.raises(SemanticIntegrationError, match="cannot carry relation-closure"):
+        finalize_v3_view(bundle, repaired, closure_trapdoor)
+
+    uncoalesced = deepcopy(migrated)
+    uncoalesced["semantic_nodes"].append(deepcopy(uncoalesced["semantic_nodes"][0]))
+    uncoalesced["semantic_nodes"][1]["semantic_node_ref"] = "duplicate-node"
+    uncoalesced["output_node_count"] = 2
+    uncoalesced["terminal_repair_migration_manifest"]["output_node_count"] = 2
+    uncoalesced["terminal_repair_migration_manifest"]["source_node_count"] = 3
+    uncoalesced["terminal_repair_migration_manifest"][
+        "reused_source_semantic_node_refs"
+    ].append("duplicate-source")
+    uncoalesced["terminal_repair_migration_manifest"].pop("manifest_sha256")
+    uncoalesced["terminal_repair_migration_manifest"]["manifest_sha256"] = (
+        _canonical_hash(uncoalesced["terminal_repair_migration_manifest"])
+    )
+    _rehash_node_compilation(uncoalesced)
+    with pytest.raises(SemanticIntegrationError, match="uncoalesced duplicate"):
+        finalize_v3_view(bundle, repaired, uncoalesced)
+
+
+def test_terminal_repair_migration_runner_hash_binds_raw_inputs_and_refuses_overwrite(
+    tmp_path: Path,
+) -> None:
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture()
+    )
+    paths = {
+        "bundle": tmp_path / "bundle.json",
+        "source": tmp_path / "source-verified.json",
+        "repaired": tmp_path / "repaired.json",
+        "terminal": tmp_path / "source-terminal.json",
+    }
+    for name, value in (
+        ("bundle", bundle),
+        ("source", source_verified),
+        ("repaired", repaired),
+        ("terminal", source_terminal),
+    ):
+        paths[name].write_text(
+            json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+    compilation_out = tmp_path / "successor" / "node-compilation.json"
+    manifest_out = tmp_path / "successor" / "manifest.json"
+    result = migrate_repaired_terminal_run(
+        bundle_path=paths["bundle"],
+        source_batch_compilation_path=paths["source"],
+        repaired_batch_compilation_path=paths["repaired"],
+        source_node_compilation_path=paths["terminal"],
+        compilation_out=compilation_out,
+        manifest_out=manifest_out,
+    )
+    manifest = json.loads(manifest_out.read_text(encoding="utf-8"))
+    assert result["status"] == "SEMANTIC_TERMINAL_REPAIR_MIGRATION_COMPLETE"
+    assert result["model_api_calls"] == 0
+    assert manifest["raw_file_sha256s"] == {
+        "bundle": _digest(paths["bundle"].read_bytes()),
+        "repaired_batch_compilation": _digest(paths["repaired"].read_bytes()),
+        "source_batch_compilation": _digest(paths["source"].read_bytes()),
+        "source_node_compilation": _digest(paths["terminal"].read_bytes()),
+    }
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        migrate_repaired_terminal_run(
+            bundle_path=paths["bundle"],
+            source_batch_compilation_path=paths["source"],
+            repaired_batch_compilation_path=paths["repaired"],
+            source_node_compilation_path=paths["terminal"],
+            compilation_out=compilation_out,
+            manifest_out=manifest_out,
+        )
 
 
 def test_row_verification_v8_installs_general_completeness_and_context_boundaries() -> None:
@@ -6532,6 +7401,23 @@ def test_v5_finalization_retains_source_role_competence_backstop() -> None:
         finalize_v3_view(bundle, compiled, forged)
 
 
+def test_policy_v2_finalization_never_promotes_local_opposition_check_to_none_observed() -> None:
+    bundle = _bundle_v5()
+    compiled = validate_batch_responses(bundle, _v5_responses(bundle))
+    stage, _ = prepare_reconciliation_stage(bundle, compiled)
+    terminal = validate_reconciliation_stage(
+        bundle, stage, _group_level_responses(stage, terminal=True)
+    )
+
+    assert all(node["opposition_checked"] is True for node in terminal["semantic_nodes"])
+    view = finalize_v3_view(bundle, compiled, terminal)
+
+    assert {
+        proposition["claim_support"]["conflict_posture"]
+        for proposition in view["propositions"]
+    } == {"not_checked"}
+
+
 def test_v5_multi_work_unit_run_accounts_for_every_leaf_once() -> None:
     """Exact denominator coverage across several prompt-bounded work units."""
     bundle = _bundle_v5(count=40, max_prompt_bytes=9_000)
@@ -6590,9 +7476,17 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
         compiled["compilation_sha256"]
     )
     assert packet["source_bindings"]["bundle_sha256"] == bundle["bundle_sha256"]
-    assert packet["evidence"]
-    assert all("product_context" in row for row in packet["evidence"])
-    assert all("parent_context" in row for row in packet["evidence"])
-    assert all("product_context_refs" not in row for row in packet["evidence"])
-    assert all("parent_context_refs" not in row for row in packet["evidence"])
+    evidence_rows = _packet_v3_evidence_rows(packet)
+    assert evidence_rows
+    assert all("product_context" not in row for row in evidence_rows)
+    assert all("parent_context" not in row for row in evidence_rows)
+    assert all("product_context_refs" not in row for row in evidence_rows)
+    assert all("parent_context_refs" not in row for row in evidence_rows)
+    assert packet["full_evidence_resolution"] == {
+        "source": "bound_semantic_evidence_bundle",
+        "lookup_key": "evidence_id",
+        "bundle_sha256": bundle["bundle_sha256"],
+        "body_field": "text",
+        "context_fields": ["product_context", "parent_context"],
+    }
     assert packet["model_api_calls"] == 0

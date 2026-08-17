@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v34
-effective_date: 2026-08-12
+version: v38
+effective_date: 2026-08-17
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v34
+# Semantic Evidence Integration Contract v38
 
 ## Purpose
 
@@ -754,6 +754,66 @@ downstream conclusion. A changed corpus invalidates the source view and every
 packet derived from it. The projection uses no provider API, embeddings,
 vector store, or new persistent index.
 
+Contract v35 adds `phase_a_evidence_packet_v2` as the default output of the
+existing `project-evidence-packet` route. It preserves v1 selection, lineage,
+coverage, and fail-closed rebuilding, but changes the model-facing layout. Each
+admitted linked, unmerged, unscoped-unmerged, or unresolved evidence item
+appears once in a source-grouped catalogue. A source group owns the repeated
+source family, source role, engagement metric kind, and source-specific
+engagement context; each evidence row retains its raw engagement value,
+observation time, materiality observation, actor and independence data,
+publication time, source reference, container reference, and the selected
+semantic units. Each proposition carries only relation-to-evidence and
+relation-to-semantic-unit references. Full evidence text and parent/product
+context remain resolvable by `evidence_id` from the hash-bound bundle and are
+not duplicated inline.
+
+The catalogue has no evidence-count cap and no top-k admission rule. Source
+grouping is presentation and transport normalization only; it does not merge
+actors, platforms, source roles, meanings, engagement units, or proposition
+relations. `phase_a_evidence_packet_v1` remains available only through the
+explicit legacy packet-version route for historical reproduction. Contract
+v35 made v2 the no-flag runner default; contract v36 below supersedes that
+default while retaining explicit v2 reproduction.
+
+Contract v36 makes `phase_a_evidence_packet_v3` the normal output. V3 is a
+lossless transport projection over v2: repeated evidence, engagement, and
+semantic-unit field names are declared once as explicit named columns, while
+values common to every row in a packet or source group are declared once as
+named defaults at that exact scope. Remaining positional values map to those
+human-readable column names. Evidence IDs and semantic-unit references remain
+literal, proposition relations remain explicit, and source-group headers still
+own source-native engagement meaning. This is normalization, not abbreviation
+or evidence selection.
+
+Before v3 is returned or hashed, the projector reconstructs the expected
+column/default layout from v2 and rejects any changed top-level payload,
+source-group evidence row, or proposition relation. V2 remains available
+through the explicit packet-version route as the matched comparison baseline;
+v1 remains historical reproduction. The normal runner needs no new operator
+step, lookup, or retrieval round.
+
+Contract v37 changes only the downstream evidence-consumer protocol. The
+packet remains `phase_a_evidence_packet_v3`. A no-provider prepare operation
+may place proposition cases in one ordered decision batch only when their
+packets bind the same corpus and bundle and their proposition relations share
+evidence. Unrelated cases remain separate calls. The model returns only its
+synthesis judgment and literal support/counter refs; it does not recopy
+engagement, provenance, actor identity, dates, excerpts, relation inventories,
+or resolution facts. A hash-bound manifest preserves exact case and
+proposition order and the original packet/selector identities.
+
+The no-provider finalize operation rejects missing, duplicate, shuffled, or
+foreign case/proposition results and refs before deterministically reattaching
+the source-owned rows and inventories. It reconstructs v3 named defaults and
+positional columns, including source-native engagement and
+`public_identity_key`, and fails on a missing lookup, wrong row attachment, or
+malformed engagement posture. Preparation and finalization make zero model API
+calls; an external fresh agent still consumes the emitted prompt and response
+schema. This is call-overhead amortization plus deterministic rehydration, not
+packet compression, evidence selection, a caching claim, or a new judgment
+authority.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -840,6 +900,34 @@ untouched active row exactly, and writes a repair manifest binding the parent
 verified compilation, selected IDs, responses, and new active-row hash. The
 new compilation hash invalidates every older reconciliation and view. Repair
 never edits semantic nodes or a finalized view directly.
+
+When a completed policy-v2 terminal compilation exists and a selective repair
+changes only a narrow set of verified rows, `migrate-repaired-terminal` is the
+supported incremental successor route. It admits an old terminal node only
+after comparing every complete leaf semantic row it uses against the repaired
+compilation; any statement, polarity, uncertainty, product/comparator/version,
+axis, condition, or evidence-posture change invalidates that node. The current
+route can deterministically rederive a node only when the complete-row repair
+changed polarity while leaving the truth-complete statement and every other
+semantic field unchanged. Changed unmerged rows retain exact membership and
+reason but resolve their semantic content from the repaired compilation. That
+is preservation, not fresh semantic adjudication: the migration does not claim
+that the prior unmerged decision or reason was reconsidered against the repaired
+meaning. A consumer that needs current membership or a freshly supported reason
+for such a row must use fresh reconciliation.
+
+The migration compiler hash-binds the raw bundle, old verified compilation,
+repaired compilation, old terminal compilation, every terminal leaf, every
+unmerged unit, the reuse/invalidation census, and any exact-identity coalescing.
+Coalescing requires truth/scope/claim metadata to agree, unions emerging labels,
+postures, and lineage, rejects relation or condition-lineage conflicts, and
+uses logical AND for opposition checking. It is not relation closure and cannot
+carry closure-only fields or make a global `none_observed` claim. `finalize-v3`
+recomputes claim support, evidence stacks, and reverse indices from the migrated
+nodes plus repaired compilation, and retains its independent duplicate-identity
+guard. A broader proposition-linked semantic change, any requested membership
+change, incomplete leaf proof, or missing source artifact falls back to a fresh
+supported reconciliation replay.
 
 For bundle v4, agent-facing reconciliation prompts carry child references and
 the meaning dimensions needed to judge a merge, but omit expanded
@@ -959,21 +1047,26 @@ Current-route operations are:
      the next node compilation; repeat until one terminal level remains.
 14. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
      v2.
-15. The opt-in v34 route instead runs `prepare-relation-closure` over the
+15. After selective row repair, `migrate-repaired-terminal` may replace a full
+    reconciliation replay only when a completed old terminal compilation and
+    complete old/new verified compilations establish the leaf-complete equality
+    and narrow deterministic-rederivation proof above. It writes a new terminal
+    compilation and migration manifest and makes zero provider calls.
+16. The opt-in v34 route instead runs `prepare-relation-closure` over the
     terminal normal-retention frontier, validates each large-run response with
     `validate-relation-closure-response`, runs `submit-relation-closure` only
     after exact global pair-relation coverage, and uses
     `finalize-relation-closed` to write view v3. `prepare-row-repair` /
     `submit-row-repair` may correct named source rows first; any repair restarts
     reconciliation from its new verified compilation hash.
-16. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+17. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
-17. `evaluate-calibration` runs the existing response validator, then evaluates
+18. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
     anomaly, and repeat judgments must be explicit and hash-bound to the exact
@@ -1152,6 +1245,51 @@ new frontier.
 
 ## Changelog
 
+- `v38` / 2026-08-17 — added the owner-authorized, no-provider
+  `migrate-repaired-terminal` successor for a completed policy-v2 terminal
+  compilation after selective whole-row repair. Reuse now requires complete
+  old/new leaf equality; polarity-only defects may be deterministically
+  rederived; compatible exact identities coalesce under must-agree, union, and
+  conflict-visible rules; and every input, leaf, invalidation, reuse, unmerged
+  unit, and coalescing decision is hash-bound. The route preserves the finalizer
+  duplicate guard, never claims relation closure, and falls back to fresh
+  reconciliation for broader proposition-linked semantic changes. A rederived
+  node retains its source `child_relations`; flattened leaf relations never
+  replace its prior-level child lineage. Changed unmerged rows preserve their
+  old membership and reason without claiming fresh semantic adjudication.
+  Enforced the existing v35/v36
+  lossless-engagement rule for legacy bundle observations carrying one explicit
+  `raw_*` source-native metric: the raw field name supplies the metric kind, the
+  stored value and materiality basis remain literal, and ambiguous or unknown
+  shapes fail instead of becoming `engagement_unavailable`. Also brought
+  `finalize-v3` into conformance with the existing rule that only complete
+  validated closure may report `none_observed`: a node's local
+  `opposition_checked` no longer promotes a proposition's `conflict_posture`,
+  which now stays `not_checked` on every policy-v2 route, not only the
+  migration route. This changes no contract rule, but it does change emitted
+  view values, so a previously pinned v3 view containing an affected
+  `none_observed` value no longer reproduces and must be regenerated before
+  reuse.
+- `v37` / 2026-08-17 — adopted ordered batching for actually related Phase A
+  proposition cases plus the decision-only response and deterministic v3
+  rehydration seam. The measured six-family workload fell from 18 to 15 calls
+  across three repetitions and from 436,309 to 347,228 logical tokens
+  (20.417%) while the finalist reproduced 18/18 complete artifacts. Kept v3
+  frozen and added fail-closed case/proposition/ref/row/engagement boundaries.
+- `v36` / 2026-08-16 — made lossless named-default/column
+  `phase_a_evidence_packet_v3` the normal Phase A evidence transport. Kept
+  literal evidence and semantic-unit refs, source grouping, every relation and
+  candidate class, native engagement, actor/independence data, conditions,
+  uncertainty, and bundle resolution while removing repeated field labels and
+  values. Added a fail-closed v3-against-v2 preservation boundary and retained
+  explicit v2/v1 comparison routes.
+- `v35` / 2026-08-16 — made `phase_a_evidence_packet_v2` the normal
+  source-grouped consolidation output. Evidence and selected semantic units are
+  stored once, propositions link to them by relation, native engagement metadata
+  travels with each evidence row under its source group, and complete bodies
+  remain resolvable from the bound bundle rather than duplicated inline. Kept
+  the complete v1 selection and lineage proof, no evidence-count cap, no
+  conclusion or score, and an explicit legacy-v1 reproduction option.
 - `v34` containment correction / 2026-08-13 — made any artifact carrying
   closure-only evidence run closure-specific structural checks before generic
   finalization, and rederive exact candidate membership, all-pairs identity,
