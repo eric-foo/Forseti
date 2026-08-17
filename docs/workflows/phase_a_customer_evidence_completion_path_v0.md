@@ -1037,12 +1037,15 @@ the repaired verified compilation plus the new migrated terminal compilation.
 The route does not permit direct edits to node compilations or finalized views.
 
 The owner-authorized Summer Fridays repair successor at
-`C:\tmp\forseti-summer-fridays-polarity-repair-replay-20260817-v0\incremental-terminal-migration-v7`
+`C:\tmp\forseti-summer-fridays-polarity-repair-replay-20260817-v0\incremental-terminal-migration-v9`
 exercised that exact route with zero provider calls. Complete-row repair changed
 five semantic units: three proposition-linked overhyped rows changed polarity,
 while two additional meanings from the same repaired evidence rows changed but
-retained their exact unmerged membership. The migration reused 106 of 107 old
-terminal nodes, invalidated and rederived one, and coalesced two compatible
+retained their exact unmerged membership. Those two memberships and their prior
+reasons were preserved rather than freshly adjudicated against the repaired
+meanings; a consumer needing that stronger claim must use fresh reconciliation.
+The migration reused 106 of 107 old terminal nodes, invalidated and rederived
+one, and coalesced two compatible
 exact-identity groups into 105 unique terminal nodes. It preserved 320 terminal
 leaf relations, 7,700 unmerged units, 8,020 total semantic units, 96 unresolved
 evidence rows, and all 60,901 captured/accounted items. The full packet also
@@ -1050,13 +1053,17 @@ preserved the selected legacy source-native engagement observations instead of
 converting them to unavailable: 3,215 Reddit rows retained their literal score
 state and 132 retailer rows retained their literal positive-helpful count,
 with no inferred values. Stored hashes are
-`2ca08fa4a834fbb3dcb7c95e8265575e331f9f5ab6deae454852b4263beee7e4`
+`3682244e87a8b305f882794575b0fa77f55ef77220c0545b8058eb899388be15`
 for the successor node compilation,
 `61dcbfc4b2426e131b56392c83d10a9096f96ef209c791bcf5552554f2d2f37a`
 for its migration manifest,
 `865dd68cd3c56e13e1369a4c8ef798ac4d3ae6ff36ed4fc52440ec0409f87cdb`
 for the finalized 105-proposition view, and
-`99836015fb904410b58e05d69ea6eb5b69e3a3ec81761d114fb164fb3b53f90d`
+`c9d8b5e5d1b199689f9fc0a35c6dc4f19de0a48e4e9815f5ec03ff8ddc62fe34`
 for the full-view `phase_a_evidence_packet_v3`. A second clean output directory
-at `incremental-terminal-migration-v8` reproduced all four artifacts
-byte-for-byte.
+at `incremental-terminal-migration-v10` reproduced all four artifacts
+byte-for-byte. The earlier v7/v8 runs remain historical evidence but are
+superseded: independent review found that their single rederived node replaced
+its prior-level `child_relations` with flattened leaf refs. The finalized view
+was unaffected, but the node-lineage record and packet source binding were not
+lossless and must not be reused.

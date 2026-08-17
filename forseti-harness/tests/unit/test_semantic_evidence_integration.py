@@ -3285,6 +3285,7 @@ def _terminal_repair_migration_fixture(
     *,
     repaired_statement: str | None = None,
     repaired_conditions: list[str] | None = None,
+    source_levels: int = 1,
 ) -> tuple[dict, dict, dict, dict]:
     bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=20_000)
     compiled = validate_batch_responses(
@@ -3318,11 +3319,26 @@ def _terminal_repair_migration_fixture(
         source_verified,
         reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
     )
-    source_terminal = validate_reconciliation_stage(
-        bundle,
-        source_stage,
-        _terminal_singleton_reconciliation_responses(source_stage),
-    )
+    if source_levels == 1:
+        source_terminal = validate_reconciliation_stage(
+            bundle,
+            source_stage,
+            _terminal_singleton_reconciliation_responses(source_stage),
+        )
+    else:
+        # One 1:1 normal level first, so the terminal level's children are
+        # prior-level semantic nodes rather than leaves.
+        level_one = validate_reconciliation_stage(
+            bundle,
+            source_stage,
+            _singleton_reconciliation_responses(source_stage),
+        )
+        source_stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+        source_terminal = validate_reconciliation_stage(
+            bundle,
+            source_stage_two,
+            _group_level_responses(source_stage_two, terminal=True),
+        )
     repair_stage, _ = prepare_row_repair(
         bundle,
         source_verified,
@@ -3452,6 +3468,43 @@ def test_terminal_repair_migration_rejects_same_id_semantic_changes(
         _migrate_terminal_fixture(
             bundle, source_verified, repaired, source_terminal
         )
+
+
+def test_terminal_repair_migration_rederivation_keeps_source_child_node_lineage() -> None:
+    """A rederived node must keep its own children, not its flattened leaves."""
+    bundle, source_verified, repaired, source_terminal = (
+        _terminal_repair_migration_fixture(source_levels=2)
+    )
+    assert source_terminal["level"] == 2
+    migrated = _migrate_terminal_fixture(
+        bundle, source_verified, repaired, source_terminal
+    )
+    manifest = migrated["terminal_repair_migration_manifest"]
+    invalidated = set(manifest["invalidated_source_semantic_node_refs"])
+    assert invalidated
+
+    source_by_ref = {
+        node["semantic_node_ref"]: node for node in source_terminal["semantic_nodes"]
+    }
+    expected_children = {
+        relation["child_ref"]
+        for ref in invalidated
+        for relation in source_by_ref[ref]["child_relations"]
+    }
+    leaf_refs = set(manifest["terminal_leaf_semantic_unit_refs"]) | set(
+        manifest["unmerged_semantic_unit_refs"]
+    )
+    # Above level 0 a child ref names a prior-level node, never a leaf unit.
+    assert expected_children
+    assert not expected_children & leaf_refs
+
+    migrated_children = {
+        relation["child_ref"]
+        for node in migrated["semantic_nodes"]
+        for relation in node["child_relations"]
+    }
+    assert expected_children <= migrated_children
+    assert not migrated_children & leaf_refs
 
 
 def test_terminal_repair_migration_rejects_relation_and_condition_conflicts() -> None:

@@ -910,7 +910,11 @@ axis, condition, or evidence-posture change invalidates that node. The current
 route can deterministically rederive a node only when the complete-row repair
 changed polarity while leaving the truth-complete statement and every other
 semantic field unchanged. Changed unmerged rows retain exact membership and
-reason but resolve their semantic content from the repaired compilation.
+reason but resolve their semantic content from the repaired compilation. That
+is preservation, not fresh semantic adjudication: the migration does not claim
+that the prior unmerged decision or reason was reconsidered against the repaired
+meaning. A consumer that needs current membership or a freshly supported reason
+for such a row must use fresh reconciliation.
 
 The migration compiler hash-binds the raw bundle, old verified compilation,
 repaired compilation, old terminal compilation, every terminal leaf, every
@@ -921,8 +925,9 @@ uses logical AND for opposition checking. It is not relation closure and cannot
 carry closure-only fields or make a global `none_observed` claim. `finalize-v3`
 recomputes claim support, evidence stacks, and reverse indices from the migrated
 nodes plus repaired compilation, and retains its independent duplicate-identity
-guard. A broader semantic change, changed membership, incomplete leaf proof, or
-missing source artifact falls back to a fresh supported reconciliation replay.
+guard. A broader proposition-linked semantic change, any requested membership
+change, incomplete leaf proof, or missing source artifact falls back to a fresh
+supported reconciliation replay.
 
 For bundle v4, agent-facing reconciliation prompts carry child references and
 the meaning dimensions needed to judge a merge, but omit expanded
@@ -1248,11 +1253,23 @@ new frontier.
   conflict-visible rules; and every input, leaf, invalidation, reuse, unmerged
   unit, and coalescing decision is hash-bound. The route preserves the finalizer
   duplicate guard, never claims relation closure, and falls back to fresh
-  reconciliation for broader semantic changes. Enforced the existing v35/v36
+  reconciliation for broader proposition-linked semantic changes. A rederived
+  node retains its source `child_relations`; flattened leaf relations never
+  replace its prior-level child lineage. Changed unmerged rows preserve their
+  old membership and reason without claiming fresh semantic adjudication.
+  Enforced the existing v35/v36
   lossless-engagement rule for legacy bundle observations carrying one explicit
   `raw_*` source-native metric: the raw field name supplies the metric kind, the
   stored value and materiality basis remain literal, and ambiguous or unknown
-  shapes fail instead of becoming `engagement_unavailable`.
+  shapes fail instead of becoming `engagement_unavailable`. Also brought
+  `finalize-v3` into conformance with the existing rule that only complete
+  validated closure may report `none_observed`: a node's local
+  `opposition_checked` no longer promotes a proposition's `conflict_posture`,
+  which now stays `not_checked` on every policy-v2 route, not only the
+  migration route. This changes no contract rule, but it does change emitted
+  view values, so a previously pinned v3 view containing an affected
+  `none_observed` value no longer reproduces and must be regenerated before
+  reuse.
 - `v37` / 2026-08-17 — adopted ordered batching for actually related Phase A
   proposition cases plus the decision-only response and deterministic v3
   rehydration seam. The measured six-family workload fell from 18 to 15 calls

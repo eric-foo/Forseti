@@ -6954,9 +6954,10 @@ def migrate_repaired_terminal_compilation(
             }
             for ref in sorted(relations)
         ]
-        rebuilt["child_relations"] = [
-            {"child_ref": ref, "relation": relations[ref]} for ref in sorted(relations)
-        ]
+        # child_relations names this node's own children, which are prior-level
+        # semantic nodes above level 0, not its flattened leaves. A polarity-only
+        # repair changes no child membership, so the source lineage is kept
+        # exactly; rewriting it from leaf refs would destroy the child link.
         rebuilt["semantic_node_ref"] = _stable_id(
             "node_repair_migration",
             repaired_batch_compilation["compilation_sha256"],
