@@ -11,6 +11,7 @@ from judgment.phase_a_evidence_selection import (
     SELECTION_SPEC_VERSION,
     _candidate_rows,
     _bucket_priority,
+    _numeric_engagement,
     _source_venue,
     finalize_quotes,
     finalize_relations_prepare_quotes,
@@ -138,9 +139,9 @@ def _packet_and_bundle(count: int = 14) -> tuple[dict, dict]:
         )
     bundle = {
         "schema_version": "semantic_evidence_bundle_v5",
-        "bundle_sha256": "b" * 64,
         "evidence_units": bundle_units,
     }
+    bundle["bundle_sha256"] = _canonical_hash(bundle)
     packet = {
         "schema_version": "phase_a_evidence_packet_v3",
         "selection": {"mode": "axis", "axis_ids": ["hydration_and_moisture"], "proposition_ids": []},
@@ -163,7 +164,12 @@ def _packet_and_bundle(count: int = 14) -> tuple[dict, dict]:
     return packet, bundle
 
 
-def _spec() -> dict:
+def _spec(count: int = 14) -> dict:
+    # Nominate only evidence the fixture actually emits: an unresolvable
+    # nomination is now a closed boundary, not a silently ignored line.
+    protected: dict[str, list[str]] = {"safety": ["community_post:0"]}
+    if count > 6:
+        protected["costly_behavior"] = ["retailer_review:6"]
     return {
         "schema_version": SELECTION_SPEC_VERSION,
         "selection_id": "hydration-pilot",
@@ -171,10 +177,7 @@ def _spec() -> dict:
         "axis_ids": ["hydration_and_moisture"],
         "subject_product_ids": ["summer-fridays-lip-butter-balm"],
         "sources": [],
-        "protected_evidence_ids": {
-            "safety": ["community_post:0"],
-            "costly_behavior": ["retailer_review:6"],
-        },
+        "protected_evidence_ids": protected,
     }
 
 
@@ -191,7 +194,21 @@ def _write_source(tmp_path: Path, count: int = 14) -> tuple[dict, list[dict]]:
         "packet": packet,
         "bundle": bundle,
     }
-    return _spec(), [source]
+    return _spec(count), [source]
+
+
+def _reseal(source: dict) -> None:
+    """Re-hash a source after an intentional body edit, then rewrite both files."""
+    bundle = source["bundle"]
+    bundle.pop("bundle_sha256", None)
+    bundle["bundle_sha256"] = _canonical_hash(bundle)
+    packet = source["packet"]
+    packet["source_bindings"]["bundle_sha256"] = bundle["bundle_sha256"]
+    packet["full_evidence_resolution"]["bundle_sha256"] = bundle["bundle_sha256"]
+    packet.pop("packet_sha256", None)
+    packet["packet_sha256"] = _canonical_hash(packet)
+    source["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+    source["bundle_path"].write_text(json.dumps(bundle), encoding="utf-8")
 
 
 def _relation_response(candidates: list[dict]) -> dict:
@@ -302,6 +319,10 @@ def test_quote_mutations_fail_at_exact_boundary(
     tmp_path: Path, mutation: str, boundary: str
 ) -> None:
     spec, sources = _write_source(tmp_path, 2)
+    if mutation == "overlength":
+        for unit in sources[0]["bundle"]["evidence_units"]:
+            unit["text"] = "x" * 400
+        _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
@@ -311,11 +332,7 @@ def test_quote_mutations_fail_at_exact_boundary(
     if mutation == "changed_character":
         row["exact_quote"] = row["exact_quote"].replace("Opening", "Changed", 1)
     elif mutation == "overlength":
-        body = "x" * 221
-        selected = quote_manifest["selected_rows"][0]
-        unit = next(unit for unit in sources[0]["bundle"]["evidence_units"] if unit["evidence_id"] == selected["evidence_id"])
-        unit["text"] = body
-        row["exact_quote"] = body
+        row["exact_quote"] = "x" * 221
     else:
         row["exact_quote"] = "Opening ... Closing context."
     with pytest.raises(EvidenceConsumerError) as caught:
@@ -325,24 +342,45 @@ def test_quote_mutations_fail_at_exact_boundary(
 
 def test_missing_body_is_typed_unavailable_and_exact_but_semantically_different_text_remains_quality_visible(tmp_path: Path) -> None:
     spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"] = []
+    _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
     )
-    sources[0]["bundle"]["evidence_units"] = []
     response = {
         "quotes": [
             {"selected_id": quote_manifest["selected_rows"][0]["selected_id"], "quote_status": "quote_unavailable", "exact_quote": None}
         ]
     }
     artifact = finalize_quotes(quote_manifest, sources, response)
-    assert artifact["source_groups"][0]["rows"][0]["quote_status"] == "quote_unavailable"
-    assert artifact["source_groups"][0]["rows"][0]["normalized_meaning"]
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["quote_status"] == "quote_unavailable"
+    assert row["source_body_present"] is False
+    assert row["normalized_meaning"]
+
+
+def test_quote_unavailable_from_an_available_body_is_distinguishable_from_a_missing_body(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = {
+        "quotes": [
+            {"selected_id": quote_manifest["selected_rows"][0]["selected_id"], "quote_status": "quote_unavailable", "exact_quote": None}
+        ]
+    }
+    artifact = finalize_quotes(quote_manifest, sources, response)
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["quote_status"] == "quote_unavailable"
+    assert row["source_body_present"] is True
 
 
 def test_source_native_ellipsis_is_preserved_when_the_quote_is_exact(tmp_path: Path) -> None:
     spec, sources = _write_source(tmp_path, 1)
     sources[0]["bundle"]["evidence_units"][0]["text"] = "My lips burn… only after this shade."
+    _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
@@ -380,6 +418,109 @@ def test_known_host_variants_group_under_one_source_venue() -> None:
     assert _source_venue("community_post", "https://old.reddit.com/r/x", "reddit:2")[:1] == ("reddit",)
     assert _source_venue("audience_comment", "https://m.tiktok.com/v/1", "tiktok-comment:1")[:1] == ("tiktok",)
     assert _source_venue("retailer_review", "https://www.sephora.com/product/x", "retailer:sephora:1")[:1] == ("sephora",)
+
+
+@pytest.mark.parametrize(
+    ("role", "source_ref", "evidence_id", "venue"),
+    [
+        ("community_post", "https://np.reddit.com/r/x/comments/1", "reddit:1", "reddit"),
+        ("community_post", "https://new.reddit.com/r/x/comments/2", "reddit:2", "reddit"),
+        ("community_post", "https://sh.reddit.com/r/x/comments/3", "reddit:3", "reddit"),
+        ("community_post", "https://redd.it/abc", "reddit:4", "reddit"),
+        ("audience_comment", "https://vm.tiktok.com/ZM123/", "tiktok-comment:1", "tiktok"),
+        ("audience_comment", "https://vt.tiktok.com/ZS456/", "tiktok-comment:2", "tiktok"),
+        ("retailer_review", "https://smile.amazon.com/dp/B0", "retailer:amazon:1", "amazon"),
+        ("retailer_review", "https://community.sephora.com/t/x", "retailer:sephora:1", "sephora"),
+    ],
+)
+def test_host_variants_and_short_links_do_not_split_one_venue(
+    role: str, source_ref: str, evidence_id: str, venue: str
+) -> None:
+    assert _source_venue(role, source_ref, evidence_id) == (venue, "normalized_source_ref_hostname")
+
+
+def test_a_lookalike_host_is_not_absorbed_into_a_known_venue() -> None:
+    assert _source_venue("community_post", "https://notreddit.com/x", "x:1") == (
+        "notreddit.com",
+        "source_ref_hostname",
+    )
+
+
+def test_partial_numeric_engagement_strings_are_refused_rather_than_misread() -> None:
+    common = {"protected_lanes": [], "relation": "support",
+              "engagement_material_positive": True, "engagement_kind": "reddit_points"}
+    # "1.2k points" must not order as 1.0 behind a genuine "5 points".
+    abbreviated = {**common, "candidate_id": "a", "engagement_raw_value": "1.2k points"}
+    grouped = {**common, "candidate_id": "b", "engagement_raw_value": "1,234 points"}
+    plain = {**common, "candidate_id": "c", "engagement_raw_value": "5 points"}
+    assert _numeric_engagement("1.2k points", "reddit_points") is None
+    assert _numeric_engagement("1,234 points", "reddit_points") is None
+    assert _numeric_engagement("922", "reddit_points") == 922.0
+    assert _numeric_engagement("368 points", "reddit_points") == 368.0
+    ordered = [row["candidate_id"] for row in sorted([abbreviated, grouped, plain], key=_bucket_priority)]
+    assert ordered[0] == "c"
+
+
+def test_a_negative_native_score_still_orders_above_unavailable_engagement() -> None:
+    common = {"protected_lanes": [], "relation": "support",
+              "engagement_material_positive": True, "engagement_kind": "reddit_points"}
+    downvoted = {**common, "candidate_id": "a_downvoted", "engagement_raw_value": -30}
+    unavailable = {**common, "candidate_id": "b_unavailable", "engagement_raw_value": None}
+    assert _bucket_priority(downvoted) < _bucket_priority(unavailable)
+
+
+def test_edited_bundle_body_without_a_resealed_hash_fails_bundle_verification(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 2)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "Fabricated body text the bundle hash never covered."
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+    assert caught.value.boundary == "bundle_verification"
+
+
+def test_body_swapped_after_the_quote_manifest_cannot_supply_a_quote(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 2)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    for unit in sources[0]["bundle"]["evidence_units"]:
+        unit["text"] = "Body substituted after the quote manifest was written."
+    response = {
+        "quotes": [
+            {"selected_id": row["selected_id"], "quote_status": "quote_available",
+             "exact_quote": "Body substituted after"}
+            for row in quote_manifest["selected_rows"]
+        ]
+    }
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(quote_manifest, sources, response)
+    assert caught.value.boundary == "body_identity_mismatch"
+
+
+@pytest.mark.parametrize(
+    ("mutation", "boundary"),
+    [
+        ("unresolved_wrong_source", "failed_rehydration_lookup"),
+        ("protected_absent_evidence", "failed_rehydration_lookup"),
+        ("protected_unknown_lane", "selection_spec"),
+        ("nomination_row_malformed", "selection_spec"),
+    ],
+)
+def test_operator_nominations_that_cannot_resolve_fail_closed(
+    tmp_path: Path, mutation: str, boundary: str
+) -> None:
+    spec, sources = _write_source(tmp_path, 4)
+    if mutation == "unresolved_wrong_source":
+        spec["admit_unresolved"] = [{"source_id": "not-a-source", "evidence_id": "community_post:0"}]
+    elif mutation == "protected_absent_evidence":
+        spec["protected_evidence_ids"] = {"safety": ["community_post:404"]}
+    elif mutation == "protected_unknown_lane":
+        spec["protected_evidence_ids"] = {"safety_critical": ["community_post:0"]}
+    else:
+        spec["admit_semantic_refs"] = ["community_post:0::hydration"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _candidate_rows(sources, spec)
+    assert caught.value.boundary == boundary
 
 
 def test_same_origin_distinct_relation_is_one_capped_group_with_two_visible_candidates(tmp_path: Path) -> None:

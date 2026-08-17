@@ -8,6 +8,7 @@ identity, selection, lineage, and exactness checks.
 from __future__ import annotations
 
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -32,6 +33,21 @@ INFLUENCE_ROLES = {"creator_authored"}
 MAX_TRUTH_GROUPS = 10
 MAX_INFLUENCE_GROUPS = 3
 MAX_QUOTE_CHARACTERS = 220
+PROTECTED_LANES = ("safety", "costly_behavior")
+# One venue per publisher, matched on the registered domain and any subdomain of
+# it, so host variants (old./np./new./sh.reddit.com, vm./vt./m.tiktok.com,
+# community.sephora.com, smile.amazon.com) cannot split one venue into several
+# display sections and several engagement-ordering buckets.
+VENUE_HOST_SUFFIXES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("reddit", ("reddit.com", "redd.it")),
+    ("tiktok", ("tiktok.com",)),
+    ("sephora", ("sephora.com",)),
+    ("amazon", ("amazon.com", "amazon.co.uk")),
+    ("revolve", ("revolve.com",)),
+)
+# A whole numeric token only: a partial parse of "1.2k" or "1,234" would order
+# rows by a value the source never stated.
+ENGAGEMENT_NUMBER_RE = re.compile(r"^\s*(-?[0-9]+(?:\.[0-9]+)?)(?![0-9A-Za-z.,])")
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
@@ -76,7 +92,7 @@ def _numeric_engagement(value: Any, engagement_kind: str | None = None) -> float
     if isinstance(value, (int, float)):
         return float(value)
     if isinstance(value, str):
-        match = __import__("re").match(r"^\s*([0-9]+(?:\.[0-9]+)?)\b", value)
+        match = ENGAGEMENT_NUMBER_RE.match(value)
         return float(match.group(1)) if match else None
     if isinstance(value, Mapping):
         if engagement_kind != "sephora_helpful_votes":
@@ -96,6 +112,22 @@ def _numeric_engagement(value: Any, engagement_kind: str | None = None) -> float
     return None
 
 
+def _verify_bundle(bundle: Mapping[str, Any]) -> None:
+    """Reject a bundle whose body content no longer matches its stored hash.
+
+    The packet/bundle field comparison only proves the two artifacts agree on a
+    declared string; it cannot see an edited evidence body.  Quotes are read
+    from these bodies, so the bundle is content-verified where it first enters
+    the trust boundary.  Later stages inherit that proof through the selection
+    manifest's ``bundle_file_sha256`` pin.
+    """
+    core = {key: value for key, value in bundle.items() if key != "bundle_sha256"}
+    if bundle.get("bundle_sha256") != _canonical_json_sha256(core):
+        raise EvidenceConsumerError(
+            "bundle_verification", "bundle content does not match its stored bundle_sha256"
+        )
+
+
 def _string_values(value: Any) -> set[str]:
     if isinstance(value, str):
         return {part for part in value.split() if part}
@@ -106,20 +138,20 @@ def _string_values(value: Any) -> set[str]:
     raise EvidenceConsumerError("rehydration_source_validation", "expected string or string list")
 
 
+def _normalized_venue(host: str) -> str | None:
+    for venue, suffixes in VENUE_HOST_SUFFIXES:
+        if any(host == suffix or host.endswith(f".{suffix}") for suffix in suffixes):
+            return venue
+    return None
+
+
 def _source_venue(source_role: str, source_ref: Any, evidence_id: str) -> tuple[str, str]:
     if isinstance(source_ref, str):
         host = (urlparse(source_ref).hostname or "").lower().removeprefix("www.")
         if host:
-            if host in {"reddit.com", "old.reddit.com"}:
-                return "reddit", "normalized_source_ref_hostname"
-            if host in {"tiktok.com", "m.tiktok.com"}:
-                return "tiktok", "normalized_source_ref_hostname"
-            if host in {"sephora.com", "community.sephora.com"}:
-                return "sephora", "normalized_source_ref_hostname"
-            if host in {"amazon.com", "amazon.co.uk"}:
-                return "amazon", "normalized_source_ref_hostname"
-            if host == "revolve.com":
-                return "revolve", "normalized_source_ref_hostname"
+            venue = _normalized_venue(host)
+            if venue is not None:
+                return venue, "normalized_source_ref_hostname"
             return host, "source_ref_hostname"
     lowered_id = evidence_id.lower()
     if "tiktok" in lowered_id:
@@ -147,27 +179,43 @@ def _candidate_rows(
         )
     wanted_axes = set(axis_ids)
     wanted_subjects = set(subject_ids)
-    explicit_semantic_refs = {
-        (row.get("source_id"), row.get("semantic_unit_ref"))
-        for row in spec.get("admit_semantic_refs", [])
-        if isinstance(row, dict)
-    }
+
+    def _nominated_pairs(key: str, field: str) -> set[tuple[str, str]]:
+        pairs: set[tuple[str, str]] = set()
+        for row in spec.get(key) or []:
+            if (
+                not isinstance(row, dict)
+                or not isinstance(row.get("source_id"), str)
+                or not isinstance(row.get(field), str)
+            ):
+                raise EvidenceConsumerError(
+                    "selection_spec", f"{key} rows need a string source_id and {field}"
+                )
+            pairs.add((row["source_id"], row[field]))
+        return pairs
+
+    explicit_semantic_refs = _nominated_pairs("admit_semantic_refs", "semantic_unit_ref")
     if not wanted_axes and not explicit_semantic_refs:
         raise EvidenceConsumerError(
             "selection_spec", "axis_ids or admit_semantic_refs must admit candidates"
         )
-    explicit_unresolved = {
-        (row.get("source_id"), row.get("evidence_id"))
-        for row in spec.get("admit_unresolved", [])
-        if isinstance(row, dict)
-    }
-    protected = {
-        key: set(values)
-        for key, values in spec.get("protected_evidence_ids", {}).items()
-        if key in {"safety", "costly_behavior"} and isinstance(values, list)
-    }
+    explicit_unresolved = _nominated_pairs("admit_unresolved", "evidence_id")
+    protected_spec = spec.get("protected_evidence_ids") or {}
+    unsupported_lanes = sorted(set(protected_spec) - set(PROTECTED_LANES))
+    if unsupported_lanes:
+        raise EvidenceConsumerError(
+            "selection_spec", f"unsupported protected lane keys: {unsupported_lanes}"
+        )
+    protected: dict[str, set[str]] = {}
+    for key, values in protected_spec.items():
+        if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
+            raise EvidenceConsumerError(
+                "selection_spec", f"protected lane {key} must be a string list"
+            )
+        protected[key] = set(values)
     candidates: list[dict[str, Any]] = []
     seen: set[str] = set()
+    admitted_unresolved: set[tuple[str, str]] = set()
     for source in sources:
         source_id = source["source_id"]
         packet = source["packet"]
@@ -269,6 +317,7 @@ def _candidate_rows(
             disposition = unresolved_by_id[evidence_id]
             semantic_ref = f"unresolved::{evidence_id}"
             cid = _candidate_id(packet["packet_sha256"], evidence_id, semantic_ref)
+            admitted_unresolved.add((source_id, evidence_id))
             if cid in seen:
                 continue
             seen.add(cid)
@@ -318,7 +367,9 @@ def _candidate_rows(
                     "engagement_material_positive": engagement.get("material_positive") if status != "engagement_unavailable" else None,
                     "existing_relations": [],
                     "retained_unmerged": False,
-                    "protected_lanes": ["unknown"],
+                    "protected_lanes": sorted(
+                        lane for lane, ids in protected.items() if evidence_id in ids
+                    ),
                 }
             )
     candidates.sort(key=lambda row: row["candidate_id"])
@@ -327,6 +378,24 @@ def _candidate_rows(
     if missing_explicit:
         raise EvidenceConsumerError(
             "failed_rehydration_lookup", f"explicit semantic refs not found: {sorted(missing_explicit)}"
+        )
+    missing_unresolved = explicit_unresolved - admitted_unresolved
+    if missing_unresolved:
+        raise EvidenceConsumerError(
+            "failed_rehydration_lookup",
+            f"nominated unresolved refs not found: {sorted(missing_unresolved)}",
+        )
+    admitted_evidence_ids = {row["evidence_id"] for row in candidates}
+    missing_protected = sorted(
+        evidence_id
+        for ids in protected.values()
+        for evidence_id in ids
+        if evidence_id not in admitted_evidence_ids
+    )
+    if missing_protected:
+        raise EvidenceConsumerError(
+            "failed_rehydration_lookup",
+            f"protected evidence ids were not admitted: {missing_protected}",
         )
     if not candidates:
         raise EvidenceConsumerError("selection_spec", "no axis-bound candidates admitted")
@@ -389,6 +458,7 @@ def prepare_evidence_selection(
         packet_bundle = source["packet"].get("source_bindings", {}).get("bundle_sha256")
         if bundle.get("bundle_sha256") != packet_bundle:
             raise EvidenceConsumerError("bundle_verification", "packet/bundle hash mismatch")
+        _verify_bundle(bundle)
     candidates = _candidate_rows(sources, spec)
     envelope = {
         "selection_id": spec["selection_id"],
@@ -464,7 +534,10 @@ def _bucket_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
         0 if row.get("protected_lanes") else 1,
         0 if row.get("relation") in {"support", "counter"} else 1,
         0 if row.get("engagement_material_positive") is True else 1,
-        -(numeric if numeric is not None else -1),
+        # An uncomparable value orders last on its own rank, so a negative
+        # source-native score cannot sort below an unavailable one.
+        0 if numeric is not None else 1,
+        -numeric if numeric is not None else 0.0,
         row["candidate_id"],
     )
 
@@ -701,11 +774,22 @@ def finalize_quotes(
         boundary = "missing_quote_result" if set(observed) != set(expected) else "quote_order_mismatch"
         raise EvidenceConsumerError(boundary, "quote result set/order mismatch")
     bodies = _bundle_bodies(sources)
+    recorded_body_hashes = quote_manifest["quote_body_sha256"]
     output_rows = []
     for selected_row, quote_row in zip(selected, quotes, strict=True):
         if set(quote_row) != {"selected_id", "quote_status", "exact_quote"}:
             raise EvidenceConsumerError("quote_response_shape", "quote row shape mismatch")
         body = bodies.get((selected_row["source_id"], selected_row["evidence_id"]))
+        selected_id = selected_row["selected_id"]
+        if selected_id not in recorded_body_hashes:
+            raise EvidenceConsumerError(
+                "manifest_verification", f"quote manifest recorded no body hash for {selected_id}"
+            )
+        if (sha256_text(body) if body is not None else None) != recorded_body_hashes[selected_id]:
+            raise EvidenceConsumerError(
+                "body_identity_mismatch",
+                f"source body changed after the quote manifest was written: {selected_id}",
+            )
         status = quote_row["quote_status"]
         quote = quote_row["exact_quote"]
         if body is None:
@@ -732,6 +816,9 @@ def finalize_quotes(
                 "source_venue": selected_row["source_venue"],
                 "source_venue_basis": selected_row["source_venue_basis"],
                 "quote_status": status,
+                # A reader cannot otherwise tell an absent source body from a
+                # body that was present and yielded no quote.
+                "source_body_present": body is not None,
                 "exact_quote": quote,
                 "normalized_meaning": selected_row["normalized_meaning"],
                 "relation": selected_row["relation"],
@@ -775,6 +862,8 @@ def finalize_quotes(
             "not a causal judgment",
             "not a commercial-pull score",
             "creator influence is not customer corroboration",
+            "an exact quote is verified for exactness only, not for semantic relevance",
+            "quote_unavailable with source_body_present true means no quote was produced from an available body",
         ],
         "model_api_calls": 0,
     }

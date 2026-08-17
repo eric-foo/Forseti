@@ -820,32 +820,50 @@ authoritative semantic view. Admission is deterministic from explicit product
 and axis membership or literal operator-nominated semantic/unresolved refs.
 An external response must label every admitted candidate exactly once as
 support, counter, adjacent, or exclude before presentation selection begins;
-missing, duplicate, foreign, reordered, wrong-product, or wrong-role rows fail
-closed. All dispositions and their inventory hash remain in the completed
-artifact, including rows not displayed.
+missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
+response validation, and wrong-product nomination fails closed earlier at
+admission. An operator nomination that cannot resolve — an `admit_semantic_ref`,
+an `admit_unresolved` ref, a protected evidence ID, or an unrecognised protected
+lane key — fails closed rather than being dropped. All dispositions and their
+inventory hash remain in the completed artifact, including rows not displayed.
 
 Presentation caps independent origins, not underlying evidence: at most ten
 customer truth-support origin groups and three creator-influence origin groups.
-The selector preserves support, counter, one distinct quiet item when present,
-unavailable engagement, and explicitly nominated safety or costly-behavior
-lanes before filling remaining slots by source-role/venue/metric round robin.
+When origins exceed the cap the selector reserves one origin group each for
+support, counter, a quiet item, unavailable engagement, and explicitly nominated
+safety or costly-behavior lanes before filling remaining slots by
+source-role/venue/metric round robin. That reservation is origin-level: which
+one or two rows a reserved group displays is decided independently, so a group
+reserved for a lane may display no row of that lane. Lane visibility in the
+displayed set is therefore not guaranteed; the complete disposition inventory,
+not the display, is the accounting record.
 Engagement orders rows only inside one source-native venue/role/metric bucket;
 its literal stored value remains unchanged and there is no cross-platform
-score. A distinct relation or condition from the same origin may receive a
-second displayed quote without consuming a second origin slot. Creator-authored
-material is influence context and is deterministically barred from customer
-support or counter relations; qualified creator-audience comments retain their
-customer role.
+score. Venue is normalized per publisher across host variants and short links,
+so one publisher cannot split into several display sections or ordering
+buckets. A source-native value the runtime cannot read as a whole number — an
+abbreviated or group-separated count — is treated as uncomparable and ordered
+last rather than partially parsed. A distinct relation or condition from the
+same origin may receive a second displayed quote without consuming a second
+origin slot. Creator-authored material is influence context and is
+deterministically barred from customer support or counter relations; qualified
+creator-audience comments retain their customer role.
 
 Only selected display rows expose their source bodies to a second external
-quote response. The finalizer follows the packet's bundle hash to its literal
-evidence ID and requires exact source-artifact and source-ref equality. An
-available quote must be one contiguous source substring of no more than 220
-characters, with no inserted ellipsis or rewriting. Missing bodies produce a
-typed `quote_unavailable` while the source-owned normalized meaning remains.
-Exactness does not prove semantic relevance; that remains a quality-adjudication
-obligation outside the deterministic runtime. Both prepare/finalize stages make
-zero provider calls and are deterministic and idempotent.
+quote response. The bundle is content-verified against its own stored
+`bundle_sha256` where it enters the trust boundary, and the finalizer follows
+the packet's bundle hash to its literal evidence ID, requires exact
+source-artifact and source-ref equality, and rejects a body whose hash differs
+from the one the quote manifest recorded. An available quote must be one
+contiguous source substring of no more than 220 characters, with no inserted
+ellipsis or rewriting; no minimum length or substance is enforced. A typed
+`quote_unavailable` covers two distinct cases — no source body, and a source
+body that yielded no quote — so each displayed row records
+`source_body_present` and the source-owned normalized meaning remains either
+way. Exactness does not prove semantic relevance; that remains a
+quality-adjudication obligation outside the deterministic runtime. Both
+prepare/finalize stages make zero provider calls and are deterministic and
+idempotent.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -1281,9 +1299,13 @@ new frontier.
 - `v39` / 2026-08-18 — added the optional hash-bound Phase A
   selection-and-exact-quote consumer. It accounts for every axis- or
   literal-ref-admitted candidate before capping source-grouped presentation,
-  separates customer truth support from creator influence, ranks engagement
-  only inside comparable native-metric buckets, preserves distinct
-  same-origin relations/conditions, and verifies exact bundle-backed quotes.
+  fails closed on an operator nomination that cannot resolve, separates
+  customer truth support from creator influence, ranks engagement only inside
+  comparable native-metric buckets over publisher-normalized venues, preserves
+  distinct same-origin relations/conditions, and verifies exact quotes against
+  a content-verified bundle body. Lane reservation is origin-level, so lane
+  visibility in the displayed set is not guaranteed; `source_body_present`
+  separates a missing body from a body that yielded no quote.
   Kept packet v3 and completed semantic outputs immutable; added no provider
   call, prevalence estimate, causal claim, commercial-pull score, or new
   evidence authority.

@@ -263,23 +263,31 @@ hash-bound `phase_a_evidence_packet_v3`; it is not packet v4, a semantic replay,
 or a second evidence authority.
 
 Admission uses explicit product plus axis membership, with literal nominated
-semantic or unresolved refs for bounded non-axis cases. The external relation
+semantic or unresolved refs for bounded non-axis cases. A nomination that
+cannot resolve fails closed instead of disappearing. The external relation
 response must account for every admitted candidate before deterministic
 presentation selection. The cap applies to displayed independent-origin
 groups: ten customer truth groups and three creator-influence groups. Source
-roles and retailer venues remain visible; creator-authored popularity never
+roles and retailer venues remain visible, with each publisher normalized to one
+venue across host variants and short links; creator-authored popularity never
 corroborates customer experience. Engagement may prioritize rows only inside
-one venue/role/native-metric bucket. Counter, quiet, unknown-engagement, safety,
-and costly-behavior lanes cannot be silently crowded out.
+one venue/role/native-metric bucket, and a count the runtime cannot read whole
+is ordered last rather than partially parsed. Counter, quiet, unknown-engagement,
+safety, and costly-behavior lanes each reserve an origin group over the cap, but
+that reservation does not guarantee a row of that lane appears in the display;
+the retained disposition inventory, not the display, is the accounting record.
 
 The quote stage reads bodies only for selected display rows. It accepts one
-contiguous exact substring of at most 220 characters after packet/bundle,
-evidence-ID, artifact-ID, and source-ref verification. It never repairs text or
-adds ellipses. Missing bodies remain `quote_unavailable` beside the normalized
-meaning. The completed artifact retains every candidate disposition and the
-full candidate-inventory hash, including Amazon or Revolve rows that did not
-earn a display slot. Repository runners emit prompts and schemas but make zero
-provider calls.
+contiguous exact substring of at most 220 characters after packet and bundle
+content verification and evidence-ID, artifact-ID, and source-ref verification,
+and rejects a body that changed after the quote manifest was written. It never
+repairs text or adds ellipses, and it enforces no minimum length. A
+`quote_unavailable` row carries `source_body_present`, so a missing body is
+distinguishable from a body that yielded no quote, and the normalized meaning
+remains either way. The completed artifact retains every candidate disposition
+and the full candidate-inventory hash, including Amazon or Revolve rows that did
+not earn a display slot. Repository runners emit prompts and schemas but make
+zero provider calls.
 
 ## Evidence-family boundary
 
