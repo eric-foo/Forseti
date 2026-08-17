@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v38
-effective_date: 2026-08-17
+version: v39
+effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v38
+# Semantic Evidence Integration Contract v39
 
 ## Purpose
 
@@ -814,6 +814,39 @@ schema. This is call-overhead amortization plus deterministic rehydration, not
 packet compression, evidence selection, a caching claim, or a new judgment
 authority.
 
+Contract v39 adds an optional no-provider selection-and-quote consumer over
+one or more hash-bound v3 packets. It does not change packet v3 or the
+authoritative semantic view. Admission is deterministic from explicit product
+and axis membership or literal operator-nominated semantic/unresolved refs.
+An external response must label every admitted candidate exactly once as
+support, counter, adjacent, or exclude before presentation selection begins;
+missing, duplicate, foreign, reordered, wrong-product, or wrong-role rows fail
+closed. All dispositions and their inventory hash remain in the completed
+artifact, including rows not displayed.
+
+Presentation caps independent origins, not underlying evidence: at most ten
+customer truth-support origin groups and three creator-influence origin groups.
+The selector preserves support, counter, one distinct quiet item when present,
+unavailable engagement, and explicitly nominated safety or costly-behavior
+lanes before filling remaining slots by source-role/venue/metric round robin.
+Engagement orders rows only inside one source-native venue/role/metric bucket;
+its literal stored value remains unchanged and there is no cross-platform
+score. A distinct relation or condition from the same origin may receive a
+second displayed quote without consuming a second origin slot. Creator-authored
+material is influence context and is deterministically barred from customer
+support or counter relations; qualified creator-audience comments retain their
+customer role.
+
+Only selected display rows expose their source bodies to a second external
+quote response. The finalizer follows the packet's bundle hash to its literal
+evidence ID and requires exact source-artifact and source-ref equality. An
+available quote must be one contiguous source substring of no more than 220
+characters, with no inserted ellipsis or rewriting. Missing bodies produce a
+typed `quote_unavailable` while the source-owned normalized meaning remains.
+Exactness does not prove semantic relevance; that remains a quality-adjudication
+obligation outside the deterministic runtime. Both prepare/finalize stages make
+zero provider calls and are deterministic and idempotent.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1245,6 +1278,15 @@ new frontier.
 
 ## Changelog
 
+- `v39` / 2026-08-18 — added the optional hash-bound Phase A
+  selection-and-exact-quote consumer. It accounts for every axis- or
+  literal-ref-admitted candidate before capping source-grouped presentation,
+  separates customer truth support from creator influence, ranks engagement
+  only inside comparable native-metric buckets, preserves distinct
+  same-origin relations/conditions, and verifies exact bundle-backed quotes.
+  Kept packet v3 and completed semantic outputs immutable; added no provider
+  call, prevalence estimate, causal claim, commercial-pull score, or new
+  evidence authority.
 - `v38` / 2026-08-17 — added the owner-authorized, no-provider
   `migrate-repaired-terminal` successor for a completed policy-v2 terminal
   compilation after selective whole-row repair. Reuse now requires complete

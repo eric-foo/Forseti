@@ -72,6 +72,12 @@ from judgment.phase_a_evidence_consumer import (  # noqa: E402
     load_prepared_cases,
     prepare_decision_batch,
 )
+from judgment.phase_a_evidence_selection import (  # noqa: E402
+    finalize_quotes,
+    finalize_relations_prepare_quotes,
+    load_selection_sources,
+    prepare_evidence_selection,
+)
 from harness_utils import hash_file  # noqa: E402
 
 
@@ -1541,6 +1547,121 @@ def finalize_evidence_consumer_batch_run(
     }
 
 
+def prepare_evidence_selection_run(
+    *,
+    spec_path: Path,
+    prompt_out: Path,
+    response_schema_out: Path,
+    manifest_out: Path,
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    rows = spec.get("sources")
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("evidence selection sources must be a nonempty list")
+    sources = []
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError("evidence selection source must be an object")
+        packet_path = (spec_path.parent / Path(row["packet_path"])).resolve(strict=True)
+        bundle_path = (spec_path.parent / Path(row["bundle_path"])).resolve(strict=True)
+        sources.append(
+            {
+                "source_id": row["source_id"],
+                "packet_path": packet_path,
+                "bundle_path": bundle_path,
+                "packet": _load_object(packet_path),
+                "bundle": _load_object(bundle_path),
+            }
+        )
+    prompt, schema, manifest = prepare_evidence_selection(spec, sources)
+    for output in (prompt_out, response_schema_out, manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(prompt_out, prompt.encode("utf-8"))
+    _write_json(response_schema_out, schema)
+    _write_json(manifest_out, manifest)
+    return {
+        "status": "PHASE_A_EVIDENCE_SELECTION_RELATIONS_READY",
+        "candidate_count": manifest["candidate_count"],
+        "candidate_inventory_sha256": manifest["candidate_inventory_sha256"],
+        "manifest_sha256": manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_evidence_selection_relations_run(
+    *,
+    manifest_path: Path,
+    response_path: Path,
+    quote_prompt_out: Path,
+    quote_schema_out: Path,
+    quote_manifest_out: Path,
+) -> dict[str, Any]:
+    manifest = _load_object(manifest_path)
+    sources = load_selection_sources(manifest)
+    response = _load_object(response_path)
+    prompt, schema, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, response
+    )
+    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(quote_prompt_out, prompt.encode("utf-8"))
+    _write_json(quote_schema_out, schema)
+    _write_json(quote_manifest_out, quote_manifest)
+    return {
+        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_READY",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
+        "truth_group_count": len(
+            {
+                row["origin_group_id"]
+                for row in quote_manifest["selected_rows"]
+                if row["layer"] == "truth_support"
+            }
+        ),
+        "influence_group_count": len(
+            {
+                row["origin_group_id"]
+                for row in quote_manifest["selected_rows"]
+                if row["layer"] == "influence_context"
+            }
+        ),
+        "manifest_sha256": quote_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_evidence_selection_quotes_run(
+    *,
+    selection_manifest_path: Path,
+    quote_manifest_path: Path,
+    response_path: Path,
+    artifact_out: Path,
+) -> dict[str, Any]:
+    selection_manifest = _load_object(selection_manifest_path)
+    sources = load_selection_sources(selection_manifest)
+    quote_manifest = _load_object(quote_manifest_path)
+    if quote_manifest.get("selection_manifest_sha256") != selection_manifest.get(
+        "manifest_sha256"
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "quote manifest belongs to another selection"
+        )
+    artifact = finalize_quotes(quote_manifest, sources, _load_object(response_path))
+    if artifact_out.exists():
+        raise ValueError(f"refusing to overwrite existing output: {artifact_out}")
+    _write_json(artifact_out, artifact)
+    return {
+        "status": "PHASE_A_EVIDENCE_SELECTION_COMPLETE",
+        "candidate_count": artifact["candidate_count"],
+        "truth_group_count": artifact["truth_group_count"],
+        "influence_group_count": artifact["influence_group_count"],
+        "artifact_out": str(artifact_out),
+        "artifact_sha256": hash_file(artifact_out),
+        "model_api_calls": 0,
+    }
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -1802,6 +1923,25 @@ def _parser() -> argparse.ArgumentParser:
     consumer_finalize.add_argument("--manifest", type=Path, required=True)
     consumer_finalize.add_argument("--response", type=Path, required=True)
     consumer_finalize.add_argument("--artifact-dir", type=Path, required=True)
+
+    selection_prepare = sub.add_parser("prepare-evidence-selection")
+    selection_prepare.add_argument("--spec", type=Path, required=True)
+    selection_prepare.add_argument("--prompt-out", type=Path, required=True)
+    selection_prepare.add_argument("--response-schema-out", type=Path, required=True)
+    selection_prepare.add_argument("--manifest-out", type=Path, required=True)
+
+    selection_relations = sub.add_parser("finalize-evidence-selection-relations")
+    selection_relations.add_argument("--manifest", type=Path, required=True)
+    selection_relations.add_argument("--response", type=Path, required=True)
+    selection_relations.add_argument("--quote-prompt-out", type=Path, required=True)
+    selection_relations.add_argument("--quote-schema-out", type=Path, required=True)
+    selection_relations.add_argument("--quote-manifest-out", type=Path, required=True)
+
+    selection_quotes = sub.add_parser("finalize-evidence-selection-quotes")
+    selection_quotes.add_argument("--selection-manifest", type=Path, required=True)
+    selection_quotes.add_argument("--quote-manifest", type=Path, required=True)
+    selection_quotes.add_argument("--response", type=Path, required=True)
+    selection_quotes.add_argument("--artifact-out", type=Path, required=True)
 
     calibration_prepare = sub.add_parser("prepare-calibration")
     calibration_prepare.add_argument("--source", type=Path, required=True)
@@ -2103,6 +2243,28 @@ def main(argv: list[str] | None = None) -> int:
                 manifest_path=args.manifest,
                 response_path=args.response,
                 artifact_dir=args.artifact_dir,
+            )
+        elif args.command == "prepare-evidence-selection":
+            result = prepare_evidence_selection_run(
+                spec_path=args.spec,
+                prompt_out=args.prompt_out,
+                response_schema_out=args.response_schema_out,
+                manifest_out=args.manifest_out,
+            )
+        elif args.command == "finalize-evidence-selection-relations":
+            result = finalize_evidence_selection_relations_run(
+                manifest_path=args.manifest,
+                response_path=args.response,
+                quote_prompt_out=args.quote_prompt_out,
+                quote_schema_out=args.quote_schema_out,
+                quote_manifest_out=args.quote_manifest_out,
+            )
+        elif args.command == "finalize-evidence-selection-quotes":
+            result = finalize_evidence_selection_quotes_run(
+                selection_manifest_path=args.selection_manifest,
+                quote_manifest_path=args.quote_manifest,
+                response_path=args.response,
+                artifact_out=args.artifact_out,
             )
         elif args.command == "prepare-calibration":
             result = prepare_semantic_calibration_run(

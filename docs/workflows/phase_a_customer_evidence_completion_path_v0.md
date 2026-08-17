@@ -253,6 +253,34 @@ deterministic rehydration cannot preserve the complete consumer artifact.
 The matched experiment result is
 `C:\tmp\forseti-phase-a-related-batching-20260817-v0\experiment_result_v1.json`.
 
+#### Optional evidence selection and exact quotes
+
+When the complete proposition-linked view is too coarse for commercially
+useful presentation, use the existing no-provider evidence-consumer's
+`prepare-evidence-selection`, `finalize-evidence-selection-relations`, and
+`finalize-evidence-selection-quotes` operations. This is a consumer view over
+hash-bound `phase_a_evidence_packet_v3`; it is not packet v4, a semantic replay,
+or a second evidence authority.
+
+Admission uses explicit product plus axis membership, with literal nominated
+semantic or unresolved refs for bounded non-axis cases. The external relation
+response must account for every admitted candidate before deterministic
+presentation selection. The cap applies to displayed independent-origin
+groups: ten customer truth groups and three creator-influence groups. Source
+roles and retailer venues remain visible; creator-authored popularity never
+corroborates customer experience. Engagement may prioritize rows only inside
+one venue/role/native-metric bucket. Counter, quiet, unknown-engagement, safety,
+and costly-behavior lanes cannot be silently crowded out.
+
+The quote stage reads bodies only for selected display rows. It accepts one
+contiguous exact substring of at most 220 characters after packet/bundle,
+evidence-ID, artifact-ID, and source-ref verification. It never repairs text or
+adds ellipses. Missing bodies remain `quote_unavailable` beside the normalized
+meaning. The completed artifact retains every candidate disposition and the
+full candidate-inventory hash, including Amazon or Revolve rows that did not
+earn a display slot. Repository runners emit prompts and schemas but make zero
+provider calls.
+
 ## Evidence-family boundary
 
 - Reddit/community and retailer reviews are customer evidence and may be
