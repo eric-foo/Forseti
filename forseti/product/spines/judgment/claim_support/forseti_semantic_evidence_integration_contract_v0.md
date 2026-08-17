@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v37
+version: v38
 effective_date: 2026-08-17
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v37
+# Semantic Evidence Integration Contract v38
 
 ## Purpose
 
@@ -901,6 +901,29 @@ verified compilation, selected IDs, responses, and new active-row hash. The
 new compilation hash invalidates every older reconciliation and view. Repair
 never edits semantic nodes or a finalized view directly.
 
+When a completed policy-v2 terminal compilation exists and a selective repair
+changes only a narrow set of verified rows, `migrate-repaired-terminal` is the
+supported incremental successor route. It admits an old terminal node only
+after comparing every complete leaf semantic row it uses against the repaired
+compilation; any statement, polarity, uncertainty, product/comparator/version,
+axis, condition, or evidence-posture change invalidates that node. The current
+route can deterministically rederive a node only when the complete-row repair
+changed polarity while leaving the truth-complete statement and every other
+semantic field unchanged. Changed unmerged rows retain exact membership and
+reason but resolve their semantic content from the repaired compilation.
+
+The migration compiler hash-binds the raw bundle, old verified compilation,
+repaired compilation, old terminal compilation, every terminal leaf, every
+unmerged unit, the reuse/invalidation census, and any exact-identity coalescing.
+Coalescing requires truth/scope/claim metadata to agree, unions emerging labels,
+postures, and lineage, rejects relation or condition-lineage conflicts, and
+uses logical AND for opposition checking. It is not relation closure and cannot
+carry closure-only fields or make a global `none_observed` claim. `finalize-v3`
+recomputes claim support, evidence stacks, and reverse indices from the migrated
+nodes plus repaired compilation, and retains its independent duplicate-identity
+guard. A broader semantic change, changed membership, incomplete leaf proof, or
+missing source artifact falls back to a fresh supported reconciliation replay.
+
 For bundle v4, agent-facing reconciliation prompts carry child references and
 the meaning dimensions needed to judge a merge, but omit expanded
 `leaf_relations` and `condition_lineage`. The stage and compiler retain that
@@ -1019,21 +1042,26 @@ Current-route operations are:
      the next node compilation; repeat until one terminal level remains.
 14. `finalize-v3` flattens terminal nodes back to exact leaves and writes view
      v2.
-15. The opt-in v34 route instead runs `prepare-relation-closure` over the
+15. After selective row repair, `migrate-repaired-terminal` may replace a full
+    reconciliation replay only when a completed old terminal compilation and
+    complete old/new verified compilations establish the leaf-complete equality
+    and narrow deterministic-rederivation proof above. It writes a new terminal
+    compilation and migration manifest and makes zero provider calls.
+16. The opt-in v34 route instead runs `prepare-relation-closure` over the
     terminal normal-retention frontier, validates each large-run response with
     `validate-relation-closure-response`, runs `submit-relation-closure` only
     after exact global pair-relation coverage, and uses
     `finalize-relation-closed` to write view v3. `prepare-row-repair` /
     `submit-row-repair` may correct named source rows first; any repair restarts
     reconciliation from its new verified compilation hash.
-16. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+17. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
-17. `evaluate-calibration` runs the existing response validator, then evaluates
+18. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
     anomaly, and repeat judgments must be explicit and hash-bound to the exact
@@ -1212,6 +1240,19 @@ new frontier.
 
 ## Changelog
 
+- `v38` / 2026-08-17 — added the owner-authorized, no-provider
+  `migrate-repaired-terminal` successor for a completed policy-v2 terminal
+  compilation after selective whole-row repair. Reuse now requires complete
+  old/new leaf equality; polarity-only defects may be deterministically
+  rederived; compatible exact identities coalesce under must-agree, union, and
+  conflict-visible rules; and every input, leaf, invalidation, reuse, unmerged
+  unit, and coalescing decision is hash-bound. The route preserves the finalizer
+  duplicate guard, never claims relation closure, and falls back to fresh
+  reconciliation for broader semantic changes. Enforced the existing v35/v36
+  lossless-engagement rule for legacy bundle observations carrying one explicit
+  `raw_*` source-native metric: the raw field name supplies the metric kind, the
+  stored value and materiality basis remain literal, and ambiguous or unknown
+  shapes fail instead of becoming `engagement_unavailable`.
 - `v37` / 2026-08-17 — adopted ordered batching for actually related Phase A
   proposition cases plus the decision-only response and deterministic v3
   rehydration seam. The measured six-family workload fell from 18 to 15 calls

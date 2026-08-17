@@ -26,6 +26,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     finalize_view,
     is_terminal_reconciliation_compilation,
     materialize_source_v3,
+    migrate_repaired_terminal_compilation,
     project_evidence_packet,
     project_evidence_packet_v1,
     project_evidence_packet_v2,
@@ -1355,6 +1356,48 @@ def finalize_v3(
     }
 
 
+def migrate_repaired_terminal_run(
+    *,
+    bundle_path: Path,
+    source_batch_compilation_path: Path,
+    repaired_batch_compilation_path: Path,
+    source_node_compilation_path: Path,
+    compilation_out: Path,
+    manifest_out: Path,
+) -> dict[str, Any]:
+    paths = {
+        "bundle": bundle_path,
+        "source_batch_compilation": source_batch_compilation_path,
+        "repaired_batch_compilation": repaired_batch_compilation_path,
+        "source_node_compilation": source_node_compilation_path,
+    }
+    compilation = migrate_repaired_terminal_compilation(
+        _load_object(bundle_path),
+        _load_object(source_batch_compilation_path),
+        _load_object(repaired_batch_compilation_path),
+        _load_object(source_node_compilation_path),
+        raw_file_sha256s={name: hash_file(path) for name, path in paths.items()},
+    )
+    _write_json(compilation_out, compilation)
+    _write_json(manifest_out, compilation["terminal_repair_migration_manifest"])
+    manifest = compilation["terminal_repair_migration_manifest"]
+    return {
+        "status": "SEMANTIC_TERMINAL_REPAIR_MIGRATION_COMPLETE",
+        "node_compilation_sha256": compilation["node_compilation_sha256"],
+        "manifest_sha256": manifest["manifest_sha256"],
+        "source_node_count": manifest["source_node_count"],
+        "output_node_count": manifest["output_node_count"],
+        "reused_node_count": len(manifest["reused_source_semantic_node_refs"]),
+        "invalidated_node_count": len(
+            manifest["invalidated_source_semantic_node_refs"]
+        ),
+        "coalesced_group_count": len(manifest["coalesced_node_groups"]),
+        "compilation_out": str(compilation_out),
+        "manifest_out": str(manifest_out),
+        "model_api_calls": 0,
+    }
+
+
 def finalize_relation_closed(
     *,
     bundle_path: Path,
@@ -1716,6 +1759,20 @@ def _parser() -> argparse.ArgumentParser:
     finish_v3.add_argument("--node-compilation", type=Path, required=True)
     finish_v3.add_argument("--view-out", type=Path, required=True)
 
+    migrate_terminal = sub.add_parser("migrate-repaired-terminal")
+    migrate_terminal.add_argument("--bundle", type=Path, required=True)
+    migrate_terminal.add_argument(
+        "--source-batch-compilation", type=Path, required=True
+    )
+    migrate_terminal.add_argument(
+        "--repaired-batch-compilation", type=Path, required=True
+    )
+    migrate_terminal.add_argument(
+        "--source-node-compilation", type=Path, required=True
+    )
+    migrate_terminal.add_argument("--compilation-out", type=Path, required=True)
+    migrate_terminal.add_argument("--manifest-out", type=Path, required=True)
+
     finish_closed = sub.add_parser("finalize-relation-closed")
     finish_closed.add_argument("--bundle", type=Path, required=True)
     finish_closed.add_argument("--batch-compilation", type=Path, required=True)
@@ -2006,6 +2063,15 @@ def main(argv: list[str] | None = None) -> int:
                 batch_compilation_path=args.batch_compilation,
                 node_compilation_path=args.node_compilation,
                 view_out=args.view_out,
+            )
+        elif args.command == "migrate-repaired-terminal":
+            result = migrate_repaired_terminal_run(
+                bundle_path=args.bundle,
+                source_batch_compilation_path=args.source_batch_compilation,
+                repaired_batch_compilation_path=args.repaired_batch_compilation,
+                source_node_compilation_path=args.source_node_compilation,
+                compilation_out=args.compilation_out,
+                manifest_out=args.manifest_out,
             )
         elif args.command == "finalize-relation-closed":
             result = finalize_relation_closed(

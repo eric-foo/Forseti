@@ -7,6 +7,7 @@ identity credit, source-role competence, and stable serialization belong here.
 """
 from __future__ import annotations
 
+from copy import deepcopy
 import hashlib
 import json
 from collections import defaultdict
@@ -64,6 +65,12 @@ RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
 RELATION_CLOSURE_COMPILATION_VERSION = "semantic_evidence_relation_closure_compilation_v1"
+TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION = (
+    "semantic_terminal_repair_migration_compilation_v1"
+)
+TERMINAL_REPAIR_MIGRATION_MANIFEST_VERSION = (
+    "semantic_terminal_repair_migration_manifest_v1"
+)
 VIEW_VERSION = "semantic_evidence_integration_view_v1"
 VIEW_VERSION_V2 = "semantic_evidence_integration_view_v2"
 VIEW_VERSION_V3 = "semantic_evidence_integration_view_v3"
@@ -6325,6 +6332,747 @@ def _relation_pair_identity_sha256(candidate_refs: Sequence[str]) -> str:
     return digest.hexdigest()
 
 
+_TERMINAL_REPAIR_IDENTITY_SET_FIELDS = (
+    "subject_product_ids",
+    "comparator_product_ids",
+    "product_version_ids",
+    "axis_ids",
+    "conditions",
+)
+_TERMINAL_REPAIR_MUST_AGREE_FIELDS = (
+    "bounded_meaning",
+    "terminal_proposition",
+    "claim_kind",
+    "polarity",
+    "uncertainty_posture",
+    "causal_ceiling",
+)
+
+
+def _terminal_repair_identity(node: Mapping[str, Any]) -> tuple[Any, ...]:
+    """Return the exact legacy proposition identity used by v2 finalization."""
+    return (
+        node.get("bounded_meaning"),
+        *(
+            tuple(sorted(node.get(field, [])))
+            for field in _TERMINAL_REPAIR_IDENTITY_SET_FIELDS
+        ),
+    )
+
+
+def _terminal_repair_leaf_relations(node: Mapping[str, Any]) -> dict[str, str]:
+    relations: dict[str, str] = {}
+    rows = node.get("leaf_relations")
+    if not isinstance(rows, list) or not rows:
+        raise SemanticIntegrationError("terminal repair source node lacks leaf lineage")
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise SemanticIntegrationError("terminal repair source node has invalid leaf lineage")
+        ref = row.get("semantic_unit_ref")
+        relation = row.get("relation")
+        if not _nonempty(ref) or relation not in RELATIONS:
+            raise SemanticIntegrationError("terminal repair source node has invalid leaf relation")
+        prior = relations.get(ref)
+        if prior is not None and prior != relation:
+            raise SemanticIntegrationError(
+                "terminal repair source node assigns conflicting relations to one leaf"
+            )
+        if prior is not None:
+            raise SemanticIntegrationError("terminal repair source node duplicates one leaf")
+        relations[ref] = relation
+    return relations
+
+
+def _terminal_repair_condition_lineage(
+    node: Mapping[str, Any],
+) -> dict[str, tuple[str, ...]]:
+    lineage: dict[str, tuple[str, ...]] = {}
+    rows = node.get("condition_lineage")
+    if not isinstance(rows, list):
+        raise SemanticIntegrationError("terminal repair source node lacks condition lineage")
+    for row in rows:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("semantic_unit_ref")):
+            raise SemanticIntegrationError("terminal repair source node has invalid condition lineage")
+        ref = row["semantic_unit_ref"]
+        conditions = tuple(
+            _string_list(
+                row.get("conditions", []),
+                field=f"terminal repair condition lineage {ref}",
+            )
+        )
+        if ref in lineage:
+            if lineage[ref] != conditions:
+                raise SemanticIntegrationError(
+                    "terminal repair source node has conflicting condition lineage"
+                )
+            raise SemanticIntegrationError(
+                "terminal repair source node duplicates condition lineage"
+            )
+        lineage[ref] = conditions
+    return lineage
+
+
+def _terminal_repair_child_relations(node: Mapping[str, Any]) -> dict[str, str]:
+    relations: dict[str, str] = {}
+    rows = node.get("child_relations")
+    if not isinstance(rows, list) or not rows:
+        raise SemanticIntegrationError("terminal repair source node lacks child lineage")
+    for row in rows:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("child_ref")):
+            raise SemanticIntegrationError("terminal repair source node has invalid child lineage")
+        ref = row["child_ref"]
+        relation = row.get("relation")
+        if relation not in RELATIONS:
+            raise SemanticIntegrationError("terminal repair source node has invalid child relation")
+        prior = relations.get(ref)
+        if prior is not None and prior != relation:
+            raise SemanticIntegrationError(
+                "terminal repair source nodes assign conflicting relations to one child"
+            )
+        relations[ref] = relation
+    return relations
+
+
+def _terminal_repair_validate_node_against_leaves(
+    node: Mapping[str, Any],
+    semantic_index: Mapping[str, Mapping[str, Any]],
+) -> set[str]:
+    """Validate compiler-owned fields against the current complete leaf rows."""
+    if node.get("terminal_proposition") is not True:
+        raise SemanticIntegrationError("terminal repair migration contains nonterminal node")
+    if node.get("claim_kind") not in CLAIM_KINDS:
+        raise SemanticIntegrationError("terminal repair migration node lacks claim kind")
+    if node.get("causal_ceiling") not in CAUSAL_CEILINGS:
+        raise SemanticIntegrationError("terminal repair migration node lacks causal ceiling")
+    if node.get("uncertainty_posture") not in UNCERTAINTY_POSTURES:
+        raise SemanticIntegrationError("terminal repair migration node has invalid uncertainty")
+    relations = _terminal_repair_leaf_relations(node)
+    if not any(relation == "support" for relation in relations.values()):
+        raise SemanticIntegrationError("terminal repair migration node lacks support")
+    if set(relations) - set(semantic_index):
+        raise SemanticIntegrationError(
+            "terminal repair migration cites missing semantic leaf"
+        )
+    subjects = set(node.get("subject_product_ids", []))
+    comparators = set(node.get("comparator_product_ids", []))
+    versions = set(node.get("product_version_ids", []))
+    leaf_polarities: set[str] = set()
+    emerging: set[str] = set()
+    postures: set[str] = set()
+    expected_lineage: dict[str, tuple[str, ...]] = {}
+    for ref in relations:
+        leaf = semantic_index[ref]
+        if (
+            set(leaf["subject_product_ids"]) != subjects
+            or set(leaf["comparator_product_ids"]) != comparators
+            or set(leaf.get("product_version_ids", [])) != versions
+        ):
+            raise SemanticIntegrationError(
+                "terminal repair migration crosses product, comparator, or version bindings"
+            )
+        leaf_polarities.add(leaf["polarity"])
+        emerging.update(leaf.get("emerging_axis_labels", []))
+        postures.add(leaf["evidence_posture"])
+        expected_lineage[ref] = tuple(leaf.get("conditions", []))
+    expected_polarity = (
+        next(iter(leaf_polarities)) if len(leaf_polarities) == 1 else "mixed"
+    )
+    if node.get("polarity") != expected_polarity:
+        raise SemanticIntegrationError(
+            "terminal repair migration collapses current leaf polarity"
+        )
+    if set(node.get("emerging_axis_labels", [])) != emerging:
+        raise SemanticIntegrationError(
+            "terminal repair migration loses current emerging-axis labels"
+        )
+    if set(node.get("evidence_postures", [])) != postures:
+        raise SemanticIntegrationError(
+            "terminal repair migration loses current evidence postures"
+        )
+    if _terminal_repair_condition_lineage(node) != expected_lineage:
+        raise SemanticIntegrationError(
+            "terminal repair migration condition lineage does not match current leaves"
+        )
+    required_conditions = {
+        condition for values in expected_lineage.values() for condition in values
+    }
+    if not required_conditions <= set(node.get("conditions", [])):
+        raise SemanticIntegrationError(
+            "terminal repair migration drops a current leaf condition"
+        )
+    _terminal_repair_child_relations(node)
+    return set(relations)
+
+
+def _terminal_repair_coalesce_group(
+    nodes: Sequence[Mapping[str, Any]],
+    *,
+    repaired_compilation_sha256: str,
+) -> dict[str, Any]:
+    if not nodes:
+        raise SemanticIntegrationError("terminal repair cannot coalesce an empty group")
+    first = nodes[0]
+    for node in nodes[1:]:
+        for field in _TERMINAL_REPAIR_MUST_AGREE_FIELDS:
+            if node.get(field) != first.get(field):
+                raise SemanticIntegrationError(
+                    f"terminal repair identity collision disagrees on {field}"
+                )
+        for field in _TERMINAL_REPAIR_IDENTITY_SET_FIELDS:
+            if set(node.get(field, [])) != set(first.get(field, [])):
+                raise SemanticIntegrationError(
+                    f"terminal repair identity collision disagrees on {field}"
+                )
+    leaf_relations: dict[str, str] = {}
+    duplicate_leaf_refs: set[str] = set()
+    child_relations: dict[str, str] = {}
+    condition_lineage: dict[str, tuple[str, ...]] = {}
+    source_refs: list[str] = []
+    emerging: set[str] = set()
+    postures: set[str] = set()
+    opposition_checked = True
+    for node in nodes:
+        source_ref = node.get("semantic_node_ref")
+        if not _nonempty(source_ref):
+            raise SemanticIntegrationError("terminal repair source node lacks identity")
+        source_refs.append(source_ref)
+        for ref, relation in _terminal_repair_leaf_relations(node).items():
+            prior = leaf_relations.get(ref)
+            if prior is not None and prior != relation:
+                raise SemanticIntegrationError(
+                    "terminal repair identity collision disagrees on leaf relation"
+                )
+            if prior is not None:
+                duplicate_leaf_refs.add(ref)
+            leaf_relations[ref] = relation
+        for ref, relation in _terminal_repair_child_relations(node).items():
+            prior = child_relations.get(ref)
+            if prior is not None and prior != relation:
+                raise SemanticIntegrationError(
+                    "terminal repair identity collision disagrees on child relation"
+                )
+            child_relations[ref] = relation
+        for ref, conditions in _terminal_repair_condition_lineage(node).items():
+            prior = condition_lineage.get(ref)
+            if prior is not None and prior != conditions:
+                raise SemanticIntegrationError(
+                    "terminal repair identity collision has condition-lineage conflict"
+                )
+            condition_lineage[ref] = conditions
+        emerging.update(node.get("emerging_axis_labels", []))
+        postures.update(node.get("evidence_postures", []))
+        opposition_checked = opposition_checked and node.get("opposition_checked") is True
+    if duplicate_leaf_refs:
+        raise SemanticIntegrationError(
+            "terminal repair identity collision duplicates one semantic leaf"
+        )
+    result = deepcopy(dict(first))
+    result["semantic_node_ref"] = _stable_id(
+        "node_repair_migration",
+        repaired_compilation_sha256,
+        *sorted(source_refs),
+        *sorted(leaf_relations),
+    )
+    result["leaf_relations"] = [
+        {"semantic_unit_ref": ref, "relation": leaf_relations[ref]}
+        for ref in sorted(leaf_relations)
+    ]
+    result["child_relations"] = [
+        {"child_ref": ref, "relation": child_relations[ref]}
+        for ref in sorted(child_relations)
+    ]
+    result["condition_lineage"] = [
+        {"semantic_unit_ref": ref, "conditions": list(condition_lineage[ref])}
+        for ref in sorted(condition_lineage)
+    ]
+    result["emerging_axis_labels"] = sorted(emerging)
+    result["evidence_postures"] = sorted(postures)
+    result["opposition_checked"] = opposition_checked
+    return result
+
+
+def _validate_terminal_repair_migration_compilation(
+    compilation: Mapping[str, Any],
+    repaired_batch_compilation: Mapping[str, Any] | None = None,
+) -> None:
+    if compilation.get("schema_version") != TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION:
+        raise SemanticIntegrationError("invalid terminal repair migration version")
+    if _carries_relation_closure_evidence(compilation):
+        raise SemanticIntegrationError(
+            "terminal repair migration cannot carry relation-closure evidence"
+        )
+    manifest = compilation.get("terminal_repair_migration_manifest")
+    if not isinstance(manifest, Mapping):
+        raise SemanticIntegrationError("terminal repair migration lacks manifest")
+    _verify_stored_hash(
+        manifest,
+        field="manifest_sha256",
+        label="terminal repair migration manifest",
+    )
+    if manifest.get("schema_version") != TERMINAL_REPAIR_MIGRATION_MANIFEST_VERSION:
+        raise SemanticIntegrationError("invalid terminal repair migration manifest version")
+    raw_hashes = manifest.get("raw_file_sha256s")
+    required_raw_hashes = {
+        "bundle",
+        "source_batch_compilation",
+        "repaired_batch_compilation",
+        "source_node_compilation",
+    }
+    if (
+        not isinstance(raw_hashes, Mapping)
+        or set(raw_hashes) != required_raw_hashes
+        or any(
+            not isinstance(value, str)
+            or len(value) != 64
+            or value != value.lower()
+            or set(value) - set("0123456789abcdef")
+            for value in raw_hashes.values()
+        )
+    ):
+        raise SemanticIntegrationError("terminal repair migration has invalid raw file hashes")
+    for field in (
+        "source_batch_compilation_sha256",
+        "repaired_batch_compilation_sha256",
+        "source_node_compilation_sha256",
+        "row_repair_manifest_sha256",
+    ):
+        value = manifest.get(field)
+        if (
+            not isinstance(value, str)
+            or len(value) != 64
+            or value != value.lower()
+            or set(value) - set("0123456789abcdef")
+        ):
+            raise SemanticIntegrationError(
+                "terminal repair migration has invalid stored lineage hash"
+            )
+    if (
+        manifest.get("relation_closure_claimed") is not False
+        or manifest.get("provider_calls") != 0
+    ):
+        raise SemanticIntegrationError(
+            "terminal repair migration overstates closure or provider execution"
+        )
+    nodes = compilation.get("semantic_nodes")
+    if not isinstance(nodes, list) or not nodes:
+        raise SemanticIntegrationError("terminal repair migration lacks semantic nodes")
+    if (
+        manifest.get("bundle_sha256") != compilation.get("bundle_sha256")
+        or manifest.get("repaired_batch_compilation_sha256")
+        != compilation.get("batch_compilation_sha256")
+        or manifest.get("output_node_count") != len(nodes)
+        or compilation.get("output_node_count") != len(nodes)
+    ):
+        raise SemanticIntegrationError("terminal repair migration manifest lineage mismatch")
+    node_refs = [node.get("semantic_node_ref") for node in nodes]
+    if any(not _nonempty(ref) for ref in node_refs) or len(node_refs) != len(set(node_refs)):
+        raise SemanticIntegrationError("terminal repair migration has duplicate node identity")
+    reused_refs = manifest.get("reused_source_semantic_node_refs")
+    invalidated_refs = manifest.get("invalidated_source_semantic_node_refs")
+    if (
+        not isinstance(reused_refs, list)
+        or not isinstance(invalidated_refs, list)
+        or any(not _nonempty(ref) for ref in reused_refs + invalidated_refs)
+        or len(reused_refs) != len(set(reused_refs))
+        or len(invalidated_refs) != len(set(invalidated_refs))
+        or set(reused_refs) & set(invalidated_refs)
+        or manifest.get("source_node_count")
+        != len(reused_refs) + len(invalidated_refs)
+    ):
+        raise SemanticIntegrationError("terminal repair migration has invalid reuse census")
+    coalesced_groups = manifest.get("coalesced_node_groups")
+    if not isinstance(coalesced_groups, list):
+        raise SemanticIntegrationError("terminal repair migration lacks coalescing census")
+    coalesced_source_refs: set[str] = set()
+    for group in coalesced_groups:
+        if not isinstance(group, Mapping):
+            raise SemanticIntegrationError("terminal repair migration has invalid coalescing census")
+        successor_ref = group.get("successor_semantic_node_ref")
+        source_refs = group.get("source_semantic_node_refs")
+        leaf_refs = group.get("leaf_semantic_unit_refs")
+        if (
+            successor_ref not in node_refs
+            or not isinstance(source_refs, list)
+            or len(source_refs) < 2
+            or len(source_refs) != len(set(source_refs))
+            or not set(source_refs) <= (set(reused_refs) | set(invalidated_refs))
+            or coalesced_source_refs & set(source_refs)
+            or not isinstance(leaf_refs, list)
+            or not leaf_refs
+            or len(leaf_refs) != len(set(leaf_refs))
+        ):
+            raise SemanticIntegrationError("terminal repair migration has invalid coalescing census")
+        successor = nodes[node_refs.index(successor_ref)]
+        if leaf_refs != sorted(_terminal_repair_leaf_relations(successor)):
+            raise SemanticIntegrationError(
+                "terminal repair migration coalescing census loses leaf lineage"
+            )
+        coalesced_source_refs.update(source_refs)
+    expected_output_count = manifest["source_node_count"] - sum(
+        len(group["source_semantic_node_refs"]) - 1 for group in coalesced_groups
+    )
+    if expected_output_count != len(nodes):
+        raise SemanticIntegrationError("terminal repair migration coalescing count mismatch")
+    identities: set[tuple[Any, ...]] = set()
+    used: set[str] = set()
+    semantic_index = (
+        {row["semantic_unit_ref"]: row for row in repaired_batch_compilation["semantic_units"]}
+        if repaired_batch_compilation is not None
+        else None
+    )
+    for node in nodes:
+        identity = _terminal_repair_identity(node)
+        if identity in identities:
+            raise SemanticIntegrationError(
+                "terminal repair migration has uncoalesced duplicate proposition identity"
+            )
+        identities.add(identity)
+        node_leaf_refs = (
+            _terminal_repair_validate_node_against_leaves(node, semantic_index)
+            if semantic_index is not None
+            else set(_terminal_repair_leaf_relations(node))
+        )
+        if used & node_leaf_refs:
+            raise SemanticIntegrationError(
+                "terminal repair migration assigns one leaf to multiple nodes"
+            )
+        used.update(node_leaf_refs)
+    unmerged_rows = compilation.get("unmerged_semantic_units")
+    if not isinstance(unmerged_rows, list):
+        raise SemanticIntegrationError("terminal repair migration lacks unmerged units")
+    unmerged = [row.get("semantic_unit_ref") for row in unmerged_rows]
+    if any(not _nonempty(ref) for ref in unmerged) or len(unmerged) != len(set(unmerged)):
+        raise SemanticIntegrationError("terminal repair migration has invalid unmerged units")
+    if used & set(unmerged):
+        raise SemanticIntegrationError(
+            "terminal repair migration leaf cannot be both used and unmerged"
+        )
+    if manifest.get("terminal_leaf_semantic_unit_refs") != sorted(used):
+        raise SemanticIntegrationError("terminal repair migration manifest leaf census mismatch")
+    if manifest.get("unmerged_semantic_unit_refs") != sorted(unmerged):
+        raise SemanticIntegrationError("terminal repair migration manifest unmerged census mismatch")
+    invalidated_unmerged_refs = manifest.get("invalidated_unmerged_semantic_unit_refs")
+    changed_rows = manifest.get("changed_semantic_units")
+    if (
+        not isinstance(invalidated_unmerged_refs, list)
+        or not set(invalidated_unmerged_refs) <= set(unmerged)
+        or not isinstance(changed_rows, list)
+        or not changed_rows
+    ):
+        raise SemanticIntegrationError("terminal repair migration has invalid change census")
+    changed_refs: set[str] = set()
+    for row in changed_rows:
+        if not isinstance(row, Mapping) or not _nonempty(row.get("semantic_unit_ref")):
+            raise SemanticIntegrationError("terminal repair migration has invalid change census")
+        ref = row["semantic_unit_ref"]
+        if ref in changed_refs or not isinstance(row.get("changed_fields"), list) or not row[
+            "changed_fields"
+        ]:
+            raise SemanticIntegrationError("terminal repair migration has invalid change census")
+        changed_refs.add(ref)
+        for field in ("source_leaf_sha256", "repaired_leaf_sha256"):
+            value = row.get(field)
+            if (
+                not isinstance(value, str)
+                or len(value) != 64
+                or value != value.lower()
+                or set(value) - set("0123456789abcdef")
+            ):
+                raise SemanticIntegrationError(
+                    "terminal repair migration has invalid changed-leaf hash"
+                )
+        if row["source_leaf_sha256"] == row["repaired_leaf_sha256"]:
+            raise SemanticIntegrationError(
+                "terminal repair migration change census contains unchanged leaf"
+            )
+    if not set(invalidated_unmerged_refs) <= changed_refs or not changed_refs <= used | set(
+        unmerged
+    ):
+        raise SemanticIntegrationError("terminal repair migration change census is inconsistent")
+    if semantic_index is not None:
+        if compilation.get("batch_compilation_sha256") != repaired_batch_compilation.get(
+            "compilation_sha256"
+        ):
+            raise SemanticIntegrationError("terminal repair migration has stale repaired lineage")
+        if used | set(unmerged) != set(semantic_index):
+            raise SemanticIntegrationError(
+                "terminal repair migration does not account for every semantic unit"
+            )
+
+
+def migrate_repaired_terminal_compilation(
+    bundle: Mapping[str, Any],
+    source_batch_compilation: Mapping[str, Any],
+    repaired_batch_compilation: Mapping[str, Any],
+    source_node_compilation: Mapping[str, Any],
+    *,
+    raw_file_sha256s: Mapping[str, str],
+) -> dict[str, Any]:
+    """Reuse only leaf-complete unchanged terminal work after verified row repair."""
+    _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
+    _verify_stored_hash(
+        source_batch_compilation,
+        field="compilation_sha256",
+        label="source batch compilation",
+    )
+    _verify_stored_hash(
+        repaired_batch_compilation,
+        field="compilation_sha256",
+        label="repaired batch compilation",
+    )
+    _verify_stored_hash(
+        source_node_compilation,
+        field="node_compilation_sha256",
+        label="source node compilation",
+    )
+    required_raw_hashes = (
+        "bundle",
+        "source_batch_compilation",
+        "repaired_batch_compilation",
+        "source_node_compilation",
+    )
+    if set(raw_file_sha256s) != set(required_raw_hashes):
+        raise SemanticIntegrationError("terminal repair migration has unexpected raw file hash")
+    for name in required_raw_hashes:
+        value = raw_file_sha256s.get(name)
+        if (
+            not isinstance(value, str)
+            or len(value) != 64
+            or value != value.lower()
+            or set(value) - set("0123456789abcdef")
+        ):
+            raise SemanticIntegrationError("terminal repair migration lacks raw file hash")
+    if (
+        source_batch_compilation.get("bundle_sha256") != bundle.get("bundle_sha256")
+        or repaired_batch_compilation.get("bundle_sha256") != bundle.get("bundle_sha256")
+        or source_node_compilation.get("bundle_sha256") != bundle.get("bundle_sha256")
+    ):
+        raise SemanticIntegrationError("terminal repair migration has stale bundle lineage")
+    if source_node_compilation.get("batch_compilation_sha256") != source_batch_compilation.get(
+        "compilation_sha256"
+    ):
+        raise SemanticIntegrationError("terminal repair source node lineage is stale")
+    if not is_terminal_reconciliation_compilation(source_node_compilation):
+        raise SemanticIntegrationError("terminal repair source compilation is not terminal")
+    repair_manifest = repaired_batch_compilation.get("row_repair_manifest")
+    if not isinstance(repair_manifest, Mapping) or repair_manifest.get(
+        "input_verified_compilation_sha256"
+    ) != source_batch_compilation.get("compilation_sha256"):
+        raise SemanticIntegrationError("terminal repair compilation lacks exact repair lineage")
+    _verify_row_verification_manifest(bundle, source_batch_compilation)
+    _verify_row_verification_manifest(bundle, repaired_batch_compilation)
+    source_index = {
+        row["semantic_unit_ref"]: row for row in source_batch_compilation["semantic_units"]
+    }
+    repaired_index = {
+        row["semantic_unit_ref"]: row for row in repaired_batch_compilation["semantic_units"]
+    }
+    if len(source_index) != len(source_batch_compilation["semantic_units"]) or len(
+        repaired_index
+    ) != len(repaired_batch_compilation["semantic_units"]):
+        raise SemanticIntegrationError("terminal repair migration has duplicate semantic unit")
+    if set(source_index) != set(repaired_index):
+        raise SemanticIntegrationError("terminal repair migration changes semantic membership")
+    if source_batch_compilation.get("evidence_dispositions") != repaired_batch_compilation.get(
+        "evidence_dispositions"
+    ):
+        raise SemanticIntegrationError("terminal repair migration changes evidence dispositions")
+    changed_fields: dict[str, list[str]] = {}
+    for ref in sorted(source_index):
+        old = source_index[ref]
+        new = repaired_index[ref]
+        fields = sorted(
+            key for key in set(old) | set(new) if old.get(key) != new.get(key)
+        )
+        if fields:
+            changed_fields[ref] = fields
+    if not changed_fields:
+        raise SemanticIntegrationError("terminal repair migration has no repaired semantic rows")
+    selected_evidence_ids = set(repair_manifest.get("selected_evidence_ids", []))
+    changed_evidence_ids = {repaired_index[ref]["evidence_id"] for ref in changed_fields}
+    if changed_evidence_ids != selected_evidence_ids:
+        raise SemanticIntegrationError(
+            "terminal repair migration row changes do not match repair selection"
+        )
+    source_nodes = source_node_compilation.get("semantic_nodes")
+    if not isinstance(source_nodes, list) or not source_nodes:
+        raise SemanticIntegrationError("terminal repair source compilation lacks nodes")
+    unmerged_rows = deepcopy(source_node_compilation.get("unmerged_semantic_units"))
+    if not isinstance(unmerged_rows, list):
+        raise SemanticIntegrationError("terminal repair source compilation lacks unmerged units")
+    unmerged_refs = {row.get("semantic_unit_ref") for row in unmerged_rows}
+    if None in unmerged_refs or len(unmerged_refs) != len(unmerged_rows):
+        raise SemanticIntegrationError("terminal repair source has invalid unmerged membership")
+    # Unmerged rows carry only their reference and reason at this boundary.
+    # Keeping exact membership does not reuse their old semantic content:
+    # downstream resolution reads the repaired compilation by that reference.
+    changed_unmerged_refs = set(changed_fields) & unmerged_refs
+    reused_nodes: list[dict[str, Any]] = []
+    rederived_nodes: list[dict[str, Any]] = []
+    reused_source_refs: list[str] = []
+    invalidated_source_refs: list[str] = []
+    source_provenance_by_node_ref: dict[str, list[str]] = {}
+    for source_node in source_nodes:
+        relations = _terminal_repair_leaf_relations(source_node)
+        affected = set(relations) & set(changed_fields)
+        if not affected:
+            for ref in relations:
+                if source_index[ref] != repaired_index[ref]:
+                    raise SemanticIntegrationError(
+                        "terminal repair attempted to reuse a changed semantic leaf"
+                    )
+            reused_nodes.append(deepcopy(dict(source_node)))
+            reused_source_refs.append(source_node["semantic_node_ref"])
+            source_provenance_by_node_ref[source_node["semantic_node_ref"]] = [
+                source_node["semantic_node_ref"]
+            ]
+            continue
+        invalidated_source_refs.append(source_node["semantic_node_ref"])
+        if any(changed_fields[ref] != ["polarity"] for ref in affected):
+            raise SemanticIntegrationError(
+                "terminal repair cannot deterministically rederive non-polarity leaf changes"
+            )
+        rebuilt = deepcopy(dict(source_node))
+        leaf_polarities = {repaired_index[ref]["polarity"] for ref in relations}
+        rebuilt["polarity"] = (
+            next(iter(leaf_polarities)) if len(leaf_polarities) == 1 else "mixed"
+        )
+        rebuilt["emerging_axis_labels"] = sorted(
+            {
+                label
+                for ref in relations
+                for label in repaired_index[ref].get("emerging_axis_labels", [])
+            }
+        )
+        rebuilt["evidence_postures"] = sorted(
+            {repaired_index[ref]["evidence_posture"] for ref in relations}
+        )
+        rebuilt["condition_lineage"] = [
+            {
+                "semantic_unit_ref": ref,
+                "conditions": list(repaired_index[ref].get("conditions", [])),
+            }
+            for ref in sorted(relations)
+        ]
+        rebuilt["child_relations"] = [
+            {"child_ref": ref, "relation": relations[ref]} for ref in sorted(relations)
+        ]
+        rebuilt["semantic_node_ref"] = _stable_id(
+            "node_repair_migration",
+            repaired_batch_compilation["compilation_sha256"],
+            source_node["semantic_node_ref"],
+            *sorted(affected),
+        )
+        _terminal_repair_validate_node_against_leaves(rebuilt, repaired_index)
+        rederived_nodes.append(rebuilt)
+        source_provenance_by_node_ref[rebuilt["semantic_node_ref"]] = [
+            source_node["semantic_node_ref"]
+        ]
+    provisional = reused_nodes + rederived_nodes
+    grouped: dict[tuple[Any, ...], list[dict[str, Any]]] = defaultdict(list)
+    for node in provisional:
+        grouped[_terminal_repair_identity(node)].append(node)
+    output_nodes: list[dict[str, Any]] = []
+    coalesced_groups: list[dict[str, Any]] = []
+    for identity in sorted(grouped, key=lambda value: repr(value)):
+        group = grouped[identity]
+        if len(group) == 1:
+            output = group[0]
+        else:
+            output = _terminal_repair_coalesce_group(
+                group,
+                repaired_compilation_sha256=repaired_batch_compilation[
+                    "compilation_sha256"
+                ],
+            )
+            coalesced_groups.append(
+                {
+                    "successor_semantic_node_ref": output["semantic_node_ref"],
+                    "source_semantic_node_refs": sorted(
+                        source_ref
+                        for node in group
+                        for source_ref in source_provenance_by_node_ref[
+                            node["semantic_node_ref"]
+                        ]
+                    ),
+                    "leaf_semantic_unit_refs": sorted(
+                        _terminal_repair_leaf_relations(output)
+                    ),
+                }
+            )
+        _terminal_repair_validate_node_against_leaves(output, repaired_index)
+        output_nodes.append(output)
+    output_nodes.sort(key=lambda node: node["semantic_node_ref"])
+    used = {
+        ref
+        for node in output_nodes
+        for ref in _terminal_repair_leaf_relations(node)
+    }
+    if used | unmerged_refs != set(repaired_index) or used & unmerged_refs:
+        raise SemanticIntegrationError(
+            "terminal repair migration does not preserve complete semantic accounting"
+        )
+    manifest: dict[str, Any] = {
+        "schema_version": TERMINAL_REPAIR_MIGRATION_MANIFEST_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "source_batch_compilation_sha256": source_batch_compilation[
+            "compilation_sha256"
+        ],
+        "repaired_batch_compilation_sha256": repaired_batch_compilation[
+            "compilation_sha256"
+        ],
+        "source_node_compilation_sha256": source_node_compilation[
+            "node_compilation_sha256"
+        ],
+        "raw_file_sha256s": dict(sorted(raw_file_sha256s.items())),
+        "source_node_count": len(source_nodes),
+        "output_node_count": len(output_nodes),
+        "reused_source_semantic_node_refs": sorted(reused_source_refs),
+        "invalidated_source_semantic_node_refs": sorted(invalidated_source_refs),
+        "invalidated_unmerged_semantic_unit_refs": sorted(changed_unmerged_refs),
+        "changed_semantic_units": [
+            {
+                "semantic_unit_ref": ref,
+                "changed_fields": changed_fields[ref],
+                "source_leaf_sha256": _sha256(source_index[ref]),
+                "repaired_leaf_sha256": _sha256(repaired_index[ref]),
+            }
+            for ref in sorted(changed_fields)
+        ],
+        "coalesced_node_groups": coalesced_groups,
+        "terminal_leaf_semantic_unit_refs": sorted(used),
+        "unmerged_semantic_unit_refs": sorted(unmerged_refs),
+        "row_repair_manifest_sha256": repair_manifest.get("manifest_sha256"),
+        "relation_closure_claimed": False,
+        "provider_calls": 0,
+    }
+    manifest["manifest_sha256"] = _sha256(manifest)
+    compilation: dict[str, Any] = {
+        "schema_version": TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_compilation_sha256": repaired_batch_compilation[
+            "compilation_sha256"
+        ],
+        "source_terminal_level": source_node_compilation.get("level"),
+        "reconciliation_policy_version": RECONCILIATION_POLICY_VERSION_V2,
+        "reconciliation_mode": "terminal_repair_migration",
+        "input_batch_count": source_node_compilation.get("input_batch_count"),
+        "input_candidate_count": len(source_nodes),
+        "output_node_count": len(output_nodes),
+        "semantic_nodes": output_nodes,
+        "unmerged_semantic_units": unmerged_rows,
+        "emerging_axis_consolidations": deepcopy(
+            source_node_compilation.get("emerging_axis_consolidations", [])
+        ),
+        "terminal_repair_migration_manifest": manifest,
+    }
+    _validate_terminal_repair_migration_compilation(
+        compilation, repaired_batch_compilation
+    )
+    compilation["node_compilation_sha256"] = _sha256(compilation)
+    return compilation
+
+
 def _carries_relation_closure_evidence(compilation: Mapping[str, Any]) -> bool:
     """Return whether generic finalization must defer to closure validation."""
     if (
@@ -6349,6 +7097,12 @@ def is_terminal_reconciliation_compilation(
         row.get("terminal_proposition") is not True for row in nodes
     ):
         return False
+    if compilation.get("schema_version") == TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION:
+        try:
+            _validate_terminal_repair_migration_compilation(compilation)
+        except SemanticIntegrationError:
+            return False
+        return True
     if _carries_relation_closure_evidence(compilation):
         try:
             _validate_relation_closure_terminal_structure(compilation)
@@ -6403,6 +7157,13 @@ def finalize_v3_view(
     ):
         raise SemanticIntegrationError(
             "terminal reconciliation has stale root batch compilation lineage"
+        )
+    if (
+        node_compilation.get("schema_version")
+        == TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION
+    ):
+        _validate_terminal_repair_migration_compilation(
+            node_compilation, batch_compilation
         )
     relation_closed = _carries_relation_closure_evidence(node_compilation)
     if relation_closed:
@@ -6567,7 +7328,7 @@ def finalize_v3_view(
             "mixed"
             if counter_evidence or opposing_proposition_ids
             else "none_observed"
-            if relation_closed or node["opposition_checked"]
+            if relation_closed
             else "not_checked"
         )
         proposition_id = proposition_ids_by_node[node["semantic_node_ref"]]
@@ -7080,6 +7841,75 @@ def project_evidence_packet_v1(
     return packet
 
 
+def _packet_v2_engagement_observation(
+    source: Mapping[str, Any],
+) -> tuple[str, str, dict[str, Any]]:
+    """Normalize one current or legacy source-native engagement observation."""
+    engagement = source.get("engagement")
+    if not isinstance(engagement, Mapping) or not engagement:
+        return (
+            "engagement_unavailable",
+            "unavailable",
+            {"status": "engagement_unavailable"},
+        )
+    if _nonempty(engagement.get("kind")):
+        allowed = {
+            "kind",
+            "context",
+            "raw_value",
+            "observed_at",
+            "material_positive",
+        }
+        if set(engagement) - allowed:
+            raise SemanticIntegrationError(
+                "evidence packet cannot drop unknown engagement fields"
+            )
+        return (
+            engagement["kind"],
+            engagement["context"]
+            if _nonempty(engagement.get("context"))
+            else "unavailable",
+            {
+                "raw_value": engagement.get("raw_value"),
+                "observed_at": engagement.get("observed_at"),
+                "material_positive": engagement.get("material_positive", False),
+            },
+        )
+    raw_fields = sorted(field for field in engagement if field.startswith("raw_"))
+    allowed_legacy = {
+        "material_positive",
+        "materiality_basis",
+        "observed_at",
+        *raw_fields,
+    }
+    if set(engagement) - allowed_legacy or len(raw_fields) > 1:
+        raise SemanticIntegrationError(
+            "evidence packet cannot normalize ambiguous legacy engagement"
+        )
+    if len(raw_fields) == 1:
+        raw_field = raw_fields[0]
+        return (
+            raw_field.removeprefix("raw_"),
+            engagement["materiality_basis"]
+            if _nonempty(engagement.get("materiality_basis"))
+            else "unavailable",
+            {
+                "raw_value": engagement.get(raw_field),
+                "observed_at": engagement.get("observed_at"),
+                "material_positive": engagement.get("material_positive", False),
+            },
+        )
+    if engagement.get("material_positive") is True:
+        raise SemanticIntegrationError(
+            "evidence packet cannot preserve material engagement without a metric"
+        )
+    return (
+        "engagement_unavailable",
+        "unavailable",
+        {"status": "engagement_unavailable"},
+    )
+
+
 def _compact_evidence_packet_v2(
     packet_v1: Mapping[str, Any],
     bundle: Mapping[str, Any],
@@ -7160,6 +7990,7 @@ def _compact_evidence_packet_v2(
         "conditions",
         "emerging_axis_labels",
     )
+
     group_rows: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for evidence_id in sorted(evidence_ids):
         source = evidence_index.get(evidence_id)
@@ -7167,23 +7998,9 @@ def _compact_evidence_packet_v2(
             raise SemanticIntegrationError(
                 f"evidence packet v2 cites unknown evidence: {evidence_id}"
             )
-        engagement = source.get("engagement")
-        if isinstance(engagement, Mapping) and _nonempty(engagement.get("kind")):
-            engagement_kind = engagement["kind"]
-            engagement_context = (
-                engagement["context"]
-                if _nonempty(engagement.get("context"))
-                else "unavailable"
-            )
-            row_engagement = {
-                "raw_value": engagement.get("raw_value"),
-                "observed_at": engagement.get("observed_at"),
-                "material_positive": engagement.get("material_positive", False),
-            }
-        else:
-            engagement_kind = "engagement_unavailable"
-            engagement_context = "unavailable"
-            row_engagement = {"status": "engagement_unavailable"}
+        engagement_kind, engagement_context, row_engagement = (
+            _packet_v2_engagement_observation(source)
+        )
         group_key = (
             source["source_family"],
             source["source_role"],
@@ -7417,6 +8234,10 @@ def _packet_v3_group_layout(
         _EVIDENCE_PACKET_V3_ENGAGEMENT_COLUMNS,
         engagement_defaults,
     )
+    if source_group.get("engagement_kind") != "engagement_unavailable":
+        for required in ("raw_value", "observed_at", "material_positive"):
+            if required not in engagement_defaults and required not in engagement_columns:
+                engagement_columns.append(required)
     return (
         evidence_defaults,
         evidence_columns,
