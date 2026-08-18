@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v45
+version: v46
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v45
+# Semantic Evidence Integration Contract v46
 
 ## Purpose
 
@@ -951,6 +951,13 @@ explicitly commits to buy or repurchase again despite the cost, or explicitly
 concludes that the product is worth the price. Displaying empties, using the
 product up, or otherwise trying to make a regretted purchase feel more
 worthwhile is sunk-cost rationalization, not countervailing value evidence. The
+counter reason `high_spend_followed_by_buyer_remorse` is available only when
+one evidence item explicitly records a substantial completed spend amount, or
+explicitly characterizes the completed spend as substantial, together with
+cost-linked regret. Multiple units alone do not establish high spend. It adds no generic
+customer-journey fields and implies neither repurchase, transaction count, nor
+future intent; regret without that explicit substantial completed spending remains
+`purchase_regret_due_cost`. The
 deterministic finalizer rejects a value reason code placed in the
 wrong relation lane. A behavior observed without an explicit price premise uses
 a plain purchase, repeated-purchase, or repurchase label; the corresponding
@@ -1411,6 +1418,12 @@ new frontier.
 
 ## Changelog
 
+- `v46` / 2026-08-18 — added one sparse, claim-specific counter meaning for
+  explicit substantial completed spending followed by cost-linked buyer’s
+  remorse. Multiple units alone do not qualify. The meaning does not add
+  lifecycle fields to origins or infer repurchase,
+  transaction count, or future intent; ordinary cost-linked regret keeps its
+  existing reason.
 - `v45` / 2026-08-18 — tightened value classification after a real-corpus
   challenge exposed sunk-cost rationalization being mislabeled as good value.
   Explicit regret, waste, or poor value now keeps every candidate from that

@@ -75,6 +75,7 @@ DISPLAY_LABEL_BY_REASON_CODE = {
     "better_value_than_comparator": "Better value than the comparison",
     "reasonable_bundle_price": "Reasonably priced bundle",
     "product_goes_a_long_way": "A little product goes a long way",
+    "high_spend_followed_by_buyer_remorse": "High spend, followed by buyer’s remorse",
     "purchase_regret_due_cost": "Purchase regret due to cost",
     "explicit_poor_value": "Explicitly poor value",
     "too_little_product_for_price": "Too little product for the price",
@@ -104,6 +105,7 @@ VALUE_REASON_RELATIONS = {
     "better_value_than_comparator": "support",
     "reasonable_bundle_price": "support",
     "product_goes_a_long_way": "support",
+    "high_spend_followed_by_buyer_remorse": "counter",
     "purchase_regret_due_cost": "counter",
     "explicit_poor_value": "counter",
     "too_little_product_for_price": "counter",
@@ -134,6 +136,7 @@ VALUE_SUPPORT_PRIORITY = {
     "product_goes_a_long_way": 4,
 }
 VALUE_COUNTER_PRIORITY = {
+    "high_spend_followed_by_buyer_remorse": 0,
     "purchase_regret_due_cost": 0,
     "explicit_poor_value": 0,
     "performance_not_worth_price": 1,
@@ -154,7 +157,7 @@ SELECTION_ENVELOPE_JSON:
 {envelope}
 """
 
-VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. When an explicit price or cost premise is paired with purchase, repurchase, or repeated ownership, use the corresponding `*_despite_price` code rather than a plain behavior or generic good-value code. An explicit same-evidence statement of regret, waste, or poor value makes every candidate from that evidence origin counter or adjacent unless the same source explicitly says it will buy or repurchase again despite the cost, or explicitly concludes that the product is worth the price. Trying to make a regretted purchase feel more worthwhile by displaying empties, using it up, or otherwise rationalizing sunk cost does not countervail the regret or waste. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Use `product_goes_a_long_way` for quantity efficiency without an explicit price judgment; `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
+VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. When an explicit price or cost premise is paired with purchase, repurchase, or repeated ownership, use the corresponding `*_despite_price` code rather than a plain behavior or generic good-value code. An explicit same-evidence statement of regret, waste, or poor value makes every candidate from that evidence origin counter or adjacent unless the same source explicitly says it will buy or repurchase again despite the cost, or explicitly concludes that the product is worth the price. Trying to make a regretted purchase feel more worthwhile by displaying empties, using it up, or otherwise rationalizing sunk cost does not countervail the regret or waste. Use `high_spend_followed_by_buyer_remorse` only when the same evidence explicitly states a substantial completed spend amount, or explicitly characterizes the completed spend as substantial, and also states cost-linked regret. Multiple units alone do not establish high spend. The code does not imply repurchase, a transaction count, or future intent. Use `purchase_regret_due_cost` when regret exists without explicit substantial completed spending. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Use `product_goes_a_long_way` for quantity efficiency without an explicit price judgment; `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 

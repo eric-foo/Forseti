@@ -13,6 +13,7 @@ from judgment.phase_a_evidence_selection import (
     VALUE_REASON_RELATIONS,
     _candidate_rows,
     _bucket_priority,
+    _display_label,
     _numeric_engagement,
     _policy_guidance,
     _relation_schema,
@@ -1017,6 +1018,49 @@ def test_value_reason_codes_must_match_their_relation_lane() -> None:
     assert caught.value.boundary == "value_reason_relation_mismatch"
 
 
+def test_high_spend_buyer_remorse_is_one_counter_meaning_without_journey_fields() -> None:
+    code = "high_spend_followed_by_buyer_remorse"
+    assert VALUE_REASON_RELATIONS[code] == "counter"
+    assert _display_label(code) == "High spend, followed by buyer’s remorse"
+    assert _display_label("purchase_regret_due_cost") == "Purchase regret due to cost"
+
+    candidate = _selection_row("candidate:high-spend-remorse", relation="counter")
+    accepted = _validate_relation_response(
+        [candidate],
+        {
+            "results": [
+                {
+                    "candidate_id": candidate["candidate_id"],
+                    "relation": "counter",
+                    "reason_code": code,
+                }
+            ]
+        },
+        value_policy=True,
+    )
+    assert accepted[0]["reason_code"] == code
+    assert not ({"future_intent", "transaction_count", "post_purchase_value"} & accepted[0].keys())
+
+
+def test_high_spend_buyer_remorse_cannot_be_promoted_to_value_support() -> None:
+    candidate = _selection_row("candidate:high-spend-remorse")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_relation_response(
+            [candidate],
+            {
+                "results": [
+                    {
+                        "candidate_id": candidate["candidate_id"],
+                        "relation": "support",
+                        "reason_code": "high_spend_followed_by_buyer_remorse",
+                    }
+                ]
+            },
+            value_policy=True,
+        )
+    assert caught.value.boundary == "value_reason_relation_mismatch"
+
+
 def test_value_response_schema_makes_comparator_direction_unambiguous() -> None:
     variants = _relation_schema(value_policy=True)["properties"]["results"]["items"][
         "anyOf"
@@ -1049,6 +1093,9 @@ def test_value_prompt_forbids_companion_only_formula_complaints_from_value_lanes
     assert "every candidate from that evidence origin counter or adjacent" in guidance
     assert "rationalizing sunk cost does not countervail" in guidance
     assert "use the corresponding `*_despite_price` code" in guidance
+    assert "does not imply repurchase, a transaction count, or future intent" in guidance
+    assert "Multiple units alone do not establish high spend" in guidance
+    assert "regret exists without explicit substantial completed spending" in guidance
     assert "product_goes_a_long_way" in guidance
     assert _policy_guidance({"axis_ids": ["hydration_and_moisture"]}) == ""
 
