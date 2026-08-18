@@ -1046,7 +1046,9 @@ def test_value_prompt_forbids_companion_only_formula_complaints_from_value_lanes
     assert "repurchase_intent" in guidance
     assert "requires explicit source meaning about price or cost" in guidance
     assert "whole same-evidence set" in guidance
-    assert "regret, waste, or poor value reverses" in guidance
+    assert "every candidate from that evidence origin counter or adjacent" in guidance
+    assert "rationalizing sunk cost does not countervail" in guidance
+    assert "use the corresponding `*_despite_price` code" in guidance
     assert "product_goes_a_long_way" in guidance
     assert _policy_guidance({"axis_ids": ["hydration_and_moisture"]}) == ""
 

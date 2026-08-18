@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v44
+version: v45
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v44
+# Semantic Evidence Integration Contract v45
 
 ## Purpose
 
@@ -943,9 +943,14 @@ purchase or repurchase despite price discomfort — but companion-only formula,
 hydration, scent, gift-card, trial, or generic purchase meanings remain
 adjacent. A value code may describe the combined visible meaning of a candidate
 and its same-evidence companions when one supplies the price/value premise and
-another supplies the purchase behavior. Explicit same-evidence regret, waste,
-or poor value reverses a positive purchase inference unless explicit later
-repurchase, purchase commitment, or worth language countervails it. The
+another supplies the purchase behavior. When an explicit price premise and
+purchase behavior are jointly visible, the customer-facing code carries the
+`despite_price` qualifier. Explicit same-evidence regret, waste, or poor value
+makes every candidate from that origin counter or adjacent unless the source
+explicitly commits to buy or repurchase again despite the cost, or explicitly
+concludes that the product is worth the price. Displaying empties, using the
+product up, or otherwise trying to make a regretted purchase feel more
+worthwhile is sunk-cost rationalization, not countervailing value evidence. The
 deterministic finalizer rejects a value reason code placed in the
 wrong relation lane. A behavior observed without an explicit price premise uses
 a plain purchase, repeated-purchase, or repurchase label; the corresponding
@@ -1406,6 +1411,13 @@ new frontier.
 
 ## Changelog
 
+- `v45` / 2026-08-18 — tightened value classification after a real-corpus
+  challenge exposed sunk-cost rationalization being mislabeled as good value.
+  Explicit regret, waste, or poor value now keeps every candidate from that
+  evidence origin counter or adjacent unless the same source explicitly buys
+  or repurchases again despite the cost, or concludes the product is worth the
+  price. Price-plus-purchase behavior must use its `despite_price` label rather
+  than a plain behavior or generic good-value label.
 - `v44` / 2026-08-18 — closed the delegated value-selection review. Added
   real-entry-point tests that fail if any production value-policy wiring is
   disabled, curated every displayable value label, and replaced the accidental
