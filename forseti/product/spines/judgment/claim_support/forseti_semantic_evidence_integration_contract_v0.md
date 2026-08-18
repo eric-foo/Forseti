@@ -1006,8 +1006,8 @@ Amazon source dates, and Revolve creation times enter the semantic source and
 flow through packet v3 to the final selection artifact. For completed packets
 whose publication time is absent, the selection consumer may rehydrate it only
 from the exact hash-bound source artifact named by the bundle; missing source
-bytes remain unavailable, while changed bytes fail rather than supplying a
-date. This is source chronology for later time alignment, not proof that search
+bytes and unsupported legacy source formats remain unavailable, while changed
+bytes fail rather than supplying a date. This is source chronology for later time alignment, not proof that search
 interest caused the evidence or vice versa.
 
 Semantic posture distinguishes first-hand experience, personal agreement,

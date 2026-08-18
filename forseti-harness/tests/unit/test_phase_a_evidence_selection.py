@@ -294,6 +294,37 @@ def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_so
     assert caught.value.boundary == "publication_time_source_hash"
 
 
+def test_hash_bound_unsupported_source_format_leaves_publication_time_unavailable(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, count=1)
+    source = sources[0]
+    packet = source["packet"]
+    bundle = source["bundle"]
+    evidence_columns = packet["source_groups"][0]["evidence_columns"]
+    evidence_row = packet["source_groups"][0]["evidence_rows"][0]
+    evidence_id = evidence_row[evidence_columns.index("evidence_id")]
+    evidence_row[evidence_columns.index("publication_time")] = None
+    evidence_row[evidence_columns.index("source_artifact_id")] = "legacy_binary_source"
+    raw_path = tmp_path / "legacy_response.bin"
+    raw_path.write_bytes(b"not a supported JSON source artifact")
+    bundle["evidence_units"][0]["source_artifact_id"] = "legacy_binary_source"
+    bundle["source_artifacts"] = [
+        {
+            "artifact_id": "legacy_binary_source",
+            "locator": str(raw_path),
+            "sha256": __import__("hashlib").sha256(raw_path.read_bytes()).hexdigest(),
+        }
+    ]
+    _reseal(source)
+
+    candidates = _candidate_rows(sources, spec)
+
+    assert next(row for row in candidates if row["evidence_id"] == evidence_id)[
+        "publication_time"
+    ] is None
+
+
 def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
     bodies = {
         row["evidence_id"]: row["text"]

@@ -370,7 +370,8 @@ exposes it. Current semantic-source builders carry Reddit post/comment
 timestamps, Sephora submission times, Amazon review dates, and Revolve review
 creation times into packet v3. A completed packet with a missing time may be
 rehydrated only from the exact source artifact and SHA-256 already bound by its
-bundle; unavailable bytes leave the time unavailable and changed bytes fail.
+bundle; unavailable or unsupported legacy bytes leave the time unavailable and
+changed bytes fail.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 

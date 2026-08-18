@@ -326,10 +326,9 @@ def _publication_time_from_artifact(
             )
         try:
             loaded = json.loads(path.read_text(encoding="utf-8-sig"))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise EvidenceConsumerError(
-                "publication_time_source", f"source artifact is not readable JSON: {source_artifact_id}"
-            ) from exc
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            artifact_cache[cache_key] = None
+            return None
         if not isinstance(loaded, Mapping):
             artifact_cache[cache_key] = None
             return None
