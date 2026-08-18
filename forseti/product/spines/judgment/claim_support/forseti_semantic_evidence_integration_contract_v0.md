@@ -826,22 +826,31 @@ admission. An operator nomination that cannot resolve — an `admit_semantic_ref
 an `admit_unresolved` ref, a protected evidence ID, or an unrecognised protected
 lane key — fails closed rather than being dropped. All dispositions and their
 inventory hash remain in the completed artifact, including rows not displayed.
+Every candidate also carries the other normalized meanings from its evidence
+item as non-candidate context. Those companions cannot create another admitted
+row or independent origin, but they prevent an isolated clause from hiding a
+same-source qualification. In particular, a price-discomfort clause does not
+become poor-value support when the same customer records purchase or repurchase
+despite that price. A value selection binds `price feels high` separately from
+`not worth it`; operator-observed purchase, repurchase, switching, return, or
+abandonment that changes the reading uses the existing `costly_behavior`
+protected-evidence lane rather than a new score.
 
 Presentation caps independent origins, not underlying evidence: at most ten
 customer truth-support origin groups and three creator-influence origin groups.
 Every explicitly nominated safety or costly-behavior origin is selected first;
 if those origins alone exceed ten, selection fails
-`presentation_cap_insufficient`. The selector then reserves one visible support,
-counter, quiet, and unavailable-engagement lane when each exists, satisfying a
-lane from an already-selected origin when possible before adding another origin.
-The cap check follows every addition and applies even when the total candidate
-origin count is below ten. Each reserved origin records its required display
-lanes, and the display contains the deterministic minimum member rows that cover
-them. This permits three or more rows from one origin when separate rows are
-needed for support, counter, and quiet lanes. Every operator-protected row is
-visible or selection fails closed. Unreserved origins retain the compact
-representative-plus-distinct-row behavior. The complete disposition inventory
-remains the accounting record for displayed and undisplayed candidates.
+`presentation_cap_insufficient`. The selector then reserves support and counter
+only from materially positive or explicitly protected evidence. Unprotected
+zero, quiet, and engagement-unavailable rows remain accounted but are not forced
+into the main display to fill a lane or venue. When no materially positive or
+protected counter exists, no counter is displayed. The cap check follows every
+addition. Each protected origin records its required display lanes, and the
+display contains the deterministic minimum member rows that cover them. Every
+operator-protected row is visible or selection fails closed. Unreserved origins
+retain the compact representative-plus-distinct-row behavior over the
+display-eligible set. The complete disposition inventory remains the accounting
+record for displayed and undisplayed candidates.
 Engagement orders rows only inside one source-native venue/role/metric bucket;
 its literal stored value remains unchanged and there is no cross-platform
 score. Venue is normalized per publisher across host variants and short links,
@@ -862,16 +871,22 @@ quote response. The bundle is content-verified against its own stored
 `bundle_sha256` where it enters the trust boundary, and the finalizer follows
 the packet's bundle hash to its literal evidence ID, requires exact
 source-artifact and source-ref equality, and rejects a body whose hash differs
-from the one the quote manifest recorded. An available quote must be one
+from the one the quote manifest recorded. An available source body of no more
+than 220 characters must be quoted in full; this deterministic boundary prevents
+a short comment from being clipped before a material qualification or
+countervailing behavior. A longer available quote must be one context-complete
 contiguous source substring of no more than 220 characters, with no inserted
 ellipsis or rewriting, and must contain at least two Unicode alphanumeric
-characters. No lexical-overlap relevance rule is applied. A typed
+characters. If a material qualification cannot fit, the external response
+returns unavailable instead of a misleading fragment. No lexical-overlap
+relevance rule is applied. A typed
 `quote_unavailable` covers two distinct cases: no source body yields
 `source_body_unavailable`, while a present body with no returned exact relevant
 quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null
 cause. Each displayed row also records `source_body_present`, and the
-source-owned normalized meaning remains in all cases. Exactness does not prove
-semantic relevance; that remains a
+source-owned normalized meaning and same-evidence companion meanings remain in
+all cases. Full-body enforcement closes context clipping for short sources;
+semantic relevance and context completeness for longer sources remain a
 quality-adjudication obligation outside the deterministic runtime. Both
 prepare/finalize stages make zero provider calls and are deterministic and
 idempotent.

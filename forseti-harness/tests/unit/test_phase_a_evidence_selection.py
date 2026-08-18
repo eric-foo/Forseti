@@ -403,6 +403,59 @@ def test_source_native_ellipsis_is_preserved_when_the_quote_is_exact(tmp_path: P
     assert output_row["quote_unavailable_cause"] is None
 
 
+def test_short_source_body_cannot_be_clipped_before_material_countervailing_behavior(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    body = (
+        "Do I cringe a little every time I remember the price tag? Yes. "
+        "Will I be repurchasing vanilla AND vanilla beige? Also yes."
+    )
+    sources[0]["bundle"]["evidence_units"][0]["text"] = body
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0]["exact_quote"] = (
+        "Do I cringe a little every time I remember the price tag? Yes."
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(quote_manifest, sources, response)
+    assert caught.value.boundary == "quote_context_incomplete"
+
+
+def test_candidate_exposes_same_evidence_companion_meanings_without_admitting_them(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    evidence_row = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0]
+    companion = copy.deepcopy(evidence_row[10][0])
+    companion[0] = "community_post:0::repurchase"
+    companion[1] = "The author intends to repurchase two named shades."
+    companion[7] = ["shade_and_color_fit"]
+    companion[8] = []
+    evidence_row[10].append(companion)
+    packet = sources[0]["packet"]
+    packet["packet_sha256"] = _canonical_hash(
+        {key: value for key, value in packet.items() if key != "packet_sha256"}
+    )
+    sources[0]["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+
+    candidates = _candidate_rows(sources, spec)
+    assert len(candidates) == 1
+    assert candidates[0]["same_evidence_companion_meanings"] == [
+        {
+            "semantic_unit_ref": "community_post:0::repurchase",
+            "statement": "The author intends to repurchase two named shades.",
+            "polarity": "affirmed",
+            "axis_ids": ["shade_and_color_fit"],
+            "conditions": [],
+        }
+    ]
+
+
 def test_sephora_positive_helpful_votes_rank_inside_only_the_sephora_bucket() -> None:
     common = {
         "protected_lanes": [],
@@ -588,17 +641,45 @@ def _selection_row(
     }
 
 
-def test_same_origin_support_counter_and_quiet_reservations_display_three_rows_under_cap() -> None:
+def test_same_origin_displays_material_support_and_counter_but_not_unprotected_quiet() -> None:
     rows = [
         _selection_row("support", relation="support"),
         _selection_row("counter", relation="counter"),
         _selection_row("quiet", relation="adjacent", material_positive=False),
     ]
     selected = _select_groups(rows, "truth_support", 10)
-    assert {row["candidate_id"] for row in selected} == {"support", "counter", "quiet"}
-    assert {"relation:support", "relation:counter", "quiet"} <= set(
+    assert {row["candidate_id"] for row in selected} == {"support", "counter"}
+    assert {"relation:support", "relation:counter"} <= set(
         selected[0]["origin_required_display_lanes"]
     )
+
+
+def test_unprotected_quiet_counter_is_retained_but_not_forced_into_presentation() -> None:
+    rows = [
+        _selection_row("material_support", origin="origin:support", relation="support"),
+        _selection_row(
+            "quiet_counter",
+            origin="origin:counter",
+            relation="counter",
+            material_positive=False,
+        ),
+    ]
+    selected = _select_groups(rows, "truth_support", 10)
+    assert {row["candidate_id"] for row in selected} == {"material_support"}
+
+
+def test_protected_quiet_behavior_remains_visible() -> None:
+    rows = [
+        _selection_row(
+            "quiet_behavior",
+            origin="origin:behavior",
+            relation="counter",
+            material_positive=False,
+            protected_lanes=["costly_behavior"],
+        )
+    ]
+    selected = _select_groups(rows, "truth_support", 10)
+    assert {row["candidate_id"] for row in selected} == {"quiet_behavior"}
 
 
 def test_under_cap_reservation_does_not_hide_counter_behind_quiet_row() -> None:
@@ -660,7 +741,7 @@ def test_available_quote_requires_two_unicode_alphanumeric_characters(
 
 def test_two_character_exact_quote_is_allowed_without_a_lexical_relevance_gate(tmp_path: Path) -> None:
     spec, sources = _write_source(tmp_path, 1)
-    sources[0]["bundle"]["evidence_units"][0]["text"] = "The exact answer was no."
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "x" * 221 + " no"
     _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(

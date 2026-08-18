@@ -52,7 +52,7 @@ ENGAGEMENT_NUMBER_RE = re.compile(r"^\s*(-?[0-9]+(?:\.[0-9]+)?)(?![0-9A-Za-z.,])
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short reason_code. Relation is about meaning, never engagement size. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short reason_code. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 SELECTION_ENVELOPE_JSON:
 {envelope}
@@ -60,7 +60,7 @@ SELECTION_ENVELOPE_JSON:
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. If the body is available, choose one contiguous exact substring of at most 220 characters that directly expresses the supplied normalized meaning. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. If no relevant exact substring exists, return quote_status=quote_unavailable and exact_quote=null. Exact text that does not express the normalized meaning is not an acceptable quote.
+Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses the supplied normalized meaning and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the normalized meaning is not an acceptable quote.
 
 SELECTED_SOURCE_BODIES_JSON:
 {rows}
@@ -278,6 +278,17 @@ def _candidate_rows(
                     "conditions": semantic.get("conditions", []),
                     "uncertainty_posture": semantic.get("uncertainty_posture"),
                     "polarity": semantic.get("polarity"),
+                    "same_evidence_companion_meanings": [
+                        {
+                            "semantic_unit_ref": companion.get("semantic_unit_ref"),
+                            "statement": companion.get("statement"),
+                            "polarity": companion.get("polarity"),
+                            "axis_ids": sorted(_string_values(companion.get("axis_ids"))),
+                            "conditions": companion.get("conditions", []),
+                        }
+                        for companion in evidence["semantic_units"]
+                        if companion.get("semantic_unit_ref") != semantic_ref
+                    ],
                     "source_family": group["source_family"],
                     "source_role": group["source_role"],
                     "layer": layer,
@@ -352,6 +363,7 @@ def _candidate_rows(
                     "conditions": [],
                     "uncertainty_posture": "unresolved",
                     "polarity": "unresolved",
+                    "same_evidence_companion_meanings": [],
                     "source_family": group["source_family"],
                     "source_role": group["source_role"],
                     "layer": layer,
@@ -557,30 +569,19 @@ def _display_members(members: Sequence[Mapping[str, Any]]) -> list[dict[str, Any
     ordered = sorted((dict(row) for row in members), key=_global_priority)
     displays = [ordered[0]]
     first = ordered[0]
-    quiet = [
-        row
-        for row in ordered[1:]
-        if row.get("engagement_material_positive") is False
-        and first.get("engagement_material_positive") is not False
-    ]
     distinct = [
         row
         for row in ordered[1:]
-        if row["relation"] != first["relation"] or row.get("conditions") != first.get("conditions")
+        if row.get("engagement_material_positive") is True
+        and (row["relation"] != first["relation"] or row.get("conditions") != first.get("conditions"))
     ]
-    if quiet:
-        displays.append(quiet[0])
-    elif distinct:
+    if distinct:
         displays.append(distinct[0])
     return displays
 
 
 def _member_display_lanes(row: Mapping[str, Any]) -> set[str]:
     lanes = {f"relation:{row['relation']}"}
-    if row.get("engagement_material_positive") is False:
-        lanes.add("quiet")
-    if row.get("engagement_status") == "engagement_unavailable":
-        lanes.add("unknown_engagement")
     lanes.update(f"protected:{lane}" for lane in row.get("protected_lanes", []))
     return lanes
 
@@ -670,7 +671,17 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
             "protected_candidate_excluded",
             f"protected evidence cannot be excluded from presentation: {protected_excluded}",
         )
-    eligible = [dict(row) for row in rows if row["layer"] == layer and row["relation"] != "exclude"]
+    eligible = [
+        dict(row)
+        for row in rows
+        if row["layer"] == layer
+        and row["relation"] != "exclude"
+        and (
+            layer != "truth_support"
+            or bool(row.get("protected_lanes"))
+            or row.get("engagement_material_positive") is True
+        )
+    ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in eligible:
         origins[row["scoped_independence_key"]].append(row)
@@ -685,12 +696,6 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
                 "origin_candidate_count": len(members),
                 "origin_relations": sorted({row["relation"] for row in members}),
                 "origin_candidate_ids": sorted(row["candidate_id"] for row in members),
-                "origin_has_quiet": any(
-                    row.get("engagement_material_positive") is False for row in members
-                ),
-                "origin_has_unknown_engagement": any(
-                    row.get("engagement_status") == "engagement_unavailable" for row in members
-                ),
                 "origin_protected_lanes": sorted(
                     {
                         lane
@@ -740,10 +745,6 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
             )
         reserve_lane("relation:support", lambda row: "support" in row["origin_relations"])
         reserve_lane("relation:counter", lambda row: "counter" in row["origin_relations"])
-        reserve_lane("quiet", lambda row: row["origin_has_quiet"])
-        reserve_lane(
-            "unknown_engagement", lambda row: row["origin_has_unknown_engagement"]
-        )
 
     buckets: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in groups:
@@ -863,6 +864,9 @@ def finalize_relations_prepare_quotes(
                 "selected_id": selected_id,
                 "candidate_id": row["candidate_id"],
                 "normalized_meaning": row["normalized_meaning"],
+                "same_evidence_companion_meanings": row[
+                    "same_evidence_companion_meanings"
+                ],
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
@@ -943,6 +947,11 @@ def finalize_quotes(
                 )
             if quote not in body:
                 raise EvidenceConsumerError("quote_exactness", "quote is not a contiguous exact substring")
+            if len(body) <= MAX_QUOTE_CHARACTERS and quote != body:
+                raise EvidenceConsumerError(
+                    "quote_context_incomplete",
+                    "a short source body must be quoted in full",
+                )
         elif status == "quote_unavailable":
             if quote is not None:
                 raise EvidenceConsumerError("quote_response_shape", "unavailable quote must be null")
@@ -971,6 +980,9 @@ def finalize_quotes(
                 ),
                 "exact_quote": quote,
                 "normalized_meaning": selected_row["normalized_meaning"],
+                "same_evidence_companion_meanings": selected_row[
+                    "same_evidence_companion_meanings"
+                ],
                 "relation": selected_row["relation"],
                 "reason_code": selected_row["reason_code"],
                 "engagement_kind": selected_row["engagement_kind"],
@@ -1012,7 +1024,8 @@ def finalize_quotes(
             "not a causal judgment",
             "not a commercial-pull score",
             "creator influence is not customer corroboration",
-            "an exact quote is verified for exactness only, not for semantic relevance",
+            "a source body of 220 characters or fewer is quoted in full to prevent context clipping",
+            "longer exact quotes remain quality-adjudicated for semantic relevance and context completeness",
             "quote_unavailable with source_body_present true means no quote was produced from an available body",
             "quote_unavailable_cause names whether the source body was unavailable or returned no relevant exact quote",
         ],

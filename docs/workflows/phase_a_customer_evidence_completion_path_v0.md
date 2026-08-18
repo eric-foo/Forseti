@@ -266,7 +266,13 @@ Admission uses explicit product plus axis membership, with literal nominated
 semantic or unresolved refs for bounded non-axis cases. A nomination that
 cannot resolve fails closed instead of disappearing. The external relation
 response must account for every admitted candidate before deterministic
-presentation selection. The cap applies to displayed independent-origin
+presentation selection. Each candidate carries the other normalized meanings
+from that same evidence item as context only, so a price complaint cannot hide
+same-source purchase or repurchase intent. For value work, bind `price feels
+high` separately from `not worth it`, and nominate an evidence item that records
+purchase, repurchase, switching, return, or abandonment under the existing
+`costly_behavior` protection when that behavior changes the commercial reading.
+The cap applies to displayed independent-origin
 groups: ten customer truth groups and three creator-influence groups. Source
 roles and retailer venues remain visible, with each publisher normalized to one
 venue across host variants and short links; creator-authored popularity never
@@ -276,19 +282,28 @@ is ordered last rather than partially parsed. An unrecognized mapping-valued
 engagement shape fails closed rather than becoming an unknown value or generic
 score. Every nominated safety or costly-behavior origin is selected first; more
 than ten such customer origins fails `presentation_cap_insufficient`. The
-selector then reserves one visible support, counter, quiet, and
-unknown-engagement lane when available, reusing an already-selected origin where
-possible. This runs even below the cap. Each group records its required display
-lanes, and the deterministic minimum member rows needed to cover them are shown;
-one origin may therefore display three or more rows. Every operator-protected
-row is visible or the run fails. The retained disposition inventory remains the
-accounting record for all other displayed and undisplayed candidates.
+selector then reserves visible support and counter only from materially positive
+or explicitly protected evidence. Unprotected zero, quiet, and
+engagement-unavailable rows stay in the complete disposition inventory but are
+not forced into the main presentation merely to fill a lane or venue. If no
+materially positive or protected counter exists, the main presentation carries
+no counter rather than manufacturing one from weak response. Each protected
+group records its required display lanes, and the deterministic minimum member
+rows needed to cover them are shown; one origin may therefore display multiple
+rows. Every operator-protected row is visible or the run fails. The retained
+disposition inventory remains the accounting record for all other displayed and
+undisplayed candidates.
 
-The quote stage reads bodies only for selected display rows. It accepts one
-contiguous exact substring of at most 220 characters after packet and bundle
+The quote stage reads bodies only for selected display rows. An available source
+body of at most 220 characters must be quoted in full, so a short comment cannot
+be clipped before a material qualification or same-source costly behavior. For
+a longer body, it accepts one context-complete contiguous exact substring of at
+most 220 characters after packet and bundle
 content verification and evidence-ID, artifact-ID, and source-ref verification,
-and rejects a body that changed after the quote manifest was written. It never
-repairs text or adds ellipses. An available quote must contain at least two
+and rejects a body that changed after the quote manifest was written. When a
+material qualification cannot fit, the quote response returns unavailable
+rather than a misleading fragment. It never repairs text or adds ellipses. An
+available quote must contain at least two
 Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
 A `quote_unavailable` row carries `source_body_present` and a deterministic
 cause: `source_body_unavailable` when the body is absent, or
