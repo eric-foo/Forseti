@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v47
+version: v48
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v47
+# Semantic Evidence Integration Contract v48
 
 ## Purpose
 
@@ -877,7 +877,9 @@ a short comment from being clipped before a material qualification or
 countervailing behavior. A longer available quote must be one context-complete
 contiguous source substring of no more than 220 characters, with no inserted
 ellipsis or rewriting, and must contain at least two Unicode alphanumeric
-characters. If a material qualification cannot fit, the external response
+characters. The substring must express the display label through either the
+selected normalized meaning or the same-evidence companion meaning that
+justified that label. If a material qualification cannot fit, the external response
 returns unavailable instead of a misleading fragment. No lexical-overlap
 relevance rule is applied. A typed
 `quote_unavailable` covers two distinct cases: no source body yields
@@ -968,7 +970,12 @@ wrong relation lane. A behavior observed without an explicit price premise uses
 a plain purchase, repeated-purchase, or repurchase label; the corresponding
 `despite_price` label is valid only when price or cost is explicit. Quantity
 efficiency without an explicit price judgment uses `product_goes_a_long_way`
-rather than claiming the benefits justify the price.
+rather than claiming the benefits justify the price. Time to finish, pan, or
+empty a product is completed-use evidence, not quantity efficiency, repurchase,
+or good value by itself. It remains adjacent unless the same evidence explicitly
+states a purchase or repurchase; that explicit behavior receives the matching
+behavior code. `product_goes_a_long_way` requires an explicit statement that a
+small amount suffices or another direct quantity-efficiency judgment.
 
 After every protected safety or costly-behavior row is admitted, value-only
 presentation fills materially positive support origins first. Purchase and
@@ -988,9 +995,20 @@ rows remain mandatory. This rule never compares raw engagement across platforms
 and does not convert engagement into corroborating headcount or a
 commercial-pull score. Mandatory protected groups are also ordered without a
 cross-venue engagement term. The quote prompt now carries the deterministic display
-label and requires a longer-body exact substring to express both that label and
-the normalized meaning or return unavailable. Semantic fit remains externally
+label and requires a longer-body exact substring to express that label through
+the normalized meaning or the same-evidence companion meaning that justified
+it, or return unavailable. Semantic fit remains externally
 adjudicated; deterministic exactness and body identity checks are unchanged.
+
+Every evidence row carries its source publication time when the preserved
+source exposes one. Reddit post/comment timestamps, Sephora submission times,
+Amazon source dates, and Revolve creation times enter the semantic source and
+flow through packet v3 to the final selection artifact. For completed packets
+whose publication time is absent, the selection consumer may rehydrate it only
+from the exact hash-bound source artifact named by the bundle; missing source
+bytes remain unavailable, while changed bytes fail rather than supplying a
+date. This is source chronology for later time alignment, not proof that search
+interest caused the evidence or vice versa.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -1423,6 +1441,14 @@ new frontier.
 
 ## Changelog
 
+- `v48` / 2026-08-18 — corrected completed-use handling and chronology. Time to
+  finish or pan is no longer quantity-efficiency/value evidence by itself; an
+  explicit same-source repurchase remains direct repurchase intent. Longer-body
+  quotes may express the selected label through the exact companion meaning
+  that justified it. Semantic-source builders now preserve Reddit, Sephora,
+  Amazon, and Revolve publication times, while the selection consumer can
+  rehydrate dates for completed packets only from hash-bound source artifacts.
+  Added no packet version, value score, search-trend inference, or provider call.
 - `v47` / 2026-08-18 — made an explicit-reference-only bounded selection inherit
   the value policy when every admitted candidate carries `value_and_quantity`.
   Mixed explicit-reference sets remain generic, and the named references still

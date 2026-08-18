@@ -1316,6 +1316,7 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
                     "body_text": "It lasts through lunch.",
                     "author_state": "customer",
                     "score_state": "2 points",
+                    "timestamp_state": "2026-07-31T14:22:03+0000",
                     "depth": 2,
                 },
             ],
@@ -1412,6 +1413,7 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
     assert assessed["product_context"][0]["text"] == "Summer Fridays wear"
     assert assessed["product_candidates"] == ["Lip Butter Balm"]
     assert assessed["engagement"]["material_positive"] is True
+    assert assessed["publication_time"] == "2026-07-31T14:22:03+0000"
     assert assessed["conversation_depth"] == 0
     assert assessed["source_reported_depth"] == 2
     assert next(
@@ -1453,6 +1455,43 @@ def _revolve_corpus(
     )
 
 
+def test_retailer_row_parsers_preserve_source_publication_times() -> None:
+    amazon_family, amazon = phase_a_semantic_run._retailer_rows(
+        {
+            "schema_version": "retail_pdp_amazon_aggregate_content_v1",
+            "rows": [
+                {
+                    "row_kind": "retail_review_row",
+                    "source_visible_fields": {
+                        "review_id": "a1",
+                        "body": "Worth it.",
+                        "author": "buyer",
+                        "helpful_count": 4,
+                        "source_date": "2026-06-16",
+                    },
+                }
+            ],
+        }
+    )
+    sephora_family, sephora = phase_a_semantic_run._retailer_rows(
+        {
+            "Results": [
+                {
+                    "Id": "s1",
+                    "ReviewText": "Worth it.",
+                    "AuthorId": "buyer",
+                    "TotalPositiveFeedbackCount": 5,
+                    "SubmissionTime": "2026-07-17T15:55:19.000+00:00",
+                }
+            ]
+        }
+    )
+    assert amazon_family == "amazon_aggregate_v1"
+    assert amazon["a1"]["publication_time"] == "2026-06-16"
+    assert sephora_family == "bazaarvoice_results_v1"
+    assert sephora["s1"]["publication_time"] == "2026-07-17T15:55:19.000+00:00"
+
+
 def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_text(
     tmp_path: Path,
 ) -> None:
@@ -1467,6 +1506,7 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
                 "id": "r1",
                 "content": "Comfortable for hours.",
                 "votesUp": 1,
+                "createdAt": "2026-07-30T12:03:04.000Z",
                 "user": {"userId": "user-1"},
             },
             {"id": "p1", "content": placeholder, "votesUp": 0, "user": {}},
@@ -1480,6 +1520,7 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
                 "id": "r1",
                 "content": "Comfortable for hours.",
                 "votesUp": 1,
+                "createdAt": "2026-07-30T12:03:04.000Z",
                 "user": {"userId": "user-1"},
             },
             {"id": "p1", "content": placeholder, "votesUp": 0, "user": {}},
@@ -1552,6 +1593,7 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
         row for row in source["captured_items"] if row["accounting_disposition"] == "assess"
     )
     assert readable["engagement"]["material_positive"] is True
+    assert readable["publication_time"] == "2026-07-30T12:03:04.000Z"
     assert readable["product_candidates"] == ["SUMR-WU1", "SUMR-WU14"]
     assert {
         (row["text"], row["source_artifact_id"], row["source_ref"])
@@ -1641,6 +1683,7 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
                 "id": "r1",
                 "content": "Comfortable for hours.",
                 "votesUp": 1,
+                "createdAt": "2026-07-30T12:03:04.000Z",
                 "user": {"userId": "user-1"},
             },
             {"id": "p1", "content": placeholder, "votesUp": 0, "user": {}},

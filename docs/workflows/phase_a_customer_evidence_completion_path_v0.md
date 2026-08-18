@@ -341,8 +341,10 @@ disposition inventory remains the accounting record for all other displayed and
 undisplayed candidates.
 
 The quote stage reads bodies only for selected display rows. Its prompt carries
-the deterministic display label as well as the normalized meaning; a returned
-long-source substring must directly express both or be `quote_unavailable`. An
+the deterministic display label, normalized meaning, and same-evidence
+companion meanings; a returned long-source substring must directly express the
+label through the normalized meaning or the companion meaning that justified
+it, or be `quote_unavailable`. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. For
@@ -362,6 +364,15 @@ case. The completed artifact retains every candidate disposition
 and the full candidate-inventory hash, including Amazon or Revolve rows that did
 not earn a display slot. Repository runners emit prompts and schemas but make
 zero provider calls.
+
+Preserve the source publication time beside every evidence row when the source
+exposes it. Current semantic-source builders carry Reddit post/comment
+timestamps, Sephora submission times, Amazon review dates, and Revolve review
+creation times into packet v3. A completed packet with a missing time may be
+rehydrated only from the exact source artifact and SHA-256 already bound by its
+bundle; unavailable bytes leave the time unavailable and changed bytes fail.
+The date enables later descriptive alignment with search trends but does not
+establish that either signal caused the other.
 
 New quote manifests use `phase_a_evidence_quote_manifest_v3`. Every selected
 row requires one customer-facing `display_label` of at most 80 characters plus
@@ -387,6 +398,10 @@ not.” likewise carries price resistance and purchase behavior together. In
 both cases, extracting only the price clause reverses or materially weakens the
 commercial reading. Weak zero-engagement complaints remain accounted but do
 not displace a materially engaged or protected counter merely to fill a lane.
+Likewise, a stated time to finish or pan a product is completed-use context, not
+quantity efficiency or good value by itself. When the same source explicitly
+says it will buy again, package the exact repurchase statement as repurchase
+intent and retain the completed-use meaning as same-source context.
 The 599-score Strawberry-duo post is the opposite regression shape: its source
 body reports a thinner, less-moisturizing formula, disliked scent, and a final
 warning not to buy, but its admitted value-axis meanings are gift-card purchase

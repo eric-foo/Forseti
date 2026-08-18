@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 from collections import defaultdict
+from datetime import datetime
 from itertools import combinations
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -157,11 +158,11 @@ SELECTION_ENVELOPE_JSON:
 {envelope}
 """
 
-VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. When an explicit price or cost premise is paired with purchase, repurchase, or repeated ownership, use the corresponding `*_despite_price` code rather than a plain behavior or generic good-value code. An explicit same-evidence statement of regret, waste, or poor value makes every candidate from that evidence origin counter or adjacent unless the same source explicitly says it will buy or repurchase again despite the cost, or explicitly concludes that the product is worth the price. Trying to make a regretted purchase feel more worthwhile by displaying empties, using it up, or otherwise rationalizing sunk cost does not countervail the regret or waste. Those two exceptions decide the lane before either regret code is considered: neither regret code may be used on an origin the same source keeps positive by explicitly buying or repurchasing again despite the cost, or by concluding the product is worth the price. Once the regret does keep the candidate counter, use `high_spend_followed_by_buyer_remorse` only when the same evidence explicitly states a substantial completed spend amount, or explicitly characterizes the completed spend as substantial, and also states cost-linked regret. Multiple units alone do not establish high spend. The code does not imply repurchase, a transaction count, or future intent. Use `purchase_regret_due_cost` when regret exists without explicit substantial completed spending. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Use `product_goes_a_long_way` for quantity efficiency without an explicit price judgment; `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
+VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. When an explicit price or cost premise is paired with purchase, repurchase, or repeated ownership, use the corresponding `*_despite_price` code rather than a plain behavior or generic good-value code. An explicit same-evidence statement of regret, waste, or poor value makes every candidate from that evidence origin counter or adjacent unless the same source explicitly says it will buy or repurchase again despite the cost, or explicitly concludes that the product is worth the price. Trying to make a regretted purchase feel more worthwhile by displaying empties, using it up, or otherwise rationalizing sunk cost does not countervail the regret or waste. Those two exceptions decide the lane before either regret code is considered: neither regret code may be used on an origin the same source keeps positive by explicitly buying or repurchasing again despite the cost, or by concluding the product is worth the price. Once the regret does keep the candidate counter, use `high_spend_followed_by_buyer_remorse` only when the same evidence explicitly states a substantial completed spend amount, or explicitly characterizes the completed spend as substantial, and also states cost-linked regret. Multiple units alone do not establish high spend. The code does not imply repurchase, a transaction count, or future intent. Use `purchase_regret_due_cost` when regret exists without explicit substantial completed spending. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Time to finish, pan, or empty a product is completed-use evidence, not quantity efficiency, repurchase, or good value by itself. If the same evidence explicitly says it will buy or repurchase again, use the matching purchase or repurchase code; otherwise keep completed use adjacent. Use `product_goes_a_long_way` only when the source explicitly says a small amount suffices or otherwise states quantity efficiency. `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses both the supplied normalized meaning and display_label, and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the normalized meaning and display label is not an acceptable quote.
+Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses the display_label and either the supplied normalized meaning or the same-evidence companion meaning that justifies that label, and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the display label through the supplied source meanings is not an acceptable quote.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -258,6 +259,126 @@ def _verify_bundle(bundle: Mapping[str, Any]) -> None:
         )
 
 
+def _publication_time_value(value: Any) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise EvidenceConsumerError(
+            "publication_time", "source publication time must be a non-empty ISO date/time"
+        )
+    normalized = value.strip()
+    if normalized.casefold() in {"unknown", "unavailable", "not available"}:
+        return None
+    try:
+        datetime.fromisoformat(normalized.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise EvidenceConsumerError(
+            "publication_time", f"source publication time is not ISO-shaped: {normalized}"
+        ) from exc
+    return normalized
+
+
+def _publication_time_from_artifact(
+    source: Mapping[str, Any],
+    evidence_id: str,
+    source_family: str,
+    source_artifact_id: str | None,
+    artifact_cache: dict[tuple[str, str], Mapping[str, Any] | None],
+) -> str | None:
+    if not source_artifact_id:
+        return None
+    cache_key = (str(source["source_id"]), source_artifact_id)
+    if cache_key in artifact_cache:
+        record = artifact_cache[cache_key]
+        if record is None:
+            return None
+    else:
+        record = None
+        artifacts = source["bundle"].get("source_artifacts")
+        if not isinstance(artifacts, list):
+            artifact_cache[cache_key] = None
+            return None
+        binding = next(
+            (
+                row
+                for row in artifacts
+                if isinstance(row, Mapping) and row.get("artifact_id") == source_artifact_id
+            ),
+            None,
+        )
+        if binding is None or not isinstance(binding.get("locator"), str):
+            artifact_cache[cache_key] = None
+            return None
+        path = Path(binding["locator"])
+        if not path.is_absolute():
+            bundle_path = source.get("bundle_path")
+            if not isinstance(bundle_path, (str, Path)):
+                artifact_cache[cache_key] = None
+                return None
+            path = Path(bundle_path).parent / path
+        if not path.is_file():
+            artifact_cache[cache_key] = None
+            return None
+        expected_hash = binding.get("sha256")
+        if not isinstance(expected_hash, str) or hash_file(path) != expected_hash:
+            raise EvidenceConsumerError(
+                "publication_time_source_hash", f"source artifact changed: {source_artifact_id}"
+            )
+        try:
+            loaded = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise EvidenceConsumerError(
+                "publication_time_source", f"source artifact is not readable JSON: {source_artifact_id}"
+            ) from exc
+        if not isinstance(loaded, Mapping):
+            artifact_cache[cache_key] = None
+            return None
+        record = loaded
+        artifact_cache[cache_key] = record
+    if source_family == "reddit_community":
+        leaf_id = evidence_id.rsplit(":", 1)[-1]
+        if leaf_id == "post":
+            post = record.get("post")
+            return _publication_time_value(
+                post.get("timestamp_state") if isinstance(post, Mapping) else None
+            )
+        comments = record.get("comments")
+        if isinstance(comments, list):
+            for row in comments:
+                if isinstance(row, Mapping) and str(row.get("comment_id")) == leaf_id:
+                    return _publication_time_value(row.get("timestamp_state"))
+        return None
+    if source_family != "retailer_review":
+        return None
+    review_id = evidence_id.rsplit(":", 1)[-1]
+    results = record.get("Results")
+    if isinstance(results, list):
+        for row in results:
+            if isinstance(row, Mapping) and str(row.get("Id")) == review_id:
+                return _publication_time_value(row.get("SubmissionTime"))
+    rows = record.get("rows")
+    if isinstance(rows, list):
+        for row in rows:
+            fields = row.get("source_visible_fields") if isinstance(row, Mapping) else None
+            if isinstance(fields, Mapping) and str(fields.get("review_id")) == review_id:
+                return _publication_time_value(fields.get("source_date"))
+    responses = record.get("responses")
+    if isinstance(responses, list):
+        for response in responses:
+            if not isinstance(response, Mapping) or not isinstance(response.get("body_text"), str):
+                continue
+            try:
+                body = json.loads(response["body_text"])
+            except json.JSONDecodeError as exc:
+                raise EvidenceConsumerError(
+                    "publication_time_source", "retailer response body is invalid JSON"
+                ) from exc
+            for row in body.get("reviews", []) if isinstance(body, Mapping) else []:
+                if isinstance(row, Mapping) and str(row.get("id")) == review_id:
+                    return _publication_time_value(row.get("createdAt"))
+    return None
+
+
 def _string_values(value: Any) -> set[str]:
     if isinstance(value, str):
         return {part for part in value.split() if part}
@@ -346,6 +467,31 @@ def _candidate_rows(
     candidates: list[dict[str, Any]] = []
     seen: set[str] = set()
     admitted_unresolved: set[tuple[str, str]] = set()
+    publication_time_cache: dict[tuple[str, str], str | None] = {}
+    publication_artifact_cache: dict[
+        tuple[str, str], Mapping[str, Any] | None
+    ] = {}
+
+    def resolved_publication_time(
+        source: Mapping[str, Any],
+        evidence_id: str,
+        group: Mapping[str, Any],
+        evidence: Mapping[str, Any],
+    ) -> str | None:
+        stored = _publication_time_value(evidence.get("publication_time"))
+        if stored is not None:
+            return stored
+        key = (str(source["source_id"]), evidence_id)
+        if key not in publication_time_cache:
+            publication_time_cache[key] = _publication_time_from_artifact(
+                source,
+                evidence_id,
+                str(group["source_family"]),
+                evidence.get("source_artifact_id"),
+                publication_artifact_cache,
+            )
+        return publication_time_cache[key]
+
     for source in sources:
         source_id = source["source_id"]
         packet = source["packet"]
@@ -420,7 +566,9 @@ def _candidate_rows(
                     "layer": layer,
                     "source_artifact_id": evidence.get("source_artifact_id"),
                     "source_ref": evidence.get("source_ref"),
-                    "publication_time": evidence.get("publication_time"),
+                    "publication_time": resolved_publication_time(
+                        source, evidence_id, group, evidence
+                    ),
                     "independence_key": evidence.get("independence_key") or evidence_id,
                     "scoped_independence_key": "::".join(
                         (
@@ -495,7 +643,9 @@ def _candidate_rows(
                     "layer": layer,
                     "source_artifact_id": evidence.get("source_artifact_id"),
                     "source_ref": evidence.get("source_ref"),
-                    "publication_time": evidence.get("publication_time"),
+                    "publication_time": resolved_publication_time(
+                        source, evidence_id, group, evidence
+                    ),
                     "independence_key": evidence.get("independence_key") or evidence_id,
                     "scoped_independence_key": "::".join(
                         (

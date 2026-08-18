@@ -1870,6 +1870,7 @@ def build_phase_a_reddit_source_v3(
                     "public_identity_key": _public_identity_key(
                         post.get("author_state")
                     ),
+                    "publication_time": post.get("timestamp_state"),
                     "engagement": {
                         "raw_score_state": post.get("score_state"),
                         "material_positive": score is not None and score > 1,
@@ -1962,6 +1963,7 @@ def build_phase_a_reddit_source_v3(
                         "public_identity_key": _public_identity_key(
                             comment.get("author_state")
                         ),
+                        "publication_time": comment.get("timestamp_state"),
                         "engagement": {
                             "raw_score_state": comment.get("score_state"),
                             "material_positive": score is not None and score > 1,
@@ -2004,6 +2006,7 @@ def _retailer_rows(source: Mapping[str, Any]) -> tuple[str, dict[str, dict[str, 
                 "text": row.get("body"),
                 "author": row.get("author"),
                 "helpful_positive": row.get("helpful_count"),
+                "publication_time": row.get("source_date"),
                 "raw": row,
             }
     elif parser_family == "bazaarvoice_results_v1":
@@ -2015,6 +2018,7 @@ def _retailer_rows(source: Mapping[str, Any]) -> tuple[str, dict[str, dict[str, 
                 "text": row.get("ReviewText"),
                 "author": row.get("AuthorId") or row.get("UserNickname"),
                 "helpful_positive": row.get("TotalPositiveFeedbackCount"),
+                "publication_time": row.get("SubmissionTime"),
                 "raw": row,
             }
     else:
@@ -2045,6 +2049,7 @@ def _retailer_rows(source: Mapping[str, Any]) -> tuple[str, dict[str, dict[str, 
                         else None
                     ),
                     "helpful_positive": row.get("votesUp"),
+                    "publication_time": row.get("createdAt"),
                     "raw": row,
                 }
                 if review_id in rows and rows[review_id] != normalized:
@@ -2370,6 +2375,7 @@ def build_phase_a_retailer_source_v3(
                 "independence_posture": posture,
                 "independence_key": identity_key,
                 "public_identity_key": _public_identity_key(raw.get("author")),
+                "publication_time": raw.get("publication_time"),
                 "engagement": {
                     "raw_positive_helpful_count": helpful,
                     "material_positive": helpful_value is not None and helpful_value > 0,

@@ -231,6 +231,69 @@ def _relation_response(candidates: list[dict]) -> dict:
     return {"results": rows}
 
 
+def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_source(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, count=1)
+    source = sources[0]
+    packet = source["packet"]
+    bundle = source["bundle"]
+    evidence_columns = packet["source_groups"][0]["evidence_columns"]
+    evidence_row = packet["source_groups"][0]["evidence_rows"][0]
+    semantic_columns = packet["catalogue_schema"]["semantic_unit_columns"]
+    semantic_row = evidence_row[evidence_columns.index("semantic_units")][0]
+    old_ref = semantic_row[semantic_columns.index("semantic_unit_ref")]
+    new_evidence_id = "reddit:abc:post"
+    new_semantic_ref = "reddit:abc:post::hydration"
+    evidence_row[evidence_columns.index("evidence_id")] = new_evidence_id
+    evidence_row[evidence_columns.index("source_artifact_id")] = "reddit_source_abc"
+    evidence_row[evidence_columns.index("source_ref")] = (
+        "https://www.reddit.com/r/test/comments/abc/example/"
+    )
+    evidence_row[evidence_columns.index("publication_time")] = None
+    semantic_row[semantic_columns.index("semantic_unit_ref")] = new_semantic_ref
+    packet["unmerged_axis_candidates"][0]["evidence_id"] = new_evidence_id
+    packet["unmerged_axis_candidates"][0]["semantic_unit_ref"] = new_semantic_ref
+    raw_path = tmp_path / "reddit_content_record.json"
+    raw_path.write_text(
+        json.dumps(
+            {
+                "post": {
+                    "body_text": "This balm feels moisturizing after use number 0.",
+                    "timestamp_state": "2026-07-29T08:17:00+0000",
+                },
+                "comments": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    bundle["evidence_units"][0].update(
+        {
+            "evidence_id": new_evidence_id,
+            "source_artifact_id": "reddit_source_abc",
+            "source_ref": "https://www.reddit.com/r/test/comments/abc/example/",
+        }
+    )
+    bundle["source_artifacts"] = [
+        {
+            "artifact_id": "reddit_source_abc",
+            "locator": str(raw_path),
+            "sha256": __import__("hashlib").sha256(raw_path.read_bytes()).hexdigest(),
+        }
+    ]
+    spec["protected_evidence_ids"] = {"safety": [new_evidence_id]}
+    assert old_ref != new_semantic_ref
+    _reseal(source)
+
+    candidates = _candidate_rows(sources, spec)
+
+    assert candidates[0]["publication_time"] == "2026-07-29T08:17:00+0000"
+    raw_path.write_text("{}", encoding="utf-8")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _candidate_rows(sources, spec)
+    assert caught.value.boundary == "publication_time_source_hash"
+
+
 def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
     bodies = {
         row["evidence_id"]: row["text"]
@@ -838,6 +901,14 @@ def test_a_value_axis_spec_turns_on_the_value_prompt_and_schema_at_the_real_entr
     )
     assert "VALUE-BOX POLICY" not in non_value_prompt
     assert "anyOf" not in non_value_schema["properties"]["results"]["items"]
+
+
+def test_value_policy_does_not_turn_time_to_finish_into_quantity_value() -> None:
+    guidance = _policy_guidance({"axis_ids": ["value_and_quantity"]})
+
+    assert "Time to finish, pan, or empty a product is completed-use evidence" in guidance
+    assert "not quantity efficiency" in guidance
+    assert "explicitly says it will buy or repurchase again" in guidance
 
 
 def test_explicit_only_value_refs_turn_on_value_policy_without_admitting_the_whole_axis(
