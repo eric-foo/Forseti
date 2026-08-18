@@ -27,13 +27,15 @@ from judgment.phase_a_evidence_consumer import (
 
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
-QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
+LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
+QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v2"
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
 MAX_TRUTH_GROUPS = 10
 MAX_INFLUENCE_GROUPS = 3
 MAX_QUOTE_CHARACTERS = 220
+MAX_PRESENTATION_CHARACTERS = 220
 PROTECTED_LANES = ("safety", "costly_behavior")
 # One venue per publisher, matched on the registered domain and any subdomain of
 # it, so host variants (old./np./new./sh.reddit.com, vm./vt./m.tiktok.com,
@@ -61,6 +63,8 @@ SELECTION_ENVELOPE_JSON:
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
 Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses the supplied normalized meaning and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the normalized meaning is not an acceptable quote.
+
+Also return one concise presentation_statement of at most 220 characters that states the evidence-bound commercial reading in plain language. Group same-evidence meanings when they describe the same actor, action, direction, and conditions; preserve every named product or shade that matters. For example, two shade-specific intentions may display as "Intends to repurchase Vanilla and Vanilla Beige." Keep a material reversal such as price discomfort followed by purchase or repurchase in the same statement. State the useful reading directly; do not append generic method caveats or boilerplate about what the evidence does not prove. Do not turn engagement into headcount or invent good-value, poor-value, purchase, or repurchase meaning absent from the supplied row.
 
 SELECTED_SOURCE_BODIES_JSON:
 {rows}
@@ -454,8 +458,17 @@ def _quote_schema() -> dict[str, Any]:
                 "enum": ["quote_available", "quote_unavailable"],
             },
             "exact_quote": {"type": ["string", "null"]},
+            "presentation_statement": {
+                "type": "string",
+                "maxLength": MAX_PRESENTATION_CHARACTERS,
+            },
         },
-        "required": ["selected_id", "quote_status", "exact_quote"],
+        "required": [
+            "selected_id",
+            "quote_status",
+            "exact_quote",
+            "presentation_statement",
+        ],
         "additionalProperties": False,
     }
     return {
@@ -897,7 +910,11 @@ def finalize_quotes(
 ) -> dict[str, Any]:
     stored = quote_manifest.get("manifest_sha256")
     payload = {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
-    if quote_manifest.get("schema_version") != QUOTE_MANIFEST_VERSION or stored != _canonical_json_sha256(payload):
+    manifest_version = quote_manifest.get("schema_version")
+    if (
+        manifest_version not in {LEGACY_QUOTE_MANIFEST_VERSION, QUOTE_MANIFEST_VERSION}
+        or stored != _canonical_json_sha256(payload)
+    ):
         raise EvidenceConsumerError("manifest_verification", "quote manifest changed")
     if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
         raise EvidenceConsumerError("quote_response_shape", "quotes missing")
@@ -918,7 +935,10 @@ def finalize_quotes(
     recorded_body_hashes = quote_manifest["quote_body_sha256"]
     output_rows = []
     for selected_row, quote_row in zip(selected, quotes, strict=True):
-        if set(quote_row) != {"selected_id", "quote_status", "exact_quote"}:
+        expected_quote_fields = {"selected_id", "quote_status", "exact_quote"}
+        if manifest_version == QUOTE_MANIFEST_VERSION:
+            expected_quote_fields.add("presentation_statement")
+        if set(quote_row) != expected_quote_fields:
             raise EvidenceConsumerError("quote_response_shape", "quote row shape mismatch")
         body = bodies.get((selected_row["source_id"], selected_row["evidence_id"]))
         selected_id = selected_row["selected_id"]
@@ -933,6 +953,17 @@ def finalize_quotes(
             )
         status = quote_row["quote_status"]
         quote = quote_row["exact_quote"]
+        presentation_statement = quote_row.get("presentation_statement")
+        if manifest_version == QUOTE_MANIFEST_VERSION:
+            if (
+                not isinstance(presentation_statement, str)
+                or sum(character.isalnum() for character in presentation_statement) < 2
+                or len(presentation_statement) > MAX_PRESENTATION_CHARACTERS
+            ):
+                raise EvidenceConsumerError(
+                    "presentation_statement",
+                    "presentation statement must be a substantive string of at most 220 characters",
+                )
         if body is None:
             if status != "quote_unavailable" or quote is not None:
                 raise EvidenceConsumerError("quote_unavailable", "missing body cannot produce a quote")
@@ -979,6 +1010,11 @@ def finalize_quotes(
                     )
                 ),
                 "exact_quote": quote,
+                **(
+                    {"presentation_statement": presentation_statement}
+                    if manifest_version == QUOTE_MANIFEST_VERSION
+                    else {}
+                ),
                 "normalized_meaning": selected_row["normalized_meaning"],
                 "same_evidence_companion_meanings": selected_row[
                     "same_evidence_companion_meanings"

@@ -236,6 +236,7 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
                 "selected_id": row["selected_id"],
                 "quote_status": "quote_available",
                 "exact_quote": bodies[row["evidence_id"]],
+                "presentation_statement": row["normalized_meaning"],
             }
             for row in quote_manifest["selected_rows"]
         ]
@@ -351,7 +352,12 @@ def test_missing_body_is_typed_unavailable_and_exact_but_semantically_different_
     )
     response = {
         "quotes": [
-            {"selected_id": quote_manifest["selected_rows"][0]["selected_id"], "quote_status": "quote_unavailable", "exact_quote": None}
+            {
+                "selected_id": quote_manifest["selected_rows"][0]["selected_id"],
+                "quote_status": "quote_unavailable",
+                "exact_quote": None,
+                "presentation_statement": "Evidence recorded without an exact quote.",
+            }
         ]
     }
     artifact = finalize_quotes(quote_manifest, sources, response)
@@ -370,7 +376,12 @@ def test_quote_unavailable_from_an_available_body_is_distinguishable_from_a_miss
     )
     response = {
         "quotes": [
-            {"selected_id": quote_manifest["selected_rows"][0]["selected_id"], "quote_status": "quote_unavailable", "exact_quote": None}
+            {
+                "selected_id": quote_manifest["selected_rows"][0]["selected_id"],
+                "quote_status": "quote_unavailable",
+                "exact_quote": None,
+                "presentation_statement": "Evidence recorded without an exact quote.",
+            }
         ]
     }
     artifact = finalize_quotes(quote_manifest, sources, response)
@@ -394,6 +405,7 @@ def test_source_native_ellipsis_is_preserved_when_the_quote_is_exact(tmp_path: P
                 "selected_id": quote_manifest["selected_rows"][0]["selected_id"],
                 "quote_status": "quote_available",
                 "exact_quote": "My lips burn… only after this shade.",
+                "presentation_statement": "The customer reports burning only after this shade.",
             }
         ]
     }
@@ -424,6 +436,84 @@ def test_short_source_body_cannot_be_clipped_before_material_countervailing_beha
     with pytest.raises(EvidenceConsumerError) as caught:
         finalize_quotes(quote_manifest, sources, response)
     assert caught.value.boundary == "quote_context_incomplete"
+
+
+def test_presentation_statement_groups_repurchases_and_preserves_source_meanings(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    evidence_row = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0]
+    for suffix, statement in (
+        ("vanilla", "The author intends to repurchase the Vanilla option."),
+        ("vanilla-beige", "The author intends to repurchase the Vanilla Beige shade."),
+    ):
+        companion = copy.deepcopy(evidence_row[10][0])
+        companion[0] = f"community_post:0::{suffix}"
+        companion[1] = statement
+        companion[7] = ["shade_and_color_fit"]
+        companion[8] = []
+        evidence_row[10].append(companion)
+    packet = sources[0]["packet"]
+    packet["packet_sha256"] = _canonical_hash(
+        {key: value for key, value in packet.items() if key != "packet_sha256"}
+    )
+    sources[0]["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0]["presentation_statement"] = (
+        "Price feels high, but the customer intends to repurchase Vanilla and Vanilla Beige."
+    )
+    artifact = finalize_quotes(quote_manifest, sources, response)
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["presentation_statement"] == response["quotes"][0]["presentation_statement"]
+    assert [meaning["statement"] for meaning in row["same_evidence_companion_meanings"]] == [
+        "The author intends to repurchase the Vanilla option.",
+        "The author intends to repurchase the Vanilla Beige shade.",
+    ]
+
+
+@pytest.mark.parametrize("mutation", ["missing", "empty", "overlength"])
+def test_current_quote_manifest_rejects_missing_or_invalid_presentation_statement(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    if mutation == "missing":
+        response["quotes"][0].pop("presentation_statement")
+        boundary = "quote_response_shape"
+    else:
+        response["quotes"][0]["presentation_statement"] = (
+            "" if mutation == "empty" else "x" * 221
+        )
+        boundary = "presentation_statement"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(quote_manifest, sources, response)
+    assert caught.value.boundary == boundary
+
+
+def test_legacy_quote_manifest_retains_its_original_response_shape(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    quote_manifest["schema_version"] = "phase_a_evidence_quote_manifest_v1"
+    quote_manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0].pop("presentation_statement")
+    artifact = finalize_quotes(quote_manifest, sources, response)
+    assert "presentation_statement" not in artifact["source_groups"][0]["rows"][0]
 
 
 def test_candidate_exposes_same_evidence_companion_meanings_without_admitting_them(
@@ -559,8 +649,12 @@ def test_body_swapped_after_the_quote_manifest_cannot_supply_a_quote(tmp_path: P
         unit["text"] = "Body substituted after the quote manifest was written."
     response = {
         "quotes": [
-            {"selected_id": row["selected_id"], "quote_status": "quote_available",
-             "exact_quote": "Body substituted after"}
+            {
+                "selected_id": row["selected_id"],
+                "quote_status": "quote_available",
+                "exact_quote": "Body substituted after",
+                "presentation_statement": row["normalized_meaning"],
+            }
             for row in quote_manifest["selected_rows"]
         ]
     }

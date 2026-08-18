@@ -278,8 +278,7 @@ Do not search for complaints first and then treat the surviving set as the
 answer. A relation label describes how the row bears on the bounded claim; it
 is not a permanent positive/negative label. Thus purchase or repurchase despite
 price discomfort counters a poor-value claim and may be presented as a positive
-willingness-to-pay or value signal, without claiming prevalence, commercial
-pull, or that the product is objectively good value.
+willingness-to-pay or value signal.
 
 Keep atomic semantic meanings and their refs separately recorded. In the
 presentation layer, meanings from the same evidence item may be grouped when
@@ -329,6 +328,14 @@ case. The completed artifact retains every candidate disposition
 and the full candidate-inventory hash, including Amazon or Revolve rows that did
 not earn a display slot. Repository runners emit prompts and schemas but make
 zero provider calls.
+
+New quote manifests use `phase_a_evidence_quote_manifest_v2`. Every selected
+row requires one `presentation_statement` of at most 220 characters that states
+the evidence-bound commercial reading in plain language. It groups eligible
+same-evidence meanings, retains named variants and material reversals, and does
+not append generic caveats whose limits are already implicit in the evidence
+fields and controlling claim-support contract. Legacy v1 quote manifests keep
+their original response shape and remain finalizable.
 
 Regression note: the exact short comment “Do I cringe a little every time I
 remember the price tag? Yes. Will I be repurchasing vanilla AND vanilla beige?

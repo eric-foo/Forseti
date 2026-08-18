@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v40
+version: v41
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v40
+# Semantic Evidence Integration Contract v41
 
 ## Purpose
 
@@ -899,8 +899,7 @@ external response relates each row to the bounded claim. `support` and
 value labels. A customer may say the price feels high while also showing
 willingness to pay through purchase or repurchase. For a bounded poor-value
 claim, that behavior is counterevidence and may be described in plain-language
-presentation as a positive willingness-to-pay or value signal; it does not by
-itself prove good value, prevalence, or commercial pull.
+presentation as a positive willingness-to-pay or value signal.
 
 Atomic source meanings remain separately traceable. Presentation may group
 same-evidence, same-actor, same-action, same-direction meanings into one
@@ -909,6 +908,15 @@ Vanilla Beige — while retaining every underlying semantic-unit reference,
 named object, condition, exact quote, and provenance. It must not group across
 independent origins, erase a conflicting clause, or turn shade-specific
 repurchase into an unqualified general repurchase claim.
+
+Contract v41 versions new quote manifests to
+`phase_a_evidence_quote_manifest_v2`. Each selected row now requires one
+concise `presentation_statement` alongside its exact quote. The statement owns
+the useful evidence-bound commercial reading, may perform the lossless grouping
+allowed above, and keeps material reversals in one sentence. It does not append
+generic method caveats whose boundaries are already carried by the source-owned
+fields and this contract. Legacy v1 quote manifests retain their prior response
+shape and remain finalizable; packet v3 and completed evidence stay unchanged.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -1341,6 +1349,15 @@ new frontier.
 
 ## Changelog
 
+- `v41` / 2026-08-18 — added a required selected-row
+  `presentation_statement` to new v2 quote manifests so the consumer, rather
+  than a later chat author, records the concise commercial reading. It groups
+  same-source same-action meanings such as Vanilla and Vanilla Beige repurchase
+  while preserving both atomic semantic refs, the exact quote, and provenance.
+  Removed repetitive presentation boilerplate about implied population and
+  value limits; the underlying claim-support boundaries remain unchanged.
+  Legacy v1 quote manifests remain readable. Added no score, packet version,
+  evidence replay, or provider call inside the repository runner.
 - `v40` / 2026-08-18 — made the value-context correction explicit. Value-axis
   admission is direction-neutral; relation labels remain relative to the
   bounded claim; price discomfort is distinct from poor value; and
