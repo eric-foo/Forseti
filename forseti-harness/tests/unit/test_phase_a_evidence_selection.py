@@ -8,7 +8,9 @@ import pytest
 
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
+    DISPLAY_LABEL_BY_REASON_CODE,
     SELECTION_SPEC_VERSION,
+    VALUE_REASON_RELATIONS,
     _candidate_rows,
     _bucket_priority,
     _numeric_engagement,
@@ -756,6 +758,150 @@ def _selection_row(
     }
 
 
+def _value_axis_source(tmp_path: Path, count: int = 6) -> tuple[dict, list[dict]]:
+    """Build a real-entry-point value-axis source and spec."""
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    packet, bundle = _packet_and_bundle(count)
+    for group in packet["source_groups"]:
+        for row in group["evidence_rows"]:
+            for semantic in row[-1]:
+                axes = semantic[7]
+                semantic[7] = (
+                    axes.replace("hydration_and_moisture", "value_and_quantity")
+                    if isinstance(axes, str)
+                    else ["value_and_quantity"]
+                )
+    packet["selection"]["axis_ids"] = ["value_and_quantity"]
+    packet.pop("packet_sha256", None)
+    packet["packet_sha256"] = _canonical_hash(packet)
+    packet_path = tmp_path / "packet.json"
+    bundle_path = tmp_path / "bundle.json"
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    spec = dict(_spec(count))
+    spec["axis_ids"] = ["value_and_quantity"]
+    spec["bounded_claim"] = "Customers report value-for-money experiences with the balm."
+    return spec, [
+        {
+            "source_id": "full-corpus",
+            "packet_path": packet_path,
+            "bundle_path": bundle_path,
+            "packet": packet,
+            "bundle": bundle,
+        }
+    ]
+
+
+def _value_relation_response(
+    candidates: list[dict], overrides: dict[str, tuple[str, str]] | None = None
+) -> dict:
+    overrides = overrides or {}
+    rows = []
+    for candidate in candidates:
+        if candidate["evidence_id"] in overrides:
+            relation, reason_code = overrides[candidate["evidence_id"]]
+        elif candidate["layer"] == "influence_context":
+            relation, reason_code = "adjacent", "non_value_product_experience"
+        else:
+            relation, reason_code = "support", "explicit_good_value"
+        rows.append(
+            {
+                "candidate_id": candidate["candidate_id"],
+                "relation": relation,
+                "reason_code": reason_code,
+            }
+        )
+    return {"results": rows}
+
+
+def test_a_value_axis_spec_turns_on_the_value_prompt_and_schema_at_the_real_entry_point(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _value_axis_source(tmp_path)
+    prompt, schema, _ = prepare_evidence_selection(spec, sources)
+    assert "VALUE-BOX POLICY" in prompt
+    variants = schema["properties"]["results"]["items"]["anyOf"]
+    by_relation = {
+        row["properties"]["relation"]["const"]: set(
+            row["properties"]["reason_code"]["enum"]
+        )
+        for row in variants
+    }
+    assert "better_value_than_comparator" in by_relation["support"]
+    assert "comparator_better_value" in by_relation["counter"]
+
+    balanced_dir = tmp_path / "balanced"
+    balanced_dir.mkdir(parents=True, exist_ok=True)
+    non_value_prompt, non_value_schema, _ = prepare_evidence_selection(
+        *_write_source(balanced_dir)
+    )
+    assert "VALUE-BOX POLICY" not in non_value_prompt
+    assert "anyOf" not in non_value_schema["properties"]["results"]["items"]
+
+
+def test_a_value_axis_spec_keeps_a_highly_engaged_adjacent_row_out_of_the_displayed_box(
+    tmp_path: Path,
+) -> None:
+    adjacent = {"community_post:5": ("adjacent", "non_value_product_experience")}
+    spec, sources = _value_axis_source(tmp_path / "value")
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, manifest["spec"])
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _value_relation_response(candidates, adjacent)
+    )
+    artifact = finalize_quotes(
+        quote_manifest, sources, _quote_response(quote_manifest, sources)
+    )
+    displayed = {row["evidence_id"] for group in artifact["source_groups"] for row in group["rows"]}
+    accounted = {row["evidence_id"] for row in artifact["candidate_dispositions"]}
+    assert "community_post:5" not in displayed
+    assert "community_post:5" in accounted
+
+    balanced_spec, balanced_sources = _value_axis_source(tmp_path / "balanced")
+    balanced_spec["axis_ids"] = ["value_and_quantity", "hydration_and_moisture"]
+    _, _, balanced_manifest = prepare_evidence_selection(balanced_spec, balanced_sources)
+    balanced_candidates = _candidate_rows(balanced_sources, balanced_manifest["spec"])
+    _, _, balanced_quotes = finalize_relations_prepare_quotes(
+        balanced_manifest,
+        balanced_sources,
+        _value_relation_response(balanced_candidates, adjacent),
+    )
+    balanced_artifact = finalize_quotes(
+        balanced_quotes,
+        balanced_sources,
+        _quote_response(balanced_quotes, balanced_sources),
+    )
+    balanced_displayed = {
+        row["evidence_id"]
+        for group in balanced_artifact["source_groups"]
+        for row in group["rows"]
+    }
+    assert "community_post:5" in balanced_displayed
+
+
+def test_a_value_axis_spec_rejects_an_inverted_comparator_through_the_real_finalizer(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _value_axis_source(tmp_path)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, manifest["spec"])
+    response = _value_relation_response(
+        candidates, {"community_post:5": ("counter", "better_value_than_comparator")}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, response)
+    assert caught.value.boundary == "value_reason_relation_mismatch"
+
+
+def test_every_value_reason_code_that_can_be_displayed_has_a_curated_label() -> None:
+    displayable = {
+        code
+        for code, relation in VALUE_REASON_RELATIONS.items()
+        if relation in {"support", "counter", "adjacent"}
+    }
+    assert displayable <= set(DISPLAY_LABEL_BY_REASON_CODE)
+
+
 def test_value_policy_keeps_positive_value_first_and_only_one_direct_complaint() -> None:
     rows = [
         _selection_row(
@@ -899,6 +1045,8 @@ def test_value_prompt_forbids_companion_only_formula_complaints_from_value_lanes
     assert "repurchase_despite_price" in guidance
     assert "repurchase_intent" in guidance
     assert "requires explicit source meaning about price or cost" in guidance
+    assert "whole same-evidence set" in guidance
+    assert "regret, waste, or poor value reverses" in guidance
     assert "product_goes_a_long_way" in guidance
     assert _policy_guidance({"axis_ids": ["hydration_and_moisture"]}) == ""
 
@@ -924,6 +1072,88 @@ def test_value_policy_does_not_compare_counter_engagement_across_venues() -> Non
     ]
     selected = _select_groups(rows, "truth_support", 10, truth_policy="value_first")
     assert [row["candidate_id"] for row in selected] == ["reddit-value"]
+
+
+def test_value_policy_shows_the_strongest_native_complaint_when_no_support_exists() -> None:
+    rows = [
+        _selection_row(
+            f"regret-{points}",
+            origin=f"origin:regret:{points}",
+            relation="counter",
+            reason_code="purchase_regret_due_cost",
+            engagement_raw_value=f"{points} points",
+        )
+        for points in (4, 1174, 31)
+    ]
+    selected = _select_groups(rows, "truth_support", 10, truth_policy="value_first")
+    assert [row["candidate_id"] for row in selected] == ["regret-1174"]
+
+
+def test_value_policy_anchors_the_complaint_to_the_best_signal_not_first_bucket() -> None:
+    rows = [
+        _selection_row(
+            "reddit-weak-2",
+            origin="origin:reddit-weak",
+            reason_code="explicit_good_value",
+            engagement_raw_value="2 points",
+        ),
+        _selection_row(
+            "reddit-counter-1",
+            origin="origin:reddit-counter",
+            relation="counter",
+            reason_code="explicit_poor_value",
+            engagement_raw_value="1 point",
+        ),
+        _selection_row(
+            "sephora-strong-999",
+            origin="origin:sephora-strong",
+            reason_code="repurchase_despite_price",
+            engagement_raw_value=999,
+            source_role="retailer_review",
+            source_venue="sephora",
+            engagement_kind="positive_helpful_count",
+        ),
+        _selection_row(
+            "sephora-counter-900",
+            origin="origin:sephora-counter",
+            relation="counter",
+            reason_code="explicit_poor_value",
+            engagement_raw_value=900,
+            source_role="retailer_review",
+            source_venue="sephora",
+            engagement_kind="positive_helpful_count",
+        ),
+    ]
+    selected = _select_groups(rows, "truth_support", 4, truth_policy="value_first")
+    selected_ids = {row["candidate_id"] for row in selected}
+    assert "sephora-strong-999" in selected_ids
+    assert "sephora-counter-900" in selected_ids
+    assert "reddit-counter-1" not in selected_ids
+
+
+def test_value_policy_orders_protected_origins_without_cross_venue_engagement() -> None:
+    rows = [
+        _selection_row(
+            "reddit-protected-2",
+            origin="origin:reddit-protected",
+            protected_lanes=["costly_behavior"],
+            engagement_raw_value="2 points",
+        ),
+        _selection_row(
+            "sephora-protected-999",
+            origin="origin:sephora-protected",
+            protected_lanes=["costly_behavior"],
+            engagement_raw_value=999,
+            source_role="retailer_review",
+            source_venue="sephora",
+            engagement_kind="positive_helpful_count",
+        ),
+    ]
+    selected = _select_groups(rows, "truth_support", 10, truth_policy="value_first")
+    assert [row["candidate_id"] for row in selected] == [
+        "reddit-protected-2",
+        "sephora-protected-999",
+    ]
 
 
 def test_value_policy_keeps_operator_protected_counter_even_without_positive_engagement() -> None:

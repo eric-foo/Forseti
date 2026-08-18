@@ -162,7 +162,7 @@ stop patching, revert any partial diff, and return findings only.
   `e97c410f5806d5ee043b8638c9a6974d7111d487fd7ce547d4c9647c7bc526b5`.
 - Inventory: 940 candidates, same frozen inventory hash as the baseline; final
   dispositions were 280 support, 323 counter, 319 adjacent, 18 exclude.
-- Display: ten truth origins, eleven rows, nine support rows, one ordinary
+- Display: ten truth origins, eleven rows, ten support rows, one ordinary
   complaint origin, seven exact quotes, four typed quote-unavailable rows.
 - The 599-point post has two adjacent dispositions and zero displayed rows.
 - The 204-point repurchase account is displayed with its full exact quote.

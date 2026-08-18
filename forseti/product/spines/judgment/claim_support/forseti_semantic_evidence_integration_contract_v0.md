@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v43
+version: v44
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v43
+# Semantic Evidence Integration Contract v44
 
 ## Purpose
 
@@ -941,7 +941,12 @@ quantity-for-price, purchase commitment, repurchase, or benefit-for-cost
 tradeoff. Same-evidence companions may qualify a direct premise — including
 purchase or repurchase despite price discomfort — but companion-only formula,
 hydration, scent, gift-card, trial, or generic purchase meanings remain
-adjacent. The deterministic finalizer rejects a value reason code placed in the
+adjacent. A value code may describe the combined visible meaning of a candidate
+and its same-evidence companions when one supplies the price/value premise and
+another supplies the purchase behavior. Explicit same-evidence regret, waste,
+or poor value reverses a positive purchase inference unless explicit later
+repurchase, purchase commitment, or worth language countervails it. The
+deterministic finalizer rejects a value reason code placed in the
 wrong relation lane. A behavior observed without an explicit price premise uses
 a plain purchase, repeated-purchase, or repurchase label; the corresponding
 `despite_price` label is valid only when price or cost is explicit. Quantity
@@ -952,13 +957,20 @@ After every protected safety or costly-behavior row is admitted, value-only
 presentation fills materially positive support origins first. Purchase and
 repurchase behavior precede other direct value meanings inside each
 source-native venue/role/metric bucket, and buckets continue to round-robin for
-source visibility. At most one ordinary counter may be shown: the highest
-native-engagement direct counter from the first selected support's same
-venue/role/metric bucket. If that comparable bucket has none, no ordinary
-counter is manufactured. Protected rows remain mandatory even when they exceed
-that ordinary allowance. This rule never compares raw engagement across
-platforms and does not convert engagement into corroborating headcount or a
-commercial-pull score. The quote prompt now carries the deterministic display
+source visibility. The primary positive anchor is chosen first by semantic
+value-signal priority, then stable source bucket identity; native engagement is
+used only within that fixed source-native bucket. At most one ordinary counter
+may be shown: the highest native-engagement direct counter from that anchor's
+same venue/role/metric bucket. If no support exists, one materially positive
+complaint is still shown from the complaint bucket chosen by the same
+semantic-first, stable-bucket rule. If the comparable bucket has none, no
+ordinary counter is manufactured. An already visible protected counter
+suppresses the ordinary counter; at the cap, an ordinary counter may displace
+the most recently added ordinary support origin but never the anchor. Protected
+rows remain mandatory. This rule never compares raw engagement across platforms
+and does not convert engagement into corroborating headcount or a
+commercial-pull score. Mandatory protected groups are also ordered without a
+cross-venue engagement term. The quote prompt now carries the deterministic display
 label and requires a longer-body exact substring to express both that label and
 the normalized meaning or return unavailable. Semantic fit remains externally
 adjudicated; deterministic exactness and body identity checks are unchanged.
@@ -1394,6 +1406,16 @@ new frontier.
 
 ## Changelog
 
+- `v44` / 2026-08-18 — closed the delegated value-selection review. Added
+  real-entry-point tests that fail if any production value-policy wiring is
+  disabled, curated every displayable value label, and replaced the accidental
+  alphabetic complaint anchor with a semantic-signal-first anchor that never
+  compares raw engagement across platforms. An all-complaint value set now
+  shows one materially positive complaint instead of an empty box. Clarified
+  that one same-evidence origin may jointly supply the price premise and
+  purchase behavior, while explicit regret, waste, or poor value reverses a
+  positive purchase inference unless the same source explicitly countervails
+  it. Protected cross-venue ordering no longer uses raw engagement.
 - `v43` / 2026-08-18 — made value-only selection direct and positive-first.
   Formula, hydration, scent, gift-card, trial-only, and generic purchase
   meanings cannot enter the value box through a companion-only warning. The

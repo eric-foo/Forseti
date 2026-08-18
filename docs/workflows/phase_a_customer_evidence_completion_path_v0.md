@@ -314,13 +314,22 @@ non-value selections, the selector then reserves visible support and counter
 only from materially positive or explicitly protected evidence. A value-only
 selection instead fills materially positive support origins first, prioritizing
 purchase and repurchase behavior before other direct value meanings, while
-still round-robining source-native venue/role/metric buckets. It may add at most
-one ordinary counter from the first selected support's same
-venue/role/native-metric bucket, ranked by that native engagement value; if that
-comparable bucket has no direct counter, it displays none. Operator-protected
-safety or costly-behavior rows remain mandatory and may exceed that ordinary
-counter allowance. This does not compare raw engagement across platforms or
-create a commercial-pull score. Unprotected zero, quiet, and
+still round-robining source-native venue/role/metric buckets. Before that
+round-robin fills the remaining places, it anchors one primary positive origin
+by value-signal kind: purchase and repurchase behavior outrank explicit worth,
+which outranks price-to-quantity meanings. Stable source bucket identity breaks
+cross-venue ties; native engagement ranks only within the already fixed bucket.
+It may add at most one ordinary counter from that anchor's same
+venue/role/native-metric bucket, ranked by that native engagement value. If no
+positive support exists, it still shows one materially positive complaint: the
+strongest native-engagement complaint from the complaint bucket chosen by the
+same semantic-first, stable-bucket rule. If the comparable bucket has no direct
+counter, it displays none. An already visible operator-protected counter
+suppresses the ordinary counter, and at the cap an ordinary counter may displace
+the most recently added ordinary support origin but never the anchor.
+Operator-protected safety or costly-behavior rows remain mandatory. This does
+not compare raw engagement across platforms or create a commercial-pull score.
+Unprotected zero, quiet, and
 engagement-unavailable rows stay in the complete disposition inventory but are
 not forced into the main presentation merely to fill a lane or venue. If no
 materially positive or protected counter exists, the main presentation carries

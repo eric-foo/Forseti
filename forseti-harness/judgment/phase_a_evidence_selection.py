@@ -82,6 +82,12 @@ DISPLAY_LABEL_BY_REASON_CODE = {
     "price_increase_quality_decline": "Higher price with lower quality",
     "cheaper_equivalent_available": "Cheaper equivalent available",
     "comparator_better_value": "Comparison offers better value",
+    # Adjacent value meanings are not value evidence, but they may still be
+    # displayed as influence context or operator-protected rows.
+    "price_or_quantity_fact_only": "Price or quantity detail only",
+    "purchase_without_value_judgment": "Purchase without a value judgment",
+    "non_value_product_experience": "Product experience outside value",
+    "unclear_value_implication": "Unclear value implication",
 }
 
 VALUE_AXIS_ID = "value_and_quantity"
@@ -127,6 +133,16 @@ VALUE_SUPPORT_PRIORITY = {
     "reasonable_bundle_price": 4,
     "product_goes_a_long_way": 4,
 }
+VALUE_COUNTER_PRIORITY = {
+    "purchase_regret_due_cost": 0,
+    "explicit_poor_value": 0,
+    "performance_not_worth_price": 1,
+    "price_increase_quality_decline": 1,
+    "too_little_product_for_price": 2,
+    "packaging_waste_undermines_value": 2,
+    "cheaper_equivalent_available": 3,
+    "comparator_better_value": 3,
+}
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
@@ -138,7 +154,7 @@ SELECTION_ENVELOPE_JSON:
 {envelope}
 """
 
-VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's own normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost. Same-evidence companion meanings may qualify a direct price/value premise: price discomfort plus purchase, repurchase, repeated ownership, or stated benefits can be positive value evidence. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the candidate itself states the cost/value tradeoff. The reason_code must describe the candidate meaning, not a companion-only conclusion. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Use `product_goes_a_long_way` for quantity efficiency without an explicit price judgment; `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
+VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. An explicit same-evidence statement of regret, waste, or poor value reverses a positive purchase inference unless an explicit later repurchase, purchase commitment, or worth statement countervails it. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Use `product_goes_a_long_way` for quantity efficiency without an explicit price judgment; `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
@@ -805,6 +821,54 @@ def _value_member_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
     return (2, 0) + _bucket_priority(row)
 
 
+def _value_anchor_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
+    """Choose a semantic signal before a source bucket, then rank natively.
+
+    Source role, venue, and metric precede the native engagement value, so a
+    Reddit score is never numerically compared with retailer helpful votes.
+    Within one bucket, the existing source-native engagement order still
+    applies.
+    """
+    relation = row.get("relation")
+    if relation == "support":
+        signal_priority = VALUE_SUPPORT_PRIORITY.get(row.get("reason_code"), 99)
+    elif relation == "counter":
+        signal_priority = VALUE_COUNTER_PRIORITY.get(row.get("reason_code"), 99)
+    else:
+        signal_priority = 99
+    return (
+        signal_priority,
+        row["source_role"],
+        row["source_venue"],
+        row["engagement_kind"],
+    ) + _bucket_priority(row)
+
+
+def _protected_value_group_priority(group: Mapping[str, Any]) -> tuple[Any, ...]:
+    """Order mandatory groups without comparing engagement across venues."""
+    member_keys = []
+    for member in group["origin_members"]:
+        relation = member.get("relation")
+        relation_priority = 0 if relation == "support" else 1 if relation == "counter" else 2
+        member_keys.append(
+            (
+                relation_priority,
+                (
+                    VALUE_SUPPORT_PRIORITY.get(member.get("reason_code"), 99)
+                    if relation == "support"
+                    else VALUE_COUNTER_PRIORITY.get(member.get("reason_code"), 99)
+                    if relation == "counter"
+                    else 99
+                ),
+                member["source_role"],
+                member["source_venue"],
+                member["engagement_kind"],
+                member["candidate_id"],
+            )
+        )
+    return min(member_keys)
+
+
 def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[dict[str, Any]]:
     _validate_protected_rows(rows)
     eligible = [
@@ -866,9 +930,7 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
 
     for group in sorted(
         (row for row in groups if row["origin_protected_lanes"]),
-        key=lambda row: min(
-            _value_member_priority(member) for member in row["origin_members"]
-        ),
+        key=_protected_value_group_priority,
     ):
         add_group(group)
         group["required_display_lanes"].extend(
@@ -894,6 +956,23 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
     support_keys = sorted(support_buckets)
     first_support: tuple[dict[str, Any], dict[str, Any]] | None = None
     ordinary_support_order: list[dict[str, Any]] = []
+
+    # Bind the complaint bucket to the best kind of positive value signal, not
+    # to whichever source bucket happens to sort first.  Engagement is used only
+    # after the source-native bucket is fixed.
+    anchor_choices = [pair for bucket in support_buckets.values() for pair in bucket]
+    if anchor_choices:
+        anchor_group, anchor_member = min(
+            anchor_choices, key=lambda pair: _value_anchor_priority(pair[1])
+        )
+        if anchor_group["origin_group_id"] in selected_origins or len(selected) < cap:
+            if "relation:support" not in anchor_group["required_display_lanes"]:
+                anchor_group["required_display_lanes"].append("relation:support")
+            was_added = add_group(anchor_group)
+            if was_added and not anchor_group["origin_protected_lanes"]:
+                ordinary_support_order.append(anchor_group)
+            first_support = (anchor_group, anchor_member)
+
     while len(selected) < cap and any(support_buckets[key] for key in support_keys):
         for key in support_keys:
             if len(selected) >= cap:
@@ -903,9 +982,10 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
             group, member = support_buckets[key].pop(0)
             if "relation:support" not in group["required_display_lanes"]:
                 group["required_display_lanes"].append("relation:support")
-            if first_support is None:
+            was_added = add_group(group)
+            if was_added and first_support is None:
                 first_support = (group, member)
-            if add_group(group) and not group["origin_protected_lanes"]:
+            if was_added and not group["origin_protected_lanes"]:
                 ordinary_support_order.append(group)
 
     protected_counter_visible = any(
@@ -913,12 +993,29 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
         for group in selected
         for member in group["origin_members"]
     )
-    if first_support is not None and not protected_counter_visible:
-        _, primary_support = first_support
+    if not protected_counter_visible:
+        primary_member = first_support[1] if first_support is not None else None
+        if primary_member is None:
+            counter_anchor_choices = []
+            for group in groups:
+                counter_anchor_choices.extend(
+                    (group, member)
+                    for member in group["origin_members"]
+                    if member["relation"] == "counter"
+                )
+            if counter_anchor_choices:
+                _, primary_member = min(
+                    counter_anchor_choices,
+                    key=lambda pair: _value_anchor_priority(pair[1]),
+                )
         primary_bucket = (
-            primary_support["source_role"],
-            primary_support["source_venue"],
-            primary_support["engagement_kind"],
+            (
+                primary_member["source_role"],
+                primary_member["source_venue"],
+                primary_member["engagement_kind"],
+            )
+            if primary_member is not None
+            else None
         )
         counter_choices: list[tuple[dict[str, Any], dict[str, Any]]] = []
         for group in groups:
@@ -926,6 +1023,7 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
                 row
                 for row in group["origin_members"]
                 if row["relation"] == "counter"
+                and primary_bucket is not None
                 and (
                     row["source_role"],
                     row["source_venue"],
