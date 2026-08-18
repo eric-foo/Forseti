@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v46
+version: v47
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v46
+# Semantic Evidence Integration Contract v47
 
 ## Purpose
 
@@ -934,7 +934,8 @@ historical runtime contract; legacy v1 remains finalizable byte-for-byte.
 
 Contract v43 makes value-only presentation direct and positive-first without
 changing `phase_a_evidence_packet_v3` or adding a score. When the sole selected
-axis is `value_and_quantity`, the emitted relation-response schema limits
+axis is `value_and_quantity`, or an explicit-reference-only bounded selection
+admits candidates that all carry that axis, the emitted relation-response schema limits
 reason codes to a small relation-aligned value vocabulary. Support or counter
 requires the candidate's own normalized meaning to state a price, value,
 quantity-for-price, purchase commitment, repurchase, or benefit-for-cost
@@ -1422,6 +1423,11 @@ new frontier.
 
 ## Changelog
 
+- `v47` / 2026-08-18 — made an explicit-reference-only bounded selection inherit
+  the value policy when every admitted candidate carries `value_and_quantity`.
+  Mixed explicit-reference sets remain generic, and the named references still
+  bound candidate admission rather than expanding to the whole axis. Added no
+  selection-spec field, packet version, provider call, or production-output rewrite.
 - `v46` / 2026-08-18 — added one sparse, claim-specific counter meaning for
   explicit substantial completed spending followed by cost-linked buyer’s
   remorse. Multiple units alone do not qualify. The meaning does not add
