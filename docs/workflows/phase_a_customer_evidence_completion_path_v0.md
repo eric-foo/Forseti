@@ -266,7 +266,16 @@ Admission uses explicit product plus axis membership, with literal nominated
 semantic or unresolved refs for bounded non-axis cases. A nomination that
 cannot resolve fails closed instead of disappearing. The external relation
 response must account for every admitted candidate before deterministic
-presentation selection. Each candidate carries the other normalized meanings
+presentation selection. For non-value work, its provider-visible envelope is a
+named columnar semantic view: bounded meaning, conditions, polarity,
+product/version scope, source role/layer, uncertainty, existing relations, and
+compact same-evidence meanings. Dates, engagement, URLs, evidence identity, and
+provenance remain in the hash-bound candidate inventory and are reattached
+deterministically; omitting them from the prompt must never omit them from the
+artifact. Value-only relation work retains the full candidate view because the
+bounded commercial pilot found that compacting those 12 rows could weaken
+`repeated purchasing despite price` into a generic value label. Each candidate
+carries the other normalized meanings
 from that same evidence item as context only, so a price complaint cannot hide
 same-source purchase or repurchase intent. For value work, bind `price feels
 high` separately from `not worth it`, and nominate an evidence item that records
@@ -340,7 +349,23 @@ rows. Every operator-protected row is visible or the run fails. The retained
 disposition inventory remains the accounting record for all other displayed and
 undisplayed candidates.
 
-The quote stage reads bodies only for selected display rows. Its prompt carries
+One displayed pack is not one evidence point. It may contain up to ten
+independent customer origins, and one origin may display several atomic
+meanings. Call those origins corroboration only when their meanings support the
+same bounded statement under compatible product, variant, timing, and
+condition scope. Origins that merely discuss the same broad axis remain
+separate evidence, not an inflated corroboration count. A source reporting
+another person's experience remains adjacent unless the directly quoted
+speaker's own account is the evidence unit. Internal independence metadata is
+kept for deterministic origin accounting rather than used by the relation
+model to discard otherwise valid evidence.
+
+The quote stage reads bodies only for selected display rows. Bodies of at most
+220 characters are copied in full by deterministic code, and absent bodies are
+typed unavailable; neither is sent to the model. Only longer bodies enter the
+provider prompt. That prompt uses named selected-row and deduplicated body
+columns, so several meanings from one source body do not repeat the entire
+body. It carries
 the deterministic display label, normalized meaning, and same-evidence
 companion meanings; a returned long-source substring must directly express the
 label through the normalized meaning or the companion meaning that justified
@@ -375,8 +400,12 @@ changed bytes fail.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 
-New quote manifests use `phase_a_evidence_quote_manifest_v3`. Every selected
-row requires one customer-facing `display_label` of at most 80 characters plus
+New quote manifests use `phase_a_evidence_quote_manifest_v4` and record the
+ordered `provider_selected_ids` subset. The finalizer recomputes that subset
+from the bound bodies, rejects drift, deterministically fills short or missing
+bodies, and merges provider-returned long-body quotes back into original
+selection order. Every selected row requires one customer-facing
+`display_label` of at most 80 characters plus
 the exact quote; do not add a second paraphrased sentence. The finalizer derives
 the label from the already-validated relation `reason_code`; the quote response
 returns only quote identity, status, and exact text. The label names the evidence
@@ -386,8 +415,8 @@ concern`, `Explicitly worth the price`, `Strong price-to-quantity value`, `Too
 little product for the price`, `Performance does not justify the price`, and
 `Price prevents repurchase`. A malformed, overlong, or
 support/counter/adjacent/exclude-leaking reason code fails closed before display.
-Legacy v1 quote
-manifests keep their original response shape and remain finalizable. The
+Legacy v1 and v3 quote manifests keep their original all-selected response
+shape and remain finalizable. The
 superseded v2 presentation-statement experiment was scratch-only and is not a
 supported historical runtime contract.
 

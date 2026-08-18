@@ -330,14 +330,21 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
         row["evidence_id"]: row["text"]
         for row in sources[0]["bundle"]["evidence_units"]
     }
+    provider_ids = set(
+        quote_manifest.get(
+            "provider_selected_ids",
+            [row["selected_id"] for row in quote_manifest["selected_rows"]],
+        )
+    )
     return {
         "quotes": [
             {
                 "selected_id": row["selected_id"],
                 "quote_status": "quote_available",
-                "exact_quote": bodies[row["evidence_id"]],
+                "exact_quote": bodies[row["evidence_id"]][:220],
             }
             for row in quote_manifest["selected_rows"]
+            if row["selected_id"] in provider_ids
         ]
     }
 
@@ -369,6 +376,41 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     assert "contiguous exact substring" in quote_prompt
     assert schema["required"] == ["results"]
     assert quote_schema["required"] == ["quotes"]
+
+
+def test_provider_prompts_are_compact_views_while_manifests_keep_full_facts(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    relation_prompt, relation_schema, manifest = prepare_evidence_selection(
+        spec, sources
+    )
+    assert '"candidate_columns"' in relation_prompt
+    assert '"independence_posture"' not in relation_prompt
+    assert '"source_ref"' not in relation_prompt
+    assert '"engagement_raw_value"' not in relation_prompt
+    assert manifest["candidate_inventory_sha256"]
+    assert relation_schema["properties"]["results"]["items"]["properties"][
+        "reason_code"
+    ]["pattern"]
+
+    long_body = "One shared body. " + "x" * 300
+    for unit in sources[0]["bundle"]["evidence_units"]:
+        unit["text"] = long_body
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    quote_prompt, quote_schema, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    assert quote_prompt.count(long_body) == 1
+    assert '"body_columns"' in quote_prompt
+    assert len(quote_manifest["provider_selected_ids"]) == len(
+        quote_manifest["selected_rows"]
+    )
+    exact_quote_schema = quote_schema["properties"]["quotes"]["items"][
+        "properties"
+    ]["exact_quote"]
+    assert exact_quote_schema["maxLength"] == 220
 
 
 @pytest.mark.parametrize(
@@ -420,10 +462,9 @@ def test_quote_mutations_fail_at_exact_boundary(
     tmp_path: Path, mutation: str, boundary: str
 ) -> None:
     spec, sources = _write_source(tmp_path, 2)
-    if mutation == "overlength":
-        for unit in sources[0]["bundle"]["evidence_units"]:
-            unit["text"] = "x" * 400
-        _reseal(sources[0])
+    for unit in sources[0]["bundle"]["evidence_units"]:
+        unit["text"] = "Opening context. " + "x" * 400 + " Closing context."
+    _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
@@ -449,15 +490,7 @@ def test_missing_body_is_typed_unavailable_and_exact_but_semantically_different_
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
     )
-    response = {
-        "quotes": [
-            {
-                "selected_id": quote_manifest["selected_rows"][0]["selected_id"],
-                "quote_status": "quote_unavailable",
-                "exact_quote": None,
-            }
-        ]
-    }
+    response = {"quotes": []}
     artifact = finalize_quotes(quote_manifest, sources, response)
     row = artifact["source_groups"][0]["rows"][0]
     assert row["quote_status"] == "quote_unavailable"
@@ -468,6 +501,8 @@ def test_missing_body_is_typed_unavailable_and_exact_but_semantically_different_
 
 def test_quote_unavailable_from_an_available_body_is_distinguishable_from_a_missing_body(tmp_path: Path) -> None:
     spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "x" * 400
+    _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
@@ -496,18 +531,10 @@ def test_source_native_ellipsis_is_preserved_when_the_quote_is_exact(tmp_path: P
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
     )
-    response = {
-        "quotes": [
-            {
-                "selected_id": quote_manifest["selected_rows"][0]["selected_id"],
-                "quote_status": "quote_available",
-                "exact_quote": "My lips burn… only after this shade.",
-            }
-        ]
-    }
+    response = {"quotes": []}
     artifact = finalize_quotes(quote_manifest, sources, response)
     output_row = artifact["source_groups"][0]["rows"][0]
-    assert output_row["exact_quote"] == response["quotes"][0]["exact_quote"]
+    assert output_row["exact_quote"] == "My lips burn… only after this shade."
     assert output_row["quote_unavailable_cause"] is None
 
 
@@ -526,21 +553,19 @@ def test_short_source_body_cannot_be_clipped_before_material_countervailing_beha
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
     )
     assert spec["bounded_claim"] in quote_prompt
-    assert '"relation":"counter"' in quote_prompt
-    assert '"reason_code":"bounded_meaning"' in quote_prompt
-    response = _quote_response(quote_manifest, sources)
-    response["quotes"][0]["exact_quote"] = (
-        "Do I cringe a little every time I remember the price tag? Yes."
-    )
-    with pytest.raises(EvidenceConsumerError) as caught:
-        finalize_quotes(quote_manifest, sources, response)
-    assert caught.value.boundary == "quote_context_incomplete"
+    assert body not in quote_prompt
+    assert quote_manifest["provider_selected_ids"] == []
+    artifact = finalize_quotes(quote_manifest, sources, {"quotes": []})
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["exact_quote"] == body
 
 
 def test_display_label_uses_customer_facing_signal_and_preserves_source_meanings(
     tmp_path: Path,
 ) -> None:
     spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "x" * 400
+    _reseal(sources[0])
     evidence_row = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0]
     for suffix, statement in (
         ("vanilla", "The author intends to repurchase the Vanilla option."),
@@ -572,7 +597,7 @@ def test_display_label_uses_customer_facing_signal_and_preserves_source_meanings
     quote_prompt, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, relation_response
     )
-    assert '"display_label":"Repurchase intent despite price"' in quote_prompt
+    assert "Repurchase intent despite price" in quote_prompt
     response = _quote_response(quote_manifest, sources)
     artifact = finalize_quotes(quote_manifest, sources, response)
     row = artifact["source_groups"][0]["rows"][0]
@@ -622,12 +647,60 @@ def test_legacy_quote_manifest_retains_its_original_response_shape(tmp_path: Pat
         manifest, sources, _relation_response(_candidate_rows(sources, spec))
     )
     quote_manifest["schema_version"] = "phase_a_evidence_quote_manifest_v1"
+    quote_manifest.pop("provider_selected_ids")
     quote_manifest["manifest_sha256"] = _canonical_hash(
         {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
     )
     response = _quote_response(quote_manifest, sources)
     artifact = finalize_quotes(quote_manifest, sources, response)
     assert "display_label" not in artifact["source_groups"][0]["rows"][0]
+
+
+def test_v3_quote_manifest_remains_finalizable_with_all_selected_responses(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    quote_manifest["schema_version"] = "phase_a_evidence_quote_manifest_v3"
+    quote_manifest.pop("provider_selected_ids")
+    quote_manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
+    )
+    response = _quote_response(quote_manifest, sources)
+    artifact = finalize_quotes(quote_manifest, sources, response)
+    assert artifact["source_groups"][0]["rows"][0]["display_label"]
+
+
+def test_v4_provider_subset_is_recomputed_from_bound_body_lengths(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    selected_id = quote_manifest["selected_rows"][0]["selected_id"]
+    quote_manifest["provider_selected_ids"] = [selected_id]
+    quote_manifest["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
+    )
+    body = sources[0]["bundle"]["evidence_units"][0]["text"]
+    response = {
+        "quotes": [
+            {
+                "selected_id": selected_id,
+                "quote_status": "quote_available",
+                "exact_quote": body,
+            }
+        ]
+    }
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(quote_manifest, sources, response)
+    assert caught.value.boundary == "manifest_verification"
+    assert "provider quote workload changed" in str(caught.value)
 
 
 def test_candidate_exposes_same_evidence_companion_meanings_without_admitting_them(
@@ -761,16 +834,7 @@ def test_body_swapped_after_the_quote_manifest_cannot_supply_a_quote(tmp_path: P
     )
     for unit in sources[0]["bundle"]["evidence_units"]:
         unit["text"] = "Body substituted after the quote manifest was written."
-    response = {
-        "quotes": [
-            {
-                "selected_id": row["selected_id"],
-                "quote_status": "quote_available",
-                "exact_quote": "Body substituted after",
-            }
-            for row in quote_manifest["selected_rows"]
-        ]
-    }
+    response = {"quotes": []}
     with pytest.raises(EvidenceConsumerError) as caught:
         finalize_quotes(quote_manifest, sources, response)
     assert caught.value.boundary == "body_identity_mismatch"
@@ -1478,7 +1542,9 @@ def test_available_quote_requires_two_unicode_alphanumeric_characters(
     tmp_path: Path, quote: str
 ) -> None:
     spec, sources = _write_source(tmp_path, 1)
-    sources[0]["bundle"]["evidence_units"][0]["text"] = f"before {quote} after"
+    sources[0]["bundle"]["evidence_units"][0]["text"] = (
+        "x" * 221 + f" before {quote} after"
+    )
     _reseal(sources[0])
     _, _, manifest = prepare_evidence_selection(spec, sources)
     _, _, quote_manifest = finalize_relations_prepare_quotes(

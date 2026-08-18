@@ -29,7 +29,8 @@ from judgment.phase_a_evidence_consumer import (
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
-QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
+PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
+QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
@@ -150,7 +151,7 @@ VALUE_COUNTER_PRIORITY = {
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 {policy_guidance}
 
@@ -162,7 +163,7 @@ VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label on
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses the display_label and either the supplied normalized meaning or the same-evidence companion meaning that justifies that label, and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the display label through the supplied source meanings is not an acceptable quote.
+Return every selected_id exactly once and in order. Every supplied source body is longer than 220 characters. Choose one contiguous exact substring of at most 220 characters that directly expresses the display_label and either the supplied normalized meaning or the same-evidence companion meaning that justifies that label, and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the display label through the supplied source meanings is not an acceptable quote.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -171,6 +172,51 @@ SELECTED_EVIDENCE_ENVELOPE_JSON:
 
 def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+
+
+RELATION_PROMPT_COLUMNS = (
+    "candidate_id",
+    "normalized_meaning",
+    "conditions",
+    "polarity",
+    "product_version_ids",
+    "subject_product_ids",
+    "source_role",
+    "layer",
+    "uncertainty_posture",
+    "existing_relations",
+    "same_evidence_companion_meanings",
+)
+
+
+def _compact_companion_meanings(row: Mapping[str, Any]) -> list[list[Any]]:
+    return [
+        [
+            companion.get("statement"),
+            companion.get("conditions", []),
+            companion.get("polarity"),
+            companion.get("axis_ids", []),
+        ]
+        for companion in row.get("same_evidence_companion_meanings", [])
+    ]
+
+
+def _relation_prompt_envelope(
+    spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]]
+) -> dict[str, Any]:
+    rows = []
+    for candidate in candidates:
+        projected = dict(candidate)
+        projected["same_evidence_companion_meanings"] = _compact_companion_meanings(
+            candidate
+        )
+        rows.append([projected.get(column) for column in RELATION_PROMPT_COLUMNS])
+    return {
+        "selection_id": spec["selection_id"],
+        "bounded_claim": spec["bounded_claim"],
+        "candidate_columns": list(RELATION_PROMPT_COLUMNS),
+        "candidate_rows": rows,
+    }
 
 
 def _uses_value_policy(
@@ -703,11 +749,15 @@ def _candidate_rows(
 def _relation_schema(*, value_policy: bool = False) -> dict[str, Any]:
     def result_row(relation: str | None = None) -> dict[str, Any]:
         relation_schema: dict[str, Any] = {"type": "string"}
-        reason_schema: dict[str, Any] = {"type": "string"}
+        reason_schema: dict[str, Any] = {
+            "type": "string",
+            "pattern": REASON_CODE_RE.pattern,
+        }
         if relation is None:
             relation_schema["enum"] = list(RELATIONS)
         else:
             relation_schema["const"] = relation
+            reason_schema.pop("pattern")
             reason_schema["enum"] = sorted(
                 code
                 for code, expected_relation in VALUE_REASON_RELATIONS.items()
@@ -746,7 +796,10 @@ def _quote_schema() -> dict[str, Any]:
                 "type": "string",
                 "enum": ["quote_available", "quote_unavailable"],
             },
-            "exact_quote": {"type": ["string", "null"]},
+            "exact_quote": {
+                "type": ["string", "null"],
+                "maxLength": MAX_QUOTE_CHARACTERS,
+            },
         },
         "required": [
             "selected_id",
@@ -780,12 +833,16 @@ def prepare_evidence_selection(
             raise EvidenceConsumerError("bundle_verification", "packet/bundle hash mismatch")
         _verify_bundle(bundle)
     candidates = _candidate_rows(sources, spec)
-    envelope = {
-        "selection_id": spec["selection_id"],
-        "bounded_claim": spec["bounded_claim"],
-        "candidates": candidates,
-    }
     value_policy = _uses_value_policy(spec, candidates)
+    envelope = (
+        {
+            "selection_id": spec["selection_id"],
+            "bounded_claim": spec["bounded_claim"],
+            "candidates": candidates,
+        }
+        if value_policy
+        else _relation_prompt_envelope(spec, candidates)
+    )
     prompt = RELATION_PROMPT.format(
         policy_guidance=_policy_guidance(spec, candidates), envelope=_compact(envelope)
     )
@@ -1471,6 +1528,63 @@ def _bundle_bodies(sources: Sequence[Mapping[str, Any]]) -> dict[tuple[str, str]
     return bodies
 
 
+QUOTE_PROMPT_COLUMNS = (
+    "selected_id",
+    "display_label",
+    "normalized_meaning",
+    "relation",
+    "same_evidence_companion_meanings",
+    "body_id",
+)
+
+
+def _quote_prompt_envelope(
+    bounded_claim: str,
+    selected: Sequence[Mapping[str, Any]],
+    bodies: Mapping[tuple[str, str], str | None],
+) -> tuple[dict[str, Any], list[str]]:
+    """Project only long bodies into the provider-visible quote workload.
+
+    Short bodies are already exact quotes under the owning contract, while a
+    missing body is deterministically unavailable. Sending either to a model
+    adds cost and another failure surface without adding judgment.
+    """
+
+    body_ids: dict[str, str] = {}
+    body_rows: list[list[str]] = []
+    selected_rows: list[list[Any]] = []
+    provider_selected_ids: list[str] = []
+    for row in selected:
+        body = bodies.get((row["source_id"], row["evidence_id"]))
+        if body is None or len(body) <= MAX_QUOTE_CHARACTERS:
+            continue
+        if body not in body_ids:
+            body_id = f"body_{len(body_ids) + 1:02d}"
+            body_ids[body] = body_id
+            body_rows.append([body_id, body])
+        provider_selected_ids.append(row["selected_id"])
+        selected_rows.append(
+            [
+                row["selected_id"],
+                _display_label(row["reason_code"]),
+                row["normalized_meaning"],
+                row["relation"],
+                _compact_companion_meanings(row),
+                body_ids[body],
+            ]
+        )
+    return (
+        {
+            "bounded_claim": bounded_claim,
+            "body_columns": ["body_id", "source_body"],
+            "body_rows": body_rows,
+            "selected_columns": list(QUOTE_PROMPT_COLUMNS),
+            "selected_rows": selected_rows,
+        },
+        provider_selected_ids,
+    )
+
+
 def finalize_relations_prepare_quotes(
     manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
@@ -1506,14 +1620,10 @@ def finalize_relations_prepare_quotes(
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
-    prompt = QUOTE_PROMPT.format(
-        envelope=_compact(
-            {
-                "bounded_claim": manifest["spec"]["bounded_claim"],
-                "selected_rows": quote_rows,
-            }
-        )
+    quote_envelope, provider_selected_ids = _quote_prompt_envelope(
+        manifest["spec"]["bounded_claim"], selected, bodies
     )
+    prompt = QUOTE_PROMPT.format(envelope=_compact(quote_envelope))
     schema = _quote_schema()
     quote_manifest = {
         "schema_version": QUOTE_MANIFEST_VERSION,
@@ -1523,6 +1633,7 @@ def finalize_relations_prepare_quotes(
         "labeled_inventory_sha256": _canonical_json_sha256(labeled),
         "selected_rows": selected,
         "selected_rows_sha256": _canonical_json_sha256(selected),
+        "provider_selected_ids": provider_selected_ids,
         "quote_body_sha256": {
             row["selected_id"]: sha256_text(row["source_body"]) if row["source_body"] is not None else None
             for row in quote_rows
@@ -1542,14 +1653,29 @@ def finalize_quotes(
     payload = {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
     manifest_version = quote_manifest.get("schema_version")
     if (
-        manifest_version not in {LEGACY_QUOTE_MANIFEST_VERSION, QUOTE_MANIFEST_VERSION}
+        manifest_version
+        not in {
+            LEGACY_QUOTE_MANIFEST_VERSION,
+            PREVIOUS_QUOTE_MANIFEST_VERSION,
+            QUOTE_MANIFEST_VERSION,
+        }
         or stored != _canonical_json_sha256(payload)
     ):
         raise EvidenceConsumerError("manifest_verification", "quote manifest changed")
     if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
         raise EvidenceConsumerError("quote_response_shape", "quotes missing")
     selected = quote_manifest["selected_rows"]
-    expected = [row["selected_id"] for row in selected]
+    expected = (
+        quote_manifest.get("provider_selected_ids")
+        if manifest_version == QUOTE_MANIFEST_VERSION
+        else [row["selected_id"] for row in selected]
+    )
+    if not isinstance(expected, list) or not all(
+        isinstance(selected_id, str) for selected_id in expected
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "provider quote ids are invalid"
+        )
     quotes = response["quotes"]
     observed = [row.get("selected_id") for row in quotes if isinstance(row, dict)]
     if len(observed) != len(quotes):
@@ -1563,13 +1689,29 @@ def finalize_quotes(
         raise EvidenceConsumerError(boundary, "quote result set/order mismatch")
     bodies = _bundle_bodies(sources)
     recorded_body_hashes = quote_manifest["quote_body_sha256"]
+    if manifest_version == QUOTE_MANIFEST_VERSION:
+        derived_provider_ids = [
+            row["selected_id"]
+            for row in selected
+            if (
+                (body := bodies.get((row["source_id"], row["evidence_id"])))
+                is not None
+                and len(body) > MAX_QUOTE_CHARACTERS
+            )
+        ]
+        if expected != derived_provider_ids:
+            raise EvidenceConsumerError(
+                "manifest_verification", "provider quote workload changed"
+            )
+    quote_results = {row["selected_id"]: row for row in quotes}
     output_rows = []
-    for selected_row, quote_row in zip(selected, quotes, strict=True):
+    for selected_row in selected:
+        selected_id = selected_row["selected_id"]
+        quote_row = quote_results.get(selected_id)
         expected_quote_fields = {"selected_id", "quote_status", "exact_quote"}
-        if set(quote_row) != expected_quote_fields:
+        if quote_row is not None and set(quote_row) != expected_quote_fields:
             raise EvidenceConsumerError("quote_response_shape", "quote row shape mismatch")
         body = bodies.get((selected_row["source_id"], selected_row["evidence_id"]))
-        selected_id = selected_row["selected_id"]
         if selected_id not in recorded_body_hashes:
             raise EvidenceConsumerError(
                 "manifest_verification", f"quote manifest recorded no body hash for {selected_id}"
@@ -1579,8 +1721,24 @@ def finalize_quotes(
                 "body_identity_mismatch",
                 f"source body changed after the quote manifest was written: {selected_id}",
             )
-        status = quote_row["quote_status"]
-        quote = quote_row["exact_quote"]
+        if quote_row is None:
+            if manifest_version != QUOTE_MANIFEST_VERSION:
+                raise EvidenceConsumerError(
+                    "missing_quote_result", "selected row has no quote result"
+                )
+            if body is None:
+                status = "quote_unavailable"
+                quote = None
+            elif len(body) <= MAX_QUOTE_CHARACTERS:
+                status = "quote_available"
+                quote = body
+            else:
+                raise EvidenceConsumerError(
+                    "missing_quote_result", "long source body has no quote result"
+                )
+        else:
+            status = quote_row["quote_status"]
+            quote = quote_row["exact_quote"]
         if body is None:
             if status != "quote_unavailable" or quote is not None:
                 raise EvidenceConsumerError("quote_unavailable", "missing body cannot produce a quote")
@@ -1629,7 +1787,8 @@ def finalize_quotes(
                 "exact_quote": quote,
                 **(
                     {"display_label": _display_label(selected_row["reason_code"])}
-                    if manifest_version == QUOTE_MANIFEST_VERSION
+                    if manifest_version
+                    in {PREVIOUS_QUOTE_MANIFEST_VERSION, QUOTE_MANIFEST_VERSION}
                     else {}
                 ),
                 "normalized_meaning": selected_row["normalized_meaning"],
