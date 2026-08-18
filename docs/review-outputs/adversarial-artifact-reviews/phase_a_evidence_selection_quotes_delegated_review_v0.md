@@ -2,14 +2,13 @@
 
 ```yaml
 retrieval_header_version: 1
-artifact_role: Reviewer findings report (docs/review-outputs/) — awaiting home-CA adjudication
+artifact_role: Reviewer findings report (docs/review-outputs/) — home-CA adjudicated
 scope: >
   Cross-vendor delegated_code_review_and_patch return for the Phase A v3
   evidence-selection and exact-quote consumer at commit fe2bee78. Eleven
-  findings, seven of them closed by a bounded patch inside the commissioned
-  file set, four reported without patch because closure needs an owner
-  decision. Records the production replay used to show the patch is
-  hash-neutral on all three sealed pilots.
+  findings, seven of them closed by a bounded delegate patch and four closed by
+  the home-CA policy adjudication recorded below. Records the production replay
+  used to show both patches preserve the sealed pilot selection identities.
 use_when:
   - Adjudicating what this review found before any landing decision on fe2bee78.
   - Checking why quote_unavailable in the sealed pilots does not mean a missing source body.
@@ -23,6 +22,7 @@ review_provenance:
   dispatch: docs/prompts/reviews/phase_a_evidence_selection_quotes_delegated_adversarial_code_review_patch_prompt_v0.md
   review_method: workflow-code-review lane for the Python targets; adversarial artifact reading for the two owning documents
   reviewer_recommendation: seven findings patched, four open for owner decision, no NEEDS_ARCHITECTURE_PASS
+  home_ca_disposition: all eleven findings accepted or modified-and-closed; no architecture pass
   findings: 11
 review_use_boundary: >
   These findings, the returned diff, and every test result here are decision
@@ -447,3 +447,64 @@ That replay is also the evidence for F-01: it is where all four
 
 No `NEEDS_ARCHITECTURE_PASS`. The design is sound; the defects are guard-level
 and presentation-policy-level, not structural.
+
+## Home-CA Adjudication And Closure
+
+The Chief Architect accepted F-01 and F-03 through F-07, accepted the
+delegate's partial F-08 correction, and kept those changes in review-patch
+commit `ee2b81411478099140a39bd32c168cd2549a8d14`. The four owner-policy
+questions were then decided and closed in
+`029d04fdbadd43a3de30f6266d50e9b5c7396b7e`:
+
+- **F-02 / F-10:** the cap is ten independent customer-origin groups, not ten
+  display rows. Every nominated safety or costly-behavior origin is mandatory;
+  more than ten fails `presentation_cap_insufficient`. Support, counter, quiet,
+  and unknown-engagement lanes are made visible even below the cap. A reserved
+  origin displays the minimum rows needed to cover its required lanes, including
+  three or more rows when separate rows carry support, counter, and quiet.
+- **F-08:** a mapping-valued engagement shape is accepted only for an exactly
+  recognized source-native kind and shape. Every other mapping fails
+  `unsupported_engagement_shape`; the raw value is not rewritten and no generic
+  score exists.
+- **F-09:** an available exact quote must contain at least two Unicode
+  alphanumeric characters. There is no lexical-overlap test, so an exact `no`
+  remains valid while punctuation, whitespace, and one-letter strings fail.
+- **F-01 terminal policy:** body-present `quote_unavailable` is accepted because
+  the normalized meaning remains visible. The artifact now distinguishes
+  `source_body_unavailable` from `no_relevant_exact_quote_returned`; available
+  quotes carry a null cause. Repository runners do not retry or call a provider.
+
+The closure was independently verified at the known failure classes rather than
+accepted from the patch description:
+
+- Focused selection/consumer/semantic suites: **277 passed**, including all
+  267 reviewer tests plus the new cap, protected-row visibility, under-cap
+  counter, mapping-shape, quote-substance, and unavailable-cause falsifiers.
+- Full `forseti-harness`: **exit 0** in 325.134 seconds, with seven skips and
+  pre-existing warnings only.
+- The four owning repository hooks and `git diff --check`: **exit 0**.
+- Three sealed manifests replayed with zero provider calls. Candidate inventory,
+  labeled inventory, selected-row, and quote-manifest hashes stayed identical;
+  stable row facts matched the prior artifacts. Replay receipt:
+  `C:\tmp\forseti-phase-a-selection-quotes-20260818-v0\home_adjudication_replay_receipt_v1.json`,
+  raw SHA-256
+  `79e8c74fc3017b17e8a848f3573cc6bb5b5702df9f481f9f7a0a562d0de47700`.
+
+The cross-vendor repo-mode discovery reviewed the full commissioned target and
+found the material policy gaps; the home CA adjudicated every finding and ran a
+class-level closure sweep plus byte/scope checks. Under the delegated-review
+overlay this closes the independent review checkpoint for this product-learning
+consumer change. The non-independent sliver is explicit: the delegate's own
+guard edits and the home closure edits were mechanically verified rather than
+receiving a second post-patch cross-vendor scan. That is accepted here and is
+not a buyer-proof assurance claim.
+
+```yaml
+review_routing_status: routed
+review_routing_closure: complete_cross_vendor_discovery_plus_home_adjudication
+accepted_residuals:
+  - Real pilots still do not exercise protected_evidence_ids or admit_unresolved; those paths are covered by synthetic falsifiers.
+  - 823 of 836 hydration candidates were not provider-relabeled in the earlier pilot.
+  - Provider and blind-quality judge were same-vendor; exact quote relevance remains a quality-adjudication obligation.
+  - A novel failure class shared across vendors and absent from the deterministic sweep remains possible below buyer-proof tier.
+```
