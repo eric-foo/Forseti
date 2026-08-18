@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v38
-effective_date: 2026-08-17
+version: v46
+effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v38
+# Semantic Evidence Integration Contract v46
 
 ## Purpose
 
@@ -814,6 +814,183 @@ schema. This is call-overhead amortization plus deterministic rehydration, not
 packet compression, evidence selection, a caching claim, or a new judgment
 authority.
 
+Contract v39 adds an optional no-provider selection-and-quote consumer over
+one or more hash-bound v3 packets. It does not change packet v3 or the
+authoritative semantic view. Admission is deterministic from explicit product
+and axis membership or literal operator-nominated semantic/unresolved refs.
+An external response must label every admitted candidate exactly once as
+support, counter, adjacent, or exclude before presentation selection begins;
+missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
+response validation, and wrong-product nomination fails closed earlier at
+admission. An operator nomination that cannot resolve — an `admit_semantic_ref`,
+an `admit_unresolved` ref, a protected evidence ID, or an unrecognised protected
+lane key — fails closed rather than being dropped. All dispositions and their
+inventory hash remain in the completed artifact, including rows not displayed.
+Every candidate also carries the other normalized meanings from its evidence
+item as non-candidate context. Those companions cannot create another admitted
+row or independent origin, but they prevent an isolated clause from hiding a
+same-source qualification. In particular, a price-discomfort clause does not
+become poor-value support when the same customer records purchase or repurchase
+despite that price. A value selection binds `price feels high` separately from
+`not worth it`; operator-observed purchase, repurchase, switching, return, or
+abandonment that changes the reading uses the existing `costly_behavior`
+protected-evidence lane rather than a new score.
+
+Presentation caps independent origins, not underlying evidence: at most ten
+customer truth-support origin groups and three creator-influence origin groups.
+Every explicitly nominated safety or costly-behavior origin is selected first;
+if those origins alone exceed ten, selection fails
+`presentation_cap_insufficient`. The selector then reserves support and counter
+only from materially positive or explicitly protected evidence. Unprotected
+zero, quiet, and engagement-unavailable rows remain accounted but are not forced
+into the main display to fill a lane or venue. When no materially positive or
+protected counter exists, no counter is displayed. The cap check follows every
+addition. Each protected origin records its required display lanes, and the
+display contains the deterministic minimum member rows that cover them. Every
+operator-protected row is visible or selection fails closed. Unreserved origins
+retain the compact representative-plus-distinct-row behavior over the
+display-eligible set. The complete disposition inventory remains the accounting
+record for displayed and undisplayed candidates.
+Engagement orders rows only inside one source-native venue/role/metric bucket;
+its literal stored value remains unchanged and there is no cross-platform
+score. Venue is normalized per publisher across host variants and short links,
+so one publisher cannot split into several display sections or ordering
+buckets. A source-native value the runtime cannot read as a whole number — an
+abbreviated or group-separated count — is treated as uncomparable and ordered
+last rather than partially parsed. Mapping-valued engagement is accepted only
+for an exactly recognized source-native engagement kind and shape; any other
+mapping fails `unsupported_engagement_shape` rather than becoming an unknown or
+generic score. A distinct relation or condition from the same origin may
+receive another displayed quote without consuming another origin slot.
+Creator-authored material is influence context and is
+deterministically barred from customer support or counter relations; qualified
+creator-audience comments retain their customer role.
+
+Only selected display rows expose their source bodies to a second external
+quote response. The bundle is content-verified against its own stored
+`bundle_sha256` where it enters the trust boundary, and the finalizer follows
+the packet's bundle hash to its literal evidence ID, requires exact
+source-artifact and source-ref equality, and rejects a body whose hash differs
+from the one the quote manifest recorded. An available source body of no more
+than 220 characters must be quoted in full; this deterministic boundary prevents
+a short comment from being clipped before a material qualification or
+countervailing behavior. A longer available quote must be one context-complete
+contiguous source substring of no more than 220 characters, with no inserted
+ellipsis or rewriting, and must contain at least two Unicode alphanumeric
+characters. If a material qualification cannot fit, the external response
+returns unavailable instead of a misleading fragment. No lexical-overlap
+relevance rule is applied. A typed
+`quote_unavailable` covers two distinct cases: no source body yields
+`source_body_unavailable`, while a present body with no returned exact relevant
+quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null
+cause. Each displayed row also records `source_body_present`, and the
+source-owned normalized meaning and same-evidence companion meanings remain in
+all cases. Full-body enforcement closes context clipping for short sources;
+semantic relevance and context completeness for longer sources remain a
+quality-adjudication obligation outside the deterministic runtime. Both
+prepare/finalize stages make zero provider calls and are deterministic and
+idempotent.
+
+Contract v40 clarifies value evidence without changing packet v3 or the
+selection schema. Candidate admission for a value axis is direction-neutral:
+the consumer admits the relevant positive and negative evidence before an
+external response relates each row to the bounded claim. `support` and
+`counter` are claim-relative labels, not permanent sentiment or commercial
+value labels. A customer may say the price feels high while also showing
+willingness to pay through purchase or repurchase. For a bounded poor-value
+claim, that behavior is counterevidence and may be described in plain-language
+presentation as a positive willingness-to-pay or value signal.
+
+Atomic source meanings remain separately traceable. Presentation may group
+same-evidence, same-actor, same-action, same-direction meanings into one
+lossless statement — for example, an intention to repurchase Vanilla and
+Vanilla Beige — while retaining every underlying semantic-unit reference,
+named object, condition, exact quote, and provenance. It must not group across
+independent origins, erase a conflicting clause, or turn shade-specific
+repurchase into an unqualified general repurchase claim.
+
+Contract v41 versions new quote manifests to
+`phase_a_evidence_quote_manifest_v2`. Each selected row now requires one
+concise `presentation_statement` alongside its exact quote. The statement owns
+the useful evidence-bound commercial reading, may perform the lossless grouping
+allowed above, and keeps material reversals in one sentence. It does not append
+generic method caveats whose boundaries are already carried by the source-owned
+fields and this contract. Legacy v1 quote manifests retain their prior response
+shape and remain finalizable; packet v3 and completed evidence stay unchanged.
+
+Contract v42 replaces that unlanded v2 presentation experiment with
+`phase_a_evidence_quote_manifest_v3`. A selected row carries one short
+customer-facing `display_label` plus the exact quote; it does not carry a second
+paraphrased sentence. The finalizer derives the label from the already-validated
+relation `reason_code`; the quote response returns no label text. The label
+names the evidence signal itself — for example,
+`Repurchase intent despite price`, `Product appeal outweighs price concern`,
+`Explicitly worth the price`, or `Too little product for the price` — and never
+exposes the internal support/counter/adjacent/exclude relation. Relation
+finalization rejects a missing, malformed, overlong, or relation-leaking reason
+code before it can become display text. The
+unlanded v2 manifest produced only scratch dogfood and is not a supported
+historical runtime contract; legacy v1 remains finalizable byte-for-byte.
+
+Contract v43 makes value-only presentation direct and positive-first without
+changing `phase_a_evidence_packet_v3` or adding a score. When the sole selected
+axis is `value_and_quantity`, the emitted relation-response schema limits
+reason codes to a small relation-aligned value vocabulary. Support or counter
+requires the candidate's own normalized meaning to state a price, value,
+quantity-for-price, purchase commitment, repurchase, or benefit-for-cost
+tradeoff. Same-evidence companions may qualify a direct premise — including
+purchase or repurchase despite price discomfort — but companion-only formula,
+hydration, scent, gift-card, trial, or generic purchase meanings remain
+adjacent. A value code may describe the combined visible meaning of a candidate
+and its same-evidence companions when one supplies the price/value premise and
+another supplies the purchase behavior. When an explicit price premise and
+purchase behavior are jointly visible, the customer-facing code carries the
+`despite_price` qualifier. Explicit same-evidence regret, waste, or poor value
+makes every candidate from that origin counter or adjacent unless the source
+explicitly commits to buy or repurchase again despite the cost, or explicitly
+concludes that the product is worth the price. Displaying empties, using the
+product up, or otherwise trying to make a regretted purchase feel more
+worthwhile is sunk-cost rationalization, not countervailing value evidence.
+Those two exceptions settle the lane before either regret reason is reached:
+neither applies to an origin the source keeps positive by explicitly committing
+to buy or repurchase again despite the cost, or by concluding the product is
+worth the price. Where the regret does keep the candidate counter, the
+counter reason `high_spend_followed_by_buyer_remorse` is available only when
+one evidence item explicitly records a substantial completed spend amount, or
+explicitly characterizes the completed spend as substantial, together with
+cost-linked regret. Multiple units alone do not establish high spend. It adds no generic
+customer-journey fields and implies neither repurchase, transaction count, nor
+future intent; regret without that explicit substantial completed spending remains
+`purchase_regret_due_cost`. The
+deterministic finalizer rejects a value reason code placed in the
+wrong relation lane. A behavior observed without an explicit price premise uses
+a plain purchase, repeated-purchase, or repurchase label; the corresponding
+`despite_price` label is valid only when price or cost is explicit. Quantity
+efficiency without an explicit price judgment uses `product_goes_a_long_way`
+rather than claiming the benefits justify the price.
+
+After every protected safety or costly-behavior row is admitted, value-only
+presentation fills materially positive support origins first. Purchase and
+repurchase behavior precede other direct value meanings inside each
+source-native venue/role/metric bucket, and buckets continue to round-robin for
+source visibility. The primary positive anchor is chosen first by semantic
+value-signal priority, then stable source bucket identity; native engagement is
+used only within that fixed source-native bucket. At most one ordinary counter
+may be shown: the highest native-engagement direct counter from that anchor's
+same venue/role/metric bucket. If no support exists, one materially positive
+complaint is still shown from the complaint bucket chosen by the same
+semantic-first, stable-bucket rule. If the comparable bucket has none, no
+ordinary counter is manufactured. An already visible protected counter
+suppresses the ordinary counter; at the cap, an ordinary counter may displace
+the most recently added ordinary support origin but never the anchor. Protected
+rows remain mandatory. This rule never compares raw engagement across platforms
+and does not convert engagement into corroborating headcount or a
+commercial-pull score. Mandatory protected groups are also ordered without a
+cross-venue engagement term. The quote prompt now carries the deterministic display
+label and requires a longer-body exact substring to express both that label and
+the normalized meaning or return unavailable. Semantic fit remains externally
+adjudicated; deterministic exactness and body identity checks are unchanged.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1245,6 +1422,84 @@ new frontier.
 
 ## Changelog
 
+- `v46` / 2026-08-18 — added one sparse, claim-specific counter meaning for
+  explicit substantial completed spending followed by cost-linked buyer’s
+  remorse. Multiple units alone do not qualify. The meaning does not add
+  lifecycle fields to origins or infer repurchase,
+  transaction count, or future intent; ordinary cost-linked regret keeps its
+  existing reason.
+- `v45` / 2026-08-18 — tightened value classification after a real-corpus
+  challenge exposed sunk-cost rationalization being mislabeled as good value.
+  Explicit regret, waste, or poor value now keeps every candidate from that
+  evidence origin counter or adjacent unless the same source explicitly buys
+  or repurchases again despite the cost, or concludes the product is worth the
+  price. Price-plus-purchase behavior must use its `despite_price` label rather
+  than a plain behavior or generic good-value label.
+- `v44` / 2026-08-18 — closed the delegated value-selection review. Added
+  real-entry-point tests that fail if any production value-policy wiring is
+  disabled, curated every displayable value label, and replaced the accidental
+  alphabetic complaint anchor with a semantic-signal-first anchor that never
+  compares raw engagement across platforms. An all-complaint value set now
+  shows one materially positive complaint instead of an empty box. Clarified
+  that one same-evidence origin may jointly supply the price premise and
+  purchase behavior, while explicit regret, waste, or poor value reverses a
+  positive purchase inference unless the same source explicitly countervails
+  it. Protected cross-venue ordering no longer uses raw engagement.
+- `v43` / 2026-08-18 — made value-only selection direct and positive-first.
+  Formula, hydration, scent, gift-card, trial-only, and generic purchase
+  meanings cannot enter the value box through a companion-only warning. The
+  599-score Strawberry-duo post remains available to its fitted axes but stays
+  adjacent to value. Purchase and repurchase despite price are prioritized;
+  one ordinary direct complaint may be shown only from the primary positive
+  signal's comparable native-engagement bucket. The quote prompt binds the
+  deterministic display label as well as the normalized meaning. Added
+  relation-aligned value reason codes and fail-closed validation, but no packet
+  v4, cross-platform score, provider call, evidence deletion, or production
+  output rewrite.
+- `v42` / 2026-08-18 — removed the redundant selected-row paraphrase and
+  replaced the unlanded v2 quote-manifest experiment with v3. Customer display
+  now uses a short evidence-signal label plus the exact quote and engagement /
+  source metadata. The label is derived deterministically from the validated
+  relation reason code, so the quote stage spends no output tokens inventing
+  it. Internal claim-relative relations remain stored but cannot leak into the
+  label. Real value labels distinguish repurchase despite price,
+  appeal outweighing price concern, explicit worth, price-to-quantity value,
+  insufficient product, unjustified performance, and price-blocked repurchase.
+  Legacy v1 still replays exactly; the superseded v2 scratch artifact was never
+  production output, pushed, merged, or published.
+- `v41` / 2026-08-18 — added a required selected-row
+  `presentation_statement` to new v2 quote manifests so the consumer, rather
+  than a later chat author, records the concise commercial reading. It groups
+  same-source same-action meanings such as Vanilla and Vanilla Beige repurchase
+  while preserving both atomic semantic refs, the exact quote, and provenance.
+  Removed repetitive presentation boilerplate about implied population and
+  value limits; the underlying claim-support boundaries remain unchanged.
+  Legacy v1 quote manifests remain readable. Added no score, packet version,
+  evidence replay, or provider call inside the repository runner.
+- `v40` / 2026-08-18 — made the value-context correction explicit. Value-axis
+  admission is direction-neutral; relation labels remain relative to the
+  bounded claim; price discomfort is distinct from poor value; and
+  purchase/repurchase despite price may be presented as a positive
+  willingness-to-pay signal while countering a poor-value claim. Allowed
+  lossless display grouping of same-evidence same-action meanings while keeping
+  their atomic semantic refs and provenance. This records the regression lesson
+  exposed by the 204-point repurchase comment and the multi-purchase “cute, I
+  can't not” comment: do not clip or isolate the price clause from the behavior
+  that changes its commercial meaning. Added no value score, prevalence claim,
+  commercial-pull score, packet version, or provider call.
+- `v39` / 2026-08-18 — added the optional hash-bound Phase A
+  selection-and-exact-quote consumer. It accounts for every axis- or
+  literal-ref-admitted candidate before capping source-grouped presentation,
+  fails closed on an operator nomination that cannot resolve, separates
+  customer truth support from creator influence, ranks engagement only inside
+  comparable native-metric buckets over publisher-normalized venues, preserves
+  distinct same-origin relations/conditions, and verifies exact quotes against
+  a content-verified bundle body. Lane reservation is origin-level, so lane
+  visibility in the displayed set is not guaranteed; `source_body_present`
+  separates a missing body from a body that yielded no quote.
+  Kept packet v3 and completed semantic outputs immutable; added no provider
+  call, prevalence estimate, causal claim, commercial-pull score, or new
+  evidence authority.
 - `v38` / 2026-08-17 — added the owner-authorized, no-provider
   `migrate-repaired-terminal` successor for a completed policy-v2 terminal
   compilation after selective whole-row repair. Reuse now requires complete

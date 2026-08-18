@@ -253,6 +253,147 @@ deterministic rehydration cannot preserve the complete consumer artifact.
 The matched experiment result is
 `C:\tmp\forseti-phase-a-related-batching-20260817-v0\experiment_result_v1.json`.
 
+#### Optional evidence selection and exact quotes
+
+When the complete proposition-linked view is too coarse for commercially
+useful presentation, use the existing no-provider evidence-consumer's
+`prepare-evidence-selection`, `finalize-evidence-selection-relations`, and
+`finalize-evidence-selection-quotes` operations. This is a consumer view over
+hash-bound `phase_a_evidence_packet_v3`; it is not packet v4, a semantic replay,
+or a second evidence authority.
+
+Admission uses explicit product plus axis membership, with literal nominated
+semantic or unresolved refs for bounded non-axis cases. A nomination that
+cannot resolve fails closed instead of disappearing. The external relation
+response must account for every admitted candidate before deterministic
+presentation selection. Each candidate carries the other normalized meanings
+from that same evidence item as context only, so a price complaint cannot hide
+same-source purchase or repurchase intent. For value work, bind `price feels
+high` separately from `not worth it`, and nominate an evidence item that records
+purchase, repurchase, switching, return, or abandonment under the existing
+`costly_behavior` protection when that behavior changes the commercial reading.
+Candidate admission remains direction-neutral: admit the relevant positive and
+negative value evidence before assigning claim-relative support or counter.
+For a selection whose only axis is `value_and_quantity`, the external relation
+response uses the value-box reason-code vocabulary emitted in its response
+schema. Support or counter requires the candidate's own meaning to state a
+price, value, quantity-for-price, purchase commitment, repurchase, or
+benefit-for-cost tradeoff. Same-evidence companions may qualify a direct value
+premise — for example, repurchase despite price discomfort — but a gift card,
+single-variant trial, formula, hydration, scent, or generic purchase statement
+does not become value evidence merely because another meaning from the post is
+negative. Such rows stay adjacent and remain in the disposition inventory. Do
+not search for complaints first and then treat the surviving set as the answer.
+A relation label describes how the row bears on the bounded claim; it is not a
+permanent positive/negative label. Thus purchase or repurchase despite price
+discomfort may be presented as a positive willingness-to-pay or value signal.
+When the evidence shows purchase, repeated ownership, or repurchase without an
+explicit price premise, use the corresponding plain behavior label rather than
+inventing "despite price"; likewise, quantity efficiency without an explicit
+price judgment is labeled "a little product goes a long way," not "worth the
+price."
+
+Keep atomic semantic meanings and their refs separately recorded. In the
+presentation layer, meanings from the same evidence item may be grouped when
+they have the same actor, action, direction, and conditions. For example,
+separate shade meanings may display as “intends to repurchase Vanilla and
+Vanilla Beige” while both semantic refs and named shades remain underneath one
+origin and one exact quote. Never group across origins, hide a conflicting
+clause, or broaden a shade-specific behavior into general repurchase.
+The cap applies to displayed independent-origin
+groups: ten customer truth groups and three creator-influence groups. Source
+roles and retailer venues remain visible, with each publisher normalized to one
+venue across host variants and short links; creator-authored popularity never
+corroborates customer experience. Engagement may prioritize rows only inside
+one venue/role/native-metric bucket, and a count the runtime cannot read whole
+is ordered last rather than partially parsed. An unrecognized mapping-valued
+engagement shape fails closed rather than becoming an unknown value or generic
+score. Every nominated safety or costly-behavior origin is selected first; more
+than ten such customer origins fails `presentation_cap_insufficient`. For
+non-value selections, the selector then reserves visible support and counter
+only from materially positive or explicitly protected evidence. A value-only
+selection instead fills materially positive support origins first, prioritizing
+purchase and repurchase behavior before other direct value meanings, while
+still round-robining source-native venue/role/metric buckets. Before that
+round-robin fills the remaining places, it anchors one primary positive origin
+by value-signal kind: purchase and repurchase behavior outrank explicit worth,
+which outranks price-to-quantity meanings. Stable source bucket identity breaks
+cross-venue ties; native engagement ranks only within the already fixed bucket.
+It may add at most one ordinary counter from that anchor's same
+venue/role/native-metric bucket, ranked by that native engagement value. If no
+positive support exists, it still shows one materially positive complaint: the
+strongest native-engagement complaint from the complaint bucket chosen by the
+same semantic-first, stable-bucket rule. If the comparable bucket has no direct
+counter, it displays none. An already visible operator-protected counter
+suppresses the ordinary counter, and at the cap an ordinary counter may displace
+the most recently added ordinary support origin but never the anchor.
+Operator-protected safety or costly-behavior rows remain mandatory. This does
+not compare raw engagement across platforms or create a commercial-pull score.
+Unprotected zero, quiet, and
+engagement-unavailable rows stay in the complete disposition inventory but are
+not forced into the main presentation merely to fill a lane or venue. If no
+materially positive or protected counter exists, the main presentation carries
+no counter rather than manufacturing one from weak response. Each protected
+group records its required display lanes, and the deterministic minimum member
+rows needed to cover them are shown; one origin may therefore display multiple
+rows. Every operator-protected row is visible or the run fails. The retained
+disposition inventory remains the accounting record for all other displayed and
+undisplayed candidates.
+
+The quote stage reads bodies only for selected display rows. Its prompt carries
+the deterministic display label as well as the normalized meaning; a returned
+long-source substring must directly express both or be `quote_unavailable`. An
+available source body of at most 220 characters must be quoted in full, so a
+short comment cannot
+be clipped before a material qualification or same-source costly behavior. For
+a longer body, it accepts one context-complete contiguous exact substring of at
+most 220 characters after packet and bundle
+content verification and evidence-ID, artifact-ID, and source-ref verification,
+and rejects a body that changed after the quote manifest was written. When a
+material qualification cannot fit, the quote response returns unavailable
+rather than a misleading fragment. It never repairs text or adds ellipses. An
+available quote must contain at least two
+Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
+A `quote_unavailable` row carries `source_body_present` and a deterministic
+cause: `source_body_unavailable` when the body is absent, or
+`no_relevant_exact_quote_returned` when a present body yielded no quote.
+Available quotes carry a null cause, and the normalized meaning remains in every
+case. The completed artifact retains every candidate disposition
+and the full candidate-inventory hash, including Amazon or Revolve rows that did
+not earn a display slot. Repository runners emit prompts and schemas but make
+zero provider calls.
+
+New quote manifests use `phase_a_evidence_quote_manifest_v3`. Every selected
+row requires one customer-facing `display_label` of at most 80 characters plus
+the exact quote; do not add a second paraphrased sentence. The finalizer derives
+the label from the already-validated relation `reason_code`; the quote response
+returns only quote identity, status, and exact text. The label names the evidence
+signal, not its internal relation to the bounded claim. Value examples
+include `Repurchase intent despite price`, `Product appeal outweighs price
+concern`, `Explicitly worth the price`, `Strong price-to-quantity value`, `Too
+little product for the price`, `Performance does not justify the price`, and
+`Price prevents repurchase`. A malformed, overlong, or
+support/counter/adjacent/exclude-leaking reason code fails closed before display.
+Legacy v1 quote
+manifests keep their original response shape and remain finalizable. The
+superseded v2 presentation-statement experiment was scratch-only and is not a
+supported historical runtime contract.
+
+Regression note: the exact short comment “Do I cringe a little every time I
+remember the price tag? Yes. Will I be repurchasing vanilla AND vanilla beige?
+Also yes.” must remain one context-complete quote. The exact comment “They are
+kind of expensive for what they are, but the packaging is just so cute I can't
+not.” likewise carries price resistance and purchase behavior together. In
+both cases, extracting only the price clause reverses or materially weakens the
+commercial reading. Weak zero-engagement complaints remain accounted but do
+not displace a materially engaged or protected counter merely to fill a lane.
+The 599-score Strawberry-duo post is the opposite regression shape: its source
+body reports a thinner, less-moisturizing formula, disliked scent, and a final
+warning not to buy, but its admitted value-axis meanings are gift-card purchase
+and trying one variant. Those meanings do not directly judge value, so the post
+must remain adjacent to the value box even though it remains useful evidence for
+formula, hydration, scent, and general purchase-warning work.
+
 ## Evidence-family boundary
 
 - Reddit/community and retailer reviews are customer evidence and may be
