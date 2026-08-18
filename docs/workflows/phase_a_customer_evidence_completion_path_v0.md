@@ -329,13 +329,21 @@ and the full candidate-inventory hash, including Amazon or Revolve rows that did
 not earn a display slot. Repository runners emit prompts and schemas but make
 zero provider calls.
 
-New quote manifests use `phase_a_evidence_quote_manifest_v2`. Every selected
-row requires one `presentation_statement` of at most 220 characters that states
-the evidence-bound commercial reading in plain language. It groups eligible
-same-evidence meanings, retains named variants and material reversals, and does
-not append generic caveats whose limits are already implicit in the evidence
-fields and controlling claim-support contract. Legacy v1 quote manifests keep
-their original response shape and remain finalizable.
+New quote manifests use `phase_a_evidence_quote_manifest_v3`. Every selected
+row requires one customer-facing `display_label` of at most 80 characters plus
+the exact quote; do not add a second paraphrased sentence. The finalizer derives
+the label from the already-validated relation `reason_code`; the quote response
+returns only quote identity, status, and exact text. The label names the evidence
+signal, not its internal relation to the bounded claim. Value examples
+include `Repurchase intent despite price`, `Product appeal outweighs price
+concern`, `Explicitly worth the price`, `Strong price-to-quantity value`, `Too
+little product for the price`, `Performance does not justify the price`, and
+`Price prevents repurchase`. A malformed, overlong, or
+support/counter/adjacent/exclude-leaking reason code fails closed before display.
+Legacy v1 quote
+manifests keep their original response shape and remain finalizable. The
+superseded v2 presentation-statement experiment was scratch-only and is not a
+supported historical runtime contract.
 
 Regression note: the exact short comment “Do I cringe a little every time I
 remember the price tag? Yes. Will I be repurchasing vanilla AND vanilla beige?

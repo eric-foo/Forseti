@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v41
+version: v42
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v41
+# Semantic Evidence Integration Contract v42
 
 ## Purpose
 
@@ -918,6 +918,20 @@ generic method caveats whose boundaries are already carried by the source-owned
 fields and this contract. Legacy v1 quote manifests retain their prior response
 shape and remain finalizable; packet v3 and completed evidence stay unchanged.
 
+Contract v42 replaces that unlanded v2 presentation experiment with
+`phase_a_evidence_quote_manifest_v3`. A selected row carries one short
+customer-facing `display_label` plus the exact quote; it does not carry a second
+paraphrased sentence. The finalizer derives the label from the already-validated
+relation `reason_code`; the quote response returns no label text. The label
+names the evidence signal itself — for example,
+`Repurchase intent despite price`, `Product appeal outweighs price concern`,
+`Explicitly worth the price`, or `Too little product for the price` — and never
+exposes the internal support/counter/adjacent/exclude relation. Relation
+finalization rejects a missing, malformed, overlong, or relation-leaking reason
+code before it can become display text. The
+unlanded v2 manifest produced only scratch dogfood and is not a supported
+historical runtime contract; legacy v1 remains finalizable byte-for-byte.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1349,6 +1363,17 @@ new frontier.
 
 ## Changelog
 
+- `v42` / 2026-08-18 — removed the redundant selected-row paraphrase and
+  replaced the unlanded v2 quote-manifest experiment with v3. Customer display
+  now uses a short evidence-signal label plus the exact quote and engagement /
+  source metadata. The label is derived deterministically from the validated
+  relation reason code, so the quote stage spends no output tokens inventing
+  it. Internal claim-relative relations remain stored but cannot leak into the
+  label. Real value labels distinguish repurchase despite price,
+  appeal outweighing price concern, explicit worth, price-to-quantity value,
+  insufficient product, unjustified performance, and price-blocked repurchase.
+  Legacy v1 still replays exactly; the superseded v2 scratch artifact was never
+  production output, pushed, merged, or published.
 - `v41` / 2026-08-18 — added a required selected-row
   `presentation_statement` to new v2 quote manifests so the consumer, rather
   than a later chat author, records the concise commercial reading. It groups

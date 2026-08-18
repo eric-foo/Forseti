@@ -28,14 +28,13 @@ from judgment.phase_a_evidence_consumer import (
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
-QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v2"
+QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
 MAX_TRUTH_GROUPS = 10
 MAX_INFLUENCE_GROUPS = 3
 MAX_QUOTE_CHARACTERS = 220
-MAX_PRESENTATION_CHARACTERS = 220
 PROTECTED_LANES = ("safety", "costly_behavior")
 # One venue per publisher, matched on the registered domain and any subdomain of
 # it, so host variants (old./np./new./sh.reddit.com, vm./vt./m.tiktok.com,
@@ -51,10 +50,26 @@ VENUE_HOST_SUFFIXES: tuple[tuple[str, tuple[str, ...]], ...] = (
 # A whole numeric token only: a partial parse of "1.2k" or "1,234" would order
 # rows by a value the source never stated.
 ENGAGEMENT_NUMBER_RE = re.compile(r"^\s*(-?[0-9]+(?:\.[0-9]+)?)(?![0-9A-Za-z.,])")
+INTERNAL_RELATION_LABEL_RE = re.compile(r"\b(?:support|counter|adjacent|exclude)\b", re.IGNORECASE)
+REASON_CODE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$")
+DISPLAY_LABEL_BY_REASON_CODE = {
+    "repurchase_despite_price": "Repurchase intent despite price",
+    "multiple_purchases_despite_price": "Product appeal outweighs price concern",
+    "explicitly_worth_price": "Explicitly worth the price",
+    "pricey_but_worth_it": "Explicitly worth the price",
+    "favorable_price_content_ratio": "Strong price-to-quantity value",
+    "reasonably_priced_two_pack": "Reasonably priced two-pack",
+    "too_expensive_for_amount": "Too little product for the price",
+    "explicitly_not_worth_price": "Not worth the price",
+    "disappointing_fill_amount": "Too little product for the tube size",
+    "container_barely_filled": "Too little product for the tube size",
+    "performance_not_worth_price": "Performance does not justify the price",
+    "longevity_justifies_price": "Longevity justifies the price",
+}
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short reason_code. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 SELECTION_ENVELOPE_JSON:
 {envelope}
@@ -64,10 +79,8 @@ QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the 
 
 Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses the supplied normalized meaning and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the normalized meaning is not an acceptable quote.
 
-Also return one concise presentation_statement of at most 220 characters that states the evidence-bound commercial reading in plain language. Group same-evidence meanings when they describe the same actor, action, direction, and conditions; preserve every named product or shade that matters. For example, two shade-specific intentions may display as "Intends to repurchase Vanilla and Vanilla Beige." Keep a material reversal such as price discomfort followed by purchase or repurchase in the same statement. State the useful reading directly; do not append generic method caveats or boilerplate about what the evidence does not prove. Do not turn engagement into headcount or invent good-value, poor-value, purchase, or repurchase meaning absent from the supplied row.
-
-SELECTED_SOURCE_BODIES_JSON:
-{rows}
+SELECTED_EVIDENCE_ENVELOPE_JSON:
+{envelope}
 """
 
 
@@ -458,16 +471,11 @@ def _quote_schema() -> dict[str, Any]:
                 "enum": ["quote_available", "quote_unavailable"],
             },
             "exact_quote": {"type": ["string", "null"]},
-            "presentation_statement": {
-                "type": "string",
-                "maxLength": MAX_PRESENTATION_CHARACTERS,
-            },
         },
         "required": [
             "selected_id",
             "quote_status",
             "exact_quote",
-            "presentation_statement",
         ],
         "additionalProperties": False,
     }
@@ -829,14 +837,37 @@ def _validate_relation_response(
     for candidate, result in zip(candidates, results, strict=True):
         if set(result) != {"candidate_id", "relation", "reason_code"}:
             raise EvidenceConsumerError("relation_response_shape", "result shape mismatch")
-        if result["relation"] not in RELATIONS or not isinstance(result["reason_code"], str) or not result["reason_code"].strip():
+        if (
+            result["relation"] not in RELATIONS
+            or not isinstance(result["reason_code"], str)
+            or len(result["reason_code"]) > 80
+            or not REASON_CODE_RE.fullmatch(result["reason_code"])
+        ):
             raise EvidenceConsumerError("relation_response_shape", "invalid relation result")
+        if INTERNAL_RELATION_LABEL_RE.search(result["reason_code"].replace("_", " ")):
+            raise EvidenceConsumerError(
+                "reason_code_relation_leak",
+                "reason code must name the evidence meaning, not its internal relation",
+            )
         if candidate["layer"] == "influence_context" and result["relation"] in {"support", "counter"}:
             raise EvidenceConsumerError(
                 "creator_customer_laundering", "creator-authored evidence cannot corroborate customer truth"
             )
         merged.append({**candidate, "relation": result["relation"], "reason_code": result["reason_code"]})
     return merged
+
+
+def _display_label(reason_code: str) -> str:
+    label = DISPLAY_LABEL_BY_REASON_CODE.get(
+        reason_code,
+        reason_code.replace("_", " ").capitalize(),
+    )
+    if len(label) > 80 or INTERNAL_RELATION_LABEL_RE.search(label):
+        raise EvidenceConsumerError(
+            "display_label",
+            "reason code cannot produce a safe customer-facing display label",
+        )
+    return label
 
 
 def _bundle_bodies(sources: Sequence[Mapping[str, Any]]) -> dict[tuple[str, str], str | None]:
@@ -880,10 +911,19 @@ def finalize_relations_prepare_quotes(
                 "same_evidence_companion_meanings": row[
                     "same_evidence_companion_meanings"
                 ],
+                "relation": row["relation"],
+                "reason_code": row["reason_code"],
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
-    prompt = QUOTE_PROMPT.format(rows=_compact(quote_rows))
+    prompt = QUOTE_PROMPT.format(
+        envelope=_compact(
+            {
+                "bounded_claim": manifest["spec"]["bounded_claim"],
+                "selected_rows": quote_rows,
+            }
+        )
+    )
     schema = _quote_schema()
     quote_manifest = {
         "schema_version": QUOTE_MANIFEST_VERSION,
@@ -936,8 +976,6 @@ def finalize_quotes(
     output_rows = []
     for selected_row, quote_row in zip(selected, quotes, strict=True):
         expected_quote_fields = {"selected_id", "quote_status", "exact_quote"}
-        if manifest_version == QUOTE_MANIFEST_VERSION:
-            expected_quote_fields.add("presentation_statement")
         if set(quote_row) != expected_quote_fields:
             raise EvidenceConsumerError("quote_response_shape", "quote row shape mismatch")
         body = bodies.get((selected_row["source_id"], selected_row["evidence_id"]))
@@ -953,17 +991,6 @@ def finalize_quotes(
             )
         status = quote_row["quote_status"]
         quote = quote_row["exact_quote"]
-        presentation_statement = quote_row.get("presentation_statement")
-        if manifest_version == QUOTE_MANIFEST_VERSION:
-            if (
-                not isinstance(presentation_statement, str)
-                or sum(character.isalnum() for character in presentation_statement) < 2
-                or len(presentation_statement) > MAX_PRESENTATION_CHARACTERS
-            ):
-                raise EvidenceConsumerError(
-                    "presentation_statement",
-                    "presentation statement must be a substantive string of at most 220 characters",
-                )
         if body is None:
             if status != "quote_unavailable" or quote is not None:
                 raise EvidenceConsumerError("quote_unavailable", "missing body cannot produce a quote")
@@ -1011,7 +1038,7 @@ def finalize_quotes(
                 ),
                 "exact_quote": quote,
                 **(
-                    {"presentation_statement": presentation_statement}
+                    {"display_label": _display_label(selected_row["reason_code"])}
                     if manifest_version == QUOTE_MANIFEST_VERSION
                     else {}
                 ),
