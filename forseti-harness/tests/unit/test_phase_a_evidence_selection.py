@@ -12,8 +12,11 @@ from judgment.phase_a_evidence_selection import (
     _candidate_rows,
     _bucket_priority,
     _numeric_engagement,
+    _policy_guidance,
+    _relation_schema,
     _select_groups,
     _source_venue,
+    _validate_relation_response,
     finalize_quotes,
     finalize_relations_prepare_quotes,
     prepare_evidence_selection,
@@ -469,7 +472,10 @@ def test_display_label_uses_customer_facing_signal_and_preserves_source_meanings
             }
         ]
     }
-    _, _, quote_manifest = finalize_relations_prepare_quotes(manifest, sources, relation_response)
+    quote_prompt, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, relation_response
+    )
+    assert '"display_label":"Repurchase intent despite price"' in quote_prompt
     response = _quote_response(quote_manifest, sources)
     artifact = finalize_quotes(quote_manifest, sources, response)
     row = artifact["source_groups"][0]["rows"][0]
@@ -724,25 +730,220 @@ def _selection_row(
     *,
     origin: str = "origin:shared",
     relation: str = "support",
+    reason_code: str = "explicit_good_value",
     material_positive: bool | None = True,
     protected_lanes: list[str] | None = None,
     engagement_status: str = "engagement_available",
+    engagement_raw_value: int | str | None = 10,
+    source_role: str = "community_post",
+    source_venue: str = "reddit",
+    engagement_kind: str = "reddit_points",
 ) -> dict:
     return {
         "candidate_id": candidate_id,
         "layer": "truth_support",
         "relation": relation,
-        "reason_code": "test",
+        "reason_code": reason_code,
         "scoped_independence_key": origin,
-        "source_role": "community_post",
-        "source_venue": "reddit",
-        "engagement_kind": "reddit_points",
-        "engagement_raw_value": 10,
+        "source_role": source_role,
+        "source_venue": source_venue,
+        "engagement_kind": engagement_kind,
+        "engagement_raw_value": engagement_raw_value,
         "engagement_material_positive": material_positive,
         "engagement_status": engagement_status,
         "conditions": [],
         "protected_lanes": protected_lanes or [],
     }
+
+
+def test_value_policy_keeps_positive_value_first_and_only_one_direct_complaint() -> None:
+    rows = [
+        _selection_row(
+            "repurchase-204",
+            origin="origin:repurchase",
+            reason_code="repurchase_despite_price",
+            engagement_raw_value="204 points",
+        ),
+        _selection_row(
+            "appeal-10",
+            origin="origin:appeal",
+            reason_code="multiple_purchases_despite_price",
+            engagement_raw_value="10 points",
+        ),
+        _selection_row(
+            "value-per-ounce-514",
+            origin="origin:value-per-ounce",
+            reason_code="favorable_price_quantity_comparison",
+            engagement_raw_value="514 points",
+        ),
+        _selection_row(
+            "retailer-value-31",
+            origin="origin:retailer-value",
+            reason_code="favorable_price_quantity_comparison",
+            engagement_raw_value=31,
+            source_role="retailer_review",
+            source_venue="sephora",
+            engagement_kind="positive_helpful_count",
+        ),
+        _selection_row(
+            "regret-1174",
+            origin="origin:regret",
+            relation="counter",
+            reason_code="purchase_regret_due_cost",
+            engagement_raw_value="1174 points",
+        ),
+        _selection_row(
+            "retailer-complaint-35",
+            origin="origin:retailer-complaint",
+            relation="counter",
+            reason_code="too_little_product_for_price",
+            engagement_raw_value=35,
+            source_role="retailer_review",
+            source_venue="sephora",
+            engagement_kind="positive_helpful_count",
+        ),
+        _selection_row(
+            "formula-599",
+            origin="origin:formula",
+            relation="adjacent",
+            reason_code="non_value_product_experience",
+            engagement_raw_value="599 points",
+        ),
+    ]
+
+    selected = _select_groups(rows, "truth_support", 5, truth_policy="value_first")
+    selected_ids = {row["candidate_id"] for row in selected}
+
+    assert {"repurchase-204", "appeal-10"} <= selected_ids
+    assert "formula-599" not in selected_ids
+    assert [row["candidate_id"] for row in selected if row["relation"] == "counter"] == [
+        "regret-1174"
+    ]
+    assert len({row["origin_group_id"] for row in selected}) == 5
+
+
+def test_value_behavior_tier_uses_native_engagement_not_behavior_subtype() -> None:
+    rows = [
+        _selection_row(
+            f"repurchase-{engagement}",
+            origin=f"origin:repurchase:{engagement}",
+            reason_code="repurchase_despite_price",
+            engagement_raw_value=f"{engagement} points",
+        )
+        for engagement in (204, 44, 11, 3)
+    ]
+    rows.extend(
+        [
+            _selection_row(
+                "multiple-purchases-10",
+                origin="origin:multiple-purchases",
+                reason_code="multiple_purchases_despite_price",
+                engagement_raw_value="10 points",
+            ),
+            _selection_row(
+                "regret-1174",
+                origin="origin:regret",
+                relation="counter",
+                reason_code="purchase_regret_due_cost",
+                engagement_raw_value="1174 points",
+            ),
+        ]
+    )
+    selected = _select_groups(rows, "truth_support", 5, truth_policy="value_first")
+    selected_ids = {row["candidate_id"] for row in selected}
+    assert "multiple-purchases-10" in selected_ids
+    assert "repurchase-3" not in selected_ids
+
+
+def test_value_reason_codes_must_match_their_relation_lane() -> None:
+    candidate = _selection_row("candidate:value")
+    response = {
+        "results": [
+            {
+                "candidate_id": "candidate:value",
+                "relation": "support",
+                "reason_code": "purchase_regret_due_cost",
+            }
+        ]
+    }
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_relation_response([candidate], response, value_policy=True)
+    assert caught.value.boundary == "value_reason_relation_mismatch"
+
+
+def test_value_response_schema_makes_comparator_direction_unambiguous() -> None:
+    variants = _relation_schema(value_policy=True)["properties"]["results"]["items"][
+        "anyOf"
+    ]
+    by_relation = {
+        row["properties"]["relation"]["const"]: set(
+            row["properties"]["reason_code"]["enum"]
+        )
+        for row in variants
+    }
+    assert "better_value_than_comparator" in by_relation["support"]
+    assert "better_value_than_comparator" not in by_relation["counter"]
+    assert "comparator_better_value" in by_relation["counter"]
+    assert {
+        "repurchase_intent",
+        "multiple_purchases",
+        "purchase_commitment",
+        "product_goes_a_long_way",
+    } <= by_relation["support"]
+
+
+def test_value_prompt_forbids_companion_only_formula_complaints_from_value_lanes() -> None:
+    guidance = _policy_guidance({"axis_ids": ["value_and_quantity"]})
+    assert "formula, hydration, scent, trial-only, gift-card" in guidance
+    assert "must not turn" in guidance
+    assert "repurchase_despite_price" in guidance
+    assert "repurchase_intent" in guidance
+    assert "requires explicit source meaning about price or cost" in guidance
+    assert "product_goes_a_long_way" in guidance
+    assert _policy_guidance({"axis_ids": ["hydration_and_moisture"]}) == ""
+
+
+def test_value_policy_does_not_compare_counter_engagement_across_venues() -> None:
+    rows = [
+        _selection_row(
+            "reddit-value",
+            origin="origin:reddit-value",
+            reason_code="explicit_good_value",
+            engagement_raw_value="20 points",
+        ),
+        _selection_row(
+            "sephora-complaint",
+            origin="origin:sephora-complaint",
+            relation="counter",
+            reason_code="explicit_poor_value",
+            engagement_raw_value=200,
+            source_role="retailer_review",
+            source_venue="sephora",
+            engagement_kind="positive_helpful_count",
+        ),
+    ]
+    selected = _select_groups(rows, "truth_support", 10, truth_policy="value_first")
+    assert [row["candidate_id"] for row in selected] == ["reddit-value"]
+
+
+def test_value_policy_keeps_operator_protected_counter_even_without_positive_engagement() -> None:
+    rows = [
+        _selection_row(
+            "protected-costly",
+            origin="origin:protected",
+            relation="counter",
+            reason_code="explicit_poor_value",
+            material_positive=False,
+            protected_lanes=["costly_behavior"],
+        ),
+        _selection_row(
+            "positive",
+            origin="origin:positive",
+            reason_code="explicit_good_value",
+        ),
+    ]
+    selected = _select_groups(rows, "truth_support", 10, truth_policy="value_first")
+    assert {row["candidate_id"] for row in selected} == {"protected-costly", "positive"}
 
 
 def test_same_origin_displays_material_support_and_counter_but_not_unprotected_quiet() -> None:

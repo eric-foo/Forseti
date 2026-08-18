@@ -274,11 +274,24 @@ purchase, repurchase, switching, return, or abandonment under the existing
 `costly_behavior` protection when that behavior changes the commercial reading.
 Candidate admission remains direction-neutral: admit the relevant positive and
 negative value evidence before assigning claim-relative support or counter.
-Do not search for complaints first and then treat the surviving set as the
-answer. A relation label describes how the row bears on the bounded claim; it
-is not a permanent positive/negative label. Thus purchase or repurchase despite
-price discomfort counters a poor-value claim and may be presented as a positive
-willingness-to-pay or value signal.
+For a selection whose only axis is `value_and_quantity`, the external relation
+response uses the value-box reason-code vocabulary emitted in its response
+schema. Support or counter requires the candidate's own meaning to state a
+price, value, quantity-for-price, purchase commitment, repurchase, or
+benefit-for-cost tradeoff. Same-evidence companions may qualify a direct value
+premise — for example, repurchase despite price discomfort — but a gift card,
+single-variant trial, formula, hydration, scent, or generic purchase statement
+does not become value evidence merely because another meaning from the post is
+negative. Such rows stay adjacent and remain in the disposition inventory. Do
+not search for complaints first and then treat the surviving set as the answer.
+A relation label describes how the row bears on the bounded claim; it is not a
+permanent positive/negative label. Thus purchase or repurchase despite price
+discomfort may be presented as a positive willingness-to-pay or value signal.
+When the evidence shows purchase, repeated ownership, or repurchase without an
+explicit price premise, use the corresponding plain behavior label rather than
+inventing "despite price"; likewise, quantity efficiency without an explicit
+price judgment is labeled "a little product goes a long way," not "worth the
+price."
 
 Keep atomic semantic meanings and their refs separately recorded. In the
 presentation layer, meanings from the same evidence item may be grouped when
@@ -296,9 +309,18 @@ one venue/role/native-metric bucket, and a count the runtime cannot read whole
 is ordered last rather than partially parsed. An unrecognized mapping-valued
 engagement shape fails closed rather than becoming an unknown value or generic
 score. Every nominated safety or costly-behavior origin is selected first; more
-than ten such customer origins fails `presentation_cap_insufficient`. The
-selector then reserves visible support and counter only from materially positive
-or explicitly protected evidence. Unprotected zero, quiet, and
+than ten such customer origins fails `presentation_cap_insufficient`. For
+non-value selections, the selector then reserves visible support and counter
+only from materially positive or explicitly protected evidence. A value-only
+selection instead fills materially positive support origins first, prioritizing
+purchase and repurchase behavior before other direct value meanings, while
+still round-robining source-native venue/role/metric buckets. It may add at most
+one ordinary counter from the first selected support's same
+venue/role/native-metric bucket, ranked by that native engagement value; if that
+comparable bucket has no direct counter, it displays none. Operator-protected
+safety or costly-behavior rows remain mandatory and may exceed that ordinary
+counter allowance. This does not compare raw engagement across platforms or
+create a commercial-pull score. Unprotected zero, quiet, and
 engagement-unavailable rows stay in the complete disposition inventory but are
 not forced into the main presentation merely to fill a lane or venue. If no
 materially positive or protected counter exists, the main presentation carries
@@ -309,8 +331,11 @@ rows. Every operator-protected row is visible or the run fails. The retained
 disposition inventory remains the accounting record for all other displayed and
 undisplayed candidates.
 
-The quote stage reads bodies only for selected display rows. An available source
-body of at most 220 characters must be quoted in full, so a short comment cannot
+The quote stage reads bodies only for selected display rows. Its prompt carries
+the deterministic display label as well as the normalized meaning; a returned
+long-source substring must directly express both or be `quote_unavailable`. An
+available source body of at most 220 characters must be quoted in full, so a
+short comment cannot
 be clipped before a material qualification or same-source costly behavior. For
 a longer body, it accepts one context-complete contiguous exact substring of at
 most 220 characters after packet and bundle
@@ -353,6 +378,12 @@ not.” likewise carries price resistance and purchase behavior together. In
 both cases, extracting only the price clause reverses or materially weakens the
 commercial reading. Weak zero-engagement complaints remain accounted but do
 not displace a materially engaged or protected counter merely to fill a lane.
+The 599-score Strawberry-duo post is the opposite regression shape: its source
+body reports a thinner, less-moisturizing formula, disliked scent, and a final
+warning not to buy, but its admitted value-axis meanings are gift-card purchase
+and trying one variant. Those meanings do not directly judge value, so the post
+must remain adjacent to the value box even though it remains useful evidence for
+formula, hydration, scent, and general purchase-warning work.
 
 ## Evidence-family boundary
 

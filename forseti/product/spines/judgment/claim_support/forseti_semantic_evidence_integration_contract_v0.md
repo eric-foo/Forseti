@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v42
+version: v43
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v42
+# Semantic Evidence Integration Contract v43
 
 ## Purpose
 
@@ -932,6 +932,37 @@ code before it can become display text. The
 unlanded v2 manifest produced only scratch dogfood and is not a supported
 historical runtime contract; legacy v1 remains finalizable byte-for-byte.
 
+Contract v43 makes value-only presentation direct and positive-first without
+changing `phase_a_evidence_packet_v3` or adding a score. When the sole selected
+axis is `value_and_quantity`, the emitted relation-response schema limits
+reason codes to a small relation-aligned value vocabulary. Support or counter
+requires the candidate's own normalized meaning to state a price, value,
+quantity-for-price, purchase commitment, repurchase, or benefit-for-cost
+tradeoff. Same-evidence companions may qualify a direct premise — including
+purchase or repurchase despite price discomfort — but companion-only formula,
+hydration, scent, gift-card, trial, or generic purchase meanings remain
+adjacent. The deterministic finalizer rejects a value reason code placed in the
+wrong relation lane. A behavior observed without an explicit price premise uses
+a plain purchase, repeated-purchase, or repurchase label; the corresponding
+`despite_price` label is valid only when price or cost is explicit. Quantity
+efficiency without an explicit price judgment uses `product_goes_a_long_way`
+rather than claiming the benefits justify the price.
+
+After every protected safety or costly-behavior row is admitted, value-only
+presentation fills materially positive support origins first. Purchase and
+repurchase behavior precede other direct value meanings inside each
+source-native venue/role/metric bucket, and buckets continue to round-robin for
+source visibility. At most one ordinary counter may be shown: the highest
+native-engagement direct counter from the first selected support's same
+venue/role/metric bucket. If that comparable bucket has none, no ordinary
+counter is manufactured. Protected rows remain mandatory even when they exceed
+that ordinary allowance. This rule never compares raw engagement across
+platforms and does not convert engagement into corroborating headcount or a
+commercial-pull score. The quote prompt now carries the deterministic display
+label and requires a longer-body exact substring to express both that label and
+the normalized meaning or return unavailable. Semantic fit remains externally
+adjudicated; deterministic exactness and body identity checks are unchanged.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1363,6 +1394,17 @@ new frontier.
 
 ## Changelog
 
+- `v43` / 2026-08-18 — made value-only selection direct and positive-first.
+  Formula, hydration, scent, gift-card, trial-only, and generic purchase
+  meanings cannot enter the value box through a companion-only warning. The
+  599-score Strawberry-duo post remains available to its fitted axes but stays
+  adjacent to value. Purchase and repurchase despite price are prioritized;
+  one ordinary direct complaint may be shown only from the primary positive
+  signal's comparable native-engagement bucket. The quote prompt binds the
+  deterministic display label as well as the normalized meaning. Added
+  relation-aligned value reason codes and fail-closed validation, but no packet
+  v4, cross-platform score, provider call, evidence deletion, or production
+  output rewrite.
 - `v42` / 2026-08-18 — removed the redundant selected-row paraphrase and
   replaced the unlanded v2 quote-manifest experiment with v3. Customer display
   now uses a short evidence-signal label plus the exact quote and engagement /

@@ -54,7 +54,6 @@ INTERNAL_RELATION_LABEL_RE = re.compile(r"\b(?:support|counter|adjacent|exclude)
 REASON_CODE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$")
 DISPLAY_LABEL_BY_REASON_CODE = {
     "repurchase_despite_price": "Repurchase intent despite price",
-    "multiple_purchases_despite_price": "Product appeal outweighs price concern",
     "explicitly_worth_price": "Explicitly worth the price",
     "pricey_but_worth_it": "Explicitly worth the price",
     "favorable_price_content_ratio": "Strong price-to-quantity value",
@@ -65,19 +64,85 @@ DISPLAY_LABEL_BY_REASON_CODE = {
     "container_barely_filled": "Too little product for the tube size",
     "performance_not_worth_price": "Performance does not justify the price",
     "longevity_justifies_price": "Longevity justifies the price",
+    "purchase_despite_price": "Purchase commitment despite price",
+    "multiple_purchases_despite_price": "Repeated purchasing despite price",
+    "repurchase_intent": "Repurchase intent",
+    "multiple_purchases": "Repeated purchasing",
+    "purchase_commitment": "Purchase commitment",
+    "explicit_good_value": "Explicitly good value",
+    "benefits_justify_price": "Benefits justify the price",
+    "favorable_price_quantity_comparison": "Favorable price-to-quantity value",
+    "better_value_than_comparator": "Better value than the comparison",
+    "reasonable_bundle_price": "Reasonably priced bundle",
+    "product_goes_a_long_way": "A little product goes a long way",
+    "purchase_regret_due_cost": "Purchase regret due to cost",
+    "explicit_poor_value": "Explicitly poor value",
+    "too_little_product_for_price": "Too little product for the price",
+    "packaging_waste_undermines_value": "Packaging waste undermines value",
+    "price_increase_quality_decline": "Higher price with lower quality",
+    "cheaper_equivalent_available": "Cheaper equivalent available",
+    "comparator_better_value": "Comparison offers better value",
+}
+
+VALUE_AXIS_ID = "value_and_quantity"
+VALUE_REASON_RELATIONS = {
+    "repurchase_despite_price": "support",
+    "multiple_purchases_despite_price": "support",
+    "purchase_despite_price": "support",
+    "repurchase_intent": "support",
+    "multiple_purchases": "support",
+    "purchase_commitment": "support",
+    "explicit_good_value": "support",
+    "benefits_justify_price": "support",
+    "favorable_price_quantity_comparison": "support",
+    "better_value_than_comparator": "support",
+    "reasonable_bundle_price": "support",
+    "product_goes_a_long_way": "support",
+    "purchase_regret_due_cost": "counter",
+    "explicit_poor_value": "counter",
+    "too_little_product_for_price": "counter",
+    "performance_not_worth_price": "counter",
+    "packaging_waste_undermines_value": "counter",
+    "price_increase_quality_decline": "counter",
+    "cheaper_equivalent_available": "counter",
+    "comparator_better_value": "counter",
+    "price_or_quantity_fact_only": "adjacent",
+    "purchase_without_value_judgment": "adjacent",
+    "non_value_product_experience": "adjacent",
+    "unclear_value_implication": "adjacent",
+    "wrong_product_or_scope": "exclude",
+    "duplicate_or_non_evidence": "exclude",
+}
+VALUE_SUPPORT_PRIORITY = {
+    "repurchase_despite_price": 0,
+    "multiple_purchases_despite_price": 0,
+    "purchase_despite_price": 0,
+    "repurchase_intent": 0,
+    "multiple_purchases": 0,
+    "purchase_commitment": 0,
+    "explicit_good_value": 3,
+    "benefits_justify_price": 3,
+    "favorable_price_quantity_comparison": 4,
+    "better_value_than_comparator": 4,
+    "reasonable_bundle_price": 4,
+    "product_goes_a_long_way": 4,
 }
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
 Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
+{policy_guidance}
+
 SELECTION_ENVELOPE_JSON:
 {envelope}
 """
 
+VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's own normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost. Same-evidence companion meanings may qualify a direct price/value premise: price discomfort plus purchase, repurchase, repeated ownership, or stated benefits can be positive value evidence. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the candidate itself states the cost/value tradeoff. The reason_code must describe the candidate meaning, not a companion-only conclusion. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Use `product_goes_a_long_way` for quantity efficiency without an explicit price judgment; `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
+
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses the supplied normalized meaning and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the normalized meaning is not an acceptable quote.
+Return every selected_id exactly once and in order. If an available source body is 220 characters or fewer, return the entire body as the exact quote; never clip a short comment before a material qualification or countervailing behavior. For a longer body, choose one contiguous exact substring of at most 220 characters that directly expresses both the supplied normalized meaning and display_label, and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the normalized meaning and display label is not an acceptable quote.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -86,6 +151,21 @@ SELECTED_EVIDENCE_ENVELOPE_JSON:
 
 def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+
+
+def _uses_value_policy(spec: Mapping[str, Any]) -> bool:
+    axis_ids = spec.get("axis_ids")
+    return isinstance(axis_ids, list) and set(axis_ids) == {VALUE_AXIS_ID}
+
+
+def _policy_guidance(spec: Mapping[str, Any]) -> str:
+    if not _uses_value_policy(spec):
+        return ""
+    grouped = "; ".join(
+        f"{relation}=[{', '.join(sorted(code for code, lane in VALUE_REASON_RELATIONS.items() if lane == relation))}]"
+        for relation in RELATIONS
+    )
+    return VALUE_RELATION_GUIDANCE.format(reason_codes=grouped)
 
 
 def _candidate_id(packet_sha256: str, evidence_id: str, semantic_ref: str) -> str:
@@ -442,17 +522,35 @@ def _candidate_rows(
     return candidates
 
 
-def _relation_schema() -> dict[str, Any]:
-    row = {
-        "type": "object",
-        "properties": {
-            "candidate_id": {"type": "string"},
-            "relation": {"type": "string", "enum": list(RELATIONS)},
-            "reason_code": {"type": "string"},
-        },
-        "required": ["candidate_id", "relation", "reason_code"],
-        "additionalProperties": False,
-    }
+def _relation_schema(*, value_policy: bool = False) -> dict[str, Any]:
+    def result_row(relation: str | None = None) -> dict[str, Any]:
+        relation_schema: dict[str, Any] = {"type": "string"}
+        reason_schema: dict[str, Any] = {"type": "string"}
+        if relation is None:
+            relation_schema["enum"] = list(RELATIONS)
+        else:
+            relation_schema["const"] = relation
+            reason_schema["enum"] = sorted(
+                code
+                for code, expected_relation in VALUE_REASON_RELATIONS.items()
+                if expected_relation == relation
+            )
+        return {
+            "type": "object",
+            "properties": {
+                "candidate_id": {"type": "string"},
+                "relation": relation_schema,
+                "reason_code": reason_schema,
+            },
+            "required": ["candidate_id", "relation", "reason_code"],
+            "additionalProperties": False,
+        }
+
+    row = (
+        {"anyOf": [result_row(relation) for relation in RELATIONS]}
+        if value_policy
+        else result_row()
+    )
     return {
         "type": "object",
         "properties": {"results": {"type": "array", "items": row}},
@@ -509,8 +607,11 @@ def prepare_evidence_selection(
         "bounded_claim": spec["bounded_claim"],
         "candidates": candidates,
     }
-    prompt = RELATION_PROMPT.format(envelope=_compact(envelope))
-    schema = _relation_schema()
+    value_policy = _uses_value_policy(spec)
+    prompt = RELATION_PROMPT.format(
+        policy_guidance=_policy_guidance(spec), envelope=_compact(envelope)
+    )
+    schema = _relation_schema(value_policy=value_policy)
     inventory_sha = _canonical_json_sha256(candidates)
     manifest = {
         "schema_version": SELECTION_MANIFEST_VERSION,
@@ -611,6 +712,8 @@ def _required_display_members(
     members: Sequence[Mapping[str, Any]],
     required_lanes: Sequence[str],
     required_candidate_ids: Sequence[str],
+    *,
+    priority: Any = _global_priority,
 ) -> list[dict[str, Any]]:
     """Return the deterministic minimum rows that make reserved lanes visible.
 
@@ -618,7 +721,7 @@ def _required_display_members(
     lane requirements remain, so exhaustive combinations over one representative
     per distinct coverage signature are bounded and prove minimal cardinality.
     """
-    ordered = sorted((dict(row) for row in members), key=_global_priority)
+    ordered = sorted((dict(row) for row in members), key=priority)
     by_id = {row["candidate_id"]: row for row in ordered}
     try:
         forced = [by_id[candidate_id] for candidate_id in required_candidate_ids]
@@ -671,7 +774,7 @@ def _flatten_display_groups(groups: Sequence[Mapping[str, Any]]) -> list[dict[st
     return rows
 
 
-def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> list[dict[str, Any]]:
+def _validate_protected_rows(rows: Sequence[Mapping[str, Any]]) -> None:
     protected_wrong_layer = [
         row["candidate_id"]
         for row in rows
@@ -692,6 +795,209 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
             "protected_candidate_excluded",
             f"protected evidence cannot be excluded from presentation: {protected_excluded}",
         )
+
+
+def _value_member_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
+    if row.get("relation") == "support":
+        return (0, VALUE_SUPPORT_PRIORITY.get(row.get("reason_code"), 99)) + _bucket_priority(row)
+    if row.get("relation") == "counter":
+        return (1, 0) + _bucket_priority(row)
+    return (2, 0) + _bucket_priority(row)
+
+
+def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[dict[str, Any]]:
+    _validate_protected_rows(rows)
+    eligible = [
+        dict(row)
+        for row in rows
+        if row["layer"] == "truth_support"
+        and row["relation"] != "exclude"
+        and (
+            bool(row.get("protected_lanes"))
+            or (
+                row.get("engagement_material_positive") is True
+                and row["relation"] in {"support", "counter"}
+            )
+        )
+    ]
+    origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in eligible:
+        origins[row["scoped_independence_key"]].append(row)
+
+    groups = []
+    for origin, members in origins.items():
+        members.sort(key=_value_member_priority)
+        representative = dict(members[0])
+        groups.append(
+            {
+                **representative,
+                "origin_group_id": origin,
+                "origin_candidate_count": len(members),
+                "origin_relations": sorted({row["relation"] for row in members}),
+                "origin_candidate_ids": sorted(row["candidate_id"] for row in members),
+                "origin_protected_lanes": sorted(
+                    {
+                        lane
+                        for row in members
+                        for lane in row.get("protected_lanes", [])
+                    }
+                ),
+                "origin_members": members,
+                "required_display_lanes": [],
+                "required_display_candidate_ids": sorted(
+                    row["candidate_id"] for row in members if row.get("protected_lanes")
+                ),
+            }
+        )
+
+    selected: list[dict[str, Any]] = []
+    selected_origins: set[str] = set()
+
+    def add_group(group: dict[str, Any]) -> bool:
+        if group["origin_group_id"] in selected_origins:
+            return False
+        selected.append(group)
+        selected_origins.add(group["origin_group_id"])
+        if len(selected_origins) > cap:
+            raise EvidenceConsumerError(
+                "presentation_cap_insufficient", "required origin groups exceed cap"
+            )
+        return True
+
+    for group in sorted(
+        (row for row in groups if row["origin_protected_lanes"]),
+        key=lambda row: min(
+            _value_member_priority(member) for member in row["origin_members"]
+        ),
+    ):
+        add_group(group)
+        group["required_display_lanes"].extend(
+            f"protected:{lane}" for lane in group["origin_protected_lanes"]
+        )
+
+    support_buckets: dict[
+        tuple[str, str, str], list[tuple[dict[str, Any], dict[str, Any]]]
+    ] = defaultdict(list)
+    for group in groups:
+        support_members = [
+            row for row in group["origin_members"] if row["relation"] == "support"
+        ]
+        if not support_members:
+            continue
+        best = min(support_members, key=_value_member_priority)
+        support_buckets[
+            (best["source_role"], best["source_venue"], best["engagement_kind"])
+        ].append((group, best))
+    for bucket in support_buckets.values():
+        bucket.sort(key=lambda pair: _value_member_priority(pair[1]))
+
+    support_keys = sorted(support_buckets)
+    first_support: tuple[dict[str, Any], dict[str, Any]] | None = None
+    ordinary_support_order: list[dict[str, Any]] = []
+    while len(selected) < cap and any(support_buckets[key] for key in support_keys):
+        for key in support_keys:
+            if len(selected) >= cap:
+                break
+            if not support_buckets[key]:
+                continue
+            group, member = support_buckets[key].pop(0)
+            if "relation:support" not in group["required_display_lanes"]:
+                group["required_display_lanes"].append("relation:support")
+            if first_support is None:
+                first_support = (group, member)
+            if add_group(group) and not group["origin_protected_lanes"]:
+                ordinary_support_order.append(group)
+
+    protected_counter_visible = any(
+        member.get("protected_lanes") and member["relation"] == "counter"
+        for group in selected
+        for member in group["origin_members"]
+    )
+    if first_support is not None and not protected_counter_visible:
+        _, primary_support = first_support
+        primary_bucket = (
+            primary_support["source_role"],
+            primary_support["source_venue"],
+            primary_support["engagement_kind"],
+        )
+        counter_choices: list[tuple[dict[str, Any], dict[str, Any]]] = []
+        for group in groups:
+            matching = [
+                row
+                for row in group["origin_members"]
+                if row["relation"] == "counter"
+                and (
+                    row["source_role"],
+                    row["source_venue"],
+                    row["engagement_kind"],
+                )
+                == primary_bucket
+            ]
+            if matching:
+                counter_choices.append((group, min(matching, key=_bucket_priority)))
+        counter_choices.sort(key=lambda pair: _bucket_priority(pair[1]))
+        if counter_choices:
+            counter_group, _ = counter_choices[0]
+            if counter_group["origin_group_id"] not in selected_origins and len(selected) >= cap:
+                removable = next(
+                    (
+                        group
+                        for group in reversed(ordinary_support_order)
+                        if group is not first_support[0]
+                    ),
+                    None,
+                )
+                if removable is not None:
+                    selected.remove(removable)
+                    selected_origins.remove(removable["origin_group_id"])
+                    ordinary_support_order.remove(removable)
+            if counter_group["origin_group_id"] in selected_origins or len(selected) < cap:
+                add_group(counter_group)
+                if "relation:counter" not in counter_group["required_display_lanes"]:
+                    counter_group["required_display_lanes"].append("relation:counter")
+
+    for group in selected:
+        group["display_members"] = _required_display_members(
+            group["origin_members"],
+            group["required_display_lanes"],
+            group["required_display_candidate_ids"],
+            priority=_value_member_priority,
+        )
+        group.pop("origin_members")
+    displayed = _flatten_display_groups(selected)
+    protected_candidate_ids = {
+        row["candidate_id"] for row in eligible if row.get("protected_lanes")
+    }
+    displayed_candidate_ids = {row["candidate_id"] for row in displayed}
+    if not protected_candidate_ids <= displayed_candidate_ids:
+        raise EvidenceConsumerError(
+            "protected_candidate_not_visible",
+            "one or more protected candidates are absent from the display",
+        )
+    ordinary_counter_origins = {
+        row["origin_group_id"]
+        for row in displayed
+        if row["relation"] == "counter" and not row.get("protected_lanes")
+    }
+    if len(ordinary_counter_origins) > 1:
+        raise EvidenceConsumerError(
+            "value_counter_cap", "value presentation contains more than one ordinary complaint"
+        )
+    return displayed
+
+
+def _select_groups(
+    rows: Sequence[Mapping[str, Any]],
+    layer: str,
+    cap: int,
+    *,
+    truth_policy: str = "balanced",
+) -> list[dict[str, Any]]:
+    if truth_policy not in {"balanced", "value_first"}:
+        raise EvidenceConsumerError("selection_policy", f"unsupported policy: {truth_policy}")
+    if truth_policy == "value_first" and layer == "truth_support":
+        return _select_value_groups(rows, cap)
+    _validate_protected_rows(rows)
     eligible = [
         dict(row)
         for row in rows
@@ -816,7 +1122,10 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
 
 
 def _validate_relation_response(
-    candidates: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
+    candidates: Sequence[Mapping[str, Any]],
+    response: Mapping[str, Any],
+    *,
+    value_policy: bool = False,
 ) -> list[dict[str, Any]]:
     if set(response) != {"results"} or not isinstance(response.get("results"), list):
         raise EvidenceConsumerError("relation_response_shape", "results missing")
@@ -849,6 +1158,18 @@ def _validate_relation_response(
                 "reason_code_relation_leak",
                 "reason code must name the evidence meaning, not its internal relation",
             )
+        if value_policy:
+            expected_relation = VALUE_REASON_RELATIONS.get(result["reason_code"])
+            if expected_relation is None:
+                raise EvidenceConsumerError(
+                    "value_reason_code",
+                    "value selection used an unsupported meaning code",
+                )
+            if result["relation"] != expected_relation:
+                raise EvidenceConsumerError(
+                    "value_reason_relation_mismatch",
+                    "value meaning code does not match its relation lane",
+                )
         if candidate["layer"] == "influence_context" and result["relation"] in {"support", "counter"}:
             raise EvidenceConsumerError(
                 "creator_customer_laundering", "creator-authored evidence cannot corroborate customer truth"
@@ -894,8 +1215,16 @@ def finalize_relations_prepare_quotes(
     manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     candidates = _candidate_rows(sources, manifest["spec"])
-    labeled = _validate_relation_response(candidates, response)
-    truth = _select_groups(labeled, "truth_support", MAX_TRUTH_GROUPS)
+    value_policy = _uses_value_policy(manifest["spec"])
+    labeled = _validate_relation_response(
+        candidates, response, value_policy=value_policy
+    )
+    truth = _select_groups(
+        labeled,
+        "truth_support",
+        MAX_TRUTH_GROUPS,
+        truth_policy="value_first" if value_policy else "balanced",
+    )
     influence = _select_groups(labeled, "influence_context", MAX_INFLUENCE_GROUPS)
     selected = truth + influence
     bodies = _bundle_bodies(sources)
@@ -913,6 +1242,7 @@ def finalize_relations_prepare_quotes(
                 ],
                 "relation": row["relation"],
                 "reason_code": row["reason_code"],
+                "display_label": _display_label(row["reason_code"]),
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
