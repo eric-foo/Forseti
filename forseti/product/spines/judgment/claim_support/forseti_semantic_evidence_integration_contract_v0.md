@@ -950,7 +950,11 @@ makes every candidate from that origin counter or adjacent unless the source
 explicitly commits to buy or repurchase again despite the cost, or explicitly
 concludes that the product is worth the price. Displaying empties, using the
 product up, or otherwise trying to make a regretted purchase feel more
-worthwhile is sunk-cost rationalization, not countervailing value evidence. The
+worthwhile is sunk-cost rationalization, not countervailing value evidence.
+Those two exceptions settle the lane before either regret reason is reached:
+neither applies to an origin the source keeps positive by explicitly committing
+to buy or repurchase again despite the cost, or by concluding the product is
+worth the price. Where the regret does keep the candidate counter, the
 counter reason `high_spend_followed_by_buyer_remorse` is available only when
 one evidence item explicitly records a substantial completed spend amount, or
 explicitly characterizes the completed spend as substantial, together with

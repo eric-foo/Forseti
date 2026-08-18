@@ -1096,6 +1096,13 @@ def test_value_prompt_forbids_companion_only_formula_complaints_from_value_lanes
     assert "does not imply repurchase, a transaction count, or future intent" in guidance
     assert "Multiple units alone do not establish high spend" in guidance
     assert "regret exists without explicit substantial completed spending" in guidance
+    # The buy-again / worth-the-price exceptions must still decide the lane
+    # before either regret code is offered, or the regret routing sentences
+    # would demote an explicit repurchase-despite-price origin to counter.
+    assert "neither regret code may be used on an origin" in guidance
+    assert guidance.index("Those two exceptions decide the lane") < guidance.index(
+        "Use `purchase_regret_due_cost`"
+    )
     assert "product_goes_a_long_way" in guidance
     assert _policy_guidance({"axis_ids": ["hydration_and_moisture"]}) == ""
 
