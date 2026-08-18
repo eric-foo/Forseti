@@ -272,19 +272,29 @@ roles and retailer venues remain visible, with each publisher normalized to one
 venue across host variants and short links; creator-authored popularity never
 corroborates customer experience. Engagement may prioritize rows only inside
 one venue/role/native-metric bucket, and a count the runtime cannot read whole
-is ordered last rather than partially parsed. Counter, quiet, unknown-engagement,
-safety, and costly-behavior lanes each reserve an origin group over the cap, but
-that reservation does not guarantee a row of that lane appears in the display;
-the retained disposition inventory, not the display, is the accounting record.
+is ordered last rather than partially parsed. An unrecognized mapping-valued
+engagement shape fails closed rather than becoming an unknown value or generic
+score. Every nominated safety or costly-behavior origin is selected first; more
+than ten such customer origins fails `presentation_cap_insufficient`. The
+selector then reserves one visible support, counter, quiet, and
+unknown-engagement lane when available, reusing an already-selected origin where
+possible. This runs even below the cap. Each group records its required display
+lanes, and the deterministic minimum member rows needed to cover them are shown;
+one origin may therefore display three or more rows. Every operator-protected
+row is visible or the run fails. The retained disposition inventory remains the
+accounting record for all other displayed and undisplayed candidates.
 
 The quote stage reads bodies only for selected display rows. It accepts one
 contiguous exact substring of at most 220 characters after packet and bundle
 content verification and evidence-ID, artifact-ID, and source-ref verification,
 and rejects a body that changed after the quote manifest was written. It never
-repairs text or adds ellipses, and it enforces no minimum length. A
-`quote_unavailable` row carries `source_body_present`, so a missing body is
-distinguishable from a body that yielded no quote, and the normalized meaning
-remains either way. The completed artifact retains every candidate disposition
+repairs text or adds ellipses. An available quote must contain at least two
+Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
+A `quote_unavailable` row carries `source_body_present` and a deterministic
+cause: `source_body_unavailable` when the body is absent, or
+`no_relevant_exact_quote_returned` when a present body yielded no quote.
+Available quotes carry a null cause, and the normalized meaning remains in every
+case. The completed artifact retains every candidate disposition
 and the full candidate-inventory hash, including Amazon or Revolve rows that did
 not earn a display slot. Repository runners emit prompts and schemas but make
 zero provider calls.

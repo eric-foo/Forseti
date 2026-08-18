@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 from collections import defaultdict
+from itertools import combinations
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import urlparse
@@ -96,17 +97,20 @@ def _numeric_engagement(value: Any, engagement_kind: str | None = None) -> float
         return float(match.group(1)) if match else None
     if isinstance(value, Mapping):
         if engagement_kind != "sephora_helpful_votes":
-            return None
+            raise EvidenceConsumerError(
+                "unsupported_engagement_shape",
+                f"mapping engagement is not defined for {engagement_kind}",
+            )
         if set(value) != {"negative", "positive", "total"} or not all(
             isinstance(value[key], (int, float)) and not isinstance(value[key], bool)
             for key in value
         ):
             raise EvidenceConsumerError(
-                "missing_engagement", "Sephora helpful-vote shape is invalid"
+                "unsupported_engagement_shape", "Sephora helpful-vote shape is invalid"
             )
         if value["negative"] < 0 or value["positive"] < 0 or value["total"] != value["negative"] + value["positive"]:
             raise EvidenceConsumerError(
-                "missing_engagement", "Sephora helpful-vote totals are inconsistent"
+                "unsupported_engagement_shape", "Sephora helpful-vote totals are inconsistent"
             )
         return float(value["positive"])
     return None
@@ -253,6 +257,11 @@ def _candidate_rows(
                 seen.add(cid)
                 engagement = evidence["engagement"]
                 status = engagement.get("status") or "engagement_available"
+                # Mapping-valued engagement has source-specific meaning.  Validate
+                # every admitted row before selection so an unselected or reserved
+                # row cannot silently bypass the source-native shape boundary.
+                if isinstance(engagement.get("raw_value"), Mapping):
+                    _numeric_engagement(engagement["raw_value"], group["engagement_kind"])
                 source_venue, source_venue_basis = _source_venue(
                     group["source_role"], evidence.get("source_ref"), evidence_id
                 )
@@ -323,6 +332,8 @@ def _candidate_rows(
             seen.add(cid)
             engagement = evidence["engagement"]
             status = engagement.get("status") or "engagement_available"
+            if isinstance(engagement.get("raw_value"), Mapping):
+                _numeric_engagement(engagement["raw_value"], group["engagement_kind"])
             meaning = disposition.get("disposition_reason") if isinstance(disposition, dict) else str(disposition)
             source_venue, source_venue_basis = _source_venue(
                 group["source_role"], evidence.get("source_ref"), evidence_id
@@ -564,6 +575,62 @@ def _display_members(members: Sequence[Mapping[str, Any]]) -> list[dict[str, Any
     return displays
 
 
+def _member_display_lanes(row: Mapping[str, Any]) -> set[str]:
+    lanes = {f"relation:{row['relation']}"}
+    if row.get("engagement_material_positive") is False:
+        lanes.add("quiet")
+    if row.get("engagement_status") == "engagement_unavailable":
+        lanes.add("unknown_engagement")
+    lanes.update(f"protected:{lane}" for lane in row.get("protected_lanes", []))
+    return lanes
+
+
+def _required_display_members(
+    members: Sequence[Mapping[str, Any]],
+    required_lanes: Sequence[str],
+    required_candidate_ids: Sequence[str],
+) -> list[dict[str, Any]]:
+    """Return the deterministic minimum rows that make reserved lanes visible.
+
+    Operator-protected candidates are mandatory rows.  At most four ordinary
+    lane requirements remain, so exhaustive combinations over one representative
+    per distinct coverage signature are bounded and prove minimal cardinality.
+    """
+    ordered = sorted((dict(row) for row in members), key=_global_priority)
+    by_id = {row["candidate_id"]: row for row in ordered}
+    try:
+        forced = [by_id[candidate_id] for candidate_id in required_candidate_ids]
+    except KeyError as exc:
+        raise EvidenceConsumerError(
+            "required_display_lane_unavailable",
+            f"protected candidate is absent from its origin: {exc.args[0]}",
+        ) from exc
+    required = set(required_lanes)
+    covered = set().union(*(_member_display_lanes(row) for row in forced)) if forced else set()
+    remaining_lanes = required - covered
+    if not remaining_lanes:
+        return forced
+
+    forced_ids = set(required_candidate_ids)
+    representatives: dict[frozenset[str], dict[str, Any]] = {}
+    for row in ordered:
+        if row["candidate_id"] in forced_ids:
+            continue
+        coverage = frozenset(_member_display_lanes(row) & remaining_lanes)
+        if coverage and coverage not in representatives:
+            representatives[coverage] = row
+    choices = list(representatives.values())
+    for size in range(1, min(len(remaining_lanes), len(choices)) + 1):
+        for chosen in combinations(choices, size):
+            chosen_coverage = set().union(*(_member_display_lanes(row) for row in chosen))
+            if remaining_lanes <= chosen_coverage:
+                return forced + list(chosen)
+    raise EvidenceConsumerError(
+        "required_display_lane_unavailable",
+        f"origin cannot display required lanes: {sorted(remaining_lanes)}",
+    )
+
+
 def _flatten_display_groups(groups: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for group in groups:
@@ -575,12 +642,34 @@ def _flatten_display_groups(groups: Sequence[Mapping[str, Any]]) -> list[dict[st
                     "origin_candidate_count": group["origin_candidate_count"],
                     "origin_relations": group["origin_relations"],
                     "origin_candidate_ids": group["origin_candidate_ids"],
+                    "origin_required_display_lanes": group["required_display_lanes"],
+                    "origin_required_display_candidate_ids": group["required_display_candidate_ids"],
                 }
             )
     return rows
 
 
 def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> list[dict[str, Any]]:
+    protected_wrong_layer = [
+        row["candidate_id"]
+        for row in rows
+        if row.get("protected_lanes") and row.get("layer") != "truth_support"
+    ]
+    if protected_wrong_layer:
+        raise EvidenceConsumerError(
+            "protected_lane_wrong_layer",
+            f"protected evidence is not customer truth evidence: {protected_wrong_layer}",
+        )
+    protected_excluded = [
+        row["candidate_id"]
+        for row in rows
+        if row.get("protected_lanes") and row.get("relation") == "exclude"
+    ]
+    if protected_excluded:
+        raise EvidenceConsumerError(
+            "protected_candidate_excluded",
+            f"protected evidence cannot be excluded from presentation: {protected_excluded}",
+        )
     eligible = [dict(row) for row in rows if row["layer"] == layer and row["relation"] != "exclude"]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in eligible:
@@ -609,34 +698,52 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
                         for lane in row.get("protected_lanes", [])
                     }
                 ),
-                "display_members": _display_members(members),
+                "origin_members": members,
+                "required_display_lanes": [],
+                "required_display_candidate_ids": sorted(
+                    row["candidate_id"] for row in members if row.get("protected_lanes")
+                ),
             }
         )
-    if len(groups) <= cap:
-        selected_groups = sorted(
-            groups, key=lambda row: (row["source_role"], row["source_venue"], _global_priority(row))
-        )
-        return _flatten_display_groups(selected_groups)
 
     selected: list[dict[str, Any]] = []
     selected_origins: set[str] = set()
 
-    def reserve(predicate: Any) -> None:
-        choices = [row for row in groups if row["origin_group_id"] not in selected_origins and predicate(row)]
-        if choices:
-            choice = sorted(choices, key=_global_priority)[0]
-            selected.append(choice)
-            selected_origins.add(choice["origin_group_id"])
+    def add_group(group: dict[str, Any]) -> None:
+        if group["origin_group_id"] not in selected_origins:
+            selected.append(group)
+            selected_origins.add(group["origin_group_id"])
+        if len(selected_origins) > cap:
+            raise EvidenceConsumerError(
+                "presentation_cap_insufficient", "required origin groups exceed cap"
+            )
+
+    def reserve_lane(lane: str, predicate: Any) -> None:
+        eligible_groups = [row for row in groups if predicate(row)]
+        if not eligible_groups:
+            return
+        already_selected = [
+            row for row in eligible_groups if row["origin_group_id"] in selected_origins
+        ]
+        choice = sorted(already_selected or eligible_groups, key=_global_priority)[0]
+        add_group(choice)
+        choice["required_display_lanes"].append(lane)
 
     if layer == "truth_support":
-        reserve(lambda row: "support" in row["origin_relations"])
-        reserve(lambda row: "counter" in row["origin_relations"])
-        reserve(lambda row: row["origin_has_quiet"])
-        reserve(lambda row: row["origin_has_unknown_engagement"])
-        reserve(lambda row: "safety" in row["origin_protected_lanes"])
-        reserve(lambda row: "costly_behavior" in row["origin_protected_lanes"])
-    if len(selected) > cap:
-        raise EvidenceConsumerError("presentation_cap_insufficient", "protected lanes exceed cap")
+        for group in sorted(
+            (row for row in groups if row["origin_protected_lanes"]),
+            key=_global_priority,
+        ):
+            add_group(group)
+            group["required_display_lanes"].extend(
+                f"protected:{lane}" for lane in group["origin_protected_lanes"]
+            )
+        reserve_lane("relation:support", lambda row: "support" in row["origin_relations"])
+        reserve_lane("relation:counter", lambda row: "counter" in row["origin_relations"])
+        reserve_lane("quiet", lambda row: row["origin_has_quiet"])
+        reserve_lane(
+            "unknown_engagement", lambda row: row["origin_has_unknown_engagement"]
+        )
 
     buckets: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in groups:
@@ -653,7 +760,37 @@ def _select_groups(rows: Sequence[Mapping[str, Any]], layer: str, cap: int) -> l
                 row = buckets[key].pop(0)
                 selected.append(row)
                 selected_origins.add(row["origin_group_id"])
-    return _flatten_display_groups(selected)
+    if len(groups) <= cap:
+        for row in sorted(
+            groups,
+            key=lambda group: (
+                group["source_role"],
+                group["source_venue"],
+                _global_priority(group),
+            ),
+        ):
+            add_group(row)
+    for group in selected:
+        if group["required_display_lanes"] or group["required_display_candidate_ids"]:
+            group["display_members"] = _required_display_members(
+                group["origin_members"],
+                group["required_display_lanes"],
+                group["required_display_candidate_ids"],
+            )
+        else:
+            group["display_members"] = _display_members(group["origin_members"])
+        group.pop("origin_members")
+    displayed = _flatten_display_groups(selected)
+    protected_candidate_ids = {
+        row["candidate_id"] for row in eligible if row.get("protected_lanes")
+    }
+    displayed_candidate_ids = {row["candidate_id"] for row in displayed}
+    if not protected_candidate_ids <= displayed_candidate_ids:
+        raise EvidenceConsumerError(
+            "protected_candidate_not_visible",
+            "one or more protected candidates are absent from the display",
+        )
+    return displayed
 
 
 def _validate_relation_response(
@@ -800,6 +937,10 @@ def finalize_quotes(
                 raise EvidenceConsumerError("quote_exactness", "available quote missing")
             if len(quote) > MAX_QUOTE_CHARACTERS:
                 raise EvidenceConsumerError("quote_overlength", "quote exceeds 220 characters")
+            if sum(character.isalnum() for character in quote) < 2:
+                raise EvidenceConsumerError(
+                    "quote_substance", "available quote has fewer than two alphanumeric characters"
+                )
             if quote not in body:
                 raise EvidenceConsumerError("quote_exactness", "quote is not a contiguous exact substring")
         elif status == "quote_unavailable":
@@ -819,6 +960,15 @@ def finalize_quotes(
                 # A reader cannot otherwise tell an absent source body from a
                 # body that was present and yielded no quote.
                 "source_body_present": body is not None,
+                "quote_unavailable_cause": (
+                    None
+                    if status == "quote_available"
+                    else (
+                        "source_body_unavailable"
+                        if body is None
+                        else "no_relevant_exact_quote_returned"
+                    )
+                ),
                 "exact_quote": quote,
                 "normalized_meaning": selected_row["normalized_meaning"],
                 "relation": selected_row["relation"],
@@ -864,6 +1014,7 @@ def finalize_quotes(
             "creator influence is not customer corroboration",
             "an exact quote is verified for exactness only, not for semantic relevance",
             "quote_unavailable with source_body_present true means no quote was produced from an available body",
+            "quote_unavailable_cause names whether the source body was unavailable or returned no relevant exact quote",
         ],
         "model_api_calls": 0,
     }

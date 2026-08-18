@@ -12,6 +12,7 @@ from judgment.phase_a_evidence_selection import (
     _candidate_rows,
     _bucket_priority,
     _numeric_engagement,
+    _select_groups,
     _source_venue,
     finalize_quotes,
     finalize_relations_prepare_quotes,
@@ -357,6 +358,7 @@ def test_missing_body_is_typed_unavailable_and_exact_but_semantically_different_
     row = artifact["source_groups"][0]["rows"][0]
     assert row["quote_status"] == "quote_unavailable"
     assert row["source_body_present"] is False
+    assert row["quote_unavailable_cause"] == "source_body_unavailable"
     assert row["normalized_meaning"]
 
 
@@ -375,6 +377,7 @@ def test_quote_unavailable_from_an_available_body_is_distinguishable_from_a_miss
     row = artifact["source_groups"][0]["rows"][0]
     assert row["quote_status"] == "quote_unavailable"
     assert row["source_body_present"] is True
+    assert row["quote_unavailable_cause"] == "no_relevant_exact_quote_returned"
 
 
 def test_source_native_ellipsis_is_preserved_when_the_quote_is_exact(tmp_path: Path) -> None:
@@ -395,7 +398,9 @@ def test_source_native_ellipsis_is_preserved_when_the_quote_is_exact(tmp_path: P
         ]
     }
     artifact = finalize_quotes(quote_manifest, sources, response)
-    assert artifact["source_groups"][0]["rows"][0]["exact_quote"] == response["quotes"][0]["exact_quote"]
+    output_row = artifact["source_groups"][0]["rows"][0]
+    assert output_row["exact_quote"] == response["quotes"][0]["exact_quote"]
+    assert output_row["quote_unavailable_cause"] is None
 
 
 def test_sephora_positive_helpful_votes_rank_inside_only_the_sephora_bucket() -> None:
@@ -410,7 +415,21 @@ def test_sephora_positive_helpful_votes_rank_inside_only_the_sephora_bucket() ->
     assert _bucket_priority(higher) < _bucket_priority(lower)
     with pytest.raises(EvidenceConsumerError) as caught:
         _bucket_priority({**higher, "engagement_raw_value": {"negative": 6, "positive": 30, "total": 35}})
-    assert caught.value.boundary == "missing_engagement"
+    assert caught.value.boundary == "unsupported_engagement_shape"
+
+
+def test_unknown_mapping_engagement_fails_during_candidate_admission(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    evidence_row = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0]
+    evidence_row[9][1] = {"likes": 50}
+    packet = sources[0]["packet"]
+    packet["packet_sha256"] = _canonical_hash(
+        {key: value for key, value in packet.items() if key != "packet_sha256"}
+    )
+    sources[0]["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _candidate_rows(sources, spec)
+    assert caught.value.boundary == "unsupported_engagement_shape"
 
 
 def test_known_host_variants_group_under_one_source_venue() -> None:
@@ -541,6 +560,116 @@ def test_same_origin_distinct_relation_is_one_capped_group_with_two_visible_cand
     _, _, quote_manifest = finalize_relations_prepare_quotes(manifest, sources, response)
     assert len({row["origin_group_id"] for row in quote_manifest["selected_rows"]}) == 1
     assert len(quote_manifest["selected_rows"]) == 2
+
+
+def _selection_row(
+    candidate_id: str,
+    *,
+    origin: str = "origin:shared",
+    relation: str = "support",
+    material_positive: bool | None = True,
+    protected_lanes: list[str] | None = None,
+    engagement_status: str = "engagement_available",
+) -> dict:
+    return {
+        "candidate_id": candidate_id,
+        "layer": "truth_support",
+        "relation": relation,
+        "reason_code": "test",
+        "scoped_independence_key": origin,
+        "source_role": "community_post",
+        "source_venue": "reddit",
+        "engagement_kind": "reddit_points",
+        "engagement_raw_value": 10,
+        "engagement_material_positive": material_positive,
+        "engagement_status": engagement_status,
+        "conditions": [],
+        "protected_lanes": protected_lanes or [],
+    }
+
+
+def test_same_origin_support_counter_and_quiet_reservations_display_three_rows_under_cap() -> None:
+    rows = [
+        _selection_row("support", relation="support"),
+        _selection_row("counter", relation="counter"),
+        _selection_row("quiet", relation="adjacent", material_positive=False),
+    ]
+    selected = _select_groups(rows, "truth_support", 10)
+    assert {row["candidate_id"] for row in selected} == {"support", "counter", "quiet"}
+    assert {"relation:support", "relation:counter", "quiet"} <= set(
+        selected[0]["origin_required_display_lanes"]
+    )
+
+
+def test_under_cap_reservation_does_not_hide_counter_behind_quiet_row() -> None:
+    rows = [
+        _selection_row("a_support", relation="support"),
+        _selection_row("b_quiet", relation="adjacent", material_positive=False),
+        _selection_row("z_counter", relation="counter"),
+    ]
+    selected = _select_groups(rows, "truth_support", 10)
+    assert "z_counter" in {row["candidate_id"] for row in selected}
+
+
+def test_more_than_ten_protected_origins_fails_the_origin_cap() -> None:
+    rows = [
+        _selection_row(
+            f"protected:{index}",
+            origin=f"origin:{index}",
+            protected_lanes=["safety"],
+        )
+        for index in range(11)
+    ]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _select_groups(rows, "truth_support", 10)
+    assert caught.value.boundary == "presentation_cap_insufficient"
+
+
+def test_every_operator_protected_candidate_and_origin_is_visible() -> None:
+    rows = [
+        _selection_row("safety:a", origin="origin:a", protected_lanes=["safety"]),
+        _selection_row("safety:b", origin="origin:b", protected_lanes=["safety"]),
+        _selection_row(
+            "costly:b", origin="origin:b", relation="counter", protected_lanes=["costly_behavior"]
+        ),
+        _selection_row("ordinary", origin="origin:c"),
+    ]
+    selected = _select_groups(rows, "truth_support", 10)
+    protected = {"safety:a", "safety:b", "costly:b"}
+    assert protected <= {row["candidate_id"] for row in selected}
+    assert {"origin:a", "origin:b"} <= {row["origin_group_id"] for row in selected}
+
+
+@pytest.mark.parametrize("quote", [" ", "!", "a", "💄"])
+def test_available_quote_requires_two_unicode_alphanumeric_characters(
+    tmp_path: Path, quote: str
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = f"before {quote} after"
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0]["exact_quote"] = quote
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(quote_manifest, sources, response)
+    assert caught.value.boundary == "quote_substance"
+
+
+def test_two_character_exact_quote_is_allowed_without_a_lexical_relevance_gate(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "The exact answer was no."
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0]["exact_quote"] = "no"
+    artifact = finalize_quotes(quote_manifest, sources, response)
+    assert artifact["source_groups"][0]["rows"][0]["exact_quote"] == "no"
 
 
 def test_runner_three_stage_round_trip_is_deterministic_and_no_provider(tmp_path: Path) -> None:

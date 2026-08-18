@@ -829,23 +829,31 @@ inventory hash remain in the completed artifact, including rows not displayed.
 
 Presentation caps independent origins, not underlying evidence: at most ten
 customer truth-support origin groups and three creator-influence origin groups.
-When origins exceed the cap the selector reserves one origin group each for
-support, counter, a quiet item, unavailable engagement, and explicitly nominated
-safety or costly-behavior lanes before filling remaining slots by
-source-role/venue/metric round robin. That reservation is origin-level: which
-one or two rows a reserved group displays is decided independently, so a group
-reserved for a lane may display no row of that lane. Lane visibility in the
-displayed set is therefore not guaranteed; the complete disposition inventory,
-not the display, is the accounting record.
+Every explicitly nominated safety or costly-behavior origin is selected first;
+if those origins alone exceed ten, selection fails
+`presentation_cap_insufficient`. The selector then reserves one visible support,
+counter, quiet, and unavailable-engagement lane when each exists, satisfying a
+lane from an already-selected origin when possible before adding another origin.
+The cap check follows every addition and applies even when the total candidate
+origin count is below ten. Each reserved origin records its required display
+lanes, and the display contains the deterministic minimum member rows that cover
+them. This permits three or more rows from one origin when separate rows are
+needed for support, counter, and quiet lanes. Every operator-protected row is
+visible or selection fails closed. Unreserved origins retain the compact
+representative-plus-distinct-row behavior. The complete disposition inventory
+remains the accounting record for displayed and undisplayed candidates.
 Engagement orders rows only inside one source-native venue/role/metric bucket;
 its literal stored value remains unchanged and there is no cross-platform
 score. Venue is normalized per publisher across host variants and short links,
 so one publisher cannot split into several display sections or ordering
 buckets. A source-native value the runtime cannot read as a whole number — an
 abbreviated or group-separated count — is treated as uncomparable and ordered
-last rather than partially parsed. A distinct relation or condition from the
-same origin may receive a second displayed quote without consuming a second
-origin slot. Creator-authored material is influence context and is
+last rather than partially parsed. Mapping-valued engagement is accepted only
+for an exactly recognized source-native engagement kind and shape; any other
+mapping fails `unsupported_engagement_shape` rather than becoming an unknown or
+generic score. A distinct relation or condition from the same origin may
+receive another displayed quote without consuming another origin slot.
+Creator-authored material is influence context and is
 deterministically barred from customer support or counter relations; qualified
 creator-audience comments retain their customer role.
 
@@ -856,11 +864,14 @@ the packet's bundle hash to its literal evidence ID, requires exact
 source-artifact and source-ref equality, and rejects a body whose hash differs
 from the one the quote manifest recorded. An available quote must be one
 contiguous source substring of no more than 220 characters, with no inserted
-ellipsis or rewriting; no minimum length or substance is enforced. A typed
-`quote_unavailable` covers two distinct cases — no source body, and a source
-body that yielded no quote — so each displayed row records
-`source_body_present` and the source-owned normalized meaning remains either
-way. Exactness does not prove semantic relevance; that remains a
+ellipsis or rewriting, and must contain at least two Unicode alphanumeric
+characters. No lexical-overlap relevance rule is applied. A typed
+`quote_unavailable` covers two distinct cases: no source body yields
+`source_body_unavailable`, while a present body with no returned exact relevant
+quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null
+cause. Each displayed row also records `source_body_present`, and the
+source-owned normalized meaning remains in all cases. Exactness does not prove
+semantic relevance; that remains a
 quality-adjudication obligation outside the deterministic runtime. Both
 prepare/finalize stages make zero provider calls and are deterministic and
 idempotent.
