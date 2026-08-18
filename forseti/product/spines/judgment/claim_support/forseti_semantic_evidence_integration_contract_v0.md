@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v39
+version: v40
 effective_date: 2026-08-18
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v39
+# Semantic Evidence Integration Contract v40
 
 ## Purpose
 
@@ -891,6 +891,25 @@ quality-adjudication obligation outside the deterministic runtime. Both
 prepare/finalize stages make zero provider calls and are deterministic and
 idempotent.
 
+Contract v40 clarifies value evidence without changing packet v3 or the
+selection schema. Candidate admission for a value axis is direction-neutral:
+the consumer admits the relevant positive and negative evidence before an
+external response relates each row to the bounded claim. `support` and
+`counter` are claim-relative labels, not permanent sentiment or commercial
+value labels. A customer may say the price feels high while also showing
+willingness to pay through purchase or repurchase. For a bounded poor-value
+claim, that behavior is counterevidence and may be described in plain-language
+presentation as a positive willingness-to-pay or value signal; it does not by
+itself prove good value, prevalence, or commercial pull.
+
+Atomic source meanings remain separately traceable. Presentation may group
+same-evidence, same-actor, same-action, same-direction meanings into one
+lossless statement — for example, an intention to repurchase Vanilla and
+Vanilla Beige — while retaining every underlying semantic-unit reference,
+named object, condition, exact quote, and provenance. It must not group across
+independent origins, erase a conflicting clause, or turn shade-specific
+repurchase into an unqualified general repurchase claim.
+
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
 strategy. Uncertainty remains a separate dimension. The compiler never turns
@@ -1322,6 +1341,17 @@ new frontier.
 
 ## Changelog
 
+- `v40` / 2026-08-18 — made the value-context correction explicit. Value-axis
+  admission is direction-neutral; relation labels remain relative to the
+  bounded claim; price discomfort is distinct from poor value; and
+  purchase/repurchase despite price may be presented as a positive
+  willingness-to-pay signal while countering a poor-value claim. Allowed
+  lossless display grouping of same-evidence same-action meanings while keeping
+  their atomic semantic refs and provenance. This records the regression lesson
+  exposed by the 204-point repurchase comment and the multi-purchase “cute, I
+  can't not” comment: do not clip or isolate the price clause from the behavior
+  that changes its commercial meaning. Added no value score, prevalence claim,
+  commercial-pull score, packet version, or provider call.
 - `v39` / 2026-08-18 — added the optional hash-bound Phase A
   selection-and-exact-quote consumer. It accounts for every axis- or
   literal-ref-admitted candidate before capping source-grouped presentation,

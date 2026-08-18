@@ -272,6 +272,22 @@ same-source purchase or repurchase intent. For value work, bind `price feels
 high` separately from `not worth it`, and nominate an evidence item that records
 purchase, repurchase, switching, return, or abandonment under the existing
 `costly_behavior` protection when that behavior changes the commercial reading.
+Candidate admission remains direction-neutral: admit the relevant positive and
+negative value evidence before assigning claim-relative support or counter.
+Do not search for complaints first and then treat the surviving set as the
+answer. A relation label describes how the row bears on the bounded claim; it
+is not a permanent positive/negative label. Thus purchase or repurchase despite
+price discomfort counters a poor-value claim and may be presented as a positive
+willingness-to-pay or value signal, without claiming prevalence, commercial
+pull, or that the product is objectively good value.
+
+Keep atomic semantic meanings and their refs separately recorded. In the
+presentation layer, meanings from the same evidence item may be grouped when
+they have the same actor, action, direction, and conditions. For example,
+separate shade meanings may display as “intends to repurchase Vanilla and
+Vanilla Beige” while both semantic refs and named shades remain underneath one
+origin and one exact quote. Never group across origins, hide a conflicting
+clause, or broaden a shade-specific behavior into general repurchase.
 The cap applies to displayed independent-origin
 groups: ten customer truth groups and three creator-influence groups. Source
 roles and retailer venues remain visible, with each publisher normalized to one
@@ -313,6 +329,15 @@ case. The completed artifact retains every candidate disposition
 and the full candidate-inventory hash, including Amazon or Revolve rows that did
 not earn a display slot. Repository runners emit prompts and schemas but make
 zero provider calls.
+
+Regression note: the exact short comment “Do I cringe a little every time I
+remember the price tag? Yes. Will I be repurchasing vanilla AND vanilla beige?
+Also yes.” must remain one context-complete quote. The exact comment “They are
+kind of expensive for what they are, but the packaging is just so cute I can't
+not.” likewise carries price resistance and purchase behavior together. In
+both cases, extracting only the price clause reverses or materially weakens the
+commercial reading. Weak zero-engagement complaints remain accounted but do
+not displace a materially engaged or protected counter merely to fill a lane.
 
 ## Evidence-family boundary
 
