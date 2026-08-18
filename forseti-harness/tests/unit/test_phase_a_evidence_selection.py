@@ -840,6 +840,65 @@ def test_a_value_axis_spec_turns_on_the_value_prompt_and_schema_at_the_real_entr
     assert "anyOf" not in non_value_schema["properties"]["results"]["items"]
 
 
+def test_explicit_only_value_refs_turn_on_value_policy_without_admitting_the_whole_axis(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _value_axis_source(tmp_path, count=3)
+    all_candidates = _candidate_rows(sources, spec)
+    admitted = all_candidates[:2]
+    spec["axis_ids"] = []
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": candidate["source_id"],
+            "semantic_unit_ref": candidate["semantic_unit_ref"],
+        }
+        for candidate in admitted
+    ]
+
+    prompt, schema, manifest = prepare_evidence_selection(spec, sources)
+    assert manifest["candidate_count"] == 2
+    assert "VALUE-BOX POLICY" in prompt
+    assert "anyOf" in schema["properties"]["results"]["items"]
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(
+            manifest,
+            sources,
+            _relation_response(_candidate_rows(sources, manifest["spec"])),
+        )
+    assert caught.value.boundary == "value_reason_code"
+
+
+def test_mixed_explicit_refs_do_not_inherit_value_only_policy(tmp_path: Path) -> None:
+    spec, sources = _value_axis_source(tmp_path, count=2)
+    packet = sources[0]["packet"]
+    semantic_rows = [
+        semantic
+        for group in packet["source_groups"]
+        for evidence in group["evidence_rows"]
+        for semantic in evidence[-1]
+    ]
+    semantic_rows[1][7] = ["hydration_and_moisture"]
+    _reseal(sources[0])
+    explicit_candidates = _candidate_rows(sources, spec)
+    # The axis spec now admits only the remaining value row; explicitly nominate
+    # both rows to form the mixed bounded set.
+    hydration_ref = semantic_rows[1][0]
+    spec["axis_ids"] = []
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": "full-corpus",
+            "semantic_unit_ref": explicit_candidates[0]["semantic_unit_ref"],
+        },
+        {"source_id": "full-corpus", "semantic_unit_ref": hydration_ref},
+    ]
+
+    prompt, schema, manifest = prepare_evidence_selection(spec, sources)
+    assert manifest["candidate_count"] == 2
+    assert "VALUE-BOX POLICY" not in prompt
+    assert "anyOf" not in schema["properties"]["results"]["items"]
+
+
 def test_a_value_axis_spec_keeps_a_highly_engaged_adjacent_row_out_of_the_displayed_box(
     tmp_path: Path,
 ) -> None:

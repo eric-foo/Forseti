@@ -172,13 +172,23 @@ def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
-def _uses_value_policy(spec: Mapping[str, Any]) -> bool:
+def _uses_value_policy(
+    spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]] | None = None
+) -> bool:
     axis_ids = spec.get("axis_ids")
-    return isinstance(axis_ids, list) and set(axis_ids) == {VALUE_AXIS_ID}
+    if not isinstance(axis_ids, list):
+        return False
+    if set(axis_ids) == {VALUE_AXIS_ID}:
+        return True
+    if axis_ids or not candidates:
+        return False
+    return all(VALUE_AXIS_ID in set(row.get("axis_ids") or []) for row in candidates)
 
 
-def _policy_guidance(spec: Mapping[str, Any]) -> str:
-    if not _uses_value_policy(spec):
+def _policy_guidance(
+    spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]] | None = None
+) -> str:
+    if not _uses_value_policy(spec, candidates):
         return ""
     grouped = "; ".join(
         f"{relation}=[{', '.join(sorted(code for code, lane in VALUE_REASON_RELATIONS.items() if lane == relation))}]"
@@ -626,9 +636,9 @@ def prepare_evidence_selection(
         "bounded_claim": spec["bounded_claim"],
         "candidates": candidates,
     }
-    value_policy = _uses_value_policy(spec)
+    value_policy = _uses_value_policy(spec, candidates)
     prompt = RELATION_PROMPT.format(
-        policy_guidance=_policy_guidance(spec), envelope=_compact(envelope)
+        policy_guidance=_policy_guidance(spec, candidates), envelope=_compact(envelope)
     )
     schema = _relation_schema(value_policy=value_policy)
     inventory_sha = _canonical_json_sha256(candidates)
@@ -1316,7 +1326,7 @@ def finalize_relations_prepare_quotes(
     manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     candidates = _candidate_rows(sources, manifest["spec"])
-    value_policy = _uses_value_policy(manifest["spec"])
+    value_policy = _uses_value_policy(manifest["spec"], candidates)
     labeled = _validate_relation_response(
         candidates, response, value_policy=value_policy
     )
