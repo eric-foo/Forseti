@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v50
+version: v51
 effective_date: 2026-08-20
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v50
+# Semantic Evidence Integration Contract v51
 
 ## Purpose
 
@@ -947,7 +947,17 @@ A generic batched display label is never semantic authority for quote choice.
 For a long source body, the returned exact substring must directly express the
 source-owned normalized meaning or a material same-evidence companion
 qualification. A relation-derived label alone cannot make an irrelevant
-substring acceptable.
+substring acceptable. The exact span must not start with an unresolved pronoun
+when nearby preceding text names its antecedent and the combined span fits.
+Product identity may still rely on the evidence row; this pronoun rule does not
+require an otherwise exact, relevant span to repeat it. Quote selection must
+prefer a context-complete span over the shortest matching phrase and directly
+substantiate every material outcome, direction, comparator, formula
+distinction, and usage or timing condition in the normalized meaning. It must
+retain a nearby material qualification and cannot stop mid-phrase. It may
+return unavailable only after checking that no one span within 220 characters
+supports the complete normalized meaning; optional non-reversing context need
+not fit.
 
 Contract v40 clarifies value evidence without changing packet v3 or the
 selection schema. Candidate admission for a value axis is direction-neutral:
@@ -1497,6 +1507,16 @@ new frontier.
 
 ## Changelog
 
+- `v51` / 2026-08-20 — prohibited a long exact-quote span from starting with an
+  unresolved pronoun when the nearby antecedent fits under the existing
+  220-character ceiling. Product identity may still rely on the evidence row,
+  avoiding the broader rejected rule that made seven usable hydration quotes
+  unavailable. Also required the selected span to substantiate every material
+  component of the normalized meaning, retain nearby qualifications, and avoid
+  mid-phrase clipping after both mirrored fresh-pack judges rejected shorter
+  but materially incomplete spans. This closes the observed quote-quality
+  near-misses without changing packet v3, source facts, relation transport, or
+  selection.
 - `v50` / 2026-08-20 — closed the returned cross-vendor batching review. Each
   batched response now carries its required single-valued batch identity, and a
   v5 quote manifest binds the actual relation batch manifest plus every

@@ -393,6 +393,12 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     assert any(group["group_key"].endswith("::amazon") for group in artifact["source_groups"])
     assert "every candidate_id exactly once" in prompt
     assert "contiguous exact substring" in quote_prompt
+    assert "Do not start the quote with an unresolved pronoun" in quote_prompt
+    assert "Product identity may rely on the evidence row" in quote_prompt
+    assert "every material component" in quote_prompt
+    assert "Do not optimize for brevity" in quote_prompt
+    assert "silently locate the source wording" in quote_prompt
+    assert "optional non-reversing context is not enough" in quote_prompt
     assert schema["required"] == ["results"]
     assert quote_schema["required"] == ["quotes"]
 

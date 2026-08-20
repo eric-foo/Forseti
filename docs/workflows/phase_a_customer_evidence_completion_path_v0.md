@@ -433,6 +433,16 @@ same-evidence companion meanings. The label is presentation metadata only: a
 returned long-source substring must directly express the normalized meaning or
 a material companion qualification, or be `quote_unavailable`; a generic
 batched relation label cannot make an irrelevant substring acceptable. An
+exact span must not start with an unresolved pronoun when nearby preceding text
+names its antecedent and the combined span fits. Product identity may still
+come from the evidence row; the pronoun rule does not require every otherwise
+relevant quote to repeat it. The quote is context-complete rather than merely
+short: it must substantiate every material outcome, direction, comparator,
+formula distinction, and usage or timing condition in the normalized meaning,
+retain a nearby material qualification, and never stop mid-phrase. It may
+return unavailable only after checking that no one span within 220 characters
+supports the complete normalized meaning; optional non-reversing context need
+not fit. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. For
