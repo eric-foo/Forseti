@@ -438,7 +438,53 @@ total is descriptive provider-output variation, not a concurrency token-saving
 claim. Both mirrored blind orderings preferred the corrected parallel artifact
 to the prior accepted pack. The receipt separately discloses 408,351 logical
 tokens across twelve rejected-attempt and judge calls; those are experiment
-overhead, not production-arm economics.
+overhead, not production-arm economics. The receipt's `payload_sha256` is
+sha256 over insertion-order compact JSON of the payload, not the repository's
+sorted-key `_canonical_json_sha256`; re-derive it that way or a correct receipt
+reads as tampered.
+
+The cross-vendor review of that proof measured three facts the arm totals above
+do not show, and they are carried here rather than left to the receipt's single
+"changed one selected origin" sentence.
+
+First, the two arms disagreed on the relation label for 56 of 836 candidates
+(6.7%) despite byte-identical relation prompts and schemas, including eight
+direct support/counter polarity flips. One flip reached the displayed pack:
+`reddit:1apzs1v:post::batch-0463-unit-0002` carries an identical normalized
+meaning and an identical exact quote in both arms, shown as "Matching customer
+experience" in the parallel arm and "Differing customer experience" in the
+serial arm. Nothing deterministic can detect this, because in positional mode
+the reason code is derived from the returned relation and therefore always
+agrees with it. Relation labeling, not origin selection, is the least stable
+part of this pipeline; treat a repeated selection as evidence of transport
+identity, never of relation stability.
+
+Second, `seventeen exact quotes, zero unavailable` counts exactness and
+availability, which deterministic code already enforces. It is not a measure of
+the context-completeness the v51 contract requires. Measured against that rule,
+the final one-call prompt returned 13 of 13 conforming long-body spans in the
+parallel arm and 10 of 13 in the serial arm: three serial spans stop mid-phrase
+(`…pricey lip balms in`, `…better in this bitter`, `…the very cold winter`), and
+the second of those also drops the "bitter cold" condition its own normalized
+meaning names. The 220-character ceiling can make start-completeness and
+component-completeness jointly unsatisfiable — that same Amazon row needs 222
+characters to keep both — and the contract states no precedence, so the adopted
+parallel span resolves it by beginning headless (`have tried glossy products…`).
+
+Third, both mirrored judges preferred the parallel artifact, but a blind
+preference does not waive an objective omission. Two flagged against the winner
+stand: the Pink Sugar span omits a nearby same-source contrast that fits at 204
+characters, and the reformulation span omits the reviewer's explicit
+recommendation. The second is a genuine ceiling residual — carrying both the
+old-formula baseline and the recommendation needs 312 characters — while the
+first is unused budget. Note also that the judges compared the parallel arm to
+the prior accepted pack, never to the serial arm; the choice of parallel over
+serial rests on measured latency, not on adjudicated quality.
+
+Of the 47.491% observed latency reduction, 46.528 points are attributable to
+concurrency and 0.963 points to net per-call provider variance; concurrency
+accounts for 98% of the saving, and the residual variance is why the figure is
+reported as observed rather than as a concurrency guarantee.
 
 The quote stage reads bodies only for selected display rows. Bodies of at most
 220 characters are copied in full by deterministic code, and absent bodies are
