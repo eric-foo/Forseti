@@ -846,7 +846,10 @@ improved on ten, while twenty was not preferred to fifteen.
 Every explicitly nominated safety or costly-behavior origin is selected first;
 if those origins alone exceed the bound customer cap, selection fails
 `presentation_cap_insufficient`. The selector then reserves support and counter
-only from materially positive or explicitly protected evidence. Unprotected
+only from materially positive or explicitly protected evidence; that reservation
+is subject to the same cap check, so a protected set that fits the cap only until
+the support and counter lanes are reserved also fails
+`presentation_cap_insufficient` rather than dropping a required origin. Unprotected
 zero, quiet, and engagement-unavailable rows remain accounted but are not forced
 into the main display to fill a lane or venue. When no materially positive or
 protected counter exists, no counter is displayed. The cap check follows every
@@ -900,16 +903,36 @@ idempotent.
 
 For a large non-value selection, positional relation transport may be split
 into hash-bound batches of at most 300 candidates. Each response is an object
-whose required named `row_NNNN` properties map to the zero-based candidate
+carrying the required single-valued `batch_id` of the batch it answers, plus
+required named `row_NNNN` properties that map to the zero-based candidate
 positions in that batch and whose values are only support, counter, adjacent,
 or exclude. It repeats neither candidate IDs nor free-text reason codes.
-Finalization validates the batch-manifest hash, source and candidate hashes,
-the exact batch set, contiguous complete coverage, and the exact required row
-key set before deterministically reattaching literal candidate identities and
-ordinary non-value reason labels. Any missing or foreign batch or row fails
-closed before presentation selection. This transport changes neither semantic
-admission nor relation authority and is unavailable for value selections,
+Because row keys restart at `row_0000` in every batch, `batch_id` is what makes
+a response answerable by exactly one batch: without it two same-size batches
+would share one schema and one interchangeable response, and a transposed or
+stale response would finalize with complete-looking coverage and systematically
+wrong relations. Finalization validates the batch-manifest hash, source and
+candidate hashes, the exact batch set, contiguous complete coverage, each
+response's own batch identity, and the exact required row key set before
+deterministically reattaching literal candidate identities. Any missing,
+foreign, or wrong-batch response, and any missing or foreign row, fails closed
+before presentation selection.
+
+Positional transport buys that failure visibility by giving up the
+model-authored reason code. A batched row therefore carries a reason label
+derived deterministically from its relation alone — one fixed label per
+relation — not a code naming the evidence meaning. That label is the relation
+restated, so a batched pack's row labels distinguish relations but not
+meanings, and any consumer that reads a reason code or display label as source
+meaning is reading a weaker signal than the literal-ID path supplies. Relation
+authority, semantic admission, candidate identity, and the exact-quote
+requirement are unchanged. The transport is unavailable for value selections,
 whose relation-aligned vocabulary remains literal-ID based.
+
+Policy guidance is a property of the whole selection, not of a transport slice:
+every batch prompt carries the guidance derived from the complete admitted
+candidate inventory, so a batch cannot acquire a policy lane the selection as a
+whole rejected.
 
 Contract v40 clarifies value evidence without changing packet v3 or the
 selection schema. Candidate admission for a value axis is direction-neutral:
@@ -1462,11 +1485,14 @@ new frontier.
 - `v49` / 2026-08-20 — kept ten customer origins as the presentation default
   while allowing an explicit one-through-twenty cap; the measured full-axis
   hydration pack binds fifteen because fifteen beat ten and twenty did not beat
-  fifteen. Added hash-bound non-value relation batching with at most 300
-  candidates and required named row slots, so a truncated long response fails
-  before selection and candidate IDs and facts remain deterministic. Value
-  selection, packet v3, creator separation, and cross-platform engagement
-  boundaries are unchanged.
+  fifteen, on a same-vendor mirrored judge. Added hash-bound non-value relation
+  batching with at most 300 candidates, required named row slots, and a required
+  single-valued `batch_id` per response, so a truncated long response fails
+  before selection, a transposed or stale batch response fails before selection,
+  and candidate IDs and facts remain deterministic. Recorded that a batched row's
+  reason label is derived from its relation and is therefore not a source-meaning
+  code. Value selection, packet v3, creator separation, and cross-platform
+  engagement boundaries are unchanged.
 - `v48` / 2026-08-18 — corrected completed-use handling and chronology. Time to
   finish or pan is no longer quantity-efficiency/value evidence by itself; an
   explicit same-source repurchase remains direct repurchase intent. Longer-body

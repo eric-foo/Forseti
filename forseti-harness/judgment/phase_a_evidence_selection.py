@@ -161,6 +161,7 @@ VALUE_COUNTER_PRIORITY = {
 
 LITERAL_RELATION_RESPONSE_INSTRUCTION = "Return every candidate_id exactly once and in the supplied order."
 POSITIONAL_RELATION_RESPONSE_INSTRUCTION = "Return one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN. Do not return candidate IDs, row numbers, or reason codes."
+BATCHED_RELATION_RESPONSE_INSTRUCTION = "Return the batch_id shown in the envelope exactly as supplied, and one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN within this batch only. Do not return candidate IDs, row numbers, or reason codes."
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
@@ -215,7 +216,10 @@ def _compact_companion_meanings(row: Mapping[str, Any]) -> list[list[Any]]:
 
 
 def _relation_prompt_envelope(
-    spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]]
+    spec: Mapping[str, Any],
+    candidates: Sequence[Mapping[str, Any]],
+    *,
+    batch_id: str | None = None,
 ) -> dict[str, Any]:
     rows = []
     for candidate in candidates:
@@ -224,12 +228,15 @@ def _relation_prompt_envelope(
             candidate
         )
         rows.append([projected.get(column) for column in RELATION_PROMPT_COLUMNS])
-    return {
+    envelope = {
         "selection_id": spec["selection_id"],
         "bounded_claim": spec["bounded_claim"],
         "candidate_columns": list(RELATION_PROMPT_COLUMNS),
         "candidate_rows": rows,
     }
+    if batch_id is not None:
+        envelope["batch_id"] = batch_id
+    return envelope
 
 
 def _uses_value_policy(
@@ -764,8 +771,11 @@ def _relation_schema(
     value_policy: bool = False,
     response_mode: str = "literal_ids",
     candidate_count: int | None = None,
+    batch_id: str | None = None,
 ) -> dict[str, Any]:
     positional = response_mode == "positional"
+    if batch_id is not None and not positional:
+        raise ValueError("only a positional relation schema can bind a batch id")
     if positional:
         if candidate_count is None or candidate_count < 1:
             raise ValueError("positional relation schema needs a candidate count")
@@ -778,10 +788,19 @@ def _relation_schema(
             "required": row_keys,
             "additionalProperties": False,
         }
+        properties: dict[str, Any] = {"results_by_candidate_row": positional_relations}
+        required = ["results_by_candidate_row"]
+        if batch_id is not None:
+            # Row keys restart at row_0000 in every batch, so two same-size
+            # batches would otherwise share one byte-identical schema and one
+            # interchangeable response.  A single-value batch_id makes each
+            # response answerable by exactly one batch.
+            properties["batch_id"] = {"type": "string", "enum": [batch_id]}
+            required.append("batch_id")
         return {
             "type": "object",
-            "properties": {"results_by_candidate_row": positional_relations},
-            "required": ["results_by_candidate_row"],
+            "properties": properties,
+            "required": required,
             "additionalProperties": False,
         }
 
@@ -801,18 +820,14 @@ def _relation_schema(
                 for code, expected_relation in VALUE_REASON_RELATIONS.items()
                 if expected_relation == relation
             )
-        properties: dict[str, Any] = {"relation": relation_schema}
-        required = ["relation"]
-        properties = {
-            "candidate_id": {"type": "string"},
-            **properties,
-            "reason_code": reason_schema,
-        }
-        required = ["candidate_id", *required, "reason_code"]
         return {
             "type": "object",
-            "properties": properties,
-            "required": required,
+            "properties": {
+                "candidate_id": {"type": "string"},
+                "relation": relation_schema,
+                "reason_code": reason_schema,
+            },
+            "required": ["candidate_id", "relation", "reason_code"],
             "additionalProperties": False,
         }
 
@@ -967,21 +982,27 @@ def prepare_evidence_selection_batches(
         )
     prompts_and_schemas: list[tuple[str, dict[str, Any]]] = []
     batches = []
+    # Policy guidance is a property of the whole selection, not of whichever
+    # rows land in one batch: deriving it per subset would let a batch that
+    # happens to hold only value-axis rows carry value-box guidance the run as
+    # a whole rejected.
+    policy_guidance = _policy_guidance(spec, candidates)
     for batch_index, start in enumerate(range(0, len(candidates), batch_size), start=1):
         subset = candidates[start : start + batch_size]
-        envelope = _relation_prompt_envelope(spec, subset)
+        batch_id = f"batch_{batch_index:04d}"
+        envelope = _relation_prompt_envelope(spec, subset, batch_id=batch_id)
         prompt = RELATION_PROMPT.format(
-            response_instruction=POSITIONAL_RELATION_RESPONSE_INSTRUCTION,
+            response_instruction=BATCHED_RELATION_RESPONSE_INSTRUCTION,
             reason_instruction="",
-            policy_guidance=_policy_guidance(spec, subset),
+            policy_guidance=policy_guidance,
             envelope=_compact(envelope),
         )
         schema = _relation_schema(
             value_policy=False,
             response_mode="positional",
             candidate_count=len(subset),
+            batch_id=batch_id,
         )
-        batch_id = f"batch_{batch_index:04d}"
         batches.append(
             {
                 "batch_id": batch_id,
@@ -1606,15 +1627,22 @@ def _validate_relation_response(
     *,
     value_policy: bool = False,
     response_mode: str = "literal_ids",
+    batch_id: str | None = None,
 ) -> list[dict[str, Any]]:
     expected = [row["candidate_id"] for row in candidates]
     if response_mode == "positional":
         response_key = "results_by_candidate_row"
-        if set(response) != {response_key} or not isinstance(
+        expected_keys = {response_key} if batch_id is None else {response_key, "batch_id"}
+        if set(response) != expected_keys or not isinstance(
             response.get(response_key), dict
         ):
             raise EvidenceConsumerError(
                 "relation_response_shape", "positional results missing"
+            )
+        if batch_id is not None and response.get("batch_id") != batch_id:
+            raise EvidenceConsumerError(
+                "relation_batch_identity",
+                "relation response does not carry the batch identity it answers",
             )
         positional_results = response[response_key]
         expected_row_keys = [f"row_{index:04d}" for index in range(len(expected))]
@@ -1625,6 +1653,10 @@ def _validate_relation_response(
         results = []
         for candidate_id, row_key in zip(expected, expected_row_keys, strict=True):
             relation = positional_results[row_key]
+            if not isinstance(relation, str):
+                raise EvidenceConsumerError(
+                    "relation_response_shape", "invalid relation result"
+                )
             results.append(
                 {
                     "candidate_id": candidate_id,
@@ -1910,6 +1942,7 @@ def finalize_batched_relations_prepare_quotes(
             responses[batch_id],
             value_policy=False,
             response_mode="positional",
+            batch_id=batch_id,
         )
         full_results.update(
             {

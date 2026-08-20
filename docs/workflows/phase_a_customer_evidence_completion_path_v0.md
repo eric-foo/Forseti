@@ -325,7 +325,8 @@ is ordered last rather than partially parsed. An unrecognized mapping-valued
 engagement shape fails closed rather than becoming an unknown value or generic
 score. Every nominated safety or costly-behavior origin is selected first; more
 such customer origins than the selection's bound cap fails
-`presentation_cap_insufficient`. For
+`presentation_cap_insufficient`, as does a protected set that fits the cap only
+until the support and counter lanes are reserved. For
 non-value selections, the selector then reserves visible support and counter
 only from materially positive or explicitly protected evidence. A value-only
 selection instead fills materially positive support origins first, prioritizing
@@ -370,27 +371,52 @@ model to discard otherwise valid evidence.
 For large non-value selections, use `prepare-evidence-selection-batches` and
 `finalize-evidence-selection-batches` instead of asking one response to repeat
 every candidate ID. The preparation emits at most 300 candidates per batch and
-uses required named row slots (`row_0000`, `row_0001`, and so on). The provider
-returns only the relation for each slot. Finalization binds each slot back to
-the hash-owned candidate identity, rejects a missing or foreign slot or batch,
-requires exact contiguous coverage of the complete candidate inventory, then
-continues through the ordinary quote manifest. Batching does not change
-admission, selection priority, relation meaning, evidence facts, or the origin
-cap. Literal-ID response mode remains the default and the required mode for
-value selections; named positional batching is an opt-in transport for large
-non-value axes.
+uses required named row slots (`row_0000`, `row_0001`, and so on) plus a
+required single-valued `batch_id`. The provider returns that `batch_id` and the
+relation for each slot. Row slots restart at `row_0000` in every batch, so
+`batch_id` is what stops one batch's response from answering another: keep it,
+or a response saved under the wrong name finalizes with complete-looking
+coverage and systematically wrong relations. Finalization binds each slot back
+to the hash-owned candidate identity, rejects a missing, foreign, or wrong-batch
+response and a missing or foreign slot, requires exact contiguous coverage of
+the complete candidate inventory, then continues through the ordinary quote
+manifest. Only the batch responses named in the batch manifest are read; any
+other file left in the response directory is ignored, so clear the directory
+between runs rather than relying on the finalizer to notice a stale file.
+Batching does not change admission, selection priority, relation meaning,
+evidence facts, or the origin cap. It does change the row label: a batched row's
+reason code and display label are derived from its relation alone, so a batched
+pack shows "Matching customer experience" or "Differing customer experience"
+where the literal-ID path names the source meaning. Do not read a batched row
+label as evidence meaning, and prefer literal-ID mode when the pack's row labels
+matter to the reader. Literal-ID response mode remains the default and the
+required mode for value selections; named positional batching is an opt-in
+transport for large non-value axes.
 
 The full-axis hydration receipt is
 `C:\tmp\forseti-phase-a-hydration-cap-pilot-20260820-v0\experiment_result_v1.json`
 (raw SHA-256
 `74149af3d24c8ba742d38ec75bb9e5e2bd075570fd29d68f31189d143608b2e9`).
-Its accepted route accounted for all 836 candidates, selected fifteen customer
-origins into seventeen exact-quote rows across Reddit, Amazon, and Sephora, and
-preserved ten support origins plus six counter origins. Required named slots
-fixed the observed long-array truncation, but increased relation-stage logical
-tokens by 35.092% versus the exact literal-ID arm; parallel relation latency was
-51.736% lower. This is a completeness and parallel-latency trade, not a token
-saving.
+Its accepted route accounted for all 836 candidates and selected fifteen
+customer origins into seventeen exact-quote rows across Reddit, Amazon, and
+Sephora. Ten of those origins carry a support row and six carry a counter row;
+two origins carry both, which is why the per-relation counts exceed fifteen.
+Required named slots fixed the observed long-array truncation, but increased
+relation-stage logical tokens by 35.092% versus the exact literal-ID arm. The
+batched arm's measured serial provider wall time was higher than the literal-ID
+arm's, and the production route itself ran serially; the 51.736% latency
+reduction is the modelled parallel critical path, available only if the batches
+are actually issued concurrently. This is a completeness trade with a
+conditional parallel-latency upside, never a token saving.
+
+Read that receipt's own residuals with its numbers, because they qualify the cap
+decision and are recorded nowhere else: the provider and the mirrored judge were
+the same vendor; the mirrored named-versus-prior pack comparison was
+position-unstable and therefore inconclusive; the packet supplies no TikTok
+audience evidence for this selection; the provider calls used high reasoning, so
+lower-effort behavior is unmeasured; and the receipt records
+`repository_head_at_run` as the parent commit with a dirty worktree, so it
+attests to the run, not to a committed revision.
 
 The quote stage reads bodies only for selected display rows. Bodies of at most
 220 characters are copied in full by deterministic code, and absent bodies are

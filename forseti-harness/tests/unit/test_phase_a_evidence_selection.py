@@ -245,6 +245,10 @@ def _positional_relation_response(candidates: list[dict]) -> dict:
     }
 
 
+def _batched_positional_relation_response(candidates: list[dict], batch_id: str) -> dict:
+    return {**_positional_relation_response(candidates), "batch_id": batch_id}
+
+
 def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_source(
     tmp_path: Path,
 ) -> None:
@@ -501,15 +505,17 @@ def test_batched_positional_relations_rehydrate_the_same_full_inventory(
         start = batch["start_index"]
         subset = candidates[start : start + batch["candidate_count"]]
         responses[batch["batch_id"]] = {
+            "batch_id": batch["batch_id"],
             "results_by_candidate_row": {
                 f"row_{local_index:04d}": full_response[
                     "results_by_candidate_row"
                 ][f"row_{start + local_index:04d}"]
                 for local_index in range(len(subset))
-            }
+            },
         }
         assert "Do not return candidate IDs" in prompt
-        assert schema["required"] == ["results_by_candidate_row"]
+        assert schema["required"] == ["results_by_candidate_row", "batch_id"]
+        assert schema["properties"]["batch_id"]["enum"] == [batch["batch_id"]]
 
     _, _, batched_quote_manifest = finalize_batched_relations_prepare_quotes(
         batch_manifest, sources, responses
@@ -563,7 +569,9 @@ def test_batched_positional_relations_reject_local_row_reordering(
     for batch in batch_manifest["batches"]:
         start = batch["start_index"]
         subset = candidates[start : start + batch["candidate_count"]]
-        responses[batch["batch_id"]] = _positional_relation_response(subset)
+        responses[batch["batch_id"]] = _batched_positional_relation_response(
+            subset, batch["batch_id"]
+        )
     first_rows = responses["batch_0001"]["results_by_candidate_row"]
     first_rows["row_9999"] = first_rows.pop("row_0001")
 
@@ -587,6 +595,102 @@ def test_batched_positional_relations_reject_tampered_manifest(
         finalize_batched_relations_prepare_quotes(batch_manifest, sources, {})
 
     assert caught.value.boundary == "manifest_verification"
+
+
+def test_batched_positional_relations_reject_transposed_same_size_batches(
+    tmp_path: Path,
+) -> None:
+    """Two same-size batches must not accept each other's response.
+
+    Row keys restart at row_0000 in every batch, so without a per-batch
+    identity a mis-filed response file finalizes cleanly with every candidate
+    still accounted exactly once and every relation silently taken from the
+    wrong batch.
+    """
+
+    spec, sources = _write_source(tmp_path, 20)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, prompts_and_schemas = prepare_evidence_selection_batches(
+        spec, sources, batch_size=10
+    )
+    candidates = _candidate_rows(sources, spec)
+
+    assert [row["candidate_count"] for row in batch_manifest["batches"]] == [10, 10]
+    first_schema, second_schema = (schema for _, schema in prompts_and_schemas)
+    assert first_schema != second_schema
+    assert (
+        batch_manifest["batches"][0]["response_schema_sha256"]
+        != batch_manifest["batches"][1]["response_schema_sha256"]
+    )
+
+    responses = {}
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        responses[batch["batch_id"]] = _batched_positional_relation_response(
+            subset, batch["batch_id"]
+        )
+    responses["batch_0001"], responses["batch_0002"] = (
+        responses["batch_0002"],
+        responses["batch_0001"],
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_relations_prepare_quotes(batch_manifest, sources, responses)
+
+    assert caught.value.boundary == "relation_batch_identity"
+
+
+def test_batched_positional_relations_reject_absent_batch_identity(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, _ = prepare_evidence_selection_batches(spec, sources, batch_size=6)
+    candidates = _candidate_rows(sources, spec)
+    responses = {}
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        responses[batch["batch_id"]] = _positional_relation_response(subset)
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_relations_prepare_quotes(batch_manifest, sources, responses)
+
+    assert caught.value.boundary == "relation_response_shape"
+
+
+def test_positional_relation_mode_rejects_non_string_relation_value(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 8)
+    spec["relation_response_mode"] = "positional"
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    response = _positional_relation_response(candidates)
+    response["results_by_candidate_row"]["row_0000"] = {"relation": "support"}
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, response)
+
+    assert caught.value.boundary == "relation_response_shape"
+
+
+def test_relation_batch_policy_guidance_is_selection_wide_not_per_batch(
+    tmp_path: Path,
+) -> None:
+    """A batch is a transport slice, so it cannot acquire its own policy lane."""
+
+    spec, sources = _write_source(tmp_path, 20)
+    spec["relation_response_mode"] = "positional"
+    candidates = _candidate_rows(sources, spec)
+    selection_guidance = _policy_guidance(spec, candidates)
+    _, prompts_and_schemas = prepare_evidence_selection_batches(
+        spec, sources, batch_size=6
+    )
+
+    for prompt, _ in prompts_and_schemas:
+        assert ("VALUE-BOX POLICY" in prompt) == ("VALUE-BOX POLICY" in selection_guidance)
 
 
 @pytest.mark.parametrize("batch_size", [0, 301, "100", True])
@@ -642,7 +746,10 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
         start = batch["start_index"]
         subset = candidates[start : start + batch["candidate_count"]]
         (response_dir / f"{batch['batch_id']}_response.json").write_text(
-            json.dumps(_positional_relation_response(subset)), encoding="utf-8"
+            json.dumps(
+                _batched_positional_relation_response(subset, batch["batch_id"])
+            ),
+            encoding="utf-8",
         )
 
     finalized = finalize_evidence_selection_batches_run(
