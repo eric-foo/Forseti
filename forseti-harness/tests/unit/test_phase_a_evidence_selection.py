@@ -360,7 +360,11 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
             {
                 "selected_id": row["selected_id"],
                 "quote_status": "quote_available",
-                "exact_quote": bodies[row["evidence_id"]][:220],
+                "exact_quote": (
+                    bodies[row["evidence_id"]][:220]
+                    if len(bodies[row["evidence_id"]]) <= 220
+                    else bodies[row["evidence_id"]][:220].rsplit(".", 1)[0] + "."
+                ),
             }
             for row in quote_manifest["selected_rows"]
             if row["selected_id"] in provider_ids
@@ -945,6 +949,45 @@ def test_quote_mutations_fail_at_exact_boundary(
     assert caught.value.boundary == boundary
 
 
+def test_quote_stopping_before_the_next_source_word_fails_loud(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = (
+        "Opening context. The balm feels better in this bitter cold, even overnight. "
+        + "x" * 221
+    )
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0]["exact_quote"] = "The balm feels better in this bitter"
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(quote_manifest, sources, response)
+
+    assert caught.value.boundary == "quote_boundary_incomplete"
+
+
+def test_quote_ending_at_source_punctuation_passes_clause_boundary_guard(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"][0]["text"] = (
+        "Opening context. The balm feels better in this bitter cold, even overnight. "
+        + "x" * 221
+    )
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    response = _quote_response(quote_manifest, sources)
+    response["quotes"][0]["exact_quote"] = "The balm feels better in this bitter cold"
+
+    artifact = finalize_quotes(quote_manifest, sources, response)
+
+    assert artifact["source_groups"][0]["rows"][0]["exact_quote"].endswith("bitter cold")
+
+
 def test_missing_body_is_typed_unavailable_and_exact_but_semantically_different_text_remains_quality_visible(tmp_path: Path) -> None:
     spec, sources = _write_source(tmp_path, 1)
     sources[0]["bundle"]["evidence_units"] = []
@@ -1027,7 +1070,7 @@ def test_display_label_uses_customer_facing_signal_and_preserves_source_meanings
     tmp_path: Path,
 ) -> None:
     spec, sources = _write_source(tmp_path, 1)
-    sources[0]["bundle"]["evidence_units"][0]["text"] = "x" * 400
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "Opening complete sentence. " + "x" * 400
     _reseal(sources[0])
     evidence_row = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0]
     for suffix, statement in (

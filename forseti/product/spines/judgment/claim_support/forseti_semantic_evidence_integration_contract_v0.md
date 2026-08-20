@@ -889,7 +889,12 @@ characters. The substring must express the display label through either the
 selected normalized meaning or the same-evidence companion meaning that
 justified that label. If a material qualification cannot fit, the external response
 returns unavailable instead of a misleading fragment. No lexical-overlap
-relevance rule is applied. A typed
+relevance rule is applied. For current v4/v5 quote manifests, a long-body quote
+that ends in an alphanumeric
+character while the bound source continues with whitespace and another
+alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
+check prevents an exact but mid-phrase span from silently satisfying the
+context-complete contract. A typed
 `quote_unavailable` covers two distinct cases: no source body yields
 `source_body_unavailable`, while a present body with no returned exact relevant
 quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null

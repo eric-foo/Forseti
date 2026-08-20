@@ -19,7 +19,10 @@ review_provenance:
   access_mode: >
     reviewer-owned branch claude/phase-a-final-contract-quote-review created at
     exact target revision 2186312c1c5bd70068995dc32b8e871a468dcbce
-  dispatch: docs/prompts/reviews/phase_a_hydration_final_contract_quote_quality_delegated_adversarial_code_review_patch_prompt_v0.md
+  dispatch: >
+    Retired after adjudication; historical prompt path
+    docs/prompts/reviews/phase_a_hydration_final_contract_quote_quality_delegated_adversarial_code_review_patch_prompt_v0.md
+    is pinned in Git at 5f67b1c38b244e1f6000950b9a5a726fe4233b95.
   reviewed_diff: 390f7bdcf290e6929f541fe63fd50f5060c7236c..2186312c1c5bd70068995dc32b8e871a468dcbce
   findings: 6
 review_use_boundary: >
@@ -32,6 +35,60 @@ non_claims: >
   willingness to pay, cross-provider latency generality, or independent
   semantic adjudication of all 836 relation decisions. No provider call was
   made by the reviewer; every re-derivation below is deterministic.
+```
+
+## Home-Lane Adjudication
+
+The home lane verified the reviewer commit and accepted its disclosure patch as
+`607c7620`. The findings were adjudicated as follows rather than inherited as a
+block:
+
+- **FF-01 — accepted, with a scale restriction.** The 56-of-836 cross-run
+  disagreement and eight polarity flips are real. The adopted parallel row for
+  `reddit:1apzs1v:post::batch-0463-unit-0002` is substantively correct under the
+  bounded hydration claim; the serial `counter` label is not. The current
+  parallel artifact remains usable as the measured hydration pack, but this one
+  workload does not prove that a fresh run will label every displayed row the
+  same way. Broad scaling remains restricted until a selected-row relation
+  confirmation pilot can detect a displayed support/counter disagreement
+  without relabeling all 836 candidates or materially erasing the measured
+  latency gain.
+- **FF-02 — accepted and closed at the deterministic consumer boundary.** A
+  quote ending in an alphanumeric character now fails
+  `quote_boundary_incomplete` when its exact source occurrence continues with
+  whitespace and another alphanumeric character. There is no automatic retry.
+  Replaying the adopted parallel response produced the byte-identical artifact
+  SHA-256 `8afd0096a1c08a1885c751e93348324bf3488c2f58413871cc5240abe5a27380`;
+  replaying the serial response failed at the new boundary, as intended.
+- **FF-03 — accepted as a disclosed ceiling residual, not patched.** The
+  220-character limit can force a choice between a grammatically complete start
+  and all material conditions. The adopted exact quote keeps the material
+  `bitter cold` condition but begins headless. Widening the cap would change the
+  model-facing task and therefore requires a fresh matched provider run; the
+  existing receipt is not reused to claim that untested change.
+- **FF-04 — modified.** The 312-character reformulation/recommendation span is a
+  genuine ceiling residual. The omitted Pink Sugar color clause is not a
+  hydration qualification and does not reverse `feels hydrating and
+  comfortable`; forcing it into a hydration quote would add off-axis detail.
+  The judge rubric was broader than the contract on this point, so its flag is
+  retained as review evidence but not accepted as a product defect.
+- **FF-05 and FF-06 — accepted.** The receipt hash derivation and the measured
+  latency decomposition are now stated explicitly in the owning workflow.
+
+No quote prompt, response schema, provider output, production artifact, cap, or
+packet version changed in this adjudication. The courier prompt was retired
+after use; Git history preserves it.
+
+```yaml
+home_adjudication:
+  status: accepted_with_scale_restriction
+  reviewer_patch: accepted_as_607c7620
+  runtime_closure: quote_boundary_incomplete
+  provider_calls: 0
+  adopted_parallel_replay: pass_byte_identical
+  serial_replay: rejected_at_quote_boundary_incomplete
+  next_material_move: selected-row relation confirmation pilot
+  broad_scale_ready: false
 ```
 
 ## Route And Preconditions

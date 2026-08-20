@@ -845,6 +845,26 @@ def _relation_schema(
     }
 
 
+def _quote_has_complete_end(body: str, quote: str) -> bool:
+    """Return whether at least one exact occurrence avoids a mid-phrase stop."""
+
+    effective_quote = quote.rstrip()
+    if not effective_quote or not effective_quote[-1].isalnum():
+        return True
+
+    search_from = 0
+    while True:
+        occurrence = body.find(quote, search_from)
+        if occurrence < 0:
+            return False
+        suffix_index = occurrence + len(quote)
+        while suffix_index < len(body) and body[suffix_index].isspace():
+            suffix_index += 1
+        if suffix_index >= len(body) or not body[suffix_index].isalnum():
+            return True
+        search_from = occurrence + 1
+
+
 def _quote_schema() -> dict[str, Any]:
     row = {
         "type": "object",
@@ -2094,6 +2114,14 @@ def finalize_quotes(
                 )
             if quote not in body:
                 raise EvidenceConsumerError("quote_exactness", "quote is not a contiguous exact substring")
+            if (
+                manifest_version in {QUOTE_MANIFEST_VERSION, BATCHED_QUOTE_MANIFEST_VERSION}
+                and not _quote_has_complete_end(body, quote)
+            ):
+                raise EvidenceConsumerError(
+                    "quote_boundary_incomplete",
+                    "available quote stops before the next source word",
+                )
             if len(body) <= MAX_QUOTE_CHARACTERS and quote != body:
                 raise EvidenceConsumerError(
                     "quote_context_incomplete",

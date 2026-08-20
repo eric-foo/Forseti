@@ -457,7 +457,10 @@ serial arm. Nothing deterministic can detect this, because in positional mode
 the reason code is derived from the returned relation and therefore always
 agrees with it. Relation labeling, not origin selection, is the least stable
 part of this pipeline; treat a repeated selection as evidence of transport
-identity, never of relation stability.
+identity, never of relation stability. The measured parallel pack remains the
+accepted artifact for this hydration workload, but the variance restricts broad
+scaling until a selected-row confirmation pilot can expose a displayed
+support/counter disagreement without relabeling the complete candidate set.
 
 Second, `seventeen exact quotes, zero unavailable` counts exactness and
 availability, which deterministic code already enforces. It is not a measure of
@@ -472,14 +475,17 @@ characters to keep both — and the contract states no precedence, so the adopte
 parallel span resolves it by beginning headless (`have tried glossy products…`).
 
 Third, both mirrored judges preferred the parallel artifact, but a blind
-preference does not waive an objective omission. Two flagged against the winner
-stand: the Pink Sugar span omits a nearby same-source contrast that fits at 204
-characters, and the reformulation span omits the reviewer's explicit
-recommendation. The second is a genuine ceiling residual — carrying both the
-old-formula baseline and the recommendation needs 312 characters — while the
-first is unused budget. Note also that the judges compared the parallel arm to
-the prior accepted pack, never to the serial arm; the choice of parallel over
-serial rests on measured latency, not on adjudicated quality.
+preference does not waive an objective omission. The reformulation span omits
+the reviewer's explicit recommendation; that is a genuine ceiling residual,
+because carrying both the old-formula baseline and the recommendation needs 312
+characters. The judge also flagged a Pink Sugar color clause that would fit at
+204 characters, but home adjudication did not accept that as a hydration defect:
+the color remark neither qualifies nor reverses “feels hydrating and
+comfortable,” and forcing it into this axis would add off-axis detail. This
+shows that the judge rubric was broader than the contract's materiality rule.
+Note also that the judges compared the parallel arm to the prior accepted pack,
+never to the serial arm; the choice of parallel over serial rests on measured
+latency, not on adjudicated quality.
 
 Of the 47.491% observed latency reduction, 46.528 points are attributable to
 concurrency and 0.963 points to net per-call provider variance; concurrency
@@ -517,6 +523,12 @@ material qualification cannot fit, the quote response returns unavailable
 rather than a misleading fragment. It never repairs text or adds ellipses. An
 available quote must contain at least two
 Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
+A long-body quote in a current v4/v5 quote manifest that ends in an alphanumeric
+character while the bound source continues with whitespace and another
+alphanumeric character fails at
+`quote_boundary_incomplete`. This catches a literal substring that stops before
+its next source word; it adds no provider retry and makes the incomplete result
+visible instead of publishing it.
 A `quote_unavailable` row carries `source_body_present` and a deterministic
 cause: `source_body_unavailable` when the body is absent, or
 `no_relevant_exact_quote_returned` when a present body yielded no quote.
