@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v49
+version: v50
 effective_date: 2026-08-20
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v49
+# Semantic Evidence Integration Contract v50
 
 ## Purpose
 
@@ -934,6 +934,21 @@ every batch prompt carries the guidance derived from the complete admitted
 candidate inventory, so a batch cannot acquire a policy lane the selection as a
 whole rejected.
 
+Batched quote preparation versions its durable output as
+`phase_a_evidence_quote_manifest_v5`. The manifest binds the exact relation
+batch-manifest hash, batch count, and one canonical response hash per batch.
+The embedded selection manifest remains the canonical full-selection identity;
+its single-prompt hash is not an execution receipt. The v5 transport binding is
+the authority for which relation prompts and responses actually produced the
+selected quote workload. Removing or changing that binding changes the manifest
+hash and fails quote finalization.
+
+A generic batched display label is never semantic authority for quote choice.
+For a long source body, the returned exact substring must directly express the
+source-owned normalized meaning or a material same-evidence companion
+qualification. A relation-derived label alone cannot make an irrelevant
+substring acceptable.
+
 Contract v40 clarifies value evidence without changing packet v3 or the
 selection schema. Candidate admission for a value axis is direction-neutral:
 the consumer admits the relevant positive and negative evidence before an
@@ -1482,6 +1497,12 @@ new frontier.
 
 ## Changelog
 
+- `v50` / 2026-08-20 — closed the returned cross-vendor batching review. Each
+  batched response now carries its required single-valued batch identity, and a
+  v5 quote manifest binds the actual relation batch manifest plus every
+  canonical response hash. Generic relation-derived labels remain presentation
+  metadata and cannot justify quote relevance without the source-owned meaning.
+  Added no packet version, value-policy change, capture, or semantic replay.
 - `v49` / 2026-08-20 — kept ten customer origins as the presentation default
   while allowing an explicit one-through-twenty cap; the measured full-axis
   hydration pack binds fifteen because fifteen beat ten and twenty did not beat

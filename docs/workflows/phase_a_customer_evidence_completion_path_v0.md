@@ -391,7 +391,12 @@ where the literal-ID path names the source meaning. Do not read a batched row
 label as evidence meaning, and prefer literal-ID mode when the pack's row labels
 matter to the reader. Literal-ID response mode remains the default and the
 required mode for value selections; named positional batching is an opt-in
-transport for large non-value axes.
+transport for large non-value axes. Its quote preparation emits
+`phase_a_evidence_quote_manifest_v5`, which binds the actual batch-manifest hash
+and every canonical batch-response hash. The embedded selection manifest keeps
+the canonical full selection identity; it is not evidence that its single large
+prompt was sent. The v5 relation-transport binding records the prompts' actual
+route.
 
 The full-axis hydration receipt is
 `C:\tmp\forseti-phase-a-hydration-cap-pilot-20260820-v0\experiment_result_v1.json`
@@ -423,11 +428,11 @@ The quote stage reads bodies only for selected display rows. Bodies of at most
 typed unavailable; neither is sent to the model. Only longer bodies enter the
 provider prompt. That prompt uses named selected-row and deduplicated body
 columns, so several meanings from one source body do not repeat the entire
-body. It carries
-the deterministic display label, normalized meaning, and same-evidence
-companion meanings; a returned long-source substring must directly express the
-label through the normalized meaning or the companion meaning that justified
-it, or be `quote_unavailable`. An
+body. It carries the deterministic display label, normalized meaning, and
+same-evidence companion meanings. The label is presentation metadata only: a
+returned long-source substring must directly express the normalized meaning or
+a material companion qualification, or be `quote_unavailable`; a generic
+batched relation label cannot make an irrelevant substring acceptable. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. For

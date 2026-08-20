@@ -8,6 +8,7 @@ import pytest
 
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
+    BATCHED_QUOTE_MANIFEST_VERSION,
     DISPLAY_LABEL_BY_REASON_CODE,
     SELECTION_SPEC_VERSION,
     VALUE_REASON_RELATIONS,
@@ -532,6 +533,28 @@ def test_batched_positional_relations_rehydrate_the_same_full_inventory(
     assert batched_quote_manifest["selected_rows"] == unbatched_quote_manifest[
         "selected_rows"
     ]
+    assert batched_quote_manifest["relation_transport"] == {
+        "mode": "named_positional_batches",
+        "batch_manifest_sha256": batch_manifest["manifest_sha256"],
+        "batch_count": 3,
+        "batch_response_sha256": {
+            batch_id: _canonical_hash(response)
+            for batch_id, response in responses.items()
+        },
+    }
+    assert batched_quote_manifest["schema_version"] == BATCHED_QUOTE_MANIFEST_VERSION
+    assert "relation_transport" not in unbatched_quote_manifest
+    batched_artifact = finalize_quotes(
+        batched_quote_manifest,
+        sources,
+        _quote_response(batched_quote_manifest, sources),
+    )
+    unbatched_artifact = finalize_quotes(
+        unbatched_quote_manifest,
+        sources,
+        _quote_response(unbatched_quote_manifest, sources),
+    )
+    assert batched_artifact["source_groups"] == unbatched_artifact["source_groups"]
 
 
 def test_batched_positional_relations_reject_missing_batch(
@@ -590,6 +613,24 @@ def test_batched_positional_relations_reject_tampered_manifest(
         spec, sources, batch_size=6
     )
     batch_manifest["candidate_count"] = 9
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_relations_prepare_quotes(batch_manifest, sources, {})
+
+    assert caught.value.boundary == "manifest_verification"
+
+
+def test_batched_positional_relations_reject_duplicate_batch_identity(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=6
+    )
+    batch_manifest["batches"][1]["batch_id"] = "batch_0001"
+    batch_manifest.pop("manifest_sha256")
+    batch_manifest["manifest_sha256"] = _canonical_hash(batch_manifest)
 
     with pytest.raises(EvidenceConsumerError) as caught:
         finalize_batched_relations_prepare_quotes(batch_manifest, sources, {})

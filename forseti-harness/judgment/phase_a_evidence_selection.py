@@ -32,6 +32,7 @@ SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
 PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
 QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
+BATCHED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v5"
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 POSITIONAL_REASON_CODE_BY_RELATION = {
@@ -177,7 +178,7 @@ VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label on
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. Every supplied source body is longer than 220 characters. Choose one contiguous exact substring of at most 220 characters that directly expresses the display_label and either the supplied normalized meaning or the same-evidence companion meaning that justifies that label, and includes any nearby clause that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans. Exact text that does not express the display label through the supplied source meanings is not an acceptable quote.
+Return every selected_id exactly once and in order. Every supplied source body is longer than 220 characters. Choose one contiguous exact substring of at most 220 characters that directly expresses the supplied normalized meaning or a same-evidence companion meaning that materially qualifies or reverses it; if that cannot fit, return quote_status=quote_unavailable and exact_quote=null. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -1914,6 +1915,13 @@ def finalize_batched_relations_prepare_quotes(
             "manifest_verification", "selection batches missing"
         )
     expected_batch_ids = [row.get("batch_id") for row in batches]
+    if (
+        not all(isinstance(batch_id, str) for batch_id in expected_batch_ids)
+        or len(expected_batch_ids) != len(set(expected_batch_ids))
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection batch identities changed"
+        )
     if set(responses) != set(expected_batch_ids):
         raise EvidenceConsumerError(
             "missing_relation_batch", "relation batch response set changed"
@@ -1955,11 +1963,24 @@ def finalize_batched_relations_prepare_quotes(
         raise EvidenceConsumerError(
             "manifest_verification", "relation batch coverage is incomplete"
         )
-    return finalize_relations_prepare_quotes(
+    prompt, schema, quote_manifest = finalize_relations_prepare_quotes(
         selection_manifest,
         sources,
         {"results_by_candidate_row": full_results},
     )
+    quote_manifest.pop("manifest_sha256")
+    quote_manifest["schema_version"] = BATCHED_QUOTE_MANIFEST_VERSION
+    quote_manifest["relation_transport"] = {
+        "mode": "named_positional_batches",
+        "batch_manifest_sha256": batch_manifest["manifest_sha256"],
+        "batch_count": len(batches),
+        "batch_response_sha256": {
+            batch_id: _canonical_json_sha256(responses[batch_id])
+            for batch_id in expected_batch_ids
+        },
+    }
+    quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
+    return prompt, schema, quote_manifest
 
 
 def finalize_quotes(
@@ -1974,6 +1995,7 @@ def finalize_quotes(
             LEGACY_QUOTE_MANIFEST_VERSION,
             PREVIOUS_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
+            BATCHED_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
     ):
@@ -1983,7 +2005,7 @@ def finalize_quotes(
     selected = quote_manifest["selected_rows"]
     expected = (
         quote_manifest.get("provider_selected_ids")
-        if manifest_version == QUOTE_MANIFEST_VERSION
+        if manifest_version in {QUOTE_MANIFEST_VERSION, BATCHED_QUOTE_MANIFEST_VERSION}
         else [row["selected_id"] for row in selected]
     )
     if not isinstance(expected, list) or not all(
@@ -2005,7 +2027,7 @@ def finalize_quotes(
         raise EvidenceConsumerError(boundary, "quote result set/order mismatch")
     bodies = _bundle_bodies(sources)
     recorded_body_hashes = quote_manifest["quote_body_sha256"]
-    if manifest_version == QUOTE_MANIFEST_VERSION:
+    if manifest_version in {QUOTE_MANIFEST_VERSION, BATCHED_QUOTE_MANIFEST_VERSION}:
         derived_provider_ids = [
             row["selected_id"]
             for row in selected
@@ -2038,7 +2060,10 @@ def finalize_quotes(
                 f"source body changed after the quote manifest was written: {selected_id}",
             )
         if quote_row is None:
-            if manifest_version != QUOTE_MANIFEST_VERSION:
+            if manifest_version not in {
+                QUOTE_MANIFEST_VERSION,
+                BATCHED_QUOTE_MANIFEST_VERSION,
+            }:
                 raise EvidenceConsumerError(
                     "missing_quote_result", "selected row has no quote result"
                 )
@@ -2104,7 +2129,11 @@ def finalize_quotes(
                 **(
                     {"display_label": _display_label(selected_row["reason_code"])}
                     if manifest_version
-                    in {PREVIOUS_QUOTE_MANIFEST_VERSION, QUOTE_MANIFEST_VERSION}
+                    in {
+                        PREVIOUS_QUOTE_MANIFEST_VERSION,
+                        QUOTE_MANIFEST_VERSION,
+                        BATCHED_QUOTE_MANIFEST_VERSION,
+                    }
                     else {}
                 ),
                 "normalized_meaning": selected_row["normalized_meaning"],
