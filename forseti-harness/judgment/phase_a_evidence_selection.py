@@ -28,13 +28,23 @@ from judgment.phase_a_evidence_consumer import (
 
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
+SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
 PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
 QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
 RELATIONS = ("support", "counter", "adjacent", "exclude")
+RELATION_RESPONSE_MODES = ("literal_ids", "positional")
+POSITIONAL_REASON_CODE_BY_RELATION = {
+    "support": "matching_customer_experience",
+    "counter": "differing_customer_experience",
+    "adjacent": "related_customer_context",
+    "exclude": "wrong_scope_or_non_evidence",
+}
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
 MAX_TRUTH_GROUPS = 10
+MAX_CONFIGURABLE_TRUTH_GROUPS = 20
+MAX_RELATION_BATCH_SIZE = 300
 MAX_INFLUENCE_GROUPS = 3
 MAX_QUOTE_CHARACTERS = 220
 PROTECTED_LANES = ("safety", "costly_behavior")
@@ -149,9 +159,12 @@ VALUE_COUNTER_PRIORITY = {
     "comparator_better_value": 3,
 }
 
+LITERAL_RELATION_RESPONSE_INSTRUCTION = "Return every candidate_id exactly once and in the supplied order."
+POSITIONAL_RELATION_RESPONSE_INSTRUCTION = "Return one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN. Do not return candidate IDs, row numbers, or reason codes."
+
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-Return every candidate_id exactly once and in the supplied order. Label its relation to the bounded claim as support, counter, adjacent, or exclude and supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction} Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 {policy_guidance}
 
@@ -746,7 +759,32 @@ def _candidate_rows(
     return candidates
 
 
-def _relation_schema(*, value_policy: bool = False) -> dict[str, Any]:
+def _relation_schema(
+    *,
+    value_policy: bool = False,
+    response_mode: str = "literal_ids",
+    candidate_count: int | None = None,
+) -> dict[str, Any]:
+    positional = response_mode == "positional"
+    if positional:
+        if candidate_count is None or candidate_count < 1:
+            raise ValueError("positional relation schema needs a candidate count")
+        row_keys = [f"row_{index:04d}" for index in range(candidate_count)]
+        positional_relations = {
+            "type": "object",
+            "properties": {
+                key: {"type": "string", "enum": list(RELATIONS)} for key in row_keys
+            },
+            "required": row_keys,
+            "additionalProperties": False,
+        }
+        return {
+            "type": "object",
+            "properties": {"results_by_candidate_row": positional_relations},
+            "required": ["results_by_candidate_row"],
+            "additionalProperties": False,
+        }
+
     def result_row(relation: str | None = None) -> dict[str, Any]:
         relation_schema: dict[str, Any] = {"type": "string"}
         reason_schema: dict[str, Any] = {
@@ -763,14 +801,18 @@ def _relation_schema(*, value_policy: bool = False) -> dict[str, Any]:
                 for code, expected_relation in VALUE_REASON_RELATIONS.items()
                 if expected_relation == relation
             )
+        properties: dict[str, Any] = {"relation": relation_schema}
+        required = ["relation"]
+        properties = {
+            "candidate_id": {"type": "string"},
+            **properties,
+            "reason_code": reason_schema,
+        }
+        required = ["candidate_id", *required, "reason_code"]
         return {
             "type": "object",
-            "properties": {
-                "candidate_id": {"type": "string"},
-                "relation": relation_schema,
-                "reason_code": reason_schema,
-            },
-            "required": ["candidate_id", "relation", "reason_code"],
+            "properties": properties,
+            "required": required,
             "additionalProperties": False,
         }
 
@@ -825,6 +867,8 @@ def prepare_evidence_selection(
         raise EvidenceConsumerError("selection_spec", "selection_id missing")
     if not isinstance(spec.get("bounded_claim"), str) or not spec["bounded_claim"].strip():
         raise EvidenceConsumerError("selection_spec", "bounded_claim missing")
+    _truth_group_cap(spec)
+    response_mode = _relation_response_mode(spec)
     for source in sources:
         _verify_packet(source["packet"])
         bundle = source["bundle"]
@@ -834,6 +878,11 @@ def prepare_evidence_selection(
         _verify_bundle(bundle)
     candidates = _candidate_rows(sources, spec)
     value_policy = _uses_value_policy(spec, candidates)
+    if value_policy and response_mode == "positional":
+        raise EvidenceConsumerError(
+            "selection_spec",
+            "positional relation responses are supported only for non-value selections",
+        )
     envelope = (
         {
             "selection_id": spec["selection_id"],
@@ -844,9 +893,24 @@ def prepare_evidence_selection(
         else _relation_prompt_envelope(spec, candidates)
     )
     prompt = RELATION_PROMPT.format(
-        policy_guidance=_policy_guidance(spec, candidates), envelope=_compact(envelope)
+        response_instruction=(
+            POSITIONAL_RELATION_RESPONSE_INSTRUCTION
+            if response_mode == "positional"
+            else LITERAL_RELATION_RESPONSE_INSTRUCTION
+        ),
+        reason_instruction=(
+            ""
+            if response_mode == "positional"
+            else " Supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words."
+        ),
+        policy_guidance=_policy_guidance(spec, candidates),
+        envelope=_compact(envelope),
     )
-    schema = _relation_schema(value_policy=value_policy)
+    schema = _relation_schema(
+        value_policy=value_policy,
+        response_mode=response_mode,
+        candidate_count=len(candidates),
+    )
     inventory_sha = _canonical_json_sha256(candidates)
     manifest = {
         "schema_version": SELECTION_MANIFEST_VERSION,
@@ -872,6 +936,104 @@ def prepare_evidence_selection(
     }
     manifest["manifest_sha256"] = _canonical_json_sha256(manifest)
     return prompt, schema, manifest
+
+
+def prepare_evidence_selection_batches(
+    spec: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    *,
+    batch_size: int,
+) -> tuple[dict[str, Any], list[tuple[str, dict[str, Any]]]]:
+    if (
+        isinstance(batch_size, bool)
+        or not isinstance(batch_size, int)
+        or batch_size < 1
+        or batch_size > MAX_RELATION_BATCH_SIZE
+    ):
+        raise EvidenceConsumerError(
+            "selection_spec",
+            f"relation batch size must be an integer from 1 to {MAX_RELATION_BATCH_SIZE}",
+        )
+    if _relation_response_mode(spec) != "positional":
+        raise EvidenceConsumerError(
+            "selection_spec", "relation batching requires positional response mode"
+        )
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    value_policy = _uses_value_policy(spec, candidates)
+    if value_policy:
+        raise EvidenceConsumerError(
+            "selection_spec", "relation batching is supported only for non-value selections"
+        )
+    prompts_and_schemas: list[tuple[str, dict[str, Any]]] = []
+    batches = []
+    for batch_index, start in enumerate(range(0, len(candidates), batch_size), start=1):
+        subset = candidates[start : start + batch_size]
+        envelope = _relation_prompt_envelope(spec, subset)
+        prompt = RELATION_PROMPT.format(
+            response_instruction=POSITIONAL_RELATION_RESPONSE_INSTRUCTION,
+            reason_instruction="",
+            policy_guidance=_policy_guidance(spec, subset),
+            envelope=_compact(envelope),
+        )
+        schema = _relation_schema(
+            value_policy=False,
+            response_mode="positional",
+            candidate_count=len(subset),
+        )
+        batch_id = f"batch_{batch_index:04d}"
+        batches.append(
+            {
+                "batch_id": batch_id,
+                "start_index": start,
+                "candidate_count": len(subset),
+                "candidate_ids_sha256": _canonical_json_sha256(
+                    [row["candidate_id"] for row in subset]
+                ),
+                "prompt_sha256": sha256_text(prompt),
+                "response_schema_sha256": _canonical_json_sha256(schema),
+            }
+        )
+        prompts_and_schemas.append((prompt, schema))
+    batch_manifest = {
+        "schema_version": SELECTION_BATCH_MANIFEST_VERSION,
+        "selection_manifest": selection_manifest,
+        "selection_manifest_sha256": selection_manifest["manifest_sha256"],
+        "candidate_inventory_sha256": selection_manifest[
+            "candidate_inventory_sha256"
+        ],
+        "candidate_count": len(candidates),
+        "batch_size": batch_size,
+        "batches": batches,
+        "model_api_calls": 0,
+    }
+    batch_manifest["manifest_sha256"] = _canonical_json_sha256(batch_manifest)
+    return batch_manifest, prompts_and_schemas
+
+
+def _truth_group_cap(spec: Mapping[str, Any]) -> int:
+    cap = spec.get("truth_group_cap", MAX_TRUTH_GROUPS)
+    if (
+        isinstance(cap, bool)
+        or not isinstance(cap, int)
+        or cap < 1
+        or cap > MAX_CONFIGURABLE_TRUTH_GROUPS
+    ):
+        raise EvidenceConsumerError(
+            "selection_spec",
+            f"truth_group_cap must be an integer from 1 to {MAX_CONFIGURABLE_TRUTH_GROUPS}",
+        )
+    return cap
+
+
+def _relation_response_mode(spec: Mapping[str, Any]) -> str:
+    mode = spec.get("relation_response_mode", "literal_ids")
+    if not isinstance(mode, str) or mode not in RELATION_RESPONSE_MODES:
+        raise EvidenceConsumerError(
+            "selection_spec",
+            f"relation_response_mode must be one of {RELATION_RESPONSE_MODES}",
+        )
+    return mode
 
 
 def load_selection_sources(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
@@ -1443,22 +1605,50 @@ def _validate_relation_response(
     response: Mapping[str, Any],
     *,
     value_policy: bool = False,
+    response_mode: str = "literal_ids",
 ) -> list[dict[str, Any]]:
-    if set(response) != {"results"} or not isinstance(response.get("results"), list):
-        raise EvidenceConsumerError("relation_response_shape", "results missing")
-    results = response["results"]
     expected = [row["candidate_id"] for row in candidates]
-    observed = [row.get("candidate_id") for row in results if isinstance(row, dict)]
-    if len(observed) != len(results):
-        raise EvidenceConsumerError("relation_response_shape", "invalid result row")
-    if len(observed) != len(set(observed)):
-        raise EvidenceConsumerError("duplicate_candidate_result", "candidate repeated")
-    if set(observed) - set(expected):
-        raise EvidenceConsumerError("foreign_candidate_result", "foreign candidate returned")
-    if len(observed) != len(expected) or set(observed) != set(expected):
-        raise EvidenceConsumerError("missing_candidate_result", "candidate set incomplete")
-    if observed != expected:
-        raise EvidenceConsumerError("candidate_order_mismatch", "candidate order changed")
+    if response_mode == "positional":
+        response_key = "results_by_candidate_row"
+        if set(response) != {response_key} or not isinstance(
+            response.get(response_key), dict
+        ):
+            raise EvidenceConsumerError(
+                "relation_response_shape", "positional results missing"
+            )
+        positional_results = response[response_key]
+        expected_row_keys = [f"row_{index:04d}" for index in range(len(expected))]
+        if set(positional_results) != set(expected_row_keys):
+            raise EvidenceConsumerError(
+                "missing_candidate_result", "positional candidate count changed"
+            )
+        results = []
+        for candidate_id, row_key in zip(expected, expected_row_keys, strict=True):
+            relation = positional_results[row_key]
+            results.append(
+                {
+                    "candidate_id": candidate_id,
+                    "relation": relation,
+                    "reason_code": POSITIONAL_REASON_CODE_BY_RELATION.get(
+                        relation, ""
+                    ),
+                }
+            )
+    else:
+        if set(response) != {"results"} or not isinstance(response.get("results"), list):
+            raise EvidenceConsumerError("relation_response_shape", "results missing")
+        results = response["results"]
+        observed = [row.get("candidate_id") for row in results if isinstance(row, dict)]
+        if len(observed) != len(results):
+            raise EvidenceConsumerError("relation_response_shape", "invalid result row")
+        if len(observed) != len(set(observed)):
+            raise EvidenceConsumerError("duplicate_candidate_result", "candidate repeated")
+        if set(observed) - set(expected):
+            raise EvidenceConsumerError("foreign_candidate_result", "foreign candidate returned")
+        if len(observed) != len(expected) or set(observed) != set(expected):
+            raise EvidenceConsumerError("missing_candidate_result", "candidate set incomplete")
+        if observed != expected:
+            raise EvidenceConsumerError("candidate_order_mismatch", "candidate order changed")
     merged = []
     for candidate, result in zip(candidates, results, strict=True):
         if set(result) != {"candidate_id", "relation", "reason_code"}:
@@ -1589,14 +1779,19 @@ def finalize_relations_prepare_quotes(
     manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     candidates = _candidate_rows(sources, manifest["spec"])
+    truth_group_cap = _truth_group_cap(manifest["spec"])
+    response_mode = _relation_response_mode(manifest["spec"])
     value_policy = _uses_value_policy(manifest["spec"], candidates)
     labeled = _validate_relation_response(
-        candidates, response, value_policy=value_policy
+        candidates,
+        response,
+        value_policy=value_policy,
+        response_mode=response_mode,
     )
     truth = _select_groups(
         labeled,
         "truth_support",
-        MAX_TRUTH_GROUPS,
+        truth_group_cap,
         truth_policy="value_first" if value_policy else "balanced",
     )
     influence = _select_groups(labeled, "influence_context", MAX_INFLUENCE_GROUPS)
@@ -1633,6 +1828,7 @@ def finalize_relations_prepare_quotes(
         "labeled_inventory_sha256": _canonical_json_sha256(labeled),
         "selected_rows": selected,
         "selected_rows_sha256": _canonical_json_sha256(selected),
+        "truth_group_cap": truth_group_cap,
         "provider_selected_ids": provider_selected_ids,
         "quote_body_sha256": {
             row["selected_id"]: sha256_text(row["source_body"]) if row["source_body"] is not None else None
@@ -1644,6 +1840,93 @@ def finalize_relations_prepare_quotes(
     }
     quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
     return prompt, schema, quote_manifest
+
+
+def finalize_batched_relations_prepare_quotes(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    stored = batch_manifest.get("manifest_sha256")
+    payload = {
+        key: value for key, value in batch_manifest.items() if key != "manifest_sha256"
+    }
+    if (
+        batch_manifest.get("schema_version") != SELECTION_BATCH_MANIFEST_VERSION
+        or stored != _canonical_json_sha256(payload)
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection batch manifest changed"
+        )
+    selection_manifest = batch_manifest.get("selection_manifest")
+    if (
+        not isinstance(selection_manifest, Mapping)
+        or selection_manifest.get("manifest_sha256")
+        != batch_manifest.get("selection_manifest_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection manifest binding changed"
+        )
+    candidates = _candidate_rows(sources, selection_manifest["spec"])
+    if (
+        len(candidates) != batch_manifest.get("candidate_count")
+        or _canonical_json_sha256(candidates)
+        != batch_manifest.get("candidate_inventory_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "batched candidate inventory changed"
+        )
+    batches = batch_manifest.get("batches")
+    if not isinstance(batches, list):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection batches missing"
+        )
+    expected_batch_ids = [row.get("batch_id") for row in batches]
+    if set(responses) != set(expected_batch_ids):
+        raise EvidenceConsumerError(
+            "missing_relation_batch", "relation batch response set changed"
+        )
+    full_results = {}
+    expected_start = 0
+    for batch in batches:
+        batch_id = batch["batch_id"]
+        start = batch.get("start_index")
+        count = batch.get("candidate_count")
+        if start != expected_start or not isinstance(count, int) or count < 1:
+            raise EvidenceConsumerError(
+                "manifest_verification", "relation batch coverage changed"
+            )
+        subset = candidates[start : start + count]
+        if (
+            len(subset) != count
+            or _canonical_json_sha256([row["candidate_id"] for row in subset])
+            != batch.get("candidate_ids_sha256")
+        ):
+            raise EvidenceConsumerError(
+                "manifest_verification", "relation batch membership changed"
+            )
+        validated = _validate_relation_response(
+            subset,
+            responses[batch_id],
+            value_policy=False,
+            response_mode="positional",
+        )
+        full_results.update(
+            {
+                f"row_{start + local_index:04d}": row["relation"]
+                for local_index, row in enumerate(validated)
+            }
+        )
+        expected_start += count
+    if expected_start != len(candidates):
+        raise EvidenceConsumerError(
+            "manifest_verification", "relation batch coverage is incomplete"
+        )
+    return finalize_relations_prepare_quotes(
+        selection_manifest,
+        sources,
+        {"results_by_candidate_row": full_results},
+    )
 
 
 def finalize_quotes(
@@ -1822,6 +2105,7 @@ def finalize_quotes(
         "candidate_inventory_sha256": quote_manifest["candidate_inventory_sha256"],
         "candidate_count": len(quote_manifest["labeled_inventory"]),
         "candidate_dispositions": quote_manifest["labeled_inventory"],
+        "truth_group_cap": quote_manifest.get("truth_group_cap", MAX_TRUTH_GROUPS),
         "truth_group_count": len(
             {row["origin_group_id"] for row in output_rows if row["layer"] == "truth_support"}
         ),

@@ -20,13 +20,17 @@ from judgment.phase_a_evidence_selection import (
     _select_groups,
     _source_venue,
     _validate_relation_response,
+    finalize_batched_relations_prepare_quotes,
     finalize_quotes,
     finalize_relations_prepare_quotes,
     prepare_evidence_selection,
+    prepare_evidence_selection_batches,
 )
 from runners.run_semantic_evidence_integration import (
+    finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
     finalize_evidence_selection_relations_run,
+    prepare_evidence_selection_batches_run,
     prepare_evidence_selection_run,
 )
 
@@ -231,6 +235,16 @@ def _relation_response(candidates: list[dict]) -> dict:
     return {"results": rows}
 
 
+def _positional_relation_response(candidates: list[dict]) -> dict:
+    literal = _relation_response(candidates)["results"]
+    return {
+        "results_by_candidate_row": {
+            f"row_{index:04d}": row["relation"]
+            for index, row in enumerate(literal)
+        }
+    }
+
+
 def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_source(
     tmp_path: Path,
 ) -> None:
@@ -376,6 +390,301 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     assert "contiguous exact substring" in quote_prompt
     assert schema["required"] == ["results"]
     assert quote_schema["required"] == ["quotes"]
+
+
+def test_selection_spec_can_raise_truth_origin_cap_to_twenty_without_changing_influence_cap(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 40)
+    spec["truth_group_cap"] = 20
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(candidates)
+    )
+    artifact = finalize_quotes(
+        quote_manifest, sources, _quote_response(quote_manifest, sources)
+    )
+
+    assert artifact["truth_group_cap"] == 20
+    assert artifact["truth_group_count"] == 20
+    assert artifact["influence_group_count"] <= 3
+
+
+def test_positional_relation_mode_rehydrates_candidate_identity_without_returning_ids(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 20)
+    spec["relation_response_mode"] = "positional"
+    prompt, schema, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+
+    assert "Do not return candidate IDs" in prompt
+    assert schema["required"] == ["results_by_candidate_row"]
+    row_schema = schema["properties"]["results_by_candidate_row"]
+    assert row_schema["required"] == [
+        f"row_{index:04d}" for index in range(len(candidates))
+    ]
+    assert row_schema["properties"]["row_0000"]["enum"] == [
+        "support",
+        "counter",
+        "adjacent",
+        "exclude",
+    ]
+
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _positional_relation_response(candidates)
+    )
+
+    assert [row["candidate_id"] for row in quote_manifest["labeled_inventory"]] == [
+        row["candidate_id"] for row in candidates
+    ]
+    assert {
+        row["reason_code"] for row in quote_manifest["labeled_inventory"]
+    } <= {
+        "matching_customer_experience",
+        "differing_customer_experience",
+        "related_customer_context",
+        "wrong_scope_or_non_evidence",
+    }
+
+
+def test_positional_relation_mode_rejects_missing_row_at_identity_boundary(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 8)
+    spec["relation_response_mode"] = "positional"
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    response = _positional_relation_response(candidates)
+    response["results_by_candidate_row"].pop("row_0007")
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, response)
+
+    assert caught.value.boundary == "missing_candidate_result"
+
+
+def test_positional_relation_mode_rejects_substituted_row_key_at_identity_boundary(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 8)
+    spec["relation_response_mode"] = "positional"
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    response = _positional_relation_response(candidates)
+    response["results_by_candidate_row"]["row_9999"] = response[
+        "results_by_candidate_row"
+    ].pop("row_0001")
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, response)
+
+    assert caught.value.boundary == "missing_candidate_result"
+
+
+def test_batched_positional_relations_rehydrate_the_same_full_inventory(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 20)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, prompts_and_schemas = prepare_evidence_selection_batches(
+        spec, sources, batch_size=7
+    )
+    candidates = _candidate_rows(sources, spec)
+    full_response = _positional_relation_response(candidates)
+    responses = {}
+    for batch, (prompt, schema) in zip(
+        batch_manifest["batches"], prompts_and_schemas, strict=True
+    ):
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        responses[batch["batch_id"]] = {
+            "results_by_candidate_row": {
+                f"row_{local_index:04d}": full_response[
+                    "results_by_candidate_row"
+                ][f"row_{start + local_index:04d}"]
+                for local_index in range(len(subset))
+            }
+        }
+        assert "Do not return candidate IDs" in prompt
+        assert schema["required"] == ["results_by_candidate_row"]
+
+    _, _, batched_quote_manifest = finalize_batched_relations_prepare_quotes(
+        batch_manifest, sources, responses
+    )
+    _, _, unbatched_manifest = prepare_evidence_selection(spec, sources)
+    _, _, unbatched_quote_manifest = finalize_relations_prepare_quotes(
+        unbatched_manifest, sources, full_response
+    )
+
+    assert [row["candidate_count"] for row in batch_manifest["batches"]] == [7, 7, 6]
+    assert batched_quote_manifest["labeled_inventory"] == unbatched_quote_manifest[
+        "labeled_inventory"
+    ]
+    assert batched_quote_manifest["selected_rows"] == unbatched_quote_manifest[
+        "selected_rows"
+    ]
+
+
+def test_batched_positional_relations_reject_missing_batch(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=6
+    )
+    candidates = _candidate_rows(sources, spec)
+    first = batch_manifest["batches"][0]
+    responses = {
+        first["batch_id"]: _positional_relation_response(
+            candidates[: first["candidate_count"]]
+        )
+    }
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_relations_prepare_quotes(batch_manifest, sources, responses)
+
+    assert caught.value.boundary == "missing_relation_batch"
+
+
+def test_batched_positional_relations_reject_local_row_reordering(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=6
+    )
+    candidates = _candidate_rows(sources, spec)
+    responses = {}
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        responses[batch["batch_id"]] = _positional_relation_response(subset)
+    first_rows = responses["batch_0001"]["results_by_candidate_row"]
+    first_rows["row_9999"] = first_rows.pop("row_0001")
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_relations_prepare_quotes(batch_manifest, sources, responses)
+
+    assert caught.value.boundary == "missing_candidate_result"
+
+
+def test_batched_positional_relations_reject_tampered_manifest(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=6
+    )
+    batch_manifest["candidate_count"] = 9
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_relations_prepare_quotes(batch_manifest, sources, {})
+
+    assert caught.value.boundary == "manifest_verification"
+
+
+@pytest.mark.parametrize("batch_size", [0, 301, "100", True])
+def test_relation_batching_rejects_invalid_batch_size(
+    tmp_path: Path, batch_size: object
+) -> None:
+    spec, sources = _write_source(tmp_path)
+    spec["relation_response_mode"] = "positional"
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection_batches(spec, sources, batch_size=batch_size)
+
+    assert caught.value.boundary == "selection_spec"
+
+
+def test_relation_batching_rejects_literal_id_mode(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path)
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection_batches(spec, sources, batch_size=5)
+
+    assert caught.value.boundary == "selection_spec"
+
+
+def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["relation_response_mode"] = "positional"
+    spec["sources"] = [
+        {
+            "source_id": sources[0]["source_id"],
+            "packet_path": str(sources[0]["packet_path"]),
+            "bundle_path": str(sources[0]["bundle_path"]),
+        }
+    ]
+    spec_path = tmp_path / "spec.json"
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    batch_dir = tmp_path / "prepared"
+    batch_manifest_path = tmp_path / "batch_manifest.json"
+
+    prepared = prepare_evidence_selection_batches_run(
+        spec_path=spec_path,
+        batch_size=6,
+        batch_dir=batch_dir,
+        batch_manifest_out=batch_manifest_path,
+    )
+    batch_manifest = json.loads(batch_manifest_path.read_text(encoding="utf-8"))
+    candidates = _candidate_rows(sources, spec)
+    response_dir = tmp_path / "responses"
+    response_dir.mkdir()
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        (response_dir / f"{batch['batch_id']}_response.json").write_text(
+            json.dumps(_positional_relation_response(subset)), encoding="utf-8"
+        )
+
+    finalized = finalize_evidence_selection_batches_run(
+        batch_manifest_path=batch_manifest_path,
+        response_dir=response_dir,
+        quote_prompt_out=tmp_path / "quote_prompt.txt",
+        quote_schema_out=tmp_path / "quote_schema.json",
+        quote_manifest_out=tmp_path / "quote_manifest.json",
+    )
+
+    assert prepared["candidate_count"] == 10
+    assert prepared["batch_count"] == 2
+    assert finalized["candidate_count"] == 10
+    assert finalized["batch_count"] == 2
+    assert (batch_dir / "batch_0001_prompt.txt").is_file()
+    assert (batch_dir / "batch_0002_schema.json").is_file()
+
+
+@pytest.mark.parametrize("cap", [0, 21, "15", True])
+def test_selection_spec_rejects_invalid_truth_origin_cap(
+    tmp_path: Path, cap: object
+) -> None:
+    spec, sources = _write_source(tmp_path)
+    spec["truth_group_cap"] = cap
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+
+    assert caught.value.boundary == "selection_spec"
+
+
+@pytest.mark.parametrize("mode", ["ids", "ordered", 1, True])
+def test_selection_spec_rejects_invalid_relation_response_mode(
+    tmp_path: Path, mode: object
+) -> None:
+    spec, sources = _write_source(tmp_path)
+    spec["relation_response_mode"] = mode
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+
+    assert caught.value.boundary == "selection_spec"
 
 
 def test_provider_prompts_are_compact_views_while_manifests_keep_full_facts(

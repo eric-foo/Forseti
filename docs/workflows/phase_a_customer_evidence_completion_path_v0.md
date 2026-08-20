@@ -309,8 +309,14 @@ separate shade meanings may display as “intends to repurchase Vanilla and
 Vanilla Beige” while both semantic refs and named shades remain underneath one
 origin and one exact quote. Never group across origins, hide a conflicting
 clause, or broaden a shade-specific behavior into general repurchase.
-The cap applies to displayed independent-origin
-groups: ten customer truth groups and three creator-influence groups. Source
+The cap applies to displayed independent-origin groups. The default remains ten
+customer truth groups, and one selection may explicitly raise that customer
+cap to at most twenty; creator influence remains capped separately at three.
+Do not raise the cap merely to make an output look comprehensive. A full-axis
+Summer Fridays hydration comparison found ten materially thinner, fifteen
+materially better, and twenty no better than fifteen under mirrored review, so
+that exact full-axis hydration selection uses fifteen. This is a measured
+selection setting, not a universal default for every axis. Source
 roles and retailer venues remain visible, with each publisher normalized to one
 venue across host variants and short links; creator-authored popularity never
 corroborates customer experience. Engagement may prioritize rows only inside
@@ -318,7 +324,8 @@ one venue/role/native-metric bucket, and a count the runtime cannot read whole
 is ordered last rather than partially parsed. An unrecognized mapping-valued
 engagement shape fails closed rather than becoming an unknown value or generic
 score. Every nominated safety or costly-behavior origin is selected first; more
-than ten such customer origins fails `presentation_cap_insufficient`. For
+such customer origins than the selection's bound cap fails
+`presentation_cap_insufficient`. For
 non-value selections, the selector then reserves visible support and counter
 only from materially positive or explicitly protected evidence. A value-only
 selection instead fills materially positive support origins first, prioritizing
@@ -349,8 +356,8 @@ rows. Every operator-protected row is visible or the run fails. The retained
 disposition inventory remains the accounting record for all other displayed and
 undisplayed candidates.
 
-One displayed pack is not one evidence point. It may contain up to ten
-independent customer origins, and one origin may display several atomic
+One displayed pack is not one evidence point. It may contain up to the
+selection's explicit customer-origin cap, and one origin may display several atomic
 meanings. Call those origins corroboration only when their meanings support the
 same bounded statement under compatible product, variant, timing, and
 condition scope. Origins that merely discuss the same broad axis remain
@@ -359,6 +366,31 @@ another person's experience remains adjacent unless the directly quoted
 speaker's own account is the evidence unit. Internal independence metadata is
 kept for deterministic origin accounting rather than used by the relation
 model to discard otherwise valid evidence.
+
+For large non-value selections, use `prepare-evidence-selection-batches` and
+`finalize-evidence-selection-batches` instead of asking one response to repeat
+every candidate ID. The preparation emits at most 300 candidates per batch and
+uses required named row slots (`row_0000`, `row_0001`, and so on). The provider
+returns only the relation for each slot. Finalization binds each slot back to
+the hash-owned candidate identity, rejects a missing or foreign slot or batch,
+requires exact contiguous coverage of the complete candidate inventory, then
+continues through the ordinary quote manifest. Batching does not change
+admission, selection priority, relation meaning, evidence facts, or the origin
+cap. Literal-ID response mode remains the default and the required mode for
+value selections; named positional batching is an opt-in transport for large
+non-value axes.
+
+The full-axis hydration receipt is
+`C:\tmp\forseti-phase-a-hydration-cap-pilot-20260820-v0\experiment_result_v1.json`
+(raw SHA-256
+`74149af3d24c8ba742d38ec75bb9e5e2bd075570fd29d68f31189d143608b2e9`).
+Its accepted route accounted for all 836 candidates, selected fifteen customer
+origins into seventeen exact-quote rows across Reddit, Amazon, and Sephora, and
+preserved ten support origins plus six counter origins. Required named slots
+fixed the observed long-array truncation, but increased relation-stage logical
+tokens by 35.092% versus the exact literal-ID arm; parallel relation latency was
+51.736% lower. This is a completeness and parallel-latency trade, not a token
+saving.
 
 The quote stage reads bodies only for selected display rows. Bodies of at most
 220 characters are copied in full by deterministic code, and absent bodies are

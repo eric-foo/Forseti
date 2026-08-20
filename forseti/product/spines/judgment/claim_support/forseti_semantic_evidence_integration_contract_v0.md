@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v48
-effective_date: 2026-08-18
+version: v49
+effective_date: 2026-08-20
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v48
+# Semantic Evidence Integration Contract v49
 
 ## Purpose
 
@@ -836,10 +836,15 @@ despite that price. A value selection binds `price feels high` separately from
 abandonment that changes the reading uses the existing `costly_behavior`
 protected-evidence lane rather than a new score.
 
-Presentation caps independent origins, not underlying evidence: at most ten
-customer truth-support origin groups and three creator-influence origin groups.
+Presentation caps independent origins, not underlying evidence. The default is
+at most ten customer truth-support origin groups; a selection may explicitly
+bind a customer cap from one through twenty. Creator influence remains capped
+separately at three and cannot consume or enlarge the customer cap. A raised
+cap is selection-specific rather than a new global default. The measured
+full-axis Summer Fridays hydration selection binds fifteen: fifteen materially
+improved on ten, while twenty was not preferred to fifteen.
 Every explicitly nominated safety or costly-behavior origin is selected first;
-if those origins alone exceed ten, selection fails
+if those origins alone exceed the bound customer cap, selection fails
 `presentation_cap_insufficient`. The selector then reserves support and counter
 only from materially positive or explicitly protected evidence. Unprotected
 zero, quiet, and engagement-unavailable rows remain accounted but are not forced
@@ -892,6 +897,19 @@ semantic relevance and context completeness for longer sources remain a
 quality-adjudication obligation outside the deterministic runtime. Both
 prepare/finalize stages make zero provider calls and are deterministic and
 idempotent.
+
+For a large non-value selection, positional relation transport may be split
+into hash-bound batches of at most 300 candidates. Each response is an object
+whose required named `row_NNNN` properties map to the zero-based candidate
+positions in that batch and whose values are only support, counter, adjacent,
+or exclude. It repeats neither candidate IDs nor free-text reason codes.
+Finalization validates the batch-manifest hash, source and candidate hashes,
+the exact batch set, contiguous complete coverage, and the exact required row
+key set before deterministically reattaching literal candidate identities and
+ordinary non-value reason labels. Any missing or foreign batch or row fails
+closed before presentation selection. This transport changes neither semantic
+admission nor relation authority and is unavailable for value selections,
+whose relation-aligned vocabulary remains literal-ID based.
 
 Contract v40 clarifies value evidence without changing packet v3 or the
 selection schema. Candidate admission for a value axis is direction-neutral:
@@ -1441,6 +1459,14 @@ new frontier.
 
 ## Changelog
 
+- `v49` / 2026-08-20 — kept ten customer origins as the presentation default
+  while allowing an explicit one-through-twenty cap; the measured full-axis
+  hydration pack binds fifteen because fifteen beat ten and twenty did not beat
+  fifteen. Added hash-bound non-value relation batching with at most 300
+  candidates and required named row slots, so a truncated long response fails
+  before selection and candidate IDs and facts remain deterministic. Value
+  selection, packet v3, creator separation, and cross-platform engagement
+  boundaries are unchanged.
 - `v48` / 2026-08-18 — corrected completed-use handling and chronology. Time to
   finish or pan is no longer quantity-efficiency/value evidence by itself; an
   explicit same-source repurchase remains direct repurchase intent. Longer-body
