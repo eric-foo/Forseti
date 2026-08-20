@@ -3,7 +3,7 @@ artifact_role: authority
 status: current
 owner: Judgment / claim support
 version: v51
-effective_date: 2026-08-20
+effective_date: 2026-08-21
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
@@ -1507,7 +1507,7 @@ new frontier.
 
 ## Changelog
 
-- `v51` / 2026-08-20 — prohibited a long exact-quote span from starting with an
+- `v51` / 2026-08-21 — prohibited a long exact-quote span from starting with an
   unresolved pronoun when the nearby antecedent fits under the existing
   220-character ceiling. Product identity may still rely on the evidence row,
   avoiding the broader rejected rule that made seven usable hydration quotes

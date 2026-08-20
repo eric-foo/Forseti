@@ -423,6 +423,23 @@ lower-effort behavior is unmeasured; and the receipt records
 `repository_head_at_run` as the parent commit with a dirty worktree, so it
 attests to the run, not to a committed revision.
 
+The post-review final-contract proof is
+`C:\tmp\forseti-phase-a-hydration-final-contract-20260820-v0\experiment_result_v1.json`
+(raw SHA-256
+`dc9420c0a43e07fa6df66b1b45b8a193759f6908b2ba7ac8c4b7fbc117c6dde3`).
+It ran fresh matched high-reasoning serial and genuinely concurrent arms over
+the same 836 candidates, then regenerated the final prompts and manifests from
+the committed implementation byte-for-byte. Both arms produced fifteen truth
+origins, seventeen exact quotes, zero unavailable quotes, and no influence
+origin. Serial used 248,014 logical tokens and 742,019.840 ms of active provider
+time; parallel used 245,176 logical tokens and 389,626.940 ms. The observed
+parallel latency reduction was 47.491%. The 1.144% lower parallel logical-token
+total is descriptive provider-output variation, not a concurrency token-saving
+claim. Both mirrored blind orderings preferred the corrected parallel artifact
+to the prior accepted pack. The receipt separately discloses 408,351 logical
+tokens across twelve rejected-attempt and judge calls; those are experiment
+overhead, not production-arm economics.
+
 The quote stage reads bodies only for selected display rows. Bodies of at most
 220 characters are copied in full by deterministic code, and absent bodies are
 typed unavailable; neither is sent to the model. Only longer bodies enter the
