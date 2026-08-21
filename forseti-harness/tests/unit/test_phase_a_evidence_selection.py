@@ -846,10 +846,12 @@ def test_linked_parent_context_is_exact_compact_and_hash_bound(tmp_path: Path) -
         ]
     ]
     candidate_index = envelope["candidate_columns"].index("parent_context_ids")
-    assert any(
-        candidate_row[candidate_index] == [f"full-corpus::{context_id}"]
+    linked_rows = [
+        candidate_row[candidate_index]
         for candidate_row in envelope["candidate_rows"]
-    )
+        if candidate_row[candidate_index]
+    ]
+    assert linked_rows == [[f"full-corpus::{context_id}"]]
     assert prompt.count(parent_text) == 1
     assert "otherwise do not inherit the missing meaning" in prompt
 
@@ -867,6 +869,16 @@ def test_linked_parent_context_is_exact_compact_and_hash_bound(tmp_path: Path) -
     assert selected_prompt.count(parent_text) == 1
     assert '"point_parent_context_ids"' in selected_prompt
     assert '"parent_context_ids"' in selected_prompt
+    # Thread proximity must never transfer the parent speaker's experience, and
+    # the scope test must stay symmetric: a same-source bundle of materially
+    # different attributes is broad exactly as a cross-source one is.
+    for policy_prompt in (prompt, preselection_prompt, selected_prompt):
+        assert (
+            "never becomes the reply speaker's merely because both appear in one thread"
+            in policy_prompt
+        )
+    for scope_prompt in (preselection_prompt, selected_prompt):
+        assert "conditions across sources" not in scope_prompt
 
     legacy_candidates = _candidate_rows(
         sources, spec, include_parent_context=False
@@ -941,6 +953,11 @@ def test_linked_parent_context_reaches_every_scope_batch_without_row_laundering(
             ]
         ]
         assert prompt.count(parent_text) == 1
+        assert (
+            "never becomes the reply speaker's merely because both appear in one thread"
+            in prompt
+        )
+        assert "conditions across sources" not in prompt
         if "parent_context_ids" in envelope["candidate_columns"]:
             context_index = envelope["candidate_columns"].index(
                 "parent_context_ids"
@@ -971,6 +988,61 @@ def test_linked_parent_context_reaches_every_scope_batch_without_row_laundering(
     )
     assert selected_envelope["point_parent_context_ids"] == [full_context_id]
     assert "parent_context_ids" not in selected_envelope["selected_columns"]
+
+
+def test_linked_parent_context_stays_on_one_child_inside_confirmation_batch(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": "full-corpus",
+            "semantic_unit_ref": "community_post:0::hydration",
+        }
+    ]
+    spec["relation_response_mode"] = "positional"
+    spec["relation_policy"] = "bounded_point"
+    context_id = _attach_parent_context(
+        sources[0],
+        "community_post:0",
+        "The balm did nothing to hydrate my lips overnight.",
+    )
+    full_context_id = f"full-corpus::{context_id}"
+
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=3
+    )
+    candidates = _candidate_rows(sources, spec)
+    responses = {}
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        responses[batch["batch_id"]] = _batched_positional_relation_response(
+            subset, batch["batch_id"]
+        )
+
+    _, prompts = prepare_batched_preselection_relation_confirmations(
+        batch_manifest, sources, responses, batch_size=10
+    )
+    linked_rows = []
+    unlinked_siblings = 0
+    for prompt, _ in prompts:
+        envelope = json.loads(
+            prompt.split(
+                "PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n", 1
+            )[1]
+        )
+        if "parent_context_ids" not in envelope["candidate_columns"]:
+            continue
+        context_index = envelope["candidate_columns"].index("parent_context_ids")
+        for row in envelope["candidate_rows"]:
+            if row[context_index]:
+                linked_rows.append(row[context_index])
+            else:
+                unlinked_siblings += 1
+
+    assert linked_rows == [[full_context_id]]
+    assert unlinked_siblings > 0
 
 
 def test_linked_parent_context_fails_closed_on_unknown_or_wrong_artifact(
