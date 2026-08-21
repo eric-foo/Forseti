@@ -73,13 +73,18 @@ from judgment.phase_a_evidence_consumer import (  # noqa: E402
     prepare_decision_batch,
 )
 from judgment.phase_a_evidence_selection import (  # noqa: E402
+    build_customer_pull_point_frontier,
     finalize_batched_relations_prepare_quotes,
+    finalize_preselection_relation_confirmation_prepare_quotes,
     finalize_quotes,
     finalize_relations_prepare_quotes,
     load_selection_sources,
     prepare_evidence_selection,
     prepare_evidence_selection_batches,
+    prepare_preselection_relation_confirmation,
     prepare_selected_relation_confirmation,
+    selection_spec_from_customer_pull_frontier,
+    verify_customer_pull_point_frontier,
 )
 from harness_utils import hash_file  # noqa: E402
 
@@ -1550,6 +1555,68 @@ def finalize_evidence_consumer_batch_run(
     }
 
 
+def build_customer_pull_point_frontier_run(
+    *, spec_path: Path, frontier_out: Path
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    packet_path = (spec_path.parent / Path(spec["packet_path"])).resolve(strict=True)
+    protected = spec.get("protected_point_ids") or {}
+    frontier = build_customer_pull_point_frontier(
+        _load_object(packet_path),
+        frontier_id=spec["frontier_id"],
+        business_question=spec["business_question"],
+        subject_product_ids=spec["subject_product_ids"],
+        source_id=spec.get("source_id", "full-corpus"),
+        protected_point_ids=protected,
+    )
+    if frontier_out.exists():
+        raise ValueError(f"refusing to overwrite existing output: {frontier_out}")
+    _write_json(frontier_out, frontier)
+    return {
+        "status": "PHASE_A_CUSTOMER_PULL_POINT_FRONTIER_READY",
+        "retailer_first_count": frontier["accounting"]["retailer_first_count"],
+        "community_discovery_count": frontier["accounting"][
+            "community_discovery_count"
+        ],
+        "nonpromoted_count": frontier["accounting"]["nonpromoted_count"],
+        "frontier_sha256": frontier["frontier_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def materialize_customer_pull_point_selection_spec_run(
+    *,
+    frontier_path: Path,
+    packet_path: Path,
+    bundle_path: Path,
+    proposition_id: str,
+    spec_out: Path,
+) -> dict[str, Any]:
+    frontier = _load_object(frontier_path)
+    packet = _load_object(packet_path)
+    verify_customer_pull_point_frontier(frontier, packet)
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, proposition_id
+    )
+    spec["sources"] = [
+        {
+            "source_id": frontier["source_id"],
+            "packet_path": str(packet_path.resolve(strict=True)),
+            "bundle_path": str(bundle_path.resolve(strict=True)),
+        }
+    ]
+    if spec_out.exists():
+        raise ValueError(f"refusing to overwrite existing output: {spec_out}")
+    _write_json(spec_out, spec)
+    return {
+        "status": "PHASE_A_CUSTOMER_PULL_POINT_SELECTION_SPEC_READY",
+        "selection_id": spec["selection_id"],
+        "frontier_sha256": frontier["frontier_sha256"],
+        "truth_group_cap": spec["truth_group_cap"],
+        "model_api_calls": 0,
+    }
+
+
 def _selection_sources_from_spec(
     spec_path: Path, spec: Mapping[str, Any]
 ) -> list[dict[str, Any]]:
@@ -1694,6 +1761,71 @@ def finalize_evidence_selection_relations_run(
         ),
         "manifest_sha256": quote_manifest["manifest_sha256"],
         "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def prepare_preselection_relation_confirmation_run(
+    *,
+    selection_manifest_path: Path,
+    first_response_path: Path,
+    prompt_out: Path,
+    response_schema_out: Path,
+    confirmation_manifest_out: Path,
+) -> dict[str, Any]:
+    selection_manifest = _load_object(selection_manifest_path)
+    sources = load_selection_sources(selection_manifest)
+    prompt, schema, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, _load_object(first_response_path)
+    )
+    for output in (prompt_out, response_schema_out, confirmation_manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(prompt_out, prompt.encode("utf-8"))
+    _write_json(response_schema_out, schema)
+    _write_json(confirmation_manifest_out, confirmation_manifest)
+    return {
+        "status": "PHASE_A_PRESELECTION_RELATION_CONFIRMATION_READY",
+        "confirmation_candidate_count": len(
+            confirmation_manifest["confirmation_candidate_ids"]
+        ),
+        "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_preselection_relation_confirmation_run(
+    *,
+    selection_manifest_path: Path,
+    first_response_path: Path,
+    confirmation_manifest_path: Path,
+    confirmation_response_path: Path,
+    quote_prompt_out: Path,
+    quote_schema_out: Path,
+    quote_manifest_out: Path,
+) -> dict[str, Any]:
+    selection_manifest = _load_object(selection_manifest_path)
+    sources = load_selection_sources(selection_manifest)
+    prompt, schema, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            _load_object(first_response_path),
+            _load_object(confirmation_manifest_path),
+            _load_object(confirmation_response_path),
+        )
+    )
+    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(quote_prompt_out, prompt.encode("utf-8"))
+    _write_json(quote_schema_out, schema)
+    _write_json(quote_manifest_out, quote_manifest)
+    return {
+        "status": "PHASE_A_CONFIRMED_EVIDENCE_SELECTION_QUOTES_READY",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
+        "selected_row_count": len(quote_manifest["selected_rows"]),
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
         "model_api_calls": 0,
     }
 
@@ -2083,6 +2215,19 @@ def _parser() -> argparse.ArgumentParser:
     consumer_finalize.add_argument("--response", type=Path, required=True)
     consumer_finalize.add_argument("--artifact-dir", type=Path, required=True)
 
+    frontier_build = sub.add_parser("build-customer-pull-point-frontier")
+    frontier_build.add_argument("--spec", type=Path, required=True)
+    frontier_build.add_argument("--frontier-out", type=Path, required=True)
+
+    frontier_point = sub.add_parser(
+        "materialize-customer-pull-point-selection-spec"
+    )
+    frontier_point.add_argument("--frontier", type=Path, required=True)
+    frontier_point.add_argument("--packet", type=Path, required=True)
+    frontier_point.add_argument("--bundle", type=Path, required=True)
+    frontier_point.add_argument("--proposition-id", required=True)
+    frontier_point.add_argument("--spec-out", type=Path, required=True)
+
     selection_prepare = sub.add_parser("prepare-evidence-selection")
     selection_prepare.add_argument("--spec", type=Path, required=True)
     selection_prepare.add_argument("--prompt-out", type=Path, required=True)
@@ -2111,6 +2256,46 @@ def _parser() -> argparse.ArgumentParser:
     )
     selection_relations.add_argument(
         "--confirmation-manifest-out", type=Path, required=True
+    )
+
+    preselection_confirmation = sub.add_parser(
+        "prepare-preselection-relation-confirmation"
+    )
+    preselection_confirmation.add_argument(
+        "--selection-manifest", type=Path, required=True
+    )
+    preselection_confirmation.add_argument(
+        "--first-response", type=Path, required=True
+    )
+    preselection_confirmation.add_argument("--prompt-out", type=Path, required=True)
+    preselection_confirmation.add_argument(
+        "--response-schema-out", type=Path, required=True
+    )
+    preselection_confirmation.add_argument(
+        "--confirmation-manifest-out", type=Path, required=True
+    )
+
+    preselection_finalize = sub.add_parser(
+        "finalize-preselection-relation-confirmation"
+    )
+    preselection_finalize.add_argument(
+        "--selection-manifest", type=Path, required=True
+    )
+    preselection_finalize.add_argument("--first-response", type=Path, required=True)
+    preselection_finalize.add_argument(
+        "--confirmation-manifest", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--confirmation-response", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--quote-prompt-out", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--quote-schema-out", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--quote-manifest-out", type=Path, required=True
     )
 
     selection_batch_relations = sub.add_parser(
@@ -2454,6 +2639,19 @@ def main(argv: list[str] | None = None) -> int:
                 response_path=args.response,
                 artifact_dir=args.artifact_dir,
             )
+        elif args.command == "build-customer-pull-point-frontier":
+            result = build_customer_pull_point_frontier_run(
+                spec_path=args.spec,
+                frontier_out=args.frontier_out,
+            )
+        elif args.command == "materialize-customer-pull-point-selection-spec":
+            result = materialize_customer_pull_point_selection_spec_run(
+                frontier_path=args.frontier,
+                packet_path=args.packet,
+                bundle_path=args.bundle,
+                proposition_id=args.proposition_id,
+                spec_out=args.spec_out,
+            )
         elif args.command == "prepare-evidence-selection":
             result = prepare_evidence_selection_run(
                 spec_path=args.spec,
@@ -2478,6 +2676,24 @@ def main(argv: list[str] | None = None) -> int:
                 confirmation_prompt_out=args.confirmation_prompt_out,
                 confirmation_schema_out=args.confirmation_schema_out,
                 confirmation_manifest_out=args.confirmation_manifest_out,
+            )
+        elif args.command == "prepare-preselection-relation-confirmation":
+            result = prepare_preselection_relation_confirmation_run(
+                selection_manifest_path=args.selection_manifest,
+                first_response_path=args.first_response,
+                prompt_out=args.prompt_out,
+                response_schema_out=args.response_schema_out,
+                confirmation_manifest_out=args.confirmation_manifest_out,
+            )
+        elif args.command == "finalize-preselection-relation-confirmation":
+            result = finalize_preselection_relation_confirmation_run(
+                selection_manifest_path=args.selection_manifest,
+                first_response_path=args.first_response,
+                confirmation_manifest_path=args.confirmation_manifest,
+                confirmation_response_path=args.confirmation_response,
+                quote_prompt_out=args.quote_prompt_out,
+                quote_schema_out=args.quote_schema_out,
+                quote_manifest_out=args.quote_manifest_out,
             )
         elif args.command == "finalize-evidence-selection-batches":
             result = finalize_evidence_selection_batches_run(

@@ -6,6 +6,7 @@ use_when:
   - Resuming the full Summer Fridays customer-corpus semantic run.
   - Applying the same Reddit/community plus retailer-review method to another company.
   - Deciding when customer evidence is ready to hand to Synthesize or Deliver.
+  - Building or changing a Phase A commercial point frontier, point evidence pack, relation prompt, or quote-selection consumer.
 authority_boundary: retrieval_only
 open_next:
   - forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
@@ -29,6 +30,63 @@ hash has a complete, reproducible evidence packet or a visible unresolved
 failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
+
+## Active commercial point-entry boundary
+
+For the completed Summer Fridays Phase A packet, the business question is:
+**Which customer-valued strengths and objections deserve commercial
+investigation?** The no-provider
+`build-customer-pull-point-frontier` command accounts every product proposition
+in one of three places:
+
+- `retailer_first_queue` is read first because a retailer review is closest to
+  a completed purchase;
+- `community_discovery_queue` keeps customer points found only in community or
+  qualified audience evidence visible and records retailer check-back as still
+  open; and
+- `nonpromoted_points` records why a proposition did not earn investigation.
+
+Retailer is a first-look venue, never an admission gate. A community-only
+purchase, repurchase, recommendation, recurring experience, or materially
+engaged customer point may earn investigation without retailer support. It
+does not become retailer corroboration. Conversely, creator-authored material
+remains influence context and cannot enter either customer-truth queue.
+Engagement is retained and ordered only within its own venue, role, and metric;
+the frontier has no cross-platform customer-pull score.
+
+The frontier is a navigation artifact over a complete, non-truncated
+`phase_a_evidence_packet_v3`; it is not packet v4 or a new evidence authority.
+`materialize-customer-pull-point-selection-spec` turns one admitted proposition
+into one hash-bound bounded-point selection with the normal thirteen-truth-origin
+cap. It admits only that proposition's literal support, counter, and adjacent
+semantic refs. The full packet and every frontier disposition remain available;
+the displayed pack is not the entire axis and never implies prevalence.
+Frontier specs use the exact bounded point as their direction: evidence that
+the balm is expensive supports that objection, rather than being reversed by
+the older positive-good-value box policy. Historical value-box selections keep
+their stamped policy.
+
+For a new point pack, relation confirmation occurs before the display cap:
+
+```text
+prepare-evidence-selection
+  -> external first relation response over every admitted row
+  -> prepare-preselection-relation-confirmation
+  -> external hidden-label confirmation over every material, protected, or
+     influence row that could reach display
+  -> finalize-preselection-relation-confirmation
+  -> external exact-quote response
+  -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
+```
+
+The confirmation frontier is independent of the first-pass relation. Therefore
+a first-pass `exclude` cannot silently hide a materially engaged or protected
+row. The confirming response may correct the relation and reason code; selection
+then runs once over the corrected inventory. Every finally displayed row must
+have crossed that confirmation boundary. Missing, duplicate, foreign, reordered,
+or unconfirmed rows fail closed. Historical v6 quote manifests retain their
+selected-row confirmation route for exact reproduction; they are not silently
+restamped as v7.
 
 ## Operating path
 
@@ -585,7 +643,7 @@ material qualification cannot fit, the quote response returns unavailable
 rather than a misleading fragment. It never repairs text or adds ellipses. An
 available quote must contain at least two
 Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
-A long-body quote in a current v4/v5/v6 quote manifest that ends in an alphanumeric
+A long-body quote in a current v4/v5/v6/v7 quote manifest that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at
 `quote_boundary_incomplete`. This catches a literal substring that stops before
@@ -610,7 +668,7 @@ changed bytes fail.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 
-New quote manifests use `phase_a_evidence_quote_manifest_v6` and record the
+New point packs use `phase_a_evidence_quote_manifest_v7` and record the
 ordered `provider_selected_ids` subset. The finalizer recomputes that subset
 from the bound bodies, rejects drift, deterministically fills short or missing
 bodies, and merges provider-returned long-body quotes back into original
@@ -625,8 +683,10 @@ concern`, `Explicitly worth the price`, `Strong price-to-quantity value`, `Too
 little product for the price`, `Performance does not justify the price`, and
 `Price prevents repurchase`. A malformed, overlong, or
 support/counter/adjacent/exclude-leaking reason code fails closed before display.
-Legacy v1 and v3 quote manifests keep their original all-selected response
-shape and remain finalizable. The
+V7 also binds the completed pre-selection relation confirmation and requires no
+late confirmation attachment during quote finalization. Historical v6 keeps
+its selected-row confirmation attachment; legacy v1 and v3 quote manifests keep
+their original all-selected response shape and remain finalizable. The
 superseded v2 presentation-statement experiment was scratch-only and is not a
 supported historical runtime contract.
 

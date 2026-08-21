@@ -27,6 +27,7 @@ from judgment.phase_a_evidence_consumer import (
 
 
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
+CUSTOMER_PULL_FRONTIER_VERSION = "phase_a_customer_pull_point_frontier_v1"
 SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
@@ -34,13 +35,18 @@ PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
 PRECONFIRMATION_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
 PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v5"
 QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v6"
+PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v7"
 BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
 RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_relation_confirmation_manifest_v2"
 )
+PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION = (
+    "phase_a_evidence_preselection_relation_confirmation_manifest_v1"
+)
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 POINT_SCOPE_STATUSES = ("single_point", "broad_axis_or_bundle")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
+RELATION_POLICIES = ("auto", "bounded_point")
 POSITIONAL_REASON_CODE_BY_RELATION = {
     "support": "matching_customer_experience",
     "counter": "differing_customer_experience",
@@ -172,7 +178,7 @@ BATCHED_RELATION_RESPONSE_INSTRUCTION = "Return the batch_id shown in the envelo
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction} Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction} Support directly supports the bounded claim. Counter directly opposes or materially qualifies it. Adjacent is relevant context that directly establishes neither direction. Exclude is wrong-scope or non-evidence. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 {policy_guidance}
 
@@ -202,9 +208,380 @@ SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:
 {envelope}
 """
 
+PRESELECTION_RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered candidate rows below. Return only the required JSON.
+
+Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
+
+{policy_guidance}
+
+Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area, combines materially different attributes, outcomes, directions, or conditions, or could make unrelated mentions look corroborative.
+
+The first-pass relation, reason code, engagement, and selection priority are intentionally absent. Opaque row handles and content-derived order reveal no first-pass signal. Return every confirmation_row_id exactly once and in order.
+
+PRESELECTION_RELATION_CONFIRMATION_ENVELOPE_JSON:
+{envelope}
+"""
+
 
 def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+
+
+def _frontier_point_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
+    reasons = set(row.get("earning_reasons", []))
+    return (
+        0 if "reported_behavior" in reasons else 1,
+        -int(row.get("independent_support_origin_count", 0)),
+        -len(row.get("material_support_evidence_ids", [])),
+        str(row.get("proposition_id")),
+    )
+
+
+def build_customer_pull_point_frontier(
+    packet: Mapping[str, Any],
+    *,
+    frontier_id: str,
+    business_question: str,
+    subject_product_ids: Sequence[str],
+    source_id: str = "full-corpus",
+    protected_point_ids: Mapping[str, Sequence[str]] | None = None,
+) -> dict[str, Any]:
+    """Build a deterministic retailer-first commercial investigation frontier.
+
+    Retailer evidence earns the first-look queue because it is closest to a
+    completed purchase, but it is deliberately not an admission gate.  A
+    customer point found only in community evidence remains visible in the
+    discovery queue and records that retailer check-back is still outstanding.
+    """
+
+    _verify_packet(packet)
+    selection = packet.get("selection")
+    coverage = packet.get("selection_coverage")
+    if (
+        not isinstance(selection, Mapping)
+        or selection.get("mode") != "proposition"
+        or not isinstance(coverage, Mapping)
+        or coverage.get("truncated") is not False
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input",
+            "frontier requires a complete, non-truncated proposition packet",
+        )
+    if not isinstance(frontier_id, str) or not frontier_id.strip():
+        raise EvidenceConsumerError("customer_pull_frontier_input", "frontier_id missing")
+    if not isinstance(business_question, str) or not business_question.strip():
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input", "business_question missing"
+        )
+    if (
+        not isinstance(source_id, str)
+        or not source_id
+        or not subject_product_ids
+        or not all(isinstance(value, str) and value for value in subject_product_ids)
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input", "source and subject product identities missing"
+        )
+    protected_input = protected_point_ids or {}
+    if set(protected_input) - set(PROTECTED_LANES) or not all(
+        isinstance(values, Sequence)
+        and not isinstance(values, (str, bytes))
+        and all(isinstance(value, str) for value in values)
+        for values in protected_input.values()
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input", "protected point lanes are invalid"
+        )
+    protected = {
+        lane: sorted(set(values)) for lane, values in protected_input.items()
+    }
+    propositions = packet.get("propositions")
+    selected_ids = selection.get("proposition_ids")
+    if (
+        not isinstance(propositions, list)
+        or not isinstance(selected_ids, list)
+        or not all(isinstance(value, str) for value in selected_ids)
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input", "proposition inventory is invalid"
+        )
+    by_id = {
+        row.get("proposition_id"): row
+        for row in propositions
+        if isinstance(row, Mapping) and isinstance(row.get("proposition_id"), str)
+    }
+    if len(by_id) != len(propositions) or set(by_id) != set(selected_ids):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input", "selected proposition inventory is not exact"
+        )
+    wanted_subjects = set(subject_product_ids)
+    evidence_index, _ = _expand_packet(packet)
+    available_truth_roles = {
+        group.get("source_role")
+        for group in packet.get("source_groups", [])
+        if isinstance(group, Mapping) and group.get("source_role") in TRUTH_ROLES
+    }
+    retailer_queue: list[dict[str, Any]] = []
+    community_queue: list[dict[str, Any]] = []
+    nonpromoted: list[dict[str, str]] = []
+    considered_ids: list[str] = []
+
+    protected_lookup = {
+        proposition_id: lane
+        for lane, proposition_ids in protected.items()
+        for proposition_id in proposition_ids
+    }
+    unknown_protected = sorted(set(protected_lookup) - set(by_id))
+    if unknown_protected:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_input",
+            f"protected points are absent: {unknown_protected}",
+        )
+
+    for proposition_id in selected_ids:
+        proposition = by_id[proposition_id]
+        subjects = set(proposition.get("subject_product_ids") or [])
+        if not (subjects & wanted_subjects):
+            continue
+        considered_ids.append(proposition_id)
+        relations = _relation_rows(packet, proposition_id)
+        relation_rows: dict[str, list[dict[str, Any]]] = {
+            relation: [] for relation in ("support", "counter", "adjacent")
+        }
+        for relation_row in relations:
+            evidence_id = relation_row["evidence_id"]
+            if evidence_id not in evidence_index:
+                raise EvidenceConsumerError(
+                    "customer_pull_frontier_input",
+                    f"linked evidence is unresolved: {evidence_id}",
+                )
+            group, evidence = evidence_index[evidence_id]
+            engagement = evidence.get("engagement") or {}
+            venue, venue_basis = _source_venue(
+                str(group["source_role"]), evidence.get("source_ref"), evidence_id
+            )
+            relation_rows[relation_row["relation"]].append(
+                {
+                    "evidence_id": evidence_id,
+                    "semantic_unit_refs": [relation_row["semantic_unit_ref"]],
+                    "source_role": group["source_role"],
+                    "source_venue": venue,
+                    "source_venue_basis": venue_basis,
+                    "engagement_kind": group["engagement_kind"],
+                    "engagement_status": engagement.get("status")
+                    or "engagement_available",
+                    "engagement_material_positive": engagement.get("material_positive"),
+                    "independence_key": evidence.get("independence_key") or evidence_id,
+                }
+            )
+        support = relation_rows["support"]
+        customer_support = [row for row in support if row["source_role"] in TRUTH_ROLES]
+        support_roles = sorted({row["source_role"] for row in customer_support})
+        origins = {
+            (packet.get("source_bindings", {}).get("corpus_sha256"), row["independence_key"])
+            for row in customer_support
+        }
+        material_support_ids = sorted(
+            {
+                row["evidence_id"]
+                for row in customer_support
+                if row["engagement_material_positive"] is True
+            }
+        )
+        earning_reasons = []
+        if proposition.get("claim_kind") == "reported_behavior":
+            earning_reasons.append("reported_behavior")
+        if len(origins) >= 2:
+            earning_reasons.append("independent_customer_recurrence")
+        if material_support_ids:
+            earning_reasons.append("material_source_native_engagement")
+        if proposition_id in protected_lookup:
+            earning_reasons.append(f"protected:{protected_lookup[proposition_id]}")
+        if not customer_support:
+            nonpromoted.append(
+                {
+                    "proposition_id": proposition_id,
+                    "disposition": "no_customer_truth_support_in_bound_packet",
+                }
+            )
+            continue
+        if not earning_reasons:
+            nonpromoted.append(
+                {
+                    "proposition_id": proposition_id,
+                    "disposition": "no_investigation_earning_signal",
+                }
+            )
+            continue
+        retailer_support = "retailer_review" in support_roles
+        community_support = any(
+            role in {"community_post", "audience_comment"} for role in support_roles
+        )
+        customer_counter_roles = sorted(
+            {
+                row["source_role"]
+                for row in relation_rows["counter"]
+                if row["source_role"] in TRUTH_ROLES
+            }
+        )
+        row = {
+            "proposition_id": proposition_id,
+            "bounded_point": proposition.get("bounded_proposition"),
+            "claim_kind": proposition.get("claim_kind"),
+            "axis_ids": sorted(proposition.get("axis_ids") or []),
+            "conditions": proposition.get("conditions") or [],
+            "customer_support_roles": support_roles,
+            "customer_counter_roles": customer_counter_roles,
+            "independent_support_origin_count": len(origins),
+            "material_support_evidence_ids": material_support_ids,
+            "earning_reasons": earning_reasons,
+            "relation_rows": relation_rows,
+            "checkback": {
+                "community": (
+                    "support_observed"
+                    if community_support
+                    else "none_observed_in_bound_packet"
+                    if available_truth_roles & {"community_post", "audience_comment"}
+                    else "not_checkable_in_bound_packet"
+                ),
+                "retailer": (
+                    "support_observed"
+                    if retailer_support
+                    else "none_observed_in_bound_packet"
+                    if "retailer_review" in available_truth_roles
+                    else "not_checkable_in_bound_packet"
+                ),
+            },
+        }
+        (retailer_queue if retailer_support else community_queue).append(row)
+
+    retailer_queue.sort(key=_frontier_point_sort_key)
+    community_queue.sort(key=_frontier_point_sort_key)
+    nonpromoted.sort(key=lambda row: row["proposition_id"])
+    frontier = {
+        "schema_version": CUSTOMER_PULL_FRONTIER_VERSION,
+        "frontier_id": frontier_id.strip(),
+        "business_question": business_question.strip(),
+        "source_id": source_id,
+        "packet_sha256": packet["packet_sha256"],
+        "subject_product_ids": sorted(set(subject_product_ids)),
+        "protected_point_ids": protected,
+        "customer_pull_policy": {
+            "retailer_is_first_look_venue": True,
+            "retailer_is_admission_gate": False,
+            "engagement_is_compared_only_within_source_role_venue_and_metric": True,
+            "creator_authored_is_customer_truth": False,
+            "cross_platform_score": None,
+        },
+        "considered_proposition_ids": considered_ids,
+        "retailer_first_queue": retailer_queue,
+        "community_discovery_queue": community_queue,
+        "nonpromoted_points": nonpromoted,
+        "accounting": {
+            "considered_proposition_count": len(considered_ids),
+            "retailer_first_count": len(retailer_queue),
+            "community_discovery_count": len(community_queue),
+            "nonpromoted_count": len(nonpromoted),
+        },
+        "model_api_calls": 0,
+    }
+    frontier["frontier_sha256"] = _canonical_json_sha256(frontier)
+    return frontier
+
+
+def verify_customer_pull_point_frontier(
+    frontier: Mapping[str, Any], packet: Mapping[str, Any]
+) -> None:
+    stored = frontier.get("frontier_sha256")
+    payload = {key: value for key, value in frontier.items() if key != "frontier_sha256"}
+    if (
+        frontier.get("schema_version") != CUSTOMER_PULL_FRONTIER_VERSION
+        or stored != _canonical_json_sha256(payload)
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_verification", "frontier content changed"
+        )
+    accounted = [
+        row.get("proposition_id")
+        for key in (
+            "retailer_first_queue",
+            "community_discovery_queue",
+            "nonpromoted_points",
+        )
+        for row in frontier.get(key, [])
+        if isinstance(row, Mapping)
+    ]
+    if (
+        len(accounted) != len(set(accounted))
+        or set(accounted) != set(frontier.get("considered_proposition_ids") or [])
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_accounting", "frontier point accounting is incomplete"
+        )
+    expected = build_customer_pull_point_frontier(
+        packet,
+        frontier_id=str(frontier.get("frontier_id", "")),
+        business_question=str(frontier.get("business_question", "")),
+        subject_product_ids=frontier.get("subject_product_ids") or [],
+        source_id=str(frontier.get("source_id", "")),
+        protected_point_ids=frontier.get("protected_point_ids") or {},
+    )
+    if dict(frontier) != expected:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_verification", "frontier does not rebuild"
+        )
+
+
+def selection_spec_from_customer_pull_frontier(
+    frontier: Mapping[str, Any],
+    packet: Mapping[str, Any],
+    proposition_id: str,
+) -> dict[str, Any]:
+    verify_customer_pull_point_frontier(frontier, packet)
+    matches = [
+        (queue, row)
+        for queue in ("retailer_first_queue", "community_discovery_queue")
+        for row in frontier[queue]
+        if row.get("proposition_id") == proposition_id
+    ]
+    if len(matches) != 1:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_point", "point is not an admitted frontier candidate"
+        )
+    queue, point = matches[0]
+    admitted = [
+        {"source_id": source_id, "semantic_unit_ref": semantic_ref}
+        for source_id, semantic_ref in sorted(
+            {
+                (frontier["source_id"], semantic_ref)
+            for relation in ("support", "counter", "adjacent")
+            for relation_row in point["relation_rows"][relation]
+            for semantic_ref in relation_row["semantic_unit_refs"]
+            }
+        )
+    ]
+    binding = {
+        "frontier_sha256": frontier["frontier_sha256"],
+        "packet_sha256": packet["packet_sha256"],
+        "proposition_id": proposition_id,
+        "queue": queue,
+        "bounded_point_sha256": sha256_text(str(point["bounded_point"])),
+        "admit_semantic_refs_sha256": _canonical_json_sha256(admitted),
+        "relation_policy": "bounded_point",
+    }
+    return {
+        "schema_version": SELECTION_SPEC_VERSION,
+        "selection_id": proposition_id,
+        "bounded_claim": point["bounded_point"],
+        "axis_ids": [],
+        "subject_product_ids": frontier["subject_product_ids"],
+        "admit_semantic_refs": admitted,
+        "protected_evidence_ids": {},
+        "truth_group_cap": MAX_TRUTH_GROUPS,
+        "relation_response_mode": "literal_ids",
+        "relation_policy": "bounded_point",
+        "customer_pull_frontier_binding": binding,
+    }
 
 
 RELATION_PROMPT_COLUMNS = (
@@ -261,6 +638,13 @@ def _relation_prompt_envelope(
 def _uses_value_policy(
     spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]] | None = None
 ) -> bool:
+    relation_policy = spec.get("relation_policy", "auto")
+    if relation_policy not in RELATION_POLICIES:
+        raise EvidenceConsumerError(
+            "selection_spec", f"unsupported relation_policy: {relation_policy}"
+        )
+    if relation_policy == "bounded_point":
+        return False
     axis_ids = spec.get("axis_ids")
     if not isinstance(axis_ids, list):
         return False
@@ -939,6 +1323,45 @@ def _relation_confirmation_schema() -> dict[str, Any]:
     }
 
 
+def _validate_customer_pull_frontier_spec_binding(
+    spec: Mapping[str, Any], sources: Sequence[Mapping[str, Any]]
+) -> None:
+    binding = spec.get("customer_pull_frontier_binding")
+    if binding is None:
+        return
+    if not isinstance(binding, Mapping) or set(binding) != {
+        "frontier_sha256",
+        "packet_sha256",
+        "proposition_id",
+        "queue",
+        "bounded_point_sha256",
+        "admit_semantic_refs_sha256",
+        "relation_policy",
+    }:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier binding shape changed"
+        )
+    if (
+        binding.get("queue")
+        not in {"retailer_first_queue", "community_discovery_queue"}
+        or binding.get("proposition_id") != spec.get("selection_id")
+        or binding.get("relation_policy") != spec.get("relation_policy")
+        or binding.get("bounded_point_sha256")
+        != sha256_text(str(spec.get("bounded_claim", "")))
+        or binding.get("admit_semantic_refs_sha256")
+        != _canonical_json_sha256(spec.get("admit_semantic_refs") or [])
+        or not isinstance(binding.get("frontier_sha256"), str)
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier-bound point spec changed"
+        )
+    packet_hashes = {source["packet"].get("packet_sha256") for source in sources}
+    if binding.get("packet_sha256") not in packet_hashes:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier packet is not among the sources"
+        )
+
+
 def prepare_evidence_selection(
     spec: Mapping[str, Any], sources: Sequence[Mapping[str, Any]]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
@@ -957,6 +1380,7 @@ def prepare_evidence_selection(
         if bundle.get("bundle_sha256") != packet_bundle:
             raise EvidenceConsumerError("bundle_verification", "packet/bundle hash mismatch")
         _verify_bundle(bundle)
+    _validate_customer_pull_frontier_spec_binding(spec, sources)
     candidates = _candidate_rows(sources, spec)
     value_policy = _uses_value_policy(spec, candidates)
     if value_policy and response_mode == "positional":
@@ -1354,6 +1778,53 @@ def _truth_row_display_eligible(
     return truth_policy == "balanced" or row.get("relation") in {
         "support",
         "counter",
+    }
+
+
+def _preselection_relation_confirmation_schema(*, value_policy: bool) -> dict[str, Any]:
+    def check_row(relation: str | None = None) -> dict[str, Any]:
+        relation_schema: dict[str, Any] = {"type": "string"}
+        reason_schema: dict[str, Any] = {
+            "type": "string",
+            "pattern": REASON_CODE_RE.pattern,
+        }
+        if relation is None:
+            relation_schema["enum"] = list(RELATIONS)
+        else:
+            relation_schema["const"] = relation
+            reason_schema = {
+                "type": "string",
+                "enum": sorted(
+                    code
+                    for code, expected_relation in VALUE_REASON_RELATIONS.items()
+                    if expected_relation == relation
+                ),
+            }
+        return {
+            "type": "object",
+            "properties": {
+                "confirmation_row_id": {"type": "string"},
+                "relation": relation_schema,
+                "reason_code": reason_schema,
+            },
+            "required": ["confirmation_row_id", "relation", "reason_code"],
+            "additionalProperties": False,
+        }
+
+    row = (
+        {"anyOf": [check_row(relation) for relation in RELATIONS]}
+        if value_policy
+        else check_row()
+    )
+    return {
+        "type": "object",
+        "properties": {
+            "point_scope": {"type": "string", "enum": list(POINT_SCOPE_STATUSES)},
+            "point_scope_reason": {"type": "string", "minLength": 1},
+            "relation_checks": {"type": "array", "items": row},
+        },
+        "required": ["point_scope", "point_scope_reason", "relation_checks"],
+        "additionalProperties": False,
     }
 
 
@@ -1939,20 +2410,18 @@ def _relation_confirmation_prompt_envelope(
     }
 
 
-def finalize_relations_prepare_quotes(
-    manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
+def _prepare_quotes_from_labeled(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    labeled: Sequence[Mapping[str, Any]],
+    *,
+    schema_version: str,
+    preselection_confirmation: Mapping[str, Any] | None = None,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
-    candidates = _candidate_rows(sources, manifest["spec"])
     truth_group_cap = _truth_group_cap(manifest["spec"])
-    response_mode = _relation_response_mode(manifest["spec"])
-    value_policy = _uses_value_policy(manifest["spec"], candidates)
+    value_policy = _uses_value_policy(manifest["spec"], labeled)
     truth_selection_policy = "value_first" if value_policy else "balanced"
-    labeled = _validate_relation_response(
-        candidates,
-        response,
-        value_policy=value_policy,
-        response_mode=response_mode,
-    )
+    labeled = [dict(row) for row in labeled]
     truth = _select_groups(
         labeled,
         "truth_support",
@@ -1986,7 +2455,7 @@ def finalize_relations_prepare_quotes(
     prompt = QUOTE_PROMPT.format(envelope=_compact(quote_envelope))
     schema = _quote_schema()
     quote_manifest = {
-        "schema_version": QUOTE_MANIFEST_VERSION,
+        "schema_version": schema_version,
         "selection_id": manifest["selection_id"],
         "bounded_claim": manifest["spec"]["bounded_claim"],
         "selection_manifest_sha256": manifest["manifest_sha256"],
@@ -1997,7 +2466,7 @@ def finalize_relations_prepare_quotes(
         "selected_rows_sha256": _canonical_json_sha256(selected),
         "truth_group_cap": truth_group_cap,
         "truth_selection_policy": truth_selection_policy,
-        "selected_relation_confirmation_required": True,
+        "selected_relation_confirmation_required": schema_version == QUOTE_MANIFEST_VERSION,
         "provider_selected_ids": provider_selected_ids,
         "quote_body_sha256": {
             row["selected_id"]: sha256_text(row["source_body"]) if row["source_body"] is not None else None
@@ -2006,6 +2475,262 @@ def finalize_relations_prepare_quotes(
         "prompt_sha256": sha256_text(prompt),
         "response_schema_sha256": _canonical_json_sha256(schema),
         "model_api_calls": 0,
+    }
+    if preselection_confirmation is not None:
+        quote_manifest["preselection_relation_confirmation"] = dict(
+            preselection_confirmation
+        )
+    quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
+    return prompt, schema, quote_manifest
+
+
+def finalize_relations_prepare_quotes(
+    manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    candidates = _candidate_rows(sources, manifest["spec"])
+    response_mode = _relation_response_mode(manifest["spec"])
+    value_policy = _uses_value_policy(manifest["spec"], candidates)
+    labeled = _validate_relation_response(
+        candidates,
+        response,
+        value_policy=value_policy,
+        response_mode=response_mode,
+    )
+    return _prepare_quotes_from_labeled(
+        manifest,
+        sources,
+        labeled,
+        schema_version=QUOTE_MANIFEST_VERSION,
+    )
+
+
+def _preselection_confirmation_candidates(
+    labeled: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return every row that could reach a displayed evidence pack.
+
+    Truth rows can reach display only when material-positive or explicitly
+    protected.  Influence rows use a separate cap and therefore all require
+    confirmation.  The frontier is independent of the first-pass relation, so
+    a mistaken ``exclude`` cannot hide a high-signal or protected row.
+    """
+
+    return [
+        dict(row)
+        for row in labeled
+        if row.get("layer") == "influence_context"
+        or row.get("protected_lanes")
+        or row.get("engagement_material_positive") is True
+    ]
+
+
+def prepare_preselection_relation_confirmation(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    first_pass_response: Mapping[str, Any],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    stored = manifest.get("manifest_sha256")
+    payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
+    if (
+        manifest.get("schema_version") != SELECTION_MANIFEST_VERSION
+        or stored != _canonical_json_sha256(payload)
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection manifest changed"
+        )
+    candidates = _candidate_rows(sources, manifest["spec"])
+    if _canonical_json_sha256(candidates) != manifest.get("candidate_inventory_sha256"):
+        raise EvidenceConsumerError(
+            "manifest_verification", "candidate inventory changed"
+        )
+    value_policy = _uses_value_policy(manifest["spec"], candidates)
+    labeled = _validate_relation_response(
+        candidates,
+        first_pass_response,
+        value_policy=value_policy,
+        response_mode=_relation_response_mode(manifest["spec"]),
+    )
+    frontier = _preselection_confirmation_candidates(labeled)
+    if not frontier:
+        raise EvidenceConsumerError(
+            "preselection_confirmation_empty",
+            "no material, protected, or influence candidates can reach display",
+        )
+    frontier_sha256 = _canonical_json_sha256(frontier)
+    presentation = _confirmation_row_presentation(frontier, frontier_sha256)
+    envelope = {
+        "bounded_point": manifest["spec"]["bounded_claim"],
+        "candidate_columns": list(RELATION_CONFIRMATION_COLUMNS),
+        "candidate_rows": [
+            [
+                row_id,
+                row["normalized_meaning"],
+                row.get("conditions", []),
+                row.get("subject_product_ids", []),
+                row.get("product_version_ids", []),
+                row["source_role"],
+                _compact_companion_meanings(row),
+            ]
+            for row_id, row in presentation
+        ],
+    }
+    prompt = PRESELECTION_RELATION_CONFIRMATION_PROMPT.format(
+        policy_guidance=_policy_guidance(manifest["spec"], candidates),
+        envelope=_compact(envelope),
+    )
+    schema = _preselection_relation_confirmation_schema(value_policy=value_policy)
+    confirmation_manifest = {
+        "schema_version": PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION,
+        "selection_manifest_sha256": manifest["manifest_sha256"],
+        "candidate_inventory_sha256": manifest["candidate_inventory_sha256"],
+        "first_pass_response_sha256": _canonical_json_sha256(first_pass_response),
+        "labeled_inventory_sha256": _canonical_json_sha256(labeled),
+        "confirmation_frontier_sha256": frontier_sha256,
+        "confirmation_row_ids": [row_id for row_id, _ in presentation],
+        "confirmation_candidate_ids": [
+            row["candidate_id"] for _, row in presentation
+        ],
+        "value_policy": value_policy,
+        "prompt_sha256": sha256_text(prompt),
+        "response_schema_sha256": _canonical_json_sha256(schema),
+        "hidden_first_pass_fields": [
+            "candidate_id",
+            "relation",
+            "reason_code",
+            "engagement",
+            "selection_priority",
+        ],
+        "model_api_calls": 0,
+    }
+    confirmation_manifest["manifest_sha256"] = _canonical_json_sha256(
+        confirmation_manifest
+    )
+    return prompt, schema, confirmation_manifest
+
+
+def finalize_preselection_relation_confirmation_prepare_quotes(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    first_pass_response: Mapping[str, Any],
+    confirmation_manifest: Mapping[str, Any],
+    confirmation_response: Mapping[str, Any],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    _, _, expected_manifest = prepare_preselection_relation_confirmation(
+        manifest, sources, first_pass_response
+    )
+    if dict(confirmation_manifest) != expected_manifest:
+        raise EvidenceConsumerError(
+            "manifest_verification", "preselection confirmation binding changed"
+        )
+    if set(confirmation_response) != {
+        "point_scope",
+        "point_scope_reason",
+        "relation_checks",
+    } or not isinstance(confirmation_response.get("relation_checks"), list):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape", "relation_checks missing"
+        )
+    if (
+        confirmation_response.get("point_scope") not in POINT_SCOPE_STATUSES
+        or not isinstance(confirmation_response.get("point_scope_reason"), str)
+        or not confirmation_response["point_scope_reason"].strip()
+    ):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape", "point scope result missing or invalid"
+        )
+    if confirmation_response["point_scope"] != "single_point":
+        raise EvidenceConsumerError(
+            "bounded_point_not_confirmed",
+            confirmation_response["point_scope_reason"].strip(),
+        )
+    checks = confirmation_response["relation_checks"]
+    if not all(
+        isinstance(row, Mapping)
+        and set(row) == {"confirmation_row_id", "relation", "reason_code"}
+        for row in checks
+    ):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape", "relation check row shape mismatch"
+        )
+    expected_row_ids = expected_manifest["confirmation_row_ids"]
+    observed = [row["confirmation_row_id"] for row in checks]
+    if len(observed) != len(set(observed)):
+        raise EvidenceConsumerError(
+            "duplicate_relation_confirmation", "candidate row repeated"
+        )
+    if set(observed) - set(expected_row_ids):
+        raise EvidenceConsumerError(
+            "foreign_relation_confirmation", "foreign candidate row"
+        )
+    if observed != expected_row_ids:
+        boundary = (
+            "missing_relation_confirmation"
+            if set(observed) != set(expected_row_ids)
+            else "relation_confirmation_order_mismatch"
+        )
+        raise EvidenceConsumerError(boundary, "relation check set/order mismatch")
+
+    candidates = _candidate_rows(sources, manifest["spec"])
+    labeled = _validate_relation_response(
+        candidates,
+        first_pass_response,
+        value_policy=expected_manifest["value_policy"],
+        response_mode=_relation_response_mode(manifest["spec"]),
+    )
+    by_id = {row["candidate_id"]: dict(row) for row in labeled}
+    changed = 0
+    for candidate_id, check in zip(
+        expected_manifest["confirmation_candidate_ids"], checks, strict=True
+    ):
+        relation = check["relation"]
+        reason_code = check["reason_code"]
+        if relation not in RELATIONS or not isinstance(reason_code, str) or not REASON_CODE_RE.fullmatch(reason_code):
+            raise EvidenceConsumerError(
+                "relation_confirmation_shape", "invalid relation confirmation"
+            )
+        if expected_manifest["value_policy"] and VALUE_REASON_RELATIONS.get(reason_code) != relation:
+            raise EvidenceConsumerError(
+                "relation_reason_mismatch", "confirmed value reason does not match relation"
+            )
+        row = by_id[candidate_id]
+        changed += int(
+            row["relation"] != relation or row["reason_code"] != reason_code
+        )
+        row["relation"] = relation
+        row["reason_code"] = reason_code
+    final_labeled = [by_id[row["candidate_id"]] for row in labeled]
+    confirmation_binding = {
+        "status": "passed",
+        "confirmation_manifest_sha256": expected_manifest["manifest_sha256"],
+        "confirmation_response_sha256": _canonical_json_sha256(confirmation_response),
+        "confirmed_candidate_count": len(checks),
+        "changed_first_pass_count": changed,
+        "point_scope_reason": confirmation_response["point_scope_reason"].strip(),
+    }
+    prompt, schema, quote_manifest = _prepare_quotes_from_labeled(
+        manifest,
+        sources,
+        final_labeled,
+        schema_version=PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        preselection_confirmation=confirmation_binding,
+    )
+    confirmed_ids = set(expected_manifest["confirmation_candidate_ids"])
+    unconfirmed_selected = sorted(
+        row["candidate_id"]
+        for row in quote_manifest["selected_rows"]
+        if row["candidate_id"] not in confirmed_ids
+    )
+    if unconfirmed_selected:
+        raise EvidenceConsumerError(
+            "selected_relation_unconfirmed",
+            f"selected rows escaped confirmation: {unconfirmed_selected}",
+        )
+    quote_manifest.pop("manifest_sha256")
+    quote_manifest["preselection_replay"] = {
+        "selection_manifest": dict(manifest),
+        "first_pass_response": dict(first_pass_response),
+        "confirmation_manifest": dict(confirmation_manifest),
+        "confirmation_response": dict(confirmation_response),
     }
     quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
     return prompt, schema, quote_manifest
@@ -2133,6 +2858,7 @@ def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
             PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
             PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
+            PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
     ):
@@ -2299,6 +3025,30 @@ def finalize_quotes(
     confirmation_response: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     manifest_version = _verified_quote_manifest_version(quote_manifest)
+    if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
+        replay = quote_manifest.get("preselection_replay")
+        if not isinstance(replay, Mapping) or set(replay) != {
+            "selection_manifest",
+            "first_pass_response",
+            "confirmation_manifest",
+            "confirmation_response",
+        }:
+            raise EvidenceConsumerError(
+                "manifest_verification", "preselection replay binding missing"
+            )
+        _, _, expected_quote_manifest = (
+            finalize_preselection_relation_confirmation_prepare_quotes(
+                replay["selection_manifest"],
+                sources,
+                replay["first_pass_response"],
+                replay["confirmation_manifest"],
+                replay["confirmation_response"],
+            )
+        )
+        if dict(quote_manifest) != expected_quote_manifest:
+            raise EvidenceConsumerError(
+                "manifest_verification", "preselection quote lineage changed"
+            )
     confirmation_manifest_sha256 = None
     point_scope_confirmation_reason = None
     if manifest_version == QUOTE_MANIFEST_VERSION:
@@ -2328,6 +3078,7 @@ def finalize_quotes(
             PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
             PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
+            PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }
         else [row["selected_id"] for row in selected]
     )
@@ -2354,6 +3105,7 @@ def finalize_quotes(
         PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
         QUOTE_MANIFEST_VERSION,
+        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }:
         derived_provider_ids = [
             row["selected_id"]
@@ -2391,6 +3143,7 @@ def finalize_quotes(
                 PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
                 PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                 QUOTE_MANIFEST_VERSION,
+                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             }:
                 raise EvidenceConsumerError(
                     "missing_quote_result", "selected row has no quote result"
@@ -2428,6 +3181,7 @@ def finalize_quotes(
                     PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
                     PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                     QUOTE_MANIFEST_VERSION,
+                    PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 }
                 and not _quote_has_complete_end(body, quote)
             ):
@@ -2475,6 +3229,7 @@ def finalize_quotes(
                         PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
                         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                         QUOTE_MANIFEST_VERSION,
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     }
                     else {}
                 ),
@@ -2505,7 +3260,8 @@ def finalize_quotes(
     artifact = {
         "schema_version": (
             "phase_a_evidence_selection_artifact_v2"
-            if manifest_version == QUOTE_MANIFEST_VERSION
+            if manifest_version
+            in {QUOTE_MANIFEST_VERSION, PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION}
             else "phase_a_evidence_selection_artifact_v1"
         ),
         "selection_manifest_sha256": quote_manifest["selection_manifest_sha256"],
@@ -2535,7 +3291,29 @@ def finalize_quotes(
         ],
         "model_api_calls": 0,
     }
-    if manifest_version == QUOTE_MANIFEST_VERSION:
+    if manifest_version in {
+        QUOTE_MANIFEST_VERSION,
+        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    }:
+        if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
+            preselection = quote_manifest.get("preselection_relation_confirmation")
+            if (
+                not isinstance(preselection, Mapping)
+                or preselection.get("status") != "passed"
+                or not isinstance(preselection.get("confirmation_manifest_sha256"), str)
+                or not isinstance(preselection.get("point_scope_reason"), str)
+                or not preselection["point_scope_reason"].strip()
+            ):
+                raise EvidenceConsumerError(
+                    "manifest_verification",
+                    "preselection relation confirmation is missing or changed",
+                )
+            confirmation_manifest_sha256 = preselection[
+                "confirmation_manifest_sha256"
+            ]
+            point_scope_confirmation_reason = preselection[
+                "point_scope_reason"
+            ].strip()
         labeled_inventory = quote_manifest["labeled_inventory"]
         truth_selection_policy = quote_manifest.get("truth_selection_policy")
         if truth_selection_policy not in {"balanced", "value_first"}:
@@ -2626,12 +3404,19 @@ def finalize_quotes(
 
 
 __all__ = [
+    "CUSTOMER_PULL_FRONTIER_VERSION",
+    "PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION",
     "QUOTE_MANIFEST_VERSION",
     "SELECTION_MANIFEST_VERSION",
     "SELECTION_SPEC_VERSION",
+    "build_customer_pull_point_frontier",
+    "finalize_preselection_relation_confirmation_prepare_quotes",
     "finalize_quotes",
     "finalize_relations_prepare_quotes",
     "load_selection_sources",
     "prepare_evidence_selection",
+    "prepare_preselection_relation_confirmation",
     "prepare_selected_relation_confirmation",
+    "selection_spec_from_customer_pull_frontier",
+    "verify_customer_pull_point_frontier",
 ]

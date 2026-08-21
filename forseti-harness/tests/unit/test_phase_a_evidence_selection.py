@@ -22,18 +22,25 @@ from judgment.phase_a_evidence_selection import (
     _source_venue,
     _truth_row_display_eligible,
     _validate_relation_response,
+    build_customer_pull_point_frontier,
+    finalize_preselection_relation_confirmation_prepare_quotes,
     finalize_batched_relations_prepare_quotes,
     finalize_quotes as _finalize_quotes_runtime,
     finalize_relations_prepare_quotes,
     prepare_evidence_selection,
     prepare_evidence_selection_batches,
+    prepare_preselection_relation_confirmation,
     prepare_selected_relation_confirmation,
+    selection_spec_from_customer_pull_frontier,
+    verify_customer_pull_point_frontier,
 )
 from runners.run_semantic_evidence_integration import (
     _parser,
+    build_customer_pull_point_frontier_run,
     finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
     finalize_evidence_selection_relations_run,
+    materialize_customer_pull_point_selection_spec_run,
     prepare_evidence_selection_batches_run,
     prepare_evidence_selection_run,
 )
@@ -251,6 +258,319 @@ def _positional_relation_response(candidates: list[dict]) -> dict:
 
 def _batched_positional_relation_response(candidates: list[dict], batch_id: str) -> dict:
     return {**_positional_relation_response(candidates), "batch_id": batch_id}
+
+
+def _proposition_packet_for_frontier() -> dict:
+    packet, _ = _packet_and_bundle(10)
+    propositions = [
+        {
+            "proposition_id": "point-retailer",
+            "bounded_proposition": "Customers say the balm is worth buying again.",
+            "claim_kind": "customer_experience",
+            "axis_ids": ["value_and_quantity"],
+            "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+            "product_version_ids": [],
+            "conditions": [],
+            "evidence_item_counts": {"support": 1, "counter": 1, "adjacent": 0},
+            "evidence_relations": {
+                "support": [["retailer_review:1", ["retailer_review:1::hydration"]]],
+                "counter": [["community_post:0", ["community_post:0::hydration"]]],
+                "adjacent": [],
+            },
+        },
+        {
+            "proposition_id": "point-community-behavior",
+            "bounded_proposition": "Customers report buying the balm repeatedly.",
+            "claim_kind": "reported_behavior",
+            "axis_ids": ["value_and_quantity"],
+            "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+            "product_version_ids": [],
+            "conditions": [],
+            "evidence_item_counts": {"support": 1, "counter": 0, "adjacent": 0},
+            "evidence_relations": {
+                "support": [["community_post:5", ["community_post:5::hydration"]]],
+                "counter": [],
+                "adjacent": [],
+            },
+        },
+        {
+            "proposition_id": "point-creator-only",
+            "bounded_proposition": "A creator presents the balm as desirable.",
+            "claim_kind": "customer_experience",
+            "axis_ids": ["hype_originality_and_trust"],
+            "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+            "product_version_ids": [],
+            "conditions": [],
+            "evidence_item_counts": {"support": 1, "counter": 0, "adjacent": 0},
+            "evidence_relations": {
+                "support": [["creator_authored:4", ["creator_authored:4::hydration"]]],
+                "counter": [],
+                "adjacent": [],
+            },
+        },
+    ]
+    packet["selection"] = {
+        "mode": "proposition",
+        "axis_ids": ["value_and_quantity", "hype_originality_and_trust"],
+        "proposition_ids": [row["proposition_id"] for row in propositions],
+    }
+    packet["selection_coverage"] = {
+        "truncated": False,
+        "selected_proposition_count": len(propositions),
+    }
+    packet["propositions"] = propositions
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    return packet
+
+
+def test_customer_pull_frontier_is_retailer_first_not_retailer_only_and_accounts_all_points() -> None:
+    packet = _proposition_packet_for_frontier()
+
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="summer-fridays-commercial-points",
+        business_question="Which customer-valued strengths and objections deserve commercial investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    verify_customer_pull_point_frontier(frontier, packet)
+    assert [row["proposition_id"] for row in frontier["retailer_first_queue"]] == [
+        "point-retailer"
+    ]
+    assert [row["proposition_id"] for row in frontier["community_discovery_queue"]] == [
+        "point-community-behavior"
+    ]
+    assert "reported_behavior" in frontier["community_discovery_queue"][0][
+        "earning_reasons"
+    ]
+    assert frontier["nonpromoted_points"] == [
+        {
+            "proposition_id": "point-creator-only",
+            "disposition": "no_customer_truth_support_in_bound_packet",
+        }
+    ]
+    accounted = {
+        row["proposition_id"]
+        for key in (
+            "retailer_first_queue",
+            "community_discovery_queue",
+            "nonpromoted_points",
+        )
+        for row in frontier[key]
+    }
+    assert accounted == set(packet["selection"]["proposition_ids"])
+    assert frontier["customer_pull_policy"]["retailer_is_admission_gate"] is False
+    assert frontier["customer_pull_policy"]["cross_platform_score"] is None
+    assert build_customer_pull_point_frontier(
+        packet,
+        frontier_id="summer-fridays-commercial-points",
+        business_question=frontier["business_question"],
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    ) == frontier
+
+
+def test_customer_pull_frontier_binding_and_materialized_point_spec_fail_closed() -> None:
+    packet = _proposition_packet_for_frontier()
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier",
+        business_question="Which points merit commercial investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, "point-community-behavior"
+    )
+    assert spec["truth_group_cap"] == 13
+    assert spec["bounded_claim"] == "Customers report buying the balm repeatedly."
+    assert spec["customer_pull_frontier_binding"]["queue"] == "community_discovery_queue"
+
+    tampered = copy.deepcopy(frontier)
+    tampered["retailer_first_queue"][0]["bounded_point"] = "Edited point"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        verify_customer_pull_point_frontier(tampered, packet)
+    assert caught.value.boundary == "customer_pull_frontier_verification"
+
+    retailer_only = copy.deepcopy(frontier)
+    retailer_only["community_discovery_queue"] = []
+    retailer_only["frontier_sha256"] = _canonical_hash(
+        {key: value for key, value in retailer_only.items() if key != "frontier_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        verify_customer_pull_point_frontier(retailer_only, packet)
+    assert caught.value.boundary == "customer_pull_frontier_accounting"
+
+
+def test_customer_pull_frontier_runner_materializes_a_cold_point_spec(
+    tmp_path: Path,
+) -> None:
+    packet = _proposition_packet_for_frontier()
+    _, bundle = _packet_and_bundle(10)
+    packet_path = tmp_path / "packet.json"
+    bundle_path = tmp_path / "bundle.json"
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    frontier_spec_path = tmp_path / "frontier-spec.json"
+    frontier_spec_path.write_text(
+        json.dumps(
+            {
+                "packet_path": str(packet_path),
+                "frontier_id": "frontier",
+                "business_question": "Which points merit commercial investigation?",
+                "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+                "source_id": "full-corpus",
+            }
+        ),
+        encoding="utf-8",
+    )
+    frontier_path = tmp_path / "frontier.json"
+    result = build_customer_pull_point_frontier_run(
+        spec_path=frontier_spec_path, frontier_out=frontier_path
+    )
+    point_spec_path = tmp_path / "point-spec.json"
+    materialized = materialize_customer_pull_point_selection_spec_run(
+        frontier_path=frontier_path,
+        packet_path=packet_path,
+        bundle_path=bundle_path,
+        proposition_id="point-community-behavior",
+        spec_out=point_spec_path,
+    )
+    point_spec = json.loads(point_spec_path.read_text(encoding="utf-8"))
+    assert result["status"] == "PHASE_A_CUSTOMER_PULL_POINT_FRONTIER_READY"
+    assert materialized["truth_group_cap"] == 13
+    assert point_spec["sources"][0]["source_id"] == "full-corpus"
+    assert point_spec["relation_policy"] == "bounded_point"
+    prepared = prepare_evidence_selection_run(
+        spec_path=point_spec_path,
+        prompt_out=tmp_path / "point-prompt.txt",
+        response_schema_out=tmp_path / "point-schema.json",
+        manifest_out=tmp_path / "point-manifest.json",
+    )
+    assert prepared["candidate_count"] == 1
+    assert "VALUE-BOX POLICY" not in (tmp_path / "point-prompt.txt").read_text(
+        encoding="utf-8"
+    )
+    assert _parser().parse_args(
+        [
+            "prepare-preselection-relation-confirmation",
+            "--selection-manifest",
+            "selection.json",
+            "--first-response",
+            "response.json",
+            "--prompt-out",
+            "prompt.txt",
+            "--response-schema-out",
+            "schema.json",
+            "--confirmation-manifest-out",
+            "confirmation.json",
+        ]
+    ).command == "prepare-preselection-relation-confirmation"
+
+
+def test_preselection_confirmation_recovers_material_candidate_before_cap_selection(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 20)
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    recovered = next(
+        row
+        for row in candidates
+        if row["layer"] == "truth_support"
+        and row["engagement_material_positive"] is True
+        and not row["protected_lanes"]
+    )
+    first_row = next(
+        row for row in first_pass["results"] if row["candidate_id"] == recovered["candidate_id"]
+    )
+    first_row["relation"] = "exclude"
+    first_row["reason_code"] = "wrong_scope"
+
+    prompt, schema, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    assert recovered["candidate_id"] in confirmation_manifest["confirmation_candidate_ids"]
+    assert recovered["candidate_id"] not in prompt
+    assert schema["required"] == [
+        "point_scope",
+        "point_scope_reason",
+        "relation_checks",
+    ]
+    original_by_id = {
+        row["candidate_id"]: row for row in _validate_relation_response(candidates, first_pass)
+    }
+    response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One direction-bearing hydration point.",
+        "relation_checks": [],
+    }
+    for row_id, candidate_id in zip(
+        confirmation_manifest["confirmation_row_ids"],
+        confirmation_manifest["confirmation_candidate_ids"],
+        strict=True,
+    ):
+        relation = "support" if candidate_id == recovered["candidate_id"] else original_by_id[candidate_id]["relation"]
+        response["relation_checks"].append(
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation,
+                "reason_code": "matching_customer_experience" if relation == "support" else (
+                    "differing_customer_experience" if relation == "counter" else (
+                        "related_customer_context" if relation == "adjacent" else "wrong_scope_or_non_evidence"
+                    )
+                ),
+            }
+        )
+
+    _, _, quote_manifest = finalize_preselection_relation_confirmation_prepare_quotes(
+        selection_manifest,
+        sources,
+        first_pass,
+        confirmation_manifest,
+        response,
+    )
+    assert recovered["candidate_id"] in {
+        row["candidate_id"] for row in quote_manifest["selected_rows"]
+    }
+    assert quote_manifest["preselection_relation_confirmation"]["status"] == "passed"
+    assert quote_manifest["selected_relation_confirmation_required"] is False
+    artifact = _finalize_quotes_runtime(
+        quote_manifest, sources, _quote_response(quote_manifest, sources)
+    )
+    assert artifact["relation_confirmation_status"] == "passed"
+    assert artifact["point_scope_confirmation_reason"] == response[
+        "point_scope_reason"
+    ]
+    assert recovered["candidate_id"] in {
+        row["candidate_id"] for row in artifact["candidate_dispositions"]
+        if row["relation"] == "support"
+    }
+    forged = copy.deepcopy(quote_manifest)
+    forged["preselection_replay"]["confirmation_response"]["relation_checks"][0][
+        "relation"
+    ] = "exclude"
+    forged["preselection_replay"]["confirmation_response"]["relation_checks"][0][
+        "reason_code"
+    ] = "wrong_scope_or_non_evidence"
+    forged["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "manifest_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(forged, sources, _quote_response(forged, sources))
+    assert caught.value.boundary == "manifest_verification"
+
+    missing = copy.deepcopy(response)
+    missing["relation_checks"].pop()
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            missing,
+        )
+    assert caught.value.boundary == "missing_relation_confirmation"
 
 
 def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_source(

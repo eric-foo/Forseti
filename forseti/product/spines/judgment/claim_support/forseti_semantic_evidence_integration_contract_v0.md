@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v51
+version: v53
 effective_date: 2026-08-21
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v51
+# Semantic Evidence Integration Contract v53
 
 ## Purpose
 
@@ -892,7 +892,7 @@ characters. The substring must express the display label through either the
 selected normalized meaning or the same-evidence companion meaning that
 justified that label. If a material qualification cannot fit, the external response
 returns unavailable instead of a misleading fragment. No lexical-overlap
-relevance rule is applied. For current v4/v5/v6 quote manifests, a long-body quote
+relevance rule is applied. For current v4/v5/v6/v7 quote manifests, a long-body quote
 that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
@@ -951,7 +951,7 @@ the authority for which relation prompts and responses actually produced the
 selected quote workload. Removing or changing that binding changes the manifest
 hash and fails quote finalization.
 
-Every new v6 point pack also requires a separate selected-row relation
+Every historical v6 point pack also requires a separate selected-row relation
 confirmation before quote finalization. The confirmation prompt contains only
 the bounded point plus each selected row's source-owned meaning, conditions,
 product/version scope, source role, and same-evidence companion meanings. It
@@ -1007,6 +1007,58 @@ that pre-cap gate, so the candidate-to-displayed drop is not read as cap
 pressure alone. Naming a runtime field `point_id` or `bounded_point` establishes
 nothing about boundedness; the separately returned scope classification gates
 the completed pack, and the artifact records the passing reason.
+
+Contract v53 makes `phase_a_evidence_quote_manifest_v7` the normal route for a
+new bounded point pack. It moves the de-correlated relation check before the
+display cap. After the first response accounts for every admitted candidate,
+the confirmation workload includes every customer-truth row with material
+source-native engagement, every operator-protected row, and every influence
+row. This frontier is derived without consulting the first-pass relation. A
+first-pass `exclude` therefore cannot make a materially engaged or protected
+candidate disappear before its relation is checked.
+
+The confirmation prompt keeps the v6 hidden-label boundary: it exposes the
+bounded point and source-owned meaning, conditions, product/version scope,
+source role, and companion meanings, but not candidate identity, first-pass
+relation or reason, engagement, or selection priority. It returns a relation
+and relation-aligned reason code for every opaque row exactly once and also
+confirms that the scope is one bounded point. Missing, duplicate, foreign,
+reordered, malformed, or broad-scope responses fail closed. A confirmed value
+reason must belong to the returned value relation. Unlike v6, a disagreement
+does not merely reject a pack after selection: the confirmed relation and
+reason replace that row's first-pass values, and the thirteen-origin selection
+runs once over the corrected inventory. Every finally displayed row must be in
+the confirmation frontier or finalization fails
+`selected_relation_unconfirmed`.
+
+V7 quote finalization verifies the hash-bound pre-selection confirmation
+lineage embedded in the quote manifest and accepts no separate late
+confirmation attachment. Quote extraction remains a separate external
+response, so relation adjudication cannot encourage context clipping. V6
+remains supported only for exact historical reproduction under its stamped
+selected-row confirmation contract; it is not silently upgraded or restamped.
+
+Contract v53 also adds
+`phase_a_customer_pull_point_frontier_v1`, a no-provider navigation view over a
+complete non-truncated proposition-mode v3 packet. It accounts every selected
+product proposition exactly once. Retailer-supported customer points enter a
+first-look queue because retailer reviews are closest to completed purchase;
+community- or qualified-audience-only customer points remain in a separate
+discovery queue and record retailer check-back as open. Retailer is not an
+admission gate. Creator-authored material cannot supply customer support.
+Points earn investigation through explicit reported customer behavior,
+independent customer recurrence, material source-native engagement, or an
+operator-protected safety/costly lane. Engagement remains comparable only
+inside one role, venue, and metric bucket, and no cross-platform commercial-pull
+score is created. Materializing one admitted proposition produces a v1
+selection spec bound to the frontier, source packet, bounded point, and literal
+semantic refs with the normal thirteen-origin cap. The frontier changes no
+packet, source fact, proposition relation, or Deliver authority.
+The materialized spec uses `relation_policy=bounded_point`: relation direction
+is evaluated against that proposition's exact wording. Thus an expensive-price
+complaint supports an expensive-price point instead of being inverted by the
+historical positive-good-value box. Existing non-frontier value selections keep
+their `auto` value policy for exact reproduction.
 
 A generic batched display label is never semantic authority for quote choice.
 For a long source body, the returned exact substring must directly express the
@@ -1572,6 +1624,17 @@ new frontier.
 
 ## Changelog
 
+- `v53` / 2026-08-21 — added the hash-bound retailer-first customer-pull point
+  frontier over a complete proposition-mode v3 packet. Retailer is the
+  first-look venue, not an admission gate; community-only customer points stay
+  visible for retailer check-back, creator-authored material stays outside
+  customer truth, and every proposition receives one queue or nonpromotion
+  disposition. Added v7 point-pack preparation, which confirms every material,
+  protected, or influence row before the thirteen-origin display cap and
+  reselects from the corrected relations. This prevents a first-pass reversed
+  relation from silently discarding high-engagement or protected evidence.
+  Packet v3, venue-relative engagement, legacy v6 reproduction, and downstream
+  Deliver authority remain unchanged.
 - `v52` / 2026-08-21 — made one completed selection artifact one bounded
   evidence-point pack, raised the default customer truth-origin cap from ten to
   thirteen, and added explicit pool-to-display accounting. New quote manifests
