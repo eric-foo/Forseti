@@ -195,7 +195,8 @@ materially change the current claim, route, blocker, or edit boundary.
   for formal lane bindings, "Template Retrieval Binding" when retrieving a
   template, "Rules" for reviewer conduct). Full read: editing lane doctrine
   or adjudicating a lane-authority conflict.
-- `.agents/workflow-overlay/validation-gates.md` — closeout checks read
+- `.agents/workflow-overlay/validation-gates.md` — closeout checks read the
+  preamble (evidence economy and failure-visibility buckets) plus
   "Current Gates"; prompt authoring reads "Prompt Orchestration Gates";
   product-proof work reads "Product Proof Gates"; enforcement-placement
   decisions read "Enforcement Placement". Full read: editing validation
