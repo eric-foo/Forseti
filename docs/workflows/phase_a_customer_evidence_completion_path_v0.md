@@ -579,6 +579,61 @@ The artifact's `presentation_basis` names that gate, and also records that the
 bounded point passed the separate scope classification; a broad axis or bundled
 claim never reaches a completed point-pack disclosure.
 
+For a whole-axis pack, thirteen is the maximum number of displayed distinct
+truth origins **per bounded point**, not the size of the evidence corpus and not
+an instruction to take the thirteen largest engagement values. The queue order
+above first preserves the point's relation lanes and independent recurrence;
+source-native engagement only breaks later ties inside a comparable venue,
+role, and metric. Keep the completed point artifact's full
+`candidate_dispositions`, `candidate_inventory_sha256`, selection-manifest
+binding, and packet/bundle source pointers. The artifact therefore accounts for
+every admitted semantic candidate while copying source bodies only for the
+selected quote workload; a later operator can resolve an undisplayed candidate
+through the bound packet and bundle rather than rerunning extraction.
+
+Complete an axis as a set of independently finalized bounded-point artifacts.
+Do not pad the set when a frontier proposition fails the existing
+`point_scope` decision: retire that proposition with its literal failure reason
+and report the smaller valid point count. A completed historical point may be
+reused only as an immutable artifact under the exact policy revision and hashes
+that produced it. If a staged historical manifest still needs quote completion,
+either finish it with that exact historical consumer revision and disclose the
+mixed lineage in the axis manifest, or rerun the whole point under the current
+policy. Never make a current finalizer accept an old manifest by rebinding or
+editing its hashes. An axis manifest references each point artifact path,
+SHA-256, and policy revision; it does not duplicate the point artifacts' full
+candidate inventories.
+
+Bind every emitted response schema through the provider's structured-output
+mechanism (for local Codex CLI execution, `--output-schema`); including schema
+wording in the prompt alone is insufficient. The finalizer must reject field
+name drift, missing rows, and quote-boundary failures. A source-exact quote
+shortened by an operator after such a failure is a disclosed corrected response,
+not an unmodified provider result; prefer a bounded provider correction turn
+and preserve every discarded-call cost either way.
+
+The completed hydration-axis dogfood at
+`C:\tmp\forseti-phase-a-hydration-axis-pack-20260822-v0\hydration_axis_pack_v1.json`
+(raw SHA-256
+`c57ffb940b863d0ad388394b188bdc28f709659a2c508c310d0bf4555774222a`)
+exercised this resume boundary. Nine completed points retained their historical
+policy revision; two unresolved points were rerun under the current linked-parent
+policy. The precise same-drying-and-cracking point passed, while “does nothing
+for their lips” failed generically because it named no single material outcome;
+the axis therefore contains ten valid points rather than eleven. Each valid
+point accounts all 836 hydration candidates and displays thirteen truth origins.
+Across the axis that is 130 point-origin placements and 146 display rows, but
+only 32 distinct origins and 37 distinct evidence items because one origin can
+inform several precise points. The selected origins span Reddit, Amazon, and
+Sephora; the artifact retains every undisplayed candidate disposition and its
+source-resolution bindings. Exact-quote and attachment finalization passed for
+all ten artifacts. The completion run used 1,095,340 logical tokens; 405,771 of
+those belonged to ten discarded malformed calls caused by the initially
+unbound structured-output schema and are not hidden as production success. Two
+long-body quote responses were source-exactly shortened to complete sentence
+boundaries after provider boundary failures and are disclosed as corrected
+responses, not unmodified provider output.
+
 The bounded v6 dogfood receipt is
 `C:\tmp\forseti-phase-a-point-pack-v6-dogfood-20260821-v0\dogfood_receipt_v1.json`
 (raw SHA-256
