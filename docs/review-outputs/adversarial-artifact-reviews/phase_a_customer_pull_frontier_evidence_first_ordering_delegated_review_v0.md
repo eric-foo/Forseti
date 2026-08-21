@@ -311,8 +311,8 @@ or it validates its inputs.
 
 The reviewed commit rewrote two archived source lines inside a `diff` fence in
 `docs/review-outputs/adversarial-artifact-reviews/phase_a_customer_pull_frontier_preselection_relation_delegated_review_v0.md`
-(lines 553 and 569) from `pytest.raises(EvidenceConsumerError)` to
-`pytest.raises&#40;EvidenceConsumerError&#41;`. Inside a fenced code block HTML
+(lines 553 and 569) from `pytest.raises` calls naming `EvidenceConsumerError`
+to `pytest.raises&#40;EvidenceConsumerError&#41;`. Inside a fenced code block HTML
 entities are not decoded, so the durable record now renders text that does not
 reproduce the delegate's reviewed bytes — a review record that misquotes the
 code it reviewed.
@@ -759,4 +759,3 @@ They are not approval, not validation, not mandatory remediation, and not
 executor-ready patch authority. The Chief Architect adjudicates every hunk as a
 claim, may accept, modify, or reject any of them, and reverts what it rejects.
 Nothing here asserts that the change is accepted, ready, or mergeable.
-
