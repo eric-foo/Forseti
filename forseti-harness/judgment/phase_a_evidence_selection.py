@@ -43,10 +43,15 @@ RELATION_CONFIRMATION_MANIFEST_VERSION = (
 PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_preselection_relation_confirmation_manifest_v1"
 )
+PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION = (
+    "phase_a_evidence_preselection_confirmation_batch_manifest_v1"
+)
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 POINT_SCOPE_STATUSES = ("single_point", "broad_axis_or_bundle")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 RELATION_POLICIES = ("auto", "bounded_point")
+TEMPORAL_PRESENTATION_POLICIES = ("recent_year_coverage_v1",)
+RECENT_YEAR_COUNT = 2
 POSITIONAL_REASON_CODE_BY_RELATION = {
     "support": "matching_customer_experience",
     "counter": "differing_customer_experience",
@@ -222,6 +227,20 @@ Also decide whether bounded_point is one specific, direction-bearing proposition
 The first-pass relation, reason code, engagement, and selection priority are intentionally absent. Opaque row handles and content-derived order reveal no first-pass signal. Return every confirmation_row_id exactly once and in order.
 
 PRESELECTION_RELATION_CONFIRMATION_ENVELOPE_JSON:
+{envelope}
+"""
+
+PRESELECTION_CONFIRMATION_BATCH_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered candidate rows below. Return only the required JSON.
+
+Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
+
+{policy_guidance}
+
+Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area, combines materially different attributes, outcomes, directions, or conditions, or could make unrelated mentions look corroborative.
+
+The first-pass relation, reason code, engagement, and selection priority are intentionally absent. Opaque row handles and content-derived order reveal no first-pass signal. Return batch_id unchanged and every confirmation_row_id exactly once and in order.
+
+PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:
 {envelope}
 """
 
@@ -588,6 +607,16 @@ def selection_spec_from_customer_pull_frontier(
             }
         )
     ]
+    point_axis_ids = sorted(
+        value for value in point.get("axis_ids", []) if isinstance(value, str)
+    )
+    expand_axis = bool(point_axis_ids) and VALUE_AXIS_ID not in point_axis_ids
+    axis_ids = point_axis_ids if expand_axis else []
+    candidate_admission = (
+        "subject_axis_union_with_literal_refs"
+        if expand_axis
+        else "literal_point_relations"
+    )
     binding = {
         "frontier_sha256": frontier["frontier_sha256"],
         "packet_sha256": packet["packet_sha256"],
@@ -595,21 +624,30 @@ def selection_spec_from_customer_pull_frontier(
         "queue": queue,
         "bounded_point_sha256": sha256_text(str(point["bounded_point"])),
         "admit_semantic_refs_sha256": _canonical_json_sha256(admitted),
+        "axis_ids_sha256": _canonical_json_sha256(axis_ids),
+        "candidate_admission": candidate_admission,
+        "relation_response_mode": "positional" if expand_axis else "literal_ids",
+        "temporal_presentation_policy": (
+            "recent_year_coverage_v1" if expand_axis else None
+        ),
         "relation_policy": "bounded_point",
     }
-    return {
+    spec = {
         "schema_version": SELECTION_SPEC_VERSION,
         "selection_id": proposition_id,
         "bounded_claim": point["bounded_point"],
-        "axis_ids": [],
+        "axis_ids": axis_ids,
         "subject_product_ids": frontier["subject_product_ids"],
         "admit_semantic_refs": admitted,
         "protected_evidence_ids": {},
         "truth_group_cap": MAX_TRUTH_GROUPS,
-        "relation_response_mode": "literal_ids",
+        "relation_response_mode": "positional" if expand_axis else "literal_ids",
         "relation_policy": "bounded_point",
         "customer_pull_frontier_binding": binding,
     }
+    if expand_axis:
+        spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
+    return spec
 
 
 RELATION_PROMPT_COLUMNS = (
@@ -1357,7 +1395,7 @@ def _validate_customer_pull_frontier_spec_binding(
     binding = spec.get("customer_pull_frontier_binding")
     if binding is None:
         return
-    if not isinstance(binding, Mapping) or set(binding) != {
+    legacy_keys = {
         "frontier_sha256",
         "packet_sha256",
         "proposition_id",
@@ -1365,9 +1403,47 @@ def _validate_customer_pull_frontier_spec_binding(
         "bounded_point_sha256",
         "admit_semantic_refs_sha256",
         "relation_policy",
+    }
+    expanded_keys = legacy_keys | {
+        "axis_ids_sha256",
+        "candidate_admission",
+        "relation_response_mode",
+        "temporal_presentation_policy",
+    }
+    binding_keys = frozenset(binding) if isinstance(binding, Mapping) else frozenset()
+    if not isinstance(binding, Mapping) or binding_keys not in {
+        frozenset(legacy_keys),
+        frozenset(expanded_keys),
     }:
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier binding shape changed"
+        )
+    if binding_keys == frozenset(legacy_keys) and spec.get("axis_ids"):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding",
+            "legacy frontier binding cannot authorize axis-wide admission",
+        )
+    if binding_keys == frozenset(expanded_keys) and (
+        binding.get("axis_ids_sha256")
+        != _canonical_json_sha256(spec.get("axis_ids") or [])
+        or binding.get("candidate_admission")
+        not in {"literal_point_relations", "subject_axis_union_with_literal_refs"}
+        or binding.get("relation_response_mode")
+        != spec.get("relation_response_mode", "literal_ids")
+        or binding.get("temporal_presentation_policy")
+        != spec.get("temporal_presentation_policy")
+        or (
+            binding.get("candidate_admission") == "literal_point_relations"
+            and spec.get("axis_ids")
+        )
+        or (
+            binding.get("candidate_admission")
+            == "subject_axis_union_with_literal_refs"
+            and not spec.get("axis_ids")
+        )
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
     if (
         binding.get("queue")
@@ -1390,6 +1466,18 @@ def _validate_customer_pull_frontier_spec_binding(
         )
 
 
+def _temporal_presentation_policy(spec: Mapping[str, Any]) -> str | None:
+    policy = spec.get("temporal_presentation_policy")
+    if policy is None:
+        return None
+    if not isinstance(policy, str) or policy not in TEMPORAL_PRESENTATION_POLICIES:
+        raise EvidenceConsumerError(
+            "selection_spec",
+            f"temporal_presentation_policy must be one of {TEMPORAL_PRESENTATION_POLICIES}",
+        )
+    return policy
+
+
 def prepare_evidence_selection(
     spec: Mapping[str, Any], sources: Sequence[Mapping[str, Any]]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
@@ -1400,6 +1488,7 @@ def prepare_evidence_selection(
     if not isinstance(spec.get("bounded_claim"), str) or not spec["bounded_claim"].strip():
         raise EvidenceConsumerError("selection_spec", "bounded_claim missing")
     _truth_group_cap(spec)
+    _temporal_presentation_policy(spec)
     response_mode = _relation_response_mode(spec)
     for source in sources:
         _verify_packet(source["packet"])
@@ -1633,8 +1722,17 @@ def _bucket_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
     )
 
 
-def _display_members(members: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
-    ordered = sorted((dict(row) for row in members), key=_global_priority)
+def _publication_year(row: Mapping[str, Any]) -> int | None:
+    value = row.get("publication_time")
+    if not isinstance(value, str) or not re.match(r"^[0-9]{4}-", value):
+        return None
+    return int(value[:4])
+
+
+def _display_members(
+    members: Sequence[Mapping[str, Any]], *, priority: Any = _global_priority
+) -> list[dict[str, Any]]:
+    ordered = sorted((dict(row) for row in members), key=priority)
     displays = [ordered[0]]
     first = ordered[0]
     distinct = [
@@ -1819,7 +1917,9 @@ def _truth_row_display_eligible(
     }
 
 
-def _preselection_relation_confirmation_schema(*, value_policy: bool) -> dict[str, Any]:
+def _preselection_relation_confirmation_schema(
+    *, value_policy: bool, batch_id: str | None = None
+) -> dict[str, Any]:
     def check_row(relation: str | None = None) -> dict[str, Any]:
         relation_schema: dict[str, Any] = {"type": "string"}
         reason_schema: dict[str, Any] = {
@@ -1854,14 +1954,19 @@ def _preselection_relation_confirmation_schema(*, value_policy: bool) -> dict[st
         if value_policy
         else check_row()
     )
+    properties = {
+        "point_scope": {"type": "string", "enum": list(POINT_SCOPE_STATUSES)},
+        "point_scope_reason": {"type": "string", "minLength": 1},
+        "relation_checks": {"type": "array", "items": row},
+    }
+    required = ["point_scope", "point_scope_reason", "relation_checks"]
+    if batch_id is not None:
+        properties["batch_id"] = {"type": "string", "const": batch_id}
+        required.append("batch_id")
     return {
         "type": "object",
-        "properties": {
-            "point_scope": {"type": "string", "enum": list(POINT_SCOPE_STATUSES)},
-            "point_scope_reason": {"type": "string", "minLength": 1},
-            "relation_checks": {"type": "array", "items": row},
-        },
-        "required": ["point_scope", "point_scope_reason", "relation_checks"],
+        "properties": properties,
+        "required": required,
         "additionalProperties": False,
     }
 
@@ -2079,11 +2184,16 @@ def _select_groups(
     cap: int,
     *,
     truth_policy: str = "balanced",
+    temporal_policy: str | None = None,
 ) -> list[dict[str, Any]]:
     if truth_policy not in {"balanced", "value_first"}:
         raise EvidenceConsumerError("selection_policy", f"unsupported policy: {truth_policy}")
     if truth_policy == "value_first" and layer == "truth_support":
         return _select_value_groups(rows, cap)
+    if temporal_policy is not None and temporal_policy not in TEMPORAL_PRESENTATION_POLICIES:
+        raise EvidenceConsumerError(
+            "selection_policy", f"unsupported temporal policy: {temporal_policy}"
+        )
     _validate_protected_rows(rows)
     eligible = [
         dict(row)
@@ -2109,6 +2219,13 @@ def _select_groups(
                 "origin_candidate_count": len(members),
                 "origin_relations": sorted({row["relation"] for row in members}),
                 "origin_candidate_ids": sorted(row["candidate_id"] for row in members),
+                "origin_publication_years": sorted(
+                    {
+                        year
+                        for row in members
+                        if (year := _publication_year(row)) is not None
+                    }
+                ),
                 "origin_protected_lanes": sorted(
                     {
                         lane
@@ -2143,7 +2260,16 @@ def _select_groups(
         already_selected = [
             row for row in eligible_groups if row["origin_group_id"] in selected_origins
         ]
-        choice = sorted(already_selected or eligible_groups, key=_global_priority)[0]
+        if temporal_policy is not None:
+            priority = lambda row: (
+                row["source_role"],
+                row["source_venue"],
+                row["engagement_kind"],
+                _bucket_priority(row),
+            )
+        else:
+            priority = _global_priority
+        choice = sorted(already_selected or eligible_groups, key=priority)[0]
         add_group(choice)
         choice["required_display_lanes"].append(lane)
 
@@ -2158,6 +2284,116 @@ def _select_groups(
             )
         reserve_lane("relation:support", lambda row: "support" in row["origin_relations"])
         reserve_lane("relation:counter", lambda row: "counter" in row["origin_relations"])
+
+        if temporal_policy == "recent_year_coverage_v1" and len(selected) < cap:
+            observed_years = sorted(
+                {
+                    year
+                    for group in groups
+                    for year in group["origin_publication_years"]
+                },
+                reverse=True,
+            )
+            recent_years = observed_years[:RECENT_YEAR_COUNT]
+            temporal_buckets: dict[
+                tuple[int, str, str, str], list[dict[str, Any]]
+            ] = defaultdict(list)
+            for group in groups:
+                years = group["origin_publication_years"]
+                latest_year = max(years) if years else None
+                if latest_year in recent_years:
+                    temporal_buckets[
+                        (
+                            latest_year,
+                            group["source_role"],
+                            group["source_venue"],
+                            group["engagement_kind"],
+                        )
+                    ].append(group)
+            for bucket in temporal_buckets.values():
+                bucket.sort(key=_bucket_priority)
+            covered_recent_keys = {
+                (
+                    max(group["origin_publication_years"]),
+                    group["source_role"],
+                    group["source_venue"],
+                    group["engagement_kind"],
+                )
+                for group in selected
+                if group["origin_publication_years"]
+                and max(group["origin_publication_years"]) in recent_years
+            }
+            recent_target = min((cap + 1) // 2, len(temporal_buckets))
+            year_queues = {
+                year: sorted(key for key in temporal_buckets if key[0] == year)
+                for year in recent_years
+            }
+            while (
+                len(covered_recent_keys) < recent_target
+                and len(selected) < cap
+                and any(year_queues.values())
+            ):
+                progressed = False
+                for year in recent_years:
+                    while year_queues[year]:
+                        key = year_queues[year].pop(0)
+                        if key in covered_recent_keys:
+                            continue
+                        candidates_in_bucket = [
+                            group
+                            for group in temporal_buckets[key]
+                            if group["origin_group_id"] not in selected_origins
+                        ]
+                        if candidates_in_bucket:
+                            add_group(candidates_in_bucket[0])
+                            covered_recent_keys.add(key)
+                            progressed = True
+                        break
+                    if len(covered_recent_keys) >= recent_target or len(selected) >= cap:
+                        break
+                if not progressed:
+                    break
+
+            # Recency is a display preference, not permission to erase the
+            # earlier history of the point. Keep one dated pre-window origin
+            # when one exists and the cap still has room.
+            if len(selected) < cap and recent_years:
+                older_groups = [
+                    group
+                    for group in groups
+                    if group["origin_group_id"] not in selected_origins
+                    and group["origin_publication_years"]
+                    and max(group["origin_publication_years"]) < min(recent_years)
+                ]
+                if older_groups:
+                    older_bucket_keys = sorted(
+                        {
+                            (
+                                group["source_role"],
+                                group["source_venue"],
+                                group["engagement_kind"],
+                            )
+                            for group in older_groups
+                        }
+                    )
+                    anchor_key = older_bucket_keys[0]
+                    anchor_bucket = sorted(
+                        (
+                            group
+                            for group in older_groups
+                            if (
+                                group["source_role"],
+                                group["source_venue"],
+                                group["engagement_kind"],
+                            )
+                            == anchor_key
+                        ),
+                        key=lambda group: (
+                            -max(group["origin_publication_years"]),
+                            _bucket_priority(group),
+                        ),
+                    )
+                    add_group(anchor_bucket[0])
 
     buckets: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in groups:
@@ -2190,9 +2426,21 @@ def _select_groups(
                 group["origin_members"],
                 group["required_display_lanes"],
                 group["required_display_candidate_ids"],
+                priority=(
+                    _bucket_priority
+                    if temporal_policy is not None
+                    else _global_priority
+                ),
             )
         else:
-            group["display_members"] = _display_members(group["origin_members"])
+            group["display_members"] = _display_members(
+                group["origin_members"],
+                priority=(
+                    _bucket_priority
+                    if temporal_policy is not None
+                    else _global_priority
+                ),
+            )
         group.pop("origin_members")
     displayed = _flatten_display_groups(selected)
     protected_candidate_ids = {
@@ -2459,12 +2707,14 @@ def _prepare_quotes_from_labeled(
     truth_group_cap = _truth_group_cap(manifest["spec"])
     value_policy = _uses_value_policy(manifest["spec"], labeled)
     truth_selection_policy = "value_first" if value_policy else "balanced"
+    temporal_policy = _temporal_presentation_policy(manifest["spec"])
     labeled = [dict(row) for row in labeled]
     truth = _select_groups(
         labeled,
         "truth_support",
         truth_group_cap,
         truth_policy=truth_selection_policy,
+        temporal_policy=temporal_policy,
     )
     influence = _select_groups(labeled, "influence_context", MAX_INFLUENCE_GROUPS)
     selected = truth + influence
@@ -2518,6 +2768,19 @@ def _prepare_quotes_from_labeled(
         quote_manifest["preselection_relation_confirmation"] = dict(
             preselection_confirmation
         )
+    if temporal_policy is not None:
+        recent_years = sorted(
+            {
+                year
+                for row in labeled
+                if row["layer"] == "truth_support"
+                and _truth_row_display_eligible(row, truth_selection_policy)
+                and (year := _publication_year(row)) is not None
+            },
+            reverse=True,
+        )[:RECENT_YEAR_COUNT]
+        quote_manifest["temporal_presentation_policy"] = temporal_policy
+        quote_manifest["recent_calendar_years"] = recent_years
     quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
     return prompt, schema, quote_manifest
 
@@ -2562,11 +2825,18 @@ def _preselection_confirmation_candidates(
     ]
 
 
-def prepare_preselection_relation_confirmation(
+def _preselection_confirmation_state(
     manifest: Mapping[str, Any],
     sources: Sequence[Mapping[str, Any]],
     first_pass_response: Mapping[str, Any],
-) -> tuple[str, dict[str, Any], dict[str, Any]]:
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    str,
+    list[tuple[str, Mapping[str, Any]]],
+    bool,
+]:
     stored = manifest.get("manifest_sha256")
     payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
     if (
@@ -2596,6 +2866,29 @@ def prepare_preselection_relation_confirmation(
         )
     frontier_sha256 = _canonical_json_sha256(frontier)
     presentation = _confirmation_row_presentation(frontier, frontier_sha256)
+    return (
+        candidates,
+        labeled,
+        frontier,
+        frontier_sha256,
+        presentation,
+        value_policy,
+    )
+
+
+def prepare_preselection_relation_confirmation(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    first_pass_response: Mapping[str, Any],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    (
+        candidates,
+        labeled,
+        _,
+        frontier_sha256,
+        presentation,
+        value_policy,
+    ) = _preselection_confirmation_state(manifest, sources, first_pass_response)
     envelope = {
         "bounded_point": manifest["spec"]["bounded_claim"],
         "candidate_columns": list(RELATION_CONFIRMATION_COLUMNS),
@@ -2789,11 +3082,11 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
     return prompt, schema, quote_manifest
 
 
-def finalize_batched_relations_prepare_quotes(
+def _assemble_batched_relation_response(
     batch_manifest: Mapping[str, Any],
     sources: Sequence[Mapping[str, Any]],
     responses: Mapping[str, Mapping[str, Any]],
-) -> tuple[str, dict[str, Any], dict[str, Any]]:
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     stored = batch_manifest.get("manifest_sha256")
     payload = {
         key: value for key, value in batch_manifest.items() if key != "manifest_sha256"
@@ -2877,20 +3170,251 @@ def finalize_batched_relations_prepare_quotes(
         raise EvidenceConsumerError(
             "manifest_verification", "relation batch coverage is incomplete"
         )
-    prompt, schema, quote_manifest = finalize_relations_prepare_quotes(
-        selection_manifest,
-        sources,
-        {"results_by_candidate_row": full_results},
-    )
-    quote_manifest.pop("manifest_sha256")
-    quote_manifest["schema_version"] = BATCHED_QUOTE_MANIFEST_VERSION
-    quote_manifest["relation_transport"] = {
+    transport = {
         "mode": "named_positional_batches",
         "batch_manifest_sha256": batch_manifest["manifest_sha256"],
         "batch_count": len(batches),
         "batch_response_sha256": {
             batch_id: _canonical_json_sha256(responses[batch_id])
             for batch_id in expected_batch_ids
+        },
+    }
+    return (
+        dict(selection_manifest),
+        {"results_by_candidate_row": full_results},
+        transport,
+    )
+
+
+def finalize_batched_relations_prepare_quotes(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    selection_manifest, first_response, transport = (
+        _assemble_batched_relation_response(batch_manifest, sources, responses)
+    )
+    prompt, schema, quote_manifest = finalize_relations_prepare_quotes(
+        selection_manifest, sources, first_response
+    )
+    quote_manifest.pop("manifest_sha256")
+    quote_manifest["schema_version"] = BATCHED_QUOTE_MANIFEST_VERSION
+    quote_manifest["relation_transport"] = transport
+    quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
+    return prompt, schema, quote_manifest
+
+
+def prepare_batched_preselection_relation_confirmations(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+    *,
+    batch_size: int,
+) -> tuple[dict[str, Any], list[tuple[str, dict[str, Any]]]]:
+    if (
+        isinstance(batch_size, bool)
+        or not isinstance(batch_size, int)
+        or batch_size < 1
+        or batch_size > MAX_RELATION_BATCH_SIZE
+    ):
+        raise EvidenceConsumerError(
+            "selection_spec",
+            f"confirmation batch size must be an integer from 1 to {MAX_RELATION_BATCH_SIZE}",
+        )
+    selection_manifest, first_response, relation_transport = (
+        _assemble_batched_relation_response(batch_manifest, sources, responses)
+    )
+    (
+        candidates,
+        labeled,
+        _,
+        frontier_sha256,
+        presentation,
+        value_policy,
+    ) = _preselection_confirmation_state(
+        selection_manifest, sources, first_response
+    )
+    prompts_and_schemas: list[tuple[str, dict[str, Any]]] = []
+    batches = []
+    for batch_index, start in enumerate(
+        range(0, len(presentation), batch_size), start=1
+    ):
+        subset = presentation[start : start + batch_size]
+        confirmation_batch_id = f"confirmation_batch_{batch_index:04d}"
+        envelope = {
+            "batch_id": confirmation_batch_id,
+            "bounded_point": selection_manifest["spec"]["bounded_claim"],
+            "candidate_columns": list(RELATION_CONFIRMATION_COLUMNS),
+            "candidate_rows": [
+                [
+                    row_id,
+                    row["normalized_meaning"],
+                    row.get("conditions", []),
+                    row.get("subject_product_ids", []),
+                    row.get("product_version_ids", []),
+                    row["source_role"],
+                    _compact_companion_meanings(row),
+                ]
+                for row_id, row in subset
+            ],
+        }
+        prompt = PRESELECTION_CONFIRMATION_BATCH_PROMPT.format(
+            policy_guidance=_policy_guidance(
+                selection_manifest["spec"], candidates
+            ),
+            envelope=_compact(envelope),
+        )
+        schema = _preselection_relation_confirmation_schema(
+            value_policy=value_policy, batch_id=confirmation_batch_id
+        )
+        batches.append(
+            {
+                "batch_id": confirmation_batch_id,
+                "start_index": start,
+                "candidate_count": len(subset),
+                "confirmation_row_ids": [row_id for row_id, _ in subset],
+                "confirmation_candidate_ids_sha256": _canonical_json_sha256(
+                    [row["candidate_id"] for _, row in subset]
+                ),
+                "prompt_sha256": sha256_text(prompt),
+                "response_schema_sha256": _canonical_json_sha256(schema),
+            }
+        )
+        prompts_and_schemas.append((prompt, schema))
+    confirmation_batch_manifest = {
+        "schema_version": PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION,
+        "selection_manifest_sha256": selection_manifest["manifest_sha256"],
+        "relation_transport": relation_transport,
+        "first_pass_response_sha256": _canonical_json_sha256(first_response),
+        "labeled_inventory_sha256": _canonical_json_sha256(labeled),
+        "confirmation_frontier_sha256": frontier_sha256,
+        "confirmation_candidate_count": len(presentation),
+        "batch_size": batch_size,
+        "batches": batches,
+        "value_policy": value_policy,
+        "model_api_calls": 0,
+    }
+    confirmation_batch_manifest["manifest_sha256"] = _canonical_json_sha256(
+        confirmation_batch_manifest
+    )
+    return confirmation_batch_manifest, prompts_and_schemas
+
+
+def finalize_batched_preselection_relation_confirmations_prepare_quotes(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+    confirmation_batch_manifest: Mapping[str, Any],
+    confirmation_batch_responses: Mapping[str, Mapping[str, Any]],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    expected_manifest, _ = prepare_batched_preselection_relation_confirmations(
+        batch_manifest,
+        sources,
+        responses,
+        batch_size=confirmation_batch_manifest.get("batch_size"),
+    )
+    if dict(confirmation_batch_manifest) != expected_manifest:
+        raise EvidenceConsumerError(
+            "manifest_verification", "preselection confirmation batches changed"
+        )
+    expected_ids = [row["batch_id"] for row in expected_manifest["batches"]]
+    if set(confirmation_batch_responses) != set(expected_ids):
+        raise EvidenceConsumerError(
+            "missing_relation_confirmation_batch",
+            "preselection confirmation response set changed",
+        )
+    merged_checks = []
+    point_scope_reasons = []
+    for batch in expected_manifest["batches"]:
+        batch_id = batch["batch_id"]
+        response = confirmation_batch_responses[batch_id]
+        if set(response) != {
+            "batch_id",
+            "point_scope",
+            "point_scope_reason",
+            "relation_checks",
+        } or not isinstance(response.get("relation_checks"), list):
+            raise EvidenceConsumerError(
+                "relation_confirmation_shape", "batched relation checks missing"
+            )
+        if response.get("batch_id") != batch_id:
+            raise EvidenceConsumerError(
+                "relation_confirmation_batch_identity",
+                "preselection confirmation answered another batch",
+            )
+        if (
+            response.get("point_scope") not in POINT_SCOPE_STATUSES
+            or not isinstance(response.get("point_scope_reason"), str)
+            or not response["point_scope_reason"].strip()
+        ):
+            raise EvidenceConsumerError(
+                "relation_confirmation_shape", "point scope result missing or invalid"
+            )
+        if response["point_scope"] != "single_point":
+            raise EvidenceConsumerError(
+                "bounded_point_not_confirmed",
+                response["point_scope_reason"].strip(),
+            )
+        checks = response["relation_checks"]
+        observed = [
+            row.get("confirmation_row_id") for row in checks if isinstance(row, dict)
+        ]
+        if observed != batch["confirmation_row_ids"]:
+            boundary = (
+                "missing_relation_confirmation"
+                if set(observed) != set(batch["confirmation_row_ids"])
+                else "relation_confirmation_order_mismatch"
+            )
+            raise EvidenceConsumerError(boundary, "relation check set/order mismatch")
+        merged_checks.extend(checks)
+        point_scope_reasons.append(response["point_scope_reason"].strip())
+
+    selection_manifest, first_response, relation_transport = (
+        _assemble_batched_relation_response(batch_manifest, sources, responses)
+    )
+    _, _, canonical_confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_response
+    )
+    canonical_confirmation_response = {
+        "point_scope": "single_point",
+        "point_scope_reason": point_scope_reasons[0],
+        "relation_checks": merged_checks,
+    }
+    prompt, schema, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_response,
+            canonical_confirmation_manifest,
+            canonical_confirmation_response,
+        )
+    )
+    quote_manifest.pop("manifest_sha256")
+    quote_manifest["relation_transport"] = relation_transport
+    quote_manifest["preselection_relation_confirmation"][
+        "canonical_single_prompt_executed"
+    ] = False
+    quote_manifest["preselection_confirmation_transport"] = {
+        "mode": "named_preselection_confirmation_batches",
+        "batch_manifest_sha256": confirmation_batch_manifest["manifest_sha256"],
+        "batch_count": len(expected_ids),
+        "batch_response_sha256": {
+            batch_id: _canonical_json_sha256(
+                confirmation_batch_responses[batch_id]
+            )
+            for batch_id in expected_ids
+        },
+        "point_scope_reasons": point_scope_reasons,
+    }
+    quote_manifest["preselection_replay"] = {
+        "batch_manifest": dict(batch_manifest),
+        "batch_responses": {
+            batch_id: dict(response) for batch_id, response in responses.items()
+        },
+        "confirmation_batch_manifest": dict(confirmation_batch_manifest),
+        "confirmation_batch_responses": {
+            batch_id: dict(response)
+            for batch_id, response in confirmation_batch_responses.items()
         },
     }
     quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
@@ -3080,24 +3604,46 @@ def finalize_quotes(
     manifest_version = _verified_quote_manifest_version(quote_manifest)
     if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
         replay = quote_manifest.get("preselection_replay")
-        if not isinstance(replay, Mapping) or set(replay) != {
+        legacy_replay_keys = {
             "selection_manifest",
             "first_pass_response",
             "confirmation_manifest",
             "confirmation_response",
+        }
+        batched_replay_keys = {
+            "batch_manifest",
+            "batch_responses",
+            "confirmation_batch_manifest",
+            "confirmation_batch_responses",
+        }
+        replay_keys = frozenset(replay) if isinstance(replay, Mapping) else frozenset()
+        if not isinstance(replay, Mapping) or replay_keys not in {
+            frozenset(legacy_replay_keys),
+            frozenset(batched_replay_keys),
         }:
             raise EvidenceConsumerError(
                 "manifest_verification", "preselection replay binding missing"
             )
-        _, _, expected_quote_manifest = (
-            finalize_preselection_relation_confirmation_prepare_quotes(
-                replay["selection_manifest"],
-                sources,
-                replay["first_pass_response"],
-                replay["confirmation_manifest"],
-                replay["confirmation_response"],
+        if replay_keys == frozenset(legacy_replay_keys):
+            _, _, expected_quote_manifest = (
+                finalize_preselection_relation_confirmation_prepare_quotes(
+                    replay["selection_manifest"],
+                    sources,
+                    replay["first_pass_response"],
+                    replay["confirmation_manifest"],
+                    replay["confirmation_response"],
+                )
             )
-        )
+        else:
+            _, _, expected_quote_manifest = (
+                finalize_batched_preselection_relation_confirmations_prepare_quotes(
+                    replay["batch_manifest"],
+                    sources,
+                    replay["batch_responses"],
+                    replay["confirmation_batch_manifest"],
+                    replay["confirmation_batch_responses"],
+                )
+            )
         if dict(quote_manifest) != expected_quote_manifest:
             raise EvidenceConsumerError(
                 "manifest_verification", "preselection quote lineage changed"
@@ -3310,6 +3856,26 @@ def finalize_quotes(
         grouped[
             f"{row['layer']}::{row['source_family']}::{row['source_role']}::{row['source_venue']}"
         ].append(row)
+    temporal_policy = quote_manifest.get("temporal_presentation_policy")
+    if temporal_policy is not None:
+        if temporal_policy not in TEMPORAL_PRESENTATION_POLICIES:
+            raise EvidenceConsumerError(
+                "manifest_verification", "temporal presentation policy changed"
+            )
+        for rows in grouped.values():
+            rows.sort(
+                key=lambda row: (
+                    -(_publication_year(row) or 0),
+                    row["engagement_kind"],
+                    -(
+                        _numeric_engagement(
+                            row["engagement_raw_value"], row["engagement_kind"]
+                        )
+                        or 0
+                    ),
+                    row["selected_id"],
+                )
+            )
     artifact = {
         "schema_version": (
             "phase_a_evidence_selection_artifact_v2"
@@ -3344,6 +3910,22 @@ def finalize_quotes(
         ],
         "model_api_calls": 0,
     }
+    if temporal_policy is not None:
+        timeline: dict[int | None, list[str]] = defaultdict(list)
+        for row in output_rows:
+            timeline[_publication_year(row)].append(row["selected_id"])
+        ordered_years = sorted(
+            (year for year in timeline if year is not None), reverse=True
+        )
+        if None in timeline:
+            ordered_years.append(None)
+        artifact["timeline"] = [
+            {
+                "calendar_year": year,
+                "selected_ids": timeline[year],
+            }
+            for year in ordered_years
+        ]
     if manifest_version in {
         QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
@@ -3450,6 +4032,46 @@ def finalize_quotes(
                 },
             }
         )
+        if temporal_policy is not None:
+            recent_years = quote_manifest.get("recent_calendar_years")
+            if (
+                not isinstance(recent_years, list)
+                or len(recent_years) > RECENT_YEAR_COUNT
+                or not all(isinstance(year, int) for year in recent_years)
+            ):
+                raise EvidenceConsumerError(
+                    "manifest_verification", "recent calendar-year binding changed"
+                )
+            recent_set = set(recent_years)
+            artifact["selection_disclosure"].update(
+                {
+                    "temporal_presentation_policy": temporal_policy,
+                    "recent_calendar_years": recent_years,
+                    "displayed_recent_truth_origin_count": len(
+                        {
+                            row["origin_group_id"]
+                            for row in truth_rows
+                            if _publication_year(row) in recent_set
+                        }
+                    ),
+                    "displayed_dated_pre_window_truth_origin_count": len(
+                        {
+                            row["origin_group_id"]
+                            for row in truth_rows
+                            if (year := _publication_year(row)) is not None
+                            and recent_years
+                            and year < min(recent_years)
+                        }
+                    ),
+                }
+            )
+            artifact["selection_disclosure"]["presentation_basis"].extend(
+                [
+                    "recent calendar years receive display representation across available source-native buckets; age never changes a relation or evidentiary weight",
+                    "one dated pre-window origin is retained when eligible and cap space permits; undated evidence remains in complete accounting",
+                    "timeline groups exact selected rows by calendar year without strong, weak, fresh, or stale judgments",
+                ]
+            )
         artifact["output_boundary"].append(
             "candidate and displayed counts describe evidence accounting, not customer prevalence"
         )
@@ -3463,11 +4085,13 @@ __all__ = [
     "SELECTION_MANIFEST_VERSION",
     "SELECTION_SPEC_VERSION",
     "build_customer_pull_point_frontier",
+    "finalize_batched_preselection_relation_confirmations_prepare_quotes",
     "finalize_preselection_relation_confirmation_prepare_quotes",
     "finalize_quotes",
     "finalize_relations_prepare_quotes",
     "load_selection_sources",
     "prepare_evidence_selection",
+    "prepare_batched_preselection_relation_confirmations",
     "prepare_preselection_relation_confirmation",
     "prepare_selected_relation_confirmation",
     "selection_spec_from_customer_pull_frontier",

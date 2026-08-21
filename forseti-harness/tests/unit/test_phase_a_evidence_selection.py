@@ -23,12 +23,14 @@ from judgment.phase_a_evidence_selection import (
     _truth_row_display_eligible,
     _validate_relation_response,
     build_customer_pull_point_frontier,
+    finalize_batched_preselection_relation_confirmations_prepare_quotes,
     finalize_preselection_relation_confirmation_prepare_quotes,
     finalize_batched_relations_prepare_quotes,
     finalize_quotes as _finalize_quotes_runtime,
     finalize_relations_prepare_quotes,
     prepare_evidence_selection,
     prepare_evidence_selection_batches,
+    prepare_batched_preselection_relation_confirmations,
     prepare_preselection_relation_confirmation,
     prepare_selected_relation_confirmation,
     selection_spec_from_customer_pull_frontier,
@@ -37,12 +39,14 @@ from judgment.phase_a_evidence_selection import (
 from runners.run_semantic_evidence_integration import (
     _parser,
     build_customer_pull_point_frontier_run,
+    finalize_batched_preselection_relation_confirmation_run,
     finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
     finalize_evidence_selection_relations_run,
     materialize_customer_pull_point_selection_spec_run,
     prepare_evidence_selection_batches_run,
     prepare_evidence_selection_run,
+    prepare_batched_preselection_relation_confirmation_run,
 )
 
 
@@ -610,6 +614,102 @@ def test_customer_pull_frontier_binding_and_materialized_point_spec_fail_closed(
     with pytest.raises(EvidenceConsumerError) as caught:
         verify_customer_pull_point_frontier(retailer_only, packet)
     assert caught.value.boundary == "customer_pull_frontier_accounting"
+
+
+def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_policy() -> None:
+    packet = _proposition_packet_for_frontier()
+    hydration = {
+        "proposition_id": "point-hydration",
+        "bounded_proposition": "Customers report that the balm hydrates their lips.",
+        "claim_kind": "customer_experience",
+        "axis_ids": ["hydration_and_moisture"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": 1, "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [["community_post:5", ["community_post:5::hydration"]]],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
+    packet["propositions"].append(hydration)
+    packet["selection"]["axis_ids"].append("hydration_and_moisture")
+    packet["selection"]["proposition_ids"].append("point-hydration")
+    packet["selection_coverage"]["selected_proposition_count"] += 1
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier",
+        business_question="Which points merit commercial investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, "point-hydration"
+    )
+    _, bundle = _packet_and_bundle(10)
+    sources = [
+        {
+            "source_id": "full-corpus",
+            "packet_path": Path("packet.json"),
+            "bundle_path": Path("bundle.json"),
+            "packet": packet,
+            "bundle": bundle,
+        }
+    ]
+
+    assert spec["axis_ids"] == ["hydration_and_moisture"]
+    assert spec["relation_response_mode"] == "positional"
+    assert spec["temporal_presentation_policy"] == "recent_year_coverage_v1"
+    assert len(_candidate_rows(sources, spec)) == 10
+
+    tampered = copy.deepcopy(spec)
+    tampered["axis_ids"] = ["texture_and_skin_finish"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(tampered, sources)
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    tampered = copy.deepcopy(spec)
+    tampered.pop("temporal_presentation_policy")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(tampered, sources)
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+
+def test_recent_year_policy_changes_display_only_and_keeps_an_older_anchor(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 40)
+    candidates = _candidate_rows(sources, spec)
+    labeled = []
+    before = {}
+    years = (2023, 2024, 2025, 2026)
+    for index, candidate in enumerate(candidates):
+        row = dict(candidate)
+        row["publication_time"] = f"{years[index % 4]}-06-01T00:00:00Z"
+        row["engagement_material_positive"] = True
+        row["relation"] = "counter" if index % 5 == 0 else "support"
+        row["reason_code"] = "bounded_meaning"
+        before[row["candidate_id"]] = row["relation"]
+        labeled.append(row)
+
+    selected = _select_groups(
+        labeled,
+        "truth_support",
+        13,
+        temporal_policy="recent_year_coverage_v1",
+    )
+    displayed_years = {
+        int(row["publication_time"][:4])
+        for row in selected
+        if row["publication_time"] is not None
+    }
+
+    assert {2025, 2026} <= displayed_years
+    assert displayed_years & {2023, 2024}
+    assert len({row["origin_group_id"] for row in selected}) == 13
+    assert {row["candidate_id"]: row["relation"] for row in labeled} == before
 
 
 def test_customer_pull_frontier_runner_materializes_a_cold_point_spec(
@@ -1605,6 +1705,129 @@ def test_batched_positional_relations_rehydrate_the_same_full_inventory(
     assert batched_artifact["source_groups"] == unbatched_artifact["source_groups"]
 
 
+def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 20)
+    spec["relation_response_mode"] = "positional"
+    spec["relation_policy"] = "bounded_point"
+    spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=7
+    )
+    candidates = _candidate_rows(sources, spec)
+    responses = {}
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        response = _batched_positional_relation_response(subset, batch["batch_id"])
+        responses[batch["batch_id"]] = response
+
+    confirmation_manifest, confirmation_prompts = (
+        prepare_batched_preselection_relation_confirmations(
+            batch_manifest, sources, responses, batch_size=5
+        )
+    )
+    reason_by_relation = {
+        "support": "matching_customer_experience",
+        "counter": "differing_customer_experience",
+        "adjacent": "related_customer_context",
+        "exclude": "wrong_scope_or_non_evidence",
+    }
+    confirmation_responses = {}
+    for batch, (prompt, _) in zip(
+        confirmation_manifest["batches"], confirmation_prompts, strict=True
+    ):
+        envelope = json.loads(
+            prompt.split(
+                "PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n", 1
+            )[1]
+        )
+        checks = []
+        for row in envelope["candidate_rows"]:
+            relation = "adjacent" if row[5] == "creator_authored" else "support"
+            checks.append(
+                {
+                    "confirmation_row_id": row[0],
+                    "relation": relation,
+                    "reason_code": reason_by_relation[relation],
+                }
+            )
+        confirmation_responses[batch["batch_id"]] = {
+            "batch_id": batch["batch_id"],
+            "point_scope": "single_point",
+            "point_scope_reason": "One direction-bearing hydration point.",
+            "relation_checks": checks,
+        }
+    _, _, quote_manifest = (
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_manifest,
+            confirmation_responses,
+        )
+    )
+    artifact = _finalize_quotes_runtime(
+        quote_manifest, sources, _quote_response(quote_manifest, sources)
+    )
+
+    assert quote_manifest["schema_version"].endswith("_v7")
+    assert quote_manifest["relation_transport"]["mode"] == "named_positional_batches"
+    assert quote_manifest["preselection_relation_confirmation"]["status"] == "passed"
+    assert artifact["candidate_count"] == 20
+    assert artifact["timeline"]
+    assert artifact["selection_disclosure"]["temporal_presentation_policy"] == (
+        "recent_year_coverage_v1"
+    )
+
+    tampered = copy.deepcopy(responses)
+    tampered["batch_0001"]["batch_id"] = "batch_0002"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_batched_preselection_relation_confirmations(
+            batch_manifest, sources, tampered, batch_size=5
+        )
+    assert caught.value.boundary == "relation_batch_identity"
+
+    missing_confirmation = copy.deepcopy(confirmation_responses)
+    missing_confirmation.pop(next(iter(missing_confirmation)))
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_manifest,
+            missing_confirmation,
+        )
+    assert caught.value.boundary == "missing_relation_confirmation_batch"
+
+    wrong_identity = copy.deepcopy(confirmation_responses)
+    first_confirmation_id = next(iter(wrong_identity))
+    wrong_identity[first_confirmation_id]["batch_id"] = "confirmation_batch_9999"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_manifest,
+            wrong_identity,
+        )
+    assert caught.value.boundary == "relation_confirmation_batch_identity"
+
+    broad = copy.deepcopy(confirmation_responses)
+    broad[first_confirmation_id]["point_scope"] = "broad_axis_or_bundle"
+    broad[first_confirmation_id]["point_scope_reason"] = "This is only an area."
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_manifest,
+            broad,
+        )
+    assert caught.value.boundary == "bounded_point_not_confirmed"
+
+
 def test_batched_positional_relations_reject_missing_batch(
     tmp_path: Path,
 ) -> None:
@@ -1858,6 +2081,84 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
     assert finalized["batch_count"] == 2
     assert (batch_dir / "batch_0001_prompt.txt").is_file()
     assert (batch_dir / "batch_0002_schema.json").is_file()
+
+    preselection_manifest_path = tmp_path / "preselection_batch_manifest.json"
+    preselection_batch_dir = tmp_path / "preselection_batches"
+    preselection = prepare_batched_preselection_relation_confirmation_run(
+        batch_manifest_path=batch_manifest_path,
+        response_dir=response_dir,
+        batch_size=4,
+        confirmation_batch_dir=preselection_batch_dir,
+        confirmation_batch_manifest_out=preselection_manifest_path,
+    )
+    confirmation_manifest = json.loads(
+        preselection_manifest_path.read_text(encoding="utf-8")
+    )
+    reason_by_relation = {
+        "support": "matching_customer_experience",
+        "counter": "differing_customer_experience",
+        "adjacent": "related_customer_context",
+        "exclude": "wrong_scope_or_non_evidence",
+    }
+    confirmation_response_dir = tmp_path / "preselection_responses"
+    confirmation_response_dir.mkdir()
+    for batch in confirmation_manifest["batches"]:
+        prompt = (
+            preselection_batch_dir / f"{batch['batch_id']}_prompt.txt"
+        ).read_text(encoding="utf-8")
+        envelope = json.loads(
+            prompt.split(
+                "PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n", 1
+            )[1]
+        )
+        checks = []
+        for row in envelope["candidate_rows"]:
+            relation = "adjacent" if row[5] == "creator_authored" else "support"
+            checks.append(
+                {
+                    "confirmation_row_id": row[0],
+                    "relation": relation,
+                    "reason_code": reason_by_relation[relation],
+                }
+            )
+        (confirmation_response_dir / f"{batch['batch_id']}_response.json").write_text(
+            json.dumps(
+                {
+                    "batch_id": batch["batch_id"],
+                "point_scope": "single_point",
+                "point_scope_reason": "One direction-bearing hydration point.",
+                    "relation_checks": checks,
+                }
+            ),
+            encoding="utf-8",
+        )
+    confirmed = finalize_batched_preselection_relation_confirmation_run(
+        batch_manifest_path=batch_manifest_path,
+        response_dir=response_dir,
+        confirmation_batch_manifest_path=preselection_manifest_path,
+        confirmation_response_dir=confirmation_response_dir,
+        quote_prompt_out=tmp_path / "v7_quote_prompt.txt",
+        quote_schema_out=tmp_path / "v7_quote_schema.json",
+        quote_manifest_out=tmp_path / "v7_quote_manifest.json",
+    )
+    assert preselection["candidate_count"] == 10
+    assert confirmed["candidate_count"] == 10
+    assert confirmed["relation_batch_count"] == 2
+    assert _parser().parse_args(
+        [
+            "prepare-batched-preselection-relation-confirmation",
+            "--batch-manifest",
+            "batches.json",
+            "--response-dir",
+            "responses",
+            "--batch-size",
+            "4",
+            "--confirmation-batch-dir",
+            "confirmation-batches",
+            "--confirmation-batch-manifest-out",
+            "confirmation.json",
+        ]
+    ).command == "prepare-batched-preselection-relation-confirmation"
 
 
 @pytest.mark.parametrize("cap", [0, 21, "15", True])

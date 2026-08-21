@@ -74,9 +74,13 @@ The frontier is a navigation artifact over a complete, non-truncated
 `phase_a_evidence_packet_v3`; it is not packet v4 or a new evidence authority.
 `materialize-customer-pull-point-selection-spec` turns one admitted proposition
 into one hash-bound bounded-point selection with the normal thirteen-truth-origin
-cap. It admits only that proposition's literal support, counter, and adjacent
-semantic refs. The full packet and every frontier disposition remain available;
-the displayed pack is not the entire axis and never implies prevalence.
+cap. For a non-value point with an explicit axis, candidate admission is the
+union of every semantic row for the same product and axis plus the proposition's
+literal refs. Every admitted row is newly judged against the exact bounded
+point; sharing an axis grants no support or counter relation. Value points keep
+literal-ref admission because their price/value behavior policy is not the
+generic non-value route. The full packet and every frontier disposition remain
+available; the displayed pack never implies prevalence.
 Frontier specs use the exact bounded point as their direction: evidence that
 the balm is expensive supports that objection, rather than being reversed by
 the older positive-good-value box policy. Historical value-box selections keep
@@ -95,6 +99,26 @@ prepare-evidence-selection
   -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
 ```
 
+When that frontier-bound non-value point expands to a large axis pool, use the
+named batch route at both model boundaries:
+
+```text
+prepare-evidence-selection-batches
+  -> external named relation responses over every admitted row
+  -> prepare-batched-preselection-relation-confirmation
+  -> external named hidden-label confirmation responses over every material,
+     protected, or influence row that could reach display
+  -> finalize-batched-preselection-relation-confirmation
+  -> external exact-quote response
+  -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
+```
+
+Both batch manifests bind contiguous complete row coverage and each response's
+own batch identity. Batching is transport only: it changes neither candidate
+admission nor the thirteen-origin cap. The second batching step is required at
+full-axis scale; sending hundreds of confirmation rows as one open array would
+recreate the truncation surface that named relation batches closed.
+
 The confirmation frontier is independent of the first-pass relation. Therefore
 a first-pass `exclude` cannot silently hide a materially engaged or protected
 row. The confirming response may correct the relation and reason code; selection
@@ -103,6 +127,19 @@ have crossed that confirmation boundary. Missing, duplicate, foreign, reordered,
 or unconfirmed rows fail closed. Historical v6 quote manifests retain their
 selected-row confirmation route for exact reproduction; they are not silently
 restamped as v7.
+
+Non-value axis-expanded point packs use `recent_year_coverage_v1` as a display
+preference. The latest two calendar years present in the eligible pool receive
+representation across available venue/role/native-metric buckets, up to half
+the thirteen-origin cap after mandatory relation/protection reservations. When
+eligible and space remains, one dated pre-window origin is retained so the
+recent view does not erase earlier history. Undated rows remain in complete
+candidate accounting. Age never changes a relation, independence, materiality,
+or evidentiary weight. The final artifact groups selected IDs by literal
+calendar year, with unavailable dates separate, and uses no strong/weak or
+fresh/stale age judgment. Within a fixed venue/role/native-metric bucket,
+source-native engagement still orders candidate display; it is never compared
+across platforms.
 
 ## Operating path
 

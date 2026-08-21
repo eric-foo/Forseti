@@ -1057,9 +1057,35 @@ independent customer recurrence, material source-native engagement, or an
 operator-protected safety/costly lane. Engagement remains comparable only
 inside one role, venue, and metric bucket, and no cross-platform commercial-pull
 score is created. Materializing one admitted proposition produces a v1
-selection spec bound to the frontier, source packet, bounded point, and literal
-semantic refs with the normal thirteen-origin cap. The frontier changes no
-packet, source fact, proposition relation, or Deliver authority.
+selection spec bound to the frontier, source packet, bounded point, candidate-
+admission mode, axis set, transport mode, and literal semantic refs with the
+normal thirteen-origin cap. A non-value point carrying an explicit axis admits
+the same-product axis union plus its literal refs; every row is still judged
+against the exact bounded point, so axis membership grants no relation. Value
+points keep literal-ref admission under their separate value policy. The
+frontier changes no packet, source fact, proposition relation, or Deliver
+authority.
+
+At full-axis scale, both relation passes use named batches. The first layer
+accounts every admitted candidate. The second independently accounts every
+material, protected, or influence row that could reach display, preserving the
+v7 pre-cap correction boundary without one hundreds-row response array. Each
+layer binds its own manifest, contiguous coverage, response hashes, and required
+batch identity; the complete set is deterministically reassembled before the
+ordinary v7 selector runs. Missing, foreign, transposed, malformed, or partial
+responses fail before quote selection. Historical v6 batching and narrow v7
+single-response replay retain their stamped behavior.
+
+Axis-expanded non-value specs also bind
+`temporal_presentation_policy=recent_year_coverage_v1`. The latest two literal
+calendar years in the display-eligible pool receive representation across
+available role/venue/native-metric buckets up to half the cap after mandatory
+protection and direction reservations; one eligible dated pre-window origin is
+retained when space remains. Undated rows remain fully accounted. This is a
+presentation preference only: publication time never changes relation,
+independence, materiality, or truth weight. Artifacts expose a neutral calendar-
+year timeline and never label age strong, weak, fresh, or stale. Native
+engagement still orders only within one comparable source bucket.
 
 Within the retailer-first and community-discovery queues, more independent
 supporting origins lead. When origin counts tie, cross-role independent
@@ -1645,6 +1671,16 @@ new frontier.
 
 ## Changelog
 
+- `v56` / 2026-08-21 — expanded non-value frontier points from literal-only
+  proposition refs to the complete same-product axis candidate union while
+  retaining exact bounded-point judgment and the thirteen-origin display cap.
+  Added named batching for the v7 preselection confirmation frontier, so full-
+  axis breadth does not reopen long-array omission or allow first-pass labels to
+  choose the cap unchecked. Added a bound two-calendar-year representation
+  preference plus one eligible dated historical anchor and a neutral selected-
+  row timeline. Age changes presentation only; packet v3, source facts,
+  relation semantics, value-point admission, prevalence boundaries, and
+  cross-platform engagement prohibitions are unchanged.
 - `v55` / 2026-08-21 — changed customer-pull frontier ordering so independent
   supporting-origin count leads, followed on ties by cross-role recurrence and
   materially engaged supporting items before reported behavior. Behavior
