@@ -600,9 +600,11 @@ that produced it. If a staged historical manifest still needs quote completion,
 either finish it with that exact historical consumer revision and disclose the
 mixed lineage in the axis manifest, or rerun the whole point under the current
 policy. Never make a current finalizer accept an old manifest by rebinding or
-editing its hashes. An axis manifest references each point artifact path,
-SHA-256, and policy revision; it does not duplicate the point artifacts' full
-candidate inventories.
+editing its hashes. An axis manifest references each point artifact path and
+SHA-256, policy revision, exact selection-manifest path and stored/file hashes,
+and quote-manifest path and stored hash; it does not duplicate the point
+artifacts' full candidate inventories. A sibling-file convention is not a
+cold-reader source pointer.
 
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
@@ -613,9 +615,9 @@ not an unmodified provider result; prefer a bounded provider correction turn
 and preserve every discarded-call cost either way.
 
 The completed hydration-axis dogfood at
-`C:\tmp\forseti-phase-a-hydration-axis-pack-20260822-v0\hydration_axis_pack_v1.json`
+`C:\tmp\forseti-phase-a-hydration-axis-pack-20260822-v0\hydration_axis_pack_v2.json`
 (raw SHA-256
-`c57ffb940b863d0ad388394b188bdc28f709659a2c508c310d0bf4555774222a`)
+`42f7fa0ca3c7d2000c77e97d37a429aa32c04c320aa2fa000a68b114acf9c77d`)
 exercised this resume boundary. Nine completed points retained their historical
 policy revision; two unresolved points were rerun under the current linked-parent
 policy. The precise same-drying-and-cracking point passed, while “does nothing
@@ -632,7 +634,13 @@ those belonged to ten discarded malformed calls caused by the initially
 unbound structured-output schema and are not hidden as production success. Two
 long-body quote responses were source-exactly shortened to complete sentence
 boundaries after provider boundary failures and are disclosed as corrected
-responses, not unmodified provider output.
+responses, not unmodified provider output. A cold-reader replay then loaded only
+the v2 axis pointers, reverified each selection-manifest identity and candidate
+inventory hash, resolved all ten bound packet/bundle sources, and matched all
+8,360 point-candidate dispositions to their source-derived candidate IDs. Its
+first local v1 index had named only artifact paths; requiring an inferred sibling
+selection manifest was rejected as incomplete rather than reported as cold
+resolvability.
 
 The bounded v6 dogfood receipt is
 `C:\tmp\forseti-phase-a-point-pack-v6-dogfood-20260821-v0\dogfood_receipt_v1.json`
