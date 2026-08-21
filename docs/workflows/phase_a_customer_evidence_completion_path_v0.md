@@ -642,6 +642,63 @@ first local v1 index had named only artifact paths; requiring an inferred siblin
 selection manifest was rejected as incomplete rather than reported as cold
 resolvability.
 
+Downstream consumers use the completed points through the derived
+`phase_a_evidence_axis_consolidated_view_v1`, built by
+`forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`. This is a
+presentation view, not a packet v4 and not another evidence authority. It
+reverifies the exact axis, point, selection, quote, packet, and bundle bindings;
+keeps all ten bounded points and every claim-relative placement; stores each of
+the 32 origins, 37 evidence items, 56 quote records, and 181 companion meanings
+once; and leaves all 8,360 candidate dispositions cold-resolvable through their
+owning point artifacts. Three navigation groups make the axis readable without
+merging its propositions: hydration efficacy, drying consequences, and
+comparator performance. Balm Dotcom and Rhode remain separate bounded points,
+and delayed drying/cracking remains separate from direct drying.
+
+The view also separates Reddit posts from Reddit comments before presenting
+source-native engagement. It does not normalize, percentile-rank, or compare a
+post score with a comment score, retailer helpful count, another venue, or
+another calendar-year bucket. Repeated rows from one actor remain one credited
+origin, while distinct actors in one thread remain distinct origins with that
+thread concentration disclosed. Each point carries its exact deterministic
+support, counter, and adjacent origin lists directly as a consumer aid; those
+lists are rederived from the preserved placements and cannot override them.
+The point-level direct lists were added after the first compact dogfood made two
+join errors while copying origin directions. That failed shape is negative
+evidence and must not be restored merely to save more tokens.
+
+The completed consolidation dogfood is at
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\consolidated_view_v5.json`
+(raw SHA-256
+`40321faeecdc25de493a2fc6c9d534e0410add91f5ee48b6c706f6cdcdbf90aa`;
+stored view SHA-256
+`5749ae8da6eeeb2e103b478a61a0b040c6691be16036913393631d1a77c06120`).
+The zero-provider build completed in 31.212 seconds and exact reprojection
+passed. Its matched three-repetition receipt is
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\experiment_receipt_v1.json`
+(raw SHA-256
+`8f97a45de735dff2d62438e90f75cc6b1910878c91741b3d98f5b151ab4b75de`).
+The completed ten-pack arm used 477,216 logical tokens; the consolidated arm
+used 418,082, saving 59,134 logical tokens (12.391%) with lower provider input
+in every repetition. The consolidated arm reproduced every point-relation
+origin set in 3 of 3 repetitions; the ten-pack arm did so in 2 of 3. An opaque
+same-vendor judge preferred the consolidated synthesis in all three primary and
+all three mirrored comparisons, with zero material-quality failures and stable
+ordering. Measured serial elapsed time was 547.708 seconds for the ten-pack and
+494.333 seconds for the consolidated view, a descriptive 53.375-second
+(9.745%) reduction rather than a latency guarantee or p95 claim. Cached input
+is reported but never subtracted, and reasoning output is a subset of output,
+never added twice.
+
+This proves one completed hydration axis only. It does not change the
+thirteen-origin selector, establish a universal axis schema, prove another
+product or axis, or turn the displayed origins into prevalence. Reverse to the
+ten-point source artifacts if deterministic reprojection loses any point,
+relation, condition, comparator, quote, source binding, or cold candidate
+access; if a representative cold consumer inflates origins or changes a
+direction; or if matched logical-token savings fall below ten percent without
+a position-stable material quality gain.
+
 The bounded v6 dogfood receipt is
 `C:\tmp\forseti-phase-a-point-pack-v6-dogfood-20260821-v0\dogfood_receipt_v1.json`
 (raw SHA-256
