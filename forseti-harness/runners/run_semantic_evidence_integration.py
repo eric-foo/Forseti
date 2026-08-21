@@ -79,6 +79,7 @@ from judgment.phase_a_evidence_selection import (  # noqa: E402
     load_selection_sources,
     prepare_evidence_selection,
     prepare_evidence_selection_batches,
+    prepare_selected_relation_confirmation,
 )
 from harness_utils import hash_file  # noqa: E402
 
@@ -1645,6 +1646,9 @@ def finalize_evidence_selection_relations_run(
     quote_prompt_out: Path,
     quote_schema_out: Path,
     quote_manifest_out: Path,
+    confirmation_prompt_out: Path,
+    confirmation_schema_out: Path,
+    confirmation_manifest_out: Path,
 ) -> dict[str, Any]:
     manifest = _load_object(manifest_path)
     sources = load_selection_sources(manifest)
@@ -1652,14 +1656,27 @@ def finalize_evidence_selection_relations_run(
     prompt, schema, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, response
     )
-    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+    confirmation_prompt, confirmation_schema, confirmation_manifest = (
+        prepare_selected_relation_confirmation(quote_manifest)
+    )
+    for output in (
+        quote_prompt_out,
+        quote_schema_out,
+        quote_manifest_out,
+        confirmation_prompt_out,
+        confirmation_schema_out,
+        confirmation_manifest_out,
+    ):
         if output.exists():
             raise ValueError(f"refusing to overwrite existing output: {output}")
     _write_new(quote_prompt_out, prompt.encode("utf-8"))
     _write_json(quote_schema_out, schema)
     _write_json(quote_manifest_out, quote_manifest)
+    _write_new(confirmation_prompt_out, confirmation_prompt.encode("utf-8"))
+    _write_json(confirmation_schema_out, confirmation_schema)
+    _write_json(confirmation_manifest_out, confirmation_manifest)
     return {
-        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_READY",
+        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_AND_CONFIRMATION_READY",
         "candidate_count": len(quote_manifest["labeled_inventory"]),
         "truth_group_count": len(
             {
@@ -1676,6 +1693,7 @@ def finalize_evidence_selection_relations_run(
             }
         ),
         "manifest_sha256": quote_manifest["manifest_sha256"],
+        "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
         "model_api_calls": 0,
     }
 
@@ -1687,6 +1705,9 @@ def finalize_evidence_selection_batches_run(
     quote_prompt_out: Path,
     quote_schema_out: Path,
     quote_manifest_out: Path,
+    confirmation_prompt_out: Path,
+    confirmation_schema_out: Path,
+    confirmation_manifest_out: Path,
 ) -> dict[str, Any]:
     batch_manifest = _load_object(batch_manifest_path)
     selection_manifest = batch_manifest.get("selection_manifest")
@@ -1702,14 +1723,27 @@ def finalize_evidence_selection_batches_run(
     prompt, schema, quote_manifest = finalize_batched_relations_prepare_quotes(
         batch_manifest, sources, responses
     )
-    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+    confirmation_prompt, confirmation_schema, confirmation_manifest = (
+        prepare_selected_relation_confirmation(quote_manifest)
+    )
+    for output in (
+        quote_prompt_out,
+        quote_schema_out,
+        quote_manifest_out,
+        confirmation_prompt_out,
+        confirmation_schema_out,
+        confirmation_manifest_out,
+    ):
         if output.exists():
             raise ValueError(f"refusing to overwrite existing output: {output}")
     _write_new(quote_prompt_out, prompt.encode("utf-8"))
     _write_json(quote_schema_out, schema)
     _write_json(quote_manifest_out, quote_manifest)
+    _write_new(confirmation_prompt_out, confirmation_prompt.encode("utf-8"))
+    _write_json(confirmation_schema_out, confirmation_schema)
+    _write_json(confirmation_manifest_out, confirmation_manifest)
     return {
-        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_READY",
+        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_AND_CONFIRMATION_READY",
         "candidate_count": len(quote_manifest["labeled_inventory"]),
         "batch_count": len(batch_manifest["batches"]),
         "truth_group_count": len(
@@ -1727,6 +1761,7 @@ def finalize_evidence_selection_batches_run(
             }
         ),
         "manifest_sha256": quote_manifest["manifest_sha256"],
+        "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
         "model_api_calls": 0,
     }
 
@@ -1736,6 +1771,8 @@ def finalize_evidence_selection_quotes_run(
     selection_manifest_path: Path,
     quote_manifest_path: Path,
     response_path: Path,
+    confirmation_manifest_path: Path,
+    confirmation_response_path: Path,
     artifact_out: Path,
 ) -> dict[str, Any]:
     selection_manifest = _load_object(selection_manifest_path)
@@ -1747,7 +1784,13 @@ def finalize_evidence_selection_quotes_run(
         raise EvidenceConsumerError(
             "manifest_verification", "quote manifest belongs to another selection"
         )
-    artifact = finalize_quotes(quote_manifest, sources, _load_object(response_path))
+    artifact = finalize_quotes(
+        quote_manifest,
+        sources,
+        _load_object(response_path),
+        _load_object(confirmation_manifest_path),
+        _load_object(confirmation_response_path),
+    )
     if artifact_out.exists():
         raise ValueError(f"refusing to overwrite existing output: {artifact_out}")
     _write_json(artifact_out, artifact)
@@ -2044,6 +2087,15 @@ def _parser() -> argparse.ArgumentParser:
     selection_relations.add_argument("--quote-prompt-out", type=Path, required=True)
     selection_relations.add_argument("--quote-schema-out", type=Path, required=True)
     selection_relations.add_argument("--quote-manifest-out", type=Path, required=True)
+    selection_relations.add_argument(
+        "--confirmation-prompt-out", type=Path, required=True
+    )
+    selection_relations.add_argument(
+        "--confirmation-schema-out", type=Path, required=True
+    )
+    selection_relations.add_argument(
+        "--confirmation-manifest-out", type=Path, required=True
+    )
 
     selection_batch_relations = sub.add_parser(
         "finalize-evidence-selection-batches"
@@ -2061,11 +2113,26 @@ def _parser() -> argparse.ArgumentParser:
     selection_batch_relations.add_argument(
         "--quote-manifest-out", type=Path, required=True
     )
+    selection_batch_relations.add_argument(
+        "--confirmation-prompt-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--confirmation-schema-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--confirmation-manifest-out", type=Path, required=True
+    )
 
     selection_quotes = sub.add_parser("finalize-evidence-selection-quotes")
     selection_quotes.add_argument("--selection-manifest", type=Path, required=True)
     selection_quotes.add_argument("--quote-manifest", type=Path, required=True)
     selection_quotes.add_argument("--response", type=Path, required=True)
+    selection_quotes.add_argument(
+        "--confirmation-manifest", type=Path, required=True
+    )
+    selection_quotes.add_argument(
+        "--confirmation-response", type=Path, required=True
+    )
     selection_quotes.add_argument("--artifact-out", type=Path, required=True)
 
     calibration_prepare = sub.add_parser("prepare-calibration")
@@ -2390,6 +2457,9 @@ def main(argv: list[str] | None = None) -> int:
                 quote_prompt_out=args.quote_prompt_out,
                 quote_schema_out=args.quote_schema_out,
                 quote_manifest_out=args.quote_manifest_out,
+                confirmation_prompt_out=args.confirmation_prompt_out,
+                confirmation_schema_out=args.confirmation_schema_out,
+                confirmation_manifest_out=args.confirmation_manifest_out,
             )
         elif args.command == "finalize-evidence-selection-batches":
             result = finalize_evidence_selection_batches_run(
@@ -2398,12 +2468,17 @@ def main(argv: list[str] | None = None) -> int:
                 quote_prompt_out=args.quote_prompt_out,
                 quote_schema_out=args.quote_schema_out,
                 quote_manifest_out=args.quote_manifest_out,
+                confirmation_prompt_out=args.confirmation_prompt_out,
+                confirmation_schema_out=args.confirmation_schema_out,
+                confirmation_manifest_out=args.confirmation_manifest_out,
             )
         elif args.command == "finalize-evidence-selection-quotes":
             result = finalize_evidence_selection_quotes_run(
                 selection_manifest_path=args.selection_manifest,
                 quote_manifest_path=args.quote_manifest,
                 response_path=args.response,
+                confirmation_manifest_path=args.confirmation_manifest,
+                confirmation_response_path=args.confirmation_response,
                 artifact_out=args.artifact_out,
             )
         elif args.command == "prepare-calibration":

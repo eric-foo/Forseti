@@ -256,7 +256,8 @@ The matched experiment result is
 #### Optional evidence selection and exact quotes
 
 When the complete proposition-linked view is too coarse for commercially
-useful presentation, use the existing no-provider evidence-consumer's
+useful presentation, bind one narrow evidence point and use the existing
+no-provider evidence-consumer's
 `prepare-evidence-selection`, `finalize-evidence-selection-relations`, and
 `finalize-evidence-selection-quotes` operations. This is a consumer view over
 hash-bound `phase_a_evidence_packet_v3`; it is not packet v4, a semantic replay,
@@ -309,9 +310,11 @@ separate shade meanings may display as “intends to repurchase Vanilla and
 Vanilla Beige” while both semantic refs and named shades remain underneath one
 origin and one exact quote. Never group across origins, hide a conflicting
 clause, or broaden a shade-specific behavior into general repurchase.
-The cap applies to displayed independent-origin groups. The default remains ten
-customer truth groups, and one selection may explicitly raise that customer
-cap to at most twenty; creator influence remains capped separately at three.
+The cap applies to displayed independent-origin groups. The default is thirteen
+customer truth groups per bounded evidence point, and one selection may
+explicitly raise that customer cap to at most twenty when protected evidence or
+a material conflict cannot fit; creator influence remains capped separately at
+three. Do not use one broad axis as the point merely to obtain one large pack.
 Do not raise the cap merely to make an output look comprehensive. A full-axis
 Summer Fridays hydration comparison found ten materially thinner, fifteen
 materially better, and twenty no better than fifteen under mirrored review, so
@@ -357,8 +360,8 @@ rows. Every operator-protected row is visible or the run fails. The retained
 disposition inventory remains the accounting record for all other displayed and
 undisplayed candidates.
 
-One displayed pack is not one evidence point. It may contain up to the
-selection's explicit customer-origin cap, and one origin may display several atomic
+One displayed pack is one bounded evidence point, not one broad axis. It may
+contain up to the selection's explicit customer-origin cap, and one origin may display several atomic
 meanings. Call those origins corroboration only when their meanings support the
 same bounded statement under compatible product, variant, timing, and
 condition scope. Origins that merely discuss the same broad axis remain
@@ -392,11 +395,43 @@ label as evidence meaning, and prefer literal-ID mode when the pack's row labels
 matter to the reader. Literal-ID response mode remains the default and the
 required mode for value selections; named positional batching is an opt-in
 transport for large non-value axes. Its quote preparation emits
-`phase_a_evidence_quote_manifest_v5`, which binds the actual batch-manifest hash
+`phase_a_evidence_quote_manifest_v6`, which retains the v5 binding of the actual batch-manifest hash
 and every canonical batch-response hash. The embedded selection manifest keeps
 the canonical full selection identity; it is not evidence that its single large
 prompt was sent. The v5 relation-transport binding records the prompts' actual
 route.
+
+The relation finalizer emits two independent provider workloads from the same
+selected rows: exact-quote extraction and selected-row relation confirmation.
+Run them concurrently when the provider route permits. The confirmation prompt
+does not contain the first-pass relation, reason code, display label,
+engagement, or selection priority. It must return every selected row exactly
+once and in order; any missing, duplicate, foreign, reordered, or disagreeing
+row blocks the final artifact. Do not combine confirmation with quote extraction:
+the bounded combined pilot classified all selected rows correctly but clipped
+one exact quote mid-phrase. New v6 artifacts record the confirmation-manifest
+hash and `passed`; historical v1/v3/v4/v5 artifacts remain readable under their
+original contracts.
+
+Every completed v6 point pack discloses the funnel rather than presenting the
+chosen rows as the whole corpus: candidate semantic rows, distinct candidate
+evidence items, candidate truth origins, displayed rows, displayed truth
+origins, displayed origins by relation, and displayed creator-influence
+origins. Render those counts with the bounded point. They describe evidence
+accounting, not customer prevalence, and the full candidate-disposition
+inventory remains attached.
+
+The bounded v6 dogfood receipt is
+`C:\tmp\forseti-phase-a-point-pack-v6-dogfood-20260821-v0\dogfood_receipt_v1.json`
+(raw SHA-256
+`6113212dfd6d3b755e3d382dd7d00536c92719e797a48d1263557a13a9bfe8ea`).
+It reused the accepted historical fifteen-origin broad hydration selection only
+to exercise the new confirmation and finalization boundary. A different model
+family from the same vendor confirmed all 17 displayed rows, including the
+known 922-point Reddit row as support, with zero disagreements. The call used
+20,335 input plus 566 output logical tokens and completed in approximately 17
+seconds. This is not cross-vendor adjudication and does not prove the new
+thirteen-origin point default; deterministic runtime tests own that default.
 
 The full-axis hydration receipt is
 `C:\tmp\forseti-phase-a-hydration-cap-pilot-20260820-v0\experiment_result_v1.json`
@@ -458,9 +493,9 @@ the reason code is derived from the returned relation and therefore always
 agrees with it. Relation labeling, not origin selection, is the least stable
 part of this pipeline; treat a repeated selection as evidence of transport
 identity, never of relation stability. The measured parallel pack remains the
-accepted artifact for this hydration workload, but the variance restricts broad
-scaling until a selected-row confirmation pilot can expose a displayed
-support/counter disagreement without relabeling the complete candidate set.
+accepted historical artifact for this hydration workload. New v6 point packs
+close the observed display boundary with the separate selected-row confirmation
+described above without relabeling the complete candidate set.
 
 Second, `seventeen exact quotes, zero unavailable` counts exactness and
 availability, which deterministic code already enforces. It is not a measure of
@@ -523,7 +558,7 @@ material qualification cannot fit, the quote response returns unavailable
 rather than a misleading fragment. It never repairs text or adds ellipses. An
 available quote must contain at least two
 Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
-A long-body quote in a current v4/v5 quote manifest that ends in an alphanumeric
+A long-body quote in a current v4/v5/v6 quote manifest that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at
 `quote_boundary_incomplete`. This catches a literal substring that stops before
@@ -548,7 +583,7 @@ changed bytes fail.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 
-New quote manifests use `phase_a_evidence_quote_manifest_v4` and record the
+New quote manifests use `phase_a_evidence_quote_manifest_v6` and record the
 ordered `provider_selected_ids` subset. The finalizer recomputes that subset
 from the bound bodies, rejects drift, deterministically fills short or missing
 bodies, and merges provider-returned long-body quotes back into original

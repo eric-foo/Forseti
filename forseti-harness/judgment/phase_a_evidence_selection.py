@@ -31,8 +31,13 @@ SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
 PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
-QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
-BATCHED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v5"
+PRECONFIRMATION_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
+PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v5"
+QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v6"
+BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
+RELATION_CONFIRMATION_MANIFEST_VERSION = (
+    "phase_a_evidence_relation_confirmation_manifest_v1"
+)
 RELATIONS = ("support", "counter", "adjacent", "exclude")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 POSITIONAL_REASON_CODE_BY_RELATION = {
@@ -43,7 +48,7 @@ POSITIONAL_REASON_CODE_BY_RELATION = {
 }
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
-MAX_TRUTH_GROUPS = 10
+MAX_TRUTH_GROUPS = 13
 MAX_CONFIGURABLE_TRUTH_GROUPS = 20
 MAX_RELATION_BATCH_SIZE = 300
 MAX_INFLUENCE_GROUPS = 3
@@ -181,6 +186,16 @@ QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the 
 Return every selected_id exactly once and in order. Every supplied source body is longer than 220 characters. Choose one context-complete contiguous exact substring of at most 220 characters that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize for brevity: when the necessary source wording fits, retain it instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries and length. Return quote_status=quote_unavailable and exact_quote=null only after verifying that no one contiguous span within 220 characters supports the full normalized meaning; inability to include optional non-reversing context is not enough. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent and the combined span fits within 220 characters. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
+{envelope}
+"""
+
+RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered selected rows below. Return only the required JSON.
+
+Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
+
+The first-pass relation, reason code, display label, engagement, and selection priority are intentionally absent. Do not infer them from selected_id or row order. Return every selected_id exactly once and in order.
+
+SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:
 {envelope}
 """
 
@@ -890,6 +905,28 @@ def _quote_schema() -> dict[str, Any]:
         "type": "object",
         "properties": {"quotes": {"type": "array", "items": row}},
         "required": ["quotes"],
+        "additionalProperties": False,
+    }
+
+
+def _relation_confirmation_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "relation_checks": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "selected_id": {"type": "string"},
+                        "relation": {"type": "string", "enum": list(RELATIONS)},
+                    },
+                    "required": ["selected_id", "relation"],
+                    "additionalProperties": False,
+                },
+            }
+        },
+        "required": ["relation_checks"],
         "additionalProperties": False,
     }
 
@@ -1780,6 +1817,16 @@ QUOTE_PROMPT_COLUMNS = (
     "body_id",
 )
 
+RELATION_CONFIRMATION_COLUMNS = (
+    "selected_id",
+    "normalized_meaning",
+    "conditions",
+    "subject_product_ids",
+    "product_version_ids",
+    "source_role",
+    "same_evidence_companion_meanings",
+)
+
 
 def _quote_prompt_envelope(
     bounded_claim: str,
@@ -1826,6 +1873,27 @@ def _quote_prompt_envelope(
         },
         provider_selected_ids,
     )
+
+
+def _relation_confirmation_prompt_envelope(
+    bounded_claim: str, selected: Sequence[Mapping[str, Any]]
+) -> dict[str, Any]:
+    return {
+        "bounded_point": bounded_claim,
+        "selected_columns": list(RELATION_CONFIRMATION_COLUMNS),
+        "selected_rows": [
+            [
+                row["selected_id"],
+                row["normalized_meaning"],
+                row.get("conditions", []),
+                row.get("subject_product_ids", []),
+                row.get("product_version_ids", []),
+                row["source_role"],
+                _compact_companion_meanings(row),
+            ]
+            for row in selected
+        ],
+    }
 
 
 def finalize_relations_prepare_quotes(
@@ -1875,6 +1943,8 @@ def finalize_relations_prepare_quotes(
     schema = _quote_schema()
     quote_manifest = {
         "schema_version": QUOTE_MANIFEST_VERSION,
+        "selection_id": manifest["selection_id"],
+        "bounded_claim": manifest["spec"]["bounded_claim"],
         "selection_manifest_sha256": manifest["manifest_sha256"],
         "candidate_inventory_sha256": manifest["candidate_inventory_sha256"],
         "labeled_inventory": labeled,
@@ -1882,6 +1952,7 @@ def finalize_relations_prepare_quotes(
         "selected_rows": selected,
         "selected_rows_sha256": _canonical_json_sha256(selected),
         "truth_group_cap": truth_group_cap,
+        "selected_relation_confirmation_required": True,
         "provider_selected_ids": provider_selected_ids,
         "quote_body_sha256": {
             row["selected_id"]: sha256_text(row["source_body"]) if row["source_body"] is not None else None
@@ -2003,29 +2074,188 @@ def finalize_batched_relations_prepare_quotes(
     return prompt, schema, quote_manifest
 
 
-def finalize_quotes(
-    quote_manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
-) -> dict[str, Any]:
+def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
     stored = quote_manifest.get("manifest_sha256")
-    payload = {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
+    payload = {
+        key: value for key, value in quote_manifest.items() if key != "manifest_sha256"
+    }
     manifest_version = quote_manifest.get("schema_version")
     if (
         manifest_version
         not in {
             LEGACY_QUOTE_MANIFEST_VERSION,
             PREVIOUS_QUOTE_MANIFEST_VERSION,
+            PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+            PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
-            BATCHED_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
     ):
-        raise EvidenceConsumerError("manifest_verification", "quote manifest changed")
+        raise EvidenceConsumerError(
+            "manifest_verification", "quote manifest changed"
+        )
+    return manifest_version
+
+
+def prepare_selected_relation_confirmation(
+    quote_manifest: Mapping[str, Any],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    manifest_version = _verified_quote_manifest_version(quote_manifest)
+    if (
+        manifest_version != QUOTE_MANIFEST_VERSION
+        or quote_manifest.get("selected_relation_confirmation_required") is not True
+    ):
+        raise EvidenceConsumerError(
+            "relation_confirmation_not_required",
+            "only current quote manifests require selected-row confirmation",
+        )
+    selected = quote_manifest.get("selected_rows")
+    if (
+        not isinstance(selected, list)
+        or quote_manifest.get("selected_rows_sha256")
+        != _canonical_json_sha256(selected)
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selected rows changed"
+        )
+    envelope = _relation_confirmation_prompt_envelope(
+        quote_manifest["bounded_claim"], selected
+    )
+    prompt = RELATION_CONFIRMATION_PROMPT.format(envelope=_compact(envelope))
+    schema = _relation_confirmation_schema()
+    confirmation_manifest = {
+        "schema_version": RELATION_CONFIRMATION_MANIFEST_VERSION,
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
+        "selection_manifest_sha256": quote_manifest["selection_manifest_sha256"],
+        "selected_rows_sha256": quote_manifest["selected_rows_sha256"],
+        "selected_ids": [row["selected_id"] for row in selected],
+        "prompt_sha256": sha256_text(prompt),
+        "response_schema_sha256": _canonical_json_sha256(schema),
+        "hidden_first_pass_fields": [
+            "relation",
+            "reason_code",
+            "display_label",
+            "engagement",
+            "selection_priority",
+        ],
+        "model_api_calls": 0,
+    }
+    confirmation_manifest["manifest_sha256"] = _canonical_json_sha256(
+        confirmation_manifest
+    )
+    return prompt, schema, confirmation_manifest
+
+
+def _validate_selected_relation_confirmation(
+    quote_manifest: Mapping[str, Any],
+    confirmation_manifest: Mapping[str, Any],
+    response: Mapping[str, Any],
+) -> str:
+    stored = confirmation_manifest.get("manifest_sha256")
+    payload = {
+        key: value
+        for key, value in confirmation_manifest.items()
+        if key != "manifest_sha256"
+    }
+    if (
+        confirmation_manifest.get("schema_version")
+        != RELATION_CONFIRMATION_MANIFEST_VERSION
+        or stored != _canonical_json_sha256(payload)
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "relation confirmation manifest changed"
+        )
+    selected = quote_manifest["selected_rows"]
+    expected = [row["selected_id"] for row in selected]
+    if (
+        confirmation_manifest.get("quote_manifest_sha256")
+        != quote_manifest.get("manifest_sha256")
+        or confirmation_manifest.get("selection_manifest_sha256")
+        != quote_manifest.get("selection_manifest_sha256")
+        or confirmation_manifest.get("selected_rows_sha256")
+        != quote_manifest.get("selected_rows_sha256")
+        or confirmation_manifest.get("selected_ids") != expected
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "relation confirmation binding changed"
+        )
+    if set(response) != {"relation_checks"} or not isinstance(
+        response.get("relation_checks"), list
+    ):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape", "relation_checks missing"
+        )
+    checks = response["relation_checks"]
+    if not all(
+        isinstance(row, dict) and set(row) == {"selected_id", "relation"}
+        for row in checks
+    ):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape", "relation check row shape mismatch"
+        )
+    observed = [row["selected_id"] for row in checks]
+    if len(observed) != len(set(observed)):
+        raise EvidenceConsumerError(
+            "duplicate_relation_confirmation", "selected row repeated"
+        )
+    if set(observed) - set(expected):
+        raise EvidenceConsumerError(
+            "foreign_relation_confirmation", "foreign selected row"
+        )
+    if observed != expected:
+        boundary = (
+            "missing_relation_confirmation"
+            if set(observed) != set(expected)
+            else "relation_confirmation_order_mismatch"
+        )
+        raise EvidenceConsumerError(boundary, "relation check set/order mismatch")
+    for selected_row, check in zip(selected, checks, strict=True):
+        if check["relation"] not in RELATIONS:
+            raise EvidenceConsumerError(
+                "relation_confirmation_shape", "invalid confirmed relation"
+            )
+        if check["relation"] != selected_row["relation"]:
+            raise EvidenceConsumerError(
+                "selected_relation_disagreement",
+                f"independent relation check disagrees for {selected_row['selected_id']}",
+            )
+    return stored
+
+
+def finalize_quotes(
+    quote_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    response: Mapping[str, Any],
+    confirmation_manifest: Mapping[str, Any] | None = None,
+    confirmation_response: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    manifest_version = _verified_quote_manifest_version(quote_manifest)
+    confirmation_manifest_sha256 = None
+    if manifest_version == QUOTE_MANIFEST_VERSION:
+        if confirmation_manifest is None or confirmation_response is None:
+            raise EvidenceConsumerError(
+                "selected_relation_confirmation_required",
+                "current evidence packs require independent selected-row confirmation",
+            )
+        confirmation_manifest_sha256 = _validate_selected_relation_confirmation(
+            quote_manifest, confirmation_manifest, confirmation_response
+        )
+    elif confirmation_manifest is not None or confirmation_response is not None:
+        raise EvidenceConsumerError(
+            "unexpected_relation_confirmation",
+            "historical quote manifests do not accept a confirmation attachment",
+        )
     if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
         raise EvidenceConsumerError("quote_response_shape", "quotes missing")
     selected = quote_manifest["selected_rows"]
     expected = (
         quote_manifest.get("provider_selected_ids")
-        if manifest_version in {QUOTE_MANIFEST_VERSION, BATCHED_QUOTE_MANIFEST_VERSION}
+        if manifest_version
+        in {
+            PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+            PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
+            QUOTE_MANIFEST_VERSION,
+        }
         else [row["selected_id"] for row in selected]
     )
     if not isinstance(expected, list) or not all(
@@ -2047,7 +2277,11 @@ def finalize_quotes(
         raise EvidenceConsumerError(boundary, "quote result set/order mismatch")
     bodies = _bundle_bodies(sources)
     recorded_body_hashes = quote_manifest["quote_body_sha256"]
-    if manifest_version in {QUOTE_MANIFEST_VERSION, BATCHED_QUOTE_MANIFEST_VERSION}:
+    if manifest_version in {
+        PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+        PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
+        QUOTE_MANIFEST_VERSION,
+    }:
         derived_provider_ids = [
             row["selected_id"]
             for row in selected
@@ -2081,8 +2315,9 @@ def finalize_quotes(
             )
         if quote_row is None:
             if manifest_version not in {
+                PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+                PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                 QUOTE_MANIFEST_VERSION,
-                BATCHED_QUOTE_MANIFEST_VERSION,
             }:
                 raise EvidenceConsumerError(
                     "missing_quote_result", "selected row has no quote result"
@@ -2115,7 +2350,12 @@ def finalize_quotes(
             if quote not in body:
                 raise EvidenceConsumerError("quote_exactness", "quote is not a contiguous exact substring")
             if (
-                manifest_version in {QUOTE_MANIFEST_VERSION, BATCHED_QUOTE_MANIFEST_VERSION}
+                manifest_version
+                in {
+                    PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+                    PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
+                    QUOTE_MANIFEST_VERSION,
+                }
                 and not _quote_has_complete_end(body, quote)
             ):
                 raise EvidenceConsumerError(
@@ -2159,8 +2399,9 @@ def finalize_quotes(
                     if manifest_version
                     in {
                         PREVIOUS_QUOTE_MANIFEST_VERSION,
+                        PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+                        PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                         QUOTE_MANIFEST_VERSION,
-                        BATCHED_QUOTE_MANIFEST_VERSION,
                     }
                     else {}
                 ),
@@ -2188,8 +2429,12 @@ def finalize_quotes(
         grouped[
             f"{row['layer']}::{row['source_family']}::{row['source_role']}::{row['source_venue']}"
         ].append(row)
-    return {
-        "schema_version": "phase_a_evidence_selection_artifact_v1",
+    artifact = {
+        "schema_version": (
+            "phase_a_evidence_selection_artifact_v2"
+            if manifest_version == QUOTE_MANIFEST_VERSION
+            else "phase_a_evidence_selection_artifact_v1"
+        ),
         "selection_manifest_sha256": quote_manifest["selection_manifest_sha256"],
         "quote_manifest_sha256": quote_manifest["manifest_sha256"],
         "candidate_inventory_sha256": quote_manifest["candidate_inventory_sha256"],
@@ -2217,6 +2462,76 @@ def finalize_quotes(
         ],
         "model_api_calls": 0,
     }
+    if manifest_version == QUOTE_MANIFEST_VERSION:
+        labeled_inventory = quote_manifest["labeled_inventory"]
+        truth_rows = [
+            row
+            for row in output_rows
+            if row["layer"] == "truth_support"
+        ]
+        artifact.update(
+            {
+                "point_id": quote_manifest["selection_id"],
+                "bounded_point": quote_manifest["bounded_claim"],
+                "relation_confirmation_status": "passed",
+                "relation_confirmation_manifest_sha256": confirmation_manifest_sha256,
+                "selection_disclosure": {
+                    "candidate_semantic_row_count": len(labeled_inventory),
+                    "candidate_evidence_item_count": len(
+                        {
+                            (row["source_id"], row["evidence_id"])
+                            for row in labeled_inventory
+                        }
+                    ),
+                    "candidate_truth_origin_count": len(
+                        {
+                            row["scoped_independence_key"]
+                            for row in labeled_inventory
+                            if row["layer"] == "truth_support"
+                            and row["relation"] != "exclude"
+                        }
+                    ),
+                    "displayed_row_count": len(output_rows),
+                    "displayed_truth_origin_count": len(
+                        {row["origin_group_id"] for row in truth_rows}
+                    ),
+                    "displayed_support_origin_count": len(
+                        {
+                            row["origin_group_id"]
+                            for row in truth_rows
+                            if row["relation"] == "support"
+                        }
+                    ),
+                    "displayed_counter_origin_count": len(
+                        {
+                            row["origin_group_id"]
+                            for row in truth_rows
+                            if row["relation"] == "counter"
+                        }
+                    ),
+                    "displayed_adjacent_origin_count": len(
+                        {
+                            row["origin_group_id"]
+                            for row in truth_rows
+                            if row["relation"] == "adjacent"
+                        }
+                    ),
+                    "displayed_influence_origin_count": artifact[
+                        "influence_group_count"
+                    ],
+                    "presentation_basis": [
+                        "one bounded evidence point",
+                        "distinct truth origins capped separately from creator influence",
+                        "support, counterevidence, protected evidence, source diversity, and source-native engagement within comparable buckets",
+                        "all admitted candidate dispositions remain available",
+                    ],
+                },
+            }
+        )
+        artifact["output_boundary"].append(
+            "candidate and displayed counts describe evidence accounting, not customer prevalence"
+        )
+    return artifact
 
 
 __all__ = [
@@ -2227,4 +2542,5 @@ __all__ = [
     "finalize_relations_prepare_quotes",
     "load_selection_sources",
     "prepare_evidence_selection",
+    "prepare_selected_relation_confirmation",
 ]

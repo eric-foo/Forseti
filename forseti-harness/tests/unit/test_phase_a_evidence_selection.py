@@ -22,10 +22,11 @@ from judgment.phase_a_evidence_selection import (
     _source_venue,
     _validate_relation_response,
     finalize_batched_relations_prepare_quotes,
-    finalize_quotes,
+    finalize_quotes as _finalize_quotes_runtime,
     finalize_relations_prepare_quotes,
     prepare_evidence_selection,
     prepare_evidence_selection_batches,
+    prepare_selected_relation_confirmation,
 )
 from runners.run_semantic_evidence_integration import (
     finalize_evidence_selection_batches_run,
@@ -372,6 +373,28 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
     }
 
 
+def _confirmation_response(quote_manifest: dict) -> dict:
+    return {
+        "relation_checks": [
+            {"selected_id": row["selected_id"], "relation": row["relation"]}
+            for row in quote_manifest["selected_rows"]
+        ]
+    }
+
+
+def finalize_quotes(quote_manifest: dict, sources: list[dict], response: dict) -> dict:
+    _, _, confirmation_manifest = prepare_selected_relation_confirmation(
+        quote_manifest
+    )
+    return _finalize_quotes_runtime(
+        quote_manifest,
+        sources,
+        response,
+        confirmation_manifest,
+        _confirmation_response(quote_manifest),
+    )
+
+
 def test_selection_round_trip_accounts_every_candidate_separates_creator_and_caps_origins(tmp_path: Path) -> None:
     spec, sources = _write_source(tmp_path)
     prompt, schema, manifest = prepare_evidence_selection(spec, sources)
@@ -386,7 +409,7 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     assert len(candidates) == 14
     assert artifact["candidate_count"] == 14
     assert len(artifact["candidate_dispositions"]) == 14
-    assert artifact["truth_group_count"] <= 10
+    assert artifact["truth_group_count"] <= 13
     assert artifact["influence_group_count"] <= 3
     assert all(
         row["relation"] == "adjacent"
@@ -405,6 +428,120 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     assert "optional non-reversing context is not enough" in quote_prompt
     assert schema["required"] == ["results"]
     assert quote_schema["required"] == ["quotes"]
+
+
+def test_default_point_pack_caps_at_thirteen_and_discloses_pool(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 40)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(candidates)
+    )
+
+    artifact = finalize_quotes(
+        quote_manifest, sources, _quote_response(quote_manifest, sources)
+    )
+
+    assert artifact["schema_version"] == "phase_a_evidence_selection_artifact_v2"
+    assert artifact["point_id"] == spec["selection_id"]
+    assert artifact["bounded_point"] == spec["bounded_claim"]
+    assert artifact["truth_group_cap"] == 13
+    assert artifact["truth_group_count"] == 13
+    assert artifact["relation_confirmation_status"] == "passed"
+    disclosure = artifact["selection_disclosure"]
+    assert disclosure["candidate_semantic_row_count"] == 40
+    assert disclosure["candidate_evidence_item_count"] == 40
+    assert disclosure["candidate_truth_origin_count"] == 32
+    assert disclosure["displayed_truth_origin_count"] == 13
+    assert disclosure["displayed_row_count"] == sum(
+        len(group["rows"]) for group in artifact["source_groups"]
+    )
+    assert "one bounded evidence point" in disclosure["presentation_basis"]
+
+
+def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 14)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+
+    prompt, schema, confirmation_manifest = prepare_selected_relation_confirmation(
+        quote_manifest
+    )
+    envelope = json.loads(
+        prompt.split("SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:\n", 1)[1]
+    )
+    assert envelope["selected_columns"] == [
+        "selected_id",
+        "normalized_meaning",
+        "conditions",
+        "subject_product_ids",
+        "product_version_ids",
+        "source_role",
+        "same_evidence_companion_meanings",
+    ]
+    assert schema["required"] == ["relation_checks"]
+    assert confirmation_manifest["hidden_first_pass_fields"] == [
+        "relation",
+        "reason_code",
+        "display_label",
+        "engagement",
+        "selection_priority",
+    ]
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            _quote_response(quote_manifest, sources),
+        )
+    assert caught.value.boundary == "selected_relation_confirmation_required"
+
+    flipped = _confirmation_response(quote_manifest)
+    flipped["relation_checks"][0]["relation"] = (
+        "counter"
+        if flipped["relation_checks"][0]["relation"] == "support"
+        else "support"
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            _quote_response(quote_manifest, sources),
+            confirmation_manifest,
+            flipped,
+        )
+    assert caught.value.boundary == "selected_relation_disagreement"
+
+    missing = _confirmation_response(quote_manifest)
+    missing["relation_checks"].pop()
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            _quote_response(quote_manifest, sources),
+            confirmation_manifest,
+            missing,
+        )
+    assert caught.value.boundary == "missing_relation_confirmation"
+
+    rebound = copy.deepcopy(confirmation_manifest)
+    rebound["quote_manifest_sha256"] = "0" * 64
+    rebound["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in rebound.items() if key != "manifest_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            _quote_response(quote_manifest, sources),
+            rebound,
+            _confirmation_response(quote_manifest),
+        )
+    assert caught.value.boundary == "manifest_verification"
 
 
 def test_selection_spec_can_raise_truth_origin_cap_to_twenty_without_changing_influence_cap(
@@ -809,6 +946,9 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
         quote_prompt_out=tmp_path / "quote_prompt.txt",
         quote_schema_out=tmp_path / "quote_schema.json",
         quote_manifest_out=tmp_path / "quote_manifest.json",
+        confirmation_prompt_out=tmp_path / "confirmation_prompt.txt",
+        confirmation_schema_out=tmp_path / "confirmation_schema.json",
+        confirmation_manifest_out=tmp_path / "confirmation_manifest.json",
     )
 
     assert prepared["candidate_count"] == 10
@@ -1158,7 +1298,7 @@ def test_legacy_quote_manifest_retains_its_original_response_shape(tmp_path: Pat
         {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
     )
     response = _quote_response(quote_manifest, sources)
-    artifact = finalize_quotes(quote_manifest, sources, response)
+    artifact = _finalize_quotes_runtime(quote_manifest, sources, response)
     assert "display_label" not in artifact["source_groups"][0]["rows"][0]
 
 
@@ -1176,7 +1316,7 @@ def test_v3_quote_manifest_remains_finalizable_with_all_selected_responses(
         {key: value for key, value in quote_manifest.items() if key != "manifest_sha256"}
     )
     response = _quote_response(quote_manifest, sources)
-    artifact = finalize_quotes(quote_manifest, sources, response)
+    artifact = _finalize_quotes_runtime(quote_manifest, sources, response)
     assert artifact["source_groups"][0]["rows"][0]["display_label"]
 
 
@@ -2097,24 +2237,41 @@ def test_runner_three_stage_round_trip_is_deterministic_and_no_provider(tmp_path
     quote_prompt = tmp_path / "quote-prompt.txt"
     quote_schema = tmp_path / "quote-schema.json"
     quote_manifest_path = tmp_path / "quote-manifest.json"
+    confirmation_prompt = tmp_path / "confirmation-prompt.txt"
+    confirmation_schema = tmp_path / "confirmation-schema.json"
+    confirmation_manifest_path = tmp_path / "confirmation-manifest.json"
     relation_final = finalize_evidence_selection_relations_run(
         manifest_path=manifest_path,
         response_path=relation_path,
         quote_prompt_out=quote_prompt,
         quote_schema_out=quote_schema,
         quote_manifest_out=quote_manifest_path,
+        confirmation_prompt_out=confirmation_prompt,
+        confirmation_schema_out=confirmation_schema,
+        confirmation_manifest_out=confirmation_manifest_path,
     )
     quote_manifest = json.loads(quote_manifest_path.read_text())
     quote_response_path = tmp_path / "quote-response.json"
     quote_response_path.write_text(json.dumps(_quote_response(quote_manifest, sources)), encoding="utf-8")
+    confirmation_response_path = tmp_path / "confirmation-response.json"
+    confirmation_response_path.write_text(
+        json.dumps(_confirmation_response(quote_manifest)), encoding="utf-8"
+    )
     artifact_path = tmp_path / "artifact.json"
     completed = finalize_evidence_selection_quotes_run(
         selection_manifest_path=manifest_path,
         quote_manifest_path=quote_manifest_path,
         response_path=quote_response_path,
+        confirmation_manifest_path=confirmation_manifest_path,
+        confirmation_response_path=confirmation_response_path,
         artifact_out=artifact_path,
     )
     assert prepared["model_api_calls"] == relation_final["model_api_calls"] == completed["model_api_calls"] == 0
+    assert relation_final["status"] == "PHASE_A_EVIDENCE_SELECTION_QUOTES_AND_CONFIRMATION_READY"
+    assert confirmation_prompt.is_file()
+    assert confirmation_schema.is_file()
+    assert confirmation_manifest_path.is_file()
     first = json.loads(artifact_path.read_text())
     second = finalize_quotes(quote_manifest, sources, _quote_response(quote_manifest, sources))
     assert first == second
+    assert first["relation_confirmation_status"] == "passed"

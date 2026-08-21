@@ -836,13 +836,16 @@ despite that price. A value selection binds `price feels high` separately from
 abandonment that changes the reading uses the existing `costly_behavior`
 protected-evidence lane rather than a new score.
 
-Presentation caps independent origins, not underlying evidence. The default is
-at most ten customer truth-support origin groups; a selection may explicitly
-bind a customer cap from one through twenty. Creator influence remains capped
-separately at three and cannot consume or enlarge the customer cap. A raised
-cap is selection-specific rather than a new global default. The measured
-full-axis Summer Fridays hydration selection binds fifteen: fifteen materially
-improved on ten, while twenty was not preferred to fifteen.
+Presentation caps independent origins, not underlying evidence. One selection
+is one bounded evidence point, not one broad axis. The default is at most
+thirteen customer truth-support origin groups per point; a selection may
+explicitly bind a customer cap from one through twenty when protected evidence
+or a material conflict cannot fit. Creator influence remains capped separately
+at three and cannot consume or enlarge the customer cap. A raised cap is
+selection-specific rather than a new global default. The earlier measured
+full-axis Summer Fridays hydration selection bound fifteen and remains a
+historical comparison artifact; new presentation runs split the broad axis into
+bounded points instead of treating fifteen origins as one axis-wide pack.
 Every explicitly nominated safety or costly-behavior origin is selected first;
 if those origins alone exceed the bound customer cap, selection fails
 `presentation_cap_insufficient`. The selector then reserves support and counter
@@ -889,7 +892,7 @@ characters. The substring must express the display label through either the
 selected normalized meaning or the same-evidence companion meaning that
 justified that label. If a material qualification cannot fit, the external response
 returns unavailable instead of a misleading fragment. No lexical-overlap
-relevance rule is applied. For current v4/v5 quote manifests, a long-body quote
+relevance rule is applied. For current v4/v5/v6 quote manifests, a long-body quote
 that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
@@ -940,13 +943,34 @@ candidate inventory, so a batch cannot acquire a policy lane the selection as a
 whole rejected.
 
 Batched quote preparation versions its durable output as
-`phase_a_evidence_quote_manifest_v5`. The manifest binds the exact relation
+`phase_a_evidence_quote_manifest_v6`. It retains the v5 binding of the exact relation
 batch-manifest hash, batch count, and one canonical response hash per batch.
 The embedded selection manifest remains the canonical full-selection identity;
 its single-prompt hash is not an execution receipt. The v5 transport binding is
 the authority for which relation prompts and responses actually produced the
 selected quote workload. Removing or changing that binding changes the manifest
 hash and fails quote finalization.
+
+Every new v6 point pack also requires a separate selected-row relation
+confirmation before quote finalization. The confirmation prompt contains only
+the bounded point plus each selected row's source-owned meaning, conditions,
+product/version scope, source role, and same-evidence companion meanings. It
+does not expose the first-pass relation, reason code, display label, engagement,
+or selection priority. The confirmation response must account for every
+selected row exactly once and in order. Any missing, duplicate, foreign,
+reordered, or differently labeled row fails closed; neither pass silently wins.
+Quote extraction remains a separate response so relation checking cannot make
+the quote task clip or omit source context. Historical v1/v3/v4/v5 manifests
+remain finalizable under their stamped contracts and never acquire this new
+obligation.
+
+The completed v6 artifact identifies its `point_id` and `bounded_point`, then
+discloses candidate semantic-row count, distinct candidate evidence-item count,
+candidate truth-origin count, displayed row count, displayed truth-origin
+count, relation-specific displayed origin counts, and displayed creator-
+influence count. These are evidence-accounting counts, not customer prevalence.
+The complete candidate-disposition inventory remains attached, so the display
+cannot imply that its selected rows were the whole source pool.
 
 A generic batched display label is never semantic authority for quote choice.
 For a long source body, the returned exact substring must directly express the
@@ -1512,6 +1536,15 @@ new frontier.
 
 ## Changelog
 
+- `v52` / 2026-08-21 — made one completed selection artifact one bounded
+  evidence-point pack, raised the default customer truth-origin cap from ten to
+  thirteen, and added explicit pool-to-display accounting. New quote manifests
+  are v6 and require a separate hidden-label confirmation of every selected
+  relation before finalization. A disagreement fails closed; quote extraction
+  stays separate after the combined relation-plus-quote pilot clipped a source
+  phrase. Historical v1/v3/v4/v5 manifests retain their stamped behavior. Added
+  no packet v4, prevalence estimate, cross-platform engagement score, or
+  relabeling of the complete candidate pool.
 - `v51` / 2026-08-21 — prohibited a long exact-quote span from starting with an
   unresolved pronoun when the nearby antecedent fits under the existing
   220-character ceiling. Product identity may still rely on the evidence row,
