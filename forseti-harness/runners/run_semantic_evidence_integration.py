@@ -1771,8 +1771,8 @@ def finalize_evidence_selection_quotes_run(
     selection_manifest_path: Path,
     quote_manifest_path: Path,
     response_path: Path,
-    confirmation_manifest_path: Path,
-    confirmation_response_path: Path,
+    confirmation_manifest_path: Path | None,
+    confirmation_response_path: Path | None,
     artifact_out: Path,
 ) -> dict[str, Any]:
     selection_manifest = _load_object(selection_manifest_path)
@@ -1784,12 +1784,28 @@ def finalize_evidence_selection_quotes_run(
         raise EvidenceConsumerError(
             "manifest_verification", "quote manifest belongs to another selection"
         )
+    # A historical v1/v3/v4/v5 quote manifest carries no confirmation
+    # obligation and rejects a confirmation attachment, so replaying one has to
+    # be able to reach finalize_quotes with no confirmation supplied.
+    if (confirmation_manifest_path is None) != (confirmation_response_path is None):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape",
+            "supply both the confirmation manifest and its response, or neither",
+        )
     artifact = finalize_quotes(
         quote_manifest,
         sources,
         _load_object(response_path),
-        _load_object(confirmation_manifest_path),
-        _load_object(confirmation_response_path),
+        (
+            _load_object(confirmation_manifest_path)
+            if confirmation_manifest_path is not None
+            else None
+        ),
+        (
+            _load_object(confirmation_response_path)
+            if confirmation_response_path is not None
+            else None
+        ),
     )
     if artifact_out.exists():
         raise ValueError(f"refusing to overwrite existing output: {artifact_out}")
@@ -2127,11 +2143,13 @@ def _parser() -> argparse.ArgumentParser:
     selection_quotes.add_argument("--selection-manifest", type=Path, required=True)
     selection_quotes.add_argument("--quote-manifest", type=Path, required=True)
     selection_quotes.add_argument("--response", type=Path, required=True)
+    # Required for a current v6 pack; omitted together to replay a historical
+    # v1/v3/v4/v5 quote manifest, which fails closed on any attachment.
     selection_quotes.add_argument(
-        "--confirmation-manifest", type=Path, required=True
+        "--confirmation-manifest", type=Path, default=None
     )
     selection_quotes.add_argument(
-        "--confirmation-response", type=Path, required=True
+        "--confirmation-response", type=Path, default=None
     )
     selection_quotes.add_argument("--artifact-out", type=Path, required=True)
 

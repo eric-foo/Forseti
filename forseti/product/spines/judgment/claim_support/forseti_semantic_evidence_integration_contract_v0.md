@@ -956,21 +956,57 @@ confirmation before quote finalization. The confirmation prompt contains only
 the bounded point plus each selected row's source-owned meaning, conditions,
 product/version scope, source role, and same-evidence companion meanings. It
 does not expose the first-pass relation, reason code, display label, engagement,
-or selection priority. The confirmation response must account for every
-selected row exactly once and in order. Any missing, duplicate, foreign,
-reordered, or differently labeled row fails closed; neither pass silently wins.
+or selection priority. Withholding selection priority is structural, not a
+prompt request: selection order leads with protected and reserved
+support/counter origins and always trails with the adjacent creator-influence
+block, so the confirmation rows carry opaque `confirmation_row_id` handles and
+are presented in a content-derived order keyed to the bound selected-row
+identities. That order is deterministic and reproduces on re-preparation, so
+the pass stays replayable without carrying the first pass into it. The
+confirmation response must account for every confirmation row exactly once and
+in order. Any missing, duplicate, foreign, reordered, or differently labeled
+row fails closed; neither pass silently wins. The confirmation manifest is
+re-derived from the bound quote manifest at finalization, so a hand-written
+manifest cannot vouch for a workload that was shown the first-pass labels.
+The same response must classify `bounded_point` as either `single_point` or
+`broad_axis_or_bundle` and give a short reason. `single_point` means one
+specific direction-bearing proposition about one material product attribute or
+outcome under one compatible condition set. Merely naming an experience area,
+or combining materially different attributes, outcomes, directions, or
+conditions, fails at `bounded_point_not_confirmed`. This reuses the existing
+confirmation call; it adds no third provider workload.
 Quote extraction remains a separate response so relation checking cannot make
 the quote task clip or omit source context. Historical v1/v3/v4/v5 manifests
 remain finalizable under their stamped contracts and never acquire this new
-obligation.
+obligation; one is finalized with no confirmation attachment at all, and
+supplying one fails closed at `unexpected_relation_confirmation`.
+
+The confirmation pass still shares the first pass's source role for each row,
+because source-role competence is required input for the judgment rather than
+leaked first-pass state. Creator-authored rows are constrained to `adjacent` by
+deterministic code, so their confirmation carries no independent information;
+the confirmation's discriminating power is over the customer truth rows.
 
 The completed v6 artifact identifies its `point_id` and `bounded_point`, then
 discloses candidate semantic-row count, distinct candidate evidence-item count,
 candidate truth-origin count, displayed row count, displayed truth-origin
-count, relation-specific displayed origin counts, and displayed creator-
-influence count. These are evidence-accounting counts, not customer prevalence.
+count, display-eligible truth-origin count, relation-specific displayed origin
+counts, and displayed creator-influence count. These are evidence-accounting
+counts, not customer prevalence. The v6 quote manifest records the truth
+selection policy, and the finalizer applies that same policy predicate when it
+counts the distinct origins eligible before the cap; the selector and the
+reported denominator therefore cannot silently drift apart.
 The complete candidate-disposition inventory remains attached, so the display
-cannot imply that its selected rows were the whole source pool.
+cannot imply that its selected rows were the whole source pool. The disclosed
+candidate truth-origin count is the admitted pool, not the pool the cap chose
+from: a truth origin with no operator-protected lane and no material positive
+source-native engagement is never display-eligible, and the value-first policy
+also excludes an otherwise material adjacent origin. The artifact reports the
+exact `display_eligible_truth_origin_count` and its `presentation_basis` names
+that pre-cap gate, so the candidate-to-displayed drop is not read as cap
+pressure alone. Naming a runtime field `point_id` or `bounded_point` establishes
+nothing about boundedness; the separately returned scope classification gates
+the completed pack, and the artifact records the passing reason.
 
 A generic batched display label is never semantic authority for quote choice.
 For a long source body, the returned exact substring must directly express the
@@ -1544,7 +1580,20 @@ new frontier.
   stays separate after the combined relation-plus-quote pilot clipped a source
   phrase. Historical v1/v3/v4/v5 manifests retain their stamped behavior. Added
   no packet v4, prevalence estimate, cross-platform engagement score, or
-  relabeling of the complete candidate pool.
+  relabeling of the complete candidate pool. Delegated code review corrected
+  three defects inside this change before landing: the confirmation rows were
+  presented in selection order under first-pass `selected_id` handles, which
+  handed the confirming workload the selection priority the manifest recorded as
+  hidden; the confirmation manifest was accepted on its binding hashes alone
+  rather than re-derived, so a hand-written manifest could vouch for a workload
+  that saw the labels; and `presentation_basis` asserted boundedness and a
+  cap-driven funnel that the runtime never establishes. Home adjudication
+  completed the funnel repair by recording the truth selection policy in v6
+  and deriving the exact display-eligible truth-origin count from the same
+  predicate the selector uses. It also closed the broad-axis false green by
+  adding a `single_point` versus `broad_axis_or_bundle` decision to the existing
+  confirmation call; broad scopes now fail before artifact completion without
+  adding another provider workload.
 - `v51` / 2026-08-21 — prohibited a long exact-quote span from starting with an
   unresolved pronoun when the nearby antecedent fits under the existing
   220-character ceiling. Product identity may still rely on the evidence row,

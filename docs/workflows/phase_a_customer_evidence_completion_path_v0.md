@@ -405,21 +405,48 @@ The relation finalizer emits two independent provider workloads from the same
 selected rows: exact-quote extraction and selected-row relation confirmation.
 Run them concurrently when the provider route permits. The confirmation prompt
 does not contain the first-pass relation, reason code, display label,
-engagement, or selection priority. It must return every selected row exactly
+engagement, or selection priority. Its rows carry opaque `confirmation_row_id`
+handles in a content-derived order rather than `selected_id` in selection
+order, because selection order itself encodes the first pass: the protected and
+reserved support/counter origins lead and the adjacent creator-influence block
+always trails. The response must return every confirmation row exactly
 once and in order; any missing, duplicate, foreign, reordered, or disagreeing
-row blocks the final artifact. Do not combine confirmation with quote extraction:
+row blocks the final artifact. Finalization re-derives the confirmation
+manifest from the bound quote manifest, so route the response back against the
+manifest the harness wrote rather than a hand-assembled one. Do not combine
+confirmation with quote extraction:
 the bounded combined pilot classified all selected rows correctly but clipped
 one exact quote mid-phrase. New v6 artifacts record the confirmation-manifest
 hash and `passed`; historical v1/v3/v4/v5 artifacts remain readable under their
-original contracts.
+original contracts. Replay one by running
+`finalize-evidence-selection-quotes` with neither `--confirmation-manifest` nor
+`--confirmation-response`; supplying either fails closed.
+
+The confirmation response also decides whether the supplied scope is one
+specific direction-bearing proposition about one product attribute or outcome
+under one compatible condition set. A claim that merely names an experience
+area, or bundles materially different outcomes, directions, or conditions,
+returns `broad_axis_or_bundle` and fails at `bounded_point_not_confirmed`. This
+is part of the existing confirmation call, not a third provider task. Record
+the passing reason on the artifact; the words `point_id` and `bounded_point`
+alone never establish boundedness.
 
 Every completed v6 point pack discloses the funnel rather than presenting the
 chosen rows as the whole corpus: candidate semantic rows, distinct candidate
-evidence items, candidate truth origins, displayed rows, displayed truth
-origins, displayed origins by relation, and displayed creator-influence
-origins. Render those counts with the bounded point. They describe evidence
+evidence items, candidate truth origins, display-eligible truth origins,
+displayed rows, displayed truth origins, displayed origins by relation, and
+displayed creator-influence origins. Render those counts with the bounded
+point. They describe evidence
 accounting, not customer prevalence, and the full candidate-disposition
-inventory remains attached.
+inventory remains attached. Do not read the candidate-to-displayed drop as cap
+pressure: candidate truth origins are the admitted pool. The v6 quote manifest
+records the truth selection policy, and the finalizer uses that exact policy to
+count distinct origins eligible before the cap; an origin with no operator-
+protected lane and no material positive source-native engagement is never
+eligible, and value-first also excludes an otherwise material adjacent origin.
+The artifact's `presentation_basis` names that gate, and also records that the
+bounded point passed the separate scope classification; a broad axis or bundled
+claim never reaches a completed point-pack disclosure.
 
 The bounded v6 dogfood receipt is
 `C:\tmp\forseti-phase-a-point-pack-v6-dogfood-20260821-v0\dogfood_receipt_v1.json`

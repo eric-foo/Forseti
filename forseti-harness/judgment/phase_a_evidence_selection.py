@@ -36,9 +36,10 @@ PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifes
 QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v6"
 BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
 RELATION_CONFIRMATION_MANIFEST_VERSION = (
-    "phase_a_evidence_relation_confirmation_manifest_v1"
+    "phase_a_evidence_relation_confirmation_manifest_v2"
 )
 RELATIONS = ("support", "counter", "adjacent", "exclude")
+POINT_SCOPE_STATUSES = ("single_point", "broad_axis_or_bundle")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 POSITIONAL_REASON_CODE_BY_RELATION = {
     "support": "matching_customer_experience",
@@ -193,7 +194,9 @@ RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. A
 
 Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
 
-The first-pass relation, reason code, display label, engagement, and selection priority are intentionally absent. Do not infer them from selected_id or row order. Return every selected_id exactly once and in order.
+Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area of experience (for example "hydration experiences" or "value experiences"), combines materially different attributes/outcomes/directions/conditions, or otherwise could make unrelated mentions look corroborative. Give one short point_scope_reason based only on the supplied point and rows.
+
+The first-pass relation, reason code, display label, engagement, and selection priority are intentionally absent. The rows carry opaque confirmation_row_id handles and are ordered by a content-derived key that encodes no first-pass signal, so neither the handle nor the row order tells you anything about the first pass. Return every confirmation_row_id exactly once and in order.
 
 SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:
 {envelope}
@@ -913,20 +916,25 @@ def _relation_confirmation_schema() -> dict[str, Any]:
     return {
         "type": "object",
         "properties": {
+            "point_scope": {
+                "type": "string",
+                "enum": list(POINT_SCOPE_STATUSES),
+            },
+            "point_scope_reason": {"type": "string", "minLength": 1},
             "relation_checks": {
                 "type": "array",
                 "items": {
                     "type": "object",
                     "properties": {
-                        "selected_id": {"type": "string"},
+                        "confirmation_row_id": {"type": "string"},
                         "relation": {"type": "string", "enum": list(RELATIONS)},
                     },
-                    "required": ["selected_id", "relation"],
+                    "required": ["confirmation_row_id", "relation"],
                     "additionalProperties": False,
                 },
             }
         },
-        "required": ["relation_checks"],
+        "required": ["point_scope", "point_scope_reason", "relation_checks"],
         "additionalProperties": False,
     }
 
@@ -1329,20 +1337,32 @@ def _protected_value_group_priority(group: Mapping[str, Any]) -> tuple[Any, ...]
     return min(member_keys)
 
 
+def _truth_row_display_eligible(
+    row: Mapping[str, Any], truth_policy: str
+) -> bool:
+    """Apply the exact pre-cap admission rule for one truth-support row."""
+    if truth_policy not in {"balanced", "value_first"}:
+        raise EvidenceConsumerError(
+            "selection_policy", f"unsupported policy: {truth_policy}"
+        )
+    if row.get("layer") != "truth_support" or row.get("relation") == "exclude":
+        return False
+    if row.get("protected_lanes"):
+        return True
+    if row.get("engagement_material_positive") is not True:
+        return False
+    return truth_policy == "balanced" or row.get("relation") in {
+        "support",
+        "counter",
+    }
+
+
 def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[dict[str, Any]]:
     _validate_protected_rows(rows)
     eligible = [
         dict(row)
         for row in rows
-        if row["layer"] == "truth_support"
-        and row["relation"] != "exclude"
-        and (
-            bool(row.get("protected_lanes"))
-            or (
-                row.get("engagement_material_positive") is True
-                and row["relation"] in {"support", "counter"}
-            )
-        )
+        if _truth_row_display_eligible(row, "value_first")
     ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in eligible:
@@ -1563,8 +1583,7 @@ def _select_groups(
         and row["relation"] != "exclude"
         and (
             layer != "truth_support"
-            or bool(row.get("protected_lanes"))
-            or row.get("engagement_material_positive") is True
+            or _truth_row_display_eligible(row, truth_policy)
         )
     ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -1818,7 +1837,7 @@ QUOTE_PROMPT_COLUMNS = (
 )
 
 RELATION_CONFIRMATION_COLUMNS = (
-    "selected_id",
+    "confirmation_row_id",
     "normalized_meaning",
     "conditions",
     "subject_product_ids",
@@ -1875,15 +1894,39 @@ def _quote_prompt_envelope(
     )
 
 
+def _confirmation_row_presentation(
+    selected: Sequence[Mapping[str, Any]], selected_rows_sha256: str
+) -> list[tuple[str, Mapping[str, Any]]]:
+    """Order the confirmation rows by a content-derived key.
+
+    Selection order encodes the first pass: protected and reserved
+    support/counter origins lead, and the creator-influence block always
+    trails.  Presenting the rows in selection order would hand the confirming
+    workload the selection priority the manifest claims is hidden, so the
+    presented order and the row handles are derived from the bound row
+    identities instead.
+    """
+    ordered = sorted(
+        selected,
+        key=lambda row: (
+            sha256_text(f"{selected_rows_sha256}::{row['candidate_id']}"),
+            row["candidate_id"],
+        ),
+    )
+    return [
+        (f"row_{index:02d}", row) for index, row in enumerate(ordered, start=1)
+    ]
+
+
 def _relation_confirmation_prompt_envelope(
-    bounded_claim: str, selected: Sequence[Mapping[str, Any]]
+    bounded_claim: str, presentation: Sequence[tuple[str, Mapping[str, Any]]]
 ) -> dict[str, Any]:
     return {
         "bounded_point": bounded_claim,
         "selected_columns": list(RELATION_CONFIRMATION_COLUMNS),
         "selected_rows": [
             [
-                row["selected_id"],
+                confirmation_row_id,
                 row["normalized_meaning"],
                 row.get("conditions", []),
                 row.get("subject_product_ids", []),
@@ -1891,7 +1934,7 @@ def _relation_confirmation_prompt_envelope(
                 row["source_role"],
                 _compact_companion_meanings(row),
             ]
-            for row in selected
+            for confirmation_row_id, row in presentation
         ],
     }
 
@@ -1903,6 +1946,7 @@ def finalize_relations_prepare_quotes(
     truth_group_cap = _truth_group_cap(manifest["spec"])
     response_mode = _relation_response_mode(manifest["spec"])
     value_policy = _uses_value_policy(manifest["spec"], candidates)
+    truth_selection_policy = "value_first" if value_policy else "balanced"
     labeled = _validate_relation_response(
         candidates,
         response,
@@ -1913,7 +1957,7 @@ def finalize_relations_prepare_quotes(
         labeled,
         "truth_support",
         truth_group_cap,
-        truth_policy="value_first" if value_policy else "balanced",
+        truth_policy=truth_selection_policy,
     )
     influence = _select_groups(labeled, "influence_context", MAX_INFLUENCE_GROUPS)
     selected = truth + influence
@@ -1952,6 +1996,7 @@ def finalize_relations_prepare_quotes(
         "selected_rows": selected,
         "selected_rows_sha256": _canonical_json_sha256(selected),
         "truth_group_cap": truth_group_cap,
+        "truth_selection_policy": truth_selection_policy,
         "selected_relation_confirmation_required": True,
         "provider_selected_ids": provider_selected_ids,
         "quote_body_sha256": {
@@ -2118,8 +2163,11 @@ def prepare_selected_relation_confirmation(
         raise EvidenceConsumerError(
             "manifest_verification", "selected rows changed"
         )
+    presentation = _confirmation_row_presentation(
+        selected, quote_manifest["selected_rows_sha256"]
+    )
     envelope = _relation_confirmation_prompt_envelope(
-        quote_manifest["bounded_claim"], selected
+        quote_manifest["bounded_claim"], presentation
     )
     prompt = RELATION_CONFIRMATION_PROMPT.format(envelope=_compact(envelope))
     schema = _relation_confirmation_schema()
@@ -2128,7 +2176,12 @@ def prepare_selected_relation_confirmation(
         "quote_manifest_sha256": quote_manifest["manifest_sha256"],
         "selection_manifest_sha256": quote_manifest["selection_manifest_sha256"],
         "selected_rows_sha256": quote_manifest["selected_rows_sha256"],
-        "selected_ids": [row["selected_id"] for row in selected],
+        "confirmation_row_ids": [
+            confirmation_row_id for confirmation_row_id, _ in presentation
+        ],
+        "confirmation_row_selected_ids": [
+            row["selected_id"] for _, row in presentation
+        ],
         "prompt_sha256": sha256_text(prompt),
         "response_schema_sha256": _canonical_json_sha256(schema),
         "hidden_first_pass_fields": [
@@ -2150,7 +2203,7 @@ def _validate_selected_relation_confirmation(
     quote_manifest: Mapping[str, Any],
     confirmation_manifest: Mapping[str, Any],
     response: Mapping[str, Any],
-) -> str:
+) -> tuple[str, str]:
     stored = confirmation_manifest.get("manifest_sha256")
     payload = {
         key: value
@@ -2165,35 +2218,50 @@ def _validate_selected_relation_confirmation(
         raise EvidenceConsumerError(
             "manifest_verification", "relation confirmation manifest changed"
         )
-    selected = quote_manifest["selected_rows"]
-    expected = [row["selected_id"] for row in selected]
-    if (
-        confirmation_manifest.get("quote_manifest_sha256")
-        != quote_manifest.get("manifest_sha256")
-        or confirmation_manifest.get("selection_manifest_sha256")
-        != quote_manifest.get("selection_manifest_sha256")
-        or confirmation_manifest.get("selected_rows_sha256")
-        != quote_manifest.get("selected_rows_sha256")
-        or confirmation_manifest.get("selected_ids") != expected
-    ):
+    # The confirmation manifest is a pure function of the bound quote manifest,
+    # so re-deriving it is the only available proof that the workload actually
+    # sent was the hidden-label prompt this manifest names.  Comparing only the
+    # binding hashes would accept a hand-written manifest whose recorded
+    # prompt_sha256 belongs to a prompt that leaked the first-pass labels.
+    _, _, expected_manifest = prepare_selected_relation_confirmation(quote_manifest)
+    if dict(confirmation_manifest) != expected_manifest:
         raise EvidenceConsumerError(
             "manifest_verification", "relation confirmation binding changed"
         )
-    if set(response) != {"relation_checks"} or not isinstance(
+    selected_by_id = {row["selected_id"]: row for row in quote_manifest["selected_rows"]}
+    expected = expected_manifest["confirmation_row_ids"]
+    selected_ids = expected_manifest["confirmation_row_selected_ids"]
+    if set(response) != {
+        "point_scope",
+        "point_scope_reason",
+        "relation_checks",
+    } or not isinstance(
         response.get("relation_checks"), list
     ):
         raise EvidenceConsumerError(
             "relation_confirmation_shape", "relation_checks missing"
         )
+    if (
+        response.get("point_scope") not in POINT_SCOPE_STATUSES
+        or not isinstance(response.get("point_scope_reason"), str)
+        or not response["point_scope_reason"].strip()
+    ):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape", "point scope result missing or invalid"
+        )
+    if response["point_scope"] != "single_point":
+        raise EvidenceConsumerError(
+            "bounded_point_not_confirmed", response["point_scope_reason"].strip()
+        )
     checks = response["relation_checks"]
     if not all(
-        isinstance(row, dict) and set(row) == {"selected_id", "relation"}
+        isinstance(row, dict) and set(row) == {"confirmation_row_id", "relation"}
         for row in checks
     ):
         raise EvidenceConsumerError(
             "relation_confirmation_shape", "relation check row shape mismatch"
         )
-    observed = [row["selected_id"] for row in checks]
+    observed = [row["confirmation_row_id"] for row in checks]
     if len(observed) != len(set(observed)):
         raise EvidenceConsumerError(
             "duplicate_relation_confirmation", "selected row repeated"
@@ -2209,7 +2277,8 @@ def _validate_selected_relation_confirmation(
             else "relation_confirmation_order_mismatch"
         )
         raise EvidenceConsumerError(boundary, "relation check set/order mismatch")
-    for selected_row, check in zip(selected, checks, strict=True):
+    for selected_id, check in zip(selected_ids, checks, strict=True):
+        selected_row = selected_by_id[selected_id]
         if check["relation"] not in RELATIONS:
             raise EvidenceConsumerError(
                 "relation_confirmation_shape", "invalid confirmed relation"
@@ -2219,7 +2288,7 @@ def _validate_selected_relation_confirmation(
                 "selected_relation_disagreement",
                 f"independent relation check disagrees for {selected_row['selected_id']}",
             )
-    return stored
+    return stored, response["point_scope_reason"].strip()
 
 
 def finalize_quotes(
@@ -2231,13 +2300,17 @@ def finalize_quotes(
 ) -> dict[str, Any]:
     manifest_version = _verified_quote_manifest_version(quote_manifest)
     confirmation_manifest_sha256 = None
+    point_scope_confirmation_reason = None
     if manifest_version == QUOTE_MANIFEST_VERSION:
         if confirmation_manifest is None or confirmation_response is None:
             raise EvidenceConsumerError(
                 "selected_relation_confirmation_required",
                 "current evidence packs require independent selected-row confirmation",
             )
-        confirmation_manifest_sha256 = _validate_selected_relation_confirmation(
+        (
+            confirmation_manifest_sha256,
+            point_scope_confirmation_reason,
+        ) = _validate_selected_relation_confirmation(
             quote_manifest, confirmation_manifest, confirmation_response
         )
     elif confirmation_manifest is not None or confirmation_response is not None:
@@ -2464,6 +2537,11 @@ def finalize_quotes(
     }
     if manifest_version == QUOTE_MANIFEST_VERSION:
         labeled_inventory = quote_manifest["labeled_inventory"]
+        truth_selection_policy = quote_manifest.get("truth_selection_policy")
+        if truth_selection_policy not in {"balanced", "value_first"}:
+            raise EvidenceConsumerError(
+                "manifest_verification", "truth selection policy missing or changed"
+            )
         truth_rows = [
             row
             for row in output_rows
@@ -2475,6 +2553,8 @@ def finalize_quotes(
                 "bounded_point": quote_manifest["bounded_claim"],
                 "relation_confirmation_status": "passed",
                 "relation_confirmation_manifest_sha256": confirmation_manifest_sha256,
+                "point_scope_confirmation_status": "passed",
+                "point_scope_confirmation_reason": point_scope_confirmation_reason,
                 "selection_disclosure": {
                     "candidate_semantic_row_count": len(labeled_inventory),
                     "candidate_evidence_item_count": len(
@@ -2489,6 +2569,15 @@ def finalize_quotes(
                             for row in labeled_inventory
                             if row["layer"] == "truth_support"
                             and row["relation"] != "exclude"
+                        }
+                    ),
+                    "display_eligible_truth_origin_count": len(
+                        {
+                            row["scoped_independence_key"]
+                            for row in labeled_inventory
+                            if _truth_row_display_eligible(
+                                row, truth_selection_policy
+                            )
                         }
                     ),
                     "displayed_row_count": len(output_rows),
@@ -2520,8 +2609,10 @@ def finalize_quotes(
                         "influence_group_count"
                     ],
                     "presentation_basis": [
-                        "one bounded evidence point",
+                        "one externally scope-confirmed evidence point; a broad axis or bundled claim fails before artifact completion",
                         "distinct truth origins capped separately from creator influence",
+                        "display_eligible_truth_origin_count is the exact pre-cap origin pool under the recorded truth selection policy; origins outside that pool are not cap omissions",
+                        "a truth origin with no operator-protected lane and no material positive source-native engagement is never displayed; value-first also excludes material adjacent origins",
                         "support, counterevidence, protected evidence, source diversity, and source-native engagement within comparable buckets",
                         "all admitted candidate dispositions remain available",
                     ],

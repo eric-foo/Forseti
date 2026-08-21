@@ -20,6 +20,7 @@ from judgment.phase_a_evidence_selection import (
     _relation_schema,
     _select_groups,
     _source_venue,
+    _truth_row_display_eligible,
     _validate_relation_response,
     finalize_batched_relations_prepare_quotes,
     finalize_quotes as _finalize_quotes_runtime,
@@ -29,6 +30,7 @@ from judgment.phase_a_evidence_selection import (
     prepare_selected_relation_confirmation,
 )
 from runners.run_semantic_evidence_integration import (
+    _parser,
     finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
     finalize_evidence_selection_relations_run,
@@ -186,7 +188,7 @@ def _spec(count: int = 14) -> dict:
     return {
         "schema_version": SELECTION_SPEC_VERSION,
         "selection_id": "hydration-pilot",
-        "bounded_claim": "Customers report hydration experiences with the balm.",
+        "bounded_claim": "The balm provides immediate hydration after use.",
         "axis_ids": ["hydration_and_moisture"],
         "subject_product_ids": ["summer-fridays-lip-butter-balm"],
         "sources": [],
@@ -373,15 +375,47 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
     }
 
 
-def _confirmation_response(quote_manifest: dict) -> dict:
+def _confirmation_response(
+    quote_manifest: dict,
+    *,
+    point_scope: str = "single_point",
+    point_scope_reason: str = "One product attribute and direction under one compatible condition set.",
+) -> dict:
+    """Build a confirmation response that agrees with every first-pass label.
+
+    This is a transport fixture, not evidence of an independent second pass:
+    it copies the first-pass relation by construction.  Independence is a
+    property of the emitted prompt, which
+    `test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip`
+    checks directly.
+    """
+    _, _, confirmation_manifest = prepare_selected_relation_confirmation(
+        quote_manifest
+    )
+    relation_by_selected_id = {
+        row["selected_id"]: row["relation"]
+        for row in quote_manifest["selected_rows"]
+    }
     return {
+        "point_scope": point_scope,
+        "point_scope_reason": point_scope_reason,
         "relation_checks": [
-            {"selected_id": row["selected_id"], "relation": row["relation"]}
-            for row in quote_manifest["selected_rows"]
+            {
+                "confirmation_row_id": confirmation_row_id,
+                "relation": relation_by_selected_id[selected_id],
+            }
+            for confirmation_row_id, selected_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_row_selected_ids"],
+                strict=True,
+            )
         ]
     }
 
 
+# This shadows the imported module function on purpose so the tests that
+# predate the confirmation gate keep exercising the full v6 path.  A test that
+# needs the real signature calls `_finalize_quotes_runtime` instead.
 def finalize_quotes(quote_manifest: dict, sources: list[dict], response: dict) -> dict:
     _, _, confirmation_manifest = prepare_selected_relation_confirmation(
         quote_manifest
@@ -452,11 +486,24 @@ def test_default_point_pack_caps_at_thirteen_and_discloses_pool(tmp_path: Path) 
     assert disclosure["candidate_semantic_row_count"] == 40
     assert disclosure["candidate_evidence_item_count"] == 40
     assert disclosure["candidate_truth_origin_count"] == 32
+    assert disclosure["display_eligible_truth_origin_count"] == 23
     assert disclosure["displayed_truth_origin_count"] == 13
     assert disclosure["displayed_row_count"] == sum(
         len(group["rows"]) for group in artifact["source_groups"]
     )
-    assert "one bounded evidence point" in disclosure["presentation_basis"]
+    assert artifact["point_scope_confirmation_status"] == "passed"
+    assert artifact["point_scope_confirmation_reason"]
+    assert any(
+        basis.startswith("one externally scope-confirmed evidence point")
+        and "broad axis or bundled claim fails" in basis
+        for basis in disclosure["presentation_basis"]
+    )
+    # The disclosed candidate pool is larger than the pool the cap chose from,
+    # so the basis has to name the display-eligibility gate that drops the rest.
+    assert any(
+        "material positive source-native engagement is never displayed" in basis
+        for basis in disclosure["presentation_basis"]
+    )
 
 
 def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip(
@@ -475,7 +522,7 @@ def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip
         prompt.split("SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:\n", 1)[1]
     )
     assert envelope["selected_columns"] == [
-        "selected_id",
+        "confirmation_row_id",
         "normalized_meaning",
         "conditions",
         "subject_product_ids",
@@ -483,7 +530,11 @@ def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip
         "source_role",
         "same_evidence_companion_meanings",
     ]
-    assert schema["required"] == ["relation_checks"]
+    assert schema["required"] == [
+        "point_scope",
+        "point_scope_reason",
+        "relation_checks",
+    ]
     assert confirmation_manifest["hidden_first_pass_fields"] == [
         "relation",
         "reason_code",
@@ -491,6 +542,29 @@ def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip
         "engagement",
         "selection_priority",
     ]
+    # `selection_priority` is only genuinely hidden if the presented order is
+    # not the selection order.  Selection order leads with the protected and
+    # reserved support/counter origins and always trails with the adjacent
+    # creator-influence block, so presenting rows in that order would hand the
+    # confirming workload the priority the manifest claims to withhold.
+    selection_order = [row["selected_id"] for row in quote_manifest["selected_rows"]]
+    assert len(selection_order) > 3
+    assert confirmation_manifest["confirmation_row_selected_ids"] != selection_order
+    assert sorted(confirmation_manifest["confirmation_row_selected_ids"]) == sorted(
+        selection_order
+    )
+    assert confirmation_manifest["confirmation_row_ids"] == [
+        f"row_{index:02d}" for index in range(1, len(selection_order) + 1)
+    ]
+    assert not any(
+        selected_id in prompt for selected_id in selection_order
+    ), "the confirmation prompt must not carry first-pass selected_id handles"
+    # A second preparation of the same bound manifest reproduces the presented
+    # order exactly, so the de-correlated order stays replayable.
+    assert (
+        prepare_selected_relation_confirmation(quote_manifest)[2]
+        == confirmation_manifest
+    )
 
     with pytest.raises(EvidenceConsumerError) as caught:
         _finalize_quotes_runtime(
@@ -542,6 +616,211 @@ def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip
             _confirmation_response(quote_manifest),
         )
     assert caught.value.boundary == "manifest_verification"
+
+
+def test_selected_relation_confirmation_rejects_a_broad_axis_as_a_point(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 14)
+    spec["bounded_claim"] = "Customers report hydration experiences with the balm."
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    _, _, confirmation_manifest = prepare_selected_relation_confirmation(
+        quote_manifest
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            _quote_response(quote_manifest, sources),
+            confirmation_manifest,
+            _confirmation_response(
+                quote_manifest,
+                point_scope="broad_axis_or_bundle",
+                point_scope_reason="The claim names an experience area without one direction-bearing outcome.",
+            ),
+        )
+    assert caught.value.boundary == "bounded_point_not_confirmed"
+
+
+def test_selected_relation_confirmation_rejects_duplicate_foreign_and_reordered_rows(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 14)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    _, _, confirmation_manifest = prepare_selected_relation_confirmation(
+        quote_manifest
+    )
+    quote_response = _quote_response(quote_manifest, sources)
+
+    def _finalize(confirmation_response: dict) -> None:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            quote_response,
+            confirmation_manifest,
+            confirmation_response,
+        )
+
+    duplicated = _confirmation_response(quote_manifest)
+    duplicated["relation_checks"][1] = copy.deepcopy(
+        duplicated["relation_checks"][0]
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize(duplicated)
+    assert caught.value.boundary == "duplicate_relation_confirmation"
+
+    foreign = _confirmation_response(quote_manifest)
+    foreign["relation_checks"][0]["confirmation_row_id"] = "row_99"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize(foreign)
+    assert caught.value.boundary == "foreign_relation_confirmation"
+
+    reordered = _confirmation_response(quote_manifest)
+    reordered["relation_checks"].reverse()
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize(reordered)
+    assert caught.value.boundary == "relation_confirmation_order_mismatch"
+
+    # A confirmation manifest whose recorded prompt hash does not belong to the
+    # prompt this quote manifest actually produces is rejected, so a
+    # hand-written manifest cannot vouch for a workload that saw the labels.
+    forged = copy.deepcopy(confirmation_manifest)
+    forged["prompt_sha256"] = "0" * 64
+    forged["manifest_sha256"] = _canonical_hash(
+        {key: value for key, value in forged.items() if key != "manifest_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            quote_response,
+            forged,
+            _confirmation_response(quote_manifest),
+        )
+    assert caught.value.boundary == "manifest_verification"
+
+
+def test_historical_quote_manifests_reject_and_never_require_confirmation(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 14)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    _, _, confirmation_manifest = prepare_selected_relation_confirmation(
+        quote_manifest
+    )
+    confirmation_response = _confirmation_response(quote_manifest)
+
+    historical = copy.deepcopy(quote_manifest)
+    for key in (
+        "selection_id",
+        "bounded_claim",
+        "selected_relation_confirmation_required",
+        "manifest_sha256",
+    ):
+        historical.pop(key)
+    historical["schema_version"] = "phase_a_evidence_quote_manifest_v4"
+    historical["manifest_sha256"] = _canonical_hash(historical)
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_selected_relation_confirmation(historical)
+    assert caught.value.boundary == "relation_confirmation_not_required"
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            historical,
+            sources,
+            _quote_response(historical, sources),
+            confirmation_manifest,
+            confirmation_response,
+        )
+    assert caught.value.boundary == "unexpected_relation_confirmation"
+
+    artifact = _finalize_quotes_runtime(
+        historical, sources, _quote_response(historical, sources)
+    )
+    assert artifact["schema_version"] == "phase_a_evidence_selection_artifact_v1"
+    assert "selection_disclosure" not in artifact
+
+
+def test_quotes_runner_replays_a_historical_manifest_without_confirmation(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 14)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    for key in (
+        "selection_id",
+        "bounded_claim",
+        "selected_relation_confirmation_required",
+        "manifest_sha256",
+    ):
+        quote_manifest.pop(key)
+    quote_manifest["schema_version"] = "phase_a_evidence_quote_manifest_v4"
+    quote_manifest["manifest_sha256"] = _canonical_hash(quote_manifest)
+
+    manifest_path = tmp_path / "selection-manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    quote_manifest_path = tmp_path / "historical-quote-manifest.json"
+    quote_manifest_path.write_text(json.dumps(quote_manifest), encoding="utf-8")
+    response_path = tmp_path / "historical-quote-response.json"
+    response_path.write_text(
+        json.dumps(_quote_response(quote_manifest, sources)), encoding="utf-8"
+    )
+    artifact_path = tmp_path / "historical-artifact.json"
+
+    completed = finalize_evidence_selection_quotes_run(
+        selection_manifest_path=manifest_path,
+        quote_manifest_path=quote_manifest_path,
+        response_path=response_path,
+        confirmation_manifest_path=None,
+        confirmation_response_path=None,
+        artifact_out=artifact_path,
+    )
+
+    assert completed["status"] == "PHASE_A_EVIDENCE_SELECTION_COMPLETE"
+    assert (
+        json.loads(artifact_path.read_text())["schema_version"]
+        == "phase_a_evidence_selection_artifact_v1"
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_evidence_selection_quotes_run(
+            selection_manifest_path=manifest_path,
+            quote_manifest_path=quote_manifest_path,
+            response_path=response_path,
+            confirmation_manifest_path=tmp_path / "confirmation-manifest.json",
+            confirmation_response_path=None,
+            artifact_out=tmp_path / "unused-artifact.json",
+        )
+    assert caught.value.boundary == "relation_confirmation_shape"
+
+    parsed = _parser().parse_args(
+        [
+            "finalize-evidence-selection-quotes",
+            "--selection-manifest",
+            str(manifest_path),
+            "--quote-manifest",
+            str(quote_manifest_path),
+            "--response",
+            str(response_path),
+            "--artifact-out",
+            str(tmp_path / "parser-artifact.json"),
+        ]
+    )
+    assert parsed.confirmation_manifest is None
+    assert parsed.confirmation_response is None
 
 
 def test_selection_spec_can_raise_truth_origin_cap_to_twenty_without_changing_influence_cap(
@@ -1585,7 +1864,7 @@ def _value_axis_source(tmp_path: Path, count: int = 6) -> tuple[dict, list[dict]
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
     spec = dict(_spec(count))
     spec["axis_ids"] = ["value_and_quantity"]
-    spec["bounded_claim"] = "Customers report value-for-money experiences with the balm."
+    spec["bounded_claim"] = "Customers repurchase the balm despite its price."
     return spec, [
         {
             "source_id": "full-corpus",
@@ -1724,6 +2003,15 @@ def test_a_value_axis_spec_keeps_a_highly_engaged_adjacent_row_out_of_the_displa
     artifact = finalize_quotes(
         quote_manifest, sources, _quote_response(quote_manifest, sources)
     )
+    assert quote_manifest["truth_selection_policy"] == "value_first"
+    expected_eligible_origins = {
+        row["scoped_independence_key"]
+        for row in quote_manifest["labeled_inventory"]
+        if _truth_row_display_eligible(row, "value_first")
+    }
+    assert artifact["selection_disclosure"][
+        "display_eligible_truth_origin_count"
+    ] == len(expected_eligible_origins)
     displayed = {row["evidence_id"] for group in artifact["source_groups"] for row in group["rows"]}
     accounted = {row["evidence_id"] for row in artifact["candidate_dispositions"]}
     assert "community_post:5" not in displayed
