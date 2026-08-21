@@ -15,6 +15,7 @@ from judgment.phase_a_evidence_selection import (
     _candidate_rows,
     _bucket_priority,
     _display_label,
+    _frontier_point_sort_key,
     _numeric_engagement,
     _policy_guidance,
     _relation_schema,
@@ -371,6 +372,41 @@ def test_customer_pull_frontier_is_retailer_first_not_retailer_only_and_accounts
         business_question=frontier["business_question"],
         subject_product_ids=["summer-fridays-lip-butter-balm"],
     ) == frontier
+
+
+def test_customer_pull_frontier_orders_evidence_strength_before_behavior_tiebreak() -> None:
+    def point(
+        proposition_id: str,
+        *,
+        origins: int,
+        material: int,
+        roles: list[str] | None = None,
+        behavior: bool = False,
+    ) -> dict:
+        return {
+            "proposition_id": proposition_id,
+            "customer_support_roles": roles or ["community_post"],
+            "independent_support_origin_count": origins,
+            "material_support_evidence_ids": [f"evidence-{i}" for i in range(material)],
+            "earning_reasons": ["reported_behavior"] if behavior else [],
+        }
+
+    stronger_point = point("stronger", origins=4, material=2)
+    weaker_behavior = point("weaker-behavior", origins=2, material=2, behavior=True)
+    equal_point = point("equal", origins=2, material=1)
+    equal_behavior = point("equal-behavior", origins=2, material=1, behavior=True)
+
+    ordered = sorted(
+        [weaker_behavior, stronger_point, equal_point, equal_behavior],
+        key=_frontier_point_sort_key,
+    )
+
+    assert [row["proposition_id"] for row in ordered] == [
+        "stronger",
+        "weaker-behavior",
+        "equal-behavior",
+        "equal",
+    ]
 
 
 def test_customer_pull_frontier_exposes_subject_filtered_propositions() -> None:

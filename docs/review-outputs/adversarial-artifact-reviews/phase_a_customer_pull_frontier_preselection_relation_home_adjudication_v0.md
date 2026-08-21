@@ -14,8 +14,12 @@ open_next:
 # Phase A customer-pull frontier and v7 preselection relation — home adjudication
 
 reviewed_by: Anthropic controller
-authored_and_adjudicated_by: OpenAI Codex
+authored_by: OpenAI Codex
+adjudicated_by: OpenAI Codex
 reviewed_revision: `74865c03d44c55d2c1e3c125461c757c3f5c414e`
+review_use_boundary: >
+  Findings are decision input only and are not approval, validation, mandatory
+  remediation, or executor-ready patch authority.
 
 The delegated findings, citations, diff, and verdict are decision input only.
 They are not inherited as approval or premises.

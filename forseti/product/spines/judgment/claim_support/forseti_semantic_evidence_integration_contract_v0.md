@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v54
+version: v55
 effective_date: 2026-08-21
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v54
+# Semantic Evidence Integration Contract v55
 
 ## Purpose
 
@@ -1060,6 +1060,15 @@ score is created. Materializing one admitted proposition produces a v1
 selection spec bound to the frontier, source packet, bounded point, and literal
 semantic refs with the normal thirteen-origin cap. The frontier changes no
 packet, source fact, proposition relation, or Deliver authority.
+
+Within the retailer-first and community-discovery queues, ordering follows the
+bounded support actually present: cross-role independent recurrence,
+independent recurrence, material source-native resonance, then an isolated
+earning signal. More independent origins and material engagement order points
+inside one posture. Reported behavior is retained as a separate commercial
+strength dimension and breaks otherwise equal ties; it is not a universal
+source-support rank and cannot make generic trial or ownership outrank a more
+strongly corroborated point.
 The materialized spec uses `relation_policy=bounded_point`: relation direction
 is evaluated against that proposition's exact wording. Thus an expensive-price
 complaint supports an expensive-price point instead of being inverted by the
@@ -1630,6 +1639,13 @@ new frontier.
 
 ## Changelog
 
+- `v55` / 2026-08-21 — changed customer-pull frontier ordering so bounded
+  support posture, independent-origin count, and material source-native
+  engagement lead before reported behavior. Behavior remains a tie-breaker,
+  preventing generic trial or ownership from monopolizing the top queue while
+  preserving purchase, repurchase, return, and recommendation evidence. Packet
+  v3, point admission, retailer-first routing, and the thirteen-origin cap are
+  unchanged.
 - `v54` / 2026-08-21 — closed the delegated review false green by requiring
   preselection confirmation labels to pass the same creator-layer and reason-code
   guards as the first pass. Made subject-filter exclusions and counts explicit in

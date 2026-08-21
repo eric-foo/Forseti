@@ -59,6 +59,13 @@ remains influence context and cannot enter either customer-truth queue.
 Engagement is retained and ordered only within its own venue, role, and metric;
 the frontier has no cross-platform customer-pull score.
 
+Within each queue, stronger bounded support leads: cross-role independent
+recurrence, independent recurrence, material source-native resonance, then an
+isolated earning signal. More independent origins and more materially engaged
+evidence break ties inside that support posture. Reported behavior remains a
+commercially useful tie-breaker, but generic trial or ownership does not
+automatically outrank a better-corroborated strength or objection.
+
 The frontier is a navigation artifact over a complete, non-truncated
 `phase_a_evidence_packet_v3`; it is not packet v4 or a new evidence authority.
 `materialize-customer-pull-point-selection-spec` turns one admitted proposition

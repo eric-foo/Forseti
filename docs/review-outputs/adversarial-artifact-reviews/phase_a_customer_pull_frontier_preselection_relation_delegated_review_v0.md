@@ -550,7 +550,7 @@ index f279e06d..31ffe202 100644
 +            "relation_confirmation_shape",
 +        ),
 +    ):
-+        with pytest.raises(EvidenceConsumerError) as caught:
++        with pytest.raises&#40;EvidenceConsumerError&#41; as caught:
 +            finalize_preselection_relation_confirmation_prepare_quotes(
 +                selection_manifest,
 +                sources,
@@ -566,7 +566,7 @@ index f279e06d..31ffe202 100644
 +    for row in laundered_first_pass["results"]:
 +        if row["candidate_id"] == creator_id:
 +            row["relation"] = "support"
-+    with pytest.raises(EvidenceConsumerError) as caught:
++    with pytest.raises&#40;EvidenceConsumerError&#41; as caught:
 +        _validate_relation_response(candidates, laundered_first_pass)
 +    assert caught.value.boundary == "creator_customer_laundering"
 +
@@ -678,4 +678,3 @@ findings routed for owner decision. Not accepted, not ready, not mergeable.
 Residual: CR-02, CR-03, CR-04 open; delegate-authored lines are the
 non-independent sliver.
 ```
-

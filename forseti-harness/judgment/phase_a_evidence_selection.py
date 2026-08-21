@@ -232,10 +232,23 @@ def _compact(value: Any) -> str:
 
 def _frontier_point_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
     reasons = set(row.get("earning_reasons", []))
+    origin_count = int(row.get("independent_support_origin_count", 0))
+    material_count = len(row.get("material_support_evidence_ids", []))
+    role_count = len(set(row.get("customer_support_roles", [])))
+    support_posture_rank = (
+        0
+        if origin_count >= 2 and role_count >= 2
+        else 1
+        if origin_count >= 2
+        else 2
+        if material_count
+        else 3
+    )
     return (
+        support_posture_rank,
+        -origin_count,
+        -material_count,
         0 if "reported_behavior" in reasons else 1,
-        -int(row.get("independent_support_origin_count", 0)),
-        -len(row.get("material_support_evidence_ids", [])),
         str(row.get("proposition_id")),
     )
 
