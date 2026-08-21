@@ -1061,14 +1061,20 @@ selection spec bound to the frontier, source packet, bounded point, and literal
 semantic refs with the normal thirteen-origin cap. The frontier changes no
 packet, source fact, proposition relation, or Deliver authority.
 
-Within the retailer-first and community-discovery queues, ordering follows the
-bounded support actually present: cross-role independent recurrence,
-independent recurrence, material source-native resonance, then an isolated
-earning signal. More independent origins and material engagement order points
-inside one posture. Reported behavior is retained as a separate commercial
-strength dimension and breaks otherwise equal ties; it is not a universal
-source-support rank and cannot make generic trial or ownership outrank a more
-strongly corroborated point.
+Within the retailer-first and community-discovery queues, more independent
+supporting origins lead. When origin counts tie, cross-role independent
+recurrence leads same-role recurrence, followed by the number of materially
+engaged supporting evidence items. Reported behavior is retained as a separate
+commercial strength dimension and breaks otherwise equal ties; it is not a
+universal source-support rank and cannot make generic trial or ownership
+outrank a more strongly corroborated point. This queue-specific order does not
+turn the claim-support postures into a universal ranking. Materially engaged
+items may share one origin; they add resonance context but do not add
+independent recurrence. An unavailable engagement posture earns no
+materiality, and engagement magnitude is never compared across venues. An
+operator-protected safety or costly-behavior lane keeps a point admitted and
+fully accounted, but protection alone grants no ordering priority.
+
 The materialized spec uses `relation_policy=bounded_point`: relation direction
 is evaluated against that proposition's exact wording. Thus an expensive-price
 complaint supports an expensive-price point instead of being inverted by the
@@ -1639,13 +1645,15 @@ new frontier.
 
 ## Changelog
 
-- `v55` / 2026-08-21 — changed customer-pull frontier ordering so bounded
-  support posture, independent-origin count, and material source-native
-  engagement lead before reported behavior. Behavior remains a tie-breaker,
-  preventing generic trial or ownership from monopolizing the top queue while
-  preserving purchase, repurchase, return, and recommendation evidence. Packet
-  v3, point admission, retailer-first routing, and the thirteen-origin cap are
-  unchanged.
+- `v55` / 2026-08-21 — changed customer-pull frontier ordering so independent
+  supporting-origin count leads, followed on ties by cross-role recurrence and
+  materially engaged supporting items before reported behavior. Behavior
+  remains a final tie-breaker, preventing generic trial or ownership from
+  monopolizing the top queue while preserving purchase, repurchase, return,
+  and recommendation evidence. Unavailable engagement earns no materiality;
+  protected lanes preserve admission but grant no ordering priority. Packet
+  v3, ordinary point admission, retailer-first routing, and the thirteen-origin
+  cap are unchanged.
 - `v54` / 2026-08-21 — closed the delegated review false green by requiring
   preselection confirmation labels to pass the same creator-layer and reason-code
   guards as the first pass. Made subject-filter exclusions and counts explicit in

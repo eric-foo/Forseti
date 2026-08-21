@@ -15,7 +15,6 @@ from judgment.phase_a_evidence_selection import (
     _candidate_rows,
     _bucket_priority,
     _display_label,
-    _frontier_point_sort_key,
     _numeric_engagement,
     _policy_guidance,
     _relation_schema,
@@ -374,38 +373,171 @@ def test_customer_pull_frontier_is_retailer_first_not_retailer_only_and_accounts
     ) == frontier
 
 
-def test_customer_pull_frontier_orders_evidence_strength_before_behavior_tiebreak() -> None:
-    def point(
-        proposition_id: str,
-        *,
-        origins: int,
-        material: int,
-        roles: list[str] | None = None,
-        behavior: bool = False,
-    ) -> dict:
-        return {
-            "proposition_id": proposition_id,
-            "customer_support_roles": roles or ["community_post"],
-            "independent_support_origin_count": origins,
-            "material_support_evidence_ids": [f"evidence-{i}" for i in range(material)],
-            "earning_reasons": ["reported_behavior"] if behavior else [],
-        }
+def _frontier_point(proposition_id: str, claim_kind: str, support: list[str]) -> dict:
+    return {
+        "proposition_id": proposition_id,
+        "bounded_proposition": f"Customers report the balm behaves as {proposition_id}.",
+        "claim_kind": claim_kind,
+        "axis_ids": ["value_and_quantity"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": len(support), "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [
+                [evidence_id, [f"{evidence_id}::hydration"]]
+                for evidence_id in support
+            ],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
 
-    stronger_point = point("stronger", origins=4, material=2)
-    weaker_behavior = point("weaker-behavior", origins=2, material=2, behavior=True)
-    equal_point = point("equal", origins=2, material=1)
-    equal_behavior = point("equal-behavior", origins=2, material=1, behavior=True)
 
-    ordered = sorted(
-        [weaker_behavior, stronger_point, equal_point, equal_behavior],
-        key=_frontier_point_sort_key,
+def _frontier_packet_for(propositions: list[dict], count: int = 25) -> dict:
+    packet, _ = _packet_and_bundle(count)
+    packet["selection"] = {
+        "mode": "proposition",
+        "axis_ids": ["value_and_quantity"],
+        "proposition_ids": [row["proposition_id"] for row in propositions],
+    }
+    packet["selection_coverage"] = {
+        "truncated": False,
+        "selected_proposition_count": len(propositions),
+    }
+    packet["propositions"] = propositions
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    return packet
+
+
+def test_customer_pull_frontier_orders_real_queues_by_evidence_then_behavior() -> None:
+    packet = _frontier_packet_for(
+        [
+            _frontier_point(
+                "retailer-deeper",
+                "customer_experience",
+                [
+                    "retailer_review:1",
+                    "retailer_review:2",
+                    "retailer_review:6",
+                    "retailer_review:7",
+                ],
+            ),
+            _frontier_point(
+                "retailer-cross-role",
+                "customer_experience",
+                ["community_post:5", "retailer_review:1"],
+            ),
+            _frontier_point(
+                "stronger",
+                "customer_experience",
+                [
+                    "community_post:0",
+                    "community_post:5",
+                    "community_post:10",
+                    "community_post:15",
+                ],
+            ),
+            _frontier_point(
+                "weaker-behavior",
+                "reported_behavior",
+                ["community_post:5", "community_post:10"],
+            ),
+            _frontier_point(
+                "equal", "customer_experience", ["community_post:5", "community_post:15"]
+            ),
+            _frontier_point(
+                "equal-behavior",
+                "reported_behavior",
+                ["community_post:5", "community_post:15"],
+            ),
+        ]
     )
 
-    assert [row["proposition_id"] for row in ordered] == [
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="strength-before-behavior",
+        business_question="Which customer points deserve commercial investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    verify_customer_pull_point_frontier(frontier, packet)
+    assert [row["proposition_id"] for row in frontier["retailer_first_queue"]] == [
+        "retailer-deeper",
+        "retailer-cross-role",
+    ]
+    assert [
+        row["proposition_id"] for row in frontier["community_discovery_queue"]
+    ] == [
         "stronger",
         "weaker-behavior",
         "equal-behavior",
         "equal",
+    ]
+
+
+def test_customer_pull_frontier_denies_material_credit_to_unavailable_engagement() -> None:
+    packet = _frontier_packet_for(
+        [_frontier_point("quiet-point", "customer_experience", ["community_post:quiet"])]
+    )
+    packet["source_groups"].append(
+        {
+            "source_family": "reddit_community",
+            "source_role": "community_post",
+            "engagement_kind": "engagement_unavailable",
+            "engagement_context": "unavailable",
+            "evidence_defaults": {},
+            "evidence_columns": packet["source_groups"][0]["evidence_columns"],
+            "engagement_defaults": {"material_positive": True},
+            "engagement_columns": ["status"],
+            "evidence_rows": [
+                [
+                    "community_post:quiet",
+                    "artifact:quiet",
+                    "https://reddit.com/evidence/quiet",
+                    "container:quiet",
+                    "2026-08-17T00:00:00Z",
+                    "actor:quiet",
+                    "credited",
+                    "origin:quiet",
+                    "public:quiet",
+                    ["engagement_unavailable"],
+                    [
+                        [
+                            "community_post:quiet::hydration",
+                            "Customer report quiet says the balm feels moisturizing.",
+                            "first_hand",
+                            "asserted",
+                            "affirmed",
+                            ["summer-fridays-lip-butter-balm"],
+                            [],
+                            ["hydration_and_moisture"],
+                            ["after use"],
+                            [],
+                        ]
+                    ],
+                ]
+            ],
+        }
+    )
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="unavailable-engagement",
+        business_question="Which customer points deserve commercial investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    verify_customer_pull_point_frontier(frontier, packet)
+    assert frontier["community_discovery_queue"] == []
+    assert frontier["nonpromoted_points"] == [
+        {
+            "proposition_id": "quiet-point",
+            "disposition": "no_investigation_earning_signal",
+        }
     ]
 
 

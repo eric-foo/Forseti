@@ -235,18 +235,10 @@ def _frontier_point_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
     origin_count = int(row.get("independent_support_origin_count", 0))
     material_count = len(row.get("material_support_evidence_ids", []))
     role_count = len(set(row.get("customer_support_roles", [])))
-    support_posture_rank = (
-        0
-        if origin_count >= 2 and role_count >= 2
-        else 1
-        if origin_count >= 2
-        else 2
-        if material_count
-        else 3
-    )
+    cross_role_recurrence = origin_count >= 2 and role_count >= 2
     return (
-        support_posture_rank,
         -origin_count,
+        0 if cross_role_recurrence else 1,
         -material_count,
         0 if "reported_behavior" in reasons else 1,
         str(row.get("proposition_id")),
@@ -375,6 +367,7 @@ def build_customer_pull_point_frontier(
                 )
             group, evidence = evidence_index[evidence_id]
             engagement = evidence.get("engagement") or {}
+            engagement_status = engagement.get("status") or "engagement_available"
             venue, venue_basis = _source_venue(
                 str(group["source_role"]), evidence.get("source_ref"), evidence_id
             )
@@ -386,9 +379,12 @@ def build_customer_pull_point_frontier(
                     "source_venue": venue,
                     "source_venue_basis": venue_basis,
                     "engagement_kind": group["engagement_kind"],
-                    "engagement_status": engagement.get("status")
-                    or "engagement_available",
-                    "engagement_material_positive": engagement.get("material_positive"),
+                    "engagement_status": engagement_status,
+                    "engagement_material_positive": (
+                        engagement.get("material_positive")
+                        if engagement_status != "engagement_unavailable"
+                        else None
+                    ),
                     "independence_key": evidence.get("independence_key") or evidence_id,
                 }
             )

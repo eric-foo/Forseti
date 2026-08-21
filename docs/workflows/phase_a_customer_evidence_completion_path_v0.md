@@ -59,12 +59,16 @@ remains influence context and cannot enter either customer-truth queue.
 Engagement is retained and ordered only within its own venue, role, and metric;
 the frontier has no cross-platform customer-pull score.
 
-Within each queue, stronger bounded support leads: cross-role independent
-recurrence, independent recurrence, material source-native resonance, then an
-isolated earning signal. More independent origins and more materially engaged
-evidence break ties inside that support posture. Reported behavior remains a
-commercially useful tie-breaker, but generic trial or ownership does not
-automatically outrank a better-corroborated strength or objection.
+Within each queue, more independent supporting origins lead. When origin counts
+tie, cross-role independent recurrence leads same-role recurrence, followed by
+more materially engaged supporting evidence items. Reported behavior remains a
+commercially useful final tie-breaker, but generic trial or ownership does not
+automatically outrank a better-corroborated strength or objection. This is a
+queue-specific investigation order, not a universal source-quality ranking.
+Materially engaged items may share one origin; they add resonance context but
+do not add independent recurrence. An unavailable engagement posture adds no
+materiality. Operator protection keeps a safety or costly-behavior point
+admitted and accounted, but protection alone grants no ordering priority.
 
 The frontier is a navigation artifact over a complete, non-truncated
 `phase_a_evidence_packet_v3`; it is not packet v4 or a new evidence authority.
