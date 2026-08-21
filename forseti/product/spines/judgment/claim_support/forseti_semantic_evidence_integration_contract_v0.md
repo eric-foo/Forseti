@@ -990,6 +990,25 @@ leaked first-pass state. Creator-authored rows are constrained to `adjacent` by
 deterministic code, so their confirmation carries no independent information;
 the confirmation's discriminating power is over the customer truth rows.
 
+Fresh selection manifests use `linked_parent_context_v1`. Exact parent text is
+carried only for the point's explicitly admitted semantic refs, not for every
+candidate admitted by an axis expansion. The provider-visible projection names
+that text once in a compact context table and gives each applicable row its
+context IDs; every point-scope confirmation batch receives the same table so
+scope is never judged from a context-stripped point. Point-level visibility
+does not attach the parent to unrelated evidence: a candidate may use parent
+content for its own relation only through its own exact context ID. The full
+exact context remains hash-bound in the candidate inventory. A terse agreement
+or omitted referent may inherit meaning from that
+linked parent only when the parent clearly supplies the same subject,
+attribute or outcome, direction, and material condition. Thread proximity by
+itself supplies nothing, and a vague phrase stays unresolved when its parent
+does not name the missing meaning. Two effects may remain one bounded point
+when the source itself presents them as one joined experience under the same
+subject, direction, and conditions; this does not permit an actor to assemble
+unrelated outcomes across sources. Manifests without the policy retain their
+historical no-parent-context reconstruction.
+
 The completed v6 artifact identifies its `point_id` and `bounded_point`, then
 discloses candidate semantic-row count, distinct candidate evidence-item count,
 candidate truth-origin count, displayed row count, displayed truth-origin

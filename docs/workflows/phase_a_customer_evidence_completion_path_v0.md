@@ -545,6 +545,23 @@ is part of the existing confirmation call, not a third provider task. Record
 the passing reason on the artifact; the words `point_id` and `bounded_point`
 alone never establish boundedness.
 
+For a fresh point selection, exact linked parent text travels only with the
+point's explicitly admitted semantic refs. It is deduplicated into a compact
+parent-context table rather than repeated across the axis-wide candidate pool.
+Every point-scope confirmation batch receives that same compact table so a
+batch cannot decide scope from a context-stripped point. The table may clarify
+the point, but it does not attach parent meaning to every evidence row: a row
+may use parent content for its relation only through its own exact context ID.
+Use it to resolve `same`, `this happened to me`, or another omitted referent
+only when the parent itself names the same subject, attribute or outcome,
+direction, and material condition. If the parent is merely a wishlist,
+shopping question, broad discussion, or otherwise does not supply the missing
+meaning, keep the terse row unresolved for that point. A source-native joined
+experience such as becoming dry and cracked may remain one point; do not use
+that allowance to join unrelated outcomes from separate sources. Historical
+selection manifests without `linked_parent_context_v1` replay with their
+original no-parent-context view.
+
 Every completed v6 point pack discloses the funnel rather than presenting the
 chosen rows as the whole corpus: candidate semantic rows, distinct candidate
 evidence items, candidate truth origins, display-eligible truth origins,

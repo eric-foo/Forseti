@@ -10,6 +10,7 @@ from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
     DISPLAY_LABEL_BY_REASON_CODE,
+    PARENT_CONTEXT_POLICY,
     SELECTION_SPEC_VERSION,
     VALUE_REASON_RELATIONS,
     _candidate_rows,
@@ -239,6 +240,27 @@ def _reseal(source: dict) -> None:
     packet["packet_sha256"] = _canonical_hash(packet)
     source["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
     source["bundle_path"].write_text(json.dumps(bundle), encoding="utf-8")
+
+
+def _attach_parent_context(source: dict, evidence_id: str, text: str) -> str:
+    unit = next(
+        row for row in source["bundle"]["evidence_units"] if row["evidence_id"] == evidence_id
+    )
+    context_id = "context:shared-parent"
+    unit["parent_context_refs"] = [context_id]
+    source["bundle"]["semantic_work_unit_projection"] = {
+        "context_registry": [
+            {
+                "context_id": context_id,
+                "context_type": "parent_text",
+                "source_artifact_id": unit["source_artifact_id"],
+                "source_ref": "https://reddit.com/thread/parent",
+                "text": text,
+            }
+        ]
+    }
+    _reseal(source)
+    return context_id
 
 
 def _relation_response(candidates: list[dict]) -> dict:
@@ -773,6 +795,216 @@ def test_relation_prompt_and_corroboration_ignore_date_and_engagement(
     assert _corroboration(original_selected) == _corroboration(mutated_selected)
 
 
+def test_linked_parent_context_is_exact_compact_and_hash_bound(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": "full-corpus",
+            "semantic_unit_ref": "community_post:0::hydration",
+        }
+    ]
+    parent_text = (
+        "Summer Fridays left my lips unbearably dry and cracked after two days."
+    )
+    context_id = _attach_parent_context(
+        sources[0], "community_post:0", parent_text
+    )
+
+    prompt, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    row = next(
+        candidate
+        for candidate in candidates
+        if candidate["evidence_id"] == "community_post:0"
+    )
+
+    assert manifest["parent_context_policy"] == PARENT_CONTEXT_POLICY
+    assert row["parent_context"] == [
+        {
+            "context_id": f"full-corpus::{context_id}",
+            "source_ref": "https://reddit.com/thread/parent",
+            "text": parent_text,
+        }
+    ]
+    assert all(
+        not candidate["parent_context"]
+        for candidate in candidates
+        if candidate["semantic_unit_ref"]
+        != "community_post:0::hydration"
+    )
+    envelope = json.loads(prompt.split("SELECTION_ENVELOPE_JSON:\n", 1)[1])
+    assert envelope["parent_context_columns"] == [
+        "parent_context_id",
+        "source_ref",
+        "parent_text",
+    ]
+    assert envelope["parent_context_rows"] == [
+        [
+            f"full-corpus::{context_id}",
+            "https://reddit.com/thread/parent",
+            parent_text,
+        ]
+    ]
+    candidate_index = envelope["candidate_columns"].index("parent_context_ids")
+    assert any(
+        candidate_row[candidate_index] == [f"full-corpus::{context_id}"]
+        for candidate_row in envelope["candidate_rows"]
+    )
+    assert prompt.count(parent_text) == 1
+    assert "otherwise do not inherit the missing meaning" in prompt
+
+    first_pass = _relation_response(candidates)
+    preselection_prompt, _, _ = prepare_preselection_relation_confirmation(
+        manifest, sources, first_pass
+    )
+    assert preselection_prompt.count(parent_text) == 1
+    assert '"point_parent_context_ids"' in preselection_prompt
+    assert '"parent_context_ids"' in preselection_prompt
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, first_pass
+    )
+    selected_prompt, _, _ = prepare_selected_relation_confirmation(quote_manifest)
+    assert selected_prompt.count(parent_text) == 1
+    assert '"point_parent_context_ids"' in selected_prompt
+    assert '"parent_context_ids"' in selected_prompt
+
+    legacy_candidates = _candidate_rows(
+        sources, spec, include_parent_context=False
+    )
+    legacy_manifest = copy.deepcopy(manifest)
+    legacy_manifest.pop("parent_context_policy")
+    legacy_manifest["candidate_inventory_sha256"] = _canonical_hash(
+        legacy_candidates
+    )
+    legacy_manifest["manifest_sha256"] = _canonical_hash(
+        {
+            key: value
+            for key, value in legacy_manifest.items()
+            if key != "manifest_sha256"
+        }
+    )
+    _, _, legacy_quote_manifest = finalize_relations_prepare_quotes(
+        legacy_manifest, sources, _relation_response(legacy_candidates)
+    )
+    assert all(
+        "parent_context" not in row
+        for row in legacy_quote_manifest["selected_rows"]
+    )
+
+
+def test_linked_parent_context_reaches_every_scope_batch_without_row_laundering(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 10)
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": "full-corpus",
+            "semantic_unit_ref": "audience_comment:3::hydration",
+        }
+    ]
+    spec["relation_response_mode"] = "positional"
+    spec["relation_policy"] = "bounded_point"
+    parent_text = "The balm did nothing to hydrate my lips overnight."
+    context_id = _attach_parent_context(
+        sources[0], "audience_comment:3", parent_text
+    )
+    full_context_id = f"full-corpus::{context_id}"
+
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=3
+    )
+    candidates = _candidate_rows(sources, spec)
+    responses = {}
+    for batch in batch_manifest["batches"]:
+        start = batch["start_index"]
+        subset = candidates[start : start + batch["candidate_count"]]
+        responses[batch["batch_id"]] = _batched_positional_relation_response(
+            subset, batch["batch_id"]
+        )
+
+    _, prompts = prepare_batched_preselection_relation_confirmations(
+        batch_manifest, sources, responses, batch_size=1
+    )
+    row_context_links = 0
+    for prompt, _ in prompts:
+        envelope = json.loads(
+            prompt.split(
+                "PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n", 1
+            )[1]
+        )
+        assert envelope["point_parent_context_ids"] == [full_context_id]
+        assert envelope["parent_context_rows"] == [
+            [
+                full_context_id,
+                "https://reddit.com/thread/parent",
+                parent_text,
+            ]
+        ]
+        assert prompt.count(parent_text) == 1
+        if "parent_context_ids" in envelope["candidate_columns"]:
+            context_index = envelope["candidate_columns"].index(
+                "parent_context_ids"
+            )
+            row_context_links += sum(
+                row[context_index] == [full_context_id]
+                for row in envelope["candidate_rows"]
+            )
+    # This exact child is outside the material/protected confirmation frontier.
+    # Its parent may still clarify the bounded point, but cannot be attached to
+    # any different candidate row in these batches.
+    assert row_context_links == 0
+
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        selection_manifest, sources, _positional_relation_response(candidates)
+    )
+    assert all(
+        row["semantic_unit_ref"] != "audience_comment:3::hydration"
+        for row in quote_manifest["selected_rows"]
+    )
+    selected_prompt, _, _ = prepare_selected_relation_confirmation(quote_manifest)
+    assert selected_prompt.count(parent_text) == 1
+    selected_envelope = json.loads(
+        selected_prompt.split(
+            "SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:\n", 1
+        )[1]
+    )
+    assert selected_envelope["point_parent_context_ids"] == [full_context_id]
+    assert "parent_context_ids" not in selected_envelope["selected_columns"]
+
+
+def test_linked_parent_context_fails_closed_on_unknown_or_wrong_artifact(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": "full-corpus",
+            "semantic_unit_ref": "community_post:0::hydration",
+        }
+    ]
+    context_id = _attach_parent_context(
+        sources[0], "community_post:0", "The parent names one exact outcome."
+    )
+    registry = sources[0]["bundle"]["semantic_work_unit_projection"][
+        "context_registry"
+    ]
+    registry[0]["source_artifact_id"] = "another-artifact"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _candidate_rows(sources, spec)
+    assert caught.value.boundary == "parent_context_resolution"
+
+    registry[0]["source_artifact_id"] = "artifact:0"
+    unit = next(
+        row
+        for row in sources[0]["bundle"]["evidence_units"]
+        if row["evidence_id"] == "community_post:0"
+    )
+    unit["parent_context_refs"] = [f"{context_id}:missing"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _candidate_rows(sources, spec)
+    assert caught.value.boundary == "parent_context_resolution"
+
 def test_year_derivation_matches_admitted_publication_time_shapes() -> None:
     """A publication time the consumer admits must not read back as undated."""
     basic_format = "20260601T000000+00:00"
@@ -992,10 +1224,20 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
         if row["relation"] == "support"
     }
     forged = copy.deepcopy(quote_manifest)
-    forged["preselection_replay"]["confirmation_response"]["relation_checks"][0][
+    forged_confirmation_manifest = forged["preselection_replay"][
+        "confirmation_manifest"
+    ]
+    forged_index = next(
+        index
+        for index, candidate_id in enumerate(
+            forged_confirmation_manifest["confirmation_candidate_ids"]
+        )
+        if not original_by_id[candidate_id]["protected_lanes"]
+    )
+    forged["preselection_replay"]["confirmation_response"]["relation_checks"][forged_index][
         "relation"
     ] = "exclude"
-    forged["preselection_replay"]["confirmation_response"]["relation_checks"][0][
+    forged["preselection_replay"]["confirmation_response"]["relation_checks"][forged_index][
         "reason_code"
     ] = "wrong_scope_or_non_evidence"
     forged["manifest_sha256"] = _canonical_hash(

@@ -29,6 +29,7 @@ from judgment.phase_a_evidence_consumer import (
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 CUSTOMER_PULL_FRONTIER_VERSION = "phase_a_customer_pull_point_frontier_v1"
 SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
+PARENT_CONTEXT_POLICY = "linked_parent_context_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
 PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
@@ -186,7 +187,7 @@ BOUNDED_POINT_RELATION_DEFINITIONS = " Support directly supports the bounded cla
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction}{relation_definitions} Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction}{relation_definitions} Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 {policy_guidance}
 
@@ -206,9 +207,9 @@ SELECTED_EVIDENCE_ENVELOPE_JSON:
 
 RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered selected rows below. Return only the required JSON.
 
-Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
+Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
 
-Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area of experience (for example "hydration experiences" or "value experiences"), combines materially different attributes/outcomes/directions/conditions, or otherwise could make unrelated mentions look corroborative. Give one short point_scope_reason based only on the supplied point and rows.
+Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Two tightly joined effects remain one point when the source itself presents them as one experience under the same subject, direction, and conditions; do not split a source-native progression such as becoming dry and cracked merely because it names both effects. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area of experience (for example "hydration experiences" or "value experiences"), combines materially different attributes/outcomes/directions/conditions across sources, or otherwise could make unrelated mentions look corroborative. Give one short point_scope_reason based only on the supplied point and rows.
 
 The first-pass relation, reason code, display label, engagement, and selection priority are intentionally absent. The rows carry opaque confirmation_row_id handles and are ordered by a content-derived key that encodes no first-pass signal, so neither the handle nor the row order tells you anything about the first pass. Return every confirmation_row_id exactly once and in order.
 
@@ -218,11 +219,11 @@ SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:
 
 PRESELECTION_RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered candidate rows below. Return only the required JSON.
 
-Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
+Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
 
 {policy_guidance}
 
-Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area, combines materially different attributes, outcomes, directions, or conditions, or could make unrelated mentions look corroborative.
+Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Two tightly joined effects remain one point when the source itself presents them as one experience under the same subject, direction, and conditions; do not split a source-native progression such as becoming dry and cracked merely because it names both effects. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area, combines materially different attributes, outcomes, directions, or conditions across sources, or could make unrelated mentions look corroborative.
 
 The first-pass relation, reason code, engagement, and selection priority are intentionally absent. Opaque row handles and content-derived order reveal no first-pass signal. Return every confirmation_row_id exactly once and in order.
 
@@ -232,11 +233,11 @@ PRESELECTION_RELATION_CONFIRMATION_ENVELOPE_JSON:
 
 PRESELECTION_CONFIRMATION_BATCH_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered candidate rows below. Return only the required JSON.
 
-Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
+Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point. Counter directly opposes or materially qualifies it. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
 
 {policy_guidance}
 
-Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area, combines materially different attributes, outcomes, directions, or conditions, or could make unrelated mentions look corroborative.
+Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Two tightly joined effects remain one point when the source itself presents them as one experience under the same subject, direction, and conditions; do not split a source-native progression such as becoming dry and cracked merely because it names both effects. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area, combines materially different attributes, outcomes, directions, or conditions across sources, or could make unrelated mentions look corroborative.
 
 The first-pass relation, reason code, engagement, and selection priority are intentionally absent. Opaque row handles and content-derived order reveal no first-pass signal. Return batch_id unchanged and every confirmation_row_id exactly once and in order.
 
@@ -650,7 +651,7 @@ def selection_spec_from_customer_pull_frontier(
     return spec
 
 
-RELATION_PROMPT_COLUMNS = (
+LEGACY_RELATION_PROMPT_COLUMNS = (
     "candidate_id",
     "normalized_meaning",
     "conditions",
@@ -663,6 +664,101 @@ RELATION_PROMPT_COLUMNS = (
     "existing_relations",
     "same_evidence_companion_meanings",
 )
+RELATION_PROMPT_COLUMNS = LEGACY_RELATION_PROMPT_COLUMNS + ("parent_context_ids",)
+
+
+def _project_parent_context(
+    rows: Sequence[Mapping[str, Any]],
+) -> tuple[bool, list[dict[str, Any]], list[list[str]]]:
+    context_aware = any(row.get("parent_context") for row in rows)
+    if context_aware and not all("parent_context" in row for row in rows):
+        raise EvidenceConsumerError(
+            "parent_context_resolution", "candidate context projection is mixed-version"
+        )
+    contexts: dict[str, tuple[str, str]] = {}
+    projected_rows: list[dict[str, Any]] = []
+    for row in rows:
+        projected = dict(row)
+        parent_rows = projected.pop("parent_context", [])
+        if context_aware:
+            if not isinstance(parent_rows, list):
+                raise EvidenceConsumerError(
+                    "parent_context_resolution", "candidate parent context is malformed"
+                )
+            parent_ids = []
+            for context in parent_rows:
+                if (
+                    not isinstance(context, Mapping)
+                    or not isinstance(context.get("context_id"), str)
+                    or not isinstance(context.get("source_ref"), str)
+                    or not isinstance(context.get("text"), str)
+                    or not context["text"]
+                ):
+                    raise EvidenceConsumerError(
+                        "parent_context_resolution", "candidate parent context is malformed"
+                    )
+                context_id = context["context_id"]
+                value = (context["source_ref"], context["text"])
+                if context_id in contexts and contexts[context_id] != value:
+                    raise EvidenceConsumerError(
+                        "parent_context_resolution",
+                        f"parent context identity carries divergent content: {context_id}",
+                    )
+                contexts[context_id] = value
+                parent_ids.append(context_id)
+            projected["parent_context_ids"] = parent_ids
+        projected_rows.append(projected)
+    context_rows = [
+        [context_id, source_ref, text]
+        for context_id, (source_ref, text) in sorted(contexts.items())
+    ]
+    return context_aware, projected_rows, context_rows
+
+
+def _attach_parent_context_envelope(
+    envelope: dict[str, Any], context_aware: bool, context_rows: list[list[str]]
+) -> None:
+    if context_aware:
+        envelope["parent_context_columns"] = [
+            "parent_context_id",
+            "source_ref",
+            "parent_text",
+        ]
+        envelope["parent_context_rows"] = context_rows
+
+
+def _attach_point_parent_context_envelope(
+    envelope: dict[str, Any], point_context_rows: Sequence[Sequence[str]]
+) -> None:
+    """Expose linked context for point scope without attaching it to every row."""
+
+    if not point_context_rows:
+        return
+    normalized = [list(row) for row in point_context_rows]
+    existing = envelope.get("parent_context_rows", [])
+    by_id: dict[str, list[str]] = {}
+    for row in [*existing, *normalized]:
+        if (
+            not isinstance(row, list)
+            or len(row) != 3
+            or not all(isinstance(value, str) for value in row)
+        ):
+            raise EvidenceConsumerError(
+                "parent_context_resolution", "point parent context is malformed"
+            )
+        if row[0] in by_id and by_id[row[0]] != row:
+            raise EvidenceConsumerError(
+                "parent_context_resolution",
+                f"parent context identity carries divergent content: {row[0]}",
+            )
+        by_id[row[0]] = row
+    envelope["parent_context_columns"] = [
+        "parent_context_id",
+        "source_ref",
+        "parent_text",
+    ]
+    envelope["parent_context_rows"] = [by_id[key] for key in sorted(by_id)]
+    envelope["point_parent_context_ids"] = [row[0] for row in normalized]
 
 
 def _compact_companion_meanings(row: Mapping[str, Any]) -> list[list[Any]]:
@@ -683,19 +779,26 @@ def _relation_prompt_envelope(
     *,
     batch_id: str | None = None,
 ) -> dict[str, Any]:
+    context_aware, projected_candidates, context_rows = _project_parent_context(
+        candidates
+    )
+    columns = (
+        RELATION_PROMPT_COLUMNS if context_aware else LEGACY_RELATION_PROMPT_COLUMNS
+    )
     rows = []
-    for candidate in candidates:
+    for candidate in projected_candidates:
         projected = dict(candidate)
         projected["same_evidence_companion_meanings"] = _compact_companion_meanings(
             candidate
         )
-        rows.append([projected.get(column) for column in RELATION_PROMPT_COLUMNS])
+        rows.append([projected.get(column) for column in columns])
     envelope = {
         "selection_id": spec["selection_id"],
         "bounded_claim": spec["bounded_claim"],
-        "candidate_columns": list(RELATION_PROMPT_COLUMNS),
+        "candidate_columns": list(columns),
         "candidate_rows": rows,
     }
+    _attach_parent_context_envelope(envelope, context_aware, context_rows)
     if batch_id is not None:
         envelope["batch_id"] = batch_id
     return envelope
@@ -951,8 +1054,127 @@ def _source_venue(source_role: str, source_ref: Any, evidence_id: str) -> tuple[
     return source_role, "source_role"
 
 
+def _parent_context_indexes(
+    bundle: Mapping[str, Any],
+) -> tuple[dict[str, Mapping[str, Any]], dict[str, Mapping[str, Any]]]:
+    units = bundle.get("evidence_units")
+    if not isinstance(units, list):
+        raise EvidenceConsumerError("bundle_verification", "bundle evidence_units missing")
+    unit_index = {
+        row["evidence_id"]: row
+        for row in units
+        if isinstance(row, Mapping) and isinstance(row.get("evidence_id"), str)
+    }
+    projection = bundle.get("semantic_work_unit_projection")
+    registry_rows = (
+        projection.get("context_registry", [])
+        if isinstance(projection, Mapping)
+        else []
+    )
+    if not isinstance(registry_rows, list):
+        raise EvidenceConsumerError(
+            "parent_context_resolution", "bundle context registry is malformed"
+        )
+    registry: dict[str, Mapping[str, Any]] = {}
+    for row in registry_rows:
+        context_id = row.get("context_id") if isinstance(row, Mapping) else None
+        if not isinstance(context_id, str) or context_id in registry:
+            raise EvidenceConsumerError(
+                "parent_context_resolution", "bundle context identity is malformed"
+            )
+        registry[context_id] = row
+    return unit_index, registry
+
+
+def _resolved_parent_context(
+    *,
+    source_id: str,
+    evidence: Mapping[str, Any],
+    bundle_unit: Mapping[str, Any] | None,
+    context_registry: Mapping[str, Mapping[str, Any]],
+) -> list[dict[str, str]]:
+    if bundle_unit is None:
+        return []
+    references = bundle_unit.get("parent_context_refs")
+    inline_rows = bundle_unit.get("parent_context")
+    if references is not None and inline_rows is not None:
+        raise EvidenceConsumerError(
+            "parent_context_resolution",
+            f"evidence {evidence.get('evidence_id')} carries two parent-context shapes",
+        )
+    resolved: list[dict[str, str]] = []
+    if references is not None:
+        if (
+            not isinstance(references, list)
+            or not all(isinstance(ref, str) and ref for ref in references)
+            or len(references) != len(set(references))
+        ):
+            raise EvidenceConsumerError(
+                "parent_context_resolution", "parent context references are malformed"
+            )
+        for ref in references:
+            context = context_registry.get(ref)
+            if context is None:
+                raise EvidenceConsumerError(
+                    "parent_context_resolution", f"unknown parent context: {ref}"
+                )
+            if (
+                context.get("context_type") != "parent_text"
+                or context.get("source_artifact_id")
+                != evidence.get("source_artifact_id")
+                or not isinstance(context.get("source_ref"), str)
+                or not isinstance(context.get("text"), str)
+                or not context["text"]
+            ):
+                raise EvidenceConsumerError(
+                    "parent_context_resolution", f"invalid parent context: {ref}"
+                )
+            resolved.append(
+                {
+                    "context_id": f"{source_id}::{ref}",
+                    "source_ref": context["source_ref"],
+                    "text": context["text"],
+                }
+            )
+        return resolved
+    if inline_rows is None:
+        return []
+    if not isinstance(inline_rows, list):
+        raise EvidenceConsumerError(
+            "parent_context_resolution", "inline parent context is malformed"
+        )
+    for row in inline_rows:
+        if (
+            not isinstance(row, Mapping)
+            or not isinstance(row.get("source_ref"), str)
+            or not isinstance(row.get("text"), str)
+            or not row["text"]
+        ):
+            raise EvidenceConsumerError(
+                "parent_context_resolution", "inline parent context is malformed"
+            )
+        identity = _canonical_json_sha256(
+            {"source_ref": row["source_ref"], "text": row["text"]}
+        )
+        resolved.append(
+            {
+                "context_id": f"{source_id}::inline::{identity}",
+                "source_ref": row["source_ref"],
+                "text": row["text"],
+            }
+        )
+    if len({row["context_id"] for row in resolved}) != len(resolved):
+        raise EvidenceConsumerError(
+            "parent_context_resolution", "inline parent context is duplicated"
+        )
+    return resolved
+
+
 def _candidate_rows(
-    sources: Sequence[Mapping[str, Any]], spec: Mapping[str, Any]
+    sources: Sequence[Mapping[str, Any]],
+    spec: Mapping[str, Any],
+    *,
+    include_parent_context: bool = True,
 ) -> list[dict[str, Any]]:
     axis_ids = spec.get("axis_ids")
     subject_ids = spec.get("subject_product_ids")
@@ -1029,6 +1251,7 @@ def _candidate_rows(
     for source in sources:
         source_id = source["source_id"]
         packet = source["packet"]
+        bundle_unit_index, context_registry = _parent_context_indexes(source["bundle"])
         evidence_index, _ = _expand_packet(packet)
         linked_relations: dict[tuple[str, str], set[str]] = defaultdict(set)
         for proposition in packet.get("propositions", []):
@@ -1127,6 +1350,17 @@ def _candidate_rows(
                         lane for lane, ids in protected.items() if evidence_id in ids
                     ),
                 }
+                if include_parent_context:
+                    candidate["parent_context"] = (
+                        _resolved_parent_context(
+                            source_id=source_id,
+                            evidence={**evidence, "evidence_id": evidence_id},
+                            bundle_unit=bundle_unit_index.get(evidence_id),
+                            context_registry=context_registry,
+                        )
+                        if explicitly_admitted
+                        else []
+                    )
                 candidates.append(candidate)
         unresolved_by_id = {
             row.get("evidence_id"): row.get("disposition")
@@ -1202,6 +1436,18 @@ def _candidate_rows(
                     "retained_unmerged": False,
                     "protected_lanes": sorted(
                         lane for lane, ids in protected.items() if evidence_id in ids
+                    ),
+                    **(
+                        {
+                            "parent_context": _resolved_parent_context(
+                                source_id=source_id,
+                                evidence={**evidence, "evidence_id": evidence_id},
+                                bundle_unit=bundle_unit_index.get(evidence_id),
+                                context_registry=context_registry,
+                            )
+                        }
+                        if include_parent_context
+                        else {}
                     ),
                 }
             )
@@ -1510,15 +1756,18 @@ def prepare_evidence_selection(
             "selection_spec",
             "positional relation responses are supported only for non-value selections",
         )
-    envelope = (
-        {
+    if value_policy:
+        context_aware, projected_candidates, context_rows = _project_parent_context(
+            candidates
+        )
+        envelope = {
             "selection_id": spec["selection_id"],
             "bounded_claim": spec["bounded_claim"],
-            "candidates": candidates,
+            "candidates": projected_candidates,
         }
-        if value_policy
-        else _relation_prompt_envelope(spec, candidates)
-    )
+        _attach_parent_context_envelope(envelope, context_aware, context_rows)
+    else:
+        envelope = _relation_prompt_envelope(spec, candidates)
     prompt = RELATION_PROMPT.format(
         response_instruction=(
             POSITIONAL_RELATION_RESPONSE_INSTRUCTION
@@ -1550,6 +1799,7 @@ def prepare_evidence_selection(
         "spec": dict(spec),
         "candidate_count": len(candidates),
         "candidate_inventory_sha256": inventory_sha,
+        "parent_context_policy": PARENT_CONTEXT_POLICY,
         "sources": [
             {
                 "source_id": source["source_id"],
@@ -1695,10 +1945,25 @@ def load_selection_sources(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
         if packet.get("packet_sha256") != row["packet_sha256"] or bundle.get("bundle_sha256") != row["bundle_sha256"]:
             raise EvidenceConsumerError("manifest_verification", "bound source identity changed")
         sources.append({**row, "packet": packet, "bundle": bundle, "packet_path": packet_path, "bundle_path": bundle_path})
-    candidates = _candidate_rows(sources, manifest["spec"])
+    candidates = _candidate_rows_for_manifest(sources, manifest)
     if _canonical_json_sha256(candidates) != manifest.get("candidate_inventory_sha256"):
         raise EvidenceConsumerError("manifest_verification", "candidate inventory changed")
     return sources
+
+
+def _candidate_rows_for_manifest(
+    sources: Sequence[Mapping[str, Any]], manifest: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    policy = manifest.get("parent_context_policy")
+    if policy not in {None, PARENT_CONTEXT_POLICY}:
+        raise EvidenceConsumerError(
+            "manifest_verification", "unsupported parent-context policy"
+        )
+    return _candidate_rows(
+        sources,
+        manifest["spec"],
+        include_parent_context=policy == PARENT_CONTEXT_POLICY,
+    )
 
 
 def _global_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
@@ -2628,7 +2893,7 @@ QUOTE_PROMPT_COLUMNS = (
     "body_id",
 )
 
-RELATION_CONFIRMATION_COLUMNS = (
+LEGACY_RELATION_CONFIRMATION_COLUMNS = (
     "confirmation_row_id",
     "normalized_meaning",
     "conditions",
@@ -2636,6 +2901,9 @@ RELATION_CONFIRMATION_COLUMNS = (
     "product_version_ids",
     "source_role",
     "same_evidence_companion_meanings",
+)
+RELATION_CONFIRMATION_COLUMNS = LEGACY_RELATION_CONFIRMATION_COLUMNS + (
+    "parent_context_ids",
 )
 
 
@@ -2710,25 +2978,50 @@ def _confirmation_row_presentation(
     ]
 
 
+def _confirmation_prompt_projection(
+    presentation: Sequence[tuple[str, Mapping[str, Any]]],
+) -> tuple[bool, tuple[str, ...], list[list[Any]], list[list[str]]]:
+    context_aware, projected, context_rows = _project_parent_context(
+        [row for _, row in presentation]
+    )
+    columns = (
+        RELATION_CONFIRMATION_COLUMNS
+        if context_aware
+        else LEGACY_RELATION_CONFIRMATION_COLUMNS
+    )
+    rows = [
+        [
+            row_id,
+            row["normalized_meaning"],
+            row.get("conditions", []),
+            row.get("subject_product_ids", []),
+            row.get("product_version_ids", []),
+            row["source_role"],
+            _compact_companion_meanings(row),
+            *([row.get("parent_context_ids", [])] if context_aware else []),
+        ]
+        for (row_id, _), row in zip(presentation, projected, strict=True)
+    ]
+    return context_aware, columns, rows, context_rows
+
+
 def _relation_confirmation_prompt_envelope(
-    bounded_claim: str, presentation: Sequence[tuple[str, Mapping[str, Any]]]
+    bounded_claim: str,
+    presentation: Sequence[tuple[str, Mapping[str, Any]]],
+    *,
+    point_context_rows: Sequence[Sequence[str]] = (),
 ) -> dict[str, Any]:
-    return {
+    context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
+        presentation
+    )
+    envelope = {
         "bounded_point": bounded_claim,
-        "selected_columns": list(RELATION_CONFIRMATION_COLUMNS),
-        "selected_rows": [
-            [
-                confirmation_row_id,
-                row["normalized_meaning"],
-                row.get("conditions", []),
-                row.get("subject_product_ids", []),
-                row.get("product_version_ids", []),
-                row["source_role"],
-                _compact_companion_meanings(row),
-            ]
-            for confirmation_row_id, row in presentation
-        ],
+        "selected_columns": list(columns),
+        "selected_rows": rows,
     }
+    _attach_parent_context_envelope(envelope, context_aware, context_rows)
+    _attach_point_parent_context_envelope(envelope, point_context_rows)
+    return envelope
 
 
 def _prepare_quotes_from_labeled(
@@ -2799,6 +3092,9 @@ def _prepare_quotes_from_labeled(
         "response_schema_sha256": _canonical_json_sha256(schema),
         "model_api_calls": 0,
     }
+    _, _, point_context_rows = _project_parent_context(labeled)
+    if point_context_rows:
+        quote_manifest["point_parent_context_rows"] = point_context_rows
     if preselection_confirmation is not None:
         quote_manifest["preselection_relation_confirmation"] = dict(
             preselection_confirmation
@@ -2823,7 +3119,7 @@ def _prepare_quotes_from_labeled(
 def finalize_relations_prepare_quotes(
     manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
-    candidates = _candidate_rows(sources, manifest["spec"])
+    candidates = _candidate_rows_for_manifest(sources, manifest)
     response_mode = _relation_response_mode(manifest["spec"])
     value_policy = _uses_value_policy(manifest["spec"], candidates)
     labeled = _validate_relation_response(
@@ -2881,7 +3177,7 @@ def _preselection_confirmation_state(
         raise EvidenceConsumerError(
             "manifest_verification", "selection manifest changed"
         )
-    candidates = _candidate_rows(sources, manifest["spec"])
+    candidates = _candidate_rows_for_manifest(sources, manifest)
     if _canonical_json_sha256(candidates) != manifest.get("candidate_inventory_sha256"):
         raise EvidenceConsumerError(
             "manifest_verification", "candidate inventory changed"
@@ -2924,22 +3220,17 @@ def prepare_preselection_relation_confirmation(
         presentation,
         value_policy,
     ) = _preselection_confirmation_state(manifest, sources, first_pass_response)
+    context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
+        presentation
+    )
     envelope = {
         "bounded_point": manifest["spec"]["bounded_claim"],
-        "candidate_columns": list(RELATION_CONFIRMATION_COLUMNS),
-        "candidate_rows": [
-            [
-                row_id,
-                row["normalized_meaning"],
-                row.get("conditions", []),
-                row.get("subject_product_ids", []),
-                row.get("product_version_ids", []),
-                row["source_role"],
-                _compact_companion_meanings(row),
-            ]
-            for row_id, row in presentation
-        ],
+        "candidate_columns": list(columns),
+        "candidate_rows": rows,
     }
+    _attach_parent_context_envelope(envelope, context_aware, context_rows)
+    _, _, point_context_rows = _project_parent_context(candidates)
+    _attach_point_parent_context_envelope(envelope, point_context_rows)
     prompt = PRESELECTION_RELATION_CONFIRMATION_PROMPT.format(
         policy_guidance=_policy_guidance(manifest["spec"], candidates),
         envelope=_compact(envelope),
@@ -3036,7 +3327,7 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
         )
         raise EvidenceConsumerError(boundary, "relation check set/order mismatch")
 
-    candidates = _candidate_rows(sources, manifest["spec"])
+    candidates = _candidate_rows_for_manifest(sources, manifest)
     labeled = _validate_relation_response(
         candidates,
         first_pass_response,
@@ -3142,7 +3433,7 @@ def _assemble_batched_relation_response(
         raise EvidenceConsumerError(
             "manifest_verification", "selection manifest binding changed"
         )
-    candidates = _candidate_rows(sources, selection_manifest["spec"])
+    candidates = _candidate_rows_for_manifest(sources, selection_manifest)
     if (
         len(candidates) != batch_manifest.get("candidate_count")
         or _canonical_json_sha256(candidates)
@@ -3271,28 +3562,23 @@ def prepare_batched_preselection_relation_confirmations(
     )
     prompts_and_schemas: list[tuple[str, dict[str, Any]]] = []
     batches = []
+    _, _, point_context_rows = _project_parent_context(candidates)
     for batch_index, start in enumerate(
         range(0, len(presentation), batch_size), start=1
     ):
         subset = presentation[start : start + batch_size]
         confirmation_batch_id = f"confirmation_batch_{batch_index:04d}"
+        context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
+            subset
+        )
         envelope = {
             "batch_id": confirmation_batch_id,
             "bounded_point": selection_manifest["spec"]["bounded_claim"],
-            "candidate_columns": list(RELATION_CONFIRMATION_COLUMNS),
-            "candidate_rows": [
-                [
-                    row_id,
-                    row["normalized_meaning"],
-                    row.get("conditions", []),
-                    row.get("subject_product_ids", []),
-                    row.get("product_version_ids", []),
-                    row["source_role"],
-                    _compact_companion_meanings(row),
-                ]
-                for row_id, row in subset
-            ],
+            "candidate_columns": list(columns),
+            "candidate_rows": rows,
         }
+        _attach_parent_context_envelope(envelope, context_aware, context_rows)
+        _attach_point_parent_context_envelope(envelope, point_context_rows)
         prompt = PRESELECTION_CONFIRMATION_BATCH_PROMPT.format(
             policy_guidance=_policy_guidance(
                 selection_manifest["spec"], candidates
@@ -3505,7 +3791,9 @@ def prepare_selected_relation_confirmation(
         selected, quote_manifest["selected_rows_sha256"]
     )
     envelope = _relation_confirmation_prompt_envelope(
-        quote_manifest["bounded_claim"], presentation
+        quote_manifest["bounded_claim"],
+        presentation,
+        point_context_rows=quote_manifest.get("point_parent_context_rows", []),
     )
     prompt = RELATION_CONFIRMATION_PROMPT.format(envelope=_compact(envelope))
     schema = _relation_confirmation_schema()
