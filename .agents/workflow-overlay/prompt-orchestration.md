@@ -405,7 +405,10 @@ Render one compact pointer-first prompt containing:
    `docs/prompts/templates/shared/forseti_preflight_defaults_v0.md` are
    restated inline, faithful to that owning artifact, so the courier body is
    self-contained for its external receiver;
-5. named validation expectations with real failure and not-run reporting;
+5. named validation expectations with real failure and not-run reporting,
+   selected under `.agents/workflow-overlay/validation-gates.md` — that file
+   owns which checks a commission may require locally, and a commission does
+   not name a broad local suite it already covers by required CI;
 6. the controller return: findings, bounded diff, neutral citations, validation
    evidence, verdict, and residual risk; and
 7. Chief Architect adjudication before any returned change is kept, plus
