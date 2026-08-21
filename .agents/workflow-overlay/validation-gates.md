@@ -11,7 +11,8 @@ authority_boundary: retrieval_only
 ```
 
 **Routine read shape** (owned by `.agents/workflow-overlay/source-loading.md`,
-Targeted Read Protocol): closeout checks read "Current Gates"; prompt
+Targeted Read Protocol): closeout checks read the preamble below (evidence
+economy and failure-visibility buckets) plus "Current Gates"; prompt
 authoring reads "Prompt Orchestration Gates"; product-proof work reads
 "Product Proof Gates"; enforcement-placement decisions read "Enforcement
 Placement"; a full-file read is for editing validation doctrine.
@@ -27,7 +28,10 @@ unavailable CI environment makes broader local diagnosis necessary. A focused
 failure blocks broader runs until it is diagnosed. Relevant implementation,
 test, dependency, checker, PR-head, or lake/index/writer changes invalidate only
 the evidence they can affect; mutable external and durable lifecycle claims
-still require fresh readback.
+still require fresh readback. A gate's evidence is its exit code plus its
+bucketed findings. Do not re-run a passing gate to improve the readability,
+formatting, or completeness of its output; capture the run once and read the
+captured output. Re-run only when changed bytes could falsify the claim.
 
 Validation reports must preserve failure visibility by bucket:
 
