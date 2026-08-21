@@ -360,6 +360,9 @@ def test_customer_pull_frontier_is_retailer_first_not_retailer_only_and_accounts
         for row in frontier[key]
     }
     assert accounted == set(packet["selection"]["proposition_ids"])
+    assert frontier["subject_filtered_proposition_ids"] == []
+    assert frontier["accounting"]["input_proposition_count"] == 3
+    assert frontier["accounting"]["subject_filtered_count"] == 0
     assert frontier["customer_pull_policy"]["retailer_is_admission_gate"] is False
     assert frontier["customer_pull_policy"]["cross_platform_score"] is None
     assert build_customer_pull_point_frontier(
@@ -368,6 +371,46 @@ def test_customer_pull_frontier_is_retailer_first_not_retailer_only_and_accounts
         business_question=frontier["business_question"],
         subject_product_ids=["summer-fridays-lip-butter-balm"],
     ) == frontier
+
+
+def test_customer_pull_frontier_exposes_subject_filtered_propositions() -> None:
+    packet = _proposition_packet_for_frontier()
+    other = copy.deepcopy(packet["propositions"][0])
+    other["proposition_id"] = "point-other-product"
+    other["subject_product_ids"] = ["another-product"]
+    packet["propositions"].append(other)
+    packet["selection"]["proposition_ids"].append(other["proposition_id"])
+    packet["selection_coverage"]["selected_proposition_count"] += 1
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="subject-scoped-frontier",
+        business_question="Which points merit commercial investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    verify_customer_pull_point_frontier(frontier, packet)
+    assert frontier["subject_filtered_proposition_ids"] == ["point-other-product"]
+    assert frontier["accounting"] == {
+        "input_proposition_count": 4,
+        "considered_proposition_count": 3,
+        "subject_filtered_count": 1,
+        "retailer_first_count": 1,
+        "community_discovery_count": 1,
+        "nonpromoted_count": 1,
+    }
+
+    hidden = copy.deepcopy(frontier)
+    hidden["subject_filtered_proposition_ids"] = []
+    hidden["accounting"]["subject_filtered_count"] = 0
+    hidden["frontier_sha256"] = _canonical_hash(
+        {key: value for key, value in hidden.items() if key != "frontier_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        verify_customer_pull_point_frontier(hidden, packet)
+    assert caught.value.boundary == "customer_pull_frontier_accounting"
 
 
 def test_customer_pull_frontier_binding_and_materialized_point_spec_fail_closed() -> None:
@@ -450,6 +493,8 @@ def test_customer_pull_frontier_runner_materializes_a_cold_point_spec(
     assert "VALUE-BOX POLICY" not in (tmp_path / "point-prompt.txt").read_text(
         encoding="utf-8"
     )
+    point_prompt = (tmp_path / "point-prompt.txt").read_text(encoding="utf-8")
+    assert "Support directly supports the bounded claim." in point_prompt
     assert _parser().parse_args(
         [
             "prepare-preselection-relation-confirmation",
@@ -571,6 +616,94 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
             missing,
         )
     assert caught.value.boundary == "missing_relation_confirmation"
+
+
+def test_preselection_confirmation_reapplies_first_pass_row_guards(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 20)
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    original_by_id = {
+        row["candidate_id"]: row
+        for row in _validate_relation_response(candidates, first_pass)
+    }
+    reason_by_relation = {
+        "support": "matching_customer_experience",
+        "counter": "differing_customer_experience",
+        "adjacent": "related_customer_context",
+        "exclude": "wrong_scope_or_non_evidence",
+    }
+
+    def _confirmation(overrides: dict[str, tuple[str, str]]) -> dict:
+        checks = []
+        for row_id, candidate_id in zip(
+            confirmation_manifest["confirmation_row_ids"],
+            confirmation_manifest["confirmation_candidate_ids"],
+            strict=True,
+        ):
+            relation = original_by_id[candidate_id]["relation"]
+            relation, reason_code = overrides.get(
+                candidate_id, (relation, reason_by_relation[relation])
+            )
+            checks.append(
+                {
+                    "confirmation_row_id": row_id,
+                    "relation": relation,
+                    "reason_code": reason_code,
+                }
+            )
+        return {
+            "point_scope": "single_point",
+            "point_scope_reason": "One direction-bearing hydration point.",
+            "relation_checks": checks,
+        }
+
+    creator_id = next(
+        row["candidate_id"]
+        for row in candidates
+        if row["layer"] == "influence_context"
+        and row["candidate_id"] in confirmation_manifest["confirmation_candidate_ids"]
+    )
+    truth_id = next(
+        row["candidate_id"]
+        for row in candidates
+        if row["layer"] == "truth_support"
+        and row["candidate_id"] in confirmation_manifest["confirmation_candidate_ids"]
+    )
+
+    for overrides, boundary in (
+        (
+            {creator_id: ("support", "matching_customer_experience")},
+            "creator_customer_laundering",
+        ),
+        ({truth_id: ("adjacent", "adjacent_to_the_claim")}, "reason_code_relation_leak"),
+        (
+            {truth_id: ("adjacent", "a" + "_bcde" * 30)},
+            "relation_confirmation_shape",
+        ),
+    ):
+        with pytest.raises(EvidenceConsumerError) as caught:
+            finalize_preselection_relation_confirmation_prepare_quotes(
+                selection_manifest,
+                sources,
+                first_pass,
+                confirmation_manifest,
+                _confirmation(overrides),
+            )
+        assert caught.value.boundary == boundary
+
+    laundered_first_pass = copy.deepcopy(first_pass)
+    for row in laundered_first_pass["results"]:
+        if row["candidate_id"] == creator_id:
+            row["relation"] = "support"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_relation_response(candidates, laundered_first_pass)
+    assert caught.value.boundary == "creator_customer_laundering"
 
 
 def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_source(
@@ -773,6 +906,7 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     )
     assert any(group["group_key"].endswith("::amazon") for group in artifact["source_groups"])
     assert "every candidate_id exactly once" in prompt
+    assert "Support directly supports the bounded claim." not in prompt
     assert "contiguous exact substring" in quote_prompt
     assert "Do not start the quote with an unresolved pronoun" in quote_prompt
     assert "Product identity may rely on the evidence row" in quote_prompt

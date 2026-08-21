@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v53
+version: v54
 effective_date: 2026-08-21
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v53
+# Semantic Evidence Integration Contract v54
 
 ## Purpose
 
@@ -951,8 +951,11 @@ the authority for which relation prompts and responses actually produced the
 selected quote workload. Removing or changing that binding changes the manifest
 hash and fails quote finalization.
 
-Every historical v6 point pack also requires a separate selected-row relation
-confirmation before quote finalization. The confirmation prompt contains only
+Every v6 point pack also requires a separate selected-row relation confirmation
+before quote finalization. V7 is the route for a frontier-bound point pack; the
+non-frontier `finalize-evidence-selection-relations` and
+`finalize-evidence-selection-batches` routes still stamp v6, so this obligation
+is live for those packs and is not reproduction-only. The confirmation prompt contains only
 the bounded point plus each selected row's source-owned meaning, conditions,
 product/version scope, source role, and same-evidence companion meanings. It
 does not expose the first-pass relation, reason code, display label, engagement,
@@ -1041,7 +1044,10 @@ selected-row confirmation contract; it is not silently upgraded or restamped.
 Contract v53 also adds
 `phase_a_customer_pull_point_frontier_v1`, a no-provider navigation view over a
 complete non-truncated proposition-mode v3 packet. It accounts every selected
-product proposition exactly once. Retailer-supported customer points enter a
+proposition matching the requested product subject exactly once and records the
+identities and count of propositions excluded by that subject filter. The input,
+matched, and filtered counts must reconcile, so subject mismatch cannot masquerade
+as complete packet accounting. Retailer-supported customer points enter a
 first-look queue because retailer reviews are closest to completed purchase;
 community- or qualified-audience-only customer points remain in a separate
 discovery queue and record retailer check-back as open. Retailer is not an
@@ -1624,6 +1630,13 @@ new frontier.
 
 ## Changelog
 
+- `v54` / 2026-08-21 — closed the delegated review false green by requiring
+  preselection confirmation labels to pass the same creator-layer and reason-code
+  guards as the first pass. Made subject-filter exclusions and counts explicit in
+  the customer-pull frontier, scoped the new bounded-point relation definitions so
+  legacy v6 from-spec prompt hashes remain reproducible, and corrected the live
+  v6 versus frontier-v7 route wording. Packet v3 and the thirteen-origin cap are
+  unchanged.
 - `v53` / 2026-08-21 — added the hash-bound retailer-first customer-pull point
   frontier over a complete proposition-mode v3 packet. Retailer is the
   first-look venue, not an admission gate; community-only customer points stay

@@ -176,9 +176,12 @@ LITERAL_RELATION_RESPONSE_INSTRUCTION = "Return every candidate_id exactly once 
 POSITIONAL_RELATION_RESPONSE_INSTRUCTION = "Return one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN. Do not return candidate IDs, row numbers, or reason codes."
 BATCHED_RELATION_RESPONSE_INSTRUCTION = "Return the batch_id shown in the envelope exactly as supplied, and one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN within this batch only. Do not return candidate IDs, row numbers, or reason codes."
 
+BOUNDED_POINT_RELATION_DEFINITIONS = " Support directly supports the bounded claim. Counter directly opposes or materially qualifies it. Adjacent is relevant context that directly establishes neither direction. Exclude is wrong-scope or non-evidence."
+
+
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
 
-{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction} Support directly supports the bounded claim. Counter directly opposes or materially qualifies it. Adjacent is relevant context that directly establishes neither direction. Exclude is wrong-scope or non-evidence. Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
+{response_instruction} Label each row's relation to the bounded claim as support, counter, adjacent, or exclude.{reason_instruction}{relation_definitions} Relation is about meaning, never engagement size. Read same_evidence_companion_meanings as context that can qualify or reverse the candidate's implication, not as separately admitted candidates. Do not isolate price discomfort from same-source purchase or repurchase behavior: for a value claim, willingness to buy despite the price is countervailing behavior rather than evidence of poor value. Preserve product, variant, timing, comparison, uncertainty, and source-role boundaries. Keep a source's report of another person's experience adjacent unless the directly quoted speaker's own account is the evidence unit. A creator-authored item is influence context and cannot corroborate customer experience. Do not estimate prevalence, causation, commercial pull, or a number of similar customers.
 
 {policy_guidance}
 
@@ -325,6 +328,7 @@ def build_customer_pull_point_frontier(
     community_queue: list[dict[str, Any]] = []
     nonpromoted: list[dict[str, str]] = []
     considered_ids: list[str] = []
+    subject_filtered_ids: list[str] = []
 
     protected_lookup = {
         proposition_id: lane
@@ -342,6 +346,7 @@ def build_customer_pull_point_frontier(
         proposition = by_id[proposition_id]
         subjects = set(proposition.get("subject_product_ids") or [])
         if not (subjects & wanted_subjects):
+            subject_filtered_ids.append(proposition_id)
             continue
         considered_ids.append(proposition_id)
         relations = _relation_rows(packet, proposition_id)
@@ -474,11 +479,14 @@ def build_customer_pull_point_frontier(
             "cross_platform_score": None,
         },
         "considered_proposition_ids": considered_ids,
+        "subject_filtered_proposition_ids": subject_filtered_ids,
         "retailer_first_queue": retailer_queue,
         "community_discovery_queue": community_queue,
         "nonpromoted_points": nonpromoted,
         "accounting": {
+            "input_proposition_count": len(selected_ids),
             "considered_proposition_count": len(considered_ids),
+            "subject_filtered_count": len(subject_filtered_ids),
             "retailer_first_count": len(retailer_queue),
             "community_discovery_count": len(community_queue),
             "nonpromoted_count": len(nonpromoted),
@@ -511,9 +519,20 @@ def verify_customer_pull_point_frontier(
         for row in frontier.get(key, [])
         if isinstance(row, Mapping)
     ]
+    filtered = frontier.get("subject_filtered_proposition_ids") or []
+    selected = packet.get("selection", {}).get("proposition_ids") or []
+    accounting = frontier.get("accounting") or {}
     if (
         len(accounted) != len(set(accounted))
         or set(accounted) != set(frontier.get("considered_proposition_ids") or [])
+        or not isinstance(filtered, list)
+        or not all(isinstance(value, str) for value in filtered)
+        or len(filtered) != len(set(filtered))
+        or set(accounted) & set(filtered)
+        or set(accounted) | set(filtered) != set(selected)
+        or accounting.get("input_proposition_count") != len(selected)
+        or accounting.get("considered_proposition_count") != len(accounted)
+        or accounting.get("subject_filtered_count") != len(filtered)
     ):
         raise EvidenceConsumerError(
             "customer_pull_frontier_accounting", "frontier point accounting is incomplete"
@@ -1408,6 +1427,11 @@ def prepare_evidence_selection(
             if response_mode == "positional"
             else " Supply one short lowercase snake_case reason_code that names the evidence meaning without repeating those internal relation words."
         ),
+        relation_definitions=(
+            BOUNDED_POINT_RELATION_DEFINITIONS
+            if spec.get("relation_policy") == "bounded_point"
+            else ""
+        ),
         policy_guidance=_policy_guidance(spec, candidates),
         envelope=_compact(envelope),
     )
@@ -1484,6 +1508,11 @@ def prepare_evidence_selection_batches(
         prompt = RELATION_PROMPT.format(
             response_instruction=BATCHED_RELATION_RESPONSE_INSTRUCTION,
             reason_instruction="",
+            relation_definitions=(
+                BOUNDED_POINT_RELATION_DEFINITIONS
+                if spec.get("relation_policy") == "bounded_point"
+                else ""
+            ),
             policy_guidance=policy_guidance,
             envelope=_compact(envelope),
         )
@@ -2684,15 +2713,30 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
     ):
         relation = check["relation"]
         reason_code = check["reason_code"]
-        if relation not in RELATIONS or not isinstance(reason_code, str) or not REASON_CODE_RE.fullmatch(reason_code):
+        if (
+            relation not in RELATIONS
+            or not isinstance(reason_code, str)
+            or len(reason_code) > 80
+            or not REASON_CODE_RE.fullmatch(reason_code)
+        ):
             raise EvidenceConsumerError(
                 "relation_confirmation_shape", "invalid relation confirmation"
+            )
+        if INTERNAL_RELATION_LABEL_RE.search(reason_code.replace("_", " ")):
+            raise EvidenceConsumerError(
+                "reason_code_relation_leak",
+                "reason code must name the evidence meaning, not its internal relation",
             )
         if expected_manifest["value_policy"] and VALUE_REASON_RELATIONS.get(reason_code) != relation:
             raise EvidenceConsumerError(
                 "relation_reason_mismatch", "confirmed value reason does not match relation"
             )
         row = by_id[candidate_id]
+        if row["layer"] == "influence_context" and relation in {"support", "counter"}:
+            raise EvidenceConsumerError(
+                "creator_customer_laundering",
+                "creator-authored evidence cannot corroborate customer truth",
+            )
         changed += int(
             row["relation"] != relation or row["reason_code"] != reason_code
         )

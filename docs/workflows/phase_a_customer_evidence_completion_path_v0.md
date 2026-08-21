@@ -36,8 +36,8 @@ B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 For the completed Summer Fridays Phase A packet, the business question is:
 **Which customer-valued strengths and objections deserve commercial
 investigation?** The no-provider
-`build-customer-pull-point-frontier` command accounts every product proposition
-in one of three places:
+`build-customer-pull-point-frontier` command accounts every proposition matching
+the requested product subject in one of three places:
 
 - `retailer_first_queue` is read first because a retailer review is closest to
   a completed purchase;
@@ -45,6 +45,11 @@ in one of three places:
   qualified audience evidence visible and records retailer check-back as still
   open; and
 - `nonpromoted_points` records why a proposition did not earn investigation.
+
+The frontier also records every proposition excluded by the requested product
+subject and reports the input, matched, and filtered counts. A stale or mistyped
+subject therefore cannot make a smaller frontier look like complete packet
+accounting.
 
 Retailer is a first-look venue, never an admission gate. A community-only
 purchase, repurchase, recommendation, recurring experience, or materially
@@ -668,7 +673,8 @@ changed bytes fail.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 
-New point packs use `phase_a_evidence_quote_manifest_v7` and record the
+New frontier-bound point packs use `phase_a_evidence_quote_manifest_v7`; the
+non-frontier relation and batched routes still produce `v6`. Both record the
 ordered `provider_selected_ids` subset. The finalizer recomputes that subset
 from the bound bodies, rejects drift, deterministically fills short or missing
 bodies, and merges provider-returned long-body quotes back into original
