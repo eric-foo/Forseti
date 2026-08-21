@@ -17,9 +17,13 @@ from judgment.phase_a_evidence_selection import (
     _display_label,
     _numeric_engagement,
     _policy_guidance,
+    _publication_time_value,
+    _publication_year,
+    _relation_prompt_envelope,
     _relation_schema,
     _select_groups,
     _source_venue,
+    _temporal_display_priority,
     _truth_row_display_eligible,
     _validate_relation_response,
     build_customer_pull_point_frontier,
@@ -683,7 +687,6 @@ def test_recent_year_policy_changes_display_only_and_keeps_an_older_anchor(
     spec, sources = _write_source(tmp_path, 40)
     candidates = _candidate_rows(sources, spec)
     labeled = []
-    before = {}
     years = (2023, 2024, 2025, 2026)
     for index, candidate in enumerate(candidates):
         row = dict(candidate)
@@ -691,7 +694,6 @@ def test_recent_year_policy_changes_display_only_and_keeps_an_older_anchor(
         row["engagement_material_positive"] = True
         row["relation"] = "counter" if index % 5 == 0 else "support"
         row["reason_code"] = "bounded_meaning"
-        before[row["candidate_id"]] = row["relation"]
         labeled.append(row)
 
     selected = _select_groups(
@@ -709,7 +711,137 @@ def test_recent_year_policy_changes_display_only_and_keeps_an_older_anchor(
     assert {2025, 2026} <= displayed_years
     assert displayed_years & {2023, 2024}
     assert len({row["origin_group_id"] for row in selected}) == 13
-    assert {row["candidate_id"]: row["relation"] for row in labeled} == before
+
+
+
+def test_relation_prompt_and_corroboration_ignore_date_and_engagement(
+    tmp_path: Path,
+) -> None:
+    """Presentation metadata cannot enter relation or origin corroboration."""
+    spec, sources = _write_source(tmp_path, 10)
+    original = []
+    for index, candidate in enumerate(_candidate_rows(sources, spec)):
+        original.append(
+            dict(
+                candidate,
+                publication_time=f"202{3 + index % 4}-06-01T00:00:00Z",
+                engagement_raw_value=index,
+                engagement_material_positive=True,
+                relation="counter" if index % 4 == 0 else "support",
+                reason_code="bounded_meaning",
+            )
+        )
+    mutated = [
+        dict(
+            row,
+            publication_time=f"202{6 - index % 4}-07-02T00:00:00Z",
+            engagement_raw_value=1000 - index,
+            engagement_observed_at="2030-01-01T00:00:00Z",
+        )
+        for index, row in enumerate(original)
+    ]
+
+    # These fields are absent from the provider-visible relation envelope, so
+    # the model cannot award truth or direction from age or engagement.
+    assert _relation_prompt_envelope(spec, original) == _relation_prompt_envelope(
+        spec, mutated
+    )
+
+    original_selected = _select_groups(
+        original,
+        "truth_support",
+        13,
+        temporal_policy="recent_year_coverage_v1",
+    )
+    mutated_selected = _select_groups(
+        mutated,
+        "truth_support",
+        13,
+        temporal_policy="recent_year_coverage_v1",
+    )
+
+    def _corroboration(rows: list[dict]) -> dict[str, tuple]:
+        return {
+            row["origin_group_id"]: (
+                row["origin_candidate_count"],
+                tuple(row["origin_relations"]),
+                tuple(row["origin_candidate_ids"]),
+            )
+            for row in rows
+        }
+
+    assert _corroboration(original_selected) == _corroboration(mutated_selected)
+
+
+def test_year_derivation_matches_admitted_publication_time_shapes() -> None:
+    """A publication time the consumer admits must not read back as undated."""
+    basic_format = "20260601T000000+00:00"
+    assert _publication_time_value(basic_format) == basic_format
+    assert _publication_year({"publication_time": basic_format}) == 2026
+    assert _publication_year({"publication_time": "2026-06-01T00:00:00Z"}) == 2026
+    assert _publication_year({"publication_time": "2026-05-13"}) == 2026
+    assert _publication_year({"publication_time": None}) is None
+    assert _publication_year({"publication_time": "not-a-date"}) is None
+
+
+def test_temporal_display_order_never_reads_unavailable_engagement_as_zero() -> None:
+    """Missing engagement is not zero engagement, even for display order."""
+
+    def _row(selected_id: str, raw_value: object, kind: str = "score_state") -> dict:
+        return {
+            "selected_id": selected_id,
+            "publication_time": "2026-06-01T00:00:00Z",
+            "engagement_kind": kind,
+            "engagement_raw_value": raw_value,
+        }
+
+    downvoted = _row("row-negative", -5)
+    unavailable = _row("row-unavailable", None, "engagement_unavailable")
+    zero = _row("row-zero", 0)
+    ordered = sorted(
+        [unavailable, downvoted, zero], key=_temporal_display_priority
+    )
+
+    assert [row["selected_id"] for row in ordered] == [
+        "row-zero",
+        "row-negative",
+        "row-unavailable",
+    ]
+
+
+def test_basic_format_dated_rows_reach_recent_year_coverage(tmp_path: Path) -> None:
+    """Recency must see every admitted date shape, not one text spelling."""
+    spec, sources = _write_source(tmp_path, 40)
+    candidates = _candidate_rows(sources, spec)
+    years = (2023, 2024, 2025, 2026)
+    labeled = []
+    for index, candidate in enumerate(candidates):
+        row = dict(candidate)
+        row["publication_time"] = f"{years[index % 4]}0601T000000+00:00"
+        row["engagement_material_positive"] = True
+        row["relation"] = "counter" if index % 5 == 0 else "support"
+        row["reason_code"] = "bounded_meaning"
+        labeled.append(row)
+
+    selected = _select_groups(
+        labeled,
+        "truth_support",
+        13,
+        temporal_policy="recent_year_coverage_v1",
+    )
+
+    assert {2025, 2026} <= {_publication_year(row) for row in selected}
+
+
+def test_temporal_policy_rejects_value_first_selection(tmp_path: Path) -> None:
+    spec, sources = _value_axis_source(tmp_path)
+    spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+
+    assert caught.value.boundary == "selection_spec"
+    assert "only for non-value" in str(caught.value)
 
 
 def test_customer_pull_frontier_runner_materializes_a_cold_point_spec(

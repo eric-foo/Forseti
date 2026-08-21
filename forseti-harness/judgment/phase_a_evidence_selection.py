@@ -1488,7 +1488,7 @@ def prepare_evidence_selection(
     if not isinstance(spec.get("bounded_claim"), str) or not spec["bounded_claim"].strip():
         raise EvidenceConsumerError("selection_spec", "bounded_claim missing")
     _truth_group_cap(spec)
-    _temporal_presentation_policy(spec)
+    temporal_policy = _temporal_presentation_policy(spec)
     response_mode = _relation_response_mode(spec)
     for source in sources:
         _verify_packet(source["packet"])
@@ -1500,6 +1500,11 @@ def prepare_evidence_selection(
     _validate_customer_pull_frontier_spec_binding(spec, sources)
     candidates = _candidate_rows(sources, spec)
     value_policy = _uses_value_policy(spec, candidates)
+    if value_policy and temporal_policy is not None:
+        raise EvidenceConsumerError(
+            "selection_spec",
+            "temporal presentation is supported only for non-value selections",
+        )
     if value_policy and response_mode == "positional":
         raise EvidenceConsumerError(
             "selection_spec",
@@ -1723,10 +1728,40 @@ def _bucket_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
 
 
 def _publication_year(row: Mapping[str, Any]) -> int | None:
+    """Derive the calendar year from an already-admitted publication time.
+
+    ``_publication_time_value`` admits every ISO-8601 shape ``fromisoformat``
+    parses, including basic format such as ``20260601T000000+00:00``.  Reading
+    the year back through a narrower text pattern would silently reclassify a
+    dated row as undated, so reuse the parse that admitted the value.
+    """
     value = row.get("publication_time")
-    if not isinstance(value, str) or not re.match(r"^[0-9]{4}-", value):
+    if not isinstance(value, str):
         return None
-    return int(value[:4])
+    try:
+        return datetime.fromisoformat(value.strip().replace("Z", "+00:00")).year
+    except ValueError:
+        return None
+
+
+def _temporal_display_priority(row: Mapping[str, Any]) -> tuple[Any, ...]:
+    """Order one already-comparable source group under the recency preference.
+
+    Engagement is compared only inside one calendar year and one native metric
+    kind, never across platforms.  An unavailable value orders last on its own
+    rank because missing engagement is not zero engagement: a reported negative
+    source-native score must not sort below a row that reported none.
+    """
+    numeric = _numeric_engagement(
+        row["engagement_raw_value"], row["engagement_kind"]
+    )
+    return (
+        -(_publication_year(row) or 0),
+        0 if numeric is not None else 1,
+        row["engagement_kind"],
+        -numeric if numeric is not None else 0.0,
+        row["selected_id"],
+    )
 
 
 def _display_members(
@@ -3863,19 +3898,7 @@ def finalize_quotes(
                 "manifest_verification", "temporal presentation policy changed"
             )
         for rows in grouped.values():
-            rows.sort(
-                key=lambda row: (
-                    -(_publication_year(row) or 0),
-                    row["engagement_kind"],
-                    -(
-                        _numeric_engagement(
-                            row["engagement_raw_value"], row["engagement_kind"]
-                        )
-                        or 0
-                    ),
-                    row["selected_id"],
-                )
-            )
+            rows.sort(key=_temporal_display_priority)
     artifact = {
         "schema_version": (
             "phase_a_evidence_selection_artifact_v2"

@@ -1086,6 +1086,10 @@ presentation preference only: publication time never changes relation,
 independence, materiality, or truth weight. Artifacts expose a neutral calendar-
 year timeline and never label age strong, weak, fresh, or stale. Native
 engagement still orders only within one comparable source bucket.
+The timeline is an ordering index, not a freestanding evidence layer: consumers
+must dereference each `selected_id` through `source_groups` and preserve its
+`layer`; an `influence_context` row never becomes customer chronology merely
+because it shares a calendar year with truth-support rows.
 
 Within the retailer-first and community-discovery queues, more independent
 supporting origins lead. When origin counts tie, cross-role independent
@@ -1671,6 +1675,13 @@ new frontier.
 
 ## Changelog
 
+- `v57` / 2026-08-22 — closed the delegated-review recency edges: every
+  admitted ISO publication-time shape now resolves to a calendar year;
+  unavailable engagement cannot sort ahead of an observed native metric;
+  value-first specs reject the non-value recency-selection policy; and the
+  timeline is explicitly an ordering index whose selected IDs retain their
+  truth-versus-influence layer through `source_groups`. No packet, stored source
+  fact, relation authority, or historical artifact was rewritten.
 - `v56` / 2026-08-21 — expanded non-value frontier points from literal-only
   proposition refs to the complete same-product axis candidate union while
   retaining exact bounded-point judgment and the thirteen-origin display cap.

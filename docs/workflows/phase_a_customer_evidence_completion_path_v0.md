@@ -79,7 +79,8 @@ union of every semantic row for the same product and axis plus the proposition's
 literal refs. Every admitted row is newly judged against the exact bounded
 point; sharing an axis grants no support or counter relation. Value points keep
 literal-ref admission because their price/value behavior policy is not the
-generic non-value route. The full packet and every frontier disposition remain
+generic non-value route, and a hand-built value-first spec cannot claim the
+non-value recent-year selection policy. The full packet and every frontier disposition remain
 available; the displayed pack never implies prevalence.
 Frontier specs use the exact bounded point as their direction: evidence that
 the balm is expensive supports that objection, rather than being reversed by
@@ -139,7 +140,9 @@ or evidentiary weight. The final artifact groups selected IDs by literal
 calendar year, with unavailable dates separate, and uses no strong/weak or
 fresh/stale age judgment. Within a fixed venue/role/native-metric bucket,
 source-native engagement still orders candidate display; it is never compared
-across platforms.
+across platforms, and an unavailable metric never sorts as observed zero. The
+timeline is only a calendar ordering index: consumers dereference each selected
+ID through `source_groups` and preserve its truth-support or influence layer.
 
 ## Operating path
 
