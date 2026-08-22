@@ -389,19 +389,95 @@ week over week.
 
 ## After admission
 
-Read the post body and all comments already rendered by the bounded surface
-capture for an admitted thread; do not stop at the top comment. Do not click
-comment-expansion controls on an obvious `no`. For a likely-material thread,
-perform one explicit bounded expansion pass targeting 90% of its declared
-comments with an 85-rendered-comment absolute cap. If a high-value thread is
-still decision-unresolved, one escalation may target 95% with a 103-comment
-cap. A 149-comment pass is exceptional and requires a specific unresolved
-branch or unusually valuable thread; it is not the default. Every pass also
-stops at two consecutive no-growth rounds, no remaining control, or eight
-rounds. If the read is still unresolved, perform one targeted revisit for the
-missing branch or post detail rather than expanding the whole tree. Separate
-independent voices from the original poster, bots, author replies, and nested
-repetition. Comment points order presentation; they do not establish truth.
+### Value-bounded evidence read: `reddit_weekly_value_bounded_read_v1`
+
+For every newly read admitted thread, read the post and allocate comment
+attention in this order:
+
+1. Form a high-engagement cohort whose size is 10% of captured comments rounded
+   up, with a minimum of 10 and maximum of 50, never exceeding the captured
+   count. Rank comments with parseable scores by score descending, retaining
+   stable source order for ties; comments with missing scores follow all scored
+   comments in stable source order. Read the post and this cohort first.
+2. Record provisional evidence points as exactly one of `individual`,
+   `recurrence`, `map_or_shortlist`, `factual_or_safety`, or `dispute`.
+3. Read the remaining comments, excluding the cohort, in stable-source-order
+   batches of 25. A batch adds decision-relevant information only when it adds a
+   new condition, mechanism, consequence, behavior, materially better evidence,
+   or counter. Identical support alone is not novelty.
+4. For `recurrence`, count distinct direct reporters and use `lead` at one,
+   `emerging` at two, `corroborated` at three or four, and `sufficient` at five.
+   Once five distinct direct reporters support the same claim, further identical
+   support does not enter the cited support set and does not reset the novelty
+   counter. Continue reading for new conditions, mechanisms, consequences,
+   behaviors, materially better evidence, and counters.
+5. Stop the broad read after two consecutive 25-comment batches add no
+   decision-relevant information. Continue beyond that stop only for a named
+   unresolved material gap, and target only the branch or detail that could
+   resolve it. Corpus exhaustion is also a valid stop.
+
+Engagement orders attention only. Neither engagement nor the reporter/status
+thresholds establish truth, prevalence, safety, causal force, or decision
+materiality. A direct reporter is a distinct visible comment author whose cited
+comment directly reports their own experience. The OP, deleted, removed, or
+unavailable authors, bots, copied accounts, and hearsay are excluded. The
+finalizer can enforce only cited-comment identity, visible author, non-OP,
+present posture, unique-author, count/status, and five-support-cap structure for
+recurrence. When the post author is not visible, non-OP is unverifiable: a
+recurrence claim fails loudly, and a non-recurrence claim derives zero
+independent reporters rather than crediting supporters it cannot separate from
+the OP. Semantic directness, bot identity, copying, amplification, and the
+evidentiary meaning remain Judgment responsibilities.
+
+Capture depth remains separately bounded. Do not click comment-expansion
+controls on an obvious `no`. Expansion requires a named unresolved material gap;
+likely materiality alone is insufficient. For that named gap, perform at most
+one bounded expansion pass targeting 90% of declared comments with an
+85-rendered-comment absolute cap. If the named high-value gap remains unresolved,
+one escalation may target 95% with a 103-comment cap. A 149-comment pass is
+exceptional and requires a specific unresolved branch or unusually valuable
+named gap; it is not the default. Every pass also stops at two consecutive
+no-growth rounds, no remaining control, or eight rounds. A targeted revisit for
+a named material gap does not relax those capture caps or the circuit breaker.
+
+The deep-dive manifest selects this policy with
+`read_policy_id: reddit_weekly_value_bounded_read_v1`. Under that manifest
+policy every extract must carry this receipt. An absent manifest
+`read_policy_id` selects legacy behavior; an unknown present manifest policy, a
+missing required receipt, or a receipt without the matching manifest policy
+fails loudly:
+
+```yaml
+evidence_read_receipt:
+  schema: forseti.reddit.weekly_evidence_read_receipt.v1
+  policy_id: reddit_weekly_value_bounded_read_v1
+  comments_reviewed: <nonnegative integer no greater than captured comments; equal when corpus_exhausted>
+  stop_reason: corpus_exhausted | decision_relevant_novelty_plateau
+  consecutive_no_value_batches: <nonnegative integer; exactly 2 for plateau>
+  claims:
+    - claim_id: <non-empty run-local identifier>
+      statement: <non-empty provisional evidence point>
+      evidence_kind: individual | recurrence | map_or_shortlist | factual_or_safety | dispute
+      corroboration_status: lead | emerging | corroborated | sufficient | not_applicable
+      support_comment_ids: [<at most five captured comment IDs>]
+      counter_comment_ids: [<captured comment IDs>]
+```
+
+A new-policy `yes` requires at least one claim; a `no` may carry an empty claims
+array. Non-recurrence claims use `not_applicable`. All cited IDs must resolve in
+the content record, and the number of distinct cited IDs cannot exceed
+`comments_reviewed`. For recurrence, support IDs must resolve to present
+comments from unique visible non-OP authors and the support count must match the
+status.
+`read_policy_id` is manifest-owned: an extract that carries its own top-level
+`read_policy_id` is rejected under either manifest policy, so a legacy run
+cannot emit a catalog row advertising this policy without a validated receipt.
+The finalizer rejects a supplied receipt with missing or mismatched policy
+identity and rejects competing top-level `independent_reporters`. It derives
+each claim's deterministic `independent_reporters: {count, handles}` from the
+resolved comment author state, emits the validated receipt and manifest policy
+in each catalog row, and echoes the policy in `run.json`. Legacy outputs omit
+the policy field.
 
 Extract product mentions only in their stated context: performance, failure,
 preference, purchase, switching, price, access, substitution, or neutral
@@ -442,7 +518,11 @@ card going client-facing is re-read against its cited packets first and
 gains at least one non-Reddit corroboration. Extraction workers emit, per
 thread, the fields the cards consume: core problem, named brands in stated
 context, `independent_reporters` (count + handles), `where_customers_go`,
-verbatim quotes, corroboration basis, and commercial signal. Reversal
+verbatim quotes, corroboration basis, and commercial signal. Under
+`reddit_weekly_value_bounded_read_v1` the `independent_reporters` field is not
+extraction-authored: extracts omit it, the finalizer derives it per claim in
+the evidence-read receipt, and cards read those per-claim values. Legacy
+extracts keep the extraction-authored per-thread field. Reversal
 condition: if two consecutive weeks yield fewer than two honest cards, the
 card-first shape is overhead and cluster synthesis leads again.
 
@@ -450,9 +530,11 @@ card-first shape is overhead and cluster synthesis leads again.
 
 - Captured threads are depth-bounded, not exhaustive. The default www surface
   pass clicks zero comment-expansion controls, and obvious `no` threads stay at
-  that surface. A likely-material pass expands at most four controls per round
-  and stops at the first of 90% of declared comments or 85 rendered comments;
-  the unresolved high-value escalation uses 95%/103, and 149 is exceptional.
+  that surface. Only a named unresolved material gap permits expansion;
+  materiality alone does not. A named-gap pass expands at most four controls per
+  round and stops at the first of 90% of declared comments or 85 rendered
+  comments; the unresolved high-value escalation uses 95%/103, and 149 is
+  exceptional.
   Every tier also stops at two consecutive no-growth rounds, no remaining
   control, or eight rounds. The retained metadata records the declared total,
   effective target, click count, rendered-comment count, and stop reason. The
@@ -484,3 +566,30 @@ card-first shape is overhead and cluster synthesis leads again.
 This contract is not a learned scorer, relevance weight, subreddit allowlist,
 corpus-wide accuracy claim, Judgment verdict, buyer proof, live Reddit
 completeness claim, or authorization for broad crawling.
+
+## Direction change propagation
+
+```yaml
+direction_change_propagation:
+  doctrine_changed: "Weekly Reddit evidence reads are manifest-bound, allocate attention by decision-relevant novelty, cap identical recurrence support at five distinct direct reporters, and expand capture only for a named unresolved material gap."
+  trigger: product_doctrine
+  related_triggers: [output_authority]
+  controlling_sources_updated:
+    - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_listing_efficiency_policy_v0.md
+    - forseti/product/spines/capture/core/source_families/social_media/reddit/reddit_weekly_demand_radar_spec_v0.md
+  downstream_surfaces_checked:
+    - forseti/product/spines/capture/core/source_families/social_media/reddit/README.md
+    - forseti-harness/runners/run_reddit_weekly_demand_read.py
+    - forseti-harness/runners/run_reddit_weekly_finalizer.py
+    - forseti-harness/tests/unit/test_reddit_subreddit_grid.py
+    - forseti-harness/tests/unit/test_reddit_weekly_finalizer.py
+  intentionally_not_updated:
+    - path: AGENTS.md and CLAUDE.md
+      reason: "They route Reddit source-family doctrine to the owning spine and do not restate within-thread read mechanics."
+    - path: .agents/workflow-overlay
+      reason: "The overlay owns workflow behavior and validation boundaries, not Reddit source-family evidence-read parameters."
+  stale_language_search: 'rg -n "analyse all captured comments|all comments already rendered|For a likely-material thread|A likely-material pass|0–3 comments suppresses|while 4\\+ comments routes" forseti/product/spines/capture/core/source_families/social_media/reddit forseti-harness/runners/run_reddit_weekly_demand_read.py forseti-harness/runners/run_reddit_weekly_finalizer.py | rg -v "stale_language_search:"'
+  non_claims:
+    - not validation
+    - not readiness
+```

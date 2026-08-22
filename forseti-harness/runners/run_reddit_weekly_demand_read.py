@@ -35,6 +35,7 @@ from runners._scaffold import exit_on_failure
 
 GRID_SOURCE_FAMILY = "reddit_subreddit_grid"
 LISTING_EFFICIENCY_POLICY_VERSION = "reddit_listing_efficiency_v0"
+READ_POLICY_ID = "reddit_weekly_value_bounded_read_v1"
 # Raised from 3 to 9 (review admits 10+) by owner decision 2026-08-01, on the
 # measured brand-evidence yield of the 414 already-dived threads: of dives that
 # landed in the 4-9 comment band, 9% carried three or more named brands against
@@ -621,6 +622,7 @@ def run_weekly_demand_read(
     return {
         "reader": "reddit_weekly_demand_read",
         "run_name": f"Reddit Top100 {as_of.isoformat()}",
+        "read_policy_id": READ_POLICY_ID,
         "as_of": as_of.isoformat(),
         "window_start": window_start.isoformat(),
         "selection_policy": {

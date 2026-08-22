@@ -86,12 +86,25 @@ real-Chrome packet is admitted only when its manifest, content-record hash,
 real-browser metadata, source slice, subreddit, requested/final locator, and
 listing URL agree; this admission reuses preserved evidence and does not turn
 Capture Spine into an access bypass.
-Mechanically, a fresh visible count of 0–3 comments suppresses a thread from
-the general deep-dive queue, while 4+ comments routes it to
-commission-conditioned model review. A zero score is not a veto, and a missing
+Mechanically, a fresh visible count of 0–9 comments suppresses a thread from
+the general deep-dive queue, while 10+ comments routes it to
+commission-conditioned model review. The governing policy's bounded sub-floor
+failure/adverse-reaction/authenticity/discontinuation/dupe and discussion-venue
+engagement exceptions still route qualifying 0–9 rows to review; neither
+exception admits a thread by itself. A zero score is not a veto, and a missing
 count is unparsed rather than zero. Title, flair, score, and engagement rank are
 review cues only. The weekly reader therefore emits no capture slots until a
 model records `yes`, `borderline`, or `no` against a named Decision Frame.
+
+The reader preserves methodology ID `reddit_weekly_top100_per_subreddit_v0` and
+separately exposes read policy `reddit_weekly_value_bounded_read_v1`. That policy
+reads the post and high-engagement comments first, then spends attention in
+25-comment batches until corpus exhaustion or a two-batch decision-relevant
+novelty plateau. Identical recurrence support stops accumulating after five
+distinct direct reporters, while new conditions, mechanisms, consequences,
+behaviors, better evidence, and counters remain discoverable. Engagement and
+corroboration thresholds order effort; they do not establish truth, prevalence,
+or safety. The governing policy owns the receipt and expansion-cap details.
 
 ## Silver Envelope Subject Shaping (lake-map courier note, 2026-07-17)
 
