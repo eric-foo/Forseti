@@ -47,12 +47,96 @@ INDEPENDENCE_POSTURES = {
     "unavailable",
 }
 PROJECTION_MODES = {"direct_outcome", "decision_state"}
-IMPLEMENTED_PROJECTION_MODES = {"direct_outcome"}
+IMPLEMENTED_PROJECTION_MODES = PROJECTION_MODES
 DIRECT_OUTCOME_BOUNDARIES = (
     "not a causal judgment",
     "not a commercial-pull score",
     "creator influence is not customer corroboration",
 )
+DECISION_STATE_BOUNDARIES = (
+    "decision states are actor-, object-, and stage-specific, not prevalence or market estimates",
+    "intent is not observed behavior",
+    "multi-unit purchase or ownership is not observed repurchase",
+    "price concern is not automatically an unfavorable value judgment",
+    "companion decision states coexist and are not averaged into sentiment",
+)
+DECISION_STATE_CONSUMER_CONTRACT = {
+    "state_tuple_authority": (
+        "explicit spec-authored state kind, direction, object, semantic refs, and qualifiers "
+        "for a completed point semantic unit"
+    ),
+    "unasserted_state_rule": (
+        "state_rows are exhaustive for delivered decision states; literal quotes and "
+        "qualifications may explain asserted states but may not create an additional "
+        "purchase, ownership, intent, recurrence, or other decision state"
+    ),
+    "placement_processing_rule": (
+        "process every placement exactly once through the same consumer join order; "
+        "display order is navigation, not importance or evidential rank"
+    ),
+    "engagement_rule": (
+        "retain source-native engagement as descriptive context only; it may not promote "
+        "truth, prevalence, recurrence, cross-platform rank, or commercial pull"
+    ),
+    "coexistence_rule": (
+        "report co-occurring states as coexistence only; do not claim that one state "
+        "causes, sustains, cancels, or explains another without separate causal authority"
+    ),
+    "quote_role": (
+        "literal source span; it need not restate parent prompt or source context already "
+        "bound by the completed semantic unit"
+    ),
+    "companion_rule": (
+        "state assertions may overlap semantic-unit refs when one literal source carries "
+        "several non-equivalent states"
+    ),
+    "qualification_rule": (
+        "resolve every qualification_ref through companion_meaning_index and preserve it "
+        "when material; it remains context rather than an additional decision state"
+    ),
+    "consumer_join_order": [
+        "decision_state_group placement_id to point_placements",
+        "state semantic refs and qualification_refs to primary or companion semantic units",
+        "placement evidence_id and quote_span_id to literal source, date, engagement, and quote",
+    ],
+    "state_row_columns": [
+        "state_kind",
+        "commercial_direction",
+        "decision_object",
+        "semantic_unit_refs",
+        "quantity",
+        "conditions",
+    ],
+}
+DECISION_STATE_CONTRACT = {
+    "value_judgment": {"stages": {"judgment"}, "directions": {"favorable", "unfavorable", "mixed"}},
+    "price_concern": {"stages": {"judgment"}, "directions": {"friction"}},
+    "buyers_remorse": {"stages": {"judgment"}, "directions": {"unfavorable"}},
+    "preference_judgment": {
+        "stages": {"judgment"},
+        "directions": {"favorable", "unfavorable", "mixed"},
+    },
+    "purchase_intent": {"stages": {"intent"}, "directions": {"toward_action"}},
+    "repurchase_intent": {"stages": {"intent"}, "directions": {"toward_action"}},
+    "return_intent": {"stages": {"intent"}, "directions": {"away_from_action"}},
+    "switching_intent": {"stages": {"intent"}, "directions": {"away_from_action"}},
+    "abandonment_intent": {"stages": {"intent"}, "directions": {"away_from_action"}},
+    "purchase": {"stages": {"observed"}, "directions": {"neutral"}},
+    "observed_repurchase": {"stages": {"observed"}, "directions": {"toward_action"}},
+    "multi_unit_purchase": {"stages": {"observed"}, "directions": {"toward_action"}},
+    "ownership": {"stages": {"observed"}, "directions": {"neutral"}},
+    "ongoing_use": {"stages": {"observed"}, "directions": {"neutral"}},
+    "completed_use": {"stages": {"observed"}, "directions": {"neutral"}},
+    "observed_return": {"stages": {"observed"}, "directions": {"away_from_action"}},
+    "observed_switch": {"stages": {"observed"}, "directions": {"away_from_action"}},
+    "observed_abandonment": {"stages": {"observed"}, "directions": {"away_from_action"}},
+    "recommendation": {"stages": {"observed"}, "directions": {"favorable", "unfavorable"}},
+}
+DECISION_STATE_CONSUMER_CONTRACT["state_kind_stages"] = {
+    state_kind: next(iter(contract["stages"]))
+    for state_kind, contract in DECISION_STATE_CONTRACT.items()
+}
+DECISION_STATE_ROW_COLUMNS = tuple(DECISION_STATE_CONSUMER_CONTRACT["state_row_columns"])
 
 
 def _load_object(path: Path, *, boundary: str) -> dict[str, Any]:
@@ -733,6 +817,407 @@ def _projection_routes(
     return normalized, placement
 
 
+def _decision_state_bindings(
+    spec: Mapping[str, Any], point_projections: Mapping[str, str]
+) -> dict[str, dict[str, Mapping[str, Any]]]:
+    """Bind every displayed Decision State row without inferring from point text."""
+
+    decision_point_ids = {
+        point_id
+        for point_id, projection_mode in point_projections.items()
+        if projection_mode == "decision_state"
+    }
+    raw_bindings = spec.get("decision_state_bindings")
+    if not decision_point_ids:
+        if raw_bindings not in (None, []):
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                "decision_state_bindings supplied without a decision_state route",
+            )
+        return {}
+    if not isinstance(raw_bindings, list) or not raw_bindings:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            "decision_state_bindings must cover every decision_state point",
+        )
+
+    normalized: dict[str, dict[str, Mapping[str, Any]]] = {}
+    for raw_point in raw_bindings:
+        if not isinstance(raw_point, Mapping) or set(raw_point) != {"point_id", "rows"}:
+            raise EvidenceConsumerError(
+                "decision_state_binding", "point binding fields are invalid"
+            )
+        point_id = _required_string(
+            raw_point, "point_id", boundary="decision_state_binding"
+        )
+        if point_id not in decision_point_ids:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"binding targets a non-decision-state point: {point_id}",
+            )
+        if point_id in normalized:
+            raise EvidenceConsumerError(
+                "decision_state_binding", f"duplicate point binding: {point_id}"
+            )
+        raw_rows = raw_point.get("rows")
+        if not isinstance(raw_rows, list) or not raw_rows:
+            raise EvidenceConsumerError(
+                "decision_state_binding", f"point binding has no rows: {point_id}"
+            )
+        rows: dict[str, Mapping[str, Any]] = {}
+        for raw_row in raw_rows:
+            if not isinstance(raw_row, Mapping) or set(raw_row) != {
+                "selected_id",
+                "state_assertions",
+                "context_only_semantic_unit_refs",
+            }:
+                raise EvidenceConsumerError(
+                    "decision_state_binding",
+                    f"row binding fields are invalid: {point_id}",
+                )
+            selected_id = _required_string(
+                raw_row, "selected_id", boundary="decision_state_binding"
+            )
+            if selected_id in rows:
+                raise EvidenceConsumerError(
+                    "decision_state_binding",
+                    f"duplicate row binding: {point_id}::{selected_id}",
+                )
+            rows[selected_id] = raw_row
+        normalized[point_id] = rows
+
+    if set(normalized) != decision_point_ids:
+        missing = sorted(decision_point_ids - set(normalized))
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"decision-state bindings do not cover every routed point: {missing}",
+        )
+    return normalized
+
+
+def _decision_state_group(
+    *,
+    point_id: str,
+    row: Mapping[str, Any],
+    placement: Mapping[str, Any],
+    binding: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate one spec-authored row state and emit a canonical state group."""
+
+    selected_id = placement["selected_id"]
+    primary_ref = _required_string(row, "semantic_unit_ref", boundary="decision_state_binding")
+    companion_refs = set(placement["same_evidence_companion_meaning_refs"])
+    available_refs = companion_refs | {primary_ref}
+    context_refs = _string_list(
+        binding.get("context_only_semantic_unit_refs"),
+        boundary="decision_state_binding",
+        field="context_only_semantic_unit_refs",
+    )
+    if len(context_refs) != len(set(context_refs)):
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"duplicate context semantic ref: {point_id}::{selected_id}",
+        )
+
+    raw_assertions = binding.get("state_assertions")
+    if not isinstance(raw_assertions, list) or not raw_assertions:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"row binding has no state assertions: {point_id}::{selected_id}",
+        )
+    assertions: list[dict[str, Any]] = []
+    asserted_refs: set[str] = set()
+    assertion_ids: set[str] = set()
+    required_fields = {
+        "state_kind",
+        "commercial_direction",
+        "decision_object",
+        "semantic_unit_refs",
+        "quantity",
+        "conditions",
+    }
+    for raw_assertion in raw_assertions:
+        if not isinstance(raw_assertion, Mapping) or set(raw_assertion) != required_fields:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"state assertion fields are invalid: {point_id}::{selected_id}",
+            )
+        state_kind = _required_string(
+            raw_assertion, "state_kind", boundary="decision_state_binding"
+        )
+        direction = _required_string(
+            raw_assertion, "commercial_direction", boundary="decision_state_binding"
+        )
+        decision_object = _required_string(
+            raw_assertion, "decision_object", boundary="decision_state_binding"
+        )
+        contract = DECISION_STATE_CONTRACT.get(state_kind)
+        if contract is None:
+            raise EvidenceConsumerError(
+                "decision_state_binding", f"unsupported decision state: {state_kind}"
+            )
+        if direction not in contract["directions"]:
+            raise EvidenceConsumerError(
+                "decision_state_transition",
+                f"invalid state/direction: {point_id}::{selected_id}::{state_kind}",
+            )
+        stage = next(iter(contract["stages"]))
+        semantic_refs = _string_list(
+            raw_assertion.get("semantic_unit_refs"),
+            boundary="decision_state_binding",
+            field="semantic_unit_refs",
+        )
+        if not semantic_refs or len(semantic_refs) != len(set(semantic_refs)):
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"state semantic refs are empty or duplicated: {point_id}::{selected_id}",
+            )
+        conditions = _string_list(
+            raw_assertion.get("conditions"),
+            boundary="decision_state_binding",
+            field="conditions",
+        )
+        if len(conditions) != len(set(conditions)):
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"state conditions are duplicated: {point_id}::{selected_id}",
+            )
+        quantity = raw_assertion.get("quantity")
+        if state_kind == "multi_unit_purchase":
+            if isinstance(quantity, bool) or not isinstance(quantity, int) or quantity < 2:
+                raise EvidenceConsumerError(
+                    "decision_state_transition",
+                    f"multi-unit purchase requires quantity >= 2: {point_id}::{selected_id}",
+                )
+        elif quantity is not None:
+            raise EvidenceConsumerError(
+                "decision_state_transition",
+                f"quantity is valid only for multi-unit purchase: {point_id}::{selected_id}",
+            )
+        normalized = {
+            "state_kind": state_kind,
+            "stage": stage,
+            "commercial_direction": direction,
+            "decision_object": decision_object,
+            "semantic_unit_refs": sorted(semantic_refs),
+            "quantity": quantity,
+            "conditions": sorted(conditions),
+        }
+        assertion_id = (
+            "decision_state_"
+            + _canonical_json_sha256([point_id, selected_id, normalized])[:24]
+        )
+        if assertion_id in assertion_ids:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"duplicate state assertion: {point_id}::{selected_id}",
+            )
+        assertion_ids.add(assertion_id)
+        asserted_refs.update(semantic_refs)
+        assertions.append({"decision_state_id": assertion_id, **normalized})
+
+    context_ref_set = set(context_refs)
+    if asserted_refs - available_refs or context_ref_set - available_refs:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"state binding references foreign semantic unit: {point_id}::{selected_id}",
+        )
+    if asserted_refs & context_ref_set:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"state and context semantic refs overlap: {point_id}::{selected_id}",
+        )
+    if asserted_refs | context_ref_set != available_refs:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"state binding does not cover every semantic unit: {point_id}::{selected_id}",
+        )
+    if primary_ref not in asserted_refs:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            f"primary semantic unit is not a decision state: {point_id}::{selected_id}",
+        )
+
+    group_id = f"decision_state_group_{_canonical_json_sha256([point_id, selected_id])[:24]}"
+    return {
+        "decision_state_group_id": group_id,
+        "point_id": point_id,
+        "selected_id": selected_id,
+        "placement_id": placement["placement_id"],
+        "origin_group_id": placement["origin_group_id"],
+        "evidence_id": placement["evidence_id"],
+        "relation": placement["relation"],
+        "layer": placement["layer"],
+        "state_assertions": sorted(assertions, key=lambda item: item["decision_state_id"]),
+        "context_only_semantic_unit_refs": sorted(context_refs),
+    }
+
+
+def _bindings_from_decision_state_groups(
+    groups: Sequence[Mapping[str, Any]],
+    *,
+    placements: Mapping[str, Mapping[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    """Recover the authoritative binding payload from canonical projected groups."""
+
+    rows_by_point: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
+    for group in groups:
+        point_id = group.get("point_id")
+        selected_id = group.get("selected_id")
+        if not isinstance(point_id, str) or not isinstance(selected_id, str):
+            placement_id = _required_string(
+                group, "placement_id", boundary="decision_state_binding"
+            )
+            placement = placements.get(placement_id) if placements is not None else None
+            if not isinstance(placement, Mapping):
+                raise EvidenceConsumerError(
+                    "decision_state_binding",
+                    f"projected state group placement is unresolved: {placement_id}",
+                )
+            point_id = _required_string(
+                placement, "point_id", boundary="decision_state_binding"
+            )
+            selected_id = _required_string(
+                placement, "selected_id", boundary="decision_state_binding"
+            )
+        if selected_id in rows_by_point[point_id]:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"duplicate projected state group: {point_id}::{selected_id}",
+            )
+        raw_assertions = group.get("state_assertions")
+        if raw_assertions is None:
+            raw_rows = group.get("state_rows")
+            if not isinstance(raw_rows, list):
+                raise EvidenceConsumerError(
+                    "decision_state_binding",
+                    f"projected state rows are invalid: {point_id}::{selected_id}",
+                )
+            raw_assertions = []
+            for raw_row in raw_rows:
+                if not isinstance(raw_row, list) or len(raw_row) != len(
+                    DECISION_STATE_ROW_COLUMNS
+                ):
+                    raise EvidenceConsumerError(
+                        "decision_state_binding",
+                        f"projected state row width is invalid: {point_id}::{selected_id}",
+                    )
+                raw_assertions.append(dict(zip(DECISION_STATE_ROW_COLUMNS, raw_row)))
+        if not isinstance(raw_assertions, list) or not raw_assertions:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"projected state assertions are invalid: {point_id}::{selected_id}",
+            )
+        assertions = []
+        for raw_assertion in raw_assertions:
+            if not isinstance(raw_assertion, Mapping):
+                raise EvidenceConsumerError(
+                    "decision_state_binding",
+                    f"projected state assertion is invalid: {point_id}::{selected_id}",
+                )
+            assertions.append(
+                {
+                    key: copy.deepcopy(value)
+                    for key, value in raw_assertion.items()
+                    if key not in {"decision_state_id", "stage"}
+                }
+            )
+        context_refs = _string_list(
+            group.get("context_only_semantic_unit_refs", group.get("qualification_refs")),
+            boundary="decision_state_binding",
+            field="context_only_semantic_unit_refs",
+        )
+        rows_by_point[point_id][selected_id] = {
+            "selected_id": selected_id,
+            "state_assertions": sorted(
+                assertions, key=lambda item: _canonical_json_sha256(item)
+            ),
+            "context_only_semantic_unit_refs": sorted(context_refs),
+        }
+    return [
+        {
+            "point_id": point_id,
+            "rows": [rows[selected_id] for selected_id in sorted(rows)],
+        }
+        for point_id, rows in sorted(rows_by_point.items())
+    ]
+
+
+def _compact_decision_state_group(group: Mapping[str, Any]) -> dict[str, Any]:
+    """Encode repeated state fields once while retaining a point/row join key."""
+
+    assertions = group["state_assertions"]
+    return {
+        "placement_id": group["placement_id"],
+        "state_rows": [
+            [assertion[column] for column in DECISION_STATE_ROW_COLUMNS]
+            for assertion in assertions
+        ],
+        "qualification_refs": group[
+            "context_only_semantic_unit_refs"
+        ],
+    }
+
+
+def _decision_state_rejected_index(
+    spec: Mapping[str, Any],
+    rejected_points: Sequence[Mapping[str, Any]],
+    navigation: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Optionally bind rejected points to an explicit existing navigation group."""
+
+    result = [copy.deepcopy(dict(row)) for row in rejected_points]
+    raw_bindings = spec.get("decision_state_rejected_point_navigation")
+    if raw_bindings is None:
+        return result
+    if not isinstance(raw_bindings, list):
+        raise EvidenceConsumerError(
+            "decision_state_binding", "rejected-point navigation must be a list"
+        )
+    rejected_ids = {
+        _required_string(row, "point_id", boundary="decision_state_binding")
+        for row in rejected_points
+    }
+    navigation_group_ids = {
+        _required_string(row, "group_id", boundary="decision_state_binding")
+        for row in navigation
+    }
+    bindings: dict[str, str] = {}
+    for raw_binding in raw_bindings:
+        if not isinstance(raw_binding, Mapping) or set(raw_binding) != {
+            "point_id",
+            "navigation_group_id",
+        }:
+            raise EvidenceConsumerError(
+                "decision_state_binding", "rejected-point navigation fields are invalid"
+            )
+        point_id = _required_string(
+            raw_binding, "point_id", boundary="decision_state_binding"
+        )
+        group_id = _required_string(
+            raw_binding, "navigation_group_id", boundary="decision_state_binding"
+        )
+        if point_id not in rejected_ids or point_id in bindings:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"rejected-point navigation identity is invalid: {point_id}",
+            )
+        if group_id not in navigation_group_ids:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"rejected point targets an unknown navigation group: {point_id}::{group_id}",
+            )
+        bindings[point_id] = group_id
+    if set(bindings) != rejected_ids:
+        raise EvidenceConsumerError(
+            "decision_state_binding",
+            "rejected-point navigation does not cover every rejected point",
+        )
+    for row in result:
+        row["navigation_group_id"] = bindings[row["point_id"]]
+    return result
+
+
 def _stable_evidence(
     row: Mapping[str, Any], candidate: Mapping[str, Any], surface: str, basis: str
 ) -> dict[str, Any]:
@@ -853,15 +1338,18 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     navigation, point_navigation = _navigation_groups(spec, set(point_ids))
     if is_routed_v2:
         projection_routes, point_projections = _projection_routes(spec, set(point_ids))
+        decision_state_bindings = _decision_state_bindings(spec, point_projections)
     else:
         projection_routes = []
         point_projections = {}
+        decision_state_bindings = {}
 
     origins: dict[str, dict[str, Any]] = {}
     evidence: dict[str, dict[str, Any]] = {}
     quote_spans: dict[str, dict[str, Any]] = {}
     companion_meanings: dict[str, dict[str, Any]] = {}
     placements: list[dict[str, Any]] = []
+    decision_state_groups: list[dict[str, Any]] = []
     point_index: list[dict[str, Any]] = []
     axis_truth_origin_ids: set[str] = set()
     candidate_total = 0
@@ -873,7 +1361,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             expected_axis=axis_id,
             require_complete_pins=require_complete_pins,
         )
-        if is_routed_v2 and point_projections[point_id] == "direct_outcome":
+        if is_routed_v2:
             output_boundary = artifact.get("output_boundary")
             missing_boundaries = [
                 boundary
@@ -883,11 +1371,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             if missing_boundaries:
                 raise EvidenceConsumerError(
                     "projection_boundary",
-                    f"direct_outcome point lacks required output boundary: "
+                    f"routed point lacks required output boundary: "
                     f"{point_id}::{missing_boundaries[0]}",
                 )
         candidate_total += len(candidate_by_id)
         point_placement_ids: list[str] = []
+        point_decision_state_bindings = dict(decision_state_bindings.get(point_id, {}))
         point_truth_origin_ids: set[str] = set()
         seen_selected: set[str] = set()
         observed_relations: dict[str, int] = {
@@ -1059,6 +1548,20 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 }
                 placements.append(placement)
                 point_placement_ids.append(placement_id)
+                if is_routed_v2 and point_projections[point_id] == "decision_state":
+                    state_binding = point_decision_state_bindings.pop(selected_id, None)
+                    if state_binding is None:
+                        raise EvidenceConsumerError(
+                            "decision_state_binding",
+                            f"display row lacks a state binding: {point_id}::{selected_id}",
+                        )
+                    state_group = _decision_state_group(
+                        point_id=point_id,
+                        row=row,
+                        placement=placement,
+                        binding=state_binding,
+                    )
+                    decision_state_groups.append(state_group)
                 observed_relations[relation] += 1
                 relation_origin_ids[relation].add(origin_id)
                 if _is_truth_support_origin(row):
@@ -1086,6 +1589,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 origin["evidence_ids"].add(evidence_id)
                 origin["placement_ids"].add(placement_id)
                 origin["container_ids"].update(stable["container_ids"])
+        if point_decision_state_bindings:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"state binding targets a non-displayed row: "
+                f"{point_id}::{sorted(point_decision_state_bindings)[0]}",
+            )
         declared_relations = descriptor.get("relation_counts")
         if not isinstance(declared_relations, Mapping) or set(declared_relations) - {
             "support",
@@ -1152,6 +1661,9 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     normalized_quotes = [quote_spans[key] for key in sorted(quote_spans)]
     normalized_companions = [companion_meanings[key] for key in sorted(companion_meanings)]
     normalized_placements = sorted(placements, key=lambda row: row["placement_id"])
+    normalized_decision_state_groups = sorted(
+        decision_state_groups, key=lambda row: row["decision_state_group_id"]
+    )
     point_index.sort(key=lambda row: row["point_id"])
 
     engagement_buckets: dict[tuple[str, str, str, str, str], set[str]] = defaultdict(set)
@@ -1200,6 +1712,23 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         if len(container_origins[container_id]) > 1
     ]
 
+    embedded_spec = copy.deepcopy(dict(spec))
+    decision_state_binding_sha256: str | None = None
+    if normalized_decision_state_groups:
+        normalized_binding_payload = _bindings_from_decision_state_groups(
+            normalized_decision_state_groups
+        )
+        decision_state_binding_sha256 = _canonical_json_sha256(
+            normalized_binding_payload
+        )
+        declared_binding_sha256 = spec.get("decision_state_bindings_sha256")
+        if declared_binding_sha256 not in (None, decision_state_binding_sha256):
+            raise EvidenceConsumerError(
+                "decision_state_binding", "decision-state binding identity changed"
+            )
+        embedded_spec.pop("decision_state_bindings", None)
+        embedded_spec["decision_state_bindings_sha256"] = decision_state_binding_sha256
+
     view: dict[str, Any] = {
         "schema_version": (
             CONSOLIDATED_VIEW_VERSION
@@ -1208,7 +1737,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         ),
         "policy": CONSOLIDATION_POLICY if is_routed_v2 else LEGACY_CONSOLIDATION_POLICY,
         "axis_id": axis_id,
-        "spec": copy.deepcopy(dict(spec)),
+        "spec": embedded_spec,
         "source_axis_pack": {
             "path": str(axis_path),
             "raw_sha256": expected_axis_hash,
@@ -1256,6 +1785,30 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     if is_routed_v2:
         view["projection_routes"] = projection_routes
         view["non_claims"].extend(DIRECT_OUTCOME_BOUNDARIES)
+        if decision_state_bindings:
+            rejected_points = axis_pack.get("rejected_points")
+            if not isinstance(rejected_points, list):
+                raise EvidenceConsumerError(
+                    "decision_state_binding", "source axis rejected-point index is invalid"
+                )
+            view["decision_state_contract"] = copy.deepcopy(
+                DECISION_STATE_CONSUMER_CONTRACT
+            )
+            view["decision_state_groups"] = [
+                _compact_decision_state_group(group)
+                for group in normalized_decision_state_groups
+            ]
+            view["rejected_point_index"] = _decision_state_rejected_index(
+                spec, rejected_points, navigation
+            )
+            view["counts"]["decision_state_group_count"] = len(
+                normalized_decision_state_groups
+            )
+            view["counts"]["decision_state_assertion_count"] = sum(
+                len(row["state_assertions"]) for row in normalized_decision_state_groups
+            )
+            view["counts"]["rejected_point_count"] = len(rejected_points)
+            view["non_claims"].extend(DECISION_STATE_BOUNDARIES)
     if view["counts"]["point_count"] != axis_pack.get("valid_point_count"):
         raise EvidenceConsumerError("axis_parity", "point count differs from source axis pack")
     if view["counts"]["candidate_disposition_count"] != axis_pack.get(
@@ -1295,7 +1848,19 @@ def validate_axis_consolidated_view(
     spec = view.get("spec")
     if not isinstance(spec, Mapping):
         raise EvidenceConsumerError("view_verification", "embedded spec missing")
-    rebuilt = build_axis_consolidated_view(spec)
+    rebuild_spec = copy.deepcopy(dict(spec))
+    if view.get("schema_version") == CONSOLIDATED_VIEW_VERSION and isinstance(
+        view.get("decision_state_groups"), list
+    ):
+        placements = {
+            row["placement_id"]: row
+            for row in view.get("point_placements", [])
+            if isinstance(row, Mapping) and isinstance(row.get("placement_id"), str)
+        }
+        rebuild_spec["decision_state_bindings"] = _bindings_from_decision_state_groups(
+            view["decision_state_groups"], placements=placements
+        )
+    rebuilt = build_axis_consolidated_view(rebuild_spec)
     if rebuilt != dict(view):
         raise EvidenceConsumerError(
             "view_reprojection", "saved view differs from deterministic source projection"

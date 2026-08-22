@@ -13,6 +13,8 @@ from judgment.phase_a_evidence_axis_consolidation import (
     AXIS_PACK_VERSION,
     CONSOLIDATED_VIEW_VERSION,
     CONSOLIDATION_SPEC_VERSION,
+    DECISION_STATE_BOUNDARIES,
+    DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
     LEGACY_CONSOLIDATION_SPEC_VERSION,
@@ -436,6 +438,60 @@ def _generic_fixture(
     return manifest, spec, paths
 
 
+def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    point_ids: list[str] = []
+    bindings: list[dict[str, Any]] = []
+    for descriptor in axis_pack["points"]:
+        point_id = descriptor["point_id"]
+        point_ids.append(point_id)
+        artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+        row_bindings = []
+        for source_group in artifact["source_groups"]:
+            for row in source_group["rows"]:
+                direction = "favorable" if row["relation"] == "support" else "unfavorable"
+                assertions = [
+                    {
+                        "state_kind": "value_judgment",
+                        "commercial_direction": direction,
+                        "decision_object": "fixture balm",
+                        "semantic_unit_refs": [row["semantic_unit_ref"]],
+                        "quantity": None,
+                        "conditions": [],
+                    }
+                ]
+                for companion in row["same_evidence_companion_meanings"]:
+                    assertions.append(
+                        {
+                            "state_kind": "preference_judgment",
+                            "commercial_direction": "favorable",
+                            "decision_object": "fixture balm texture",
+                            "semantic_unit_refs": [companion["semantic_unit_ref"]],
+                            "quantity": None,
+                            "conditions": [],
+                        }
+                    )
+                row_bindings.append(
+                    {
+                        "selected_id": row["selected_id"],
+                        "state_assertions": assertions,
+                        "context_only_semantic_unit_refs": [],
+                    }
+                )
+        bindings.append({"point_id": point_id, "rows": row_bindings})
+    spec["projection_routes"] = [
+        {"projection_mode": "decision_state", "point_ids": point_ids}
+    ]
+    spec["decision_state_bindings"] = bindings
+
+
+def _projected_state_assertions(
+    view: Mapping[str, Any], group: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    columns = view["decision_state_contract"]["state_row_columns"]
+    return [dict(zip(columns, row)) for row in group["state_rows"]]
+
+
 def _refresh_axis_binding(spec: dict[str, Any], paths: dict[str, Path]) -> None:
     axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
     for descriptor in axis["points"]:
@@ -505,22 +561,213 @@ def test_v2_direct_outcome_routes_every_point_and_carries_existing_boundaries(
     assert all(boundary in view["non_claims"] for boundary in DIRECT_OUTCOME_BOUNDARIES)
 
 
-def test_decision_state_route_fails_at_the_unimplemented_projection_boundary(
+def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    spec, _ = _fixture(tmp_path, monkeypatch)
-    assert build_axis_consolidated_view(spec)["counts"]["point_count"] == 2
-
-    spec["projection_routes"] = [
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    spec["decision_state_rejected_point_navigation"] = [
         {
-            "projection_mode": "decision_state",
-            "point_ids": ["point_a", "point_b"],
+            "point_id": "point_rejected",
+            "navigation_group_id": "hydration_efficacy",
         }
     ]
-    with pytest.raises(
-        EvidenceConsumerError,
-        match="projection mode is routed but not implemented: decision_state",
-    ):
+
+    view = build_axis_consolidated_view(spec)
+
+    assert view["counts"]["decision_state_group_count"] == 4
+    assert view["counts"]["decision_state_assertion_count"] == 6
+    assert view["counts"]["rejected_point_count"] == 1
+    assert view["rejected_point_index"] == [
+        {
+            "point_id": "point_rejected",
+            "bounded_point": "The balm fixes every lip outcome.",
+            "disposition": "point_scope_failed",
+            "reason": "broad_axis_or_bundle",
+            "navigation_group_id": "hydration_efficacy",
+        }
+    ]
+    placements = {row["placement_id"]: row for row in view["point_placements"]}
+    post_groups = [
+        group
+        for group in view["decision_state_groups"]
+        if placements[group["placement_id"]]["evidence_id"] == "reddit:thread1:post"
+    ]
+    assert all(
+        {state["state_kind"] for state in _projected_state_assertions(view, group)}
+        == {"value_judgment", "preference_judgment"}
+        for group in post_groups
+    )
+    assert {placements[group["placement_id"]]["relation"] for group in post_groups} == {
+        "support",
+        "counter",
+    }
+    assert all(boundary in view["non_claims"] for boundary in DECISION_STATE_BOUNDARIES)
+    assert view["decision_state_contract"] == DECISION_STATE_CONSUMER_CONTRACT
+    assert "state_rows are exhaustive" in view["decision_state_contract"]["unasserted_state_rule"]
+    assert "every placement exactly once" in view["decision_state_contract"]["placement_processing_rule"]
+    assert "descriptive context only" in view["decision_state_contract"]["engagement_rule"]
+    assert "coexistence only" in view["decision_state_contract"]["coexistence_rule"]
+    assert build_axis_consolidated_view(spec) == view
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
+
+
+def test_mixed_projection_routes_keep_direct_and_decision_points_distinct(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    spec["projection_routes"] = [
+        {"projection_mode": "direct_outcome", "point_ids": ["point_a"]},
+        {"projection_mode": "decision_state", "point_ids": ["point_b"]},
+    ]
+    spec["decision_state_bindings"] = [
+        binding
+        for binding in spec["decision_state_bindings"]
+        if binding["point_id"] == "point_b"
+    ]
+
+    view = build_axis_consolidated_view(spec)
+
+    point_modes = {row["point_id"]: row["projection_mode"] for row in view["point_index"]}
+    assert point_modes == {"point_a": "direct_outcome", "point_b": "decision_state"}
+    placements = {row["placement_id"]: row for row in view["point_placements"]}
+    assert {
+        placements[row["placement_id"]]["point_id"]
+        for row in view["decision_state_groups"]
+    } == {"point_b"}
+
+
+def test_decision_state_keeps_selected_zero_engagement_without_promotion(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    for point_id in ("point_a", "point_b"):
+        artifact_path = paths[f"artifact_{point_id}"]
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        row = next(
+            row
+            for group in artifact["source_groups"]
+            for row in group["rows"]
+            if row["evidence_id"] == "reddit:thread1:post"
+        )
+        row["engagement_raw_value"] = "0 points"
+        candidate = next(
+            row
+            for row in artifact["candidate_dispositions"]
+            if row["evidence_id"] == "reddit:thread1:post"
+        )
+        candidate.update(
+            {
+                "engagement_status": "engagement_available",
+                "engagement_context": "reddit_post",
+                "engagement_material_positive": False,
+            }
+        )
+        _write(artifact_path, artifact)
+        point = next(
+            row for row in manifest["accepted_points"] if row["point_id"] == point_id
+        )
+        point["artifact_sha256"] = hash_file(artifact_path)
+    axis_path = paths["generic_axis"]
+    _rehash_manifest(manifest)
+    _write(axis_path, build_phase_a_evidence_axis_pack(manifest))
+    spec["source_axis_pack_sha256"] = hash_file(axis_path)
+    _route_every_point_as_decision_state(spec)
+
+    view = build_axis_consolidated_view(spec)
+    evidence = next(
+        row for row in view["evidence_index"] if row["evidence_id"] == "reddit:thread1:post"
+    )
+
+    assert evidence["engagement"] == {
+        "kind": "score_state",
+        "status": "engagement_available",
+        "raw_value": "0 points",
+        "observed_at": None,
+        "context": "reddit_post",
+        "material_positive": False,
+    }
+    assert "promoted" not in evidence["engagement"]
+    placements = {row["placement_id"]: row for row in view["point_placements"]}
+    assert any(
+        placements[row["placement_id"]]["evidence_id"] == evidence["evidence_id"]
+        for row in view["decision_state_groups"]
+    )
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    [
+        (
+            {"state_kind": "repurchase_intent", "commercial_direction": "away_from_action"},
+            "invalid state/direction",
+        ),
+        (
+            {"state_kind": "buyers_remorse", "commercial_direction": "favorable"},
+            "invalid state/direction",
+        ),
+        (
+            {
+                "state_kind": "observed_repurchase",
+                "commercial_direction": "toward_action",
+                "quantity": 4,
+            },
+            "quantity is valid only for multi-unit purchase",
+        ),
+    ],
+)
+def test_decision_state_wrong_cause_transitions_fail_at_semantic_boundary(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: dict[str, Any],
+    match: str,
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    assertion = spec["decision_state_bindings"][0]["rows"][1]["state_assertions"][0]
+    assertion.update(mutation)
+
+    with pytest.raises(EvidenceConsumerError, match=match):
+        build_axis_consolidated_view(spec)
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    [
+        ("missing_point", "do not cover every routed point"),
+        ("missing_row", "display row lacks a state binding"),
+        ("foreign_ref", "references foreign semantic unit"),
+        ("missing_companion", "does not cover every semantic unit"),
+        ("primary_as_context", "primary semantic unit is not a decision state"),
+    ],
+)
+def test_decision_state_bindings_require_exact_row_and_semantic_coverage(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+    match: str,
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    first_point = spec["decision_state_bindings"][0]
+    first_row = first_point["rows"][0]
+    if mutation == "missing_point":
+        spec["decision_state_bindings"].pop()
+    elif mutation == "missing_row":
+        first_point["rows"].pop()
+    elif mutation == "foreign_ref":
+        first_row["state_assertions"][0]["semantic_unit_refs"] = ["foreign::semantic"]
+    elif mutation == "missing_companion":
+        first_row["state_assertions"].pop()
+    else:
+        primary_ref = first_row["state_assertions"][0]["semantic_unit_refs"][0]
+        first_row["state_assertions"].pop(0)
+        first_row["context_only_semantic_unit_refs"].append(primary_ref)
+
+    with pytest.raises(EvidenceConsumerError, match=match):
         build_axis_consolidated_view(spec)
 
 
@@ -584,7 +831,7 @@ def test_v2_direct_outcome_requires_the_boundaries_owned_by_each_point(
 
     with pytest.raises(
         EvidenceConsumerError,
-        match="direct_outcome point lacks required output boundary: point_a::creator influence",
+        match="routed point lacks required output boundary: point_a::creator influence",
     ):
         build_axis_consolidated_view(spec)
 
