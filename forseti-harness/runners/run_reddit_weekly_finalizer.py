@@ -119,6 +119,11 @@ def finalize_reddit_weekly_run(
             raise ValueError(f"thread {thread_id} has non-final admission {admission!r}")
         if not _has_summary(extract):
             raise ValueError(f"thread {thread_id} has no agent-readable outcome summary")
+        if "read_policy_id" in extract:
+            raise ValueError(
+                f"thread {thread_id} extract must not carry top-level read_policy_id; "
+                "the deep-dive manifest owns read-policy selection"
+            )
         validated_receipt = _validated_evidence_read_receipt(
             extract=extract,
             content_record=content_record,
@@ -394,6 +399,7 @@ def _validated_evidence_read_receipt(
         post.get("author_state") if isinstance(post, dict) else None
     )
     claim_ids: set[str] = set()
+    cited_comment_ids: set[str] = set()
     validated_claims = []
     for position, claim in enumerate(claims, start=1):
         claim_label = f"{label}.claims[{position}]"
@@ -431,6 +437,8 @@ def _validated_evidence_read_receipt(
             raise ValueError(
                 f"{claim_label} comment IDs cannot be both support and counter: {overlap}"
             )
+        cited_comment_ids.update(support_ids)
+        cited_comment_ids.update(counter_ids)
         support_comments = _resolve_comment_ids(
             support_ids, comments_by_id=comments_by_id, label=f"{claim_label}.support_comment_ids"
         )
@@ -473,6 +481,11 @@ def _validated_evidence_read_receipt(
                     "handles": reporter_handles,
                 },
             }
+        )
+    if len(cited_comment_ids) > comments_reviewed:
+        raise ValueError(
+            f"{label} cites more distinct comments than comments_reviewed: "
+            f"cited={len(cited_comment_ids)} reviewed={comments_reviewed}"
         )
     return {**receipt, "claims": validated_claims}
 

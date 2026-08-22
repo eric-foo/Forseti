@@ -423,7 +423,10 @@ comment directly reports their own experience. The OP, deleted, removed, or
 unavailable authors, bots, copied accounts, and hearsay are excluded. The
 finalizer can enforce only cited-comment identity, visible author, non-OP,
 present posture, unique-author, count/status, and five-support-cap structure for
-recurrence. Semantic directness, bot identity, copying, amplification, and the
+recurrence. When the post author is not visible, non-OP is unverifiable: a
+recurrence claim fails loudly, and a non-recurrence claim derives zero
+independent reporters rather than crediting supporters it cannot separate from
+the OP. Semantic directness, bot identity, copying, amplification, and the
 evidentiary meaning remain Judgment responsibilities.
 
 Capture depth remains separately bounded. Do not click comment-expansion
@@ -462,8 +465,13 @@ evidence_read_receipt:
 
 A new-policy `yes` requires at least one claim; a `no` may carry an empty claims
 array. Non-recurrence claims use `not_applicable`. All cited IDs must resolve in
-the content record. For recurrence, support IDs must resolve to present comments
-from unique visible non-OP authors and the support count must match the status.
+the content record, and the number of distinct cited IDs cannot exceed
+`comments_reviewed`. For recurrence, support IDs must resolve to present
+comments from unique visible non-OP authors and the support count must match the
+status.
+`read_policy_id` is manifest-owned: an extract that carries its own top-level
+`read_policy_id` is rejected under either manifest policy, so a legacy run
+cannot emit a catalog row advertising this policy without a validated receipt.
 The finalizer rejects a supplied receipt with missing or mismatched policy
 identity and rejects competing top-level `independent_reporters`. It derives
 each claim's deterministic `independent_reporters: {count, handles}` from the
@@ -510,7 +518,11 @@ card going client-facing is re-read against its cited packets first and
 gains at least one non-Reddit corroboration. Extraction workers emit, per
 thread, the fields the cards consume: core problem, named brands in stated
 context, `independent_reporters` (count + handles), `where_customers_go`,
-verbatim quotes, corroboration basis, and commercial signal. Reversal
+verbatim quotes, corroboration basis, and commercial signal. Under
+`reddit_weekly_value_bounded_read_v1` the `independent_reporters` field is not
+extraction-authored: extracts omit it, the finalizer derives it per claim in
+the evidence-read receipt, and cards read those per-claim values. Legacy
+extracts keep the extraction-authored per-thread field. Reversal
 condition: if two consecutive weeks yield fewer than two honest cards, the
 card-first shape is overhead and cluster synthesis leads again.
 

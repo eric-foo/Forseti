@@ -278,6 +278,22 @@ def test_new_read_policy_corpus_exhausted_requires_every_captured_comment_review
         _finalize(deep_dive, tmp_path / "output")
 
 
+def test_new_read_policy_rejects_more_distinct_citations_than_comments_reviewed(
+    tmp_path: Path,
+) -> None:
+    deep_dive = _new_policy_fixture(tmp_path, ["reporter"])
+    _set_new_policy_receipt(
+        deep_dive,
+        claims=[_claim("individual", "not_applicable", 1)],
+        comments_reviewed=0,
+        stop_reason="decision_relevant_novelty_plateau",
+        consecutive_no_value_batches=2,
+    )
+
+    with pytest.raises(ValueError, match="cites more distinct comments than comments_reviewed"):
+        _finalize(deep_dive, tmp_path / "output")
+
+
 def test_new_read_policy_yes_requires_a_claim_but_no_may_have_none(tmp_path: Path) -> None:
     yes_deep_dive = _new_policy_fixture(tmp_path / "yes", ["reporter"])
     _set_new_policy_receipt(yes_deep_dive, claims=[])
@@ -362,6 +378,29 @@ def test_legacy_extract_without_receipt_remains_unchanged(tmp_path: Path) -> Non
     assert "read_policy_id" not in run
     assert all("read_policy_id" not in row for row in rows)
     assert all("evidence_read_receipt" not in row for row in rows)
+
+
+@pytest.mark.parametrize("manifest_policy", [None, "reddit_weekly_value_bounded_read_v1"])
+def test_extract_cannot_declare_its_own_read_policy(
+    tmp_path: Path, manifest_policy: str | None
+) -> None:
+    # A legacy manifest must not be able to emit a catalog row advertising the
+    # new policy without a validated receipt, and a new-policy manifest must not
+    # silently rewrite a conflicting extract-level declaration.
+    if manifest_policy is None:
+        deep_dive = _fixture(tmp_path)
+    else:
+        deep_dive = _new_policy_fixture(tmp_path, ["reporter"])
+        _set_new_policy_receipt(
+            deep_dive, claims=[_claim("individual", "not_applicable", 1)]
+        )
+    extract_path = deep_dive / "existing_11_extracts_v1.jsonl"
+    extract = json.loads(extract_path.read_text(encoding="utf-8"))
+    extract["read_policy_id"] = "reddit_weekly_value_bounded_read_v1"
+    extract_path.write_text(json.dumps(extract) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="must not carry top-level read_policy_id"):
+        _finalize(deep_dive, tmp_path / "output")
 
 
 def _finalize(deep_dive: Path, output: Path) -> dict[str, object]:
