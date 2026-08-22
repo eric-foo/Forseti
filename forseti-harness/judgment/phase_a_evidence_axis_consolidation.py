@@ -27,11 +27,14 @@ from judgment.phase_a_evidence_selection import _verify_bundle, load_selection_s
 
 AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v1"
 AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v1"
-CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
-CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
+LEGACY_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
+CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
+LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
+CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
-CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
+LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
+CONSOLIDATION_POLICY = "point_routed_origin_normalized_surface_separated_v2"
 POINT_TRUTH_ORIGIN_CAP = 13
 SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
     "phase_a_evidence_quote_manifest_v6",
@@ -43,6 +46,13 @@ INDEPENDENCE_POSTURES = {
     "confirmed_same_actor",
     "unavailable",
 }
+PROJECTION_MODES = {"direct_outcome", "decision_state"}
+IMPLEMENTED_PROJECTION_MODES = {"direct_outcome"}
+DIRECT_OUTCOME_BOUNDARIES = (
+    "not a causal judgment",
+    "not a commercial-pull score",
+    "creator influence is not customer corroboration",
+)
 
 
 def _load_object(path: Path, *, boundary: str) -> dict[str, Any]:
@@ -665,6 +675,64 @@ def _navigation_groups(
     return normalized, placement
 
 
+def _projection_routes(
+    spec: Mapping[str, Any], point_ids: set[str]
+) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    """Require one explicit projection route for every v2 point."""
+
+    routes = spec.get("projection_routes")
+    if not isinstance(routes, list) or not routes:
+        raise EvidenceConsumerError(
+            "projection_routing", "projection_routes must be nonempty"
+        )
+    normalized: list[dict[str, Any]] = []
+    placement: dict[str, str] = {}
+    seen_modes: set[str] = set()
+    for route in routes:
+        if not isinstance(route, Mapping):
+            raise EvidenceConsumerError("projection_routing", "route must be an object")
+        mode = _required_string(route, "projection_mode", boundary="projection_routing")
+        route_points = _string_list(
+            route.get("point_ids"), boundary="projection_routing", field="point_ids"
+        )
+        if mode not in PROJECTION_MODES:
+            raise EvidenceConsumerError(
+                "projection_routing", f"unsupported projection mode: {mode}"
+            )
+        if mode in seen_modes:
+            raise EvidenceConsumerError(
+                "projection_routing", f"duplicate projection mode: {mode}"
+            )
+        if not route_points:
+            raise EvidenceConsumerError(
+                "projection_routing", f"projection route has no points: {mode}"
+            )
+        seen_modes.add(mode)
+        for point_id in route_points:
+            if point_id not in point_ids:
+                raise EvidenceConsumerError(
+                    "projection_routing", f"unknown point_id in projection route: {point_id}"
+                )
+            if point_id in placement:
+                raise EvidenceConsumerError(
+                    "projection_routing", f"point_id appears more than once: {point_id}"
+                )
+            placement[point_id] = mode
+        normalized.append({"projection_mode": mode, "point_ids": route_points})
+    if set(placement) != point_ids:
+        missing = sorted(point_ids - set(placement))
+        raise EvidenceConsumerError(
+            "projection_routing", f"projection routes do not cover every point: {missing}"
+        )
+    unimplemented = sorted(set(placement.values()) - IMPLEMENTED_PROJECTION_MODES)
+    if unimplemented:
+        raise EvidenceConsumerError(
+            "projection_routing",
+            f"projection mode is routed but not implemented: {unimplemented[0]}",
+        )
+    return normalized, placement
+
+
 def _stable_evidence(
     row: Mapping[str, Any], candidate: Mapping[str, Any], surface: str, basis: str
 ) -> dict[str, Any]:
@@ -737,8 +805,13 @@ def _load_point(
 def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     """Build and fully verify one derived, origin-normalized axis view."""
 
-    if spec.get("schema_version") != CONSOLIDATION_SPEC_VERSION:
+    spec_version = spec.get("schema_version")
+    if spec_version not in {
+        LEGACY_CONSOLIDATION_SPEC_VERSION,
+        CONSOLIDATION_SPEC_VERSION,
+    }:
         raise EvidenceConsumerError("consolidation_spec", "unsupported spec version")
+    is_routed_v2 = spec_version == CONSOLIDATION_SPEC_VERSION
     axis_id = _required_string(spec, "axis_id", boundary="consolidation_spec")
     axis_path = Path(
         _required_string(spec, "source_axis_pack_path", boundary="consolidation_spec")
@@ -778,6 +851,11 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     ):
         raise EvidenceConsumerError("axis_binding", "axis point identities are invalid")
     navigation, point_navigation = _navigation_groups(spec, set(point_ids))
+    if is_routed_v2:
+        projection_routes, point_projections = _projection_routes(spec, set(point_ids))
+    else:
+        projection_routes = []
+        point_projections = {}
 
     origins: dict[str, dict[str, Any]] = {}
     evidence: dict[str, dict[str, Any]] = {}
@@ -795,6 +873,19 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             expected_axis=axis_id,
             require_complete_pins=require_complete_pins,
         )
+        if is_routed_v2 and point_projections[point_id] == "direct_outcome":
+            output_boundary = artifact.get("output_boundary")
+            missing_boundaries = [
+                boundary
+                for boundary in DIRECT_OUTCOME_BOUNDARIES
+                if not isinstance(output_boundary, list) or boundary not in output_boundary
+            ]
+            if missing_boundaries:
+                raise EvidenceConsumerError(
+                    "projection_boundary",
+                    f"direct_outcome point lacks required output boundary: "
+                    f"{point_id}::{missing_boundaries[0]}",
+                )
         candidate_total += len(candidate_by_id)
         point_placement_ids: list[str] = []
         point_truth_origin_ids: set[str] = set()
@@ -1025,8 +1116,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             )
         axis_truth_origin_ids.update(point_truth_origin_ids)
         group_id, family_id = point_navigation[point_id]
-        point_index.append(
-            {
+        point_entry = {
                 "point_id": point_id,
                 "bounded_point": artifact["bounded_point"],
                 "navigation_group_id": group_id,
@@ -1041,7 +1131,9 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 "placement_ids": sorted(point_placement_ids),
                 "bindings": bindings,
             }
-        )
+        if is_routed_v2:
+            point_entry["projection_mode"] = point_projections[point_id]
+        point_index.append(point_entry)
 
     normalized_origins = []
     for origin_id in sorted(origins):
@@ -1109,8 +1201,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     ]
 
     view: dict[str, Any] = {
-        "schema_version": CONSOLIDATED_VIEW_VERSION,
-        "policy": CONSOLIDATION_POLICY,
+        "schema_version": (
+            CONSOLIDATED_VIEW_VERSION
+            if is_routed_v2
+            else LEGACY_CONSOLIDATED_VIEW_VERSION
+        ),
+        "policy": CONSOLIDATION_POLICY if is_routed_v2 else LEGACY_CONSOLIDATION_POLICY,
         "axis_id": axis_id,
         "spec": copy.deepcopy(dict(spec)),
         "source_axis_pack": {
@@ -1157,6 +1253,9 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             "the view does not change point relations, selection, or evidence authority",
         ],
     }
+    if is_routed_v2:
+        view["projection_routes"] = projection_routes
+        view["non_claims"].extend(DIRECT_OUTCOME_BOUNDARIES)
     if view["counts"]["point_count"] != axis_pack.get("valid_point_count"):
         raise EvidenceConsumerError("axis_parity", "point count differs from source axis pack")
     if view["counts"]["candidate_disposition_count"] != axis_pack.get(
@@ -1180,7 +1279,10 @@ def validate_axis_consolidated_view(
 ) -> dict[str, Any]:
     """Reproject a saved view and require one externally trusted view identity."""
 
-    if view.get("schema_version") != CONSOLIDATED_VIEW_VERSION:
+    if view.get("schema_version") not in {
+        LEGACY_CONSOLIDATED_VIEW_VERSION,
+        CONSOLIDATED_VIEW_VERSION,
+    }:
         raise EvidenceConsumerError("view_verification", "unsupported view version")
     stored = view.get("view_sha256")
     if stored != expected_view_sha256:

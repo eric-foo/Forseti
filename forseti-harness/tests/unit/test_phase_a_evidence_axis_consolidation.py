@@ -11,7 +11,11 @@ from harness_utils import hash_file
 from judgment.phase_a_evidence_axis_consolidation import (
     AXIS_PACK_MANIFEST_VERSION,
     AXIS_PACK_VERSION,
+    CONSOLIDATED_VIEW_VERSION,
     CONSOLIDATION_SPEC_VERSION,
+    DIRECT_OUTCOME_BOUNDARIES,
+    LEGACY_CONSOLIDATED_VIEW_VERSION,
+    LEGACY_CONSOLIDATION_SPEC_VERSION,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     point_placement_keys,
@@ -314,6 +318,10 @@ def _fixture(
                 "displayed_truth_origin_count": 2,
             },
             "source_groups": [{"rows": data["rows"]}],
+            "output_boundary": [
+                "not a prevalence estimate",
+                *DIRECT_OUTCOME_BOUNDARIES,
+            ],
         }
         artifact_path = tmp_path / point_id / "artifact.json"
         _write(artifact_path, artifact)
@@ -367,6 +375,12 @@ def _fixture(
                         "point_ids": ["point_a", "point_b"],
                     }
                 ],
+            }
+        ],
+        "projection_routes": [
+            {
+                "projection_mode": "direct_outcome",
+                "point_ids": ["point_a", "point_b"],
             }
         ],
     }
@@ -475,6 +489,123 @@ def test_build_normalizes_origins_and_separates_post_comment_surfaces(
         view, expected_view_sha256=view["view_sha256"]
     ) == view
     assert build_axis_consolidated_view(spec) == view
+
+
+def test_v2_direct_outcome_routes_every_point_and_carries_existing_boundaries(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    view = build_axis_consolidated_view(spec)
+
+    assert view["schema_version"] == CONSOLIDATED_VIEW_VERSION
+    assert view["projection_routes"] == spec["projection_routes"]
+    assert {row["projection_mode"] for row in view["point_index"]} == {
+        "direct_outcome"
+    }
+    assert all(boundary in view["non_claims"] for boundary in DIRECT_OUTCOME_BOUNDARIES)
+
+
+def test_decision_state_route_fails_at_the_unimplemented_projection_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    assert build_axis_consolidated_view(spec)["counts"]["point_count"] == 2
+
+    spec["projection_routes"] = [
+        {
+            "projection_mode": "decision_state",
+            "point_ids": ["point_a", "point_b"],
+        }
+    ]
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="projection mode is routed but not implemented: decision_state",
+    ):
+        build_axis_consolidated_view(spec)
+
+
+@pytest.mark.parametrize(
+    "routes,error",
+    [
+        (
+            [{"projection_mode": "direct_outcome", "point_ids": ["point_a"]}],
+            "projection routes do not cover every point",
+        ),
+        (
+            [
+                {
+                    "projection_mode": "direct_outcome",
+                    "point_ids": ["point_a", "point_a", "point_b"],
+                }
+            ],
+            "point_id appears more than once",
+        ),
+        (
+            [
+                {
+                    "projection_mode": "direct_outcome",
+                    "point_ids": ["point_a", "point_b", "point_foreign"],
+                }
+            ],
+            "unknown point_id in projection route",
+        ),
+        (
+            [
+                {
+                    "projection_mode": "generic_compact",
+                    "point_ids": ["point_a", "point_b"],
+                }
+            ],
+            "unsupported projection mode",
+        ),
+    ],
+)
+def test_v2_projection_routes_require_exactly_one_known_route_per_point(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    routes: list[dict[str, Any]],
+    error: str,
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    spec["projection_routes"] = routes
+    with pytest.raises(EvidenceConsumerError, match=error):
+        build_axis_consolidated_view(spec)
+
+
+def test_v2_direct_outcome_requires_the_boundaries_owned_by_each_point(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["output_boundary"].remove("creator influence is not customer corroboration")
+    _write(artifact_path, artifact)
+    _refresh_axis_binding(spec, paths)
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="direct_outcome point lacks required output boundary: point_a::creator influence",
+    ):
+        build_axis_consolidated_view(spec)
+
+
+def test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    spec["schema_version"] = LEGACY_CONSOLIDATION_SPEC_VERSION
+    spec.pop("projection_routes")
+
+    view = build_axis_consolidated_view(spec)
+
+    assert view["schema_version"] == LEGACY_CONSOLIDATED_VIEW_VERSION
+    assert "projection_routes" not in view
+    assert all("projection_mode" not in row for row in view["point_index"])
+    assert all(boundary not in view["non_claims"] for boundary in DIRECT_OUTCOME_BOUNDARIES)
+    assert build_axis_consolidated_view(spec) == view
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
 
 
 @pytest.mark.parametrize("field,value", [("relation", "support"), ("quote_span_id", "quote_fake")])

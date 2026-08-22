@@ -633,15 +633,39 @@ never enter `truth_origin_count` or `unique_truth_origins_across_axis`.
 
 Validate a saved generic pack with
 `validate-axis-pack --pack <axis-pack.json> --expected-axis-pack-sha256 <trusted-stored-hash>`.
-Then build `phase_a_evidence_axis_consolidated_view_v1` with the same runner's
-existing `build --spec <consolidation-spec.json> --output <new-view.json>` route;
-the spec explicitly pins the generic pack path and raw file SHA-256 and supplies
-presentation-only navigation groups covering every accepted point exactly once.
-Navigation may group points for reading but cannot merge propositions or grant
-evidence or relation authority. Validate the saved view with `validate --view
+Then build `phase_a_evidence_axis_consolidated_view_v2` with the same runner's
+existing `build --spec <consolidation-spec.json> --output <new-view.json>` route.
+The `phase_a_evidence_axis_consolidation_spec_v2` spec explicitly pins the
+generic pack path and raw file SHA-256, supplies presentation-only navigation
+groups, and supplies `projection_routes`; both structures must cover every
+accepted point exactly once. Navigation may group points for reading but cannot
+merge propositions or grant evidence or relation authority. The v1 spec and
+view remain accepted only so frozen historical artifacts rebuild without byte
+or hash drift. Validate the saved view with `validate --view
 <view.json> --expected-view-sha256 <trusted-stored-hash>`. Both writers refuse
 overwrite, make zero provider calls, and reproduce identical output from
 identical inputs.
+
+Projection routing is point-level, not an axis-name allowlist. A model may
+recommend the route while authoring the spec, but the declared spec is the
+durable choice; the builder does not silently infer or change it. Use
+`direct_outcome` when the point reports an attribute or experienced result,
+such as hydration, drying, wear, texture, finish, scent, flavor, shade fit,
+reaction, application, or comparator performance. Use `decision_state` when
+the point reports an actor's judgment or action state, such as value judgment,
+ownership, purchase, purchase intent, completed use, return, repurchase,
+switching, recommendation, or abandonment. These are routing examples rather
+than axis assignments: one named axis may contain points of both kinds.
+
+The v2 builder currently implements `direct_outcome`. It preserves the v1
+origin-normalized, surface-separated projection and also carries forward each
+point's existing boundaries that the presentation is not a causal judgment,
+not a commercial-pull score, and that creator influence is not customer
+corroboration. A declared `decision_state` route is recognized but fails at the
+projection-routing boundary because that projector is not implemented yet; it
+must never fall through to `direct_outcome`. Value is the first intended
+Decision State test subject, not evidence that Decision State is already
+complete.
 
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
@@ -681,8 +705,8 @@ first local v1 index had named only artifact paths; requiring an inferred siblin
 selection manifest was rejected as incomplete rather than reported as cold
 resolvability.
 
-Downstream consumers use generic completed axis packs through the derived
-`phase_a_evidence_axis_consolidated_view_v1`, built by
+Downstream consumers use generic completed axis packs through the live derived
+`phase_a_evidence_axis_consolidated_view_v2`, built by
 `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`. This is a
 presentation view, not a packet v4 and not another evidence authority. It
 accepts `phase_a_evidence_axis_pack_v1` as the live input and retains
@@ -749,6 +773,10 @@ pretend those metadata corrections were newly measured quality or latency. Its
 same fixed prompt projects to 362,501 UTF-8 bytes versus the ten-pack's 501,073,
 a static 27.655% reduction; logical-token and latency deltas remain the v5
 measurements above.
+
+That trust-bound file remains a frozen v1 artifact and is not rewritten by the
+live v2 route. Its results establish the Direct Outcome predecessor evidence;
+they do not validate the unimplemented Decision State projection.
 
 The completed production evidence still proves one hydration axis only. The
 generic builder's deterministic two-point fixtures prove schema and parity
