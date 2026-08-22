@@ -704,6 +704,76 @@ def test_legacy_hydration_v2_shape_remains_byte_deterministic_and_valid(
     ) == first
 
 
+def _bind_generic_fixture_to_literal_frontier(
+    manifest: dict[str, Any], *, expected_axis: str
+) -> None:
+    for descriptor in manifest["accepted_points"]:
+        selection_path = Path(descriptor["selection_manifest_path"])
+        selection = json.loads(selection_path.read_text(encoding="utf-8"))
+        selection["spec"]["axis_ids"] = []
+        selection["spec"]["relation_response_mode"] = "literal_ids"
+        selection["spec"]["relation_policy"] = "bounded_point"
+        selection["spec"]["customer_pull_frontier_binding"] = {
+            "proposition_id": descriptor["point_id"],
+            "candidate_admission": "literal_point_relations",
+        }
+        _rehash_manifest(selection)
+        _write(selection_path, selection)
+
+        quote_path = Path(descriptor["quote_manifest_path"])
+        quote = json.loads(quote_path.read_text(encoding="utf-8"))
+        quote["selection_manifest_sha256"] = selection["manifest_sha256"]
+        _rehash_manifest(quote)
+        _write(quote_path, quote)
+
+        artifact_path = Path(descriptor["artifact_path"])
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        for candidate in artifact["candidate_dispositions"]:
+            candidate["axis_ids"] = [expected_axis]
+        artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
+        artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
+        _write(artifact_path, artifact)
+
+        descriptor["artifact_sha256"] = hash_file(artifact_path)
+        descriptor["selection_manifest_file_sha256"] = hash_file(selection_path)
+        descriptor["selection_manifest_sha256"] = selection["manifest_sha256"]
+        descriptor["quote_manifest_file_sha256"] = hash_file(quote_path)
+        descriptor["quote_manifest_sha256"] = quote["manifest_sha256"]
+    _rehash_manifest(manifest)
+
+
+def test_axis_pack_accepts_frontier_literal_ref_points_bound_by_candidate_axes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    _bind_generic_fixture_to_literal_frontier(
+        manifest, expected_axis="hydration_and_moisture"
+    )
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+
+    assert pack["valid_point_count"] == 2
+
+
+def test_axis_pack_rejects_frontier_literal_ref_point_with_foreign_candidate_axis(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    _bind_generic_fixture_to_literal_frontier(
+        manifest, expected_axis="hydration_and_moisture"
+    )
+    descriptor = manifest["accepted_points"][0]
+    artifact_path = Path(descriptor["artifact_path"])
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["candidate_dispositions"][0]["axis_ids"] = ["value_and_quantity"]
+    _write(artifact_path, artifact)
+    descriptor["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(manifest)
+
+    with pytest.raises(EvidenceConsumerError, match="axis binding changed"):
+        build_phase_a_evidence_axis_pack(manifest)
+
+
 def test_axis_builder_rejects_schema_rename_with_hidden_sibling_inference(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
