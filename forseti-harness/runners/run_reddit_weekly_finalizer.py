@@ -60,8 +60,11 @@ def finalize_reddit_weekly_run(
             f"missing_extracts={missing[:5]} unexpected_extracts={unexpected[:5]}"
         )
 
+    coverage = _required_object(
+        source_manifest.get("coverage", {}), "deep-dive manifest coverage"
+    )
     declared_admitted = _required_int(
-        source_manifest.get("coverage", {}).get("admitted"),
+        coverage.get("admitted"),
         "deep-dive manifest coverage.admitted",
     )
     if declared_admitted != len(extract_rows):
@@ -100,6 +103,10 @@ def finalize_reddit_weekly_run(
                 **extract,
                 "schema": CATALOG_ROW_SCHEMA,
                 "title": content_thread.get("title"),
+                # Store the pointer this run actually resolved and read, so the
+                # catalog's advertised full-text field does not depend on the
+                # working directory the finalizer happened to run from.
+                "content_record": str(content_record_path),
                 "catalog_order": catalog_order,
                 "original_order": manifest_row.get("deep_dive_order"),
                 "capture_wave": manifest_row.get("capture_wave"),
