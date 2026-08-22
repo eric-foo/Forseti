@@ -614,6 +614,84 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     ) == view
 
 
+def test_decision_state_preserves_price_value_stage_and_quantity_as_distinct_facts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    row = spec["decision_state_bindings"][0]["rows"][0]
+    primary_ref = row["state_assertions"][0]["semantic_unit_refs"][0]
+    companion_ref = row["state_assertions"][1]["semantic_unit_refs"][0]
+    row["state_assertions"] = [
+        {
+            "state_kind": "price_concern",
+            "commercial_direction": "friction",
+            "decision_object": "fixture balm price",
+            "semantic_unit_refs": [primary_ref],
+            "quantity": None,
+            "conditions": [],
+        },
+        {
+            "state_kind": "value_judgment",
+            "commercial_direction": "favorable",
+            "decision_object": "fixture balm value",
+            "semantic_unit_refs": [primary_ref],
+            "quantity": None,
+            "conditions": [],
+        },
+        {
+            "state_kind": "repurchase_intent",
+            "commercial_direction": "toward_action",
+            "decision_object": "fixture balm",
+            "semantic_unit_refs": [primary_ref],
+            "quantity": None,
+            "conditions": [],
+        },
+        {
+            "state_kind": "observed_repurchase",
+            "commercial_direction": "toward_action",
+            "decision_object": "fixture balm",
+            "semantic_unit_refs": [companion_ref],
+            "quantity": None,
+            "conditions": [],
+        },
+        {
+            "state_kind": "multi_unit_purchase",
+            "commercial_direction": "toward_action",
+            "decision_object": "fixture balm",
+            "semantic_unit_refs": [companion_ref],
+            "quantity": 4,
+            "conditions": [],
+        },
+    ]
+
+    view = build_axis_consolidated_view(spec)
+    placement = next(
+        item
+        for item in view["point_placements"]
+        if item["point_id"] == "point_a" and item["selected_id"] == "selected_01"
+    )
+    group = next(
+        item
+        for item in view["decision_state_groups"]
+        if item["placement_id"] == placement["placement_id"]
+    )
+    states = {
+        item["state_kind"]: item for item in _projected_state_assertions(view, group)
+    }
+
+    assert states["price_concern"]["commercial_direction"] == "friction"
+    assert states["value_judgment"]["commercial_direction"] == "favorable"
+    assert view["decision_state_contract"]["state_kind_stages"][
+        "repurchase_intent"
+    ] == "intent"
+    assert view["decision_state_contract"]["state_kind_stages"][
+        "observed_repurchase"
+    ] == "observed"
+    assert states["observed_repurchase"]["quantity"] is None
+    assert states["multi_unit_purchase"]["quantity"] == 4
+
+
 def test_mixed_projection_routes_keep_direct_and_decision_points_distinct(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -717,6 +795,22 @@ def test_decision_state_keeps_selected_zero_engagement_without_promotion(
             },
             "quantity is valid only for multi-unit purchase",
         ),
+        (
+            {
+                "state_kind": "multi_unit_purchase",
+                "commercial_direction": "toward_action",
+                "quantity": None,
+            },
+            "multi-unit purchase requires quantity >= 2",
+        ),
+        (
+            {
+                "state_kind": "multi_unit_purchase",
+                "commercial_direction": "toward_action",
+                "quantity": 1,
+            },
+            "multi-unit purchase requires quantity >= 2",
+        ),
     ],
 )
 def test_decision_state_wrong_cause_transitions_fail_at_semantic_boundary(
@@ -819,6 +913,84 @@ def test_v2_projection_routes_require_exactly_one_known_route_per_point(
         build_axis_consolidated_view(spec)
 
 
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("decision_state_bindings", []),
+        ("decision_state_bindings_sha256", "unused-binding-identity"),
+        (
+            "decision_state_rejected_point_navigation",
+            [
+                {
+                    "point_id": "point_rejected",
+                    "navigation_group_id": "hydration_efficacy",
+                }
+            ],
+        ),
+    ],
+)
+def test_v2_direct_outcome_rejects_decision_state_spec_residue(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    value: Any,
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    spec[field] = value
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="decision-state fields supplied without a decision_state route",
+    ):
+        build_axis_consolidated_view(spec)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("decision_state_bindings", []),
+        ("decision_state_bindings_sha256", "unused-binding-identity"),
+        ("decision_state_rejected_point_navigation", []),
+    ],
+)
+def test_v1_rejects_decision_state_spec_residue(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    value: Any,
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    spec["schema_version"] = LEGACY_CONSOLIDATION_SPEC_VERSION
+    spec.pop("projection_routes")
+    spec[field] = value
+
+    with pytest.raises(EvidenceConsumerError, match="invalid in a v1 spec"):
+        build_axis_consolidated_view(spec)
+
+
+@pytest.mark.parametrize(
+    "rejected_points",
+    [
+        [{"point_id": "point_rejected"}],
+        ["point_rejected"],
+    ],
+)
+def test_decision_state_rejects_incomplete_legacy_rejected_point_rows(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    rejected_points: list[Any],
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    axis["rejected_points"] = rejected_points
+    _write(paths["axis"], axis)
+    spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+    _route_every_point_as_decision_state(spec)
+
+    with pytest.raises(EvidenceConsumerError, match="rejected-point fields are invalid"):
+        build_axis_consolidated_view(spec)
+
+
 def test_v2_direct_outcome_requires_the_boundaries_owned_by_each_point(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -870,6 +1042,27 @@ def test_reprojection_rejects_rehashed_direction_or_quote_mutation(
     mutated["view_sha256"] = _canonical_json_sha256(
         {key: item for key, item in mutated.items() if key != "view_sha256"}
     )
+    with pytest.raises(EvidenceConsumerError, match="trusted view identity differs"):
+        validate_axis_consolidated_view(
+            mutated, expected_view_sha256=trusted_view_sha256
+        )
+
+
+def test_external_view_hash_rejects_rehashed_decision_state_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    trusted_view_sha256 = view["view_sha256"]
+    mutated = copy.deepcopy(view)
+    state_row = mutated["decision_state_groups"][0]["state_rows"][0]
+    state_row[0] = "purchase"
+    state_row[1] = "neutral"
+    mutated["view_sha256"] = _canonical_json_sha256(
+        {key: item for key, item in mutated.items() if key != "view_sha256"}
+    )
+
     with pytest.raises(EvidenceConsumerError, match="trusted view identity differs"):
         validate_axis_consolidated_view(
             mutated, expected_view_sha256=trusted_view_sha256

@@ -657,15 +657,17 @@ ownership, purchase, purchase intent, completed use, return, repurchase,
 switching, recommendation, or abandonment. These are routing examples rather
 than axis assignments: one named axis may contain points of both kinds.
 
-The v2 builder currently implements `direct_outcome`. It preserves the v1
-origin-normalized, surface-separated projection and also carries forward each
+The v2 builder implements both `direct_outcome` and `decision_state` at the
+explicit point-level routing seam. Direct Outcome preserves the v1
+origin-normalized, surface-separated projection and carries forward each
 point's existing boundaries that the presentation is not a causal judgment,
 not a commercial-pull score, and that creator influence is not customer
-corroboration. A declared `decision_state` route is recognized but fails at the
-projection-routing boundary because that projector is not implemented yet; it
-must never fall through to `direct_outcome`. Value is the first intended
-Decision State test subject, not evidence that Decision State is already
-complete.
+corroboration. Decision State instead compacts explicit spec-authored actor,
+object, judgment/action-stage, direction, quantity, semantic-reference, and
+qualification facts without inferring states from quotes, engagement, point
+text, or axis names. Value is the first full frozen Decision State test
+subject; this does not make its findings prevalent, causal, or representative
+of other products or axes.
 
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
@@ -776,7 +778,9 @@ measurements above.
 
 That trust-bound file remains a frozen v1 artifact and is not rewritten by the
 live v2 route. Its results establish the Direct Outcome predecessor evidence;
-they do not validate the unimplemented Decision State projection.
+they do not themselves validate Decision State. The separate frozen value-axis
+pilot exercises Decision State while preserving this Direct Outcome and v1
+compatibility boundary.
 
 The completed production evidence still proves one hydration axis only. The
 generic builder's deterministic two-point fixtures prove schema and parity

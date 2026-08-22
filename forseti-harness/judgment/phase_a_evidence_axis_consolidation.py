@@ -48,6 +48,11 @@ INDEPENDENCE_POSTURES = {
 }
 PROJECTION_MODES = {"direct_outcome", "decision_state"}
 IMPLEMENTED_PROJECTION_MODES = PROJECTION_MODES
+DECISION_STATE_SPEC_FIELDS = {
+    "decision_state_bindings",
+    "decision_state_bindings_sha256",
+    "decision_state_rejected_point_navigation",
+}
 DIRECT_OUTCOME_BOUNDARIES = (
     "not a causal judgment",
     "not a commercial-pull score",
@@ -1166,7 +1171,21 @@ def _decision_state_rejected_index(
 ) -> list[dict[str, Any]]:
     """Optionally bind rejected points to an explicit existing navigation group."""
 
-    result = [copy.deepcopy(dict(row)) for row in rejected_points]
+    required_fields = {"point_id", "bounded_point", "disposition", "reason"}
+    result: list[dict[str, Any]] = []
+    for row in rejected_points:
+        if not isinstance(row, Mapping) or set(row) != required_fields:
+            raise EvidenceConsumerError(
+                "decision_state_binding", "rejected-point fields are invalid"
+            )
+        result.append(
+            {
+                field: _required_string(
+                    row, field, boundary="decision_state_binding"
+                )
+                for field in ("point_id", "bounded_point", "disposition", "reason")
+            }
+        )
     raw_bindings = spec.get("decision_state_rejected_point_navigation")
     if raw_bindings is None:
         return result
@@ -1174,10 +1193,7 @@ def _decision_state_rejected_index(
         raise EvidenceConsumerError(
             "decision_state_binding", "rejected-point navigation must be a list"
         )
-    rejected_ids = {
-        _required_string(row, "point_id", boundary="decision_state_binding")
-        for row in rejected_points
-    }
+    rejected_ids = {row["point_id"] for row in result}
     navigation_group_ids = {
         _required_string(row, "group_id", boundary="decision_state_binding")
         for row in navigation
@@ -1297,6 +1313,13 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     }:
         raise EvidenceConsumerError("consolidation_spec", "unsupported spec version")
     is_routed_v2 = spec_version == CONSOLIDATION_SPEC_VERSION
+    if not is_routed_v2:
+        legacy_residue = sorted(DECISION_STATE_SPEC_FIELDS & set(spec))
+        if legacy_residue:
+            raise EvidenceConsumerError(
+                "decision_state_binding",
+                f"decision-state fields are invalid in a v1 spec: {legacy_residue}",
+            )
     axis_id = _required_string(spec, "axis_id", boundary="consolidation_spec")
     axis_path = Path(
         _required_string(spec, "source_axis_pack_path", boundary="consolidation_spec")
@@ -1338,6 +1361,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     navigation, point_navigation = _navigation_groups(spec, set(point_ids))
     if is_routed_v2:
         projection_routes, point_projections = _projection_routes(spec, set(point_ids))
+        if "decision_state" not in point_projections.values():
+            direct_only_residue = sorted(DECISION_STATE_SPEC_FIELDS & set(spec))
+            if direct_only_residue:
+                raise EvidenceConsumerError(
+                    "decision_state_binding",
+                    "decision-state fields supplied without a decision_state route: "
+                    f"{direct_only_residue}",
+                )
         decision_state_bindings = _decision_state_bindings(spec, point_projections)
     else:
         projection_routes = []
