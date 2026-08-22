@@ -874,6 +874,7 @@ def test_weekly_demand_read_gates_and_reports(
     payload = run_weekly_demand_read(data_root=lake, as_of=dt.date(2026, 7, 17))
 
     assert payload["run_name"] == "Reddit Top100 2026-07-17"
+    assert payload["read_policy_id"] == "reddit_weekly_value_bounded_read_v1"
     assert payload["subs_read"] == 1
     assert payload["subs_missing_weekly_packet"] == []
     (health,) = payload["sub_health"]

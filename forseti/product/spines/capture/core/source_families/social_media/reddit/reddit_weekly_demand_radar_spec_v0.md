@@ -194,6 +194,9 @@ silently change downstream count semantics. Every emitted weekly reader
 artifact is named `Reddit Top100 YYYY-MM-DD`, using its `as_of` date, and
 carries that value in `run_name`. The date is the durable run identity; do not
 invent an ordinal that would require a separate sequence registry.
+The same reader exposes `read_policy_id: reddit_weekly_value_bounded_read_v1`;
+this identifies the within-thread attention policy and does not replace or
+version the Top100 listing methodology.
 
 After all admitted threads have final deep-dive extracts, run
 `run_reddit_weekly_finalizer.py`. Completion emits exactly two deterministic
@@ -201,10 +204,10 @@ access artifacts: `run.json` and
 `reddit_top100_YYYY-MM-DD_threads.jsonl`. The finalizer must fail unless the
 preliminary manifest's admitted thread IDs, the final extract thread IDs, and
 the readable content-record thread IDs are the same set with no duplicates.
-Final yes/no comes from the extracts; the preliminary manifest supplies only
-listing context and original order. The catalog is a run-scoped agent access
-aid, not neutral Data Lake authority, and retains each thread's exact extract
-and full-text provenance.
+Final yes/no comes from the extracts; the preliminary manifest supplies listing
+context, original order, and the within-thread `read_policy_id`. The catalog is
+a run-scoped agent access aid, not neutral Data Lake authority, and retains each
+thread's exact extract and full-text provenance.
 
 - The selection pool is every non-stickied, non-promoted listing row with
   parseable score and comment count. Listing evidence remains preserved whether
@@ -242,11 +245,31 @@ and full-text provenance.
   This prevents a mechanical shortlist from masquerading as authorization.
   A model `no` is the only adjudication state that suppresses capture; captured
   `borderline` uncertainty resolves in extraction under the governing policy.
-- Once selected, capture the complete exposed thread and analyse all captured
-  comments. Comment points order evidence for presentation; they are not a
-  within-thread stopping rule. Record explicitly named brands, products, and
-  ingredients in their stated context (alleged problem/cause, proposed
-  solution, recommendation, comparison, praise, or neutral mention).
+- Once selected, capture the complete exposed thread, then analyze its comments
+  under `reddit_weekly_value_bounded_read_v1`, owned by the listing policy's
+  "Value-bounded evidence read" section. Read the post and the
+  high-engagement cohort first, record typed provisional evidence points, then
+  read the remainder in 25-comment stable-order batches until corpus exhaustion
+  or two consecutive batches add no decision-relevant information. After five
+  distinct direct reporters, identical recurrence support is no longer cited or
+  novelty-bearing; new conditions, mechanisms, consequences, behaviors, better
+  evidence, and counters remain in scope. Engagement orders attention only and
+  no threshold establishes truth, prevalence, or safety. Expand beyond the
+  broad-read stop only for a named unresolved material gap and never beyond the
+  existing 90%/85, 95%/103, exceptional 149 capture caps or circuit breaker.
+  Record explicitly named brands, products, and ingredients in their stated
+  context (alleged problem/cause, proposed solution, recommendation, comparison,
+  praise, or neutral mention).
+- A new-policy deep-dive manifest carries
+  `read_policy_id: reddit_weekly_value_bounded_read_v1`, and every extract under
+  that manifest carries the evidence-read receipt owned by the listing policy.
+  The finalizer
+  validates each receipt against resolved content-record comments, derives
+  per-claim independent-reporter handles/counts, emits the validated receipt and
+  policy in each catalog row, and echoes the policy in `run.json`. A missing
+  required receipt, unknown present manifest policy, or receipt/manifest mismatch
+  fails loudly. An absent manifest policy selects legacy behavior and legacy
+  outputs omit the policy field.
 - When direct HTTP returns a body classified as `block_shell`, the bounded batch
   writes a diagnostic PNG and JSON receipt from the exact preserved response
   bytes. The derivation performs no URL re-fetch, browser access, retry, CAPTCHA
