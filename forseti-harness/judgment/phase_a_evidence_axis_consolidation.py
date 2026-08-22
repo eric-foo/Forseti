@@ -83,6 +83,18 @@ def _string_list(value: Any, *, boundary: str, field: str) -> list[str]:
     return list(value)
 
 
+def _is_truth_support_origin(row: Mapping[str, Any]) -> bool:
+    """Only a truth-support row contributes to a truth-origin count.
+
+    Displayed rows carry other layers (creator influence, for example).  Those
+    origins remain displayed and counted as origins, but they are not customer
+    truth and must never enter a count named for truth support.
+    """
+    return row.get("layer") == "truth_support" and isinstance(
+        row.get("origin_group_id"), str
+    )
+
+
 def _point_rows(artifact: Mapping[str, Any], *, point_id: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     source_groups = artifact.get("source_groups")
@@ -277,9 +289,7 @@ def _validate_point_binding(
                 "point_binding", f"display relation binding changed: {point_id}"
             )
     truth_origins = {
-        row.get("origin_group_id")
-        for row in rows
-        if row.get("layer") == "truth_support" and isinstance(row.get("origin_group_id"), str)
+        row["origin_group_id"] for row in rows if _is_truth_support_origin(row)
     }
     if artifact.get("truth_group_count") != len(truth_origins):
         raise EvidenceConsumerError("point_policy", f"truth origin count changed: {point_id}")
@@ -421,7 +431,7 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
         )
 
     point_descriptors: list[dict[str, Any]] = []
-    unique_origins: set[str] = set()
+    unique_truth_origins: set[str] = set()
     unique_evidence: set[str] = set()
     candidate_total = 0
     display_total = 0
@@ -434,8 +444,9 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
         candidate_total += normalized["candidate_count"]
         display_total += normalized["display_row_count"]
         for row in _point_rows(artifact, point_id=normalized["point_id"]):
-            unique_origins.add(row["origin_group_id"])
             unique_evidence.add(row["evidence_id"])
+            if _is_truth_support_origin(row):
+                unique_truth_origins.add(row["origin_group_id"])
 
     pack: dict[str, Any] = {
         "schema_version": AXIS_PACK_VERSION,
@@ -449,7 +460,7 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
         "rejected_point_count": len(rejected_rows),
         "frontier_point_count": len(point_descriptors) + len(rejected_rows),
         "display_row_slots": display_total,
-        "unique_truth_origins_across_axis": len(unique_origins),
+        "unique_truth_origins_across_axis": len(unique_truth_origins),
         "unique_evidence_items_across_axis": len(unique_evidence),
         "cold_reader_resolution": {
             "resolved_candidate_disposition_count": candidate_total,
@@ -566,7 +577,9 @@ def _content_surface(row: Mapping[str, Any]) -> tuple[str, str]:
                 "content_surface", "Reddit thread identity is absent from its source reference"
             )
         if parts[2] == "post":
-            if "/_/" in source_ref:
+            # A thread permalink carries at most the slug after the thread id;
+            # any further segment is a comment id, whatever the marker claims.
+            if len(path_parts[comments_index + 2 :]) > 1:
                 raise EvidenceConsumerError(
                     "content_surface", "Reddit post identity conflicts with comment URL"
                 )
@@ -772,6 +785,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     companion_meanings: dict[str, dict[str, Any]] = {}
     placements: list[dict[str, Any]] = []
     point_index: list[dict[str, Any]] = []
+    axis_truth_origin_ids: set[str] = set()
     candidate_total = 0
 
     for descriptor in point_descriptors:
@@ -783,6 +797,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         )
         candidate_total += len(candidate_by_id)
         point_placement_ids: list[str] = []
+        point_truth_origin_ids: set[str] = set()
         seen_selected: set[str] = set()
         observed_relations: dict[str, int] = {
             "support": 0,
@@ -955,6 +970,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 point_placement_ids.append(placement_id)
                 observed_relations[relation] += 1
                 relation_origin_ids[relation].add(origin_id)
+                if _is_truth_support_origin(row):
+                    point_truth_origin_ids.add(origin_id)
                 origin = origins.setdefault(
                     origin_id,
                     {
@@ -999,14 +1016,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             raise EvidenceConsumerError(
                 "point_projection", f"display row count changed: {point_id}"
             )
-        distinct_point_origins = set().union(*relation_origin_ids.values())
         if (
             artifact.get("truth_group_count") != descriptor.get("truth_origin_count")
-            or len(distinct_point_origins) != descriptor.get("truth_origin_count")
+            or len(point_truth_origin_ids) != descriptor.get("truth_origin_count")
         ):
             raise EvidenceConsumerError(
                 "point_projection", f"truth origin count changed: {point_id}"
             )
+        axis_truth_origin_ids.update(point_truth_origin_ids)
         group_id, family_id = point_navigation[point_id]
         point_index.append(
             {
@@ -1148,10 +1165,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         raise EvidenceConsumerError("axis_parity", "candidate disposition count changed")
     if view["counts"]["placement_count"] != axis_pack.get("display_row_slots"):
         raise EvidenceConsumerError("axis_parity", "display placement count changed")
-    if view["counts"]["unique_origin_count"] != axis_pack.get(
-        "unique_truth_origins_across_axis"
-    ):
-        raise EvidenceConsumerError("axis_parity", "unique origin count changed")
+    if len(axis_truth_origin_ids) != axis_pack.get("unique_truth_origins_across_axis"):
+        raise EvidenceConsumerError("axis_parity", "unique truth origin count changed")
     if view["counts"]["unique_evidence_count"] != axis_pack.get(
         "unique_evidence_items_across_axis"
     ):
