@@ -170,7 +170,33 @@ def _validate_point_binding(
         raise EvidenceConsumerError(
             "candidate_access", f"candidate inventory binding changed: {point_id}"
         )
-    if selection_manifest.get("spec", {}).get("axis_ids") != [expected_axis]:
+    selection_spec = selection_manifest.get("spec")
+    frontier_binding = (
+        selection_spec.get("customer_pull_frontier_binding")
+        if isinstance(selection_spec, Mapping)
+        else None
+    )
+    literal_frontier_axis_binding = (
+        isinstance(selection_spec, Mapping)
+        and selection_spec.get("axis_ids") == []
+        and selection_spec.get("relation_response_mode") == "literal_ids"
+        and selection_spec.get("relation_policy") == "bounded_point"
+        and isinstance(frontier_binding, Mapping)
+        and frontier_binding.get("proposition_id") == point_id
+        and frontier_binding.get("candidate_admission") == "literal_point_relations"
+        and all(
+            isinstance(candidate.get("axis_ids"), list)
+            and expected_axis in candidate["axis_ids"]
+            for candidate in candidate_by_id.values()
+        )
+    )
+    if (
+        not isinstance(selection_spec, Mapping)
+        or (
+            selection_spec.get("axis_ids") != [expected_axis]
+            and not literal_frontier_axis_binding
+        )
+    ):
         raise EvidenceConsumerError("candidate_access", f"axis binding changed: {point_id}")
     sources = load_selection_sources(selection_manifest)
     for source in sources:
