@@ -46,6 +46,55 @@ def test_finalizer_writes_complete_agent_catalog_and_is_repeatable(tmp_path: Pat
     assert rows[0]["transcript"].endswith("existing.txt")
 
 
+def test_finalizer_keeps_extract_admission_over_preliminary_manifest(tmp_path: Path) -> None:
+    deep_dive = _fixture(tmp_path)
+    manifest = json.loads(
+        (deep_dive / "deep_dive_manifest_v1.json").read_text(encoding="utf-8")
+    )
+    assert manifest["existing_admitted_captures"][0]["admission"] == "borderline"
+    assert manifest["pending"][0]["admission"] == "yes"
+
+    result = _finalize(deep_dive, tmp_path / "output")
+
+    assert [row["admission"] for row in _rows(result)] == ["yes", "no"]
+    assert (result["yes"], result["no"]) == (1, 1)
+
+
+def test_finalizer_catalog_content_records_resolve_outside_the_runner_cwd(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    deep_dive = _fixture(tmp_path)
+    for name in ("existing_11_extracts_v1.jsonl", "batch_001_extracts_v1.jsonl"):
+        path = deep_dive / name
+        row = json.loads(path.read_text(encoding="utf-8"))
+        row["content_record"] = Path(row["content_record"]).relative_to(tmp_path).as_posix()
+        path.write_text(json.dumps(row) + "\n", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+
+    result = _finalize(deep_dive, tmp_path / "output")
+    monkeypatch.undo()
+
+    pointers = [Path(row["content_record"]) for row in _rows(result)]
+    assert len(pointers) == result["content_records_resolved"]
+    assert all(pointer.is_absolute() and pointer.is_file() for pointer in pointers)
+
+
+def test_finalizer_tolerates_blank_lines_and_rejects_malformed_extract_lines(
+    tmp_path: Path,
+) -> None:
+    deep_dive = _fixture(tmp_path)
+    batch = deep_dive / "batch_001_extracts_v1.jsonl"
+    batch.write_text(
+        "\n   \n" + batch.read_text(encoding="utf-8") + "\n", encoding="utf-8"
+    )
+
+    assert _finalize(deep_dive, tmp_path / "output")["threads"] == 2
+
+    (deep_dive / "batch_002_extracts_v1.jsonl").write_text("{\n", encoding="utf-8")
+    with pytest.raises(ValueError, match=r"invalid JSON in batch_002_extracts_v1\.jsonl:1"):
+        _finalize(deep_dive, tmp_path / "malformed")
+
+
 def test_finalizer_rejects_duplicate_extract_thread(tmp_path: Path) -> None:
     deep_dive = _fixture(tmp_path)
     batch = deep_dive / "batch_001_extracts_v1.jsonl"
@@ -89,10 +138,26 @@ def test_finalizer_rejects_declared_count_mismatch(tmp_path: Path) -> None:
         _finalize(deep_dive, tmp_path / "output")
 
 
+def test_finalizer_rejects_non_object_manifest_coverage(tmp_path: Path) -> None:
+    deep_dive = _fixture(tmp_path)
+    manifest_path = deep_dive / "deep_dive_manifest_v1.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["coverage"] = []
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="deep-dive manifest coverage must be a JSON object"):
+        _finalize(deep_dive, tmp_path / "output")
+
+
 def _finalize(deep_dive: Path, output: Path) -> dict[str, object]:
     return finalize_reddit_weekly_run(
         deep_dive_dir=deep_dive, output_dir=output, as_of=dt.date(2026, 8, 11)
     )
+
+
+def _rows(result: dict[str, object]) -> list[dict[str, object]]:
+    text = Path(str(result["catalog_path"])).read_text(encoding="utf-8")
+    return [json.loads(line) for line in text.splitlines() if line.strip()]
 
 
 def _fixture(tmp_path: Path) -> Path:
@@ -115,6 +180,8 @@ def _fixture(tmp_path: Path) -> Path:
                 "thread_url": "https://reddit.example/existing",
                 "subreddit": "example",
                 "title": "Existing listing title",
+                # Pre-adjudication selection decision; the extract owns the final call.
+                "admission": "borderline",
                 "listing_snapshot": {"score": 20, "comments": 10},
             }
         ],
@@ -124,6 +191,7 @@ def _fixture(tmp_path: Path) -> Path:
                 "thread_url": "https://reddit.example/queued",
                 "subreddit": "example",
                 "title_or_none": "Queued listing title",
+                "admission": "yes",
                 "listing_snapshot": {"score": 10, "comments": 5},
                 "deep_dive_order": 1,
                 "capture_wave": "high_priority",
