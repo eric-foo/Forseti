@@ -602,9 +602,46 @@ mixed lineage in the axis manifest, or rerun the whole point under the current
 policy. Never make a current finalizer accept an old manifest by rebinding or
 editing its hashes. An axis manifest references each point artifact path and
 SHA-256, policy revision, exact selection-manifest path and stored/file hashes,
-and quote-manifest path and stored hash; it does not duplicate the point
+and quote-manifest path and stored/file hashes; it does not duplicate the point
 artifacts' full candidate inventories. A sibling-file convention is not a
 cold-reader source pointer.
+
+The live repository route for any named Phase A axis is
+`phase_a_evidence_axis_pack_manifest_v1` ->
+`phase_a_evidence_axis_pack_v1`. Use
+`forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py
+build-axis-pack --manifest <explicit-manifest.json> --output <new-axis-pack.json>`.
+The manifest is a self-hashed JSON object with `axis_id`, nonempty
+`accepted_points`, and explicit `rejected_points` (an empty list is allowed).
+Every accepted point names its `point_id`, `bounded_point`, `policy_revision`,
+point-artifact path/file SHA-256, selection-manifest path/file SHA-256/stored
+manifest SHA-256, and quote-manifest path/file SHA-256/stored manifest SHA-256.
+Do not infer any sibling file. The builder independently reopens those literal
+paths, verifies point and axis identity, candidate closure, the normal
+thirteen-truth-origin cap, selection and quote lineage, packet
+v3 identity, content-bound bundle identity, and packet-to-bundle binding, then
+derives rather than trusts the pack's point, relation, origin, evidence, and
+candidate counts. Accepted and rejected point IDs are unique and disjoint.
+`policy_revision` is a declared operator pin rather than verified lineage: it
+is cross-checked only against a point artifact that carries its own
+`policy_revision`, and the completed Phase A point artifacts do not carry one,
+so no completed point currently exercises that check.
+
+Truth-origin counts admit only `truth_support` rows. Other displayed layers,
+such as creator influence, remain displayed origins and displayed rows but
+never enter `truth_origin_count` or `unique_truth_origins_across_axis`.
+
+Validate a saved generic pack with
+`validate-axis-pack --pack <axis-pack.json> --expected-axis-pack-sha256 <trusted-stored-hash>`.
+Then build `phase_a_evidence_axis_consolidated_view_v1` with the same runner's
+existing `build --spec <consolidation-spec.json> --output <new-view.json>` route;
+the spec explicitly pins the generic pack path and raw file SHA-256 and supplies
+presentation-only navigation groups covering every accepted point exactly once.
+Navigation may group points for reading but cannot merge propositions or grant
+evidence or relation authority. Validate the saved view with `validate --view
+<view.json> --expected-view-sha256 <trusted-stored-hash>`. Both writers refuse
+overwrite, make zero provider calls, and reproduce identical output from
+identical inputs.
 
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
@@ -614,7 +651,8 @@ shortened by an operator after such a failure is a disclosed corrected response,
 not an unmodified provider result; prefer a bounded provider correction turn
 and preserve every discarded-call cost either way.
 
-The completed hydration-axis dogfood at
+The completed hydration-axis dogfood is the immutable completed example and
+legacy compatibility input for this generic route. Its pack at
 `C:\tmp\forseti-phase-a-hydration-axis-pack-20260822-v0\hydration_axis_pack_v2.json`
 (raw SHA-256
 `42f7fa0ca3c7d2000c77e97d37a429aa32c04c320aa2fa000a68b114acf9c77d`)
@@ -643,10 +681,12 @@ first local v1 index had named only artifact paths; requiring an inferred siblin
 selection manifest was rejected as incomplete rather than reported as cold
 resolvability.
 
-Downstream consumers use the completed points through the derived
+Downstream consumers use generic completed axis packs through the derived
 `phase_a_evidence_axis_consolidated_view_v1`, built by
 `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`. This is a
 presentation view, not a packet v4 and not another evidence authority. It
+accepts `phase_a_evidence_axis_pack_v1` as the live input and retains
+`phase_a_hydration_axis_pack_v2` only for immutable hydration compatibility. It
 reverifies the exact axis, point, selection, quote, packet, and bundle bindings;
 keeps all ten bounded points and every claim-relative placement; stores each of
 the 32 origins, 37 evidence items, 56 quote records, and 181 companion meanings
@@ -710,9 +750,11 @@ same fixed prompt projects to 362,501 UTF-8 bytes versus the ten-pack's 501,073,
 a static 27.655% reduction; logical-token and latency deltas remain the v5
 measurements above.
 
-This proves one completed hydration axis only. It does not change the
-thirteen-origin selector, establish a universal axis schema, prove another
-product or axis, or turn the displayed origins into prevalence. Reverse to the
+The completed production evidence still proves one hydration axis only. The
+generic builder's deterministic two-point fixtures prove schema and parity
+behavior, not another product or axis. This route does not change the
+thirteen-origin selector, point relations, packet v3, or turn displayed origins
+into prevalence. Reverse to the
 ten-point source artifacts if deterministic reprojection loses any point,
 relation, condition, comparator, quote, source binding, or cold candidate
 access; if a representative cold consumer inflates origins or changes a

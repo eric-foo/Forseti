@@ -20,14 +20,23 @@ from harness_utils import hash_file
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
+    _verify_packet,
 )
-from judgment.phase_a_evidence_selection import load_selection_sources
+from judgment.phase_a_evidence_selection import _verify_bundle, load_selection_sources
 
 
+AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v1"
+AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v1"
 CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
-SOURCE_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
+SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
+LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
+POINT_TRUTH_ORIGIN_CAP = 13
+SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
+    "phase_a_evidence_quote_manifest_v6",
+    "phase_a_evidence_quote_manifest_v7",
+}
 INDEPENDENCE_POSTURES = {
     "credited",
     "possible_same_actor",
@@ -57,6 +66,10 @@ def _verify_manifest_hash(
         raise EvidenceConsumerError(boundary, "manifest identity differs from point binding")
 
 
+def _canonical_hash(value: Mapping[str, Any], field: str) -> str:
+    return _canonical_json_sha256({key: item for key, item in value.items() if key != field})
+
+
 def _required_string(value: Mapping[str, Any], key: str, *, boundary: str) -> str:
     observed = value.get(key)
     if not isinstance(observed, str) or not observed:
@@ -68,6 +81,439 @@ def _string_list(value: Any, *, boundary: str, field: str) -> list[str]:
     if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
         raise EvidenceConsumerError(boundary, f"{field} must be a string list")
     return list(value)
+
+
+def _is_truth_support_origin(row: Mapping[str, Any]) -> bool:
+    """Only a truth-support row contributes to a truth-origin count.
+
+    Displayed rows carry other layers (creator influence, for example).  Those
+    origins remain displayed and counted as origins, but they are not customer
+    truth and must never enter a count named for truth support.
+    """
+    return row.get("layer") == "truth_support" and isinstance(
+        row.get("origin_group_id"), str
+    )
+
+
+def _point_rows(artifact: Mapping[str, Any], *, point_id: str) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    source_groups = artifact.get("source_groups")
+    if not isinstance(source_groups, list):
+        raise EvidenceConsumerError("point_binding", f"source groups invalid: {point_id}")
+    for source_group in source_groups:
+        if not isinstance(source_group, Mapping) or not isinstance(
+            source_group.get("rows"), list
+        ):
+            raise EvidenceConsumerError("point_binding", f"source group rows invalid: {point_id}")
+        for row in source_group["rows"]:
+            if not isinstance(row, Mapping):
+                raise EvidenceConsumerError("point_binding", f"display row invalid: {point_id}")
+            rows.append(dict(row))
+    return rows
+
+
+def _validate_point_binding(
+    descriptor: Mapping[str, Any], *, expected_axis: str, require_complete_pins: bool
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    point_id = _required_string(descriptor, "point_id", boundary="point_binding")
+    bounded_point = _required_string(descriptor, "bounded_point", boundary="point_binding")
+    artifact_path = Path(_required_string(descriptor, "artifact_path", boundary="point_binding"))
+    expected_artifact_hash = _required_string(
+        descriptor, "artifact_sha256", boundary="point_binding"
+    )
+    if not artifact_path.is_file() or hash_file(artifact_path) != expected_artifact_hash:
+        raise EvidenceConsumerError("point_binding", f"point artifact changed: {point_id}")
+    artifact = _load_object(artifact_path, boundary="point_binding")
+    if artifact.get("point_id") != point_id:
+        raise EvidenceConsumerError("point_binding", f"point identity changed: {point_id}")
+    if artifact.get("bounded_point") != bounded_point:
+        raise EvidenceConsumerError("point_binding", f"bounded point changed: {point_id}")
+    if require_complete_pins and artifact.get("schema_version") != (
+        "phase_a_evidence_selection_artifact_v2"
+    ):
+        raise EvidenceConsumerError("point_policy", f"unsupported point artifact: {point_id}")
+
+    candidates = artifact.get("candidate_dispositions")
+    if not isinstance(candidates, list) or not candidates:
+        raise EvidenceConsumerError("candidate_access", f"candidate inventory missing: {point_id}")
+    candidate_ids = [row.get("candidate_id") for row in candidates if isinstance(row, Mapping)]
+    if (
+        len(candidate_ids) != len(candidates)
+        or not all(isinstance(value, str) and value for value in candidate_ids)
+        or len(set(candidate_ids)) != len(candidate_ids)
+    ):
+        raise EvidenceConsumerError("candidate_access", f"candidate identities invalid: {point_id}")
+    candidate_by_id = {
+        row["candidate_id"]: dict(row) for row in candidates if isinstance(row, Mapping)
+    }
+
+    selection_path = Path(
+        _required_string(descriptor, "selection_manifest_path", boundary="candidate_access")
+    )
+    expected_selection_file_hash = _required_string(
+        descriptor, "selection_manifest_file_sha256", boundary="candidate_access"
+    )
+    if (
+        not selection_path.is_file()
+        or hash_file(selection_path) != expected_selection_file_hash
+    ):
+        raise EvidenceConsumerError("candidate_access", f"selection manifest changed: {point_id}")
+    selection_manifest = _load_object(selection_path, boundary="candidate_access")
+    _verify_manifest_hash(
+        selection_manifest,
+        expected=descriptor.get("selection_manifest_sha256"),
+        boundary="candidate_access",
+    )
+    if selection_manifest.get("candidate_inventory_sha256") != artifact.get(
+        "candidate_inventory_sha256"
+    ):
+        raise EvidenceConsumerError(
+            "candidate_access", f"candidate inventory binding changed: {point_id}"
+        )
+    if selection_manifest.get("spec", {}).get("axis_ids") != [expected_axis]:
+        raise EvidenceConsumerError("candidate_access", f"axis binding changed: {point_id}")
+    sources = load_selection_sources(selection_manifest)
+    for source in sources:
+        packet = source.get("packet")
+        bundle = source.get("bundle")
+        if not isinstance(packet, Mapping) or not isinstance(bundle, Mapping):
+            raise EvidenceConsumerError("source_binding", f"source binding invalid: {point_id}")
+        _verify_packet(packet)
+        _verify_bundle(bundle)
+        if packet.get("source_bindings", {}).get("bundle_sha256") != bundle.get(
+            "bundle_sha256"
+        ):
+            raise EvidenceConsumerError(
+                "source_binding", f"packet/bundle binding changed: {point_id}"
+            )
+
+    quote_path = Path(
+        _required_string(descriptor, "quote_manifest_path", boundary="quote_binding")
+    )
+    if require_complete_pins:
+        expected_quote_file_hash = _required_string(
+            descriptor, "quote_manifest_file_sha256", boundary="quote_binding"
+        )
+        if not quote_path.is_file() or hash_file(quote_path) != expected_quote_file_hash:
+            raise EvidenceConsumerError("quote_binding", f"quote manifest changed: {point_id}")
+    elif not quote_path.is_file():
+        raise EvidenceConsumerError("quote_binding", f"quote manifest missing: {point_id}")
+    else:
+        expected_quote_file_hash = hash_file(quote_path)
+    quote_manifest = _load_object(quote_path, boundary="quote_binding")
+    _verify_manifest_hash(
+        quote_manifest,
+        expected=descriptor.get("quote_manifest_sha256"),
+        boundary="quote_binding",
+    )
+    if quote_manifest.get("schema_version") not in SUPPORTED_QUOTE_MANIFEST_VERSIONS:
+        raise EvidenceConsumerError("quote_binding", f"unsupported quote policy: {point_id}")
+    if quote_manifest.get("selection_manifest_sha256") != artifact.get(
+        "selection_manifest_sha256"
+    ):
+        raise EvidenceConsumerError("quote_binding", f"quote lineage changed: {point_id}")
+    if quote_manifest.get("candidate_inventory_sha256") not in {
+        None,
+        artifact.get("candidate_inventory_sha256"),
+    }:
+        raise EvidenceConsumerError(
+            "quote_binding", f"quote candidate binding changed: {point_id}"
+        )
+    if artifact.get("quote_manifest_sha256") not in {
+        None,
+        quote_manifest.get("manifest_sha256"),
+    }:
+        raise EvidenceConsumerError("quote_binding", f"artifact quote binding changed: {point_id}")
+
+    if require_complete_pins:
+        if artifact.get("truth_group_cap") != POINT_TRUTH_ORIGIN_CAP:
+            raise EvidenceConsumerError(
+                "point_policy", f"truth origin cap must be {POINT_TRUTH_ORIGIN_CAP}: {point_id}"
+            )
+        if artifact.get("selection_manifest_sha256") != selection_manifest.get(
+            "manifest_sha256"
+        ):
+            raise EvidenceConsumerError(
+                "point_policy", f"artifact selection binding changed: {point_id}"
+            )
+        artifact_policy = artifact.get("policy_revision")
+        if artifact_policy is not None and artifact_policy != descriptor.get("policy_revision"):
+            raise EvidenceConsumerError("point_policy", f"policy lineage changed: {point_id}")
+
+    rows = _point_rows(artifact, point_id=point_id)
+    for row in rows:
+        origin_candidate_ids = row.get("origin_candidate_ids")
+        if (
+            not isinstance(origin_candidate_ids, list)
+            or not origin_candidate_ids
+            or not all(candidate_id in candidate_by_id for candidate_id in origin_candidate_ids)
+        ):
+            raise EvidenceConsumerError(
+                "point_binding", f"display candidate missing: {point_id}"
+            )
+        matching = [
+            candidate_by_id[candidate_id]
+            for candidate_id in origin_candidate_ids
+            if candidate_by_id[candidate_id].get("evidence_id") == row.get("evidence_id")
+            and candidate_by_id[candidate_id].get("semantic_unit_ref")
+            == row.get("semantic_unit_ref")
+        ]
+        if len(matching) != 1 or matching[0].get("relation") != row.get("relation"):
+            raise EvidenceConsumerError(
+                "point_binding", f"display relation binding changed: {point_id}"
+            )
+    truth_origins = {
+        row["origin_group_id"] for row in rows if _is_truth_support_origin(row)
+    }
+    if artifact.get("truth_group_count") != len(truth_origins):
+        raise EvidenceConsumerError("point_policy", f"truth origin count changed: {point_id}")
+    if len(truth_origins) > POINT_TRUTH_ORIGIN_CAP:
+        raise EvidenceConsumerError("point_policy", f"truth origin cap exceeded: {point_id}")
+    if require_complete_pins:
+        disclosure = artifact.get("selection_disclosure")
+        if (
+            artifact.get("relation_confirmation_status") != "passed"
+            or artifact.get("point_scope_confirmation_status") != "passed"
+            or not isinstance(artifact.get("point_scope_confirmation_reason"), str)
+            or not artifact["point_scope_confirmation_reason"].strip()
+            or not isinstance(disclosure, Mapping)
+            or disclosure.get("candidate_semantic_row_count") != len(candidates)
+            or disclosure.get("displayed_row_count") != len(rows)
+            or disclosure.get("displayed_truth_origin_count") != len(truth_origins)
+        ):
+            raise EvidenceConsumerError(
+                "point_policy", f"point completion policy changed: {point_id}"
+            )
+
+    relation_counts = {"support": 0, "counter": 0, "adjacent": 0}
+    for row in rows:
+        relation = row.get("relation")
+        if relation not in relation_counts:
+            raise EvidenceConsumerError("point_binding", f"displayed relation invalid: {point_id}")
+        relation_counts[relation] += 1
+    descriptor_out = {
+        "point_id": point_id,
+        "bounded_point": bounded_point,
+        "artifact_path": str(artifact_path),
+        "artifact_sha256": expected_artifact_hash,
+        "candidate_count": len(candidates),
+        "display_row_count": len(rows),
+        "truth_origin_count": len(truth_origins),
+        "relation_counts": relation_counts,
+        "policy_revision": _required_string(
+            descriptor, "policy_revision", boundary="point_policy"
+        ),
+        "policy_lineage": {
+            "artifact_schema_version": artifact.get("schema_version"),
+            "selection_manifest_schema_version": selection_manifest.get("schema_version"),
+            "quote_manifest_schema_version": quote_manifest.get("schema_version"),
+        },
+        "selection_manifest_path": str(selection_path),
+        "selection_manifest_file_sha256": expected_selection_file_hash,
+        "selection_manifest_sha256": selection_manifest["manifest_sha256"],
+        "quote_manifest_path": str(quote_path),
+        "quote_manifest_file_sha256": expected_quote_file_hash,
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
+    }
+    bindings = {
+        key: descriptor_out[key]
+        for key in (
+            "artifact_path",
+            "artifact_sha256",
+            "selection_manifest_path",
+            "selection_manifest_file_sha256",
+            "selection_manifest_sha256",
+            "quote_manifest_path",
+            "quote_manifest_file_sha256",
+            "quote_manifest_sha256",
+        )
+    }
+    return artifact, candidate_by_id, {"descriptor": descriptor_out, "bindings": bindings}
+
+
+def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    """Build a generic, cold-resolvable Phase A axis pack from explicit pins."""
+
+    if manifest.get("schema_version") != AXIS_PACK_MANIFEST_VERSION:
+        raise EvidenceConsumerError("axis_manifest", "unsupported axis manifest version")
+    if set(manifest) != {
+        "schema_version",
+        "axis_id",
+        "accepted_points",
+        "rejected_points",
+        "manifest_sha256",
+    }:
+        raise EvidenceConsumerError("axis_manifest", "axis manifest fields are invalid")
+    stored_manifest_hash = manifest.get("manifest_sha256")
+    if not isinstance(stored_manifest_hash, str) or stored_manifest_hash != _canonical_hash(
+        manifest, "manifest_sha256"
+    ):
+        raise EvidenceConsumerError("axis_manifest", "stored manifest hash is invalid")
+    axis_id = _required_string(manifest, "axis_id", boundary="axis_manifest")
+    accepted = manifest.get("accepted_points")
+    rejected = manifest.get("rejected_points")
+    if not isinstance(accepted, list) or not accepted:
+        raise EvidenceConsumerError("axis_manifest", "accepted_points must be nonempty")
+    if not isinstance(rejected, list):
+        raise EvidenceConsumerError("axis_manifest", "rejected_points must be explicit")
+
+    accepted_ids = [row.get("point_id") for row in accepted if isinstance(row, Mapping)]
+    if (
+        len(accepted_ids) != len(accepted)
+        or not all(isinstance(value, str) and value for value in accepted_ids)
+        or len(set(accepted_ids)) != len(accepted_ids)
+    ):
+        raise EvidenceConsumerError("axis_manifest", "accepted point identities are invalid")
+    accepted_fields = {
+        "point_id",
+        "bounded_point",
+        "artifact_path",
+        "artifact_sha256",
+        "policy_revision",
+        "selection_manifest_path",
+        "selection_manifest_file_sha256",
+        "selection_manifest_sha256",
+        "quote_manifest_path",
+        "quote_manifest_file_sha256",
+        "quote_manifest_sha256",
+    }
+    if any(set(row) != accepted_fields for row in accepted):
+        raise EvidenceConsumerError("axis_manifest", "accepted point pins are incomplete")
+    rejected_rows: list[dict[str, str]] = []
+    rejected_ids: list[str] = []
+    for row in rejected:
+        if not isinstance(row, Mapping):
+            raise EvidenceConsumerError("axis_manifest", "rejected point must be an object")
+        if set(row) != {"point_id", "bounded_point", "disposition", "reason"}:
+            raise EvidenceConsumerError("axis_manifest", "rejected point fields are invalid")
+        point_id = _required_string(row, "point_id", boundary="axis_manifest")
+        rejected_ids.append(point_id)
+        rejected_rows.append(
+            {
+                "point_id": point_id,
+                "bounded_point": _required_string(row, "bounded_point", boundary="axis_manifest"),
+                "disposition": _required_string(row, "disposition", boundary="axis_manifest"),
+                "reason": _required_string(row, "reason", boundary="axis_manifest"),
+            }
+        )
+    if len(set(rejected_ids)) != len(rejected_ids):
+        raise EvidenceConsumerError("axis_manifest", "rejected point identities are invalid")
+    overlap = set(accepted_ids) & set(rejected_ids)
+    if overlap:
+        raise EvidenceConsumerError(
+            "axis_manifest", f"accepted/rejected point overlap: {sorted(overlap)}"
+        )
+
+    point_descriptors: list[dict[str, Any]] = []
+    unique_truth_origins: set[str] = set()
+    unique_evidence: set[str] = set()
+    candidate_total = 0
+    display_total = 0
+    for descriptor in accepted:
+        artifact, _, checked = _validate_point_binding(
+            descriptor, expected_axis=axis_id, require_complete_pins=True
+        )
+        normalized = checked["descriptor"]
+        point_descriptors.append(normalized)
+        candidate_total += normalized["candidate_count"]
+        display_total += normalized["display_row_count"]
+        for row in _point_rows(artifact, point_id=normalized["point_id"]):
+            unique_evidence.add(row["evidence_id"])
+            if _is_truth_support_origin(row):
+                unique_truth_origins.add(row["origin_group_id"])
+
+    pack: dict[str, Any] = {
+        "schema_version": AXIS_PACK_VERSION,
+        "status": "complete_valid_axis_pack",
+        "axis_id": axis_id,
+        "source_manifest": {
+            "schema_version": AXIS_PACK_MANIFEST_VERSION,
+            "manifest_sha256": stored_manifest_hash,
+        },
+        "valid_point_count": len(point_descriptors),
+        "rejected_point_count": len(rejected_rows),
+        "frontier_point_count": len(point_descriptors) + len(rejected_rows),
+        "display_row_slots": display_total,
+        "unique_truth_origins_across_axis": len(unique_truth_origins),
+        "unique_evidence_items_across_axis": len(unique_evidence),
+        "cold_reader_resolution": {
+            "resolved_candidate_disposition_count": candidate_total,
+            "path_resolution": "explicit_manifest_paths_only",
+        },
+        "points": point_descriptors,
+        "rejected_points": rejected_rows,
+        "non_claims": [
+            "the axis pack does not change point selection, relation, quote, packet, or bundle authority",
+            "rejected points are frontier closure dispositions, not evidence exclusions",
+            "origin counts are evidence-origin groups, not people or prevalence",
+        ],
+    }
+    pack["axis_pack_sha256"] = _canonical_hash(pack, "axis_pack_sha256")
+    return pack
+
+
+def validate_phase_a_evidence_axis_pack(
+    pack: Mapping[str, Any], *, expected_axis_pack_sha256: str
+) -> dict[str, Any]:
+    """Validate a saved generic axis pack against an externally pinned identity."""
+
+    if pack.get("schema_version") != AXIS_PACK_VERSION:
+        raise EvidenceConsumerError("axis_pack_verification", "unsupported axis pack version")
+    stored = pack.get("axis_pack_sha256")
+    if stored != expected_axis_pack_sha256:
+        raise EvidenceConsumerError(
+            "axis_pack_verification", "trusted axis pack identity differs from saved pack"
+        )
+    if not isinstance(stored, str) or stored != _canonical_hash(pack, "axis_pack_sha256"):
+        raise EvidenceConsumerError("axis_pack_verification", "stored axis pack hash is invalid")
+    source_manifest = pack.get("source_manifest")
+    points = pack.get("points")
+    rejected = pack.get("rejected_points")
+    if (
+        not isinstance(source_manifest, Mapping)
+        or source_manifest.get("schema_version") != AXIS_PACK_MANIFEST_VERSION
+        or not isinstance(source_manifest.get("manifest_sha256"), str)
+        or not isinstance(points, list)
+        or not points
+        or not isinstance(rejected, list)
+        or not all(isinstance(row, Mapping) for row in points)
+        or not all(isinstance(row, Mapping) for row in rejected)
+    ):
+        raise EvidenceConsumerError("axis_pack_verification", "axis pack closure is invalid")
+    manifest: dict[str, Any] = {
+        "schema_version": AXIS_PACK_MANIFEST_VERSION,
+        "axis_id": pack.get("axis_id"),
+        "accepted_points": [
+            {
+                key: row[key]
+                for key in (
+                    "point_id",
+                    "bounded_point",
+                    "artifact_path",
+                    "artifact_sha256",
+                    "policy_revision",
+                    "selection_manifest_path",
+                    "selection_manifest_file_sha256",
+                    "selection_manifest_sha256",
+                    "quote_manifest_path",
+                    "quote_manifest_file_sha256",
+                    "quote_manifest_sha256",
+                )
+            }
+            for row in points
+            if isinstance(row, Mapping)
+        ],
+        "rejected_points": copy.deepcopy(rejected),
+    }
+    manifest["manifest_sha256"] = _canonical_hash(manifest, "manifest_sha256")
+    if manifest["manifest_sha256"] != source_manifest["manifest_sha256"]:
+        raise EvidenceConsumerError("axis_pack_verification", "source manifest identity changed")
+    rebuilt = build_phase_a_evidence_axis_pack(manifest)
+    if rebuilt != dict(pack):
+        raise EvidenceConsumerError(
+            "axis_pack_reprojection", "saved axis pack differs from deterministic source projection"
+        )
+    return rebuilt
 
 
 def _publication_year(value: Any) -> int | None:
@@ -105,7 +551,9 @@ def _content_surface(row: Mapping[str, Any]) -> tuple[str, str]:
                 "content_surface", "Reddit thread identity is absent from its source reference"
             )
         if parts[2] == "post":
-            if "/_/" in source_ref:
+            # A thread permalink carries at most the slug after the thread id;
+            # any further segment is a comment id, whatever the marker claims.
+            if len(path_parts[comments_index + 2 :]) > 1:
                 raise EvidenceConsumerError(
                     "content_surface", "Reddit post identity conflicts with comment URL"
                 )
@@ -228,82 +676,36 @@ def _quote_span(row: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _load_point(
-    descriptor: Mapping[str, Any], *, expected_axis: str
+    descriptor: Mapping[str, Any], *, expected_axis: str, require_complete_pins: bool
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-    point_id = _required_string(descriptor, "point_id", boundary="point_binding")
-    artifact_path = Path(_required_string(descriptor, "artifact_path", boundary="point_binding"))
-    expected_artifact_hash = _required_string(
-        descriptor, "artifact_sha256", boundary="point_binding"
+    artifact, candidate_by_id, checked = _validate_point_binding(
+        descriptor,
+        expected_axis=expected_axis,
+        require_complete_pins=require_complete_pins,
     )
-    if not artifact_path.is_file() or hash_file(artifact_path) != expected_artifact_hash:
-        raise EvidenceConsumerError("point_binding", f"point artifact changed: {point_id}")
-    artifact = _load_object(artifact_path, boundary="point_binding")
-    if artifact.get("point_id") != point_id:
-        raise EvidenceConsumerError("point_binding", f"point identity changed: {point_id}")
-    if artifact.get("bounded_point") != descriptor.get("bounded_point"):
-        raise EvidenceConsumerError("point_binding", f"bounded point changed: {point_id}")
-    candidates = artifact.get("candidate_dispositions")
-    if not isinstance(candidates, list) or len(candidates) != descriptor.get("candidate_count"):
-        raise EvidenceConsumerError("candidate_access", f"candidate count changed: {point_id}")
-    candidate_ids = [row.get("candidate_id") for row in candidates if isinstance(row, Mapping)]
-    if (
-        len(candidate_ids) != len(candidates)
-        or not all(isinstance(value, str) and value for value in candidate_ids)
-        or len(set(candidate_ids)) != len(candidate_ids)
-    ):
-        raise EvidenceConsumerError("candidate_access", f"candidate identities invalid: {point_id}")
-    candidate_by_id = {
-        row["candidate_id"]: dict(row) for row in candidates if isinstance(row, Mapping)
-    }
-
-    selection_path = Path(
-        _required_string(descriptor, "selection_manifest_path", boundary="candidate_access")
-    )
-    expected_raw = _required_string(
-        descriptor, "selection_manifest_file_sha256", boundary="candidate_access"
-    )
-    if not selection_path.is_file() or hash_file(selection_path) != expected_raw:
-        raise EvidenceConsumerError("candidate_access", f"selection manifest changed: {point_id}")
-    selection_manifest = _load_object(selection_path, boundary="candidate_access")
-    _verify_manifest_hash(
-        selection_manifest,
-        expected=descriptor.get("selection_manifest_sha256"),
-        boundary="candidate_access",
-    )
-    if selection_manifest.get("candidate_inventory_sha256") != artifact.get(
-        "candidate_inventory_sha256"
-    ):
+    normalized = checked["descriptor"]
+    for key in ("candidate_count", "display_row_count", "truth_origin_count"):
+        if descriptor.get(key) != normalized[key]:
+            raise EvidenceConsumerError(
+                "point_binding", f"declared point summary changed: {descriptor.get('point_id')}::{key}"
+            )
+    declared_relations = descriptor.get("relation_counts")
+    if not isinstance(declared_relations, Mapping) or {
+        relation: declared_relations.get(relation, 0)
+        for relation in ("support", "counter", "adjacent")
+    } != normalized["relation_counts"]:
         raise EvidenceConsumerError(
-            "candidate_access", f"candidate inventory binding changed: {point_id}"
+            "point_binding",
+            f"declared point summary changed: {descriptor.get('point_id')}::relation_counts",
         )
-    if selection_manifest.get("spec", {}).get("axis_ids") != [expected_axis]:
-        raise EvidenceConsumerError("candidate_access", f"axis binding changed: {point_id}")
-    load_selection_sources(selection_manifest)
-
-    quote_path = Path(
-        _required_string(descriptor, "quote_manifest_path", boundary="quote_binding")
-    )
-    if not quote_path.is_file():
-        raise EvidenceConsumerError("quote_binding", f"quote manifest missing: {point_id}")
-    quote_manifest = _load_object(quote_path, boundary="quote_binding")
-    _verify_manifest_hash(
-        quote_manifest,
-        expected=descriptor.get("quote_manifest_sha256"),
-        boundary="quote_binding",
-    )
-    if quote_manifest.get("selection_manifest_sha256") != artifact.get(
-        "selection_manifest_sha256"
-    ):
-        raise EvidenceConsumerError("quote_binding", f"quote lineage changed: {point_id}")
-    return artifact, candidate_by_id, {
-        "artifact_path": str(artifact_path),
-        "artifact_sha256": expected_artifact_hash,
-        "selection_manifest_path": str(selection_path),
-        "selection_manifest_file_sha256": expected_raw,
-        "selection_manifest_sha256": selection_manifest["manifest_sha256"],
-        "quote_manifest_path": str(quote_path),
-        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
-    }
+    bindings = checked["bindings"]
+    if not require_complete_pins:
+        bindings = {
+            key: value
+            for key, value in bindings.items()
+            if key != "quote_manifest_file_sha256"
+        }
+    return artifact, candidate_by_id, bindings
 
 
 def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
@@ -321,9 +723,21 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     if not axis_path.is_file() or hash_file(axis_path) != expected_axis_hash:
         raise EvidenceConsumerError("axis_binding", "source axis pack changed")
     axis_pack = _load_object(axis_path, boundary="axis_binding")
+    axis_pack_version = axis_pack.get("schema_version")
+    if axis_pack_version == SOURCE_AXIS_PACK_VERSION:
+        stored_pack_hash = axis_pack.get("axis_pack_sha256")
+        if not isinstance(stored_pack_hash, str):
+            raise EvidenceConsumerError("axis_binding", "generic axis pack identity missing")
+        validate_phase_a_evidence_axis_pack(
+            axis_pack, expected_axis_pack_sha256=stored_pack_hash
+        )
+        require_complete_pins = True
+    elif axis_pack_version == LEGACY_HYDRATION_AXIS_PACK_VERSION:
+        require_complete_pins = False
+    else:
+        raise EvidenceConsumerError("axis_binding", "unsupported source axis pack version")
     if (
-        axis_pack.get("schema_version") != SOURCE_AXIS_PACK_VERSION
-        or axis_pack.get("axis_id") != axis_id
+        axis_pack.get("axis_id") != axis_id
         or axis_pack.get("status") != "complete_valid_axis_pack"
     ):
         raise EvidenceConsumerError("axis_binding", "unsupported or incomplete source axis pack")
@@ -345,15 +759,19 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     companion_meanings: dict[str, dict[str, Any]] = {}
     placements: list[dict[str, Any]] = []
     point_index: list[dict[str, Any]] = []
+    axis_truth_origin_ids: set[str] = set()
     candidate_total = 0
 
     for descriptor in point_descriptors:
         point_id = descriptor["point_id"]
         artifact, candidate_by_id, bindings = _load_point(
-            descriptor, expected_axis=axis_id
+            descriptor,
+            expected_axis=axis_id,
+            require_complete_pins=require_complete_pins,
         )
         candidate_total += len(candidate_by_id)
         point_placement_ids: list[str] = []
+        point_truth_origin_ids: set[str] = set()
         seen_selected: set[str] = set()
         observed_relations: dict[str, int] = {
             "support": 0,
@@ -526,6 +944,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 point_placement_ids.append(placement_id)
                 observed_relations[relation] += 1
                 relation_origin_ids[relation].add(origin_id)
+                if _is_truth_support_origin(row):
+                    point_truth_origin_ids.add(origin_id)
                 origin = origins.setdefault(
                     origin_id,
                     {
@@ -570,14 +990,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             raise EvidenceConsumerError(
                 "point_projection", f"display row count changed: {point_id}"
             )
-        distinct_point_origins = set().union(*relation_origin_ids.values())
         if (
             artifact.get("truth_group_count") != descriptor.get("truth_origin_count")
-            or len(distinct_point_origins) != descriptor.get("truth_origin_count")
+            or len(point_truth_origin_ids) != descriptor.get("truth_origin_count")
         ):
             raise EvidenceConsumerError(
                 "point_projection", f"truth origin count changed: {point_id}"
             )
+        axis_truth_origin_ids.update(point_truth_origin_ids)
         group_id, family_id = point_navigation[point_id]
         point_index.append(
             {
@@ -719,10 +1139,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         raise EvidenceConsumerError("axis_parity", "candidate disposition count changed")
     if view["counts"]["placement_count"] != axis_pack.get("display_row_slots"):
         raise EvidenceConsumerError("axis_parity", "display placement count changed")
-    if view["counts"]["unique_origin_count"] != axis_pack.get(
-        "unique_truth_origins_across_axis"
-    ):
-        raise EvidenceConsumerError("axis_parity", "unique origin count changed")
+    if len(axis_truth_origin_ids) != axis_pack.get("unique_truth_origins_across_axis"):
+        raise EvidenceConsumerError("axis_parity", "unique truth origin count changed")
     if view["counts"]["unique_evidence_count"] != axis_pack.get(
         "unique_evidence_items_across_axis"
     ):
@@ -739,13 +1157,13 @@ def validate_axis_consolidated_view(
     if view.get("schema_version") != CONSOLIDATED_VIEW_VERSION:
         raise EvidenceConsumerError("view_verification", "unsupported view version")
     stored = view.get("view_sha256")
-    payload = {key: value for key, value in view.items() if key != "view_sha256"}
-    if not isinstance(stored, str) or stored != _canonical_json_sha256(payload):
-        raise EvidenceConsumerError("view_verification", "stored view hash is invalid")
     if stored != expected_view_sha256:
         raise EvidenceConsumerError(
             "view_verification", "trusted view identity differs from saved view"
         )
+    payload = {key: value for key, value in view.items() if key != "view_sha256"}
+    if not isinstance(stored, str) or stored != _canonical_json_sha256(payload):
+        raise EvidenceConsumerError("view_verification", "stored view hash is invalid")
     spec = view.get("spec")
     if not isinstance(spec, Mapping):
         raise EvidenceConsumerError("view_verification", "embedded spec missing")

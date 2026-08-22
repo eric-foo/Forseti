@@ -12,7 +12,9 @@ if __package__ in {None, ""}:
 
 from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     build_axis_consolidated_view,
+    build_phase_a_evidence_axis_pack,
     validate_axis_consolidated_view,
+    validate_phase_a_evidence_axis_pack,
 )
 
 
@@ -48,6 +50,38 @@ def build_run(*, spec_path: Path, output_path: Path) -> dict[str, Any]:
     }
 
 
+def build_axis_pack_run(*, manifest_path: Path, output_path: Path) -> dict[str, Any]:
+    pack = build_phase_a_evidence_axis_pack(_load_object(manifest_path))
+    validate_phase_a_evidence_axis_pack(
+        pack, expected_axis_pack_sha256=pack["axis_pack_sha256"]
+    )
+    _write_new(output_path, pack)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "axis_pack_sha256": pack["axis_pack_sha256"],
+        "valid_point_count": pack["valid_point_count"],
+        "rejected_point_count": pack["rejected_point_count"],
+        "model_api_calls": 0,
+    }
+
+
+def validate_axis_pack_run(
+    *, pack_path: Path, expected_axis_pack_sha256: str
+) -> dict[str, Any]:
+    pack = validate_phase_a_evidence_axis_pack(
+        _load_object(pack_path), expected_axis_pack_sha256=expected_axis_pack_sha256
+    )
+    return {
+        "status": "valid",
+        "pack_path": str(pack_path),
+        "axis_pack_sha256": pack["axis_pack_sha256"],
+        "valid_point_count": pack["valid_point_count"],
+        "rejected_point_count": pack["rejected_point_count"],
+        "model_api_calls": 0,
+    }
+
+
 def validate_run(*, view_path: Path, expected_view_sha256: str) -> dict[str, Any]:
     view = validate_axis_consolidated_view(
         _load_object(view_path), expected_view_sha256=expected_view_sha256
@@ -67,11 +101,26 @@ def main() -> int:
     build_parser = subparsers.add_parser("build")
     build_parser.add_argument("--spec", type=Path, required=True)
     build_parser.add_argument("--output", type=Path, required=True)
+    build_pack_parser = subparsers.add_parser("build-axis-pack")
+    build_pack_parser.add_argument("--manifest", type=Path, required=True)
+    build_pack_parser.add_argument("--output", type=Path, required=True)
+    validate_pack_parser = subparsers.add_parser("validate-axis-pack")
+    validate_pack_parser.add_argument("--pack", type=Path, required=True)
+    validate_pack_parser.add_argument("--expected-axis-pack-sha256", required=True)
     validate_parser = subparsers.add_parser("validate")
     validate_parser.add_argument("--view", type=Path, required=True)
     validate_parser.add_argument("--expected-view-sha256", required=True)
     args = parser.parse_args()
-    if args.command == "build":
+    if args.command == "build-axis-pack":
+        result = build_axis_pack_run(
+            manifest_path=args.manifest, output_path=args.output
+        )
+    elif args.command == "validate-axis-pack":
+        result = validate_axis_pack_run(
+            pack_path=args.pack,
+            expected_axis_pack_sha256=args.expected_axis_pack_sha256,
+        )
+    elif args.command == "build":
         result = build_run(spec_path=args.spec, output_path=args.output)
     else:
         result = validate_run(
