@@ -73,15 +73,19 @@ If delegation is explicitly commissioned for a work unit, freeze an
 implementation commit inside the open PR, delegate, adjudicate and incorporate
 accepted patches in that same PR, rerun validation, then merge.
 
-**Direct invocation is courier-prompt authoring only.** An explicit user request
-such as `delegate patch`, `write the delegate patch prompt`, or an invocation of
-the delegated-review-patch skill requires the authoring agent to immediately
-render exactly one paste-ready commission for the operator to courier from
-target and commission fields safely inferable from the current context;
-genuinely operator-owned values remain `operator_to_fill`. It must not first
-search for or probe installed models, CLIs, plugins, controllers, or fallback
-routes. The request does **not** authorize the authoring agent to create or
-dispatch a task, fork a thread, spawn a subagent, or send the prompt.
+**Every entry is courier-prompt authoring only.** This applies both to an
+explicit user request such as `delegate patch`, `write the delegate patch
+prompt`, or an invocation of the delegated-review-patch skill, and to an
+automatic checkpoint entered from `success-implement`, `/fused`, an
+implementation lane, or a review lane. The authoring agent immediately renders
+exactly one paste-ready commission for the operator to courier from target and
+commission fields safely inferable from the current context; genuinely
+operator-owned values remain `operator_to_fill`. It must not first search for
+or probe installed models, CLIs, plugins, controllers, agents, or fallback
+routes. Entry into the lane does **not** authorize the authoring agent to create
+or dispatch a task, fork a thread, spawn a subagent, send the prompt, or execute
+the review. Generic skill language about automatic lane entry or available
+review routes defers to this Forseti owner-courier boundary.
 The rendered prompt binds an unknown future receiver as
 `receiver_to_bind` until the operator-selected controller proves
 different-vendor lineage and direct repository access. If no eligible controller
@@ -240,8 +244,9 @@ file set. When no patch authority is commissioned, route via prompt-orchestrator
 to read-only implementation/code review instead; patch authority is never
 assumed from the target category.
 
-Route-out is authoring only: it returns the paste-ready prompt to the operator
-and does not inspect local controller availability or dispatch any receiver.
+Route-out is authoring only, regardless of how the lane was entered: it returns
+the paste-ready prompt to the operator and does not inspect local controller or
+agent availability, dispatch any receiver, or execute the review.
 The prompt records `delivery: operator_courier_only`, `access: repo`,
 `delegate_eligibility: different_vendor_lineage_with_direct_repo_access`, the
 observed author vendor, and either a different observed delegate vendor or
@@ -360,22 +365,24 @@ delegated_review_patch_overlay_interface:
 
 ```yaml
 direction_change_propagation:
-  doctrine_changed: Direct delegate-patch invocations immediately render one operator-courier prompt without discovery or dispatch preflight.
+  doctrine_changed: Every delegated review-and-patch entry, including automatic skill and workflow checkpoints, immediately renders one operator-courier prompt without reviewer discovery, dispatch, or execution.
   trigger: workflow_authority
   related_triggers: [review_authority]
-  controlling_sources_updated: [.agents/workflow-overlay/delegated-review-patch.md]
-  downstream_surfaces_checked:
+  controlling_sources_updated:
     - AGENTS.md
-    - .agents/workflow-overlay/README.md
-    - .agents/workflow-overlay/source-loading.md
+    - .agents/workflow-overlay/delegated-review-patch.md
     - .agents/workflow-overlay/prompt-orchestration.md
     - .agents/workflow-overlay/review-lanes.md
+  downstream_surfaces_checked:
+    - .agents/workflow-overlay/README.md
+    - .agents/workflow-overlay/source-loading.md
+    - .agents/workflow-overlay/validation-gates.md
   intentionally_not_updated:
-    - {path: .agents/workflow-overlay/prompt-orchestration.md, reason: "Already requires exactly one courier prompt and forbids controller inspection, task creation or dispatch, and fork or spawn."}
-    - {path: installed and plugin skills, reason: "Deployment copies do not control this Forseti direct-invocation rule."}
-    - {path: hooks, tests, and registries, reason: "No mechanical gate or registry behavior changes."}
-  stale_language_search: rg -n -i "separate explicit execution request|discover a controller|inspect installed controllers|delegate patch" AGENTS.md .agents/workflow-overlay
-  non_claims: [not validation, not readiness]
+    - {path: installed and plugin skills, reason: "Deployment copies do not control Forseti; AGENTS.md now makes their generic mechanics defer to the project owner-courier rule."}
+    - {path: hooks, tests, and registries, reason: "Repository gates cannot observe pre-prompt tool probing or agent dispatch; this is a resident action-sequencing boundary, not a mechanically checkable artifact defect."}
+  stale_language_search: rg -n -i "Direct invocation is courier|explicit `delegate patch` invocation is an authoring request|separate explicit execution request|discover a controller|inspect installed controllers" AGENTS.md .agents/workflow-overlay | rg -v "stale_language_search"
+  stale_language_search_result: no stale narrow-entry or execution-authorizing language found in controlling sources
+  non_claims: [not validation, not readiness, not proof of receiver eligibility or review execution]
 ```
 
 ## Evidence And Non-Claims
