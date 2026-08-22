@@ -6,6 +6,7 @@ use_when:
   - Resuming the full Summer Fridays customer-corpus semantic run.
   - Applying the same Reddit/community plus retailer-review method to another company.
   - Deciding when customer evidence is ready to hand to Synthesize or Deliver.
+  - Building or changing a Phase A commercial point frontier, point evidence pack, relation prompt, or quote-selection consumer.
 authority_boundary: retrieval_only
 open_next:
   - forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
@@ -29,6 +30,119 @@ hash has a complete, reproducible evidence packet or a visible unresolved
 failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
+
+## Active commercial point-entry boundary
+
+For the completed Summer Fridays Phase A packet, the business question is:
+**Which customer-valued strengths and objections deserve commercial
+investigation?** The no-provider
+`build-customer-pull-point-frontier` command accounts every proposition matching
+the requested product subject in one of three places:
+
+- `retailer_first_queue` is read first because a retailer review is closest to
+  a completed purchase;
+- `community_discovery_queue` keeps customer points found only in community or
+  qualified audience evidence visible and records retailer check-back as still
+  open; and
+- `nonpromoted_points` records why a proposition did not earn investigation.
+
+The frontier also records every proposition excluded by the requested product
+subject and reports the input, matched, and filtered counts. A stale or mistyped
+subject therefore cannot make a smaller frontier look like complete packet
+accounting.
+
+Retailer is a first-look venue, never an admission gate. A community-only
+purchase, repurchase, recommendation, recurring experience, or materially
+engaged customer point may earn investigation without retailer support. It
+does not become retailer corroboration. Conversely, creator-authored material
+remains influence context and cannot enter either customer-truth queue.
+Engagement is retained and ordered only within its own venue, role, and metric;
+the frontier has no cross-platform customer-pull score.
+
+Within each queue, more independent supporting origins lead. When origin counts
+tie, cross-role independent recurrence leads same-role recurrence, followed by
+more materially engaged supporting evidence items. Reported behavior remains a
+commercially useful final tie-breaker, but generic trial or ownership does not
+automatically outrank a better-corroborated strength or objection. This is a
+queue-specific investigation order, not a universal source-quality ranking.
+Materially engaged items may share one origin; they add resonance context but
+do not add independent recurrence. An unavailable engagement posture adds no
+materiality. Operator protection keeps a safety or costly-behavior point
+admitted and accounted, but protection alone grants no ordering priority.
+
+The frontier is a navigation artifact over a complete, non-truncated
+`phase_a_evidence_packet_v3`; it is not packet v4 or a new evidence authority.
+`materialize-customer-pull-point-selection-spec` turns one admitted proposition
+into one hash-bound bounded-point selection with the normal thirteen-truth-origin
+cap. For a non-value point with an explicit axis, candidate admission is the
+union of every semantic row for the same product and axis plus the proposition's
+literal refs. Every admitted row is newly judged against the exact bounded
+point; sharing an axis grants no support or counter relation. Value points keep
+literal-ref admission because their price/value behavior policy is not the
+generic non-value route, and a hand-built value-first spec cannot claim the
+non-value recent-year selection policy. The full packet and every frontier disposition remain
+available; the displayed pack never implies prevalence.
+Frontier specs use the exact bounded point as their direction: evidence that
+the balm is expensive supports that objection, rather than being reversed by
+the older positive-good-value box policy. Historical value-box selections keep
+their stamped policy.
+
+For a new point pack, relation confirmation occurs before the display cap:
+
+```text
+prepare-evidence-selection
+  -> external first relation response over every admitted row
+  -> prepare-preselection-relation-confirmation
+  -> external hidden-label confirmation over every material, protected, or
+     influence row that could reach display
+  -> finalize-preselection-relation-confirmation
+  -> external exact-quote response
+  -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
+```
+
+When that frontier-bound non-value point expands to a large axis pool, use the
+named batch route at both model boundaries:
+
+```text
+prepare-evidence-selection-batches
+  -> external named relation responses over every admitted row
+  -> prepare-batched-preselection-relation-confirmation
+  -> external named hidden-label confirmation responses over every material,
+     protected, or influence row that could reach display
+  -> finalize-batched-preselection-relation-confirmation
+  -> external exact-quote response
+  -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
+```
+
+Both batch manifests bind contiguous complete row coverage and each response's
+own batch identity. Batching is transport only: it changes neither candidate
+admission nor the thirteen-origin cap. The second batching step is required at
+full-axis scale; sending hundreds of confirmation rows as one open array would
+recreate the truncation surface that named relation batches closed.
+
+The confirmation frontier is independent of the first-pass relation. Therefore
+a first-pass `exclude` cannot silently hide a materially engaged or protected
+row. The confirming response may correct the relation and reason code; selection
+then runs once over the corrected inventory. Every finally displayed row must
+have crossed that confirmation boundary. Missing, duplicate, foreign, reordered,
+or unconfirmed rows fail closed. Historical v6 quote manifests retain their
+selected-row confirmation route for exact reproduction; they are not silently
+restamped as v7.
+
+Non-value axis-expanded point packs use `recent_year_coverage_v1` as a display
+preference. The latest two calendar years present in the eligible pool receive
+representation across available venue/role/native-metric buckets, up to half
+the thirteen-origin cap after mandatory relation/protection reservations. When
+eligible and space remains, one dated pre-window origin is retained so the
+recent view does not erase earlier history. Undated rows remain in complete
+candidate accounting. Age never changes a relation, independence, materiality,
+or evidentiary weight. The final artifact groups selected IDs by literal
+calendar year, with unavailable dates separate, and uses no strong/weak or
+fresh/stale age judgment. Within a fixed venue/role/native-metric bucket,
+source-native engagement still orders candidate display; it is never compared
+across platforms, and an unavailable metric never sorts as observed zero. The
+timeline is only a calendar ordering index: consumers dereference each selected
+ID through `source_groups` and preserve its truth-support or influence layer.
 
 ## Operating path
 
@@ -256,7 +370,8 @@ The matched experiment result is
 #### Optional evidence selection and exact quotes
 
 When the complete proposition-linked view is too coarse for commercially
-useful presentation, use the existing no-provider evidence-consumer's
+useful presentation, bind one narrow evidence point and use the existing
+no-provider evidence-consumer's
 `prepare-evidence-selection`, `finalize-evidence-selection-relations`, and
 `finalize-evidence-selection-quotes` operations. This is a consumer view over
 hash-bound `phase_a_evidence_packet_v3`; it is not packet v4, a semantic replay,
@@ -266,7 +381,16 @@ Admission uses explicit product plus axis membership, with literal nominated
 semantic or unresolved refs for bounded non-axis cases. A nomination that
 cannot resolve fails closed instead of disappearing. The external relation
 response must account for every admitted candidate before deterministic
-presentation selection. Each candidate carries the other normalized meanings
+presentation selection. For non-value work, its provider-visible envelope is a
+named columnar semantic view: bounded meaning, conditions, polarity,
+product/version scope, source role/layer, uncertainty, existing relations, and
+compact same-evidence meanings. Dates, engagement, URLs, evidence identity, and
+provenance remain in the hash-bound candidate inventory and are reattached
+deterministically; omitting them from the prompt must never omit them from the
+artifact. Value-only relation work retains the full candidate view because the
+bounded commercial pilot found that compacting those 12 rows could weaken
+`repeated purchasing despite price` into a generic value label. Each candidate
+carries the other normalized meanings
 from that same evidence item as context only, so a price complaint cannot hide
 same-source purchase or repurchase intent. For value work, bind `price feels
 high` separately from `not worth it`, and nominate an evidence item that records
@@ -300,8 +424,16 @@ separate shade meanings may display as “intends to repurchase Vanilla and
 Vanilla Beige” while both semantic refs and named shades remain underneath one
 origin and one exact quote. Never group across origins, hide a conflicting
 clause, or broaden a shade-specific behavior into general repurchase.
-The cap applies to displayed independent-origin
-groups: ten customer truth groups and three creator-influence groups. Source
+The cap applies to displayed independent-origin groups. The default is thirteen
+customer truth groups per bounded evidence point, and one selection may
+explicitly raise that customer cap to at most twenty when protected evidence or
+a material conflict cannot fit; creator influence remains capped separately at
+three. Do not use one broad axis as the point merely to obtain one large pack.
+Do not raise the cap merely to make an output look comprehensive. A full-axis
+Summer Fridays hydration comparison found ten materially thinner, fifteen
+materially better, and twenty no better than fifteen under mirrored review, so
+that exact full-axis hydration selection uses fifteen. This is a measured
+selection setting, not a universal default for every axis. Source
 roles and retailer venues remain visible, with each publisher normalized to one
 venue across host variants and short links; creator-authored popularity never
 corroborates customer experience. Engagement may prioritize rows only inside
@@ -309,7 +441,9 @@ one venue/role/native-metric bucket, and a count the runtime cannot read whole
 is ordered last rather than partially parsed. An unrecognized mapping-valued
 engagement shape fails closed rather than becoming an unknown value or generic
 score. Every nominated safety or costly-behavior origin is selected first; more
-than ten such customer origins fails `presentation_cap_insufficient`. For
+such customer origins than the selection's bound cap fails
+`presentation_cap_insufficient`, as does a protected set that fits the cap only
+until the support and counter lanes are reserved. For
 non-value selections, the selector then reserves visible support and counter
 only from materially positive or explicitly protected evidence. A value-only
 selection instead fills materially positive support origins first, prioritizing
@@ -340,9 +474,377 @@ rows. Every operator-protected row is visible or the run fails. The retained
 disposition inventory remains the accounting record for all other displayed and
 undisplayed candidates.
 
-The quote stage reads bodies only for selected display rows. Its prompt carries
-the deterministic display label as well as the normalized meaning; a returned
-long-source substring must directly express both or be `quote_unavailable`. An
+One displayed pack is one bounded evidence point, not one broad axis. It may
+contain up to the selection's explicit customer-origin cap, and one origin may display several atomic
+meanings. Call those origins corroboration only when their meanings support the
+same bounded statement under compatible product, variant, timing, and
+condition scope. Origins that merely discuss the same broad axis remain
+separate evidence, not an inflated corroboration count. A source reporting
+another person's experience remains adjacent unless the directly quoted
+speaker's own account is the evidence unit. Internal independence metadata is
+kept for deterministic origin accounting rather than used by the relation
+model to discard otherwise valid evidence.
+
+For large non-value selections, use `prepare-evidence-selection-batches` and
+`finalize-evidence-selection-batches` instead of asking one response to repeat
+every candidate ID. The preparation emits at most 300 candidates per batch and
+uses required named row slots (`row_0000`, `row_0001`, and so on) plus a
+required single-valued `batch_id`. The provider returns that `batch_id` and the
+relation for each slot. Row slots restart at `row_0000` in every batch, so
+`batch_id` is what stops one batch's response from answering another: keep it,
+or a response saved under the wrong name finalizes with complete-looking
+coverage and systematically wrong relations. Finalization binds each slot back
+to the hash-owned candidate identity, rejects a missing, foreign, or wrong-batch
+response and a missing or foreign slot, requires exact contiguous coverage of
+the complete candidate inventory, then continues through the ordinary quote
+manifest. Only the batch responses named in the batch manifest are read; any
+other file left in the response directory is ignored, so clear the directory
+between runs rather than relying on the finalizer to notice a stale file.
+Batching does not change admission, selection priority, relation meaning,
+evidence facts, or the origin cap. It does change the row label: a batched row's
+reason code and display label are derived from its relation alone, so a batched
+pack shows "Matching customer experience" or "Differing customer experience"
+where the literal-ID path names the source meaning. Do not read a batched row
+label as evidence meaning, and prefer literal-ID mode when the pack's row labels
+matter to the reader. Literal-ID response mode remains the default and the
+required mode for value selections; named positional batching is an opt-in
+transport for large non-value axes. Its quote preparation emits
+`phase_a_evidence_quote_manifest_v6`, which retains the v5 binding of the actual batch-manifest hash
+and every canonical batch-response hash. The embedded selection manifest keeps
+the canonical full selection identity; it is not evidence that its single large
+prompt was sent. The v5 relation-transport binding records the prompts' actual
+route.
+
+The relation finalizer emits two independent provider workloads from the same
+selected rows: exact-quote extraction and selected-row relation confirmation.
+Run them concurrently when the provider route permits. The confirmation prompt
+does not contain the first-pass relation, reason code, display label,
+engagement, or selection priority. Its rows carry opaque `confirmation_row_id`
+handles in a content-derived order rather than `selected_id` in selection
+order, because selection order itself encodes the first pass: the protected and
+reserved support/counter origins lead and the adjacent creator-influence block
+always trails. The response must return every confirmation row exactly
+once and in order; any missing, duplicate, foreign, reordered, or disagreeing
+row blocks the final artifact. Finalization re-derives the confirmation
+manifest from the bound quote manifest, so route the response back against the
+manifest the harness wrote rather than a hand-assembled one. Do not combine
+confirmation with quote extraction:
+the bounded combined pilot classified all selected rows correctly but clipped
+one exact quote mid-phrase. New v6 artifacts record the confirmation-manifest
+hash and `passed`; historical v1/v3/v4/v5 artifacts remain readable under their
+original contracts. Replay one by running
+`finalize-evidence-selection-quotes` with neither `--confirmation-manifest` nor
+`--confirmation-response`; supplying either fails closed.
+
+The confirmation response also decides whether the supplied scope is one
+specific direction-bearing proposition about one product attribute or outcome
+under one compatible condition set. A claim that merely names an experience
+area, or bundles materially different outcomes, directions, or conditions,
+returns `broad_axis_or_bundle` and fails at `bounded_point_not_confirmed`. This
+is part of the existing confirmation call, not a third provider task. Record
+the passing reason on the artifact; the words `point_id` and `bounded_point`
+alone never establish boundedness.
+
+For a fresh point selection, exact linked parent text travels only with the
+point's explicitly admitted semantic refs. It is deduplicated into a compact
+parent-context table rather than repeated across the axis-wide candidate pool.
+Every point-scope confirmation batch receives that same compact table so a
+batch cannot decide scope from a context-stripped point. The table may clarify
+the point, but it does not attach parent meaning to every evidence row: a row
+may use parent content for its relation only through its own exact context ID.
+Use it to resolve `same`, `this happened to me`, or another omitted referent
+only when the parent itself names the same subject, attribute or outcome,
+direction, and material condition. If the parent is merely a wishlist,
+shopping question, broad discussion, or otherwise does not supply the missing
+meaning, keep the terse row unresolved for that point. A source-native joined
+experience such as becoming dry and cracked may remain one point; do not use
+that allowance to join unrelated outcomes from separate sources. Historical
+selection manifests without `linked_parent_context_v1` replay with their
+original no-parent-context view.
+
+Every completed v6 point pack discloses the funnel rather than presenting the
+chosen rows as the whole corpus: candidate semantic rows, distinct candidate
+evidence items, candidate truth origins, display-eligible truth origins,
+displayed rows, displayed truth origins, displayed origins by relation, and
+displayed creator-influence origins. Render those counts with the bounded
+point. They describe evidence
+accounting, not customer prevalence, and the full candidate-disposition
+inventory remains attached. Do not read the candidate-to-displayed drop as cap
+pressure: candidate truth origins are the admitted pool. The v6 quote manifest
+records the truth selection policy, and the finalizer uses that exact policy to
+count distinct origins eligible before the cap; an origin with no operator-
+protected lane and no material positive source-native engagement is never
+eligible, and value-first also excludes an otherwise material adjacent origin.
+The artifact's `presentation_basis` names that gate, and also records that the
+bounded point passed the separate scope classification; a broad axis or bundled
+claim never reaches a completed point-pack disclosure.
+
+For a whole-axis pack, thirteen is the maximum number of displayed distinct
+truth origins **per bounded point**, not the size of the evidence corpus and not
+an instruction to take the thirteen largest engagement values. The queue order
+above first preserves the point's relation lanes and independent recurrence;
+source-native engagement only breaks later ties inside a comparable venue,
+role, and metric. Keep the completed point artifact's full
+`candidate_dispositions`, `candidate_inventory_sha256`, selection-manifest
+binding, and packet/bundle source pointers. The artifact therefore accounts for
+every admitted semantic candidate while copying source bodies only for the
+selected quote workload; a later operator can resolve an undisplayed candidate
+through the bound packet and bundle rather than rerunning extraction.
+
+Complete an axis as a set of independently finalized bounded-point artifacts.
+Do not pad the set when a frontier proposition fails the existing
+`point_scope` decision: retire that proposition with its literal failure reason
+and report the smaller valid point count. A completed historical point may be
+reused only as an immutable artifact under the exact policy revision and hashes
+that produced it. If a staged historical manifest still needs quote completion,
+either finish it with that exact historical consumer revision and disclose the
+mixed lineage in the axis manifest, or rerun the whole point under the current
+policy. Never make a current finalizer accept an old manifest by rebinding or
+editing its hashes. An axis manifest references each point artifact path and
+SHA-256, policy revision, exact selection-manifest path and stored/file hashes,
+and quote-manifest path and stored hash; it does not duplicate the point
+artifacts' full candidate inventories. A sibling-file convention is not a
+cold-reader source pointer.
+
+Bind every emitted response schema through the provider's structured-output
+mechanism (for local Codex CLI execution, `--output-schema`); including schema
+wording in the prompt alone is insufficient. The finalizer must reject field
+name drift, missing rows, and quote-boundary failures. A source-exact quote
+shortened by an operator after such a failure is a disclosed corrected response,
+not an unmodified provider result; prefer a bounded provider correction turn
+and preserve every discarded-call cost either way.
+
+The completed hydration-axis dogfood at
+`C:\tmp\forseti-phase-a-hydration-axis-pack-20260822-v0\hydration_axis_pack_v2.json`
+(raw SHA-256
+`42f7fa0ca3c7d2000c77e97d37a429aa32c04c320aa2fa000a68b114acf9c77d`)
+exercised this resume boundary. Nine completed points retained their historical
+policy revision; two unresolved points were rerun under the current linked-parent
+policy. The precise same-drying-and-cracking point passed, while “does nothing
+for their lips” failed generically because it named no single material outcome;
+the axis therefore contains ten valid points rather than eleven. Each valid
+point accounts all 836 hydration candidates and displays thirteen
+evidence-origin groups.
+Across the axis that is 130 point-origin placements and 146 display rows, but
+only 32 distinct origins and 37 distinct evidence items because one origin can
+inform several precise points. The selected origins span Reddit, Amazon, and
+Sephora; the artifact retains every undisplayed candidate disposition and its
+source-resolution bindings. Exact-quote and attachment finalization passed for
+all ten artifacts. The completion run used 1,095,340 logical tokens; 405,771 of
+those belonged to ten discarded malformed calls caused by the initially
+unbound structured-output schema and are not hidden as production success. Two
+long-body quote responses were source-exactly shortened to complete sentence
+boundaries after provider boundary failures and are disclosed as corrected
+responses, not unmodified provider output. A cold-reader replay then loaded only
+the v2 axis pointers, reverified each selection-manifest identity and candidate
+inventory hash, resolved all ten bound packet/bundle sources, and matched all
+8,360 point-candidate dispositions to their source-derived candidate IDs. Its
+first local v1 index had named only artifact paths; requiring an inferred sibling
+selection manifest was rejected as incomplete rather than reported as cold
+resolvability.
+
+Downstream consumers use the completed points through the derived
+`phase_a_evidence_axis_consolidated_view_v1`, built by
+`forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`. This is a
+presentation view, not a packet v4 and not another evidence authority. It
+reverifies the exact axis, point, selection, quote, packet, and bundle bindings;
+keeps all ten bounded points and every claim-relative placement; stores each of
+the 32 origins, 37 evidence items, 56 quote records, and 181 companion meanings
+once; and leaves all 8,360 candidate dispositions cold-resolvable through their
+owning point artifacts. Three navigation groups make the axis readable without
+merging its propositions: hydration efficacy, drying consequences, and
+comparator performance. Balm Dotcom and Rhode remain separate bounded points,
+and delayed drying/cracking remains separate from direct drying.
+
+The view also separates Reddit posts from Reddit comments before presenting
+source-native engagement. It does not normalize, percentile-rank, or compare a
+post score with a comment score, retailer helpful count, another venue, or
+another calendar-year bucket; undated engagement is explicitly non-comparable.
+Repeated rows sharing one origin key remain one evidence-origin group, while
+distinct actors in one thread remain distinct origins with that thread
+concentration disclosed. The current axis has 32 evidence-origin groups: 30
+carry `credited` independence posture and 2 carry `unavailable`; neither count
+is a people or prevalence estimate. Each point carries its exact deterministic
+support, counter, and adjacent origin lists directly as a consumer aid; those
+lists are rederived from the preserved placements and cannot override them.
+The point-level direct lists were added after the first compact dogfood made two
+join errors while copying origin directions. That failed shape is negative
+evidence and must not be restored merely to save more tokens.
+
+The current trust-bound consolidation successor is at
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\consolidated_view_review_closed_v1.json`
+(raw SHA-256
+`e1845be89e8504fba4398de267639bdd431eef0d2eaeb5b94e7d8802eda87735`;
+stored view SHA-256
+`4a78b4ac7a5b00d0b1d454f1a32476946820d9000058ece08f1fa86a5142feb2`).
+Its build spec is
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\consolidation_spec_v1.json`
+(raw SHA-256
+`f11f66a09f29113bfcfdc164afdc71b0d536e7ee0dcf1c9949461d18ea394490`).
+Cold validation must receive the independently pinned stored view SHA through
+`--expected-view-sha256`; copying the hash from the file under validation is not
+a trust check. A wrong external pin rejects before reprojection. The zero-model
+build completed in an observed 38.562 seconds, and a second build was
+byte-identical. The predecessor v5 dogfood build completed in the receipt-bound
+33.339 seconds. Its matched three-repetition receipt is
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\experiment_receipt_v1.json`
+(raw SHA-256
+`8f97a45de735dff2d62438e90f75cc6b1910878c91741b3d98f5b151ab4b75de`).
+The completed ten-pack arm used 477,216 logical tokens; the consolidated arm
+used 418,082, saving 59,134 logical tokens (12.391%) with lower provider input
+in every repetition. The consolidated arm reproduced every point-relation
+origin set in 3 of 3 repetitions; the ten-pack arm did so in 2 of 3. An opaque
+same-vendor judge preferred the consolidated synthesis in all three primary and
+all three mirrored comparisons, with zero material-quality failures and stable
+ordering. Measured serial elapsed time was 547.708 seconds for the ten-pack and
+494.333 seconds for the consolidated view, a descriptive 53.375-second
+(9.745%) reduction rather than a latency guarantee or p95 claim. Cached input
+is reported but never subtracted, and reasoning output is a subset of output,
+never added twice. Those provider measurements belong to v5. The review-closed
+successor
+preserves every navigation group, point placement, relation, evidence fact,
+quote, and companion meaning while adding the explicit 30/2 independence split
+and denying comparison for undated engagement. No provider rerun was used to
+pretend those metadata corrections were newly measured quality or latency. Its
+same fixed prompt projects to 362,501 UTF-8 bytes versus the ten-pack's 501,073,
+a static 27.655% reduction; logical-token and latency deltas remain the v5
+measurements above.
+
+This proves one completed hydration axis only. It does not change the
+thirteen-origin selector, establish a universal axis schema, prove another
+product or axis, or turn the displayed origins into prevalence. Reverse to the
+ten-point source artifacts if deterministic reprojection loses any point,
+relation, condition, comparator, quote, source binding, or cold candidate
+access; if a representative cold consumer inflates origins or changes a
+direction; or if matched logical-token savings fall below ten percent without
+a position-stable material quality gain.
+
+The bounded v6 dogfood receipt is
+`C:\tmp\forseti-phase-a-point-pack-v6-dogfood-20260821-v0\dogfood_receipt_v1.json`
+(raw SHA-256
+`6113212dfd6d3b755e3d382dd7d00536c92719e797a48d1263557a13a9bfe8ea`).
+It reused the accepted historical fifteen-origin broad hydration selection only
+to exercise the new confirmation and finalization boundary. A different model
+family from the same vendor confirmed all 17 displayed rows, including the
+known 922-point Reddit row as support, with zero disagreements. The call used
+20,335 input plus 566 output logical tokens and completed in approximately 17
+seconds. This is not cross-vendor adjudication and does not prove the new
+thirteen-origin point default; deterministic runtime tests own that default.
+
+The full-axis hydration receipt is
+`C:\tmp\forseti-phase-a-hydration-cap-pilot-20260820-v0\experiment_result_v1.json`
+(raw SHA-256
+`74149af3d24c8ba742d38ec75bb9e5e2bd075570fd29d68f31189d143608b2e9`).
+Its accepted route accounted for all 836 candidates and selected fifteen
+customer origins into seventeen exact-quote rows across Reddit, Amazon, and
+Sephora. Ten of those origins carry a support row and six carry a counter row;
+two origins carry both, which is why the per-relation counts exceed fifteen.
+Required named slots fixed the observed long-array truncation, but increased
+relation-stage logical tokens by 35.092% versus the exact literal-ID arm. The
+batched arm's measured serial provider wall time was higher than the literal-ID
+arm's, and the production route itself ran serially; the 51.736% latency
+reduction is the modelled parallel critical path, available only if the batches
+are actually issued concurrently. This is a completeness trade with a
+conditional parallel-latency upside, never a token saving.
+
+Read that receipt's own residuals with its numbers, because they qualify the cap
+decision and are recorded nowhere else: the provider and the mirrored judge were
+the same vendor; the mirrored named-versus-prior pack comparison was
+position-unstable and therefore inconclusive; the packet supplies no TikTok
+audience evidence for this selection; the provider calls used high reasoning, so
+lower-effort behavior is unmeasured; and the receipt records
+`repository_head_at_run` as the parent commit with a dirty worktree, so it
+attests to the run, not to a committed revision.
+
+The post-review final-contract proof is
+`C:\tmp\forseti-phase-a-hydration-final-contract-20260820-v0\experiment_result_v1.json`
+(raw SHA-256
+`dc9420c0a43e07fa6df66b1b45b8a193759f6908b2ba7ac8c4b7fbc117c6dde3`).
+It ran fresh matched high-reasoning serial and genuinely concurrent arms over
+the same 836 candidates, then regenerated the final prompts and manifests from
+the committed implementation byte-for-byte. Both arms produced fifteen truth
+origins, seventeen exact quotes, zero unavailable quotes, and no influence
+origin. Serial used 248,014 logical tokens and 742,019.840 ms of active provider
+time; parallel used 245,176 logical tokens and 389,626.940 ms. The observed
+parallel latency reduction was 47.491%. The 1.144% lower parallel logical-token
+total is descriptive provider-output variation, not a concurrency token-saving
+claim. Both mirrored blind orderings preferred the corrected parallel artifact
+to the prior accepted pack. The receipt separately discloses 408,351 logical
+tokens across twelve rejected-attempt and judge calls; those are experiment
+overhead, not production-arm economics. The receipt's `payload_sha256` is
+sha256 over insertion-order compact JSON of the payload, not the repository's
+sorted-key `_canonical_json_sha256`; re-derive it that way or a correct receipt
+reads as tampered.
+
+The cross-vendor review of that proof measured three facts the arm totals above
+do not show, and they are carried here rather than left to the receipt's single
+"changed one selected origin" sentence.
+
+First, the two arms disagreed on the relation label for 56 of 836 candidates
+(6.7%) despite byte-identical relation prompts and schemas, including eight
+direct support/counter polarity flips. One flip reached the displayed pack:
+`reddit:1apzs1v:post::batch-0463-unit-0002` carries an identical normalized
+meaning and an identical exact quote in both arms, shown as "Matching customer
+experience" in the parallel arm and "Differing customer experience" in the
+serial arm. Nothing deterministic can detect this, because in positional mode
+the reason code is derived from the returned relation and therefore always
+agrees with it. Relation labeling, not origin selection, is the least stable
+part of this pipeline; treat a repeated selection as evidence of transport
+identity, never of relation stability. The measured parallel pack remains the
+accepted historical artifact for this hydration workload. New v6 point packs
+close the observed display boundary with the separate selected-row confirmation
+described above without relabeling the complete candidate set.
+
+Second, `seventeen exact quotes, zero unavailable` counts exactness and
+availability, which deterministic code already enforces. It is not a measure of
+the context-completeness the v51 contract requires. Measured against that rule,
+the final one-call prompt returned 13 of 13 conforming long-body spans in the
+parallel arm and 10 of 13 in the serial arm: three serial spans stop mid-phrase
+(`…pricey lip balms in`, `…better in this bitter`, `…the very cold winter`), and
+the second of those also drops the "bitter cold" condition its own normalized
+meaning names. The 220-character ceiling can make start-completeness and
+component-completeness jointly unsatisfiable — that same Amazon row needs 222
+characters to keep both — and the contract states no precedence, so the adopted
+parallel span resolves it by beginning headless (`have tried glossy products…`).
+
+Third, both mirrored judges preferred the parallel artifact, but a blind
+preference does not waive an objective omission. The reformulation span omits
+the reviewer's explicit recommendation; that is a genuine ceiling residual,
+because carrying both the old-formula baseline and the recommendation needs 312
+characters. The judge also flagged a Pink Sugar color clause that would fit at
+204 characters, but home adjudication did not accept that as a hydration defect:
+the color remark neither qualifies nor reverses “feels hydrating and
+comfortable,” and forcing it into this axis would add off-axis detail. This
+shows that the judge rubric was broader than the contract's materiality rule.
+Note also that the judges compared the parallel arm to the prior accepted pack,
+never to the serial arm; the choice of parallel over serial rests on measured
+latency, not on adjudicated quality.
+
+Of the 47.491% observed latency reduction, 46.528 points are attributable to
+concurrency and 0.963 points to net per-call provider variance; concurrency
+accounts for 98% of the saving, and the residual variance is why the figure is
+reported as observed rather than as a concurrency guarantee.
+
+The quote stage reads bodies only for selected display rows. Bodies of at most
+220 characters are copied in full by deterministic code, and absent bodies are
+typed unavailable; neither is sent to the model. Only longer bodies enter the
+provider prompt. That prompt uses named selected-row and deduplicated body
+columns, so several meanings from one source body do not repeat the entire
+body. It carries the deterministic display label, normalized meaning, and
+same-evidence companion meanings. The label is presentation metadata only: a
+returned long-source substring must directly express the normalized meaning or
+a material companion qualification, or be `quote_unavailable`; a generic
+batched relation label cannot make an irrelevant substring acceptable. An
+exact span must not start with an unresolved pronoun when nearby preceding text
+names its antecedent and the combined span fits. Product identity may still
+come from the evidence row; the pronoun rule does not require every otherwise
+relevant quote to repeat it. The quote is context-complete rather than merely
+short: it must substantiate every material outcome, direction, comparator,
+formula distinction, and usage or timing condition in the normalized meaning,
+retain a nearby material qualification, and never stop mid-phrase. It may
+return unavailable only after checking that no one span within 220 characters
+supports the complete normalized meaning; optional non-reversing context need
+not fit. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. For
@@ -354,6 +856,12 @@ material qualification cannot fit, the quote response returns unavailable
 rather than a misleading fragment. It never repairs text or adds ellipses. An
 available quote must contain at least two
 Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
+A long-body quote in a current v4/v5/v6/v7 quote manifest that ends in an alphanumeric
+character while the bound source continues with whitespace and another
+alphanumeric character fails at
+`quote_boundary_incomplete`. This catches a literal substring that stops before
+its next source word; it adds no provider retry and makes the incomplete result
+visible instead of publishing it.
 A `quote_unavailable` row carries `source_body_present` and a deterministic
 cause: `source_body_unavailable` when the body is absent, or
 `no_relevant_exact_quote_returned` when a present body yielded no quote.
@@ -363,8 +871,23 @@ and the full candidate-inventory hash, including Amazon or Revolve rows that did
 not earn a display slot. Repository runners emit prompts and schemas but make
 zero provider calls.
 
-New quote manifests use `phase_a_evidence_quote_manifest_v3`. Every selected
-row requires one customer-facing `display_label` of at most 80 characters plus
+Preserve the source publication time beside every evidence row when the source
+exposes it. Current semantic-source builders carry Reddit post/comment
+timestamps, Sephora submission times, Amazon review dates, and Revolve review
+creation times into packet v3. A completed packet with a missing time may be
+rehydrated only from the exact source artifact and SHA-256 already bound by its
+bundle; unavailable or unsupported legacy bytes leave the time unavailable and
+changed bytes fail.
+The date enables later descriptive alignment with search trends but does not
+establish that either signal caused the other.
+
+New frontier-bound point packs use `phase_a_evidence_quote_manifest_v7`; the
+non-frontier relation and batched routes still produce `v6`. Both record the
+ordered `provider_selected_ids` subset. The finalizer recomputes that subset
+from the bound bodies, rejects drift, deterministically fills short or missing
+bodies, and merges provider-returned long-body quotes back into original
+selection order. Every selected row requires one customer-facing
+`display_label` of at most 80 characters plus
 the exact quote; do not add a second paraphrased sentence. The finalizer derives
 the label from the already-validated relation `reason_code`; the quote response
 returns only quote identity, status, and exact text. The label names the evidence
@@ -374,8 +897,10 @@ concern`, `Explicitly worth the price`, `Strong price-to-quantity value`, `Too
 little product for the price`, `Performance does not justify the price`, and
 `Price prevents repurchase`. A malformed, overlong, or
 support/counter/adjacent/exclude-leaking reason code fails closed before display.
-Legacy v1 quote
-manifests keep their original response shape and remain finalizable. The
+V7 also binds the completed pre-selection relation confirmation and requires no
+late confirmation attachment during quote finalization. Historical v6 keeps
+its selected-row confirmation attachment; legacy v1 and v3 quote manifests keep
+their original all-selected response shape and remain finalizable. The
 superseded v2 presentation-statement experiment was scratch-only and is not a
 supported historical runtime contract.
 
@@ -387,6 +912,10 @@ not.” likewise carries price resistance and purchase behavior together. In
 both cases, extracting only the price clause reverses or materially weakens the
 commercial reading. Weak zero-engagement complaints remain accounted but do
 not displace a materially engaged or protected counter merely to fill a lane.
+Likewise, a stated time to finish or pan a product is completed-use context, not
+quantity efficiency or good value by itself. When the same source explicitly
+says it will buy again, package the exact repurchase statement as repurchase
+intent and retain the completed-use meaning as same-source context.
 The 599-score Strawberry-duo post is the opposite regression shape: its source
 body reports a thinner, less-moisturizing formula, disliked scent, and a final
 warning not to buy, but its admitted value-axis meanings are gift-card purchase

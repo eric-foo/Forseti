@@ -1,0 +1,118 @@
+# Phase A Hydration Full-Axis Cap And Batching Review + Adjudication v0
+
+```yaml
+retrieval_header_version: 1
+artifact_role: Reviewer findings report + home-CA adjudication record
+scope: >
+  Durable record of the cross-vendor review of the fifteen-origin hydration
+  pack and named positional relation transport, plus the home adjudication and
+  deterministic full-corpus replay that closed the accepted findings.
+use_when:
+  - Reusing or changing Phase A named positional relation batching.
+  - Checking why batch identity and quote-manifest transport lineage are required.
+  - Interpreting batched display labels or the hydration cap evidence.
+authority_boundary: retrieval_only
+review_provenance:
+  authored_by: Anthropic reviewer (operator-couriered return)
+  reviewed_by: OpenAI GPT-5 via Codex home lane
+  de_correlation_bar: cross_vendor_discovery
+  access_mode: repo at exact reviewed commit 9cf9f2ccfc350447754beee9f4b700935ce219ed
+  dispatch: docs/prompts/reviews/phase_a_hydration_full_axis_cap_batching_delegated_review_patch_prompt_v0.md
+  reviewer_patch: c363226699de9454246797334f887ccc37d21aad
+  home_cherry_pick: c5d92d829f9ef76031483b67f9895e78103ea671
+  reviewer_recommendation: one critical patch plus two owner decisions
+  findings: 3
+review_use_boundary: >
+  The reviewer findings are decision input, not approval, validation,
+  mandatory remediation, or patch authority. The decisions and verification
+  kept by the home lane are recorded below.
+non_claims: >
+  This record does not claim population prevalence, commercial pull, provider
+  latency improvement, or independent semantic adjudication of all 836 rows.
+```
+
+## Adjudication
+
+### FF-01 — wrong batch response could silently change relations: accepted
+
+At the reviewed commit, local row names restarted at `row_0000` in every
+batch. Two equal-sized batches therefore had interchangeable response shapes.
+The reviewer swapped their responses and the old finalizer accepted all rows
+while silently changing 8 of 16 relations.
+
+The reviewer patch was kept. Every response now carries one required
+`batch_id`; the finalizer rejects a response that names a different batch.
+The response guidance is also derived from the whole admitted selection, and
+invalid relation value types fail at a typed boundary. The home lane
+cherry-picked the patch as `c5d92d829f9ef76031483b67f9895e78103ea671`.
+
+### FF-02 — generic batched labels could be mistaken for source meaning: bounded
+
+The generic labels remain presentation metadata because removing batching
+would discard the measured efficiency direction without improving the stored
+source facts. They are not allowed to justify quote choice. A long exact quote
+must express the source-owned normalized meaning or a material same-evidence
+qualification; an otherwise irrelevant substring remains unacceptable even if
+its generic label sounds suitable.
+
+This closes the evidence-integrity risk without pretending that a generic
+label is a rich description. Improving decorative label wording remains a
+presentation-quality opportunity, not truth authority.
+
+### FF-03 — quote output did not record the batches actually used: accepted
+
+Batched quote preparation now emits
+`phase_a_evidence_quote_manifest_v5`. It binds the actual batch-manifest hash,
+batch count, and canonical response hash for every named batch. The embedded
+full-selection manifest remains the canonical selection identity; its
+single-prompt hash is explicitly not treated as an execution receipt.
+
+## Home verification
+
+The home lane replayed the real hydration workload deterministically with no
+provider calls. It added the newly required batch identity to the previously
+accepted three relation responses, then ran the current finalizers.
+
+- admitted candidates: 836
+- selected truth origins: 15
+- displayed rows and exact quotes: 17
+- influence origins: 0
+- semantic display equality to the pre-closure artifact: exact `source_groups`
+- batch-manifest stored hash:
+  `dcb12f76eed60318badfd762cb49048218e6be014ac35cd5862c31e55f097324`
+- canonical batch-response hashes:
+  - `batch_0001`: `14a446c4a361910bbbe6d46b2468be2ca65d4b7feb0c14339c9f5b94d0d8b257`
+  - `batch_0002`: `ba986a6ee12300fd9b20b0acfb32a5eabd5530c6d06db080433121fe70df420c`
+  - `batch_0003`: `84bb39e366abe07cc14a8e3e1f0eee6f48c0cbcb39eb22348a6c3267a6603f37`
+- quote-manifest stored hash:
+  `325819cfb74ccbdd6fd57ccbbf080deb38334e65189b46f38ad462405b256796`
+- replay artifact file SHA-256:
+  `27ee70fe1d3aceefb1ed817403567afa15f7d10f656de7d955c34dda1cf4f9e2`
+
+The replay lives at
+`C:\tmp\forseti-phase-a-hydration-cap-pilot-20260820-v0\home_adjudication_v2`.
+It is scratch evidence, not production output.
+
+The focused selection/consumer/semantic suite and the complete
+`python -m pytest -q forseti-harness` harness passed after the home closure.
+The full run retained only the repository's existing opt-in skips and warnings.
+
+## Accepted residuals
+
+- The 836-row relation decisions and 17 quote choices were not regenerated by
+  a provider; this closure proves transport identity and deterministic output
+  preservation, not fresh semantic quality.
+- Generic labels remain deliberately generic and non-authoritative.
+- The reviewer's serial provider run was slower than the unbatched arm; the
+  earlier latency saving is a modelled parallel critical path, not observed
+  serial production latency.
+- The original experimental receipt was produced from the implementation's
+  parent commit with the candidate diff present; the home replay verifies the
+  final transport behavior but does not rewrite that historical receipt.
+
+## Reversal condition
+
+Disable named positional batching and return to the literal-ID route if a
+representative replay can accept a wrong-batch response, change any stored
+source fact, lose a selected origin or quote, or use a generic label as the
+semantic basis for quote relevance.

@@ -6,7 +6,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -73,10 +73,20 @@ from judgment.phase_a_evidence_consumer import (  # noqa: E402
     prepare_decision_batch,
 )
 from judgment.phase_a_evidence_selection import (  # noqa: E402
+    build_customer_pull_point_frontier,
+    finalize_batched_preselection_relation_confirmations_prepare_quotes,
+    finalize_batched_relations_prepare_quotes,
+    finalize_preselection_relation_confirmation_prepare_quotes,
     finalize_quotes,
     finalize_relations_prepare_quotes,
     load_selection_sources,
     prepare_evidence_selection,
+    prepare_evidence_selection_batches,
+    prepare_batched_preselection_relation_confirmations,
+    prepare_preselection_relation_confirmation,
+    prepare_selected_relation_confirmation,
+    selection_spec_from_customer_pull_frontier,
+    verify_customer_pull_point_frontier,
 )
 from harness_utils import hash_file  # noqa: E402
 
@@ -1547,14 +1557,71 @@ def finalize_evidence_consumer_batch_run(
     }
 
 
-def prepare_evidence_selection_run(
-    *,
-    spec_path: Path,
-    prompt_out: Path,
-    response_schema_out: Path,
-    manifest_out: Path,
+def build_customer_pull_point_frontier_run(
+    *, spec_path: Path, frontier_out: Path
 ) -> dict[str, Any]:
     spec = _load_object(spec_path)
+    packet_path = (spec_path.parent / Path(spec["packet_path"])).resolve(strict=True)
+    protected = spec.get("protected_point_ids") or {}
+    frontier = build_customer_pull_point_frontier(
+        _load_object(packet_path),
+        frontier_id=spec["frontier_id"],
+        business_question=spec["business_question"],
+        subject_product_ids=spec["subject_product_ids"],
+        source_id=spec.get("source_id", "full-corpus"),
+        protected_point_ids=protected,
+    )
+    if frontier_out.exists():
+        raise ValueError(f"refusing to overwrite existing output: {frontier_out}")
+    _write_json(frontier_out, frontier)
+    return {
+        "status": "PHASE_A_CUSTOMER_PULL_POINT_FRONTIER_READY",
+        "retailer_first_count": frontier["accounting"]["retailer_first_count"],
+        "community_discovery_count": frontier["accounting"][
+            "community_discovery_count"
+        ],
+        "nonpromoted_count": frontier["accounting"]["nonpromoted_count"],
+        "frontier_sha256": frontier["frontier_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def materialize_customer_pull_point_selection_spec_run(
+    *,
+    frontier_path: Path,
+    packet_path: Path,
+    bundle_path: Path,
+    proposition_id: str,
+    spec_out: Path,
+) -> dict[str, Any]:
+    frontier = _load_object(frontier_path)
+    packet = _load_object(packet_path)
+    verify_customer_pull_point_frontier(frontier, packet)
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, proposition_id
+    )
+    spec["sources"] = [
+        {
+            "source_id": frontier["source_id"],
+            "packet_path": str(packet_path.resolve(strict=True)),
+            "bundle_path": str(bundle_path.resolve(strict=True)),
+        }
+    ]
+    if spec_out.exists():
+        raise ValueError(f"refusing to overwrite existing output: {spec_out}")
+    _write_json(spec_out, spec)
+    return {
+        "status": "PHASE_A_CUSTOMER_PULL_POINT_SELECTION_SPEC_READY",
+        "selection_id": spec["selection_id"],
+        "frontier_sha256": frontier["frontier_sha256"],
+        "truth_group_cap": spec["truth_group_cap"],
+        "model_api_calls": 0,
+    }
+
+
+def _selection_sources_from_spec(
+    spec_path: Path, spec: Mapping[str, Any]
+) -> list[dict[str, Any]]:
     rows = spec.get("sources")
     if not isinstance(rows, list) or not rows:
         raise ValueError("evidence selection sources must be a nonempty list")
@@ -1573,6 +1640,18 @@ def prepare_evidence_selection_run(
                 "bundle": _load_object(bundle_path),
             }
         )
+    return sources
+
+
+def prepare_evidence_selection_run(
+    *,
+    spec_path: Path,
+    prompt_out: Path,
+    response_schema_out: Path,
+    manifest_out: Path,
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    sources = _selection_sources_from_spec(spec_path, spec)
     prompt, schema, manifest = prepare_evidence_selection(spec, sources)
     for output in (prompt_out, response_schema_out, manifest_out):
         if output.exists():
@@ -1589,6 +1668,46 @@ def prepare_evidence_selection_run(
     }
 
 
+def prepare_evidence_selection_batches_run(
+    *,
+    spec_path: Path,
+    batch_size: int,
+    batch_dir: Path,
+    batch_manifest_out: Path,
+) -> dict[str, Any]:
+    spec = _load_object(spec_path)
+    sources = _selection_sources_from_spec(spec_path, spec)
+    batch_manifest, prompts_and_schemas = prepare_evidence_selection_batches(
+        spec, sources, batch_size=batch_size
+    )
+    output_paths = [batch_manifest_out]
+    for batch in batch_manifest["batches"]:
+        output_paths.extend(
+            [
+                batch_dir / f"{batch['batch_id']}_prompt.txt",
+                batch_dir / f"{batch['batch_id']}_schema.json",
+            ]
+        )
+    existing = [str(path) for path in output_paths if path.exists()]
+    if existing:
+        raise ValueError(f"refusing to overwrite existing output: {existing}")
+    for batch, (prompt, schema) in zip(
+        batch_manifest["batches"], prompts_and_schemas, strict=True
+    ):
+        _write_new(
+            batch_dir / f"{batch['batch_id']}_prompt.txt", prompt.encode("utf-8")
+        )
+        _write_json(batch_dir / f"{batch['batch_id']}_schema.json", schema)
+    _write_json(batch_manifest_out, batch_manifest)
+    return {
+        "status": "PHASE_A_EVIDENCE_SELECTION_RELATION_BATCHES_READY",
+        "candidate_count": batch_manifest["candidate_count"],
+        "batch_count": len(batch_manifest["batches"]),
+        "batch_manifest_sha256": batch_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
 def finalize_evidence_selection_relations_run(
     *,
     manifest_path: Path,
@@ -1596,6 +1715,9 @@ def finalize_evidence_selection_relations_run(
     quote_prompt_out: Path,
     quote_schema_out: Path,
     quote_manifest_out: Path,
+    confirmation_prompt_out: Path,
+    confirmation_schema_out: Path,
+    confirmation_manifest_out: Path,
 ) -> dict[str, Any]:
     manifest = _load_object(manifest_path)
     sources = load_selection_sources(manifest)
@@ -1603,14 +1725,27 @@ def finalize_evidence_selection_relations_run(
     prompt, schema, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, response
     )
-    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+    confirmation_prompt, confirmation_schema, confirmation_manifest = (
+        prepare_selected_relation_confirmation(quote_manifest)
+    )
+    for output in (
+        quote_prompt_out,
+        quote_schema_out,
+        quote_manifest_out,
+        confirmation_prompt_out,
+        confirmation_schema_out,
+        confirmation_manifest_out,
+    ):
         if output.exists():
             raise ValueError(f"refusing to overwrite existing output: {output}")
     _write_new(quote_prompt_out, prompt.encode("utf-8"))
     _write_json(quote_schema_out, schema)
     _write_json(quote_manifest_out, quote_manifest)
+    _write_new(confirmation_prompt_out, confirmation_prompt.encode("utf-8"))
+    _write_json(confirmation_schema_out, confirmation_schema)
+    _write_json(confirmation_manifest_out, confirmation_manifest)
     return {
-        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_READY",
+        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_AND_CONFIRMATION_READY",
         "candidate_count": len(quote_manifest["labeled_inventory"]),
         "truth_group_count": len(
             {
@@ -1627,6 +1762,256 @@ def finalize_evidence_selection_relations_run(
             }
         ),
         "manifest_sha256": quote_manifest["manifest_sha256"],
+        "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def prepare_preselection_relation_confirmation_run(
+    *,
+    selection_manifest_path: Path,
+    first_response_path: Path,
+    prompt_out: Path,
+    response_schema_out: Path,
+    confirmation_manifest_out: Path,
+) -> dict[str, Any]:
+    selection_manifest = _load_object(selection_manifest_path)
+    sources = load_selection_sources(selection_manifest)
+    prompt, schema, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, _load_object(first_response_path)
+    )
+    for output in (prompt_out, response_schema_out, confirmation_manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(prompt_out, prompt.encode("utf-8"))
+    _write_json(response_schema_out, schema)
+    _write_json(confirmation_manifest_out, confirmation_manifest)
+    return {
+        "status": "PHASE_A_PRESELECTION_RELATION_CONFIRMATION_READY",
+        "confirmation_candidate_count": len(
+            confirmation_manifest["confirmation_candidate_ids"]
+        ),
+        "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_preselection_relation_confirmation_run(
+    *,
+    selection_manifest_path: Path,
+    first_response_path: Path,
+    confirmation_manifest_path: Path,
+    confirmation_response_path: Path,
+    quote_prompt_out: Path,
+    quote_schema_out: Path,
+    quote_manifest_out: Path,
+) -> dict[str, Any]:
+    selection_manifest = _load_object(selection_manifest_path)
+    sources = load_selection_sources(selection_manifest)
+    prompt, schema, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            _load_object(first_response_path),
+            _load_object(confirmation_manifest_path),
+            _load_object(confirmation_response_path),
+        )
+    )
+    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(quote_prompt_out, prompt.encode("utf-8"))
+    _write_json(quote_schema_out, schema)
+    _write_json(quote_manifest_out, quote_manifest)
+    return {
+        "status": "PHASE_A_CONFIRMED_EVIDENCE_SELECTION_QUOTES_READY",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
+        "selected_row_count": len(quote_manifest["selected_rows"]),
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_evidence_selection_batches_run(
+    *,
+    batch_manifest_path: Path,
+    response_dir: Path,
+    quote_prompt_out: Path,
+    quote_schema_out: Path,
+    quote_manifest_out: Path,
+    confirmation_prompt_out: Path,
+    confirmation_schema_out: Path,
+    confirmation_manifest_out: Path,
+) -> dict[str, Any]:
+    batch_manifest = _load_object(batch_manifest_path)
+    selection_manifest = batch_manifest.get("selection_manifest")
+    if not isinstance(selection_manifest, dict):
+        raise ValueError("selection batch manifest is missing its selection manifest")
+    sources = load_selection_sources(selection_manifest)
+    responses = {
+        batch["batch_id"]: _load_object(
+            response_dir / f"{batch['batch_id']}_response.json"
+        )
+        for batch in batch_manifest.get("batches", [])
+    }
+    prompt, schema, quote_manifest = finalize_batched_relations_prepare_quotes(
+        batch_manifest, sources, responses
+    )
+    confirmation_prompt, confirmation_schema, confirmation_manifest = (
+        prepare_selected_relation_confirmation(quote_manifest)
+    )
+    for output in (
+        quote_prompt_out,
+        quote_schema_out,
+        quote_manifest_out,
+        confirmation_prompt_out,
+        confirmation_schema_out,
+        confirmation_manifest_out,
+    ):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(quote_prompt_out, prompt.encode("utf-8"))
+    _write_json(quote_schema_out, schema)
+    _write_json(quote_manifest_out, quote_manifest)
+    _write_new(confirmation_prompt_out, confirmation_prompt.encode("utf-8"))
+    _write_json(confirmation_schema_out, confirmation_schema)
+    _write_json(confirmation_manifest_out, confirmation_manifest)
+    return {
+        "status": "PHASE_A_EVIDENCE_SELECTION_QUOTES_AND_CONFIRMATION_READY",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
+        "batch_count": len(batch_manifest["batches"]),
+        "truth_group_count": len(
+            {
+                row["origin_group_id"]
+                for row in quote_manifest["selected_rows"]
+                if row["layer"] == "truth_support"
+            }
+        ),
+        "influence_group_count": len(
+            {
+                row["origin_group_id"]
+                for row in quote_manifest["selected_rows"]
+                if row["layer"] == "influence_context"
+            }
+        ),
+        "manifest_sha256": quote_manifest["manifest_sha256"],
+        "confirmation_manifest_sha256": confirmation_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def _load_relation_batch_responses(
+    batch_manifest: Mapping[str, Any], response_dir: Path
+) -> dict[str, dict[str, Any]]:
+    return {
+        batch["batch_id"]: _load_object(
+            response_dir / f"{batch['batch_id']}_response.json"
+        )
+        for batch in batch_manifest.get("batches", [])
+    }
+
+
+def prepare_batched_preselection_relation_confirmation_run(
+    *,
+    batch_manifest_path: Path,
+    response_dir: Path,
+    batch_size: int,
+    confirmation_batch_dir: Path,
+    confirmation_batch_manifest_out: Path,
+) -> dict[str, Any]:
+    batch_manifest = _load_object(batch_manifest_path)
+    selection_manifest = batch_manifest.get("selection_manifest")
+    if not isinstance(selection_manifest, dict):
+        raise ValueError("selection batch manifest is missing its selection manifest")
+    sources = load_selection_sources(selection_manifest)
+    responses = _load_relation_batch_responses(batch_manifest, response_dir)
+    confirmation_batch_manifest, prompts_and_schemas = (
+        prepare_batched_preselection_relation_confirmations(
+            batch_manifest, sources, responses, batch_size=batch_size
+        )
+    )
+    output_paths = [confirmation_batch_manifest_out]
+    for batch in confirmation_batch_manifest["batches"]:
+        output_paths.extend(
+            [
+                confirmation_batch_dir / f"{batch['batch_id']}_prompt.txt",
+                confirmation_batch_dir / f"{batch['batch_id']}_schema.json",
+            ]
+        )
+    existing = [str(path) for path in output_paths if path.exists()]
+    if existing:
+        raise ValueError(f"refusing to overwrite existing output: {existing}")
+    for batch, (prompt, schema) in zip(
+        confirmation_batch_manifest["batches"], prompts_and_schemas, strict=True
+    ):
+        _write_new(
+            confirmation_batch_dir / f"{batch['batch_id']}_prompt.txt",
+            prompt.encode("utf-8"),
+        )
+        _write_json(
+            confirmation_batch_dir / f"{batch['batch_id']}_schema.json", schema
+        )
+    _write_json(confirmation_batch_manifest_out, confirmation_batch_manifest)
+    return {
+        "status": "PHASE_A_PRESELECTION_RELATION_CONFIRMATION_BATCHES_READY",
+        "candidate_count": batch_manifest["candidate_count"],
+        "relation_batch_count": len(batch_manifest["batches"]),
+        "confirmation_candidate_count": confirmation_batch_manifest[
+            "confirmation_candidate_count"
+        ],
+        "confirmation_batch_count": len(confirmation_batch_manifest["batches"]),
+        "confirmation_batch_manifest_sha256": confirmation_batch_manifest[
+            "manifest_sha256"
+        ],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_batched_preselection_relation_confirmation_run(
+    *,
+    batch_manifest_path: Path,
+    response_dir: Path,
+    confirmation_batch_manifest_path: Path,
+    confirmation_response_dir: Path,
+    quote_prompt_out: Path,
+    quote_schema_out: Path,
+    quote_manifest_out: Path,
+) -> dict[str, Any]:
+    batch_manifest = _load_object(batch_manifest_path)
+    selection_manifest = batch_manifest.get("selection_manifest")
+    if not isinstance(selection_manifest, dict):
+        raise ValueError("selection batch manifest is missing its selection manifest")
+    sources = load_selection_sources(selection_manifest)
+    responses = _load_relation_batch_responses(batch_manifest, response_dir)
+    confirmation_batch_manifest = _load_object(confirmation_batch_manifest_path)
+    confirmation_batch_responses = {
+        batch["batch_id"]: _load_object(
+            confirmation_response_dir / f"{batch['batch_id']}_response.json"
+        )
+        for batch in confirmation_batch_manifest.get("batches", [])
+    }
+    prompt, schema, quote_manifest = (
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_batch_manifest,
+            confirmation_batch_responses,
+        )
+    )
+    for output in (quote_prompt_out, quote_schema_out, quote_manifest_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_new(quote_prompt_out, prompt.encode("utf-8"))
+    _write_json(quote_schema_out, schema)
+    _write_json(quote_manifest_out, quote_manifest)
+    return {
+        "status": "PHASE_A_BATCHED_CONFIRMED_EVIDENCE_SELECTION_QUOTES_READY",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
+        "relation_batch_count": len(batch_manifest["batches"]),
+        "confirmation_batch_count": len(confirmation_batch_manifest["batches"]),
+        "selected_row_count": len(quote_manifest["selected_rows"]),
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
         "model_api_calls": 0,
     }
 
@@ -1636,6 +2021,8 @@ def finalize_evidence_selection_quotes_run(
     selection_manifest_path: Path,
     quote_manifest_path: Path,
     response_path: Path,
+    confirmation_manifest_path: Path | None,
+    confirmation_response_path: Path | None,
     artifact_out: Path,
 ) -> dict[str, Any]:
     selection_manifest = _load_object(selection_manifest_path)
@@ -1647,7 +2034,29 @@ def finalize_evidence_selection_quotes_run(
         raise EvidenceConsumerError(
             "manifest_verification", "quote manifest belongs to another selection"
         )
-    artifact = finalize_quotes(quote_manifest, sources, _load_object(response_path))
+    # A historical v1/v3/v4/v5 quote manifest carries no confirmation
+    # obligation and rejects a confirmation attachment, so replaying one has to
+    # be able to reach finalize_quotes with no confirmation supplied.
+    if (confirmation_manifest_path is None) != (confirmation_response_path is None):
+        raise EvidenceConsumerError(
+            "relation_confirmation_shape",
+            "supply both the confirmation manifest and its response, or neither",
+        )
+    artifact = finalize_quotes(
+        quote_manifest,
+        sources,
+        _load_object(response_path),
+        (
+            _load_object(confirmation_manifest_path)
+            if confirmation_manifest_path is not None
+            else None
+        ),
+        (
+            _load_object(confirmation_response_path)
+            if confirmation_response_path is not None
+            else None
+        ),
+    )
     if artifact_out.exists():
         raise ValueError(f"refusing to overwrite existing output: {artifact_out}")
     _write_json(artifact_out, artifact)
@@ -1924,11 +2333,32 @@ def _parser() -> argparse.ArgumentParser:
     consumer_finalize.add_argument("--response", type=Path, required=True)
     consumer_finalize.add_argument("--artifact-dir", type=Path, required=True)
 
+    frontier_build = sub.add_parser("build-customer-pull-point-frontier")
+    frontier_build.add_argument("--spec", type=Path, required=True)
+    frontier_build.add_argument("--frontier-out", type=Path, required=True)
+
+    frontier_point = sub.add_parser(
+        "materialize-customer-pull-point-selection-spec"
+    )
+    frontier_point.add_argument("--frontier", type=Path, required=True)
+    frontier_point.add_argument("--packet", type=Path, required=True)
+    frontier_point.add_argument("--bundle", type=Path, required=True)
+    frontier_point.add_argument("--proposition-id", required=True)
+    frontier_point.add_argument("--spec-out", type=Path, required=True)
+
     selection_prepare = sub.add_parser("prepare-evidence-selection")
     selection_prepare.add_argument("--spec", type=Path, required=True)
     selection_prepare.add_argument("--prompt-out", type=Path, required=True)
     selection_prepare.add_argument("--response-schema-out", type=Path, required=True)
     selection_prepare.add_argument("--manifest-out", type=Path, required=True)
+
+    selection_batch_prepare = sub.add_parser("prepare-evidence-selection-batches")
+    selection_batch_prepare.add_argument("--spec", type=Path, required=True)
+    selection_batch_prepare.add_argument("--batch-size", type=int, required=True)
+    selection_batch_prepare.add_argument("--batch-dir", type=Path, required=True)
+    selection_batch_prepare.add_argument(
+        "--batch-manifest-out", type=Path, required=True
+    )
 
     selection_relations = sub.add_parser("finalize-evidence-selection-relations")
     selection_relations.add_argument("--manifest", type=Path, required=True)
@@ -1936,11 +2366,138 @@ def _parser() -> argparse.ArgumentParser:
     selection_relations.add_argument("--quote-prompt-out", type=Path, required=True)
     selection_relations.add_argument("--quote-schema-out", type=Path, required=True)
     selection_relations.add_argument("--quote-manifest-out", type=Path, required=True)
+    selection_relations.add_argument(
+        "--confirmation-prompt-out", type=Path, required=True
+    )
+    selection_relations.add_argument(
+        "--confirmation-schema-out", type=Path, required=True
+    )
+    selection_relations.add_argument(
+        "--confirmation-manifest-out", type=Path, required=True
+    )
+
+    preselection_confirmation = sub.add_parser(
+        "prepare-preselection-relation-confirmation"
+    )
+    preselection_confirmation.add_argument(
+        "--selection-manifest", type=Path, required=True
+    )
+    preselection_confirmation.add_argument(
+        "--first-response", type=Path, required=True
+    )
+    preselection_confirmation.add_argument("--prompt-out", type=Path, required=True)
+    preselection_confirmation.add_argument(
+        "--response-schema-out", type=Path, required=True
+    )
+    preselection_confirmation.add_argument(
+        "--confirmation-manifest-out", type=Path, required=True
+    )
+
+    preselection_finalize = sub.add_parser(
+        "finalize-preselection-relation-confirmation"
+    )
+    preselection_finalize.add_argument(
+        "--selection-manifest", type=Path, required=True
+    )
+    preselection_finalize.add_argument("--first-response", type=Path, required=True)
+    preselection_finalize.add_argument(
+        "--confirmation-manifest", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--confirmation-response", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--quote-prompt-out", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--quote-schema-out", type=Path, required=True
+    )
+    preselection_finalize.add_argument(
+        "--quote-manifest-out", type=Path, required=True
+    )
+
+    batched_preselection_confirmation = sub.add_parser(
+        "prepare-batched-preselection-relation-confirmation"
+    )
+    batched_preselection_confirmation.add_argument(
+        "--batch-manifest", type=Path, required=True
+    )
+    batched_preselection_confirmation.add_argument(
+        "--response-dir", type=Path, required=True
+    )
+    batched_preselection_confirmation.add_argument(
+        "--batch-size", type=int, required=True
+    )
+    batched_preselection_confirmation.add_argument(
+        "--confirmation-batch-dir", type=Path, required=True
+    )
+    batched_preselection_confirmation.add_argument(
+        "--confirmation-batch-manifest-out", type=Path, required=True
+    )
+
+    batched_preselection_finalize = sub.add_parser(
+        "finalize-batched-preselection-relation-confirmation"
+    )
+    batched_preselection_finalize.add_argument(
+        "--batch-manifest", type=Path, required=True
+    )
+    batched_preselection_finalize.add_argument(
+        "--response-dir", type=Path, required=True
+    )
+    batched_preselection_finalize.add_argument(
+        "--confirmation-batch-manifest", type=Path, required=True
+    )
+    batched_preselection_finalize.add_argument(
+        "--confirmation-response-dir", type=Path, required=True
+    )
+    batched_preselection_finalize.add_argument(
+        "--quote-prompt-out", type=Path, required=True
+    )
+    batched_preselection_finalize.add_argument(
+        "--quote-schema-out", type=Path, required=True
+    )
+    batched_preselection_finalize.add_argument(
+        "--quote-manifest-out", type=Path, required=True
+    )
+
+    selection_batch_relations = sub.add_parser(
+        "finalize-evidence-selection-batches"
+    )
+    selection_batch_relations.add_argument(
+        "--batch-manifest", type=Path, required=True
+    )
+    selection_batch_relations.add_argument("--response-dir", type=Path, required=True)
+    selection_batch_relations.add_argument(
+        "--quote-prompt-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--quote-schema-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--quote-manifest-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--confirmation-prompt-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--confirmation-schema-out", type=Path, required=True
+    )
+    selection_batch_relations.add_argument(
+        "--confirmation-manifest-out", type=Path, required=True
+    )
 
     selection_quotes = sub.add_parser("finalize-evidence-selection-quotes")
     selection_quotes.add_argument("--selection-manifest", type=Path, required=True)
     selection_quotes.add_argument("--quote-manifest", type=Path, required=True)
     selection_quotes.add_argument("--response", type=Path, required=True)
+    # Required for a current v6 pack; omitted together to replay a historical
+    # v1/v3/v4/v5 quote manifest, which fails closed on any attachment.
+    selection_quotes.add_argument(
+        "--confirmation-manifest", type=Path, default=None
+    )
+    selection_quotes.add_argument(
+        "--confirmation-response", type=Path, default=None
+    )
     selection_quotes.add_argument("--artifact-out", type=Path, required=True)
 
     calibration_prepare = sub.add_parser("prepare-calibration")
@@ -2244,12 +2801,32 @@ def main(argv: list[str] | None = None) -> int:
                 response_path=args.response,
                 artifact_dir=args.artifact_dir,
             )
+        elif args.command == "build-customer-pull-point-frontier":
+            result = build_customer_pull_point_frontier_run(
+                spec_path=args.spec,
+                frontier_out=args.frontier_out,
+            )
+        elif args.command == "materialize-customer-pull-point-selection-spec":
+            result = materialize_customer_pull_point_selection_spec_run(
+                frontier_path=args.frontier,
+                packet_path=args.packet,
+                bundle_path=args.bundle,
+                proposition_id=args.proposition_id,
+                spec_out=args.spec_out,
+            )
         elif args.command == "prepare-evidence-selection":
             result = prepare_evidence_selection_run(
                 spec_path=args.spec,
                 prompt_out=args.prompt_out,
                 response_schema_out=args.response_schema_out,
                 manifest_out=args.manifest_out,
+            )
+        elif args.command == "prepare-evidence-selection-batches":
+            result = prepare_evidence_selection_batches_run(
+                spec_path=args.spec,
+                batch_size=args.batch_size,
+                batch_dir=args.batch_dir,
+                batch_manifest_out=args.batch_manifest_out,
             )
         elif args.command == "finalize-evidence-selection-relations":
             result = finalize_evidence_selection_relations_run(
@@ -2258,12 +2835,64 @@ def main(argv: list[str] | None = None) -> int:
                 quote_prompt_out=args.quote_prompt_out,
                 quote_schema_out=args.quote_schema_out,
                 quote_manifest_out=args.quote_manifest_out,
+                confirmation_prompt_out=args.confirmation_prompt_out,
+                confirmation_schema_out=args.confirmation_schema_out,
+                confirmation_manifest_out=args.confirmation_manifest_out,
+            )
+        elif args.command == "prepare-preselection-relation-confirmation":
+            result = prepare_preselection_relation_confirmation_run(
+                selection_manifest_path=args.selection_manifest,
+                first_response_path=args.first_response,
+                prompt_out=args.prompt_out,
+                response_schema_out=args.response_schema_out,
+                confirmation_manifest_out=args.confirmation_manifest_out,
+            )
+        elif args.command == "finalize-preselection-relation-confirmation":
+            result = finalize_preselection_relation_confirmation_run(
+                selection_manifest_path=args.selection_manifest,
+                first_response_path=args.first_response,
+                confirmation_manifest_path=args.confirmation_manifest,
+                confirmation_response_path=args.confirmation_response,
+                quote_prompt_out=args.quote_prompt_out,
+                quote_schema_out=args.quote_schema_out,
+                quote_manifest_out=args.quote_manifest_out,
+            )
+        elif args.command == "prepare-batched-preselection-relation-confirmation":
+            result = prepare_batched_preselection_relation_confirmation_run(
+                batch_manifest_path=args.batch_manifest,
+                response_dir=args.response_dir,
+                batch_size=args.batch_size,
+                confirmation_batch_dir=args.confirmation_batch_dir,
+                confirmation_batch_manifest_out=args.confirmation_batch_manifest_out,
+            )
+        elif args.command == "finalize-batched-preselection-relation-confirmation":
+            result = finalize_batched_preselection_relation_confirmation_run(
+                batch_manifest_path=args.batch_manifest,
+                response_dir=args.response_dir,
+                confirmation_batch_manifest_path=args.confirmation_batch_manifest,
+                confirmation_response_dir=args.confirmation_response_dir,
+                quote_prompt_out=args.quote_prompt_out,
+                quote_schema_out=args.quote_schema_out,
+                quote_manifest_out=args.quote_manifest_out,
+            )
+        elif args.command == "finalize-evidence-selection-batches":
+            result = finalize_evidence_selection_batches_run(
+                batch_manifest_path=args.batch_manifest,
+                response_dir=args.response_dir,
+                quote_prompt_out=args.quote_prompt_out,
+                quote_schema_out=args.quote_schema_out,
+                quote_manifest_out=args.quote_manifest_out,
+                confirmation_prompt_out=args.confirmation_prompt_out,
+                confirmation_schema_out=args.confirmation_schema_out,
+                confirmation_manifest_out=args.confirmation_manifest_out,
             )
         elif args.command == "finalize-evidence-selection-quotes":
             result = finalize_evidence_selection_quotes_run(
                 selection_manifest_path=args.selection_manifest,
                 quote_manifest_path=args.quote_manifest,
                 response_path=args.response,
+                confirmation_manifest_path=args.confirmation_manifest,
+                confirmation_response_path=args.confirmation_response,
                 artifact_out=args.artifact_out,
             )
         elif args.command == "prepare-calibration":
