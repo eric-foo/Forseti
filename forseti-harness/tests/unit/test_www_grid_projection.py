@@ -155,6 +155,122 @@ def test_ads_are_excluded_from_rows_and_thing_count() -> None:
     assert not any(row["promoted"] for row in view["thread_rows"])
 
 
+def test_ad_with_reddit_permalink_is_still_excluded() -> None:
+    """Observed 2026-08-22: promoted rows can now look like Reddit threads."""
+    ad = (
+        '<shreddit-ad-post permalink="/r/u_brand/comments/ad123/campaign/"'
+        ' content-href="https://www.reddit.com/r/u_brand/comments/ad123/campaign/"'
+        ' created-timestamp="2026-08-22T01:02:03.000000+0000"'
+        ' post-title="Campaign"></shreddit-ad-post>'
+    )
+    view = build_www_grid_content_record(
+        rendered_dom=DOM + ad,
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )["grid_view"]
+    assert view["listing_thing_count_or_none"] == 3
+    assert view["listing_permalink_count_or_none"] == 3
+    assert len(view["thread_rows"]) == 3
+    # Counting alone would still pass if the ad displaced an organic row, so
+    # name the ad's own canonical URL and require it to be absent.
+    assert "https://www.reddit.com/r/u_brand/comments/ad123/campaign/" not in [
+        row["thread_url"] for row in view["thread_rows"]
+    ]
+    assert not any(row["promoted"] for row in view["thread_rows"])
+
+
+def test_duplicate_permalink_is_one_semantic_row() -> None:
+    duplicate = _post(
+        slug="aaa", title="Duplicate shell", score="1", comments="0"
+    )
+    view = build_www_grid_content_record(
+        rendered_dom=DOM + f"<section>{duplicate}</section>",
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )["grid_view"]
+    assert view["listing_thing_count_or_none"] == 3
+    assert view["listing_permalink_count_or_none"] == 3
+    assert len(view["thread_rows"]) == 3
+    # First element wins: the later shell carries thinner values, and letting
+    # it overwrite the row would silently downgrade score and comment count.
+    assert view["thread_rows"][0]["visible_title_or_none"] == "Text post"
+    assert view["thread_rows"][0]["visible_score_or_none"] == "893"
+
+
+def test_nested_duplicate_post_element_is_one_semantic_row() -> None:
+    """The Goal's nested case: the inner element repeats the outer's permalink."""
+    outer = _post(slug="aaa", title="Outer", score="10", comments="5")
+    inner = _post(slug="aaa", title="Nested duplicate", score="1", comments="0")
+    nested_dom = outer.replace("</shreddit-post>", inner + "</shreddit-post>", 1)
+    record = build_www_grid_content_record(
+        rendered_dom=nested_dom,
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )
+    view = record["grid_view"]
+    assert view["listing_thing_count_or_none"] == 1
+    assert view["listing_permalink_count_or_none"] == 1
+    assert [row["visible_title_or_none"] for row in view["thread_rows"]] == ["Outer"]
+    assert grid_view_projection_anomaly(grid_view_from_record(record)) is None
+
+
+def _unclosed(slug: str, title: str) -> str:
+    """One organic post element whose end tag never arrives."""
+    return _post(slug=slug, title=title, score="10", comments="5").replace(
+        "</shreddit-post>", "", 1
+    )
+
+
+@pytest.mark.parametrize(
+    "dom, titles",
+    [
+        (
+            _unclosed("aaa", "A")
+            + _post(slug="bbb", title="B", score="10", comments="5")
+            + _post(slug="ccc", title="C", score="10", comments="5"),
+            ["A", "B", "C"],
+        ),
+        (
+            _post(slug="aaa", title="A", score="10", comments="5")
+            + _unclosed("bbb", "B")
+            + _post(slug="ccc", title="C", score="10", comments="5"),
+            ["A", "B", "C"],
+        ),
+        (
+            '<shreddit-ad-post content-href="https://ad.example/">'
+            + _post(slug="aaa", title="A", score="10", comments="5")
+            + _post(slug="bbb", title="B", score="10", comments="5"),
+            ["A", "B"],
+        ),
+    ],
+    ids=["first-post-unclosed", "middle-post-unclosed", "unclosed-ad-wrapper"],
+)
+def test_a_missing_end_tag_does_not_silently_swallow_later_posts(
+    dom: str, titles: list[str]
+) -> None:
+    """Regression: absorbing siblings as "nested" loses rows the guard cannot see.
+
+    A post element that never closes must not turn every following sibling into
+    nested content.  That failure is invisible to the caller's guard, because a
+    swallowed element leaves neither a row nor a thing count -- the two numbers
+    the guard compares -- so the capture would be retained as complete while
+    silently missing most of the listing.
+    """
+    record = build_www_grid_content_record(
+        rendered_dom=dom,
+        visible_text=VISIBLE_TEXT,
+        subreddit="testsub",
+        listing_url=LISTING_URL,
+    )
+    view = record["grid_view"]
+    assert [row["visible_title_or_none"] for row in view["thread_rows"]] == titles
+    assert view["listing_thing_count_or_none"] == len(titles)
+    assert grid_view_projection_anomaly(grid_view_from_record(record)) is None
+
+
 def test_malformed_organic_post_still_trips_the_row_count_guard() -> None:
     """Ad exclusion must not make the organic-row guard self-satisfying."""
     malformed = (
@@ -314,13 +430,15 @@ def test_timezone_naive_timestamp_stays_absent() -> None:
     dom = _post(slug="aaa", title="Naive time", score="10", comments="5").replace(
         "+0000", ""
     )
-    row = build_www_grid_content_record(
+    record = build_www_grid_content_record(
         rendered_dom=dom,
         visible_text=VISIBLE_TEXT,
         subreddit="testsub",
         listing_url=LISTING_URL,
-    )["grid_view"]["thread_rows"][0]
+    )
+    row = record["grid_view"]["thread_rows"][0]
     assert row["timestamp_utc_ms_or_none"] is None
+    assert grid_view_projection_anomaly(grid_view_from_record(record)) == "no_timestamps"
 
 
 def test_record_reuses_the_shared_kind_and_folds_through_the_materializer_path() -> None:
