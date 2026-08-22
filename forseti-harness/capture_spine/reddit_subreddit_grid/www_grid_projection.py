@@ -56,7 +56,7 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
 # ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-6"
+WWW_GRID_PROJECTION_PARSER_VERSION = "www-8"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a
@@ -159,6 +159,7 @@ class _WwwRedditGridParser(HTMLParser):
         self.thread_rows: list[GridThreadRow] = []
         self.listing_thing_count = 0
         self.listing_permalink_count = 0
+        self._seen_organic_thread_urls: set[str] = set()
         self._open: dict[str, str] | None = None
         self._open_promoted = False
         self._open_flair: str | None = None
@@ -184,6 +185,12 @@ class _WwwRedditGridParser(HTMLParser):
             ).strip() or None
             return
         if tag in (_POST_TAG, _AD_TAG):
+            # A post element ALSO closes the previous one, so a missing end tag
+            # costs at most that element's sub-state.  Treating the second open
+            # element as nested instead would absorb every following sibling
+            # into the first row -- and, because the thing count below is the
+            # guard's only independent witness, that loss would be invisible to
+            # the anomaly guard rather than routed to raw.
             self._finish()
             self._open = attributes
             self._open_promoted = tag == _AD_TAG
@@ -192,13 +199,15 @@ class _WwwRedditGridParser(HTMLParser):
             self._open_preview_image_url = None
             self._open_preview_alt_text = None
             self._depth = 1
-            # Ads are deliberately outside the thing count.  New-Reddit ad
-            # elements carry no thread permalink, so they can never become
-            # rows, and counting them would make thing_count exceed the row
-            # count on every capture -- which the caller's projection-anomaly
-            # guard reads as a broken parser and falls back to raw for.  The
-            # selection policy already excludes promoted rows, so nothing
-            # decision-relevant is lost by leaving them out of both.
+            # Counted HERE, at the element, and never from the row-emitting
+            # path: the caller's guard compares this count against the row
+            # count, so a count derived from the same function that appends
+            # rows would agree with itself by construction and could never
+            # report an element that failed to become a row.  The old-Reddit
+            # sibling parser counts at the same point for the same reason.
+            # Ads stay outside the count because the selection policy already
+            # excludes promoted rows and they can never become rows here, so
+            # counting them would trip the guard on every capture carrying one.
             if tag == _POST_TAG:
                 self.listing_thing_count += 1
             return
@@ -249,6 +258,11 @@ class _WwwRedditGridParser(HTMLParser):
         attributes, self._open = self._open, None
         if attributes is None:
             return
+        promoted, self._open_promoted = self._open_promoted, False
+        # Ads now sometimes carry a canonical-looking Reddit permalink.  Their
+        # URL shape must not promote them into an organic listing row.
+        if promoted:
+            return
         # ``permalink`` first, and it is the only reliable source: on image and
         # gallery posts ``content-href`` is the MEDIA url (i.redd.it/... ,
         # /gallery/...), not the thread.  Preferring content-href silently
@@ -258,7 +272,21 @@ class _WwwRedditGridParser(HTMLParser):
             attributes.get("permalink") or attributes.get("content-href") or ""
         )
         if thread_url is None:
+            # Counted at the start tag and deliberately LEFT counted: a
+            # malformed organic element is a thing the listing rendered that
+            # this parser could not turn into a row, which is exactly the
+            # mismatch the caller's guard exists to surface.
             return
+        if thread_url in self._seen_organic_thread_urls:
+            # One row per canonical permalink.  A duplicate that is collapsed
+            # on purpose must leave the thing count with its row, or the guard
+            # would read intended deduplication as a broken parse and route an
+            # otherwise-good capture to raw.  This subtracts only elements this
+            # branch actually saw, so an element that never reached here still
+            # shows up as a mismatch.
+            self.listing_thing_count -= 1
+            return
+        self._seen_organic_thread_urls.add(thread_url)
         self.listing_permalink_count += 1
         prefixed = attributes.get("subreddit-prefixed-name") or ""
         subreddit = prefixed.removeprefix("r/").strip().lower() or self.declared_subreddit
@@ -269,7 +297,7 @@ class _WwwRedditGridParser(HTMLParser):
                 visible_title_or_none=(attributes.get("post-title") or "").strip() or None,
                 visible_score_or_none=(attributes.get("score") or "").strip() or None,
                 visible_comment_count_or_none=(attributes.get("comment-count") or "").strip() or None,
-                promoted=self._open_promoted,
+                promoted=False,
                 timestamp_utc_ms_or_none=_timestamp_utc_ms(attributes.get("created-timestamp")),
                 stickied=self._open_stickied,
                 flair_or_none=self._open_flair,
