@@ -669,6 +669,17 @@ text, or axis names. Value is the first full frozen Decision State test
 subject; this does not make its findings prevalent, causal, or representative
 of other products or axes.
 
+For price-and-value evidence, Phase A preserves the source-explicit ingredients
+that a later judgment may need: price or cheaper-comparator friction,
+value-at-price judgments, price-conditioned purchase or repurchase intent, and
+observed purchase, use, return, switching, or repurchase behavior. When one
+source carries several of these states, their shared placement remains visible.
+Phase A does not add a `premium`, `pricing_power`, or `tier_potential` state or
+classify the current product as premium. The packed evidence may later support
+evaluation of whether an offer could be elevated or a higher tier introduced;
+that potential and any resulting action remain downstream judgments rather than
+evidence-pack facts.
+
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
 wording in the prompt alone is insufficient. The finalizer must reject field

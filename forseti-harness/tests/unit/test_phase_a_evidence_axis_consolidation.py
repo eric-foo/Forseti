@@ -614,7 +614,7 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     ) == view
 
 
-def test_decision_state_preserves_price_value_stage_and_quantity_as_distinct_facts(
+def test_decision_state_preserves_premium_potential_inputs_without_inference(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
@@ -626,15 +626,15 @@ def test_decision_state_preserves_price_value_stage_and_quantity_as_distinct_fac
         {
             "state_kind": "price_concern",
             "commercial_direction": "friction",
-            "decision_object": "fixture balm price",
+            "decision_object": "fixture balm relative to cheaper substitutes",
             "semantic_unit_refs": [primary_ref],
             "quantity": None,
-            "conditions": [],
+            "conditions": ["at $24"],
         },
         {
             "state_kind": "value_judgment",
             "commercial_direction": "favorable",
-            "decision_object": "fixture balm value",
+            "decision_object": "fixture balm at $24",
             "semantic_unit_refs": [primary_ref],
             "quantity": None,
             "conditions": [],
@@ -681,6 +681,7 @@ def test_decision_state_preserves_price_value_stage_and_quantity_as_distinct_fac
     }
 
     assert states["price_concern"]["commercial_direction"] == "friction"
+    assert states["price_concern"]["conditions"] == ["at $24"]
     assert states["value_judgment"]["commercial_direction"] == "favorable"
     assert view["decision_state_contract"]["state_kind_stages"][
         "repurchase_intent"
@@ -690,6 +691,12 @@ def test_decision_state_preserves_price_value_stage_and_quantity_as_distinct_fac
     ] == "observed"
     assert states["observed_repurchase"]["quantity"] is None
     assert states["multi_unit_purchase"]["quantity"] == 4
+    assert not {
+        "premium",
+        "premium_acceptance",
+        "pricing_power",
+        "tier_potential",
+    } & set(view["decision_state_contract"]["state_kind_stages"])
 
 
 def test_mixed_projection_routes_keep_direct_and_decision_points_distinct(
@@ -786,6 +793,10 @@ def test_decision_state_keeps_selected_zero_engagement_without_promotion(
         (
             {"state_kind": "buyers_remorse", "commercial_direction": "favorable"},
             "invalid state/direction",
+        ),
+        (
+            {"state_kind": "premium", "commercial_direction": "favorable"},
+            "unsupported decision state: premium",
         ),
         (
             {
