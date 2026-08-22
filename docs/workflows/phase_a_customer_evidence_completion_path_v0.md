@@ -623,7 +623,8 @@ policy revision; two unresolved points were rerun under the current linked-paren
 policy. The precise same-drying-and-cracking point passed, while “does nothing
 for their lips” failed generically because it named no single material outcome;
 the axis therefore contains ten valid points rather than eleven. Each valid
-point accounts all 836 hydration candidates and displays thirteen truth origins.
+point accounts all 836 hydration candidates and displays thirteen
+evidence-origin groups.
 Across the axis that is 130 point-origin placements and 146 display rows, but
 only 32 distinct origins and 37 distinct evidence items because one origin can
 inform several precise points. The selected origins span Reddit, Amazon, and
@@ -658,23 +659,34 @@ and delayed drying/cracking remains separate from direct drying.
 The view also separates Reddit posts from Reddit comments before presenting
 source-native engagement. It does not normalize, percentile-rank, or compare a
 post score with a comment score, retailer helpful count, another venue, or
-another calendar-year bucket. Repeated rows from one actor remain one credited
-origin, while distinct actors in one thread remain distinct origins with that
-thread concentration disclosed. Each point carries its exact deterministic
+another calendar-year bucket; undated engagement is explicitly non-comparable.
+Repeated rows sharing one origin key remain one evidence-origin group, while
+distinct actors in one thread remain distinct origins with that thread
+concentration disclosed. The current axis has 32 evidence-origin groups: 30
+carry `credited` independence posture and 2 carry `unavailable`; neither count
+is a people or prevalence estimate. Each point carries its exact deterministic
 support, counter, and adjacent origin lists directly as a consumer aid; those
 lists are rederived from the preserved placements and cannot override them.
 The point-level direct lists were added after the first compact dogfood made two
 join errors while copying origin directions. That failed shape is negative
 evidence and must not be restored merely to save more tokens.
 
-The completed consolidation dogfood is at
-`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\consolidated_view_v5.json`
+The current trust-bound consolidation successor is at
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\consolidated_view_review_closed_v1.json`
 (raw SHA-256
-`40321faeecdc25de493a2fc6c9d534e0410add91f5ee48b6c706f6cdcdbf90aa`;
+`e1845be89e8504fba4398de267639bdd431eef0d2eaeb5b94e7d8802eda87735`;
 stored view SHA-256
-`5749ae8da6eeeb2e103b478a61a0b040c6691be16036913393631d1a77c06120`).
-The zero-provider build completed in 31.212 seconds and exact reprojection
-passed. Its matched three-repetition receipt is
+`4a78b4ac7a5b00d0b1d454f1a32476946820d9000058ece08f1fa86a5142feb2`).
+Its build spec is
+`C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\consolidation_spec_v1.json`
+(raw SHA-256
+`f11f66a09f29113bfcfdc164afdc71b0d536e7ee0dcf1c9949461d18ea394490`).
+Cold validation must receive the independently pinned stored view SHA through
+`--expected-view-sha256`; copying the hash from the file under validation is not
+a trust check. A wrong external pin rejects before reprojection. The zero-model
+build completed in an observed 38.562 seconds, and a second build was
+byte-identical. The predecessor v5 dogfood build completed in the receipt-bound
+33.339 seconds. Its matched three-repetition receipt is
 `C:\tmp\forseti-phase-a-axis-consolidation-20260822-v0\experiment_receipt_v1.json`
 (raw SHA-256
 `8f97a45de735dff2d62438e90f75cc6b1910878c91741b3d98f5b151ab4b75de`).
@@ -688,7 +700,15 @@ ordering. Measured serial elapsed time was 547.708 seconds for the ten-pack and
 494.333 seconds for the consolidated view, a descriptive 53.375-second
 (9.745%) reduction rather than a latency guarantee or p95 claim. Cached input
 is reported but never subtracted, and reasoning output is a subset of output,
-never added twice.
+never added twice. Those provider measurements belong to v5. The review-closed
+successor
+preserves every navigation group, point placement, relation, evidence fact,
+quote, and companion meaning while adding the explicit 30/2 independence split
+and denying comparison for undated engagement. No provider rerun was used to
+pretend those metadata corrections were newly measured quality or latency. Its
+same fixed prompt projects to 362,501 UTF-8 bytes versus the ten-pack's 501,073,
+a static 27.655% reduction; logical-token and latency deltas remain the v5
+measurements above.
 
 This proves one completed hydration axis only. It does not change the
 thirteen-origin selector, establish a universal axis schema, prove another

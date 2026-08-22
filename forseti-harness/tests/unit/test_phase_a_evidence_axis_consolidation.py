@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 import pytest
 
@@ -42,6 +42,7 @@ def _candidate(
     origin: str,
     container: str,
     conditions: list[str] | None = None,
+    independence_posture: str = "credited",
 ) -> dict[str, Any]:
     return {
         "candidate_id": candidate_id,
@@ -49,6 +50,7 @@ def _candidate(
         "semantic_unit_ref": semantic_ref,
         "relation": relation,
         "scoped_independence_key": origin,
+        "independence_posture": independence_posture,
         "container_id": container,
         "conditions": conditions or [],
         "product_version_ids": [],
@@ -101,10 +103,21 @@ def _row(
     }
 
 
-def _fixture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[dict[str, Any], dict[str, Path]]:
+def _fixture(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    selection_source_calls: list[Mapping[str, Any]] | None = None,
+) -> tuple[dict[str, Any], dict[str, Path]]:
+    recorded = [] if selection_source_calls is None else selection_source_calls
+
+    def _record_selection_sources(manifest: Mapping[str, Any]) -> list[Any]:
+        recorded.append(manifest)
+        return []
+
     monkeypatch.setattr(
         "judgment.phase_a_evidence_axis_consolidation.load_selection_sources",
-        lambda _manifest: [],
+        _record_selection_sources,
     )
     point_data = {
         "point_a": {
@@ -353,6 +366,8 @@ def test_build_normalizes_origins_and_separates_post_comment_surfaces(
         "candidate_disposition_count": 6,
         "placement_count": 4,
         "unique_origin_count": 3,
+        "credited_origin_count": 3,
+        "uncredited_origin_count": 0,
         "unique_evidence_count": 3,
         "unique_quote_span_count": 3,
         "unique_companion_meaning_count": 1,
@@ -361,6 +376,7 @@ def test_build_normalizes_origins_and_separates_post_comment_surfaces(
     }
     alice = next(row for row in view["origin_index"] if row["independence_key"] == "reddit:alice")
     assert len(alice["placement_ids"]) == 2
+    assert alice["independence_posture"] == "credited"
     point_a = next(row for row in view["point_index"] if row["point_id"] == "point_a")
     assert point_a["support_origin_ids"] == ["scope::reddit:alice"]
     assert point_a["counter_origin_ids"] == ["scope::reddit:bob"]
@@ -379,7 +395,9 @@ def test_build_normalizes_origins_and_separates_post_comment_surfaces(
         }
     ]
     assert "candidate_dispositions" not in json.dumps(view)
-    assert validate_axis_consolidated_view(view) == view
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
     assert build_axis_consolidated_view(spec) == view
 
 
@@ -392,13 +410,43 @@ def test_reprojection_rejects_rehashed_direction_or_quote_mutation(
 ) -> None:
     spec, _ = _fixture(tmp_path, monkeypatch)
     view = build_axis_consolidated_view(spec)
+    trusted_view_sha256 = view["view_sha256"]
     mutated = copy.deepcopy(view)
     mutated["point_placements"][0][field] = value
     mutated["view_sha256"] = _canonical_json_sha256(
         {key: item for key, item in mutated.items() if key != "view_sha256"}
     )
-    with pytest.raises(EvidenceConsumerError, match="view_reprojection"):
-        validate_axis_consolidated_view(mutated)
+    with pytest.raises(EvidenceConsumerError, match="trusted view identity differs"):
+        validate_axis_consolidated_view(
+            mutated, expected_view_sha256=trusted_view_sha256
+        )
+
+
+def test_external_view_hash_rejects_coherent_navigation_regrouping(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    view = build_axis_consolidated_view(spec)
+    trusted_view_sha256 = view["view_sha256"]
+    mutated = copy.deepcopy(view)
+    family = mutated["spec"]["navigation_groups"][0]["families"][0]
+    family["family_id"] = "misleading_direction"
+    family["label"] = "Misleading direction"
+    mutated["navigation_groups"][0]["families"][0]["family_id"] = (
+        "misleading_direction"
+    )
+    mutated["navigation_groups"][0]["families"][0]["label"] = (
+        "Misleading direction"
+    )
+    for point in mutated["point_index"]:
+        point["family_id"] = "misleading_direction"
+    mutated["view_sha256"] = _canonical_json_sha256(
+        {key: item for key, item in mutated.items() if key != "view_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError, match="trusted view identity differs"):
+        validate_axis_consolidated_view(
+            mutated, expected_view_sha256=trusted_view_sha256
+        )
 
 
 def test_navigation_must_cover_every_point_once(
@@ -423,6 +471,52 @@ def test_same_origin_cannot_change_identity_across_points(
         build_axis_consolidated_view(spec)
 
 
+def test_origin_index_preserves_unavailable_independence_posture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["candidate_dispositions"][1]["independence_posture"] = "unavailable"
+    _write(artifact_path, artifact)
+    _refresh_axis_binding(spec, paths)
+    view = build_axis_consolidated_view(spec)
+    bob = next(row for row in view["origin_index"] if row["independence_key"] == "reddit:bob")
+    assert bob["independence_posture"] == "unavailable"
+    assert view["counts"]["credited_origin_count"] == 2
+    assert view["counts"]["uncredited_origin_count"] == 1
+
+
+def test_one_origin_cannot_change_independence_posture_across_points(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_b"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["candidate_dispositions"][0]["independence_posture"] = "unavailable"
+    _write(artifact_path, artifact)
+    _refresh_axis_binding(spec, paths)
+    with pytest.raises(EvidenceConsumerError, match="origin independence posture changed"):
+        build_axis_consolidated_view(spec)
+
+
+def test_undated_engagement_bucket_denies_comparison(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    for point_id in ("point_a", "point_b"):
+        artifact_path = paths[f"artifact_{point_id}"]
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        for row in artifact["source_groups"][0]["rows"]:
+            row["publication_time"] = None
+        _write(artifact_path, artifact)
+    _refresh_axis_binding(spec, paths)
+    view = build_axis_consolidated_view(spec)
+    assert {row["comparison_boundary"] for row in view["engagement_buckets"]} == {
+        "not_comparable_without_observation_year"
+    }
+
+
 def test_companion_meaning_cannot_change_across_placements(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -436,6 +530,35 @@ def test_companion_meaning_cannot_change_across_placements(
     _refresh_axis_binding(spec, paths)
     with pytest.raises(EvidenceConsumerError, match="companion meaning changed"):
         build_axis_consolidated_view(spec)
+
+
+def test_reddit_comment_surface_requires_a_matching_comment_source_ref(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    comment_row = artifact["source_groups"][0]["rows"][1]
+    assert comment_row["evidence_id"] == "reddit:thread1:comment1"
+    comment_row["source_ref"] = (
+        "https://www.reddit.com/r/test/comments/thread1/title/?ref=comment1"
+    )
+    _write(artifact_path, artifact)
+    _refresh_axis_binding(spec, paths)
+    with pytest.raises(EvidenceConsumerError, match="Reddit comment identity is absent"):
+        build_axis_consolidated_view(spec)
+
+
+def test_build_verifies_the_cold_selection_sources_of_every_point(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[Mapping[str, Any]] = []
+    spec, _ = _fixture(tmp_path, monkeypatch, selection_source_calls=calls)
+    build_axis_consolidated_view(spec)
+    assert [call["schema_version"] for call in calls] == [
+        "phase_a_evidence_selection_manifest_v1"
+    ] * 2
+    assert len({call["manifest_sha256"] for call in calls}) == 2
 
 
 def test_candidate_manifest_tampering_fails_before_projection(
@@ -456,6 +579,9 @@ def test_runner_writes_once_and_validates(
     _write(spec_path, spec)
     result = build_run(spec_path=spec_path, output_path=output_path)
     assert result["status"] == "complete"
-    assert validate_run(view_path=output_path)["view_sha256"] == result["view_sha256"]
+    assert validate_run(
+        view_path=output_path,
+        expected_view_sha256=result["view_sha256"],
+    )["view_sha256"] == result["view_sha256"]
     with pytest.raises(ValueError, match="refusing to overwrite"):
         build_run(spec_path=spec_path, output_path=output_path)

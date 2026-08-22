@@ -14,6 +14,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping, Sequence
+from urllib.parse import urlparse
 
 from harness_utils import hash_file
 from judgment.phase_a_evidence_consumer import (
@@ -27,6 +28,12 @@ CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 SOURCE_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
+INDEPENDENCE_POSTURES = {
+    "credited",
+    "possible_same_actor",
+    "confirmed_same_actor",
+    "unavailable",
+}
 
 
 def _load_object(path: Path, *, boundary: str) -> dict[str, Any]:
@@ -83,12 +90,30 @@ def _content_surface(row: Mapping[str, Any]) -> tuple[str, str]:
             raise EvidenceConsumerError(
                 "content_surface", "Reddit evidence identity cannot distinguish post/comment"
             )
+        path_parts = [part for part in urlparse(source_ref).path.split("/") if part]
+        try:
+            comments_index = path_parts.index("comments")
+        except ValueError as exc:
+            raise EvidenceConsumerError(
+                "content_surface", "Reddit source reference has no comments path"
+            ) from exc
+        if (
+            comments_index + 1 >= len(path_parts)
+            or path_parts[comments_index + 1] != parts[1]
+        ):
+            raise EvidenceConsumerError(
+                "content_surface", "Reddit thread identity is absent from its source reference"
+            )
         if parts[2] == "post":
             if "/_/" in source_ref:
                 raise EvidenceConsumerError(
                     "content_surface", "Reddit post identity conflicts with comment URL"
                 )
             return "reddit_post", "reddit_evidence_id_post_marker"
+        if parts[2] not in path_parts[comments_index + 2 :]:
+            raise EvidenceConsumerError(
+                "content_surface", "Reddit comment identity is absent from its source reference"
+            )
         return "reddit_comment", "reddit_evidence_id_comment_marker"
     if role == "retailer_review":
         return f"{venue}_review", "source_role_and_venue"
@@ -397,6 +422,11 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 independence_key = _required_string(
                     row, "independence_key", boundary="origin_identity"
                 )
+                independence_posture = candidate.get("independence_posture")
+                if independence_posture not in INDEPENDENCE_POSTURES:
+                    raise EvidenceConsumerError(
+                        "origin_identity", "origin independence posture is invalid"
+                    )
                 evidence_id = _required_string(row, "evidence_id", boundary="point_projection")
                 surface, surface_basis = _content_surface(row)
                 stable = _stable_evidence(row, candidate, surface, surface_basis)
@@ -501,6 +531,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                     {
                         "origin_group_id": origin_id,
                         "independence_key": independence_key,
+                        "independence_posture": independence_posture,
                         "evidence_ids": set(),
                         "placement_ids": set(),
                         "container_ids": set(),
@@ -509,6 +540,11 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 if origin["independence_key"] != independence_key:
                     raise EvidenceConsumerError(
                         "origin_identity", f"origin independence changed: {origin_id}"
+                    )
+                if origin["independence_posture"] != independence_posture:
+                    raise EvidenceConsumerError(
+                        "origin_identity",
+                        f"origin independence posture changed: {origin_id}",
                     )
                 origin["evidence_ids"].add(evidence_id)
                 origin["placement_ids"].add(placement_id)
@@ -568,6 +604,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             {
                 "origin_group_id": origin_id,
                 "independence_key": origin["independence_key"],
+                "independence_posture": origin["independence_posture"],
                 "evidence_ids": sorted(origin["evidence_ids"]),
                 "placement_ids": sorted(origin["placement_ids"]),
                 "container_ids": sorted(origin["container_ids"]),
@@ -598,7 +635,11 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             "source_role": key[2],
             "engagement_kind": key[3],
             "calendar_year": key[4],
-            "comparison_boundary": "within_bucket_only",
+            "comparison_boundary": (
+                "not_comparable_without_observation_year"
+                if key[4] == "undated"
+                else "within_bucket_only"
+            ),
             "evidence_ids": sorted(values),
         }
         for key, values in sorted(engagement_buckets.items())
@@ -645,6 +686,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             "candidate_disposition_count": candidate_total,
             "placement_count": len(normalized_placements),
             "unique_origin_count": len(normalized_origins),
+            "credited_origin_count": sum(
+                row["independence_posture"] == "credited" for row in normalized_origins
+            ),
+            "uncredited_origin_count": sum(
+                row["independence_posture"] != "credited" for row in normalized_origins
+            ),
             "unique_evidence_count": len(normalized_evidence),
             "unique_quote_span_count": len(normalized_quotes),
             "unique_companion_meaning_count": len(normalized_companions),
@@ -656,9 +703,11 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             ),
         },
         "non_claims": [
-            "origin counts are credited evidence origins, not people or prevalence",
+            "origin counts are evidence-origin groups, not people or prevalence; "
+            "independence posture is explicit per origin",
             "engagement is source-native resonance and is not independent-origin credit",
-            "engagement values are comparable only inside one declared content-surface bucket",
+            "dated engagement values are comparable only inside one declared "
+            "content-surface bucket; undated values are not comparable",
             "the view does not change point relations, selection, or evidence authority",
         ],
     }
@@ -682,8 +731,10 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     return view
 
 
-def validate_axis_consolidated_view(view: Mapping[str, Any]) -> dict[str, Any]:
-    """Reproject a saved view from its bound sources and require exact parity."""
+def validate_axis_consolidated_view(
+    view: Mapping[str, Any], *, expected_view_sha256: str
+) -> dict[str, Any]:
+    """Reproject a saved view and require one externally trusted view identity."""
 
     if view.get("schema_version") != CONSOLIDATED_VIEW_VERSION:
         raise EvidenceConsumerError("view_verification", "unsupported view version")
@@ -691,6 +742,10 @@ def validate_axis_consolidated_view(view: Mapping[str, Any]) -> dict[str, Any]:
     payload = {key: value for key, value in view.items() if key != "view_sha256"}
     if not isinstance(stored, str) or stored != _canonical_json_sha256(payload):
         raise EvidenceConsumerError("view_verification", "stored view hash is invalid")
+    if stored != expected_view_sha256:
+        raise EvidenceConsumerError(
+            "view_verification", "trusted view identity differs from saved view"
+        )
     spec = view.get("spec")
     if not isinstance(spec, Mapping):
         raise EvidenceConsumerError("view_verification", "embedded spec missing")

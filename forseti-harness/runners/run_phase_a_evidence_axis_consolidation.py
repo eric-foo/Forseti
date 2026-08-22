@@ -35,7 +35,9 @@ def _write_new(path: Path, value: Any) -> None:
 
 def build_run(*, spec_path: Path, output_path: Path) -> dict[str, Any]:
     view = build_axis_consolidated_view(_load_object(spec_path))
-    validate_axis_consolidated_view(view)
+    validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    )
     _write_new(output_path, view)
     return {
         "status": "complete",
@@ -46,8 +48,10 @@ def build_run(*, spec_path: Path, output_path: Path) -> dict[str, Any]:
     }
 
 
-def validate_run(*, view_path: Path) -> dict[str, Any]:
-    view = validate_axis_consolidated_view(_load_object(view_path))
+def validate_run(*, view_path: Path, expected_view_sha256: str) -> dict[str, Any]:
+    view = validate_axis_consolidated_view(
+        _load_object(view_path), expected_view_sha256=expected_view_sha256
+    )
     return {
         "status": "valid",
         "view_path": str(view_path),
@@ -65,11 +69,15 @@ def main() -> int:
     build_parser.add_argument("--output", type=Path, required=True)
     validate_parser = subparsers.add_parser("validate")
     validate_parser.add_argument("--view", type=Path, required=True)
+    validate_parser.add_argument("--expected-view-sha256", required=True)
     args = parser.parse_args()
     if args.command == "build":
         result = build_run(spec_path=args.spec, output_path=args.output)
     else:
-        result = validate_run(view_path=args.view)
+        result = validate_run(
+            view_path=args.view,
+            expected_view_sha256=args.expected_view_sha256,
+        )
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0
 
