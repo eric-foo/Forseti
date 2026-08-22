@@ -9,15 +9,25 @@ import pytest
 
 from harness_utils import hash_file
 from judgment.phase_a_evidence_axis_consolidation import (
+    AXIS_PACK_MANIFEST_VERSION,
+    AXIS_PACK_VERSION,
     CONSOLIDATION_SPEC_VERSION,
     build_axis_consolidated_view,
+    build_phase_a_evidence_axis_pack,
+    point_placement_keys,
     validate_axis_consolidated_view,
+    validate_phase_a_evidence_axis_pack,
 )
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
 )
-from runners.run_phase_a_evidence_axis_consolidation import build_run, validate_run
+from runners.run_phase_a_evidence_axis_consolidation import (
+    build_axis_pack_run,
+    build_run,
+    validate_axis_pack_run,
+    validate_run,
+)
 
 
 def _write(path: Path, value: Any) -> None:
@@ -31,6 +41,11 @@ def _write(path: Path, value: Any) -> None:
 def _manifest(**values: Any) -> dict[str, Any]:
     values["manifest_sha256"] = _canonical_json_sha256(values)
     return values
+
+
+def _rehash_manifest(value: dict[str, Any]) -> None:
+    value.pop("manifest_sha256", None)
+    value["manifest_sha256"] = _canonical_json_sha256(value)
 
 
 def _candidate(
@@ -273,6 +288,7 @@ def _fixture(
         quote = _manifest(
             schema_version="phase_a_evidence_quote_manifest_v6",
             selection_manifest_sha256=selection["manifest_sha256"],
+            candidate_inventory_sha256=inventory_hash,
         )
         quote_path = tmp_path / point_id / "quote.json"
         _write(quote_path, quote)
@@ -280,12 +296,23 @@ def _fixture(
         for row in data["rows"]:
             relation_counts[row["relation"]] = relation_counts.get(row["relation"], 0) + 1
         artifact = {
+            "schema_version": "phase_a_evidence_selection_artifact_v2",
             "point_id": point_id,
             "bounded_point": data["bounded_point"],
             "candidate_dispositions": data["candidates"],
             "candidate_inventory_sha256": inventory_hash,
             "selection_manifest_sha256": selection["manifest_sha256"],
+            "quote_manifest_sha256": quote["manifest_sha256"],
+            "truth_group_cap": 13,
             "truth_group_count": 2,
+            "relation_confirmation_status": "passed",
+            "point_scope_confirmation_status": "passed",
+            "point_scope_confirmation_reason": "one bounded fixture point",
+            "selection_disclosure": {
+                "candidate_semantic_row_count": 3,
+                "displayed_row_count": 2,
+                "displayed_truth_origin_count": 2,
+            },
             "source_groups": [{"rows": data["rows"]}],
         }
         artifact_path = tmp_path / point_id / "artifact.json"
@@ -344,6 +371,55 @@ def _fixture(
         ],
     }
     return spec, paths
+
+
+def _generic_fixture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Path]]:
+    legacy_spec, paths = _fixture(tmp_path, monkeypatch)
+    legacy_axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    accepted = []
+    for descriptor in legacy_axis["points"]:
+        accepted.append(
+            {
+                "point_id": descriptor["point_id"],
+                "bounded_point": descriptor["bounded_point"],
+                "artifact_path": descriptor["artifact_path"],
+                "artifact_sha256": descriptor["artifact_sha256"],
+                "policy_revision": descriptor["policy_revision"],
+                "selection_manifest_path": descriptor["selection_manifest_path"],
+                "selection_manifest_file_sha256": descriptor[
+                    "selection_manifest_file_sha256"
+                ],
+                "selection_manifest_sha256": descriptor["selection_manifest_sha256"],
+                "quote_manifest_path": descriptor["quote_manifest_path"],
+                "quote_manifest_file_sha256": hash_file(
+                    Path(descriptor["quote_manifest_path"])
+                ),
+                "quote_manifest_sha256": descriptor["quote_manifest_sha256"],
+            }
+        )
+    manifest = _manifest(
+        schema_version=AXIS_PACK_MANIFEST_VERSION,
+        axis_id="hydration_and_moisture",
+        accepted_points=accepted,
+        rejected_points=[
+            {
+                "point_id": "point_rejected",
+                "bounded_point": "The balm fixes every lip outcome.",
+                "disposition": "point_scope_failed",
+                "reason": "broad_axis_or_bundle",
+            }
+        ],
+    )
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    axis_path = tmp_path / "generic_axis.json"
+    _write(axis_path, pack)
+    paths["generic_axis"] = axis_path
+    spec = copy.deepcopy(legacy_spec)
+    spec["source_axis_pack_path"] = str(axis_path)
+    spec["source_axis_pack_sha256"] = hash_file(axis_path)
+    return manifest, spec, paths
 
 
 def _refresh_axis_binding(spec: dict[str, Any], paths: dict[str, Path]) -> None:
@@ -585,3 +661,286 @@ def test_runner_writes_once_and_validates(
     )["view_sha256"] == result["view_sha256"]
     with pytest.raises(ValueError, match="refusing to overwrite"):
         build_run(spec_path=spec_path, output_path=output_path)
+
+
+def test_generic_axis_pack_and_view_preserve_point_relation_origin_and_source_parity(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, generic_spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    legacy_spec = copy.deepcopy(generic_spec)
+    legacy_spec["source_axis_pack_path"] = str(paths["axis"])
+    legacy_spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+
+    assert pack["schema_version"] == AXIS_PACK_VERSION
+    assert pack["valid_point_count"] == 2
+    assert pack["rejected_point_count"] == 1
+    assert pack["cold_reader_resolution"] == {
+        "resolved_candidate_disposition_count": 6,
+        "path_resolution": "explicit_manifest_paths_only",
+    }
+    assert all(point["quote_manifest_file_sha256"] for point in pack["points"])
+    assert validate_phase_a_evidence_axis_pack(
+        pack, expected_axis_pack_sha256=pack["axis_pack_sha256"]
+    ) == pack
+
+    generic_view = build_axis_consolidated_view(generic_spec)
+    legacy_view = build_axis_consolidated_view(legacy_spec)
+    assert generic_view["counts"] == legacy_view["counts"]
+    assert point_placement_keys(generic_view) == point_placement_keys(legacy_view)
+    assert build_axis_consolidated_view(generic_spec) == generic_view
+    assert build_phase_a_evidence_axis_pack(manifest) == pack
+
+
+def test_legacy_hydration_v2_shape_remains_byte_deterministic_and_valid(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    first = build_axis_consolidated_view(spec)
+    second = build_axis_consolidated_view(spec)
+    assert first == second
+    assert validate_axis_consolidated_view(
+        first, expected_view_sha256=first["view_sha256"]
+    ) == first
+
+
+def test_axis_builder_rejects_schema_rename_with_hidden_sibling_inference(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    near_miss = copy.deepcopy(manifest)
+    point = near_miss["accepted_points"][0]
+    for field in (
+        "selection_manifest_path",
+        "selection_manifest_file_sha256",
+        "selection_manifest_sha256",
+        "quote_manifest_path",
+        "quote_manifest_file_sha256",
+        "quote_manifest_sha256",
+    ):
+        point.pop(field)
+    _rehash_manifest(near_miss)
+    with pytest.raises(EvidenceConsumerError, match="accepted point pins are incomplete"):
+        build_phase_a_evidence_axis_pack(near_miss)
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    [
+        ("duplicate_point", "accepted point identities are invalid"),
+        ("accepted_rejected_overlap", "accepted/rejected point overlap"),
+        ("missing_point_pin", "accepted point pins are incomplete"),
+        ("wrong_axis", "axis binding changed"),
+        ("stale_selection_binding", "manifest identity differs"),
+        ("stale_quote_binding", "manifest identity differs"),
+    ],
+)
+def test_axis_manifest_wrong_cause_guards_fail_at_their_named_boundary(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+    match: str,
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    changed = copy.deepcopy(manifest)
+    if mutation == "duplicate_point":
+        changed["accepted_points"].append(copy.deepcopy(changed["accepted_points"][0]))
+    elif mutation == "accepted_rejected_overlap":
+        changed["rejected_points"][0]["point_id"] = changed["accepted_points"][0][
+            "point_id"
+        ]
+    elif mutation == "missing_point_pin":
+        changed["accepted_points"][0].pop("artifact_sha256")
+    elif mutation == "wrong_axis":
+        changed["axis_id"] = "value_and_quantity"
+    elif mutation == "stale_selection_binding":
+        changed["accepted_points"][0]["selection_manifest_sha256"] = "0" * 64
+    else:
+        changed["accepted_points"][0]["quote_manifest_sha256"] = "0" * 64
+    _rehash_manifest(changed)
+    with pytest.raises(EvidenceConsumerError, match=match):
+        build_phase_a_evidence_axis_pack(changed)
+
+
+def test_altered_point_file_fails_at_the_point_file_pin(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, paths = _generic_fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["bounded_point"] = "Altered after pinning."
+    _write(artifact_path, artifact)
+    with pytest.raises(EvidenceConsumerError, match="point artifact changed"):
+        build_phase_a_evidence_axis_pack(manifest)
+
+
+def test_packet_bundle_mismatch_fails_at_source_binding(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    monkeypatch.setattr(
+        "judgment.phase_a_evidence_axis_consolidation.load_selection_sources",
+        lambda _: [
+            {
+                "packet": {"source_bindings": {"bundle_sha256": "packet_bundle"}},
+                "bundle": {"bundle_sha256": "different_bundle"},
+            }
+        ],
+    )
+    monkeypatch.setattr(
+        "judgment.phase_a_evidence_axis_consolidation._verify_packet", lambda _: None
+    )
+    monkeypatch.setattr(
+        "judgment.phase_a_evidence_axis_consolidation._verify_bundle", lambda _: None
+    )
+    with pytest.raises(EvidenceConsumerError, match="packet/bundle binding changed"):
+        build_phase_a_evidence_axis_pack(manifest)
+
+
+@pytest.mark.parametrize("stale_source", ["packet", "bundle"])
+def test_stale_packet_or_bundle_self_binding_is_reverified(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    stale_source: str,
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    monkeypatch.setattr(
+        "judgment.phase_a_evidence_axis_consolidation.load_selection_sources",
+        lambda _: [
+            {
+                "packet": {"source_bindings": {"bundle_sha256": "bundle"}},
+                "bundle": {"bundle_sha256": "bundle"},
+            }
+        ],
+    )
+
+    def _packet_check(_: Mapping[str, Any]) -> None:
+        if stale_source == "packet":
+            raise EvidenceConsumerError("packet_verification", "packet hash mismatch")
+
+    def _bundle_check(_: Mapping[str, Any]) -> None:
+        if stale_source == "bundle":
+            raise EvidenceConsumerError("bundle_verification", "bundle hash mismatch")
+
+    monkeypatch.setattr(
+        "judgment.phase_a_evidence_axis_consolidation._verify_packet", _packet_check
+    )
+    monkeypatch.setattr(
+        "judgment.phase_a_evidence_axis_consolidation._verify_bundle", _bundle_check
+    )
+    with pytest.raises(EvidenceConsumerError, match=f"{stale_source} hash mismatch"):
+        build_phase_a_evidence_axis_pack(manifest)
+
+
+def test_generic_pack_rejects_a_nonstandard_truth_origin_cap_after_repinning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, paths = _generic_fixture(tmp_path, monkeypatch)
+    changed = copy.deepcopy(manifest)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["truth_group_cap"] = 20
+    _write(artifact_path, artifact)
+    changed["accepted_points"][0]["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(changed)
+    with pytest.raises(EvidenceConsumerError, match="truth origin cap must be 13"):
+        build_phase_a_evidence_axis_pack(changed)
+
+
+def test_navigation_rejects_duplicate_membership_and_foreign_point(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    duplicate = copy.deepcopy(spec)
+    duplicate["navigation_groups"][0]["families"].append(
+        {
+            "family_id": "duplicate_family",
+            "label": "Duplicate",
+            "point_ids": ["point_a"],
+        }
+    )
+    with pytest.raises(EvidenceConsumerError, match="appears more than once"):
+        build_axis_consolidated_view(duplicate)
+
+    foreign = copy.deepcopy(spec)
+    foreign["navigation_groups"][0]["families"][0]["point_ids"].append(
+        "foreign_point"
+    )
+    with pytest.raises(EvidenceConsumerError, match="unknown point_id"):
+        build_axis_consolidated_view(foreign)
+
+
+def test_stored_and_external_axis_and_view_hashes_fail_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    bad_manifest = copy.deepcopy(manifest)
+    bad_manifest["manifest_sha256"] = "0" * 64
+    with pytest.raises(EvidenceConsumerError, match="stored manifest hash is invalid"):
+        build_phase_a_evidence_axis_pack(bad_manifest)
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    bad_pack = copy.deepcopy(pack)
+    bad_pack["axis_pack_sha256"] = "0" * 64
+    with pytest.raises(EvidenceConsumerError, match="stored axis pack hash is invalid"):
+        validate_phase_a_evidence_axis_pack(
+            bad_pack, expected_axis_pack_sha256=bad_pack["axis_pack_sha256"]
+        )
+    with pytest.raises(EvidenceConsumerError, match="trusted axis pack identity differs"):
+        validate_phase_a_evidence_axis_pack(
+            pack, expected_axis_pack_sha256="f" * 64
+        )
+
+    view = build_axis_consolidated_view(spec)
+    mutated = copy.deepcopy(view)
+    mutated["view_sha256"] = "0" * 64
+    with pytest.raises(EvidenceConsumerError, match="stored view hash is invalid"):
+        validate_axis_consolidated_view(
+            mutated, expected_view_sha256=mutated["view_sha256"]
+        )
+    with pytest.raises(EvidenceConsumerError, match="trusted view identity differs"):
+        validate_axis_consolidated_view(view, expected_view_sha256="f" * 64)
+
+
+def test_axis_pack_runner_writes_once_and_validates(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    manifest_path = tmp_path / "axis_manifest.json"
+    output_path = tmp_path / "axis_pack.json"
+    _write(manifest_path, manifest)
+    result = build_axis_pack_run(manifest_path=manifest_path, output_path=output_path)
+    assert result["status"] == "complete"
+    assert validate_axis_pack_run(
+        pack_path=output_path,
+        expected_axis_pack_sha256=result["axis_pack_sha256"],
+    )["axis_pack_sha256"] == result["axis_pack_sha256"]
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        build_axis_pack_run(manifest_path=manifest_path, output_path=output_path)
+
+
+def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> None:
+    repository_root = Path(__file__).resolve().parents[3]
+    workflow = (
+        repository_root / "docs/workflows/phase_a_customer_evidence_completion_path_v0.md"
+    ).read_text(encoding="utf-8")
+    repo_map = (repository_root / "docs/workflows/forseti_repo_map_v0.md").read_text(
+        encoding="utf-8"
+    )
+    runner = (
+        repository_root
+        / "forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py"
+    ).read_text(encoding="utf-8")
+    for required in (
+        "phase_a_evidence_axis_pack_manifest_v1",
+        "phase_a_evidence_axis_pack_v1",
+        "build-axis-pack --manifest",
+        "validate-axis-pack --pack",
+        "Do not infer any sibling file",
+        "phase_a_hydration_axis_pack_v2",
+    ):
+        assert required in workflow
+    assert "Phase A customer-evidence point pack, generic axis pack" in repo_map
+    assert "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in repo_map
+    assert 'subparsers.add_parser("build-axis-pack")' in runner
+    assert 'subparsers.add_parser("validate-axis-pack")' in runner

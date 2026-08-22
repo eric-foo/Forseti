@@ -2490,8 +2490,9 @@ def _parser() -> argparse.ArgumentParser:
     selection_quotes.add_argument("--selection-manifest", type=Path, required=True)
     selection_quotes.add_argument("--quote-manifest", type=Path, required=True)
     selection_quotes.add_argument("--response", type=Path, required=True)
-    # Required for a current v6 pack; omitted together to replay a historical
-    # v1/v3/v4/v5 quote manifest, which fails closed on any attachment.
+    # Required for a v6 pack. Omit both for a frontier-bound v7 pack, whose
+    # preselection confirmation is already hash-bound, or for historical
+    # v1/v3/v4/v5 replay, which fails closed on any attachment.
     selection_quotes.add_argument(
         "--confirmation-manifest", type=Path, default=None
     )
