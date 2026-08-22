@@ -618,10 +618,18 @@ point-artifact path/file SHA-256, selection-manifest path/file SHA-256/stored
 manifest SHA-256, and quote-manifest path/file SHA-256/stored manifest SHA-256.
 Do not infer any sibling file. The builder independently reopens those literal
 paths, verifies point and axis identity, candidate closure, the normal
-thirteen-truth-origin cap, policy lineage, selection and quote lineage, packet
+thirteen-truth-origin cap, selection and quote lineage, packet
 v3 identity, content-bound bundle identity, and packet-to-bundle binding, then
 derives rather than trusts the pack's point, relation, origin, evidence, and
 candidate counts. Accepted and rejected point IDs are unique and disjoint.
+`policy_revision` is a declared operator pin rather than verified lineage: it
+is cross-checked only against a point artifact that carries its own
+`policy_revision`, and the completed Phase A point artifacts do not carry one,
+so no completed point currently exercises that check.
+
+Truth-origin counts admit only `truth_support` rows. Other displayed layers,
+such as creator influence, remain displayed origins and displayed rows but
+never enter `truth_origin_count` or `unique_truth_origins_across_axis`.
 
 Validate a saved generic pack with
 `validate-axis-pack --pack <axis-pack.json> --expected-axis-pack-sha256 <trusted-stored-hash>`.

@@ -847,6 +847,102 @@ def test_generic_pack_rejects_a_nonstandard_truth_origin_cap_after_repinning(
         build_phase_a_evidence_axis_pack(changed)
 
 
+def test_non_truth_support_origin_is_displayed_but_never_counted_as_truth(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A creator-influence origin must not enter any truth-origin count.
+
+    Every fixture and pilot row so far carries `layer: truth_support`, so the
+    layer discriminator is otherwise unexercised: an all-layer origin union and
+    a truth-only union coincide and a relabel cannot be observed.
+    """
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    baseline = build_phase_a_evidence_axis_pack(manifest)
+    assert baseline["unique_truth_origins_across_axis"] == 3
+
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    rows = artifact["source_groups"][0]["rows"]
+    influence = copy.deepcopy(rows[0])
+    influence.update(
+        {
+            "selected_id": "selected_influence",
+            "evidence_id": "reddit:thread9:post",
+            "semantic_unit_ref": "reddit:thread9:post::creator",
+            "relation": "adjacent",
+            "origin_group_id": "scope::reddit:creator",
+            "independence_key": "reddit:creator",
+            "origin_candidate_ids": ["candidate_influence"],
+            "layer": "creator_influence",
+            "source_ref": "https://www.reddit.com/r/test/comments/thread9/title/",
+            "same_evidence_companion_meanings": [],
+        }
+    )
+    rows.append(influence)
+    artifact["candidate_dispositions"].append(
+        _candidate(
+            "candidate_influence",
+            evidence_id="reddit:thread9:post",
+            semantic_ref="reddit:thread9:post::creator",
+            relation="adjacent",
+            origin="scope::reddit:creator",
+            container="reddit_thread_thread9",
+        )
+    )
+    artifact["selection_disclosure"]["candidate_semantic_row_count"] = len(
+        artifact["candidate_dispositions"]
+    )
+    artifact["selection_disclosure"]["displayed_row_count"] = len(rows)
+    _write(artifact_path, artifact)
+    changed = copy.deepcopy(manifest)
+    changed["accepted_points"][0]["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(changed)
+
+    pack = build_phase_a_evidence_axis_pack(changed)
+    assert pack["unique_truth_origins_across_axis"] == 3
+    assert pack["display_row_slots"] == baseline["display_row_slots"] + 1
+    assert [point["truth_origin_count"] for point in pack["points"]] == [2, 2]
+
+    pack_path = tmp_path / "layered_axis.json"
+    _write(pack_path, pack)
+    layered_spec = copy.deepcopy(spec)
+    layered_spec["source_axis_pack_path"] = str(pack_path)
+    layered_spec["source_axis_pack_sha256"] = hash_file(pack_path)
+    view = build_axis_consolidated_view(layered_spec)
+    assert view["counts"]["unique_origin_count"] == 4
+    assert view["counts"]["placement_count"] == 5
+    influence_placement = next(
+        row for row in view["point_placements"] if row["layer"] == "creator_influence"
+    )
+    assert influence_placement["origin_group_id"] == "scope::reddit:creator"
+
+
+def test_reddit_post_surface_rejects_a_comment_permalink_with_a_slug(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The `:post` marker must lose to a URL that names a comment.
+
+    `reddit:thread1:post` is displayed by both fixture points, so the rewrite
+    is applied to both. Rewriting one would trip the cross-point evidence
+    identity guard first and prove the wrong boundary.
+    """
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    for point_id in ("point_a", "point_b"):
+        artifact_path = paths[f"artifact_{point_id}"]
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        post_row = artifact["source_groups"][0]["rows"][0]
+        assert post_row["evidence_id"] == "reddit:thread1:post"
+        post_row["source_ref"] = (
+            "https://www.reddit.com/r/test/comments/thread1/title/comment1/"
+        )
+        _write(artifact_path, artifact)
+    _refresh_axis_binding(spec, paths)
+    with pytest.raises(
+        EvidenceConsumerError, match="Reddit post identity conflicts with comment URL"
+    ):
+        build_axis_consolidated_view(spec)
+
+
 def test_navigation_rejects_duplicate_membership_and_foreign_point(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
