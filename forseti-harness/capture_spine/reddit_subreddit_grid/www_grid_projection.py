@@ -55,8 +55,9 @@ from source_capture.projection_shared import canonical_www_reddit_thread_url
 
 # Namespaced so a content record written by this parser can never be mistaken
 # for one written by the old-Reddit parser at the same record kind.  Bump on
-# ANY behavior change here, for the same reason the old parser bumps.
-WWW_GRID_PROJECTION_PARSER_VERSION = "www-8"
+# ANY behavior change here, for the same reason the old parser bumps.  Human-
+# readable history and evidence: docs/workflows/reddit_www_grid_parser_changelog_v0.md
+WWW_GRID_PROJECTION_PARSER_VERSION = "reddit-www-grid-parser-v8"
 
 # The old-Reddit projection caps at 100 because its URL asked for limit=100, so
 # the cap and the page agreed.  On www the rendered VIEWPORT is the bound (a

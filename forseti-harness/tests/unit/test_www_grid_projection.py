@@ -444,6 +444,7 @@ def test_timezone_naive_timestamp_stays_absent() -> None:
 def test_record_reuses_the_shared_kind_and_folds_through_the_materializer_path() -> None:
     """A second record kind would force changes down the whole consumer chain."""
     record = _record()
+    assert WWW_GRID_PROJECTION_PARSER_VERSION == "reddit-www-grid-parser-v8"
     assert record["parser_version"] == WWW_GRID_PROJECTION_PARSER_VERSION
     view = grid_view_from_record(record)
     assert view.subreddit == "testsub"
