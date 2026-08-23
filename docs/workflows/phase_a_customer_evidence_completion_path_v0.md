@@ -669,6 +669,30 @@ text, or axis names. Value is the first full frozen Decision State test
 subject; this does not make its findings prevalent, causal, or representative
 of other products or axes.
 
+A Decision State point may still carry nearby direct-result evidence. Preserve
+such a row as explicit context only, with an empty state row list and complete
+semantic references, instead of inventing a preference, intent, or behavior.
+For `shade_and_color_fit`, for example, “Poppy appears sheer orange-red” may sit
+beside a wearing or ownership point while remaining a color result. Keep “asks
+Summer Fridays to release a mauve shade” as an assortment request rather than
+purchase intent, and keep “aims to finish Pink Guava” as use-completion intent
+rather than observed completed use. The point route stays explicit; this
+context form does not silently reroute or discard the evidence row.
+Likewise, a stated wish to try is trial intent rather than purchase intent, and
+a received or otherwise acquired balm is acquisition rather than an inferred
+purchase.
+
+For each Decision State display row, the durable binding also names the exact
+semantic unit or units that explain that row's point-relative
+support/counter/adjacent relation. This is separate from the exhaustive list of
+states present in the source: one source may discuss several shades or stages,
+and the consumer must not follow an unrelated primary sentence when the
+point-relevant meaning is a companion. A routed v2 Direct Outcome point may use
+the same explicit relation binding when a frozen row's primary meaning is only
+context; existing Direct Outcome specs remain unchanged when no binding is
+present. Preserve a specific shown wearing as a wear event rather than ongoing
+use, just as use-completion intent remains distinct from completed use.
+
 For price-and-value evidence, Phase A keeps the exact comparison the source
 made. If someone says “expensive for a lip balm,” keep “for a lip balm” in the
 packed state rather than leaving it only in the quote. Keep these meanings

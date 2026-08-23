@@ -449,11 +449,10 @@ def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
         row_bindings = []
         for source_group in artifact["source_groups"]:
             for row in source_group["rows"]:
-                direction = "favorable" if row["relation"] == "support" else "unfavorable"
                 assertions = [
                     {
                         "state_kind": "value_judgment",
-                        "commercial_direction": direction,
+                        "commercial_direction": "favorable",
                         "decision_object": "fixture balm",
                         "semantic_unit_refs": [row["semantic_unit_ref"]],
                         "quantity": None,
@@ -476,6 +475,7 @@ def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
                         "selected_id": row["selected_id"],
                         "state_assertions": assertions,
                         "context_only_semantic_unit_refs": [],
+                        "relation_semantic_unit_refs": [row["semantic_unit_ref"]],
                     }
                 )
         bindings.append({"point_id": point_id, "rows": row_bindings})
@@ -485,11 +485,38 @@ def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
     spec["decision_state_bindings"] = bindings
 
 
+def _synchronize_semantic_binding_row(
+    spec: dict[str, Any], authoritative_row: Mapping[str, Any]
+) -> None:
+    refs = {
+        ref
+        for assertion in authoritative_row["state_assertions"]
+        for ref in assertion["semantic_unit_refs"]
+    } | set(authoritative_row["context_only_semantic_unit_refs"])
+    for point_binding in spec["decision_state_bindings"]:
+        for row in point_binding["rows"]:
+            row_refs = {
+                ref
+                for assertion in row["state_assertions"]
+                for ref in assertion["semantic_unit_refs"]
+            } | set(row["context_only_semantic_unit_refs"])
+            if row is not authoritative_row and row_refs == refs:
+                row["state_assertions"] = copy.deepcopy(
+                    authoritative_row["state_assertions"]
+                )
+                row["context_only_semantic_unit_refs"] = copy.deepcopy(
+                    authoritative_row["context_only_semantic_unit_refs"]
+                )
+
+
 def _projected_state_assertions(
     view: Mapping[str, Any], group: Mapping[str, Any]
 ) -> list[dict[str, Any]]:
-    columns = view["decision_state_contract"]["state_row_columns"]
-    return [dict(zip(columns, row)) for row in group["state_rows"]]
+    columns = view["decision_state_index"]["columns"]
+    rows = {row[0]: row for row in view["decision_state_index"]["rows"]}
+    return [
+        dict(zip(columns[1:], rows[state_id][1:])) for state_id in group["state_ids"]
+    ]
 
 
 def _refresh_axis_binding(spec: dict[str, Any], paths: dict[str, Path]) -> None:
@@ -545,6 +572,46 @@ def test_build_normalizes_origins_and_separates_post_comment_surfaces(
         view, expected_view_sha256=view["view_sha256"]
     ) == view
     assert build_axis_consolidated_view(spec) == view
+
+
+def test_evidence_identity_ignores_other_evidence_in_same_origin_candidate_bundle(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_b"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    post_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["evidence_id"] == "reddit:thread1:post"
+    )
+    other_candidate = next(
+        row
+        for row in artifact["candidate_dispositions"]
+        if row["evidence_id"] != post_row["evidence_id"]
+        and isinstance(row.get("container_id"), str)
+    )
+    post_row["origin_candidate_ids"].append(other_candidate["candidate_id"])
+    _write(artifact_path, artifact)
+    descriptor = next(
+        row for row in manifest["accepted_points"] if row["point_id"] == "point_b"
+    )
+    descriptor["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(manifest)
+    axis_path = paths["generic_axis"]
+    _write(axis_path, build_phase_a_evidence_axis_pack(manifest))
+    spec["source_axis_pack_sha256"] = hash_file(axis_path)
+
+    view = build_axis_consolidated_view(spec)
+    evidence = next(
+        row for row in view["evidence_index"] if row["evidence_id"] == "reddit:thread1:post"
+    )
+
+    assert other_candidate["container_id"] not in evidence["container_ids"]
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
 
 
 def test_v2_direct_outcome_routes_every_point_and_carries_existing_boundaries(
@@ -604,7 +671,27 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     }
     assert all(boundary in view["non_claims"] for boundary in DECISION_STATE_BOUNDARIES)
     assert view["decision_state_contract"] == DECISION_STATE_CONSUMER_CONTRACT
-    assert "state_rows are exhaustive" in view["decision_state_contract"]["unasserted_state_rule"]
+    reader = view["decision_state_reader_surface"]
+    assert reader["schema_version"] == "phase_a_evidence_decision_state_reader_surface_v1"
+    assert len(reader["placement_table"]["rows"]) == view["counts"]["placement_count"]
+    assert len(reader["point_table"]["rows"]) == view["counts"]["point_count"]
+    assert len(reader["evidence_table"]["rows"]) == view["counts"]["unique_evidence_count"]
+    point_columns = reader["point_table"]["columns"]
+    relation_index = point_columns.index("relation_counts")
+    assert sum(
+        sum(row[relation_index].values()) for row in reader["point_table"]["rows"]
+    ) == view["counts"]["placement_count"]
+    relation_facts_index = point_columns.index("relation_facts")
+    assert sum(
+        len(row[relation_facts_index]["rows"])
+        for row in reader["point_table"]["rows"]
+    ) == view["counts"]["placement_count"]
+    assert all(
+        fact[3]
+        for row in reader["point_table"]["rows"]
+        for fact in row[relation_facts_index]["rows"]
+    )
+    assert "state assertions are exhaustive" in view["decision_state_contract"]["unasserted_state_rule"]
     assert "every placement exactly once" in view["decision_state_contract"]["placement_processing_rule"]
     assert "descriptive context only" in view["decision_state_contract"]["engagement_rule"]
     assert "coexistence only" in view["decision_state_contract"]["coexistence_rule"]
@@ -664,6 +751,7 @@ def test_decision_state_keeps_price_value_and_premium_meanings_distinct(
             "conditions": [],
         },
     ]
+    _synchronize_semantic_binding_row(spec, row)
 
     view = build_axis_consolidated_view(spec)
     placement = next(
@@ -742,6 +830,160 @@ def test_mixed_projection_routes_keep_direct_and_decision_points_distinct(
         placements[row["placement_id"]]["point_id"]
         for row in view["decision_state_groups"]
     } == {"point_b"}
+
+
+def test_decision_state_retains_direct_result_row_as_explicit_context_only(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    row = spec["decision_state_bindings"][0]["rows"][0]
+    all_refs = [
+        assertion_ref
+        for assertion in row["state_assertions"]
+        for assertion_ref in assertion["semantic_unit_refs"]
+    ]
+    row["state_assertions"] = []
+    row["context_only_semantic_unit_refs"] = all_refs
+    _synchronize_semantic_binding_row(spec, row)
+
+    view = build_axis_consolidated_view(spec)
+    placement = next(
+        item
+        for item in view["point_placements"]
+        if item["point_id"] == "point_a" and item["selected_id"] == "selected_01"
+    )
+    group = next(
+        item
+        for item in view["decision_state_groups"]
+        if item["placement_id"] == placement["placement_id"]
+    )
+
+    assert group["state_ids"] == []
+    assert group["qualification_refs"] == sorted(all_refs)
+    assert view["counts"]["decision_state_group_count"] == 4
+    assert view["counts"]["decision_state_assertion_count"] == 2
+    assert "empty state_ids means no judgment" in view["decision_state_contract"][
+        "context_only_row_rule"
+    ]
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
+
+
+def test_decision_state_allows_primary_result_context_with_companion_state(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    row = spec["decision_state_bindings"][0]["rows"][0]
+    primary_ref = row["state_assertions"][0]["semantic_unit_refs"][0]
+    row["state_assertions"].pop(0)
+    row["context_only_semantic_unit_refs"].append(primary_ref)
+    _synchronize_semantic_binding_row(spec, row)
+
+    view = build_axis_consolidated_view(spec)
+    placement = next(
+        item
+        for item in view["point_placements"]
+        if item["point_id"] == "point_a" and item["selected_id"] == "selected_01"
+    )
+    group = next(
+        item
+        for item in view["decision_state_groups"]
+        if item["placement_id"] == placement["placement_id"]
+    )
+
+    assert len(group["state_ids"]) == 1
+    assert primary_ref in group["qualification_refs"]
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
+
+
+def test_decision_state_rejects_point_context_changing_one_semantic_unit_state(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    point_a = next(
+        row for row in spec["decision_state_bindings"] if row["point_id"] == "point_a"
+    )
+    point_b = next(
+        row for row in spec["decision_state_bindings"] if row["point_id"] == "point_b"
+    )
+    shared_ref = point_a["rows"][0]["state_assertions"][0]["semantic_unit_refs"][0]
+    assertion = next(
+        assertion
+        for row in point_b["rows"]
+        for assertion in row["state_assertions"]
+        if shared_ref in assertion["semantic_unit_refs"]
+    )
+    assertion["decision_object"] = "point-context-biased reinterpretation"
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="semantic unit changes state meaning across points",
+    ):
+        build_axis_consolidated_view(spec)
+
+
+def test_decision_state_distinguishes_release_and_finish_intent_from_other_stages(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    first = spec["decision_state_bindings"][0]["rows"][0]["state_assertions"][0]
+    second = spec["decision_state_bindings"][0]["rows"][1]["state_assertions"][0]
+    first.update(
+        {
+            "state_kind": "assortment_request",
+            "commercial_direction": "toward_action",
+            "decision_object": "a mauve Lip Butter Balm release",
+        }
+    )
+    second.update(
+        {
+            "state_kind": "use_completion_intent",
+            "commercial_direction": "toward_action",
+            "decision_object": "finishing the owned balm",
+        }
+    )
+    _synchronize_semantic_binding_row(spec, spec["decision_state_bindings"][0]["rows"][0])
+    _synchronize_semantic_binding_row(spec, spec["decision_state_bindings"][0]["rows"][1])
+
+    view = build_axis_consolidated_view(spec)
+    assert view["decision_state_contract"]["state_kind_stages"][
+        "assortment_request"
+    ] == "intent"
+    assert view["decision_state_contract"]["state_kind_stages"][
+        "use_completion_intent"
+    ] == "intent"
+    assert view["decision_state_contract"]["state_kind_stages"]["trial_intent"] == "intent"
+    assert view["decision_state_contract"]["state_kind_stages"]["acquisition"] == "observed"
+    kinds = {
+        assertion["state_kind"]
+        for group in view["decision_state_groups"]
+        for assertion in _projected_state_assertions(view, group)
+    }
+    assert {"assortment_request", "use_completion_intent"} <= kinds
+    assert "purchase_intent" not in {
+        assertion["state_kind"]
+        for assertion in _projected_state_assertions(
+            view,
+            next(
+                group
+                for group in view["decision_state_groups"]
+                if group["placement_id"]
+                == next(
+                    item["placement_id"]
+                    for item in view["point_placements"]
+                    if item["point_id"] == "point_a"
+                    and item["selected_id"] == "selected_01"
+                )
+            ),
+        )
+    }
 
 
 def test_decision_state_keeps_selected_zero_engagement_without_promotion(
@@ -865,7 +1107,6 @@ def test_decision_state_wrong_cause_transitions_fail_at_semantic_boundary(
         ("missing_row", "display row lacks a state binding"),
         ("foreign_ref", "references foreign semantic unit"),
         ("missing_companion", "does not cover every semantic unit"),
-        ("primary_as_context", "primary semantic unit is not a decision state"),
     ],
 )
 def test_decision_state_bindings_require_exact_row_and_semantic_coverage(
@@ -886,11 +1127,6 @@ def test_decision_state_bindings_require_exact_row_and_semantic_coverage(
         first_row["state_assertions"][0]["semantic_unit_refs"] = ["foreign::semantic"]
     elif mutation == "missing_companion":
         first_row["state_assertions"].pop()
-    else:
-        primary_ref = first_row["state_assertions"][0]["semantic_unit_refs"][0]
-        first_row["state_assertions"].pop(0)
-        first_row["context_only_semantic_unit_refs"].append(primary_ref)
-
     with pytest.raises(EvidenceConsumerError, match=match):
         build_axis_consolidated_view(spec)
 
@@ -1057,6 +1293,91 @@ def test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields(
     ) == view
 
 
+def test_decision_state_reader_binds_claim_relation_to_companion_meaning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    binding = spec["decision_state_bindings"][0]["rows"][0]
+    companion_ref = binding["state_assertions"][1]["semantic_unit_refs"][0]
+    binding["relation_semantic_unit_refs"] = [companion_ref]
+
+    view = build_axis_consolidated_view(spec)
+    reader = view["decision_state_reader_surface"]
+    point_columns = reader["point_table"]["columns"]
+    assert any(
+        any(semantic[0] == companion_ref for semantic in fact[3])
+        for row in reader["point_table"]["rows"]
+        for fact in row[point_columns.index("relation_facts")]["rows"]
+    )
+
+
+def test_v2_direct_outcome_can_bind_point_relation_to_companion_meaning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact = json.loads(paths["artifact_point_a"].read_text(encoding="utf-8"))
+    row = artifact["source_groups"][0]["rows"][0]
+    companion_ref = row["same_evidence_companion_meanings"][0]["semantic_unit_ref"]
+    spec["direct_outcome_relation_bindings"] = [
+        {
+            "point_id": "point_a",
+            "rows": [
+                {
+                    "selected_id": row["selected_id"],
+                    "relation_semantic_unit_refs": [companion_ref],
+                }
+            ],
+        }
+    ]
+
+    view = build_axis_consolidated_view(spec)
+    placement = next(
+        item
+        for item in view["point_placements"]
+        if item["point_id"] == "point_a" and item["selected_id"] == row["selected_id"]
+    )
+    assert placement["relation_semantic_unit_refs"] == [companion_ref]
+
+
+def test_v2_direct_outcome_rejects_foreign_relation_semantic_binding(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact = json.loads(paths["artifact_point_a"].read_text(encoding="utf-8"))
+    selected_id = artifact["source_groups"][0]["rows"][0]["selected_id"]
+    spec["direct_outcome_relation_bindings"] = [
+        {
+            "point_id": "point_a",
+            "rows": [
+                {
+                    "selected_id": selected_id,
+                    "relation_semantic_unit_refs": ["foreign::semantic-unit"],
+                }
+            ],
+        }
+    ]
+
+    with pytest.raises(EvidenceConsumerError, match="foreign semantic unit"):
+        build_axis_consolidated_view(spec)
+
+
+@pytest.mark.parametrize("relation_refs", [[], ["foreign::semantic-unit"]])
+def test_decision_state_rejects_invalid_relation_semantic_binding(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    relation_refs: list[str],
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    spec["decision_state_bindings"][0]["rows"][0][
+        "relation_semantic_unit_refs"
+    ] = relation_refs
+
+    with pytest.raises(EvidenceConsumerError, match="relation semantic|foreign semantic"):
+        build_axis_consolidated_view(spec)
+
+
 @pytest.mark.parametrize("field,value", [("relation", "support"), ("quote_span_id", "quote_fake")])
 def test_reprojection_rejects_rehashed_direction_or_quote_mutation(
     tmp_path: Path,
@@ -1086,9 +1407,9 @@ def test_external_view_hash_rejects_rehashed_decision_state_mutation(
     view = build_axis_consolidated_view(spec)
     trusted_view_sha256 = view["view_sha256"]
     mutated = copy.deepcopy(view)
-    state_row = mutated["decision_state_groups"][0]["state_rows"][0]
-    state_row[0] = "purchase"
-    state_row[1] = "neutral"
+    state_row = mutated["decision_state_index"]["rows"][0]
+    state_row[1] = "purchase"
+    state_row[2] = "neutral"
     mutated["view_sha256"] = _canonical_json_sha256(
         {key: item for key, item in mutated.items() if key != "view_sha256"}
     )
