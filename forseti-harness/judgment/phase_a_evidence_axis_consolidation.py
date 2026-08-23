@@ -63,6 +63,11 @@ DECISION_STATE_BOUNDARIES = (
     "intent is not observed behavior",
     "multi-unit purchase or ownership is not observed repurchase",
     "price concern is not automatically an unfavorable value judgment",
+    (
+        "price, value, intent, and observed-behavior states do not classify the product "
+        "as premium, establish pricing power, or prove that an offer can be elevated or "
+        "a higher tier introduced"
+    ),
     "companion decision states coexist and are not averaged into sentiment",
 )
 DECISION_STATE_CONSUMER_CONTRACT = {

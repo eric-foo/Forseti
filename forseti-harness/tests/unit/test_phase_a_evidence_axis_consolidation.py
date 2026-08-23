@@ -703,6 +703,12 @@ def test_decision_state_preserves_premium_potential_inputs_without_inference(
         "pricing_power",
         "tier_potential",
     } & set(view["decision_state_contract"]["state_kind_stages"])
+    assert any(
+        "do not classify the product as premium" in boundary
+        and "establish pricing power" in boundary
+        and "a higher tier introduced" in boundary
+        for boundary in view["non_claims"]
+    )
 
 
 def test_mixed_projection_routes_keep_direct_and_decision_points_distinct(
