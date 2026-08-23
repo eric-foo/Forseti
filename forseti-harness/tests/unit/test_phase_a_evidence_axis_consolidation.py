@@ -17,6 +17,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     DECISION_STATE_BOUNDARIES,
     DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
+    EVIDENCE_ACCOUNTING_CONTRACT,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
     LEGACY_CONSOLIDATION_SPEC_VERSION,
     build_axis_consolidated_view,
@@ -65,15 +66,46 @@ def _candidate(
     container: str,
     conditions: list[str] | None = None,
     independence_posture: str = "credited",
+    normalized_meaning: str | None = None,
+    source_ref: str | None = None,
+    publication_time: str = "2025-06-01T00:00:00+00:00",
+    engagement_value: Any = None,
 ) -> dict[str, Any]:
+    if evidence_id.startswith("reddit:"):
+        _, thread_id, item_id = evidence_id.split(":")
+        source_ref = source_ref or (
+            f"https://www.reddit.com/r/test/comments/{thread_id}/title/"
+            if item_id == "post"
+            else f"https://www.reddit.com/comments/{thread_id}/_/{item_id}"
+        )
+        source_venue = "reddit"
+        source_role = "community_post"
+        engagement_kind = "score_state"
+    else:
+        source_ref = source_ref or f"https://www.sephora.com/product/test#{evidence_id}"
+        source_venue = "sephora"
+        source_role = "retailer_review"
+        engagement_kind = "positive_helpful_count"
     return {
         "candidate_id": candidate_id,
         "evidence_id": evidence_id,
         "semantic_unit_ref": semantic_ref,
+        "normalized_meaning": normalized_meaning or f"Meaning for {semantic_ref}",
         "relation": relation,
         "scoped_independence_key": origin,
         "independence_posture": independence_posture,
         "container_id": container,
+        "source_ref": source_ref,
+        "publication_time": publication_time,
+        "source_venue": source_venue,
+        "source_role": source_role,
+        "engagement_kind": engagement_kind,
+        "engagement_status": "engagement_available",
+        "engagement_raw_value": engagement_value,
+        "engagement_observed_at": None,
+        "engagement_material_positive": False,
+        "source_id": "fixture",
+        "packet_sha256": "fixture_packet_sha256",
         "conditions": conditions or [],
         "product_version_ids": [],
         "uncertainty_posture": "asserted",
@@ -613,6 +645,135 @@ def test_evidence_identity_ignores_other_evidence_in_same_origin_candidate_bundl
     assert validate_axis_consolidated_view(
         view, expected_view_sha256=view["view_sha256"]
     ) == view
+
+
+def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    selected = artifact["source_groups"][0]["rows"][0]
+    artifact["candidate_dispositions"].extend(
+        [
+            _candidate(
+                "candidate_a_repeat",
+                evidence_id="reddit:thread2:comment2",
+                semantic_ref="reddit:thread2:comment2::hydrating",
+                relation="support",
+                origin="scope::reddit:alice",
+                container="reddit_thread_thread2",
+                normalized_meaning=selected["normalized_meaning"],
+                publication_time="2025-07-02T03:04:05+00:00",
+                engagement_value="999 points",
+            ),
+            # A second candidate id for the same evidence/semantic unit is not a
+            # second source observation.
+            _candidate(
+                "candidate_a_repeat_duplicate",
+                evidence_id="reddit:thread2:comment2",
+                semantic_ref="reddit:thread2:comment2::hydrating",
+                relation="support",
+                origin="scope::reddit:alice",
+                container="reddit_thread_thread2",
+                normalized_meaning=selected["normalized_meaning"],
+                publication_time="2025-07-02T03:04:05+00:00",
+                engagement_value="999 points",
+            ),
+            _candidate(
+                "candidate_a_other_meaning",
+                evidence_id="reddit:thread3:comment3",
+                semantic_ref="reddit:thread3:comment3::smooth",
+                relation="support",
+                origin="scope::reddit:alice",
+                container="reddit_thread_thread3",
+                normalized_meaning="The balm feels smooth.",
+            ),
+            _candidate(
+                "candidate_other_origin",
+                evidence_id="reddit:thread4:comment4",
+                semantic_ref="reddit:thread4:comment4::hydrating",
+                relation="support",
+                origin="scope::reddit:dana",
+                container="reddit_thread_thread4",
+                normalized_meaning=selected["normalized_meaning"],
+            ),
+            _candidate(
+                "candidate_a_other_relation",
+                evidence_id="reddit:thread5:comment5",
+                semantic_ref="reddit:thread5:comment5::hydrating",
+                relation="counter",
+                origin="scope::reddit:alice",
+                container="reddit_thread_thread5",
+                normalized_meaning=selected["normalized_meaning"],
+            ),
+        ]
+    )
+    artifact["selection_disclosure"]["candidate_semantic_row_count"] = 8
+    _write(artifact_path, artifact)
+    axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    point_a = next(row for row in axis["points"] if row["point_id"] == "point_a")
+    point_a["candidate_count"] = 8
+    point_a["artifact_sha256"] = hash_file(artifact_path)
+    axis["cold_reader_resolution"]["resolved_candidate_disposition_count"] = 11
+    axis["rejected_points"] = []
+    _write(paths["axis"], axis)
+    spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+
+    direct_view = build_axis_consolidated_view(spec)
+    point = next(row for row in direct_view["point_index"] if row["point_id"] == "point_a")
+    assert point["support_origin_ids"] == ["scope::reddit:alice"]
+    assert len(point["same_origin_observation_groups"]) == 1
+    group = point["same_origin_observation_groups"][0]
+    assert group["source_observation_count"] == 2
+    assert group["origin_group_id"] == "scope::reddit:alice"
+    assert group["normalized_meaning"] == selected["normalized_meaning"]
+    assert [row["evidence_id"] for row in group["observations"]] == [
+        "reddit:thread1:post",
+        "reddit:thread2:comment2",
+    ]
+    assert [row["content_surface"] for row in group["observations"]] == [
+        "reddit_post",
+        "reddit_comment",
+    ]
+    assert [row["publication_time"] for row in group["observations"]] == [
+        "2025-06-01T00:00:00+00:00",
+        "2025-07-02T03:04:05+00:00",
+    ]
+    assert group["observations"][1]["candidate_ids"] == [
+        "candidate_a_repeat",
+        "candidate_a_repeat_duplicate",
+    ]
+    assert direct_view["evidence_accounting_contract"] == EVIDENCE_ACCOUNTING_CONTRACT
+
+    _route_every_point_as_decision_state(spec)
+    decision_view = build_axis_consolidated_view(spec)
+    reader = decision_view["decision_state_reader_surface"]
+    assert reader["evidence_accounting_contract"] == EVIDENCE_ACCOUNTING_CONTRACT
+    columns = reader["point_table"]["columns"]
+    point_row = next(
+        row
+        for row in reader["point_table"]["rows"]
+        if row[columns.index("point_id")] == "point_a"
+    )
+    assert point_row[columns.index("same_origin_observation_groups")] == [group]
+    assert build_axis_consolidated_view(spec) == decision_view
+
+
+def test_legacy_v1_does_not_gain_evidence_accounting_fields(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    spec["schema_version"] = LEGACY_CONSOLIDATION_SPEC_VERSION
+    spec.pop("projection_routes")
+
+    view = build_axis_consolidated_view(spec)
+
+    assert "evidence_accounting_contract" not in view
+    assert all(
+        "same_origin_observation_groups" not in point
+        for point in view["point_index"]
+    )
 
 
 def test_v2_direct_outcome_routes_every_point_and_carries_existing_boundaries(

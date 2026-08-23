@@ -59,6 +59,23 @@ corroborate a customer's private purchase motivation.
 When version, period, actor identity, or another load-bearing scope fact is
 unknown, preserve `unknown`; never silently merge it into a known scope.
 
+## Independent origins and source observations are different counts
+
+Keep these two accounting units separate whenever one origin states the same
+bounded proposition more than once:
+
+- `independent_origin_count` counts distinct credited evidence origins;
+- `source_observation_count` counts distinct dated evidence assertions of the
+  bounded proposition.
+
+Two dated statements from one account are one origin and two source
+observations. Preserve both evidence references and their literal dates. The
+later statement must not disappear merely because origin de-duplication worked,
+and it must not be promoted into a second independent person. Repeated source
+observations may be updates or repeated reporting; without explicit source
+evidence that distinguishes the underlying acts, they do not establish
+multiple purchases, uses, completions, or other real-world events.
+
 ## Provenance floor
 
 Every evidence unit used in a synthesized claim must resolve to:
@@ -193,6 +210,7 @@ claim_support:
   bounded_proposition:
   support_posture: isolated | directly_observed | resonance_supported | independently_repeated | cross_venue_corroborated
   independent_origin_count:
+  source_observation_count:
   source_roles: []
   evidence_refs: []
   engagement_evidence_refs: []

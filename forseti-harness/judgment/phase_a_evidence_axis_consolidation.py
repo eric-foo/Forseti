@@ -59,6 +59,24 @@ DIRECT_OUTCOME_BOUNDARIES = (
     "not a commercial-pull score",
     "creator influence is not customer corroboration",
 )
+EVIDENCE_ACCOUNTING_CONTRACT = {
+    "independent_origin_rule": (
+        "point relation origin-id arrays count distinct evidence origins; multiple source "
+        "observations inside one same-origin group never add independent-origin credit"
+    ),
+    "source_observation_rule": (
+        "same_origin_observation_groups preserve every distinct admitted evidence and semantic "
+        "unit that matches a displayed point-relative meaning, relation, and origin"
+    ),
+    "display_scope_rule": (
+        "a same-origin observation group explains a displayed fact only; it does not promote "
+        "a non-displayed origin or change selection, relation, or evidential authority"
+    ),
+    "underlying_event_rule": (
+        "repeated source observations may be updates or repeated reporting and do not by "
+        "themselves establish multiple underlying purchases, uses, completions, or other events"
+    ),
+}
 DECISION_STATE_BOUNDARIES = (
     "decision states are actor-, object-, and stage-specific, not prevalence or market estimates",
     "intent is not observed behavior",
@@ -1572,6 +1590,7 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "candidate_inventory_sha256",
         "bindings",
         "relation_counts",
+        "same_origin_observation_groups",
         "state_table",
         "relation_facts",
     )
@@ -1610,6 +1629,9 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "quote_table": _row_table(view["quote_spans"], quote_columns),
         "semantic_unit_table": _row_table(
             [semantic_units[key] for key in sorted(semantic_units)], semantic_columns
+        ),
+        "evidence_accounting_contract": copy.deepcopy(
+            view["evidence_accounting_contract"]
         ),
         "decision_state_contract": copy.deepcopy(view["decision_state_contract"]),
         "rejected_point_index": copy.deepcopy(view["rejected_point_index"]),
@@ -1774,6 +1796,129 @@ def _stable_evidence(
             "material_positive": candidate.get("engagement_material_positive"),
         },
     }
+
+
+def _same_origin_observation_groups(
+    *,
+    point_id: str,
+    displayed_rows: Sequence[Mapping[str, Any]],
+    candidate_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Preserve repeated source observations without manufacturing recurrence credit."""
+
+    displayed_keys: set[tuple[str, str, str]] = set()
+    for row in displayed_rows:
+        relation = _required_string(row, "relation", boundary="evidence_accounting")
+        if relation not in {"support", "counter", "adjacent"}:
+            raise EvidenceConsumerError(
+                "evidence_accounting", f"unsupported displayed relation: {point_id}::{relation}"
+            )
+        displayed_keys.add(
+            (
+                relation,
+                _required_string(
+                    row, "normalized_meaning", boundary="evidence_accounting"
+                ),
+                _required_string(row, "origin_group_id", boundary="evidence_accounting"),
+            )
+        )
+
+    groups: list[dict[str, Any]] = []
+    for relation, normalized_meaning, origin_group_id in sorted(displayed_keys):
+        matching = [
+            candidate
+            for candidate in candidate_by_id.values()
+            if candidate.get("relation") == relation
+            and candidate.get("normalized_meaning") == normalized_meaning
+            and candidate.get("scoped_independence_key") == origin_group_id
+        ]
+        observations: dict[tuple[str, str], dict[str, Any]] = {}
+        candidate_ids: dict[tuple[str, str], set[str]] = defaultdict(set)
+        independence_postures: set[str] = set()
+        for candidate in matching:
+            evidence_id = _required_string(
+                candidate, "evidence_id", boundary="evidence_accounting"
+            )
+            semantic_unit_ref = _required_string(
+                candidate, "semantic_unit_ref", boundary="evidence_accounting"
+            )
+            observation_key = (evidence_id, semantic_unit_ref)
+            surface, _ = _content_surface(candidate)
+            record = {
+                "evidence_id": evidence_id,
+                "semantic_unit_ref": semantic_unit_ref,
+                "source_ref": _required_string(
+                    candidate, "source_ref", boundary="evidence_accounting"
+                ),
+                "publication_time": candidate.get("publication_time"),
+                "source_venue": _required_string(
+                    candidate, "source_venue", boundary="evidence_accounting"
+                ),
+                "source_role": _required_string(
+                    candidate, "source_role", boundary="evidence_accounting"
+                ),
+                "content_surface": surface,
+                "engagement": {
+                    "kind": candidate.get("engagement_kind"),
+                    "status": candidate.get("engagement_status"),
+                    "raw_value": candidate.get("engagement_raw_value"),
+                    "observed_at": candidate.get("engagement_observed_at"),
+                    "material_positive": candidate.get("engagement_material_positive"),
+                },
+                "lineage": {
+                    "source_id": candidate.get("source_id"),
+                    "packet_sha256": candidate.get("packet_sha256"),
+                },
+            }
+            previous = observations.setdefault(observation_key, record)
+            if previous != record:
+                raise EvidenceConsumerError(
+                    "evidence_accounting",
+                    f"source observation changed inside one point: "
+                    f"{point_id}::{evidence_id}::{semantic_unit_ref}",
+                )
+            candidate_ids[observation_key].add(
+                _required_string(candidate, "candidate_id", boundary="evidence_accounting")
+            )
+            independence_posture = candidate.get("independence_posture")
+            if independence_posture not in INDEPENDENCE_POSTURES:
+                raise EvidenceConsumerError(
+                    "evidence_accounting", "source observation independence posture is invalid"
+                )
+            independence_postures.add(independence_posture)
+        if len(observations) <= 1:
+            continue
+        if len(independence_postures) != 1:
+            raise EvidenceConsumerError(
+                "evidence_accounting",
+                f"same-origin observation posture changed: {point_id}::{origin_group_id}",
+            )
+        observation_rows = []
+        for observation_key, record in observations.items():
+            observation_rows.append(
+                {
+                    **record,
+                    "candidate_ids": sorted(candidate_ids[observation_key]),
+                }
+            )
+        observation_rows.sort(
+            key=lambda row: (
+                row["publication_time"] or "",
+                row["evidence_id"],
+                row["semantic_unit_ref"],
+            )
+        )
+        groups.append(
+            {
+                "relation": relation,
+                "normalized_meaning": normalized_meaning,
+                "origin_group_id": origin_group_id,
+                "independence_posture": next(iter(independence_postures)),
+                "source_observation_count": len(observation_rows),
+                "observations": observation_rows,
+            }
+        )
+    return groups
 
 
 def _quote_span(row: Mapping[str, Any]) -> dict[str, Any]:
@@ -1948,6 +2093,15 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         source_groups = artifact.get("source_groups")
         if not isinstance(source_groups, list):
             raise EvidenceConsumerError("point_projection", f"source groups invalid: {point_id}")
+        same_origin_observation_groups = (
+            _same_origin_observation_groups(
+                point_id=point_id,
+                displayed_rows=_point_rows(artifact, point_id=point_id),
+                candidate_by_id=candidate_by_id,
+            )
+            if is_routed_v2
+            else []
+        )
         for source_group in source_groups:
             if not isinstance(source_group, Mapping) or not isinstance(
                 source_group.get("rows"), list
@@ -2219,6 +2373,9 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             }
         if is_routed_v2:
             point_entry["projection_mode"] = point_projections[point_id]
+            point_entry["same_origin_observation_groups"] = (
+                same_origin_observation_groups
+            )
         point_index.append(point_entry)
 
     normalized_origins = []
@@ -2362,7 +2519,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     }
     if is_routed_v2:
         view["projection_routes"] = projection_routes
+        view["evidence_accounting_contract"] = copy.deepcopy(
+            EVIDENCE_ACCOUNTING_CONTRACT
+        )
         view["non_claims"].extend(DIRECT_OUTCOME_BOUNDARIES)
+        view["non_claims"].append(
+            "multiple dated observations from one origin remain one origin and do not by "
+            "themselves establish multiple underlying events"
+        )
         if decision_state_bindings:
             rejected_points = axis_pack.get("rejected_points")
             if not isinstance(rejected_points, list):
