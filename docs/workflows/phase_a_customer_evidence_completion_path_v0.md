@@ -658,16 +658,16 @@ switching, recommendation, or abandonment. These are routing examples rather
 than axis assignments: one named axis may contain points of both kinds.
 
 The v2 builder implements both `direct_outcome` and `decision_state` at the
-explicit point-level routing seam. Direct Outcome preserves the v1
-origin-normalized, surface-separated projection and carries forward each
-point's existing boundaries that the presentation is not a causal judgment,
-not a commercial-pull score, and that creator influence is not customer
-corroboration. Decision State instead compacts explicit spec-authored actor,
-object, judgment/action-stage, direction, quantity, semantic-reference, and
-qualification facts without inferring states from quotes, engagement, point
-text, or axis names. Value is the first full frozen Decision State test
-subject; this does not make its findings prevalent, causal, or representative
-of other products or axes.
+explicit point-level routing seam. Every routed v2 point carries forward its
+existing boundaries that the presentation is not a causal judgment, not a
+commercial-pull score, and that creator influence is not customer
+corroboration. Direct Outcome preserves the v1 origin-normalized,
+surface-separated projection. Decision State instead compacts explicit
+spec-authored actor, object, judgment/action-stage, direction, quantity,
+semantic-reference, and qualification facts without inferring states from
+quotes, engagement, point text, or axis names. Value is the first full frozen
+Decision State test subject; this does not make its findings prevalent, causal,
+or representative of other products or axes.
 
 A Decision State point may still carry nearby direct-result evidence. Preserve
 such a row as explicit context only, with an empty state row list and complete
@@ -821,8 +821,11 @@ measurements above.
 That trust-bound file remains a frozen v1 artifact and is not rewritten by the
 live v2 route. Its results establish the Direct Outcome predecessor evidence;
 they do not themselves validate Decision State. The separate frozen value-axis
-pilot exercises Decision State while preserving this Direct Outcome and v1
-compatibility boundary.
+pilot exercises Decision State, and the separate frozen shade-axis pilot
+exercises the mixed route -- one Direct Outcome point beside twelve Decision
+State points -- together with the explicit point-relative relation binding. Both
+preserve this Direct Outcome and v1 compatibility boundary. Exercising a route
+is a coverage fact about that run, not evidence that either axis is complete.
 
 The completed production evidence still proves one hydration axis only. The
 generic builder's deterministic two-point fixtures prove schema and parity

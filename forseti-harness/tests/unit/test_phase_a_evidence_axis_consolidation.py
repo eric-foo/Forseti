@@ -1042,6 +1042,97 @@ def test_decision_state_keeps_selected_zero_engagement_without_promotion(
         placements[row["placement_id"]]["evidence_id"] == evidence["evidence_id"]
         for row in view["decision_state_groups"]
     )
+    reader_evidence = _reader_row(
+        view["decision_state_reader_surface"]["evidence_table"],
+        "evidence_id",
+        evidence["evidence_id"],
+    )
+    assert reader_evidence["engagement_status"] == "engagement_available"
+    assert reader_evidence["engagement_raw_value"] == "0 points"
+    assert reader_evidence["engagement_context"] == "reddit_post"
+
+
+def _reader_rows(table: Mapping[str, Any]) -> list[dict[str, Any]]:
+    return [dict(zip(table["columns"], row)) for row in table["rows"]]
+
+
+def _reader_row(table: Mapping[str, Any], key: str, value: Any) -> dict[str, Any]:
+    return next(row for row in _reader_rows(table) if row[key] == value)
+
+
+def test_reader_surface_derivations_recover_point_relation_origins(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+
+    view = build_axis_consolidated_view(spec)
+    reader = view["decision_state_reader_surface"]
+    origin_by_evidence = {
+        row["evidence_id"]: row["origin_group_id"]
+        for row in _reader_rows(reader["evidence_table"])
+    }
+
+    # The compact placement table intentionally drops relation and evidence_id,
+    # so the stated derivation must route through point relation_facts instead.
+    assert "relation" not in reader["placement_table"]["columns"]
+    assert "evidence_id" not in reader["placement_table"]["columns"]
+    assert "relation_facts" in reader["derivation_rules"][
+        "point_placement_and_relation_origins"
+    ]
+
+    for point_row in _reader_rows(reader["point_table"]):
+        derived: dict[str, set[str]] = {"support": set(), "counter": set(), "adjacent": set()}
+        for fact in _reader_rows(point_row["relation_facts"]):
+            derived[fact["relation"]].add(origin_by_evidence[fact["evidence_id"]])
+        point = next(
+            row for row in view["point_index"] if row["point_id"] == point_row["point_id"]
+        )
+        assert sorted(derived["support"]) == point["support_origin_ids"]
+        assert sorted(derived["counter"]) == point["counter_origin_ids"]
+        assert sorted(derived["adjacent"]) == point["adjacent_origin_ids"]
+
+
+def test_context_only_qualification_refs_resolve_through_primary_or_companion(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    row = spec["decision_state_bindings"][0]["rows"][0]
+    all_refs = [
+        assertion_ref
+        for assertion in row["state_assertions"]
+        for assertion_ref in assertion["semantic_unit_refs"]
+    ]
+    row["state_assertions"] = []
+    row["context_only_semantic_unit_refs"] = all_refs
+    _synchronize_semantic_binding_row(spec, row)
+
+    view = build_axis_consolidated_view(spec)
+    companion_refs = {row["semantic_unit_ref"] for row in view["companion_meaning_index"]}
+    placements = {row["placement_id"]: row for row in view["point_placements"]}
+    primary_context_refs = {
+        ref
+        for group in view["decision_state_groups"]
+        for ref in group["qualification_refs"]
+        if ref == placements[group["placement_id"]]["semantic_unit_ref"]
+    }
+
+    # The context-only form this route allows puts the placement's own primary
+    # meaning in qualification_refs, where companion_meaning_index cannot resolve it.
+    assert primary_context_refs
+    assert not primary_context_refs & companion_refs
+    rule = view["decision_state_contract"]["qualification_rule"]
+    assert "primary" in rule and "companion" in rule
+    semantic_units = {
+        row["semantic_unit_ref"]: row
+        for row in _reader_rows(
+            view["decision_state_reader_surface"]["semantic_unit_table"]
+        )
+    }
+    for ref in primary_context_refs:
+        assert semantic_units[ref]["statement"]
+    assert "placement_table" in rule and "semantic_unit_table" in rule
 
 
 @pytest.mark.parametrize(
@@ -1257,8 +1348,9 @@ def test_decision_state_rejects_incomplete_legacy_rejected_point_rows(
         build_axis_consolidated_view(spec)
 
 
-def test_v2_direct_outcome_requires_the_boundaries_owned_by_each_point(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize("projection_mode", ["direct_outcome", "decision_state"])
+def test_v2_routed_points_require_the_boundaries_owned_by_each_point(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, projection_mode: str
 ) -> None:
     spec, paths = _fixture(tmp_path, monkeypatch)
     artifact_path = paths["artifact_point_a"]
@@ -1266,6 +1358,8 @@ def test_v2_direct_outcome_requires_the_boundaries_owned_by_each_point(
     artifact["output_boundary"].remove("creator influence is not customer corroboration")
     _write(artifact_path, artifact)
     _refresh_axis_binding(spec, paths)
+    if projection_mode == "decision_state":
+        _route_every_point_as_decision_state(spec)
 
     with pytest.raises(
         EvidenceConsumerError,

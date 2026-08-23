@@ -111,8 +111,10 @@ DECISION_STATE_CONSUMER_CONTRACT = {
         "asserted for that placement"
     ),
     "qualification_rule": (
-        "resolve every qualification_ref through companion_meaning_index and preserve it "
-        "when material; it remains context rather than an additional decision state"
+        "resolve every qualification_ref through placement_table semantic_unit_ref into "
+        "semantic_unit_table, or through companion_meaning_index -- a context-only row "
+        "routinely qualifies its own primary meaning -- and preserve it when material; "
+        "it remains context rather than an additional decision state"
     ),
     "consumer_join_order": [
         "decision_state_group placement_id to point_placements",
@@ -1447,8 +1449,10 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
             "source_ref": row["source_ref"],
             "publication_time": row["publication_time"],
             "engagement_kind": row["engagement"]["kind"],
+            "engagement_status": row["engagement"]["status"],
             "engagement_raw_value": row["engagement"]["raw_value"],
             "engagement_observed_at": row["engagement"]["observed_at"],
+            "engagement_context": row["engagement"]["context"],
             "engagement_material_positive": row["engagement"]["material_positive"],
             "container_ids": row["container_ids"],
         }
@@ -1564,7 +1568,9 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
                 "the placement's indexed state_ids"
             ),
             "point_placement_and_relation_origins": (
-                "group placement_table by point_id and relation, then join evidence origin_group_id"
+                "group each point's relation_facts rows by relation, then join evidence_table "
+                "origin_group_id by evidence_id; placement_table carries neither relation nor "
+                "evidence_id"
             ),
             "origin_evidence_and_containers": (
                 "group evidence_table evidence_id and container_ids by origin_group_id"
