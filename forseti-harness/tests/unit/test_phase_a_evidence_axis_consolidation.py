@@ -645,7 +645,7 @@ def test_decision_state_preserves_premium_potential_inputs_without_inference(
             "decision_object": "fixture balm",
             "semantic_unit_refs": [primary_ref],
             "quantity": None,
-            "conditions": [],
+            "conditions": ["at $24"],
         },
         {
             "state_kind": "observed_repurchase",
@@ -682,7 +682,13 @@ def test_decision_state_preserves_premium_potential_inputs_without_inference(
 
     assert states["price_concern"]["commercial_direction"] == "friction"
     assert states["price_concern"]["conditions"] == ["at $24"]
+    assert (
+        states["price_concern"]["decision_object"]
+        == "fixture balm relative to cheaper substitutes"
+    )
     assert states["value_judgment"]["commercial_direction"] == "favorable"
+    assert states["value_judgment"]["decision_object"] == "fixture balm at $24"
+    assert states["repurchase_intent"]["conditions"] == ["at $24"]
     assert view["decision_state_contract"]["state_kind_stages"][
         "repurchase_intent"
     ] == "intent"
