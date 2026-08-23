@@ -120,6 +120,30 @@ admission nor the thirteen-origin cap. The second batching step is required at
 full-axis scale; sending hundreds of confirmation rows as one open array would
 recreate the truncation surface that named relation batches closed.
 
+Every external model call is also an immutable attempt. Before launching it,
+choose a new attempt ID and new attempt directory; refuse the launch if that
+directory or any intended response, event-log, or usage-receipt target already
+exists. Persist the structured response, complete event stream, and exact usage
+record under that one attempt ID before the attempt may be selected as the
+canonical response. A retry uses a new attempt ID. It may supersede an earlier
+attempt for finalization, but it never overwrites, renames onto, or deletes the
+earlier attempt. All-attempt accounting includes every launched attempt,
+including discarded successes and failures. If any launched attempt lacks a
+recoverable exact usage record, the all-attempt token proof is `FAIL_UNOBSERVED`;
+do not estimate the missing usage from another call or report only the chosen
+canonical calls as the complete run cost.
+
+Use `reserve-evidence-selection-provider-attempt --attempt-root <root>
+--attempt-id <new-id>` before each call. Send `codex exec -o` to the returned
+`response.json` and its `--json` output to the returned `events.jsonl`; never
+send either stream directly to a canonical batch-response path. After the call,
+use `publish-evidence-selection-provider-attempt --attempt-dir <attempt>
+--response-dir <canonical-dir> --canonical-response-name <name>`. For a named
+relation batch also supply `--batch-manifest` and `--batch-id`; publication then
+validates the batch-bound response, extracts and preserves the exact completed-
+turn usage, and atomically hard-links the response without replacement. Keep
+every attempt directory after publication or failure.
+
 The confirmation frontier is independent of the first-pass relation. Therefore
 a first-pass `exclude` cannot silently hide a materially engaged or protected
 row. The confirming response may correct the relation and reason code; selection
@@ -498,8 +522,10 @@ to the hash-owned candidate identity, rejects a missing, foreign, or wrong-batch
 response and a missing or foreign slot, requires exact contiguous coverage of
 the complete candidate inventory, then continues through the ordinary quote
 manifest. Only the batch responses named in the batch manifest are read; any
-other file left in the response directory is ignored, so clear the directory
-between runs rather than relying on the finalizer to notice a stale file.
+other file left in the response directory is ignored. Use a new canonical
+response directory for each run and copy or project only the selected immutable
+attempt responses into it. Never clear and reuse an attempt directory, and do
+not rely on the finalizer to notice a stale file.
 Batching does not change admission, selection priority, relation meaning,
 evidence facts, or the origin cap. It does change the row label: a batched row's
 reason code and display label are derived from its relation alone, so a batched

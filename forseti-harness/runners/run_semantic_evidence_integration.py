@@ -86,6 +86,7 @@ from judgment.phase_a_evidence_selection import (  # noqa: E402
     prepare_preselection_relation_confirmation,
     prepare_selected_relation_confirmation,
     selection_spec_from_customer_pull_frontier,
+    validate_evidence_selection_batch_response,
     verify_customer_pull_point_frontier,
 )
 from harness_utils import hash_file  # noqa: E402
@@ -864,6 +865,149 @@ def publish_batch_response_file(
         "status": "SEMANTIC_BATCH_RESPONSE_PUBLISHED",
         **receipt,
         "response_path": str(target),
+        "model_api_calls": 0,
+    }
+
+
+def reserve_evidence_selection_provider_attempt(
+    *, attempt_root: Path, attempt_id: str
+) -> dict[str, Any]:
+    """Atomically reserve one immutable external-model attempt directory."""
+
+    allowed = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-")
+    if (
+        not attempt_id
+        or len(attempt_id) > 128
+        or attempt_id in {".", ".."}
+        or any(character not in allowed for character in attempt_id)
+    ):
+        raise ValueError("attempt_id must be a safe nonempty filename component")
+    attempt_root.mkdir(parents=True, exist_ok=True)
+    attempt_dir = attempt_root / attempt_id
+    try:
+        attempt_dir.mkdir()
+    except FileExistsError as exc:
+        raise ValueError(f"refusing to reuse provider attempt: {attempt_dir}") from exc
+    return {
+        "status": "PHASE_A_EVIDENCE_PROVIDER_ATTEMPT_RESERVED",
+        "attempt_id": attempt_id,
+        "attempt_dir": str(attempt_dir),
+        "response_path": str(attempt_dir / "response.json"),
+        "events_path": str(attempt_dir / "events.jsonl"),
+        "model_api_calls": 0,
+    }
+
+
+def _codex_usage_from_events(events_path: Path) -> dict[str, int]:
+    completed: list[Mapping[str, Any]] = []
+    for line in events_path.read_text(encoding="utf-8-sig").splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(event, Mapping) and event.get("type") == "turn.completed":
+            usage = event.get("usage")
+            if isinstance(usage, Mapping):
+                completed.append(usage)
+    if len(completed) != 1:
+        raise ValueError("attempt events must contain exactly one completed-turn usage")
+    usage = completed[0]
+    fields = (
+        "input_tokens",
+        "cached_input_tokens",
+        "output_tokens",
+        "reasoning_output_tokens",
+    )
+    if any(
+        isinstance(usage.get(field), bool)
+        or not isinstance(usage.get(field), int)
+        or usage[field] < 0
+        for field in fields
+    ):
+        raise ValueError("completed-turn usage is incomplete or invalid")
+    if (
+        usage["cached_input_tokens"] > usage["input_tokens"]
+        or usage["reasoning_output_tokens"] > usage["output_tokens"]
+    ):
+        raise ValueError("completed-turn usage subsets are invalid")
+    return {field: usage[field] for field in fields}
+
+
+def publish_evidence_selection_provider_attempt(
+    *,
+    attempt_dir: Path,
+    response_dir: Path,
+    canonical_response_name: str,
+    batch_manifest_path: Path | None = None,
+    batch_id: str | None = None,
+) -> dict[str, Any]:
+    """Preserve attempt usage and atomically publish one response without replace."""
+
+    if (
+        not canonical_response_name
+        or Path(canonical_response_name).name != canonical_response_name
+        or not canonical_response_name.endswith(".json")
+    ):
+        raise ValueError("canonical response name must be one JSON filename")
+    if (batch_manifest_path is None) != (batch_id is None):
+        raise ValueError("batch manifest and batch_id must be supplied together")
+    response_path = attempt_dir / "response.json"
+    events_path = attempt_dir / "events.jsonl"
+    if not response_path.is_file() or not events_path.is_file():
+        raise ValueError("attempt must contain response.json and events.jsonl")
+    usage = _codex_usage_from_events(events_path)
+    usage_receipt = {
+        "schema_version": "phase_a_evidence_provider_attempt_usage_v1",
+        "response_sha256": hash_file(response_path),
+        "events_sha256": hash_file(events_path),
+        "usage": usage,
+    }
+    _write_json(attempt_dir / "usage.json", usage_receipt)
+    response = _load_object(response_path)
+    validation: dict[str, Any] = {}
+    if batch_manifest_path is not None and batch_id is not None:
+        batch_manifest = _load_object(batch_manifest_path)
+        selection_manifest = batch_manifest.get("selection_manifest")
+        if not isinstance(selection_manifest, dict):
+            raise ValueError("selection batch manifest is missing its selection manifest")
+        validation = validate_evidence_selection_batch_response(
+            batch_manifest,
+            load_selection_sources(selection_manifest),
+            batch_id=batch_id,
+            response=response,
+        )
+    response_dir.mkdir(parents=True, exist_ok=True)
+    target = response_dir / canonical_response_name
+    staged = response_dir / (
+        f".{canonical_response_name}.{hash_file(response_path)}.json.tmp"
+    )
+    _write_new(staged, response_path.read_bytes())
+    try:
+        # Publish from a response-directory sibling so the preserved attempt
+        # file cannot mutate the canonical hard link after publication.
+        os.link(staged, target)
+    except FileExistsError as exc:
+        staged.unlink(missing_ok=True)
+        raise ValueError(f"refusing to overwrite existing response: {target}") from exc
+    except OSError as exc:
+        staged.unlink(missing_ok=True)
+        raise ValueError(
+            f"atomic no-replace response publication failed: {target}"
+        ) from exc
+    try:
+        staged.unlink()
+    except OSError as exc:
+        raise ValueError(
+            "response final was published but staged-response cleanup failed: "
+            f"{staged}"
+        ) from exc
+    return {
+        "status": "PHASE_A_EVIDENCE_PROVIDER_ATTEMPT_PUBLISHED",
+        **validation,
+        "response_path": str(target),
+        "attempt_dir": str(attempt_dir),
+        "usage_receipt_path": str(attempt_dir / "usage.json"),
+        "usage": usage,
         "model_api_calls": 0,
     }
 
@@ -2360,6 +2504,17 @@ def _parser() -> argparse.ArgumentParser:
         "--batch-manifest-out", type=Path, required=True
     )
 
+    attempt_reserve = sub.add_parser("reserve-evidence-selection-provider-attempt")
+    attempt_reserve.add_argument("--attempt-root", type=Path, required=True)
+    attempt_reserve.add_argument("--attempt-id", required=True)
+
+    attempt_publish = sub.add_parser("publish-evidence-selection-provider-attempt")
+    attempt_publish.add_argument("--attempt-dir", type=Path, required=True)
+    attempt_publish.add_argument("--response-dir", type=Path, required=True)
+    attempt_publish.add_argument("--canonical-response-name", required=True)
+    attempt_publish.add_argument("--batch-manifest", type=Path)
+    attempt_publish.add_argument("--batch-id")
+
     selection_relations = sub.add_parser("finalize-evidence-selection-relations")
     selection_relations.add_argument("--manifest", type=Path, required=True)
     selection_relations.add_argument("--response", type=Path, required=True)
@@ -2828,6 +2983,19 @@ def main(argv: list[str] | None = None) -> int:
                 batch_size=args.batch_size,
                 batch_dir=args.batch_dir,
                 batch_manifest_out=args.batch_manifest_out,
+            )
+        elif args.command == "reserve-evidence-selection-provider-attempt":
+            result = reserve_evidence_selection_provider_attempt(
+                attempt_root=args.attempt_root,
+                attempt_id=args.attempt_id,
+            )
+        elif args.command == "publish-evidence-selection-provider-attempt":
+            result = publish_evidence_selection_provider_attempt(
+                attempt_dir=args.attempt_dir,
+                response_dir=args.response_dir,
+                canonical_response_name=args.canonical_response_name,
+                batch_manifest_path=args.batch_manifest,
+                batch_id=args.batch_id,
             )
         elif args.command == "finalize-evidence-selection-relations":
             result = finalize_evidence_selection_relations_run(
