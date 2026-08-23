@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -1091,6 +1092,79 @@ def test_reader_surface_derivations_recover_point_relation_origins(
         assert sorted(derived["support"]) == point["support_origin_ids"]
         assert sorted(derived["counter"]) == point["counter_origin_ids"]
         assert sorted(derived["adjacent"]) == point["adjacent_origin_ids"]
+
+
+def test_reader_relation_facts_bind_only_point_relative_states(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+
+    view = build_axis_consolidated_view(spec)
+    reader = view["decision_state_reader_surface"]
+    full_state_rows = {
+        row["decision_state_id"]: row
+        for row in _reader_rows(view["decision_state_index"])
+    }
+    point_by_placement = {
+        row["placement_id"]: row["point_id"] for row in view["point_placements"]
+    }
+    expected_point_state_ids: dict[str, set[str]] = defaultdict(set)
+    for group in view["decision_state_groups"]:
+        expected_point_state_ids[point_by_placement[group["placement_id"]]].update(
+            group["state_ids"]
+        )
+    assert "decision_state_index" not in reader
+    assert "state_dictionary" not in reader
+    semantic_rows = _reader_rows(reader["semantic_unit_table"])
+
+    def expand_reader_state(state: Mapping[str, Any]) -> dict[str, Any]:
+        return {
+            **{
+                key: value
+                for key, value in state.items()
+                if key != "semantic_unit_row_ids"
+            },
+            "semantic_unit_refs": [
+                semantic_rows[row_id]["semantic_unit_ref"]
+                for row_id in state["semantic_unit_row_ids"]
+            ],
+        }
+
+    def state_refs(state: Mapping[str, Any]) -> set[str]:
+        return {
+            semantic_rows[row_id]["semantic_unit_ref"]
+            for row_id in state["semantic_unit_row_ids"]
+        }
+
+    for point in _reader_rows(reader["point_table"]):
+        point_states = _reader_rows(point["state_table"])
+        expected_states = [
+            {
+                key: value
+                for key, value in full_state_rows[state_id].items()
+                if key != "decision_state_id"
+            }
+            for state_id in sorted(expected_point_state_ids[point["point_id"]])
+        ]
+        assert [expand_reader_state(state) for state in point_states] == expected_states
+        for fact in _reader_rows(point["relation_facts"]):
+            relation_refs = {row[0] for row in fact["semantic_units"]}
+            relation_states = [
+                point_states[row_id] for row_id in fact["relation_state_row_ids"]
+            ]
+            context_states = [
+                point_states[row_id] for row_id in fact["source_context_state_row_ids"]
+            ]
+            assert all(state_refs(row) & relation_refs for row in relation_states)
+            assert all(
+                not state_refs(row) & relation_refs for row in context_states
+            )
+
+    rule = view["decision_state_contract"]["point_relation_state_rule"]
+    assert "relation_state_row_ids" in rule
+    assert "source_context_state_row_ids" in rule
+    assert "state_table" in rule
 
 
 def test_context_only_qualification_refs_resolve_through_primary_or_companion(

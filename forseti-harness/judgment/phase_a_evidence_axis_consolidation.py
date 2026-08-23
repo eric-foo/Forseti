@@ -85,6 +85,12 @@ DECISION_STATE_CONSUMER_CONTRACT = {
         "qualifications may explain asserted states but may not create an additional "
         "purchase, ownership, intent, recurrence, or other decision state"
     ),
+    "point_relation_state_rule": (
+        "inside each reader point, relation_facts relation_state_row_ids are the exhaustive "
+        "zero-based rows in that point's state_table that explain the point-relative relation; "
+        "source_context_state_row_ids preserve other co-occurring states from the same literal "
+        "source but may not be attached to the relation"
+    ),
     "placement_processing_rule": (
         "process every placement exactly once through the same consumer join order; "
         "display order is navigation, not importance or evidential rank"
@@ -1368,6 +1374,11 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
     groups = {
         row["placement_id"]: row for row in view["decision_state_groups"]
     }
+    state_columns = view["decision_state_index"]["columns"]
+    state_ref_index = state_columns.index("semantic_unit_refs")
+    state_rows = {
+        row[0]: row for row in view["decision_state_index"]["rows"]
+    }
     semantic_units: dict[str, dict[str, Any]] = {
         row["semantic_unit_ref"]: {
             "semantic_unit_ref": row["semantic_unit_ref"],
@@ -1467,7 +1478,22 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "evidence_id",
         "semantic_units",
         "quote_status",
+        "relation_state_row_ids",
+        "source_context_state_row_ids",
     ]
+    point_state_ids: dict[str, set[str]] = defaultdict(set)
+    for row in placement_rows:
+        point_state_ids[row["point_id"]].update(row["state_ids"])
+    point_state_row_ids = {
+        point_id: {
+            state_id: row_id for row_id, state_id in enumerate(sorted(state_ids))
+        }
+        for point_id, state_ids in point_state_ids.items()
+    }
+    semantic_ref_row_ids = {
+        semantic_ref: row_id
+        for row_id, semantic_ref in enumerate(sorted(semantic_units))
+    }
     point_relation_facts: dict[str, list[list[Any]]] = defaultdict(list)
     for row in placement_rows:
         point_relation_facts[row["point_id"]].append(
@@ -1480,12 +1506,45 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
                     for semantic_ref in row["relation_semantic_unit_refs"]
                 ],
                 quote_statuses[row["quote_span_id"]],
+                [
+                    point_state_row_ids[row["point_id"]][state_id]
+                    for state_id in row["state_ids"]
+                    if set(state_rows[state_id][state_ref_index])
+                    & set(row["relation_semantic_unit_refs"])
+                ],
+                [
+                    point_state_row_ids[row["point_id"]][state_id]
+                    for state_id in row["state_ids"]
+                    if not set(state_rows[state_id][state_ref_index])
+                    & set(row["relation_semantic_unit_refs"])
+                ],
             ]
         )
     point_rows = [
         {
             **row,
             "relation_counts": point_relation_counts[row["point_id"]],
+            "state_table": {
+                "columns": [
+                    "state_kind",
+                    "commercial_direction",
+                    "decision_object",
+                    "semantic_unit_row_ids",
+                    "quantity",
+                    "conditions",
+                ],
+                "rows": [
+                    [
+                        *state_rows[state_id][1:4],
+                        [
+                            semantic_ref_row_ids[semantic_ref]
+                            for semantic_ref in state_rows[state_id][state_ref_index]
+                        ],
+                        *state_rows[state_id][5:],
+                    ]
+                    for state_id in sorted(point_state_ids[row["point_id"]])
+                ],
+            },
             "relation_facts": {
                 "columns": relation_fact_columns,
                 "rows": point_relation_facts[row["point_id"]],
@@ -1497,7 +1556,8 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         {
             key: value
             for key, value in row.items()
-            if key not in {"relation", "evidence_id", "relation_semantic_unit_refs"}
+            if key
+            not in {"relation", "evidence_id", "relation_semantic_unit_refs", "state_ids"}
         }
         for row in placement_rows
     ]
@@ -1512,6 +1572,7 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "candidate_inventory_sha256",
         "bindings",
         "relation_counts",
+        "state_table",
         "relation_facts",
     )
     placement_columns = tuple(compact_placement_rows[0])
@@ -1550,7 +1611,6 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "semantic_unit_table": _row_table(
             [semantic_units[key] for key in sorted(semantic_units)], semantic_columns
         ),
-        "decision_state_index": copy.deepcopy(view["decision_state_index"]),
         "decision_state_contract": copy.deepcopy(view["decision_state_contract"]),
         "rejected_point_index": copy.deepcopy(view["rejected_point_index"]),
         "non_claims": copy.deepcopy(view["non_claims"]),
@@ -1561,11 +1621,19 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
             ),
             "point_relation_facts": (
                 "relation_facts exhaustively bind every displayed placement to the literal "
-                "semantic meaning that explains its point-relative relation"
+                "semantic meaning and relation_state_row_ids that explain its point-relative "
+                "relation; source_context_state_row_ids coexist but may not be attached to the "
+                "relation; both are zero-based rows in the same point row's state_table"
+            ),
+            "state_semantic_unit_rows": (
+                "each point state_table semantic_unit_row_ids value is a zero-based row in the "
+                "reader semantic_unit_table, preserving exact semantic refs without repeating them"
             ),
             "context_only_semantic_unit_refs": (
-                "placement primary plus companion semantic refs minus semantic refs used by "
-                "the placement's indexed state_ids"
+                "placement primary plus companion semantic refs minus semantic refs used by the "
+                "matching relation fact's relation_state_row_ids and "
+                "source_context_state_row_ids, resolved through the same point's state_table and "
+                "reader semantic_unit_table"
             ),
             "point_placement_and_relation_origins": (
                 "group each point's relation_facts rows by relation, then join evidence_table "
