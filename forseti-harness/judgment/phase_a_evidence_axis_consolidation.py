@@ -62,11 +62,15 @@ DECISION_STATE_BOUNDARIES = (
     "decision states are actor-, object-, and stage-specific, not prevalence or market estimates",
     "intent is not observed behavior",
     "multi-unit purchase or ownership is not observed repurchase",
-    "price concern is not automatically an unfavorable value judgment",
     (
-        "price, value, intent, and observed-behavior states do not classify the product "
-        "as premium, establish pricing power, or prove that an offer can be elevated or "
-        "a higher tier introduced"
+        "keep the source's price comparison visible: 'expensive for a lip balm' is a "
+        "category-relative price concern, while 'overpriced' or 'not worth it' requires "
+        "an explicit value rejection"
+    ),
+    (
+        "premium describes source-supported quality or positioning, not price alone; "
+        "price, value, intent, and behavior do not by themselves prove pricing power or "
+        "support for a higher tier"
     ),
     "companion decision states coexist and are not averaged into sentiment",
 )

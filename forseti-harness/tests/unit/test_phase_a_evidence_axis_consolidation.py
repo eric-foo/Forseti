@@ -614,7 +614,7 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     ) == view
 
 
-def test_decision_state_preserves_premium_potential_inputs_without_inference(
+def test_decision_state_keeps_price_value_and_premium_meanings_distinct(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
@@ -704,9 +704,16 @@ def test_decision_state_preserves_premium_potential_inputs_without_inference(
         "tier_potential",
     } & set(view["decision_state_contract"]["state_kind_stages"])
     assert any(
-        "do not classify the product as premium" in boundary
-        and "establish pricing power" in boundary
-        and "a higher tier introduced" in boundary
+        "expensive for a lip balm" in boundary
+        and "overpriced" in boundary
+        and "explicit value rejection" in boundary
+        for boundary in view["non_claims"]
+    )
+    assert any(
+        "premium describes source-supported quality or positioning" in boundary
+        and "not price alone" in boundary
+        and "pricing power" in boundary
+        and "higher tier" in boundary
         for boundary in view["non_claims"]
     )
 

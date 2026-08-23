@@ -669,16 +669,23 @@ text, or axis names. Value is the first full frozen Decision State test
 subject; this does not make its findings prevalent, causal, or representative
 of other products or axes.
 
-For price-and-value evidence, Phase A preserves the source-explicit ingredients
-that a later judgment may need: price or cheaper-comparator friction,
-value-at-price judgments, price-conditioned purchase or repurchase intent, and
-observed purchase, use, return, switching, or repurchase behavior. When one
-source carries several of these states, their shared placement remains visible.
-Phase A does not add a `premium`, `pricing_power`, or `tier_potential` state or
-classify the current product as premium. The packed evidence may later support
-evaluation of whether an offer could be elevated or a higher tier introduced;
-that potential and any resulting action remain downstream judgments rather than
-evidence-pack facts.
+For price-and-value evidence, Phase A keeps the exact comparison the source
+made. If someone says “expensive for a lip balm,” keep “for a lip balm” in the
+packed state rather than leaving it only in the quote. Keep these meanings
+separate:
+
+- `expensive` or `pricey` means the person feels the price is high;
+- `overpriced` or `not worth it` means the person explicitly rejects the value;
+- `premium` is a positive quality or positioning description only when the
+  source supports it, never another word for a high price.
+
+Also preserve value-at-price judgments, price-conditioned purchase or
+repurchase intent, and observed purchase, use, return, switching, or repurchase
+behavior. When one source carries several of these states, keep them together
+without blending them. Price, value, intent, and behavior do not by themselves
+prove pricing power or support for a higher tier. Phase A packs the evidence;
+any later decision about positioning, elevation, or a higher tier belongs
+downstream.
 
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
