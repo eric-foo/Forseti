@@ -155,6 +155,29 @@ DECISION_STATE_CONSUMER_CONTRACT = {
         "conditions",
     ],
 }
+DECISION_STATE_READER_CONTRACT_OVERRIDES = {
+    "qualification_rule": (
+        "resolve every state_table semantic_unit_row_ids value through the reader "
+        "semantic_unit_table; derive context-only meaning from the matching placement "
+        "primary plus companion semantic refs minus refs used by the matching relation "
+        "fact's relation_state_row_ids and source_context_state_row_ids, and preserve "
+        "material qualification as context rather than an additional decision state"
+    ),
+    "consumer_join_order": [
+        "point_table relation_facts evidence_id to evidence_table and enclosing point_id plus selected_id to placement_table",
+        "relation_facts relation_state_row_ids and source_context_state_row_ids to the enclosing point row state_table",
+        "state_table semantic_unit_row_ids and placement semantic refs to semantic_unit_table",
+        "placement quote_span_id to quote_table; evidence_table carries literal source, date, engagement, and origin_group_id",
+    ],
+    "state_row_columns": [
+        "state_kind",
+        "commercial_direction",
+        "decision_object",
+        "semantic_unit_row_ids",
+        "quantity",
+        "conditions",
+    ],
+}
 DECISION_STATE_CONTRACT = {
     "value_judgment": {"stages": {"judgment"}, "directions": {"favorable", "unfavorable", "mixed"}},
     "price_concern": {"stages": {"judgment"}, "directions": {"friction"}},
@@ -189,6 +212,16 @@ DECISION_STATE_CONSUMER_CONTRACT["state_kind_stages"] = {
     for state_kind, contract in DECISION_STATE_CONTRACT.items()
 }
 DECISION_STATE_ROW_COLUMNS = tuple(DECISION_STATE_CONSUMER_CONTRACT["state_row_columns"])
+
+
+def _decision_state_reader_contract(
+    contract: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Translate only view-specific join vocabulary into reader-table vocabulary."""
+
+    reader_contract = copy.deepcopy(dict(contract))
+    reader_contract.update(copy.deepcopy(DECISION_STATE_READER_CONTRACT_OVERRIDES))
+    return reader_contract
 
 
 def _load_object(path: Path, *, boundary: str) -> dict[str, Any]:
@@ -1633,7 +1666,9 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "evidence_accounting_contract": copy.deepcopy(
             view["evidence_accounting_contract"]
         ),
-        "decision_state_contract": copy.deepcopy(view["decision_state_contract"]),
+        "decision_state_contract": _decision_state_reader_contract(
+            view["decision_state_contract"]
+        ),
         "rejected_point_index": copy.deepcopy(view["rejected_point_index"]),
         "non_claims": copy.deepcopy(view["non_claims"]),
         "derivation_rules": {
@@ -1806,7 +1841,7 @@ def _same_origin_observation_groups(
 ) -> list[dict[str, Any]]:
     """Preserve repeated source observations without manufacturing recurrence credit."""
 
-    displayed_keys: set[tuple[str, str, str]] = set()
+    displayed_keys: set[tuple[str, str, str, str]] = set()
     for row in displayed_rows:
         relation = _required_string(row, "relation", boundary="evidence_accounting")
         if relation not in {"support", "counter", "adjacent"}:
@@ -1815,6 +1850,7 @@ def _same_origin_observation_groups(
             )
         displayed_keys.add(
             (
+                _required_string(row, "layer", boundary="evidence_accounting"),
                 relation,
                 _required_string(
                     row, "normalized_meaning", boundary="evidence_accounting"
@@ -1824,7 +1860,7 @@ def _same_origin_observation_groups(
         )
 
     groups: list[dict[str, Any]] = []
-    for relation, normalized_meaning, origin_group_id in sorted(displayed_keys):
+    for layer, relation, normalized_meaning, origin_group_id in sorted(displayed_keys):
         matching = [
             candidate
             for candidate in candidate_by_id.values()
@@ -1886,13 +1922,15 @@ def _same_origin_observation_groups(
                     "evidence_accounting", "source observation independence posture is invalid"
                 )
             independence_postures.add(independence_posture)
-        if len(observations) <= 1:
+        if not observations:
             continue
         if len(independence_postures) != 1:
             raise EvidenceConsumerError(
                 "evidence_accounting",
                 f"same-origin observation posture changed: {point_id}::{origin_group_id}",
             )
+        if len(observations) <= 1:
+            continue
         observation_rows = []
         for observation_key, record in observations.items():
             observation_rows.append(
@@ -1910,6 +1948,7 @@ def _same_origin_observation_groups(
         )
         groups.append(
             {
+                "layer": layer,
                 "relation": relation,
                 "normalized_meaning": normalized_meaning,
                 "origin_group_id": origin_group_id,
@@ -2168,7 +2207,10 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                     {
                         item.get("container_id")
                         for item in (candidate_by_id[value] for value in candidate_ids)
-                        if item.get("evidence_id") == evidence_id
+                        # Narrowing an evidence row to its own candidates is a
+                        # v2 correction; applying it to v1 would rewrite already
+                        # published frozen v1 container_ids.
+                        if not is_routed_v2 or item.get("evidence_id") == evidence_id
                         if isinstance(item.get("container_id"), str) and item.get("container_id")
                     }
                 )

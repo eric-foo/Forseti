@@ -711,6 +711,52 @@ prove pricing power or support for a higher tier. Phase A packs the evidence;
 any later decision about positioning, elevation, or a higher tier belongs
 downstream.
 
+The v2 spec carries these facts in named fields; a cold operator authors them
+explicitly and the builder never infers them. `projection_routes` is a list of
+`{projection_mode, point_ids}` objects using `direct_outcome` or
+`decision_state`. `decision_state_bindings` is a list of `{point_id, rows}`
+objects that must cover every routed `decision_state` point and, inside each
+point, every displayed `selected_id` exactly once. A row carries exactly
+`selected_id`, `state_assertions`, `context_only_semantic_unit_refs`, and
+`relation_semantic_unit_refs`. A state assertion carries exactly `state_kind`,
+`commercial_direction`, `decision_object`, `semantic_unit_refs`, `quantity`, and
+`conditions`; the judgment/intent/observed/event stage is derived from
+`state_kind` rather than authored, `quantity` is allowed only for
+`multi_unit_purchase` and must be at least two, and an unsupported `state_kind`
+or an out-of-contract `commercial_direction` fails loud. Inside one row the
+asserted and context-only semantic references must be disjoint and together
+cover the display row's own meaning plus every same-evidence companion meaning
+exactly once; `relation_semantic_unit_refs` is nonempty and drawn from that same
+set. An empty `state_assertions` list is the explicit context-only form above.
+
+A routed `direct_outcome` point uses the optional
+`direct_outcome_relation_bindings` list of `{point_id, rows}`, with rows of
+`{selected_id, relation_semantic_unit_refs}`, only when a frozen row's primary
+meaning is context. The optional `decision_state_rejected_point_navigation` list
+of `{point_id, navigation_group_id}` places rejected frontier points into an
+existing navigation group and, when present, must cover every rejected point.
+`decision_state_bindings_sha256` is optional in the spec and is checked against
+the builder's own recomputation. Every field named in this paragraph and the one
+above it, apart from `projection_routes`, is rejected in a v1 spec and in a v2
+spec that routes no `decision_state` point.
+
+The built v2 view stores `decision_state_bindings_sha256` in place of the
+authored bindings and adds `decision_state_index`, `decision_state_groups`,
+`rejected_point_index`, and a `decision_state_reader_surface` join surface
+whenever at least one point is routed `decision_state`. The full view's
+`decision_state_contract` uses full-view table names; the reader surface derives
+the same semantic contract with reader-native join instructions and
+`semantic_unit_row_ids`, so every table and column named inside the compact
+surface resolves inside that surface. Every v2 point also carries
+`same_origin_observation_groups`: one group for each displayed layer, relation,
+meaning, and origin where that single origin carries more than one distinct
+evidence-and-semantic-unit observation, each observation keeping its literal
+evidence reference, date or explicit date unavailability, and source-native
+engagement, and each group reporting a `source_observation_count`. That count is
+a source-observation count, never independent-origin credit and never evidence
+of several underlying purchases, uses, or completions; the owning semantics stay in
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
 wording in the prompt alone is insufficient. The finalizer must reject field
@@ -823,9 +869,19 @@ live v2 route. Its results establish the Direct Outcome predecessor evidence;
 they do not themselves validate Decision State. The separate frozen value-axis
 pilot exercises Decision State, and the separate frozen shade-axis pilot
 exercises the mixed route -- one Direct Outcome point beside twelve Decision
-State points -- together with the explicit point-relative relation binding. Both
-preserve this Direct Outcome and v1 compatibility boundary. Exercising a route
-is a coverage fact about that run, not evidence that either axis is complete.
+State points -- together with the explicit point-relative relation binding. Their
+frozen inputs are the two build specs
+`C:\tmp\forseti-phase-a-delegated-adjudication-20260823-v0\value_spec_current_v2.json`
+(raw SHA-256
+`137c2697cf11c0e8fbf8160a417535acb63782c8d0b8fec4cc6c7b3a7d20cfc7`) and
+`C:\tmp\forseti-phase-a-shade-mixed-projection-20260823-v0\mixed_spec_v2.json`
+(raw SHA-256
+`99b30fa86d7be7227a1fc85b7f19155a5e9ba6d51dc0ea75283f3fdf6a8988cf`). Rebuild each
+spec with the runner's `build` route rather than trusting a stored view file: the
+view files recorded beside those specs predate this change and no longer
+reproject. Both routes preserve this Direct Outcome and v1 compatibility
+boundary. Exercising a route is a coverage fact about that run, not evidence
+that either axis is complete.
 
 The completed production evidence still proves one hydration axis only. The
 generic builder's deterministic two-point fixtures prove schema and parity

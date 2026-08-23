@@ -647,6 +647,79 @@ def test_evidence_identity_ignores_other_evidence_in_same_origin_candidate_bundl
     ) == view
 
 
+def _bind_shared_foreign_container_candidate(paths: dict[str, Path]) -> None:
+    """Give both fixture points one identical extra candidate under a displayed origin.
+
+    `reddit:thread1:post` is displayed by both fixture points, so the extra
+    candidate has to be identical in both or the cross-point evidence identity
+    guard fails first and the container boundary under test is never reached.
+    """
+    for point_id in ("point_a", "point_b"):
+        artifact_path = paths[f"artifact_{point_id}"]
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        artifact["candidate_dispositions"].append(
+            _candidate(
+                "candidate_shared_other",
+                evidence_id="reddit:thread7:post",
+                semantic_ref="reddit:thread7:post::other",
+                relation="adjacent",
+                origin="scope::reddit:alice",
+                container="reddit_thread_thread7",
+            )
+        )
+        post_row = next(
+            row
+            for group in artifact["source_groups"]
+            for row in group["rows"]
+            if row["evidence_id"] == "reddit:thread1:post"
+        )
+        post_row["origin_candidate_ids"].append("candidate_shared_other")
+        _write(artifact_path, artifact)
+
+
+def test_legacy_v1_container_ids_keep_their_frozen_origin_bundle_shape(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A published v1 view must keep the container_ids bytes it was published with.
+
+    The routed v2 projection narrows an evidence row's containers to that
+    evidence's own candidates. Applying the same narrowing to v1 silently
+    rewrites already published v1 views, so the frozen route keeps the original
+    origin-bundle union and only v2 narrows.
+    """
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    _bind_shared_foreign_container_candidate(paths)
+    axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    for descriptor in axis["points"]:
+        descriptor["candidate_count"] = 4
+        descriptor["artifact_sha256"] = hash_file(Path(descriptor["artifact_path"]))
+    axis["cold_reader_resolution"]["resolved_candidate_disposition_count"] = 8
+    _write(paths["axis"], axis)
+    spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+
+    routed_view = build_axis_consolidated_view(spec)
+    legacy_spec = copy.deepcopy(spec)
+    legacy_spec["schema_version"] = LEGACY_CONSOLIDATION_SPEC_VERSION
+    legacy_spec.pop("projection_routes")
+    legacy_view = build_axis_consolidated_view(legacy_spec)
+
+    def containers(view: Mapping[str, Any]) -> list[str]:
+        return next(
+            row
+            for row in view["evidence_index"]
+            if row["evidence_id"] == "reddit:thread1:post"
+        )["container_ids"]
+
+    assert containers(routed_view) == ["reddit_thread_thread1"]
+    assert containers(legacy_view) == [
+        "reddit_thread_thread1",
+        "reddit_thread_thread7",
+    ]
+    assert validate_axis_consolidated_view(
+        legacy_view, expected_view_sha256=legacy_view["view_sha256"]
+    ) == legacy_view
+
+
 def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -726,6 +799,7 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     assert len(point["same_origin_observation_groups"]) == 1
     group = point["same_origin_observation_groups"][0]
     assert group["source_observation_count"] == 2
+    assert group["layer"] == "truth_support"
     assert group["origin_group_id"] == "scope::reddit:alice"
     assert group["normalized_meaning"] == selected["normalized_meaning"]
     assert [row["evidence_id"] for row in group["observations"]] == [
@@ -758,6 +832,78 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     )
     assert point_row[columns.index("same_origin_observation_groups")] == [group]
     assert build_axis_consolidated_view(spec) == decision_view
+
+
+def test_generic_axis_pack_preserves_same_origin_repeated_observation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    selected = artifact["source_groups"][0]["rows"][0]
+    artifact["candidate_dispositions"].append(
+        _candidate(
+            "candidate_a_generic_repeat",
+            evidence_id="reddit:thread2:comment2",
+            semantic_ref="reddit:thread2:comment2::hydrating",
+            relation="support",
+            origin="scope::reddit:alice",
+            container="reddit_thread_thread2",
+            normalized_meaning=selected["normalized_meaning"],
+            publication_time="2025-07-02T03:04:05+00:00",
+        )
+    )
+    artifact["selection_disclosure"]["candidate_semantic_row_count"] = 4
+    _write(artifact_path, artifact)
+    accepted = next(
+        row for row in manifest["accepted_points"] if row["point_id"] == "point_a"
+    )
+    accepted["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(manifest)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    _write(paths["generic_axis"], pack)
+    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+
+    view = build_axis_consolidated_view(spec)
+
+    point = next(row for row in view["point_index"] if row["point_id"] == "point_a")
+    assert point["same_origin_observation_groups"][0]["source_observation_count"] == 2
+
+
+def test_same_origin_posture_conflict_fails_before_single_observation_is_skipped(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    selected = artifact["source_groups"][0]["rows"][0]
+    artifact["candidate_dispositions"].append(
+        _candidate(
+            "candidate_a_conflicting_posture",
+            evidence_id=selected["evidence_id"],
+            semantic_ref=selected["semantic_unit_ref"],
+            relation=selected["relation"],
+            origin=selected["origin_group_id"],
+            container="reddit_thread_thread1",
+            independence_posture="unavailable",
+            normalized_meaning=selected["normalized_meaning"],
+        )
+    )
+    artifact["selection_disclosure"]["candidate_semantic_row_count"] = 4
+    _write(artifact_path, artifact)
+    axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    point_a = next(row for row in axis["points"] if row["point_id"] == "point_a")
+    point_a["candidate_count"] = 4
+    point_a["artifact_sha256"] = hash_file(artifact_path)
+    axis["cold_reader_resolution"]["resolved_candidate_disposition_count"] = 7
+    _write(paths["axis"], axis)
+    spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="same-origin observation posture changed",
+    ):
+        build_axis_consolidated_view(spec)
 
 
 def test_legacy_v1_does_not_gain_evidence_accounting_fields(
@@ -835,6 +981,33 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     assert view["decision_state_contract"] == DECISION_STATE_CONSUMER_CONTRACT
     reader = view["decision_state_reader_surface"]
     assert reader["schema_version"] == "phase_a_evidence_decision_state_reader_surface_v1"
+    assert reader["decision_state_contract"]["state_row_columns"] == [
+        "state_kind",
+        "commercial_direction",
+        "decision_object",
+        "semantic_unit_row_ids",
+        "quantity",
+        "conditions",
+    ]
+    reader_join_order = " ".join(
+        reader["decision_state_contract"]["consumer_join_order"]
+    )
+    for absent_table in (
+        "decision_state_groups",
+        "point_placements",
+        "decision_state_index",
+        "companion_meaning_index",
+        "qualification_refs",
+    ):
+        assert absent_table not in reader_join_order
+    for present_table in (
+        "point_table",
+        "placement_table",
+        "evidence_table",
+        "semantic_unit_table",
+        "quote_table",
+    ):
+        assert present_table in reader_join_order
     assert len(reader["placement_table"]["rows"]) == view["counts"]["placement_count"]
     assert len(reader["point_table"]["rows"]) == view["counts"]["point_count"]
     assert len(reader["evidence_table"]["rows"]) == view["counts"]["unique_evidence_count"]
