@@ -31,11 +31,11 @@ failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 
-## Phase A evidence machinery regression anchors
+## Before changing Phase A evidence machinery
 
-Use these anchors before changing the Phase A point-pack, selection, or axis-
-projection machinery. They name the active boundaries most likely to produce a
-plausible but misleading result if lost. This section is a retrieval and
+Use these regression anchors before changing the Phase A point-pack, selection,
+quote, or axis-projection machinery. They name the active boundaries most likely
+to produce a plausible but misleading result if lost. This section is a retrieval and
 regression aid, not evidence authority, schema authority, or an exhaustive
 changelog. The linked contracts and executable tests own the current meaning;
 superseded rationale remains in the semantic-integration contract's

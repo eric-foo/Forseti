@@ -2933,7 +2933,9 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "phase_a_hydration_axis_pack_v2",
     ):
         assert required in workflow
-    assert "Phase A customer-evidence point pack, generic axis pack" in repo_map
+    assert "Phase A evidence machinery" in repo_map
+    assert "phase_a_evidence_selection.py" in repo_map
+    assert "phase_a_evidence_axis_consolidation.py" in repo_map
     assert "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in repo_map
     assert 'subparsers.add_parser("build-axis-pack")' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
