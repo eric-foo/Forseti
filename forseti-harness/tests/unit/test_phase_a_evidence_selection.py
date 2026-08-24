@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+import judgment.phase_a_evidence_selection as evidence_selection
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
@@ -742,7 +743,7 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
 
 
 def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display(
-    tmp_path: Path,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     packet = _proposition_packet_for_frontier()
     point = {
@@ -831,14 +832,109 @@ def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_disp
         for row in quote_manifest["labeled_inventory"]
         if row["candidate_id"] == rejected_candidate["candidate_id"]
     )
-    assert rejected_row["reason_code"] == rejection["cause"]
-    assert rejected_row["reason_code"] != "literal_source_does_not_state_bounded_relation"
     assert rejected_candidate["candidate_id"] not in {
         row["candidate_id"] for row in quote_manifest["selected_rows"]
     }
     assert quote_manifest["frontier_relation_candidate_ids"] == [
         surviving_candidate["candidate_id"]
     ]
+
+    def _historical_apply_frontier_relation_rejections(
+        historical_spec: dict, rows: list[dict]
+    ) -> list[dict]:
+        rejected_refs = {
+            (row["source_id"], row["semantic_unit_ref"])
+            for row in historical_spec["frontier_relation_rejections"]
+        }
+        resolved = []
+        for source_row in rows:
+            row = dict(source_row)
+            if (row["source_id"], row["semantic_unit_ref"]) in rejected_refs:
+                row["relation"] = "exclude"
+                row["reason_code"] = (
+                    "literal_source_does_not_state_bounded_relation"
+                )
+            resolved.append(row)
+        return resolved
+
+    # Emulate the v7 producer that stamped one stable exclusion code while the
+    # hash-bound spec retained the retired display-limit cause.  The current
+    # consumer must rederive those exact bytes rather than silently restamping
+    # the saved manifest with the spec's different cause string.
+    with monkeypatch.context() as historical:
+        historical.setattr(
+            evidence_selection,
+            "_apply_frontier_relation_rejections",
+            _historical_apply_frontier_relation_rejections,
+        )
+        (
+            _,
+            historical_labeled,
+            _,
+            _,
+            _,
+            _,
+        ) = evidence_selection._preselection_confirmation_state(
+            manifest, sources, response
+        )
+        _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+            manifest, sources, response
+        )
+        historical_by_id = {
+            row["candidate_id"]: row for row in historical_labeled
+        }
+        confirmation_response = {
+            "point_scope": "single_point",
+            "point_scope_reason": "One shade-use point under one condition set.",
+            "relation_checks": [
+                {
+                    "confirmation_row_id": row_id,
+                    "relation": historical_by_id[candidate_id]["relation"],
+                    "reason_code": historical_by_id[candidate_id]["reason_code"],
+                }
+                for row_id, candidate_id in zip(
+                    confirmation_manifest["confirmation_row_ids"],
+                    confirmation_manifest["confirmation_candidate_ids"],
+                    strict=True,
+                )
+            ],
+        }
+        _, _, historical_quote_manifest = (
+            _finalize_preselection_relation_confirmation_prepare_quotes(
+                manifest,
+                sources,
+                response,
+                confirmation_manifest,
+                confirmation_response,
+                quote_manifest_version=(
+                    LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                ),
+            )
+        )
+
+    stored = historical_quote_manifest["manifest_sha256"]
+    assert stored == _canonical_hash(
+        {
+            key: value
+            for key, value in historical_quote_manifest.items()
+            if key != "manifest_sha256"
+        }
+    )
+    assert historical_quote_manifest["preselection_replay"]["selection_manifest"][
+        "spec"
+    ]["frontier_relation_rejections"] == [rejection]
+    artifact = _finalize_quotes_runtime(
+        historical_quote_manifest,
+        sources,
+        _quote_response(historical_quote_manifest, sources),
+    )
+    assert artifact["schema_version"] == "phase_a_evidence_selection_artifact_v2"
+    # The stamped exclusion code is version-invariant, so a historical spec that
+    # still carries the retired display-limit cause replays byte-identically.
+    # The distinct cause stays retrievable from the hash-bound spec above.
+    assert rejected_row["reason_code"] == "literal_source_does_not_state_bounded_relation"
+    assert rejected_row["reason_code"] != rejection["cause"]
+    assert spec["frontier_relation_rejections"] == [rejection]
 
 
 def test_rejected_frontier_relation_is_deterministically_excluded_from_display(

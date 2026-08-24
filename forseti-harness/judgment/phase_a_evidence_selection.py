@@ -2568,8 +2568,8 @@ def _apply_frontier_relation_rejections(
         (row["source_id"], row["semantic_unit_ref"])
         for row in spec.get("admit_semantic_refs") or []
     }
-    rejected_causes = {
-        (row["source_id"], row["semantic_unit_ref"]): row["cause"]
+    rejected_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
         for row in _normalize_frontier_relation_rejections(
             spec.get("frontier_relation_rejections") or [],
             admitted_refs=admitted_refs,
@@ -2578,12 +2578,14 @@ def _apply_frontier_relation_rejections(
     resolved = []
     for source_row in rows:
         row = dict(source_row)
-        rejection_cause = rejected_causes.get(
-            (row["source_id"], row["semantic_unit_ref"])
-        )
-        if rejection_cause is not None:
+        if (row["source_id"], row["semantic_unit_ref"]) in rejected_refs:
             row["relation"] = "exclude"
-            row["reason_code"] = rejection_cause
+            # Every stamped manifest version records this one exclusion code
+            # regardless of the spec-declared cause, so a historical spec that
+            # still carries the retired display-limit cause keeps replaying
+            # byte-identically.  The cause itself stays distinguishable in the
+            # spec's hash-bound `frontier_relation_rejections`.
+            row["reason_code"] = "literal_source_does_not_state_bounded_relation"
         resolved.append(row)
     return resolved
 
