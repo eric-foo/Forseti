@@ -31,6 +31,33 @@ failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 
+## Phase A evidence machinery regression anchors
+
+Use these anchors before changing the Phase A point-pack, selection, or axis-
+projection machinery. They name the active boundaries most likely to produce a
+plausible but misleading result if lost. This section is a retrieval and
+regression aid, not evidence authority, schema authority, or an exhaustive
+changelog. The linked contracts and executable tests own the current meaning;
+superseded rationale remains in the semantic-integration contract's
+`## Changelog` and in Git/PR history. Update an anchor only when its active
+boundary or enforcement moves; do not append a row for every PR.
+
+Test names below resolve in
+`forseti-harness/tests/unit/test_phase_a_evidence_axis_consolidation.py`
+(`axis test`) or
+`forseti-harness/tests/unit/test_phase_a_evidence_selection.py`
+(`selection test`) as labeled.
+
+| Active guard | Failure it prevents | Current enforcement | Deeper history |
+| --- | --- | --- | --- |
+| Every accepted point is explicitly routed once to `direct_outcome` or `decision_state`; one axis may mix both. | An axis name silently forces every point through one reading shape, so a result and an actor's choice state become indistinguishable. | This workflow, paragraph beginning `Projection routing is point-level`; `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` (`_projection_routes`); axis tests `test_v2_projection_routes_require_exactly_one_known_route_per_point` and `test_mixed_projection_routes_keep_direct_and_decision_points_distinct`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. |
+| Decision State preserves actor, object, state kind/stage, direction, quantity, conditions, relation-bearing meanings, and same-source companion states; direct results can remain explicit context only. | Purchase intent becomes purchase, four units become four repurchases, or regret and intended repurchase collapse into one positive/negative label. | This workflow, paragraphs beginning `The v2 builder implements both` and `The v2 spec carries these facts`; `DECISION_STATE_CONSUMER_CONTRACT` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_decision_state_projects_typed_companion_states_and_rejected_frontier`, `test_decision_state_wrong_cause_transitions_fail_at_semantic_boundary`, `test_decision_state_bindings_require_exact_row_and_semantic_coverage`, and `test_decision_state_retains_direct_result_row_as_explicit_context_only`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `a75de28e`, `e92dfc2f`, `9ec2e865`. |
+| Price concern, value rejection or approval, and source-supported premium quality/positioning remain separate; Phase A does not infer pricing power or a higher-tier recommendation. | "Expensive but worth it" is flattened into poor value, or the word `premium` is invented from price and handed downstream as a recommendation. | This workflow, paragraph beginning `For price-and-value evidence`; `DECISION_STATE_BOUNDARIES` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; `VALUE_RELATION_GUIDANCE`, `_uses_value_policy`, and `_select_value_groups` in `forseti-harness/judgment/phase_a_evidence_selection.py`; axis test `test_decision_state_keeps_price_value_and_premium_meanings_distinct`; selection tests `test_high_spend_buyer_remorse_cannot_be_promoted_to_value_support` and `test_value_policy_does_not_turn_time_to_finish_into_quantity_value`. | Semantic-integration contract changelog `v40`, `v45`, `v46`, and `v48`; commits `5529a646`, `ef791055`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
+| Several matching statements from one origin remain several source observations but add only one independent origin; literal evidence, date, surface, and native engagement stay attached to each observation. | Two statements from one account are reported as two independent people, or the later statement disappears during origin de-duplication. | `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`, "Independent origins and source observations are different counts"; `EVIDENCE_ACCOUNTING_CONTRACT` and `_same_origin_observation_groups` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_same_origin_repeated_observation_survives_without_adding_origin_credit` and `test_generic_axis_pack_preserves_same_origin_repeated_observation`. | Commit `8442885a`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
+| Every admitted frontier candidate remains accounted; a literal relation rejected for a proved wrong source link stays excluded and cold-resolvable, while counterevidence and the last earning signal cannot be removed. Rejected-only axes require pinned resolution receipts. | A bad literal link is replaced with a nearby quote, or rejected and awkward evidence simply disappears so the axis looks complete. | This workflow, `frontier_relation_rejections` paragraph beginning `That failure removes only`, and rejected-only paragraph beginning `An axis whose entire frontier fails`; `_validate_resolved_frontier_earning` and `_apply_frontier_relation_rejections` in `forseti-harness/judgment/phase_a_evidence_selection.py`; `build_phase_a_evidence_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display`, `test_frontier_relation_rejection_cannot_remove_the_last_earning_signal`, and `test_frontier_relation_rejection_cannot_hide_counterevidence`; axis tests `test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt` and `test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt`. | Commits `9b6dd2ca`, `36a40086`, `3ffe2d4e`; PR [#1515](https://github.com/eric-foo/forseti/pull/1515). |
+| Quote length never decides whether current evidence is truthful. V8 accepts the shortest context-complete contiguous exact span even above 220 characters; 220 remains only the short-body copy/review-workload threshold, and stamped v7 keeps its historical ceiling. | A long truthful explanation is rejected because it is inconvenient to display, or historical v7 replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION` and its v7 compatibility branch in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded` and `test_quote_stopping_before_the_next_source_word_fails_loud`. | Semantic-integration contract changelog `v58`; commit `54610553`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
+| Frozen v1 specs and views rebuild under their original shape and bytes; v2-only routing, Decision State, and evidence-accounting fields never leak backward. | A current improvement quietly restamps historical evidence or makes the compatibility control look reproducible when its bytes changed. | This workflow, paragraph containing `The v1 spec and`; `LEGACY_CONSOLIDATION_SPEC_VERSION`, `LEGACY_CONSOLIDATED_VIEW_VERSION`, and `build_axis_consolidated_view` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields`, `test_v1_rejects_decision_state_spec_residue`, and `test_legacy_v1_does_not_gain_evidence_accounting_fields`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. Quote-manifest v7/v8 replay is the separate compatibility boundary in semantic-integration contract changelog `v58`. |
+
 ## Active commercial point-entry boundary
 
 For the completed Summer Fridays Phase A packet, the business question is:
@@ -97,7 +124,7 @@ prepare-evidence-selection
      influence row that could reach display
   -> finalize-preselection-relation-confirmation
   -> external exact-quote response
-  -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
+  -> finalize-evidence-selection-quotes (no confirmation attachment for v8)
 ```
 
 When that frontier-bound non-value point expands to a large axis pool, use the
@@ -111,7 +138,7 @@ prepare-evidence-selection-batches
      protected, or influence row that could reach display
   -> finalize-batched-preselection-relation-confirmation
   -> external exact-quote response
-  -> finalize-evidence-selection-quotes (no confirmation attachment for v7)
+  -> finalize-evidence-selection-quotes (no confirmation attachment for v8)
 ```
 
 Both batch manifests bind contiguous complete row coverage and each response's
@@ -1179,7 +1206,7 @@ changed bytes fail.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 
-New frontier-bound point packs use `phase_a_evidence_quote_manifest_v7`; the
+New frontier-bound point packs use `phase_a_evidence_quote_manifest_v8`; the
 non-frontier relation and batched routes still produce `v6`. Both record the
 ordered `provider_selected_ids` subset. The finalizer recomputes that subset
 from the bound bodies, rejects drift, deterministically fills short or missing
@@ -1195,8 +1222,9 @@ concern`, `Explicitly worth the price`, `Strong price-to-quantity value`, `Too
 little product for the price`, `Performance does not justify the price`, and
 `Price prevents repurchase`. A malformed, overlong, or
 support/counter/adjacent/exclude-leaking reason code fails closed before display.
-V7 also binds the completed pre-selection relation confirmation and requires no
-late confirmation attachment during quote finalization. Historical v6 keeps
+V8 also binds the completed pre-selection relation confirmation and requires no
+late confirmation attachment during quote finalization. Historical v7 retains
+its stamped quote-length ceiling, while historical v6 keeps
 its selected-row confirmation attachment; legacy v1 and v3 quote manifests keep
 their original all-selected response shape and remain finalizable. The
 superseded v2 presentation-statement experiment was scratch-only and is not a
