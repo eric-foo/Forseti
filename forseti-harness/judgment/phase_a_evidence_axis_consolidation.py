@@ -40,6 +40,7 @@ POINT_TRUTH_ORIGIN_CAP = 13
 SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
     "phase_a_evidence_quote_manifest_v6",
     "phase_a_evidence_quote_manifest_v7",
+    "phase_a_evidence_quote_manifest_v8",
 }
 INDEPENDENCE_POSTURES = {
     "credited",
@@ -1807,20 +1808,32 @@ def _decision_state_rejected_index(
     """Optionally bind rejected points to an explicit existing navigation group."""
 
     required_fields = {"point_id", "bounded_point", "disposition", "reason"}
+    receipt_fields = {"resolution_receipt_path", "resolution_receipt_sha256"}
     result: list[dict[str, Any]] = []
     for row in rejected_points:
-        if not isinstance(row, Mapping) or set(row) != required_fields:
+        if not isinstance(row, Mapping) or set(row) not in {
+            frozenset(required_fields),
+            frozenset(required_fields | receipt_fields),
+        }:
             raise EvidenceConsumerError(
                 "decision_state_binding", "rejected-point fields are invalid"
             )
-        result.append(
-            {
-                field: _required_string(
-                    row, field, boundary="decision_state_binding"
-                )
-                for field in ("point_id", "bounded_point", "disposition", "reason")
-            }
-        )
+        normalized = {
+            field: _required_string(
+                row, field, boundary="decision_state_binding"
+            )
+            for field in ("point_id", "bounded_point", "disposition", "reason")
+        }
+        if receipt_fields <= set(row):
+            normalized.update(
+                {
+                    field: _required_string(
+                        row, field, boundary="decision_state_binding"
+                    )
+                    for field in sorted(receipt_fields)
+                }
+            )
+        result.append(normalized)
     raw_bindings = spec.get("decision_state_rejected_point_navigation")
     if raw_bindings is None:
         return result
