@@ -1928,6 +1928,45 @@ def test_decision_state_rejects_incomplete_legacy_rejected_point_rows(
         build_axis_consolidated_view(spec)
 
 
+def test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    receipt_path = tmp_path / "rejected-point-receipt.json"
+    _write(
+        receipt_path,
+        {
+            "schema_version": "phase_a_rejected_point_resolution_receipt_v1",
+            "point_id": "point_rejected",
+            "failure_boundary": "frontier_relation_quote_relevance",
+        },
+    )
+    manifest["rejected_points"][0].update(
+        {
+            "resolution_receipt_path": str(receipt_path),
+            "resolution_receipt_sha256": hash_file(receipt_path),
+        }
+    )
+    _rehash_manifest(manifest)
+    axis_pack = build_phase_a_evidence_axis_pack(manifest)
+    _write(paths["generic_axis"], axis_pack)
+    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+    _route_every_point_as_decision_state(spec)
+
+    view = build_axis_consolidated_view(spec)
+
+    assert view["rejected_point_index"] == [
+        {
+            "point_id": "point_rejected",
+            "bounded_point": "The balm fixes every lip outcome.",
+            "disposition": "point_scope_failed",
+            "reason": "broad_axis_or_bundle",
+            "resolution_receipt_path": str(receipt_path),
+            "resolution_receipt_sha256": hash_file(receipt_path),
+        }
+    ]
+
+
 @pytest.mark.parametrize("projection_mode", ["direct_outcome", "decision_state"])
 def test_v2_routed_points_require_the_boundaries_owned_by_each_point(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, projection_mode: str

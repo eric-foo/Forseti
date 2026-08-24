@@ -53,6 +53,9 @@ RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 RELATION_POLICIES = ("auto", "bounded_point")
 TEMPORAL_PRESENTATION_POLICIES = ("recent_year_coverage_v1",)
 FRONTIER_RELATION_DISPLAY_POLICY = "literal_point_relations_display_eligible_v1"
+FRONTIER_RELATION_REJECTION_CAUSES = (
+    "literal_source_does_not_state_bounded_relation",
+)
 RECENT_YEAR_COUNT = 2
 POSITIONAL_REASON_CODE_BY_RELATION = {
     "support": "matching_customer_experience",
@@ -585,6 +588,8 @@ def selection_spec_from_customer_pull_frontier(
     frontier: Mapping[str, Any],
     packet: Mapping[str, Any],
     proposition_id: str,
+    *,
+    frontier_relation_rejections: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     verify_customer_pull_point_frontier(frontier, packet)
     matches = [
@@ -619,6 +624,20 @@ def selection_spec_from_customer_pull_frontier(
         if expand_axis
         else "literal_point_relations"
     )
+    normalized_rejections = _normalize_frontier_relation_rejections(
+        frontier_relation_rejections,
+        admitted_refs={(row["source_id"], row["semantic_unit_ref"]) for row in admitted},
+    )
+    if normalized_rejections:
+        _validate_resolved_frontier_earning(
+            packet,
+            proposition_id,
+            rejected_pairs={
+                (row["source_id"], row["semantic_unit_ref"])
+                for row in normalized_rejections
+            },
+            source_id=frontier["source_id"],
+        )
     binding = {
         "frontier_sha256": frontier["frontier_sha256"],
         "packet_sha256": packet["packet_sha256"],
@@ -635,6 +654,10 @@ def selection_spec_from_customer_pull_frontier(
         "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "relation_policy": "bounded_point",
     }
+    if normalized_rejections:
+        binding["frontier_relation_rejections_sha256"] = _canonical_json_sha256(
+            normalized_rejections
+        )
     spec = {
         "schema_version": SELECTION_SPEC_VERSION,
         "selection_id": proposition_id,
@@ -649,9 +672,121 @@ def selection_spec_from_customer_pull_frontier(
         "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "customer_pull_frontier_binding": binding,
     }
+    if normalized_rejections:
+        spec["frontier_relation_rejections"] = normalized_rejections
     if expand_axis:
         spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
     return spec
+
+
+def _normalize_frontier_relation_rejections(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    admitted_refs: set[tuple[str, str]],
+) -> list[dict[str, str]]:
+    if not isinstance(rows, Sequence) or isinstance(rows, (str, bytes)):
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution", "frontier relation rejections must be rows"
+        )
+    normalized: list[dict[str, str]] = []
+    for row in rows:
+        if not isinstance(row, Mapping) or set(row) != {
+            "source_id",
+            "semantic_unit_ref",
+            "cause",
+        }:
+            raise EvidenceConsumerError(
+                "frontier_relation_resolution", "frontier relation rejection shape changed"
+            )
+        source_id = row.get("source_id")
+        semantic_ref = row.get("semantic_unit_ref")
+        cause = row.get("cause")
+        if (
+            not isinstance(source_id, str)
+            or not isinstance(semantic_ref, str)
+            or cause not in FRONTIER_RELATION_REJECTION_CAUSES
+            or (source_id, semantic_ref) not in admitted_refs
+        ):
+            raise EvidenceConsumerError(
+                "frontier_relation_resolution",
+                "frontier relation rejection is not an admitted literal relation",
+            )
+        normalized.append(
+            {
+                "source_id": source_id,
+                "semantic_unit_ref": semantic_ref,
+                "cause": cause,
+            }
+        )
+    normalized.sort(key=lambda row: (row["source_id"], row["semantic_unit_ref"]))
+    pairs = [(row["source_id"], row["semantic_unit_ref"]) for row in normalized]
+    if len(pairs) != len(set(pairs)):
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution", "frontier relation rejection is duplicated"
+        )
+    return normalized
+
+
+def _validate_resolved_frontier_earning(
+    packet: Mapping[str, Any],
+    proposition_id: str,
+    *,
+    rejected_pairs: set[tuple[str, str]],
+    source_id: str,
+) -> None:
+    propositions = {
+        row.get("proposition_id"): row
+        for row in packet.get("propositions", [])
+        if isinstance(row, Mapping)
+    }
+    proposition = propositions.get(proposition_id)
+    if not isinstance(proposition, Mapping):
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution", "frontier proposition is absent"
+        )
+    evidence_index, _ = _expand_packet(packet)
+    relation_rows = _relation_rows(packet, proposition_id)
+    support_pairs = {
+        (source_id, row["semantic_unit_ref"])
+        for row in relation_rows
+        if row["relation"] == "support"
+    }
+    if not rejected_pairs <= support_pairs:
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution",
+            "only a false literal support relation can be rejected",
+        )
+    support_rows: list[tuple[Mapping[str, Any], Mapping[str, Any]]] = []
+    for relation_row in relation_rows:
+        pair = (source_id, relation_row["semantic_unit_ref"])
+        if relation_row["relation"] != "support" or pair in rejected_pairs:
+            continue
+        group, evidence = evidence_index[relation_row["evidence_id"]]
+        if group.get("source_role") in TRUTH_ROLES:
+            support_rows.append((group, evidence))
+    origins = {
+        (
+            packet.get("source_bindings", {}).get("corpus_sha256"),
+            evidence.get("independence_key") or evidence.get("evidence_id"),
+        )
+        for _, evidence in support_rows
+    }
+    materially_engaged = any(
+        (evidence.get("engagement") or {}).get("status", "engagement_available")
+        != "engagement_unavailable"
+        and (evidence.get("engagement") or {}).get("material_positive") is True
+        for _, evidence in support_rows
+    )
+    earned = (
+        proposition.get("claim_kind") == "reported_behavior"
+        or len(origins) >= 2
+        or materially_engaged
+    )
+    if not support_rows or not earned:
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution",
+            "surviving literal relations no longer earn frontier admission",
+        )
 
 
 LEGACY_RELATION_PROMPT_COLUMNS = (
@@ -1660,11 +1795,13 @@ def _validate_customer_pull_frontier_spec_binding(
         "temporal_presentation_policy",
     }
     current_keys = expanded_keys | {"frontier_relation_display_policy"}
+    resolved_keys = current_keys | {"frontier_relation_rejections_sha256"}
     binding_keys = frozenset(binding) if isinstance(binding, Mapping) else frozenset()
     if not isinstance(binding, Mapping) or binding_keys not in {
         frozenset(legacy_keys),
         frozenset(expanded_keys),
         frozenset(current_keys),
+        frozenset(resolved_keys),
     }:
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier binding shape changed"
@@ -1674,7 +1811,11 @@ def _validate_customer_pull_frontier_spec_binding(
             "customer_pull_frontier_binding",
             "legacy frontier binding cannot authorize axis-wide admission",
         )
-    if binding_keys in {frozenset(expanded_keys), frozenset(current_keys)} and (
+    if binding_keys in {
+        frozenset(expanded_keys),
+        frozenset(current_keys),
+        frozenset(resolved_keys),
+    } and (
         binding.get("axis_ids_sha256")
         != _canonical_json_sha256(spec.get("axis_ids") or [])
         or binding.get("candidate_admission")
@@ -1696,7 +1837,7 @@ def _validate_customer_pull_frontier_spec_binding(
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
-    if binding_keys == frozenset(current_keys) and (
+    if binding_keys in {frozenset(current_keys), frozenset(resolved_keys)} and (
         binding.get("frontier_relation_display_policy")
         != spec.get("frontier_relation_display_policy")
         or spec.get("frontier_relation_display_policy")
@@ -1704,6 +1845,52 @@ def _validate_customer_pull_frontier_spec_binding(
     ):
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
+        )
+    if binding_keys == frozenset(resolved_keys):
+        rejections = _normalize_frontier_relation_rejections(
+            spec.get("frontier_relation_rejections"),
+            admitted_refs={
+                (row["source_id"], row["semantic_unit_ref"])
+                for row in spec.get("admit_semantic_refs") or []
+                if isinstance(row, Mapping)
+                and isinstance(row.get("source_id"), str)
+                and isinstance(row.get("semantic_unit_ref"), str)
+            },
+        )
+        if (
+            not rejections
+            or binding.get("frontier_relation_rejections_sha256")
+            != _canonical_json_sha256(rejections)
+        ):
+            raise EvidenceConsumerError(
+                "customer_pull_frontier_binding",
+                "frontier relation resolution changed",
+            )
+        packet = next(
+            (
+                source["packet"]
+                for source in sources
+                if source["packet"].get("packet_sha256") == binding.get("packet_sha256")
+            ),
+            None,
+        )
+        if packet is None:
+            raise EvidenceConsumerError(
+                "customer_pull_frontier_binding",
+                "frontier packet is not among the sources",
+            )
+        _validate_resolved_frontier_earning(
+            packet,
+            str(binding.get("proposition_id")),
+            rejected_pairs={
+                (row["source_id"], row["semantic_unit_ref"])
+                for row in rejections
+            },
+            source_id=rejections[0]["source_id"],
+        )
+    elif spec.get("frontier_relation_rejections") is not None:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier relation resolution is unbound"
         )
     if (
         binding.get("queue")
@@ -2338,11 +2525,43 @@ def _frontier_relation_candidate_ids(
         (row["source_id"], row["semantic_unit_ref"])
         for row in spec.get("admit_semantic_refs") or []
     }
+    rejected_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in _normalize_frontier_relation_rejections(
+            spec.get("frontier_relation_rejections") or [],
+            admitted_refs=admitted_refs,
+        )
+    }
     return frozenset(
         row["candidate_id"]
         for row in rows
         if (row["source_id"], row["semantic_unit_ref"]) in admitted_refs
+        and (row["source_id"], row["semantic_unit_ref"]) not in rejected_refs
     )
+
+
+def _apply_frontier_relation_rejections(
+    spec: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> list[dict[str, Any]]:
+    admitted_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in spec.get("admit_semantic_refs") or []
+    }
+    rejected_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in _normalize_frontier_relation_rejections(
+            spec.get("frontier_relation_rejections") or [],
+            admitted_refs=admitted_refs,
+        )
+    }
+    resolved = []
+    for source_row in rows:
+        row = dict(source_row)
+        if (row["source_id"], row["semantic_unit_ref"]) in rejected_refs:
+            row["relation"] = "exclude"
+            row["reason_code"] = "literal_source_does_not_state_bounded_relation"
+        resolved.append(row)
+    return resolved
 
 
 def _preselection_relation_confirmation_schema(
@@ -2974,13 +3193,16 @@ def _validate_relation_response(
             or not REASON_CODE_RE.fullmatch(result["reason_code"])
         ):
             raise EvidenceConsumerError("relation_response_shape", "invalid relation result")
-        if INTERNAL_RELATION_LABEL_RE.search(result["reason_code"].replace("_", " ")):
+        reason_code = result["reason_code"]
+        if not value_policy:
+            reason_code = _normalize_reason_code(reason_code)
+        if INTERNAL_RELATION_LABEL_RE.search(reason_code.replace("_", " ")):
             raise EvidenceConsumerError(
                 "reason_code_relation_leak",
                 "reason code must name the evidence meaning, not its internal relation",
             )
         if value_policy:
-            expected_relation = VALUE_REASON_RELATIONS.get(result["reason_code"])
+            expected_relation = VALUE_REASON_RELATIONS.get(reason_code)
             if expected_relation is None:
                 raise EvidenceConsumerError(
                     "value_reason_code",
@@ -2995,8 +3217,18 @@ def _validate_relation_response(
             raise EvidenceConsumerError(
                 "creator_customer_laundering", "creator-authored evidence cannot corroborate customer truth"
             )
-        merged.append({**candidate, "relation": result["relation"], "reason_code": result["reason_code"]})
+        merged.append({**candidate, "relation": result["relation"], "reason_code": reason_code})
     return merged
+
+
+def _normalize_reason_code(reason_code: str) -> str:
+    """Keep ordinary ``exclude`` verbs from masquerading as lane labels."""
+
+    tokens = reason_code.split("_")
+    return "_".join(
+        "omits" if token == "exclude" and 0 < index < len(tokens) - 1 else token
+        for index, token in enumerate(tokens)
+    )
 
 
 def _display_label(reason_code: str) -> str:
@@ -3190,7 +3422,7 @@ def _prepare_quotes_from_labeled(
     value_policy = _uses_value_policy(manifest["spec"], labeled)
     truth_selection_policy = "value_first" if value_policy else "balanced"
     temporal_policy = _temporal_presentation_policy(manifest["spec"])
-    labeled = [dict(row) for row in labeled]
+    labeled = _apply_frontier_relation_rejections(manifest["spec"], labeled)
     frontier_relation_candidate_ids = _frontier_relation_candidate_ids(
         manifest["spec"], labeled
     )
@@ -3365,6 +3597,7 @@ def _preselection_confirmation_state(
         value_policy=value_policy,
         response_mode=_relation_response_mode(manifest["spec"]),
     )
+    labeled = _apply_frontier_relation_rejections(manifest["spec"], labeled)
     frontier_relation_candidate_ids = _frontier_relation_candidate_ids(
         manifest["spec"], labeled
     )
@@ -3532,6 +3765,8 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
             raise EvidenceConsumerError(
                 "relation_confirmation_shape", "invalid relation confirmation"
             )
+        if not expected_manifest["value_policy"]:
+            reason_code = _normalize_reason_code(reason_code)
         if INTERNAL_RELATION_LABEL_RE.search(reason_code.replace("_", " ")):
             raise EvidenceConsumerError(
                 "reason_code_relation_leak",

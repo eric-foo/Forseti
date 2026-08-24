@@ -628,6 +628,22 @@ not contain. If an available frontier-defining body yields no relevant exact
 quote, point completion fails at `frontier_relation_quote_relevance`; do not
 replace it with parent, child, sibling, or engagement meaning.
 
+That failure rejects the false literal support relation, not automatically
+every other relation attached to the point. Counter and adjacent relations are
+not eligible for this repair. After checking the bound source, an author may
+rerun the point with a hash-bound `frontier_relation_rejections` row whose only
+cause is `literal_source_does_not_state_bounded_relation`. The rejected
+semantic reference stays admitted and candidate-accounted, must be labeled
+`exclude`, and cannot be forced into display or exact-quote work. The consumer
+rechecks frontier admission from the surviving literal customer support. If
+the surviving support no longer supplies reported behavior, independent
+customer recurrence, or material source-native engagement, the whole point
+must be rejected instead. This is a repair for a wrong packet link, not an
+allowance to hide counterevidence, quiet evidence, or an inconvenient result.
+Materialize that repaired spec with one repeated
+`--reject-frontier-relation <semantic_unit_ref>` argument per source-checked
+bad link; the runner fixes the cause vocabulary and binds the resulting list.
+
 For a whole-axis pack, thirteen is the maximum number of displayed distinct
 truth origins **per bounded point**, not the size of the evidence corpus and not
 an instruction to take the thirteen largest engagement values. The queue order

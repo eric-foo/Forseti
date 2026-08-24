@@ -722,6 +722,301 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
     assert caught.value.boundary == "customer_pull_frontier_binding"
 
 
+def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display(
+    tmp_path: Path,
+) -> None:
+    packet = _proposition_packet_for_frontier()
+    point = {
+        "proposition_id": "point-shade-wear",
+        "bounded_proposition": "The author wears the Poppy shade in the shared example.",
+        "claim_kind": "customer_experience",
+        "axis_ids": ["shade_and_color_fit"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": 2, "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [
+                ["community_post:0", ["community_post:0::hydration"]],
+                ["community_post:5", ["community_post:5::hydration"]],
+            ],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
+    packet["propositions"].append(point)
+    packet["selection"]["axis_ids"].append("shade_and_color_fit")
+    packet["selection"]["proposition_ids"].append(point["proposition_id"])
+    packet["selection_coverage"]["selected_proposition_count"] += 1
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier-relation-resolution",
+        business_question="Which literal shade points merit investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    rejection = {
+        "source_id": "full-corpus",
+        "semantic_unit_ref": "community_post:0::hydration",
+        "cause": "literal_source_does_not_state_bounded_relation",
+    }
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier,
+        packet,
+        point["proposition_id"],
+        frontier_relation_rejections=[rejection],
+    )
+    _, bundle = _packet_and_bundle(10)
+    packet_path = tmp_path / "packet.json"
+    bundle_path = tmp_path / "bundle.json"
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    sources = [
+        {
+            "source_id": "full-corpus",
+            "packet_path": packet_path,
+            "bundle_path": bundle_path,
+            "packet": packet,
+            "bundle": bundle,
+        }
+    ]
+
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    rejected_candidate = next(
+        row
+        for row in candidates
+        if row["semantic_unit_ref"] == rejection["semantic_unit_ref"]
+    )
+    surviving_candidate = next(
+        row
+        for row in candidates
+        if row["semantic_unit_ref"] == "community_post:5::hydration"
+    )
+    response = _positional_relation_response(candidates)
+    for index, candidate in enumerate(candidates):
+        if candidate["candidate_id"] == rejected_candidate["candidate_id"]:
+            response["results_by_candidate_row"][f"row_{index:04d}"] = "exclude"
+        elif candidate["candidate_id"] == surviving_candidate["candidate_id"]:
+            response["results_by_candidate_row"][f"row_{index:04d}"] = "support"
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, response
+    )
+
+    assert rejected_candidate["candidate_id"] in {
+        row["candidate_id"] for row in quote_manifest["labeled_inventory"]
+    }
+    assert rejected_candidate["candidate_id"] not in {
+        row["candidate_id"] for row in quote_manifest["selected_rows"]
+    }
+    assert quote_manifest["frontier_relation_candidate_ids"] == [
+        surviving_candidate["candidate_id"]
+    ]
+
+
+def test_rejected_frontier_relation_is_deterministically_excluded_from_display(
+    tmp_path: Path,
+) -> None:
+    packet = _proposition_packet_for_frontier()
+    point = next(
+        row
+        for row in packet["propositions"]
+        if row["proposition_id"] == "point-community-behavior"
+    )
+    point["evidence_relations"]["support"].append(
+        ["community_post:0", ["community_post:0::hydration"]]
+    )
+    point["evidence_item_counts"]["support"] = 2
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier-relation-resolution",
+        business_question="Which literal points merit investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    rejection = {
+        "source_id": "full-corpus",
+        "semantic_unit_ref": "community_post:0::hydration",
+        "cause": "literal_source_does_not_state_bounded_relation",
+    }
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier,
+        packet,
+        "point-community-behavior",
+        frontier_relation_rejections=[rejection],
+    )
+    _, bundle = _packet_and_bundle(10)
+    packet_path = tmp_path / "packet.json"
+    bundle_path = tmp_path / "bundle.json"
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    sources = [
+        {
+            "source_id": "full-corpus",
+            "packet_path": packet_path,
+            "bundle_path": bundle_path,
+            "packet": packet,
+            "bundle": bundle,
+        }
+    ]
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    response = _relation_response(candidates)
+    rejected_index = next(
+        index
+        for index, row in enumerate(candidates)
+        if row["semantic_unit_ref"] == rejection["semantic_unit_ref"]
+    )
+    response["results"][rejected_index]["relation"] = "support"
+
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, response
+    )
+
+    resolved = next(
+        row
+        for row in quote_manifest["labeled_inventory"]
+        if row["candidate_id"] == candidates[rejected_index]["candidate_id"]
+    )
+    assert resolved["relation"] == "exclude"
+    assert (
+        resolved["reason_code"]
+        == "literal_source_does_not_state_bounded_relation"
+    )
+    assert resolved["candidate_id"] not in {
+        row["candidate_id"] for row in quote_manifest["selected_rows"]
+    }
+
+
+def test_frontier_relation_rejection_cannot_remove_the_last_earning_signal() -> None:
+    packet = _proposition_packet_for_frontier()
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier-relation-resolution",
+        business_question="Which literal points merit investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        selection_spec_from_customer_pull_frontier(
+            frontier,
+            packet,
+            "point-retailer",
+            frontier_relation_rejections=[
+                {
+                    "source_id": "full-corpus",
+                    "semantic_unit_ref": "retailer_review:1::hydration",
+                    "cause": "literal_source_does_not_state_bounded_relation",
+                }
+            ],
+        )
+
+    assert caught.value.boundary == "frontier_relation_resolution"
+
+
+def test_frontier_relation_rejection_cannot_hide_counterevidence() -> None:
+    packet = _proposition_packet_for_frontier()
+    point = next(
+        row
+        for row in packet["propositions"]
+        if row["proposition_id"] == "point-retailer"
+    )
+    point["evidence_relations"]["counter"].append(
+        ["community_post:0", ["community_post:0::hydration"]]
+    )
+    point["evidence_item_counts"]["counter"] = 1
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier-relation-resolution",
+        business_question="Which literal points merit investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        selection_spec_from_customer_pull_frontier(
+            frontier,
+            packet,
+            "point-retailer",
+            frontier_relation_rejections=[
+                {
+                    "source_id": "full-corpus",
+                    "semantic_unit_ref": "community_post:0::hydration",
+                    "cause": "literal_source_does_not_state_bounded_relation",
+                }
+            ],
+        )
+
+    assert caught.value.boundary == "frontier_relation_resolution"
+
+
+def test_frontier_relation_rejection_binding_is_tamper_evident() -> None:
+    packet = _proposition_packet_for_frontier()
+    point = next(
+        row
+        for row in packet["propositions"]
+        if row["proposition_id"] == "point-community-behavior"
+    )
+    point["evidence_relations"]["support"].append(
+        ["community_post:0", ["community_post:0::hydration"]]
+    )
+    point["evidence_item_counts"]["support"] = 2
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="frontier-relation-resolution",
+        business_question="Which literal points merit investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier,
+        packet,
+        "point-community-behavior",
+        frontier_relation_rejections=[
+            {
+                "source_id": "full-corpus",
+                "semantic_unit_ref": "community_post:0::hydration",
+                "cause": "literal_source_does_not_state_bounded_relation",
+            }
+        ],
+    )
+    _, bundle = _packet_and_bundle(10)
+    sources = [{"source_id": "full-corpus", "packet": packet, "bundle": bundle}]
+    tampered = copy.deepcopy(spec)
+    tampered["frontier_relation_rejections"][0]["semantic_unit_ref"] = (
+        "community_post:5::hydration"
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(tampered, sources)
+
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    parsed = _parser().parse_args(
+        [
+            "materialize-customer-pull-point-selection-spec",
+            "--frontier",
+            "frontier.json",
+            "--packet",
+            "packet.json",
+            "--bundle",
+            "bundle.json",
+            "--proposition-id",
+            "point-community-behavior",
+            "--reject-frontier-relation",
+            "community_post:0::hydration",
+            "--spec-out",
+            "spec.json",
+        ]
+    )
+    assert parsed.rejected_frontier_semantic_refs == [
+        "community_post:0::hydration"
+    ]
+
 def test_recent_year_policy_changes_display_only_and_keeps_an_older_anchor(
     tmp_path: Path,
 ) -> None:
@@ -3149,6 +3444,39 @@ def test_relation_reason_code_cannot_leak_internal_relation_into_display_label(
     with pytest.raises(EvidenceConsumerError) as caught:
         finalize_relations_prepare_quotes(manifest, sources, response)
     assert caught.value.boundary == boundary
+
+
+def test_ordinary_exclude_verb_is_normalized_without_weakening_lane_label_guard(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidate = _candidate_rows(sources, spec)[0]
+    response = {
+        "results": [
+            {
+                "candidate_id": candidate["candidate_id"],
+                "relation": "counter",
+                "reason_code": "favorite_set_exclude_vanilla",
+            }
+        ]
+    }
+
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, response
+    )
+
+    assert quote_manifest["labeled_inventory"][0]["reason_code"] == (
+        "favorite_set_omits_vanilla"
+    )
+    assert _display_label(quote_manifest["selected_rows"][0]["reason_code"]) == (
+        "Favorite set omits vanilla"
+    )
+
+    response["results"][0]["reason_code"] = "exclude"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, response)
+    assert caught.value.boundary == "reason_code_relation_leak"
 
 
 def test_legacy_quote_manifest_retains_its_original_response_shape(tmp_path: Path) -> None:
