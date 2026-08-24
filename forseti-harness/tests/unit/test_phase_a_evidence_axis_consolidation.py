@@ -2913,6 +2913,7 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     workflow = (
         repository_root / "docs/workflows/phase_a_customer_evidence_completion_path_v0.md"
     ).read_text(encoding="utf-8")
+    normalized_workflow = " ".join(workflow.split())
     repo_map = (repository_root / "docs/workflows/forseti_repo_map_v0.md").read_text(
         encoding="utf-8"
     )
@@ -2931,8 +2932,13 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "Absence from the small index is therefore not evidence",
         "Do not infer any sibling file",
         "phase_a_hydration_axis_pack_v2",
+        "reconstructed hash-bound bytes",
+        "independently produced historical artifact",
+        "old consumer path remains replayable",
+        "Use cold model dogfood only",
+        "test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display",
     ):
-        assert required in workflow
+        assert required in normalized_workflow
     assert "Phase A evidence machinery" in repo_map
     assert "phase_a_evidence_selection.py" in repo_map
     assert "phase_a_evidence_axis_consolidation.py" in repo_map
