@@ -839,6 +839,45 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     assert build_axis_consolidated_view(spec) == decision_view
 
 
+def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    expected = (
+        "point_index[*].authoritative_point_meaning exactly repeats bounded_point and is the "
+        "authoritative admitted point meaning, including literal comparator, time, and "
+        "personal-fit terms; placement normalized meanings are point-relative evidence and "
+        "may support, counter, qualify, or sit adjacent, but never broaden, merge, or rewrite "
+        "the point"
+    )
+
+    direct_view = build_axis_consolidated_view(spec)
+    assert direct_view["evidence_accounting_contract"]["point_meaning_rule"] == expected
+    for point in direct_view["point_index"]:
+        assert point["authoritative_point_meaning"] == point["bounded_point"]
+        assert point["displayed_relation_counts"] == {
+            relation: sum(
+                placement["point_id"] == point["point_id"]
+                and placement["relation"] == relation
+                for placement in direct_view["point_placements"]
+            )
+            for relation in ("support", "counter", "adjacent")
+        }
+
+    axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    axis["rejected_points"] = []
+    _write(paths["axis"], axis)
+    spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+    _route_every_point_as_decision_state(spec)
+    decision_view = build_axis_consolidated_view(spec)
+    assert (
+        decision_view["decision_state_reader_surface"][
+            "evidence_accounting_contract"
+        ]["point_meaning_rule"]
+        == expected
+    )
+
+
 def test_dogfood_truth_index_preserves_observations_states_and_literal_rejections(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

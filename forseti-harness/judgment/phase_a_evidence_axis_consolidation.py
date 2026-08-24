@@ -62,6 +62,13 @@ DIRECT_OUTCOME_BOUNDARIES = (
     "creator influence is not customer corroboration",
 )
 EVIDENCE_ACCOUNTING_CONTRACT = {
+    "point_meaning_rule": (
+        "point_index[*].authoritative_point_meaning exactly repeats bounded_point and is the "
+        "authoritative admitted point meaning, including literal comparator, time, and "
+        "personal-fit terms; placement normalized meanings are point-relative evidence and "
+        "may support, counter, qualify, or sit adjacent, but never broaden, merge, or rewrite "
+        "the point"
+    ),
     "independent_origin_rule": (
         "point relation origin-id arrays count distinct evidence origins; multiple source "
         "observations inside one same-origin group never add independent-origin credit"
@@ -2490,6 +2497,10 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             }
         if is_routed_v2:
             point_entry["projection_mode"] = point_projections[point_id]
+            point_entry["authoritative_point_meaning"] = artifact["bounded_point"]
+            point_entry["displayed_relation_counts"] = copy.deepcopy(
+                observed_relations
+            )
             point_entry["same_origin_observation_groups"] = (
                 same_origin_observation_groups
             )

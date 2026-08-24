@@ -981,6 +981,16 @@ merging its propositions: hydration efficacy, drying consequences, and
 comparator performance. Balm Dotcom and Rhode remain separate bounded points,
 and delayed drying/cracking remains separate from direct drying.
 
+For every routed v2 view, `point_index[*].authoritative_point_meaning` repeats
+`bounded_point` exactly and is the authoritative admitted meaning, including any
+literal comparator, time, or personal-fit term. The same point entry carries
+deterministic displayed support, counter, and adjacent row counts. Placement
+normalized meanings explain those point-relative relations; they may not
+broaden, merge, or rewrite the point. This prevents a cold reader from turning,
+for example, evidence about smoothness into a wider "soft or smooth" point when
+the admitted point is only softness, or from hiding mixed evidence by skipping
+its point-local relation accounting.
+
 The view also separates Reddit posts from Reddit comments before presenting
 source-native engagement. It does not normalize, percentile-rank, or compare a
 post score with a comment score, retailer helpful count, another venue, or
