@@ -86,9 +86,14 @@ from judgment.phase_a_evidence_selection import (  # noqa: E402
     prepare_preselection_relation_confirmation,
     prepare_selected_relation_confirmation,
     selection_spec_from_customer_pull_frontier,
+    validate_evidence_selection_batch_response,
     verify_customer_pull_point_frontier,
 )
 from harness_utils import hash_file  # noqa: E402
+from provider_attempts import (  # noqa: E402
+    publish_provider_attempt,
+    reserve_provider_attempt,
+)
 
 
 def _load_object(path: Path) -> dict[str, Any]:
@@ -865,6 +870,56 @@ def publish_batch_response_file(
         **receipt,
         "response_path": str(target),
         "model_api_calls": 0,
+    }
+
+
+def reserve_evidence_selection_provider_attempt(
+    *, attempt_root: Path, attempt_id: str
+) -> dict[str, Any]:
+    """Atomically reserve one immutable external-model attempt directory."""
+    reserved = reserve_provider_attempt(attempt_root=attempt_root, attempt_id=attempt_id)
+    return {
+        "status": "PHASE_A_EVIDENCE_PROVIDER_ATTEMPT_RESERVED",
+        **reserved,
+    }
+
+
+def publish_evidence_selection_provider_attempt(
+    *,
+    attempt_dir: Path,
+    response_dir: Path,
+    canonical_response_name: str,
+    batch_manifest_path: Path | None = None,
+    batch_id: str | None = None,
+) -> dict[str, Any]:
+    """Preserve attempt usage and atomically publish one response without replace."""
+    if (batch_manifest_path is None) != (batch_id is None):
+        raise ValueError("batch manifest and batch_id must be supplied together")
+
+    def _validate(response: dict[str, Any]) -> Mapping[str, Any]:
+        if batch_manifest_path is None or batch_id is None:
+            return {}
+        batch_manifest = _load_object(batch_manifest_path)
+        selection_manifest = batch_manifest.get("selection_manifest")
+        if not isinstance(selection_manifest, dict):
+            raise ValueError("selection batch manifest is missing its selection manifest")
+        return validate_evidence_selection_batch_response(
+            batch_manifest,
+            load_selection_sources(selection_manifest),
+            batch_id=batch_id,
+            response=response,
+        )
+
+    published = publish_provider_attempt(
+        attempt_dir=attempt_dir,
+        response_dir=response_dir,
+        canonical_response_name=canonical_response_name,
+        usage_schema_version="phase_a_evidence_provider_attempt_usage_v1",
+        validate_response=_validate,
+    )
+    return {
+        "status": "PHASE_A_EVIDENCE_PROVIDER_ATTEMPT_PUBLISHED",
+        **published,
     }
 
 
@@ -2360,6 +2415,17 @@ def _parser() -> argparse.ArgumentParser:
         "--batch-manifest-out", type=Path, required=True
     )
 
+    attempt_reserve = sub.add_parser("reserve-evidence-selection-provider-attempt")
+    attempt_reserve.add_argument("--attempt-root", type=Path, required=True)
+    attempt_reserve.add_argument("--attempt-id", required=True)
+
+    attempt_publish = sub.add_parser("publish-evidence-selection-provider-attempt")
+    attempt_publish.add_argument("--attempt-dir", type=Path, required=True)
+    attempt_publish.add_argument("--response-dir", type=Path, required=True)
+    attempt_publish.add_argument("--canonical-response-name", required=True)
+    attempt_publish.add_argument("--batch-manifest", type=Path)
+    attempt_publish.add_argument("--batch-id")
+
     selection_relations = sub.add_parser("finalize-evidence-selection-relations")
     selection_relations.add_argument("--manifest", type=Path, required=True)
     selection_relations.add_argument("--response", type=Path, required=True)
@@ -2828,6 +2894,19 @@ def main(argv: list[str] | None = None) -> int:
                 batch_size=args.batch_size,
                 batch_dir=args.batch_dir,
                 batch_manifest_out=args.batch_manifest_out,
+            )
+        elif args.command == "reserve-evidence-selection-provider-attempt":
+            result = reserve_evidence_selection_provider_attempt(
+                attempt_root=args.attempt_root,
+                attempt_id=args.attempt_id,
+            )
+        elif args.command == "publish-evidence-selection-provider-attempt":
+            result = publish_evidence_selection_provider_attempt(
+                attempt_dir=args.attempt_dir,
+                response_dir=args.response_dir,
+                canonical_response_name=args.canonical_response_name,
+                batch_manifest_path=args.batch_manifest,
+                batch_id=args.batch_id,
             )
         elif args.command == "finalize-evidence-selection-relations":
             result = finalize_evidence_selection_relations_run(

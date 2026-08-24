@@ -120,6 +120,40 @@ admission nor the thirteen-origin cap. The second batching step is required at
 full-axis scale; sending hundreds of confirmation rows as one open array would
 recreate the truncation surface that named relation batches closed.
 
+When calls may run concurrently or be retried and their individual outputs or
+token use matter to the run's proof, each call is an immutable attempt. Before
+launching it, choose a new attempt ID and new attempt directory; refuse the
+launch if that directory or any intended response, event-log, or usage-receipt
+target already exists. Persist the structured response, complete event stream,
+and exact usage record under that one attempt ID before the attempt may be
+selected as the canonical response. A retry uses a new attempt ID. It may
+supersede an earlier attempt for finalization, but it never overwrites, renames
+onto, or deletes the earlier attempt. All-attempt accounting includes every
+launched attempt in that proof, including discarded successes and failures. If
+any launched attempt lacks a recoverable exact usage record, the all-attempt
+token proof is `FAIL_UNOBSERVED`; do not estimate the missing usage from another
+call or report only the chosen canonical calls as the complete run cost. Serial
+calls whose individual attempt history is not used in a comparison or proof do
+not acquire this extra bookkeeping merely for uniformity.
+
+Use `reserve-evidence-selection-provider-attempt --attempt-root <root>
+--attempt-id <new-id>` before each call. Send `codex exec -o` to the returned
+`response.json` and its `--json` output to the returned `events.jsonl`; never
+send either stream directly to a canonical batch-response path. After the call,
+use `publish-evidence-selection-provider-attempt --attempt-dir <attempt>
+--response-dir <canonical-dir> --canonical-response-name <name>`. For a named
+relation batch also supply `--batch-manifest` and `--batch-id`; publication then
+validates the batch-bound response, extracts and preserves the exact completed-
+turn usage, and atomically hard-links the response without replacement. Keep
+every attempt directory after publication or failure.
+
+The filesystem behavior lives in `forseti-harness/provider_attempts.py` and
+performs no model call. The Phase A commands above are compatibility adapters:
+they add evidence-selection response validation while reusing the same unique-
+attempt storage. Other intelligence-cycle stages may reuse the helper when they
+have the same parallel/retry proof shape; it is not a mandatory wrapper around
+all model activity.
+
 The confirmation frontier is independent of the first-pass relation. Therefore
 a first-pass `exclude` cannot silently hide a materially engaged or protected
 row. The confirming response may correct the relation and reason code; selection
@@ -498,8 +532,10 @@ to the hash-owned candidate identity, rejects a missing, foreign, or wrong-batch
 response and a missing or foreign slot, requires exact contiguous coverage of
 the complete candidate inventory, then continues through the ordinary quote
 manifest. Only the batch responses named in the batch manifest are read; any
-other file left in the response directory is ignored, so clear the directory
-between runs rather than relying on the finalizer to notice a stale file.
+other file left in the response directory is ignored. Use a new canonical
+response directory for each run and copy or project only the selected immutable
+attempt responses into it. Never clear and reuse an attempt directory, and do
+not rely on the finalizer to notice a stale file.
 Batching does not change admission, selection priority, relation meaning,
 evidence facts, or the origin cap. It does change the row label: a batched row's
 reason code and display label are derived from its relation alone, so a batched
@@ -633,15 +669,129 @@ never enter `truth_origin_count` or `unique_truth_origins_across_axis`.
 
 Validate a saved generic pack with
 `validate-axis-pack --pack <axis-pack.json> --expected-axis-pack-sha256 <trusted-stored-hash>`.
-Then build `phase_a_evidence_axis_consolidated_view_v1` with the same runner's
-existing `build --spec <consolidation-spec.json> --output <new-view.json>` route;
-the spec explicitly pins the generic pack path and raw file SHA-256 and supplies
-presentation-only navigation groups covering every accepted point exactly once.
-Navigation may group points for reading but cannot merge propositions or grant
-evidence or relation authority. Validate the saved view with `validate --view
+Then build `phase_a_evidence_axis_consolidated_view_v2` with the same runner's
+existing `build --spec <consolidation-spec.json> --output <new-view.json>` route.
+The `phase_a_evidence_axis_consolidation_spec_v2` spec explicitly pins the
+generic pack path and raw file SHA-256, supplies presentation-only navigation
+groups, and supplies `projection_routes`; both structures must cover every
+accepted point exactly once. Navigation may group points for reading but cannot
+merge propositions or grant evidence or relation authority. The v1 spec and
+view remain accepted only so frozen historical artifacts rebuild without byte
+or hash drift. Validate the saved view with `validate --view
 <view.json> --expected-view-sha256 <trusted-stored-hash>`. Both writers refuse
 overwrite, make zero provider calls, and reproduce identical output from
 identical inputs.
+
+Projection routing is point-level, not an axis-name allowlist. A model may
+recommend the route while authoring the spec, but the declared spec is the
+durable choice; the builder does not silently infer or change it. Use
+`direct_outcome` when the point reports an attribute or experienced result,
+such as hydration, drying, wear, texture, finish, scent, flavor, shade fit,
+reaction, application, or comparator performance. Use `decision_state` when
+the point reports an actor's judgment or action state, such as value judgment,
+ownership, purchase, purchase intent, completed use, return, repurchase,
+switching, recommendation, or abandonment. These are routing examples rather
+than axis assignments: one named axis may contain points of both kinds.
+
+The v2 builder implements both `direct_outcome` and `decision_state` at the
+explicit point-level routing seam. Every routed v2 point carries forward its
+existing boundaries that the presentation is not a causal judgment, not a
+commercial-pull score, and that creator influence is not customer
+corroboration. Direct Outcome preserves the v1 origin-normalized,
+surface-separated projection. Decision State instead compacts explicit
+spec-authored actor, object, judgment/action-stage, direction, quantity,
+semantic-reference, and qualification facts without inferring states from
+quotes, engagement, point text, or axis names. Value is the first full frozen
+Decision State test subject; this does not make its findings prevalent, causal,
+or representative of other products or axes.
+
+A Decision State point may still carry nearby direct-result evidence. Preserve
+such a row as explicit context only, with an empty state row list and complete
+semantic references, instead of inventing a preference, intent, or behavior.
+For `shade_and_color_fit`, for example, “Poppy appears sheer orange-red” may sit
+beside a wearing or ownership point while remaining a color result. Keep “asks
+Summer Fridays to release a mauve shade” as an assortment request rather than
+purchase intent, and keep “aims to finish Pink Guava” as use-completion intent
+rather than observed completed use. The point route stays explicit; this
+context form does not silently reroute or discard the evidence row.
+Likewise, a stated wish to try is trial intent rather than purchase intent, and
+a received or otherwise acquired balm is acquisition rather than an inferred
+purchase.
+
+For each Decision State display row, the durable binding also names the exact
+semantic unit or units that explain that row's point-relative
+support/counter/adjacent relation. This is separate from the exhaustive list of
+states present in the source: one source may discuss several shades or stages,
+and the consumer must not follow an unrelated primary sentence when the
+point-relevant meaning is a companion. A routed v2 Direct Outcome point may use
+the same explicit relation binding when a frozen row's primary meaning is only
+context; existing Direct Outcome specs remain unchanged when no binding is
+present. Preserve a specific shown wearing as a wear event rather than ongoing
+use, just as use-completion intent remains distinct from completed use.
+
+For price-and-value evidence, Phase A keeps the exact comparison the source
+made. If someone says “expensive for a lip balm,” keep “for a lip balm” in the
+packed state rather than leaving it only in the quote. Keep these meanings
+separate:
+
+- `expensive` or `pricey` means the person feels the price is high;
+- `overpriced` or `not worth it` means the person explicitly rejects the value;
+- `premium` is a positive quality or positioning description only when the
+  source supports it, never another word for a high price.
+
+Also preserve value-at-price judgments, price-conditioned purchase or
+repurchase intent, and observed purchase, use, return, switching, or repurchase
+behavior. When one source carries several of these states, keep them together
+without blending them. Price, value, intent, and behavior do not by themselves
+prove pricing power or support for a higher tier. Phase A packs the evidence;
+any later decision about positioning, elevation, or a higher tier belongs
+downstream.
+
+The v2 spec carries these facts in named fields; a cold operator authors them
+explicitly and the builder never infers them. `projection_routes` is a list of
+`{projection_mode, point_ids}` objects using `direct_outcome` or
+`decision_state`. `decision_state_bindings` is a list of `{point_id, rows}`
+objects that must cover every routed `decision_state` point and, inside each
+point, every displayed `selected_id` exactly once. A row carries exactly
+`selected_id`, `state_assertions`, `context_only_semantic_unit_refs`, and
+`relation_semantic_unit_refs`. A state assertion carries exactly `state_kind`,
+`commercial_direction`, `decision_object`, `semantic_unit_refs`, `quantity`, and
+`conditions`; the judgment/intent/observed/event stage is derived from
+`state_kind` rather than authored, `quantity` is allowed only for
+`multi_unit_purchase` and must be at least two, and an unsupported `state_kind`
+or an out-of-contract `commercial_direction` fails loud. Inside one row the
+asserted and context-only semantic references must be disjoint and together
+cover the display row's own meaning plus every same-evidence companion meaning
+exactly once; `relation_semantic_unit_refs` is nonempty and drawn from that same
+set. An empty `state_assertions` list is the explicit context-only form above.
+
+A routed `direct_outcome` point uses the optional
+`direct_outcome_relation_bindings` list of `{point_id, rows}`, with rows of
+`{selected_id, relation_semantic_unit_refs}`, only when a frozen row's primary
+meaning is context. The optional `decision_state_rejected_point_navigation` list
+of `{point_id, navigation_group_id}` places rejected frontier points into an
+existing navigation group and, when present, must cover every rejected point.
+`decision_state_bindings_sha256` is optional in the spec and is checked against
+the builder's own recomputation. Every field named in this paragraph and the one
+above it, apart from `projection_routes`, is rejected in a v1 spec and in a v2
+spec that routes no `decision_state` point.
+
+The built v2 view stores `decision_state_bindings_sha256` in place of the
+authored bindings and adds `decision_state_index`, `decision_state_groups`,
+`rejected_point_index`, and a `decision_state_reader_surface` join surface
+whenever at least one point is routed `decision_state`. The full view's
+`decision_state_contract` uses full-view table names; the reader surface derives
+the same semantic contract with reader-native join instructions and
+`semantic_unit_row_ids`, so every table and column named inside the compact
+surface resolves inside that surface. Every v2 point also carries
+`same_origin_observation_groups`: one group for each displayed layer, relation,
+meaning, and origin where that single origin carries more than one distinct
+evidence-and-semantic-unit observation, each observation keeping its literal
+evidence reference, date or explicit date unavailability, and source-native
+engagement, and each group reporting a `source_observation_count`. That count is
+a source-observation count, never independent-origin credit and never evidence
+of several underlying purchases, uses, or completions; the owning semantics stay in
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
 
 Bind every emitted response schema through the provider's structured-output
 mechanism (for local Codex CLI execution, `--output-schema`); including schema
@@ -681,8 +831,43 @@ first local v1 index had named only artifact paths; requiring an inferred siblin
 selection manifest was rejected as incomplete rather than reported as cold
 resolvability.
 
-Downstream consumers use generic completed axis packs through the derived
-`phase_a_evidence_axis_consolidated_view_v1`, built by
+Blind full-versus-compact dogfood builds its exact-fact answer key from the
+validated consolidated view, never from a prose completion receipt:
+
+The input must be a routed v2 consolidated view carrying point, placement, and
+`projection_routes` facts. A frozen v1 view may still validate and rebuild for
+compatibility proof, but it is not a dogfood-truth-index input.
+
+```text
+run_phase_a_evidence_axis_consolidation.py build-dogfood-truth
+  --view <validated-view.json>
+  --output <new-truth-index.json>
+
+run_phase_a_evidence_axis_consolidation.py validate-dogfood-truth
+  --truth <truth-index.json>
+  --expected-truth-index-sha256 <independently-recorded-hash>
+```
+
+The generated index fixes accepted/rejected accounting, literal dispositions,
+accepted-only projection routes, point meanings, preserved same-origin source
+observations, and authored Decision State rows. It points disputed source,
+date, engagement, origin, relation, quote, and companion details back to the
+validated view. Absence from the small index is therefore not evidence that a
+reader invented a detail. A completion receipt may explain execution, but it
+is not evidence truth and must not replace this generated index or its source
+view in a judge prompt.
+
+Cold readers may search and stop when they judge that further reading has low
+likely value. Dogfood grades the resulting Phase A brief, not whether the
+reader opened every point artifact or repeated a coverage checklist. An omitted
+low-value detail is not a failure; an actually false or misleading statement,
+or a material omission that changes the practical evidence picture, remains a
+failure. Token comparisons use the readers' natural consumption and compare
+valid arms in aggregate. Preserve broken runs, but do not let an invalid and
+artificially cheap arm establish compactness against a correct arm.
+
+Downstream consumers use generic completed axis packs through the live derived
+`phase_a_evidence_axis_consolidated_view_v2`, built by
 `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`. This is a
 presentation view, not a packet v4 and not another evidence authority. It
 accepts `phase_a_evidence_axis_pack_v1` as the live input and retains
@@ -749,6 +934,25 @@ pretend those metadata corrections were newly measured quality or latency. Its
 same fixed prompt projects to 362,501 UTF-8 bytes versus the ten-pack's 501,073,
 a static 27.655% reduction; logical-token and latency deltas remain the v5
 measurements above.
+
+That trust-bound file remains a frozen v1 artifact and is not rewritten by the
+live v2 route. Its results establish the Direct Outcome predecessor evidence;
+they do not themselves validate Decision State. The separate frozen value-axis
+pilot exercises Decision State, and the separate frozen shade-axis pilot
+exercises the mixed route -- one Direct Outcome point beside twelve Decision
+State points -- together with the explicit point-relative relation binding. Their
+frozen inputs are the two build specs
+`C:\tmp\forseti-phase-a-delegated-adjudication-20260823-v0\value_spec_current_v2.json`
+(raw SHA-256
+`137c2697cf11c0e8fbf8160a417535acb63782c8d0b8fec4cc6c7b3a7d20cfc7`) and
+`C:\tmp\forseti-phase-a-shade-mixed-projection-20260823-v0\mixed_spec_v2.json`
+(raw SHA-256
+`99b30fa86d7be7227a1fc85b7f19155a5e9ba6d51dc0ea75283f3fdf6a8988cf`). Rebuild each
+spec with the runner's `build` route rather than trusting a stored view file: the
+view files recorded beside those specs predate this change and no longer
+reproject. Both routes preserve this Direct Outcome and v1 compatibility
+boundary. Exercising a route is a coverage fact about that run, not evidence
+that either axis is complete.
 
 The completed production evidence still proves one hydration axis only. The
 generic builder's deterministic two-point fixtures prove schema and parity

@@ -1904,6 +1904,94 @@ def prepare_evidence_selection_batches(
     return batch_manifest, prompts_and_schemas
 
 
+def validate_evidence_selection_batch_response(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    *,
+    batch_id: str,
+    response: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate one immutable provider attempt before canonical publication."""
+
+    stored = batch_manifest.get("manifest_sha256")
+    payload = {
+        key: value for key, value in batch_manifest.items() if key != "manifest_sha256"
+    }
+    if (
+        batch_manifest.get("schema_version") != SELECTION_BATCH_MANIFEST_VERSION
+        or stored != _canonical_json_sha256(payload)
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection batch manifest changed"
+        )
+    selection_manifest = batch_manifest.get("selection_manifest")
+    if (
+        not isinstance(selection_manifest, Mapping)
+        or selection_manifest.get("manifest_sha256")
+        != batch_manifest.get("selection_manifest_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection manifest binding changed"
+        )
+    candidates = _candidate_rows_for_manifest(sources, selection_manifest)
+    if (
+        len(candidates) != batch_manifest.get("candidate_count")
+        or _canonical_json_sha256(candidates)
+        != batch_manifest.get("candidate_inventory_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "batched candidate inventory changed"
+        )
+    batches = batch_manifest.get("batches")
+    if not isinstance(batches, list):
+        raise EvidenceConsumerError(
+            "manifest_verification", "selection batches missing"
+        )
+    matches = [
+        batch
+        for batch in batches
+        if isinstance(batch, Mapping) and batch.get("batch_id") == batch_id
+    ]
+    if len(matches) != 1:
+        raise EvidenceConsumerError(
+            "relation_batch_identity", "requested relation batch is not unique"
+        )
+    batch = matches[0]
+    start = batch.get("start_index")
+    count = batch.get("candidate_count")
+    if (
+        not isinstance(start, int)
+        or start < 0
+        or not isinstance(count, int)
+        or count < 1
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "relation batch coverage changed"
+        )
+    subset = candidates[start : start + count]
+    if (
+        len(subset) != count
+        or _canonical_json_sha256([row["candidate_id"] for row in subset])
+        != batch.get("candidate_ids_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "relation batch membership changed"
+        )
+    validated = _validate_relation_response(
+        subset,
+        response,
+        value_policy=False,
+        response_mode="positional",
+        batch_id=batch_id,
+    )
+    return {
+        "batch_id": batch_id,
+        "candidate_count": len(validated),
+        "batch_manifest_sha256": stored,
+        "response_sha256": _canonical_json_sha256(response),
+    }
+
+
 def _truth_group_cap(spec: Mapping[str, Any]) -> int:
     cap = spec.get("truth_group_cap", MAX_TRUTH_GROUPS)
     if (

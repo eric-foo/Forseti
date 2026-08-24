@@ -52,6 +52,8 @@ from runners.run_semantic_evidence_integration import (
     prepare_evidence_selection_batches_run,
     prepare_evidence_selection_run,
     prepare_batched_preselection_relation_confirmation_run,
+    publish_evidence_selection_provider_attempt,
+    reserve_evidence_selection_provider_attempt,
 )
 
 
@@ -2149,6 +2151,164 @@ def test_batched_positional_relations_rehydrate_the_same_full_inventory(
         _quote_response(unbatched_quote_manifest, sources),
     )
     assert batched_artifact["source_groups"] == unbatched_artifact["source_groups"]
+
+
+def test_provider_attempt_reservation_and_publication_preserve_every_attempt(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 8)
+    spec["relation_response_mode"] = "positional"
+    batch_manifest, _ = prepare_evidence_selection_batches(
+        spec, sources, batch_size=4
+    )
+    manifest_path = tmp_path / "batch-manifest.json"
+    manifest_path.write_text(json.dumps(batch_manifest), encoding="utf-8")
+    candidates = _candidate_rows(sources, spec)
+    first = batch_manifest["batches"][0]
+    response = _batched_positional_relation_response(
+        candidates[: first["candidate_count"]], first["batch_id"]
+    )
+    attempts = tmp_path / "attempts"
+    reserved = reserve_evidence_selection_provider_attempt(
+        attempt_root=attempts, attempt_id="relation-batch_0001-attempt_01"
+    )
+    attempt_dir = Path(reserved["attempt_dir"])
+    (attempt_dir / "response.json").write_text(json.dumps(response), encoding="utf-8")
+    (attempt_dir / "events.jsonl").write_text(
+        "provider warning\n"
+        + json.dumps(
+            {
+                "type": "turn.completed",
+                "usage": {
+                    "input_tokens": 100,
+                    "cached_input_tokens": 20,
+                    "output_tokens": 30,
+                    "reasoning_output_tokens": 10,
+                },
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    response_dir = tmp_path / "canonical-responses"
+
+    published = publish_evidence_selection_provider_attempt(
+        attempt_dir=attempt_dir,
+        response_dir=response_dir,
+        canonical_response_name="batch_0001_response.json",
+        batch_manifest_path=manifest_path,
+        batch_id="batch_0001",
+    )
+
+    assert published["status"] == "PHASE_A_EVIDENCE_PROVIDER_ATTEMPT_PUBLISHED"
+    assert published["candidate_count"] == 4
+    assert published["usage"]["cached_input_tokens"] == 20
+    assert (attempt_dir / "response.json").is_file()
+    assert (attempt_dir / "events.jsonl").is_file()
+    assert (attempt_dir / "usage.json").is_file()
+    assert (response_dir / "batch_0001_response.json").read_bytes() == (
+        attempt_dir / "response.json"
+    ).read_bytes()
+    canonical_bytes = (response_dir / "batch_0001_response.json").read_bytes()
+    (attempt_dir / "response.json").write_text("{}", encoding="utf-8")
+    assert (response_dir / "batch_0001_response.json").read_bytes() == canonical_bytes
+    with pytest.raises(ValueError, match="refusing to reuse provider attempt"):
+        reserve_evidence_selection_provider_attempt(
+            attempt_root=attempts, attempt_id="relation-batch_0001-attempt_01"
+        )
+
+    retry = reserve_evidence_selection_provider_attempt(
+        attempt_root=attempts, attempt_id="relation-batch_0001-attempt_02"
+    )
+    retry_dir = Path(retry["attempt_dir"])
+    (retry_dir / "response.json").write_text(json.dumps(response), encoding="utf-8")
+    (retry_dir / "events.jsonl").write_text(
+        json.dumps(
+            {
+                "type": "turn.completed",
+                "usage": {
+                    "input_tokens": 110,
+                    "cached_input_tokens": 25,
+                    "output_tokens": 32,
+                    "reasoning_output_tokens": 11,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="refusing to overwrite existing response"):
+        publish_evidence_selection_provider_attempt(
+            attempt_dir=retry_dir,
+            response_dir=response_dir,
+            canonical_response_name="batch_0001_response.json",
+            batch_manifest_path=manifest_path,
+            batch_id="batch_0001",
+        )
+    assert (retry_dir / "response.json").is_file()
+    assert (retry_dir / "events.jsonl").is_file()
+    assert (retry_dir / "usage.json").is_file()
+
+    wrong = reserve_evidence_selection_provider_attempt(
+        attempt_root=attempts, attempt_id="relation-batch_0001-attempt_03"
+    )
+    wrong_dir = Path(wrong["attempt_dir"])
+    wrong_response = copy.deepcopy(response)
+    wrong_response["batch_id"] = "batch_0002"
+    (wrong_dir / "response.json").write_text(
+        json.dumps(wrong_response), encoding="utf-8"
+    )
+    (wrong_dir / "events.jsonl").write_text(
+        json.dumps(
+            {
+                "type": "turn.completed",
+                "usage": {
+                    "input_tokens": 90,
+                    "cached_input_tokens": 0,
+                    "output_tokens": 20,
+                    "reasoning_output_tokens": 5,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        publish_evidence_selection_provider_attempt(
+            attempt_dir=wrong_dir,
+            response_dir=response_dir,
+            canonical_response_name="wrong_response.json",
+            batch_manifest_path=manifest_path,
+            batch_id="batch_0001",
+        )
+    assert caught.value.boundary == "relation_batch_identity"
+    assert (wrong_dir / "usage.json").is_file()
+    assert not (response_dir / "wrong_response.json").exists()
+
+    malformed = reserve_evidence_selection_provider_attempt(
+        attempt_root=attempts, attempt_id="relation-batch_0001-attempt_04"
+    )
+    malformed_dir = Path(malformed["attempt_dir"])
+    (malformed_dir / "response.json").write_text("not-json", encoding="utf-8")
+    (malformed_dir / "events.jsonl").write_text(
+        json.dumps(
+            {
+                "type": "turn.completed",
+                "usage": {
+                    "input_tokens": 80,
+                    "cached_input_tokens": 0,
+                    "output_tokens": 4,
+                    "reasoning_output_tokens": 0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(json.JSONDecodeError):
+        publish_evidence_selection_provider_attempt(
+            attempt_dir=malformed_dir,
+            response_dir=response_dir,
+            canonical_response_name="malformed_response.json",
+        )
+    assert (malformed_dir / "usage.json").is_file()
 
 
 def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
