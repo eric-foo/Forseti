@@ -2939,10 +2939,22 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display",
     ):
         assert required in normalized_workflow
-    assert "Phase A evidence machinery" in repo_map
-    assert "phase_a_evidence_selection.py" in repo_map
-    assert "phase_a_evidence_axis_consolidation.py" in repo_map
-    assert "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in repo_map
+    # Co-presence anywhere in the map is not a route.  The module names and the
+    # owning workflow have to sit in one quick-index row, or a cold agent who
+    # greps the map for the file it is about to change lands somewhere else.
+    machinery_rows = [
+        line
+        for line in repo_map.splitlines()
+        if line.lstrip().startswith("|")
+        and "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in line
+    ]
+    assert len(machinery_rows) == 1
+    for required in (
+        "Phase A evidence machinery",
+        "phase_a_evidence_selection.py",
+        "phase_a_evidence_axis_consolidation.py",
+    ):
+        assert required in machinery_rows[0]
     assert 'subparsers.add_parser("build-axis-pack")' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
     assert 'subparsers.add_parser("build-dogfood-truth")' in runner
