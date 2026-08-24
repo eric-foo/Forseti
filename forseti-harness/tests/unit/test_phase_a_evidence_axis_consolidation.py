@@ -2467,6 +2467,71 @@ def test_axis_builder_rejects_schema_rename_with_hidden_sibling_inference(
         build_phase_a_evidence_axis_pack(near_miss)
 
 
+def test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt(
+    tmp_path: Path,
+) -> None:
+    receipt_path = tmp_path / "rejected-point-receipt.json"
+    _write(
+        receipt_path,
+        {
+            "schema_version": "phase_a_rejected_point_resolution_receipt_v1",
+            "point_id": "point_rejected",
+            "failure_boundary": "frontier_relation_quote_relevance",
+        },
+    )
+    manifest = {
+        "schema_version": AXIS_PACK_MANIFEST_VERSION,
+        "axis_id": "application_and_tool_performance",
+        "accepted_points": [],
+        "rejected_points": [
+            {
+                "point_id": "point_rejected",
+                "bounded_point": "A rejected application point.",
+                "disposition": "frontier_relation_quote_relevance_failed",
+                "reason": "The relation-bearing source body does not support the point.",
+                "resolution_receipt_path": str(receipt_path),
+                "resolution_receipt_sha256": hash_file(receipt_path),
+            }
+        ],
+    }
+    _rehash_manifest(manifest)
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    assert pack["status"] == "complete_rejected_axis_pack"
+    assert pack["valid_point_count"] == 0
+    assert pack["rejected_point_count"] == 1
+    assert pack["cold_reader_resolution"][
+        "rejected_resolution_receipt_count"
+    ] == 1
+    assert validate_phase_a_evidence_axis_pack(
+        pack, expected_axis_pack_sha256=pack["axis_pack_sha256"]
+    ) == pack
+
+    pack_path = tmp_path / "rejected-only-axis-pack.json"
+    _write(pack_path, pack)
+    rejected_route_spec = {
+        "schema_version": CONSOLIDATION_SPEC_VERSION,
+        "axis_id": "application_and_tool_performance",
+        "source_axis_pack_path": str(pack_path),
+        "source_axis_pack_sha256": hash_file(pack_path),
+        "navigation_groups": [],
+        "projection_routes": [
+            {
+                "projection_mode": "decision_state",
+                "point_ids": ["point_rejected"],
+            }
+        ],
+    }
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_axis_consolidated_view(rejected_route_spec)
+    assert caught.value.boundary == "axis_binding"
+
+    receipt_path.write_text("changed\n", encoding="utf-8")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_phase_a_evidence_axis_pack(manifest)
+    assert caught.value.boundary == "rejected_point_resolution"
+
+
 @pytest.mark.parametrize(
     "mutation,match",
     [

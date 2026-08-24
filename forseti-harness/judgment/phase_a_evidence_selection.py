@@ -52,6 +52,7 @@ POINT_SCOPE_STATUSES = ("single_point", "broad_axis_or_bundle")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 RELATION_POLICIES = ("auto", "bounded_point")
 TEMPORAL_PRESENTATION_POLICIES = ("recent_year_coverage_v1",)
+FRONTIER_RELATION_DISPLAY_POLICY = "literal_point_relations_display_eligible_v1"
 RECENT_YEAR_COUNT = 2
 POSITIONAL_REASON_CODE_BY_RELATION = {
     "support": "matching_customer_experience",
@@ -199,7 +200,7 @@ VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label on
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. Every supplied source body is longer than 220 characters. Choose one context-complete contiguous exact substring of at most 220 characters that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize for brevity: when the necessary source wording fits, retain it instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries and length. Return quote_status=quote_unavailable and exact_quote=null only after verifying that no one contiguous span within 220 characters supports the full normalized meaning; inability to include optional non-reversing context is not enough. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent and the combined span fits within 220 characters. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
+Return every selected_id exactly once and in order. Choose one context-complete contiguous exact substring of at most 220 characters that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. When the supplied body is 220 characters or shorter and is relevant, return the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize for brevity: when the necessary source wording fits, retain it instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries and length. Return quote_status=quote_unavailable and exact_quote=null only after verifying that no one contiguous span within 220 characters supports the full normalized meaning; inability to include optional non-reversing context is not enough. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent and the combined span fits within 220 characters. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -631,6 +632,7 @@ def selection_spec_from_customer_pull_frontier(
         "temporal_presentation_policy": (
             "recent_year_coverage_v1" if expand_axis else None
         ),
+        "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "relation_policy": "bounded_point",
     }
     spec = {
@@ -644,6 +646,7 @@ def selection_spec_from_customer_pull_frontier(
         "truth_group_cap": MAX_TRUTH_GROUPS,
         "relation_response_mode": "positional" if expand_axis else "literal_ids",
         "relation_policy": "bounded_point",
+        "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "customer_pull_frontier_binding": binding,
     }
     if expand_axis:
@@ -1656,10 +1659,12 @@ def _validate_customer_pull_frontier_spec_binding(
         "relation_response_mode",
         "temporal_presentation_policy",
     }
+    current_keys = expanded_keys | {"frontier_relation_display_policy"}
     binding_keys = frozenset(binding) if isinstance(binding, Mapping) else frozenset()
     if not isinstance(binding, Mapping) or binding_keys not in {
         frozenset(legacy_keys),
         frozenset(expanded_keys),
+        frozenset(current_keys),
     }:
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier binding shape changed"
@@ -1669,7 +1674,7 @@ def _validate_customer_pull_frontier_spec_binding(
             "customer_pull_frontier_binding",
             "legacy frontier binding cannot authorize axis-wide admission",
         )
-    if binding_keys == frozenset(expanded_keys) and (
+    if binding_keys in {frozenset(expanded_keys), frozenset(current_keys)} and (
         binding.get("axis_ids_sha256")
         != _canonical_json_sha256(spec.get("axis_ids") or [])
         or binding.get("candidate_admission")
@@ -1687,6 +1692,15 @@ def _validate_customer_pull_frontier_spec_binding(
             == "subject_axis_union_with_literal_refs"
             and not spec.get("axis_ids")
         )
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier candidate admission changed"
+        )
+    if binding_keys == frozenset(current_keys) and (
+        binding.get("frontier_relation_display_policy")
+        != spec.get("frontier_relation_display_policy")
+        or spec.get("frontier_relation_display_policy")
+        != FRONTIER_RELATION_DISPLAY_POLICY
     ):
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
@@ -2286,7 +2300,10 @@ def _protected_value_group_priority(group: Mapping[str, Any]) -> tuple[Any, ...]
 
 
 def _truth_row_display_eligible(
-    row: Mapping[str, Any], truth_policy: str
+    row: Mapping[str, Any],
+    truth_policy: str,
+    *,
+    frontier_relation_bound: bool = False,
 ) -> bool:
     """Apply the exact pre-cap admission rule for one truth-support row."""
     if truth_policy not in {"balanced", "value_first"}:
@@ -2297,12 +2314,35 @@ def _truth_row_display_eligible(
         return False
     if row.get("protected_lanes"):
         return True
+    if frontier_relation_bound:
+        return True
     if row.get("engagement_material_positive") is not True:
         return False
     return truth_policy == "balanced" or row.get("relation") in {
         "support",
         "counter",
     }
+
+
+def _frontier_relation_candidate_ids(
+    spec: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> frozenset[str]:
+    policy = spec.get("frontier_relation_display_policy")
+    if policy is None:
+        return frozenset()
+    if policy != FRONTIER_RELATION_DISPLAY_POLICY:
+        raise EvidenceConsumerError(
+            "selection_spec", "unsupported frontier relation display policy"
+        )
+    admitted_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in spec.get("admit_semantic_refs") or []
+    }
+    return frozenset(
+        row["candidate_id"]
+        for row in rows
+        if (row["source_id"], row["semantic_unit_ref"]) in admitted_refs
+    )
 
 
 def _preselection_relation_confirmation_schema(
@@ -2359,12 +2399,22 @@ def _preselection_relation_confirmation_schema(
     }
 
 
-def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[dict[str, Any]]:
+def _select_value_groups(
+    rows: Sequence[Mapping[str, Any]],
+    cap: int,
+    *,
+    frontier_relation_candidate_ids: frozenset[str] = frozenset(),
+) -> list[dict[str, Any]]:
     _validate_protected_rows(rows)
     eligible = [
         dict(row)
         for row in rows
-        if _truth_row_display_eligible(row, "value_first")
+        if _truth_row_display_eligible(
+            row,
+            "value_first",
+            frontier_relation_bound=row["candidate_id"]
+            in frontier_relation_candidate_ids,
+        )
     ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in eligible:
@@ -2573,11 +2623,16 @@ def _select_groups(
     *,
     truth_policy: str = "balanced",
     temporal_policy: str | None = None,
+    frontier_relation_candidate_ids: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     if truth_policy not in {"balanced", "value_first"}:
         raise EvidenceConsumerError("selection_policy", f"unsupported policy: {truth_policy}")
     if truth_policy == "value_first" and layer == "truth_support":
-        return _select_value_groups(rows, cap)
+        return _select_value_groups(
+            rows,
+            cap,
+            frontier_relation_candidate_ids=frontier_relation_candidate_ids,
+        )
     if temporal_policy is not None and temporal_policy not in TEMPORAL_PRESENTATION_POLICIES:
         raise EvidenceConsumerError(
             "selection_policy", f"unsupported temporal policy: {temporal_policy}"
@@ -2590,7 +2645,12 @@ def _select_groups(
         and row["relation"] != "exclude"
         and (
             layer != "truth_support"
-            or _truth_row_display_eligible(row, truth_policy)
+            or _truth_row_display_eligible(
+                row,
+                truth_policy,
+                frontier_relation_bound=row["candidate_id"]
+                in frontier_relation_candidate_ids,
+            )
         )
     ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -2999,12 +3059,15 @@ def _quote_prompt_envelope(
     bounded_claim: str,
     selected: Sequence[Mapping[str, Any]],
     bodies: Mapping[tuple[str, str], str | None],
+    *,
+    required_quote_candidate_ids: frozenset[str] = frozenset(),
 ) -> tuple[dict[str, Any], list[str]]:
-    """Project only long bodies into the provider-visible quote workload.
+    """Project long bodies and frontier-defining rows into quote review.
 
-    Short bodies are already exact quotes under the owning contract, while a
-    missing body is deterministically unavailable. Sending either to a model
-    adds cost and another failure surface without adding judgment.
+    Ordinary short bodies are already exact quotes under the owning contract.
+    A frontier-defining row is different: its meaning helped admit the point,
+    so the provider must verify that even a short literal body substantiates it.
+    Missing bodies remain deterministically unavailable.
     """
 
     body_ids: dict[str, str] = {}
@@ -3013,7 +3076,10 @@ def _quote_prompt_envelope(
     provider_selected_ids: list[str] = []
     for row in selected:
         body = bodies.get((row["source_id"], row["evidence_id"]))
-        if body is None or len(body) <= MAX_QUOTE_CHARACTERS:
+        if body is None or (
+            len(body) <= MAX_QUOTE_CHARACTERS
+            and row["candidate_id"] not in required_quote_candidate_ids
+        ):
             continue
         if body not in body_ids:
             body_id = f"body_{len(body_ids) + 1:02d}"
@@ -3125,12 +3191,16 @@ def _prepare_quotes_from_labeled(
     truth_selection_policy = "value_first" if value_policy else "balanced"
     temporal_policy = _temporal_presentation_policy(manifest["spec"])
     labeled = [dict(row) for row in labeled]
+    frontier_relation_candidate_ids = _frontier_relation_candidate_ids(
+        manifest["spec"], labeled
+    )
     truth = _select_groups(
         labeled,
         "truth_support",
         truth_group_cap,
         truth_policy=truth_selection_policy,
         temporal_policy=temporal_policy,
+        frontier_relation_candidate_ids=frontier_relation_candidate_ids,
     )
     influence = _select_groups(labeled, "influence_context", MAX_INFLUENCE_GROUPS)
     selected = truth + influence
@@ -3154,7 +3224,10 @@ def _prepare_quotes_from_labeled(
             }
         )
     quote_envelope, provider_selected_ids = _quote_prompt_envelope(
-        manifest["spec"]["bounded_claim"], selected, bodies
+        manifest["spec"]["bounded_claim"],
+        selected,
+        bodies,
+        required_quote_candidate_ids=frontier_relation_candidate_ids,
     )
     prompt = QUOTE_PROMPT.format(envelope=_compact(quote_envelope))
     schema = _quote_schema()
@@ -3180,6 +3253,13 @@ def _prepare_quotes_from_labeled(
         "response_schema_sha256": _canonical_json_sha256(schema),
         "model_api_calls": 0,
     }
+    if frontier_relation_candidate_ids:
+        quote_manifest["frontier_relation_display_policy"] = (
+            FRONTIER_RELATION_DISPLAY_POLICY
+        )
+        quote_manifest["frontier_relation_candidate_ids"] = sorted(
+            frontier_relation_candidate_ids
+        )
     _, _, point_context_rows = _project_parent_context(labeled)
     if point_context_rows:
         quote_manifest["point_parent_context_rows"] = point_context_rows
@@ -3193,7 +3273,12 @@ def _prepare_quotes_from_labeled(
                 year
                 for row in labeled
                 if row["layer"] == "truth_support"
-                and _truth_row_display_eligible(row, truth_selection_policy)
+                and _truth_row_display_eligible(
+                    row,
+                    truth_selection_policy,
+                    frontier_relation_bound=row["candidate_id"]
+                    in frontier_relation_candidate_ids,
+                )
                 and (year := _publication_year(row)) is not None
             },
             reverse=True,
@@ -3226,6 +3311,8 @@ def finalize_relations_prepare_quotes(
 
 def _preselection_confirmation_candidates(
     labeled: Sequence[Mapping[str, Any]],
+    *,
+    frontier_relation_candidate_ids: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     """Return every row that could reach a displayed evidence pack.
 
@@ -3241,6 +3328,7 @@ def _preselection_confirmation_candidates(
         if row.get("layer") == "influence_context"
         or row.get("protected_lanes")
         or row.get("engagement_material_positive") is True
+        or row["candidate_id"] in frontier_relation_candidate_ids
     ]
 
 
@@ -3277,11 +3365,17 @@ def _preselection_confirmation_state(
         value_policy=value_policy,
         response_mode=_relation_response_mode(manifest["spec"]),
     )
-    frontier = _preselection_confirmation_candidates(labeled)
+    frontier_relation_candidate_ids = _frontier_relation_candidate_ids(
+        manifest["spec"], labeled
+    )
+    frontier = _preselection_confirmation_candidates(
+        labeled,
+        frontier_relation_candidate_ids=frontier_relation_candidate_ids,
+    )
     if not frontier:
         raise EvidenceConsumerError(
             "preselection_confirmation_empty",
-            "no material, protected, or influence candidates can reach display",
+            "no frontier-bound, material, protected, or influence candidates can reach display",
         )
     frontier_sha256 = _canonical_json_sha256(frontier)
     presentation = _confirmation_row_presentation(frontier, frontier_sha256)
@@ -4081,6 +4175,16 @@ def finalize_quotes(
     if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
         raise EvidenceConsumerError("quote_response_shape", "quotes missing")
     selected = quote_manifest["selected_rows"]
+    frontier_relation_ids = quote_manifest.get(
+        "frontier_relation_candidate_ids", []
+    )
+    if not isinstance(frontier_relation_ids, list) or not all(
+        isinstance(value, str) for value in frontier_relation_ids
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "frontier relation quote ids are invalid"
+        )
+    frontier_relation_candidate_ids = frozenset(frontier_relation_ids)
     expected = (
         quote_manifest.get("provider_selected_ids")
         if manifest_version
@@ -4123,7 +4227,10 @@ def finalize_quotes(
             if (
                 (body := bodies.get((row["source_id"], row["evidence_id"])))
                 is not None
-                and len(body) > MAX_QUOTE_CHARACTERS
+                and (
+                    len(body) > MAX_QUOTE_CHARACTERS
+                    or row["candidate_id"] in frontier_relation_candidate_ids
+                )
             )
         ]
         if expected != derived_provider_ids:
@@ -4207,6 +4314,15 @@ def finalize_quotes(
         elif status == "quote_unavailable":
             if quote is not None:
                 raise EvidenceConsumerError("quote_response_shape", "unavailable quote must be null")
+            if (
+                body is not None
+                and selected_row["candidate_id"]
+                in frontier_relation_candidate_ids
+            ):
+                raise EvidenceConsumerError(
+                    "frontier_relation_quote_relevance",
+                    "a frontier-defining relation has no relevant exact quote",
+                )
         else:
             raise EvidenceConsumerError("quote_response_shape", "invalid quote status")
         output_rows.append(
@@ -4354,6 +4470,25 @@ def finalize_quotes(
             raise EvidenceConsumerError(
                 "manifest_verification", "truth selection policy missing or changed"
             )
+        frontier_relation_policy = quote_manifest.get(
+            "frontier_relation_display_policy"
+        )
+        frontier_relation_ids = quote_manifest.get(
+            "frontier_relation_candidate_ids", []
+        )
+        if (
+            frontier_relation_policy not in {None, FRONTIER_RELATION_DISPLAY_POLICY}
+            or not isinstance(frontier_relation_ids, list)
+            or not all(isinstance(value, str) for value in frontier_relation_ids)
+            or (
+                frontier_relation_policy is None
+                and frontier_relation_ids
+            )
+        ):
+            raise EvidenceConsumerError(
+                "manifest_verification",
+                "frontier relation display binding changed",
+            )
         truth_rows = [
             row
             for row in output_rows
@@ -4388,7 +4523,10 @@ def finalize_quotes(
                             row["scoped_independence_key"]
                             for row in labeled_inventory
                             if _truth_row_display_eligible(
-                                row, truth_selection_policy
+                                row,
+                                truth_selection_policy,
+                                frontier_relation_bound=row["candidate_id"]
+                                in frontier_relation_candidate_ids,
                             )
                         }
                     ),
@@ -4424,7 +4562,11 @@ def finalize_quotes(
                         "one externally scope-confirmed evidence point; a broad axis or bundled claim fails before artifact completion",
                         "distinct truth origins capped separately from creator influence",
                         "display_eligible_truth_origin_count is the exact pre-cap origin pool under the recorded truth selection policy; origins outside that pool are not cap omissions",
-                        "a truth origin with no operator-protected lane and no material positive source-native engagement is never displayed; value-first also excludes material adjacent origins",
+                        (
+                            "a quiet truth origin is display-eligible only when it is operator-protected or literally bound to the accepted frontier point; that visibility grants no resonance credit, and value-first still excludes unbound material adjacent origins"
+                            if frontier_relation_candidate_ids
+                            else "a truth origin with no operator-protected lane and no material positive source-native engagement is never displayed; value-first also excludes material adjacent origins"
+                        ),
                         "support, counterevidence, protected evidence, source diversity, and source-native engagement within comparable buckets",
                         "all admitted candidate dispositions remain available",
                     ],

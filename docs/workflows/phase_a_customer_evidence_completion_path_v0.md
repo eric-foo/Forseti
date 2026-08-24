@@ -608,12 +608,25 @@ accounting, not customer prevalence, and the full candidate-disposition
 inventory remains attached. Do not read the candidate-to-displayed drop as cap
 pressure: candidate truth origins are the admitted pool. The v6 quote manifest
 records the truth selection policy, and the finalizer uses that exact policy to
-count distinct origins eligible before the cap; an origin with no operator-
-protected lane and no material positive source-native engagement is never
-eligible, and value-first also excludes an otherwise material adjacent origin.
+count distinct origins eligible before the cap. A quiet origin is eligible when
+its literal semantic reference is one of the accepted frontier point's bound
+support, counter, or adjacent relations under
+`literal_point_relations_display_eligible_v1`; this preserves the evidence that
+actually admitted the point without treating quiet engagement as resonance.
+Other origins with no operator-protected lane and no material positive
+source-native engagement remain ineligible, and value-first also excludes an
+otherwise material adjacent origin.
 The artifact's `presentation_basis` names that gate, and also records that the
 bounded point passed the separate scope classification; a broad axis or bundled
 claim never reaches a completed point-pack disclosure.
+
+Every selected row whose literal semantic reference helped admit the frontier
+point also enters exact-quote relevance review even when its source body is 220
+characters or shorter. A short body is still quoted in full when relevant, but
+it may no longer become an automatic exact-looking quote for a meaning it does
+not contain. If an available frontier-defining body yields no relevant exact
+quote, point completion fails at `frontier_relation_quote_relevance`; do not
+replace it with parent, child, sibling, or engagement meaning.
 
 For a whole-axis pack, thirteen is the maximum number of displayed distinct
 truth origins **per bounded point**, not the size of the evidence corpus and not
@@ -641,6 +654,14 @@ SHA-256, policy revision, exact selection-manifest path and stored/file hashes,
 and quote-manifest path and stored/file hashes; it does not duplicate the point
 artifacts' full candidate inventories. A sibling-file convention is not a
 cold-reader source pointer.
+
+An axis whose entire frontier fails completion remains a completed
+rejected-only axis rather than disappearing or forcing a rejected point through
+a projection. Every rejected row in that shape carries a literal,
+SHA-256-pinned resolution receipt; the receipt binds the frozen source and the
+failure boundary needed to understand or reverse the rejection. Rejected-only
+axes produce no Direct Outcome or Decision State projection because no accepted
+point exists to route.
 
 The live repository route for any named Phase A axis is
 `phase_a_evidence_axis_pack_manifest_v1` ->
