@@ -1696,12 +1696,20 @@ def _validate_customer_pull_frontier_spec_binding(
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
-    if binding_keys == frozenset(current_keys) and (
-        binding.get("frontier_relation_display_policy")
-        != spec.get("frontier_relation_display_policy")
-        or spec.get("frontier_relation_display_policy")
-        != FRONTIER_RELATION_DISPLAY_POLICY
-    ):
+    if binding_keys == frozenset(current_keys):
+        if (
+            binding.get("frontier_relation_display_policy")
+            != spec.get("frontier_relation_display_policy")
+            or spec.get("frontier_relation_display_policy")
+            != FRONTIER_RELATION_DISPLAY_POLICY
+        ):
+            raise EvidenceConsumerError(
+                "customer_pull_frontier_binding", "frontier candidate admission changed"
+            )
+    elif spec.get("frontier_relation_display_policy") is not None:
+        # A pre-policy binding pins every other display-affecting spec field.
+        # Leaving this one unpinned would let a frozen frontier-bound spec turn
+        # quiet-row display on without its binding authorizing the change.
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
@@ -2163,9 +2171,10 @@ def _required_display_members(
 ) -> list[dict[str, Any]]:
     """Return the deterministic minimum rows that make reserved lanes visible.
 
-    Operator-protected candidates are mandatory rows.  At most four ordinary
-    lane requirements remain, so exhaustive combinations over one representative
-    per distinct coverage signature are bounded and prove minimal cardinality.
+    Operator-protected and frontier-defining candidates are mandatory rows.
+    At most four ordinary lane requirements remain, so exhaustive combinations
+    over one representative per distinct coverage signature are bounded and
+    prove minimal cardinality.
     """
     ordered = sorted((dict(row) for row in members), key=priority)
     by_id = {row["candidate_id"]: row for row in ordered}
@@ -2174,7 +2183,7 @@ def _required_display_members(
     except KeyError as exc:
         raise EvidenceConsumerError(
             "required_display_lane_unavailable",
-            f"protected candidate is absent from its origin: {exc.args[0]}",
+            f"required candidate is absent from its origin: {exc.args[0]}",
         ) from exc
     required = set(required_lanes)
     covered = set().union(*(_member_display_lanes(row) for row in forced)) if forced else set()
@@ -2441,7 +2450,10 @@ def _select_value_groups(
                 "origin_members": members,
                 "required_display_lanes": [],
                 "required_display_candidate_ids": sorted(
-                    row["candidate_id"] for row in members if row.get("protected_lanes")
+                    row["candidate_id"]
+                    for row in members
+                    if row.get("protected_lanes")
+                    or row["candidate_id"] in frontier_relation_candidate_ids
                 ),
             }
         )
@@ -2468,6 +2480,21 @@ def _select_value_groups(
         group["required_display_lanes"].extend(
             f"protected:{lane}" for lane in group["origin_protected_lanes"]
         )
+
+    # These rows supplied the literal relations that admitted the point. They
+    # must survive the origin cap so their wording is displayed and enters the
+    # exact-quote relevance check. If the complete frontier itself exceeds the
+    # cap, fail visibly instead of completing from an unchecked subset.
+    for group in sorted(
+        (
+            row
+            for row in groups
+            if frontier_relation_candidate_ids
+            & set(row["origin_candidate_ids"])
+        ),
+        key=_value_member_priority,
+    ):
+        add_group(group)
 
     support_buckets: dict[
         tuple[str, str, str], list[tuple[dict[str, Any], dict[str, Any]]]
@@ -2604,6 +2631,16 @@ def _select_value_groups(
             "protected_candidate_not_visible",
             "one or more protected candidates are absent from the display",
         )
+    frontier_candidate_ids = {
+        row["candidate_id"]
+        for row in eligible
+        if row["candidate_id"] in frontier_relation_candidate_ids
+    }
+    if not frontier_candidate_ids <= displayed_candidate_ids:
+        raise EvidenceConsumerError(
+            "frontier_candidate_not_visible",
+            "one or more frontier-defining candidates are absent from the display",
+        )
     ordinary_counter_origins = {
         row["origin_group_id"]
         for row in displayed
@@ -2684,7 +2721,10 @@ def _select_groups(
                 "origin_members": members,
                 "required_display_lanes": [],
                 "required_display_candidate_ids": sorted(
-                    row["candidate_id"] for row in members if row.get("protected_lanes")
+                    row["candidate_id"]
+                    for row in members
+                    if row.get("protected_lanes")
+                    or row["candidate_id"] in frontier_relation_candidate_ids
                 ),
             }
         )
@@ -2730,6 +2770,16 @@ def _select_groups(
             group["required_display_lanes"].extend(
                 f"protected:{lane}" for lane in group["origin_protected_lanes"]
             )
+        for group in sorted(
+            (
+                row
+                for row in groups
+                if frontier_relation_candidate_ids
+                & set(row["origin_candidate_ids"])
+            ),
+            key=_global_priority,
+        ):
+            add_group(group)
         reserve_lane("relation:support", lambda row: "support" in row["origin_relations"])
         reserve_lane("relation:counter", lambda row: "counter" in row["origin_relations"])
 
@@ -2899,6 +2949,16 @@ def _select_groups(
         raise EvidenceConsumerError(
             "protected_candidate_not_visible",
             "one or more protected candidates are absent from the display",
+        )
+    frontier_candidate_ids = {
+        row["candidate_id"]
+        for row in eligible
+        if row["candidate_id"] in frontier_relation_candidate_ids
+    }
+    if not frontier_candidate_ids <= displayed_candidate_ids:
+        raise EvidenceConsumerError(
+            "frontier_candidate_not_visible",
+            "one or more frontier-defining candidates are absent from the display",
         )
     return displayed
 
@@ -3316,10 +3376,11 @@ def _preselection_confirmation_candidates(
 ) -> list[dict[str, Any]]:
     """Return every row that could reach a displayed evidence pack.
 
-    Truth rows can reach display only when material-positive or explicitly
-    protected.  Influence rows use a separate cap and therefore all require
-    confirmation.  The frontier is independent of the first-pass relation, so
-    a mistaken ``exclude`` cannot hide a high-signal or protected row.
+    Truth rows can reach display only when material-positive, explicitly
+    protected, or literally bound to the frontier point.  Influence rows use a
+    separate cap and therefore all require confirmation.  The frontier is
+    independent of the first-pass relation, so a mistaken ``exclude`` cannot
+    hide a high-signal, protected, or frontier-defining row.
     """
 
     return [

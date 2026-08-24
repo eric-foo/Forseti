@@ -628,6 +628,20 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
                     "rejected_point_resolution",
                     f"rejected-point receipt changed: {point_id}",
                 )
+            receipt = _load_object(
+                receipt_path, boundary="rejected_point_resolution"
+            )
+            if (
+                receipt.get("schema_version")
+                != "phase_a_rejected_point_resolution_receipt_v1"
+                or receipt.get("point_id") != point_id
+                or not isinstance(receipt.get("failure_boundary"), str)
+                or not receipt["failure_boundary"]
+            ):
+                raise EvidenceConsumerError(
+                    "rejected_point_resolution",
+                    f"rejected-point receipt does not resolve this point: {point_id}",
+                )
             normalized_rejected.update(
                 {
                     "resolution_receipt_path": str(receipt_path),

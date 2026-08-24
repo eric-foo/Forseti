@@ -2526,6 +2526,30 @@ def test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt(
         build_axis_consolidated_view(rejected_route_spec)
     assert caught.value.boundary == "axis_binding"
 
+    receiptless = copy.deepcopy(manifest)
+    for row in receiptless["rejected_points"]:
+        row.pop("resolution_receipt_path")
+        row.pop("resolution_receipt_sha256")
+    _rehash_manifest(receiptless)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_phase_a_evidence_axis_pack(receiptless)
+    assert caught.value.boundary == "rejected_point_resolution"
+
+    wrong_point_receipt = {
+        "schema_version": "phase_a_rejected_point_resolution_receipt_v1",
+        "point_id": "some_other_point",
+        "failure_boundary": "frontier_relation_quote_relevance",
+    }
+    _write(receipt_path, wrong_point_receipt)
+    wrong_point_manifest = copy.deepcopy(manifest)
+    wrong_point_manifest["rejected_points"][0][
+        "resolution_receipt_sha256"
+    ] = hash_file(receipt_path)
+    _rehash_manifest(wrong_point_manifest)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_phase_a_evidence_axis_pack(wrong_point_manifest)
+    assert caught.value.boundary == "rejected_point_resolution"
+
     receipt_path.write_text("changed\n", encoding="utf-8")
     with pytest.raises(EvidenceConsumerError) as caught:
         build_phase_a_evidence_axis_pack(manifest)
