@@ -11,8 +11,10 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
+    build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
+    validate_axis_dogfood_truth_index,
     validate_axis_consolidated_view,
     validate_phase_a_evidence_axis_pack,
 )
@@ -95,6 +97,41 @@ def validate_run(*, view_path: Path, expected_view_sha256: str) -> dict[str, Any
     }
 
 
+def build_dogfood_truth_run(*, view_path: Path, output_path: Path) -> dict[str, Any]:
+    view = _load_object(view_path)
+    truth_index = build_axis_dogfood_truth_index(
+        view, source_view_path=view_path
+    )
+    validate_axis_dogfood_truth_index(
+        truth_index,
+        expected_truth_index_sha256=truth_index["truth_index_sha256"],
+    )
+    _write_new(output_path, truth_index)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "truth_index_sha256": truth_index["truth_index_sha256"],
+        "counts": truth_index["counts"],
+        "model_api_calls": 0,
+    }
+
+
+def validate_dogfood_truth_run(
+    *, truth_path: Path, expected_truth_index_sha256: str
+) -> dict[str, Any]:
+    truth_index = validate_axis_dogfood_truth_index(
+        _load_object(truth_path),
+        expected_truth_index_sha256=expected_truth_index_sha256,
+    )
+    return {
+        "status": "valid",
+        "truth_path": str(truth_path),
+        "truth_index_sha256": truth_index["truth_index_sha256"],
+        "counts": truth_index["counts"],
+        "model_api_calls": 0,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -110,6 +147,12 @@ def main() -> int:
     validate_parser = subparsers.add_parser("validate")
     validate_parser.add_argument("--view", type=Path, required=True)
     validate_parser.add_argument("--expected-view-sha256", required=True)
+    build_truth_parser = subparsers.add_parser("build-dogfood-truth")
+    build_truth_parser.add_argument("--view", type=Path, required=True)
+    build_truth_parser.add_argument("--output", type=Path, required=True)
+    validate_truth_parser = subparsers.add_parser("validate-dogfood-truth")
+    validate_truth_parser.add_argument("--truth", type=Path, required=True)
+    validate_truth_parser.add_argument("--expected-truth-index-sha256", required=True)
     args = parser.parse_args()
     if args.command == "build-axis-pack":
         result = build_axis_pack_run(
@@ -122,6 +165,15 @@ def main() -> int:
         )
     elif args.command == "build":
         result = build_run(spec_path=args.spec, output_path=args.output)
+    elif args.command == "build-dogfood-truth":
+        result = build_dogfood_truth_run(
+            view_path=args.view, output_path=args.output
+        )
+    elif args.command == "validate-dogfood-truth":
+        result = validate_dogfood_truth_run(
+            truth_path=args.truth,
+            expected_truth_index_sha256=args.expected_truth_index_sha256,
+        )
     else:
         result = validate_run(
             view_path=args.view,

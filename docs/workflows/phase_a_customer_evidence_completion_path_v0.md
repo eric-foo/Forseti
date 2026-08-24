@@ -120,18 +120,21 @@ admission nor the thirteen-origin cap. The second batching step is required at
 full-axis scale; sending hundreds of confirmation rows as one open array would
 recreate the truncation surface that named relation batches closed.
 
-Every external model call is also an immutable attempt. Before launching it,
-choose a new attempt ID and new attempt directory; refuse the launch if that
-directory or any intended response, event-log, or usage-receipt target already
-exists. Persist the structured response, complete event stream, and exact usage
-record under that one attempt ID before the attempt may be selected as the
-canonical response. A retry uses a new attempt ID. It may supersede an earlier
-attempt for finalization, but it never overwrites, renames onto, or deletes the
-earlier attempt. All-attempt accounting includes every launched attempt,
-including discarded successes and failures. If any launched attempt lacks a
-recoverable exact usage record, the all-attempt token proof is `FAIL_UNOBSERVED`;
-do not estimate the missing usage from another call or report only the chosen
-canonical calls as the complete run cost.
+When calls may run concurrently or be retried and their individual outputs or
+token use matter to the run's proof, each call is an immutable attempt. Before
+launching it, choose a new attempt ID and new attempt directory; refuse the
+launch if that directory or any intended response, event-log, or usage-receipt
+target already exists. Persist the structured response, complete event stream,
+and exact usage record under that one attempt ID before the attempt may be
+selected as the canonical response. A retry uses a new attempt ID. It may
+supersede an earlier attempt for finalization, but it never overwrites, renames
+onto, or deletes the earlier attempt. All-attempt accounting includes every
+launched attempt in that proof, including discarded successes and failures. If
+any launched attempt lacks a recoverable exact usage record, the all-attempt
+token proof is `FAIL_UNOBSERVED`; do not estimate the missing usage from another
+call or report only the chosen canonical calls as the complete run cost. Serial
+calls whose individual attempt history is not used in a comparison or proof do
+not acquire this extra bookkeeping merely for uniformity.
 
 Use `reserve-evidence-selection-provider-attempt --attempt-root <root>
 --attempt-id <new-id>` before each call. Send `codex exec -o` to the returned
@@ -143,6 +146,13 @@ relation batch also supply `--batch-manifest` and `--batch-id`; publication then
 validates the batch-bound response, extracts and preserves the exact completed-
 turn usage, and atomically hard-links the response without replacement. Keep
 every attempt directory after publication or failure.
+
+The filesystem behavior lives in `forseti-harness/provider_attempts.py` and
+performs no model call. The Phase A commands above are compatibility adapters:
+they add evidence-selection response validation while reusing the same unique-
+attempt storage. Other intelligence-cycle stages may reuse the helper when they
+have the same parallel/retry proof shape; it is not a mandatory wrapper around
+all model activity.
 
 The confirmation frontier is independent of the first-pass relation. Therefore
 a first-pass `exclude` cannot silently hide a materially engaged or protected
@@ -820,6 +830,37 @@ inventory hash, resolved all ten bound packet/bundle sources, and matched all
 first local v1 index had named only artifact paths; requiring an inferred sibling
 selection manifest was rejected as incomplete rather than reported as cold
 resolvability.
+
+Blind full-versus-compact dogfood builds its exact-fact answer key from the
+validated consolidated view, never from a prose completion receipt:
+
+```text
+run_phase_a_evidence_axis_consolidation.py build-dogfood-truth
+  --view <validated-view.json>
+  --output <new-truth-index.json>
+
+run_phase_a_evidence_axis_consolidation.py validate-dogfood-truth
+  --truth <truth-index.json>
+  --expected-truth-index-sha256 <independently-recorded-hash>
+```
+
+The generated index fixes accepted/rejected accounting, literal dispositions,
+accepted-only projection routes, point meanings, preserved same-origin source
+observations, and authored Decision State rows. It points disputed source,
+date, engagement, origin, relation, quote, and companion details back to the
+validated view. Absence from the small index is therefore not evidence that a
+reader invented a detail. A completion receipt may explain execution, but it
+is not evidence truth and must not replace this generated index or its source
+view in a judge prompt.
+
+Cold readers may search and stop when they judge that further reading has low
+likely value. Dogfood grades the resulting Phase A brief, not whether the
+reader opened every point artifact or repeated a coverage checklist. An omitted
+low-value detail is not a failure; an actually false or misleading statement,
+or a material omission that changes the practical evidence picture, remains a
+failure. Token comparisons use the readers' natural consumption and compare
+valid arms in aggregate. Preserve broken runs, but do not let an invalid and
+artificially cheap arm establish compactness against a correct arm.
 
 Downstream consumers use generic completed axis packs through the live derived
 `phase_a_evidence_axis_consolidated_view_v2`, built by

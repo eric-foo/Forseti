@@ -31,6 +31,7 @@ LEGACY_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1
 CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
 LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
+DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
 SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
@@ -2652,6 +2653,239 @@ def validate_axis_consolidated_view(
     if rebuilt != dict(view):
         raise EvidenceConsumerError(
             "view_reprojection", "saved view differs from deterministic source projection"
+        )
+    return rebuilt
+
+
+def build_axis_dogfood_truth_index(
+    view: Mapping[str, Any], *, source_view_path: Path
+) -> dict[str, Any]:
+    """Build a compact exact-fact index for blind representation comparisons.
+
+    The index owns only facts copied or mechanically derived from the validated
+    consolidated view. Absence from this index is never evidence that a detail
+    was invented; the source view remains the exact-detail authority.
+    """
+
+    source_view_path = source_view_path.resolve()
+    source_bytes = source_view_path.read_bytes()
+    source_file_value = json.loads(source_bytes.decode("utf-8-sig"))
+    if not isinstance(source_file_value, dict) or source_file_value != dict(view):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification",
+            "source view path does not contain the supplied view",
+        )
+    validated = validate_axis_consolidated_view(
+        view, expected_view_sha256=_required_string(
+            view, "view_sha256", boundary="dogfood_truth_index_verification"
+        )
+    )
+    point_rows = validated.get("point_index")
+    placement_rows = validated.get("point_placements")
+    routes = validated.get("projection_routes")
+    if (
+        not isinstance(point_rows, list)
+        or not isinstance(placement_rows, list)
+        or not isinstance(routes, list)
+    ):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification",
+            "validated view lacks point, placement, or routing facts",
+        )
+
+    reader_point_by_id: dict[str, dict[str, Any]] = {}
+    reader = validated.get("decision_state_reader_surface")
+    if isinstance(reader, Mapping):
+        point_table = reader.get("point_table")
+        if not isinstance(point_table, Mapping):
+            raise EvidenceConsumerError(
+                "dogfood_truth_index_verification",
+                "decision-state reader point table is missing",
+            )
+        columns = point_table.get("columns")
+        rows = point_table.get("rows")
+        if not isinstance(columns, list) or not isinstance(rows, list):
+            raise EvidenceConsumerError(
+                "dogfood_truth_index_verification",
+                "decision-state reader point table is invalid",
+            )
+        for row in rows:
+            if not isinstance(row, list) or len(row) != len(columns):
+                raise EvidenceConsumerError(
+                    "dogfood_truth_index_verification",
+                    "decision-state reader point row is invalid",
+                )
+            expanded = dict(zip(columns, row, strict=True))
+            point_id = expanded.get("point_id")
+            if not isinstance(point_id, str) or point_id in reader_point_by_id:
+                raise EvidenceConsumerError(
+                    "dogfood_truth_index_verification",
+                    "decision-state reader point identity is invalid",
+                )
+            reader_point_by_id[point_id] = expanded
+
+    placements_by_point: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for placement in placement_rows:
+        if not isinstance(placement, Mapping):
+            raise EvidenceConsumerError(
+                "dogfood_truth_index_verification", "point placement is invalid"
+            )
+        point_id = _required_string(
+            placement, "point_id", boundary="dogfood_truth_index_verification"
+        )
+        placements_by_point[point_id].append(copy.deepcopy(dict(placement)))
+
+    accepted_points: list[dict[str, Any]] = []
+    for point in sorted(point_rows, key=lambda row: row["point_id"]):
+        if not isinstance(point, Mapping):
+            raise EvidenceConsumerError(
+                "dogfood_truth_index_verification", "point index row is invalid"
+            )
+        point_id = _required_string(
+            point, "point_id", boundary="dogfood_truth_index_verification"
+        )
+        accepted = {
+            "point_id": point_id,
+            "bounded_point": _required_string(
+                point, "bounded_point", boundary="dogfood_truth_index_verification"
+            ),
+            "projection_mode": _required_string(
+                point, "projection_mode", boundary="dogfood_truth_index_verification"
+            ),
+            "relation_origin_ids": {
+                relation: copy.deepcopy(point.get(f"{relation}_origin_ids", []))
+                for relation in ("support", "counter", "adjacent")
+            },
+            "same_origin_observation_groups": copy.deepcopy(
+                point.get("same_origin_observation_groups", [])
+            ),
+            "placements": sorted(
+                placements_by_point.pop(point_id, []),
+                key=lambda row: row["placement_id"],
+            ),
+        }
+        reader_point = reader_point_by_id.get(point_id)
+        if reader_point is not None:
+            accepted["state_table"] = copy.deepcopy(reader_point["state_table"])
+            accepted["relation_facts"] = copy.deepcopy(reader_point["relation_facts"])
+        accepted_points.append(accepted)
+    if placements_by_point:
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification",
+            "placement references a point outside the accepted point index",
+        )
+
+    source_axis_pack = validated.get("source_axis_pack")
+    if not isinstance(source_axis_pack, Mapping):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification", "source axis pack binding is missing"
+        )
+    axis_pack_path = Path(
+        _required_string(
+            source_axis_pack, "path", boundary="dogfood_truth_index_verification"
+        )
+    )
+    axis_pack = _load_object(axis_pack_path, boundary="dogfood_truth_index_verification")
+    rejected_points = validated.get("rejected_point_index")
+    if rejected_points is None:
+        rejected_points = axis_pack.get("rejected_points", [])
+    if not isinstance(rejected_points, list):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification", "rejected point index is invalid"
+        )
+    rejected_points = sorted(
+        copy.deepcopy(rejected_points), key=lambda row: row["point_id"]
+    )
+    accepted_ids = [row["point_id"] for row in accepted_points]
+    rejected_ids = [row["point_id"] for row in rejected_points]
+    routed_ids = sorted(
+        point_id for route in routes for point_id in route.get("point_ids", [])
+    )
+    if routed_ids != sorted(accepted_ids) or set(routed_ids) & set(rejected_ids):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification",
+            "projection routes must cover accepted points only",
+        )
+
+    truth_index: dict[str, Any] = {
+        "schema_version": DOGFOOD_TRUTH_INDEX_VERSION,
+        "axis_id": validated["axis_id"],
+        "source_view": {
+            "path": str(source_view_path),
+            "raw_sha256": hash_file(source_view_path),
+            "view_sha256": validated["view_sha256"],
+        },
+        "source_axis_pack": copy.deepcopy(dict(source_axis_pack)),
+        "counts": {
+            "accepted_point_count": len(accepted_points),
+            "rejected_point_count": len(rejected_points),
+            "frontier_point_count": len(accepted_points) + len(rejected_points),
+        },
+        "projection_routes": copy.deepcopy(routes),
+        "accepted_points": accepted_points,
+        "rejected_points": rejected_points,
+        "exact_detail_authority": {
+            "rule": (
+                "absence from this index is not evidence of invention; resolve disputed "
+                "source, date, engagement, origin, relation, quote, or companion details "
+                "against the validated source view"
+            ),
+            "source_view_sections": [
+                "origin_index",
+                "evidence_index",
+                "quote_spans",
+                "companion_meaning_index",
+                "point_placements",
+            ],
+        },
+        "non_claims": copy.deepcopy(validated.get("non_claims", [])),
+    }
+    truth_index["truth_index_sha256"] = _canonical_json_sha256(truth_index)
+    return truth_index
+
+
+def validate_axis_dogfood_truth_index(
+    truth_index: Mapping[str, Any], *, expected_truth_index_sha256: str
+) -> dict[str, Any]:
+    """Rebuild a saved dogfood truth index from its validated source view."""
+
+    if truth_index.get("schema_version") != DOGFOOD_TRUTH_INDEX_VERSION:
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification", "unsupported truth index version"
+        )
+    stored = truth_index.get("truth_index_sha256")
+    if stored != expected_truth_index_sha256:
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification",
+            "trusted truth index identity differs from saved index",
+        )
+    payload = {
+        key: value for key, value in truth_index.items() if key != "truth_index_sha256"
+    }
+    if not isinstance(stored, str) or stored != _canonical_json_sha256(payload):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification", "stored truth index hash is invalid"
+        )
+    source_view = truth_index.get("source_view")
+    if not isinstance(source_view, Mapping):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification", "source view binding is missing"
+        )
+    source_path = Path(
+        _required_string(
+            source_view, "path", boundary="dogfood_truth_index_verification"
+        )
+    )
+    if hash_file(source_path) != source_view.get("raw_sha256"):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_verification", "source view raw bytes changed"
+        )
+    view = _load_object(source_path, boundary="dogfood_truth_index_verification")
+    rebuilt = build_axis_dogfood_truth_index(view, source_view_path=source_path)
+    if rebuilt != dict(truth_index):
+        raise EvidenceConsumerError(
+            "dogfood_truth_index_reprojection",
+            "saved truth index differs from the validated source view",
         )
     return rebuilt
 

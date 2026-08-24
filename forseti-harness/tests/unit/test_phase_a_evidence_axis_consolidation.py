@@ -17,12 +17,15 @@ from judgment.phase_a_evidence_axis_consolidation import (
     DECISION_STATE_BOUNDARIES,
     DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
+    DOGFOOD_TRUTH_INDEX_VERSION,
     EVIDENCE_ACCOUNTING_CONTRACT,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
     LEGACY_CONSOLIDATION_SPEC_VERSION,
+    build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     point_placement_keys,
+    validate_axis_dogfood_truth_index,
     validate_axis_consolidated_view,
     validate_phase_a_evidence_axis_pack,
 )
@@ -32,8 +35,10 @@ from judgment.phase_a_evidence_consumer import (
 )
 from runners.run_phase_a_evidence_axis_consolidation import (
     build_axis_pack_run,
+    build_dogfood_truth_run,
     build_run,
     validate_axis_pack_run,
+    validate_dogfood_truth_run,
     validate_run,
 )
 
@@ -832,6 +837,156 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     )
     assert point_row[columns.index("same_origin_observation_groups")] == [group]
     assert build_axis_consolidated_view(spec) == decision_view
+
+
+def test_dogfood_truth_index_preserves_observations_states_and_literal_rejections(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    selected = artifact["source_groups"][0]["rows"][0]
+    artifact["candidate_dispositions"].append(
+        _candidate(
+            "candidate_a_truth_repeat",
+            evidence_id="reddit:thread2:comment2",
+            semantic_ref="reddit:thread2:comment2::hydrating",
+            relation="support",
+            origin="scope::reddit:alice",
+            container="reddit_thread_thread2",
+            normalized_meaning=selected["normalized_meaning"],
+            publication_time="2025-07-02T03:04:05+00:00",
+        )
+    )
+    artifact["selection_disclosure"]["candidate_semantic_row_count"] = 4
+    _write(artifact_path, artifact)
+    accepted = next(
+        row for row in manifest["accepted_points"] if row["point_id"] == "point_a"
+    )
+    accepted["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(manifest)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    _write(paths["generic_axis"], pack)
+    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+    _route_every_point_as_decision_state(spec)
+    first_binding = spec["decision_state_bindings"][0]["rows"][0]
+    first_binding["state_assertions"][0]["decision_object"] = (
+        "Cherry and Brown Sugar scents"
+    )
+    _synchronize_semantic_binding_row(spec, first_binding)
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view.json"
+    _write(view_path, view)
+
+    truth = build_axis_dogfood_truth_index(view, source_view_path=view_path)
+
+    assert truth["schema_version"] == DOGFOOD_TRUTH_INDEX_VERSION
+    assert truth["counts"] == {
+        "accepted_point_count": 2,
+        "rejected_point_count": 1,
+        "frontier_point_count": 3,
+    }
+    assert truth["rejected_points"] == [
+        {
+            "point_id": "point_rejected",
+            "bounded_point": "The balm fixes every lip outcome.",
+            "disposition": "point_scope_failed",
+            "reason": "broad_axis_or_bundle",
+        }
+    ]
+    point_a = next(row for row in truth["accepted_points"] if row["point_id"] == "point_a")
+    assert point_a["same_origin_observation_groups"][0][
+        "source_observation_count"
+    ] == 2
+    assert [
+        row["content_surface"]
+        for row in point_a["same_origin_observation_groups"][0]["observations"]
+    ] == ["reddit_post", "reddit_comment"]
+    assert any(
+        row[2] == "Cherry and Brown Sugar scents"
+        for row in point_a["state_table"]["rows"]
+    )
+    routed_ids = sorted(
+        point_id
+        for route in truth["projection_routes"]
+        for point_id in route["point_ids"]
+    )
+    assert routed_ids == ["point_a", "point_b"]
+    assert "point_rejected" not in routed_ids
+    assert validate_axis_dogfood_truth_index(
+        truth, expected_truth_index_sha256=truth["truth_index_sha256"]
+    ) == truth
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "derived_disposition",
+        "invent_rejected_route",
+        "drop_same_origin_observation",
+        "drop_decision_state",
+    ],
+)
+def test_dogfood_truth_wrong_cause_reaches_reprojection_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str
+) -> None:
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    selected = artifact["source_groups"][0]["rows"][0]
+    artifact["candidate_dispositions"].append(
+        _candidate(
+            "candidate_a_wrong_cause_repeat",
+            evidence_id="reddit:thread2:comment2",
+            semantic_ref="reddit:thread2:comment2::hydrating",
+            relation="support",
+            origin="scope::reddit:alice",
+            container="reddit_thread_thread2",
+            normalized_meaning=selected["normalized_meaning"],
+        )
+    )
+    artifact["selection_disclosure"]["candidate_semantic_row_count"] = 4
+    _write(artifact_path, artifact)
+    accepted = next(
+        row for row in manifest["accepted_points"] if row["point_id"] == "point_a"
+    )
+    accepted["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(manifest)
+    _write(paths["generic_axis"], build_phase_a_evidence_axis_pack(manifest))
+    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+    _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view.json"
+    _write(view_path, view)
+    changed = build_axis_dogfood_truth_index(view, source_view_path=view_path)
+    if mutation == "derived_disposition":
+        changed["rejected_points"][0]["disposition"] = (
+            "nonpromoted_no_investigation_earning_signal"
+        )
+    elif mutation == "invent_rejected_route":
+        changed["projection_routes"][0]["point_ids"].append("point_rejected")
+    elif mutation == "drop_same_origin_observation":
+        point_a = next(
+            row for row in changed["accepted_points"] if row["point_id"] == "point_a"
+        )
+        point_a["same_origin_observation_groups"][0]["observations"].pop()
+        point_a["same_origin_observation_groups"][0]["source_observation_count"] = 1
+    else:
+        point_a = next(
+            row for row in changed["accepted_points"] if row["point_id"] == "point_a"
+        )
+        point_a["state_table"]["rows"].pop()
+    changed.pop("truth_index_sha256")
+    changed["truth_index_sha256"] = _canonical_json_sha256(changed)
+
+    with pytest.raises(
+        EvidenceConsumerError, match="saved truth index differs"
+    ) as caught:
+        validate_axis_dogfood_truth_index(
+            changed,
+            expected_truth_index_sha256=changed["truth_index_sha256"],
+        )
+    assert caught.value.boundary == "dogfood_truth_index_reprojection"
 
 
 def test_generic_axis_pack_preserves_same_origin_repeated_observation(
@@ -2586,6 +2741,28 @@ def test_axis_pack_runner_writes_once_and_validates(
         build_axis_pack_run(manifest_path=manifest_path, output_path=output_path)
 
 
+def test_dogfood_truth_runner_writes_once_and_rebuilds_from_source_view(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    view_path = tmp_path / "view.json"
+    truth_path = tmp_path / "truth.json"
+    _write(view_path, build_axis_consolidated_view(spec))
+
+    built = build_dogfood_truth_run(
+        view_path=view_path, output_path=truth_path
+    )
+
+    assert built["model_api_calls"] == 0
+    assert validate_dogfood_truth_run(
+        truth_path=truth_path,
+        expected_truth_index_sha256=built["truth_index_sha256"],
+    )["status"] == "valid"
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        build_dogfood_truth_run(view_path=view_path, output_path=truth_path)
+
+
 def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> None:
     repository_root = Path(__file__).resolve().parents[3]
     workflow = (
@@ -2603,6 +2780,9 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "phase_a_evidence_axis_pack_v1",
         "build-axis-pack --manifest",
         "validate-axis-pack --pack",
+        "build-dogfood-truth",
+        "validate-dogfood-truth",
+        "Absence from the small index is therefore not evidence",
         "Do not infer any sibling file",
         "phase_a_hydration_axis_pack_v2",
     ):
@@ -2611,3 +2791,6 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     assert "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in repo_map
     assert 'subparsers.add_parser("build-axis-pack")' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
+    assert 'subparsers.add_parser("build-dogfood-truth")' in runner
+    assert 'subparsers.add_parser("validate-dogfood-truth")' in runner
+    validate_axis_dogfood_truth_index,
