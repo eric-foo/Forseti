@@ -403,6 +403,20 @@ inherit this floor.
   marker, status, and count checks. It must not require full artifact echo, full
   ledger-row echo, pasted Evidence Units, or broad source dumps unless a
   targeted failure makes that exact excerpt necessary.
+- Document-pinned projection falsifier: when a delegated code target changes a
+  builder or projector whose bytes could affect a frozen artifact that an
+  in-scope document explicitly uses for identity, compatibility, or proof, the
+  commission must name a baseline rebuild or reprojection of each affected pin
+  from its bound inputs at immutable `reviewed_revision` and compare the result
+  with the pinned artifact or semantics. If the controller then changes
+  builder, projector, input, or pin bytes that could affect that result or
+  claim, rerun once after those patch bytes settle and report the final result
+  as working-tree evidence tied to the returned diff, not as evidence from
+  `reviewed_revision`; otherwise reuse the baseline evidence. This does not
+  require a repository-wide artifact census or a check when no in-scope
+  document carries such a pin. Missing tooling or inputs is `not-run` and
+  blocks only the compatibility or proof claim that depends on the pin; it is
+  never a generic review failure.
 - Retrieval-metadata gate: new or materially touched durable prompt artifacts
   must follow `.agents/workflow-overlay/retrieval-metadata.md` without using
   retrieval metadata as authority, validation proof, approval, readiness,

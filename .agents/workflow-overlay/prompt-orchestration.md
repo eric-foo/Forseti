@@ -413,9 +413,12 @@ Render one compact pointer-first prompt containing:
 5. named validation expectations with real failure and not-run reporting,
    selected under `.agents/workflow-overlay/validation-gates.md` — that file
    owns which checks a commission may require locally, and a commission does
-   not name a broad local suite it already covers by required CI;
+   not name a broad local suite it already covers by required CI; include its
+   conditional document-pinned projection falsifier when that trigger applies;
 6. the controller return: findings, bounded diff, neutral citations, validation
-   evidence, verdict, and residual risk; and
+   evidence, verdict, and residual risk, each stated once — when the complete
+   response is couriered as one unit, it is the return packet and must not echo
+   itself in a second delegated-return block; and
 7. Chief Architect adjudication before any returned change is kept, plus
    `NEEDS_ARCHITECTURE_PASS` for design-level blockers.
 

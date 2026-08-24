@@ -107,6 +107,16 @@ Architect reserves final authority over what is kept and may veto any change it
 judges to add no benefit or net-negative value, even when individually
 defensible.
 
+**Return economy.** When the controller's complete response is couriered as one
+unit — the lane default — that response is the return packet. State findings,
+diff, citations, validation, verdict, residuals, and blockers once in the main
+response; do not append a second `DELEGATED_*_RETURN_FOR_HOME_MODEL` block that
+restates them. Add a compact transport wrapper only when a distinct downstream
+consumer receives a separate subset or a pointer to a durable report, and point
+to the carried material instead of copying it. This Forseti rule overrides a
+generic review skill's append-a-courier-block mechanic; it removes duplicate
+transport, not any adjudication field or the Chief Architect keep/reject gate.
+
 **Delegate lifecycle hard stop.** The rule text is the `lifecycle_hard_stop`
 constant in `docs/prompts/templates/shared/forseti_preflight_defaults_v0.md`
 (single owner — do not fork or paraphrase it here). All lifecycle actions
