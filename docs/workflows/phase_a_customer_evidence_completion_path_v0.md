@@ -632,6 +632,27 @@ not contain. If an available frontier-defining body yields no relevant exact
 quote, point completion fails at `frontier_relation_quote_relevance`; do not
 replace it with parent, child, sibling, or engagement meaning.
 
+That failure removes only the affected literal support relation, not
+automatically every other relation attached to the point. Counter and adjacent
+relations are not eligible for this repair. After checking the bound source, an
+author may rerun the point with a hash-bound `frontier_relation_rejections` row.
+Use `literal_source_does_not_state_bounded_relation` only for a wrong packet
+link. Use `no_context_complete_quote_within_display_limit` only when the source
+does state the relation but no one contiguous exact span within the consumer's
+220-character limit carries the needed antecedent and material meaning. Never
+substitute a nearby quote that states another product, state, or stage. The
+rejected semantic reference stays admitted and candidate-accounted, must be
+labeled `exclude`, and cannot be forced into display or exact-quote work. The
+consumer rechecks frontier admission from the surviving literal customer
+support. If the surviving support no longer supplies reported behavior,
+independent customer recurrence, or material source-native engagement, the
+whole point must be rejected instead. This is not an allowance to hide
+counterevidence, quiet evidence, or an inconvenient result. Materialize a wrong
+link with repeated `--reject-frontier-relation <semantic_unit_ref>` arguments;
+materialize an unquotable literal relation with repeated
+`--reject-unquotable-frontier-relation <semantic_unit_ref>` arguments. The
+runner binds the cause and resulting list.
+
 For a whole-axis pack, thirteen is the maximum number of displayed distinct
 truth origins **per bounded point**, not the size of the evidence corpus and not
 an instruction to take the thirteen largest engagement values. The queue order
