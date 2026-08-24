@@ -10,12 +10,15 @@ from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
     DISPLAY_LABEL_BY_REASON_CODE,
+    LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     PARENT_CONTEXT_POLICY,
     SELECTION_SPEC_VERSION,
     VALUE_REASON_RELATIONS,
     _candidate_rows,
     _bucket_priority,
     _display_label,
+    _finalize_preselection_relation_confirmation_prepare_quotes,
     _numeric_engagement,
     _preselection_confirmation_candidates,
     _policy_guidance,
@@ -823,6 +826,13 @@ def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_disp
     assert rejected_candidate["candidate_id"] in {
         row["candidate_id"] for row in quote_manifest["labeled_inventory"]
     }
+    rejected_row = next(
+        row
+        for row in quote_manifest["labeled_inventory"]
+        if row["candidate_id"] == rejected_candidate["candidate_id"]
+    )
+    assert rejected_row["reason_code"] == rejection["cause"]
+    assert rejected_row["reason_code"] != "literal_source_does_not_state_bounded_relation"
     assert rejected_candidate["candidate_id"] not in {
         row["candidate_id"] for row in quote_manifest["selected_rows"]
     }
@@ -1541,24 +1551,24 @@ def test_customer_pull_frontier_runner_materializes_a_cold_point_spec(
             "confirmation.json",
         ]
     ).command == "prepare-preselection-relation-confirmation"
-    parsed = _parser().parse_args(
-        [
-            "materialize-customer-pull-point-selection-spec",
-            "--frontier",
-            "frontier.json",
-            "--packet",
-            "packet.json",
-            "--bundle",
-            "bundle.json",
-            "--proposition-id",
-            "point",
-            "--reject-unquotable-frontier-relation",
-            "source::semantic-ref",
-            "--spec-out",
-            "spec.json",
-        ]
-    )
-    assert parsed.unquotable_frontier_semantic_refs == ["source::semantic-ref"]
+    with pytest.raises(SystemExit):
+        _parser().parse_args(
+            [
+                "materialize-customer-pull-point-selection-spec",
+                "--frontier",
+                "frontier.json",
+                "--packet",
+                "packet.json",
+                "--bundle",
+                "bundle.json",
+                "--proposition-id",
+                "point",
+                "--reject-unquotable-frontier-relation",
+                "source::semantic-ref",
+                "--spec-out",
+                "spec.json",
+            ]
+        )
 
 
 def test_preselection_confirmation_recovers_material_candidate_before_cap_selection(
@@ -2721,7 +2731,7 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
         quote_manifest, sources, _quote_response(quote_manifest, sources)
     )
 
-    assert quote_manifest["schema_version"].endswith("_v7")
+    assert quote_manifest["schema_version"] == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
     assert quote_manifest["relation_transport"]["mode"] == "named_positional_batches"
     assert quote_manifest["preselection_relation_confirmation"]["status"] == "passed"
     assert artifact["candidate_count"] == 20
@@ -3086,9 +3096,9 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
         response_dir=response_dir,
         confirmation_batch_manifest_path=preselection_manifest_path,
         confirmation_response_dir=confirmation_response_dir,
-        quote_prompt_out=tmp_path / "v7_quote_prompt.txt",
-        quote_schema_out=tmp_path / "v7_quote_schema.json",
-        quote_manifest_out=tmp_path / "v7_quote_manifest.json",
+        quote_prompt_out=tmp_path / "v8_quote_prompt.txt",
+        quote_schema_out=tmp_path / "v8_quote_schema.json",
+        quote_manifest_out=tmp_path / "v8_quote_manifest.json",
     )
     assert preselection["candidate_count"] == 10
     assert confirmed["candidate_count"] == 10
@@ -3169,6 +3179,97 @@ def test_provider_prompts_are_compact_views_while_manifests_keep_full_facts(
         "properties"
     ]["exact_quote"]
     assert exact_quote_schema["maxLength"] == 220
+
+
+def test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    body = (
+        "Goal is to finish this tube because the color works for me, although that may take time. "
+        + "The earlier entry names Pink Guava and explains the same goal in full. "
+        + "Summer Fridays Lip Butter Balm Vanilla Beige. Same as previous, including the goal to finish it."
+    )
+    assert len(body) > 220
+    sources[0]["bundle"]["evidence_units"][0]["text"] = body
+    _reseal(sources[0])
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    relation_by_candidate = {
+        row["candidate_id"]: row for row in first_pass["results"]
+    }
+    confirmation_response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One product state under one condition set.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation_by_candidate[candidate_id]["relation"],
+                "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+    quote_prompt, quote_schema, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+    exact_quote_schema = quote_schema["properties"]["quotes"]["items"][
+        "properties"
+    ]["exact_quote"]
+    assert quote_manifest["schema_version"] == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    assert "maxLength" not in exact_quote_schema
+    assert "There is no character ceiling" in quote_prompt
+    assert "another source word follows after whitespace" in quote_prompt
+    response = {
+        "quotes": [
+            {
+                "selected_id": quote_manifest["provider_selected_ids"][0],
+                "quote_status": "quote_available",
+                "exact_quote": body,
+            }
+        ]
+    }
+    artifact = _finalize_quotes_runtime(quote_manifest, sources, response)
+    output_row = artifact["source_groups"][0]["rows"][0]
+    assert output_row["exact_quote"] == body
+    assert body in sources[0]["bundle"]["evidence_units"][0]["text"]
+
+    shortened = copy.deepcopy(response)
+    shortened["quotes"][0]["exact_quote"] = "Goal is to finish this tube because"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, shortened)
+    assert caught.value.boundary == "quote_boundary_incomplete"
+
+    _, legacy_schema, legacy_manifest = (
+        _finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+            quote_manifest_version=LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        )
+    )
+    assert legacy_schema["properties"]["quotes"]["items"]["properties"][
+        "exact_quote"
+    ]["maxLength"] == 220
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(legacy_manifest, sources, response)
+    assert caught.value.boundary == "quote_overlength"
 
 
 @pytest.mark.parametrize(

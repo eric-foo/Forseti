@@ -635,23 +635,24 @@ replace it with parent, child, sibling, or engagement meaning.
 That failure removes only the affected literal support relation, not
 automatically every other relation attached to the point. Counter and adjacent
 relations are not eligible for this repair. After checking the bound source, an
-author may rerun the point with a hash-bound `frontier_relation_rejections` row.
-Use `literal_source_does_not_state_bounded_relation` only for a wrong packet
-link. Use `no_context_complete_quote_within_display_limit` only when the source
-does state the relation but no one contiguous exact span within the consumer's
-220-character limit carries the needed antecedent and material meaning. Never
-substitute a nearby quote that states another product, state, or stage. The
-rejected semantic reference stays admitted and candidate-accounted, must be
-labeled `exclude`, and cannot be forced into display or exact-quote work. The
-consumer rechecks frontier admission from the surviving literal customer
-support. If the surviving support no longer supplies reported behavior,
-independent customer recurrence, or material source-native engagement, the
-whole point must be rejected instead. This is not an allowance to hide
-counterevidence, quiet evidence, or an inconvenient result. Materialize a wrong
-link with repeated `--reject-frontier-relation <semantic_unit_ref>` arguments;
-materialize an unquotable literal relation with repeated
-`--reject-unquotable-frontier-relation <semantic_unit_ref>` arguments. The
-runner binds the cause and resulting list.
+author may rerun the point with a hash-bound `frontier_relation_rejections` row
+using `literal_source_does_not_state_bounded_relation` for a wrong packet link.
+Never substitute a nearby quote that states another product, state, or stage.
+When the source does state the relation, return the shortest context-complete
+contiguous exact span; quote length is not a rejection cause. The 220-character
+threshold only determines whether a short body is copied in full and whether
+external quote review is needed. A truthful span may exceed it. Historical v7
+specs may retain `no_context_complete_quote_within_display_limit` for exact
+replay, but new authoring must not create that cause. A genuinely rejected
+semantic reference stays admitted and candidate-accounted, must be labeled
+`exclude`, and cannot be forced into display or exact-quote work. The consumer
+rechecks frontier admission from the surviving literal customer support. If the
+surviving support no longer supplies reported behavior, independent customer
+recurrence, or material source-native engagement, the whole point must be
+rejected instead. This is not an allowance to hide counterevidence, quiet
+evidence, or an inconvenient result. Materialize a wrong link with repeated
+`--reject-frontier-relation <semantic_unit_ref>` arguments. The runner binds the
+cause and resulting list.
 
 For a whole-axis pack, thirteen is the maximum number of displayed distinct
 truth origins **per bounded point**, not the size of the evidence corpus and not
@@ -1134,27 +1135,26 @@ returned long-source substring must directly express the normalized meaning or
 a material companion qualification, or be `quote_unavailable`; a generic
 batched relation label cannot make an irrelevant substring acceptable. An
 exact span must not start with an unresolved pronoun when nearby preceding text
-names its antecedent and the combined span fits. Product identity may still
+names its antecedent. Product identity may still
 come from the evidence row; the pronoun rule does not require every otherwise
 relevant quote to repeat it. The quote is context-complete rather than merely
 short: it must substantiate every material outcome, direction, comparator,
 formula distinction, and usage or timing condition in the normalized meaning,
 retain a nearby material qualification, and never stop mid-phrase. It may
-return unavailable only after checking that no one span within 220 characters
-supports the complete normalized meaning; optional non-reversing context need
-not fit. An
+return unavailable only after checking that no contiguous exact span supports
+the complete normalized meaning; quote length alone is not a rejection cause. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. For
-a longer body, it accepts one context-complete contiguous exact substring of at
-most 220 characters after packet and bundle
+a longer body, v8 accepts the shortest context-complete contiguous exact
+substring needed by the meaning, even when it exceeds 220 characters, after packet and bundle
 content verification and evidence-ID, artifact-ID, and source-ref verification,
-and rejects a body that changed after the quote manifest was written. When a
-material qualification cannot fit, the quote response returns unavailable
-rather than a misleading fragment. It never repairs text or adds ellipses. An
+and rejects a body that changed after the quote manifest was written. When no
+contiguous exact span carries the material meaning, the quote response returns
+unavailable rather than a misleading fragment. It never repairs text or adds ellipses. An
 available quote must contain at least two
 Unicode alphanumeric characters; no lexical-overlap relevance rule is applied.
-A long-body quote in a current v4/v5/v6/v7 quote manifest that ends in an alphanumeric
+A long-body quote in a v4/v5/v6/v7/v8 quote manifest that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at
 `quote_boundary_incomplete`. This catches a literal substring that stops before

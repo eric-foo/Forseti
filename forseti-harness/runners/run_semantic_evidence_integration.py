@@ -1649,7 +1649,6 @@ def materialize_customer_pull_point_selection_spec_run(
     proposition_id: str,
     spec_out: Path,
     rejected_frontier_semantic_refs: Sequence[str] = (),
-    unquotable_frontier_semantic_refs: Sequence[str] = (),
 ) -> dict[str, Any]:
     frontier = _load_object(frontier_path)
     packet = _load_object(packet_path)
@@ -1665,14 +1664,6 @@ def materialize_customer_pull_point_selection_spec_run(
                 "cause": "literal_source_does_not_state_bounded_relation",
             }
             for semantic_ref in rejected_frontier_semantic_refs
-        ]
-        + [
-            {
-                "source_id": frontier["source_id"],
-                "semantic_unit_ref": semantic_ref,
-                "cause": "no_context_complete_quote_within_display_limit",
-            }
-            for semantic_ref in unquotable_frontier_semantic_refs
         ],
     )
     spec["sources"] = [
@@ -1691,9 +1682,6 @@ def materialize_customer_pull_point_selection_spec_run(
         "frontier_sha256": frontier["frontier_sha256"],
         "truth_group_cap": spec["truth_group_cap"],
         "rejected_frontier_relation_count": len(rejected_frontier_semantic_refs),
-        "unquotable_frontier_relation_count": len(
-            unquotable_frontier_semantic_refs
-        ),
         "model_api_calls": 0,
     }
 
@@ -2433,16 +2421,6 @@ def _parser() -> argparse.ArgumentParser:
             "repeat for multiple rejected relations"
         ),
     )
-    frontier_point.add_argument(
-        "--reject-unquotable-frontier-relation",
-        action="append",
-        default=[],
-        dest="unquotable_frontier_semantic_refs",
-        help=(
-            "literal semantic ref whose meaning has no context-complete exact "
-            "quote within the display limit; repeat for multiple relations"
-        ),
-    )
     frontier_point.add_argument("--spec-out", type=Path, required=True)
 
     selection_prepare = sub.add_parser("prepare-evidence-selection")
@@ -2926,9 +2904,6 @@ def main(argv: list[str] | None = None) -> int:
                 spec_out=args.spec_out,
                 rejected_frontier_semantic_refs=(
                     args.rejected_frontier_semantic_refs
-                ),
-                unquotable_frontier_semantic_refs=(
-                    args.unquotable_frontier_semantic_refs
                 ),
             )
         elif args.command == "prepare-evidence-selection":

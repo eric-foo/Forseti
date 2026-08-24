@@ -40,6 +40,7 @@ POINT_TRUTH_ORIGIN_CAP = 13
 SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
     "phase_a_evidence_quote_manifest_v6",
     "phase_a_evidence_quote_manifest_v7",
+    "phase_a_evidence_quote_manifest_v8",
 }
 INDEPENDENCE_POSTURES = {
     "credited",
