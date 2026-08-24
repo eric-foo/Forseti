@@ -2788,7 +2788,15 @@ def build_axis_dogfood_truth_index(
     axis_pack = _load_object(axis_pack_path, boundary="dogfood_truth_index_verification")
     rejected_points = validated.get("rejected_point_index")
     if rejected_points is None:
-        rejected_points = axis_pack.get("rejected_points", [])
+        # An absent rejected frontier is unknown, never an empty one. Defaulting
+        # it to [] would let this builder, its rebuild validator, and a dogfood
+        # judge all assert that no point was ever rejected.
+        rejected_points = axis_pack.get("rejected_points")
+        if rejected_points is None:
+            raise EvidenceConsumerError(
+                "dogfood_truth_index_verification",
+                "source axis pack states no rejected-point frontier",
+            )
     if not isinstance(rejected_points, list):
         raise EvidenceConsumerError(
             "dogfood_truth_index_verification", "rejected point index is invalid"

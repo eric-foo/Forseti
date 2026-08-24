@@ -834,6 +834,10 @@ resolvability.
 Blind full-versus-compact dogfood builds its exact-fact answer key from the
 validated consolidated view, never from a prose completion receipt:
 
+The input must be a routed v2 consolidated view carrying point, placement, and
+`projection_routes` facts. A frozen v1 view may still validate and rebuild for
+compatibility proof, but it is not a dogfood-truth-index input.
+
 ```text
 run_phase_a_evidence_axis_consolidation.py build-dogfood-truth
   --view <validated-view.json>

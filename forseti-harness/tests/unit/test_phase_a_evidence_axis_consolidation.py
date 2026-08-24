@@ -989,6 +989,23 @@ def test_dogfood_truth_wrong_cause_reaches_reprojection_boundary(
     assert caught.value.boundary == "dogfood_truth_index_reprojection"
 
 
+def test_dogfood_truth_index_refuses_an_absent_rejected_point_frontier(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, _ = _fixture(tmp_path, monkeypatch)
+    view = build_axis_consolidated_view(spec)
+    assert "rejected_point_index" not in view
+    view_path = tmp_path / "view.json"
+    _write(view_path, view)
+
+    with pytest.raises(
+        EvidenceConsumerError, match="no rejected-point frontier"
+    ) as caught:
+        build_axis_dogfood_truth_index(view, source_view_path=view_path)
+
+    assert caught.value.boundary == "dogfood_truth_index_verification"
+
+
 def test_generic_axis_pack_preserves_same_origin_repeated_observation(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -2782,6 +2799,7 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "validate-axis-pack --pack",
         "build-dogfood-truth",
         "validate-dogfood-truth",
+        "routed v2 consolidated view",
         "Absence from the small index is therefore not evidence",
         "Do not infer any sibling file",
         "phase_a_hydration_axis_pack_v2",
@@ -2793,4 +2811,3 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
     assert 'subparsers.add_parser("build-dogfood-truth")' in runner
     assert 'subparsers.add_parser("validate-dogfood-truth")' in runner
-    validate_axis_dogfood_truth_index,
