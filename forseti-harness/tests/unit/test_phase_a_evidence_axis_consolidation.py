@@ -28,6 +28,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     LEGACY_CONSOLIDATED_VIEW_VERSION,
     LEGACY_CONSOLIDATION_SPEC_VERSION,
     _axis_reader_point_filename,
+    _point_reader_state_ledger,
     _reader_evidence_accounting_contract,
     _validate_decision_state_reader_evidence_rows,
     bind_axis_reader_output_schema,
@@ -4141,6 +4142,14 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
         )
     assert caught.value.boundary == "point_reader_brief"
 
+    mismatched_selected_identity = copy.deepcopy(first_facts[0])
+    mismatched_selected_identity["decision_state"]["selected_id"] = (
+        "selected_elsewhere"
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _point_reader_state_ledger([mismatched_selected_identity])
+    assert caught.value.boundary == "point_reader_decision_state"
+
 
 def test_point_reader_identity_binds_meaning_but_not_storage_path(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -4342,38 +4351,6 @@ def test_point_reader_runner_reuses_valid_points_and_recovers_partial_run(
         "validate_axis_point_reader_snapshot",
         count_snapshot_validation,
     )
-    completed = finalize_point_reader_run(
-        manifest_path=second_manifest_path,
-        point_store_dir=store,
-        responses_dir=responses,
-        brief_store_dir=briefs,
-        output_path=tmp_path / "complete_output.json",
-        expected_snapshot_sha256=second["snapshot_sha256"],
-    )
-    assert completed["compiled_point_count"] == 1
-    assert completed["reused_brief_count"] == 1
-    assert snapshot_validation_calls == 1
-    assert validate_point_reader_output_run(
-        manifest_path=second_manifest_path,
-        point_store_dir=store,
-        output_path=tmp_path / "complete_output.json",
-        expected_snapshot_sha256=second["snapshot_sha256"],
-    )["status"] == "valid"
-
-    empty_responses = tmp_path / "empty_responses"
-    empty_responses.mkdir()
-    replayed = finalize_point_reader_run(
-        manifest_path=second_manifest_path,
-        point_store_dir=store,
-        responses_dir=empty_responses,
-        brief_store_dir=briefs,
-        output_path=tmp_path / "replayed_output.json",
-        expected_snapshot_sha256=second["snapshot_sha256"],
-    )
-    assert replayed["compiled_point_count"] == 0
-    assert replayed["reused_brief_count"] == 2
-    assert snapshot_validation_calls == 2
-
     judgment_snapshot_validation_calls = 0
     original_judgment_snapshot_validation = (
         consolidation_judgment.validate_axis_point_reader_snapshot
@@ -4389,12 +4366,39 @@ def test_point_reader_runner_reuses_valid_points_and_recovers_partial_run(
         "validate_axis_point_reader_snapshot",
         count_judgment_snapshot_validation,
     )
+    completed = finalize_point_reader_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        responses_dir=responses,
+        brief_store_dir=briefs,
+        output_path=tmp_path / "complete_output.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert completed["compiled_point_count"] == 1
+    assert completed["reused_brief_count"] == 1
+    assert snapshot_validation_calls == 1
+    assert judgment_snapshot_validation_calls == 0
     assert validate_point_reader_output_run(
         manifest_path=second_manifest_path,
         point_store_dir=store,
         output_path=tmp_path / "complete_output.json",
         expected_snapshot_sha256=second["snapshot_sha256"],
     )["status"] == "valid"
+    assert judgment_snapshot_validation_calls == 1
+
+    empty_responses = tmp_path / "empty_responses"
+    empty_responses.mkdir()
+    replayed = finalize_point_reader_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        responses_dir=empty_responses,
+        brief_store_dir=briefs,
+        output_path=tmp_path / "replayed_output.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert replayed["compiled_point_count"] == 0
+    assert replayed["reused_brief_count"] == 2
+    assert snapshot_validation_calls == 2
     assert judgment_snapshot_validation_calls == 1
 
 
