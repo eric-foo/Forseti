@@ -78,6 +78,7 @@ Test names below resolve in
 | Quote length never decides whether current evidence is truthful. V8 accepts the shortest context-complete contiguous exact span even above 220 characters; 220 remains only the short-body copy/review-workload threshold, and stamped v7 keeps its historical ceiling. | A long truthful explanation is rejected because it is inconvenient to display, or historical v7 replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION` and its v7 compatibility branch in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded`, `test_quote_stopping_before_the_next_source_word_fails_loud`, and `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display` (emulated-v7-producer/current-consumer replay: proves the v7 consumer path still finalizes and keeps its stamped exclusion code, not that saved v7 bytes were reproduced). | Semantic-integration contract changelog `v58`; commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
 | A cold model reads routed v2 evidence through a hash-bound manifest plus one point-local JSONL file containing self-contained displayed facts; route-specific meaning remains inside each fact. | A normalized view or one axis-wide fact stream forces repeated joins or searches, so reading cost becomes unstable or a quote, date, relation, companion meaning, or Decision State is transferred across points. | This workflow, paragraph beginning `When a cold model must read`; `build_axis_reader_bundle` and `validate_axis_reader_bundle` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local`, `test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct`, and `test_axis_reader_bundle_wrong_cause_reaches_reprojection_boundary`. | The landing revision and review disposition are preserved in Git history; no frozen consolidated-view bytes are changed. |
 | Scalable reader compilation freezes path-independent point identities, lets one worker read one complete point, compiler-attaches exact evidence and Decision State, reuses unchanged briefs, and assembles only exact accepted/rejected membership. | Rebuilding or prompting a whole axis after one point changes wastes work; a compact answer can also look exact while dropping a state, borrowing a quote, or omitting a late worker result. | This workflow, paragraph beginning `For scalable point-at-a-time compilation`; point-reader functions in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` and `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`; axis tests `test_point_reader_compiler_closes_decision_state_at_consumer_boundary`, `test_point_reader_identity_binds_meaning_but_not_storage_path`, `test_point_reader_runner_reuses_valid_points_and_recovers_partial_run`, and `test_point_reader_membership_scales_without_a_whole_axis_schema`. | Semantic-integration contract changelog `v59`; commits `81cad271`, `cb102c6a`, and `3ef82edc`. This route adds generated run bookkeeping, not an evidence authority, global index, hierarchy, or Deliver stage. Frozen v1/v2 outputs remain unchanged. |
+| An evidence-rich axis with no admitted frontier point preserves every exact axis-tagged candidate in a no-frontier v2 pack; it invents no point and assigns no support/counter relation. | Zero-proposition axes disappear as apparently complete empties, or an operator fabricates a convenient claim merely to retain useful evidence. | This workflow, paragraph beginning `When an axis has nonempty axis-tagged evidence`; `materialize_phase_a_evidence_no_frontier_axis_manifest` and `_build_no_frontier_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_no_frontier_axis_pack_preserves_every_candidate_and_reprojects`, `test_no_frontier_axis_pack_rejects_repinned_missing_candidate_at_accounting`, `test_no_frontier_axis_pack_rejects_repinned_cross_evidence_attachment`, and `test_no_frontier_axis_route_rejects_an_already_admitted_point_at_status_boundary`. | The v2 pack is a separate consumer shape. Existing point-bearing v1 packs and routed v1/v2 consolidated views retain their existing bytes and route. |
 | Frozen v1 specs and views rebuild under their original shape and bytes; v2-only routing, Decision State, and evidence-accounting fields never leak backward. | A current improvement quietly restamps historical evidence or makes the compatibility control look reproducible when its bytes changed. | This workflow, paragraph containing `The v1 spec and`; `LEGACY_CONSOLIDATION_SPEC_VERSION`, `LEGACY_CONSOLIDATED_VIEW_VERSION`, and `build_axis_consolidated_view` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields`, `test_v1_rejects_decision_state_spec_residue`, and `test_legacy_v1_does_not_gain_evidence_accounting_fields`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. Quote-manifest v7/v8 replay is the separate compatibility boundary in semantic-integration contract changelog `v58`. |
 
 ## Active commercial point-entry boundary
@@ -746,7 +747,38 @@ nonempty `failure_boundary`; a byte-valid receipt for another point is invalid.
 Rejected-only axes produce no Direct Outcome or Decision State projection
 because no accepted point exists to route.
 
-The live repository route for any named Phase A axis is
+When an axis has nonempty axis-tagged evidence but no admitted frontier point,
+do not treat it as empty, invent a bounded point, or assign generic
+support/counter relations. Materialize
+`phase_a_evidence_axis_pack_manifest_v2` with
+`materialize-no-frontier-axis-manifest`, then build and validate
+`phase_a_evidence_axis_pack_v2` through the normal axis-pack commands. The
+manifest pins the packet, bundle, frontier, exact semantic-unit membership, and
+full candidate inventory. The pack retains every candidate's normalized
+meaning, evidence/source identity, date, engagement, posture, uncertainty,
+polarity, origin, and hash lineage while keeping literal source bodies
+cold-resolvable through the pinned bundle. Its reading contract distinguishes
+routing relevance from point relation, source-native resonance from truth,
+statement polarity from product sentiment, and semantic/evidence/origin counts
+from people or prevalence. `no admitted frontier point` never means `no
+evidence` or `no meaningful pattern`.
+
+This route is Phase A evidence packaging, not point formation, point rejection,
+or Deliver. It fails at `no_frontier_axis_status` if the verified frontier
+already admits a point for the axis; use the point-bearing v1 pack and explicit
+point-level projection route in that case. If a later frontier revision admits
+a point, rebuild under that normal route rather than carrying the no-frontier
+pack forward. Existing v1 pack and consolidated-view behavior remains the
+compatibility path.
+
+For point-bearing batched selection, the relation batch manifest already
+contains the exact hash-bound selection manifest. Quote finalization and the
+axis-pack accepted-point descriptor may consume that embedded manifest
+directly; do not copy it into a second hand-maintained file merely to satisfy a
+path convention. The consumer rechecks the batch-manifest hash and embedded
+selection-manifest shape before use.
+
+The live repository route for a point-bearing Phase A axis is
 `phase_a_evidence_axis_pack_manifest_v1` ->
 `phase_a_evidence_axis_pack_v1`. Use
 `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py

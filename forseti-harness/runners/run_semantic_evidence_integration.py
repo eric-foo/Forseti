@@ -73,6 +73,7 @@ from judgment.phase_a_evidence_consumer import (  # noqa: E402
     prepare_decision_batch,
 )
 from judgment.phase_a_evidence_selection import (  # noqa: E402
+    SELECTION_BATCH_MANIFEST_VERSION,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
     finalize_batched_relations_prepare_quotes,
@@ -2083,6 +2084,19 @@ def finalize_batched_preselection_relation_confirmation_run(
     }
 
 
+def _selection_manifest_for_finalization(path: Path) -> dict[str, Any]:
+    selection_manifest = _load_object(path)
+    if selection_manifest.get("schema_version") != SELECTION_BATCH_MANIFEST_VERSION:
+        return selection_manifest
+    embedded = selection_manifest.get("selection_manifest")
+    if not isinstance(embedded, dict):
+        raise EvidenceConsumerError(
+            "manifest_verification",
+            "selection batch manifest is missing its embedded selection manifest",
+        )
+    return embedded
+
+
 def finalize_evidence_selection_quotes_run(
     *,
     selection_manifest_path: Path,
@@ -2092,7 +2106,7 @@ def finalize_evidence_selection_quotes_run(
     confirmation_response_path: Path | None,
     artifact_out: Path,
 ) -> dict[str, Any]:
-    selection_manifest = _load_object(selection_manifest_path)
+    selection_manifest = _selection_manifest_for_finalization(selection_manifest_path)
     sources = load_selection_sources(selection_manifest)
     quote_manifest = _load_object(quote_manifest_path)
     if quote_manifest.get("selection_manifest_sha256") != selection_manifest.get(

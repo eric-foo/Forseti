@@ -636,6 +636,33 @@ def _generic_fixture(
     return manifest, spec, paths
 
 
+def test_axis_pack_resolves_selection_manifest_embedded_in_relation_batch(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    descriptor = manifest["accepted_points"][0]
+    selection_path = Path(descriptor["selection_manifest_path"])
+    embedded = json.loads(selection_path.read_text(encoding="utf-8"))
+    batch = _manifest(
+        schema_version="phase_a_evidence_selection_batch_manifest_v1",
+        selection_manifest=embedded,
+        batches=[],
+    )
+    batch_path = tmp_path / "selection_batch_manifest.json"
+    _write(batch_path, batch)
+    descriptor["selection_manifest_path"] = str(batch_path)
+    descriptor["selection_manifest_file_sha256"] = hash_file(batch_path)
+    _rehash_manifest(manifest)
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+
+    assert pack["points"][0]["selection_manifest_path"] == str(batch_path)
+    assert (
+        pack["points"][0]["selection_manifest_sha256"]
+        == embedded["manifest_sha256"]
+    )
+
+
 def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
     axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
     point_ids: list[str] = []

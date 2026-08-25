@@ -6,7 +6,15 @@ from pathlib import Path
 
 import pytest
 
+from harness_utils import hash_file
 import judgment.phase_a_evidence_selection as evidence_selection
+from judgment.phase_a_evidence_axis_consolidation import (
+    NO_FRONTIER_AXIS_PACK_VERSION,
+    _no_frontier_axis_disposition,
+    build_phase_a_evidence_axis_pack,
+    materialize_phase_a_evidence_no_frontier_axis_manifest,
+    validate_phase_a_evidence_axis_pack,
+)
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
@@ -48,6 +56,7 @@ from judgment.phase_a_evidence_selection import (
     verify_customer_pull_point_frontier,
 )
 from runners.run_semantic_evidence_integration import (
+    _selection_manifest_for_finalization,
     _parser,
     build_customer_pull_point_frontier_run,
     finalize_batched_preselection_relation_confirmation_run,
@@ -201,6 +210,232 @@ def _packet_and_bundle(count: int = 14) -> tuple[dict, dict]:
     }
     packet["packet_sha256"] = _canonical_hash(packet)
     return packet, bundle
+
+
+def _no_frontier_source(
+    tmp_path: Path, *, count: int = 5
+) -> tuple[dict, dict, dict, Path, Path, Path]:
+    packet, bundle = _packet_and_bundle(count)
+    semantic_axis_index = packet["catalogue_schema"]["semantic_unit_columns"].index(
+        "axis_ids"
+    )
+    for group in packet["source_groups"]:
+        semantic_units_index = group["evidence_columns"].index("semantic_units")
+        for evidence_row in group["evidence_rows"]:
+            for semantic_row in evidence_row[semantic_units_index]:
+                semantic_row[semantic_axis_index] = ["coverage_and_pigment"]
+    packet["selection"] = {"mode": "proposition", "proposition_ids": []}
+    packet["selection_coverage"] = {"truncated": False}
+    packet.pop("packet_sha256", None)
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="coverage-frontier",
+        business_question="What coverage evidence earned investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    packet_path = tmp_path / "packet.json"
+    bundle_path = tmp_path / "bundle.json"
+    frontier_path = tmp_path / "frontier.json"
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    frontier_path.write_text(json.dumps(frontier), encoding="utf-8")
+    return packet, bundle, frontier, packet_path, bundle_path, frontier_path
+
+
+def _no_frontier_manifest(
+    packet_path: Path, bundle_path: Path, frontier_path: Path
+) -> dict:
+    return materialize_phase_a_evidence_no_frontier_axis_manifest(
+        axis_id="coverage_and_pigment",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+        source_id="full-corpus",
+        packet_path=packet_path,
+        bundle_path=bundle_path,
+        frontier_path=frontier_path,
+    )
+
+
+def _rewrite_no_frontier_sources(
+    *,
+    packet: dict,
+    frontier: dict,
+    packet_path: Path,
+    frontier_path: Path,
+    manifest: dict,
+) -> None:
+    packet.pop("packet_sha256", None)
+    packet["packet_sha256"] = _canonical_hash(packet)
+    rebuilt_frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id=frontier["frontier_id"],
+        business_question=frontier["business_question"],
+        subject_product_ids=frontier["subject_product_ids"],
+        source_id=frontier["source_id"],
+        protected_point_ids=frontier["protected_point_ids"],
+    )
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    frontier_path.write_text(json.dumps(rebuilt_frontier), encoding="utf-8")
+    manifest["packet_sha256"] = packet["packet_sha256"]
+    manifest["packet_file_sha256"] = hash_file(packet_path)
+    manifest["frontier_sha256"] = rebuilt_frontier["frontier_sha256"]
+    manifest["frontier_file_sha256"] = hash_file(frontier_path)
+    manifest.pop("manifest_sha256", None)
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+
+
+def test_no_frontier_axis_pack_preserves_every_candidate_and_reprojects(
+    tmp_path: Path,
+) -> None:
+    _, _, _, packet_path, bundle_path, frontier_path = _no_frontier_source(
+        tmp_path
+    )
+    manifest = _no_frontier_manifest(packet_path, bundle_path, frontier_path)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+
+    assert pack["schema_version"] == NO_FRONTIER_AXIS_PACK_VERSION
+    assert pack["status"] == "complete_no_admitted_frontier_point_axis_pack"
+    assert pack["frontier_point_count"] == 0
+    assert pack["candidate_semantic_unit_count"] == 5
+    assert len(pack["candidate_inventory"]) == 5
+    assert {
+        row["semantic_unit_ref"] for row in pack["candidate_inventory"]
+    } == set(manifest["expected_semantic_unit_refs"])
+    assert all(row["existing_relations"] == [] for row in pack["candidate_inventory"])
+    assert all(row["source_ref"] for row in pack["candidate_inventory"])
+    assert all("engagement_raw_value" in row for row in pack["candidate_inventory"])
+    assert "row-level threshold result" in pack["reading_contract"]["engagement"]
+    assert "not overall sentiment" in pack["reading_contract"]["polarity"]
+    assert "routing relevance only" in pack["reading_contract"]["axis_assignment"]
+    assert build_phase_a_evidence_axis_pack(manifest) == pack
+    assert (
+        validate_phase_a_evidence_axis_pack(
+            pack, expected_axis_pack_sha256=pack["axis_pack_sha256"]
+        )
+        == pack
+    )
+
+
+def test_no_frontier_axis_route_rejects_an_already_admitted_point_at_status_boundary():
+    packet = {
+        "propositions": [
+            {
+                "proposition_id": "prop_coverage",
+                "axis_ids": ["coverage_and_pigment"],
+            }
+        ]
+    }
+    frontier = {
+        "retailer_first_queue": [
+            {
+                "proposition_id": "prop_coverage",
+                "axis_ids": ["coverage_and_pigment"],
+            }
+        ],
+        "community_discovery_queue": [],
+        "nonpromoted_points": [],
+    }
+
+    with pytest.raises(EvidenceConsumerError) as exc:
+        _no_frontier_axis_disposition(frontier, packet, "coverage_and_pigment")
+
+    assert exc.value.boundary == "no_frontier_axis_status"
+
+
+def test_no_frontier_axis_pack_rejects_repinned_missing_candidate_at_accounting(
+    tmp_path: Path,
+) -> None:
+    packet, _, frontier, packet_path, bundle_path, frontier_path = (
+        _no_frontier_source(tmp_path)
+    )
+    manifest = _no_frontier_manifest(packet_path, bundle_path, frontier_path)
+    group = packet["source_groups"][0]
+    semantic_units_index = group["evidence_columns"].index("semantic_units")
+    removed = group["evidence_rows"].pop(0)
+    removed_ref = removed[semantic_units_index][0][0]
+    packet["unmerged_axis_candidates"] = [
+        row
+        for row in packet["unmerged_axis_candidates"]
+        if row["semantic_unit_ref"] != removed_ref
+    ]
+    _rewrite_no_frontier_sources(
+        packet=packet,
+        frontier=frontier,
+        packet_path=packet_path,
+        frontier_path=frontier_path,
+        manifest=manifest,
+    )
+    with pytest.raises(EvidenceConsumerError) as exc:
+        build_phase_a_evidence_axis_pack(manifest)
+    assert exc.value.boundary == "no_frontier_axis_candidate_accounting"
+
+
+def test_no_frontier_axis_pack_rejects_repinned_cross_evidence_attachment(
+    tmp_path: Path,
+) -> None:
+    packet, _, frontier, packet_path, bundle_path, frontier_path = (
+        _no_frontier_source(tmp_path)
+    )
+    manifest = _no_frontier_manifest(packet_path, bundle_path, frontier_path)
+    populated = [group for group in packet["source_groups"] if group["evidence_rows"]]
+    source_group = populated[0]
+    target_group = next(
+        group
+        for group in populated
+        if group is not source_group and group["evidence_rows"]
+    )
+    source_semantic_index = source_group["evidence_columns"].index("semantic_units")
+    target_semantic_index = target_group["evidence_columns"].index("semantic_units")
+    target_evidence_index = target_group["evidence_columns"].index("evidence_id")
+    moved = source_group["evidence_rows"][0][source_semantic_index].pop(0)
+    target_evidence_id = target_group["evidence_rows"][0][target_evidence_index]
+    target_group["evidence_rows"][0][target_semantic_index].append(moved)
+    moved_ref = moved[0]
+    for row in packet["unmerged_axis_candidates"]:
+        if row["semantic_unit_ref"] == moved_ref:
+            row["evidence_id"] = target_evidence_id
+            break
+    _rewrite_no_frontier_sources(
+        packet=packet,
+        frontier=frontier,
+        packet_path=packet_path,
+        frontier_path=frontier_path,
+        manifest=manifest,
+    )
+
+    with pytest.raises(EvidenceConsumerError) as exc:
+        build_phase_a_evidence_axis_pack(manifest)
+    assert exc.value.boundary == "no_frontier_axis_candidate_inventory"
+
+
+def test_quote_finalization_reads_embedded_selection_manifest(
+    tmp_path: Path,
+) -> None:
+    embedded = {
+        "schema_version": "phase_a_evidence_selection_manifest_v1",
+        "manifest_sha256": "a" * 64,
+    }
+    batch_path = tmp_path / "batch_manifest.json"
+    batch_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "phase_a_evidence_selection_batch_manifest_v1",
+                "selection_manifest": embedded,
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert _selection_manifest_for_finalization(batch_path) == embedded
+
+    batch_path.write_text(
+        json.dumps(
+            {"schema_version": "phase_a_evidence_selection_batch_manifest_v1"}
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(EvidenceConsumerError) as exc:
+        _selection_manifest_for_finalization(batch_path)
+    assert exc.value.boundary == "manifest_verification"
 
 
 def _spec(count: int = 14) -> dict:

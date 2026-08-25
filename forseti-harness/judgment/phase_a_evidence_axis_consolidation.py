@@ -21,17 +21,23 @@ from harness_utils import hash_file
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
+    _expand_packet,
     _verify_packet,
 )
 from judgment.phase_a_evidence_selection import (
     PARENT_CONTEXT_POLICY,
+    SELECTION_BATCH_MANIFEST_VERSION,
+    _candidate_rows,
     _verify_bundle,
     load_selection_sources,
+    verify_customer_pull_point_frontier,
 )
 
 
 AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v1"
 AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v1"
+NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v2"
+NO_FRONTIER_AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v2"
 LEGACY_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
 CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
 LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
@@ -486,7 +492,21 @@ def _validate_point_binding(
         or hash_file(selection_path) != expected_selection_file_hash
     ):
         raise EvidenceConsumerError("candidate_access", f"selection manifest changed: {point_id}")
-    selection_manifest = _load_object(selection_path, boundary="candidate_access")
+    selection_container = _load_object(selection_path, boundary="candidate_access")
+    if selection_container.get("schema_version") == SELECTION_BATCH_MANIFEST_VERSION:
+        _verify_manifest_hash(
+            selection_container,
+            expected=selection_container.get("manifest_sha256"),
+            boundary="candidate_access",
+        )
+        selection_manifest = selection_container.get("selection_manifest")
+        if not isinstance(selection_manifest, Mapping):
+            raise EvidenceConsumerError(
+                "candidate_access",
+                f"selection batch manifest is missing its embedded manifest: {point_id}",
+            )
+    else:
+        selection_manifest = selection_container
     _verify_manifest_hash(
         selection_manifest,
         expected=descriptor.get("selection_manifest_sha256"),
@@ -714,9 +734,361 @@ def _validate_point_binding(
     return artifact, candidate_by_id, {"descriptor": descriptor_out, "bindings": bindings}
 
 
+def _no_frontier_axis_candidates(
+    *,
+    axis_id: str,
+    subject_product_ids: Sequence[str],
+    source_id: str,
+    packet: Mapping[str, Any],
+    bundle: Mapping[str, Any],
+    packet_path: Path,
+    bundle_path: Path,
+) -> list[dict[str, Any]]:
+    sources = [
+        {
+            "source_id": source_id,
+            "packet": packet,
+            "bundle": bundle,
+            "packet_path": packet_path,
+            "bundle_path": bundle_path,
+        }
+    ]
+    candidates = _candidate_rows(
+        sources,
+        {
+            "axis_ids": [axis_id],
+            "subject_product_ids": list(subject_product_ids),
+            "admit_semantic_refs": [],
+            "protected_evidence_ids": {},
+        },
+    )
+    if not candidates:
+        raise EvidenceConsumerError(
+            "no_frontier_axis_candidates",
+            "a no-frontier pack requires axis-tagged evidence candidates",
+        )
+    refs = [row.get("semantic_unit_ref") for row in candidates]
+    if (
+        not all(isinstance(value, str) and value for value in refs)
+        or len(refs) != len(set(refs))
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_candidates",
+            "axis candidate semantic identities are invalid",
+        )
+    return candidates
+
+
+def _no_frontier_axis_disposition(
+    frontier: Mapping[str, Any], packet: Mapping[str, Any], axis_id: str
+) -> dict[str, Any]:
+    proposition_axes = {
+        row.get("proposition_id"): set(row.get("axis_ids") or [])
+        for row in packet.get("propositions", [])
+        if isinstance(row, Mapping) and isinstance(row.get("proposition_id"), str)
+    }
+    admitted_ids = sorted(
+        {
+            row["proposition_id"]
+            for queue in ("retailer_first_queue", "community_discovery_queue")
+            for row in frontier.get(queue, [])
+            if isinstance(row, Mapping)
+            and isinstance(row.get("proposition_id"), str)
+            and axis_id in set(row.get("axis_ids") or [])
+        }
+    )
+    if admitted_ids:
+        raise EvidenceConsumerError(
+            "no_frontier_axis_status",
+            f"axis already has admitted frontier points: {admitted_ids}",
+        )
+    nonpromoted_ids = sorted(
+        {
+            row["proposition_id"]
+            for row in frontier.get("nonpromoted_points", [])
+            if isinstance(row, Mapping)
+            and isinstance(row.get("proposition_id"), str)
+            and axis_id in proposition_axes.get(row["proposition_id"], set())
+        }
+    )
+    return {
+        "disposition": "no_admitted_frontier_point",
+        "admitted_point_ids": admitted_ids,
+        "nonpromoted_point_ids": nonpromoted_ids,
+    }
+
+
+def materialize_phase_a_evidence_no_frontier_axis_manifest(
+    *,
+    axis_id: str,
+    subject_product_ids: Sequence[str],
+    source_id: str,
+    packet_path: Path,
+    bundle_path: Path,
+    frontier_path: Path,
+) -> dict[str, Any]:
+    """Bind an evidence-rich axis that has no admitted frontier point.
+
+    This is not a fallback point generator. It preserves the exact axis-tagged
+    candidate inventory and the verified frontier absence without assigning
+    support/counter relations that require a bounded point.
+    """
+
+    if not isinstance(axis_id, str) or not axis_id.strip():
+        raise EvidenceConsumerError("no_frontier_axis_manifest", "axis_id missing")
+    if (
+        not isinstance(source_id, str)
+        or not source_id
+        or not subject_product_ids
+        or not all(isinstance(value, str) and value for value in subject_product_ids)
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_manifest", "source and subject identities are invalid"
+        )
+    packet = _load_object(packet_path, boundary="no_frontier_axis_manifest")
+    bundle = _load_object(bundle_path, boundary="no_frontier_axis_manifest")
+    frontier = _load_object(frontier_path, boundary="no_frontier_axis_manifest")
+    _verify_packet(packet)
+    _verify_bundle(bundle)
+    if packet.get("source_bindings", {}).get("bundle_sha256") != bundle.get(
+        "bundle_sha256"
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_manifest", "packet and bundle identities differ"
+        )
+    verify_customer_pull_point_frontier(frontier, packet)
+    subjects = sorted(set(subject_product_ids))
+    if subjects != sorted(frontier.get("subject_product_ids") or []):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_manifest", "frontier subject identity differs"
+        )
+    _no_frontier_axis_disposition(frontier, packet, axis_id)
+    candidates = _no_frontier_axis_candidates(
+        axis_id=axis_id,
+        subject_product_ids=subjects,
+        source_id=source_id,
+        packet=packet,
+        bundle=bundle,
+        packet_path=packet_path,
+        bundle_path=bundle_path,
+    )
+    manifest: dict[str, Any] = {
+        "schema_version": NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION,
+        "axis_id": axis_id,
+        "subject_product_ids": subjects,
+        "source_id": source_id,
+        "packet_path": str(packet_path),
+        "packet_file_sha256": hash_file(packet_path),
+        "packet_sha256": packet["packet_sha256"],
+        "bundle_path": str(bundle_path),
+        "bundle_file_sha256": hash_file(bundle_path),
+        "bundle_sha256": bundle["bundle_sha256"],
+        "frontier_path": str(frontier_path),
+        "frontier_file_sha256": hash_file(frontier_path),
+        "frontier_sha256": frontier["frontier_sha256"],
+        "expected_semantic_unit_refs": sorted(
+            row["semantic_unit_ref"] for row in candidates
+        ),
+        "candidate_inventory_sha256": _canonical_json_sha256(candidates),
+    }
+    manifest["manifest_sha256"] = _canonical_hash(manifest, "manifest_sha256")
+    return manifest
+
+
+def _build_no_frontier_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    expected_fields = {
+        "schema_version",
+        "axis_id",
+        "subject_product_ids",
+        "source_id",
+        "packet_path",
+        "packet_file_sha256",
+        "packet_sha256",
+        "bundle_path",
+        "bundle_file_sha256",
+        "bundle_sha256",
+        "frontier_path",
+        "frontier_file_sha256",
+        "frontier_sha256",
+        "expected_semantic_unit_refs",
+        "candidate_inventory_sha256",
+        "manifest_sha256",
+    }
+    if set(manifest) != expected_fields:
+        raise EvidenceConsumerError(
+            "no_frontier_axis_manifest", "manifest fields are invalid"
+        )
+    stored_manifest_hash = manifest.get("manifest_sha256")
+    if not isinstance(stored_manifest_hash, str) or stored_manifest_hash != _canonical_hash(
+        manifest, "manifest_sha256"
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_manifest", "stored manifest hash is invalid"
+        )
+    axis_id = _required_string(
+        manifest, "axis_id", boundary="no_frontier_axis_manifest"
+    )
+    source_id = _required_string(
+        manifest, "source_id", boundary="no_frontier_axis_manifest"
+    )
+    subjects = manifest.get("subject_product_ids")
+    expected_refs = manifest.get("expected_semantic_unit_refs")
+    if (
+        not isinstance(subjects, list)
+        or subjects != sorted(set(subjects))
+        or not subjects
+        or not all(isinstance(value, str) and value for value in subjects)
+        or not isinstance(expected_refs, list)
+        or expected_refs != sorted(set(expected_refs))
+        or not expected_refs
+        or not all(isinstance(value, str) and value for value in expected_refs)
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_manifest", "candidate scope is invalid"
+        )
+    paths = {
+        key: Path(_required_string(manifest, key, boundary="no_frontier_axis_manifest"))
+        for key in ("packet_path", "bundle_path", "frontier_path")
+    }
+    for stem in ("packet", "bundle", "frontier"):
+        if not paths[f"{stem}_path"].is_file() or hash_file(
+            paths[f"{stem}_path"]
+        ) != _required_string(
+            manifest, f"{stem}_file_sha256", boundary="no_frontier_axis_manifest"
+        ):
+            raise EvidenceConsumerError(
+                "no_frontier_axis_source", f"bound {stem} file changed"
+            )
+    packet = _load_object(paths["packet_path"], boundary="no_frontier_axis_source")
+    bundle = _load_object(paths["bundle_path"], boundary="no_frontier_axis_source")
+    frontier = _load_object(
+        paths["frontier_path"], boundary="no_frontier_axis_source"
+    )
+    _verify_packet(packet)
+    _verify_bundle(bundle)
+    if (
+        packet.get("packet_sha256") != manifest.get("packet_sha256")
+        or bundle.get("bundle_sha256") != manifest.get("bundle_sha256")
+        or frontier.get("frontier_sha256") != manifest.get("frontier_sha256")
+        or packet.get("source_bindings", {}).get("bundle_sha256")
+        != bundle.get("bundle_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_source", "bound source identity changed"
+        )
+    verify_customer_pull_point_frontier(frontier, packet)
+    if subjects != sorted(frontier.get("subject_product_ids") or []):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_source", "frontier subject identity differs"
+        )
+    disposition = _no_frontier_axis_disposition(frontier, packet, axis_id)
+    candidates = _no_frontier_axis_candidates(
+        axis_id=axis_id,
+        subject_product_ids=subjects,
+        source_id=source_id,
+        packet=packet,
+        bundle=bundle,
+        packet_path=paths["packet_path"],
+        bundle_path=paths["bundle_path"],
+    )
+    observed_refs = sorted(row["semantic_unit_ref"] for row in candidates)
+    if observed_refs != expected_refs:
+        raise EvidenceConsumerError(
+            "no_frontier_axis_candidate_accounting",
+            "axis candidate semantic coverage changed",
+        )
+    candidate_inventory_sha256 = _canonical_json_sha256(candidates)
+    if candidate_inventory_sha256 != manifest.get("candidate_inventory_sha256"):
+        raise EvidenceConsumerError(
+            "no_frontier_axis_candidate_inventory",
+            "axis candidate facts or source attachment changed",
+        )
+    unique_evidence = {row["evidence_id"] for row in candidates}
+    unique_origins = {row["scoped_independence_key"] for row in candidates}
+    bindings = {
+        key: manifest[key]
+        for key in (
+            "packet_path",
+            "packet_file_sha256",
+            "packet_sha256",
+            "bundle_path",
+            "bundle_file_sha256",
+            "bundle_sha256",
+            "frontier_path",
+            "frontier_file_sha256",
+            "frontier_sha256",
+        )
+    }
+    pack: dict[str, Any] = {
+        "schema_version": NO_FRONTIER_AXIS_PACK_VERSION,
+        "status": "complete_no_admitted_frontier_point_axis_pack",
+        "axis_id": axis_id,
+        "subject_product_ids": copy.deepcopy(subjects),
+        "source_id": source_id,
+        "source_manifest": {
+            "schema_version": NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION,
+            "manifest_sha256": stored_manifest_hash,
+        },
+        "source_bindings": bindings,
+        "valid_point_count": 0,
+        "rejected_point_count": 0,
+        "frontier_point_count": 0,
+        "candidate_semantic_unit_count": len(candidates),
+        "unique_evidence_items_across_axis": len(unique_evidence),
+        "unique_origins_across_axis": len(unique_origins),
+        "candidate_inventory_sha256": candidate_inventory_sha256,
+        "frontier_resolution": disposition,
+        "candidate_inventory": copy.deepcopy(candidates),
+        "reading_contract": {
+            "axis_assignment": (
+                "axis_ids preserve routing relevance only; without a bounded point they do not "
+                "make a row support, counter, or direct product-performance evidence"
+            ),
+            "engagement": (
+                "engagement_context describes the source metric and its positive threshold; "
+                "engagement_material_positive is the row-level threshold result, raw_value is "
+                "descriptive resonance only, and neither changes evidence truth"
+            ),
+            "polarity": (
+                "polarity describes how the normalized statement is expressed relative to its "
+                "own predicate; it is not overall sentiment, product value, or an axis verdict "
+                "and must not be aggregated across rows"
+            ),
+            "evidence_posture": (
+                "questions, expectations, intentions, attributed reports, and first-hand "
+                "experiences remain distinct through evidence and uncertainty posture"
+            ),
+            "conflict": (
+                "conflicting source-native details stay unresolved unless separate authority "
+                "adjudicates them; coexistence is not a defect or an invitation to average"
+            ),
+            "counting": (
+                "candidate rows are semantic statements, unique evidence items are source "
+                "observations, and unique origins are origin groups; none is a people or "
+                "prevalence count"
+            ),
+        },
+        "cold_reader_resolution": {
+            "resolved_candidate_disposition_count": len(candidates),
+            "path_resolution": "explicit_manifest_paths_only",
+            "literal_source_text": "recover_from_hash_pinned_bundle",
+        },
+        "non_claims": [
+            "no admitted frontier point does not mean no evidence or no meaningful pattern",
+            "candidate rows have no support/counter relation until a bounded point is admitted",
+            "the inventory does not estimate prevalence, causation, market representativeness, or commercial pull",
+            "the inventory is Phase A evidence packaging and makes no Deliver recommendation",
+        ],
+    }
+    pack["axis_pack_sha256"] = _canonical_hash(pack, "axis_pack_sha256")
+    return pack
+
+
 def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
     """Build a generic, cold-resolvable Phase A axis pack from explicit pins."""
 
+    if manifest.get("schema_version") == NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION:
+        return _build_no_frontier_axis_pack(manifest)
     if manifest.get("schema_version") != AXIS_PACK_MANIFEST_VERSION:
         raise EvidenceConsumerError("axis_manifest", "unsupported axis manifest version")
     if set(manifest) != {
@@ -901,6 +1273,67 @@ def validate_phase_a_evidence_axis_pack(
 ) -> dict[str, Any]:
     """Validate a saved generic axis pack against an externally pinned identity."""
 
+    if pack.get("schema_version") == NO_FRONTIER_AXIS_PACK_VERSION:
+        stored = pack.get("axis_pack_sha256")
+        if stored != expected_axis_pack_sha256:
+            raise EvidenceConsumerError(
+                "axis_pack_verification",
+                "trusted axis pack identity differs from saved pack",
+            )
+        if not isinstance(stored, str) or stored != _canonical_hash(
+            pack, "axis_pack_sha256"
+        ):
+            raise EvidenceConsumerError(
+                "axis_pack_verification", "stored axis pack hash is invalid"
+            )
+        source_manifest = pack.get("source_manifest")
+        bindings = pack.get("source_bindings")
+        candidates = pack.get("candidate_inventory")
+        if (
+            not isinstance(source_manifest, Mapping)
+            or source_manifest.get("schema_version")
+            != NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION
+            or not isinstance(source_manifest.get("manifest_sha256"), str)
+            or not isinstance(bindings, Mapping)
+            or not isinstance(candidates, list)
+            or not candidates
+            or not all(isinstance(row, Mapping) for row in candidates)
+        ):
+            raise EvidenceConsumerError(
+                "axis_pack_verification", "no-frontier axis pack closure is invalid"
+            )
+        refs = sorted(
+            row.get("semantic_unit_ref")
+            for row in candidates
+            if isinstance(row.get("semantic_unit_ref"), str)
+        )
+        if len(refs) != len(candidates) or len(refs) != len(set(refs)):
+            raise EvidenceConsumerError(
+                "axis_pack_verification", "candidate semantic identities are invalid"
+            )
+        manifest: dict[str, Any] = {
+            "schema_version": NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION,
+            "axis_id": pack.get("axis_id"),
+            "subject_product_ids": copy.deepcopy(pack.get("subject_product_ids")),
+            "source_id": pack.get("source_id"),
+            **copy.deepcopy(dict(bindings)),
+            "expected_semantic_unit_refs": refs,
+            "candidate_inventory_sha256": pack.get("candidate_inventory_sha256"),
+            "manifest_sha256": source_manifest["manifest_sha256"],
+        }
+        if _canonical_hash(manifest, "manifest_sha256") != source_manifest[
+            "manifest_sha256"
+        ]:
+            raise EvidenceConsumerError(
+                "axis_pack_verification", "source manifest identity changed"
+            )
+        rebuilt = build_phase_a_evidence_axis_pack(manifest)
+        if rebuilt != dict(pack):
+            raise EvidenceConsumerError(
+                "axis_pack_reprojection",
+                "saved axis pack differs from deterministic source projection",
+            )
+        return rebuilt
     if pack.get("schema_version") != AXIS_PACK_VERSION:
         raise EvidenceConsumerError("axis_pack_verification", "unsupported axis pack version")
     stored = pack.get("axis_pack_sha256")
