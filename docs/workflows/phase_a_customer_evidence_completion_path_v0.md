@@ -1123,14 +1123,21 @@ run_phase_a_evidence_axis_consolidation.py validate-point-reader-output
 
 The run freezes one identity per accepted point from the exact company,
 product, cutoff, bounded point, route, point facts, point-scoped Decision State
-ledger, source lineage, method text, response schema, and reader policy. Storage
+ledger, source lineage, method text, response schema, reader policy, and point
+brief schema version. Storage
 paths, file times, and labels alone are not identities. A real change to any
 meaning-bearing input creates a new point identity; an unchanged point reuses
-its exact input and compiled brief across runs and storage locations.
+its exact input, request, response address, and compiled brief across runs and
+storage locations. The compiled brief is point-local. The complete axis output,
+not each reusable brief, binds the current whole-axis snapshot and rejected
+frontier.
 
 Prepare all requests together so the snapshot is validated once. Each request
-contains one complete point and asks the model only for an interpretation plus
-point-local `placement_id` handles. A placement is the unique fact address;
+contains one complete point and asks the model only for the exact point-input
+fingerprint, an interpretation, and point-local `placement_id` handles. The
+fingerprint is required in the response, so moving an answer authored for an
+older method, schema, point, or axis into a new filename fails before
+compilation. A placement is the unique fact address;
 the compiler, not the model, restores its literal quote, evidence and origin
 identity, source venue/role/surface, date, native engagement, and relation. For
 Decision State it also attaches the complete exact ledger, including every
@@ -1150,10 +1157,12 @@ Deliver recommendation.
 
 The recurring cost is one complete source validation when a new snapshot is
 created, one point request per changed point, and one linear local validation
-and assembly pass. Request preparation and finalization each validate the
-snapshot once rather than once per point. Do not place a whole axis into every
-point schema or re-read every stored point while compiling each brief; those
-turn linear work into repeated whole-axis work without adding truth.
+and assembly pass. Request preparation, finalization, and public axis-output
+validation each validate the snapshot once rather than once per point. They
+reuse the already validated point payloads for every brief check. Do not place a
+whole axis into every point schema or re-read every stored point while compiling
+or validating each brief; those turn linear work into repeated whole-axis work
+without adding truth.
 
 The validator deterministically rebuilds the manifest and every point file from the bound view and
 rejects a coherently rehashed omission, cross-point move, wrong relation, date,

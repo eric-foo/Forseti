@@ -75,6 +75,7 @@ from runners.run_phase_a_evidence_axis_consolidation import (
     validate_point_reader_run,
 )
 import runners.run_phase_a_evidence_axis_consolidation as consolidation_runner
+import judgment.phase_a_evidence_axis_consolidation as consolidation_judgment
 
 
 def _write(path: Path, value: Any) -> None:
@@ -3990,6 +3991,7 @@ def _point_reader_response(
     if not representatives:
         representatives.append({"placement_id": facts[0]["placement_id"]})
     return {
+        "point_input_sha256": point["point_input_sha256"],
         "point_id": point["point_id"],
         "interpretation": (
             f"Evidence for {point['bounded_point']} remains mixed where the "
@@ -4053,6 +4055,7 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
             point_store_dir=store,
             point_id=manifest["points"][0]["point_id"],
             response={
+                "point_input_sha256": manifest["points"][0]["point_input_sha256"],
                 "point_id": manifest["points"][0]["point_id"],
                 "interpretation": "counterevidence deliberately omitted",
                 "representative_handles": [
@@ -4127,6 +4130,17 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
         )
     assert caught.value.boundary == "point_reader_decision_state"
 
+    axis_bound = copy.deepcopy(briefs[0])
+    axis_bound["snapshot_sha256"] = manifest["snapshot_sha256"]
+    axis_bound["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in axis_bound.items() if key != "brief_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_point_reader_brief(
+            manifest, point_store_dir=store, brief=axis_bound
+        )
+    assert caught.value.boundary == "point_reader_brief"
+
 
 def test_point_reader_identity_binds_meaning_but_not_storage_path(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -4140,7 +4154,7 @@ def test_point_reader_identity_binds_meaning_but_not_storage_path(
     _write(second_path, view)
     subject = _point_reader_subject_identity()
 
-    first, _ = build_axis_point_reader_snapshot(
+    first, first_payloads = build_axis_point_reader_snapshot(
         view, source_view_path=first_path, subject_identity=subject
     )
     relocated, _ = build_axis_point_reader_snapshot(
@@ -4160,6 +4174,30 @@ def test_point_reader_identity_binds_meaning_but_not_storage_path(
         before["point_input_sha256"] != after["point_input_sha256"]
         for before, after in zip(first["points"], changed_method["points"], strict=True)
     )
+    assert all(
+        before["response_file"] != after["response_file"]
+        for before, after in zip(first["points"], changed_method["points"], strict=True)
+    )
+    stale_response = _point_reader_response(
+        first["points"][0],
+        first_payloads[first["points"][0]["point_id"]],
+    )
+    _, changed_payloads = build_axis_point_reader_snapshot(
+        view,
+        source_view_path=first_path,
+        subject_identity=subject,
+        method_text=POINT_READER_METHOD_TEXT + "\nMaterial method change.",
+    )
+    changed_store = tmp_path / "changed_store"
+    _write_point_reader_store(changed_store, changed_method, changed_payloads)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        compile_point_reader_brief(
+            changed_method,
+            point_store_dir=changed_store,
+            point_id=changed_method["points"][0]["point_id"],
+            response=stale_response,
+        )
+    assert caught.value.boundary == "point_reader_response"
     changed_schema = copy.deepcopy(POINT_READER_RESPONSE_SCHEMA)
     changed_schema["description"] = "Material schema change"
     rebound_schema, _ = build_axis_point_reader_snapshot(
@@ -4335,6 +4373,110 @@ def test_point_reader_runner_reuses_valid_points_and_recovers_partial_run(
     assert replayed["compiled_point_count"] == 0
     assert replayed["reused_brief_count"] == 2
     assert snapshot_validation_calls == 2
+
+    judgment_snapshot_validation_calls = 0
+    original_judgment_snapshot_validation = (
+        consolidation_judgment.validate_axis_point_reader_snapshot
+    )
+
+    def count_judgment_snapshot_validation(*args: Any, **kwargs: Any) -> Any:
+        nonlocal judgment_snapshot_validation_calls
+        judgment_snapshot_validation_calls += 1
+        return original_judgment_snapshot_validation(*args, **kwargs)
+
+    monkeypatch.setattr(
+        consolidation_judgment,
+        "validate_axis_point_reader_snapshot",
+        count_judgment_snapshot_validation,
+    )
+    assert validate_point_reader_output_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        output_path=tmp_path / "complete_output.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )["status"] == "valid"
+    assert judgment_snapshot_validation_calls == 1
+
+
+def test_point_reader_reuses_point_work_across_axis_snapshot_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Axis provenance may change without invalidating identical point work."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view.json"
+    identity_path = tmp_path / "subject.json"
+    store = tmp_path / "point_store"
+    responses = tmp_path / "responses"
+    briefs = tmp_path / "briefs"
+    requests = tmp_path / "requests"
+    _write(view_path, view)
+    _write(identity_path, _point_reader_subject_identity())
+
+    first = build_point_reader_run(
+        view_path=view_path,
+        subject_identity_path=identity_path,
+        manifest_output_path=tmp_path / "run_1.json",
+        point_store_dir=store,
+    )
+    first_manifest = json.loads((tmp_path / "run_1.json").read_text(encoding="utf-8"))
+    responses.mkdir()
+    for point in first_manifest["points"]:
+        payload = (store / point["point_payload_file"]).read_bytes()
+        _write(responses / point["response_file"], _point_reader_response(point, payload))
+    prepare_point_reader_requests_run(
+        manifest_path=tmp_path / "run_1.json",
+        point_store_dir=store,
+        output_dir=requests,
+        expected_snapshot_sha256=first["snapshot_sha256"],
+    )
+    finalize_point_reader_run(
+        manifest_path=tmp_path / "run_1.json",
+        point_store_dir=store,
+        responses_dir=responses,
+        brief_store_dir=briefs,
+        output_path=tmp_path / "output_1.json",
+        expected_snapshot_sha256=first["snapshot_sha256"],
+    )
+
+    view_path.write_text(
+        json.dumps(view, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    second = build_point_reader_run(
+        view_path=view_path,
+        subject_identity_path=identity_path,
+        manifest_output_path=tmp_path / "run_2.json",
+        point_store_dir=store,
+    )
+    second_manifest = json.loads((tmp_path / "run_2.json").read_text(encoding="utf-8"))
+    assert second["snapshot_sha256"] != first["snapshot_sha256"]
+    assert [point["point_input_sha256"] for point in second_manifest["points"]] == [
+        point["point_input_sha256"] for point in first_manifest["points"]
+    ]
+    replayed_requests = prepare_point_reader_requests_run(
+        manifest_path=tmp_path / "run_2.json",
+        point_store_dir=store,
+        output_dir=requests,
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert replayed_requests["materialized_request_count"] == 0
+    assert replayed_requests["reused_request_count"] == len(second_manifest["points"])
+
+    empty_responses = tmp_path / "empty_responses"
+    empty_responses.mkdir()
+    replayed = finalize_point_reader_run(
+        manifest_path=tmp_path / "run_2.json",
+        point_store_dir=store,
+        responses_dir=empty_responses,
+        brief_store_dir=briefs,
+        output_path=tmp_path / "output_2.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert replayed["compiled_point_count"] == 0
+    assert replayed["reused_brief_count"] == len(second_manifest["points"])
 
 
 def test_point_reader_membership_scales_without_a_whole_axis_schema() -> None:

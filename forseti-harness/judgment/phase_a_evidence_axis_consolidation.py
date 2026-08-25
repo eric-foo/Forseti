@@ -39,7 +39,8 @@ CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
 AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v1"
 POINT_READER_RUN_MANIFEST_VERSION = "phase_a_evidence_point_reader_run_manifest_v1"
-POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v1"
+POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v2"
+POINT_READER_REQUEST_VERSION = "phase_a_evidence_point_reader_request_v2"
 POINT_READER_AXIS_OUTPUT_VERSION = "phase_a_evidence_point_reader_axis_output_v1"
 POINT_READER_SUBJECT_IDENTITY_VERSION = "phase_a_point_reader_subject_identity_v1"
 POINT_READER_METHOD_TEXT = (
@@ -54,8 +55,14 @@ POINT_READER_METHOD_TEXT = (
 POINT_READER_RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["point_id", "interpretation", "representative_handles"],
+    "required": [
+        "point_input_sha256",
+        "point_id",
+        "interpretation",
+        "representative_handles",
+    ],
     "properties": {
+        "point_input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "point_id": {"type": "string"},
         "interpretation": {"type": "string", "minLength": 1},
         "representative_handles": {
@@ -4424,15 +4431,21 @@ def _point_reader_state_ledger(facts: Sequence[Mapping[str, Any]]) -> list[dict[
             "relation": fact["relation"],
             "decision_state": state,
         }
+        state_selected_id = state.pop("selected_id", fact["selected_id"])
+        if state_selected_id != fact["selected_id"]:
+            raise EvidenceConsumerError(
+                "point_reader_decision_state",
+                "decision-state selected identity changed",
+            )
         ledger.append(
             {
+                **state,
                 "state_row_id": "state_row_"
                 + _canonical_json_sha256(row_payload),
                 "placement_id": fact["placement_id"],
                 "selected_id": fact["selected_id"],
                 "evidence_id": fact["evidence"]["evidence_id"],
                 "relation": fact["relation"],
-                **state,
             }
         )
     return ledger
@@ -4558,6 +4571,7 @@ def build_axis_point_reader_snapshot(
             "method_text_sha256": method_sha256,
             "response_schema_sha256": response_schema_sha256,
             "point_reader_policy_sha256": policy_sha256,
+            "point_brief_schema_version": POINT_READER_BRIEF_VERSION,
         }
         point_input = point_reader_input_sha256(input_contract)
         point_records.append(
@@ -4571,9 +4585,7 @@ def build_axis_point_reader_snapshot(
                 "truth_origin_count": legacy_point["truth_origin_count"],
                 "fact_count": len(facts),
                 "point_payload_file": f"point_{point_input}.jsonl",
-                "response_file": "response_"
-                + hashlib.sha256(point_id.encode("utf-8")).hexdigest()
-                + ".json",
+                "response_file": f"response_{point_input}.json",
                 "brief_file": f"brief_{point_input}.json",
                 "input_contract": input_contract,
                 "point_input_sha256": point_input,
@@ -4683,11 +4695,7 @@ def _validate_point_reader_manifest_shape(
                 "point_reader_identity", "point input identity changed"
             )
         expected_file = f"point_{point['point_input_sha256']}.jsonl"
-        expected_response = (
-            "response_"
-            + hashlib.sha256(point["point_id"].encode("utf-8")).hexdigest()
-            + ".json"
-        )
+        expected_response = f"response_{point['point_input_sha256']}.json"
         expected_brief = f"brief_{point['point_input_sha256']}.json"
         if (
             point.get("point_payload_file") != expected_file
@@ -4801,13 +4809,16 @@ def bind_point_reader_response_schema(
         )
     schema = copy.deepcopy(validated["method_binding"]["response_schema"])
     properties = schema.get("properties")
-    if not isinstance(properties, dict) or not isinstance(
-        properties.get("point_id"), dict
+    if (
+        not isinstance(properties, dict)
+        or not isinstance(properties.get("point_id"), dict)
+        or not isinstance(properties.get("point_input_sha256"), dict)
     ):
         raise EvidenceConsumerError(
-            "point_reader_response_schema", "response schema point field is missing"
+            "point_reader_response_schema", "response schema identity fields are missing"
         )
     properties["point_id"]["const"] = point_id
+    properties["point_input_sha256"]["const"] = point["point_input_sha256"]
     return schema
 
 
@@ -4839,11 +4850,19 @@ def _compile_point_reader_brief_from_validated_facts(
     """Compile after the caller has validated the snapshot and this point payload."""
 
     point_id = point["point_id"]
-    if set(response) != {"point_id", "interpretation", "representative_handles"}:
+    if set(response) != {
+        "point_input_sha256",
+        "point_id",
+        "interpretation",
+        "representative_handles",
+    }:
         raise EvidenceConsumerError(
             "point_reader_response", "point response fields are invalid"
         )
-    if response.get("point_id") != point_id:
+    if (
+        response.get("point_id") != point_id
+        or response.get("point_input_sha256") != point["point_input_sha256"]
+    ):
         raise EvidenceConsumerError(
             "point_reader_response", "point response identity changed"
         )
@@ -4918,7 +4937,6 @@ def _compile_point_reader_brief_from_validated_facts(
     ledger = _point_reader_state_ledger(facts)
     brief: dict[str, Any] = {
         "schema_version": POINT_READER_BRIEF_VERSION,
-        "snapshot_sha256": manifest["snapshot_sha256"],
         "point_input_sha256": point["point_input_sha256"],
         "subject_identity": copy.deepcopy(manifest["subject_identity"]),
         "axis_id": manifest["axis_id"],
@@ -4971,6 +4989,10 @@ def _validate_point_reader_brief_from_validated_facts(
         raise EvidenceConsumerError(
             "point_reader_brief", "unsupported point brief"
         )
+    if "snapshot_sha256" in brief:
+        raise EvidenceConsumerError(
+            "point_reader_brief", "point brief contains an axis-scoped binding"
+        )
     point_id = brief.get("point_id")
     if not isinstance(point_id, str):
         raise EvidenceConsumerError("point_reader_brief", "point brief identity is missing")
@@ -4991,7 +5013,6 @@ def _validate_point_reader_brief_from_validated_facts(
             "compiled brief omitted, altered, or transferred a decision state",
         )
     expected_bindings = {
-        "snapshot_sha256": manifest["snapshot_sha256"],
         "point_input_sha256": point["point_input_sha256"],
         "subject_identity": manifest["subject_identity"],
         "axis_id": manifest["axis_id"],
@@ -5111,7 +5132,6 @@ def assemble_axis_point_reader_output(
         if (
             brief.get("schema_version") != POINT_READER_BRIEF_VERSION
             or brief.get("point_input_sha256") != point["point_input_sha256"]
-            or brief.get("snapshot_sha256") != validated["snapshot_sha256"]
             or brief.get("brief_sha256")
             != _canonical_json_sha256(
                 {key: value for key, value in brief.items() if key != "brief_sha256"}
@@ -5149,8 +5169,24 @@ def validate_axis_point_reader_output(
     manifest: Mapping[str, Any],
     *,
     output: Mapping[str, Any],
-    point_store_dir: Path | None = None,
+    point_store_dir: Path,
 ) -> dict[str, Any]:
+    validated, payloads = validate_axis_point_reader_snapshot(
+        manifest, point_store_dir=point_store_dir
+    )
+    return _validate_axis_point_reader_output_from_validated_snapshot(
+        validated, payloads=payloads, output=output
+    )
+
+
+def _validate_axis_point_reader_output_from_validated_snapshot(
+    manifest: Mapping[str, Any],
+    *,
+    payloads: Mapping[str, bytes],
+    output: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate an axis output without re-reading an already validated point store."""
+
     if output.get("schema_version") != POINT_READER_AXIS_OUTPUT_VERSION:
         raise EvidenceConsumerError(
             "point_reader_completion", "unsupported point-reader axis output"
@@ -5164,11 +5200,16 @@ def validate_axis_point_reader_output(
     rebuilt = assemble_axis_point_reader_output(
         manifest, briefs=output.get("accepted_points", [])
     )
-    if point_store_dir is not None:
-        for brief in rebuilt["accepted_points"]:
-            validate_point_reader_brief(
-                manifest, point_store_dir=point_store_dir, brief=brief
-            )
+    points_by_id = {point["point_id"]: point for point in manifest["points"]}
+    for brief in rebuilt["accepted_points"]:
+        point = points_by_id[brief["point_id"]]
+        facts = [
+            json.loads(line)
+            for line in payloads[point["point_id"]].decode("utf-8").splitlines()
+        ]
+        _validate_point_reader_brief_from_validated_facts(
+            manifest, point=point, facts=facts, brief=brief
+        )
     if rebuilt != dict(output):
         raise EvidenceConsumerError(
             "point_reader_completion", "axis output differs from its snapshot"

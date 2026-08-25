@@ -15,6 +15,7 @@ if __package__ in {None, ""}:
 from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     _axis_reader_point_filename,
     _compile_point_reader_brief_from_validated_facts,
+    _validate_axis_point_reader_output_from_validated_snapshot,
     _validate_point_reader_brief_from_validated_facts,
     assemble_axis_point_reader_output,
     bind_axis_reader_output_schema,
@@ -24,6 +25,7 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     compile_point_reader_brief,
+    POINT_READER_REQUEST_VERSION,
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
@@ -343,16 +345,18 @@ def _point_reader_request(
     facts = [json.loads(line) for line in payload.decode("utf-8").splitlines()]
     response_schema = copy.deepcopy(manifest["method_binding"]["response_schema"])
     properties = response_schema.get("properties")
-    if not isinstance(properties, dict) or not isinstance(
-        properties.get("point_id"), dict
+    if (
+        not isinstance(properties, dict)
+        or not isinstance(properties.get("point_id"), dict)
+        or not isinstance(properties.get("point_input_sha256"), dict)
     ):
         raise EvidenceConsumerError(
-            "point_reader_response_schema", "response schema point field is missing"
+            "point_reader_response_schema", "response schema identity fields are missing"
         )
     properties["point_id"]["const"] = point["point_id"]
+    properties["point_input_sha256"]["const"] = point["point_input_sha256"]
     request: dict[str, Any] = {
-        "schema_version": "phase_a_evidence_point_reader_request_v1",
-        "snapshot_sha256": manifest["snapshot_sha256"],
+        "schema_version": POINT_READER_REQUEST_VERSION,
         "point_input_sha256": point["point_input_sha256"],
         "point_id": point["point_id"],
         "bounded_point": point["bounded_point"],
@@ -424,10 +428,7 @@ def prepare_point_reader_requests_run(
         request = _point_reader_request(
             manifest, point, payloads[point["point_id"]]
         )
-        request_path = output_dir / (
-            "request_" + hashlib.sha256(point["point_id"].encode("utf-8")).hexdigest()
-            + ".json"
-        )
+        request_path = output_dir / f"request_{request['request_sha256']}.json"
         if request_path.exists():
             if not request_path.is_file() or _load_object(request_path) != request:
                 raise ValueError(
@@ -511,10 +512,10 @@ def finalize_point_reader_run(
         )
     output = assemble_axis_point_reader_output(manifest, briefs=briefs)
     _write_new(output_path, output)
-    saved = validate_axis_point_reader_output(
+    saved = _validate_axis_point_reader_output_from_validated_snapshot(
         manifest,
         output=_load_object(output_path),
-        point_store_dir=point_store_dir,
+        payloads=payloads,
     )
     return {
         "status": "complete",
