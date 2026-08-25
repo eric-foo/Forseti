@@ -36,7 +36,10 @@ PREVIOUS_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v3"
 PRECONFIRMATION_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v4"
 PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v5"
 QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v6"
-PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v7"
+LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = (
+    "phase_a_evidence_quote_manifest_v7"
+)
+PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v8"
 BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
 RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_relation_confirmation_manifest_v2"
@@ -52,6 +55,11 @@ POINT_SCOPE_STATUSES = ("single_point", "broad_axis_or_bundle")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 RELATION_POLICIES = ("auto", "bounded_point")
 TEMPORAL_PRESENTATION_POLICIES = ("recent_year_coverage_v1",)
+FRONTIER_RELATION_DISPLAY_POLICY = "literal_point_relations_display_eligible_v1"
+FRONTIER_RELATION_REJECTION_CAUSES = (
+    "literal_source_does_not_state_bounded_relation",
+    "no_context_complete_quote_within_display_limit",
+)
 RECENT_YEAR_COUNT = 2
 POSITIONAL_REASON_CODE_BY_RELATION = {
     "support": "matching_customer_experience",
@@ -65,7 +73,7 @@ MAX_TRUTH_GROUPS = 13
 MAX_CONFIGURABLE_TRUTH_GROUPS = 20
 MAX_RELATION_BATCH_SIZE = 300
 MAX_INFLUENCE_GROUPS = 3
-MAX_QUOTE_CHARACTERS = 220
+SHORT_BODY_QUOTE_CHARACTERS = 220
 PROTECTED_LANES = ("safety", "costly_behavior")
 # One venue per publisher, matched on the registered domain and any subdomain of
 # it, so host variants (old./np./new./sh.reddit.com, vm./vt./m.tiktok.com,
@@ -123,6 +131,7 @@ DISPLAY_LABEL_BY_REASON_CODE = {
 }
 
 VALUE_AXIS_ID = "value_and_quantity"
+HYPE_TRUST_AXIS_ID = "hype_originality_and_trust"
 VALUE_REASON_RELATIONS = {
     "repurchase_despite_price": "support",
     "multiple_purchases_despite_price": "support",
@@ -197,9 +206,21 @@ SELECTION_ENVELOPE_JSON:
 
 VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. When an explicit price or cost premise is paired with purchase, repurchase, or repeated ownership, use the corresponding `*_despite_price` code rather than a plain behavior or generic good-value code. An explicit same-evidence statement of regret, waste, or poor value makes every candidate from that evidence origin counter or adjacent unless the same source explicitly says it will buy or repurchase again despite the cost, or explicitly concludes that the product is worth the price. Trying to make a regretted purchase feel more worthwhile by displaying empties, using it up, or otherwise rationalizing sunk cost does not countervail the regret or waste. Those two exceptions decide the lane before either regret code is considered: neither regret code may be used on an origin the same source keeps positive by explicitly buying or repurchasing again despite the cost, or by concluding the product is worth the price. Once the regret does keep the candidate counter, use `high_spend_followed_by_buyer_remorse` only when the same evidence explicitly states a substantial completed spend amount, or explicitly characterizes the completed spend as substantial, and also states cost-linked regret. Multiple units alone do not establish high spend. The code does not imply repurchase, a transaction count, or future intent. Use `purchase_regret_due_cost` when regret exists without explicit substantial completed spending. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Time to finish, pan, or empty a product is completed-use evidence, not quantity efficiency, repurchase, or good value by itself. If the same evidence explicitly says it will buy or repurchase again, use the matching purchase or repurchase code; otherwise keep completed use adjacent. Use `product_goes_a_long_way` only when the source explicitly says a small amount suffices or otherwise states quantity efficiency. `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
 
+HYPE_EXPECTATION_RELATION_GUIDANCE = """HYPE-EXPECTATION POLICY: A support or counter relation for a bounded point whose meaning depends on hype or expectation fit requires an explicit hype or expectation premise in the candidate's normalized meaning or its same-evidence companion meanings. A generic positive or negative product result, liking, disappointment, comparator preference, value judgment, recommendation, or behavior without that premise must remain adjacent; do not infer that the product met or failed its hype from direction alone. When the bounded point explicitly attributes the judgment to hype, virality, popularity, publicity, promotion, or marketing, expectation language alone is not enough unless the same evidence also names that exposure. When the bounded point is only about expectation fit and attributes no exposure cause, explicit expectation language may supply the premise. When one same-source meaning supplies the required premise and another supplies the actor's result or judgment, use them together without inventing a causal claim. Merely naming that a product is hyped beside a negative comparison is adjacent unless the actor judges the hype excessive or binds that exposure to the resulting expectation. Keep neighboring hype judgments distinct: worth-the-hype is adjacent to love-despite-viral-popularity, and overhyped is adjacent to the narrower did-not-live-up-to-hype state, unless the source explicitly reaches the bounded judgment. Liking or loving a product despite its popularity can coexist with calling it overhyped or saying it fell short of hype; it is not counterevidence unless the source explicitly says the product met, justified, or was worth the hype. Love plus overhype is adjacent to a narrower viral-love point unless the same literal source or exact bound parent establishes viral popularity. Likewise, other people's praise plus the actor's poor result is adjacent unless the source binds that exposure to the actor's resulting expectation."""
+
+DECISION_OBJECT_SCOPE_RELATION_GUIDANCE = """DECISION-OBJECT SCOPE POLICY: Support and counter must address the bounded judgment object at the same scope. An attribute-, formula-, variant-, shade-, scent-, or occasion-specific appraisal is adjacent to an overall-product judgment unless the same source explicitly reaches the whole-product verdict; a broad overall appraisal is likewise adjacent to a narrower attribute judgment unless it names that attribute. Preserve the narrower appraisal as useful context instead of silently widening it."""
+
+LEGACY_QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
+
+Return every selected_id exactly once and in order. Choose one context-complete contiguous exact substring of at most 220 characters that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. When the supplied body is 220 characters or shorter and is relevant, return the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize for brevity: when the necessary source wording fits, retain it instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries and length. Return quote_status=quote_unavailable and exact_quote=null only after verifying that no one contiguous span within 220 characters supports the full normalized meaning; inability to include optional non-reversing context is not enough. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent and the combined span fits within 220 characters. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
+
+SELECTED_EVIDENCE_ENVELOPE_JSON:
+{envelope}
+"""
+
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. Every supplied source body is longer than 220 characters. Choose one context-complete contiguous exact substring of at most 220 characters that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize for brevity: when the necessary source wording fits, retain it instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries and length. Return quote_status=quote_unavailable and exact_quote=null only after verifying that no one contiguous span within 220 characters supports the full normalized meaning; inability to include optional non-reversing context is not enough. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent and the combined span fits within 220 characters. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
+Return every selected_id exactly once and in order. Choose the shortest context-complete contiguous exact substring that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. There is no character ceiling: source meaning, not display length, determines the necessary span. When the supplied body is 220 characters or shorter and is relevant, return the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Linked parent context may supply an omitted premise or referent only for a selected row whose parent_context_ids names that exact context and whose child body is a direct, unambiguous terse response. The returned exact_quote must remain one contiguous exact substring of the child source_body: never copy or combine parent text into exact_quote. If the bound parent does not supply every missing material component, return quote_status=quote_unavailable. Do not optimize past context completeness: retain necessary source wording instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. A quote that ends with a letter or number while another source word follows after whitespace fails the consumer boundary check; expand it through source punctuation or the end of the body. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries. Return quote_status=quote_unavailable and exact_quote=null only when no one contiguous exact span supports the full normalized meaning, either in the child body alone or, for a directly linked terse response, in the child body read with its exact bound parent; length alone can never make a truthful span unavailable. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -584,6 +605,8 @@ def selection_spec_from_customer_pull_frontier(
     frontier: Mapping[str, Any],
     packet: Mapping[str, Any],
     proposition_id: str,
+    *,
+    frontier_relation_rejections: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     verify_customer_pull_point_frontier(frontier, packet)
     matches = [
@@ -618,6 +641,20 @@ def selection_spec_from_customer_pull_frontier(
         if expand_axis
         else "literal_point_relations"
     )
+    normalized_rejections = _normalize_frontier_relation_rejections(
+        frontier_relation_rejections,
+        admitted_refs={(row["source_id"], row["semantic_unit_ref"]) for row in admitted},
+    )
+    if normalized_rejections:
+        _validate_resolved_frontier_earning(
+            packet,
+            proposition_id,
+            rejected_pairs={
+                (row["source_id"], row["semantic_unit_ref"])
+                for row in normalized_rejections
+            },
+            source_id=frontier["source_id"],
+        )
     binding = {
         "frontier_sha256": frontier["frontier_sha256"],
         "packet_sha256": packet["packet_sha256"],
@@ -631,8 +668,13 @@ def selection_spec_from_customer_pull_frontier(
         "temporal_presentation_policy": (
             "recent_year_coverage_v1" if expand_axis else None
         ),
+        "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "relation_policy": "bounded_point",
     }
+    if normalized_rejections:
+        binding["frontier_relation_rejections_sha256"] = _canonical_json_sha256(
+            normalized_rejections
+        )
     spec = {
         "schema_version": SELECTION_SPEC_VERSION,
         "selection_id": proposition_id,
@@ -644,11 +686,124 @@ def selection_spec_from_customer_pull_frontier(
         "truth_group_cap": MAX_TRUTH_GROUPS,
         "relation_response_mode": "positional" if expand_axis else "literal_ids",
         "relation_policy": "bounded_point",
+        "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "customer_pull_frontier_binding": binding,
     }
+    if normalized_rejections:
+        spec["frontier_relation_rejections"] = normalized_rejections
     if expand_axis:
         spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
     return spec
+
+
+def _normalize_frontier_relation_rejections(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    admitted_refs: set[tuple[str, str]],
+) -> list[dict[str, str]]:
+    if not isinstance(rows, Sequence) or isinstance(rows, (str, bytes)):
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution", "frontier relation rejections must be rows"
+        )
+    normalized: list[dict[str, str]] = []
+    for row in rows:
+        if not isinstance(row, Mapping) or set(row) != {
+            "source_id",
+            "semantic_unit_ref",
+            "cause",
+        }:
+            raise EvidenceConsumerError(
+                "frontier_relation_resolution", "frontier relation rejection shape changed"
+            )
+        source_id = row.get("source_id")
+        semantic_ref = row.get("semantic_unit_ref")
+        cause = row.get("cause")
+        if (
+            not isinstance(source_id, str)
+            or not isinstance(semantic_ref, str)
+            or cause not in FRONTIER_RELATION_REJECTION_CAUSES
+            or (source_id, semantic_ref) not in admitted_refs
+        ):
+            raise EvidenceConsumerError(
+                "frontier_relation_resolution",
+                "frontier relation rejection is not an admitted literal relation",
+            )
+        normalized.append(
+            {
+                "source_id": source_id,
+                "semantic_unit_ref": semantic_ref,
+                "cause": cause,
+            }
+        )
+    normalized.sort(key=lambda row: (row["source_id"], row["semantic_unit_ref"]))
+    pairs = [(row["source_id"], row["semantic_unit_ref"]) for row in normalized]
+    if len(pairs) != len(set(pairs)):
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution", "frontier relation rejection is duplicated"
+        )
+    return normalized
+
+
+def _validate_resolved_frontier_earning(
+    packet: Mapping[str, Any],
+    proposition_id: str,
+    *,
+    rejected_pairs: set[tuple[str, str]],
+    source_id: str,
+) -> None:
+    propositions = {
+        row.get("proposition_id"): row
+        for row in packet.get("propositions", [])
+        if isinstance(row, Mapping)
+    }
+    proposition = propositions.get(proposition_id)
+    if not isinstance(proposition, Mapping):
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution", "frontier proposition is absent"
+        )
+    evidence_index, _ = _expand_packet(packet)
+    relation_rows = _relation_rows(packet, proposition_id)
+    support_pairs = {
+        (source_id, row["semantic_unit_ref"])
+        for row in relation_rows
+        if row["relation"] == "support"
+    }
+    if not rejected_pairs <= support_pairs:
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution",
+            "only a literal support relation can be rejected",
+        )
+    support_rows: list[tuple[Mapping[str, Any], Mapping[str, Any]]] = []
+    for relation_row in relation_rows:
+        pair = (source_id, relation_row["semantic_unit_ref"])
+        if relation_row["relation"] != "support" or pair in rejected_pairs:
+            continue
+        group, evidence = evidence_index[relation_row["evidence_id"]]
+        if group.get("source_role") in TRUTH_ROLES:
+            support_rows.append((group, evidence))
+    origins = {
+        (
+            packet.get("source_bindings", {}).get("corpus_sha256"),
+            evidence.get("independence_key") or evidence.get("evidence_id"),
+        )
+        for _, evidence in support_rows
+    }
+    materially_engaged = any(
+        (evidence.get("engagement") or {}).get("status", "engagement_available")
+        != "engagement_unavailable"
+        and (evidence.get("engagement") or {}).get("material_positive") is True
+        for _, evidence in support_rows
+    )
+    earned = (
+        proposition.get("claim_kind") == "reported_behavior"
+        or len(origins) >= 2
+        or materially_engaged
+    )
+    if not support_rows or not earned:
+        raise EvidenceConsumerError(
+            "frontier_relation_resolution",
+            "surviving literal relations no longer earn frontier admission",
+        )
 
 
 LEGACY_RELATION_PROMPT_COLUMNS = (
@@ -827,13 +982,17 @@ def _uses_value_policy(
 def _policy_guidance(
     spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]] | None = None
 ) -> str:
-    if not _uses_value_policy(spec, candidates):
-        return ""
-    grouped = "; ".join(
-        f"{relation}=[{', '.join(sorted(code for code, lane in VALUE_REASON_RELATIONS.items() if lane == relation))}]"
-        for relation in RELATIONS
-    )
-    return VALUE_RELATION_GUIDANCE.format(reason_codes=grouped)
+    guidance = [DECISION_OBJECT_SCOPE_RELATION_GUIDANCE]
+    if _uses_value_policy(spec, candidates):
+        grouped = "; ".join(
+            f"{relation}=[{', '.join(sorted(code for code, lane in VALUE_REASON_RELATIONS.items() if lane == relation))}]"
+            for relation in RELATIONS
+        )
+        guidance.append(VALUE_RELATION_GUIDANCE.format(reason_codes=grouped))
+    axis_ids = spec.get("axis_ids")
+    if isinstance(axis_ids, list) and HYPE_TRUST_AXIS_ID in axis_ids:
+        guidance.append(HYPE_EXPECTATION_RELATION_GUIDANCE)
+    return "\n\n".join(guidance)
 
 
 def _candidate_id(packet_sha256: str, evidence_id: str, semantic_ref: str) -> str:
@@ -1579,7 +1738,10 @@ def _quote_has_complete_end(body: str, quote: str) -> bool:
         search_from = occurrence + 1
 
 
-def _quote_schema() -> dict[str, Any]:
+def _quote_schema(*, semantic_ceiling: bool = True) -> dict[str, Any]:
+    exact_quote_schema: dict[str, Any] = {"type": ["string", "null"]}
+    if semantic_ceiling:
+        exact_quote_schema["maxLength"] = SHORT_BODY_QUOTE_CHARACTERS
     row = {
         "type": "object",
         "properties": {
@@ -1588,10 +1750,7 @@ def _quote_schema() -> dict[str, Any]:
                 "type": "string",
                 "enum": ["quote_available", "quote_unavailable"],
             },
-            "exact_quote": {
-                "type": ["string", "null"],
-                "maxLength": MAX_QUOTE_CHARACTERS,
-            },
+            "exact_quote": exact_quote_schema,
         },
         "required": [
             "selected_id",
@@ -1656,10 +1815,14 @@ def _validate_customer_pull_frontier_spec_binding(
         "relation_response_mode",
         "temporal_presentation_policy",
     }
+    current_keys = expanded_keys | {"frontier_relation_display_policy"}
+    resolved_keys = current_keys | {"frontier_relation_rejections_sha256"}
     binding_keys = frozenset(binding) if isinstance(binding, Mapping) else frozenset()
     if not isinstance(binding, Mapping) or binding_keys not in {
         frozenset(legacy_keys),
         frozenset(expanded_keys),
+        frozenset(current_keys),
+        frozenset(resolved_keys),
     }:
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier binding shape changed"
@@ -1669,7 +1832,11 @@ def _validate_customer_pull_frontier_spec_binding(
             "customer_pull_frontier_binding",
             "legacy frontier binding cannot authorize axis-wide admission",
         )
-    if binding_keys == frozenset(expanded_keys) and (
+    if binding_keys in {
+        frozenset(expanded_keys),
+        frozenset(current_keys),
+        frozenset(resolved_keys),
+    } and (
         binding.get("axis_ids_sha256")
         != _canonical_json_sha256(spec.get("axis_ids") or [])
         or binding.get("candidate_admission")
@@ -1690,6 +1857,69 @@ def _validate_customer_pull_frontier_spec_binding(
     ):
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
+        )
+    if binding_keys in {frozenset(current_keys), frozenset(resolved_keys)}:
+        if (
+            binding.get("frontier_relation_display_policy")
+            != spec.get("frontier_relation_display_policy")
+            or spec.get("frontier_relation_display_policy")
+            != FRONTIER_RELATION_DISPLAY_POLICY
+        ):
+            raise EvidenceConsumerError(
+                "customer_pull_frontier_binding", "frontier candidate admission changed"
+            )
+    elif spec.get("frontier_relation_display_policy") is not None:
+        # A pre-policy binding pins every other display-affecting spec field.
+        # Leaving this one unpinned would let a frozen frontier-bound spec turn
+        # quiet-row display on without its binding authorizing the change.
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier candidate admission changed"
+        )
+    if binding_keys == frozenset(resolved_keys):
+        rejections = _normalize_frontier_relation_rejections(
+            spec.get("frontier_relation_rejections"),
+            admitted_refs={
+                (row["source_id"], row["semantic_unit_ref"])
+                for row in spec.get("admit_semantic_refs") or []
+                if isinstance(row, Mapping)
+                and isinstance(row.get("source_id"), str)
+                and isinstance(row.get("semantic_unit_ref"), str)
+            },
+        )
+        if (
+            not rejections
+            or binding.get("frontier_relation_rejections_sha256")
+            != _canonical_json_sha256(rejections)
+        ):
+            raise EvidenceConsumerError(
+                "customer_pull_frontier_binding",
+                "frontier relation resolution changed",
+            )
+        packet = next(
+            (
+                source["packet"]
+                for source in sources
+                if source["packet"].get("packet_sha256") == binding.get("packet_sha256")
+            ),
+            None,
+        )
+        if packet is None:
+            raise EvidenceConsumerError(
+                "customer_pull_frontier_binding",
+                "frontier packet is not among the sources",
+            )
+        _validate_resolved_frontier_earning(
+            packet,
+            str(binding.get("proposition_id")),
+            rejected_pairs={
+                (row["source_id"], row["semantic_unit_ref"])
+                for row in rejections
+            },
+            source_id=rejections[0]["source_id"],
+        )
+    elif spec.get("frontier_relation_rejections") is not None:
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier relation resolution is unbound"
         )
     if (
         binding.get("queue")
@@ -2149,9 +2379,10 @@ def _required_display_members(
 ) -> list[dict[str, Any]]:
     """Return the deterministic minimum rows that make reserved lanes visible.
 
-    Operator-protected candidates are mandatory rows.  At most four ordinary
-    lane requirements remain, so exhaustive combinations over one representative
-    per distinct coverage signature are bounded and prove minimal cardinality.
+    Operator-protected and frontier-defining candidates are mandatory rows.
+    At most four ordinary lane requirements remain, so exhaustive combinations
+    over one representative per distinct coverage signature are bounded and
+    prove minimal cardinality.
     """
     ordered = sorted((dict(row) for row in members), key=priority)
     by_id = {row["candidate_id"]: row for row in ordered}
@@ -2160,7 +2391,7 @@ def _required_display_members(
     except KeyError as exc:
         raise EvidenceConsumerError(
             "required_display_lane_unavailable",
-            f"protected candidate is absent from its origin: {exc.args[0]}",
+            f"required candidate is absent from its origin: {exc.args[0]}",
         ) from exc
     required = set(required_lanes)
     covered = set().union(*(_member_display_lanes(row) for row in forced)) if forced else set()
@@ -2286,7 +2517,10 @@ def _protected_value_group_priority(group: Mapping[str, Any]) -> tuple[Any, ...]
 
 
 def _truth_row_display_eligible(
-    row: Mapping[str, Any], truth_policy: str
+    row: Mapping[str, Any],
+    truth_policy: str,
+    *,
+    frontier_relation_bound: bool = False,
 ) -> bool:
     """Apply the exact pre-cap admission rule for one truth-support row."""
     if truth_policy not in {"balanced", "value_first"}:
@@ -2297,12 +2531,72 @@ def _truth_row_display_eligible(
         return False
     if row.get("protected_lanes"):
         return True
+    if frontier_relation_bound:
+        return True
     if row.get("engagement_material_positive") is not True:
         return False
     return truth_policy == "balanced" or row.get("relation") in {
         "support",
         "counter",
     }
+
+
+def _frontier_relation_candidate_ids(
+    spec: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> frozenset[str]:
+    policy = spec.get("frontier_relation_display_policy")
+    if policy is None:
+        return frozenset()
+    if policy != FRONTIER_RELATION_DISPLAY_POLICY:
+        raise EvidenceConsumerError(
+            "selection_spec", "unsupported frontier relation display policy"
+        )
+    admitted_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in spec.get("admit_semantic_refs") or []
+    }
+    rejected_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in _normalize_frontier_relation_rejections(
+            spec.get("frontier_relation_rejections") or [],
+            admitted_refs=admitted_refs,
+        )
+    }
+    return frozenset(
+        row["candidate_id"]
+        for row in rows
+        if (row["source_id"], row["semantic_unit_ref"]) in admitted_refs
+        and (row["source_id"], row["semantic_unit_ref"]) not in rejected_refs
+    )
+
+
+def _apply_frontier_relation_rejections(
+    spec: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> list[dict[str, Any]]:
+    admitted_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in spec.get("admit_semantic_refs") or []
+    }
+    rejected_refs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in _normalize_frontier_relation_rejections(
+            spec.get("frontier_relation_rejections") or [],
+            admitted_refs=admitted_refs,
+        )
+    }
+    resolved = []
+    for source_row in rows:
+        row = dict(source_row)
+        if (row["source_id"], row["semantic_unit_ref"]) in rejected_refs:
+            row["relation"] = "exclude"
+            # Every stamped manifest version records this one exclusion code
+            # regardless of the spec-declared cause, so a historical spec that
+            # still carries the retired display-limit cause keeps replaying
+            # byte-identically.  The cause itself stays distinguishable in the
+            # spec's hash-bound `frontier_relation_rejections`.
+            row["reason_code"] = "literal_source_does_not_state_bounded_relation"
+        resolved.append(row)
+    return resolved
 
 
 def _preselection_relation_confirmation_schema(
@@ -2359,12 +2653,22 @@ def _preselection_relation_confirmation_schema(
     }
 
 
-def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[dict[str, Any]]:
+def _select_value_groups(
+    rows: Sequence[Mapping[str, Any]],
+    cap: int,
+    *,
+    frontier_relation_candidate_ids: frozenset[str] = frozenset(),
+) -> list[dict[str, Any]]:
     _validate_protected_rows(rows)
     eligible = [
         dict(row)
         for row in rows
-        if _truth_row_display_eligible(row, "value_first")
+        if _truth_row_display_eligible(
+            row,
+            "value_first",
+            frontier_relation_bound=row["candidate_id"]
+            in frontier_relation_candidate_ids,
+        )
     ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in eligible:
@@ -2391,7 +2695,10 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
                 "origin_members": members,
                 "required_display_lanes": [],
                 "required_display_candidate_ids": sorted(
-                    row["candidate_id"] for row in members if row.get("protected_lanes")
+                    row["candidate_id"]
+                    for row in members
+                    if row.get("protected_lanes")
+                    or row["candidate_id"] in frontier_relation_candidate_ids
                 ),
             }
         )
@@ -2418,6 +2725,21 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
         group["required_display_lanes"].extend(
             f"protected:{lane}" for lane in group["origin_protected_lanes"]
         )
+
+    # These rows supplied the literal relations that admitted the point. They
+    # must survive the origin cap so their wording is displayed and enters the
+    # exact-quote relevance check. If the complete frontier itself exceeds the
+    # cap, fail visibly instead of completing from an unchecked subset.
+    for group in sorted(
+        (
+            row
+            for row in groups
+            if frontier_relation_candidate_ids
+            & set(row["origin_candidate_ids"])
+        ),
+        key=_value_member_priority,
+    ):
+        add_group(group)
 
     support_buckets: dict[
         tuple[str, str, str], list[tuple[dict[str, Any], dict[str, Any]]]
@@ -2554,6 +2876,16 @@ def _select_value_groups(rows: Sequence[Mapping[str, Any]], cap: int) -> list[di
             "protected_candidate_not_visible",
             "one or more protected candidates are absent from the display",
         )
+    frontier_candidate_ids = {
+        row["candidate_id"]
+        for row in eligible
+        if row["candidate_id"] in frontier_relation_candidate_ids
+    }
+    if not frontier_candidate_ids <= displayed_candidate_ids:
+        raise EvidenceConsumerError(
+            "frontier_candidate_not_visible",
+            "one or more frontier-defining candidates are absent from the display",
+        )
     ordinary_counter_origins = {
         row["origin_group_id"]
         for row in displayed
@@ -2573,11 +2905,16 @@ def _select_groups(
     *,
     truth_policy: str = "balanced",
     temporal_policy: str | None = None,
+    frontier_relation_candidate_ids: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     if truth_policy not in {"balanced", "value_first"}:
         raise EvidenceConsumerError("selection_policy", f"unsupported policy: {truth_policy}")
     if truth_policy == "value_first" and layer == "truth_support":
-        return _select_value_groups(rows, cap)
+        return _select_value_groups(
+            rows,
+            cap,
+            frontier_relation_candidate_ids=frontier_relation_candidate_ids,
+        )
     if temporal_policy is not None and temporal_policy not in TEMPORAL_PRESENTATION_POLICIES:
         raise EvidenceConsumerError(
             "selection_policy", f"unsupported temporal policy: {temporal_policy}"
@@ -2590,7 +2927,12 @@ def _select_groups(
         and row["relation"] != "exclude"
         and (
             layer != "truth_support"
-            or _truth_row_display_eligible(row, truth_policy)
+            or _truth_row_display_eligible(
+                row,
+                truth_policy,
+                frontier_relation_bound=row["candidate_id"]
+                in frontier_relation_candidate_ids,
+            )
         )
     ]
     origins: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -2624,7 +2966,10 @@ def _select_groups(
                 "origin_members": members,
                 "required_display_lanes": [],
                 "required_display_candidate_ids": sorted(
-                    row["candidate_id"] for row in members if row.get("protected_lanes")
+                    row["candidate_id"]
+                    for row in members
+                    if row.get("protected_lanes")
+                    or row["candidate_id"] in frontier_relation_candidate_ids
                 ),
             }
         )
@@ -2670,6 +3015,16 @@ def _select_groups(
             group["required_display_lanes"].extend(
                 f"protected:{lane}" for lane in group["origin_protected_lanes"]
             )
+        for group in sorted(
+            (
+                row
+                for row in groups
+                if frontier_relation_candidate_ids
+                & set(row["origin_candidate_ids"])
+            ),
+            key=_global_priority,
+        ):
+            add_group(group)
         reserve_lane("relation:support", lambda row: "support" in row["origin_relations"])
         reserve_lane("relation:counter", lambda row: "counter" in row["origin_relations"])
 
@@ -2840,6 +3195,16 @@ def _select_groups(
             "protected_candidate_not_visible",
             "one or more protected candidates are absent from the display",
         )
+    frontier_candidate_ids = {
+        row["candidate_id"]
+        for row in eligible
+        if row["candidate_id"] in frontier_relation_candidate_ids
+    }
+    if not frontier_candidate_ids <= displayed_candidate_ids:
+        raise EvidenceConsumerError(
+            "frontier_candidate_not_visible",
+            "one or more frontier-defining candidates are absent from the display",
+        )
     return displayed
 
 
@@ -2914,13 +3279,16 @@ def _validate_relation_response(
             or not REASON_CODE_RE.fullmatch(result["reason_code"])
         ):
             raise EvidenceConsumerError("relation_response_shape", "invalid relation result")
-        if INTERNAL_RELATION_LABEL_RE.search(result["reason_code"].replace("_", " ")):
+        reason_code = result["reason_code"]
+        if not value_policy:
+            reason_code = _normalize_reason_code(reason_code)
+        if INTERNAL_RELATION_LABEL_RE.search(reason_code.replace("_", " ")):
             raise EvidenceConsumerError(
                 "reason_code_relation_leak",
                 "reason code must name the evidence meaning, not its internal relation",
             )
         if value_policy:
-            expected_relation = VALUE_REASON_RELATIONS.get(result["reason_code"])
+            expected_relation = VALUE_REASON_RELATIONS.get(reason_code)
             if expected_relation is None:
                 raise EvidenceConsumerError(
                     "value_reason_code",
@@ -2935,8 +3303,18 @@ def _validate_relation_response(
             raise EvidenceConsumerError(
                 "creator_customer_laundering", "creator-authored evidence cannot corroborate customer truth"
             )
-        merged.append({**candidate, "relation": result["relation"], "reason_code": result["reason_code"]})
+        merged.append({**candidate, "relation": result["relation"], "reason_code": reason_code})
     return merged
+
+
+def _normalize_reason_code(reason_code: str) -> str:
+    """Keep ordinary ``exclude`` verbs from masquerading as lane labels."""
+
+    tokens = reason_code.split("_")
+    return "_".join(
+        "omits" if token == "exclude" and 0 < index < len(tokens) - 1 else token
+        for index, token in enumerate(tokens)
+    )
 
 
 def _display_label(reason_code: str) -> str:
@@ -2980,6 +3358,7 @@ QUOTE_PROMPT_COLUMNS = (
     "same_evidence_companion_meanings",
     "body_id",
 )
+CONTEXT_QUOTE_PROMPT_COLUMNS = QUOTE_PROMPT_COLUMNS + ("parent_context_ids",)
 
 LEGACY_RELATION_CONFIRMATION_COLUMNS = (
     "confirmation_row_id",
@@ -2999,22 +3378,44 @@ def _quote_prompt_envelope(
     bounded_claim: str,
     selected: Sequence[Mapping[str, Any]],
     bodies: Mapping[tuple[str, str], str | None],
+    *,
+    required_quote_candidate_ids: frozenset[str] = frozenset(),
+    include_parent_context: bool = False,
 ) -> tuple[dict[str, Any], list[str]]:
-    """Project only long bodies into the provider-visible quote workload.
+    """Project long bodies and frontier-defining rows into quote review.
 
-    Short bodies are already exact quotes under the owning contract, while a
-    missing body is deterministically unavailable. Sending either to a model
-    adds cost and another failure surface without adding judgment.
+    Ordinary short bodies are already exact quotes under the owning contract.
+    A frontier-defining row is different: its meaning helped admit the point,
+    so the provider must verify that even a short literal body substantiates it.
+    Missing bodies remain deterministically unavailable.
     """
 
+    provider_rows = []
+    for row in selected:
+        body = bodies.get((row["source_id"], row["evidence_id"]))
+        if body is None or (
+            len(body) <= SHORT_BODY_QUOTE_CHARACTERS
+            and row["candidate_id"] not in required_quote_candidate_ids
+        ):
+            continue
+        provider_rows.append(row)
+    if include_parent_context:
+        context_aware, projected_rows, context_rows = _project_parent_context(
+            provider_rows
+        )
+    else:
+        context_aware = False
+        projected_rows = list(provider_rows)
+        context_rows = []
+    selected_columns = (
+        CONTEXT_QUOTE_PROMPT_COLUMNS if context_aware else QUOTE_PROMPT_COLUMNS
+    )
     body_ids: dict[str, str] = {}
     body_rows: list[list[str]] = []
     selected_rows: list[list[Any]] = []
     provider_selected_ids: list[str] = []
-    for row in selected:
+    for row in projected_rows:
         body = bodies.get((row["source_id"], row["evidence_id"]))
-        if body is None or len(body) <= MAX_QUOTE_CHARACTERS:
-            continue
         if body not in body_ids:
             body_id = f"body_{len(body_ids) + 1:02d}"
             body_ids[body] = body_id
@@ -3028,18 +3429,18 @@ def _quote_prompt_envelope(
                 row["relation"],
                 _compact_companion_meanings(row),
                 body_ids[body],
+                *([row.get("parent_context_ids", [])] if context_aware else []),
             ]
         )
-    return (
-        {
-            "bounded_claim": bounded_claim,
-            "body_columns": ["body_id", "source_body"],
-            "body_rows": body_rows,
-            "selected_columns": list(QUOTE_PROMPT_COLUMNS),
-            "selected_rows": selected_rows,
-        },
-        provider_selected_ids,
-    )
+    envelope = {
+        "bounded_claim": bounded_claim,
+        "body_columns": ["body_id", "source_body"],
+        "body_rows": body_rows,
+        "selected_columns": list(selected_columns),
+        "selected_rows": selected_rows,
+    }
+    _attach_parent_context_envelope(envelope, context_aware, context_rows)
+    return envelope, provider_selected_ids
 
 
 def _confirmation_row_presentation(
@@ -3124,13 +3525,17 @@ def _prepare_quotes_from_labeled(
     value_policy = _uses_value_policy(manifest["spec"], labeled)
     truth_selection_policy = "value_first" if value_policy else "balanced"
     temporal_policy = _temporal_presentation_policy(manifest["spec"])
-    labeled = [dict(row) for row in labeled]
+    labeled = _apply_frontier_relation_rejections(manifest["spec"], labeled)
+    frontier_relation_candidate_ids = _frontier_relation_candidate_ids(
+        manifest["spec"], labeled
+    )
     truth = _select_groups(
         labeled,
         "truth_support",
         truth_group_cap,
         truth_policy=truth_selection_policy,
         temporal_policy=temporal_policy,
+        frontier_relation_candidate_ids=frontier_relation_candidate_ids,
     )
     influence = _select_groups(labeled, "influence_context", MAX_INFLUENCE_GROUPS)
     selected = truth + influence
@@ -3153,11 +3558,19 @@ def _prepare_quotes_from_labeled(
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
-    quote_envelope, provider_selected_ids = _quote_prompt_envelope(
-        manifest["spec"]["bounded_claim"], selected, bodies
+    context_complete_quotes = (
+        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
     )
-    prompt = QUOTE_PROMPT.format(envelope=_compact(quote_envelope))
-    schema = _quote_schema()
+    quote_envelope, provider_selected_ids = _quote_prompt_envelope(
+        manifest["spec"]["bounded_claim"],
+        selected,
+        bodies,
+        required_quote_candidate_ids=frontier_relation_candidate_ids,
+        include_parent_context=context_complete_quotes,
+    )
+    prompt_template = QUOTE_PROMPT if context_complete_quotes else LEGACY_QUOTE_PROMPT
+    prompt = prompt_template.format(envelope=_compact(quote_envelope))
+    schema = _quote_schema(semantic_ceiling=not context_complete_quotes)
     quote_manifest = {
         "schema_version": schema_version,
         "selection_id": manifest["selection_id"],
@@ -3180,6 +3593,13 @@ def _prepare_quotes_from_labeled(
         "response_schema_sha256": _canonical_json_sha256(schema),
         "model_api_calls": 0,
     }
+    if frontier_relation_candidate_ids:
+        quote_manifest["frontier_relation_display_policy"] = (
+            FRONTIER_RELATION_DISPLAY_POLICY
+        )
+        quote_manifest["frontier_relation_candidate_ids"] = sorted(
+            frontier_relation_candidate_ids
+        )
     _, _, point_context_rows = _project_parent_context(labeled)
     if point_context_rows:
         quote_manifest["point_parent_context_rows"] = point_context_rows
@@ -3193,7 +3613,12 @@ def _prepare_quotes_from_labeled(
                 year
                 for row in labeled
                 if row["layer"] == "truth_support"
-                and _truth_row_display_eligible(row, truth_selection_policy)
+                and _truth_row_display_eligible(
+                    row,
+                    truth_selection_policy,
+                    frontier_relation_bound=row["candidate_id"]
+                    in frontier_relation_candidate_ids,
+                )
                 and (year := _publication_year(row)) is not None
             },
             reverse=True,
@@ -3226,13 +3651,16 @@ def finalize_relations_prepare_quotes(
 
 def _preselection_confirmation_candidates(
     labeled: Sequence[Mapping[str, Any]],
+    *,
+    frontier_relation_candidate_ids: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     """Return every row that could reach a displayed evidence pack.
 
-    Truth rows can reach display only when material-positive or explicitly
-    protected.  Influence rows use a separate cap and therefore all require
-    confirmation.  The frontier is independent of the first-pass relation, so
-    a mistaken ``exclude`` cannot hide a high-signal or protected row.
+    Truth rows can reach display only when material-positive, explicitly
+    protected, or literally bound to the frontier point.  Influence rows use a
+    separate cap and therefore all require confirmation.  The frontier is
+    independent of the first-pass relation, so a mistaken ``exclude`` cannot
+    hide a high-signal, protected, or frontier-defining row.
     """
 
     return [
@@ -3241,6 +3669,7 @@ def _preselection_confirmation_candidates(
         if row.get("layer") == "influence_context"
         or row.get("protected_lanes")
         or row.get("engagement_material_positive") is True
+        or row["candidate_id"] in frontier_relation_candidate_ids
     ]
 
 
@@ -3277,11 +3706,18 @@ def _preselection_confirmation_state(
         value_policy=value_policy,
         response_mode=_relation_response_mode(manifest["spec"]),
     )
-    frontier = _preselection_confirmation_candidates(labeled)
+    labeled = _apply_frontier_relation_rejections(manifest["spec"], labeled)
+    frontier_relation_candidate_ids = _frontier_relation_candidate_ids(
+        manifest["spec"], labeled
+    )
+    frontier = _preselection_confirmation_candidates(
+        labeled,
+        frontier_relation_candidate_ids=frontier_relation_candidate_ids,
+    )
     if not frontier:
         raise EvidenceConsumerError(
             "preselection_confirmation_empty",
-            "no material, protected, or influence candidates can reach display",
+            "no frontier-bound, material, protected, or influence candidates can reach display",
         )
     frontier_sha256 = _canonical_json_sha256(frontier)
     presentation = _confirmation_row_presentation(frontier, frontier_sha256)
@@ -3353,12 +3789,14 @@ def prepare_preselection_relation_confirmation(
     return prompt, schema, confirmation_manifest
 
 
-def finalize_preselection_relation_confirmation_prepare_quotes(
+def _finalize_preselection_relation_confirmation_prepare_quotes(
     manifest: Mapping[str, Any],
     sources: Sequence[Mapping[str, Any]],
     first_pass_response: Mapping[str, Any],
     confirmation_manifest: Mapping[str, Any],
     confirmation_response: Mapping[str, Any],
+    *,
+    quote_manifest_version: str,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     _, _, expected_manifest = prepare_preselection_relation_confirmation(
         manifest, sources, first_pass_response
@@ -3438,6 +3876,8 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
             raise EvidenceConsumerError(
                 "relation_confirmation_shape", "invalid relation confirmation"
             )
+        if not expected_manifest["value_policy"]:
+            reason_code = _normalize_reason_code(reason_code)
         if INTERNAL_RELATION_LABEL_RE.search(reason_code.replace("_", " ")):
             raise EvidenceConsumerError(
                 "reason_code_relation_leak",
@@ -3471,7 +3911,7 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
         manifest,
         sources,
         final_labeled,
-        schema_version=PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        schema_version=quote_manifest_version,
         preselection_confirmation=confirmation_binding,
     )
     confirmed_ids = set(expected_manifest["confirmation_candidate_ids"])
@@ -3494,6 +3934,23 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
     }
     quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
     return prompt, schema, quote_manifest
+
+
+def finalize_preselection_relation_confirmation_prepare_quotes(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    first_pass_response: Mapping[str, Any],
+    confirmation_manifest: Mapping[str, Any],
+    confirmation_response: Mapping[str, Any],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    return _finalize_preselection_relation_confirmation_prepare_quotes(
+        manifest,
+        sources,
+        first_pass_response,
+        confirmation_manifest,
+        confirmation_response,
+        quote_manifest_version=PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    )
 
 
 def _assemble_batched_relation_response(
@@ -3709,12 +4166,14 @@ def prepare_batched_preselection_relation_confirmations(
     return confirmation_batch_manifest, prompts_and_schemas
 
 
-def finalize_batched_preselection_relation_confirmations_prepare_quotes(
+def _finalize_batched_preselection_relation_confirmations_prepare_quotes(
     batch_manifest: Mapping[str, Any],
     sources: Sequence[Mapping[str, Any]],
     responses: Mapping[str, Mapping[str, Any]],
     confirmation_batch_manifest: Mapping[str, Any],
     confirmation_batch_responses: Mapping[str, Mapping[str, Any]],
+    *,
+    quote_manifest_version: str,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     expected_manifest, _ = prepare_batched_preselection_relation_confirmations(
         batch_manifest,
@@ -3790,12 +4249,13 @@ def finalize_batched_preselection_relation_confirmations_prepare_quotes(
         "relation_checks": merged_checks,
     }
     prompt, schema, quote_manifest = (
-        finalize_preselection_relation_confirmation_prepare_quotes(
+        _finalize_preselection_relation_confirmation_prepare_quotes(
             selection_manifest,
             sources,
             first_response,
             canonical_confirmation_manifest,
             canonical_confirmation_response,
+            quote_manifest_version=quote_manifest_version,
         )
     )
     quote_manifest.pop("manifest_sha256")
@@ -3830,6 +4290,23 @@ def finalize_batched_preselection_relation_confirmations_prepare_quotes(
     return prompt, schema, quote_manifest
 
 
+def finalize_batched_preselection_relation_confirmations_prepare_quotes(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+    confirmation_batch_manifest: Mapping[str, Any],
+    confirmation_batch_responses: Mapping[str, Mapping[str, Any]],
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    return _finalize_batched_preselection_relation_confirmations_prepare_quotes(
+        batch_manifest,
+        sources,
+        responses,
+        confirmation_batch_manifest,
+        confirmation_batch_responses,
+        quote_manifest_version=PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    )
+
+
 def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
     stored = quote_manifest.get("manifest_sha256")
     payload = {
@@ -3844,6 +4321,7 @@ def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
             PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
             PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
+            LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
@@ -4013,7 +4491,10 @@ def finalize_quotes(
     confirmation_response: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     manifest_version = _verified_quote_manifest_version(quote_manifest)
-    if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
+    if manifest_version in {
+        LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    }:
         replay = quote_manifest.get("preselection_replay")
         legacy_replay_keys = {
             "selection_manifest",
@@ -4037,22 +4518,24 @@ def finalize_quotes(
             )
         if replay_keys == frozenset(legacy_replay_keys):
             _, _, expected_quote_manifest = (
-                finalize_preselection_relation_confirmation_prepare_quotes(
+                _finalize_preselection_relation_confirmation_prepare_quotes(
                     replay["selection_manifest"],
                     sources,
                     replay["first_pass_response"],
                     replay["confirmation_manifest"],
                     replay["confirmation_response"],
+                    quote_manifest_version=manifest_version,
                 )
             )
         else:
             _, _, expected_quote_manifest = (
-                finalize_batched_preselection_relation_confirmations_prepare_quotes(
+                _finalize_batched_preselection_relation_confirmations_prepare_quotes(
                     replay["batch_manifest"],
                     sources,
                     replay["batch_responses"],
                     replay["confirmation_batch_manifest"],
                     replay["confirmation_batch_responses"],
+                    quote_manifest_version=manifest_version,
                 )
             )
         if dict(quote_manifest) != expected_quote_manifest:
@@ -4081,6 +4564,16 @@ def finalize_quotes(
     if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
         raise EvidenceConsumerError("quote_response_shape", "quotes missing")
     selected = quote_manifest["selected_rows"]
+    frontier_relation_ids = quote_manifest.get(
+        "frontier_relation_candidate_ids", []
+    )
+    if not isinstance(frontier_relation_ids, list) or not all(
+        isinstance(value, str) for value in frontier_relation_ids
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "frontier relation quote ids are invalid"
+        )
+    frontier_relation_candidate_ids = frozenset(frontier_relation_ids)
     expected = (
         quote_manifest.get("provider_selected_ids")
         if manifest_version
@@ -4088,6 +4581,7 @@ def finalize_quotes(
             PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
             PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
+            LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }
         else [row["selected_id"] for row in selected]
@@ -4115,6 +4609,7 @@ def finalize_quotes(
         PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
         QUOTE_MANIFEST_VERSION,
+        LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }:
         derived_provider_ids = [
@@ -4123,7 +4618,10 @@ def finalize_quotes(
             if (
                 (body := bodies.get((row["source_id"], row["evidence_id"])))
                 is not None
-                and len(body) > MAX_QUOTE_CHARACTERS
+                and (
+                    len(body) > SHORT_BODY_QUOTE_CHARACTERS
+                    or row["candidate_id"] in frontier_relation_candidate_ids
+                )
             )
         ]
         if expected != derived_provider_ids:
@@ -4153,6 +4651,7 @@ def finalize_quotes(
                 PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
                 PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                 QUOTE_MANIFEST_VERSION,
+                LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             }:
                 raise EvidenceConsumerError(
@@ -4161,7 +4660,7 @@ def finalize_quotes(
             if body is None:
                 status = "quote_unavailable"
                 quote = None
-            elif len(body) <= MAX_QUOTE_CHARACTERS:
+            elif len(body) <= SHORT_BODY_QUOTE_CHARACTERS:
                 status = "quote_available"
                 quote = body
             else:
@@ -4177,7 +4676,10 @@ def finalize_quotes(
         elif status == "quote_available":
             if not isinstance(quote, str) or not quote:
                 raise EvidenceConsumerError("quote_exactness", "available quote missing")
-            if len(quote) > MAX_QUOTE_CHARACTERS:
+            if (
+                manifest_version != PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                and len(quote) > SHORT_BODY_QUOTE_CHARACTERS
+            ):
                 raise EvidenceConsumerError("quote_overlength", "quote exceeds 220 characters")
             if sum(character.isalnum() for character in quote) < 2:
                 raise EvidenceConsumerError(
@@ -4191,6 +4693,7 @@ def finalize_quotes(
                     PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
                     PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                     QUOTE_MANIFEST_VERSION,
+                    LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 }
                 and not _quote_has_complete_end(body, quote)
@@ -4199,7 +4702,7 @@ def finalize_quotes(
                     "quote_boundary_incomplete",
                     "available quote stops before the next source word",
                 )
-            if len(body) <= MAX_QUOTE_CHARACTERS and quote != body:
+            if len(body) <= SHORT_BODY_QUOTE_CHARACTERS and quote != body:
                 raise EvidenceConsumerError(
                     "quote_context_incomplete",
                     "a short source body must be quoted in full",
@@ -4207,6 +4710,15 @@ def finalize_quotes(
         elif status == "quote_unavailable":
             if quote is not None:
                 raise EvidenceConsumerError("quote_response_shape", "unavailable quote must be null")
+            if (
+                body is not None
+                and selected_row["candidate_id"]
+                in frontier_relation_candidate_ids
+            ):
+                raise EvidenceConsumerError(
+                    "frontier_relation_quote_relevance",
+                    "a frontier-defining relation has no relevant exact quote",
+                )
         else:
             raise EvidenceConsumerError("quote_response_shape", "invalid quote status")
         output_rows.append(
@@ -4239,6 +4751,7 @@ def finalize_quotes(
                         PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
                         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                         QUOTE_MANIFEST_VERSION,
+                        LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     }
                     else {}
@@ -4279,7 +4792,11 @@ def finalize_quotes(
         "schema_version": (
             "phase_a_evidence_selection_artifact_v2"
             if manifest_version
-            in {QUOTE_MANIFEST_VERSION, PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION}
+            in {
+                QUOTE_MANIFEST_VERSION,
+                LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            }
             else "phase_a_evidence_selection_artifact_v1"
         ),
         "selection_manifest_sha256": quote_manifest["selection_manifest_sha256"],
@@ -4309,6 +4826,10 @@ def finalize_quotes(
         ],
         "model_api_calls": 0,
     }
+    if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
+        artifact["output_boundary"].append(
+            "quote length never determines whether available source evidence is admissible"
+        )
     if temporal_policy is not None:
         timeline: dict[int | None, list[str]] = defaultdict(list)
         for row in output_rows:
@@ -4327,9 +4848,13 @@ def finalize_quotes(
         ]
     if manifest_version in {
         QUOTE_MANIFEST_VERSION,
+        LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }:
-        if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
+        if manifest_version in {
+            LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        }:
             preselection = quote_manifest.get("preselection_relation_confirmation")
             if (
                 not isinstance(preselection, Mapping)
@@ -4353,6 +4878,25 @@ def finalize_quotes(
         if truth_selection_policy not in {"balanced", "value_first"}:
             raise EvidenceConsumerError(
                 "manifest_verification", "truth selection policy missing or changed"
+            )
+        frontier_relation_policy = quote_manifest.get(
+            "frontier_relation_display_policy"
+        )
+        frontier_relation_ids = quote_manifest.get(
+            "frontier_relation_candidate_ids", []
+        )
+        if (
+            frontier_relation_policy not in {None, FRONTIER_RELATION_DISPLAY_POLICY}
+            or not isinstance(frontier_relation_ids, list)
+            or not all(isinstance(value, str) for value in frontier_relation_ids)
+            or (
+                frontier_relation_policy is None
+                and frontier_relation_ids
+            )
+        ):
+            raise EvidenceConsumerError(
+                "manifest_verification",
+                "frontier relation display binding changed",
             )
         truth_rows = [
             row
@@ -4388,7 +4932,10 @@ def finalize_quotes(
                             row["scoped_independence_key"]
                             for row in labeled_inventory
                             if _truth_row_display_eligible(
-                                row, truth_selection_policy
+                                row,
+                                truth_selection_policy,
+                                frontier_relation_bound=row["candidate_id"]
+                                in frontier_relation_candidate_ids,
                             )
                         }
                     ),
@@ -4424,7 +4971,11 @@ def finalize_quotes(
                         "one externally scope-confirmed evidence point; a broad axis or bundled claim fails before artifact completion",
                         "distinct truth origins capped separately from creator influence",
                         "display_eligible_truth_origin_count is the exact pre-cap origin pool under the recorded truth selection policy; origins outside that pool are not cap omissions",
-                        "a truth origin with no operator-protected lane and no material positive source-native engagement is never displayed; value-first also excludes material adjacent origins",
+                        (
+                            "a quiet truth origin is display-eligible only when it is operator-protected or literally bound to the accepted frontier point; that visibility grants no resonance credit, and value-first still excludes unbound material adjacent origins"
+                            if frontier_relation_candidate_ids
+                            else "a truth origin with no operator-protected lane and no material positive source-native engagement is never displayed; value-first also excludes material adjacent origins"
+                        ),
                         "support, counterevidence, protected evidence, source diversity, and source-native engagement within comparable buckets",
                         "all admitted candidate dispositions remain available",
                     ],

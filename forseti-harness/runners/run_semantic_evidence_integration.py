@@ -6,7 +6,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -1648,12 +1648,23 @@ def materialize_customer_pull_point_selection_spec_run(
     bundle_path: Path,
     proposition_id: str,
     spec_out: Path,
+    rejected_frontier_semantic_refs: Sequence[str] = (),
 ) -> dict[str, Any]:
     frontier = _load_object(frontier_path)
     packet = _load_object(packet_path)
     verify_customer_pull_point_frontier(frontier, packet)
     spec = selection_spec_from_customer_pull_frontier(
-        frontier, packet, proposition_id
+        frontier,
+        packet,
+        proposition_id,
+        frontier_relation_rejections=[
+            {
+                "source_id": frontier["source_id"],
+                "semantic_unit_ref": semantic_ref,
+                "cause": "literal_source_does_not_state_bounded_relation",
+            }
+            for semantic_ref in rejected_frontier_semantic_refs
+        ],
     )
     spec["sources"] = [
         {
@@ -1670,6 +1681,7 @@ def materialize_customer_pull_point_selection_spec_run(
         "selection_id": spec["selection_id"],
         "frontier_sha256": frontier["frontier_sha256"],
         "truth_group_cap": spec["truth_group_cap"],
+        "rejected_frontier_relation_count": len(rejected_frontier_semantic_refs),
         "model_api_calls": 0,
     }
 
@@ -2399,6 +2411,16 @@ def _parser() -> argparse.ArgumentParser:
     frontier_point.add_argument("--packet", type=Path, required=True)
     frontier_point.add_argument("--bundle", type=Path, required=True)
     frontier_point.add_argument("--proposition-id", required=True)
+    frontier_point.add_argument(
+        "--reject-frontier-relation",
+        action="append",
+        default=[],
+        dest="rejected_frontier_semantic_refs",
+        help=(
+            "literal semantic ref whose bound source does not state the point; "
+            "repeat for multiple rejected relations"
+        ),
+    )
     frontier_point.add_argument("--spec-out", type=Path, required=True)
 
     selection_prepare = sub.add_parser("prepare-evidence-selection")
@@ -2880,6 +2902,9 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 proposition_id=args.proposition_id,
                 spec_out=args.spec_out,
+                rejected_frontier_semantic_refs=(
+                    args.rejected_frontier_semantic_refs
+                ),
             )
         elif args.command == "prepare-evidence-selection":
             result = prepare_evidence_selection_run(

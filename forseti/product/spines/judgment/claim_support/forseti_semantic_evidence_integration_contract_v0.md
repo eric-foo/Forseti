@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v57
-effective_date: 2026-08-22
+version: v59
+effective_date: 2026-08-26
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v57
+# Semantic Evidence Integration Contract v59
 
 ## Purpose
 
@@ -885,14 +885,18 @@ source-artifact and source-ref equality, and rejects a body whose hash differs
 from the one the quote manifest recorded. An available source body of no more
 than 220 characters must be quoted in full; this deterministic boundary prevents
 a short comment from being clipped before a material qualification or
-countervailing behavior. A longer available quote must be one context-complete
-contiguous source substring of no more than 220 characters, with no inserted
-ellipsis or rewriting, and must contain at least two Unicode alphanumeric
-characters. The substring must express the display label through either the
+countervailing behavior. V8 uses that threshold only for short-body copying and
+external-review workload selection, never as a semantic ceiling. A longer
+available quote must be the shortest context-complete contiguous source
+substring that carries the material meaning, with no inserted ellipsis or
+rewriting, and must contain at least two Unicode alphanumeric characters. It may
+exceed 220 characters when the necessary antecedent or qualification requires
+it. The substring must express the display label through either the
 selected normalized meaning or the same-evidence companion meaning that
-justified that label. If a material qualification cannot fit, the external response
-returns unavailable instead of a misleading fragment. No lexical-overlap
-relevance rule is applied. For current v4/v5/v6/v7 quote manifests, a long-body quote
+justified that label. If no contiguous exact span carries the material meaning,
+the external response returns unavailable instead of a misleading fragment;
+length alone is not an unavailable cause in v8. No lexical-overlap relevance
+rule is applied. For v4/v5/v6/v7/v8 quote manifests, a long-body quote
 that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
@@ -1030,8 +1034,8 @@ pressure alone. Naming a runtime field `point_id` or `bounded_point` establishes
 nothing about boundedness; the separately returned scope classification gates
 the completed pack, and the artifact records the passing reason.
 
-Contract v53 makes `phase_a_evidence_quote_manifest_v7` the normal route for a
-new bounded point pack. It moves the de-correlated relation check before the
+Contract v58 makes `phase_a_evidence_quote_manifest_v8` the normal route for a
+new bounded point pack. It retains v7's de-correlated relation check before the
 display cap. After the first response accounts for every admitted candidate,
 the confirmation workload includes every customer-truth row with material
 source-native engagement, every operator-protected row, and every influence
@@ -1053,12 +1057,14 @@ runs once over the corrected inventory. Every finally displayed row must be in
 the confirmation frontier or finalization fails
 `selected_relation_unconfirmed`.
 
-V7 quote finalization verifies the hash-bound pre-selection confirmation
+V8 quote finalization verifies the hash-bound pre-selection confirmation
 lineage embedded in the quote manifest and accepts no separate late
 confirmation attachment. Quote extraction remains a separate external
 response, so relation adjudication cannot encourage context clipping. V6
 remains supported only for exact historical reproduction under its stamped
-selected-row confirmation contract; it is not silently upgraded or restamped.
+selected-row confirmation contract. V7 also remains readable and
+reconstructible under its stamped 220-character ceiling; neither historical
+version is silently upgraded or restamped.
 
 Contract v53 also adds
 `phase_a_customer_pull_point_frontier_v1`, a no-provider navigation view over a
@@ -1135,16 +1141,16 @@ For a long source body, the returned exact substring must directly express the
 source-owned normalized meaning or a material same-evidence companion
 qualification. A relation-derived label alone cannot make an irrelevant
 substring acceptable. The exact span must not start with an unresolved pronoun
-when nearby preceding text names its antecedent and the combined span fits.
+when nearby preceding text names its antecedent.
 Product identity may still rely on the evidence row; this pronoun rule does not
 require an otherwise exact, relevant span to repeat it. Quote selection must
 prefer a context-complete span over the shortest matching phrase and directly
 substantiate every material outcome, direction, comparator, formula
 distinction, and usage or timing condition in the normalized meaning. It must
 retain a nearby material qualification and cannot stop mid-phrase. It may
-return unavailable only after checking that no one span within 220 characters
-supports the complete normalized meaning; optional non-reversing context need
-not fit.
+return unavailable only after checking that no contiguous exact span supports
+the complete normalized meaning; quote length alone is not a reason to reject
+available evidence.
 
 Contract v40 clarifies value evidence without changing packet v3 or the
 selection schema. Candidate admission for a value axis is direction-neutral:
@@ -1694,6 +1700,30 @@ new frontier.
 
 ## Changelog
 
+- `v59` / 2026-08-26 — added the scalable point-local reader after a complete
+  routed v2 axis is built. Each accepted point now has a path-independent,
+  meaning-bound input fingerprint and content-addressed request, response, and
+  compiled brief; unchanged point work can be reused across a changed whole-axis
+  snapshot, while changed method, schema, subject, axis, facts, lineage, or
+  Decision State creates a new identity. Deterministic code restores literal
+  evidence and the complete Decision State ledger, and final assembly emits no
+  axis output until accepted plus rejected membership is exact. Snapshot
+  validation and point-file reading remain linear rather than repeating the
+  whole axis for every point. Cross-vendor adversarial recheck closed stale
+  response reuse, repeated validation, snapshot-scoped brief reuse,
+  store-optional validation, label-addressed requests, and state-identity
+  shadowing; texture dogfood plus a frozen-value sample reproduced exact reuse,
+  failure visibility, and state separation. Added no evidence authority, global
+  index, prevalence or Deliver judgment, interpretation-method change, or
+  frozen v1/v2 output mutation.
+- `v58` / 2026-08-25 — versioned new bounded-point quote manifests to v8 and
+  removed the 220-character semantic ceiling. The threshold remains only for
+  deterministic full-copying of short bodies and external-review workload
+  selection. Longer evidence now carries the shortest context-complete
+  contiguous exact span needed for its meaning; length alone cannot reject a
+  truthful frontier relation. V7 remains exactly replayable under its stamped
+  ceiling, and new runner authoring no longer exposes the legacy unquotable
+  rejection path.
 - `v57` / 2026-08-22 — closed the delegated-review recency edges: every
   admitted ISO publication-time shape now resolves to a calendar year;
   unavailable engagement cannot sort ahead of an observed native metric;
