@@ -929,9 +929,24 @@ def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_disp
         _quote_response(historical_quote_manifest, sources),
     )
     assert artifact["schema_version"] == "phase_a_evidence_selection_artifact_v2"
-    # The stamped exclusion code is version-invariant, so a historical spec that
-    # still carries the retired display-limit cause replays byte-identically.
-    # The distinct cause stays retrievable from the hash-bound spec above.
+    # The replayed v7 disposition must carry the code the emulated producer
+    # stamped, not the different cause the hash-bound spec still holds. Reading
+    # it from the replayed artifact binds a consumer outcome instead of only the
+    # artifact's schema stamp; this remains emulation, not saved-byte replay.
+    replayed_rejected_row = next(
+        row
+        for row in artifact["candidate_dispositions"]
+        if row["candidate_id"] == rejected_candidate["candidate_id"]
+    )
+    assert replayed_rejected_row["relation"] == "exclude"
+    assert (
+        replayed_rejected_row["reason_code"]
+        == "literal_source_does_not_state_bounded_relation"
+    )
+    assert replayed_rejected_row["reason_code"] != rejection["cause"]
+    # The stamped exclusion code is version-invariant, so the current path
+    # stamps the same code while the retired display-limit cause stays
+    # retrievable from the hash-bound spec above.
     assert rejected_row["reason_code"] == "literal_source_does_not_state_bounded_relation"
     assert rejected_row["reason_code"] != rejection["cause"]
     assert spec["frontier_relation_rejections"] == [rejection]

@@ -94,7 +94,7 @@ not changes to source precedence.
 | Source-capture access / anti-blocking components | `forseti/product/spines/capture/core/source_capture_toolbox/README.md` |
 | ECR source-side orientation | `docs/workflows/ecr_spine_submap_v0.md` |
 | Judgment Spine orientation or claim/gate routing | `docs/research/judgment-spine/judgment_spine_consolidation_map_v0.md` |
-| Phase A customer-evidence point pack, generic axis pack, or consolidated axis view | `docs/workflows/phase_a_customer_evidence_completion_path_v0.md` |
+| Phase A evidence machinery (`phase_a_evidence_selection.py` or `phase_a_evidence_axis_consolidation.py`), selection/quotes, point pack, generic axis pack, projection, or consolidated axis view | `docs/workflows/phase_a_customer_evidence_completion_path_v0.md` |
 | Creator ideal audience or commercial creator-fit method | `forseti/product/spines/creator_signal/creator_ideal_audience_distillation_deck_v0.md` |
 | Pack a judgment view or author a packing adapter | `forseti/product/spines/packing/README.md`, then `forseti/product/spines/packing/authority/packing_spine_v0_serialization_contract_v0.md` |
 | Cross-spine research-engine grouping | `docs/workflows/forseti_research_engine_map_v0.md` |

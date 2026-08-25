@@ -801,6 +801,7 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     direct_view = build_axis_consolidated_view(spec)
     point = next(row for row in direct_view["point_index"] if row["point_id"] == "point_a")
     assert point["support_origin_ids"] == ["scope::reddit:alice"]
+    assert point["displayed_relation_row_counts"]["support"] == 1
     assert len(point["same_origin_observation_groups"]) == 1
     group = point["same_origin_observation_groups"][0]
     assert group["source_observation_count"] == 2
@@ -836,7 +837,64 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
         if row[columns.index("point_id")] == "point_a"
     )
     assert point_row[columns.index("same_origin_observation_groups")] == [group]
+    assert point_row[columns.index("relation_counts")]["support"] == 1
     assert build_axis_consolidated_view(spec) == decision_view
+
+
+def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    expected = (
+        "bounded_point on each point row is the authoritative admitted meaning, including "
+        "literal comparator, time, and personal-fit terms; placement normalized meanings "
+        "are point-relative evidence and may support, counter, qualify, or sit adjacent, "
+        "but never broaden, merge, or rewrite the point"
+    )
+    count_rule = (
+        "point-row relation totals count displayed evidence rows by relation; they are "
+        "distinct from relation origin-id arrays and same-origin source_observation_count, "
+        "may exceed the distinct-origin count, and are never independent-origin credit, "
+        "a people count, or prevalence"
+    )
+
+    direct_view = build_axis_consolidated_view(spec)
+    assert direct_view["evidence_accounting_contract"]["point_meaning_rule"] == expected
+    assert (
+        direct_view["evidence_accounting_contract"]["displayed_relation_count_rule"]
+        == count_rule
+    )
+    for point in direct_view["point_index"]:
+        assert "authoritative_point_meaning" not in point
+        assert point["displayed_relation_row_counts"] == {
+            relation: sum(
+                placement["point_id"] == point["point_id"]
+                and placement["relation"] == relation
+                for placement in direct_view["point_placements"]
+            )
+            for relation in ("support", "counter", "adjacent")
+        }
+
+    axis = json.loads(paths["axis"].read_text(encoding="utf-8"))
+    axis["rejected_points"] = []
+    _write(paths["axis"], axis)
+    spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
+    _route_every_point_as_decision_state(spec)
+    decision_view = build_axis_consolidated_view(spec)
+    reader = decision_view["decision_state_reader_surface"]
+    assert reader["evidence_accounting_contract"]["point_meaning_rule"] == expected
+    assert (
+        reader["evidence_accounting_contract"]["displayed_relation_count_rule"]
+        == count_rule
+    )
+    point_columns = reader["point_table"]["columns"]
+    assert "bounded_point" in point_columns
+    assert "relation_counts" in point_columns
+    assert "point_index" not in reader
+    assert all(
+        "point_index" not in rule and "authoritative_point_meaning" not in rule
+        for rule in reader["evidence_accounting_contract"].values()
+    )
 
 
 def test_dogfood_truth_index_preserves_observations_states_and_literal_rejections(
@@ -2913,6 +2971,7 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     workflow = (
         repository_root / "docs/workflows/phase_a_customer_evidence_completion_path_v0.md"
     ).read_text(encoding="utf-8")
+    normalized_workflow = " ".join(workflow.split())
     repo_map = (repository_root / "docs/workflows/forseti_repo_map_v0.md").read_text(
         encoding="utf-8"
     )
@@ -2931,10 +2990,29 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "Absence from the small index is therefore not evidence",
         "Do not infer any sibling file",
         "phase_a_hydration_axis_pack_v2",
+        "reconstructed hash-bound bytes",
+        "independently produced historical artifact",
+        "old consumer path remains replayable",
+        "Use cold model dogfood only",
+        "test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display",
     ):
-        assert required in workflow
-    assert "Phase A customer-evidence point pack, generic axis pack" in repo_map
-    assert "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in repo_map
+        assert required in normalized_workflow
+    # Co-presence anywhere in the map is not a route.  The module names and the
+    # owning workflow have to sit in one quick-index row, or a cold agent who
+    # greps the map for the file it is about to change lands somewhere else.
+    machinery_rows = [
+        line
+        for line in repo_map.splitlines()
+        if line.lstrip().startswith("|")
+        and "docs/workflows/phase_a_customer_evidence_completion_path_v0.md" in line
+    ]
+    assert len(machinery_rows) == 1
+    for required in (
+        "Phase A evidence machinery",
+        "phase_a_evidence_selection.py",
+        "phase_a_evidence_axis_consolidation.py",
+    ):
+        assert required in machinery_rows[0]
     assert 'subparsers.add_parser("build-axis-pack")' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
     assert 'subparsers.add_parser("build-dogfood-truth")' in runner
