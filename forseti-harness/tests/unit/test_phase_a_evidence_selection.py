@@ -17,6 +17,7 @@ from judgment.phase_a_evidence_selection import (
     _bucket_priority,
     _display_label,
     _numeric_engagement,
+    _preselection_confirmation_candidates,
     _policy_guidance,
     _publication_time_value,
     _publication_year,
@@ -26,6 +27,7 @@ from judgment.phase_a_evidence_selection import (
     _source_venue,
     _temporal_display_priority,
     _truth_row_display_eligible,
+    _validate_customer_pull_frontier_spec_binding,
     _validate_relation_response,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
@@ -627,6 +629,16 @@ def test_customer_pull_frontier_binding_and_materialized_point_spec_fail_closed(
     assert spec["truth_group_cap"] == 13
     assert spec["bounded_claim"] == "Customers report buying the balm repeatedly."
     assert spec["customer_pull_frontier_binding"]["queue"] == "community_discovery_queue"
+    assert (
+        spec["frontier_relation_display_policy"]
+        == "literal_point_relations_display_eligible_v1"
+    )
+    assert (
+        spec["customer_pull_frontier_binding"][
+            "frontier_relation_display_policy"
+        ]
+        == spec["frontier_relation_display_policy"]
+    )
 
     tampered = copy.deepcopy(frontier)
     tampered["retailer_first_queue"][0]["bounded_point"] = "Edited point"
@@ -703,6 +715,27 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
     with pytest.raises(EvidenceConsumerError) as caught:
         prepare_evidence_selection(tampered, sources)
     assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    tampered = copy.deepcopy(spec)
+    tampered["frontier_relation_display_policy"] = "quiet_rows_are_resonance"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(tampered, sources)
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    # A pre-policy binding shape cannot leave the display policy unpinned while
+    # the spec still turns quiet-row display on.
+    tampered = copy.deepcopy(spec)
+    tampered["customer_pull_frontier_binding"].pop(
+        "frontier_relation_display_policy"
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(tampered, sources)
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    legacy = copy.deepcopy(spec)
+    legacy["customer_pull_frontier_binding"].pop("frontier_relation_display_policy")
+    legacy.pop("frontier_relation_display_policy")
+    _validate_customer_pull_frontier_spec_binding(legacy, sources)
 
 
 def test_recent_year_policy_changes_display_only_and_keeps_an_older_anchor(
@@ -3014,6 +3047,65 @@ def test_short_source_body_cannot_be_clipped_before_material_countervailing_beha
     assert row["exact_quote"] == body
 
 
+def test_frontier_bound_short_body_requires_relevance_checked_quote(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    candidate = _candidate_rows(sources, spec)[0]
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": candidate["source_id"],
+            "semantic_unit_ref": candidate["semantic_unit_ref"],
+        }
+    ]
+    spec["frontier_relation_display_policy"] = (
+        "literal_point_relations_display_eligible_v1"
+    )
+    body = "This short body discusses something else entirely."
+    sources[0]["bundle"]["evidence_units"][0]["text"] = body
+    _reseal(sources[0])
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote_manifest = finalize_relations_prepare_quotes(
+        manifest, sources, _relation_response(_candidate_rows(sources, spec))
+    )
+    selected_id = quote_manifest["selected_rows"][0]["selected_id"]
+    assert quote_manifest["provider_selected_ids"] == [selected_id]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_quotes(
+            quote_manifest,
+            sources,
+            {
+                "quotes": [
+                    {
+                        "selected_id": selected_id,
+                        "quote_status": "quote_unavailable",
+                        "exact_quote": None,
+                    }
+                ]
+            },
+        )
+    assert caught.value.boundary == "frontier_relation_quote_relevance"
+
+    # Relevance review must not block completion: a relevant short body is
+    # still returned in full and completes normally.
+    artifact = finalize_quotes(
+        quote_manifest,
+        sources,
+        {
+            "quotes": [
+                {
+                    "selected_id": selected_id,
+                    "quote_status": "quote_available",
+                    "exact_quote": body,
+                }
+            ]
+        },
+    )
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["quote_status"] == "quote_available"
+    assert row["exact_quote"] == body
+
+
 def test_display_label_uses_customer_facing_signal_and_preserves_source_meanings(
     tmp_path: Path,
 ) -> None:
@@ -3945,6 +4037,113 @@ def test_unprotected_quiet_counter_is_retained_but_not_forced_into_presentation(
     ]
     selected = _select_groups(rows, "truth_support", 10)
     assert {row["candidate_id"] for row in selected} == {"material_support"}
+
+
+def test_frontier_bound_quiet_support_is_display_eligible_without_resonance_credit() -> None:
+    rows = [
+        _selection_row(
+            "material_support",
+            origin="origin:material",
+            relation="support",
+        ),
+        _selection_row(
+            "quiet_frontier_support",
+            origin="origin:quiet",
+            relation="support",
+            material_positive=False,
+            engagement_raw_value="1 point",
+        ),
+        _selection_row(
+            "quiet_unlinked_support",
+            origin="origin:unlinked",
+            relation="support",
+            material_positive=False,
+            engagement_raw_value="1 point",
+        ),
+    ]
+    selected = _select_groups(
+        rows,
+        "truth_support",
+        10,
+        frontier_relation_candidate_ids=frozenset({"quiet_frontier_support"}),
+    )
+    assert {row["candidate_id"] for row in selected} == {
+        "material_support",
+        "quiet_frontier_support",
+    }
+    quiet = next(
+        row for row in selected if row["candidate_id"] == "quiet_frontier_support"
+    )
+    assert quiet["engagement_material_positive"] is False
+    confirmation_frontier = _preselection_confirmation_candidates(
+        rows,
+        frontier_relation_candidate_ids=frozenset({"quiet_frontier_support"}),
+    )
+    assert {row["candidate_id"] for row in confirmation_frontier} == {
+        "material_support",
+        "quiet_frontier_support",
+    }
+
+
+@pytest.mark.parametrize("truth_policy", ["balanced", "value_first"])
+def test_frontier_bound_origin_displaces_an_ordinary_origin_at_the_cap(
+    truth_policy: str,
+) -> None:
+    rows = [
+        _selection_row(
+            f"material_{index}",
+            origin=f"origin:material:{index}",
+            relation="support",
+        )
+        for index in range(13)
+    ]
+    rows.append(
+        _selection_row(
+            "quiet_frontier",
+            origin="origin:quiet-frontier",
+            relation="support",
+            material_positive=False,
+            engagement_raw_value="1 point",
+        )
+    )
+
+    selected = _select_groups(
+        rows,
+        "truth_support",
+        13,
+        truth_policy=truth_policy,
+        frontier_relation_candidate_ids=frozenset({"quiet_frontier"}),
+    )
+    assert len({row["origin_group_id"] for row in selected}) == 13
+    assert "quiet_frontier" in {row["candidate_id"] for row in selected}
+
+
+@pytest.mark.parametrize("truth_policy", ["balanced", "value_first"])
+def test_frontier_itself_exceeding_the_cap_fails_visibly(
+    truth_policy: str,
+) -> None:
+    rows = [
+        _selection_row(
+            f"frontier_{index}",
+            origin=f"origin:frontier:{index}",
+            relation="support",
+            material_positive=False,
+            engagement_raw_value="1 point",
+        )
+        for index in range(14)
+    ]
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _select_groups(
+            rows,
+            "truth_support",
+            13,
+            truth_policy=truth_policy,
+            frontier_relation_candidate_ids=frozenset(
+                row["candidate_id"] for row in rows
+            ),
+        )
+    assert caught.value.boundary == "presentation_cap_insufficient"
 
 
 def test_protected_quiet_behavior_remains_visible() -> None:

@@ -558,10 +558,14 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
     axis_id = _required_string(manifest, "axis_id", boundary="axis_manifest")
     accepted = manifest.get("accepted_points")
     rejected = manifest.get("rejected_points")
-    if not isinstance(accepted, list) or not accepted:
-        raise EvidenceConsumerError("axis_manifest", "accepted_points must be nonempty")
+    if not isinstance(accepted, list):
+        raise EvidenceConsumerError("axis_manifest", "accepted_points must be explicit")
     if not isinstance(rejected, list):
         raise EvidenceConsumerError("axis_manifest", "rejected_points must be explicit")
+    if not accepted and not rejected:
+        raise EvidenceConsumerError(
+            "axis_manifest", "the accepted/rejected frontier must be nonempty"
+        )
 
     accepted_ids = [row.get("point_id") for row in accepted if isinstance(row, Mapping)]
     if (
@@ -587,27 +591,76 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
         raise EvidenceConsumerError("axis_manifest", "accepted point pins are incomplete")
     rejected_rows: list[dict[str, str]] = []
     rejected_ids: list[str] = []
+    rejected_receipt_count = 0
+    rejected_base_fields = {"point_id", "bounded_point", "disposition", "reason"}
+    rejected_receipt_fields = {
+        "resolution_receipt_path",
+        "resolution_receipt_sha256",
+    }
     for row in rejected:
         if not isinstance(row, Mapping):
             raise EvidenceConsumerError("axis_manifest", "rejected point must be an object")
-        if set(row) != {"point_id", "bounded_point", "disposition", "reason"}:
+        row_fields = frozenset(row)
+        if row_fields not in {
+            frozenset(rejected_base_fields),
+            frozenset(rejected_base_fields | rejected_receipt_fields),
+        }:
             raise EvidenceConsumerError("axis_manifest", "rejected point fields are invalid")
         point_id = _required_string(row, "point_id", boundary="axis_manifest")
         rejected_ids.append(point_id)
-        rejected_rows.append(
-            {
-                "point_id": point_id,
-                "bounded_point": _required_string(row, "bounded_point", boundary="axis_manifest"),
-                "disposition": _required_string(row, "disposition", boundary="axis_manifest"),
-                "reason": _required_string(row, "reason", boundary="axis_manifest"),
-            }
-        )
+        normalized_rejected = {
+            "point_id": point_id,
+            "bounded_point": _required_string(row, "bounded_point", boundary="axis_manifest"),
+            "disposition": _required_string(row, "disposition", boundary="axis_manifest"),
+            "reason": _required_string(row, "reason", boundary="axis_manifest"),
+        }
+        if row_fields == frozenset(rejected_base_fields | rejected_receipt_fields):
+            receipt_path = Path(
+                _required_string(
+                    row, "resolution_receipt_path", boundary="axis_manifest"
+                )
+            )
+            receipt_sha256 = _required_string(
+                row, "resolution_receipt_sha256", boundary="axis_manifest"
+            )
+            if not receipt_path.is_file() or hash_file(receipt_path) != receipt_sha256:
+                raise EvidenceConsumerError(
+                    "rejected_point_resolution",
+                    f"rejected-point receipt changed: {point_id}",
+                )
+            receipt = _load_object(
+                receipt_path, boundary="rejected_point_resolution"
+            )
+            if (
+                receipt.get("schema_version")
+                != "phase_a_rejected_point_resolution_receipt_v1"
+                or receipt.get("point_id") != point_id
+                or not isinstance(receipt.get("failure_boundary"), str)
+                or not receipt["failure_boundary"]
+            ):
+                raise EvidenceConsumerError(
+                    "rejected_point_resolution",
+                    f"rejected-point receipt does not resolve this point: {point_id}",
+                )
+            normalized_rejected.update(
+                {
+                    "resolution_receipt_path": str(receipt_path),
+                    "resolution_receipt_sha256": receipt_sha256,
+                }
+            )
+            rejected_receipt_count += 1
+        rejected_rows.append(normalized_rejected)
     if len(set(rejected_ids)) != len(rejected_ids):
         raise EvidenceConsumerError("axis_manifest", "rejected point identities are invalid")
     overlap = set(accepted_ids) & set(rejected_ids)
     if overlap:
         raise EvidenceConsumerError(
             "axis_manifest", f"accepted/rejected point overlap: {sorted(overlap)}"
+        )
+    if not accepted and rejected_receipt_count != len(rejected_rows):
+        raise EvidenceConsumerError(
+            "rejected_point_resolution",
+            "a rejected-only axis requires one literal resolution receipt per point",
         )
 
     point_descriptors: list[dict[str, Any]] = []
@@ -630,7 +683,11 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
 
     pack: dict[str, Any] = {
         "schema_version": AXIS_PACK_VERSION,
-        "status": "complete_valid_axis_pack",
+        "status": (
+            "complete_valid_axis_pack"
+            if point_descriptors
+            else "complete_rejected_axis_pack"
+        ),
         "axis_id": axis_id,
         "source_manifest": {
             "schema_version": AXIS_PACK_MANIFEST_VERSION,
@@ -654,6 +711,10 @@ def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, A
             "origin counts are evidence-origin groups, not people or prevalence",
         ],
     }
+    if rejected_receipt_count:
+        pack["cold_reader_resolution"]["rejected_resolution_receipt_count"] = (
+            rejected_receipt_count
+        )
     pack["axis_pack_sha256"] = _canonical_hash(pack, "axis_pack_sha256")
     return pack
 
@@ -680,8 +741,8 @@ def validate_phase_a_evidence_axis_pack(
         or source_manifest.get("schema_version") != AXIS_PACK_MANIFEST_VERSION
         or not isinstance(source_manifest.get("manifest_sha256"), str)
         or not isinstance(points, list)
-        or not points
         or not isinstance(rejected, list)
+        or (not points and not rejected)
         or not all(isinstance(row, Mapping) for row in points)
         or not all(isinstance(row, Mapping) for row in rejected)
     ):
