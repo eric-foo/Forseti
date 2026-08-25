@@ -22,7 +22,6 @@ open_next:
   - docs/workflows/efficiency/success_implement_controller_boundary_probe_diagnostic_2026_08_12_v0.md
   - docs/workflows/efficiency/success_implement_transparent_acceptance_example_diagnostic_2026_08_12_v0.md
   - docs/workflows/efficiency/success_implement_fresh_context_completion_admission_diagnostic_2026_08_13_v0.md
-  - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - A named in-scope behavior changes owner, status, or operating shape without an update here.
 ```
@@ -59,7 +58,6 @@ require their own fresh check when load-bearing.
 | Delegated review-and-patch | Active explicit commission | [`delegated-review-patch.md`](../../../.agents/workflow-overlay/delegated-review-patch.md) | Bound different-family reviewer-patcher and home adjudication |
 | Safety and authorization | Active overlay | [`safety-rules.md`](../../../.agents/workflow-overlay/safety-rules.md) | Protected actions, destructive boundaries, implementation authority |
 | Skill adoption | Active overlay | [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | External source, shadow, collision, adoption, and project precedence |
-| Loss-First Implement | Owner-authorized explicit-only candidate; post-hoc backtest did not support promotion | [`forseti-loss-first-implement/SKILL.md`](../../../.agents/skills/forseti-loss-first-implement/SKILL.md) via [`skill-adoption.md`](../../../.agents/workflow-overlay/skill-adoption.md) | Experimental mechanic: select the highest-loss false green and avoid unrequired broad validation; not the default implementation entry |
 | Deletion evidence | Active decision/gate | [`deletion_evidence_doctrine_v0.md`](../../decisions/deletion_evidence_doctrine_v0.md) | Governed deletion evidence and fail-closed enforcement |
 | Ontology/runtime drift checking | Active decision/gate | [`ontology_runtime_drift_check_contract_v0.md`](../../decisions/ontology_runtime_drift_check_contract_v0.md) | W2b leak-surface drift semantics |
 | Repo-map architecture and reachability | Active owner-locked stack | [`forseti_repo_map_architecture_mgt_v0.md`](../../decisions/forseti_repo_map_architecture_mgt_v0.md) | Map/submap/header tiers, generated health, link coverage |
@@ -99,17 +97,15 @@ Fused, Assumption Gate, Implementation Scoping, Spec Writing, and
 Micro-decision Locking are preserved. They are not erased, retired, or claimed
 inferior by the owner preference.
 
-The owner-authorized Forseti-local
-[`forseti-loss-first-implement`](../../../.agents/skills/forseti-loss-first-implement/SKILL.md)
-candidate tests the next hypothesis directly: keep one implementation method,
-choose the decisive falsifier by maximum plausible loss, bind only applicable
-authority/transition/closure invariants, and run no broader validation than the
-repository requires. Its exposed-corpus 36-case replay used the fewest median
-tokens and Full Chain had the lowest latency. Success Implement's reported
-quality lead is specific to that replay's post-hoc three-way scorer and is not
-independent proof of baseline strength. Loss-First remains explicit-only and
-experimental; it has
-not demonstrated superiority on an untouched holdout. See
+The retired Forseti-local Loss-First Implement candidate tested one method:
+keep a single implementation entry, choose the decisive falsifier by maximum
+plausible loss, bind only applicable authority/transition/closure invariants,
+and run no broader validation than the repository requires. Its exposed-corpus
+36-case replay used the fewest median tokens and Full Chain had the lowest
+latency. That replay's post-hoc three-way scorer ranked Success Implement best
+on quality, but the rank is scorer-specific rather than independent proof of
+baseline strength. The candidate source was removed on 2026-08-25; its observed
+result remains in
 [`loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md`](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md).
 
 The later exposed-corpus per-axis screen tested four latency, four token, and
@@ -279,6 +275,9 @@ authority changed. See
 
 ### 2026-08
 
+- **2026-08-25 — Forseti-local Loss-First Implement candidate removed.** The
+  source and adoption record were retired by owner instruction. Its post-hoc
+  negative result remains historical evidence. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
 - **2026-08-13 — Success Implement hot-path trim stopped before holdout.** A
   43-clause preservation audit reduced the current source by 10.689%, then 24
   fresh authored runs compared baseline and trim in 12 matched blocks. The trim
@@ -355,11 +354,6 @@ authority changed. See
   scorer-specific, not independent baseline-strength evidence. Ten stale/drifted
   A/B worktree cases also established that future studies must freeze exact
   candidate diff bytes before judging. [Three-way record](loss_first_implement_36_case_posthoc_backtest_2026_08_11_v0.md)
-- **2026-08-11 — Loss-First Implement added as a Forseti-local candidate.** It
-  converts the 36-case study's critical false-pass and latency-outlier lessons
-  into an explicit-only source without replacing upstream Success Implement or
-  claiming deployment. [Candidate source](../../../.agents/skills/forseti-loss-first-implement/SKILL.md),
-  [adoption boundary](../../../.agents/workflow-overlay/skill-adoption.md)
 - **2026-08-11 — Success Implement vs Full Chain returned NO_WIN.** The
   12-case tuning revision improved within-tuning performance, but the untouched
   24-case holdout found Success Implement worse on critical defects and median
