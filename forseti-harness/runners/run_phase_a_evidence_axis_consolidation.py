@@ -25,6 +25,7 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     compile_point_reader_brief,
+    materialize_phase_a_evidence_no_frontier_axis_manifest,
     POINT_READER_REQUEST_VERSION,
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
@@ -102,6 +103,36 @@ def build_axis_pack_run(*, manifest_path: Path, output_path: Path) -> dict[str, 
         "axis_pack_sha256": pack["axis_pack_sha256"],
         "valid_point_count": pack["valid_point_count"],
         "rejected_point_count": pack["rejected_point_count"],
+        "model_api_calls": 0,
+    }
+
+
+def materialize_no_frontier_axis_manifest_run(
+    *,
+    axis_id: str,
+    subject_product_ids: list[str],
+    source_id: str,
+    packet_path: Path,
+    bundle_path: Path,
+    frontier_path: Path,
+    output_path: Path,
+) -> dict[str, Any]:
+    manifest = materialize_phase_a_evidence_no_frontier_axis_manifest(
+        axis_id=axis_id,
+        subject_product_ids=subject_product_ids,
+        source_id=source_id,
+        packet_path=packet_path,
+        bundle_path=bundle_path,
+        frontier_path=frontier_path,
+    )
+    _write_new(output_path, manifest)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "manifest_sha256": manifest["manifest_sha256"],
+        "candidate_semantic_unit_count": len(
+            manifest["expected_semantic_unit_refs"]
+        ),
         "model_api_calls": 0,
     }
 
@@ -562,6 +593,22 @@ def main() -> int:
     build_pack_parser = subparsers.add_parser("build-axis-pack")
     build_pack_parser.add_argument("--manifest", type=Path, required=True)
     build_pack_parser.add_argument("--output", type=Path, required=True)
+    materialize_no_frontier_parser = subparsers.add_parser(
+        "materialize-no-frontier-axis-manifest"
+    )
+    materialize_no_frontier_parser.add_argument("--axis-id", required=True)
+    materialize_no_frontier_parser.add_argument(
+        "--subject-product-id", action="append", required=True
+    )
+    materialize_no_frontier_parser.add_argument(
+        "--source-id", default="full-corpus"
+    )
+    materialize_no_frontier_parser.add_argument("--packet", type=Path, required=True)
+    materialize_no_frontier_parser.add_argument("--bundle", type=Path, required=True)
+    materialize_no_frontier_parser.add_argument(
+        "--frontier", type=Path, required=True
+    )
+    materialize_no_frontier_parser.add_argument("--output", type=Path, required=True)
     validate_pack_parser = subparsers.add_parser("validate-axis-pack")
     validate_pack_parser.add_argument("--pack", type=Path, required=True)
     validate_pack_parser.add_argument("--expected-axis-pack-sha256", required=True)
@@ -687,6 +734,16 @@ def main() -> int:
     if args.command == "build-axis-pack":
         result = build_axis_pack_run(
             manifest_path=args.manifest, output_path=args.output
+        )
+    elif args.command == "materialize-no-frontier-axis-manifest":
+        result = materialize_no_frontier_axis_manifest_run(
+            axis_id=args.axis_id,
+            subject_product_ids=args.subject_product_id,
+            source_id=args.source_id,
+            packet_path=args.packet,
+            bundle_path=args.bundle,
+            frontier_path=args.frontier,
+            output_path=args.output,
         )
     elif args.command == "validate-axis-pack":
         result = validate_axis_pack_run(
