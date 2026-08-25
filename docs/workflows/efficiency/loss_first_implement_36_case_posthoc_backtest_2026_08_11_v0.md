@@ -13,7 +13,6 @@ authority_boundary: retrieval_only
 open_next:
   - docs/workflows/efficiency/success_implement_vs_full_chain_36_case_retrospective_2026_08_11_v0.md
   - docs/workflows/efficiency/forseti_behavioral_contract_changelog_v0.md
-  - .agents/skills/forseti-loss-first-implement/SKILL.md
 stale_if:
   - An active three-way adjudication is superseded.
   - A fresh untouched holdout tests this or a successor method.
@@ -202,13 +201,14 @@ is only a convenience, never the evidence authority.
 
 ## Disposition
 
-- Keep Forseti Loss-First Implement explicit-only and experimental.
+- The Forseti-local Loss-First Implement candidate source was removed by owner
+  instruction on 2026-08-25; do not restore or promote it from this record.
 - Do not make it the default implementation entry or claim it beat Success
   Implement or Full Chain.
 - Do not alter the earlier Success Implement versus Full Chain deployment
   result: this post-hoc three-way evaluator uses a new calibration and an
   exposed corpus.
-- Preserve the candidate and this negative result for designing a future fresh
+- Preserve this negative result for designing a future successor and fresh
   holdout; do not tune and relabel these 24 recent cases as confirmation.
 - Actual billed cost remains `NOT_OBSERVED`; token counts are observed resource
   counters, not currency.
