@@ -21,6 +21,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     EVIDENCE_ACCOUNTING_CONTRACT,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
     LEGACY_CONSOLIDATION_SPEC_VERSION,
+    _validate_decision_state_reader_evidence_rows,
     build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
@@ -1191,7 +1192,7 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     assert all(boundary in view["non_claims"] for boundary in DECISION_STATE_BOUNDARIES)
     assert view["decision_state_contract"] == DECISION_STATE_CONSUMER_CONTRACT
     reader = view["decision_state_reader_surface"]
-    assert reader["schema_version"] == "phase_a_evidence_decision_state_reader_surface_v1"
+    assert reader["schema_version"] == "phase_a_evidence_decision_state_reader_surface_v2"
     assert reader["decision_state_contract"]["state_row_columns"] == [
         "state_kind",
         "commercial_direction",
@@ -1232,11 +1233,35 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
         len(row[relation_facts_index]["rows"])
         for row in reader["point_table"]["rows"]
     ) == view["counts"]["placement_count"]
-    assert all(
-        fact[3]
-        for row in reader["point_table"]["rows"]
-        for fact in row[relation_facts_index]["rows"]
-    )
+    evidence_id_index = reader["evidence_table"]["columns"].index("evidence_id")
+    quote_span_id_index = reader["quote_table"]["columns"].index("quote_span_id")
+    for point_row in reader["point_table"]["rows"]:
+        facts = point_row[relation_facts_index]
+        evidence_fact_index = facts["columns"].index("evidence_id")
+        evidence_row_index = facts["columns"].index("evidence_row_id")
+        quote_span_fact_index = facts["columns"].index("quote_span_id")
+        quote_row_index = facts["columns"].index("quote_row_id")
+        relation_semantic_rows_index = facts["columns"].index(
+            "relation_semantic_unit_row_ids"
+        )
+        for fact in facts["rows"]:
+            assert fact[relation_semantic_rows_index]
+            assert all(
+                0 <= row_id < len(reader["semantic_unit_table"]["rows"])
+                for row_id in fact[relation_semantic_rows_index]
+            )
+            assert (
+                reader["evidence_table"]["rows"][fact[evidence_row_index]][
+                    evidence_id_index
+                ]
+                == fact[evidence_fact_index]
+            )
+            assert (
+                reader["quote_table"]["rows"][fact[quote_row_index]][
+                    quote_span_id_index
+                ]
+                == fact[quote_span_fact_index]
+            )
     assert "state assertions are exhaustive" in view["decision_state_contract"]["unasserted_state_rule"]
     assert "every placement exactly once" in view["decision_state_contract"]["placement_processing_rule"]
     assert "descriptive context only" in view["decision_state_contract"]["engagement_rule"]
@@ -1532,6 +1557,35 @@ def test_decision_state_distinguishes_release_and_finish_intent_from_other_stage
     }
 
 
+def test_decision_state_preserves_expectation_judgment_as_its_own_state(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    row = spec["decision_state_bindings"][0]["rows"][0]
+    row["state_assertions"][0].update(
+        {
+            "state_kind": "expectation_judgment",
+            "commercial_direction": "unfavorable",
+            "decision_object": "fixture balm relative to its hype",
+        }
+    )
+    _synchronize_semantic_binding_row(spec, row)
+
+    view = build_axis_consolidated_view(spec)
+
+    assert view["decision_state_contract"]["state_kind_stages"][
+        "expectation_judgment"
+    ] == "judgment"
+    assert any(
+        assertion["state_kind"] == "expectation_judgment"
+        and assertion["commercial_direction"] == "unfavorable"
+        and assertion["decision_object"] == "fixture balm relative to its hype"
+        for group in view["decision_state_groups"]
+        for assertion in _projected_state_assertions(view, group)
+    )
+
+
 def test_decision_state_keeps_selected_zero_engagement_without_promotion(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1639,6 +1693,115 @@ def test_reader_surface_derivations_recover_point_relation_origins(
         assert sorted(derived["adjacent"]) == point["adjacent_origin_ids"]
 
 
+def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    bound_rows = spec["decision_state_bindings"][0]["rows"]
+    for index, row in enumerate(bound_rows[:2], start=1):
+        row["parent_contexts"] = [
+            {
+                "context_id": f"context_{index}",
+                "source_ref": f"https://example.test/parent/{index}",
+                "text": f"Exact parent question {index}?",
+            }
+        ]
+    reader = copy.deepcopy(
+        build_axis_consolidated_view(spec)["decision_state_reader_surface"]
+    )
+    point_columns = reader["point_table"]["columns"]
+    facts = reader["point_table"]["rows"][0][
+        point_columns.index("relation_facts")
+    ]
+    fact = facts["rows"][0]
+    evidence_row_id_index = facts["columns"].index("evidence_row_id")
+    evidence_id_index = facts["columns"].index("evidence_id")
+    evidence_table_id_index = reader["evidence_table"]["columns"].index(
+        "evidence_id"
+    )
+    original_row_id = fact[evidence_row_id_index]
+    wrong_row_id = next(
+        row_id
+        for row_id, row in enumerate(reader["evidence_table"]["rows"])
+        if row_id != original_row_id
+        and row[evidence_table_id_index] != fact[evidence_id_index]
+    )
+    fact[evidence_row_id_index] = wrong_row_id
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_decision_state_reader_evidence_rows(reader)
+
+    assert caught.value.boundary == "decision_state_reader_evidence_binding"
+
+    reader = copy.deepcopy(
+        build_axis_consolidated_view(spec)["decision_state_reader_surface"]
+    )
+    point_columns = reader["point_table"]["columns"]
+    facts = reader["point_table"]["rows"][0][
+        point_columns.index("relation_facts")
+    ]
+    context_ids_index = facts["columns"].index("parent_context_ids")
+    context_rows_index = facts["columns"].index("parent_context_row_ids")
+    context_fact = next(row for row in facts["rows"] if row[context_ids_index])
+    original_context_row_id = context_fact[context_rows_index][0]
+    context_fact[context_rows_index][0] = next(
+        row_id
+        for row_id in range(len(reader["parent_context_table"]["rows"]))
+        if row_id != original_context_row_id
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_decision_state_reader_evidence_rows(reader)
+
+    assert caught.value.boundary == "decision_state_reader_evidence_binding"
+
+    reader = copy.deepcopy(
+        build_axis_consolidated_view(spec)["decision_state_reader_surface"]
+    )
+    point_columns = reader["point_table"]["columns"]
+    facts = reader["point_table"]["rows"][0][
+        point_columns.index("relation_facts")
+    ]
+    relation_semantic_rows_index = facts["columns"].index(
+        "relation_semantic_unit_row_ids"
+    )
+    facts["rows"][0][relation_semantic_rows_index] = [
+        len(reader["semantic_unit_table"]["rows"])
+    ]
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_decision_state_reader_evidence_rows(reader)
+
+    assert caught.value.boundary == "decision_state_reader_evidence_binding"
+
+    reader = copy.deepcopy(
+        build_axis_consolidated_view(spec)["decision_state_reader_surface"]
+    )
+    point_columns = reader["point_table"]["columns"]
+    facts = reader["point_table"]["rows"][0][
+        point_columns.index("relation_facts")
+    ]
+    fact = facts["rows"][0]
+    quote_row_id_index = facts["columns"].index("quote_row_id")
+    quote_span_id_index = facts["columns"].index("quote_span_id")
+    quote_table_span_index = reader["quote_table"]["columns"].index(
+        "quote_span_id"
+    )
+    original_quote_row_id = fact[quote_row_id_index]
+    fact[quote_row_id_index] = next(
+        row_id
+        for row_id, row in enumerate(reader["quote_table"]["rows"])
+        if row_id != original_quote_row_id
+        and row[quote_table_span_index] != fact[quote_span_id_index]
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_decision_state_reader_evidence_rows(reader)
+
+    assert caught.value.boundary == "decision_state_reader_evidence_binding"
+
+
 def test_reader_relation_facts_bind_only_point_relative_states(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1694,7 +1857,10 @@ def test_reader_relation_facts_bind_only_point_relative_states(
         ]
         assert [expand_reader_state(state) for state in point_states] == expected_states
         for fact in _reader_rows(point["relation_facts"]):
-            relation_refs = {row[0] for row in fact["semantic_units"]}
+            relation_refs = {
+                semantic_rows[row_id]["semantic_unit_ref"]
+                for row_id in fact["relation_semantic_unit_row_ids"]
+            }
             relation_states = [
                 point_states[row_id] for row_id in fact["relation_state_row_ids"]
             ]
@@ -1763,6 +1929,13 @@ def test_context_only_qualification_refs_resolve_through_primary_or_companion(
         ),
         (
             {"state_kind": "buyers_remorse", "commercial_direction": "favorable"},
+            "invalid state/direction",
+        ),
+        (
+            {
+                "state_kind": "expectation_judgment",
+                "commercial_direction": "toward_action",
+            },
             "invalid state/direction",
         ),
         (
@@ -2057,10 +2230,18 @@ def test_decision_state_reader_binds_claim_relation_to_companion_meaning(
     view = build_axis_consolidated_view(spec)
     reader = view["decision_state_reader_surface"]
     point_columns = reader["point_table"]["columns"]
+    semantic_rows = _reader_rows(reader["semantic_unit_table"])
     assert any(
-        any(semantic[0] == companion_ref for semantic in fact[3])
+        any(
+            semantic_rows[row_id]["semantic_unit_ref"] == companion_ref
+            for row_id in fact[
+                fact_columns.index("relation_semantic_unit_row_ids")
+            ]
+        )
         for row in reader["point_table"]["rows"]
-        for fact in row[point_columns.index("relation_facts")]["rows"]
+        for fact_table in [row[point_columns.index("relation_facts")]]
+        for fact_columns in [fact_table["columns"]]
+        for fact in fact_table["rows"]
     )
 
 

@@ -677,7 +677,13 @@ characters or shorter. A short body is still quoted in full when relevant, but
 it may no longer become an automatic exact-looking quote for a meaning it does
 not contain. If an available frontier-defining body yields no relevant exact
 quote, point completion fails at `frontier_relation_quote_relevance`; do not
-replace it with parent, child, sibling, or engagement meaning.
+replace it with parent, child, sibling, or engagement meaning. One narrow case
+is not replacement: when the literal body is a direct terse reply and its
+selected row names one exact hash-bound parent context, the parent may supply
+the omitted premise or referent. Quote review receives only that row-bound
+context, and the returned quote remains one contiguous exact substring of the
+child body. Never copy, splice, or paraphrase parent text into the quote; if the
+exact parent-child pair still leaves any material meaning unstated, reject it.
 
 That failure removes only the affected literal support relation, not
 automatically every other relation attached to the point. Counter and adjacent
@@ -847,6 +853,25 @@ prove pricing power or support for a higher tier. Phase A packs the evidence;
 any later decision about positioning, elevation, or a higher tier belongs
 downstream.
 
+For hype and trust evidence, `expectation_judgment` keeps whether the product
+met, exceeded, or fell short of the expectation the actor names. It is distinct
+from `preference_judgment`: preferring one formula over another does not itself
+say either product met its hype, and calling a product overhyped does not by
+itself name a preferred alternative. One actor's generic “this is amazing” may
+create a favorable overall product judgment when the actor, object, and
+direction are bounded, but it proves no particular attribute, result, or hype
+fit. Keep that limitation visible instead of rejecting the judgment or
+inventing the missing reason.
+For a hype- or expectation-dependent point, support and counter relations also
+require that premise in the row's normalized meaning or same-source companion
+meanings. Generic favorable or unfavorable performance remains adjacent rather
+than being converted into “met the hype” or “failed the hype” from direction
+alone. When the point explicitly attributes the judgment to hype, virality,
+popularity, promotion, publicity, or marketing, the evidence must also name
+that exposure; a bare “fell short of my expectations” does not identify what
+created the expectations. For an expectation-only point that names no exposure
+cause, explicit expectation language is sufficient.
+
 The v2 spec carries these facts in named fields; a cold operator authors them
 explicitly and the builder never infers them. `projection_routes` is a list of
 `{projection_mode, point_ids}` objects using `direct_outcome` or
@@ -883,7 +908,23 @@ whenever at least one point is routed `decision_state`. The full view's
 `decision_state_contract` uses full-view table names; the reader surface derives
 the same semantic contract with reader-native join instructions and
 `semantic_unit_row_ids`, so every table and column named inside the compact
-surface resolves inside that surface. Every v2 point also carries
+surface resolves inside that surface. Reader-surface v2 also gives every
+point-local `relation_facts` row an `evidence_row_id`: the zero-based row in the
+global `evidence_table`, plus a `quote_row_id` for the zero-based row in
+`quote_table`, and `relation_semantic_unit_row_ids` for the zero-based rows in
+`semantic_unit_table`. When a terse child reply needs its exact parent prompt,
+the same fact carries paired `parent_context_ids` and
+`parent_context_row_ids` into the deduplicated `parent_context_table`; empty
+arrays mean the quote is self-contained. The consumer uses those direct
+handles, rechecks the evidence, quote, and parent-context identities, and
+resolves each semantic statement from its single global row before reading or
+rendering meaning, source, date, venue, role, engagement, exact quote, or exact
+parent context. This prevents an exact-looking finding from joining the right
+quote to a neighboring evidence row's engagement value, lets deterministic
+code render literal fields instead of asking a model to retype them, and
+avoids repeating semantic statements or shared parent prompts inside every
+point.
+Every v2 point also carries
 `same_origin_observation_groups`: one group for each displayed layer, relation,
 meaning, and origin where that single origin carries more than one distinct
 evidence-and-semantic-unit observation, each observation keeping its literal
@@ -1181,13 +1222,18 @@ concurrency and 0.963 points to net per-call provider variance; concurrency
 accounts for 98% of the saving, and the residual variance is why the figure is
 reported as observed rather than as a concurrency guarantee.
 
-The quote stage reads bodies only for selected display rows. Bodies of at most
-220 characters are copied in full by deterministic code, and absent bodies are
-typed unavailable; neither is sent to the model. Only longer bodies enter the
-provider prompt. That prompt uses named selected-row and deduplicated body
-columns, so several meanings from one source body do not repeat the entire
-body. It carries the deterministic display label, normalized meaning, and
-same-evidence companion meanings. The label is presentation metadata only: a
+The quote stage reads bodies only for selected display rows. Ordinary bodies of
+at most 220 characters are copied in full by deterministic code, and absent
+bodies are typed unavailable; neither is sent to the model. Longer bodies and
+short bodies whose literal relation helped admit the point enter the provider
+prompt. That prompt uses named selected-row and deduplicated body columns, so
+several meanings from one source body do not repeat the entire body. It carries
+the deterministic display label, normalized meaning, and same-evidence
+companion meanings. For a direct terse response, it also carries only the
+parent context IDs already bound to that selected row and the exact referenced
+context rows. The parent may supply an omitted premise or referent but never
+quote text: `exact_quote` remains a contiguous substring of the child body. The
+label is presentation metadata only: a
 returned long-source substring must directly express the normalized meaning or
 a material companion qualification, or be `quote_unavailable`; a generic
 batched relation label cannot make an irrelevant substring acceptable. An

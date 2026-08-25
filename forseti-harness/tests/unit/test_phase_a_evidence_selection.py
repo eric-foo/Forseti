@@ -3628,6 +3628,122 @@ def test_frontier_bound_short_body_requires_relevance_checked_quote(
     assert row["exact_quote"] == body
 
 
+def test_frontier_quote_review_receives_only_its_bound_parent_context(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 2)
+    candidate = _candidate_rows(sources, spec)[0]
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": candidate["source_id"],
+            "semantic_unit_ref": candidate["semantic_unit_ref"],
+        }
+    ]
+    spec["frontier_relation_display_policy"] = (
+        "literal_point_relations_display_eligible_v1"
+    )
+    child_body = "Summer Fridays Lip Butter Balm."
+    parent_text = "Which balm feels moisturizing after use?"
+    sources[0]["bundle"]["evidence_units"][0]["text"] = child_body
+    context_id = _attach_parent_context(
+        sources[0], "community_post:0", parent_text
+    )
+    full_context_id = f"full-corpus::{context_id}"
+
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    relation_by_candidate = {
+        row["candidate_id"]: row for row in first_pass["results"]
+    }
+    confirmation_response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One product state under one condition set.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation_by_candidate[candidate_id]["relation"],
+                "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+    quote_prompt, _, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+    envelope = json.loads(
+        quote_prompt.split("SELECTED_EVIDENCE_ENVELOPE_JSON:\n", 1)[1]
+    )
+
+    assert envelope["parent_context_rows"] == [
+        [
+            full_context_id,
+            "https://reddit.com/thread/parent",
+            parent_text,
+        ]
+    ]
+    context_index = envelope["selected_columns"].index("parent_context_ids")
+    linked_rows = [
+        row for row in envelope["selected_rows"] if row[context_index]
+    ]
+    assert len(linked_rows) == 1
+    assert linked_rows[0][context_index] == [full_context_id]
+    assert quote_prompt.count(parent_text) == 1
+    assert "never copy or combine parent text into exact_quote" in quote_prompt
+
+    selected_id = quote_manifest["provider_selected_ids"][0]
+    artifact = _finalize_quotes_runtime(
+        quote_manifest,
+        sources,
+        {
+            "quotes": [
+                {
+                    "selected_id": selected_id,
+                    "quote_status": "quote_available",
+                    "exact_quote": child_body,
+                }
+            ]
+        },
+    )
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["exact_quote"] == child_body
+    bound_row = next(
+        row
+        for row in quote_manifest["selected_rows"]
+        if row["selected_id"] == selected_id
+    )
+    assert bound_row["parent_context"][0]["context_id"] == full_context_id
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            {
+                "quotes": [
+                    {
+                        "selected_id": selected_id,
+                        "quote_status": "quote_unavailable",
+                        "exact_quote": None,
+                    }
+                ]
+            },
+        )
+    assert caught.value.boundary == "frontier_relation_quote_relevance"
+
+
 def test_display_label_uses_customer_facing_signal_and_preserves_source_meanings(
     tmp_path: Path,
 ) -> None:
@@ -4107,6 +4223,52 @@ def test_value_policy_does_not_turn_time_to_finish_into_quantity_value() -> None
     assert "explicitly says it will buy or repurchase again" in guidance
 
 
+def test_hype_policy_does_not_launder_generic_expectations_into_hype() -> None:
+    guidance = _policy_guidance(
+        {
+            "axis_ids": ["hype_originality_and_trust"],
+            "relation_policy": "bounded_point",
+        }
+    )
+
+    assert "HYPE-EXPECTATION POLICY" in guidance
+    assert "requires an explicit hype or expectation premise" in guidance
+    assert "expectation language alone is not enough" in guidance
+    assert "names that exposure" in guidance
+    assert "only about expectation fit" in guidance
+    assert "generic positive or negative product result" in guidance
+    assert "must remain adjacent" in guidance
+    assert "can coexist with calling it overhyped" in guidance
+    assert "not counterevidence unless the source explicitly says" in guidance
+    assert "other people's praise plus the actor's poor result is adjacent" in guidance
+    assert "Merely naming that a product is hyped beside a negative comparison is adjacent" in guidance
+    assert "Love plus overhype is adjacent to a narrower viral-love point" in guidance
+    assert "Keep neighboring hype judgments distinct" in guidance
+    assert "worth-the-hype is adjacent to love-despite-viral-popularity" in guidance
+    assert "overhyped is adjacent to the narrower did-not-live-up-to-hype state" in guidance
+    non_hype_guidance = _policy_guidance(
+        {
+            "axis_ids": ["hydration_and_moisture"],
+            "relation_policy": "bounded_point",
+        }
+    )
+    assert "HYPE-EXPECTATION POLICY" not in non_hype_guidance
+    assert "DECISION-OBJECT SCOPE POLICY" in non_hype_guidance
+
+
+def test_relation_guidance_keeps_attribute_praise_adjacent_to_an_overall_judgment() -> None:
+    guidance = _policy_guidance(
+        {
+            "axis_ids": ["hype_originality_and_trust"],
+            "relation_policy": "bounded_point",
+        }
+    )
+
+    assert "An attribute-, formula-, variant-, shade-, scent-, or occasion-specific appraisal" in guidance
+    assert "adjacent to an overall-product judgment" in guidance
+    assert "silently widening it" in guidance
+
+
 def test_explicit_only_value_refs_turn_on_value_policy_without_admitting_the_whole_axis(
     tmp_path: Path,
 ) -> None:
@@ -4439,7 +4601,12 @@ def test_value_prompt_forbids_companion_only_formula_complaints_from_value_lanes
         "Use `purchase_regret_due_cost`"
     )
     assert "product_goes_a_long_way" in guidance
-    assert _policy_guidance({"axis_ids": ["hydration_and_moisture"]}) == ""
+    hydration_guidance = _policy_guidance(
+        {"axis_ids": ["hydration_and_moisture"]}
+    )
+    assert "VALUE-BOX POLICY" not in hydration_guidance
+    assert "HYPE-EXPECTATION POLICY" not in hydration_guidance
+    assert "DECISION-OBJECT SCOPE POLICY" in hydration_guidance
 
 
 def test_value_policy_does_not_compare_counter_engagement_across_venues() -> None:
