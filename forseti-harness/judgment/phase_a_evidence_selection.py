@@ -131,6 +131,7 @@ DISPLAY_LABEL_BY_REASON_CODE = {
 }
 
 VALUE_AXIS_ID = "value_and_quantity"
+HYPE_TRUST_AXIS_ID = "hype_originality_and_trust"
 VALUE_REASON_RELATIONS = {
     "repurchase_despite_price": "support",
     "multiple_purchases_despite_price": "support",
@@ -205,6 +206,10 @@ SELECTION_ENVELOPE_JSON:
 
 VALUE_RELATION_GUIDANCE = """VALUE-BOX POLICY: Use a support or counter label only when the candidate's normalized meaning directly concerns price, value, quantity-for-price, purchase commitment, repurchase, or whether benefits justify cost, either alone or together with its same-evidence companion meanings. Same-evidence meanings may jointly support one code when one supplies an explicit price/value premise and another supplies purchase, repurchase, repeated ownership, or stated benefits; the code must describe that combined visible meaning, never a conclusion absent from the whole same-evidence set. When an explicit price or cost premise is paired with purchase, repurchase, or repeated ownership, use the corresponding `*_despite_price` code rather than a plain behavior or generic good-value code. An explicit same-evidence statement of regret, waste, or poor value makes every candidate from that evidence origin counter or adjacent unless the same source explicitly says it will buy or repurchase again despite the cost, or explicitly concludes that the product is worth the price. Trying to make a regretted purchase feel more worthwhile by displaying empties, using it up, or otherwise rationalizing sunk cost does not countervail the regret or waste. Those two exceptions decide the lane before either regret code is considered: neither regret code may be used on an origin the same source keeps positive by explicitly buying or repurchasing again despite the cost, or by concluding the product is worth the price. Once the regret does keep the candidate counter, use `high_spend_followed_by_buyer_remorse` only when the same evidence explicitly states a substantial completed spend amount, or explicitly characterizes the completed spend as substantial, and also states cost-linked regret. Multiple units alone do not establish high spend. The code does not imply repurchase, a transaction count, or future intent. Use `purchase_regret_due_cost` when regret exists without explicit substantial completed spending. Companion meanings must not turn a formula, hydration, scent, trial-only, gift-card, or generic purchase statement into value evidence; those are adjacent unless the same-evidence set states the cost/value tradeoff. Use `repurchase_intent`, `multiple_purchases`, or `purchase_commitment` when the behavior is visible but price resistance is not; the corresponding `*_despite_price` code requires explicit source meaning about price or cost. Time to finish, pan, or empty a product is completed-use evidence, not quantity efficiency, repurchase, or good value by itself. If the same evidence explicitly says it will buy or repurchase again, use the matching purchase or repurchase code; otherwise keep completed use adjacent. Use `product_goes_a_long_way` only when the source explicitly says a small amount suffices or otherwise states quantity efficiency. `benefits_justify_price` requires an explicit worth/price tradeoff. `better_value_than_comparator` means the subject product is better value; `comparator_better_value` means the other product is better value. Use exactly one relation-aligned code from this list: {reason_codes}."""
 
+HYPE_EXPECTATION_RELATION_GUIDANCE = """HYPE-EXPECTATION POLICY: A support or counter relation for a bounded point whose meaning depends on hype or expectation fit requires an explicit hype or expectation premise in the candidate's normalized meaning or its same-evidence companion meanings. A generic positive or negative product result, liking, disappointment, comparator preference, value judgment, recommendation, or behavior without that premise must remain adjacent; do not infer that the product met or failed its hype from direction alone. When the bounded point explicitly attributes the judgment to hype, virality, popularity, publicity, promotion, or marketing, expectation language alone is not enough unless the same evidence also names that exposure. When the bounded point is only about expectation fit and attributes no exposure cause, explicit expectation language may supply the premise. When one same-source meaning supplies the required premise and another supplies the actor's result or judgment, use them together without inventing a causal claim. Merely naming that a product is hyped beside a negative comparison is adjacent unless the actor judges the hype excessive or binds that exposure to the resulting expectation. Keep neighboring hype judgments distinct: worth-the-hype is adjacent to love-despite-viral-popularity, and overhyped is adjacent to the narrower did-not-live-up-to-hype state, unless the source explicitly reaches the bounded judgment. Liking or loving a product despite its popularity can coexist with calling it overhyped or saying it fell short of hype; it is not counterevidence unless the source explicitly says the product met, justified, or was worth the hype. Love plus overhype is adjacent to a narrower viral-love point unless the same literal source or exact bound parent establishes viral popularity. Likewise, other people's praise plus the actor's poor result is adjacent unless the source binds that exposure to the actor's resulting expectation."""
+
+DECISION_OBJECT_SCOPE_RELATION_GUIDANCE = """DECISION-OBJECT SCOPE POLICY: Support and counter must address the bounded judgment object at the same scope. An attribute-, formula-, variant-, shade-, scent-, or occasion-specific appraisal is adjacent to an overall-product judgment unless the same source explicitly reaches the whole-product verdict; a broad overall appraisal is likewise adjacent to a narrower attribute judgment unless it names that attribute. Preserve the narrower appraisal as useful context instead of silently widening it."""
+
 LEGACY_QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
 Return every selected_id exactly once and in order. Choose one context-complete contiguous exact substring of at most 220 characters that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. When the supplied body is 220 characters or shorter and is relevant, return the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize for brevity: when the necessary source wording fits, retain it instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries and length. Return quote_status=quote_unavailable and exact_quote=null only after verifying that no one contiguous span within 220 characters supports the full normalized meaning; inability to include optional non-reversing context is not enough. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent and the combined span fits within 220 characters. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
@@ -215,7 +220,7 @@ SELECTED_EVIDENCE_ENVELOPE_JSON:
 
 QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and source bodies below. Return only the required JSON.
 
-Return every selected_id exactly once and in order. Choose the shortest context-complete contiguous exact substring that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. There is no character ceiling: source meaning, not display length, determines the necessary span. When the supplied body is 220 characters or shorter and is relevant, return the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Do not optimize past context completeness: retain necessary source wording instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. A quote that ends with a letter or number while another source word follows after whitespace fails the consumer boundary check; expand it through source punctuation or the end of the body. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries. Return quote_status=quote_unavailable and exact_quote=null only when no one contiguous exact span supports the full normalized meaning; length alone can never make a truthful span unavailable. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
+Return every selected_id exactly once and in order. Choose the shortest context-complete contiguous exact substring that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. There is no character ceiling: source meaning, not display length, determines the necessary span. When the supplied body is 220 characters or shorter and is relevant, return the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Linked parent context may supply an omitted premise or referent only for a selected row whose parent_context_ids names that exact context and whose child body is a direct, unambiguous terse response. The returned exact_quote must remain one contiguous exact substring of the child source_body: never copy or combine parent text into exact_quote. If the bound parent does not supply every missing material component, return quote_status=quote_unavailable. Do not optimize past context completeness: retain necessary source wording instead of clipping to a merely related phrase, and do not end mid-phrase or before a word that completes a material condition. A quote that ends with a letter or number while another source word follows after whitespace fails the consumer boundary check; expand it through source punctuation or the end of the body. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, then verify the final boundaries. Return quote_status=quote_unavailable and exact_quote=null only when no one contiguous exact span supports the full normalized meaning, either in the child body alone or, for a directly linked terse response, in the child body read with its exact bound parent; length alone can never make a truthful span unavailable. Do not start the quote with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent. Product identity may rely on the evidence row; this pronoun rule does not require the quote to repeat the product name or reject an otherwise exact, relevant span. The display_label is presentation metadata, not source meaning, and can never make an otherwise irrelevant substring acceptable. Use same_evidence_companion_meanings to detect context that cannot be clipped away. Preserve spelling and punctuation. Do not rewrite, repair, add ellipses, or combine non-contiguous spans.
 
 SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
@@ -977,13 +982,17 @@ def _uses_value_policy(
 def _policy_guidance(
     spec: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]] | None = None
 ) -> str:
-    if not _uses_value_policy(spec, candidates):
-        return ""
-    grouped = "; ".join(
-        f"{relation}=[{', '.join(sorted(code for code, lane in VALUE_REASON_RELATIONS.items() if lane == relation))}]"
-        for relation in RELATIONS
-    )
-    return VALUE_RELATION_GUIDANCE.format(reason_codes=grouped)
+    guidance = [DECISION_OBJECT_SCOPE_RELATION_GUIDANCE]
+    if _uses_value_policy(spec, candidates):
+        grouped = "; ".join(
+            f"{relation}=[{', '.join(sorted(code for code, lane in VALUE_REASON_RELATIONS.items() if lane == relation))}]"
+            for relation in RELATIONS
+        )
+        guidance.append(VALUE_RELATION_GUIDANCE.format(reason_codes=grouped))
+    axis_ids = spec.get("axis_ids")
+    if isinstance(axis_ids, list) and HYPE_TRUST_AXIS_ID in axis_ids:
+        guidance.append(HYPE_EXPECTATION_RELATION_GUIDANCE)
+    return "\n\n".join(guidance)
 
 
 def _candidate_id(packet_sha256: str, evidence_id: str, semantic_ref: str) -> str:
@@ -3349,6 +3358,7 @@ QUOTE_PROMPT_COLUMNS = (
     "same_evidence_companion_meanings",
     "body_id",
 )
+CONTEXT_QUOTE_PROMPT_COLUMNS = QUOTE_PROMPT_COLUMNS + ("parent_context_ids",)
 
 LEGACY_RELATION_CONFIRMATION_COLUMNS = (
     "confirmation_row_id",
@@ -3370,6 +3380,7 @@ def _quote_prompt_envelope(
     bodies: Mapping[tuple[str, str], str | None],
     *,
     required_quote_candidate_ids: frozenset[str] = frozenset(),
+    include_parent_context: bool = False,
 ) -> tuple[dict[str, Any], list[str]]:
     """Project long bodies and frontier-defining rows into quote review.
 
@@ -3379,10 +3390,7 @@ def _quote_prompt_envelope(
     Missing bodies remain deterministically unavailable.
     """
 
-    body_ids: dict[str, str] = {}
-    body_rows: list[list[str]] = []
-    selected_rows: list[list[Any]] = []
-    provider_selected_ids: list[str] = []
+    provider_rows = []
     for row in selected:
         body = bodies.get((row["source_id"], row["evidence_id"]))
         if body is None or (
@@ -3390,6 +3398,24 @@ def _quote_prompt_envelope(
             and row["candidate_id"] not in required_quote_candidate_ids
         ):
             continue
+        provider_rows.append(row)
+    if include_parent_context:
+        context_aware, projected_rows, context_rows = _project_parent_context(
+            provider_rows
+        )
+    else:
+        context_aware = False
+        projected_rows = list(provider_rows)
+        context_rows = []
+    selected_columns = (
+        CONTEXT_QUOTE_PROMPT_COLUMNS if context_aware else QUOTE_PROMPT_COLUMNS
+    )
+    body_ids: dict[str, str] = {}
+    body_rows: list[list[str]] = []
+    selected_rows: list[list[Any]] = []
+    provider_selected_ids: list[str] = []
+    for row in projected_rows:
+        body = bodies.get((row["source_id"], row["evidence_id"]))
         if body not in body_ids:
             body_id = f"body_{len(body_ids) + 1:02d}"
             body_ids[body] = body_id
@@ -3403,18 +3429,18 @@ def _quote_prompt_envelope(
                 row["relation"],
                 _compact_companion_meanings(row),
                 body_ids[body],
+                *([row.get("parent_context_ids", [])] if context_aware else []),
             ]
         )
-    return (
-        {
-            "bounded_claim": bounded_claim,
-            "body_columns": ["body_id", "source_body"],
-            "body_rows": body_rows,
-            "selected_columns": list(QUOTE_PROMPT_COLUMNS),
-            "selected_rows": selected_rows,
-        },
-        provider_selected_ids,
-    )
+    envelope = {
+        "bounded_claim": bounded_claim,
+        "body_columns": ["body_id", "source_body"],
+        "body_rows": body_rows,
+        "selected_columns": list(selected_columns),
+        "selected_rows": selected_rows,
+    }
+    _attach_parent_context_envelope(envelope, context_aware, context_rows)
+    return envelope, provider_selected_ids
 
 
 def _confirmation_row_presentation(
@@ -3532,14 +3558,15 @@ def _prepare_quotes_from_labeled(
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
+    context_complete_quotes = (
+        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
     quote_envelope, provider_selected_ids = _quote_prompt_envelope(
         manifest["spec"]["bounded_claim"],
         selected,
         bodies,
         required_quote_candidate_ids=frontier_relation_candidate_ids,
-    )
-    context_complete_quotes = (
-        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+        include_parent_context=context_complete_quotes,
     )
     prompt_template = QUOTE_PROMPT if context_complete_quotes else LEGACY_QUOTE_PROMPT
     prompt = prompt_template.format(envelope=_compact(quote_envelope))
