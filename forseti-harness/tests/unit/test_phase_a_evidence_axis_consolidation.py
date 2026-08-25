@@ -35,6 +35,7 @@ from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
 )
+from judgment.phase_a_evidence_selection import PARENT_CONTEXT_POLICY
 from runners.run_phase_a_evidence_axis_consolidation import (
     build_axis_pack_run,
     build_dogfood_truth_run,
@@ -322,7 +323,16 @@ def _fixture(
     descriptors = []
     paths: dict[str, Path] = {}
     for point_id, data in point_data.items():
-        inventory_hash = f"inventory_{point_id}"
+        inventory_hash = _canonical_json_sha256(
+            [
+                {
+                    key: value
+                    for key, value in candidate.items()
+                    if key not in {"relation", "reason_code"}
+                }
+                for candidate in data["candidates"]
+            ]
+        )
         selection = _manifest(
             schema_version="phase_a_evidence_selection_manifest_v1",
             candidate_inventory_sha256=inventory_hash,
@@ -901,6 +911,21 @@ def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
     )
 
 
+def test_reader_accounting_contract_rejects_an_authority_key_fork(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setitem(
+        EVIDENCE_ACCOUNTING_CONTRACT,
+        "future_accounting_rule",
+        "A future authoritative rule must not disappear from the compact reader.",
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _reader_evidence_accounting_contract()
+
+    assert caught.value.boundary == "decision_state_reader_accounting_contract"
+
+
 def test_dogfood_truth_index_preserves_observations_states_and_literal_rejections(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1214,7 +1239,7 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
     assert all(boundary in view["non_claims"] for boundary in DECISION_STATE_BOUNDARIES)
     assert view["decision_state_contract"] == DECISION_STATE_CONSUMER_CONTRACT
     reader = view["decision_state_reader_surface"]
-    assert reader["schema_version"] == "phase_a_evidence_decision_state_reader_surface_v2"
+    assert reader["schema_version"] == "phase_a_evidence_decision_state_reader_surface_v3"
     assert reader["decision_state_contract"]["state_row_columns"] == [
         "state_kind",
         "commercial_direction",
@@ -1734,34 +1759,83 @@ def test_reader_surface_derivations_recover_point_relation_origins(
         assert sorted(derived["adjacent"]) == point["adjacent_origin_ids"]
 
 
-def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
+def test_candidate_inventory_rejects_rewritten_parent_context_before_projection(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    manifest, _, paths = _generic_fixture(tmp_path, monkeypatch)
     artifact_path = paths["artifact_point_a"]
     artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-    for index, candidate in enumerate(artifact["candidate_dispositions"][:2], start=1):
-        candidate["parent_context"] = [
-            {
-                "context_id": f"context_{index}",
-                "source_ref": f"https://www.reddit.com/r/test/comments/parent{index}/prompt/",
-                "text": f"Exact parent question {index}?",
-            }
-        ]
-    _write(artifact_path, artifact)
+    for candidate in artifact["candidate_dispositions"]:
+        candidate["parent_context"] = []
+    source_shaped_candidates = [
+        {
+            key: value
+            for key, value in candidate.items()
+            if key not in {"relation", "reason_code"}
+        }
+        for candidate in artifact["candidate_dispositions"]
+    ]
+    inventory_hash = _canonical_json_sha256(source_shaped_candidates)
     point = next(
         row for row in manifest["accepted_points"] if row["point_id"] == "point_a"
     )
+    selection_path = Path(point["selection_manifest_path"])
+    selection = json.loads(selection_path.read_text(encoding="utf-8"))
+    selection["parent_context_policy"] = PARENT_CONTEXT_POLICY
+    selection["candidate_inventory_sha256"] = inventory_hash
+    _rehash_manifest(selection)
+    _write(selection_path, selection)
+    quote_path = Path(point["quote_manifest_path"])
+    quote = json.loads(quote_path.read_text(encoding="utf-8"))
+    quote["selection_manifest_sha256"] = selection["manifest_sha256"]
+    quote["candidate_inventory_sha256"] = inventory_hash
+    _rehash_manifest(quote)
+    _write(quote_path, quote)
+    artifact["candidate_inventory_sha256"] = inventory_hash
+    artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
+    artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
+    artifact["candidate_dispositions"][0]["parent_context"] = [
+        {
+            "context_id": "totally-made-up",
+            "source_ref": "https://example.invalid/parent",
+            "text": "A parent prompt that never existed in the captured corpus.",
+        }
+    ]
+    _write(artifact_path, artifact)
     point["artifact_sha256"] = hash_file(artifact_path)
+    point["selection_manifest_file_sha256"] = hash_file(selection_path)
+    point["selection_manifest_sha256"] = selection["manifest_sha256"]
+    point["quote_manifest_file_sha256"] = hash_file(quote_path)
+    point["quote_manifest_sha256"] = quote["manifest_sha256"]
     _rehash_manifest(manifest)
-    _write(paths["generic_axis"], build_phase_a_evidence_axis_pack(manifest))
-    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_phase_a_evidence_axis_pack(manifest)
+
+    assert caught.value.boundary == "candidate_access"
+    assert "candidate disposition inventory changed" in str(caught.value)
+
+
+def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
     _route_every_point_as_decision_state(spec)
     reader = copy.deepcopy(
         build_axis_consolidated_view(spec)["decision_state_reader_surface"]
     )
-    parent_context_rows = _reader_rows(reader["parent_context_table"])
-    assert len(parent_context_rows) == 2
+    reader["parent_context_table"]["rows"] = [
+        [
+            "context_1",
+            "https://www.reddit.com/r/test/comments/parent1/prompt/",
+            "Exact parent question 1?",
+        ],
+        [
+            "context_2",
+            "https://www.reddit.com/r/test/comments/parent2/prompt/",
+            "Exact parent question 2?",
+        ],
+    ]
     assert reader["parent_context_table"]["columns"] == [
         "context_id",
         "source_ref",
@@ -1775,6 +1849,12 @@ def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
     facts = reader["point_table"]["rows"][0][
         point_columns.index("relation_facts")
     ]
+    context_ids_index = facts["columns"].index("parent_context_ids")
+    context_rows_index = facts["columns"].index("parent_context_row_ids")
+    facts["rows"][0][context_ids_index] = ["context_1"]
+    facts["rows"][0][context_rows_index] = [0]
+    facts["rows"][1][context_ids_index] = ["context_2"]
+    facts["rows"][1][context_rows_index] = [1]
     fact = facts["rows"][0]
     evidence_row_id_index = facts["columns"].index("evidence_row_id")
     evidence_id_index = facts["columns"].index("evidence_id")
@@ -1798,19 +1878,27 @@ def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
     reader = copy.deepcopy(
         build_axis_consolidated_view(spec)["decision_state_reader_surface"]
     )
+    reader["parent_context_table"]["rows"] = [
+        [
+            "context_1",
+            "https://www.reddit.com/r/test/comments/parent1/prompt/",
+            "Exact parent question 1?",
+        ],
+        [
+            "context_2",
+            "https://www.reddit.com/r/test/comments/parent2/prompt/",
+            "Exact parent question 2?",
+        ],
+    ]
     point_columns = reader["point_table"]["columns"]
     facts = reader["point_table"]["rows"][0][
         point_columns.index("relation_facts")
     ]
     context_ids_index = facts["columns"].index("parent_context_ids")
     context_rows_index = facts["columns"].index("parent_context_row_ids")
-    context_fact = next(row for row in facts["rows"] if row[context_ids_index])
-    original_context_row_id = context_fact[context_rows_index][0]
-    context_fact[context_rows_index][0] = next(
-        row_id
-        for row_id in range(len(reader["parent_context_table"]["rows"]))
-        if row_id != original_context_row_id
-    )
+    context_fact = facts["rows"][0]
+    context_fact[context_ids_index] = ["context_1"]
+    context_fact[context_rows_index] = [1]
 
     with pytest.raises(EvidenceConsumerError) as caught:
         _validate_decision_state_reader_evidence_rows(reader)
@@ -1831,26 +1919,49 @@ def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
     context_only_index = facts["columns"].index(
         "context_only_semantic_unit_row_ids"
     )
-    relation_state_index = facts["columns"].index("relation_state_row_ids")
-    source_state_index = facts["columns"].index("source_context_state_row_ids")
-    state_table = reader["point_table"]["rows"][0][
-        point_columns.index("state_table")
-    ]
-    state_semantic_index = state_table["columns"].index("semantic_unit_row_ids")
-    allowed_row_ids = set(fact[context_only_index])
-    for state_row_id in [*fact[relation_state_index], *fact[source_state_index]]:
-        allowed_row_ids.update(state_table["rows"][state_row_id][state_semantic_index])
-    wrong_semantic_row_id = next(
-        row_id
-        for row_id in range(len(reader["semantic_unit_table"]["rows"]))
-        if row_id not in allowed_row_ids
-    )
-    facts["rows"][0][relation_semantic_rows_index] = [wrong_semantic_row_id]
+    foreign_semantic_row_id = facts["rows"][1][relation_semantic_rows_index][0]
+    facts["rows"][0][relation_semantic_rows_index] = [foreign_semantic_row_id]
+    facts["rows"][0][context_only_index] = [foreign_semantic_row_id]
 
     with pytest.raises(EvidenceConsumerError) as caught:
         _validate_decision_state_reader_evidence_rows(reader)
 
     assert caught.value.boundary == "decision_state_reader_evidence_binding"
+    assert "semantic rows do not belong" in str(caught.value)
+
+    reader = copy.deepcopy(
+        build_axis_consolidated_view(spec)["decision_state_reader_surface"]
+    )
+    point_columns = reader["point_table"]["columns"]
+    facts = reader["point_table"]["rows"][0][
+        point_columns.index("relation_facts")
+    ]
+    fact = facts["rows"][0]
+    relation_semantic_rows_index = facts["columns"].index(
+        "relation_semantic_unit_row_ids"
+    )
+    context_only_index = facts["columns"].index(
+        "context_only_semantic_unit_row_ids"
+    )
+    relation_state_index = facts["columns"].index("relation_state_row_ids")
+    state_table = reader["point_table"]["rows"][0][
+        point_columns.index("state_table")
+    ]
+    foreign_state_row = copy.deepcopy(
+        state_table["rows"][fact[relation_state_index][0]]
+    )
+    foreign_state_row[state_table["columns"].index("state_kind")] = (
+        "preference_judgment"
+    )
+    state_table["rows"].append(foreign_state_row)
+    fact[context_only_index] = list(fact[relation_semantic_rows_index])
+    fact[relation_state_index] = [len(state_table["rows"]) - 1]
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_decision_state_reader_evidence_rows(reader)
+
+    assert caught.value.boundary == "decision_state_reader_evidence_binding"
+    assert "state row identity does not match" in str(caught.value)
 
     reader = copy.deepcopy(
         build_axis_consolidated_view(spec)["decision_state_reader_surface"]
@@ -1994,7 +2105,7 @@ def test_context_only_qualification_refs_resolve_through_primary_or_companion(
     }
     for ref in primary_context_refs:
         assert semantic_units[ref]["statement"]
-    assert "placement_table" in rule and "semantic_unit_table" in rule
+    assert "point_placements" in rule and "semantic_unit_table" in rule
 
 
 @pytest.mark.parametrize(

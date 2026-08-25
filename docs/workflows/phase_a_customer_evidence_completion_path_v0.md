@@ -898,7 +898,11 @@ exactly once; `relation_semantic_unit_refs` is nonempty and drawn from that same
 set. An empty `state_assertions` list is the explicit context-only form above.
 Linked parent prompt text is not authored in this spec. The projector derives
 it only from the hash-pinned candidate disposition that exactly matches the
-displayed evidence and semantic unit; a spec-supplied replacement is rejected.
+displayed evidence and semantic unit. Before projection it removes only the
+selection result fields (`relation` and `reason_code`) and requires the complete
+remaining disposition inventory to match the selection manifest's source-derived
+candidate hash; a spec-supplied replacement or rewritten candidate context is
+rejected.
 
 A routed `direct_outcome` point uses the optional
 `direct_outcome_relation_bindings` list of `{point_id, rows}`, with rows of
@@ -918,21 +922,27 @@ whenever at least one point is routed `decision_state`. The full view's
 `decision_state_contract` uses full-view table names; the reader surface derives
 the same semantic contract with reader-native join instructions and
 `semantic_unit_row_ids`, so every table and column named inside the compact
-surface resolves inside that surface. Reader-surface v2 also gives every
+surface resolves inside that surface. Reader-surface v3 gives every
 point-local `relation_facts` row an `evidence_row_id`: the zero-based row in the
 global `evidence_table`, plus a `quote_row_id` for the zero-based row in
 `quote_table`, and `relation_semantic_unit_row_ids` for the zero-based rows in
-`semantic_unit_table`. The same fact carries `layer` and direct
-`context_only_semantic_unit_row_ids`, so the compact surface no longer repeats
-point, selected-row, quote, and companion identities in a separate placement
-table. When a terse child reply needs its exact parent prompt,
+`semantic_unit_table`. The same fact carries `layer`,
+`primary_semantic_unit_row_id`, `companion_semantic_unit_row_ids`, and direct
+`context_only_semantic_unit_row_ids`. Relation, context-only, and state meanings
+must belong to that exact primary-plus-companion ownership set, while
+`state_binding_sha256` rechecks both state-row partitions. The compact surface
+therefore preserves primary-versus-companion ownership without repeating point,
+selected-row, quote, and full placement data in a separate placement table.
+When a terse child reply needs its exact parent prompt,
 the same fact carries paired `parent_context_ids` and
 `parent_context_row_ids` into the deduplicated `parent_context_table`; empty
-arrays mean the quote is self-contained. The reader contract marks those rows
+arrays mean no parent context is supplied and do not prove that the quote is
+self-contained. The reader contract marks supplied parent rows
 as context rather than evidence, makes venue and surface recoverable from the
 literal `source_ref`, and states that source role and publication date are
 unavailable rather than inventing either. The consumer uses those direct
-handles, rechecks the evidence, quote, and parent-context identities, and
+handles, rechecks the evidence, quote, semantic ownership, state partitions,
+and parent-context identities, and
 resolves each semantic statement from its single global row before reading or
 rendering meaning, source, date, venue, role, engagement, exact quote, or exact
 parent context. This prevents an exact-looking finding from joining the right
