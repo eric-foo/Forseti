@@ -3380,6 +3380,7 @@ def _quote_prompt_envelope(
     bodies: Mapping[tuple[str, str], str | None],
     *,
     required_quote_candidate_ids: frozenset[str] = frozenset(),
+    include_parent_context: bool = False,
 ) -> tuple[dict[str, Any], list[str]]:
     """Project long bodies and frontier-defining rows into quote review.
 
@@ -3398,9 +3399,14 @@ def _quote_prompt_envelope(
         ):
             continue
         provider_rows.append(row)
-    context_aware, projected_rows, context_rows = _project_parent_context(
-        provider_rows
-    )
+    if include_parent_context:
+        context_aware, projected_rows, context_rows = _project_parent_context(
+            provider_rows
+        )
+    else:
+        context_aware = False
+        projected_rows = list(provider_rows)
+        context_rows = []
     selected_columns = (
         CONTEXT_QUOTE_PROMPT_COLUMNS if context_aware else QUOTE_PROMPT_COLUMNS
     )
@@ -3410,10 +3416,6 @@ def _quote_prompt_envelope(
     provider_selected_ids: list[str] = []
     for row in projected_rows:
         body = bodies.get((row["source_id"], row["evidence_id"]))
-        if body is None:
-            raise EvidenceConsumerError(
-                "quote_prompt_projection", "provider row lost its source body"
-            )
         if body not in body_ids:
             body_id = f"body_{len(body_ids) + 1:02d}"
             body_ids[body] = body_id
@@ -3556,14 +3558,15 @@ def _prepare_quotes_from_labeled(
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
+    context_complete_quotes = (
+        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
     quote_envelope, provider_selected_ids = _quote_prompt_envelope(
         manifest["spec"]["bounded_claim"],
         selected,
         bodies,
         required_quote_candidate_ids=frontier_relation_candidate_ids,
-    )
-    context_complete_quotes = (
-        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+        include_parent_context=context_complete_quotes,
     )
     prompt_template = QUOTE_PROMPT if context_complete_quotes else LEGACY_QUOTE_PROMPT
     prompt = prompt_template.format(envelope=_compact(quote_envelope))

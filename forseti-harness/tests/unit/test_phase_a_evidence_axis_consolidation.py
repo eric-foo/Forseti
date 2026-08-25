@@ -21,6 +21,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     EVIDENCE_ACCOUNTING_CONTRACT,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
     LEGACY_CONSOLIDATION_SPEC_VERSION,
+    _reader_evidence_accounting_contract,
     _validate_decision_state_reader_evidence_rows,
     build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
@@ -830,7 +831,10 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     _route_every_point_as_decision_state(spec)
     decision_view = build_axis_consolidated_view(spec)
     reader = decision_view["decision_state_reader_surface"]
-    assert reader["evidence_accounting_contract"] == EVIDENCE_ACCOUNTING_CONTRACT
+    assert (
+        reader["evidence_accounting_contract"]
+        == _reader_evidence_accounting_contract()
+    )
     columns = reader["point_table"]["columns"]
     point_row = next(
         row
@@ -853,10 +857,8 @@ def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
         "but never broaden, merge, or rewrite the point"
     )
     count_rule = (
-        "point-row relation totals count displayed evidence rows by relation; they are "
-        "distinct from relation origin-id arrays and same-origin source_observation_count, "
-        "may exceed the distinct-origin count, and are never independent-origin credit, "
-        "a people count, or prevalence"
+        "point relation totals count displayed rows, not origins, people, prevalence, or "
+        "same-origin observations; they may exceed distinct-origin counts"
     )
 
     direct_view = build_axis_consolidated_view(spec)
@@ -883,10 +885,11 @@ def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
     _route_every_point_as_decision_state(spec)
     decision_view = build_axis_consolidated_view(spec)
     reader = decision_view["decision_state_reader_surface"]
-    assert reader["evidence_accounting_contract"]["point_meaning_rule"] == expected
+    compact_accounting = _reader_evidence_accounting_contract()
+    assert reader["evidence_accounting_contract"] == compact_accounting
     assert (
         reader["evidence_accounting_contract"]["displayed_relation_count_rule"]
-        == count_rule
+        == compact_accounting["displayed_relation_count_rule"]
     )
     point_columns = reader["point_table"]["columns"]
     assert "bounded_point" in point_columns
@@ -1229,17 +1232,17 @@ def test_decision_state_projects_typed_companion_states_and_rejected_frontier(
         "decision_state_index",
         "companion_meaning_index",
         "qualification_refs",
+        "placement_table",
     ):
         assert absent_table not in reader_join_order
     for present_table in (
         "point_table",
-        "placement_table",
         "evidence_table",
         "semantic_unit_table",
         "quote_table",
     ):
         assert present_table in reader_join_order
-    assert len(reader["placement_table"]["rows"]) == view["counts"]["placement_count"]
+    assert "placement_table" not in reader
     assert len(reader["point_table"]["rows"]) == view["counts"]["point_count"]
     assert len(reader["evidence_table"]["rows"]) == view["counts"]["unique_evidence_count"]
     point_columns = reader["point_table"]["columns"]
@@ -1679,6 +1682,26 @@ def _reader_row(table: Mapping[str, Any], key: str, value: Any) -> dict[str, Any
     return next(row for row in _reader_rows(table) if row[key] == value)
 
 
+def test_decision_state_rejects_spec_authored_parent_context_before_projection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    spec["decision_state_bindings"][0]["rows"][0]["parent_contexts"] = [
+        {
+            "context_id": "totally-made-up",
+            "source_ref": "https://example.invalid/parent",
+            "text": "A parent prompt that never existed in the captured corpus.",
+        }
+    ]
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_axis_consolidated_view(spec)
+
+    assert caught.value.boundary == "decision_state_binding"
+    assert "row binding fields are invalid" in str(caught.value)
+
+
 def test_reader_surface_derivations_recover_point_relation_origins(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1692,10 +1715,9 @@ def test_reader_surface_derivations_recover_point_relation_origins(
         for row in _reader_rows(reader["evidence_table"])
     }
 
-    # The compact placement table intentionally drops relation and evidence_id,
-    # so the stated derivation must route through point relation_facts instead.
-    assert "relation" not in reader["placement_table"]["columns"]
-    assert "evidence_id" not in reader["placement_table"]["columns"]
+    # Point relation facts now carry the complete compact join; no duplicate
+    # placement table is needed.
+    assert "placement_table" not in reader
     assert "relation_facts" in reader["derivation_rules"][
         "point_placement_and_relation_origins"
     ]
@@ -1715,20 +1737,40 @@ def test_reader_surface_derivations_recover_point_relation_origins(
 def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    _route_every_point_as_decision_state(spec)
-    bound_rows = spec["decision_state_bindings"][0]["rows"]
-    for index, row in enumerate(bound_rows[:2], start=1):
-        row["parent_contexts"] = [
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    artifact_path = paths["artifact_point_a"]
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    for index, candidate in enumerate(artifact["candidate_dispositions"][:2], start=1):
+        candidate["parent_context"] = [
             {
                 "context_id": f"context_{index}",
-                "source_ref": f"https://example.test/parent/{index}",
+                "source_ref": f"https://www.reddit.com/r/test/comments/parent{index}/prompt/",
                 "text": f"Exact parent question {index}?",
             }
         ]
+    _write(artifact_path, artifact)
+    point = next(
+        row for row in manifest["accepted_points"] if row["point_id"] == "point_a"
+    )
+    point["artifact_sha256"] = hash_file(artifact_path)
+    _rehash_manifest(manifest)
+    _write(paths["generic_axis"], build_phase_a_evidence_axis_pack(manifest))
+    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+    _route_every_point_as_decision_state(spec)
     reader = copy.deepcopy(
         build_axis_consolidated_view(spec)["decision_state_reader_surface"]
     )
+    parent_context_rows = _reader_rows(reader["parent_context_table"])
+    assert len(parent_context_rows) == 2
+    assert reader["parent_context_table"]["columns"] == [
+        "context_id",
+        "source_ref",
+        "text",
+    ]
+    quote_role = reader["decision_state_contract"]["quote_role"]
+    assert "context rather than evidence" in quote_role
+    assert "source role and date are unavailable" in quote_role
+    assert "venue and surface remain recoverable from source_ref" in quote_role
     point_columns = reader["point_table"]["columns"]
     facts = reader["point_table"]["rows"][0][
         point_columns.index("relation_facts")
@@ -1785,9 +1827,25 @@ def test_reader_evidence_row_handle_rejects_a_wrong_exact_join(
     relation_semantic_rows_index = facts["columns"].index(
         "relation_semantic_unit_row_ids"
     )
-    facts["rows"][0][relation_semantic_rows_index] = [
-        len(reader["semantic_unit_table"]["rows"])
+    fact = facts["rows"][0]
+    context_only_index = facts["columns"].index(
+        "context_only_semantic_unit_row_ids"
+    )
+    relation_state_index = facts["columns"].index("relation_state_row_ids")
+    source_state_index = facts["columns"].index("source_context_state_row_ids")
+    state_table = reader["point_table"]["rows"][0][
+        point_columns.index("state_table")
     ]
+    state_semantic_index = state_table["columns"].index("semantic_unit_row_ids")
+    allowed_row_ids = set(fact[context_only_index])
+    for state_row_id in [*fact[relation_state_index], *fact[source_state_index]]:
+        allowed_row_ids.update(state_table["rows"][state_row_id][state_semantic_index])
+    wrong_semantic_row_id = next(
+        row_id
+        for row_id in range(len(reader["semantic_unit_table"]["rows"]))
+        if row_id not in allowed_row_ids
+    )
+    facts["rows"][0][relation_semantic_rows_index] = [wrong_semantic_row_id]
 
     with pytest.raises(EvidenceConsumerError) as caught:
         _validate_decision_state_reader_evidence_rows(reader)

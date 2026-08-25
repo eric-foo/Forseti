@@ -1310,9 +1310,12 @@ def test_linked_parent_context_is_exact_compact_and_hash_bound(tmp_path: Path) -
     assert preselection_prompt.count(parent_text) == 1
     assert '"point_parent_context_ids"' in preselection_prompt
     assert '"parent_context_ids"' in preselection_prompt
-    _, _, quote_manifest = finalize_relations_prepare_quotes(
+    legacy_quote_prompt, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, first_pass
     )
+    assert parent_text not in legacy_quote_prompt
+    assert '"parent_context_rows"' not in legacy_quote_prompt
+    assert '"parent_context_ids"' not in legacy_quote_prompt
     selected_prompt, _, _ = prepare_selected_relation_confirmation(quote_manifest)
     assert selected_prompt.count(parent_text) == 1
     assert '"point_parent_context_ids"' in selected_prompt
@@ -4223,7 +4226,7 @@ def test_value_policy_does_not_turn_time_to_finish_into_quantity_value() -> None
     assert "explicitly says it will buy or repurchase again" in guidance
 
 
-def test_hype_policy_does_not_launder_generic_expectations_into_hype() -> None:
+def test_hype_policy_guidance_forbids_laundering_generic_expectations_into_hype() -> None:
     guidance = _policy_guidance(
         {
             "axis_ids": ["hype_originality_and_trust"],
@@ -4256,7 +4259,7 @@ def test_hype_policy_does_not_launder_generic_expectations_into_hype() -> None:
     assert "DECISION-OBJECT SCOPE POLICY" in non_hype_guidance
 
 
-def test_relation_guidance_keeps_attribute_praise_adjacent_to_an_overall_judgment() -> None:
+def test_relation_guidance_says_attribute_praise_is_adjacent_to_an_overall_judgment() -> None:
     guidance = _policy_guidance(
         {
             "axis_ids": ["hype_originality_and_trust"],

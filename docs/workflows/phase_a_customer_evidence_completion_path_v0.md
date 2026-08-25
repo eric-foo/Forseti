@@ -872,8 +872,15 @@ that exposure; a bare “fell short of my expectations” does not identify what
 created the expectations. For an expectation-only point that names no exposure
 cause, explicit expectation language is sufficient.
 
-The v2 spec carries these facts in named fields; a cold operator authors them
-explicitly and the builder never infers them. `projection_routes` is a list of
+The decision-object scope rule is axis-wide, not a hype-only exception. An
+attribute-, formula-, variant-, shade-, scent-, or occasion-specific appraisal
+is adjacent to an overall-product judgment unless the same source explicitly
+reaches that whole-product verdict; an overall appraisal is likewise adjacent
+to a narrower point unless it names that narrower object. This keeps useful
+nearby information without silently changing what the actor judged.
+
+The v2 spec carries the decision states in named fields; a cold operator authors
+them explicitly and the builder never infers them. `projection_routes` is a list of
 `{projection_mode, point_ids}` objects using `direct_outcome` or
 `decision_state`. `decision_state_bindings` is a list of `{point_id, rows}`
 objects that must cover every routed `decision_state` point and, inside each
@@ -889,6 +896,9 @@ asserted and context-only semantic references must be disjoint and together
 cover the display row's own meaning plus every same-evidence companion meaning
 exactly once; `relation_semantic_unit_refs` is nonempty and drawn from that same
 set. An empty `state_assertions` list is the explicit context-only form above.
+Linked parent prompt text is not authored in this spec. The projector derives
+it only from the hash-pinned candidate disposition that exactly matches the
+displayed evidence and semantic unit; a spec-supplied replacement is rejected.
 
 A routed `direct_outcome` point uses the optional
 `direct_outcome_relation_bindings` list of `{point_id, rows}`, with rows of
@@ -912,10 +922,16 @@ surface resolves inside that surface. Reader-surface v2 also gives every
 point-local `relation_facts` row an `evidence_row_id`: the zero-based row in the
 global `evidence_table`, plus a `quote_row_id` for the zero-based row in
 `quote_table`, and `relation_semantic_unit_row_ids` for the zero-based rows in
-`semantic_unit_table`. When a terse child reply needs its exact parent prompt,
+`semantic_unit_table`. The same fact carries `layer` and direct
+`context_only_semantic_unit_row_ids`, so the compact surface no longer repeats
+point, selected-row, quote, and companion identities in a separate placement
+table. When a terse child reply needs its exact parent prompt,
 the same fact carries paired `parent_context_ids` and
 `parent_context_row_ids` into the deduplicated `parent_context_table`; empty
-arrays mean the quote is self-contained. The consumer uses those direct
+arrays mean the quote is self-contained. The reader contract marks those rows
+as context rather than evidence, makes venue and surface recoverable from the
+literal `source_ref`, and states that source role and publication date are
+unavailable rather than inventing either. The consumer uses those direct
 handles, rechecks the evidence, quote, and parent-context identities, and
 resolves each semantic statement from its single global row before reading or
 rendering meaning, source, date, venue, role, engagement, exact quote, or exact
@@ -1032,6 +1048,8 @@ people, prevalence, or the `source_observation_count` inside a same-origin
 group. They may therefore exceed the same relation's distinct-origin count.
 Placement normalized meanings explain point-relative relations; they may not
 broaden, merge, or rewrite the point.
+The compact Decision State reader carries the same six accounting rules in
+shorter reader-native wording; this is wording compaction, not a weaker rule.
 
 This named authority makes a broader point or a misreported count contradict
 the emitted point row; it cannot force a non-compliant reader to obey. For

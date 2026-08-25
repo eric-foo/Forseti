@@ -69,10 +69,8 @@ EVIDENCE_ACCOUNTING_CONTRACT = {
         "but never broaden, merge, or rewrite the point"
     ),
     "displayed_relation_count_rule": (
-        "point-row relation totals count displayed evidence rows by relation; they are "
-        "distinct from relation origin-id arrays and same-origin source_observation_count, "
-        "may exceed the distinct-origin count, and are never independent-origin credit, "
-        "a people count, or prevalence"
+        "point relation totals count displayed rows, not origins, people, prevalence, or "
+        "same-origin observations; they may exceed distinct-origin counts"
     ),
     "independent_origin_rule": (
         "point relation origin-id arrays count distinct evidence origins; multiple source "
@@ -137,9 +135,9 @@ DECISION_STATE_CONSUMER_CONTRACT = {
         "causes, sustains, cancels, or explains another without separate causal authority"
     ),
     "quote_role": (
-        "literal source span; when a terse direct response depends on an exact parent prompt, "
-        "the binding carries that literal context and the reader resolves it without copying "
-        "parent text into the child quote"
+        "child quotes stay literal; any needed parent comes only from the matching hash-pinned "
+        "candidate, never the spec, and is context rather than evidence; source role and date "
+        "are unavailable, while venue and surface remain recoverable from source_ref"
     ),
     "companion_rule": (
         "state assertions may overlap semantic-unit refs when one literal source carries "
@@ -174,15 +172,13 @@ DECISION_STATE_CONSUMER_CONTRACT = {
 DECISION_STATE_READER_CONTRACT_OVERRIDES = {
     "qualification_rule": (
         "resolve every state_table semantic_unit_row_ids value through the reader "
-        "semantic_unit_table; derive context-only meaning from the matching placement "
-        "primary plus companion semantic refs minus refs used by the matching relation "
-        "fact's relation_state_row_ids and source_context_state_row_ids, and preserve "
-        "material qualification as context rather than an additional decision state"
+        "semantic_unit_table; relation_facts context_only_semantic_unit_row_ids directly "
+        "bind material qualification preserved as context rather than another decision state"
     ),
     "consumer_join_order": [
-        "point_table relation_facts evidence_row_id directly selects its zero-based evidence_table row and evidence_id rechecks identity; enclosing point_id plus selected_id joins placement_table",
+        "point_table relation_facts process each selected_id exactly once and evidence_row_id directly selects its zero-based evidence_table row whose evidence_id rechecks identity",
         "relation_facts relation_state_row_ids and source_context_state_row_ids to the enclosing point row state_table",
-        "state_table semantic_unit_row_ids and placement semantic refs to semantic_unit_table",
+        "relation_facts and state_table semantic-unit row ids to semantic_unit_table",
         "relation_facts quote_row_id directly selects its zero-based quote_table row and quote_span_id rechecks identity; evidence_table carries literal source, date, engagement, and origin_group_id",
         "relation_facts parent_context_row_ids select zero-based parent_context_table rows and parent_context_ids recheck identity; empty arrays mean the literal quote is self-contained",
     ],
@@ -243,6 +239,36 @@ def _decision_state_reader_contract(
     reader_contract = copy.deepcopy(dict(contract))
     reader_contract.update(copy.deepcopy(DECISION_STATE_READER_CONTRACT_OVERRIDES))
     return reader_contract
+
+
+def _reader_evidence_accounting_contract() -> dict[str, str]:
+    """Preserve the full accounting rules in compact reader wording."""
+
+    return {
+        "point_meaning_rule": (
+            "bounded_point is the sole admitted point meaning; placements may support, "
+            "counter, qualify, or sit adjacent but never widen, merge, or rewrite it"
+        ),
+        "displayed_relation_count_rule": (
+            "relation_counts are displayed rows, not origins, people, prevalence, or "
+            "same-origin observations; they may exceed origin counts"
+        ),
+        "independent_origin_rule": (
+            "relation origin ids count distinct evidence origins; repeated same-origin "
+            "observations add no independent credit"
+        ),
+        "source_observation_rule": (
+            "same_origin_observation_groups retain each distinct admitted evidence and "
+            "semantic observation matching the displayed point relation and origin"
+        ),
+        "display_scope_rule": (
+            "same-origin groups explain displayed facts only; they do not promote origins "
+            "or alter selection, relation, or authority"
+        ),
+        "underlying_event_rule": (
+            "repeated source observations do not establish multiple underlying events"
+        ),
+    }
 
 
 def _load_object(path: Path, *, boundary: str) -> dict[str, Any]:
@@ -310,6 +336,47 @@ def _point_rows(artifact: Mapping[str, Any], *, point_id: str) -> list[dict[str,
                 raise EvidenceConsumerError("point_binding", f"display row invalid: {point_id}")
             rows.append(dict(row))
     return rows
+
+
+def _validated_candidate_parent_contexts(
+    candidate: Mapping[str, Any], *, point_id: str, selected_id: str
+) -> list[dict[str, str]]:
+    """Read linked parent context only from the hash-pinned candidate row."""
+
+    raw_contexts = candidate.get("parent_context", [])
+    if not isinstance(raw_contexts, list):
+        raise EvidenceConsumerError(
+            "decision_state_parent_context_binding",
+            f"candidate parent contexts are invalid: {point_id}::{selected_id}",
+        )
+    contexts: list[dict[str, str]] = []
+    seen_context_ids: set[str] = set()
+    for raw_context in raw_contexts:
+        if not isinstance(raw_context, Mapping) or set(raw_context) != {
+            "context_id",
+            "source_ref",
+            "text",
+        }:
+            raise EvidenceConsumerError(
+                "decision_state_parent_context_binding",
+                f"candidate parent context fields are invalid: {point_id}::{selected_id}",
+            )
+        context = {
+            field: _required_string(
+                raw_context,
+                field,
+                boundary="decision_state_parent_context_binding",
+            )
+            for field in ("context_id", "source_ref", "text")
+        }
+        if context["context_id"] in seen_context_ids:
+            raise EvidenceConsumerError(
+                "decision_state_parent_context_binding",
+                f"candidate parent context is duplicated: {point_id}::{selected_id}",
+            )
+        seen_context_ids.add(context["context_id"])
+        contexts.append(context)
+    return contexts
 
 
 def _validate_point_binding(
@@ -488,6 +555,13 @@ def _validate_point_binding(
             raise EvidenceConsumerError(
                 "point_binding", f"display relation binding changed: {point_id}"
             )
+        _validated_candidate_parent_contexts(
+            matching[0],
+            point_id=point_id,
+            selected_id=_required_string(
+                row, "selected_id", boundary="decision_state_parent_context_binding"
+            ),
+        )
     truth_origins = {
         row["origin_group_id"] for row in rows if _is_truth_support_origin(row)
     }
@@ -1039,14 +1113,7 @@ def _decision_state_bindings(
                 "context_only_semantic_unit_refs",
                 "relation_semantic_unit_refs",
             }
-            allowed_row_field_sets = (
-                required_row_fields,
-                required_row_fields | {"parent_contexts"},
-            )
-            if (
-                not isinstance(raw_row, Mapping)
-                or set(raw_row) not in allowed_row_field_sets
-            ):
+            if not isinstance(raw_row, Mapping) or set(raw_row) != required_row_fields:
                 raise EvidenceConsumerError(
                     "decision_state_binding",
                     f"row binding fields are invalid: {point_id}",
@@ -1059,40 +1126,7 @@ def _decision_state_bindings(
                     "decision_state_binding",
                     f"duplicate row binding: {point_id}::{selected_id}",
                 )
-            raw_contexts = raw_row.get("parent_contexts", [])
-            if not isinstance(raw_contexts, list):
-                raise EvidenceConsumerError(
-                    "decision_state_parent_context_binding",
-                    f"parent contexts are invalid: {point_id}::{selected_id}",
-                )
-            contexts = []
-            seen_context_ids = set()
-            for raw_context in raw_contexts:
-                if not isinstance(raw_context, Mapping) or set(raw_context) != {
-                    "context_id",
-                    "source_ref",
-                    "text",
-                }:
-                    raise EvidenceConsumerError(
-                        "decision_state_parent_context_binding",
-                        f"parent context fields are invalid: {point_id}::{selected_id}",
-                    )
-                context = {
-                    field: _required_string(
-                        raw_context,
-                        field,
-                        boundary="decision_state_parent_context_binding",
-                    )
-                    for field in ("context_id", "source_ref", "text")
-                }
-                if context["context_id"] in seen_context_ids:
-                    raise EvidenceConsumerError(
-                        "decision_state_parent_context_binding",
-                        f"parent context is duplicated: {point_id}::{selected_id}",
-                    )
-                seen_context_ids.add(context["context_id"])
-                contexts.append(context)
-            rows[selected_id] = {**raw_row, "parent_contexts": contexts}
+            rows[selected_id] = dict(raw_row)
         normalized[point_id] = rows
 
     if set(normalized) != decision_point_ids:
@@ -1430,11 +1464,6 @@ def _bindings_from_decision_state_groups(
                     field="relation_semantic_unit_refs",
                 )
             ),
-            "parent_contexts": copy.deepcopy(
-                placement.get("parent_contexts", [])
-                if isinstance(placement, Mapping)
-                else []
-            ),
         }
     return [
         {
@@ -1554,6 +1583,19 @@ def _validate_decision_state_reader_evidence_rows(
     reader: Mapping[str, Any],
 ) -> None:
     boundary = "decision_state_reader_evidence_binding"
+
+    def valid_row_ids(value: Any, row_count: int) -> bool:
+        return (
+            isinstance(value, list)
+            and all(
+                not isinstance(row_id, bool)
+                and isinstance(row_id, int)
+                and 0 <= row_id < row_count
+                for row_id in value
+            )
+            and len(value) == len(set(value))
+        )
+
     evidence_table = reader.get("evidence_table")
     quote_table = reader.get("quote_table")
     semantic_table = reader.get("semantic_unit_table")
@@ -1601,7 +1643,9 @@ def _validate_decision_state_reader_evidence_rows(
     try:
         evidence_id_index = evidence_columns.index("evidence_id")
         quote_span_id_index = quote_columns.index("quote_span_id")
+        semantic_ref_index = semantic_columns.index("semantic_unit_ref")
         parent_context_id_index = parent_context_columns.index("context_id")
+        state_table_index = point_columns.index("state_table")
         relation_facts_index = point_columns.index("relation_facts")
     except ValueError as exc:
         raise EvidenceConsumerError(boundary, "reader join column is missing") from exc
@@ -1609,19 +1653,42 @@ def _validate_decision_state_reader_evidence_rows(
         if not isinstance(point_row, list) or len(point_row) != len(point_columns):
             raise EvidenceConsumerError(boundary, "reader point row is invalid")
         facts = point_row[relation_facts_index]
+        state_table = point_row[state_table_index]
         if not isinstance(facts, Mapping):
             raise EvidenceConsumerError(boundary, "reader relation facts are invalid")
+        if not isinstance(state_table, Mapping):
+            raise EvidenceConsumerError(boundary, "reader state table is invalid")
+        state_columns = state_table.get("columns")
+        state_rows = state_table.get("rows")
+        if not isinstance(state_columns, list) or not isinstance(state_rows, list):
+            raise EvidenceConsumerError(boundary, "reader state table is invalid")
+        try:
+            state_semantic_rows_index = state_columns.index("semantic_unit_row_ids")
+        except ValueError as exc:
+            raise EvidenceConsumerError(
+                boundary, "reader state semantic binding is missing"
+            ) from exc
         fact_columns = facts.get("columns")
         fact_rows = facts.get("rows")
         if not isinstance(fact_columns, list) or not isinstance(fact_rows, list):
             raise EvidenceConsumerError(boundary, "reader relation facts are invalid")
         try:
             fact_evidence_id_index = fact_columns.index("evidence_id")
+            fact_selected_id_index = fact_columns.index("selected_id")
             fact_evidence_row_index = fact_columns.index("evidence_row_id")
             fact_quote_span_id_index = fact_columns.index("quote_span_id")
             fact_quote_row_index = fact_columns.index("quote_row_id")
             fact_relation_semantic_rows_index = fact_columns.index(
                 "relation_semantic_unit_row_ids"
+            )
+            fact_context_only_semantic_rows_index = fact_columns.index(
+                "context_only_semantic_unit_row_ids"
+            )
+            fact_relation_state_rows_index = fact_columns.index(
+                "relation_state_row_ids"
+            )
+            fact_source_context_state_rows_index = fact_columns.index(
+                "source_context_state_row_ids"
             )
             fact_parent_context_ids_index = fact_columns.index(
                 "parent_context_ids"
@@ -1633,6 +1700,7 @@ def _validate_decision_state_reader_evidence_rows(
             raise EvidenceConsumerError(
                 boundary, "reader relation evidence row binding is missing"
             ) from exc
+        seen_selected_ids: set[str] = set()
         for fact in fact_rows:
             if not isinstance(fact, list) or len(fact) != len(fact_columns):
                 raise EvidenceConsumerError(boundary, "reader relation fact is invalid")
@@ -1689,6 +1757,86 @@ def _validate_decision_state_reader_evidence_rows(
             ):
                 raise EvidenceConsumerError(
                     boundary, "reader relation semantic row binding is invalid"
+                )
+            selected_id = fact[fact_selected_id_index]
+            if (
+                not isinstance(selected_id, str)
+                or not selected_id
+                or selected_id in seen_selected_ids
+            ):
+                raise EvidenceConsumerError(
+                    boundary, "reader selected identity is invalid or duplicated"
+                )
+            seen_selected_ids.add(selected_id)
+            context_only_semantic_row_ids = fact[
+                fact_context_only_semantic_rows_index
+            ]
+            relation_state_row_ids = fact[fact_relation_state_rows_index]
+            source_context_state_row_ids = fact[
+                fact_source_context_state_rows_index
+            ]
+            if any(
+                not valid_row_ids(row_ids, row_count)
+                for row_ids, row_count in (
+                    (context_only_semantic_row_ids, len(semantic_rows)),
+                    (relation_state_row_ids, len(state_rows)),
+                    (source_context_state_row_ids, len(state_rows)),
+                )
+            ):
+                raise EvidenceConsumerError(
+                    boundary, "reader state or context-only row binding is invalid"
+                )
+            if set(relation_state_row_ids) & set(source_context_state_row_ids):
+                raise EvidenceConsumerError(
+                    boundary, "reader relation and source-context states overlap"
+                )
+            available_semantic_row_ids = set(context_only_semantic_row_ids)
+            for state_row_id in [
+                *relation_state_row_ids,
+                *source_context_state_row_ids,
+            ]:
+                state_row = state_rows[state_row_id]
+                if not isinstance(state_row, list) or len(state_row) != len(
+                    state_columns
+                ):
+                    raise EvidenceConsumerError(boundary, "reader state row is invalid")
+                state_semantic_row_ids = state_row[state_semantic_rows_index]
+                if (
+                    not isinstance(state_semantic_row_ids, list)
+                    or any(
+                        isinstance(row_id, bool)
+                        or not isinstance(row_id, int)
+                        or row_id < 0
+                        or row_id >= len(semantic_rows)
+                        for row_id in state_semantic_row_ids
+                    )
+                ):
+                    raise EvidenceConsumerError(
+                        boundary, "reader state semantic row binding is invalid"
+                    )
+                available_semantic_row_ids.update(state_semantic_row_ids)
+            resolved_relation_refs: set[str] = set()
+            for semantic_row_id in relation_semantic_row_ids:
+                semantic_row = semantic_rows[semantic_row_id]
+                if not isinstance(semantic_row, list) or len(semantic_row) != len(
+                    semantic_columns
+                ):
+                    raise EvidenceConsumerError(
+                        boundary, "reader semantic unit row is invalid"
+                    )
+                semantic_ref = semantic_row[semantic_ref_index]
+                if not isinstance(semantic_ref, str) or not semantic_ref:
+                    raise EvidenceConsumerError(
+                        boundary, "reader semantic unit identity is invalid"
+                    )
+                resolved_relation_refs.add(semantic_ref)
+            if (
+                len(resolved_relation_refs) != len(relation_semantic_row_ids)
+                or not set(relation_semantic_row_ids) <= available_semantic_row_ids
+            ):
+                raise EvidenceConsumerError(
+                    boundary,
+                    "reader relation semantic rows do not belong to the selected placement",
                 )
             context_ids = fact[fact_parent_context_ids_index]
             context_row_ids = fact[fact_parent_context_rows_index]
@@ -1805,6 +1953,17 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
                         if group is not None
                         else placement.get("relation_semantic_unit_refs", [semantic_ref]),
                     ),
+                    (
+                        "context_only_semantic_unit_refs",
+                        (
+                            group["qualification_refs"]
+                            if group is not None
+                            else [
+                                semantic_ref,
+                                *placement["same_evidence_companion_meaning_refs"],
+                            ]
+                        ),
+                    ),
                     ("parent_contexts", placement.get("parent_contexts", [])),
                     ("state_ids", group["state_ids"] if group is not None else []),
                 )
@@ -1866,12 +2025,14 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
     }
     relation_fact_columns = [
         "selected_id",
+        "layer",
         "relation",
         "evidence_id",
         "evidence_row_id",
         "quote_span_id",
         "quote_row_id",
         "relation_semantic_unit_row_ids",
+        "context_only_semantic_unit_row_ids",
         "quote_status",
         "parent_context_ids",
         "parent_context_row_ids",
@@ -1896,6 +2057,7 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         point_relation_facts[row["point_id"]].append(
             [
                 row["selected_id"],
+                row["layer"],
                 row["relation"],
                 row["evidence_id"],
                 evidence_row_ids[row["evidence_id"]],
@@ -1904,6 +2066,10 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
                 [
                     semantic_ref_row_ids[semantic_ref]
                     for semantic_ref in row["relation_semantic_unit_refs"]
+                ],
+                [
+                    semantic_ref_row_ids[semantic_ref]
+                    for semantic_ref in row["context_only_semantic_unit_refs"]
                 ],
                 quote_statuses[row["quote_span_id"]],
                 [context["context_id"] for context in row["parent_contexts"]],
@@ -1957,16 +2123,6 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         }
         for row in view["point_index"]
     ]
-    compact_placement_rows = [
-        {
-            key: value
-            for key, value in row.items()
-            if key
-            not in {"relation", "evidence_id", "relation_semantic_unit_refs", "state_ids"}
-            and key != "parent_contexts"
-        }
-        for row in placement_rows
-    ]
     point_columns = (
         "point_id",
         "bounded_point",
@@ -1982,7 +2138,6 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "state_table",
         "relation_facts",
     )
-    placement_columns = tuple(compact_placement_rows[0])
     evidence_columns = tuple(evidence_rows[0])
     semantic_columns = (
         "semantic_unit_ref",
@@ -2012,7 +2167,6 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "navigation_groups": copy.deepcopy(view["navigation_groups"]),
         "projection_routes": copy.deepcopy(view["projection_routes"]),
         "point_table": _row_table(point_rows, point_columns),
-        "placement_table": _row_table(compact_placement_rows, placement_columns),
         "evidence_table": _row_table(evidence_rows, evidence_columns),
         "origin_table": _row_table(view["origin_index"], origin_columns),
         "quote_table": _row_table(quote_rows, quote_columns),
@@ -2022,9 +2176,7 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "semantic_unit_table": _row_table(
             [semantic_units[key] for key in sorted(semantic_units)], semantic_columns
         ),
-        "evidence_accounting_contract": copy.deepcopy(
-            view["evidence_accounting_contract"]
-        ),
+        "evidence_accounting_contract": _reader_evidence_accounting_contract(),
         "decision_state_contract": _decision_state_reader_contract(
             view["decision_state_contract"]
         ),
@@ -2032,9 +2184,8 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "non_claims": copy.deepcopy(view["non_claims"]),
         "derivation_rules": {
             "placement_origin": (
-                "placement point_id plus selected_id joins point relation_facts; its "
-                "evidence_row_id directly selects the zero-based evidence_table row, whose "
-                "evidence_id must match before origin_group_id is used"
+                "each point relation_facts row directly binds selected_id to evidence_row_id; "
+                "the selected evidence_table row's evidence_id must match before origin_group_id is used"
             ),
             "point_relation_facts": (
                 "relation_facts exhaustively bind every displayed placement to the literal "
@@ -2051,15 +2202,12 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
                 "reader semantic_unit_table, preserving exact semantic refs without repeating them"
             ),
             "context_only_semantic_unit_refs": (
-                "placement primary plus companion semantic refs minus semantic refs used by the "
-                "matching relation fact's relation_state_row_ids and "
-                "source_context_state_row_ids, resolved through the same point's state_table and "
-                "reader semantic_unit_table"
+                "relation_facts context_only_semantic_unit_row_ids directly select zero-based "
+                "reader semantic_unit_table rows"
             ),
             "point_placement_and_relation_origins": (
                 "group each point's relation_facts rows by relation, then select evidence_table "
-                "origin_group_id by evidence_row_id after matching evidence_id; placement_table "
-                "carries neither relation nor evidence_id"
+                "origin_group_id by evidence_row_id after matching evidence_id"
             ),
             "origin_evidence_and_containers": (
                 "group evidence_table evidence_id and container_ids by origin_group_id"
@@ -2691,6 +2839,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                                 f"{point_id}::{selected_id}",
                             )
                         placement["relation_semantic_unit_refs"] = relation_refs
+                placements.append(placement)
+                point_placement_ids.append(placement_id)
                 if is_routed_v2 and point_projections[point_id] == "decision_state":
                     state_binding = point_decision_state_bindings.pop(selected_id, None)
                     if state_binding is None:
@@ -2699,7 +2849,11 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                             f"display row lacks a state binding: {point_id}::{selected_id}",
                         )
                     placement["parent_contexts"] = copy.deepcopy(
-                        state_binding["parent_contexts"]
+                        _validated_candidate_parent_contexts(
+                            candidate,
+                            point_id=point_id,
+                            selected_id=selected_id,
+                        )
                     )
                     state_group = _decision_state_group(
                         point_id=point_id,
@@ -2708,8 +2862,6 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                         binding=state_binding,
                     )
                     decision_state_groups.append(state_group)
-                placements.append(placement)
-                point_placement_ids.append(placement_id)
                 observed_relations[relation] += 1
                 relation_origin_ids[relation].add(origin_id)
                 if _is_truth_support_origin(row):
