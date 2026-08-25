@@ -21,7 +21,6 @@ from harness_utils import hash_file
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
-    _expand_packet,
     _verify_packet,
 )
 from judgment.phase_a_evidence_selection import (
@@ -761,6 +760,10 @@ def _no_frontier_axis_candidates(
             "admit_semantic_refs": [],
             "protected_evidence_ids": {},
         },
+        # Axis admission never resolves a parent prompt, so carrying the field
+        # here would stamp every row with an empty parent_context that reads as
+        # "this reply has no parent" instead of "this route did not resolve one".
+        include_parent_context=False,
     )
     if not candidates:
         raise EvidenceConsumerError(
@@ -1061,6 +1064,12 @@ def _build_no_frontier_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
             "conflict": (
                 "conflicting source-native details stay unresolved unless separate authority "
                 "adjudicates them; coexistence is not a defect or an invitation to average"
+            ),
+            "parent_context": (
+                "this pack carries no parent_context field because axis admission resolves "
+                "none; a terse row is therefore not proven self-contained, and any parent "
+                "prompt needed to read it must be recovered from the hash-pinned bundle "
+                "rather than assumed absent"
             ),
             "counting": (
                 "candidate rows are semantic statements, unique evidence items are source "

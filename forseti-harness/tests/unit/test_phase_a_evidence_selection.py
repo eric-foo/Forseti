@@ -213,7 +213,7 @@ def _packet_and_bundle(count: int = 14) -> tuple[dict, dict]:
 
 
 def _no_frontier_source(
-    tmp_path: Path, *, count: int = 5
+    tmp_path: Path, *, count: int = 5, parent_context_text: str | None = None
 ) -> tuple[dict, dict, dict, Path, Path, Path]:
     packet, bundle = _packet_and_bundle(count)
     semantic_axis_index = packet["catalogue_schema"]["semantic_unit_columns"].index(
@@ -226,6 +226,24 @@ def _no_frontier_source(
                 semantic_row[semantic_axis_index] = ["coverage_and_pigment"]
     packet["selection"] = {"mode": "proposition", "proposition_ids": []}
     packet["selection_coverage"] = {"truncated": False}
+    if parent_context_text is not None:
+        unit = bundle["evidence_units"][0]
+        unit["parent_context_refs"] = ["context:shared-parent"]
+        bundle["semantic_work_unit_projection"] = {
+            "context_registry": [
+                {
+                    "context_id": "context:shared-parent",
+                    "context_type": "parent_text",
+                    "source_artifact_id": unit["source_artifact_id"],
+                    "source_ref": "https://reddit.com/thread/parent",
+                    "text": parent_context_text,
+                }
+            ]
+        }
+        bundle.pop("bundle_sha256", None)
+        bundle["bundle_sha256"] = _canonical_hash(bundle)
+        packet["source_bindings"]["bundle_sha256"] = bundle["bundle_sha256"]
+        packet["full_evidence_resolution"]["bundle_sha256"] = bundle["bundle_sha256"]
     packet.pop("packet_sha256", None)
     packet["packet_sha256"] = _canonical_hash(packet)
     frontier = build_customer_pull_point_frontier(
@@ -308,6 +326,46 @@ def test_no_frontier_axis_pack_preserves_every_candidate_and_reprojects(
     assert "not overall sentiment" in pack["reading_contract"]["polarity"]
     assert "routing relevance only" in pack["reading_contract"]["axis_assignment"]
     assert build_phase_a_evidence_axis_pack(manifest) == pack
+    assert (
+        validate_phase_a_evidence_axis_pack(
+            pack, expected_axis_pack_sha256=pack["axis_pack_sha256"]
+        )
+        == pack
+    )
+
+
+def test_no_frontier_axis_pack_never_presents_unresolved_parent_context_as_absent(
+    tmp_path: Path,
+) -> None:
+    parent_text = (
+        "Very underwhelmed by this balm, I think I am returning it. Read more"
+    )
+    _, bundle, _, packet_path, bundle_path, frontier_path = _no_frontier_source(
+        tmp_path, parent_context_text=parent_text
+    )
+    manifest = _no_frontier_manifest(packet_path, bundle_path, frontier_path)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+
+    # The parent prompt is genuinely recoverable from the pinned bundle, so an
+    # empty parent_context on this row would assert an absence the bundle
+    # contradicts and would let a qualifying reply read as a standalone claim.
+    unit = bundle["evidence_units"][0]
+    _, context_registry = evidence_selection._parent_context_indexes(bundle)
+    resolved = evidence_selection._resolved_parent_context(
+        source_id="full-corpus",
+        evidence=unit,
+        bundle_unit=unit,
+        context_registry=context_registry,
+    )
+    assert resolved and resolved[0]["text"] == parent_text
+    assert any(
+        row["evidence_id"] == unit["evidence_id"]
+        for row in pack["candidate_inventory"]
+    )
+
+    assert all("parent_context" not in row for row in pack["candidate_inventory"])
+    assert "hash-pinned bundle" in pack["reading_contract"]["parent_context"]
+    assert "not proven self-contained" in pack["reading_contract"]["parent_context"]
     assert (
         validate_phase_a_evidence_axis_pack(
             pack, expected_axis_pack_sha256=pack["axis_pack_sha256"]
