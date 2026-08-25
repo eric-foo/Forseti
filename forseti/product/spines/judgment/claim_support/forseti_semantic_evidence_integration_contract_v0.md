@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v58
-effective_date: 2026-08-25
+version: v59
+effective_date: 2026-08-26
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v58
+# Semantic Evidence Integration Contract v59
 
 ## Purpose
 
@@ -1700,6 +1700,22 @@ new frontier.
 
 ## Changelog
 
+- `v59` / 2026-08-26 — added the scalable point-local reader after a complete
+  routed v2 axis is built. Each accepted point now has a path-independent,
+  meaning-bound input fingerprint and content-addressed request, response, and
+  compiled brief; unchanged point work can be reused across a changed whole-axis
+  snapshot, while changed method, schema, subject, axis, facts, lineage, or
+  Decision State creates a new identity. Deterministic code restores literal
+  evidence and the complete Decision State ledger, and final assembly emits no
+  axis output until accepted plus rejected membership is exact. Snapshot
+  validation and point-file reading remain linear rather than repeating the
+  whole axis for every point. Cross-vendor adversarial recheck closed stale
+  response reuse, repeated validation, snapshot-scoped brief reuse,
+  store-optional validation, label-addressed requests, and state-identity
+  shadowing; texture dogfood plus a frozen-value sample reproduced exact reuse,
+  failure visibility, and state separation. Added no evidence authority, global
+  index, prevalence or Deliver judgment, interpretation-method change, or
+  frozen v1/v2 output mutation.
 - `v58` / 2026-08-25 — versioned new bounded-point quote manifests to v8 and
   removed the 220-character semantic ceiling. The threshold remains only for
   deterministic full-copying of short bodies and external-review workload
