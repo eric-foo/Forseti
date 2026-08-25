@@ -981,15 +981,22 @@ merging its propositions: hydration efficacy, drying consequences, and
 comparator performance. Balm Dotcom and Rhode remain separate bounded points,
 and delayed drying/cracking remains separate from direct drying.
 
-For every routed v2 view, `point_index[*].authoritative_point_meaning` repeats
-`bounded_point` exactly and is the authoritative admitted meaning, including any
-literal comparator, time, or personal-fit term. The same point entry carries
-deterministic displayed support, counter, and adjacent row counts. Placement
-normalized meanings explain those point-relative relations; they may not
-broaden, merge, or rewrite the point. This prevents a cold reader from turning,
-for example, evidence about smoothness into a wider "soft or smooth" point when
-the admitted point is only softness, or from hiding mixed evidence by skipping
-its point-local relation accounting.
+For every routed v2 view, `bounded_point` on each point row is the authoritative
+admitted meaning, including any literal comparator, time, or personal-fit term.
+The full point entry carries deterministic displayed support, counter, and
+adjacent row counts as `displayed_relation_row_counts`; the compact Decision
+State point table carries the same displayed-row totals as `relation_counts`.
+These are counts of displayed evidence rows, not distinct evidence origins,
+people, prevalence, or the `source_observation_count` inside a same-origin
+group. They may therefore exceed the same relation's distinct-origin count.
+Placement normalized meanings explain point-relative relations; they may not
+broaden, merge, or rewrite the point.
+
+This named authority makes a broader point or a misreported count contradict
+the emitted point row; it cannot force a non-compliant reader to obey. For
+example, evidence about smoothness cannot truthfully widen a point that admits
+only softness, and two displayed supporting rows from one origin remain two
+rows but only one independent origin.
 
 The view also separates Reddit posts from Reddit comments before presenting
 source-native engagement. It does not normalize, percentile-rank, or compare a

@@ -63,11 +63,16 @@ DIRECT_OUTCOME_BOUNDARIES = (
 )
 EVIDENCE_ACCOUNTING_CONTRACT = {
     "point_meaning_rule": (
-        "point_index[*].authoritative_point_meaning exactly repeats bounded_point and is the "
-        "authoritative admitted point meaning, including literal comparator, time, and "
-        "personal-fit terms; placement normalized meanings are point-relative evidence and "
-        "may support, counter, qualify, or sit adjacent, but never broaden, merge, or rewrite "
-        "the point"
+        "bounded_point on each point row is the authoritative admitted meaning, including "
+        "literal comparator, time, and personal-fit terms; placement normalized meanings "
+        "are point-relative evidence and may support, counter, qualify, or sit adjacent, "
+        "but never broaden, merge, or rewrite the point"
+    ),
+    "displayed_relation_count_rule": (
+        "point-row relation totals count displayed evidence rows by relation; they are "
+        "distinct from relation origin-id arrays and same-origin source_observation_count, "
+        "may exceed the distinct-origin count, and are never independent-origin credit, "
+        "a people count, or prevalence"
     ),
     "independent_origin_rule": (
         "point relation origin-id arrays count distinct evidence origins; multiple source "
@@ -2497,8 +2502,7 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             }
         if is_routed_v2:
             point_entry["projection_mode"] = point_projections[point_id]
-            point_entry["authoritative_point_meaning"] = artifact["bounded_point"]
-            point_entry["displayed_relation_counts"] = copy.deepcopy(
+            point_entry["displayed_relation_row_counts"] = copy.deepcopy(
                 observed_relations
             )
             point_entry["same_origin_observation_groups"] = (

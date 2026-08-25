@@ -801,6 +801,7 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
     direct_view = build_axis_consolidated_view(spec)
     point = next(row for row in direct_view["point_index"] if row["point_id"] == "point_a")
     assert point["support_origin_ids"] == ["scope::reddit:alice"]
+    assert point["displayed_relation_row_counts"]["support"] == 1
     assert len(point["same_origin_observation_groups"]) == 1
     group = point["same_origin_observation_groups"][0]
     assert group["source_observation_count"] == 2
@@ -836,6 +837,7 @@ def test_same_origin_repeated_observation_survives_without_adding_origin_credit(
         if row[columns.index("point_id")] == "point_a"
     )
     assert point_row[columns.index("same_origin_observation_groups")] == [group]
+    assert point_row[columns.index("relation_counts")]["support"] == 1
     assert build_axis_consolidated_view(spec) == decision_view
 
 
@@ -844,18 +846,27 @@ def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
 ) -> None:
     spec, paths = _fixture(tmp_path, monkeypatch)
     expected = (
-        "point_index[*].authoritative_point_meaning exactly repeats bounded_point and is the "
-        "authoritative admitted point meaning, including literal comparator, time, and "
-        "personal-fit terms; placement normalized meanings are point-relative evidence and "
-        "may support, counter, qualify, or sit adjacent, but never broaden, merge, or rewrite "
-        "the point"
+        "bounded_point on each point row is the authoritative admitted meaning, including "
+        "literal comparator, time, and personal-fit terms; placement normalized meanings "
+        "are point-relative evidence and may support, counter, qualify, or sit adjacent, "
+        "but never broaden, merge, or rewrite the point"
+    )
+    count_rule = (
+        "point-row relation totals count displayed evidence rows by relation; they are "
+        "distinct from relation origin-id arrays and same-origin source_observation_count, "
+        "may exceed the distinct-origin count, and are never independent-origin credit, "
+        "a people count, or prevalence"
     )
 
     direct_view = build_axis_consolidated_view(spec)
     assert direct_view["evidence_accounting_contract"]["point_meaning_rule"] == expected
+    assert (
+        direct_view["evidence_accounting_contract"]["displayed_relation_count_rule"]
+        == count_rule
+    )
     for point in direct_view["point_index"]:
-        assert point["authoritative_point_meaning"] == point["bounded_point"]
-        assert point["displayed_relation_counts"] == {
+        assert "authoritative_point_meaning" not in point
+        assert point["displayed_relation_row_counts"] == {
             relation: sum(
                 placement["point_id"] == point["point_id"]
                 and placement["relation"] == relation
@@ -870,11 +881,19 @@ def test_routed_views_keep_bounded_point_authoritative_over_placement_meanings(
     spec["source_axis_pack_sha256"] = hash_file(paths["axis"])
     _route_every_point_as_decision_state(spec)
     decision_view = build_axis_consolidated_view(spec)
+    reader = decision_view["decision_state_reader_surface"]
+    assert reader["evidence_accounting_contract"]["point_meaning_rule"] == expected
     assert (
-        decision_view["decision_state_reader_surface"][
-            "evidence_accounting_contract"
-        ]["point_meaning_rule"]
-        == expected
+        reader["evidence_accounting_contract"]["displayed_relation_count_rule"]
+        == count_rule
+    )
+    point_columns = reader["point_table"]["columns"]
+    assert "bounded_point" in point_columns
+    assert "relation_counts" in point_columns
+    assert "point_index" not in reader
+    assert all(
+        "point_index" not in rule and "authoritative_point_meaning" not in rule
+        for rule in reader["evidence_accounting_contract"].values()
     )
 
 
