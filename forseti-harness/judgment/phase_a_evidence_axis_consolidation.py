@@ -9,6 +9,7 @@ claim-relative placement needed to reconstruct every displayed point.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from collections import defaultdict
 from datetime import datetime
@@ -36,6 +37,7 @@ CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
 LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
+AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v1"
 SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
@@ -3561,6 +3563,701 @@ def validate_axis_dogfood_truth_index(
             "saved truth index differs from the validated source view",
         )
     return rebuilt
+
+
+def _axis_reader_fact_bytes(rows: Sequence[Mapping[str, Any]]) -> bytes:
+    """Serialize complete reader facts deterministically as one JSON object per line."""
+
+    return b"".join(
+        json.dumps(
+            dict(row),
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        + b"\n"
+        for row in rows
+    )
+
+
+def _axis_reader_point_filename(point_id: str) -> str:
+    """Keep ordinary point ids readable without restricting valid identities."""
+
+    if (
+        point_id not in {".", ".."}
+        and all(character.isalnum() or character in "._-" for character in point_id)
+    ):
+        return f"{point_id}.jsonl"
+    digest = hashlib.sha256(point_id.encode("utf-8")).hexdigest()
+    return f"point_{digest}.jsonl"
+
+
+def build_axis_reader_bundle(
+    view: Mapping[str, Any], *, source_view_path: Path, facts_dir: Path
+) -> tuple[dict[str, Any], dict[str, bytes]]:
+    """Build a route-aware manifest plus self-contained fact stream for cold readers.
+
+    The validated consolidated view remains authoritative.  This bundle changes only
+    physical reading locality: every displayed placement carries its literal meaning,
+    provenance, quote, companions, and any authored decision states in one fact.
+    """
+
+    source_view_path = source_view_path.resolve()
+    facts_dir = facts_dir.resolve()
+    source_bytes = source_view_path.read_bytes()
+    source_file_value = json.loads(source_bytes.decode("utf-8-sig"))
+    if not isinstance(source_file_value, dict) or source_file_value != dict(view):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification",
+            "source view path does not contain the supplied view",
+        )
+    validated = validate_axis_consolidated_view(
+        view,
+        expected_view_sha256=_required_string(
+            view, "view_sha256", boundary="axis_reader_bundle_verification"
+        ),
+    )
+    if validated.get("schema_version") != CONSOLIDATED_VIEW_VERSION:
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification",
+            "reader bundles require a point-routed v2 consolidated view",
+        )
+
+    point_rows = validated.get("point_index")
+    placement_rows = validated.get("point_placements")
+    if not isinstance(point_rows, list) or not isinstance(placement_rows, list):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "validated view lacks point placements"
+        )
+    point_by_id = {
+        _required_string(row, "point_id", boundary="axis_reader_bundle_verification"): row
+        for row in point_rows
+        if isinstance(row, Mapping)
+    }
+    if len(point_by_id) != len(point_rows):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "point identity is duplicated"
+        )
+    evidence_by_id = {
+        row["evidence_id"]: row for row in validated.get("evidence_index", [])
+    }
+    origin_by_id = {
+        row["origin_group_id"]: row for row in validated.get("origin_index", [])
+    }
+    quote_by_id = {
+        row["quote_span_id"]: row for row in validated.get("quote_spans", [])
+    }
+    companion_by_ref = {
+        row["semantic_unit_ref"]: row
+        for row in validated.get("companion_meaning_index", [])
+    }
+
+    state_binding_by_key: dict[tuple[str, str], dict[str, Any]] = {}
+    if isinstance(validated.get("decision_state_groups"), list):
+        placements_by_id = {
+            row["placement_id"]: row for row in placement_rows
+        }
+        bindings = _bindings_from_decision_state_groups(
+            _expand_compact_decision_state_groups(validated),
+            placements=placements_by_id,
+        )
+        for point_binding in bindings:
+            for row in point_binding["rows"]:
+                state_binding_by_key[(point_binding["point_id"], row["selected_id"])] = row
+
+    facts: list[dict[str, Any]] = []
+    observed_placements: set[str] = set()
+    for placement in sorted(
+        placement_rows, key=lambda row: (row["point_id"], row["placement_id"])
+    ):
+        if not isinstance(placement, Mapping):
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "point placement is invalid"
+            )
+        point_id = _required_string(
+            placement, "point_id", boundary="axis_reader_bundle_verification"
+        )
+        point = point_by_id.get(point_id)
+        if point is None:
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "placement point is unresolved"
+            )
+        placement_id = _required_string(
+            placement, "placement_id", boundary="axis_reader_bundle_verification"
+        )
+        if placement_id in observed_placements:
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "placement identity is duplicated"
+            )
+        observed_placements.add(placement_id)
+        evidence_id = _required_string(
+            placement, "evidence_id", boundary="axis_reader_bundle_verification"
+        )
+        origin_group_id = _required_string(
+            placement, "origin_group_id", boundary="axis_reader_bundle_verification"
+        )
+        quote_span_id = _required_string(
+            placement, "quote_span_id", boundary="axis_reader_bundle_verification"
+        )
+        try:
+            evidence = evidence_by_id[evidence_id]
+            origin = origin_by_id[origin_group_id]
+            quote = quote_by_id[quote_span_id]
+        except KeyError as exc:
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification",
+                f"placement literal binding is unresolved: {placement_id}",
+            ) from exc
+        companion_refs = list(placement["same_evidence_companion_meaning_refs"])
+        try:
+            companion_meanings = [
+                copy.deepcopy(companion_by_ref[ref]) for ref in companion_refs
+            ]
+        except KeyError as exc:
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification",
+                f"placement companion meaning is unresolved: {placement_id}",
+            ) from exc
+        state_binding = state_binding_by_key.get(
+            (point_id, _required_string(
+                placement, "selected_id", boundary="axis_reader_bundle_verification"
+            ))
+        )
+        relation_refs = (
+            state_binding["relation_semantic_unit_refs"]
+            if state_binding is not None
+            else placement.get(
+                "relation_semantic_unit_refs", [placement["semantic_unit_ref"]]
+            )
+        )
+        context = placement["candidate_context"]
+        fact: dict[str, Any] = {
+            "point_id": point_id,
+            "bounded_point": point["bounded_point"],
+            "projection_mode": point["projection_mode"],
+            "placement_id": placement_id,
+            "selected_id": placement["selected_id"],
+            "relation": placement["relation"],
+            "layer": placement["layer"],
+            "reason_code": placement["reason_code"],
+            "display_label": placement["display_label"],
+            "point_relative_meaning": {
+                "semantic_unit_ref": placement["semantic_unit_ref"],
+                "statement": placement["normalized_meaning"],
+                "relation_semantic_unit_refs": copy.deepcopy(relation_refs),
+                "conditions": copy.deepcopy(context["conditions"]),
+                "polarity": context["polarity"],
+                "axis_ids": copy.deepcopy(context["axis_ids"]),
+                "independence_posture": context["independence_posture"],
+                "product_version_ids": copy.deepcopy(context["product_version_ids"]),
+                "retained_unmerged": context["retained_unmerged"],
+                "uncertainty_posture": context["uncertainty_posture"],
+            },
+            "evidence": {
+                "evidence_id": evidence["evidence_id"],
+                "origin_group_id": evidence["origin_group_id"],
+                "source_venue": evidence["source_venue"],
+                "source_role": evidence["source_role"],
+                "content_surface": evidence["content_surface"],
+                "source_ref": evidence["source_ref"],
+                "publication_time": evidence["publication_time"],
+                "engagement": copy.deepcopy(evidence["engagement"]),
+                "container_ids": copy.deepcopy(evidence["container_ids"]),
+            },
+            "origin": {
+                "origin_group_id": origin["origin_group_id"],
+                "independence_key": origin["independence_key"],
+                "independence_posture": origin["independence_posture"],
+            },
+            "quote": {
+                "quote_span_id": quote["quote_span_id"],
+                "evidence_id": quote["evidence_id"],
+                "quote_status": quote["quote_status"],
+                "exact_quote": quote["exact_quote"],
+                "quote_unavailable_cause": quote["quote_unavailable_cause"],
+            },
+            "companion_meanings": companion_meanings,
+            "parent_contexts": copy.deepcopy(placement.get("parent_contexts", [])),
+            "origin_candidate_ids": copy.deepcopy(placement["origin_candidate_ids"]),
+        }
+        if state_binding is not None:
+            fact["decision_state"] = copy.deepcopy(state_binding)
+        facts.append(fact)
+
+    if len(facts) != validated["counts"]["placement_count"]:
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "reader fact coverage is incomplete"
+        )
+    unbound_state_rows = sorted(set(state_binding_by_key) - {
+        (fact["point_id"], fact["selected_id"]) for fact in facts
+    })
+    if unbound_state_rows:
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "decision-state fact is unresolved"
+        )
+
+    source_axis_pack = validated.get("source_axis_pack")
+    if not isinstance(source_axis_pack, Mapping):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "source axis pack binding is missing"
+        )
+    axis_pack_path = Path(_required_string(
+        source_axis_pack, "path", boundary="axis_reader_bundle_verification"
+    ))
+    axis_pack = _load_object(axis_pack_path, boundary="axis_reader_bundle_verification")
+    rejected_points = validated.get("rejected_point_index")
+    if rejected_points is None:
+        rejected_points = axis_pack.get("rejected_points")
+    if not isinstance(rejected_points, list):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "rejected frontier is unresolved"
+        )
+
+    fact_rows_by_point: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for fact in facts:
+        fact_rows_by_point[fact["point_id"]].append(fact)
+    facts_by_point = {
+        point_id: _axis_reader_fact_bytes(fact_rows_by_point[point_id])
+        for point_id in sorted(point_by_id)
+    }
+    manifest_points: list[dict[str, Any]] = []
+    for point in point_rows:
+        point_id = _required_string(
+            point, "point_id", boundary="axis_reader_bundle_verification"
+        )
+        point_facts = facts_by_point[point_id]
+        point_row = copy.deepcopy(point)
+        point_row["facts_file"] = {
+            "path": str(facts_dir / _axis_reader_point_filename(point_id)),
+            "fact_count": len(fact_rows_by_point[point_id]),
+            "raw_sha256": hashlib.sha256(point_facts).hexdigest(),
+        }
+        manifest_points.append(point_row)
+    manifest: dict[str, Any] = {
+        "schema_version": AXIS_READER_MANIFEST_VERSION,
+        "axis_id": validated["axis_id"],
+        "source_view": {
+            "path": str(source_view_path),
+            "raw_sha256": hashlib.sha256(source_bytes).hexdigest(),
+            "view_sha256": validated["view_sha256"],
+        },
+        "source_axis_pack": copy.deepcopy(dict(source_axis_pack)),
+        "counts": copy.deepcopy(validated["counts"]),
+        "navigation_groups": copy.deepcopy(validated["navigation_groups"]),
+        "projection_routes": copy.deepcopy(validated["projection_routes"]),
+        "points": manifest_points,
+        "rejected_points": sorted(
+            copy.deepcopy(rejected_points), key=lambda row: row["point_id"]
+        ),
+        "facts_directory": {
+            "path": str(facts_dir),
+            "format": "one complete displayed fact per JSON line",
+            "lookup_rule": "read each point facts_file exactly once",
+            "fact_count": len(facts),
+            "point_file_count": len(facts_by_point),
+        },
+        "evidence_accounting_contract": copy.deepcopy(
+            validated["evidence_accounting_contract"]
+        ),
+        "non_claims": copy.deepcopy(validated["non_claims"]),
+        "reader_rule": (
+            "Read each point facts_file exactly once and process every displayed fact. "
+            "Display order is navigation, "
+            "not importance. bounded_point is the exact point meaning; a fact's statement "
+            "explains its relation but never redefines or broadens that point. Each fact "
+            "keeps its point-relative meaning, literal evidence, "
+            "origin, quote, companion meanings, and any authored decision states together; "
+            "do not transfer meaning or metadata across facts. The fact's relation is "
+            "authoritative for exactly the semantic refs listed in "
+            "point_relative_meaning.relation_semantic_unit_refs; never relabel it from "
+            "the quote or give it to any other companion meaning. Never describe a whole "
+            "relation bucket from representative examples: either verify every fact in the "
+            "bucket or use explicitly non-exhaustive wording such as 'includes'. Keep publication times literal; "
+            "do not calculate an elapsed interval unless the source states it. Any exact "
+            "relation counts or all-evidence source-surface summary must come from every fact "
+            "in that point file. A summary labelled representative may name only the facts "
+            "actually displayed as representatives. If a displayed representative has "
+            "quote_status quote_available, either reproduce its exact quote or retain "
+            "quote_span_id with the point, evidence, and relation so the bound quote stays directly recoverable; "
+            "never substitute an unbound excerpt. When a neighboring meaning is authored as "
+            "support, describe it as evidence for the exact bounded_point; never rewrite "
+            "the admitted point as an OR-list of neighboring meanings. Any output field "
+            "for the exact or admitted meaning must copy bounded_point verbatim and contain "
+            "nothing else; put evidence explanations and qualifiers in separate fields. "
+            "A structured point brief must copy displayed_relation_row_counts and "
+            "truth_origin_count into reader_accounting; these are rows and origin groups, "
+            "never people, votes, or prevalence."
+        ),
+    }
+    if "decision_state_contract" in validated:
+        manifest["decision_state_contract"] = copy.deepcopy(
+            validated["decision_state_contract"]
+        )
+    manifest["reader_manifest_sha256"] = _canonical_json_sha256(manifest)
+    return manifest, facts_by_point
+
+
+def validate_axis_reader_bundle(
+    manifest: Mapping[str, Any],
+    *,
+    facts_dir: Path,
+    expected_reader_manifest_sha256: str,
+) -> tuple[dict[str, Any], dict[str, bytes]]:
+    """Rebuild a saved reader bundle from its independently hash-pinned source view."""
+
+    if manifest.get("schema_version") != AXIS_READER_MANIFEST_VERSION:
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "unsupported reader manifest version"
+        )
+    stored = manifest.get("reader_manifest_sha256")
+    if stored != expected_reader_manifest_sha256:
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification",
+            "trusted reader manifest identity differs from saved manifest",
+        )
+    payload = {
+        key: value for key, value in manifest.items()
+        if key != "reader_manifest_sha256"
+    }
+    if not isinstance(stored, str) or stored != _canonical_json_sha256(payload):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "stored reader manifest hash is invalid"
+        )
+    facts_dir = facts_dir.resolve()
+    directory_binding = manifest.get("facts_directory")
+    point_rows = manifest.get("points")
+    if (
+        not isinstance(directory_binding, Mapping)
+        or directory_binding.get("path") != str(facts_dir)
+        or not isinstance(point_rows, list)
+    ):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "reader facts directory changed"
+        )
+    fact_streams: dict[str, bytes] = {}
+    total_fact_count = 0
+    expected_paths: set[Path] = set()
+    for point in point_rows:
+        if not isinstance(point, Mapping):
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "reader point is invalid"
+            )
+        point_id = _required_string(
+            point, "point_id", boundary="axis_reader_bundle_verification"
+        )
+        facts_binding = point.get("facts_file")
+        if not isinstance(facts_binding, Mapping):
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "reader point facts are missing"
+            )
+        facts_path = Path(_required_string(
+            facts_binding, "path", boundary="axis_reader_bundle_verification"
+        )).resolve()
+        expected_path = (facts_dir / _axis_reader_point_filename(point_id)).resolve()
+        if facts_path != expected_path:
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "reader point facts path changed"
+            )
+        facts_bytes = facts_path.read_bytes()
+        expected_paths.add(facts_path)
+        if facts_binding.get("raw_sha256") != hashlib.sha256(facts_bytes).hexdigest():
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "reader fact bytes changed"
+            )
+        try:
+            parsed_facts = [
+                json.loads(line) for line in facts_bytes.decode("utf-8").splitlines()
+            ]
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "reader fact stream is invalid"
+            ) from exc
+        if (
+            any(not isinstance(row, dict) for row in parsed_facts)
+            or len(parsed_facts) != facts_binding.get("fact_count")
+        ):
+            raise EvidenceConsumerError(
+                "axis_reader_bundle_verification", "reader fact count changed"
+            )
+        fact_streams[point_id] = facts_bytes
+        total_fact_count += len(parsed_facts)
+    if (
+        total_fact_count != directory_binding.get("fact_count")
+        or len(fact_streams) != directory_binding.get("point_file_count")
+        or set(facts_dir.glob("*.jsonl")) != expected_paths
+    ):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "reader facts directory is incomplete"
+        )
+    source_view = manifest.get("source_view")
+    if not isinstance(source_view, Mapping):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "source view binding is missing"
+        )
+    source_path = Path(_required_string(
+        source_view, "path", boundary="axis_reader_bundle_verification"
+    ))
+    if hash_file(source_path) != source_view.get("raw_sha256"):
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_verification", "source view raw bytes changed"
+        )
+    source = _load_object(source_path, boundary="axis_reader_bundle_verification")
+    rebuilt_manifest, rebuilt_fact_streams = build_axis_reader_bundle(
+        source, source_view_path=source_path, facts_dir=facts_dir
+    )
+    if rebuilt_manifest != dict(manifest) or rebuilt_fact_streams != fact_streams:
+        raise EvidenceConsumerError(
+            "axis_reader_bundle_reprojection",
+            "saved reader bundle differs from the validated source view",
+        )
+    return rebuilt_manifest, rebuilt_fact_streams
+
+
+def validate_axis_reader_structured_output(
+    manifest: Mapping[str, Any],
+    *,
+    facts_dir: Path,
+    expected_reader_manifest_sha256: str,
+    output: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Fail loud when a structured cold-reader brief misbinds reader facts."""
+
+    validated, fact_streams = validate_axis_reader_bundle(
+        manifest,
+        facts_dir=facts_dir,
+        expected_reader_manifest_sha256=expected_reader_manifest_sha256,
+    )
+    point_contract = {
+        point["point_id"]: (point["bounded_point"], point["projection_mode"])
+        for point in validated["points"]
+    }
+    accounting_contract = {
+        point["point_id"]: {
+            "displayed_relation_row_counts": point["displayed_relation_row_counts"],
+            "truth_origin_count": point["truth_origin_count"],
+        }
+        for point in validated["points"]
+    }
+    facts_by_point = {
+        point_id: [
+            json.loads(line)
+            for line in fact_bytes.decode("utf-8").splitlines()
+        ]
+        for point_id, fact_bytes in fact_streams.items()
+    }
+
+    def validated_point_rows(field: str, route_field: str) -> list[Mapping[str, Any]]:
+        rows = output.get(field)
+        if not isinstance(rows, list) or any(
+            not isinstance(row, Mapping) for row in rows
+        ):
+            raise EvidenceConsumerError(
+                "axis_reader_output_verification",
+                f"structured output {field} is missing or invalid",
+            )
+        observed_ids = [row.get("point_id") for row in rows]
+        if len(observed_ids) != len(set(observed_ids)) or set(observed_ids) != set(
+            point_contract
+        ):
+            raise EvidenceConsumerError(
+                "axis_reader_output_verification",
+                f"structured output {field} does not account every accepted point once",
+            )
+        for row in rows:
+            point_id = row["point_id"]
+            bounded_point, projection_mode = point_contract[point_id]
+            if (
+                row.get("bounded_point") != bounded_point
+                or row.get(route_field) != projection_mode
+            ):
+                raise EvidenceConsumerError(
+                    "axis_reader_output_verification",
+                    "structured output changed a point identity, meaning, or route",
+                )
+        return rows
+
+    validated_point_rows("point_accounting", "route")
+    accepted_rows = validated_point_rows("accepted_points", "projection_route")
+    representative_count = 0
+    for point_row in accepted_rows:
+        point_id = point_row["point_id"]
+        bounded_point = point_contract[point_id][0]
+        if point_row.get("exact_phase_a_meaning") != bounded_point:
+            raise EvidenceConsumerError(
+                "axis_reader_output_verification",
+                "structured output changed the exact admitted meaning",
+            )
+        if point_row.get("reader_accounting") != accounting_contract[point_id]:
+            raise EvidenceConsumerError(
+                "axis_reader_output_verification",
+                "structured output changed or omitted exact reader accounting",
+            )
+        representatives = point_row.get("representative_evidence")
+        if not isinstance(representatives, list) or any(
+            not isinstance(row, Mapping) for row in representatives
+        ):
+            raise EvidenceConsumerError(
+                "axis_reader_output_verification",
+                "structured output representatives are missing or invalid",
+            )
+        for representative in representatives:
+            representative_count += 1
+            evidence_id = representative.get("evidence_id")
+            relation = representative.get("relation")
+            quote_status = representative.get("quote_status")
+            exact_quote = representative.get("exact_quote")
+            quote_span_id = representative.get("quote_span_id")
+            has_bound_handle = isinstance(quote_span_id, str)
+            matching_facts = [
+                fact
+                for fact in facts_by_point[point_id]
+                if fact["evidence"]["evidence_id"] == evidence_id
+                and fact["relation"] == relation
+                and fact["quote"]["quote_status"] == quote_status
+                and (
+                    (
+                        has_bound_handle
+                        and fact["quote"]["quote_span_id"] == quote_span_id
+                        and exact_quote in {None, fact["quote"]["exact_quote"]}
+                    )
+                    or (
+                        not has_bound_handle
+                        and fact["quote"]["exact_quote"] == exact_quote
+                    )
+                )
+            ]
+            if not matching_facts or (
+                quote_status == "quote_available"
+                and not has_bound_handle
+                and (not isinstance(exact_quote, str) or not exact_quote)
+            ):
+                raise EvidenceConsumerError(
+                    "axis_reader_output_verification",
+                    "structured output cited a cross-point, wrong-relation, or missing quote",
+                )
+    return {
+        "status": "valid",
+        "point_count": len(point_contract),
+        "representative_count": representative_count,
+        "reader_manifest_sha256": validated["reader_manifest_sha256"],
+    }
+
+
+def bind_axis_reader_output_schema(
+    manifest: Mapping[str, Any], base_schema: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Bind structured brief point identities and counts for constrained decoding."""
+
+    if manifest.get("schema_version") != AXIS_READER_MANIFEST_VERSION:
+        raise EvidenceConsumerError(
+            "axis_reader_output_schema_binding", "unsupported reader manifest version"
+        )
+    properties = base_schema.get("properties")
+    if not isinstance(properties, Mapping):
+        raise EvidenceConsumerError(
+            "axis_reader_output_schema_binding", "base schema properties are missing"
+        )
+    schema = copy.deepcopy(dict(base_schema))
+    bound_properties = schema["properties"]
+    point_rows = manifest.get("points")
+    if not isinstance(point_rows, list) or not point_rows:
+        raise EvidenceConsumerError(
+            "axis_reader_output_schema_binding", "reader points are missing"
+        )
+
+    def bind_items(field: str, constants: Sequence[Mapping[str, Any]]) -> None:
+        def bind_value(property_schema: dict[str, Any], value: Any) -> dict[str, Any]:
+            bound = copy.deepcopy(property_schema)
+            if isinstance(value, Mapping):
+                child_properties = bound.get("properties")
+                if not isinstance(child_properties, dict):
+                    raise EvidenceConsumerError(
+                        "axis_reader_output_schema_binding",
+                        f"base schema {field} object properties are missing",
+                    )
+                for child_key, child_value in value.items():
+                    child_schema = child_properties.get(child_key)
+                    if not isinstance(child_schema, dict):
+                        raise EvidenceConsumerError(
+                            "axis_reader_output_schema_binding",
+                            f"base schema {field} lacks {child_key}",
+                        )
+                    child_properties[child_key] = bind_value(child_schema, child_value)
+                return bound
+            if "type" not in bound:
+                raise EvidenceConsumerError(
+                    "axis_reader_output_schema_binding",
+                    f"base schema {field} scalar lacks a type",
+                )
+            bound["const"] = copy.deepcopy(value)
+            return bound
+
+        array_schema = bound_properties.get(field)
+        if not isinstance(array_schema, dict) or not isinstance(
+            array_schema.get("items"), Mapping
+        ):
+            raise EvidenceConsumerError(
+                "axis_reader_output_schema_binding",
+                f"base schema {field} item contract is missing",
+            )
+        template = array_schema["items"]
+        variants = []
+        for row_constants in constants:
+            variant = copy.deepcopy(dict(template))
+            item_properties = variant.get("properties")
+            if not isinstance(item_properties, dict):
+                raise EvidenceConsumerError(
+                    "axis_reader_output_schema_binding",
+                    f"base schema {field} properties are missing",
+                )
+            for key, value in row_constants.items():
+                if key not in item_properties:
+                    raise EvidenceConsumerError(
+                        "axis_reader_output_schema_binding",
+                        f"base schema {field} lacks {key}",
+                    )
+                property_schema = item_properties[key]
+                if not isinstance(property_schema, dict) or "type" not in property_schema:
+                    raise EvidenceConsumerError(
+                        "axis_reader_output_schema_binding",
+                        f"base schema {field}.{key} lacks a type",
+                    )
+                item_properties[key] = bind_value(property_schema, value)
+            variants.append(variant)
+        array_schema["minItems"] = len(constants)
+        array_schema["maxItems"] = len(constants)
+        array_schema["items"] = {"anyOf": variants}
+
+    bind_items(
+        "point_accounting",
+        [
+            {
+                "point_id": point["point_id"],
+                "bounded_point": point["bounded_point"],
+                "route": point["projection_mode"],
+            }
+            for point in point_rows
+        ],
+    )
+    bind_items(
+        "accepted_points",
+        [
+            {
+                "point_id": point["point_id"],
+                "bounded_point": point["bounded_point"],
+                "projection_route": point["projection_mode"],
+                "exact_phase_a_meaning": point["bounded_point"],
+                "reader_accounting": {
+                    "displayed_relation_row_counts": point[
+                        "displayed_relation_row_counts"
+                    ],
+                    "truth_origin_count": point["truth_origin_count"],
+                },
+            }
+            for point in point_rows
+        ],
+    )
+    return schema
 
 
 def point_placement_keys(view: Mapping[str, Any]) -> list[tuple[Any, ...]]:

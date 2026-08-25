@@ -76,6 +76,7 @@ Test names below resolve in
 | Several matching statements from one origin remain several source observations but add only one independent origin; literal evidence, date, surface, and native engagement stay attached to each observation. | Two statements from one account are reported as two independent people, or the later statement disappears during origin de-duplication. | `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`, "Independent origins and source observations are different counts"; `EVIDENCE_ACCOUNTING_CONTRACT` and `_same_origin_observation_groups` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_same_origin_repeated_observation_survives_without_adding_origin_credit` and `test_generic_axis_pack_preserves_same_origin_repeated_observation`. | Commit `8442885a`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Every admitted frontier candidate remains accounted; a literal relation rejected for a proved wrong source link stays excluded and cold-resolvable, while counterevidence and the last earning signal cannot be removed. Rejected-only axes require pinned resolution receipts. | A bad literal link is replaced with a nearby quote, or rejected and awkward evidence simply disappears so the axis looks complete. | This workflow, `frontier_relation_rejections` paragraph beginning `That failure removes only`, and rejected-only paragraph beginning `An axis whose entire frontier fails`; `_validate_resolved_frontier_earning` and `_apply_frontier_relation_rejections` in `forseti-harness/judgment/phase_a_evidence_selection.py`; `build_phase_a_evidence_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display`, `test_frontier_relation_rejection_cannot_remove_the_last_earning_signal`, and `test_frontier_relation_rejection_cannot_hide_counterevidence`; axis tests `test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt` and `test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt`. | Commits `9b6dd2ca`, `36a40086`, `3ffe2d4e`; PR [#1515](https://github.com/eric-foo/forseti/pull/1515). |
 | Quote length never decides whether current evidence is truthful. V8 accepts the shortest context-complete contiguous exact span even above 220 characters; 220 remains only the short-body copy/review-workload threshold, and stamped v7 keeps its historical ceiling. | A long truthful explanation is rejected because it is inconvenient to display, or historical v7 replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION` and its v7 compatibility branch in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded`, `test_quote_stopping_before_the_next_source_word_fails_loud`, and `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display` (emulated-v7-producer/current-consumer replay: proves the v7 consumer path still finalizes and keeps its stamped exclusion code, not that saved v7 bytes were reproduced). | Semantic-integration contract changelog `v58`; commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
+| A cold model reads routed v2 evidence through a hash-bound manifest plus one point-local JSONL file containing self-contained displayed facts; route-specific meaning remains inside each fact. | A normalized view or one axis-wide fact stream forces repeated joins or searches, so reading cost becomes unstable or a quote, date, relation, companion meaning, or Decision State is transferred across points. | This workflow, paragraph beginning `When a cold model must read`; `build_axis_reader_bundle` and `validate_axis_reader_bundle` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local`, `test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct`, and `test_axis_reader_bundle_wrong_cause_reaches_reprojection_boundary`. | The landing revision and review disposition are preserved in Git history; no frozen consolidated-view bytes are changed. |
 | Frozen v1 specs and views rebuild under their original shape and bytes; v2-only routing, Decision State, and evidence-accounting fields never leak backward. | A current improvement quietly restamps historical evidence or makes the compatibility control look reproducible when its bytes changed. | This workflow, paragraph containing `The v1 spec and`; `LEGACY_CONSOLIDATION_SPEC_VERSION`, `LEGACY_CONSOLIDATED_VIEW_VERSION`, and `build_axis_consolidated_view` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields`, `test_v1_rejects_decision_state_spec_residue`, and `test_legacy_v1_does_not_gain_evidence_accounting_fields`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. Quote-manifest v7/v8 replay is the separate compatibility boundary in semantic-integration contract changelog `v58`. |
 
 ## Active commercial point-entry boundary
@@ -1043,6 +1044,106 @@ or a material omission that changes the practical evidence picture, remains a
 failure. Token comparisons use the readers' natural consumption and compare
 valid arms in aggregate. Preserve broken runs, but do not let an invalid and
 artificially cheap arm establish compactness against a correct arm.
+
+When a cold model must read a complete routed v2 axis, give it the generated
+axis reader bundle rather than making it repeatedly join the consolidated
+view's normalized tables. The bundle is a physical reading arrangement, not a
+new evidence authority: its manifest points to the independently hash-pinned
+validated view, while each manifest point names one point-local JSONL file with
+one complete displayed fact per line. Each fact carries its point and route, point-relative meaning, literal
+source/date/engagement, origin, relation, quote, companions, parent context,
+and any explicitly authored Decision State together. Direct Outcome,
+Decision State, and mixed axes therefore share one navigation method without
+sharing or flattening their semantic payloads.
+
+```text
+run_phase_a_evidence_axis_consolidation.py build-reader
+  --view <validated-routed-v2-view.json>
+  --manifest-output <new-reader-manifest.json>
+  --facts-output-dir <new-reader-facts-directory>
+
+run_phase_a_evidence_axis_consolidation.py validate-reader
+  --manifest <reader-manifest.json>
+  --facts-dir <reader-facts-directory>
+  --expected-reader-manifest-sha256 <independently-recorded-hash>
+
+run_phase_a_evidence_axis_consolidation.py validate-reader-output
+  --manifest <reader-manifest.json>
+  --facts-dir <reader-facts-directory>
+  --output <structured-reader-brief.json>
+  --expected-reader-manifest-sha256 <independently-recorded-hash>
+
+run_phase_a_evidence_axis_consolidation.py bind-reader-output-schema
+  --manifest <reader-manifest.json>
+  --facts-dir <reader-facts-directory>
+  --base-schema <structured-reader-brief-base-schema.json>
+  --output-schema <new-bound-output-schema.json>
+  --expected-reader-manifest-sha256 <independently-recorded-hash>
+```
+
+The validator deterministically rebuilds the manifest and every point file from the bound view and
+rejects a coherently rehashed omission, cross-point move, wrong relation, date,
+engagement, source surface, quote, companion meaning, parent context, or state
+transition at reader-bundle reprojection. Reader order is navigation rather
+than rank. `bounded_point` remains the exact point meaning; a displayed fact
+explains its relation but never redefines or broadens that point. A fact's
+relation is authoritative for exactly the semantic
+references listed in its
+`point_relative_meaning.relation_semantic_unit_refs`: do not relabel it from
+the wider quote or give it to any other same-evidence companion meaning. Keep
+publication times literal and do not calculate elapsed time between
+observations unless a source states the interval. Do not describe a whole
+support, counter, or adjacent bucket from representative examples: either
+verify every displayed fact in that bucket or use explicitly non-exhaustive
+wording such as `includes`.
+Likewise, exact relation counts and an all-evidence source-surface summary must
+be derived from every fact in the point file. A summary labelled
+`representative` may name only the facts actually displayed as representatives.
+When a displayed representative is `quote_available`, either reproduce its
+exact quote or retain `quote_span_id` with the point, evidence, and relation so
+the bound quote is directly recoverable. Never substitute an unbound excerpt.
+When a neighboring meaning is authored as support, describe it as evidence for
+the exact `bounded_point`; never rewrite the admitted point as an OR-list of
+neighboring meanings. Any output field for the exact or admitted meaning must
+copy `bounded_point` verbatim and contain nothing else; evidence explanations
+and qualifiers belong in separate fields.
+Each structured point brief also copies `displayed_relation_row_counts` and
+`truth_origin_count` into `reader_accounting`. These are exact displayed-row
+and origin-group accounting, never people, votes, corroboration, or prevalence.
+Before a model emits that shape, bind the base output schema with
+`bind-reader-output-schema`. Constrained decoding then fixes every accepted
+point ID, exact meaning, route, and accounting object before generation; this
+prevents silent swaps and avoids spending a full retry on deterministic
+bookkeeping. `validate-reader-output` remains the post-generation evidence
+backstop.
+When a cold reader emits the structured Phase A brief shape, run
+`validate-reader-output` before using it. This conditional local check rejects
+missing or duplicated accepted points, point ID/meaning/route swaps, broadened
+exact meanings, omitted or changed reader accounting, and representative quotes
+moved across a point or relation, or an unavailable/unbound quote handle. It costs no model call and is not required
+when no structured reader brief is produced.
+
+This exact validation is the standing cost for every generated reader bundle.
+Blind full-versus-reader dogfood is not repeated for every ordinary future
+axis. Repeat it only when the physical reader representation changes, a new
+projection payload is introduced, or an observed axis exposes a material
+reader failure. Such a representation-change comparison uses at least two
+independent compact reads against one unchanged full baseline, mirrored opaque
+labels, zero compact critical errors after home adjudication against the
+authoritative view, no recurring material regression, and materially lower
+logical tokens in each valid repetition. Bound each model call to one silent
+30-minute wall-clock timeout; the local timer does not poll the model or spend
+prompt tokens, and a timeout remains a visible invalid attempt rather than a
+cheap compact result.
+If a judge chooses the same opaque position after the candidates swap labels,
+mark that pair `position_unstable` and exclude both preference votes; retain and
+adjudicate its error findings. Only stable pairs contribute candidate or
+baseline wins, so position bias cannot manufacture either result.
+
+Judge each quote against the specific placement and `quote_span_id` the answer
+cites. One evidence item may lawfully carry more than one exact quote span for
+different displayed facts; a judge must not reject one bound span merely
+because another span from the same evidence ends earlier.
 
 Downstream consumers use generic completed axis packs through the live derived
 `phase_a_evidence_axis_consolidated_view_v2`, built by
