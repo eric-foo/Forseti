@@ -77,6 +77,7 @@ Test names below resolve in
 | Every admitted frontier candidate remains accounted; a literal relation rejected for a proved wrong source link stays excluded and cold-resolvable, while counterevidence and the last earning signal cannot be removed. Rejected-only axes require pinned resolution receipts. | A bad literal link is replaced with a nearby quote, or rejected and awkward evidence simply disappears so the axis looks complete. | This workflow, `frontier_relation_rejections` paragraph beginning `That failure removes only`, and rejected-only paragraph beginning `An axis whose entire frontier fails`; `_validate_resolved_frontier_earning` and `_apply_frontier_relation_rejections` in `forseti-harness/judgment/phase_a_evidence_selection.py`; `build_phase_a_evidence_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display`, `test_frontier_relation_rejection_cannot_remove_the_last_earning_signal`, and `test_frontier_relation_rejection_cannot_hide_counterevidence`; axis tests `test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt` and `test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt`. | Commits `9b6dd2ca`, `36a40086`, `3ffe2d4e`; PR [#1515](https://github.com/eric-foo/forseti/pull/1515). |
 | Quote length never decides whether current evidence is truthful. V8 accepts the shortest context-complete contiguous exact span even above 220 characters; 220 remains only the short-body copy/review-workload threshold, and stamped v7 keeps its historical ceiling. | A long truthful explanation is rejected because it is inconvenient to display, or historical v7 replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION` and its v7 compatibility branch in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded`, `test_quote_stopping_before_the_next_source_word_fails_loud`, and `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display` (emulated-v7-producer/current-consumer replay: proves the v7 consumer path still finalizes and keeps its stamped exclusion code, not that saved v7 bytes were reproduced). | Semantic-integration contract changelog `v58`; commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
 | A cold model reads routed v2 evidence through a hash-bound manifest plus one point-local JSONL file containing self-contained displayed facts; route-specific meaning remains inside each fact. | A normalized view or one axis-wide fact stream forces repeated joins or searches, so reading cost becomes unstable or a quote, date, relation, companion meaning, or Decision State is transferred across points. | This workflow, paragraph beginning `When a cold model must read`; `build_axis_reader_bundle` and `validate_axis_reader_bundle` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local`, `test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct`, and `test_axis_reader_bundle_wrong_cause_reaches_reprojection_boundary`. | The landing revision and review disposition are preserved in Git history; no frozen consolidated-view bytes are changed. |
+| Scalable reader compilation freezes path-independent point identities, lets one worker read one complete point, compiler-attaches exact evidence and Decision State, reuses unchanged briefs, and assembles only exact accepted/rejected membership. | Rebuilding or prompting a whole axis after one point changes wastes work; a compact answer can also look exact while dropping a state, borrowing a quote, or omitting a late worker result. | This workflow, paragraph beginning `For scalable point-at-a-time compilation`; point-reader functions in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` and `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`; axis tests `test_point_reader_compiler_closes_decision_state_at_consumer_boundary`, `test_point_reader_identity_binds_meaning_but_not_storage_path`, `test_point_reader_runner_reuses_valid_points_and_recovers_partial_run`, and `test_point_reader_membership_scales_without_a_whole_axis_schema`. | This route adds generated run bookkeeping, not an evidence authority, global index, hierarchy, or Deliver stage. Frozen v1/v2 outputs remain unchanged. |
 | Frozen v1 specs and views rebuild under their original shape and bytes; v2-only routing, Decision State, and evidence-accounting fields never leak backward. | A current improvement quietly restamps historical evidence or makes the compatibility control look reproducible when its bytes changed. | This workflow, paragraph containing `The v1 spec and`; `LEGACY_CONSOLIDATION_SPEC_VERSION`, `LEGACY_CONSOLIDATED_VIEW_VERSION`, and `build_axis_consolidated_view` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields`, `test_v1_rejects_decision_state_spec_residue`, and `test_legacy_v1_does_not_gain_evidence_accounting_fields`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. Quote-manifest v7/v8 replay is the separate compatibility boundary in semantic-integration contract changelog `v58`. |
 
 ## Active commercial point-entry boundary
@@ -1081,6 +1082,79 @@ run_phase_a_evidence_axis_consolidation.py bind-reader-output-schema
   --expected-reader-manifest-sha256 <independently-recorded-hash>
 ```
 
+For scalable point-at-a-time compilation, use the point-reader run after the
+routed v2 view is complete. This is the default route when points may be
+processed independently, resumed, or selectively rebuilt. The older
+`build-reader` bundle remains a validated reading arrangement and compatibility
+surface; it is not the incremental run ledger.
+
+```text
+run_phase_a_evidence_axis_consolidation.py build-point-reader-run
+  --view <validated-routed-v2-view.json>
+  --subject-identity <company-product-cutoff.json>
+  --manifest-output <new-point-reader-run.json>
+  --point-store-dir <content-addressed-point-directory>
+
+run_phase_a_evidence_axis_consolidation.py validate-point-reader-run
+  --manifest <point-reader-run.json>
+  --point-store-dir <content-addressed-point-directory>
+  --expected-snapshot-sha256 <independently-recorded-hash>
+
+run_phase_a_evidence_axis_consolidation.py prepare-point-reader-requests
+  --manifest <point-reader-run.json>
+  --point-store-dir <content-addressed-point-directory>
+  --output-dir <point-request-directory>
+  --expected-snapshot-sha256 <independently-recorded-hash>
+
+run_phase_a_evidence_axis_consolidation.py finalize-point-reader-run
+  --manifest <point-reader-run.json>
+  --point-store-dir <content-addressed-point-directory>
+  --responses-dir <point-response-directory>
+  --brief-store-dir <content-addressed-brief-directory>
+  --output <new-complete-axis-brief.json>
+  --expected-snapshot-sha256 <independently-recorded-hash>
+
+run_phase_a_evidence_axis_consolidation.py validate-point-reader-output
+  --manifest <point-reader-run.json>
+  --point-store-dir <content-addressed-point-directory>
+  --output <complete-axis-brief.json>
+  --expected-snapshot-sha256 <independently-recorded-hash>
+```
+
+The run freezes one identity per accepted point from the exact company,
+product, cutoff, bounded point, route, point facts, point-scoped Decision State
+ledger, source lineage, method text, response schema, and reader policy. Storage
+paths, file times, and labels alone are not identities. A real change to any
+meaning-bearing input creates a new point identity; an unchanged point reuses
+its exact input and compiled brief across runs and storage locations.
+
+Prepare all requests together so the snapshot is validated once. Each request
+contains one complete point and asks the model only for an interpretation plus
+point-local `placement_id` handles. A placement is the unique fact address;
+the compiler, not the model, restores its literal quote, evidence and origin
+identity, source venue/role/surface, date, native engagement, and relation. For
+Decision State it also attaches the complete exact ledger, including every
+state kind, stage, direction, object, quantity, condition, context-only row,
+and awkward companion state. A coherently rehashed omission or cross-point
+transfer therefore fails at the consumer boundary.
+
+Finalization harvests every valid response or reusable brief even when another
+point is missing. It then fails visibly and emits no axis output until every
+accepted point appears exactly once with no foreign point. A retry needs no
+response file for an already valid brief. Rejected points spend no model call:
+the run generates one receipt for each rejected frontier row, bound to the
+validated axis pack, and exact accepted plus rejected membership is checked at
+assembly. This bookkeeping is local generated state, not a Data Lake object,
+global index, new evidence authority, axis hierarchy, prevalence claim, or
+Deliver recommendation.
+
+The recurring cost is one complete source validation when a new snapshot is
+created, one point request per changed point, and one linear local validation
+and assembly pass. Request preparation and finalization each validate the
+snapshot once rather than once per point. Do not place a whole axis into every
+point schema or re-read every stored point while compiling each brief; those
+turn linear work into repeated whole-axis work without adding truth.
+
 The validator deterministically rebuilds the manifest and every point file from the bound view and
 rejects a coherently rehashed omission, cross-point move, wrong relation, date,
 engagement, source surface, quote, companion meaning, parent context, or state
@@ -1111,11 +1185,11 @@ Each structured point brief also copies `displayed_relation_row_counts` and
 `truth_origin_count` into `reader_accounting`. These are exact displayed-row
 and origin-group accounting, never people, votes, corroboration, or prevalence.
 Before a model emits that shape, bind the base output schema with
-`bind-reader-output-schema`. Constrained decoding then fixes every accepted
-point ID, exact meaning, route, and accounting object before generation; this
-prevents silent swaps and avoids spending a full retry on deterministic
-bookkeeping. `validate-reader-output` remains the post-generation evidence
-backstop.
+`bind-reader-output-schema`. Constrained decoding then keeps each emitted row's
+point ID, exact meaning, route, and accounting object together; it does not
+prove that every point appears exactly once. `validate-reader-output` is the
+post-generation coverage and evidence backstop: it rejects missing or repeated
+points as well as deterministic bookkeeping changes.
 When a cold reader emits the structured Phase A brief shape, run
 `validate-reader-output` before using it. This conditional local check rejects
 missing or duplicated accepted points, point ID/meaning/route swaps, broadened

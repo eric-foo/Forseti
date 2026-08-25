@@ -38,6 +38,40 @@ LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
 AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v1"
+POINT_READER_RUN_MANIFEST_VERSION = "phase_a_evidence_point_reader_run_manifest_v1"
+POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v1"
+POINT_READER_AXIS_OUTPUT_VERSION = "phase_a_evidence_point_reader_axis_output_v1"
+POINT_READER_SUBJECT_IDENTITY_VERSION = "phase_a_point_reader_subject_identity_v1"
+POINT_READER_METHOD_TEXT = (
+    "Read exactly one complete Phase A evidence point. Explain only its bounded point. "
+    "Use the supplied relation and literal evidence without relabelling either. Preserve "
+    "counterevidence and awkward coexistence. For Decision State, distinguish judgment, "
+    "intent, observed action, quantity, object, and conditions; never turn intent into "
+    "observed behavior or several purchased units into several repurchases. Do not infer "
+    "prevalence, causation, market representativeness, pricing power, or a Deliver "
+    "recommendation. Cite only supplied point-local placement handles."
+)
+POINT_READER_RESPONSE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["point_id", "interpretation", "representative_handles"],
+    "properties": {
+        "point_id": {"type": "string"},
+        "interpretation": {"type": "string", "minLength": 1},
+        "representative_handles": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["placement_id"],
+                "properties": {
+                    "placement_id": {"type": "string"},
+                },
+            },
+        },
+    },
+}
 SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
@@ -4106,6 +4140,11 @@ def validate_axis_reader_structured_output(
             relation = representative.get("relation")
             quote_status = representative.get("quote_status")
             exact_quote = representative.get("exact_quote")
+            if exact_quote is not None and not isinstance(exact_quote, str):
+                raise EvidenceConsumerError(
+                    "axis_reader_output_verification",
+                    "structured output representative quote is not literal text",
+                )
             quote_span_id = representative.get("quote_span_id")
             has_bound_handle = isinstance(quote_span_id, str)
             matching_facts = [
@@ -4143,6 +4182,38 @@ def validate_axis_reader_structured_output(
     }
 
 
+def _json_schema_type_admits(declared: Any, value: Any) -> bool:
+    """Report whether a declared JSON Schema type can carry this bound constant.
+
+    A constant pinned onto an incompatible declared type produces a schema no
+    output can satisfy, so the mismatch must fail here rather than surface as an
+    unexplained decoding failure.
+    """
+
+    for name in declared if isinstance(declared, list) else [declared]:
+        if name == "boolean":
+            if isinstance(value, bool):
+                return True
+        elif name in {"integer", "number"}:
+            if isinstance(value, bool):
+                continue
+            if isinstance(value, int) or (name == "number" and isinstance(value, float)):
+                return True
+        elif name == "string":
+            if isinstance(value, str):
+                return True
+        elif name == "null":
+            if value is None:
+                return True
+        elif name == "array":
+            if isinstance(value, list):
+                return True
+        elif name == "object":
+            if isinstance(value, Mapping):
+                return True
+    return False
+
+
 def bind_axis_reader_output_schema(
     manifest: Mapping[str, Any], base_schema: Mapping[str, Any]
 ) -> dict[str, Any]:
@@ -4168,6 +4239,11 @@ def bind_axis_reader_output_schema(
     def bind_items(field: str, constants: Sequence[Mapping[str, Any]]) -> None:
         def bind_value(property_schema: dict[str, Any], value: Any) -> dict[str, Any]:
             bound = copy.deepcopy(property_schema)
+            if "type" in bound and not _json_schema_type_admits(bound["type"], value):
+                raise EvidenceConsumerError(
+                    "axis_reader_output_schema_binding",
+                    f"base schema {field} type cannot carry its bound value",
+                )
             if isinstance(value, Mapping):
                 child_properties = bound.get("properties")
                 if not isinstance(child_properties, dict):
@@ -4258,6 +4334,846 @@ def bind_axis_reader_output_schema(
         ],
     )
     return schema
+
+
+POINT_READER_POLICY = {
+    "semantic_unit": "one complete accepted Phase A point",
+    "model_scope": "interpretation plus point-local evidence handles only",
+    "deterministic_fields": (
+        "subject, point, route, accounting, literal representatives, and the complete "
+        "Decision State ledger are compiler-owned"
+    ),
+    "coverage": "every accepted point exactly once; no duplicate or foreign point",
+    "rejected_frontier": (
+        "each rejected point receives a deterministic receipt bound to the validated "
+        "axis pack; no model call is spent on rejection bookkeeping"
+    ),
+    "non_claims": [
+        "no Deliver recommendation",
+        "no prevalence or causal claim",
+        "no Data Lake persistence or global index",
+        "no axis-level semantic condensation",
+    ],
+}
+
+
+def _point_reader_subject_identity(value: Mapping[str, Any]) -> dict[str, str]:
+    expected = {
+        "schema_version",
+        "company_id",
+        "product_id",
+        "cutoff",
+    }
+    if set(value) != expected or value.get("schema_version") != (
+        POINT_READER_SUBJECT_IDENTITY_VERSION
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_subject_identity", "subject identity fields are invalid"
+        )
+    return {
+        key: _required_string(value, key, boundary="point_reader_subject_identity")
+        for key in ("schema_version", "company_id", "product_id", "cutoff")
+    }
+
+
+def _point_reader_state_ledger(facts: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    ledger: list[dict[str, Any]] = []
+    for fact in facts:
+        raw_state = fact.get("decision_state")
+        if raw_state is None:
+            continue
+        if not isinstance(raw_state, Mapping):
+            raise EvidenceConsumerError(
+                "point_reader_decision_state", "decision-state fact is invalid"
+            )
+        state = copy.deepcopy(dict(raw_state))
+        assertions = state.get("state_assertions")
+        if not isinstance(assertions, list):
+            raise EvidenceConsumerError(
+                "point_reader_decision_state", "decision-state assertions are invalid"
+            )
+        normalized_assertions: list[dict[str, Any]] = []
+        for assertion in assertions:
+            if not isinstance(assertion, Mapping):
+                raise EvidenceConsumerError(
+                    "point_reader_decision_state", "decision-state assertion is invalid"
+                )
+            normalized = copy.deepcopy(dict(assertion))
+            state_kind = _required_string(
+                normalized, "state_kind", boundary="point_reader_decision_state"
+            )
+            stage = DECISION_STATE_CONSUMER_CONTRACT["state_kind_stages"].get(
+                state_kind
+            )
+            if stage is None:
+                raise EvidenceConsumerError(
+                    "point_reader_decision_state", "decision-state kind is unsupported"
+                )
+            if normalized.get("stage") not in (None, stage):
+                raise EvidenceConsumerError(
+                    "point_reader_decision_state", "decision-state stage changed"
+                )
+            normalized["stage"] = stage
+            normalized_assertions.append(normalized)
+        state["state_assertions"] = normalized_assertions
+        row_payload = {
+            "point_id": fact["point_id"],
+            "placement_id": fact["placement_id"],
+            "selected_id": fact["selected_id"],
+            "evidence_id": fact["evidence"]["evidence_id"],
+            "relation": fact["relation"],
+            "decision_state": state,
+        }
+        ledger.append(
+            {
+                "state_row_id": "state_row_"
+                + _canonical_json_sha256(row_payload),
+                "placement_id": fact["placement_id"],
+                "selected_id": fact["selected_id"],
+                "evidence_id": fact["evidence"]["evidence_id"],
+                "relation": fact["relation"],
+                **state,
+            }
+        )
+    return ledger
+
+
+def point_reader_input_sha256(input_contract: Mapping[str, Any]) -> str:
+    """Hash every semantic dependency that must invalidate reusable point work."""
+
+    forbidden = {"path", "absolute_path", "mtime", "point_input_sha256"}
+    if forbidden & set(input_contract):
+        raise EvidenceConsumerError(
+            "point_reader_identity", "point identity contains a storage-local field"
+        )
+    return _canonical_json_sha256(dict(input_contract))
+
+
+def _point_reader_rejected_receipts(
+    rejected: Sequence[Mapping[str, Any]], *, axis_pack_sha256: str
+) -> list[dict[str, Any]]:
+    receipts: list[dict[str, Any]] = []
+    for row in sorted(rejected, key=lambda value: value["point_id"]):
+        receipt = {
+            "schema_version": "phase_a_point_reader_rejected_receipt_v1",
+            "point_id": _required_string(
+                row, "point_id", boundary="point_reader_rejected_frontier"
+            ),
+            "bounded_point": _required_string(
+                row, "bounded_point", boundary="point_reader_rejected_frontier"
+            ),
+            "disposition": _required_string(
+                row, "disposition", boundary="point_reader_rejected_frontier"
+            ),
+            "reason": _required_string(
+                row, "reason", boundary="point_reader_rejected_frontier"
+            ),
+            "source_axis_pack_sha256": axis_pack_sha256,
+            "resolution_kind": "validated_axis_frontier_disposition",
+        }
+        if "resolution_receipt_sha256" in row:
+            receipt["source_resolution_receipt_sha256"] = _required_string(
+                row,
+                "resolution_receipt_sha256",
+                boundary="point_reader_rejected_frontier",
+            )
+        receipt["receipt_sha256"] = _canonical_json_sha256(receipt)
+        receipts.append(receipt)
+    return receipts
+
+
+def build_axis_point_reader_snapshot(
+    view: Mapping[str, Any],
+    *,
+    source_view_path: Path,
+    subject_identity: Mapping[str, Any],
+    method_text: str = POINT_READER_METHOD_TEXT,
+    response_schema: Mapping[str, Any] = POINT_READER_RESPONSE_SCHEMA,
+) -> tuple[dict[str, Any], dict[str, bytes]]:
+    """Create a path-independent point work snapshot over one validated axis."""
+
+    subject = _point_reader_subject_identity(subject_identity)
+    if not isinstance(method_text, str) or not method_text.strip():
+        raise EvidenceConsumerError(
+            "point_reader_method", "point-reader method text is empty"
+        )
+    if not isinstance(response_schema, Mapping):
+        raise EvidenceConsumerError(
+            "point_reader_method", "point-reader response schema is invalid"
+        )
+    source_view_path = source_view_path.resolve()
+    legacy_manifest, point_payloads = build_axis_reader_bundle(
+        view,
+        source_view_path=source_view_path,
+        facts_dir=source_view_path.parent / ".point-reader-runtime",
+    )
+    source_axis_pack = legacy_manifest["source_axis_pack"]
+    axis_pack = _load_object(
+        Path(source_axis_pack["path"]), boundary="point_reader_snapshot"
+    )
+    axis_pack_sha256 = _required_string(
+        axis_pack, "axis_pack_sha256", boundary="point_reader_snapshot"
+    )
+    validate_phase_a_evidence_axis_pack(
+        axis_pack, expected_axis_pack_sha256=axis_pack_sha256
+    )
+    lineage_by_point = {row["point_id"]: row for row in axis_pack["points"]}
+    subject_sha256 = _canonical_json_sha256(subject)
+    method_sha256 = hashlib.sha256(method_text.encode("utf-8")).hexdigest()
+    response_schema_value = copy.deepcopy(dict(response_schema))
+    response_schema_sha256 = _canonical_json_sha256(response_schema_value)
+    policy_sha256 = _canonical_json_sha256(POINT_READER_POLICY)
+
+    point_records: list[dict[str, Any]] = []
+    for legacy_point in sorted(legacy_manifest["points"], key=lambda row: row["point_id"]):
+        point_id = legacy_point["point_id"]
+        payload = point_payloads[point_id]
+        facts = [json.loads(line) for line in payload.decode("utf-8").splitlines()]
+        ledger = _point_reader_state_ledger(facts)
+        lineage = lineage_by_point.get(point_id)
+        if not isinstance(lineage, Mapping):
+            raise EvidenceConsumerError(
+                "point_reader_identity", "point lineage is unresolved"
+            )
+        input_contract = {
+            "subject_identity_sha256": subject_sha256,
+            "axis_id": legacy_manifest["axis_id"],
+            "point_id": point_id,
+            "bounded_point": legacy_point["bounded_point"],
+            "projection_mode": legacy_point["projection_mode"],
+            "point_payload_raw_sha256": hashlib.sha256(payload).hexdigest(),
+            "decision_state_ledger_sha256": _canonical_json_sha256(ledger),
+            "source_lineage": {
+                key: copy.deepcopy(lineage[key])
+                for key in (
+                    "artifact_sha256",
+                    "selection_manifest_file_sha256",
+                    "selection_manifest_sha256",
+                    "quote_manifest_file_sha256",
+                    "quote_manifest_sha256",
+                    "policy_revision",
+                    "policy_lineage",
+                )
+            },
+            "method_text_sha256": method_sha256,
+            "response_schema_sha256": response_schema_sha256,
+            "point_reader_policy_sha256": policy_sha256,
+        }
+        point_input = point_reader_input_sha256(input_contract)
+        point_records.append(
+            {
+                "point_id": point_id,
+                "bounded_point": legacy_point["bounded_point"],
+                "projection_mode": legacy_point["projection_mode"],
+                "displayed_relation_row_counts": copy.deepcopy(
+                    legacy_point["displayed_relation_row_counts"]
+                ),
+                "truth_origin_count": legacy_point["truth_origin_count"],
+                "fact_count": len(facts),
+                "point_payload_file": f"point_{point_input}.jsonl",
+                "response_file": "response_"
+                + hashlib.sha256(point_id.encode("utf-8")).hexdigest()
+                + ".json",
+                "brief_file": f"brief_{point_input}.json",
+                "input_contract": input_contract,
+                "point_input_sha256": point_input,
+            }
+        )
+
+    rejected_receipts = _point_reader_rejected_receipts(
+        legacy_manifest["rejected_points"], axis_pack_sha256=axis_pack_sha256
+    )
+    source_bytes = source_view_path.read_bytes()
+    manifest: dict[str, Any] = {
+        "schema_version": POINT_READER_RUN_MANIFEST_VERSION,
+        "subject_identity": subject,
+        "subject_identity_sha256": subject_sha256,
+        "axis_id": legacy_manifest["axis_id"],
+        "source_binding": {
+            "source_view_raw_sha256": hashlib.sha256(source_bytes).hexdigest(),
+            "source_view_sha256": view["view_sha256"],
+            "source_axis_pack_sha256": axis_pack_sha256,
+        },
+        "method_binding": {
+            "method_text": method_text,
+            "method_text_sha256": method_sha256,
+            "response_schema": response_schema_value,
+            "response_schema_sha256": response_schema_sha256,
+            "point_reader_policy": copy.deepcopy(POINT_READER_POLICY),
+            "point_reader_policy_sha256": policy_sha256,
+        },
+        "points": point_records,
+        "rejected_point_receipts": rejected_receipts,
+        "counts": {
+            "accepted_point_count": len(point_records),
+            "rejected_point_count": len(rejected_receipts),
+            "frontier_point_count": len(point_records) + len(rejected_receipts),
+        },
+        "storage_contract": {
+            "point_store_root": "runtime_supplied",
+            "lookup_rule": "join point_payload_file inside the supplied point store",
+            "portable_identity_excludes": ["absolute paths", "mtimes", "labels alone"],
+        },
+    }
+    manifest["snapshot_sha256"] = _canonical_json_sha256(manifest)
+    return manifest, point_payloads
+
+
+def _validate_point_reader_manifest_shape(
+    manifest: Mapping[str, Any], *, expected_snapshot_sha256: str
+) -> dict[str, Any]:
+    if manifest.get("schema_version") != POINT_READER_RUN_MANIFEST_VERSION:
+        raise EvidenceConsumerError(
+            "point_reader_snapshot", "unsupported point-reader snapshot"
+        )
+    stored = manifest.get("snapshot_sha256")
+    if stored != expected_snapshot_sha256:
+        raise EvidenceConsumerError(
+            "point_reader_snapshot", "trusted snapshot identity changed"
+        )
+    if not isinstance(stored, str) or stored != _canonical_json_sha256(
+        {key: value for key, value in manifest.items() if key != "snapshot_sha256"}
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_snapshot", "stored snapshot identity is invalid"
+        )
+    subject = _point_reader_subject_identity(manifest.get("subject_identity", {}))
+    if manifest.get("subject_identity_sha256") != _canonical_json_sha256(subject):
+        raise EvidenceConsumerError(
+            "point_reader_subject_identity", "subject identity binding changed"
+        )
+    method = manifest.get("method_binding")
+    if not isinstance(method, Mapping):
+        raise EvidenceConsumerError("point_reader_method", "method binding is missing")
+    method_text = method.get("method_text")
+    response_schema = method.get("response_schema")
+    policy = method.get("point_reader_policy")
+    if (
+        not isinstance(method_text, str)
+        or method.get("method_text_sha256")
+        != hashlib.sha256(method_text.encode("utf-8")).hexdigest()
+        or not isinstance(response_schema, Mapping)
+        or method.get("response_schema_sha256")
+        != _canonical_json_sha256(dict(response_schema))
+        or not isinstance(policy, Mapping)
+        or method.get("point_reader_policy_sha256")
+        != _canonical_json_sha256(dict(policy))
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_method", "method content binding changed"
+        )
+    points = manifest.get("points")
+    if not isinstance(points, list) or not points:
+        raise EvidenceConsumerError("point_reader_snapshot", "snapshot points are missing")
+    point_ids = [row.get("point_id") for row in points if isinstance(row, Mapping)]
+    if (
+        len(point_ids) != len(points)
+        or any(not isinstance(point_id, str) for point_id in point_ids)
+        or len(set(point_ids)) != len(point_ids)
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_snapshot", "snapshot point identities are invalid"
+        )
+    for point in points:
+        contract = point.get("input_contract")
+        if not isinstance(contract, Mapping) or point.get(
+            "point_input_sha256"
+        ) != point_reader_input_sha256(contract):
+            raise EvidenceConsumerError(
+                "point_reader_identity", "point input identity changed"
+            )
+        expected_file = f"point_{point['point_input_sha256']}.jsonl"
+        expected_response = (
+            "response_"
+            + hashlib.sha256(point["point_id"].encode("utf-8")).hexdigest()
+            + ".json"
+        )
+        expected_brief = f"brief_{point['point_input_sha256']}.json"
+        if (
+            point.get("point_payload_file") != expected_file
+            or point.get("response_file") != expected_response
+            or point.get("brief_file") != expected_brief
+        ):
+            raise EvidenceConsumerError(
+                "point_reader_identity", "point payload lookup changed"
+            )
+    counts = manifest.get("counts")
+    receipts = manifest.get("rejected_point_receipts")
+    if not isinstance(counts, Mapping) or not isinstance(receipts, list):
+        raise EvidenceConsumerError(
+            "point_reader_snapshot", "snapshot frontier accounting is invalid"
+        )
+    if (
+        counts.get("accepted_point_count") != len(points)
+        or counts.get("rejected_point_count") != len(receipts)
+        or counts.get("frontier_point_count") != len(points) + len(receipts)
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_snapshot", "snapshot frontier accounting changed"
+        )
+    for receipt in receipts:
+        if not isinstance(receipt, Mapping) or receipt.get(
+            "receipt_sha256"
+        ) != _canonical_json_sha256(
+            {key: value for key, value in receipt.items() if key != "receipt_sha256"}
+        ):
+            raise EvidenceConsumerError(
+                "point_reader_rejected_frontier", "rejected receipt changed"
+            )
+    rejected_ids = [receipt.get("point_id") for receipt in receipts]
+    source_binding = manifest.get("source_binding")
+    if (
+        any(not isinstance(point_id, str) for point_id in rejected_ids)
+        or len(rejected_ids) != len(set(rejected_ids))
+        or set(point_ids) & set(rejected_ids)
+        or not isinstance(source_binding, Mapping)
+        or any(
+            receipt.get("source_axis_pack_sha256")
+            != source_binding.get("source_axis_pack_sha256")
+            for receipt in receipts
+        )
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_rejected_frontier",
+            "accepted and rejected frontier membership changed",
+        )
+    return copy.deepcopy(dict(manifest))
+
+
+def validate_axis_point_reader_snapshot(
+    manifest: Mapping[str, Any],
+    *,
+    point_store_dir: Path,
+    expected_snapshot_sha256: str | None = None,
+) -> tuple[dict[str, Any], dict[str, bytes]]:
+    validated = _validate_point_reader_manifest_shape(
+        manifest,
+        expected_snapshot_sha256=(
+            expected_snapshot_sha256
+            if expected_snapshot_sha256 is not None
+            else str(manifest.get("snapshot_sha256"))
+        ),
+    )
+    payloads: dict[str, bytes] = {}
+    for point in validated["points"]:
+        path = point_store_dir / point["point_payload_file"]
+        if not path.is_file():
+            raise EvidenceConsumerError(
+                "point_reader_store", f"point payload is missing: {point['point_id']}"
+            )
+        payload = path.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != point["input_contract"][
+            "point_payload_raw_sha256"
+        ]:
+            raise EvidenceConsumerError(
+                "point_reader_store", f"point payload changed: {point['point_id']}"
+            )
+        facts = [json.loads(line) for line in payload.decode("utf-8").splitlines()]
+        if len(facts) != point["fact_count"] or any(
+            fact.get("point_id") != point["point_id"] for fact in facts
+        ):
+            raise EvidenceConsumerError(
+                "point_reader_store", f"point payload coverage changed: {point['point_id']}"
+            )
+        if _canonical_json_sha256(_point_reader_state_ledger(facts)) != point[
+            "input_contract"
+        ]["decision_state_ledger_sha256"]:
+            raise EvidenceConsumerError(
+                "point_reader_decision_state",
+                f"point state ledger changed: {point['point_id']}",
+            )
+        payloads[point["point_id"]] = payload
+    return validated, payloads
+
+
+def bind_point_reader_response_schema(
+    manifest: Mapping[str, Any], point_id: str
+) -> dict[str, Any]:
+    validated = _validate_point_reader_manifest_shape(
+        manifest, expected_snapshot_sha256=str(manifest.get("snapshot_sha256"))
+    )
+    point = next(
+        (row for row in validated["points"] if row["point_id"] == point_id), None
+    )
+    if point is None:
+        raise EvidenceConsumerError(
+            "point_reader_response_schema", "response point is not in the snapshot"
+        )
+    schema = copy.deepcopy(validated["method_binding"]["response_schema"])
+    properties = schema.get("properties")
+    if not isinstance(properties, dict) or not isinstance(
+        properties.get("point_id"), dict
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_response_schema", "response schema point field is missing"
+        )
+    properties["point_id"]["const"] = point_id
+    return schema
+
+
+def _point_reader_facts(
+    manifest: Mapping[str, Any], point_store_dir: Path, point_id: str
+) -> tuple[Mapping[str, Any], list[dict[str, Any]]]:
+    validated, payloads = validate_axis_point_reader_snapshot(
+        manifest, point_store_dir=point_store_dir
+    )
+    point = next(
+        (row for row in validated["points"] if row["point_id"] == point_id), None
+    )
+    if point is None:
+        raise EvidenceConsumerError(
+            "point_reader_response", "response point is not in the snapshot"
+        )
+    return point, [
+        json.loads(line) for line in payloads[point_id].decode("utf-8").splitlines()
+    ]
+
+
+def _compile_point_reader_brief_from_validated_facts(
+    manifest: Mapping[str, Any],
+    *,
+    point: Mapping[str, Any],
+    facts: Sequence[Mapping[str, Any]],
+    response: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Compile after the caller has validated the snapshot and this point payload."""
+
+    point_id = point["point_id"]
+    if set(response) != {"point_id", "interpretation", "representative_handles"}:
+        raise EvidenceConsumerError(
+            "point_reader_response", "point response fields are invalid"
+        )
+    if response.get("point_id") != point_id:
+        raise EvidenceConsumerError(
+            "point_reader_response", "point response identity changed"
+        )
+    interpretation = response.get("interpretation")
+    handles = response.get("representative_handles")
+    if not isinstance(interpretation, str) or not interpretation.strip():
+        raise EvidenceConsumerError(
+            "point_reader_response", "point interpretation is missing"
+        )
+    if not isinstance(handles, list) or not handles or any(
+        not isinstance(handle, Mapping) for handle in handles
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_response", "representative handles are invalid"
+        )
+    representatives: list[dict[str, Any]] = []
+    observed_handles: set[str] = set()
+    for handle in handles:
+        if set(handle) != {"placement_id"}:
+            raise EvidenceConsumerError(
+                "point_reader_response", "representative handle fields are invalid"
+            )
+        handle_key = handle["placement_id"]
+        if not isinstance(handle_key, str):
+            raise EvidenceConsumerError(
+                "point_reader_response", "representative handle is invalid"
+            )
+        if handle_key in observed_handles:
+            raise EvidenceConsumerError(
+                "point_reader_response", "representative handle is duplicated"
+            )
+        observed_handles.add(handle_key)
+        matches = [
+            fact
+            for fact in facts
+            if fact["placement_id"] == handle_key
+        ]
+        if len(matches) != 1:
+            raise EvidenceConsumerError(
+                "point_reader_response",
+                "representative handle is foreign, ambiguous, or cross-point",
+            )
+        fact = matches[0]
+        representatives.append(
+            {
+                "placement_id": fact["placement_id"],
+                "evidence_id": fact["evidence"]["evidence_id"],
+                "relation": fact["relation"],
+                "quote_span_id": fact["quote"]["quote_span_id"],
+                "quote_status": fact["quote"]["quote_status"],
+                "exact_quote": fact["quote"]["exact_quote"],
+                "source_ref": fact["evidence"]["source_ref"],
+                "source_venue": fact["evidence"]["source_venue"],
+                "source_role": fact["evidence"]["source_role"],
+                "content_surface": fact["evidence"]["content_surface"],
+                "publication_time": fact["evidence"]["publication_time"],
+                "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
+                "origin_group_id": fact["origin"]["origin_group_id"],
+            }
+        )
+    required_relations = {
+        relation
+        for relation in ("support", "counter")
+        if point["displayed_relation_row_counts"].get(relation, 0) > 0
+    }
+    represented_relations = {row["relation"] for row in representatives}
+    if required_relations - represented_relations:
+        raise EvidenceConsumerError(
+            "point_reader_response",
+            "representative handles omit displayed support or counterevidence",
+        )
+    ledger = _point_reader_state_ledger(facts)
+    brief: dict[str, Any] = {
+        "schema_version": POINT_READER_BRIEF_VERSION,
+        "snapshot_sha256": manifest["snapshot_sha256"],
+        "point_input_sha256": point["point_input_sha256"],
+        "subject_identity": copy.deepcopy(manifest["subject_identity"]),
+        "axis_id": manifest["axis_id"],
+        "point_id": point_id,
+        "bounded_point": point["bounded_point"],
+        "projection_mode": point["projection_mode"],
+        "reader_accounting": {
+            "displayed_relation_row_counts": copy.deepcopy(
+                point["displayed_relation_row_counts"]
+            ),
+            "truth_origin_count": point["truth_origin_count"],
+        },
+        "model_interpretation": interpretation,
+        "representative_evidence": representatives,
+        "decision_state_ledger": ledger,
+        "decision_state_ledger_sha256": _canonical_json_sha256(ledger),
+        "source_point_payload": {
+            "file_name": point["point_payload_file"],
+            "raw_sha256": point["input_contract"]["point_payload_raw_sha256"],
+        },
+        "non_claims": copy.deepcopy(POINT_READER_POLICY["non_claims"]),
+    }
+    brief["brief_sha256"] = _canonical_json_sha256(brief)
+    return brief
+
+
+def compile_point_reader_brief(
+    manifest: Mapping[str, Any],
+    *,
+    point_store_dir: Path,
+    point_id: str,
+    response: Mapping[str, Any],
+) -> dict[str, Any]:
+    point, facts = _point_reader_facts(manifest, point_store_dir, point_id)
+    return _compile_point_reader_brief_from_validated_facts(
+        manifest, point=point, facts=facts, response=response
+    )
+
+
+def _validate_point_reader_brief_from_validated_facts(
+    manifest: Mapping[str, Any],
+    *,
+    point: Mapping[str, Any],
+    facts: Sequence[Mapping[str, Any]],
+    brief: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate after the caller has validated the snapshot and this point payload."""
+
+    if brief.get("schema_version") != POINT_READER_BRIEF_VERSION:
+        raise EvidenceConsumerError(
+            "point_reader_brief", "unsupported point brief"
+        )
+    point_id = brief.get("point_id")
+    if not isinstance(point_id, str):
+        raise EvidenceConsumerError("point_reader_brief", "point brief identity is missing")
+    if point_id != point.get("point_id"):
+        raise EvidenceConsumerError(
+            "point_reader_brief", "point brief identity changed"
+        )
+    expected_ledger = _point_reader_state_ledger(facts)
+    observed_ledger = brief.get("decision_state_ledger")
+    if (
+        not isinstance(observed_ledger, list)
+        or brief.get("decision_state_ledger_sha256")
+        != _canonical_json_sha256(observed_ledger)
+        or observed_ledger != expected_ledger
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_decision_state",
+            "compiled brief omitted, altered, or transferred a decision state",
+        )
+    expected_bindings = {
+        "snapshot_sha256": manifest["snapshot_sha256"],
+        "point_input_sha256": point["point_input_sha256"],
+        "subject_identity": manifest["subject_identity"],
+        "axis_id": manifest["axis_id"],
+        "bounded_point": point["bounded_point"],
+        "projection_mode": point["projection_mode"],
+        "reader_accounting": {
+            "displayed_relation_row_counts": point["displayed_relation_row_counts"],
+            "truth_origin_count": point["truth_origin_count"],
+        },
+        "source_point_payload": {
+            "file_name": point["point_payload_file"],
+            "raw_sha256": point["input_contract"]["point_payload_raw_sha256"],
+        },
+    }
+    if any(brief.get(key) != value for key, value in expected_bindings.items()):
+        raise EvidenceConsumerError(
+            "point_reader_brief", "compiled point binding changed"
+        )
+    interpretation = brief.get("model_interpretation")
+    representatives = brief.get("representative_evidence")
+    if not isinstance(interpretation, str) or not interpretation.strip():
+        raise EvidenceConsumerError(
+            "point_reader_brief", "compiled interpretation is missing"
+        )
+    if not isinstance(representatives, list):
+        raise EvidenceConsumerError(
+            "point_reader_brief", "compiled representatives are invalid"
+        )
+    fact_keys = {
+        fact["placement_id"]: fact
+        for fact in facts
+    }
+    for row in representatives:
+        if not isinstance(row, Mapping):
+            raise EvidenceConsumerError(
+                "point_reader_brief", "compiled representative is invalid"
+            )
+        fact = fact_keys.get(row.get("placement_id"))
+        if fact is None:
+            raise EvidenceConsumerError(
+                "point_reader_brief", "compiled representative is foreign"
+            )
+        expected = {
+            "placement_id": fact["placement_id"],
+            "evidence_id": fact["evidence"]["evidence_id"],
+            "relation": fact["relation"],
+            "quote_span_id": fact["quote"]["quote_span_id"],
+            "quote_status": fact["quote"]["quote_status"],
+            "exact_quote": fact["quote"]["exact_quote"],
+            "source_ref": fact["evidence"]["source_ref"],
+            "source_venue": fact["evidence"]["source_venue"],
+            "source_role": fact["evidence"]["source_role"],
+            "content_surface": fact["evidence"]["content_surface"],
+            "publication_time": fact["evidence"]["publication_time"],
+            "engagement": fact["evidence"]["engagement"],
+            "origin_group_id": fact["origin"]["origin_group_id"],
+        }
+        if dict(row) != expected:
+            raise EvidenceConsumerError(
+                "point_reader_brief", "compiled representative metadata changed"
+            )
+    if brief.get("brief_sha256") != _canonical_json_sha256(
+        {key: value for key, value in brief.items() if key != "brief_sha256"}
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_brief", "compiled brief identity changed"
+        )
+    return copy.deepcopy(dict(brief))
+
+
+def validate_point_reader_brief(
+    manifest: Mapping[str, Any],
+    *,
+    point_store_dir: Path,
+    brief: Mapping[str, Any],
+) -> dict[str, Any]:
+    point_id = brief.get("point_id")
+    if not isinstance(point_id, str):
+        raise EvidenceConsumerError("point_reader_brief", "point brief identity is missing")
+    point, facts = _point_reader_facts(manifest, point_store_dir, point_id)
+    return _validate_point_reader_brief_from_validated_facts(
+        manifest, point=point, facts=facts, brief=brief
+    )
+
+
+def validate_point_reader_completion_membership(
+    expected_point_ids: Sequence[str], observed: Sequence[Mapping[str, Any]]
+) -> list[str]:
+    expected = list(expected_point_ids)
+    if len(expected) != len(set(expected)):
+        raise EvidenceConsumerError(
+            "point_reader_completion", "expected point membership is duplicated"
+        )
+    observed_ids = [row.get("point_id") for row in observed]
+    if (
+        len(observed_ids) != len(set(observed_ids))
+        or set(observed_ids) != set(expected)
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_completion",
+            "completed points are missing, duplicated, or foreign",
+        )
+    return expected
+
+
+def assemble_axis_point_reader_output(
+    manifest: Mapping[str, Any], *, briefs: Sequence[Mapping[str, Any]]
+) -> dict[str, Any]:
+    validated = _validate_point_reader_manifest_shape(
+        manifest, expected_snapshot_sha256=str(manifest.get("snapshot_sha256"))
+    )
+    expected_ids = [row["point_id"] for row in validated["points"]]
+    validate_point_reader_completion_membership(expected_ids, briefs)
+    by_id = {brief["point_id"]: copy.deepcopy(dict(brief)) for brief in briefs}
+    ordered = [by_id[point_id] for point_id in expected_ids]
+    for point, brief in zip(validated["points"], ordered, strict=True):
+        if (
+            brief.get("schema_version") != POINT_READER_BRIEF_VERSION
+            or brief.get("point_input_sha256") != point["point_input_sha256"]
+            or brief.get("snapshot_sha256") != validated["snapshot_sha256"]
+            or brief.get("brief_sha256")
+            != _canonical_json_sha256(
+                {key: value for key, value in brief.items() if key != "brief_sha256"}
+            )
+            or brief.get("decision_state_ledger_sha256")
+            != _canonical_json_sha256(brief.get("decision_state_ledger"))
+        ):
+            raise EvidenceConsumerError(
+                "point_reader_completion", "completed point binding changed"
+            )
+        if brief.get("decision_state_ledger_sha256") != point["input_contract"][
+            "decision_state_ledger_sha256"
+        ]:
+            raise EvidenceConsumerError(
+                "point_reader_decision_state",
+                "completed point omitted, altered, or transferred a decision state",
+            )
+    output: dict[str, Any] = {
+        "schema_version": POINT_READER_AXIS_OUTPUT_VERSION,
+        "snapshot_sha256": validated["snapshot_sha256"],
+        "subject_identity": copy.deepcopy(validated["subject_identity"]),
+        "axis_id": validated["axis_id"],
+        "accepted_points": ordered,
+        "rejected_point_receipts": copy.deepcopy(
+            validated["rejected_point_receipts"]
+        ),
+        "counts": copy.deepcopy(validated["counts"]),
+        "non_claims": copy.deepcopy(POINT_READER_POLICY["non_claims"]),
+    }
+    output["axis_output_sha256"] = _canonical_json_sha256(output)
+    return output
+
+
+def validate_axis_point_reader_output(
+    manifest: Mapping[str, Any],
+    *,
+    output: Mapping[str, Any],
+    point_store_dir: Path | None = None,
+) -> dict[str, Any]:
+    if output.get("schema_version") != POINT_READER_AXIS_OUTPUT_VERSION:
+        raise EvidenceConsumerError(
+            "point_reader_completion", "unsupported point-reader axis output"
+        )
+    if output.get("axis_output_sha256") != _canonical_json_sha256(
+        {key: value for key, value in output.items() if key != "axis_output_sha256"}
+    ):
+        raise EvidenceConsumerError(
+            "point_reader_completion", "axis output identity changed"
+        )
+    rebuilt = assemble_axis_point_reader_output(
+        manifest, briefs=output.get("accepted_points", [])
+    )
+    if point_store_dir is not None:
+        for brief in rebuilt["accepted_points"]:
+            validate_point_reader_brief(
+                manifest, point_store_dir=point_store_dir, brief=brief
+            )
+    if rebuilt != dict(output):
+        raise EvidenceConsumerError(
+            "point_reader_completion", "axis output differs from its snapshot"
+        )
+    return rebuilt
 
 
 def point_placement_keys(view: Mapping[str, Any]) -> list[tuple[Any, ...]]:

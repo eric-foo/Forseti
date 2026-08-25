@@ -13,6 +13,11 @@ from judgment.phase_a_evidence_axis_consolidation import (
     AXIS_PACK_MANIFEST_VERSION,
     AXIS_PACK_VERSION,
     AXIS_READER_MANIFEST_VERSION,
+    POINT_READER_AXIS_OUTPUT_VERSION,
+    POINT_READER_BRIEF_VERSION,
+    POINT_READER_METHOD_TEXT,
+    POINT_READER_RESPONSE_SCHEMA,
+    POINT_READER_RUN_MANIFEST_VERSION,
     CONSOLIDATED_VIEW_VERSION,
     CONSOLIDATION_SPEC_VERSION,
     DECISION_STATE_BOUNDARIES,
@@ -26,16 +31,25 @@ from judgment.phase_a_evidence_axis_consolidation import (
     _reader_evidence_accounting_contract,
     _validate_decision_state_reader_evidence_rows,
     bind_axis_reader_output_schema,
+    bind_point_reader_response_schema,
+    assemble_axis_point_reader_output,
+    build_axis_point_reader_snapshot,
     build_axis_reader_bundle,
     build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
+    compile_point_reader_brief,
     point_placement_keys,
+    point_reader_input_sha256,
+    validate_axis_point_reader_output,
+    validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
     validate_axis_reader_structured_output,
     validate_axis_dogfood_truth_index,
     validate_axis_consolidated_view,
     validate_phase_a_evidence_axis_pack,
+    validate_point_reader_brief,
+    validate_point_reader_completion_membership,
 )
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
@@ -46,6 +60,7 @@ from runners.run_phase_a_evidence_axis_consolidation import (
     build_axis_pack_run,
     build_dogfood_truth_run,
     build_reader_run,
+    build_point_reader_run,
     bind_reader_output_schema_run,
     build_run,
     validate_axis_pack_run,
@@ -53,7 +68,13 @@ from runners.run_phase_a_evidence_axis_consolidation import (
     validate_reader_run,
     validate_reader_output_run,
     validate_run,
+    finalize_point_reader_run,
+    prepare_point_reader_request_run,
+    prepare_point_reader_requests_run,
+    validate_point_reader_output_run,
+    validate_point_reader_run,
 )
+import runners.run_phase_a_evidence_axis_consolidation as consolidation_runner
 
 
 def _write(path: Path, value: Any) -> None:
@@ -1540,6 +1561,75 @@ def test_axis_reader_bundle_rejects_state_transition_tamper_at_reprojection(
             expected_reader_manifest_sha256=manifest["reader_manifest_sha256"],
         )
     assert caught.value.boundary == "axis_reader_bundle_reprojection"
+
+
+def test_axis_reader_structured_output_rejects_a_non_literal_representative_quote(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A non-string quote must fail loud here, not crash the evidence check."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view.json"
+    facts_dir = tmp_path / "reader_facts"
+    _write(view_path, view)
+    manifest, streams = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=facts_dir
+    )
+    _write_reader_facts(facts_dir, streams)
+
+    for wrong_quote in ([], {}, 12, True):
+        output = _structured_reader_output(manifest, streams)
+        output["accepted_points"][0]["representative_evidence"][0][
+            "exact_quote"
+        ] = wrong_quote
+        with pytest.raises(EvidenceConsumerError) as caught:
+            validate_axis_reader_structured_output(
+                manifest,
+                facts_dir=facts_dir,
+                expected_reader_manifest_sha256=manifest["reader_manifest_sha256"],
+                output=output,
+            )
+        assert caught.value.boundary == "axis_reader_output_verification"
+
+
+def test_axis_reader_output_schema_binding_rejects_an_incompatible_base_schema(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A constant pinned onto an incompatible declared type is unsatisfiable."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view.json"
+    _write(view_path, view)
+    manifest, _ = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "facts"
+    )
+
+    integer_count_as_string = _reader_output_base_schema()
+    integer_count_as_string["properties"]["accepted_points"]["items"]["properties"][
+        "reader_accounting"
+    ]["properties"]["truth_origin_count"]["type"] = "string"
+    string_point_id_as_integer = _reader_output_base_schema()
+    string_point_id_as_integer["properties"]["point_accounting"]["items"][
+        "properties"
+    ]["point_id"]["type"] = "integer"
+    object_accounting_as_array = _reader_output_base_schema()
+    object_accounting_as_array["properties"]["accepted_points"]["items"][
+        "properties"
+    ]["reader_accounting"]["type"] = "array"
+
+    for base_schema in (
+        integer_count_as_string,
+        string_point_id_as_integer,
+        object_accounting_as_array,
+    ):
+        with pytest.raises(EvidenceConsumerError) as caught:
+            bind_axis_reader_output_schema(manifest, base_schema)
+        assert caught.value.boundary == "axis_reader_output_schema_binding"
+
+    unchanged = bind_axis_reader_output_schema(manifest, _reader_output_base_schema())
+    assert unchanged["properties"]["accepted_points"]["items"]["anyOf"]
 
 
 def test_generic_axis_pack_preserves_same_origin_repeated_observation(
@@ -3831,6 +3921,439 @@ def test_axis_reader_runner_writes_once_and_rebuilds_from_source_view(
     assert not untouched_facts.exists()
 
 
+def test_axis_reader_runner_validates_the_manifest_bytes_it_wrote(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A corrupted durable manifest cannot inherit an in-memory success result."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    view_path = tmp_path / "reader_view.json"
+    manifest_path = tmp_path / "reader_manifest.json"
+    facts_dir = tmp_path / "reader_facts"
+    _write(view_path, build_axis_consolidated_view(spec))
+    original_write_new = consolidation_runner._write_new
+
+    def write_then_corrupt(path: Path, value: Any) -> None:
+        original_write_new(path, value)
+        if path == manifest_path:
+            saved = json.loads(path.read_text(encoding="utf-8"))
+            saved["axis_id"] = "corrupted_after_write"
+            _write(path, saved)
+
+    monkeypatch.setattr(consolidation_runner, "_write_new", write_then_corrupt)
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        consolidation_runner.build_reader_run(
+            view_path=view_path,
+            manifest_output_path=manifest_path,
+            facts_output_dir=facts_dir,
+        )
+    assert caught.value.boundary == "axis_reader_bundle_verification"
+
+
+def _point_reader_subject_identity() -> dict[str, str]:
+    return {
+        "schema_version": "phase_a_point_reader_subject_identity_v1",
+        "company_id": "summer-fridays",
+        "product_id": "lip-butter-balm",
+        "cutoff": "2026-08-25",
+    }
+
+
+def _write_point_reader_store(
+    store: Path,
+    manifest: Mapping[str, Any],
+    payloads: Mapping[str, bytes],
+) -> None:
+    store.mkdir()
+    for point in manifest["points"]:
+        (store / point["point_payload_file"]).write_bytes(
+            payloads[point["point_id"]]
+        )
+
+
+def _point_reader_response(
+    point: Mapping[str, Any], payload: bytes
+) -> dict[str, Any]:
+    facts = [json.loads(line) for line in payload.decode("utf-8").splitlines()]
+    required_relations = {
+        relation
+        for relation in ("support", "counter")
+        if point["displayed_relation_row_counts"].get(relation, 0) > 0
+    }
+    representatives = []
+    represented_relations = set()
+    for fact in facts:
+        if fact["relation"] in required_relations - represented_relations:
+            representatives.append({"placement_id": fact["placement_id"]})
+            represented_relations.add(fact["relation"])
+    if not representatives:
+        representatives.append({"placement_id": facts[0]["placement_id"]})
+    return {
+        "point_id": point["point_id"],
+        "interpretation": (
+            f"Evidence for {point['bounded_point']} remains mixed where the "
+            "literal point facts disagree."
+        ),
+        "representative_handles": representatives,
+    }
+
+
+def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A coherently rehashed compact brief cannot omit or transfer state."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "decision_view.json"
+    store = tmp_path / "point_store"
+    _write(view_path, view)
+    manifest, payloads = build_axis_point_reader_snapshot(
+        view,
+        source_view_path=view_path,
+        subject_identity=_point_reader_subject_identity(),
+    )
+    _write_point_reader_store(store, manifest, payloads)
+
+    briefs = []
+    for point in manifest["points"]:
+        response = _point_reader_response(point, payloads[point["point_id"]])
+        brief = compile_point_reader_brief(
+            manifest,
+            point_store_dir=store,
+            point_id=point["point_id"],
+            response=response,
+        )
+        assert brief["schema_version"] == POINT_READER_BRIEF_VERSION
+        assert brief["decision_state_ledger"]
+        assert validate_point_reader_brief(
+            manifest, point_store_dir=store, brief=brief
+        ) == brief
+        briefs.append(brief)
+
+    output = assemble_axis_point_reader_output(manifest, briefs=briefs)
+    assert output["schema_version"] == POINT_READER_AXIS_OUTPUT_VERSION
+    assert validate_axis_point_reader_output(
+        manifest, output=output, point_store_dir=store
+    ) == output
+
+    first_facts = [
+        json.loads(line)
+        for line in payloads[manifest["points"][0]["point_id"]]
+        .decode("utf-8")
+        .splitlines()
+    ]
+    support = next(fact for fact in first_facts if fact["relation"] == "support")
+    assert any(fact["relation"] == "counter" for fact in first_facts)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        compile_point_reader_brief(
+            manifest,
+            point_store_dir=store,
+            point_id=manifest["points"][0]["point_id"],
+            response={
+                "point_id": manifest["points"][0]["point_id"],
+                "interpretation": "counterevidence deliberately omitted",
+                "representative_handles": [
+                    {"placement_id": support["placement_id"]}
+                ],
+            },
+        )
+    assert caught.value.boundary == "point_reader_response"
+
+    wrong_state = copy.deepcopy(briefs[0])
+    wrong_state["decision_state_ledger"][0]["state_assertions"][0][
+        "state_kind"
+    ] = "observed_repurchase"
+    wrong_state["decision_state_ledger_sha256"] = _canonical_json_sha256(
+        wrong_state["decision_state_ledger"]
+    )
+    wrong_state["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in wrong_state.items() if key != "brief_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_point_reader_brief(
+            manifest, point_store_dir=store, brief=wrong_state
+        )
+    assert caught.value.boundary == "point_reader_decision_state"
+    wrong_state_output = copy.deepcopy(output)
+    wrong_state_output["accepted_points"][0] = wrong_state
+    wrong_state_output["axis_output_sha256"] = _canonical_json_sha256(
+        {
+            key: value
+            for key, value in wrong_state_output.items()
+            if key != "axis_output_sha256"
+        }
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_point_reader_output(
+            manifest, output=wrong_state_output, point_store_dir=store
+        )
+    assert caught.value.boundary == "point_reader_decision_state"
+
+    wrong_quote_output = copy.deepcopy(output)
+    wrong_quote = wrong_quote_output["accepted_points"][0]
+    wrong_quote["representative_evidence"][0]["exact_quote"] = "borrowed quote"
+    wrong_quote["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in wrong_quote.items() if key != "brief_sha256"}
+    )
+    wrong_quote_output["axis_output_sha256"] = _canonical_json_sha256(
+        {
+            key: value
+            for key, value in wrong_quote_output.items()
+            if key != "axis_output_sha256"
+        }
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_point_reader_output(
+            manifest, output=wrong_quote_output, point_store_dir=store
+        )
+    assert caught.value.boundary == "point_reader_brief"
+
+    transferred = copy.deepcopy(briefs[0])
+    transferred["decision_state_ledger"] = copy.deepcopy(
+        briefs[1]["decision_state_ledger"]
+    )
+    transferred["decision_state_ledger_sha256"] = _canonical_json_sha256(
+        transferred["decision_state_ledger"]
+    )
+    transferred["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in transferred.items() if key != "brief_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_point_reader_brief(
+            manifest, point_store_dir=store, brief=transferred
+        )
+    assert caught.value.boundary == "point_reader_decision_state"
+
+
+def test_point_reader_identity_binds_meaning_but_not_storage_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    first_path = tmp_path / "root_a" / "view.json"
+    second_path = tmp_path / "root_b" / "view.json"
+    _write(first_path, view)
+    _write(second_path, view)
+    subject = _point_reader_subject_identity()
+
+    first, _ = build_axis_point_reader_snapshot(
+        view, source_view_path=first_path, subject_identity=subject
+    )
+    relocated, _ = build_axis_point_reader_snapshot(
+        view, source_view_path=second_path, subject_identity=subject
+    )
+    assert [row["point_input_sha256"] for row in first["points"]] == [
+        row["point_input_sha256"] for row in relocated["points"]
+    ]
+
+    changed_method, _ = build_axis_point_reader_snapshot(
+        view,
+        source_view_path=first_path,
+        subject_identity=subject,
+        method_text=POINT_READER_METHOD_TEXT + "\nMaterial method change.",
+    )
+    assert all(
+        before["point_input_sha256"] != after["point_input_sha256"]
+        for before, after in zip(first["points"], changed_method["points"], strict=True)
+    )
+    changed_schema = copy.deepcopy(POINT_READER_RESPONSE_SCHEMA)
+    changed_schema["description"] = "Material schema change"
+    rebound_schema, _ = build_axis_point_reader_snapshot(
+        view,
+        source_view_path=first_path,
+        subject_identity=subject,
+        response_schema=changed_schema,
+    )
+    assert all(
+        before["point_input_sha256"] != after["point_input_sha256"]
+        for before, after in zip(first["points"], rebound_schema["points"], strict=True)
+    )
+    changed_subject = copy.deepcopy(subject)
+    changed_subject["company_id"] = "another-company"
+    rebound_subject, _ = build_axis_point_reader_snapshot(
+        view, source_view_path=first_path, subject_identity=changed_subject
+    )
+    assert all(
+        before["point_input_sha256"] != after["point_input_sha256"]
+        for before, after in zip(first["points"], rebound_subject["points"], strict=True)
+    )
+
+    changed_one = copy.deepcopy(first["points"][0]["input_contract"])
+    changed_one["decision_state_ledger_sha256"] = "f" * 64
+    assert point_reader_input_sha256(changed_one) != first["points"][0][
+        "point_input_sha256"
+    ]
+    assert first["points"][1]["point_input_sha256"] == relocated["points"][1][
+        "point_input_sha256"
+    ]
+
+
+def test_point_reader_runner_reuses_valid_points_and_recovers_partial_run(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    view_path = tmp_path / "view.json"
+    identity_path = tmp_path / "subject.json"
+    first_manifest_path = tmp_path / "run_1.json"
+    second_manifest_path = tmp_path / "run_2.json"
+    store = tmp_path / "point_store"
+    _write(view_path, build_axis_consolidated_view(spec))
+    _write(identity_path, _point_reader_subject_identity())
+
+    first = build_point_reader_run(
+        view_path=view_path,
+        subject_identity_path=identity_path,
+        manifest_output_path=first_manifest_path,
+        point_store_dir=store,
+    )
+    assert first["materialized_point_count"] == 2
+    assert first["reused_point_count"] == 0
+    second = build_point_reader_run(
+        view_path=view_path,
+        subject_identity_path=identity_path,
+        manifest_output_path=second_manifest_path,
+        point_store_dir=store,
+    )
+    assert second["materialized_point_count"] == 0
+    assert second["reused_point_count"] == 2
+    assert second["snapshot_sha256"] == first["snapshot_sha256"]
+    assert validate_point_reader_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )["status"] == "valid"
+
+    manifest = json.loads(second_manifest_path.read_text(encoding="utf-8"))
+    responses = tmp_path / "responses"
+    responses.mkdir()
+    first_point = manifest["points"][0]
+    first_payload = (store / first_point["point_payload_file"]).read_bytes()
+    second_point = manifest["points"][1]
+    second_payload = (store / second_point["point_payload_file"]).read_bytes()
+    _write(
+        responses / second_point["response_file"],
+        _point_reader_response(second_point, second_payload),
+    )
+    request_path = tmp_path / "request.json"
+    prepared = prepare_point_reader_request_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        point_id=first_point["point_id"],
+        output_path=request_path,
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    request = json.loads(request_path.read_text(encoding="utf-8"))
+    assert prepared["response_file"] == first_point["response_file"]
+    assert request["method_text"] == POINT_READER_METHOD_TEXT
+    assert request["response_schema"] == bind_point_reader_response_schema(
+        manifest, first_point["point_id"]
+    )
+    request_batch = tmp_path / "requests"
+    batch = prepare_point_reader_requests_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        output_dir=request_batch,
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert batch["materialized_request_count"] == 2
+    assert batch["reused_request_count"] == 0
+    replayed_batch = prepare_point_reader_requests_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        output_dir=request_batch,
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert replayed_batch["materialized_request_count"] == 0
+    assert replayed_batch["reused_request_count"] == 2
+
+    briefs = tmp_path / "brief_store"
+    with pytest.raises(EvidenceConsumerError, match="response is missing"):
+        finalize_point_reader_run(
+            manifest_path=second_manifest_path,
+            point_store_dir=store,
+            responses_dir=responses,
+            brief_store_dir=briefs,
+            output_path=tmp_path / "partial_output.json",
+            expected_snapshot_sha256=second["snapshot_sha256"],
+        )
+    assert len(list(briefs.glob("brief_*.json"))) == 1
+
+    for point in manifest["points"][:1]:
+        payload = (store / point["point_payload_file"]).read_bytes()
+        _write(
+            responses / point["response_file"],
+            _point_reader_response(point, payload),
+        )
+    snapshot_validation_calls = 0
+    original_snapshot_validation = (
+        consolidation_runner.validate_axis_point_reader_snapshot
+    )
+
+    def count_snapshot_validation(*args: Any, **kwargs: Any) -> Any:
+        nonlocal snapshot_validation_calls
+        snapshot_validation_calls += 1
+        return original_snapshot_validation(*args, **kwargs)
+
+    monkeypatch.setattr(
+        consolidation_runner,
+        "validate_axis_point_reader_snapshot",
+        count_snapshot_validation,
+    )
+    completed = finalize_point_reader_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        responses_dir=responses,
+        brief_store_dir=briefs,
+        output_path=tmp_path / "complete_output.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert completed["compiled_point_count"] == 1
+    assert completed["reused_brief_count"] == 1
+    assert snapshot_validation_calls == 1
+    assert validate_point_reader_output_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        output_path=tmp_path / "complete_output.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )["status"] == "valid"
+
+    empty_responses = tmp_path / "empty_responses"
+    empty_responses.mkdir()
+    replayed = finalize_point_reader_run(
+        manifest_path=second_manifest_path,
+        point_store_dir=store,
+        responses_dir=empty_responses,
+        brief_store_dir=briefs,
+        output_path=tmp_path / "replayed_output.json",
+        expected_snapshot_sha256=second["snapshot_sha256"],
+    )
+    assert replayed["compiled_point_count"] == 0
+    assert replayed["reused_brief_count"] == 2
+    assert snapshot_validation_calls == 2
+
+
+def test_point_reader_membership_scales_without_a_whole_axis_schema() -> None:
+    for count in (1, 100, 1000):
+        expected = [f"point_{index:04d}" for index in range(count)]
+        assert validate_point_reader_completion_membership(
+            expected, [{"point_id": point_id} for point_id in expected]
+        ) == expected
+        with pytest.raises(EvidenceConsumerError):
+            validate_point_reader_completion_membership(
+                expected, [{"point_id": point_id} for point_id in expected[:-1]]
+            )
+        if count > 1:
+            duplicated = [{"point_id": point_id} for point_id in expected]
+            duplicated[-1] = {"point_id": expected[0]}
+            with pytest.raises(EvidenceConsumerError):
+                validate_point_reader_completion_membership(expected, duplicated)
+
+
 def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> None:
     repository_root = Path(__file__).resolve().parents[3]
     workflow = (
@@ -3855,6 +4378,11 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "validate-reader",
         "validate-reader-output",
         "bind-reader-output-schema",
+        "build-point-reader-run",
+        "validate-point-reader-run",
+        "prepare-point-reader-requests",
+        "finalize-point-reader-run",
+        "validate-point-reader-output",
         "--facts-output-dir",
         "--facts-dir",
         "one complete displayed fact per line",
@@ -3888,6 +4416,9 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     ):
         assert required in machinery_rows[0]
     assert 'subparsers.add_parser("build-axis-pack")' in runner
+    assert 'subparsers.add_parser("build-point-reader-run")' in runner
+    assert '"prepare-point-reader-requests"' in runner
+    assert '"finalize-point-reader-run"' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
     assert 'subparsers.add_parser("build-dogfood-truth")' in runner
     assert 'subparsers.add_parser("validate-dogfood-truth")' in runner
