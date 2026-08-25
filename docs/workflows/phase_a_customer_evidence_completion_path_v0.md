@@ -902,7 +902,18 @@ displayed evidence and semantic unit. Before projection it removes only the
 selection result fields (`relation` and `reason_code`) and requires the complete
 remaining disposition inventory to match the selection manifest's source-derived
 candidate hash; a spec-supplied replacement or rewritten candidate context is
-rejected.
+rejected. That recomputation seals candidate content and linked parent context;
+it does not cover `relation` or `reason_code`. The spec-supplied
+`artifact_sha256` pins those final fields, but a hash records their bytes rather
+than why a post-quote change was authorized. Do not hand-edit a finalized point
+artifact to correct either field. Rerun relation confirmation, quote-manifest
+preparation, and point finalization so the normal lineage agrees. If a frozen
+artifact must instead be preserved, record every changed row, its before/after
+relation, semantic basis, and exact source hashes in a durable home-adjudication
+record before accepting the projection. The hype/trust pilot's thirteen
+retrospective dogfood corrections are bound in
+`docs/review-outputs/adversarial-artifact-reviews/phase_a_hype_trust_relation_narrowing_home_adjudication_v0.md`;
+that one frozen disposition is not a reusable exception for later cycles.
 
 A routed `direct_outcome` point uses the optional
 `direct_outcome_relation_bindings` list of `{point_id, rows}`, with rows of
