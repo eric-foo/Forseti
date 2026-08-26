@@ -1360,6 +1360,16 @@ def test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display(
     assert point_a["full_candidate_pool"]["semantic_row_count"] == 3
     assert point_a["full_candidate_pool"]["evidence_item_count"] == 3
     assert point_a["full_candidate_pool"]["origin_count"] == 3
+    assert set(point_a["full_candidate_pool"]) == {
+        "semantic_row_count",
+        "evidence_item_count",
+        "origin_count",
+        "material_engagement_origin_count",
+        "independence_posture_origin_counts",
+        "relation_counts",
+        "direct_relation_origin_overlap",
+        "direct_relation_by_source_role",
+    }
     assert point_a["full_candidate_pool"]["relation_counts"] == {
         "adjacent": {
             "semantic_row_count": 1,
@@ -1392,10 +1402,27 @@ def test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display(
         "counter": 1,
         "support": 1,
     }
+    assert set(point_a["display_panel"]) == {
+        "semantic_row_count",
+        "relation_row_counts",
+        "scope",
+    }
     assert point_a["full_candidate_pool"]["direct_relation_origin_overlap"] == {
         "support_only": 1,
         "counter_only": 1,
         "both": 0,
+    }
+    point_b = next(
+        row for row in accounting["points"] if row["point_id"] == "point_b"
+    )
+    assert {
+        (row["source_role"], row["relation"])
+        for row in point_b["full_candidate_pool"][
+            "direct_relation_by_source_role"
+        ]
+    } == {
+        ("community_post", "counter"),
+        ("retailer_review", "support"),
     }
     assert "not prevalence" in " ".join(accounting["non_claims"])
     assert build_axis_reader_accounting(
@@ -1449,6 +1476,68 @@ def test_axis_reader_accounting_rejects_a_coherently_rehashed_false_full_pool(
             expected_accounting_sha256=accounting["accounting_sha256"],
         )
     assert caught.value.boundary == "axis_reader_accounting_reprojection"
+
+
+def test_reader_instructions_oblige_pool_counts_before_display_balance(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The consumer surface, not only the workflow doc, must carry the duty.
+
+    Deterministic validators can prove the accounting arrives; they cannot read
+    prose.  The reachable boundary is the instruction the cold reader actually
+    receives, so assert the affirmative duty survives into the rendered
+    point-reader request and the axis reader contract beside a pool the display
+    panel does not cover.
+    """
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    view_path = tmp_path / "view.json"
+    identity_path = tmp_path / "subject.json"
+    manifest_path = tmp_path / "run.json"
+    store = tmp_path / "point_store"
+    view = build_axis_consolidated_view(spec)
+    _write(view_path, view)
+    _write(identity_path, _point_reader_subject_identity())
+
+    run = build_point_reader_run(
+        view_path=view_path,
+        subject_identity_path=identity_path,
+        manifest_output_path=manifest_path,
+        point_store_dir=store,
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    point = next(
+        row for row in manifest["points"] if row["point_id"] == "point_a"
+    )
+    request_path = tmp_path / "request.json"
+    prepare_point_reader_request_run(
+        manifest_path=manifest_path,
+        point_store_dir=store,
+        point_id=point["point_id"],
+        output_path=request_path,
+        expected_snapshot_sha256=run["snapshot_sha256"],
+    )
+    request = json.loads(request_path.read_text(encoding="utf-8"))
+
+    # The request carries strictly more pool than the display panel shows.
+    carried = request["candidate_pool_accounting"]
+    assert (
+        carried["full_candidate_pool"]["semantic_row_count"]
+        > carried["display_panel"]["semantic_row_count"]
+    )
+
+    # The duty to disclose that gap is affirmative, not merely a prohibition.
+    method_text = request["method_text"]
+    assert method_text == POINT_READER_METHOD_TEXT
+    assert "before characterizing direction or balance" in method_text
+    assert "never let the displayed examples stand in for the full pool" in method_text
+
+    reader, _ = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "contract_facts"
+    )
+    reader_rule = reader["reader_rule"]
+    assert "before characterizing direction or balance" in reader_rule
+    assert "when useful" not in reader_rule
 
 
 def test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct(

@@ -359,6 +359,16 @@ def test_no_frontier_reader_accounting_preserves_shape_without_inventing_relatio
     assert pool["semantic_row_count"] == 5
     assert pool["evidence_item_count"] > 0
     assert pool["origin_count"] > 0
+    assert set(pool) == {
+        "semantic_row_count",
+        "evidence_item_count",
+        "origin_count",
+        "material_engagement_origin_count",
+        "independence_posture_origin_counts",
+        "source_role_counts",
+        "relations",
+        "display_scope",
+    }
     assert pool["relations"] == {
         "status": "not_applicable_no_admitted_frontier_point"
     }

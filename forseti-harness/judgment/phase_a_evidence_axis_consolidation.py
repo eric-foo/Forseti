@@ -58,8 +58,10 @@ POINT_READER_METHOD_TEXT = (
     "prevalence, causation, market representativeness, pricing power, or a Deliver "
     "recommendation. Treat candidate_pool_accounting as exact captured-pool "
     "bookkeeping: distinguish it from selected display examples, and never turn its "
-    "row or origin counts into customer prevalence. Cite only supplied point-local "
-    "placement handles."
+    "row or origin counts into customer prevalence. Read full_candidate_pool before "
+    "reading the display panel as the point. State its exact captured support and counter "
+    "counts before characterizing direction or balance; never let the displayed examples "
+    "stand in for the full pool. Cite only supplied point-local placement handles."
 )
 POINT_READER_RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -1443,14 +1445,15 @@ def _candidate_dimension_counts(
     ]
 
 
-def _candidate_posture_counts(
+def _candidate_origin_counts_by_dimension(
     rows: Sequence[Mapping[str, Any]], field: str
 ) -> dict[str, int]:
-    counts: dict[str, int] = defaultdict(int)
+    origins: dict[str, set[str]] = defaultdict(set)
     for row in rows:
         value = row.get(field)
-        counts[value if isinstance(value, str) and value else "unspecified"] += 1
-    return {key: counts[key] for key in sorted(counts)}
+        key = value if isinstance(value, str) and value else "unspecified"
+        origins[key].add(row["scoped_independence_key"])
+    return {key: len(origins[key]) for key in sorted(origins)}
 
 
 def _validated_candidate_accounting_rows(
@@ -1504,40 +1507,15 @@ def _candidate_pool_summary(
         candidates, relations_applicable=relations_applicable
     )
     summary: dict[str, Any] = {
-        **{
-            key: value
-            for key, value in _candidate_count_summary(rows).items()
-            if key != "material_engagement_origin_count"
-        },
-        "source_role_counts": _candidate_dimension_counts(rows, "source_role"),
-        "source_venue_counts": _candidate_dimension_counts(rows, "source_venue"),
-        "layer_counts": _candidate_dimension_counts(rows, "layer"),
-        "independence_posture_counts": _candidate_dimension_counts(
+        **_candidate_count_summary(rows),
+        "independence_posture_origin_counts": _candidate_origin_counts_by_dimension(
             rows, "independence_posture"
         ),
-        "uncertainty_posture_row_counts": _candidate_posture_counts(
-            rows, "uncertainty_posture"
-        ),
-        "polarity_row_counts": _candidate_posture_counts(rows, "polarity"),
-        "engagement_kind_row_counts": _candidate_posture_counts(
-            rows, "engagement_kind"
-        ),
-        "engagement_status_row_counts": _candidate_posture_counts(
-            rows, "engagement_status"
-        ),
-        "observability": {
-            "publication_time_available_row_count": sum(
-                isinstance(row.get("publication_time"), str)
-                and bool(row["publication_time"].strip())
-                for row in rows
-            ),
-            "condition_present_row_count": sum(bool(row["conditions"]) for row in rows),
-            "material_engagement_origin_count": _candidate_count_summary(rows)[
-                "material_engagement_origin_count"
-            ],
-        },
     }
     if not relations_applicable:
+        summary["source_role_counts"] = _candidate_dimension_counts(
+            rows, "source_role"
+        )
         summary["relations"] = {
             "status": "not_applicable_no_admitted_frontier_point"
         }
@@ -1569,14 +1547,14 @@ def _candidate_pool_summary(
     ] = defaultdict(list)
     for row in rows:
         relation_role_buckets[(row["source_role"], row["relation"])].append(row)
-    summary["relation_by_source_role"] = [
+    summary["direct_relation_by_source_role"] = [
         {
             "source_role": source_role,
             "relation": relation,
             **_candidate_count_summary(relation_role_buckets[(source_role, relation)]),
         }
         for source_role in sorted({key[0] for key in relation_role_buckets})
-        for relation in _CANDIDATE_RELATIONS
+        for relation in ("support", "counter")
         if (source_role, relation) in relation_role_buckets
     ]
     return summary
@@ -1590,22 +1568,9 @@ def _display_panel_accounting(
         relation: sum(row["relation"] == relation for row in rows)
         for relation in ("support", "counter", "adjacent")
     }
-    relation_origin_counts = {
-        relation: len(
-            {
-                row["origin_group_id"]
-                for row in rows
-                if row["relation"] == relation
-            }
-        )
-        for relation in ("support", "counter", "adjacent")
-    }
     return {
         "semantic_row_count": len(rows),
-        "evidence_item_count": len({row["evidence_id"] for row in rows}),
-        "origin_count": len({row["origin_group_id"] for row in rows}),
         "relation_row_counts": relation_row_counts,
-        "relation_origin_counts": relation_origin_counts,
         "scope": "selected_display_examples_not_the_full_candidate_pool",
     }
 
@@ -4759,9 +4724,10 @@ def build_axis_reader_bundle(
             "A structured point brief must copy displayed_relation_row_counts, "
             "truth_origin_count, and candidate_pool_accounting into reader_accounting. "
             "The display panel is selected examples; the full candidate pool is every "
-            "point-relative disposition. Report exact captured-pool counts when useful, "
-            "but never turn them into people, votes, prevalence, market sentiment, or a "
-            "Deliver recommendation."
+            "point-relative disposition. Report the exact captured-pool support and "
+            "counter counts before characterizing direction or balance; never let the "
+            "displayed examples stand in for the full pool or turn any counts into people, "
+            "votes, prevalence, market sentiment, or a Deliver recommendation."
         ),
     }
     if "decision_state_contract" in validated:
