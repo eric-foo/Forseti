@@ -130,6 +130,17 @@ DECISION_STATE_SPEC_FIELDS = {
 DIRECT_OUTCOME_RELATION_SPEC_FIELDS = {"direct_outcome_relation_bindings"}
 RELATION_REVIEW_REQUEST_VERSION = "phase_a_evidence_axis_relation_review_request_v1"
 RELATION_REVIEW_RECEIPT_VERSION = "phase_a_evidence_axis_relation_review_receipt_v1"
+RELATION_REVIEW_REQUEST_FIELDS = {
+    "schema_version",
+    "axis_id",
+    "source_spec_sha256",
+    "source_axis_pack_sha256",
+    "method",
+    "points",
+    "prompt",
+    "response_schema",
+    "request_sha256",
+}
 RELATION_REVIEW_METHOD_TEXT = (
     "Review every displayed row after selection and before consolidation. Bind its "
     "confirmed relation to the smallest nonempty subset of that row's exact semantic "
@@ -432,6 +443,38 @@ def _point_rows(artifact: Mapping[str, Any], *, point_id: str) -> list[dict[str,
                 raise EvidenceConsumerError("point_binding", f"display row invalid: {point_id}")
             rows.append(dict(row))
     return rows
+
+
+def _display_row_candidate(
+    row: Mapping[str, Any],
+    candidate_by_id: Mapping[str, Any],
+    *,
+    boundary: str,
+    point_id: str,
+    selected_id: str,
+) -> tuple[list[str], Mapping[str, Any]]:
+    """Resolve the one pinned candidate a display row is allowed to read."""
+
+    candidate_ids = _string_list(
+        row.get("origin_candidate_ids"), boundary=boundary, field="origin_candidate_ids"
+    )
+    if any(candidate_id not in candidate_by_id for candidate_id in candidate_ids):
+        raise EvidenceConsumerError(
+            boundary, f"display candidate missing: {point_id}::{selected_id}"
+        )
+    matching = [
+        candidate_by_id[candidate_id]
+        for candidate_id in candidate_ids
+        if candidate_by_id[candidate_id].get("evidence_id") == row.get("evidence_id")
+        and candidate_by_id[candidate_id].get("semantic_unit_ref")
+        == row.get("semantic_unit_ref")
+    ]
+    if len(matching) != 1:
+        raise EvidenceConsumerError(
+            boundary,
+            f"display row does not resolve to one candidate: {point_id}::{selected_id}",
+        )
+    return candidate_ids, matching[0]
 
 
 def _validated_candidate_parent_contexts(
@@ -3867,19 +3910,16 @@ def _axis_relation_review_points(
             expected_axis=axis_pack["axis_id"],
             require_complete_pins=True,
         )
-        candidate_by_ref = {
-            row["semantic_unit_ref"]: row for row in candidate_by_id.values()
-        }
         rows: list[dict[str, Any]] = []
         for row in _point_rows(artifact, point_id=point_id):
             primary_ref = row["semantic_unit_ref"]
-            candidate = candidate_by_ref.get(primary_ref)
-            if candidate is None:
-                raise EvidenceConsumerError(
-                    "relation_review",
-                    f"displayed semantic unit is absent from candidates: "
-                    f"{point_id}::{row['selected_id']}",
-                )
+            _, candidate = _display_row_candidate(
+                row,
+                candidate_by_id,
+                boundary="relation_review",
+                point_id=point_id,
+                selected_id=row["selected_id"],
+            )
             semantic_units = [
                 {
                     "semantic_unit_ref": primary_ref,
@@ -3967,6 +4007,29 @@ def _relation_review_response_schema(points: Sequence[Mapping[str, Any]]) -> dic
     }
 
 
+def _relation_review_prompt(points: Sequence[Mapping[str, Any]]) -> str:
+    return (
+        "You are reviewing exact point-relative relation bindings for a completed "
+        "Phase A evidence axis. Do not call tools. Return only schema-valid JSON.\n\n"
+        "Return every point_id, selected_id, and row exactly once and in supplied order. "
+        "Choose the smallest nonempty subset of that row's semantic_unit_refs whose "
+        "supplied statements, read together, directly explain its confirmed support, "
+        "counter, or adjacent relation to bounded_point. Support must establish the "
+        "bounded point and every material qualifier. Counter must directly oppose or "
+        "materially qualify it. Adjacent is relevant context that establishes neither "
+        "direction. One same-source statement may supply a premise while another supplies "
+        "the result; retain both when needed. Preserve actor, object, predicate, state, "
+        "condition, comparator, and scope. Do not add meaning from point wording, generic "
+        "sentiment, engagement, source identity, neighboring rows, or axis overlap.\n\n"
+        "If no supplied subset truthfully explains the relation, return "
+        "valid_relation=false with an empty relation_semantic_unit_refs list and a precise "
+        "reason. Otherwise return valid_relation=true. Preserve refs exactly.\n\n"
+        "POINT_ROWS_JSON:\n"
+        + json.dumps(points, ensure_ascii=False, separators=(",", ":"))
+        + "\n"
+    )
+
+
 def prepare_axis_relation_review(spec: Mapping[str, Any]) -> dict[str, Any]:
     """Prepare the one selected-row-only semantic review required by v3."""
 
@@ -3992,26 +4055,7 @@ def prepare_axis_relation_review(spec: Mapping[str, Any]) -> dict[str, Any]:
     point_ids = {row["point_id"] for row in axis_pack["points"]}
     _, point_projections = _projection_routes(spec, point_ids)
     points = _axis_relation_review_points(axis_pack, point_projections)
-    prompt = (
-        "You are reviewing exact point-relative relation bindings for a completed "
-        "Phase A evidence axis. Do not call tools. Return only schema-valid JSON.\n\n"
-        "Return every point_id, selected_id, and row exactly once and in supplied order. "
-        "Choose the smallest nonempty subset of that row's semantic_unit_refs whose "
-        "supplied statements, read together, directly explain its confirmed support, "
-        "counter, or adjacent relation to bounded_point. Support must establish the "
-        "bounded point and every material qualifier. Counter must directly oppose or "
-        "materially qualify it. Adjacent is relevant context that establishes neither "
-        "direction. One same-source statement may supply a premise while another supplies "
-        "the result; retain both when needed. Preserve actor, object, predicate, state, "
-        "condition, comparator, and scope. Do not add meaning from point wording, generic "
-        "sentiment, engagement, source identity, neighboring rows, or axis overlap.\n\n"
-        "If no supplied subset truthfully explains the relation, return "
-        "valid_relation=false with an empty relation_semantic_unit_refs list and a precise "
-        "reason. Otherwise return valid_relation=true. Preserve refs exactly.\n\n"
-        "POINT_ROWS_JSON:\n"
-        + json.dumps(points, ensure_ascii=False, separators=(",", ":"))
-        + "\n"
-    )
+    prompt = _relation_review_prompt(points)
     request: dict[str, Any] = {
         "schema_version": RELATION_REVIEW_REQUEST_VERSION,
         "axis_id": axis_id,
@@ -4124,28 +4168,21 @@ def finalize_axis_relation_review(
 ) -> dict[str, Any]:
     """Fail closed on invalid rows and emit the directly buildable v3 spec."""
 
-    required_request_fields = {
-        "schema_version",
-        "axis_id",
-        "source_spec_sha256",
-        "source_axis_pack_sha256",
-        "method",
-        "points",
-        "prompt",
-        "response_schema",
-        "request_sha256",
-    }
     request_unsigned = dict(request)
     request_sha256 = request_unsigned.pop("request_sha256", None)
     if (
         spec.get("schema_version") != CONSOLIDATION_SPEC_VERSION
-        or set(request) != required_request_fields
+        or set(request) != RELATION_REVIEW_REQUEST_FIELDS
         or request.get("schema_version") != RELATION_REVIEW_REQUEST_VERSION
         or request.get("axis_id") != spec.get("axis_id")
         or request.get("source_spec_sha256") != _canonical_json_sha256(dict(spec))
         or request.get("source_axis_pack_sha256")
         != spec.get("source_axis_pack_sha256")
         or request.get("method") != RELATION_REVIEW_METHOD_TEXT
+        or not isinstance(request.get("points"), list)
+        or request.get("prompt") != _relation_review_prompt(request["points"])
+        or request.get("response_schema")
+        != _relation_review_response_schema(request["points"])
         or request_sha256 != _canonical_json_sha256(request_unsigned)
     ):
         raise EvidenceConsumerError("relation_review", "relation review request changed")
@@ -4172,7 +4209,14 @@ def finalize_axis_relation_review(
     for raw_point in result.get("decision_state_bindings") or []:
         point_id = raw_point["point_id"]
         for row in raw_point["rows"]:
-            row["relation_semantic_unit_refs"] = by_point[point_id][row["selected_id"]]
+            reviewed_refs = by_point.get(point_id, {}).get(row["selected_id"])
+            if reviewed_refs is None:
+                raise EvidenceConsumerError(
+                    "relation_review",
+                    f"state binding targets a non-reviewed row: "
+                    f"{point_id}::{row['selected_id']}",
+                )
+            row["relation_semantic_unit_refs"] = reviewed_refs
     direct_bindings: list[dict[str, Any]] = []
     for point in request["points"]:
         point_id = point["point_id"]
@@ -4262,14 +4306,21 @@ def _verified_axis_relation_review(
     request_unsigned = dict(request)
     request_sha256 = request_unsigned.pop("request_sha256", None)
     if (
-        request.get("schema_version") != RELATION_REVIEW_REQUEST_VERSION
+        set(request) != RELATION_REVIEW_REQUEST_FIELDS
+        or request.get("schema_version") != RELATION_REVIEW_REQUEST_VERSION
+        or request.get("axis_id") != axis_pack["axis_id"]
+        or request.get("source_axis_pack_sha256") != spec["source_axis_pack_sha256"]
+        or request.get("method") != RELATION_REVIEW_METHOD_TEXT
         or request_sha256 != _canonical_json_sha256(request_unsigned)
         or request_sha256 != receipt["request_sha256"]
     ):
         raise EvidenceConsumerError("relation_review", "v3 relation review request changed")
     current_points = _axis_relation_review_points(axis_pack, point_projections)
     if (
-        request.get("points") != current_points
+        request["points"] != current_points
+        or request["prompt"] != _relation_review_prompt(current_points)
+        or request["response_schema"]
+        != _relation_review_response_schema(current_points)
         or receipt["reviewed_rows_sha256"] != _canonical_json_sha256(current_points)
     ):
         raise EvidenceConsumerError("relation_review", "reviewed point rows changed")
@@ -4461,28 +4512,13 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                     raise EvidenceConsumerError(
                         "point_projection", f"unsupported displayed relation: {relation}"
                     )
-                candidate_ids = _string_list(
-                    row.get("origin_candidate_ids"),
+                candidate_ids, candidate = _display_row_candidate(
+                    row,
+                    candidate_by_id,
                     boundary="point_projection",
-                    field="origin_candidate_ids",
+                    point_id=point_id,
+                    selected_id=selected_id,
                 )
-                if any(candidate_id not in candidate_by_id for candidate_id in candidate_ids):
-                    raise EvidenceConsumerError(
-                        "point_projection", f"display candidate missing: {point_id}::{selected_id}"
-                    )
-                matching = [
-                    candidate_by_id[candidate_id]
-                    for candidate_id in candidate_ids
-                    if candidate_by_id[candidate_id].get("evidence_id") == row.get("evidence_id")
-                    and candidate_by_id[candidate_id].get("semantic_unit_ref")
-                    == row.get("semantic_unit_ref")
-                ]
-                if len(matching) != 1:
-                    raise EvidenceConsumerError(
-                        "point_projection",
-                        f"display row does not resolve to one candidate: {point_id}::{selected_id}",
-                    )
-                candidate = matching[0]
                 if candidate.get("relation") != relation:
                     raise EvidenceConsumerError(
                         "point_projection", f"candidate relation changed: {point_id}::{selected_id}"
