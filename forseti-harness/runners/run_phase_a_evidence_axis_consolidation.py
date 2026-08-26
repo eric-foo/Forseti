@@ -21,6 +21,7 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     bind_axis_reader_output_schema,
     build_axis_point_reader_snapshot,
     build_axis_reader_bundle,
+    build_axis_reader_accounting,
     build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
@@ -30,6 +31,7 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
+    validate_axis_reader_accounting,
     validate_axis_reader_structured_output,
     validate_axis_dogfood_truth_index,
     validate_axis_consolidated_view,
@@ -149,6 +151,42 @@ def validate_axis_pack_run(
         "axis_pack_sha256": pack["axis_pack_sha256"],
         "valid_point_count": pack["valid_point_count"],
         "rejected_point_count": pack["rejected_point_count"],
+        "model_api_calls": 0,
+    }
+
+
+def build_reader_accounting_run(
+    *, pack_path: Path, output_path: Path
+) -> dict[str, Any]:
+    accounting = build_axis_reader_accounting(
+        _load_object(pack_path), source_axis_pack_path=pack_path
+    )
+    validate_axis_reader_accounting(
+        accounting,
+        expected_accounting_sha256=accounting["accounting_sha256"],
+    )
+    _write_new(output_path, accounting)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "accounting_sha256": accounting["accounting_sha256"],
+        "point_count": len(accounting["points"]),
+        "model_api_calls": 0,
+    }
+
+
+def validate_reader_accounting_run(
+    *, accounting_path: Path, expected_accounting_sha256: str
+) -> dict[str, Any]:
+    accounting = validate_axis_reader_accounting(
+        _load_object(accounting_path),
+        expected_accounting_sha256=expected_accounting_sha256,
+    )
+    return {
+        "status": "valid",
+        "accounting_path": str(accounting_path),
+        "accounting_sha256": accounting["accounting_sha256"],
+        "point_count": len(accounting["points"]),
         "model_api_calls": 0,
     }
 
@@ -392,6 +430,9 @@ def _point_reader_request(
         "point_id": point["point_id"],
         "bounded_point": point["bounded_point"],
         "projection_mode": point["projection_mode"],
+        "candidate_pool_accounting": copy.deepcopy(
+            point["candidate_pool_accounting"]
+        ),
         "method_text": manifest["method_binding"]["method_text"],
         "response_schema": response_schema,
         "facts": facts,
@@ -612,6 +653,18 @@ def main() -> int:
     validate_pack_parser = subparsers.add_parser("validate-axis-pack")
     validate_pack_parser.add_argument("--pack", type=Path, required=True)
     validate_pack_parser.add_argument("--expected-axis-pack-sha256", required=True)
+    build_accounting_parser = subparsers.add_parser("build-reader-accounting")
+    build_accounting_parser.add_argument("--axis-pack", type=Path, required=True)
+    build_accounting_parser.add_argument("--output", type=Path, required=True)
+    validate_accounting_parser = subparsers.add_parser(
+        "validate-reader-accounting"
+    )
+    validate_accounting_parser.add_argument(
+        "--accounting", type=Path, required=True
+    )
+    validate_accounting_parser.add_argument(
+        "--expected-accounting-sha256", required=True
+    )
     validate_parser = subparsers.add_parser("validate")
     validate_parser.add_argument("--view", type=Path, required=True)
     validate_parser.add_argument("--expected-view-sha256", required=True)
@@ -749,6 +802,15 @@ def main() -> int:
         result = validate_axis_pack_run(
             pack_path=args.pack,
             expected_axis_pack_sha256=args.expected_axis_pack_sha256,
+        )
+    elif args.command == "build-reader-accounting":
+        result = build_reader_accounting_run(
+            pack_path=args.axis_pack, output_path=args.output
+        )
+    elif args.command == "validate-reader-accounting":
+        result = validate_reader_accounting_run(
+            accounting_path=args.accounting,
+            expected_accounting_sha256=args.expected_accounting_sha256,
         )
     elif args.command == "build":
         result = build_run(spec_path=args.spec, output_path=args.output)

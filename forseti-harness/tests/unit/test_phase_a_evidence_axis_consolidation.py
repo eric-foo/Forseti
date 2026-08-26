@@ -13,6 +13,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     AXIS_PACK_MANIFEST_VERSION,
     AXIS_PACK_VERSION,
     AXIS_READER_MANIFEST_VERSION,
+    AXIS_READER_ACCOUNTING_VERSION,
     POINT_READER_AXIS_OUTPUT_VERSION,
     POINT_READER_BRIEF_VERSION,
     POINT_READER_METHOD_TEXT,
@@ -36,6 +37,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     assemble_axis_point_reader_output,
     build_axis_point_reader_snapshot,
     build_axis_reader_bundle,
+    build_axis_reader_accounting,
     build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
@@ -45,6 +47,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
+    validate_axis_reader_accounting,
     validate_axis_reader_structured_output,
     validate_axis_dogfood_truth_index,
     validate_axis_consolidated_view,
@@ -61,12 +64,14 @@ from runners.run_phase_a_evidence_axis_consolidation import (
     build_axis_pack_run,
     build_dogfood_truth_run,
     build_reader_run,
+    build_reader_accounting_run,
     build_point_reader_run,
     bind_reader_output_schema_run,
     build_run,
     validate_axis_pack_run,
     validate_dogfood_truth_run,
     validate_reader_run,
+    validate_reader_accounting_run,
     validate_reader_output_run,
     validate_run,
     finalize_point_reader_run,
@@ -143,6 +148,9 @@ def _structured_reader_output(
                         "displayed_relation_row_counts"
                     ],
                     "truth_origin_count": point["truth_origin_count"],
+                    "candidate_pool_accounting": point[
+                        "candidate_pool_accounting"
+                    ],
                 },
                 "representative_evidence": [
                     {
@@ -196,6 +204,10 @@ def _reader_output_base_schema() -> dict[str, Any]:
                                     },
                                 },
                                 "truth_origin_count": {"type": "integer"},
+                                "candidate_pool_accounting": {
+                                    "type": "object",
+                                    "additionalProperties": True,
+                                },
                             },
                         },
                     },
@@ -1327,6 +1339,205 @@ def test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local(
         facts_dir=facts_dir,
         expected_reader_manifest_sha256=manifest["reader_manifest_sha256"],
     ) == (manifest, fact_streams)
+
+
+def test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    pack_path = paths["generic_axis"]
+    pack = json.loads(pack_path.read_text(encoding="utf-8"))
+
+    accounting = build_axis_reader_accounting(
+        pack, source_axis_pack_path=pack_path
+    )
+
+    assert accounting["schema_version"] == AXIS_READER_ACCOUNTING_VERSION
+    assert accounting["status"] == "point_bearing_candidate_accounting"
+    point_a = next(
+        row for row in accounting["points"] if row["point_id"] == "point_a"
+    )
+    assert point_a["full_candidate_pool"]["semantic_row_count"] == 3
+    assert point_a["full_candidate_pool"]["evidence_item_count"] == 3
+    assert point_a["full_candidate_pool"]["origin_count"] == 3
+    assert set(point_a["full_candidate_pool"]) == {
+        "semantic_row_count",
+        "evidence_item_count",
+        "origin_count",
+        "material_engagement_origin_count",
+        "independence_posture_origin_counts",
+        "relation_counts",
+        "direct_relation_origin_overlap",
+        "direct_relation_by_source_role",
+    }
+    assert point_a["full_candidate_pool"]["relation_counts"] == {
+        "adjacent": {
+            "semantic_row_count": 1,
+            "evidence_item_count": 1,
+            "origin_count": 1,
+            "material_engagement_origin_count": 0,
+        },
+        "counter": {
+            "semantic_row_count": 1,
+            "evidence_item_count": 1,
+            "origin_count": 1,
+            "material_engagement_origin_count": 0,
+        },
+        "exclude": {
+            "semantic_row_count": 0,
+            "evidence_item_count": 0,
+            "origin_count": 0,
+            "material_engagement_origin_count": 0,
+        },
+        "support": {
+            "semantic_row_count": 1,
+            "evidence_item_count": 1,
+            "origin_count": 1,
+            "material_engagement_origin_count": 0,
+        },
+    }
+    assert point_a["display_panel"]["semantic_row_count"] == 2
+    assert point_a["display_panel"]["relation_row_counts"] == {
+        "adjacent": 0,
+        "counter": 1,
+        "support": 1,
+    }
+    assert set(point_a["display_panel"]) == {
+        "semantic_row_count",
+        "relation_row_counts",
+        "scope",
+    }
+    assert point_a["full_candidate_pool"]["direct_relation_origin_overlap"] == {
+        "support_only": 1,
+        "counter_only": 1,
+        "both": 0,
+    }
+    point_b = next(
+        row for row in accounting["points"] if row["point_id"] == "point_b"
+    )
+    assert {
+        (row["source_role"], row["relation"])
+        for row in point_b["full_candidate_pool"][
+            "direct_relation_by_source_role"
+        ]
+    } == {
+        ("community_post", "counter"),
+        ("retailer_review", "support"),
+    }
+    assert "not prevalence" in " ".join(accounting["non_claims"])
+    assert build_axis_reader_accounting(
+        pack, source_axis_pack_path=pack_path
+    ) == accounting
+    assert validate_axis_reader_accounting(
+        accounting,
+        expected_accounting_sha256=accounting["accounting_sha256"],
+    ) == accounting
+
+    accounting_path = tmp_path / "reader_accounting.json"
+    built = build_reader_accounting_run(
+        pack_path=pack_path, output_path=accounting_path
+    )
+    assert built["model_api_calls"] == 0
+    assert validate_reader_accounting_run(
+        accounting_path=accounting_path,
+        expected_accounting_sha256=built["accounting_sha256"],
+    )["status"] == "valid"
+
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view_with_accounting.json"
+    _write(view_path, view)
+    reader, _ = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "reader_facts"
+    )
+    embedded = next(
+        row for row in reader["points"] if row["point_id"] == "point_a"
+    )["candidate_pool_accounting"]
+    assert embedded == point_a
+
+
+def test_axis_reader_accounting_rejects_a_coherently_rehashed_false_full_pool(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, _, paths = _generic_fixture(tmp_path, monkeypatch)
+    pack_path = paths["generic_axis"]
+    pack = json.loads(pack_path.read_text(encoding="utf-8"))
+    accounting = build_axis_reader_accounting(
+        pack, source_axis_pack_path=pack_path
+    )
+    accounting["points"][0]["full_candidate_pool"]["relation_counts"][
+        "support"
+    ]["origin_count"] += 1
+    accounting.pop("accounting_sha256")
+    accounting["accounting_sha256"] = _canonical_json_sha256(accounting)
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_reader_accounting(
+            accounting,
+            expected_accounting_sha256=accounting["accounting_sha256"],
+        )
+    assert caught.value.boundary == "axis_reader_accounting_reprojection"
+
+
+def test_reader_instructions_oblige_pool_counts_before_display_balance(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The consumer surface, not only the workflow doc, must carry the duty.
+
+    Deterministic validators can prove the accounting arrives; they cannot read
+    prose.  The reachable boundary is the instruction the cold reader actually
+    receives, so assert the affirmative duty survives into the rendered
+    point-reader request and the axis reader contract beside a pool the display
+    panel does not cover.
+    """
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    view_path = tmp_path / "view.json"
+    identity_path = tmp_path / "subject.json"
+    manifest_path = tmp_path / "run.json"
+    store = tmp_path / "point_store"
+    view = build_axis_consolidated_view(spec)
+    _write(view_path, view)
+    _write(identity_path, _point_reader_subject_identity())
+
+    run = build_point_reader_run(
+        view_path=view_path,
+        subject_identity_path=identity_path,
+        manifest_output_path=manifest_path,
+        point_store_dir=store,
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    point = next(
+        row for row in manifest["points"] if row["point_id"] == "point_a"
+    )
+    request_path = tmp_path / "request.json"
+    prepare_point_reader_request_run(
+        manifest_path=manifest_path,
+        point_store_dir=store,
+        point_id=point["point_id"],
+        output_path=request_path,
+        expected_snapshot_sha256=run["snapshot_sha256"],
+    )
+    request = json.loads(request_path.read_text(encoding="utf-8"))
+
+    # The request carries strictly more pool than the display panel shows.
+    carried = request["candidate_pool_accounting"]
+    assert (
+        carried["full_candidate_pool"]["semantic_row_count"]
+        > carried["display_panel"]["semantic_row_count"]
+    )
+
+    # The duty to disclose that gap is affirmative, not merely a prohibition.
+    method_text = request["method_text"]
+    assert method_text == POINT_READER_METHOD_TEXT
+    assert "before characterizing direction or balance" in method_text
+    assert "never let the displayed examples stand in for the full pool" in method_text
+
+    reader, _ = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "contract_facts"
+    )
+    reader_rule = reader["reader_rule"]
+    assert "before characterizing direction or balance" in reader_rule
+    assert "when useful" not in reader_rule
 
 
 def test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct(
@@ -4142,6 +4353,23 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
         )
     assert caught.value.boundary == "point_reader_brief"
 
+    wrong_accounting_brief = copy.deepcopy(briefs[0])
+    wrong_accounting_brief["reader_accounting"]["candidate_pool_accounting"][
+        "full_candidate_pool"
+    ]["relation_counts"]["support"]["origin_count"] += 1
+    wrong_accounting_brief["brief_sha256"] = _canonical_json_sha256(
+        {
+            key: value
+            for key, value in wrong_accounting_brief.items()
+            if key != "brief_sha256"
+        }
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_point_reader_brief(
+            manifest, point_store_dir=store, brief=wrong_accounting_brief
+        )
+    assert caught.value.boundary == "point_reader_brief"
+
     transferred = copy.deepcopy(briefs[0])
     transferred["decision_state_ledger"] = copy.deepcopy(
         briefs[1]["decision_state_ledger"]
@@ -4324,6 +4552,9 @@ def test_point_reader_runner_reuses_valid_points_and_recovers_partial_run(
     request = json.loads(request_path.read_text(encoding="utf-8"))
     assert prepared["response_file"] == first_point["response_file"]
     assert request["method_text"] == POINT_READER_METHOD_TEXT
+    assert request["candidate_pool_accounting"] == first_point[
+        "candidate_pool_accounting"
+    ]
     assert request["response_schema"] == bind_point_reader_response_schema(
         manifest, first_point["point_id"]
     )
@@ -4548,6 +4779,8 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
         "build-dogfood-truth",
         "validate-dogfood-truth",
         "build-reader",
+        "build-reader-accounting",
+        "validate-reader-accounting",
         "validate-reader",
         "validate-reader-output",
         "bind-reader-output-schema",
