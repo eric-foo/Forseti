@@ -141,6 +141,19 @@ to drying. Likewise, similar symptoms are adjacent to a same-experience point
 unless the candidate or its exact linked parent supplies an explicit comparison
 or adoption target. This boundary is enforced in both initial relation judgment
 and pre-selection confirmation; display selection cannot repair it later.
+Support and counter must also preserve the bounded point's exact state,
+predicate, scope, and load-bearing actor identity rather than merely matching a
+favorable or unfavorable direction. A different actor's private judgment,
+intent, ownership, or behavior cannot prove or disprove a named actor's private
+state unless the point itself explicitly asserts a cross-actor pattern.
+Ownership needs explicit possession or acquisition; liking, future purchase, or
+an incomplete owned-shade list does not establish or negate it. Likewise,
+repurchasing when a product runs out is not an aim to finish: completion intent
+needs an explicit goal, plan, aim, or commitment to finish, use up, or pan the
+item. Superlatives require an equivalent superlative over the same assortment
+and attribute scope. Other materially overlapping states are adjacent; sharing
+only a product family or axis is excluded. These boundaries apply in the first
+relation pass and every confirmation route.
 
 Frontier specs use the exact bounded point as their direction: evidence that
 the balm is expensive supports that objection, rather than being reversed by

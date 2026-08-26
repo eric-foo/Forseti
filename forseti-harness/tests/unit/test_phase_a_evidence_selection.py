@@ -3263,6 +3263,13 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
         assert "ordinary, quick, possible, or qualified drying is not severe drying" in prompt
         assert "a severe reaction, injury, peeling, cracking, or pain is not severe drying" in prompt
         assert "sharing similar symptoms does not establish the same experience" in prompt
+        assert "Support and counter must match the bounded point's asserted judgment or behavior state" in prompt
+        assert "an explicit semantically equivalent superlative" in prompt
+        assert "the same compared assortment and attribute scope" in prompt
+        assert "merely sharing a product family or axis is exclude" in prompt
+        assert "A different actor's private judgment, intent, ownership, or behavior cannot support or counter" in prompt
+        assert "A conditional future action such as repurchasing when a product runs out does not establish an aim to finish" in prompt
+        assert "An ownership point requires explicit possession or acquisition" in prompt
     reason_by_relation = {
         "support": "matching_customer_experience",
         "counter": "differing_customer_experience",

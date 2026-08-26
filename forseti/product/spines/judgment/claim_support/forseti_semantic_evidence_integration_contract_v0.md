@@ -1700,6 +1700,26 @@ new frontier.
 
 ## Changelog
 
+- `v63` / 2026-08-27 — tightened every Phase A point-relation prompt after the
+  final all-axis dogfood proved that broad sentiment direction still overrode
+  the bounded predicate and actor scope. The recurring failures included a
+  conditional future repurchase promoted into an aim to finish, liking or
+  purchase intent treated as ownership evidence, non-exhaustive shade lists
+  treated as non-ownership, and a different actor's preference treated as
+  changing a named actor's private state. Support and counter now require the
+  same asserted judgment or behavior state, material object and condition,
+  load-bearing actor scope, and—where applicable—the same superlative,
+  assortment, and attribute scope. Materially overlapping but non-equivalent
+  states remain adjacent; product-family or axis overlap alone is excluded.
+  Focused unit validation passes 156 tests. A fresh seven-case cold dogfood
+  returned the exact expected relations for completion intent, ownership,
+  actor identity, and a different-flavour formula comparator. The first canary
+  receipt is intentionally retained as a proof-expectation failure: exact
+  object scope correctly excluded an e.l.f. dupe from a Trader Joe's ingredient
+  point. The corrected receipt passes. The pre-fix shade consumer remains a
+  stable current critical failure, so the run stopped without rewriting frozen
+  outputs or claiming Phase A completion. Historical token deltas remain
+  `NOT_COMPARABLE`; no Deliver or price-savings claim follows.
 - `v62` / 2026-08-27 — made bounded-point relation judgment preserve every
   material qualifier after hydration dogfood exposed two recurring promotions:
   generic drying had been admitted as severe drying, and similar drying or
