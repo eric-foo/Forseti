@@ -771,7 +771,11 @@ For a cold no-frontier read, prepare the dedicated reader request rather than
 sending the verbose pack plus its derived accounting as one repeated prompt.
 The request validates the complete pack, sends every candidate exactly once in
 a compact columnar table, and deduplicates exact parent contexts recovered from
-the pinned bundle. The model may return only one to five `candidate_id`
+the pinned bundle. Every compact row carries its exact `evidence_id` and
+`scoped_independence_key`, so repeated meanings from one evidence item or origin
+cannot masquerade as extra people. Request-native parent-context wording makes
+an empty context list an unresolved absence in the bound bundle, not proof that
+the source is self-contained. The model may return only one to five `candidate_id`
 handles plus an interpretation. Finalization rejects missing, duplicate, or
 foreign handles and restores each selected example's complete frozen candidate
 row and resolved parent context. The compiled output keeps the full-pool count

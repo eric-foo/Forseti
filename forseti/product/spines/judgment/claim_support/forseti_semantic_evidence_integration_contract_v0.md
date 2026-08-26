@@ -1707,20 +1707,29 @@ new frontier.
   longer collapse into an unexplained repeated quote or contradictory relation
   label. A dedicated no-frontier reader now validates the complete v2 pack,
   presents every candidate once in a compact columnar request with deduplicated
-  parent contexts, accepts only one to five in-pool candidate handles, and
-  deterministically expands those handles to complete frozen source rows. Its
+  parent contexts, exact evidence IDs, and scoped origin keys; accepts only one
+  to five in-pool candidate handles; and deterministically expands those
+  handles to complete frozen source rows. Request-native parent-context wording
+  preserves an empty context list as unresolved rather than proof of a
+  self-contained source. Its
   output fixes relations to `not_applicable_no_admitted_frontier_point` and
   keeps displayed-example count separate from the full candidate count.
   Frozen coverage and packaging dogfood rebuilt byte-identically at 121 and 63
-  rows. Their requests were 109,686 and 59,915 bytes versus the retired
+  rows. Their requests were 127,013 and 68,999 bytes versus the retired
   temporary prompts' 357,594 and 163,294 bytes. The two valid live calls used
-  86,161 input tokens, zero cached input, 829 output tokens, and 62 reasoning
+  98,183 input tokens, zero cached input, 794 output tokens, and 43 reasoning
   tokens versus 185,262 historical input tokens under the same two
   no-frontier whole-axis call definitions; the current outputs retained exact
   source, date, engagement, semantic, origin, and parent-context recovery for
-  all ten selected examples. One first attempt per axis failed before provider
-  entry on an incompatible local CLI config and was preserved as orchestration
-  failure; the unchanged retry ignored that config and succeeded. Current
+  all ten selected examples. Both final calls succeeded on their first attempt;
+  the receipt at
+  `C:\tmp\forseti-phase-a-smallest-complete-20260826-v1\DOGFOOD_RECEIPT.md`
+  records the exact request/output hashes, usage, timing, and the limit that raw
+  provider JSONL was not separately persisted. A different-vendor review found
+  the first compact table exposed origin counts only in aggregate; home
+  adjudication rejected its contradictory overall PASS, added evidence/origin
+  identity to every model-visible row, corrected stale parent-context wording,
+  and reran both axes. Current
   point-format hype and shade snapshots also rebuilt byte-identically and
   recompiled 15 historical handle selections with all 50 representative
   meaning blocks present. Hydration remains intentionally unobserved at the

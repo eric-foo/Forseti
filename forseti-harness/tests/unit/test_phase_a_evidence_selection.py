@@ -414,6 +414,24 @@ def test_no_frontier_reader_compacts_complete_pool_and_recovers_exact_examples(
     )
     assert len(request["candidate_rows"]) == 8
     assert request["candidate_pool_accounting"]["semantic_row_count"] == 8
+    evidence_column = request["candidate_columns"].index("evidence_id")
+    origin_column = request["candidate_columns"].index(
+        "scoped_independence_key"
+    )
+    assert {
+        (row[evidence_column], row[origin_column])
+        for row in request["candidate_rows"]
+    } == {
+        (row["evidence_id"], row["scoped_independence_key"])
+        for row in pack["candidate_inventory"]
+    }
+    assert "one origin, never extra people" in request["method_text"]
+    assert "this request resolved parent context" in request["reading_contract"][
+        "parent_context"
+    ]
+    assert "does not prove the source is self-contained" in request[
+        "reading_contract"
+    ]["parent_context"]
     assert request["parent_contexts"][0]["text"] == parent_text
     assert validate_no_frontier_reader_request(
         request, expected_request_sha256=request["request_sha256"]

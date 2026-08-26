@@ -99,7 +99,9 @@ NO_FRONTIER_READER_METHOD_TEXT = (
     "captured pool; they are not the pool. Do not invent a bounded point or support/counter "
     "relations, aggregate polarity into sentiment or prevalence, count rows or origins as "
     "people, infer causation or market representativeness, or make a Deliver recommendation. "
-    "Read parent context where supplied and cite only supplied candidate_id handles."
+    "Rows sharing an evidence_id are meanings from one evidence item; rows sharing a "
+    "scoped_independence_key are one origin, never extra people. Read parent context where "
+    "supplied and cite only supplied candidate_id handles."
 )
 SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
@@ -1830,6 +1832,8 @@ def build_no_frontier_reader_request(
     context_by_id: dict[str, dict[str, str]] = {}
     columns = [
         "candidate_id",
+        "evidence_id",
+        "scoped_independence_key",
         "normalized_meaning",
         "conditions",
         "uncertainty_posture",
@@ -1867,6 +1871,13 @@ def build_no_frontier_reader_request(
         rows.append([copy.deepcopy(values[column]) for column in columns])
     accounting = build_axis_reader_accounting(
         validated, source_axis_pack_path=source_axis_pack_path
+    )
+    reading_contract = copy.deepcopy(validated["reading_contract"])
+    reading_contract["parent_context"] = (
+        "this request resolved parent context from the hash-pinned bundle; "
+        "parent_context_ids point to the exact supplied contexts, while an empty list "
+        "means no parent context was recoverable from that bound bundle and does not "
+        "prove the source is self-contained"
     )
     axis_pack_sha256 = validated["axis_pack_sha256"]
     response_schema: dict[str, Any] = {
@@ -1908,7 +1919,7 @@ def build_no_frontier_reader_request(
         "candidate_pool_accounting": copy.deepcopy(
             accounting["no_frontier_candidate_pool"]
         ),
-        "reading_contract": copy.deepcopy(validated["reading_contract"]),
+        "reading_contract": reading_contract,
         "method_text": NO_FRONTIER_READER_METHOD_TEXT,
         "response_schema": response_schema,
         "candidate_columns": columns,
