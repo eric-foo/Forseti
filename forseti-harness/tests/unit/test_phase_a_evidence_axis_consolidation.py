@@ -21,6 +21,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     POINT_READER_RUN_MANIFEST_VERSION,
     CONSOLIDATED_VIEW_VERSION,
     CONSOLIDATION_SPEC_VERSION,
+    VERIFIED_CONSOLIDATION_SPEC_VERSION,
     DECISION_STATE_BOUNDARIES,
     DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
@@ -42,8 +43,10 @@ from judgment.phase_a_evidence_axis_consolidation import (
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     compile_point_reader_brief,
+    finalize_axis_relation_review,
     point_placement_keys,
     point_reader_input_sha256,
+    prepare_axis_relation_review,
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
@@ -4912,9 +4915,131 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     ):
         assert required in machinery_rows[0]
     assert 'subparsers.add_parser("build-axis-pack")' in runner
+    assert '"prepare-relation-review"' in runner
+    assert '"finalize-relation-review"' in runner
     assert 'subparsers.add_parser("build-point-reader-run")' in runner
     assert '"prepare-point-reader-requests"' in runner
     assert '"finalize-point-reader-run"' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
     assert 'subparsers.add_parser("build-dogfood-truth")' in runner
     assert 'subparsers.add_parser("validate-dogfood-truth")' in runner
+
+
+def _valid_relation_review_response(request: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "points": [
+            {
+                "point_id": point["point_id"],
+                "rows": [
+                    {
+                        "selected_id": row["selected_id"],
+                        "valid_relation": True,
+                        "relation_semantic_unit_refs": [
+                            row["semantic_units"][0]["semantic_unit_ref"]
+                        ],
+                        "reason": "exact displayed meaning binds the confirmed relation",
+                    }
+                    for row in point["rows"]
+                ],
+            }
+            for point in request["points"]
+        ]
+    }
+
+
+@pytest.mark.parametrize("decision_state", [False, True])
+def test_relation_review_emits_directly_buildable_v3_spec(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    decision_state: bool,
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    if decision_state:
+        _route_every_point_as_decision_state(spec)
+    request = prepare_axis_relation_review(spec)
+    assert "uniqueItems" not in json.dumps(request["response_schema"])
+    response = _valid_relation_review_response(request)
+    request_path = tmp_path / f"relation_request_{decision_state}.json"
+    response_path = tmp_path / f"relation_response_{decision_state}.json"
+    _write(request_path, request)
+    _write(response_path, response)
+
+    reviewed_spec = finalize_axis_relation_review(
+        spec,
+        request,
+        response,
+        request_path=request_path,
+        response_path=response_path,
+    )
+    view = build_axis_consolidated_view(reviewed_spec)
+    assert validate_axis_consolidated_view(
+        view, expected_view_sha256=view["view_sha256"]
+    ) == view
+
+    assert reviewed_spec["schema_version"] == VERIFIED_CONSOLIDATION_SPEC_VERSION
+    assert view["counts"]["placement_count"] == 4
+    if decision_state:
+        assert all(
+            group["relation_semantic_unit_refs"]
+            for group in view["decision_state_groups"]
+        )
+    else:
+        assert all(
+            placement["relation_semantic_unit_refs"]
+            for placement in view["point_placements"]
+        )
+
+
+def test_relation_review_fails_closed_when_displayed_relation_has_no_exact_meaning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    request = prepare_axis_relation_review(spec)
+    response = _valid_relation_review_response(request)
+    response["points"][0]["rows"][0].update(
+        {
+            "valid_relation": False,
+            "relation_semantic_unit_refs": [],
+            "reason": "the statement concerns a different actor and object",
+        }
+    )
+    request_path = tmp_path / "invalid_relation_request.json"
+    response_path = tmp_path / "invalid_relation_response.json"
+    _write(request_path, request)
+    _write(response_path, response)
+
+    with pytest.raises(
+        EvidenceConsumerError, match="1 displayed relation.*lack exact semantic support"
+    ):
+        finalize_axis_relation_review(
+            spec,
+            request,
+            response,
+            request_path=request_path,
+            response_path=response_path,
+        )
+
+
+def test_v3_build_rejects_relation_binding_changed_after_review(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    request = prepare_axis_relation_review(spec)
+    response = _valid_relation_review_response(request)
+    request_path = tmp_path / "tamper_relation_request.json"
+    response_path = tmp_path / "tamper_relation_response.json"
+    _write(request_path, request)
+    _write(response_path, response)
+    reviewed_spec = finalize_axis_relation_review(
+        spec,
+        request,
+        response,
+        request_path=request_path,
+        response_path=response_path,
+    )
+    reviewed_spec["direct_outcome_relation_bindings"][0]["rows"][0][
+        "relation_semantic_unit_refs"
+    ] = ["foreign::semantic-unit"]
+
+    with pytest.raises(EvidenceConsumerError, match="foreign semantic unit|differs"):
+        build_axis_consolidated_view(reviewed_spec)

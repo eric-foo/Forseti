@@ -1700,6 +1700,21 @@ new frontier.
 
 ## Changelog
 
+- `v64` / 2026-08-27 — added a fail-closed, selected-row-only relation review
+  after regenerating the complete shade axis with the v63 prompt. An initial
+  prototype found seven displayed rows whose supplied meanings could not
+  explain their confirmed point relation; the exact canonical prompt found 24.
+  A different-flavour formula-comparison canary found three more broad-axis
+  adjacencies with no point-relative meaning. The recurring defect was
+  therefore not missing
+  wording alone: two model passes could preserve a relation label without
+  binding it to the exact actor, object, predicate, state, condition,
+  comparator, and scope in the row. New consolidation work prepares one cold
+  review over displayed primary and same-evidence companion meanings, rejects
+  any row with no truthful nonempty binding, and emits a hash-bound v3 spec
+  that the builder revalidates against the raw request and response. It adds no
+  full-ledger reread, lexical classifier, ontology, historical rewrite, or
+  Deliver judgment. Historical v1/v2 specs remain replayable.
 - `v63` / 2026-08-27 — tightened every Phase A point-relation prompt after the
   final all-axis dogfood proved that broad sentiment direction still overrode
   the bounded predicate and actor scope. The recurring failures included a

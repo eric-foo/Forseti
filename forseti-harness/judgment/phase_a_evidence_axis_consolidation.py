@@ -39,6 +39,7 @@ NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v2
 NO_FRONTIER_AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v2"
 LEGACY_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
 CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
+VERIFIED_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v3"
 LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
@@ -127,6 +128,16 @@ DECISION_STATE_SPEC_FIELDS = {
     "decision_state_rejected_point_navigation",
 }
 DIRECT_OUTCOME_RELATION_SPEC_FIELDS = {"direct_outcome_relation_bindings"}
+RELATION_REVIEW_REQUEST_VERSION = "phase_a_evidence_axis_relation_review_request_v1"
+RELATION_REVIEW_RECEIPT_VERSION = "phase_a_evidence_axis_relation_review_receipt_v1"
+RELATION_REVIEW_METHOD_TEXT = (
+    "Review every displayed row after selection and before consolidation. Bind its "
+    "confirmed relation to the smallest nonempty subset of that row's exact semantic "
+    "units. If no supplied subset truthfully explains the relation to the bounded point, "
+    "mark the row invalid. Preserve actor, object, predicate, state, condition, comparator, "
+    "and scope; do not add meaning from point wording, sentiment, engagement, source "
+    "identity, or neighboring rows."
+)
 DIRECT_OUTCOME_BOUNDARIES = (
     "not a causal judgment",
     "not a commercial-pull score",
@@ -3842,6 +3853,441 @@ def _load_point(
     return artifact, candidate_by_id, bindings
 
 
+def _axis_relation_review_points(
+    axis_pack: Mapping[str, Any],
+    point_projections: Mapping[str, str],
+) -> list[dict[str, Any]]:
+    """Project only displayed, same-evidence meanings for post-selection review."""
+
+    points: list[dict[str, Any]] = []
+    for descriptor in axis_pack["points"]:
+        point_id = descriptor["point_id"]
+        artifact, candidate_by_id, _ = _load_point(
+            descriptor,
+            expected_axis=axis_pack["axis_id"],
+            require_complete_pins=True,
+        )
+        candidate_by_ref = {
+            row["semantic_unit_ref"]: row for row in candidate_by_id.values()
+        }
+        rows: list[dict[str, Any]] = []
+        for row in _point_rows(artifact, point_id=point_id):
+            primary_ref = row["semantic_unit_ref"]
+            candidate = candidate_by_ref.get(primary_ref)
+            if candidate is None:
+                raise EvidenceConsumerError(
+                    "relation_review",
+                    f"displayed semantic unit is absent from candidates: "
+                    f"{point_id}::{row['selected_id']}",
+                )
+            semantic_units = [
+                {
+                    "semantic_unit_ref": primary_ref,
+                    "statement": row["normalized_meaning"],
+                    "conditions": copy.deepcopy(candidate.get("conditions") or []),
+                    "polarity": candidate.get("polarity"),
+                }
+            ]
+            for companion in row.get("same_evidence_companion_meanings") or []:
+                companion_statement = companion.get("statement") or companion.get(
+                    "normalized_meaning"
+                )
+                if not isinstance(companion_statement, str) or not companion_statement.strip():
+                    raise EvidenceConsumerError(
+                        "relation_review",
+                        f"companion meaning text is missing: "
+                        f"{point_id}::{row['selected_id']}",
+                    )
+                semantic_units.append(
+                    {
+                        "semantic_unit_ref": companion["semantic_unit_ref"],
+                        "statement": companion_statement,
+                        "conditions": copy.deepcopy(companion.get("conditions") or []),
+                        "polarity": companion.get("polarity"),
+                    }
+                )
+            rows.append(
+                {
+                    "selected_id": row["selected_id"],
+                    "relation": row["relation"],
+                    "semantic_units": semantic_units,
+                }
+            )
+        points.append(
+            {
+                "point_id": point_id,
+                "bounded_point": artifact["bounded_point"],
+                "projection_mode": point_projections[point_id],
+                "rows": rows,
+            }
+        )
+    return points
+
+
+def _relation_review_response_schema(points: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    row_schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": [
+            "selected_id",
+            "valid_relation",
+            "relation_semantic_unit_refs",
+            "reason",
+        ],
+        "properties": {
+            "selected_id": {"type": "string", "minLength": 1},
+            "valid_relation": {"type": "boolean"},
+            "relation_semantic_unit_refs": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1},
+            },
+            "reason": {"type": "string", "minLength": 1},
+        },
+    }
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["points"],
+        "properties": {
+            "points": {
+                "type": "array",
+                "minItems": len(points),
+                "maxItems": len(points),
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["point_id", "rows"],
+                    "properties": {
+                        "point_id": {"type": "string", "minLength": 1},
+                        "rows": {"type": "array", "items": row_schema},
+                    },
+                },
+            }
+        },
+    }
+
+
+def prepare_axis_relation_review(spec: Mapping[str, Any]) -> dict[str, Any]:
+    """Prepare the one selected-row-only semantic review required by v3."""
+
+    if spec.get("schema_version") != CONSOLIDATION_SPEC_VERSION:
+        raise EvidenceConsumerError(
+            "relation_review", "relation review preparation requires a v2 source spec"
+        )
+    axis_id = _required_string(spec, "axis_id", boundary="relation_review")
+    axis_path = Path(
+        _required_string(spec, "source_axis_pack_path", boundary="relation_review")
+    )
+    axis_sha256 = _required_string(
+        spec, "source_axis_pack_sha256", boundary="relation_review"
+    )
+    if not axis_path.is_file() or hash_file(axis_path) != axis_sha256:
+        raise EvidenceConsumerError("relation_review", "source axis pack changed")
+    axis_pack = _load_object(axis_path, boundary="relation_review")
+    validate_phase_a_evidence_axis_pack(
+        axis_pack, expected_axis_pack_sha256=axis_pack["axis_pack_sha256"]
+    )
+    if axis_pack.get("axis_id") != axis_id:
+        raise EvidenceConsumerError("relation_review", "source axis identity changed")
+    point_ids = {row["point_id"] for row in axis_pack["points"]}
+    _, point_projections = _projection_routes(spec, point_ids)
+    points = _axis_relation_review_points(axis_pack, point_projections)
+    prompt = (
+        "You are reviewing exact point-relative relation bindings for a completed "
+        "Phase A evidence axis. Do not call tools. Return only schema-valid JSON.\n\n"
+        "Return every point_id, selected_id, and row exactly once and in supplied order. "
+        "Choose the smallest nonempty subset of that row's semantic_unit_refs whose "
+        "supplied statements, read together, directly explain its confirmed support, "
+        "counter, or adjacent relation to bounded_point. Support must establish the "
+        "bounded point and every material qualifier. Counter must directly oppose or "
+        "materially qualify it. Adjacent is relevant context that establishes neither "
+        "direction. One same-source statement may supply a premise while another supplies "
+        "the result; retain both when needed. Preserve actor, object, predicate, state, "
+        "condition, comparator, and scope. Do not add meaning from point wording, generic "
+        "sentiment, engagement, source identity, neighboring rows, or axis overlap.\n\n"
+        "If no supplied subset truthfully explains the relation, return "
+        "valid_relation=false with an empty relation_semantic_unit_refs list and a precise "
+        "reason. Otherwise return valid_relation=true. Preserve refs exactly.\n\n"
+        "POINT_ROWS_JSON:\n"
+        + json.dumps(points, ensure_ascii=False, separators=(",", ":"))
+        + "\n"
+    )
+    request: dict[str, Any] = {
+        "schema_version": RELATION_REVIEW_REQUEST_VERSION,
+        "axis_id": axis_id,
+        "source_spec_sha256": _canonical_json_sha256(dict(spec)),
+        "source_axis_pack_sha256": axis_sha256,
+        "method": RELATION_REVIEW_METHOD_TEXT,
+        "points": points,
+        "prompt": prompt,
+        "response_schema": _relation_review_response_schema(points),
+    }
+    request["request_sha256"] = _canonical_json_sha256(request)
+    return request
+
+
+def _validated_axis_relation_response(
+    request: Mapping[str, Any], response: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    if set(response) != {"points"} or not isinstance(response.get("points"), list):
+        raise EvidenceConsumerError("relation_review", "response fields are invalid")
+    expected_points = request["points"]
+    if len(response["points"]) != len(expected_points):
+        raise EvidenceConsumerError("relation_review", "response point coverage changed")
+    bindings: list[dict[str, Any]] = []
+    invalid_rows: list[str] = []
+    for expected_point, raw_point in zip(expected_points, response["points"]):
+        if not isinstance(raw_point, Mapping) or set(raw_point) != {"point_id", "rows"}:
+            raise EvidenceConsumerError("relation_review", "response point fields are invalid")
+        point_id = expected_point["point_id"]
+        if raw_point.get("point_id") != point_id or not isinstance(raw_point.get("rows"), list):
+            raise EvidenceConsumerError("relation_review", "response point order changed")
+        if len(raw_point["rows"]) != len(expected_point["rows"]):
+            raise EvidenceConsumerError(
+                "relation_review", f"response row coverage changed: {point_id}"
+            )
+        bound_rows: list[dict[str, Any]] = []
+        for expected_row, raw_row in zip(expected_point["rows"], raw_point["rows"]):
+            required = {
+                "selected_id",
+                "valid_relation",
+                "relation_semantic_unit_refs",
+                "reason",
+            }
+            if not isinstance(raw_row, Mapping) or set(raw_row) != required:
+                raise EvidenceConsumerError(
+                    "relation_review", f"response row fields are invalid: {point_id}"
+                )
+            selected_id = expected_row["selected_id"]
+            if raw_row.get("selected_id") != selected_id:
+                raise EvidenceConsumerError(
+                    "relation_review", f"response row order changed: {point_id}"
+                )
+            refs = raw_row.get("relation_semantic_unit_refs")
+            reason = raw_row.get("reason")
+            valid = raw_row.get("valid_relation")
+            if (
+                not isinstance(valid, bool)
+                or not isinstance(refs, list)
+                or any(not isinstance(ref, str) or not ref for ref in refs)
+                or len(refs) != len(set(refs))
+                or not isinstance(reason, str)
+                or not reason.strip()
+            ):
+                raise EvidenceConsumerError(
+                    "relation_review",
+                    f"response row values are invalid: {point_id}::{selected_id}",
+                )
+            available_refs = {
+                unit["semantic_unit_ref"] for unit in expected_row["semantic_units"]
+            }
+            if set(refs) - available_refs:
+                raise EvidenceConsumerError(
+                    "relation_review",
+                    f"response references a foreign semantic unit: {point_id}::{selected_id}",
+                )
+            if valid and not refs:
+                raise EvidenceConsumerError(
+                    "relation_review",
+                    f"valid relation has no semantic binding: {point_id}::{selected_id}",
+                )
+            if not valid:
+                if refs:
+                    raise EvidenceConsumerError(
+                        "relation_review",
+                        f"invalid relation retains semantic bindings: {point_id}::{selected_id}",
+                    )
+                invalid_rows.append(f"{point_id}::{selected_id}")
+            bound_rows.append(
+                {
+                    "selected_id": selected_id,
+                    "relation_semantic_unit_refs": sorted(refs),
+                }
+            )
+        bindings.append({"point_id": point_id, "rows": bound_rows})
+    if invalid_rows:
+        raise EvidenceConsumerError(
+            "relation_semantic_binding_unresolved",
+            f"{len(invalid_rows)} displayed relation(s) lack exact semantic support; "
+            f"first: {invalid_rows[0]}",
+        )
+    return bindings
+
+
+def finalize_axis_relation_review(
+    spec: Mapping[str, Any],
+    request: Mapping[str, Any],
+    response: Mapping[str, Any],
+    *,
+    request_path: Path,
+    response_path: Path,
+) -> dict[str, Any]:
+    """Fail closed on invalid rows and emit the directly buildable v3 spec."""
+
+    required_request_fields = {
+        "schema_version",
+        "axis_id",
+        "source_spec_sha256",
+        "source_axis_pack_sha256",
+        "method",
+        "points",
+        "prompt",
+        "response_schema",
+        "request_sha256",
+    }
+    request_unsigned = dict(request)
+    request_sha256 = request_unsigned.pop("request_sha256", None)
+    if (
+        spec.get("schema_version") != CONSOLIDATION_SPEC_VERSION
+        or set(request) != required_request_fields
+        or request.get("schema_version") != RELATION_REVIEW_REQUEST_VERSION
+        or request.get("axis_id") != spec.get("axis_id")
+        or request.get("source_spec_sha256") != _canonical_json_sha256(dict(spec))
+        or request.get("source_axis_pack_sha256")
+        != spec.get("source_axis_pack_sha256")
+        or request.get("method") != RELATION_REVIEW_METHOD_TEXT
+        or request_sha256 != _canonical_json_sha256(request_unsigned)
+    ):
+        raise EvidenceConsumerError("relation_review", "relation review request changed")
+    axis_path = Path(str(spec.get("source_axis_pack_path")))
+    if (
+        not axis_path.is_file()
+        or hash_file(axis_path) != request["source_axis_pack_sha256"]
+    ):
+        raise EvidenceConsumerError("relation_review", "source axis pack changed")
+    bindings = _validated_axis_relation_response(request, response)
+    by_point = {
+        point["point_id"]: {
+            row["selected_id"]: row["relation_semantic_unit_refs"]
+            for row in point["rows"]
+        }
+        for point in bindings
+    }
+    result = copy.deepcopy(dict(spec))
+    result["schema_version"] = VERIFIED_CONSOLIDATION_SPEC_VERSION
+    _, point_projections = _projection_routes(
+        spec, {point["point_id"] for point in request["points"]}
+    )
+    _decision_state_bindings(spec, point_projections)
+    for raw_point in result.get("decision_state_bindings") or []:
+        point_id = raw_point["point_id"]
+        for row in raw_point["rows"]:
+            row["relation_semantic_unit_refs"] = by_point[point_id][row["selected_id"]]
+    direct_bindings: list[dict[str, Any]] = []
+    for point in request["points"]:
+        point_id = point["point_id"]
+        if point_projections[point_id] == "direct_outcome":
+            direct_bindings.append(
+                {
+                    "point_id": point_id,
+                    "rows": [
+                        {
+                            "selected_id": row["selected_id"],
+                            "relation_semantic_unit_refs": by_point[point_id][
+                                row["selected_id"]
+                            ],
+                        }
+                        for row in point["rows"]
+                    ],
+                }
+            )
+    if direct_bindings:
+        result["direct_outcome_relation_bindings"] = direct_bindings
+    else:
+        result.pop("direct_outcome_relation_bindings", None)
+    result.pop("decision_state_bindings_sha256", None)
+    receipt: dict[str, Any] = {
+        "schema_version": RELATION_REVIEW_RECEIPT_VERSION,
+        "axis_id": request["axis_id"],
+        "source_spec_sha256": request["source_spec_sha256"],
+        "source_axis_pack_sha256": request["source_axis_pack_sha256"],
+        "request_path": str(request_path),
+        "request_file_sha256": hash_file(request_path),
+        "request_sha256": request["request_sha256"],
+        "response_path": str(response_path),
+        "response_file_sha256": hash_file(response_path),
+        "reviewed_rows_sha256": _canonical_json_sha256(request["points"]),
+        "bindings": bindings,
+        "bindings_sha256": _canonical_json_sha256(bindings),
+    }
+    receipt["receipt_sha256"] = _canonical_json_sha256(receipt)
+    result["relation_binding_review"] = receipt
+    return result
+
+
+def _verified_axis_relation_review(
+    spec: Mapping[str, Any],
+    axis_pack: Mapping[str, Any],
+    point_projections: Mapping[str, str],
+) -> dict[str, dict[str, list[str]]]:
+    receipt = spec.get("relation_binding_review")
+    required = {
+        "schema_version",
+        "axis_id",
+        "source_spec_sha256",
+        "source_axis_pack_sha256",
+        "request_path",
+        "request_file_sha256",
+        "request_sha256",
+        "response_path",
+        "response_file_sha256",
+        "reviewed_rows_sha256",
+        "bindings",
+        "bindings_sha256",
+        "receipt_sha256",
+    }
+    if not isinstance(receipt, Mapping) or set(receipt) != required:
+        raise EvidenceConsumerError("relation_review", "v3 relation review receipt is invalid")
+    if (
+        receipt.get("schema_version") != RELATION_REVIEW_RECEIPT_VERSION
+        or receipt.get("axis_id") != axis_pack["axis_id"]
+        or receipt.get("source_axis_pack_sha256") != spec["source_axis_pack_sha256"]
+    ):
+        raise EvidenceConsumerError("relation_review", "v3 relation review identity changed")
+    unsigned = dict(receipt)
+    declared_receipt_sha256 = unsigned.pop("receipt_sha256")
+    if declared_receipt_sha256 != _canonical_json_sha256(unsigned):
+        raise EvidenceConsumerError("relation_review", "v3 relation review receipt hash changed")
+    request_path = Path(receipt["request_path"])
+    response_path = Path(receipt["response_path"])
+    if (
+        not request_path.is_file()
+        or hash_file(request_path) != receipt["request_file_sha256"]
+        or not response_path.is_file()
+        or hash_file(response_path) != receipt["response_file_sha256"]
+    ):
+        raise EvidenceConsumerError("relation_review", "v3 relation review source changed")
+    request = _load_object(request_path, boundary="relation_review")
+    response = _load_object(response_path, boundary="relation_review")
+    request_unsigned = dict(request)
+    request_sha256 = request_unsigned.pop("request_sha256", None)
+    if (
+        request.get("schema_version") != RELATION_REVIEW_REQUEST_VERSION
+        or request_sha256 != _canonical_json_sha256(request_unsigned)
+        or request_sha256 != receipt["request_sha256"]
+    ):
+        raise EvidenceConsumerError("relation_review", "v3 relation review request changed")
+    current_points = _axis_relation_review_points(axis_pack, point_projections)
+    if (
+        request.get("points") != current_points
+        or receipt["reviewed_rows_sha256"] != _canonical_json_sha256(current_points)
+    ):
+        raise EvidenceConsumerError("relation_review", "reviewed point rows changed")
+    bindings = _validated_axis_relation_response(request, response)
+    if (
+        bindings != receipt["bindings"]
+        or receipt["bindings_sha256"] != _canonical_json_sha256(bindings)
+    ):
+        raise EvidenceConsumerError("relation_review", "reviewed bindings changed")
+    return {
+        point["point_id"]: {
+            row["selected_id"]: row["relation_semantic_unit_refs"]
+            for row in point["rows"]
+        }
+        for point in bindings
+    }
+
+
 def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     """Build and fully verify one derived, origin-normalized axis view."""
 
@@ -3849,9 +4295,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     if spec_version not in {
         LEGACY_CONSOLIDATION_SPEC_VERSION,
         CONSOLIDATION_SPEC_VERSION,
+        VERIFIED_CONSOLIDATION_SPEC_VERSION,
     }:
         raise EvidenceConsumerError("consolidation_spec", "unsupported spec version")
-    is_routed_v2 = spec_version == CONSOLIDATION_SPEC_VERSION
+    is_routed_v2 = spec_version in {
+        CONSOLIDATION_SPEC_VERSION,
+        VERIFIED_CONSOLIDATION_SPEC_VERSION,
+    }
+    is_verified_v3 = spec_version == VERIFIED_CONSOLIDATION_SPEC_VERSION
     if not is_routed_v2:
         legacy_residue = sorted(
             (DECISION_STATE_SPEC_FIELDS | DIRECT_OUTCOME_RELATION_SPEC_FIELDS) & set(spec)
@@ -3914,11 +4365,17 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         direct_outcome_relation_bindings = _direct_outcome_relation_bindings(
             spec, point_projections
         )
+        verified_relation_bindings = (
+            _verified_axis_relation_review(spec, axis_pack, point_projections)
+            if is_verified_v3
+            else {}
+        )
     else:
         projection_routes = []
         point_projections = {}
         decision_state_bindings = {}
         direct_outcome_relation_bindings = {}
+        verified_relation_bindings = {}
 
     origins: dict[str, dict[str, Any]] = {}
     evidence: dict[str, dict[str, Any]] = {}
@@ -4152,6 +4609,33 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                                 f"{point_id}::{selected_id}",
                             )
                         placement["relation_semantic_unit_refs"] = relation_refs
+                if is_verified_v3:
+                    reviewed_refs = verified_relation_bindings.get(point_id, {}).get(
+                        selected_id
+                    )
+                    if reviewed_refs is None:
+                        raise EvidenceConsumerError(
+                            "relation_review",
+                            f"display row lacks reviewed semantic binding: "
+                            f"{point_id}::{selected_id}",
+                        )
+                    if point_projections[point_id] == "direct_outcome":
+                        declared_refs = placement.get("relation_semantic_unit_refs")
+                    else:
+                        state_binding_for_review = point_decision_state_bindings.get(
+                            selected_id
+                        )
+                        declared_refs = (
+                            state_binding_for_review.get("relation_semantic_unit_refs")
+                            if state_binding_for_review is not None
+                            else None
+                        )
+                    if declared_refs != reviewed_refs:
+                        raise EvidenceConsumerError(
+                            "relation_review",
+                            f"consolidation relation binding differs from reviewed meaning: "
+                            f"{point_id}::{selected_id}",
+                        )
                 placements.append(placement)
                 point_placement_ids.append(placement_id)
                 if is_routed_v2 and point_projections[point_id] == "decision_state":

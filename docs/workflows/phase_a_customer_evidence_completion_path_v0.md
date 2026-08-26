@@ -1021,6 +1021,20 @@ the builder's own recomputation. Every field named in this paragraph and the one
 above it, apart from `projection_routes`, is rejected in a v1 spec and in a v2
 spec that routes no `decision_state` point.
 
+New consolidation work uses `phase_a_evidence_axis_consolidation_spec_v3`.
+Before building it, run `prepare-relation-review` against the complete v2 source
+spec, obtain one cold structured response, and run `finalize-relation-review`.
+This review sees only displayed rows, not the full candidate ledger. For every
+row it must bind the confirmed relation to the smallest nonempty subset of that
+row's exact primary and same-evidence companion meanings. When no supplied
+meaning truthfully explains the relation—including a wrong actor, object,
+predicate, state, condition, comparator, or scope—the finalizer fails with
+`relation_semantic_binding_unresolved`; do not build or hand-relabel the row.
+The finalizer writes the directly buildable v3 spec and pins the request, raw
+response, reviewed row set, bindings, and source axis pack. The v3 builder
+replays those checks and rejects missing, extra, foreign, or changed bindings.
+Historical v1/v2 specs remain replayable; they are not upgraded or restamped.
+
 The built v2 view stores `decision_state_bindings_sha256` in place of the
 authored bindings and adds `decision_state_index`, `decision_state_groups`,
 `rejected_point_index`, and a `decision_state_reader_surface` join surface

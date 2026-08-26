@@ -28,8 +28,10 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     build_phase_a_evidence_axis_pack,
     compile_point_reader_brief,
     compile_no_frontier_reader_output,
+    finalize_axis_relation_review,
     materialize_phase_a_evidence_no_frontier_axis_manifest,
     POINT_READER_REQUEST_VERSION,
+    prepare_axis_relation_review,
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
@@ -191,6 +193,45 @@ def validate_reader_accounting_run(
         "accounting_path": str(accounting_path),
         "accounting_sha256": accounting["accounting_sha256"],
         "point_count": len(accounting["points"]),
+        "model_api_calls": 0,
+    }
+
+
+def prepare_relation_review_run(*, spec_path: Path, output_path: Path) -> dict[str, Any]:
+    request = prepare_axis_relation_review(_load_object(spec_path))
+    _write_new(output_path, request)
+    return {
+        "status": "prepared",
+        "output_path": str(output_path),
+        "request_sha256": request["request_sha256"],
+        "point_count": len(request["points"]),
+        "row_count": sum(len(point["rows"]) for point in request["points"]),
+        "model_api_calls_required": 1,
+    }
+
+
+def finalize_relation_review_run(
+    *,
+    spec_path: Path,
+    request_path: Path,
+    response_path: Path,
+    output_path: Path,
+) -> dict[str, Any]:
+    reviewed_spec = finalize_axis_relation_review(
+        _load_object(spec_path),
+        _load_object(request_path),
+        _load_object(response_path),
+        request_path=request_path,
+        response_path=response_path,
+    )
+    _write_new(output_path, reviewed_spec)
+    receipt = reviewed_spec["relation_binding_review"]
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "receipt_sha256": receipt["receipt_sha256"],
+        "point_count": len(receipt["bindings"]),
+        "row_count": sum(len(point["rows"]) for point in receipt["bindings"]),
         "model_api_calls": 0,
     }
 
@@ -701,6 +742,18 @@ def main() -> int:
     build_parser = subparsers.add_parser("build")
     build_parser.add_argument("--spec", type=Path, required=True)
     build_parser.add_argument("--output", type=Path, required=True)
+    prepare_relation_review_parser = subparsers.add_parser(
+        "prepare-relation-review"
+    )
+    prepare_relation_review_parser.add_argument("--spec", type=Path, required=True)
+    prepare_relation_review_parser.add_argument("--output", type=Path, required=True)
+    finalize_relation_review_parser = subparsers.add_parser(
+        "finalize-relation-review"
+    )
+    finalize_relation_review_parser.add_argument("--spec", type=Path, required=True)
+    finalize_relation_review_parser.add_argument("--request", type=Path, required=True)
+    finalize_relation_review_parser.add_argument("--response", type=Path, required=True)
+    finalize_relation_review_parser.add_argument("--output", type=Path, required=True)
     build_pack_parser = subparsers.add_parser("build-axis-pack")
     build_pack_parser.add_argument("--manifest", type=Path, required=True)
     build_pack_parser.add_argument("--output", type=Path, required=True)
@@ -933,6 +986,17 @@ def main() -> int:
         )
     elif args.command == "build":
         result = build_run(spec_path=args.spec, output_path=args.output)
+    elif args.command == "prepare-relation-review":
+        result = prepare_relation_review_run(
+            spec_path=args.spec, output_path=args.output
+        )
+    elif args.command == "finalize-relation-review":
+        result = finalize_relation_review_run(
+            spec_path=args.spec,
+            request_path=args.request,
+            response_path=args.response,
+            output_path=args.output,
+        )
     elif args.command == "build-dogfood-truth":
         result = build_dogfood_truth_run(
             view_path=args.view, output_path=args.output
