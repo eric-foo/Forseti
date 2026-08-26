@@ -4008,6 +4008,33 @@ def _relation_review_response_schema(points: Sequence[Mapping[str, Any]]) -> dic
 
 
 def _relation_review_prompt(points: Sequence[Mapping[str, Any]]) -> str:
+    # Requests are persisted with sorted JSON keys. Reconstruct the producer's
+    # fixed field order so prompt replay does not depend on mapping insertion
+    # order after the request is loaded from disk.
+    ordered_points = [
+        {
+            "point_id": point["point_id"],
+            "bounded_point": point["bounded_point"],
+            "projection_mode": point["projection_mode"],
+            "rows": [
+                {
+                    "selected_id": row["selected_id"],
+                    "relation": row["relation"],
+                    "semantic_units": [
+                        {
+                            "semantic_unit_ref": unit["semantic_unit_ref"],
+                            "statement": unit["statement"],
+                            "conditions": unit["conditions"],
+                            "polarity": unit["polarity"],
+                        }
+                        for unit in row["semantic_units"]
+                    ],
+                }
+                for row in point["rows"]
+            ],
+        }
+        for point in points
+    ]
     return (
         "You are reviewing exact point-relative relation bindings for a completed "
         "Phase A evidence axis. Do not call tools. Return only schema-valid JSON.\n\n"
@@ -4025,7 +4052,7 @@ def _relation_review_prompt(points: Sequence[Mapping[str, Any]]) -> str:
         "valid_relation=false with an empty relation_semantic_unit_refs list and a precise "
         "reason. Otherwise return valid_relation=true. Preserve refs exactly.\n\n"
         "POINT_ROWS_JSON:\n"
-        + json.dumps(points, ensure_ascii=False, separators=(",", ":"))
+        + json.dumps(ordered_points, ensure_ascii=False, separators=(",", ":"))
         + "\n"
     )
 

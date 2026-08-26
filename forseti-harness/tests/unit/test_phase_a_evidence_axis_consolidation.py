@@ -5172,3 +5172,29 @@ def test_relation_review_finalizer_rejects_non_displayed_state_binding_row(
             request_path=request_path,
             response_path=response_path,
         )
+
+
+def test_relation_review_request_replays_after_sorted_json_round_trip(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    request = prepare_axis_relation_review(spec)
+    response = _valid_relation_review_response(request)
+    request_path = tmp_path / "sorted_relation_request.json"
+    response_path = tmp_path / "sorted_relation_response.json"
+    request_path.write_text(
+        json.dumps(request, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    _write(response_path, response)
+    reloaded_request = json.loads(request_path.read_text(encoding="utf-8"))
+
+    reviewed_spec = finalize_axis_relation_review(
+        spec,
+        reloaded_request,
+        response,
+        request_path=request_path,
+        response_path=response_path,
+    )
+
+    assert reviewed_spec["schema_version"] == VERIFIED_CONSOLIDATION_SPEC_VERSION
