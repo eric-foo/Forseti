@@ -1700,6 +1700,24 @@ new frontier.
 
 ## Changelog
 
+- `v62` / 2026-08-27 — made bounded-point relation judgment preserve every
+  material qualifier after hydration dogfood exposed two recurring promotions:
+  generic drying had been admitted as severe drying, and similar drying or
+  cracking had been admitted as the same experience without an explicit
+  comparison target. The initial relation prompt and every pre-selection
+  confirmation route now keep broader, weaker, or merely similar outcomes
+  adjacent. Severe reactions or consequences do not establish severe drying
+  unless the source explicitly links them to drying; terse agreement may still
+  adopt an exact linked parent's experience. A fresh current-format hydration
+  pack rebuilt byte-identically twice, retained all 10 accepted and one rejected
+  frontier members plus all 8,360 candidate dispositions, and changed only the
+  two source-proven point artifacts. Point-local compilation reused nine of ten
+  inputs after the final correction. A fresh mirrored comparison preferred the
+  corrected current reader in both positions with no current critical error.
+  The model judge's error labels remain allegations until checked against the
+  authoritative view and literal source; reader preference cannot create or
+  erase factual failure. Frozen production artifacts remain unchanged, and no
+  Deliver claim or all-axis completion claim follows.
 - `v61` / 2026-08-26 — closed the two recurring reader defects exposed by the
   frozen 12-axis comparison without reviving its temporary hydration bridge.
   Point brief v4 now carries each selected placement's exact

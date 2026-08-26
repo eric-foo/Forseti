@@ -2086,7 +2086,9 @@ def test_customer_pull_frontier_runner_materializes_a_cold_point_spec(
         encoding="utf-8"
     )
     point_prompt = (tmp_path / "point-prompt.txt").read_text(encoding="utf-8")
-    assert "Support directly supports the bounded claim." in point_prompt
+    assert "Support directly supports the bounded claim and every material qualifier" in point_prompt
+    assert "a severe reaction, injury, peeling, cracking, or pain is not severe drying" in point_prompt
+    assert "sharing similar symptoms does not establish the same experience" in point_prompt
     assert _parser().parse_args(
         [
             "prepare-preselection-relation-confirmation",
@@ -2526,7 +2528,7 @@ def test_selection_round_trip_accounts_every_candidate_separates_creator_and_cap
     )
     assert any(group["group_key"].endswith("::amazon") for group in artifact["source_groups"])
     assert "every candidate_id exactly once" in prompt
-    assert "Support directly supports the bounded claim." not in prompt
+    assert evidence_selection.BOUNDED_POINT_RELATION_DEFINITIONS not in prompt
     assert "contiguous exact substring" in quote_prompt
     assert "Do not start the quote with an unresolved pronoun" in quote_prompt
     assert "Product identity may rely on the evidence row" in quote_prompt
@@ -3238,6 +3240,29 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
             batch_manifest, sources, responses, batch_size=5
         )
     )
+    assert all(
+        "Support directly supports the bounded point and every material qualifier"
+        in prompt
+        and "a severe reaction, injury, peeling, cracking, or pain is not severe drying"
+        in prompt
+        and "sharing similar symptoms does not establish the same experience"
+        in prompt
+        for prompt, _ in confirmation_prompts
+    )
+    for prompt in (
+        evidence_selection.BOUNDED_POINT_RELATION_DEFINITIONS,
+        evidence_selection.RELATION_CONFIRMATION_PROMPT,
+        evidence_selection.PRESELECTION_RELATION_CONFIRMATION_PROMPT,
+        evidence_selection.PRESELECTION_CONFIRMATION_BATCH_PROMPT,
+    ):
+        assert "every material qualifier" in prompt
+        assert (
+            "A broader, weaker, or merely similar outcome is adjacent rather than support."
+            in prompt
+        )
+        assert "ordinary, quick, possible, or qualified drying is not severe drying" in prompt
+        assert "a severe reaction, injury, peeling, cracking, or pain is not severe drying" in prompt
+        assert "sharing similar symptoms does not establish the same experience" in prompt
     reason_by_relation = {
         "support": "matching_customer_experience",
         "counter": "differing_customer_experience",
