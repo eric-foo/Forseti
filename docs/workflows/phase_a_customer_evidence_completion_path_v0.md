@@ -133,6 +133,15 @@ literal-ref admission because their price/value behavior policy is not the
 generic non-value route, and a hand-built value-first spec cannot claim the
 non-value recent-year selection policy. The full packet and every frontier disposition remain
 available; the displayed pack never implies prevalence.
+
+That exact-point judgment includes every material qualifier. Ordinary,
+possible, quick, or qualified drying is adjacent to a severe-drying point, as
+is a severe reaction or consequence that the source does not explicitly link
+to drying. Likewise, similar symptoms are adjacent to a same-experience point
+unless the candidate or its exact linked parent supplies an explicit comparison
+or adoption target. This boundary is enforced in both initial relation judgment
+and pre-selection confirmation; display selection cannot repair it later.
+
 Frontier specs use the exact bounded point as their direction: evidence that
 the balm is expensive supports that objection, rather than being reversed by
 the older positive-good-value box policy. Historical value-box selections keep
@@ -1333,6 +1342,13 @@ If a judge chooses the same opaque position after the candidates swap labels,
 mark that pair `position_unstable` and exclude both preference votes; retain and
 adjudicate its error findings. Only stable pairs contribute candidate or
 baseline wins, so position bias cannot manufacture either result.
+
+A model judge's critical-error report is an allegation until home adjudication
+checks the cited placement against the authoritative view and its literal
+source. Blind A/B preference measures reader utility, not factual validity:
+position stability does not prove an alleged error, and position instability
+does not create one. Only a source-adjudicated current critical error fails the
+current representation's factual-quality gate.
 
 Judge each quote against the specific placement and `quote_span_id` the answer
 cites. One evidence item may lawfully carry more than one exact quote span for
