@@ -1713,10 +1713,16 @@ new frontier.
   states remain adjacent; product-family or axis overlap alone is excluded.
   Focused unit validation passes 156 tests. A fresh seven-case cold dogfood
   returned the exact expected relations for completion intent, ownership,
-  actor identity, and a different-flavour formula comparator. The first canary
-  receipt is intentionally retained as a proof-expectation failure: exact
-  object scope correctly excluded an e.l.f. dupe from a Trader Joe's ingredient
-  point. The corrected receipt passes. The pre-fix shade consumer remains a
+  actor identity, and a different-flavour formula comparator, but it applied a
+  condensed restatement of the boundary rather than the shipped prompt string.
+  This proof's production relation and confirmation waves exercised the
+  asserted-state, superlative, and adjacency-floor sentences on real candidate
+  pools; the cross-actor, ownership, and completion-intent sentences appear in
+  no production prompt in that proof root and stay unexercised outside the
+  condensed dogfood until the affected shade points are regenerated. The first
+  canary receipt is intentionally retained as a proof-expectation failure:
+  exact object scope correctly excluded an e.l.f. dupe from a Trader Joe's
+  ingredient point. The corrected receipt passes. The pre-fix shade consumer remains a
   stable current critical failure, so the run stopped without rewriting frozen
   outputs or claiming Phase A completion. Historical token deltas remain
   `NOT_COMPARABLE`; no Deliver or price-savings claim follows.
