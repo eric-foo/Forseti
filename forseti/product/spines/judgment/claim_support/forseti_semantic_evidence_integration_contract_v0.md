@@ -1700,6 +1700,78 @@ new frontier.
 
 ## Changelog
 
+- `v61` / 2026-08-26 — closed the two recurring reader defects exposed by the
+  frozen 12-axis comparison without reviving its temporary hydration bridge.
+  Point brief v4 now carries each selected placement's exact
+  `point_relative_meaning`; two meanings attached to one literal quote can no
+  longer collapse into an unexplained repeated quote or contradictory relation
+  label. A dedicated no-frontier reader now validates the complete v2 pack,
+  presents every candidate once in a compact columnar request with deduplicated
+  parent contexts, exact evidence IDs, and scoped origin keys; accepts only one
+  to five in-pool candidate handles; and deterministically expands those
+  handles to complete frozen source rows. Request-native parent-context wording
+  preserves an empty context list as unresolved rather than proof of a
+  self-contained source. Its
+  output fixes relations to `not_applicable_no_admitted_frontier_point` and
+  keeps displayed-example count separate from the full candidate count.
+  Frozen coverage and packaging dogfood rebuilt byte-identically at 121 and 63
+  rows. Their requests were 127,013 and 68,999 bytes versus the retired
+  temporary prompts' 357,594 and 163,294 bytes. The two valid live calls used
+  98,183 input tokens, zero cached input, 794 output tokens, and 43 reasoning
+  tokens versus 185,262 historical input tokens under the same two
+  no-frontier whole-axis call definitions; the current outputs retained exact
+  source, date, engagement, semantic, origin, and parent-context recovery for
+  all ten selected examples. Both final calls succeeded on their first attempt;
+  the receipt at
+  `C:\tmp\forseti-phase-a-smallest-complete-20260826-v1\DOGFOOD_RECEIPT.md`
+  records the exact request/output hashes, usage, timing, and the limit that raw
+  provider JSONL was not separately persisted. A different-vendor review found
+  the first compact table exposed origin counts only in aggregate; home
+  adjudication rejected its contradictory overall PASS, added evidence/origin
+  identity to every model-visible row, corrected stale parent-context wording,
+  and reran both axes. Current
+  point-format hype and shade snapshots also rebuilt byte-identically and
+  recompiled 15 historical handle selections with all 50 representative
+  meaning blocks present. Hydration remains intentionally unobserved at the
+  final current-reader boundary because its only frozen pack is legacy-format;
+  no adapter or estimated token usage was retained to manufacture coverage.
+  This change does not relabel the frozen shade or hype relations and does not
+  claim all-axis Phase A completion.
+- `v60` / 2026-08-26 — completed the frozen 12-axis reader comparison without
+  making legacy hydration a permanent current-reader input. The old hydration
+  pack predates the embedded axis-pack identity, complete lineage, and typed
+  rejection disposition required by the current point reader. A temporary
+  different-vendor-reviewed bridge (patch SHA-256
+  `b8d864b72fd3c489a55c4a93ffbabad6e5628c4496ca6d79b646e19784420a3e`)
+  supplied only that measurement route; review first corrected an unpinned
+  quote-file hash entering point identity and a weaker legacy accounting gate.
+  The bridge was never committed, pushed, opened as a PR, merged, or retained
+  as product behavior. The final reader accepts current-format packs only;
+  legacy hydration remains available to its existing historical
+  consolidated-view replay and fails loudly at current reader accounting.
+  Across the measured current readers, all 53 consumer calls succeeded over
+  exactly 50 accepted points, 14 rejected points, and 184 no-frontier rows:
+  2,128,742 input tokens, zero cached input, 21,155 output tokens, 4,124
+  reasoning tokens, 4,329,673 request bytes, 67,552 response bytes, and
+  675,803 ms summed provider-active time. Thirty-four mapped blind judgments
+  produced 29 current wins and five historical wins, but this is not an
+  all-axis quality-improvement claim: shade had stable current critical
+  relation errors; hydration and hype retained position-linked critical
+  classification; coverage resolved to a historical win; and packaging
+  remained position-inconclusive. Scent, value, texture, formula, reaction,
+  and wear were stable current wins without current critical classification;
+  the rejected-only application explanation resolved the same way after its
+  required fresh pair. The run showed why the historical consumer shapes are
+  retired for current work: several omit rejected or full-pool accounting,
+  lose literal recoverability, or turn no-frontier candidates into patterns;
+  three axes had no receipt-bound historical reader output at all. It also
+  showed that point-local structure does not cure a bad frozen relation, so no
+  reader patch hides those failures. Historical latency and token deltas remain
+  `NOT_COMPARABLE` wherever call definitions differ. The immutable measurement
+  receipt is
+  `C:\tmp\forseti-phase-a-all-axis-proof-20260826-v0\MEASUREMENT_BRIDGE_CLOSEOUT.md`;
+  absence of a current-format hydration pack means the final adapter-free
+  reader is not yet proven across all 12 axes.
 - `v59` / 2026-08-26 — added the scalable point-local reader after a complete
   routed v2 axis is built. Each accepted point now has a path-independent,
   meaning-bound input fingerprint and content-addressed request, response, and

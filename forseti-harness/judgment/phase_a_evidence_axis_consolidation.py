@@ -45,10 +45,12 @@ DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
 AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v2"
 AXIS_READER_ACCOUNTING_VERSION = "phase_a_evidence_axis_reader_accounting_v1"
 POINT_READER_RUN_MANIFEST_VERSION = "phase_a_evidence_point_reader_run_manifest_v2"
-POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v3"
+POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v4"
 POINT_READER_REQUEST_VERSION = "phase_a_evidence_point_reader_request_v3"
 POINT_READER_AXIS_OUTPUT_VERSION = "phase_a_evidence_point_reader_axis_output_v2"
 POINT_READER_SUBJECT_IDENTITY_VERSION = "phase_a_point_reader_subject_identity_v1"
+NO_FRONTIER_READER_REQUEST_VERSION = "phase_a_evidence_no_frontier_reader_request_v1"
+NO_FRONTIER_READER_OUTPUT_VERSION = "phase_a_evidence_no_frontier_reader_output_v1"
 POINT_READER_METHOD_TEXT = (
     "Read exactly one complete Phase A evidence point. Explain only its bounded point. "
     "Use the supplied relation and literal evidence without relabelling either. Preserve "
@@ -90,6 +92,17 @@ POINT_READER_RESPONSE_SCHEMA: dict[str, Any] = {
         },
     },
 }
+NO_FRONTIER_READER_METHOD_TEXT = (
+    "Read the complete compact candidate table for one evidence axis with no admitted "
+    "frontier point. Explain the range and ambiguity a later reader should retain, and "
+    "select at most five useful examples by candidate_id. The examples illustrate the "
+    "captured pool; they are not the pool. Do not invent a bounded point or support/counter "
+    "relations, aggregate polarity into sentiment or prevalence, count rows or origins as "
+    "people, infer causation or market representativeness, or make a Deliver recommendation. "
+    "Rows sharing an evidence_id are meanings from one evidence item; rows sharing a "
+    "scoped_independence_key are one origin, never extra people. Read parent context where "
+    "supplied and cite only supplied candidate_id handles."
+)
 SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
@@ -1684,6 +1697,11 @@ def build_axis_reader_accounting(
         raise EvidenceConsumerError(
             "axis_reader_accounting", "source pack path does not contain the supplied pack"
         )
+    if pack.get("schema_version") == LEGACY_HYDRATION_AXIS_PACK_VERSION:
+        raise EvidenceConsumerError(
+            "axis_reader_accounting",
+            "legacy hydration packs are historical replay inputs; current reader accounting requires a current-format axis pack",
+        )
     validated = validate_phase_a_evidence_axis_pack(
         pack,
         expected_axis_pack_sha256=_required_string(
@@ -1738,6 +1756,349 @@ def validate_axis_reader_accounting(
         raise EvidenceConsumerError(
             "axis_reader_accounting_reprojection",
             "saved accounting differs from the complete candidate ledger",
+        )
+    return rebuilt
+
+
+def _no_frontier_reader_candidates(
+    pack: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Resolve exact parent context without changing the frozen candidate ledger."""
+
+    bindings = pack["source_bindings"]
+    packet_path = Path(bindings["packet_path"])
+    bundle_path = Path(bindings["bundle_path"])
+    packet = _load_object(packet_path, boundary="no_frontier_reader_source")
+    bundle = _load_object(bundle_path, boundary="no_frontier_reader_source")
+    candidates = _candidate_rows(
+        [
+            {
+                "source_id": pack["source_id"],
+                "packet": packet,
+                "bundle": bundle,
+                "packet_path": packet_path,
+                "bundle_path": bundle_path,
+            }
+        ],
+        {
+            "axis_ids": [pack["axis_id"]],
+            "subject_product_ids": copy.deepcopy(pack["subject_product_ids"]),
+            "admit_semantic_refs": [
+                {
+                    "source_id": pack["source_id"],
+                    "semantic_unit_ref": row["semantic_unit_ref"],
+                }
+                for row in pack["candidate_inventory"]
+            ],
+            "protected_evidence_ids": {},
+        },
+    )
+    without_parent = []
+    for row in candidates:
+        projected = copy.deepcopy(row)
+        projected.pop("parent_context", None)
+        without_parent.append(projected)
+    if without_parent != pack["candidate_inventory"]:
+        raise EvidenceConsumerError(
+            "no_frontier_reader_candidate_resolution",
+            "parent-context resolution changed the frozen candidate ledger",
+        )
+    return candidates
+
+
+def build_no_frontier_reader_request(
+    pack: Mapping[str, Any], *, source_axis_pack_path: Path
+) -> dict[str, Any]:
+    """Build one compact, complete no-frontier reader request from a frozen pack."""
+
+    source_axis_pack_path = source_axis_pack_path.resolve()
+    source = _load_object(source_axis_pack_path, boundary="no_frontier_reader_request")
+    if source != dict(pack):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request",
+            "source pack path does not contain the supplied pack",
+        )
+    validated = validate_phase_a_evidence_axis_pack(
+        pack,
+        expected_axis_pack_sha256=_required_string(
+            pack, "axis_pack_sha256", boundary="no_frontier_reader_request"
+        ),
+    )
+    if validated.get("schema_version") != NO_FRONTIER_AXIS_PACK_VERSION:
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request", "reader requires a no-frontier axis pack"
+        )
+    candidates = _no_frontier_reader_candidates(validated)
+    context_by_id: dict[str, dict[str, str]] = {}
+    columns = [
+        "candidate_id",
+        "evidence_id",
+        "scoped_independence_key",
+        "normalized_meaning",
+        "conditions",
+        "uncertainty_posture",
+        "polarity",
+        "source_role",
+        "source_venue",
+        "publication_time",
+        "engagement_kind",
+        "engagement_status",
+        "engagement_raw_value",
+        "independence_posture",
+        "parent_context_ids",
+    ]
+    rows: list[list[Any]] = []
+    for candidate in candidates:
+        context_ids: list[str] = []
+        for context in candidate.get("parent_context", []):
+            context_id = context["context_id"]
+            exact_context = {
+                "context_id": context_id,
+                "source_ref": context["source_ref"],
+                "text": context["text"],
+            }
+            prior = context_by_id.setdefault(context_id, exact_context)
+            if prior != exact_context:
+                raise EvidenceConsumerError(
+                    "no_frontier_reader_parent_context",
+                    "one parent-context identity resolved to different text",
+                )
+            context_ids.append(context_id)
+        values = {
+            **candidate,
+            "parent_context_ids": context_ids,
+        }
+        rows.append([copy.deepcopy(values[column]) for column in columns])
+    accounting = build_axis_reader_accounting(
+        validated, source_axis_pack_path=source_axis_pack_path
+    )
+    reading_contract = copy.deepcopy(validated["reading_contract"])
+    reading_contract["parent_context"] = (
+        "this request resolved parent context from the hash-pinned bundle; "
+        "parent_context_ids point to the exact supplied contexts, while an empty list "
+        "means no parent context was recoverable from that bound bundle and does not "
+        "prove the source is self-contained"
+    )
+    axis_pack_sha256 = validated["axis_pack_sha256"]
+    response_schema: dict[str, Any] = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": [
+            "axis_pack_sha256",
+            "axis_id",
+            "interpretation",
+            "representative_handles",
+        ],
+        "properties": {
+            "axis_pack_sha256": {"const": axis_pack_sha256},
+            "axis_id": {"const": validated["axis_id"]},
+            "interpretation": {"type": "string", "minLength": 1},
+            "representative_handles": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["candidate_id"],
+                    "properties": {"candidate_id": {"type": "string"}},
+                },
+            },
+        },
+    }
+    request: dict[str, Any] = {
+        "schema_version": NO_FRONTIER_READER_REQUEST_VERSION,
+        "axis_pack_sha256": axis_pack_sha256,
+        "axis_id": validated["axis_id"],
+        "subject_product_ids": copy.deepcopy(validated["subject_product_ids"]),
+        "status": "no_admitted_frontier_point",
+        "source_axis_pack": {
+            "path": str(source_axis_pack_path),
+            "raw_sha256": hash_file(source_axis_pack_path),
+        },
+        "candidate_pool_accounting": copy.deepcopy(
+            accounting["no_frontier_candidate_pool"]
+        ),
+        "reading_contract": reading_contract,
+        "method_text": NO_FRONTIER_READER_METHOD_TEXT,
+        "response_schema": response_schema,
+        "candidate_columns": columns,
+        "candidate_rows": rows,
+        "parent_contexts": [
+            context_by_id[key] for key in sorted(context_by_id)
+        ],
+    }
+    request["request_sha256"] = _canonical_hash(request, "request_sha256")
+    return request
+
+
+def validate_no_frontier_reader_request(
+    request: Mapping[str, Any], *, expected_request_sha256: str
+) -> dict[str, Any]:
+    if request.get("schema_version") != NO_FRONTIER_READER_REQUEST_VERSION:
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request", "unsupported request version"
+        )
+    if (
+        request.get("request_sha256") != expected_request_sha256
+        or request.get("request_sha256") != _canonical_hash(request, "request_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request", "request identity changed"
+        )
+    source = request.get("source_axis_pack")
+    if not isinstance(source, Mapping):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request", "source pack binding is missing"
+        )
+    source_path = Path(
+        _required_string(source, "path", boundary="no_frontier_reader_request")
+    )
+    if not source_path.is_file() or hash_file(source_path) != source.get("raw_sha256"):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request", "source pack bytes changed"
+        )
+    rebuilt = build_no_frontier_reader_request(
+        _load_object(source_path, boundary="no_frontier_reader_request"),
+        source_axis_pack_path=source_path,
+    )
+    if rebuilt != dict(request):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_request_reprojection",
+            "saved request differs from the complete frozen candidate ledger",
+        )
+    return rebuilt
+
+
+def compile_no_frontier_reader_output(
+    request: Mapping[str, Any], *, response: Mapping[str, Any]
+) -> dict[str, Any]:
+    validated_request = validate_no_frontier_reader_request(
+        request,
+        expected_request_sha256=_required_string(
+            request, "request_sha256", boundary="no_frontier_reader_response"
+        ),
+    )
+    if set(response) != {
+        "axis_pack_sha256",
+        "axis_id",
+        "interpretation",
+        "representative_handles",
+    }:
+        raise EvidenceConsumerError(
+            "no_frontier_reader_response", "response fields are invalid"
+        )
+    if (
+        response.get("axis_pack_sha256") != validated_request["axis_pack_sha256"]
+        or response.get("axis_id") != validated_request["axis_id"]
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_response", "response identity changed"
+        )
+    interpretation = response.get("interpretation")
+    handles = response.get("representative_handles")
+    if not isinstance(interpretation, str) or not interpretation.strip():
+        raise EvidenceConsumerError(
+            "no_frontier_reader_response", "interpretation is missing"
+        )
+    if (
+        not isinstance(handles, list)
+        or not 1 <= len(handles) <= 5
+        or any(not isinstance(handle, Mapping) for handle in handles)
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_response", "representative handles are invalid"
+        )
+    source_path = Path(validated_request["source_axis_pack"]["path"])
+    pack = _load_object(source_path, boundary="no_frontier_reader_response")
+    candidate_by_id = {
+        row["candidate_id"]: row for row in _no_frontier_reader_candidates(pack)
+    }
+    selected: list[dict[str, Any]] = []
+    observed: set[str] = set()
+    for handle in handles:
+        if set(handle) != {"candidate_id"}:
+            raise EvidenceConsumerError(
+                "no_frontier_reader_response", "representative handle fields are invalid"
+            )
+        candidate_id = handle.get("candidate_id")
+        if (
+            not isinstance(candidate_id, str)
+            or candidate_id in observed
+            or candidate_id not in candidate_by_id
+        ):
+            raise EvidenceConsumerError(
+                "no_frontier_reader_response",
+                "representative handle is duplicate, foreign, or unavailable",
+            )
+        observed.add(candidate_id)
+        selected.append(copy.deepcopy(candidate_by_id[candidate_id]))
+    output: dict[str, Any] = {
+        "schema_version": NO_FRONTIER_READER_OUTPUT_VERSION,
+        "request_sha256": validated_request["request_sha256"],
+        "axis_pack_sha256": validated_request["axis_pack_sha256"],
+        "axis_id": validated_request["axis_id"],
+        "subject_product_ids": copy.deepcopy(
+            validated_request["subject_product_ids"]
+        ),
+        "status": "no_admitted_frontier_point",
+        "relations": {"status": "not_applicable_no_admitted_frontier_point"},
+        "candidate_pool_accounting": copy.deepcopy(
+            validated_request["candidate_pool_accounting"]
+        ),
+        "model_interpretation": interpretation,
+        "representative_evidence": selected,
+        "display_scope": {
+            "displayed_example_count": len(selected),
+            "complete_candidate_row_count": len(validated_request["candidate_rows"]),
+            "displayed_examples_are_complete_pool": False,
+        },
+        "source_axis_pack": copy.deepcopy(validated_request["source_axis_pack"]),
+        "non_claims": [
+            "no bounded point or support/counter relation was invented",
+            "displayed examples are not the complete captured candidate pool",
+            "candidate rows and origins are not people or prevalence",
+            "this Phase A reader makes no Deliver recommendation",
+        ],
+    }
+    output["output_sha256"] = _canonical_hash(output, "output_sha256")
+    return output
+
+
+def validate_no_frontier_reader_output(
+    request: Mapping[str, Any],
+    *,
+    output: Mapping[str, Any],
+    expected_output_sha256: str,
+) -> dict[str, Any]:
+    if (
+        output.get("schema_version") != NO_FRONTIER_READER_OUTPUT_VERSION
+        or output.get("output_sha256") != expected_output_sha256
+        or output.get("output_sha256") != _canonical_hash(output, "output_sha256")
+    ):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_output", "output identity changed"
+        )
+    representatives = output.get("representative_evidence")
+    if not isinstance(representatives, list):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_output", "representative evidence is invalid"
+        )
+    response = {
+        "axis_pack_sha256": output.get("axis_pack_sha256"),
+        "axis_id": output.get("axis_id"),
+        "interpretation": output.get("model_interpretation"),
+        "representative_handles": [
+            {"candidate_id": row.get("candidate_id")}
+            for row in representatives
+            if isinstance(row, Mapping)
+        ],
+    }
+    rebuilt = compile_no_frontier_reader_output(request, response=response)
+    if rebuilt != dict(output):
+        raise EvidenceConsumerError(
+            "no_frontier_reader_output_reprojection",
+            "saved output differs from its hash-bound candidate rows",
         )
     return rebuilt
 
@@ -5745,6 +6106,9 @@ def _compile_point_reader_brief_from_validated_facts(
                 "publication_time": fact["evidence"]["publication_time"],
                 "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
                 "origin_group_id": fact["origin"]["origin_group_id"],
+                "point_relative_meaning": copy.deepcopy(
+                    fact["point_relative_meaning"]
+                ),
             }
         )
     required_relations = {
@@ -5897,6 +6261,7 @@ def _validate_point_reader_brief_from_validated_facts(
             "publication_time": fact["evidence"]["publication_time"],
             "engagement": fact["evidence"]["engagement"],
             "origin_group_id": fact["origin"]["origin_group_id"],
+            "point_relative_meaning": fact["point_relative_meaning"],
         }
         if dict(row) != expected:
             raise EvidenceConsumerError(

@@ -1455,6 +1455,33 @@ def test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display(
     assert embedded == point_a
 
 
+def test_current_reader_rejects_legacy_hydration_pack_but_replay_still_builds(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec, paths = _fixture(tmp_path, monkeypatch)
+    pack_path = paths["axis"]
+    pack = json.loads(pack_path.read_text(encoding="utf-8"))
+
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "legacy_replay_view.json"
+    _write(view_path, view)
+
+    with pytest.raises(EvidenceConsumerError) as error:
+        build_axis_reader_accounting(pack, source_axis_pack_path=pack_path)
+
+    assert error.value.boundary == "axis_reader_accounting"
+    assert "historical replay inputs" in str(error.value)
+
+    with pytest.raises(EvidenceConsumerError) as bundle_error:
+        build_axis_reader_bundle(
+            view,
+            source_view_path=view_path,
+            facts_dir=tmp_path / "legacy_reader_facts",
+        )
+    assert bundle_error.value.boundary == "axis_reader_accounting"
+    assert "unsupported source axis pack" in str(bundle_error.value)
+
+
 def test_axis_reader_accounting_rejects_a_coherently_rehashed_false_full_pool(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -4269,6 +4296,22 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
         )
         assert brief["schema_version"] == POINT_READER_BRIEF_VERSION
         assert brief["decision_state_ledger"]
+        fact_by_placement = {
+            fact["placement_id"]: fact
+            for fact in (
+                json.loads(line)
+                for line in payloads[point["point_id"]]
+                .decode("utf-8")
+                .splitlines()
+            )
+        }
+        assert all(
+            representative["point_relative_meaning"]
+            == fact_by_placement[representative["placement_id"]][
+                "point_relative_meaning"
+            ]
+            for representative in brief["representative_evidence"]
+        )
         assert validate_point_reader_brief(
             manifest, point_store_dir=store, brief=brief
         ) == brief
@@ -4286,7 +4329,41 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
         .decode("utf-8")
         .splitlines()
     ]
-    support = next(fact for fact in first_facts if fact["relation"] == "support")
+    support_source = next(
+        fact for fact in first_facts if fact["relation"] == "support"
+    )
+    same_quote_facts = [copy.deepcopy(support_source), copy.deepcopy(support_source)]
+    same_quote_facts[1]["placement_id"] += "::second-meaning"
+    same_quote_facts[1]["relation"] = "counter"
+    same_quote_facts[1]["point_relative_meaning"]["semantic_unit_ref"] += (
+        "::second-meaning"
+    )
+    same_quote_facts[1]["point_relative_meaning"]["statement"] = (
+        "A different exact meaning retained from the same literal quote."
+    )
+    same_quote_brief = consolidation_judgment._compile_point_reader_brief_from_validated_facts(
+        manifest,
+        point=manifest["points"][0],
+        facts=same_quote_facts,
+        response={
+            "point_input_sha256": manifest["points"][0]["point_input_sha256"],
+            "point_id": manifest["points"][0]["point_id"],
+            "interpretation": "One quote retains two distinct bounded meanings.",
+            "representative_handles": [
+                {"placement_id": fact["placement_id"]}
+                for fact in same_quote_facts
+            ],
+        },
+    )
+    same_quote_representatives = same_quote_brief["representative_evidence"]
+    assert same_quote_representatives[0]["exact_quote"] == same_quote_representatives[1][
+        "exact_quote"
+    ]
+    assert (
+        same_quote_representatives[0]["point_relative_meaning"]
+        != same_quote_representatives[1]["point_relative_meaning"]
+    )
+    support = support_source
     assert any(fact["relation"] == "counter" for fact in first_facts)
     with pytest.raises(EvidenceConsumerError) as caught:
         compile_point_reader_brief(
@@ -4350,6 +4427,19 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
     with pytest.raises(EvidenceConsumerError) as caught:
         validate_axis_point_reader_output(
             manifest, output=wrong_quote_output, point_store_dir=store
+        )
+    assert caught.value.boundary == "point_reader_brief"
+
+    wrong_meaning = copy.deepcopy(briefs[0])
+    wrong_meaning["representative_evidence"][0]["point_relative_meaning"][
+        "statement"
+    ] = "meaning moved from another evidence placement"
+    wrong_meaning["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in wrong_meaning.items() if key != "brief_sha256"}
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_point_reader_brief(
+            manifest, point_store_dir=store, brief=wrong_meaning
         )
     assert caught.value.boundary == "point_reader_brief"
 

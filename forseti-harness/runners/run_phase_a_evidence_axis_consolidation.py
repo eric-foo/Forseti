@@ -22,10 +22,12 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     build_axis_point_reader_snapshot,
     build_axis_reader_bundle,
     build_axis_reader_accounting,
+    build_no_frontier_reader_request,
     build_axis_dogfood_truth_index,
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     compile_point_reader_brief,
+    compile_no_frontier_reader_output,
     materialize_phase_a_evidence_no_frontier_axis_manifest,
     POINT_READER_REQUEST_VERSION,
     validate_axis_point_reader_output,
@@ -37,6 +39,8 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     validate_axis_consolidated_view,
     validate_phase_a_evidence_axis_pack,
     validate_point_reader_brief,
+    validate_no_frontier_reader_output,
+    validate_no_frontier_reader_request,
 )
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError  # noqa: E402
 
@@ -187,6 +191,72 @@ def validate_reader_accounting_run(
         "accounting_path": str(accounting_path),
         "accounting_sha256": accounting["accounting_sha256"],
         "point_count": len(accounting["points"]),
+        "model_api_calls": 0,
+    }
+
+
+def prepare_no_frontier_reader_request_run(
+    *, pack_path: Path, output_path: Path
+) -> dict[str, Any]:
+    request = build_no_frontier_reader_request(
+        _load_object(pack_path), source_axis_pack_path=pack_path
+    )
+    validate_no_frontier_reader_request(
+        request, expected_request_sha256=request["request_sha256"]
+    )
+    _write_new(output_path, request)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "request_sha256": request["request_sha256"],
+        "candidate_row_count": len(request["candidate_rows"]),
+        "request_bytes": output_path.stat().st_size,
+        "model_api_calls": 0,
+    }
+
+
+def finalize_no_frontier_reader_run(
+    *, request_path: Path, response_path: Path, output_path: Path
+) -> dict[str, Any]:
+    request = _load_object(request_path)
+    output = compile_no_frontier_reader_output(
+        request, response=_load_object(response_path)
+    )
+    validate_no_frontier_reader_output(
+        request,
+        output=output,
+        expected_output_sha256=output["output_sha256"],
+    )
+    _write_new(output_path, output)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "output_sha256": output["output_sha256"],
+        "displayed_example_count": output["display_scope"][
+            "displayed_example_count"
+        ],
+        "complete_candidate_row_count": output["display_scope"][
+            "complete_candidate_row_count"
+        ],
+        "model_api_calls": 0,
+    }
+
+
+def validate_no_frontier_reader_output_run(
+    *, request_path: Path, output_path: Path, expected_output_sha256: str
+) -> dict[str, Any]:
+    output = validate_no_frontier_reader_output(
+        _load_object(request_path),
+        output=_load_object(output_path),
+        expected_output_sha256=expected_output_sha256,
+    )
+    return {
+        "status": "valid",
+        "output_path": str(output_path),
+        "output_sha256": output["output_sha256"],
+        "complete_candidate_row_count": output["display_scope"][
+            "complete_candidate_row_count"
+        ],
         "model_api_calls": 0,
     }
 
@@ -665,6 +735,39 @@ def main() -> int:
     validate_accounting_parser.add_argument(
         "--expected-accounting-sha256", required=True
     )
+    prepare_no_frontier_reader_parser = subparsers.add_parser(
+        "prepare-no-frontier-reader-request"
+    )
+    prepare_no_frontier_reader_parser.add_argument(
+        "--axis-pack", type=Path, required=True
+    )
+    prepare_no_frontier_reader_parser.add_argument(
+        "--output", type=Path, required=True
+    )
+    finalize_no_frontier_reader_parser = subparsers.add_parser(
+        "finalize-no-frontier-reader"
+    )
+    finalize_no_frontier_reader_parser.add_argument(
+        "--request", type=Path, required=True
+    )
+    finalize_no_frontier_reader_parser.add_argument(
+        "--response", type=Path, required=True
+    )
+    finalize_no_frontier_reader_parser.add_argument(
+        "--output", type=Path, required=True
+    )
+    validate_no_frontier_reader_parser = subparsers.add_parser(
+        "validate-no-frontier-reader-output"
+    )
+    validate_no_frontier_reader_parser.add_argument(
+        "--request", type=Path, required=True
+    )
+    validate_no_frontier_reader_parser.add_argument(
+        "--output", type=Path, required=True
+    )
+    validate_no_frontier_reader_parser.add_argument(
+        "--expected-output-sha256", required=True
+    )
     validate_parser = subparsers.add_parser("validate")
     validate_parser.add_argument("--view", type=Path, required=True)
     validate_parser.add_argument("--expected-view-sha256", required=True)
@@ -811,6 +914,22 @@ def main() -> int:
         result = validate_reader_accounting_run(
             accounting_path=args.accounting,
             expected_accounting_sha256=args.expected_accounting_sha256,
+        )
+    elif args.command == "prepare-no-frontier-reader-request":
+        result = prepare_no_frontier_reader_request_run(
+            pack_path=args.axis_pack, output_path=args.output
+        )
+    elif args.command == "finalize-no-frontier-reader":
+        result = finalize_no_frontier_reader_run(
+            request_path=args.request,
+            response_path=args.response,
+            output_path=args.output,
+        )
+    elif args.command == "validate-no-frontier-reader-output":
+        result = validate_no_frontier_reader_output_run(
+            request_path=args.request,
+            output_path=args.output,
+            expected_output_sha256=args.expected_output_sha256,
         )
     elif args.command == "build":
         result = build_run(spec_path=args.spec, output_path=args.output)

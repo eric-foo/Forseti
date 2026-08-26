@@ -13,10 +13,14 @@ from judgment.phase_a_evidence_axis_consolidation import (
     NO_FRONTIER_AXIS_PACK_VERSION,
     _no_frontier_axis_disposition,
     build_axis_reader_accounting,
+    build_no_frontier_reader_request,
     build_phase_a_evidence_axis_pack,
+    compile_no_frontier_reader_output,
     materialize_phase_a_evidence_no_frontier_axis_manifest,
     validate_phase_a_evidence_axis_pack,
     validate_axis_reader_accounting,
+    validate_no_frontier_reader_output,
+    validate_no_frontier_reader_request,
 )
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
@@ -391,6 +395,87 @@ def test_no_frontier_reader_accounting_preserves_shape_without_inventing_relatio
             expected_accounting_sha256=invented["accounting_sha256"],
         )
     assert caught.value.boundary == "axis_reader_accounting_reprojection"
+
+
+def test_no_frontier_reader_compacts_complete_pool_and_recovers_exact_examples(
+    tmp_path: Path,
+) -> None:
+    parent_text = "The parent asks whether the reply means it will be returned."
+    _, _, _, packet_path, bundle_path, frontier_path = _no_frontier_source(
+        tmp_path, count=8, parent_context_text=parent_text
+    )
+    manifest = _no_frontier_manifest(packet_path, bundle_path, frontier_path)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    pack_path = tmp_path / "no-frontier-pack.json"
+    pack_path.write_text(json.dumps(pack), encoding="utf-8")
+
+    request = build_no_frontier_reader_request(
+        pack, source_axis_pack_path=pack_path
+    )
+    assert len(request["candidate_rows"]) == 8
+    assert request["candidate_pool_accounting"]["semantic_row_count"] == 8
+    evidence_column = request["candidate_columns"].index("evidence_id")
+    origin_column = request["candidate_columns"].index(
+        "scoped_independence_key"
+    )
+    assert {
+        (row[evidence_column], row[origin_column])
+        for row in request["candidate_rows"]
+    } == {
+        (row["evidence_id"], row["scoped_independence_key"])
+        for row in pack["candidate_inventory"]
+    }
+    assert "one origin, never extra people" in request["method_text"]
+    assert "this request resolved parent context" in request["reading_contract"][
+        "parent_context"
+    ]
+    assert "does not prove the source is self-contained" in request[
+        "reading_contract"
+    ]["parent_context"]
+    assert request["parent_contexts"][0]["text"] == parent_text
+    assert validate_no_frontier_reader_request(
+        request, expected_request_sha256=request["request_sha256"]
+    ) == request
+
+    candidate_id = request["candidate_rows"][0][
+        request["candidate_columns"].index("candidate_id")
+    ]
+    output = compile_no_frontier_reader_output(
+        request,
+        response={
+            "axis_pack_sha256": pack["axis_pack_sha256"],
+            "axis_id": pack["axis_id"],
+            "interpretation": "The captured rows vary; no bounded claim is admitted.",
+            "representative_handles": [{"candidate_id": candidate_id}],
+        },
+    )
+    assert output["relations"] == {
+        "status": "not_applicable_no_admitted_frontier_point"
+    }
+    assert output["display_scope"] == {
+        "displayed_example_count": 1,
+        "complete_candidate_row_count": 8,
+        "displayed_examples_are_complete_pool": False,
+    }
+    assert output["representative_evidence"][0]["candidate_id"] == candidate_id
+    assert "parent_context" in output["representative_evidence"][0]
+    assert validate_no_frontier_reader_output(
+        request,
+        output=output,
+        expected_output_sha256=output["output_sha256"],
+    ) == output
+
+    foreign = copy.deepcopy(output)
+    foreign["representative_evidence"][0]["candidate_id"] = "foreign"
+    foreign.pop("output_sha256")
+    foreign["output_sha256"] = _canonical_hash(foreign)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_no_frontier_reader_output(
+            request,
+            output=foreign,
+            expected_output_sha256=foreign["output_sha256"],
+        )
+    assert caught.value.boundary == "no_frontier_reader_response"
 
 
 def test_no_frontier_axis_pack_never_presents_unresolved_parent_context_as_absent(
