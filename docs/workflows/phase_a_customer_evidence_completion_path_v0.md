@@ -78,6 +78,7 @@ Test names below resolve in
 | Quote length never decides whether current evidence is truthful. V8 accepts the shortest context-complete contiguous exact span even above 220 characters; 220 remains only the short-body copy/review-workload threshold, and stamped v7 keeps its historical ceiling. | A long truthful explanation is rejected because it is inconvenient to display, or historical v7 replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION` and its v7 compatibility branch in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded`, `test_quote_stopping_before_the_next_source_word_fails_loud`, and `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display` (emulated-v7-producer/current-consumer replay: proves the v7 consumer path still finalizes and keeps its stamped exclusion code, not that saved v7 bytes were reproduced). | Semantic-integration contract changelog `v58`; commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
 | A cold model reads routed v2 evidence through a hash-bound manifest plus one point-local JSONL file containing self-contained displayed facts; route-specific meaning remains inside each fact. | A normalized view or one axis-wide fact stream forces repeated joins or searches, so reading cost becomes unstable or a quote, date, relation, companion meaning, or Decision State is transferred across points. | This workflow, paragraph beginning `When a cold model must read`; `build_axis_reader_bundle` and `validate_axis_reader_bundle` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local`, `test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct`, and `test_axis_reader_bundle_wrong_cause_reaches_reprojection_boundary`. | The landing revision and review disposition are preserved in Git history; no frozen consolidated-view bytes are changed. |
 | Scalable reader compilation freezes path-independent point identities, lets one worker read one complete point, compiler-attaches exact evidence and Decision State, reuses unchanged briefs, and assembles only exact accepted/rejected membership. | Rebuilding or prompting a whole axis after one point changes wastes work; a compact answer can also look exact while dropping a state, borrowing a quote, or omitting a late worker result. | This workflow, paragraph beginning `For scalable point-at-a-time compilation`; point-reader functions in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` and `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`; axis tests `test_point_reader_compiler_closes_decision_state_at_consumer_boundary`, `test_point_reader_identity_binds_meaning_but_not_storage_path`, `test_point_reader_runner_reuses_valid_points_and_recovers_partial_run`, and `test_point_reader_membership_scales_without_a_whole_axis_schema`. | Semantic-integration contract changelog `v59`; commits `81cad271`, `cb102c6a`, and `3ef82edc`. This route adds generated run bookkeeping, not an evidence authority, global index, hierarchy, or Deliver stage. Frozen v1/v2 outputs remain unchanged. |
+| Every compact reader carries a deterministic full-candidate-pool label beside its selected display examples. Point-bearing labels preserve point-relative relation rows, evidence items, origins, direct-relation overlap, source-role splits, and material-engagement origins; no-frontier labels preserve full candidate shape but make relations explicitly not applicable. | A balanced-looking 13-origin display panel hides a materially asymmetric 327-row captured pool, or an evidence-rich no-point axis acquires invented support/counter labels merely to obtain a compact summary. | This workflow, paragraph beginning `Before reading selected examples as the axis`; `build_axis_reader_accounting` and `validate_axis_reader_accounting` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; tests `test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display`, `test_axis_reader_accounting_rejects_a_coherently_rehashed_false_full_pool`, and `test_no_frontier_reader_accounting_preserves_shape_without_inventing_relations`. | The label is a new reader-side v1 projection over unchanged axis-pack inputs. It adds one linear local pass and zero model calls; frozen point artifacts, axis packs, consolidation specs, and consolidated views retain their bytes. |
 | An evidence-rich axis with no admitted frontier point preserves every exact axis-tagged candidate in a no-frontier v2 pack; it invents no point and assigns no support/counter relation. | Zero-proposition axes disappear as apparently complete empties, or an operator fabricates a convenient claim merely to retain useful evidence. | This workflow, paragraph beginning `When an axis has nonempty axis-tagged evidence`; `materialize_phase_a_evidence_no_frontier_axis_manifest` and `_build_no_frontier_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_no_frontier_axis_pack_preserves_every_candidate_and_reprojects`, `test_no_frontier_axis_pack_rejects_repinned_missing_candidate_at_accounting`, `test_no_frontier_axis_pack_rejects_repinned_cross_evidence_attachment`, `test_no_frontier_axis_route_rejects_an_already_admitted_point_at_status_boundary`, and `test_no_frontier_axis_pack_never_presents_unresolved_parent_context_as_absent`. | The v2 pack is a separate consumer shape. Existing point-bearing v1 packs and routed v1/v2 consolidated views retain their existing bytes and route. |
 | Frozen v1 specs and views rebuild under their original shape and bytes; v2-only routing, Decision State, and evidence-accounting fields never leak backward. | A current improvement quietly restamps historical evidence or makes the compatibility control look reproducible when its bytes changed. | This workflow, paragraph containing `The v1 spec and`; `LEGACY_CONSOLIDATION_SPEC_VERSION`, `LEGACY_CONSOLIDATED_VIEW_VERSION`, and `build_axis_consolidated_view` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields`, `test_v1_rejects_decision_state_spec_residue`, and `test_legacy_v1_does_not_gain_evidence_accounting_fields`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. Quote-manifest v7/v8 replay is the separate compatibility boundary in semantic-integration contract changelog `v58`. |
 
@@ -1119,6 +1120,14 @@ run_phase_a_evidence_axis_consolidation.py bind-reader-output-schema
   --base-schema <structured-reader-brief-base-schema.json>
   --output-schema <new-bound-output-schema.json>
   --expected-reader-manifest-sha256 <independently-recorded-hash>
+
+run_phase_a_evidence_axis_consolidation.py build-reader-accounting
+  --axis-pack <validated-point-bearing-or-no-frontier-axis-pack.json>
+  --output <new-reader-accounting.json>
+
+run_phase_a_evidence_axis_consolidation.py validate-reader-accounting
+  --accounting <reader-accounting.json>
+  --expected-accounting-sha256 <independently-recorded-hash>
 ```
 
 For scalable point-at-a-time compilation, use the point-reader run after the
@@ -1229,9 +1238,32 @@ the exact `bounded_point`; never rewrite the admitted point as an OR-list of
 neighboring meanings. Any output field for the exact or admitted meaning must
 copy `bounded_point` verbatim and contain nothing else; evidence explanations
 and qualifiers belong in separate fields.
-Each structured point brief also copies `displayed_relation_row_counts` and
-`truth_origin_count` into `reader_accounting`. These are exact displayed-row
-and origin-group accounting, never people, votes, corroboration, or prevalence.
+Before reading selected examples as the axis, read the deterministic
+`candidate_pool_accounting` carried by the reader. Its `display_panel` counts
+only selected examples. Its `full_candidate_pool` counts every disposition for
+that exact bounded point, including support, counter, adjacent, and exclude
+rows; distinct evidence items; distinct origin groups; support-only,
+counter-only, and both-direction origins; source-role splits; and origins with
+material source-native engagement. Coexistence of support and counter means
+the captured set is mixed, not that the two directions are equal. If the full
+captured set is materially asymmetric, state that asymmetry with its exact
+counts and source-role split instead of letting the compact display panel imply
+balance. These are captured-corpus counts, not customer shares, market
+sentiment, or prevalence. Material engagement describes resonance only and
+does not increase truth or convert creator influence into customer
+corroboration.
+
+For an evidence-rich axis with no admitted frontier point, build the same
+reader-accounting projection directly from its no-frontier v2 pack. It reports
+semantic-row, evidence-item, origin, source-role, source-venue, posture, date,
+condition, and engagement availability counts, while setting relations to
+`not_applicable_no_admitted_frontier_point`. It must not invent a bounded point
+or support/counter labels.
+
+Each structured point brief also copies `displayed_relation_row_counts`,
+`truth_origin_count`, and the exact point-local `candidate_pool_accounting` into
+`reader_accounting`. These are exact displayed-row, full-candidate, and
+origin-group accounting, never people, votes, corroboration, or prevalence.
 Before a model emits that shape, bind the base output schema with
 `bind-reader-output-schema`. Constrained decoding then keeps each emitted row's
 point ID, exact meaning, route, and accounting object together; it does not

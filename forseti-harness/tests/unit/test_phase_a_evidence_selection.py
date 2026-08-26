@@ -9,11 +9,14 @@ import pytest
 from harness_utils import hash_file
 import judgment.phase_a_evidence_selection as evidence_selection
 from judgment.phase_a_evidence_axis_consolidation import (
+    AXIS_READER_ACCOUNTING_VERSION,
     NO_FRONTIER_AXIS_PACK_VERSION,
     _no_frontier_axis_disposition,
+    build_axis_reader_accounting,
     build_phase_a_evidence_axis_pack,
     materialize_phase_a_evidence_no_frontier_axis_manifest,
     validate_phase_a_evidence_axis_pack,
+    validate_axis_reader_accounting,
 )
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
@@ -332,6 +335,52 @@ def test_no_frontier_axis_pack_preserves_every_candidate_and_reprojects(
         )
         == pack
     )
+
+
+def test_no_frontier_reader_accounting_preserves_shape_without_inventing_relations(
+    tmp_path: Path,
+) -> None:
+    _, _, _, packet_path, bundle_path, frontier_path = _no_frontier_source(
+        tmp_path
+    )
+    manifest = _no_frontier_manifest(packet_path, bundle_path, frontier_path)
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    pack_path = tmp_path / "no-frontier-pack.json"
+    pack_path.write_text(json.dumps(pack), encoding="utf-8")
+
+    accounting = build_axis_reader_accounting(
+        pack, source_axis_pack_path=pack_path
+    )
+
+    assert accounting["schema_version"] == AXIS_READER_ACCOUNTING_VERSION
+    assert accounting["status"] == "no_admitted_frontier_candidate_accounting"
+    assert accounting["points"] == []
+    pool = accounting["no_frontier_candidate_pool"]
+    assert pool["semantic_row_count"] == 5
+    assert pool["evidence_item_count"] > 0
+    assert pool["origin_count"] > 0
+    assert pool["relations"] == {
+        "status": "not_applicable_no_admitted_frontier_point"
+    }
+    assert "support" not in json.dumps(pool["relations"])
+    assert validate_axis_reader_accounting(
+        accounting,
+        expected_accounting_sha256=accounting["accounting_sha256"],
+    ) == accounting
+
+    invented = copy.deepcopy(accounting)
+    invented["no_frontier_candidate_pool"]["relations"] = {
+        "status": "applicable",
+        "support": 5,
+    }
+    invented.pop("accounting_sha256")
+    invented["accounting_sha256"] = _canonical_hash(invented)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_reader_accounting(
+            invented,
+            expected_accounting_sha256=invented["accounting_sha256"],
+        )
+    assert caught.value.boundary == "axis_reader_accounting_reprojection"
 
 
 def test_no_frontier_axis_pack_never_presents_unresolved_parent_context_as_absent(

@@ -42,11 +42,12 @@ CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
 LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
-AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v1"
-POINT_READER_RUN_MANIFEST_VERSION = "phase_a_evidence_point_reader_run_manifest_v1"
-POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v2"
-POINT_READER_REQUEST_VERSION = "phase_a_evidence_point_reader_request_v2"
-POINT_READER_AXIS_OUTPUT_VERSION = "phase_a_evidence_point_reader_axis_output_v1"
+AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v2"
+AXIS_READER_ACCOUNTING_VERSION = "phase_a_evidence_axis_reader_accounting_v1"
+POINT_READER_RUN_MANIFEST_VERSION = "phase_a_evidence_point_reader_run_manifest_v2"
+POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v3"
+POINT_READER_REQUEST_VERSION = "phase_a_evidence_point_reader_request_v3"
+POINT_READER_AXIS_OUTPUT_VERSION = "phase_a_evidence_point_reader_axis_output_v2"
 POINT_READER_SUBJECT_IDENTITY_VERSION = "phase_a_point_reader_subject_identity_v1"
 POINT_READER_METHOD_TEXT = (
     "Read exactly one complete Phase A evidence point. Explain only its bounded point. "
@@ -55,7 +56,10 @@ POINT_READER_METHOD_TEXT = (
     "intent, observed action, quantity, object, and conditions; never turn intent into "
     "observed behavior or several purchased units into several repurchases. Do not infer "
     "prevalence, causation, market representativeness, pricing power, or a Deliver "
-    "recommendation. Cite only supplied point-local placement handles."
+    "recommendation. Treat candidate_pool_accounting as exact captured-pool "
+    "bookkeeping: distinguish it from selected display examples, and never turn its "
+    "row or origin counts into customer prevalence. Cite only supplied point-local "
+    "placement handles."
 )
 POINT_READER_RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -1398,6 +1402,377 @@ def validate_phase_a_evidence_axis_pack(
     if rebuilt != dict(pack):
         raise EvidenceConsumerError(
             "axis_pack_reprojection", "saved axis pack differs from deterministic source projection"
+        )
+    return rebuilt
+
+
+_CANDIDATE_RELATIONS = ("support", "counter", "adjacent", "exclude")
+
+
+def _candidate_count_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    return {
+        "semantic_row_count": len(rows),
+        "evidence_item_count": len({row["evidence_id"] for row in rows}),
+        "origin_count": len({row["scoped_independence_key"] for row in rows}),
+        "material_engagement_origin_count": len(
+            {
+                row["scoped_independence_key"]
+                for row in rows
+                if row.get("engagement_material_positive") is True
+            }
+        ),
+    }
+
+
+def _candidate_dimension_counts(
+    rows: Sequence[Mapping[str, Any]], field: str
+) -> list[dict[str, Any]]:
+    def value(row: Mapping[str, Any]) -> str:
+        observed = row.get(field)
+        return observed if isinstance(observed, str) and observed else "unspecified"
+
+    buckets: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+    for row in rows:
+        buckets[value(row)].append(row)
+    return [
+        {
+            field: dimension_value,
+            **_candidate_count_summary(buckets[dimension_value]),
+        }
+        for dimension_value in sorted(buckets)
+    ]
+
+
+def _candidate_posture_counts(
+    rows: Sequence[Mapping[str, Any]], field: str
+) -> dict[str, int]:
+    counts: dict[str, int] = defaultdict(int)
+    for row in rows:
+        value = row.get(field)
+        counts[value if isinstance(value, str) and value else "unspecified"] += 1
+    return {key: counts[key] for key in sorted(counts)}
+
+
+def _validated_candidate_accounting_rows(
+    candidates: Any, *, relations_applicable: bool
+) -> list[dict[str, Any]]:
+    if not isinstance(candidates, list) or not candidates or any(
+        not isinstance(row, Mapping) for row in candidates
+    ):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting", "candidate ledger is missing or invalid"
+        )
+    rows = [copy.deepcopy(dict(row)) for row in candidates]
+    required_strings = (
+        "candidate_id",
+        "evidence_id",
+        "semantic_unit_ref",
+        "scoped_independence_key",
+        "independence_posture",
+        "source_role",
+        "source_venue",
+    )
+    for row in rows:
+        if any(
+            not isinstance(row.get(field), str) or not row[field]
+            for field in required_strings
+        ):
+            raise EvidenceConsumerError(
+                "axis_reader_accounting", "candidate accounting identity is invalid"
+            )
+        conditions = row.get("conditions")
+        if not isinstance(conditions, list):
+            raise EvidenceConsumerError(
+                "axis_reader_accounting", "candidate conditions are invalid"
+            )
+        if relations_applicable and row.get("relation") not in _CANDIDATE_RELATIONS:
+            raise EvidenceConsumerError(
+                "axis_reader_accounting", "candidate relation is invalid"
+            )
+    candidate_ids = [row["candidate_id"] for row in rows]
+    if len(candidate_ids) != len(set(candidate_ids)):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting", "candidate accounting identity is duplicated"
+        )
+    return rows
+
+
+def _candidate_pool_summary(
+    candidates: Any, *, relations_applicable: bool
+) -> dict[str, Any]:
+    rows = _validated_candidate_accounting_rows(
+        candidates, relations_applicable=relations_applicable
+    )
+    summary: dict[str, Any] = {
+        **{
+            key: value
+            for key, value in _candidate_count_summary(rows).items()
+            if key != "material_engagement_origin_count"
+        },
+        "source_role_counts": _candidate_dimension_counts(rows, "source_role"),
+        "source_venue_counts": _candidate_dimension_counts(rows, "source_venue"),
+        "layer_counts": _candidate_dimension_counts(rows, "layer"),
+        "independence_posture_counts": _candidate_dimension_counts(
+            rows, "independence_posture"
+        ),
+        "uncertainty_posture_row_counts": _candidate_posture_counts(
+            rows, "uncertainty_posture"
+        ),
+        "polarity_row_counts": _candidate_posture_counts(rows, "polarity"),
+        "engagement_kind_row_counts": _candidate_posture_counts(
+            rows, "engagement_kind"
+        ),
+        "engagement_status_row_counts": _candidate_posture_counts(
+            rows, "engagement_status"
+        ),
+        "observability": {
+            "publication_time_available_row_count": sum(
+                isinstance(row.get("publication_time"), str)
+                and bool(row["publication_time"].strip())
+                for row in rows
+            ),
+            "condition_present_row_count": sum(bool(row["conditions"]) for row in rows),
+            "material_engagement_origin_count": _candidate_count_summary(rows)[
+                "material_engagement_origin_count"
+            ],
+        },
+    }
+    if not relations_applicable:
+        summary["relations"] = {
+            "status": "not_applicable_no_admitted_frontier_point"
+        }
+        return summary
+
+    relation_counts: dict[str, dict[str, int]] = {}
+    for relation in _CANDIDATE_RELATIONS:
+        relation_counts[relation] = _candidate_count_summary(
+            [row for row in rows if row["relation"] == relation]
+        )
+    summary["relation_counts"] = relation_counts
+    support_origins = {
+        row["scoped_independence_key"]
+        for row in rows
+        if row["relation"] == "support"
+    }
+    counter_origins = {
+        row["scoped_independence_key"]
+        for row in rows
+        if row["relation"] == "counter"
+    }
+    summary["direct_relation_origin_overlap"] = {
+        "support_only": len(support_origins - counter_origins),
+        "counter_only": len(counter_origins - support_origins),
+        "both": len(support_origins & counter_origins),
+    }
+    relation_role_buckets: dict[
+        tuple[str, str], list[Mapping[str, Any]]
+    ] = defaultdict(list)
+    for row in rows:
+        relation_role_buckets[(row["source_role"], row["relation"])].append(row)
+    summary["relation_by_source_role"] = [
+        {
+            "source_role": source_role,
+            "relation": relation,
+            **_candidate_count_summary(relation_role_buckets[(source_role, relation)]),
+        }
+        for source_role in sorted({key[0] for key in relation_role_buckets})
+        for relation in _CANDIDATE_RELATIONS
+        if (source_role, relation) in relation_role_buckets
+    ]
+    return summary
+
+
+def _display_panel_accounting(
+    artifact: Mapping[str, Any], *, point_id: str
+) -> dict[str, Any]:
+    rows = _point_rows(artifact, point_id=point_id)
+    relation_row_counts = {
+        relation: sum(row["relation"] == relation for row in rows)
+        for relation in ("support", "counter", "adjacent")
+    }
+    relation_origin_counts = {
+        relation: len(
+            {
+                row["origin_group_id"]
+                for row in rows
+                if row["relation"] == relation
+            }
+        )
+        for relation in ("support", "counter", "adjacent")
+    }
+    return {
+        "semantic_row_count": len(rows),
+        "evidence_item_count": len({row["evidence_id"] for row in rows}),
+        "origin_count": len({row["origin_group_id"] for row in rows}),
+        "relation_row_counts": relation_row_counts,
+        "relation_origin_counts": relation_origin_counts,
+        "scope": "selected_display_examples_not_the_full_candidate_pool",
+    }
+
+
+def _axis_reader_accounting_from_validated_pack(
+    pack: Mapping[str, Any], *, source_axis_pack_path: Path
+) -> dict[str, Any]:
+    schema_version = pack.get("schema_version")
+    if schema_version not in {AXIS_PACK_VERSION, NO_FRONTIER_AXIS_PACK_VERSION}:
+        raise EvidenceConsumerError(
+            "axis_reader_accounting", "unsupported source axis pack"
+        )
+    source_axis_pack_path = source_axis_pack_path.resolve()
+    points: list[dict[str, Any]] = []
+    no_frontier_pool: dict[str, Any] | None = None
+    if schema_version == AXIS_PACK_VERSION:
+        for descriptor in sorted(pack["points"], key=lambda row: row["point_id"]):
+            artifact_path = Path(
+                _required_string(
+                    descriptor, "artifact_path", boundary="axis_reader_accounting"
+                )
+            )
+            if not artifact_path.is_file() or hash_file(artifact_path) != descriptor.get(
+                "artifact_sha256"
+            ):
+                raise EvidenceConsumerError(
+                    "axis_reader_accounting", "bound point artifact changed"
+                )
+            artifact = _load_object(artifact_path, boundary="axis_reader_accounting")
+            point_id = _required_string(
+                descriptor, "point_id", boundary="axis_reader_accounting"
+            )
+            if artifact.get("point_id") != point_id:
+                raise EvidenceConsumerError(
+                    "axis_reader_accounting", "point identity changed"
+                )
+            points.append(
+                {
+                    "point_id": point_id,
+                    "bounded_point": _required_string(
+                        descriptor, "bounded_point", boundary="axis_reader_accounting"
+                    ),
+                    "full_candidate_pool": _candidate_pool_summary(
+                        artifact.get("candidate_dispositions"),
+                        relations_applicable=True,
+                    ),
+                    "display_panel": _display_panel_accounting(
+                        artifact, point_id=point_id
+                    ),
+                }
+            )
+        status = "point_bearing_candidate_accounting"
+    else:
+        no_frontier_pool = _candidate_pool_summary(
+            pack.get("candidate_inventory"), relations_applicable=False
+        )
+        no_frontier_pool["display_scope"] = "full_candidate_inventory"
+        status = "no_admitted_frontier_candidate_accounting"
+
+    accounting: dict[str, Any] = {
+        "schema_version": AXIS_READER_ACCOUNTING_VERSION,
+        "status": status,
+        "axis_id": _required_string(pack, "axis_id", boundary="axis_reader_accounting"),
+        "source_axis_pack": {
+            "path": str(source_axis_pack_path),
+            "raw_sha256": hash_file(source_axis_pack_path),
+            "axis_pack_sha256": _required_string(
+                pack, "axis_pack_sha256", boundary="axis_reader_accounting"
+            ),
+        },
+        "points": points,
+        "accounting_contract": {
+            "display_vs_pool": (
+                "display_panel counts selected examples; full_candidate_pool counts every "
+                "point-relative candidate disposition"
+            ),
+            "count_units": (
+                "semantic rows, evidence items, and origin groups are distinct units; "
+                "none is a people count"
+            ),
+            "relations": (
+                "support, counter, adjacent, and exclude are relative to one admitted "
+                "bounded point; without an admitted point relations are not applicable"
+            ),
+            "engagement": (
+                "material engagement counts source-native resonance origins only and "
+                "never increases evidence truth"
+            ),
+        },
+        "non_claims": [
+            "captured-corpus accounting is not prevalence or market representativeness",
+            "relation and origin counts are not positive or negative customer ratios",
+            "creator engagement is resonance or influence, not customer corroboration",
+            "the accounting makes no causal claim or Deliver recommendation",
+        ],
+    }
+    if no_frontier_pool is not None:
+        accounting["no_frontier_candidate_pool"] = no_frontier_pool
+    accounting["accounting_sha256"] = _canonical_json_sha256(accounting)
+    return accounting
+
+
+def build_axis_reader_accounting(
+    pack: Mapping[str, Any], *, source_axis_pack_path: Path
+) -> dict[str, Any]:
+    """Project a compact full-ledger label without changing the frozen pack."""
+
+    source_axis_pack_path = source_axis_pack_path.resolve()
+    source = _load_object(source_axis_pack_path, boundary="axis_reader_accounting")
+    if source != dict(pack):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting", "source pack path does not contain the supplied pack"
+        )
+    validated = validate_phase_a_evidence_axis_pack(
+        pack,
+        expected_axis_pack_sha256=_required_string(
+            pack, "axis_pack_sha256", boundary="axis_reader_accounting"
+        ),
+    )
+    return _axis_reader_accounting_from_validated_pack(
+        validated, source_axis_pack_path=source_axis_pack_path
+    )
+
+
+def validate_axis_reader_accounting(
+    accounting: Mapping[str, Any], *, expected_accounting_sha256: str
+) -> dict[str, Any]:
+    """Rebuild compact accounting from its hash-bound complete axis pack."""
+
+    if accounting.get("schema_version") != AXIS_READER_ACCOUNTING_VERSION:
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_verification", "unsupported accounting version"
+        )
+    stored = accounting.get("accounting_sha256")
+    if stored != expected_accounting_sha256:
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_verification", "trusted accounting identity changed"
+        )
+    payload = {
+        key: value for key, value in accounting.items() if key != "accounting_sha256"
+    }
+    if not isinstance(stored, str) or stored != _canonical_json_sha256(payload):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_verification", "stored accounting hash is invalid"
+        )
+    source = accounting.get("source_axis_pack")
+    if not isinstance(source, Mapping):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_verification", "source axis pack is missing"
+        )
+    source_path = Path(
+        _required_string(source, "path", boundary="axis_reader_accounting_verification")
+    )
+    if not source_path.is_file() or hash_file(source_path) != source.get("raw_sha256"):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_verification", "source axis pack bytes changed"
+        )
+    pack = _load_object(source_path, boundary="axis_reader_accounting_verification")
+    if pack.get("axis_pack_sha256") != source.get("axis_pack_sha256"):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_verification", "source axis pack identity changed"
+        )
+    rebuilt = build_axis_reader_accounting(pack, source_axis_pack_path=source_path)
+    if rebuilt != dict(accounting):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting_reprojection",
+            "saved accounting differs from the complete candidate ledger",
         )
     return rebuilt
 
@@ -4288,6 +4663,16 @@ def build_axis_reader_bundle(
         source_axis_pack, "path", boundary="axis_reader_bundle_verification"
     ))
     axis_pack = _load_object(axis_pack_path, boundary="axis_reader_bundle_verification")
+    candidate_pool_accounting = _axis_reader_accounting_from_validated_pack(
+        axis_pack, source_axis_pack_path=axis_pack_path
+    )
+    accounting_by_point = {
+        row["point_id"]: row for row in candidate_pool_accounting["points"]
+    }
+    if set(accounting_by_point) != set(point_by_id):
+        raise EvidenceConsumerError(
+            "axis_reader_accounting", "candidate accounting point coverage changed"
+        )
     rejected_points = validated.get("rejected_point_index")
     if rejected_points is None:
         rejected_points = axis_pack.get("rejected_points")
@@ -4310,6 +4695,9 @@ def build_axis_reader_bundle(
         )
         point_facts = facts_by_point[point_id]
         point_row = copy.deepcopy(point)
+        point_row["candidate_pool_accounting"] = copy.deepcopy(
+            accounting_by_point[point_id]
+        )
         point_row["facts_file"] = {
             "path": str(facts_dir / _axis_reader_point_filename(point_id)),
             "fact_count": len(fact_rows_by_point[point_id]),
@@ -4325,6 +4713,7 @@ def build_axis_reader_bundle(
             "view_sha256": validated["view_sha256"],
         },
         "source_axis_pack": copy.deepcopy(dict(source_axis_pack)),
+        "candidate_pool_accounting": candidate_pool_accounting,
         "counts": copy.deepcopy(validated["counts"]),
         "navigation_groups": copy.deepcopy(validated["navigation_groups"]),
         "projection_routes": copy.deepcopy(validated["projection_routes"]),
@@ -4367,9 +4756,12 @@ def build_axis_reader_bundle(
             "the admitted point as an OR-list of neighboring meanings. Any output field "
             "for the exact or admitted meaning must copy bounded_point verbatim and contain "
             "nothing else; put evidence explanations and qualifiers in separate fields. "
-            "A structured point brief must copy displayed_relation_row_counts and "
-            "truth_origin_count into reader_accounting; these are rows and origin groups, "
-            "never people, votes, or prevalence."
+            "A structured point brief must copy displayed_relation_row_counts, "
+            "truth_origin_count, and candidate_pool_accounting into reader_accounting. "
+            "The display panel is selected examples; the full candidate pool is every "
+            "point-relative disposition. Report exact captured-pool counts when useful, "
+            "but never turn them into people, votes, prevalence, market sentiment, or a "
+            "Deliver recommendation."
         ),
     }
     if "decision_state_contract" in validated:
@@ -4518,6 +4910,7 @@ def validate_axis_reader_structured_output(
         point["point_id"]: {
             "displayed_relation_row_counts": point["displayed_relation_row_counts"],
             "truth_origin_count": point["truth_origin_count"],
+            "candidate_pool_accounting": point["candidate_pool_accounting"],
         }
         for point in validated["points"]
     }
@@ -4696,6 +5089,9 @@ def bind_axis_reader_output_schema(
             if isinstance(value, Mapping):
                 child_properties = bound.get("properties")
                 if not isinstance(child_properties, dict):
+                    if bound.get("additionalProperties") is True:
+                        bound["const"] = copy.deepcopy(dict(value))
+                        return bound
                     raise EvidenceConsumerError(
                         "axis_reader_output_schema_binding",
                         f"base schema {field} object properties are missing",
@@ -4777,6 +5173,9 @@ def bind_axis_reader_output_schema(
                         "displayed_relation_row_counts"
                     ],
                     "truth_origin_count": point["truth_origin_count"],
+                    "candidate_pool_accounting": point[
+                        "candidate_pool_accounting"
+                    ],
                 },
             }
             for point in point_rows
@@ -4789,8 +5188,8 @@ POINT_READER_POLICY = {
     "semantic_unit": "one complete accepted Phase A point",
     "model_scope": "interpretation plus point-local evidence handles only",
     "deterministic_fields": (
-        "subject, point, route, accounting, literal representatives, and the complete "
-        "Decision State ledger are compiler-owned"
+        "subject, point, route, display and full-candidate accounting, literal "
+        "representatives, and the complete Decision State ledger are compiler-owned"
     ),
     "coverage": "every accepted point exactly once; no duplicate or foreign point",
     "rejected_frontier": (
@@ -5014,6 +5413,9 @@ def build_axis_point_reader_snapshot(
             "response_schema_sha256": response_schema_sha256,
             "point_reader_policy_sha256": policy_sha256,
             "point_brief_schema_version": POINT_READER_BRIEF_VERSION,
+            "candidate_pool_accounting_sha256": _canonical_json_sha256(
+                legacy_point["candidate_pool_accounting"]
+            ),
         }
         point_input = point_reader_input_sha256(input_contract)
         point_records.append(
@@ -5025,6 +5427,9 @@ def build_axis_point_reader_snapshot(
                     legacy_point["displayed_relation_row_counts"]
                 ),
                 "truth_origin_count": legacy_point["truth_origin_count"],
+                "candidate_pool_accounting": copy.deepcopy(
+                    legacy_point["candidate_pool_accounting"]
+                ),
                 "fact_count": len(facts),
                 "point_payload_file": f"point_{point_input}.jsonl",
                 "response_file": f"response_{point_input}.json",
@@ -5135,6 +5540,17 @@ def _validate_point_reader_manifest_shape(
         ) != point_reader_input_sha256(contract):
             raise EvidenceConsumerError(
                 "point_reader_identity", "point input identity changed"
+            )
+        candidate_accounting = point.get("candidate_pool_accounting")
+        if (
+            not isinstance(candidate_accounting, Mapping)
+            or candidate_accounting.get("point_id") != point.get("point_id")
+            or candidate_accounting.get("bounded_point") != point.get("bounded_point")
+            or contract.get("candidate_pool_accounting_sha256")
+            != _canonical_json_sha256(dict(candidate_accounting))
+        ):
+            raise EvidenceConsumerError(
+                "point_reader_accounting", "point candidate accounting changed"
             )
         expected_file = f"point_{point['point_input_sha256']}.jsonl"
         expected_response = f"response_{point['point_input_sha256']}.json"
@@ -5390,6 +5806,9 @@ def _compile_point_reader_brief_from_validated_facts(
                 point["displayed_relation_row_counts"]
             ),
             "truth_origin_count": point["truth_origin_count"],
+            "candidate_pool_accounting": copy.deepcopy(
+                point["candidate_pool_accounting"]
+            ),
         },
         "model_interpretation": interpretation,
         "representative_evidence": representatives,
@@ -5463,6 +5882,7 @@ def _validate_point_reader_brief_from_validated_facts(
         "reader_accounting": {
             "displayed_relation_row_counts": point["displayed_relation_row_counts"],
             "truth_origin_count": point["truth_origin_count"],
+            "candidate_pool_accounting": point["candidate_pool_accounting"],
         },
         "source_point_payload": {
             "file_name": point["point_payload_file"],
