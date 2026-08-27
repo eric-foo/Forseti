@@ -5092,6 +5092,44 @@ def test_current_direct_outcome_binding_reaches_both_reader_surfaces_unchanged(
     ] == [companion_ref]
 
 
+def test_current_owned_relation_ref_substitution_fails_at_lineage_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    descriptor = next(
+        row for row in axis_pack["points"] if row["point_id"] == direct_point_id
+    )
+    artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+    authored_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = authored_row["same_evidence_companion_meanings"][0][
+        "semantic_unit_ref"
+    ]
+    spec_row = next(
+        row
+        for binding in spec["direct_outcome_relation_bindings"]
+        if binding["point_id"] == direct_point_id
+        for row in binding["rows"]
+        if row["selected_id"] == authored_row["selected_id"]
+    )
+    assert spec_row["relation_semantic_unit_refs"] == [
+        authored_row["semantic_unit_ref"]
+    ]
+    spec_row["relation_semantic_unit_refs"] = [companion_ref]
+
+    with pytest.raises(
+        EvidenceConsumerError, match="relation binding changed after selection"
+    ) as caught:
+        build_axis_consolidated_view(spec)
+    assert caught.value.boundary == "relation_binding_lineage"
+
+
 @pytest.mark.parametrize(
     "mutation,match",
     [
