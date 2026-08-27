@@ -877,15 +877,22 @@ Creator-authored material is influence context and is
 deterministically barred from customer support or counter relations; qualified
 creator-audience comments retain their customer role.
 
-Only selected display rows expose their source bodies to a second external
-quote response. The bundle is content-verified against its own stored
+Only selected display rows expose their source bodies to the existing external
+quote response. Current v9 authoring presents stable token addresses inside
+each deduplicated body. Every returned row is schema-bound to its selected row
+and body and chooses an inclusive start/end token pair; deterministic code
+copies the original contiguous source characters. Foreign bodies, foreign
+tokens, reversed spans, transcription-shaped responses, and changed bodies fail
+locally. This proves exact row/body transfer, not that a structurally valid span
+is semantically adequate; context completeness remains a bounded quality
+judgment. The bundle is content-verified against its own stored
 `bundle_sha256` where it enters the trust boundary, and the finalizer follows
 the packet's bundle hash to its literal evidence ID, requires exact
 source-artifact and source-ref equality, and rejects a body whose hash differs
 from the one the quote manifest recorded. An available source body of no more
 than 220 characters must be quoted in full; this deterministic boundary prevents
 a short comment from being clipped before a material qualification or
-countervailing behavior. V8 uses that threshold only for short-body copying and
+countervailing behavior. Current v9 and historical v8 use that threshold only for short-body copying and
 external-review workload selection, never as a semantic ceiling. A longer
 available quote must be the shortest context-complete contiguous source
 substring that carries the material meaning, with no inserted ellipsis or
@@ -895,13 +902,16 @@ it. The substring must express the display label through either the
 selected normalized meaning or the same-evidence companion meaning that
 justified that label. If no contiguous exact span carries the material meaning,
 the external response returns unavailable instead of a misleading fragment;
-length alone is not an unavailable cause in v8. No lexical-overlap relevance
-rule is applied. For v4/v5/v6/v7/v8 quote manifests, a long-body quote
+length alone is not an unavailable cause in current v9 or historical v8. No lexical-overlap relevance
+rule is applied. For historical v4/v5/v6/v7/v8 quote manifests, a long-body quote
 that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
 check prevents an exact but mid-phrase span from silently satisfying the
-context-complete contract. A typed
+context-complete contract. Current v9 does not apply that prose heuristic after
+token-span selection: deterministic enforcement owns exact row/body/token
+attachment, while semantic completeness remains explicitly not mechanically
+proven. A typed
 `quote_unavailable` covers two distinct cases: no source body yields
 `source_body_unavailable`, while a present body with no returned exact relevant
 quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null
@@ -1700,6 +1710,26 @@ new frontier.
 
 ## Changelog
 
+- `v66` / 2026-08-27 — replaced current v9 quote transcription with
+  `row_owned_token_span_v1` inside the existing quote call. All-axis completion
+  dogfood first observed 13 of 39 long-body point responses fail the exact or
+  complete-boundary consumer; one bounded correction still left 9 point
+  failures and exposed quotes copied under another selected row. Current schemas
+  now bind each selected row to one source body and its allowed token addresses;
+  the provider returns only inclusive start/end addresses, and deterministic
+  finalization copies the exact source characters. Foreign bodies, foreign
+  tokens, reversed spans, transcription-shaped responses, and changed bodies
+  fail locally. The change adds no provider call, retry loop, prose classifier,
+  quote-length ceiling, frozen rewrite, or Deliver judgment. Structurally valid
+  span adequacy remains not mechanically proven. A first 9-failure-plus-canary
+  dogfood finalized 10 of 10 token-span responses but exposed an avoidable
+  899,188-input-token enum schema. Replacing per-row token enumeration with a
+  body-bound token pattern reduced the hydration schema from 409,055 to 25,063
+  bytes and the unaffected reaction canary from 203,885 to 30,379 bytes; both
+  lean-schema calls finalized on their first attempt using 97,694 input tokens
+  in aggregate. This is transport and failure-boundary evidence, not semantic
+  quote-quality proof. Historical v7/v8 text responses retain their stamped
+  replay and boundary behavior.
 - `v65` / 2026-08-27 — retired the selected-row v3 provider review and made
   explicit row-owned relation bindings mandatory in current authoring. The
   existing hidden-label preselection confirmation now returns the smallest

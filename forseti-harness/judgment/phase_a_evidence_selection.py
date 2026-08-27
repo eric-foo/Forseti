@@ -235,6 +235,16 @@ SELECTED_EVIDENCE_ENVELOPE_JSON:
 {envelope}
 """
 
+CURRENT_QUOTE_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the ordered selected rows and token-addressed source bodies below. Return only the required JSON.
+
+Return every selected_id exactly once and in order. For quote_available, choose the shortest context-complete contiguous span that directly substantiates every material component of the supplied normalized meaning, including its outcome, direction, comparator, product or formula distinction, and usage or timing condition when present. Return the row's bound body_id plus the inclusive start_token_id and end_token_id; do not transcribe quote text. Every token marker belongs to the named body, and deterministic code will copy the original source characters from the first selected token through the last. There is no character ceiling: source meaning, not display length, determines the necessary span. When the supplied body is 220 characters or shorter and is relevant, select the entire body; do not clip it. Include any nearby same-evidence companion meaning that materially qualifies or reverses it. Linked parent context may supply an omitted premise or referent only for a selected row whose parent_context_ids names that exact context. The selected span must remain within the child source body: never select parent tokens or combine non-contiguous spans. If the bound parent does not supply every missing material component, return quote_status=quote_unavailable with body_id and both token ids null. Do not optimize past context completeness: retain necessary source wording instead of clipping to a merely related phrase. Before returning each row, silently locate the source wording for every material component, expand the span for its antecedent and nearby qualification, and verify both final token boundaries. Return quote_unavailable only when no one contiguous child-body span supports the full normalized meaning, either alone or, for a directly linked terse response, read with its exact bound parent; length alone can never make a truthful span unavailable. Do not start with an unresolved pronoun such as she, he, they, it, this, that, these, or those when nearby preceding text names the antecedent. Product identity may rely on the evidence row. The display_label is presentation metadata, not source meaning. Use same_evidence_companion_meanings to detect context that cannot be clipped away.
+
+Each token-addressed body preserves the original whitespace and punctuation; markers such as [body_01_token_000001] are addresses, not source text. Choose addresses only from the body_id bound to that selected row.
+
+SELECTED_EVIDENCE_ENVELOPE_JSON:
+{envelope}
+"""
+
 RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered selected rows below. Return only the required JSON.
 
 Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Support and counter must match the bounded point's asserted judgment or behavior state, not merely share its direction; related ownership, use, intent, liking, or a different criterion is adjacent when it overlaps the point and otherwise exclude. A different actor's private judgment, intent, ownership, or behavior cannot support or counter the named actor's private state; it is adjacent only when it otherwise materially overlaps, unless the bounded point itself explicitly asserts a cross-actor pattern. An ownership point requires explicit possession or acquisition; liking, purchase or repurchase intent, and a non-exhaustive owned-shade list do not establish or negate ownership. A conditional future action such as repurchasing when a product runs out does not establish an aim to finish; completion intent requires an explicit goal, plan, aim, or commitment to finish, use up, or pan it. For a favorite, number-one, best, top-ranked, or other superlative point, support or counter requires an explicit semantically equivalent superlative over the same compared assortment and attribute scope; a weaker preference or subset superlative is adjacent. Adjacent must still share the bounded point's material decision object, attribute, outcome, or directly linked condition; merely sharing a product family or axis is exclude. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
@@ -1754,7 +1764,71 @@ def _quote_has_complete_end(body: str, quote: str) -> bool:
         search_from = occurrence + 1
 
 
-def _quote_schema(*, semantic_ceiling: bool = True) -> dict[str, Any]:
+def _quote_schema(
+    *,
+    semantic_ceiling: bool = True,
+    row_token_bindings: Sequence[tuple[str, str]] | None = None,
+) -> dict[str, Any]:
+    if row_token_bindings is not None:
+        variants: list[dict[str, Any]] = []
+        for selected_id, body_id in row_token_bindings:
+            token_pattern = f"^{re.escape(body_id)}_token_[0-9]{{6}}$"
+            available = {
+                "type": "object",
+                "properties": {
+                    "selected_id": {"type": "string", "const": selected_id},
+                    "body_id": {"type": "string", "const": body_id},
+                    "quote_status": {"type": "string", "const": "quote_available"},
+                    "start_token_id": {"type": "string", "pattern": token_pattern},
+                    "end_token_id": {"type": "string", "pattern": token_pattern},
+                },
+                "required": [
+                    "selected_id",
+                    "body_id",
+                    "quote_status",
+                    "start_token_id",
+                    "end_token_id",
+                ],
+                "additionalProperties": False,
+            }
+            unavailable = {
+                "type": "object",
+                "properties": {
+                    "selected_id": {"type": "string", "const": selected_id},
+                    "body_id": {"type": "null"},
+                    "quote_status": {"type": "string", "const": "quote_unavailable"},
+                    "start_token_id": {"type": "null"},
+                    "end_token_id": {"type": "null"},
+                },
+                "required": [
+                    "selected_id",
+                    "body_id",
+                    "quote_status",
+                    "start_token_id",
+                    "end_token_id",
+                ],
+                "additionalProperties": False,
+            }
+            variants.extend((available, unavailable))
+        items: dict[str, Any]
+        if variants:
+            items = {"anyOf": variants}
+        else:
+            items = {"type": "object"}
+        return {
+            "type": "object",
+            "properties": {
+                "quotes": {
+                    "type": "array",
+                    "items": items,
+                    "minItems": len(row_token_bindings),
+                    "maxItems": len(row_token_bindings),
+                }
+            },
+            "required": ["quotes"],
+            "additionalProperties": False,
+        }
+
     exact_quote_schema: dict[str, Any] = {"type": ["string", "null"]}
     if semantic_ceiling:
         exact_quote_schema["maxLength"] = SHORT_BODY_QUOTE_CHARACTERS
@@ -2620,8 +2694,14 @@ def _preselection_relation_confirmation_schema(
     value_policy: bool,
     batch_id: str | None = None,
     include_relation_refs: bool = False,
+    row_relation_bindings: Sequence[tuple[str, Sequence[str]]] | None = None,
 ) -> dict[str, Any]:
-    def check_row(relation: str | None = None) -> dict[str, Any]:
+    def check_row(
+        relation: str | None = None,
+        *,
+        confirmation_row_id: str | None = None,
+        allowed_relation_refs: Sequence[str] | None = None,
+    ) -> dict[str, Any]:
         relation_schema: dict[str, Any] = {"type": "string"}
         reason_schema: dict[str, Any] = {
             "type": "string",
@@ -2629,6 +2709,11 @@ def _preselection_relation_confirmation_schema(
         }
         if relation is None:
             relation_schema["enum"] = list(RELATIONS)
+            if value_policy:
+                reason_schema = {
+                    "type": "string",
+                    "enum": sorted(VALUE_REASON_RELATIONS),
+                }
         else:
             relation_schema["const"] = relation
             reason_schema = {
@@ -2644,12 +2729,23 @@ def _preselection_relation_confirmation_schema(
             "relation": relation_schema,
             "reason_code": reason_schema,
         }
+        if confirmation_row_id is not None:
+            properties["confirmation_row_id"]["const"] = confirmation_row_id
         required = ["confirmation_row_id", "relation", "reason_code"]
         if include_relation_refs:
+            ref_item_schema: dict[str, Any] = {"type": "string"}
+            if allowed_relation_refs is not None:
+                normalized_refs = sorted(set(allowed_relation_refs))
+                if not normalized_refs:
+                    raise EvidenceConsumerError(
+                        "relation_semantic_binding",
+                        "relation confirmation has no row-owned semantic refs",
+                    )
+                ref_item_schema["enum"] = normalized_refs
             properties["relation_semantic_unit_refs"] = {
                 "type": "array",
                 "minItems": 1,
-                "items": {"type": "string"},
+                "items": ref_item_schema,
             }
             required.append("relation_semantic_unit_refs")
         return {
@@ -2659,16 +2755,35 @@ def _preselection_relation_confirmation_schema(
             "additionalProperties": False,
         }
 
-    row = (
-        {"anyOf": [check_row(relation) for relation in RELATIONS]}
-        if value_policy
-        else check_row()
-    )
+    if row_relation_bindings is not None:
+        variants = []
+        for confirmation_row_id, allowed_relation_refs in row_relation_bindings:
+            variants.append(
+                check_row(
+                    confirmation_row_id=confirmation_row_id,
+                    allowed_relation_refs=allowed_relation_refs,
+                )
+            )
+        if not variants:
+            raise EvidenceConsumerError(
+                "relation_semantic_binding",
+                "relation confirmation has no row-owned semantic bindings",
+            )
+        row = {"anyOf": variants}
+    else:
+        row = (
+            {"anyOf": [check_row(relation) for relation in RELATIONS]}
+            if value_policy
+            else check_row()
+        )
     properties = {
         "point_scope": {"type": "string", "enum": list(POINT_SCOPE_STATUSES)},
         "point_scope_reason": {"type": "string", "minLength": 1},
         "relation_checks": {"type": "array", "items": row},
     }
+    if row_relation_bindings is not None:
+        properties["relation_checks"]["minItems"] = len(row_relation_bindings)
+        properties["relation_checks"]["maxItems"] = len(row_relation_bindings)
     required = ["point_scope", "point_scope_reason", "relation_checks"]
     if batch_id is not None:
         properties["batch_id"] = {"type": "string", "const": batch_id}
@@ -3387,6 +3502,7 @@ QUOTE_PROMPT_COLUMNS = (
     "body_id",
 )
 CONTEXT_QUOTE_PROMPT_COLUMNS = QUOTE_PROMPT_COLUMNS + ("parent_context_ids",)
+CURRENT_QUOTE_TRANSPORT = "row_owned_token_span_v1"
 
 LEGACY_RELATION_CONFIRMATION_COLUMNS = (
     "confirmation_row_id",
@@ -3416,6 +3532,26 @@ CURRENT_RELATION_CONFIRMATION_COLUMNS = (
 )
 
 
+def _quote_token_spans(body_id: str, body: str) -> list[tuple[str, int, int]]:
+    return [
+        (f"{body_id}_token_{index:06d}", match.start(), match.end())
+        for index, match in enumerate(re.finditer(r"\S+", body), start=1)
+    ]
+
+
+def _token_addressed_body(body_id: str, body: str) -> str:
+    spans = _quote_token_spans(body_id, body)
+    pieces: list[str] = []
+    cursor = 0
+    for token_id, start, end in spans:
+        pieces.append(body[cursor:start])
+        pieces.append(f"[{token_id}]")
+        pieces.append(body[start:end])
+        cursor = end
+    pieces.append(body[cursor:])
+    return "".join(pieces)
+
+
 def _quote_prompt_envelope(
     bounded_claim: str,
     selected: Sequence[Mapping[str, Any]],
@@ -3423,7 +3559,8 @@ def _quote_prompt_envelope(
     *,
     required_quote_candidate_ids: frozenset[str] = frozenset(),
     include_parent_context: bool = False,
-) -> tuple[dict[str, Any], list[str]]:
+    token_anchors: bool = False,
+) -> tuple[dict[str, Any], list[str], list[tuple[str, str]]]:
     """Project long bodies and frontier-defining rows into quote review.
 
     Ordinary short bodies are already exact quotes under the owning contract.
@@ -3456,13 +3593,19 @@ def _quote_prompt_envelope(
     body_rows: list[list[str]] = []
     selected_rows: list[list[Any]] = []
     provider_selected_ids: list[str] = []
+    row_token_bindings: list[tuple[str, str]] = []
     for row in projected_rows:
         body = bodies.get((row["source_id"], row["evidence_id"]))
         if body not in body_ids:
             body_id = f"body_{len(body_ids) + 1:02d}"
             body_ids[body] = body_id
-            body_rows.append([body_id, body])
+            if token_anchors:
+                body_rows.append([body_id, _token_addressed_body(body_id, body)])
+            else:
+                body_rows.append([body_id, body])
         provider_selected_ids.append(row["selected_id"])
+        if token_anchors:
+            row_token_bindings.append((row["selected_id"], body_ids[body]))
         selected_rows.append(
             [
                 row["selected_id"],
@@ -3476,13 +3619,16 @@ def _quote_prompt_envelope(
         )
     envelope = {
         "bounded_claim": bounded_claim,
-        "body_columns": ["body_id", "source_body"],
+        "body_columns": [
+            "body_id",
+            "token_addressed_source_body" if token_anchors else "source_body",
+        ],
         "body_rows": body_rows,
         "selected_columns": list(selected_columns),
         "selected_rows": selected_rows,
     }
     _attach_parent_context_envelope(envelope, context_aware, context_rows)
-    return envelope, provider_selected_ids
+    return envelope, provider_selected_ids, row_token_bindings
 
 
 def _confirmation_row_presentation(
@@ -3616,16 +3762,27 @@ def _prepare_quotes_from_labeled(
         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }
-    quote_envelope, provider_selected_ids = _quote_prompt_envelope(
+    current_quote_transport = (
+        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
+    quote_envelope, provider_selected_ids, row_token_bindings = _quote_prompt_envelope(
         manifest["spec"]["bounded_claim"],
         selected,
         bodies,
         required_quote_candidate_ids=frontier_relation_candidate_ids,
         include_parent_context=context_complete_quotes,
+        token_anchors=current_quote_transport,
     )
-    prompt_template = QUOTE_PROMPT if context_complete_quotes else LEGACY_QUOTE_PROMPT
+    prompt_template = (
+        CURRENT_QUOTE_PROMPT
+        if current_quote_transport
+        else (QUOTE_PROMPT if context_complete_quotes else LEGACY_QUOTE_PROMPT)
+    )
     prompt = prompt_template.format(envelope=_compact(quote_envelope))
-    schema = _quote_schema(semantic_ceiling=not context_complete_quotes)
+    schema = _quote_schema(
+        semantic_ceiling=not context_complete_quotes,
+        row_token_bindings=(row_token_bindings if current_quote_transport else None),
+    )
     quote_manifest = {
         "schema_version": schema_version,
         "selection_id": manifest["selection_id"],
@@ -3648,6 +3805,12 @@ def _prepare_quotes_from_labeled(
         "response_schema_sha256": _canonical_json_sha256(schema),
         "model_api_calls": 0,
     }
+    if current_quote_transport:
+        quote_manifest["quote_transport"] = CURRENT_QUOTE_TRANSPORT
+        quote_manifest["quote_body_ids"] = {
+            selected_id: body_id
+            for selected_id, body_id in row_token_bindings
+        }
     if frontier_relation_candidate_ids:
         quote_manifest["frontier_relation_display_policy"] = (
             FRONTIER_RELATION_DISPLAY_POLICY
@@ -3833,6 +3996,25 @@ def prepare_preselection_relation_confirmation(
     schema = _preselection_relation_confirmation_schema(
         value_policy=value_policy,
         include_relation_refs=include_relation_refs,
+        row_relation_bindings=(
+            [
+                (
+                    row_id,
+                    [
+                        row["semantic_unit_ref"],
+                        *(
+                            companion["semantic_unit_ref"]
+                            for companion in row[
+                                "same_evidence_companion_meanings"
+                            ]
+                        ),
+                    ],
+                )
+                for row_id, row in presentation
+            ]
+            if include_relation_refs
+            else None
+        ),
     )
     confirmation_manifest = {
         "schema_version": (
@@ -4265,6 +4447,25 @@ def prepare_batched_preselection_relation_confirmations(
             value_policy=value_policy,
             batch_id=confirmation_batch_id,
             include_relation_refs=include_relation_refs,
+            row_relation_bindings=(
+                [
+                    (
+                        row_id,
+                        [
+                            row["semantic_unit_ref"],
+                            *(
+                                companion["semantic_unit_ref"]
+                                for companion in row[
+                                    "same_evidence_companion_meanings"
+                                ]
+                            ),
+                        ],
+                    )
+                    for row_id, row in subset
+                ]
+                if include_relation_refs
+                else None
+            ),
         )
         batches.append(
             {
@@ -4638,6 +4839,16 @@ def finalize_quotes(
     confirmation_response: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     manifest_version = _verified_quote_manifest_version(quote_manifest)
+    current_token_transport = (
+        manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
+    if current_token_transport and (
+        quote_manifest.get("quote_transport") != CURRENT_QUOTE_TRANSPORT
+        or not isinstance(quote_manifest.get("quote_body_ids"), Mapping)
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification", "current quote token binding is missing or changed"
+        )
     if manifest_version in {
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
@@ -4783,7 +4994,17 @@ def finalize_quotes(
     for selected_row in selected:
         selected_id = selected_row["selected_id"]
         quote_row = quote_results.get(selected_id)
-        expected_quote_fields = {"selected_id", "quote_status", "exact_quote"}
+        expected_quote_fields = (
+            {
+                "selected_id",
+                "body_id",
+                "quote_status",
+                "start_token_id",
+                "end_token_id",
+            }
+            if current_token_transport
+            else {"selected_id", "quote_status", "exact_quote"}
+        )
         if quote_row is not None and set(quote_row) != expected_quote_fields:
             raise EvidenceConsumerError("quote_response_shape", "quote row shape mismatch")
         body = bodies.get((selected_row["source_id"], selected_row["evidence_id"]))
@@ -4817,6 +5038,54 @@ def finalize_quotes(
             else:
                 raise EvidenceConsumerError(
                     "missing_quote_result", "long source body has no quote result"
+                )
+        elif current_token_transport:
+            status = quote_row["quote_status"]
+            quote = None
+            if status == "quote_available":
+                expected_body_id = quote_manifest["quote_body_ids"].get(selected_id)
+                if quote_row["body_id"] != expected_body_id:
+                    raise EvidenceConsumerError(
+                        "foreign_quote_body",
+                        f"quote span is bound to another source body: {selected_id}",
+                    )
+                if not isinstance(body, str):
+                    raise EvidenceConsumerError(
+                        "quote_unavailable", "missing body cannot produce a quote span"
+                    )
+                token_spans = {
+                    token_id: (start, end)
+                    for token_id, start, end in _quote_token_spans(expected_body_id, body)
+                }
+                start_token_id = quote_row["start_token_id"]
+                end_token_id = quote_row["end_token_id"]
+                if (
+                    not isinstance(start_token_id, str)
+                    or not isinstance(end_token_id, str)
+                    or start_token_id not in token_spans
+                    or end_token_id not in token_spans
+                ):
+                    raise EvidenceConsumerError(
+                        "foreign_quote_token",
+                        f"quote span references a foreign token: {selected_id}",
+                    )
+                start = token_spans[start_token_id][0]
+                end = token_spans[end_token_id][1]
+                if start > end:
+                    raise EvidenceConsumerError(
+                        "reversed_quote_span",
+                        f"quote span ends before it starts: {selected_id}",
+                    )
+                quote = body[start:end]
+            elif (
+                status == "quote_unavailable"
+                and any(
+                    quote_row[field] is not None
+                    for field in ("body_id", "start_token_id", "end_token_id")
+                )
+            ):
+                raise EvidenceConsumerError(
+                    "quote_response_shape", "unavailable quote span must use null bindings"
                 )
         else:
             status = quote_row["quote_status"]
@@ -4852,6 +5121,7 @@ def finalize_quotes(
                     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 }
+                and not current_token_transport
                 and not _quote_has_complete_end(body, quote)
             ):
                 raise EvidenceConsumerError(
@@ -5001,6 +5271,8 @@ def finalize_quotes(
         artifact["output_boundary"].extend(
             [
                 "quote length never determines whether available source evidence is admissible",
+                "exact quote text is deterministically copied from row-bound source-token addresses",
+                "semantic adequacy of a structurally valid quote span is not mechanically proven",
                 "relation semantic-unit references are judgment-authored and ownership-checked; their semantic warrant is not mechanically proven",
             ]
         )
