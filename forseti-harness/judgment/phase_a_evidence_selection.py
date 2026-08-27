@@ -1814,7 +1814,15 @@ def _quote_schema(
         if variants:
             items = {"anyOf": variants}
         else:
-            items = {"type": "object"}
+            # The provider validates object schemas even when maxItems is zero.
+            # Keep the empty transport closed instead of emitting an incomplete
+            # object schema that the API rejects before the call can run.
+            items = {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": False,
+            }
         return {
             "type": "object",
             "properties": {
