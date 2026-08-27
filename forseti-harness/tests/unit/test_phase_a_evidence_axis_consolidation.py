@@ -5201,3 +5201,55 @@ def test_historical_v2_direct_outcome_keeps_its_stamped_primary_fallback(
         require_explicit_direct_outcome=False,
     )
     assert refs == [placement["semantic_unit_ref"]]
+
+
+def test_historical_spec_cannot_consume_current_row_owned_relation_bindings(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A v2 spec must not strip a v3 artifact's owned refs back to the primary."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    axis_pack = json.loads(
+        Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8")
+    )
+    descriptor = next(
+        row for row in axis_pack["points"] if row["point_id"] == direct_point_id
+    )
+    artifact = json.loads(
+        Path(descriptor["artifact_path"]).read_text(encoding="utf-8")
+    )
+    authored_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = authored_row["same_evidence_companion_meanings"][0][
+        "semantic_unit_ref"
+    ]
+    _bind_current_direct_outcome_relations(
+        spec,
+        point_ids={direct_point_id},
+        companion_for=(direct_point_id, authored_row["selected_id"]),
+    )
+    current_view = build_axis_consolidated_view(copy.deepcopy(spec))
+    current_placement = next(
+        row
+        for row in current_view["point_placements"]
+        if row["point_id"] == direct_point_id
+        and row["selected_id"] == authored_row["selected_id"]
+    )
+    assert current_placement["relation_semantic_unit_refs"] == [companion_ref]
+    assert companion_ref != authored_row["semantic_unit_ref"]
+
+    downgraded = copy.deepcopy(spec)
+    downgraded["schema_version"] = CONSOLIDATION_SPEC_VERSION
+    downgraded.pop("direct_outcome_relation_bindings", None)
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="historical consolidation spec cannot consume row-owned relation",
+    ) as caught:
+        build_axis_consolidated_view(downgraded)
+    assert caught.value.boundary == "relation_binding_lineage"

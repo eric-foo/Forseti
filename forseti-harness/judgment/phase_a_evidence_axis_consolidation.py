@@ -4059,6 +4059,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 f"current authoring requires row-owned relation bindings from the "
                 f"selection artifact: {point_id}",
             )
+        if not is_current_v4 and artifact.get("schema_version") == (
+            "phase_a_evidence_selection_artifact_v3"
+        ):
+            raise EvidenceConsumerError(
+                "relation_binding_lineage",
+                f"a historical consolidation spec cannot consume row-owned relation "
+                f"bindings and fall back to the primary reference: {point_id}",
+            )
         if is_routed_v2:
             output_boundary = artifact.get("output_boundary")
             missing_boundaries = [

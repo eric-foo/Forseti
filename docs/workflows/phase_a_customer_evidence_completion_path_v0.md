@@ -1042,7 +1042,10 @@ therefore proves attachment integrity only; whether that chosen subset really
 warrants support, counter, or adjacent remains a bounded judgment question and
 is **not mechanically proven**. Rejected-only and no-frontier routes create no
 point or relation. Historical v1/v2 consolidation specs and v7/v8 quote
-manifests remain replayable; they are not upgraded or restamped.
+manifests remain replayable; they are not upgraded or restamped. That replay
+covers their own historical artifacts only: a v3 selection artifact routed by a
+v1 or v2 spec is rejected at the relation-binding lineage boundary rather than
+allowed to drop its row-owned references back to the primary reference.
 
 The retired selected-row v3 review was a rejected experiment, not a standing
 diagnostic. The measured canonical-policy candidate was unstable: two shade
