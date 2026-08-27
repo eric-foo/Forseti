@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -4164,6 +4165,19 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
         _finalize_quotes_runtime(quote_manifest, sources, foreign_token)
     assert caught.value.boundary == "foreign_quote_token"
 
+    # The lean schema names the body pattern, not the token set, so only exact
+    # membership in the rederived spans separates a real address from a
+    # schema-shaped one this body does not own.
+    unowned_token = copy.deepcopy(response)
+    unowned_token["quotes"][0]["end_token_id"] = "body_01_token_999999"
+    assert re.fullmatch(
+        available_variant["properties"]["end_token_id"]["pattern"],
+        unowned_token["quotes"][0]["end_token_id"],
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, unowned_token)
+    assert caught.value.boundary == "foreign_quote_token"
+
     reversed_span = copy.deepcopy(response)
     reversed_span["quotes"][0]["start_token_id"], reversed_span["quotes"][0][
         "end_token_id"
@@ -4607,6 +4621,97 @@ def test_frontier_quote_review_receives_only_its_bound_parent_context(
                     _unavailable_token_quote_row(selected_id)
                 ]
             },
+        )
+    assert caught.value.boundary == "frontier_relation_quote_relevance"
+
+
+@pytest.mark.parametrize(
+    "child_body",
+    [
+        "Summer Fridays Lip Butter Balm.\n",
+        " Summer Fridays Lip Butter Balm.",
+    ],
+)
+def test_short_frontier_body_with_edge_whitespace_quotes_its_full_token_span(
+    tmp_path: Path, child_body: str
+) -> None:
+    """The widest token span is the complete addressable short-body quote."""
+
+    spec, sources = _write_source(tmp_path, 2)
+    candidate = _candidate_rows(sources, spec)[0]
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": candidate["source_id"],
+            "semantic_unit_ref": candidate["semantic_unit_ref"],
+        }
+    ]
+    spec["frontier_relation_display_policy"] = (
+        "literal_point_relations_display_eligible_v1"
+    )
+    sources[0]["bundle"]["evidence_units"][0]["text"] = child_body
+    _reseal(sources[0])
+
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    relation_by_candidate = {
+        row["candidate_id"]: row for row in first_pass["results"]
+    }
+    semantic_ref_by_candidate = {
+        row["candidate_id"]: row["semantic_unit_ref"] for row in candidates
+    }
+    confirmation_response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One product state under one condition set.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation_by_candidate[candidate_id]["relation"],
+                "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [
+                    semantic_ref_by_candidate[candidate_id]
+                ],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+    _, _, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+    selected_id = quote_manifest["provider_selected_ids"][0]
+    artifact = _finalize_quotes_runtime(
+        quote_manifest,
+        sources,
+        {
+            "quotes": [
+                _token_quote_row(
+                    quote_manifest, selected_id, child_body, child_body.strip()
+                )
+            ]
+        },
+    )
+    assert artifact["source_groups"][0]["rows"][0]["exact_quote"] == (
+        child_body.strip()
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            {"quotes": [_unavailable_token_quote_row(selected_id)]},
         )
     assert caught.value.boundary == "frontier_relation_quote_relevance"
 

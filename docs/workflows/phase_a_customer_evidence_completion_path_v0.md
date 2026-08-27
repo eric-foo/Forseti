@@ -1669,7 +1669,10 @@ return unavailable only after checking that no contiguous exact span supports
 the complete normalized meaning; quote length alone is not a rejection cause. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
-be clipped before a material qualification or same-source costly behavior. For
+be clipped before a material qualification or same-source costly behavior. Under
+current v9 token addressing, quoted in full means that body's first token
+through its last: a token address cannot name leading or trailing whitespace, so
+requiring the raw bytes would leave such a row no finalizable answer at all. For
 a longer body, current v9 asks for the shortest context-complete contiguous
 exact substring needed by the meaning, even when it exceeds 220 characters,
 after packet and bundle

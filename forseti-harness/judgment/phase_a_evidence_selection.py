@@ -3539,6 +3539,20 @@ def _quote_token_spans(body_id: str, body: str) -> list[tuple[str, int, int]]:
     ]
 
 
+def _complete_token_span(body: str) -> str:
+    """Return the widest span a token-addressed response can name.
+
+    Token addresses name non-whitespace runs, so a response cannot express a
+    body's leading or trailing whitespace. Complete coverage of a short body
+    under that transport is its first token through its last, not its raw bytes.
+    """
+
+    spans = _quote_token_spans("", body)
+    if not spans:
+        return ""
+    return body[spans[0][1] : spans[-1][2]]
+
+
 def _token_addressed_body(body_id: str, body: str) -> str:
     spans = _quote_token_spans(body_id, body)
     pieces: list[str] = []
@@ -5128,7 +5142,9 @@ def finalize_quotes(
                     "quote_boundary_incomplete",
                     "available quote stops before the next source word",
                 )
-            if len(body) <= SHORT_BODY_QUOTE_CHARACTERS and quote != body:
+            if len(body) <= SHORT_BODY_QUOTE_CHARACTERS and quote != (
+                _complete_token_span(body) if current_token_transport else body
+            ):
                 raise EvidenceConsumerError(
                     "quote_context_incomplete",
                     "a short source body must be quoted in full",

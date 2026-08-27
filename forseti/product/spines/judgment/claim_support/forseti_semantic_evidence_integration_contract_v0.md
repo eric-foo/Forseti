@@ -892,7 +892,9 @@ source-artifact and source-ref equality, and rejects a body whose hash differs
 from the one the quote manifest recorded. An available source body of no more
 than 220 characters must be quoted in full; this deterministic boundary prevents
 a short comment from being clipped before a material qualification or
-countervailing behavior. Current v9 and historical v8 use that threshold only for short-body copying and
+countervailing behavior. Under current v9 token addressing, quoted in full means
+that body's first token through its last, because a token address cannot name
+leading or trailing whitespace. Current v9 and historical v8 use that threshold only for short-body copying and
 external-review workload selection, never as a semantic ceiling. A longer
 available quote must be the shortest context-complete contiguous source
 substring that carries the material meaning, with no inserted ellipsis or
