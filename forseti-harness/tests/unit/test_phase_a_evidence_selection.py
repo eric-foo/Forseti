@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -2160,8 +2161,43 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
         "relation_checks",
     ]
     original_by_id = {
-        row["candidate_id"]: row for row in _validate_relation_response(candidates, first_pass)
+        row["candidate_id"]: row
+        for row in _validate_relation_response(candidates, first_pass)
     }
+    schema_refs_by_row = {
+        variant["properties"]["confirmation_row_id"]["const"]: variant[
+            "properties"
+        ]["relation_semantic_unit_refs"]["items"]["enum"]
+        for variant in schema["properties"]["relation_checks"]["items"]["anyOf"]
+    }
+    assert schema["properties"]["relation_checks"]["minItems"] == len(
+        confirmation_manifest["confirmation_row_ids"]
+    )
+    assert schema["properties"]["relation_checks"]["maxItems"] == len(
+        confirmation_manifest["confirmation_row_ids"]
+    )
+    assert schema_refs_by_row == {
+        row_id: sorted(
+            {
+                original_by_id[candidate_id]["semantic_unit_ref"],
+                *(
+                    companion["semantic_unit_ref"]
+                    for companion in original_by_id[candidate_id][
+                        "same_evidence_companion_meanings"
+                    ]
+                ),
+            }
+        )
+        for row_id, candidate_id in zip(
+            confirmation_manifest["confirmation_row_ids"],
+            confirmation_manifest["confirmation_candidate_ids"],
+            strict=True,
+        )
+    }
+    assert all(
+        "foreign::semantic-unit" not in refs
+        for refs in schema_refs_by_row.values()
+    )
     response = {
         "point_scope": "single_point",
         "point_scope_reason": "One direction-bearing hydration point.",
@@ -2373,7 +2409,11 @@ def test_current_relation_binding_fails_at_its_named_boundary(
     elif mutation == "duplicate":
         checks[0]["relation_semantic_unit_refs"] *= 2
     else:
-        checks[0]["relation_semantic_unit_refs"] = ["foreign::semantic-unit"]
+        checks[0]["relation_semantic_unit_refs"] = [
+            by_id[confirmation_manifest["confirmation_candidate_ids"][1]][
+                "semantic_unit_ref"
+            ]
+        ]
     response = {
         "point_scope": "single_point",
         "point_scope_reason": "One bounded fixture point.",
@@ -2576,6 +2616,43 @@ def test_hash_bound_unsupported_source_format_leaves_publication_time_unavailabl
     ] is None
 
 
+def _token_quote_row(
+    quote_manifest: dict,
+    selected_id: str,
+    body: str,
+    quote: str | None = None,
+) -> dict:
+    body_id = quote_manifest["quote_body_ids"][selected_id]
+    spans = evidence_selection._quote_token_spans(body_id, body)
+    if quote is None:
+        quote = body
+    quote_start = body.index(quote)
+    quote_end = quote_start + len(quote)
+    selected_spans = [
+        span for span in spans if span[1] >= quote_start and span[2] <= quote_end
+    ]
+    assert selected_spans
+    assert selected_spans[0][1] == quote_start
+    assert selected_spans[-1][2] == quote_end
+    return {
+        "selected_id": selected_id,
+        "body_id": body_id,
+        "quote_status": "quote_available",
+        "start_token_id": selected_spans[0][0],
+        "end_token_id": selected_spans[-1][0],
+    }
+
+
+def _unavailable_token_quote_row(selected_id: str) -> dict:
+    return {
+        "selected_id": selected_id,
+        "body_id": None,
+        "quote_status": "quote_unavailable",
+        "start_token_id": None,
+        "end_token_id": None,
+    }
+
+
 def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
     bodies = {
         row["evidence_id"]: row["text"]
@@ -2587,21 +2664,29 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
             [row["selected_id"] for row in quote_manifest["selected_rows"]],
         )
     )
-    return {
-        "quotes": [
-            {
-                "selected_id": row["selected_id"],
-                "quote_status": "quote_available",
-                "exact_quote": (
-                    bodies[row["evidence_id"]][:220]
-                    if len(bodies[row["evidence_id"]]) <= 220
-                    else bodies[row["evidence_id"]][:220].rsplit(".", 1)[0] + "."
-                ),
-            }
-            for row in quote_manifest["selected_rows"]
-            if row["selected_id"] in provider_ids
-        ]
-    }
+    current_transport = quote_manifest.get("quote_transport") == (
+        evidence_selection.CURRENT_QUOTE_TRANSPORT
+    )
+    rows = []
+    for row in quote_manifest["selected_rows"]:
+        if row["selected_id"] not in provider_ids:
+            continue
+        body = bodies[row["evidence_id"]]
+        if current_transport:
+            rows.append(_token_quote_row(quote_manifest, row["selected_id"], body))
+        else:
+            rows.append(
+                {
+                    "selected_id": row["selected_id"],
+                    "quote_status": "quote_available",
+                    "exact_quote": (
+                        body
+                        if len(body) <= 220
+                        else body[:220].rsplit(".", 1)[0] + "."
+                    ),
+                }
+            )
+    return {"quotes": rows}
 
 
 def _confirmation_response(
@@ -3433,7 +3518,7 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
         "exclude": "wrong_scope_or_non_evidence",
     }
     confirmation_responses = {}
-    for batch, (prompt, _) in zip(
+    for batch, (prompt, schema) in zip(
         confirmation_manifest["batches"], confirmation_prompts, strict=True
     ):
         envelope = json.loads(
@@ -3444,6 +3529,34 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
         checks = []
         primary_ref_index = envelope["candidate_columns"].index(
             "primary_semantic_unit_ref"
+        )
+        companion_index = envelope["candidate_columns"].index(
+            "same_evidence_companion_meanings_with_refs"
+        )
+        schema_refs_by_row = {
+            variant["properties"]["confirmation_row_id"]["const"]: variant[
+                "properties"
+            ]["relation_semantic_unit_refs"]["items"]["enum"]
+            for variant in schema["properties"]["relation_checks"]["items"]["anyOf"]
+        }
+        assert schema["properties"]["relation_checks"]["minItems"] == len(
+            envelope["candidate_rows"]
+        )
+        assert schema["properties"]["relation_checks"]["maxItems"] == len(
+            envelope["candidate_rows"]
+        )
+        assert schema_refs_by_row == {
+            row[0]: sorted(
+                {
+                    row[primary_ref_index],
+                    *(companion[0] for companion in row[companion_index]),
+                }
+            )
+            for row in envelope["candidate_rows"]
+        }
+        assert all(
+            "invented::semantic-unit" not in refs
+            for refs in schema_refs_by_row.values()
         )
         source_role_index = envelope["candidate_columns"].index("source_role")
         for row in envelope["candidate_rows"]:
@@ -3986,14 +4099,97 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
             confirmation_response,
         )
     )
-    exact_quote_schema = quote_schema["properties"]["quotes"]["items"][
-        "properties"
-    ]["exact_quote"]
     assert quote_manifest["schema_version"] == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
-    assert "maxLength" not in exact_quote_schema
+    assert quote_manifest["quote_transport"] == evidence_selection.CURRENT_QUOTE_TRANSPORT
+    quote_variants = quote_schema["properties"]["quotes"]["items"]["anyOf"]
+    available_variant = next(
+        row
+        for row in quote_variants
+        if row["properties"]["quote_status"].get("const") == "quote_available"
+    )
+    assert "exact_quote" not in available_variant["properties"]
+    assert available_variant["properties"]["selected_id"]["const"] == (
+        quote_manifest["provider_selected_ids"][0]
+    )
+    assert available_variant["properties"]["body_id"]["const"] == "body_01"
+    assert available_variant["properties"]["start_token_id"]["pattern"] == (
+        "^body_01_token_[0-9]{6}$"
+    )
+    assert "enum" not in available_variant["properties"]["start_token_id"]
     assert "There is no character ceiling" in quote_prompt
-    assert "another source word follows after whitespace" in quote_prompt
+    assert "do not transcribe quote text" in quote_prompt
+    assert "[body_01_token_000001]Goal" in quote_prompt
     response = {
+        "quotes": [
+            _token_quote_row(
+                quote_manifest, quote_manifest["provider_selected_ids"][0], body
+            )
+        ]
+    }
+    artifact = _finalize_quotes_runtime(quote_manifest, sources, response)
+    output_row = artifact["source_groups"][0]["rows"][0]
+    assert output_row["exact_quote"] == body
+    assert body in sources[0]["bundle"]["evidence_units"][0]["text"]
+
+    structurally_exact_but_semantically_dubious = {
+        "quotes": [
+            _token_quote_row(
+                quote_manifest,
+                quote_manifest["provider_selected_ids"][0],
+                body,
+                "Goal is to finish this tube because",
+            )
+        ]
+    }
+    dubious_artifact = _finalize_quotes_runtime(
+        quote_manifest, sources, structurally_exact_but_semantically_dubious
+    )
+    assert dubious_artifact["source_groups"][0]["rows"][0]["exact_quote"] == (
+        "Goal is to finish this tube because"
+    )
+    assert any(
+        "semantic adequacy of a structurally valid quote span is not mechanically proven"
+        in boundary
+        for boundary in dubious_artifact["output_boundary"]
+    )
+
+    wrong_body = copy.deepcopy(response)
+    wrong_body["quotes"][0]["body_id"] = "body_99"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, wrong_body)
+    assert caught.value.boundary == "foreign_quote_body"
+
+    foreign_token = copy.deepcopy(response)
+    foreign_token["quotes"][0]["start_token_id"] = "body_99_token_000001"
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, foreign_token)
+    assert caught.value.boundary == "foreign_quote_token"
+
+    # The lean schema names the body pattern, not the token set, so only exact
+    # membership in the rederived spans separates a real address from a
+    # schema-shaped one this body does not own.
+    unowned_token = copy.deepcopy(response)
+    unowned_token["quotes"][0]["end_token_id"] = "body_01_token_999999"
+    assert re.fullmatch(
+        available_variant["properties"]["end_token_id"]["pattern"],
+        unowned_token["quotes"][0]["end_token_id"],
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, unowned_token)
+    assert caught.value.boundary == "foreign_quote_token"
+
+    reversed_span = copy.deepcopy(response)
+    reversed_span["quotes"][0]["start_token_id"], reversed_span["quotes"][0][
+        "end_token_id"
+    ] = (
+        reversed_span["quotes"][0]["end_token_id"],
+        reversed_span["quotes"][0]["start_token_id"],
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, reversed_span)
+    assert caught.value.boundary == "reversed_quote_span"
+
+    transcribed_instead_of_bound = {
         "quotes": [
             {
                 "selected_id": quote_manifest["provider_selected_ids"][0],
@@ -4002,16 +4198,11 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
             }
         ]
     }
-    artifact = _finalize_quotes_runtime(quote_manifest, sources, response)
-    output_row = artifact["source_groups"][0]["rows"][0]
-    assert output_row["exact_quote"] == body
-    assert body in sources[0]["bundle"]["evidence_units"][0]["text"]
-
-    shortened = copy.deepcopy(response)
-    shortened["quotes"][0]["exact_quote"] = "Goal is to finish this tube because"
     with pytest.raises(EvidenceConsumerError) as caught:
-        _finalize_quotes_runtime(quote_manifest, sources, shortened)
-    assert caught.value.boundary == "quote_boundary_incomplete"
+        _finalize_quotes_runtime(
+            quote_manifest, sources, transcribed_instead_of_bound
+        )
+    assert caught.value.boundary == "quote_response_shape"
 
     _, _, legacy_confirmation_manifest = prepare_preselection_relation_confirmation(
         selection_manifest,
@@ -4040,8 +4231,17 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
     assert "maxLength" not in previous_schema["properties"]["quotes"]["items"][
         "properties"
     ]["exact_quote"]
+    historical_response = {
+        "quotes": [
+            {
+                "selected_id": previous_manifest["provider_selected_ids"][0],
+                "quote_status": "quote_available",
+                "exact_quote": body,
+            }
+        ]
+    }
     previous_artifact = _finalize_quotes_runtime(
-        previous_manifest, sources, response
+        previous_manifest, sources, historical_response
     )
     assert previous_artifact["schema_version"] == (
         "phase_a_evidence_selection_artifact_v2"
@@ -4060,7 +4260,7 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
         "exact_quote"
     ]["maxLength"] == 220
     with pytest.raises(EvidenceConsumerError) as caught:
-        _finalize_quotes_runtime(legacy_manifest, sources, response)
+        _finalize_quotes_runtime(legacy_manifest, sources, historical_response)
     assert caught.value.boundary == "quote_overlength"
 
 
@@ -4389,7 +4589,7 @@ def test_frontier_quote_review_receives_only_its_bound_parent_context(
     assert len(linked_rows) == 1
     assert linked_rows[0][context_index] == [full_context_id]
     assert quote_prompt.count(parent_text) == 1
-    assert "never copy or combine parent text into exact_quote" in quote_prompt
+    assert "never select parent tokens" in quote_prompt
 
     selected_id = quote_manifest["provider_selected_ids"][0]
     artifact = _finalize_quotes_runtime(
@@ -4397,11 +4597,9 @@ def test_frontier_quote_review_receives_only_its_bound_parent_context(
         sources,
         {
             "quotes": [
-                {
-                    "selected_id": selected_id,
-                    "quote_status": "quote_available",
-                    "exact_quote": child_body,
-                }
+                _token_quote_row(
+                    quote_manifest, selected_id, child_body
+                )
             ]
         },
     )
@@ -4420,13 +4618,100 @@ def test_frontier_quote_review_receives_only_its_bound_parent_context(
             sources,
             {
                 "quotes": [
-                    {
-                        "selected_id": selected_id,
-                        "quote_status": "quote_unavailable",
-                        "exact_quote": None,
-                    }
+                    _unavailable_token_quote_row(selected_id)
                 ]
             },
+        )
+    assert caught.value.boundary == "frontier_relation_quote_relevance"
+
+
+@pytest.mark.parametrize(
+    "child_body",
+    [
+        "Summer Fridays Lip Butter Balm.\n",
+        " Summer Fridays Lip Butter Balm.",
+    ],
+)
+def test_short_frontier_body_with_edge_whitespace_quotes_its_full_token_span(
+    tmp_path: Path, child_body: str
+) -> None:
+    """The widest token span is the complete addressable short-body quote."""
+
+    spec, sources = _write_source(tmp_path, 2)
+    candidate = _candidate_rows(sources, spec)[0]
+    spec["admit_semantic_refs"] = [
+        {
+            "source_id": candidate["source_id"],
+            "semantic_unit_ref": candidate["semantic_unit_ref"],
+        }
+    ]
+    spec["frontier_relation_display_policy"] = (
+        "literal_point_relations_display_eligible_v1"
+    )
+    sources[0]["bundle"]["evidence_units"][0]["text"] = child_body
+    _reseal(sources[0])
+
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    relation_by_candidate = {
+        row["candidate_id"]: row for row in first_pass["results"]
+    }
+    semantic_ref_by_candidate = {
+        row["candidate_id"]: row["semantic_unit_ref"] for row in candidates
+    }
+    confirmation_response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One product state under one condition set.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation_by_candidate[candidate_id]["relation"],
+                "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [
+                    semantic_ref_by_candidate[candidate_id]
+                ],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+    _, _, quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+    selected_id = quote_manifest["provider_selected_ids"][0]
+    artifact = _finalize_quotes_runtime(
+        quote_manifest,
+        sources,
+        {
+            "quotes": [
+                _token_quote_row(
+                    quote_manifest, selected_id, child_body, child_body.strip()
+                )
+            ]
+        },
+    )
+    assert artifact["source_groups"][0]["rows"][0]["exact_quote"] == (
+        child_body.strip()
+    )
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(
+            quote_manifest,
+            sources,
+            {"quotes": [_unavailable_token_quote_row(selected_id)]},
         )
     assert caught.value.boundary == "frontier_relation_quote_relevance"
 
@@ -4881,7 +5166,7 @@ def test_a_value_axis_spec_turns_on_the_value_prompt_and_schema_at_the_real_entr
     tmp_path: Path,
 ) -> None:
     spec, sources = _value_axis_source(tmp_path)
-    prompt, schema, _ = prepare_evidence_selection(spec, sources)
+    prompt, schema, selection_manifest = prepare_evidence_selection(spec, sources)
     assert "VALUE-BOX POLICY" in prompt
     variants = schema["properties"]["results"]["items"]["anyOf"]
     by_relation = {
@@ -4892,6 +5177,61 @@ def test_a_value_axis_spec_turns_on_the_value_prompt_and_schema_at_the_real_entr
     }
     assert "better_value_than_comparator" in by_relation["support"]
     assert "comparator_better_value" in by_relation["counter"]
+
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _value_relation_response(candidates)
+    _, confirmation_schema, confirmation_manifest = (
+        prepare_preselection_relation_confirmation(
+            selection_manifest, sources, first_pass
+        )
+    )
+    confirmation_variants = confirmation_schema["properties"]["relation_checks"][
+        "items"
+    ]["anyOf"]
+    variants_by_row = {}
+    for variant in confirmation_variants:
+        row_id = variant["properties"]["confirmation_row_id"]["const"]
+        variants_by_row.setdefault(row_id, []).append(variant)
+    assert set(variants_by_row) == set(
+        confirmation_manifest["confirmation_row_ids"]
+    )
+    assert all(
+        len(variants) == 1
+        and set(variants[0]["properties"]["relation"]["enum"])
+        == set(evidence_selection.RELATIONS)
+        for variants in variants_by_row.values()
+    )
+    assert all(
+        len(
+            {
+                tuple(
+                    variant["properties"]["relation_semantic_unit_refs"]["items"][
+                        "enum"
+                    ]
+                )
+                for variant in variants
+            }
+        )
+        == 1
+        for variants in variants_by_row.values()
+    )
+    value_confirmation_schema = (
+        evidence_selection._preselection_relation_confirmation_schema(
+            value_policy=True,
+            include_relation_refs=True,
+            row_relation_bindings=[("row_01", ["semantic::01"])],
+        )
+    )
+    value_variant = value_confirmation_schema["properties"]["relation_checks"][
+        "items"
+    ]["anyOf"]
+    assert len(value_variant) == 1
+    assert set(value_variant[0]["properties"]["relation"]["enum"]) == set(
+        evidence_selection.RELATIONS
+    )
+    assert set(value_variant[0]["properties"]["reason_code"]["enum"]) == set(
+        VALUE_REASON_RELATIONS
+    )
 
     balanced_dir = tmp_path / "balanced"
     balanced_dir.mkdir(parents=True, exist_ok=True)
