@@ -2148,6 +2148,10 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
     prompt, schema, confirmation_manifest = prepare_preselection_relation_confirmation(
         selection_manifest, sources, first_pass
     )
+    assert (
+        "For every row, return relation_semantic_unit_refs as the smallest nonempty "
+        "subset" in prompt
+    )
     assert recovered["candidate_id"] in confirmation_manifest["confirmation_candidate_ids"]
     assert recovered["candidate_id"] not in prompt
     assert schema["required"] == [
@@ -3393,6 +3397,8 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
     assert all(
         "Support directly supports the bounded point and every material qualifier"
         in prompt
+        and "For every row, return relation_semantic_unit_refs as the smallest "
+        "nonempty subset" in prompt
         and "a severe reaction, injury, peeling, cracking, or pain is not severe drying"
         in prompt
         and "sharing similar symptoms does not establish the same experience"

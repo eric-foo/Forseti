@@ -134,6 +134,10 @@ DIRECT_OUTCOME_BOUNDARIES = (
     "not a commercial-pull score",
     "creator influence is not customer corroboration",
 )
+RELATION_SEMANTIC_WARRANT_BOUNDARY = (
+    "relation semantic-unit references are judgment-authored and ownership-checked; "
+    "their semantic warrant is not mechanically proven"
+)
 EVIDENCE_ACCOUNTING_CONTRACT = {
     "point_meaning_rule": (
         "bounded_point on each point row is the authoritative admitted meaning, including "
@@ -4069,9 +4073,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             )
         if is_routed_v2:
             output_boundary = artifact.get("output_boundary")
+            required_boundaries = list(DIRECT_OUTCOME_BOUNDARIES)
+            if is_current_v4:
+                required_boundaries.append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
             missing_boundaries = [
                 boundary
-                for boundary in DIRECT_OUTCOME_BOUNDARIES
+                for boundary in required_boundaries
                 if not isinstance(output_boundary, list) or boundary not in output_boundary
             ]
             if missing_boundaries:
@@ -4567,6 +4574,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             EVIDENCE_ACCOUNTING_CONTRACT
         )
         view["non_claims"].extend(DIRECT_OUTCOME_BOUNDARIES)
+        if is_current_v4:
+            view["non_claims"].append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
         view["non_claims"].append(
             "multiple dated observations from one origin remain one origin and do not by "
             "themselves establish multiple underlying events"

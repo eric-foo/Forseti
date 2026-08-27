@@ -25,6 +25,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     DECISION_STATE_BOUNDARIES,
     DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
+    RELATION_SEMANTIC_WARRANT_BOUNDARY,
     DOGFOOD_TRUTH_INDEX_VERSION,
     EVIDENCE_ACCOUNTING_CONTRACT,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
@@ -744,6 +745,8 @@ def _bind_current_direct_outcome_relations(
         point_id = descriptor["point_id"]
         artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
         artifact["schema_version"] = "phase_a_evidence_selection_artifact_v3"
+        if RELATION_SEMANTIC_WARRANT_BOUNDARY not in artifact["output_boundary"]:
+            artifact["output_boundary"].append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
         rows = []
         for source_group in artifact["source_groups"]:
             for row in source_group["rows"]:
@@ -5043,6 +5046,7 @@ def test_current_direct_outcome_binding_reaches_both_reader_surfaces_unchanged(
     )
 
     view = build_axis_consolidated_view(spec)
+    assert RELATION_SEMANTIC_WARRANT_BOUNDARY in view["non_claims"]
     placement = next(
         row
         for row in view["point_placements"]
@@ -5052,6 +5056,7 @@ def test_current_direct_outcome_binding_reaches_both_reader_surfaces_unchanged(
     assert placement["relation_semantic_unit_refs"] == [companion_ref]
 
     decision_reader = view["decision_state_reader_surface"]
+    assert RELATION_SEMANTIC_WARRANT_BOUNDARY in decision_reader["non_claims"]
     point_columns = decision_reader["point_table"]["columns"]
     semantic_rows = _reader_rows(decision_reader["semantic_unit_table"])
     direct_point = next(
@@ -5075,9 +5080,10 @@ def test_current_direct_outcome_binding_reaches_both_reader_surfaces_unchanged(
 
     view_path = tmp_path / "current_mixed_view.json"
     _write(view_path, view)
-    _, fact_streams = build_axis_reader_bundle(
+    reader_manifest, fact_streams = build_axis_reader_bundle(
         view, source_view_path=view_path, facts_dir=tmp_path / "current_mixed_facts"
     )
+    assert RELATION_SEMANTIC_WARRANT_BOUNDARY in reader_manifest["non_claims"]
     full_fact = next(
         json.loads(line)
         for line in fact_streams[direct_point_id].decode("utf-8").splitlines()
@@ -5192,15 +5198,58 @@ def test_historical_v2_direct_outcome_keeps_its_stamped_primary_fallback(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    spec["projection_routes"] = [
+        {"projection_mode": "direct_outcome", "point_ids": ["point_a"]},
+        {"projection_mode": "decision_state", "point_ids": ["point_b"]},
+    ]
+    spec["decision_state_bindings"] = [
+        binding
+        for binding in spec["decision_state_bindings"]
+        if binding["point_id"] == "point_b"
+    ]
     view = build_axis_consolidated_view(spec)
-    placement = view["point_placements"][0]
-    assert "relation_semantic_unit_refs" not in placement
-    refs = consolidation_judgment._reader_relation_semantic_unit_refs(
-        placement=placement,
-        decision_state_group=None,
-        require_explicit_direct_outcome=False,
+    placement = next(
+        row for row in view["point_placements"] if row["point_id"] == "point_a"
     )
-    assert refs == [placement["semantic_unit_ref"]]
+    assert "relation_semantic_unit_refs" not in placement
+    primary_ref = placement["semantic_unit_ref"]
+
+    reader = view["decision_state_reader_surface"]
+    semantic_rows = _reader_rows(reader["semantic_unit_table"])
+    point_columns = reader["point_table"]["columns"]
+    point_row = next(
+        row
+        for row in reader["point_table"]["rows"]
+        if row[point_columns.index("point_id")] == placement["point_id"]
+    )
+    relation_facts = point_row[point_columns.index("relation_facts")]
+    fact_columns = relation_facts["columns"]
+    fact_row = next(
+        row
+        for row in relation_facts["rows"]
+        if row[fact_columns.index("selected_id")] == placement["selected_id"]
+    )
+    assert [
+        semantic_rows[row_id]["semantic_unit_ref"]
+        for row_id in fact_row[
+            fact_columns.index("relation_semantic_unit_row_ids")
+        ]
+    ] == [primary_ref]
+
+    view_path = tmp_path / "historical_v2_view.json"
+    _write(view_path, view)
+    _, fact_streams = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "historical_v2_facts"
+    )
+    full_fact = next(
+        json.loads(line)
+        for line in fact_streams[placement["point_id"]].decode("utf-8").splitlines()
+        if json.loads(line)["selected_id"] == placement["selected_id"]
+    )
+    assert full_fact["point_relative_meaning"][
+        "relation_semantic_unit_refs"
+    ] == [primary_ref]
 
 
 def test_historical_spec_cannot_consume_current_row_owned_relation_bindings(
