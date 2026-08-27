@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v59
-effective_date: 2026-08-26
+version: v65
+effective_date: 2026-08-27
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v59
+# Semantic Evidence Integration Contract v65
 
 ## Purpose
 
@@ -1700,21 +1700,32 @@ new frontier.
 
 ## Changelog
 
-- `v64` / 2026-08-27 — added a fail-closed, selected-row-only relation review
-  after regenerating the complete shade axis with the v63 prompt. An initial
-  prototype found seven displayed rows whose supplied meanings could not
-  explain their confirmed point relation; the exact canonical prompt found 24.
-  A different-flavour formula-comparison canary found three more broad-axis
-  adjacencies with no point-relative meaning. The recurring defect was
-  therefore not missing
-  wording alone: two model passes could preserve a relation label without
-  binding it to the exact actor, object, predicate, state, condition,
-  comparator, and scope in the row. New consolidation work prepares one cold
-  review over displayed primary and same-evidence companion meanings, rejects
-  any row with no truthful nonempty binding, and emits a hash-bound v3 spec
-  that the builder revalidates against the raw request and response. It adds no
-  full-ledger reread, lexical classifier, ontology, historical rewrite, or
-  Deliver judgment. Historical v1/v2 specs remain replayable.
+- `v65` / 2026-08-27 — retired the selected-row v3 provider review and made
+  explicit row-owned relation bindings mandatory in current authoring. The
+  existing hidden-label preselection confirmation now returns the smallest
+  nonempty primary-or-same-evidence companion semantic-ref subset with each
+  relation (`phase_a_evidence_quote_manifest_v9`); the v3 selection artifact
+  carries it unchanged, and the v4 consolidation spec must repeat it for every
+  displayed Direct Outcome and Decision State row. Builder and readers reject
+  missing, duplicate, foreign, cross-point, cross-evidence, omitted, or changed
+  attachments. They prove row ownership and transfer integrity, not whether the
+  judgment-authored subset semantically warrants support, counter, or adjacent.
+  This removes one unbatched selected-row whole-axis provider call without
+  removing the pre-existing batched semantic confirmation. It adds no provider
+  stage, deterministic prose classifier, consensus loop, adapter, frozen
+  rewrite, permanent canary, or Deliver judgment. Historical v1/v2
+  consolidation specs and v7/v8 quote manifests remain replayable.
+- `v64` / 2026-08-27 — recorded the now-rejected selected-row v3 experiment.
+  Its exact canonical-policy candidate was not the shipped v3 prompt and was
+  position-unstable: two shade runs flagged 14 and 59 rows, while four formula
+  runs flagged 6, 4, 5, and 4. Four earlier attempts failed before reaching the
+  provider because of orchestration configuration. Repeated stability of the
+  shipped v3 prompt is unmeasured because each axis had only one historical run;
+  that prompt also condensed canonical policy into a third policy. The 24 shade
+  and 3 formula flags remain unadjudicated allegations. This evidence supported
+  retiring recurring ceremony in favor of a lower deterministic attachment
+  boundary; it did not prove those rows wrong, semantic truth, reader-quality
+  improvement, or that all semantic provider cost disappeared.
 - `v63` / 2026-08-27 — tightened every Phase A point-relation prompt after the
   final all-axis dogfood proved that broad sentiment direction still overrode
   the bounded predicate and actor scope. The recurring failures included a

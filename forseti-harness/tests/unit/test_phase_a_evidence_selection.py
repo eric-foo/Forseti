@@ -27,6 +27,7 @@ from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
     DISPLAY_LABEL_BY_REASON_CODE,
     LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     PARENT_CONTEXT_POLICY,
     SELECTION_SPEC_VERSION,
@@ -1315,7 +1316,7 @@ def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_disp
             manifest, sources, response
         )
         _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
-            manifest, sources, response
+            manifest, sources, response, include_relation_refs=False
         )
         historical_by_id = {
             row["candidate_id"]: row for row in historical_labeled
@@ -2177,6 +2178,9 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
                         "related_customer_context" if relation == "adjacent" else "wrong_scope_or_non_evidence"
                     )
                 ),
+                "relation_semantic_unit_refs": [
+                    original_by_id[candidate_id]["semantic_unit_ref"]
+                ],
             }
         )
 
@@ -2195,6 +2199,7 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
     artifact = _finalize_quotes_runtime(
         quote_manifest, sources, _quote_response(quote_manifest, sources)
     )
+    assert artifact["schema_version"] == "phase_a_evidence_selection_artifact_v3"
     assert artifact["relation_confirmation_status"] == "passed"
     assert artifact["point_scope_confirmation_reason"] == response[
         "point_scope_reason"
@@ -2203,6 +2208,16 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
         row["candidate_id"] for row in artifact["candidate_dispositions"]
         if row["relation"] == "support"
     }
+    recovered_output = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if recovered["candidate_id"] in row["origin_candidate_ids"]
+        and row["semantic_unit_ref"] == recovered["semantic_unit_ref"]
+    )
+    assert recovered_output["relation_semantic_unit_refs"] == [
+        recovered["semantic_unit_ref"]
+    ]
     forged = copy.deepcopy(quote_manifest)
     forged_confirmation_manifest = forged["preselection_replay"][
         "confirmation_manifest"
@@ -2238,6 +2253,138 @@ def test_preselection_confirmation_recovers_material_candidate_before_cap_select
             missing,
         )
     assert caught.value.boundary == "missing_relation_confirmation"
+
+
+def test_current_relation_binding_accepts_owned_companion_without_claiming_semantic_warrant(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    evidence_row = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0]
+    companion = copy.deepcopy(evidence_row[10][0])
+    companion[0] = "community_post:0::unrelated-shade-intent"
+    companion[1] = "The author intends to buy a different shade."
+    companion[7] = ["shade_and_color_fit"]
+    companion[8] = []
+    evidence_row[10].append(companion)
+    packet = sources[0]["packet"]
+    packet["packet_sha256"] = _canonical_hash(
+        {key: value for key, value in packet.items() if key != "packet_sha256"}
+    )
+    sources[0]["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    by_id = {row["candidate_id"]: row for row in candidates}
+    first_by_id = {row["candidate_id"]: row for row in first_pass["results"]}
+    companion_candidate_id = next(
+        candidate_id
+        for candidate_id in confirmation_manifest["confirmation_candidate_ids"]
+        if by_id[candidate_id]["same_evidence_companion_meanings"]
+    )
+    companion_ref = by_id[companion_candidate_id][
+        "same_evidence_companion_meanings"
+    ][0]["semantic_unit_ref"]
+    response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One bounded fixture point.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": first_by_id[candidate_id]["relation"],
+                "reason_code": first_by_id[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [
+                    companion_ref
+                    if candidate_id == companion_candidate_id
+                    else by_id[candidate_id]["semantic_unit_ref"]
+                ],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+
+    _, _, quote_manifest = finalize_preselection_relation_confirmation_prepare_quotes(
+        selection_manifest,
+        sources,
+        first_pass,
+        confirmation_manifest,
+        response,
+    )
+    bound = next(
+        row
+        for row in quote_manifest["labeled_inventory"]
+        if row["candidate_id"] == companion_candidate_id
+    )
+    assert bound["relation_semantic_unit_refs"] == [companion_ref]
+    artifact = _finalize_quotes_runtime(
+        quote_manifest, sources, _quote_response(quote_manifest, sources)
+    )
+    assert any(
+        "semantic warrant is not mechanically proven" in boundary
+        for boundary in artifact["output_boundary"]
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "boundary"),
+    [
+        ("missing", "relation_confirmation_shape"),
+        ("duplicate", "relation_semantic_binding"),
+        ("foreign", "relation_semantic_binding"),
+    ],
+)
+def test_current_relation_binding_fails_at_its_named_boundary(
+    tmp_path: Path, mutation: str, boundary: str
+) -> None:
+    spec, sources = _write_source(tmp_path, 4)
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    by_id = {row["candidate_id"]: row for row in candidates}
+    first_by_id = {row["candidate_id"]: row for row in first_pass["results"]}
+    checks = [
+        {
+            "confirmation_row_id": row_id,
+            "relation": first_by_id[candidate_id]["relation"],
+            "reason_code": first_by_id[candidate_id]["reason_code"],
+            "relation_semantic_unit_refs": [by_id[candidate_id]["semantic_unit_ref"]],
+        }
+        for row_id, candidate_id in zip(
+            confirmation_manifest["confirmation_row_ids"],
+            confirmation_manifest["confirmation_candidate_ids"],
+            strict=True,
+        )
+    ]
+    if mutation == "missing":
+        checks[0].pop("relation_semantic_unit_refs")
+    elif mutation == "duplicate":
+        checks[0]["relation_semantic_unit_refs"] *= 2
+    else:
+        checks[0]["relation_semantic_unit_refs"] = ["foreign::semantic-unit"]
+    response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One bounded fixture point.",
+        "relation_checks": checks,
+    }
+
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            response,
+        )
+    assert caught.value.boundary == boundary
 
 
 def test_preselection_confirmation_reapplies_first_pass_row_guards(
@@ -2277,6 +2424,9 @@ def test_preselection_confirmation_reapplies_first_pass_row_guards(
                     "confirmation_row_id": row_id,
                     "relation": relation,
                     "reason_code": reason_code,
+                    "relation_semantic_unit_refs": [
+                        original_by_id[candidate_id]["semantic_unit_ref"]
+                    ],
                 }
             )
         return {
@@ -3286,13 +3436,20 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
             )[1]
         )
         checks = []
+        primary_ref_index = envelope["candidate_columns"].index(
+            "primary_semantic_unit_ref"
+        )
+        source_role_index = envelope["candidate_columns"].index("source_role")
         for row in envelope["candidate_rows"]:
-            relation = "adjacent" if row[5] == "creator_authored" else "support"
+            relation = (
+                "adjacent" if row[source_role_index] == "creator_authored" else "support"
+            )
             checks.append(
                 {
                     "confirmation_row_id": row[0],
                     "relation": relation,
                     "reason_code": reason_by_relation[relation],
+                    "relation_semantic_unit_refs": [row[primary_ref_index]],
                 }
             )
         confirmation_responses[batch["batch_id"]] = {
@@ -3654,13 +3811,20 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
             )[1]
         )
         checks = []
+        primary_ref_index = envelope["candidate_columns"].index(
+            "primary_semantic_unit_ref"
+        )
+        source_role_index = envelope["candidate_columns"].index("source_role")
         for row in envelope["candidate_rows"]:
-            relation = "adjacent" if row[5] == "creator_authored" else "support"
+            relation = (
+                "adjacent" if row[source_role_index] == "creator_authored" else "support"
+            )
             checks.append(
                 {
                     "confirmation_row_id": row[0],
                     "relation": relation,
                     "reason_code": reason_by_relation[relation],
+                    "relation_semantic_unit_refs": [row[primary_ref_index]],
                 }
             )
         (confirmation_response_dir / f"{batch['batch_id']}_response.json").write_text(
@@ -3764,7 +3928,7 @@ def test_provider_prompts_are_compact_views_while_manifests_keep_full_facts(
     assert exact_quote_schema["maxLength"] == 220
 
 
-def test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded(
+def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
     tmp_path: Path,
 ) -> None:
     spec, sources = _write_source(tmp_path, 1)
@@ -3785,6 +3949,9 @@ def test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded
     relation_by_candidate = {
         row["candidate_id"]: row for row in first_pass["results"]
     }
+    semantic_ref_by_candidate = {
+        row["candidate_id"]: row["semantic_unit_ref"] for row in candidates
+    }
     confirmation_response = {
         "point_scope": "single_point",
         "point_scope_reason": "One product state under one condition set.",
@@ -3793,6 +3960,9 @@ def test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded
                 "confirmation_row_id": row_id,
                 "relation": relation_by_candidate[candidate_id]["relation"],
                 "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [
+                    semantic_ref_by_candidate[candidate_id]
+                ],
             }
             for row_id, candidate_id in zip(
                 confirmation_manifest["confirmation_row_ids"],
@@ -3837,13 +4007,46 @@ def test_v8_accepts_context_complete_exact_quote_over_220_and_v7_remains_bounded
         _finalize_quotes_runtime(quote_manifest, sources, shortened)
     assert caught.value.boundary == "quote_boundary_incomplete"
 
+    _, _, legacy_confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest,
+        sources,
+        first_pass,
+        include_relation_refs=False,
+    )
+    legacy_confirmation_response = copy.deepcopy(confirmation_response)
+    for row in legacy_confirmation_response["relation_checks"]:
+        row.pop("relation_semantic_unit_refs")
+    _, previous_schema, previous_manifest = (
+        _finalize_preselection_relation_confirmation_prepare_quotes(
+            selection_manifest,
+            sources,
+            first_pass,
+            legacy_confirmation_manifest,
+            legacy_confirmation_response,
+            quote_manifest_version=(
+                PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+            ),
+        )
+    )
+    assert previous_manifest["schema_version"] == (
+        PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
+    assert "maxLength" not in previous_schema["properties"]["quotes"]["items"][
+        "properties"
+    ]["exact_quote"]
+    previous_artifact = _finalize_quotes_runtime(
+        previous_manifest, sources, response
+    )
+    assert previous_artifact["schema_version"] == (
+        "phase_a_evidence_selection_artifact_v2"
+    )
     _, legacy_schema, legacy_manifest = (
         _finalize_preselection_relation_confirmation_prepare_quotes(
             selection_manifest,
             sources,
             first_pass,
-            confirmation_manifest,
-            confirmation_response,
+            legacy_confirmation_manifest,
+            legacy_confirmation_response,
             quote_manifest_version=LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         )
     )
@@ -4131,6 +4334,9 @@ def test_frontier_quote_review_receives_only_its_bound_parent_context(
     relation_by_candidate = {
         row["candidate_id"]: row for row in first_pass["results"]
     }
+    semantic_ref_by_candidate = {
+        row["candidate_id"]: row["semantic_unit_ref"] for row in candidates
+    }
     confirmation_response = {
         "point_scope": "single_point",
         "point_scope_reason": "One product state under one condition set.",
@@ -4139,6 +4345,9 @@ def test_frontier_quote_review_receives_only_its_bound_parent_context(
                 "confirmation_row_id": row_id,
                 "relation": relation_by_candidate[candidate_id]["relation"],
                 "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [
+                    semantic_ref_by_candidate[candidate_id]
+                ],
             }
             for row_id, candidate_id in zip(
                 confirmation_manifest["confirmation_row_ids"],

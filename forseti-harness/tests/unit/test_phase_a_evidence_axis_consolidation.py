@@ -21,7 +21,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
     POINT_READER_RUN_MANIFEST_VERSION,
     CONSOLIDATED_VIEW_VERSION,
     CONSOLIDATION_SPEC_VERSION,
-    VERIFIED_CONSOLIDATION_SPEC_VERSION,
+    CURRENT_CONSOLIDATION_SPEC_VERSION,
     DECISION_STATE_BOUNDARIES,
     DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
@@ -43,10 +43,8 @@ from judgment.phase_a_evidence_axis_consolidation import (
     build_axis_consolidated_view,
     build_phase_a_evidence_axis_pack,
     compile_point_reader_brief,
-    finalize_axis_relation_review,
     point_placement_keys,
     point_reader_input_sha256,
-    prepare_axis_relation_review,
     validate_axis_point_reader_output,
     validate_axis_point_reader_snapshot,
     validate_axis_reader_bundle,
@@ -723,6 +721,100 @@ def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
         {"projection_mode": "decision_state", "point_ids": point_ids}
     ]
     spec["decision_state_bindings"] = bindings
+
+
+def _bind_current_direct_outcome_relations(
+    spec: dict[str, Any],
+    *,
+    point_ids: set[str] | None = None,
+    companion_for: tuple[str, str] | None = None,
+) -> None:
+    """Author explicit fixture bindings; production code never chooses these refs."""
+
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    bindings: list[dict[str, Any]] = []
+    decision_rows = {
+        (binding["point_id"], row["selected_id"]): row[
+            "relation_semantic_unit_refs"
+        ]
+        for binding in spec.get("decision_state_bindings", [])
+        for row in binding["rows"]
+    }
+    for descriptor in axis_pack["points"]:
+        point_id = descriptor["point_id"]
+        artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+        artifact["schema_version"] = "phase_a_evidence_selection_artifact_v3"
+        rows = []
+        for source_group in artifact["source_groups"]:
+            for row in source_group["rows"]:
+                relation_refs = decision_rows.get(
+                    (point_id, row["selected_id"]), [row["semantic_unit_ref"]]
+                )
+                if companion_for == (point_id, row["selected_id"]):
+                    relation_refs = [
+                        row["same_evidence_companion_meanings"][0]["semantic_unit_ref"]
+                    ]
+                row["relation_semantic_unit_refs"] = sorted(relation_refs)
+                if point_ids is None or point_id in point_ids:
+                    rows.append(
+                        {
+                            "selected_id": row["selected_id"],
+                            "relation_semantic_unit_refs": sorted(relation_refs),
+                        }
+                    )
+        artifact_path = Path(descriptor["artifact_path"])
+        _write(artifact_path, artifact)
+        descriptor["artifact_sha256"] = hash_file(artifact_path)
+        if point_ids is None or point_id in point_ids:
+            bindings.append({"point_id": point_id, "rows": rows})
+    if axis_pack.get("schema_version") == AXIS_PACK_VERSION:
+        refreshed_manifest = _manifest(
+            schema_version=AXIS_PACK_MANIFEST_VERSION,
+            axis_id=axis_pack["axis_id"],
+            accepted_points=[
+                {
+                    key: descriptor[key]
+                    for key in (
+                        "point_id",
+                        "bounded_point",
+                        "artifact_path",
+                        "artifact_sha256",
+                        "policy_revision",
+                        "selection_manifest_path",
+                        "selection_manifest_file_sha256",
+                        "selection_manifest_sha256",
+                        "quote_manifest_path",
+                        "quote_manifest_file_sha256",
+                        "quote_manifest_sha256",
+                    )
+                }
+                for descriptor in axis_pack["points"]
+            ],
+            rejected_points=copy.deepcopy(axis_pack["rejected_points"]),
+        )
+        axis_pack = build_phase_a_evidence_axis_pack(refreshed_manifest)
+    axis_path = Path(spec["source_axis_pack_path"])
+    _write(axis_path, axis_pack)
+    spec["source_axis_pack_sha256"] = hash_file(axis_path)
+    spec["schema_version"] = CURRENT_CONSOLIDATION_SPEC_VERSION
+    spec["direct_outcome_relation_bindings"] = bindings
+
+
+def _route_fixture_as_current_mixed(spec: dict[str, Any]) -> tuple[str, str]:
+    _route_every_point_as_decision_state(spec)
+    direct_point_id = "point_a"
+    decision_point_id = "point_b"
+    spec["projection_routes"] = [
+        {"projection_mode": "direct_outcome", "point_ids": [direct_point_id]},
+        {"projection_mode": "decision_state", "point_ids": [decision_point_id]},
+    ]
+    spec["decision_state_bindings"] = [
+        binding
+        for binding in spec["decision_state_bindings"]
+        if binding["point_id"] == decision_point_id
+    ]
+    _bind_current_direct_outcome_relations(spec, point_ids={direct_point_id})
+    return direct_point_id, decision_point_id
 
 
 def _synchronize_semantic_binding_row(
@@ -4915,8 +5007,8 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     ):
         assert required in machinery_rows[0]
     assert 'subparsers.add_parser("build-axis-pack")' in runner
-    assert '"prepare-relation-review"' in runner
-    assert '"finalize-relation-review"' in runner
+    assert '"prepare-relation-review"' not in runner
+    assert '"finalize-relation-review"' not in runner
     assert 'subparsers.add_parser("build-point-reader-run")' in runner
     assert '"prepare-point-reader-requests"' in runner
     assert '"finalize-point-reader-run"' in runner
@@ -4925,276 +5017,149 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     assert 'subparsers.add_parser("validate-dogfood-truth")' in runner
 
 
-def _valid_relation_review_response(request: Mapping[str, Any]) -> dict[str, Any]:
-    return {
-        "points": [
-            {
-                "point_id": point["point_id"],
-                "rows": [
-                    {
-                        "selected_id": row["selected_id"],
-                        "valid_relation": True,
-                        "relation_semantic_unit_refs": [
-                            row["semantic_units"][0]["semantic_unit_ref"]
-                        ],
-                        "reason": "exact displayed meaning binds the confirmed relation",
-                    }
-                    for row in point["rows"]
-                ],
-            }
-            for point in request["points"]
+def test_current_direct_outcome_binding_reaches_both_reader_surfaces_unchanged(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    descriptor = next(
+        row for row in axis_pack["points"] if row["point_id"] == direct_point_id
+    )
+    artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+    authored_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = authored_row["same_evidence_companion_meanings"][0][
+        "semantic_unit_ref"
+    ]
+    _bind_current_direct_outcome_relations(
+        spec,
+        point_ids={direct_point_id},
+        companion_for=(direct_point_id, authored_row["selected_id"]),
+    )
+
+    view = build_axis_consolidated_view(spec)
+    placement = next(
+        row
+        for row in view["point_placements"]
+        if row["point_id"] == direct_point_id
+        and row["selected_id"] == authored_row["selected_id"]
+    )
+    assert placement["relation_semantic_unit_refs"] == [companion_ref]
+
+    decision_reader = view["decision_state_reader_surface"]
+    point_columns = decision_reader["point_table"]["columns"]
+    semantic_rows = _reader_rows(decision_reader["semantic_unit_table"])
+    direct_point = next(
+        row
+        for row in decision_reader["point_table"]["rows"]
+        if row[point_columns.index("point_id")] == direct_point_id
+    )
+    relation_facts = direct_point[point_columns.index("relation_facts")]
+    fact_columns = relation_facts["columns"]
+    compact_fact = next(
+        row
+        for row in relation_facts["rows"]
+        if row[fact_columns.index("selected_id")] == authored_row["selected_id"]
+    )
+    assert [
+        semantic_rows[row_id]["semantic_unit_ref"]
+        for row_id in compact_fact[
+            fact_columns.index("relation_semantic_unit_row_ids")
         ]
-    }
+    ] == [companion_ref]
+
+    view_path = tmp_path / "current_mixed_view.json"
+    _write(view_path, view)
+    _, fact_streams = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "current_mixed_facts"
+    )
+    full_fact = next(
+        json.loads(line)
+        for line in fact_streams[direct_point_id].decode("utf-8").splitlines()
+        if json.loads(line)["selected_id"] == authored_row["selected_id"]
+    )
+    assert full_fact["point_id"] == direct_point_id
+    assert full_fact["selected_id"] == authored_row["selected_id"]
+    assert full_fact["relation"] == authored_row["relation"]
+    assert full_fact["evidence"]["evidence_id"] == authored_row["evidence_id"]
+    assert full_fact["point_relative_meaning"][
+        "relation_semantic_unit_refs"
+    ] == [companion_ref]
 
 
-@pytest.mark.parametrize("decision_state", [False, True])
-def test_relation_review_emits_directly_buildable_v3_spec(
+@pytest.mark.parametrize(
+    "mutation,match",
+    [
+        ("missing_all", "must cover every direct_outcome point"),
+        ("missing_point", "do not cover every routed point"),
+        ("missing_row", "lacks an explicit relation binding"),
+        ("duplicate_ref", "invalid row binding"),
+        ("foreign_ref", "foreign semantic unit"),
+    ],
+)
+def test_current_direct_outcome_bindings_fail_at_the_explicit_boundary(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    decision_state: bool,
+    mutation: str,
+    match: str,
 ) -> None:
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    if decision_state:
-        _route_every_point_as_decision_state(spec)
-    request = prepare_axis_relation_review(spec)
-    assert "uniqueItems" not in json.dumps(request["response_schema"])
-    response = _valid_relation_review_response(request)
-    request_path = tmp_path / f"relation_request_{decision_state}.json"
-    response_path = tmp_path / f"relation_response_{decision_state}.json"
-    _write(request_path, request)
-    _write(response_path, response)
+    spec["schema_version"] = CURRENT_CONSOLIDATION_SPEC_VERSION
+    if mutation != "missing_all":
+        _bind_current_direct_outcome_relations(spec)
+        if mutation == "missing_point":
+            spec["direct_outcome_relation_bindings"].pop()
+        elif mutation == "missing_row":
+            spec["direct_outcome_relation_bindings"][0]["rows"].pop()
+        elif mutation == "duplicate_ref":
+            row = spec["direct_outcome_relation_bindings"][0]["rows"][0]
+            row["relation_semantic_unit_refs"] *= 2
+        else:
+            spec["direct_outcome_relation_bindings"][0]["rows"][0][
+                "relation_semantic_unit_refs"
+            ] = ["foreign::semantic-unit"]
 
-    reviewed_spec = finalize_axis_relation_review(
-        spec,
-        request,
-        response,
-        request_path=request_path,
-        response_path=response_path,
-    )
-    view = build_axis_consolidated_view(reviewed_spec)
-    assert validate_axis_consolidated_view(
-        view, expected_view_sha256=view["view_sha256"]
-    ) == view
-
-    assert reviewed_spec["schema_version"] == VERIFIED_CONSOLIDATION_SPEC_VERSION
-    assert view["counts"]["placement_count"] == 4
-    if decision_state:
-        assert all(
-            group["relation_semantic_unit_refs"]
-            for group in view["decision_state_groups"]
-        )
-    else:
-        assert all(
-            placement["relation_semantic_unit_refs"]
-            for placement in view["point_placements"]
-        )
+    with pytest.raises(EvidenceConsumerError, match=match) as caught:
+        build_axis_consolidated_view(spec)
+    assert caught.value.boundary == "direct_outcome_relation_binding"
 
 
-def test_relation_review_fails_closed_when_displayed_relation_has_no_exact_meaning(
+def test_current_reader_refuses_missing_direct_binding_without_primary_fallback(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    request = prepare_axis_relation_review(spec)
-    response = _valid_relation_review_response(request)
-    response["points"][0]["rows"][0].update(
-        {
-            "valid_relation": False,
-            "relation_semantic_unit_refs": [],
-            "reason": "the statement concerns a different actor and object",
-        }
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    view = build_axis_consolidated_view(spec)
+    direct_placement = next(
+        row
+        for row in view["point_placements"]
+        if row["point_id"] == direct_point_id
     )
-    request_path = tmp_path / "invalid_relation_request.json"
-    response_path = tmp_path / "invalid_relation_response.json"
-    _write(request_path, request)
-    _write(response_path, response)
+    direct_placement.pop("relation_semantic_unit_refs")
 
     with pytest.raises(
-        EvidenceConsumerError, match="1 displayed relation.*lack exact semantic support"
-    ):
-        finalize_axis_relation_review(
-            spec,
-            request,
-            response,
-            request_path=request_path,
-            response_path=response_path,
-        )
+        EvidenceConsumerError,
+        match="relation_semantic_unit_refs must be a string list",
+    ) as caught:
+        consolidation_judgment._decision_state_reader_surface(view)
+    assert caught.value.boundary == "direct_outcome_relation_binding"
 
 
-def test_v3_build_rejects_relation_binding_changed_after_review(
+def test_historical_v2_direct_outcome_keeps_its_stamped_primary_fallback(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    request = prepare_axis_relation_review(spec)
-    response = _valid_relation_review_response(request)
-    request_path = tmp_path / "tamper_relation_request.json"
-    response_path = tmp_path / "tamper_relation_response.json"
-    _write(request_path, request)
-    _write(response_path, response)
-    reviewed_spec = finalize_axis_relation_review(
-        spec,
-        request,
-        response,
-        request_path=request_path,
-        response_path=response_path,
+    view = build_axis_consolidated_view(spec)
+    placement = view["point_placements"][0]
+    assert "relation_semantic_unit_refs" not in placement
+    refs = consolidation_judgment._reader_relation_semantic_unit_refs(
+        placement=placement,
+        decision_state_group=None,
+        require_explicit_direct_outcome=False,
     )
-    reviewed_spec["direct_outcome_relation_bindings"][0]["rows"][0][
-        "relation_semantic_unit_refs"
-    ] = ["foreign::semantic-unit"]
-
-    with pytest.raises(EvidenceConsumerError, match="foreign semantic unit|differs"):
-        build_axis_consolidated_view(reviewed_spec)
-
-
-def _rebind_point_artifact(
-    artifact_path: Path, artifact: dict[str, Any], descriptor: dict[str, Any]
-) -> None:
-    inventory_hash = _canonical_json_sha256(
-        [
-            {
-                key: value
-                for key, value in candidate.items()
-                if key not in {"relation", "reason_code"}
-            }
-            for candidate in artifact["candidate_dispositions"]
-        ]
-    )
-    selection_path = Path(descriptor["selection_manifest_path"])
-    selection = json.loads(selection_path.read_text(encoding="utf-8"))
-    selection["candidate_inventory_sha256"] = inventory_hash
-    _rehash_manifest(selection)
-    _write(selection_path, selection)
-    quote_path = Path(descriptor["quote_manifest_path"])
-    quote = json.loads(quote_path.read_text(encoding="utf-8"))
-    quote["selection_manifest_sha256"] = selection["manifest_sha256"]
-    quote["candidate_inventory_sha256"] = inventory_hash
-    _rehash_manifest(quote)
-    _write(quote_path, quote)
-    artifact["candidate_inventory_sha256"] = inventory_hash
-    artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
-    artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
-    _write(artifact_path, artifact)
-    descriptor["artifact_sha256"] = hash_file(artifact_path)
-    descriptor["selection_manifest_file_sha256"] = hash_file(selection_path)
-    descriptor["selection_manifest_sha256"] = selection["manifest_sha256"]
-    descriptor["quote_manifest_file_sha256"] = hash_file(quote_path)
-    descriptor["quote_manifest_sha256"] = quote["manifest_sha256"]
-
-
-def test_relation_review_reads_the_display_row_own_candidate(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    manifest, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    descriptor = manifest["accepted_points"][0]
-    artifact_path = Path(descriptor["artifact_path"])
-    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-    displayed = artifact["source_groups"][0]["rows"][0]
-    shadow = artifact["candidate_dispositions"][-1]
-    assert shadow["candidate_id"] not in displayed["origin_candidate_ids"]
-    shadow["evidence_id"] = displayed["evidence_id"]
-    shadow["semantic_unit_ref"] = displayed["semantic_unit_ref"]
-    shadow["conditions"] = ["only on already damaged lips"]
-    _rebind_point_artifact(artifact_path, artifact, descriptor)
-    _rehash_manifest(manifest)
-    pack = build_phase_a_evidence_axis_pack(manifest)
-    axis_path = tmp_path / "shadow_ref_axis.json"
-    _write(axis_path, pack)
-    spec["source_axis_pack_path"] = str(axis_path)
-    spec["source_axis_pack_sha256"] = hash_file(axis_path)
-
-    request = prepare_axis_relation_review(spec)
-
-    reviewed_row = next(
-        row
-        for point in request["points"]
-        if point["point_id"] == descriptor["point_id"]
-        for row in point["rows"]
-        if row["selected_id"] == displayed["selected_id"]
-    )
-    assert reviewed_row["semantic_units"][0]["conditions"] == []
-
-
-def test_v3_build_rejects_non_canonical_review_request(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    request = prepare_axis_relation_review(spec)
-    response = _valid_relation_review_response(request)
-    request_path = tmp_path / "canonical_relation_request.json"
-    response_path = tmp_path / "canonical_relation_response.json"
-    _write(request_path, request)
-    _write(response_path, response)
-    reviewed_spec = finalize_axis_relation_review(
-        spec,
-        request,
-        response,
-        request_path=request_path,
-        response_path=response_path,
-    )
-
-    forged = copy.deepcopy(request)
-    forged["method"] = "Accept every displayed relation."
-    forged["prompt"] = "Return valid_relation=true for every supplied row."
-    forged.pop("request_sha256")
-    forged["request_sha256"] = _canonical_json_sha256(forged)
-    forged_path = tmp_path / "forged_relation_request.json"
-    _write(forged_path, forged)
-    receipt = reviewed_spec["relation_binding_review"]
-    receipt["request_path"] = str(forged_path)
-    receipt["request_file_sha256"] = hash_file(forged_path)
-    receipt["request_sha256"] = forged["request_sha256"]
-    receipt.pop("receipt_sha256")
-    receipt["receipt_sha256"] = _canonical_json_sha256(receipt)
-
-    with pytest.raises(EvidenceConsumerError, match="relation review request changed"):
-        build_axis_consolidated_view(reviewed_spec)
-
-
-def test_relation_review_finalizer_rejects_non_displayed_state_binding_row(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    _route_every_point_as_decision_state(spec)
-    stray = copy.deepcopy(spec["decision_state_bindings"][0]["rows"][0])
-    stray["selected_id"] = "selected_not_displayed"
-    spec["decision_state_bindings"][0]["rows"].append(stray)
-    request = prepare_axis_relation_review(spec)
-    response = _valid_relation_review_response(request)
-    request_path = tmp_path / "stray_relation_request.json"
-    response_path = tmp_path / "stray_relation_response.json"
-    _write(request_path, request)
-    _write(response_path, response)
-
-    with pytest.raises(EvidenceConsumerError, match="non-reviewed row"):
-        finalize_axis_relation_review(
-            spec,
-            request,
-            response,
-            request_path=request_path,
-            response_path=response_path,
-        )
-
-
-def test_relation_review_request_replays_after_sorted_json_round_trip(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
-    request = prepare_axis_relation_review(spec)
-    response = _valid_relation_review_response(request)
-    request_path = tmp_path / "sorted_relation_request.json"
-    response_path = tmp_path / "sorted_relation_response.json"
-    request_path.write_text(
-        json.dumps(request, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    _write(response_path, response)
-    reloaded_request = json.loads(request_path.read_text(encoding="utf-8"))
-
-    reviewed_spec = finalize_axis_relation_review(
-        spec,
-        reloaded_request,
-        response,
-        request_path=request_path,
-        response_path=response_path,
-    )
-
-    assert reviewed_spec["schema_version"] == VERIFIED_CONSOLIDATION_SPEC_VERSION
+    assert refs == [placement["semantic_unit_ref"]]
