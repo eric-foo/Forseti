@@ -577,11 +577,14 @@ def _validate_point_binding(
         )
     parent_context_policy = selection_manifest.get("parent_context_policy")
     if parent_context_policy == PARENT_CONTEXT_POLICY:
+        derived_candidate_fields = {"relation", "reason_code"}
+        if artifact.get("schema_version") == "phase_a_evidence_selection_artifact_v3":
+            derived_candidate_fields.add("relation_semantic_unit_refs")
         source_shaped_candidates = [
             {
                 key: copy.deepcopy(value)
                 for key, value in candidate.items()
-                if key not in {"relation", "reason_code"}
+                if key not in derived_candidate_fields
             }
             for candidate in candidates
         ]

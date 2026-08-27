@@ -677,6 +677,79 @@ def test_axis_pack_resolves_selection_manifest_embedded_in_relation_batch(
     )
 
 
+def _repin_parent_context_candidate_inventory(
+    manifest: dict[str, Any], descriptor: dict[str, Any], artifact: dict[str, Any]
+) -> None:
+    source_inventory = [
+        {
+            key: value
+            for key, value in candidate.items()
+            if key not in {"relation", "reason_code", "relation_semantic_unit_refs"}
+        }
+        for candidate in artifact["candidate_dispositions"]
+    ]
+    inventory_hash = _canonical_json_sha256(source_inventory)
+    selection_path = Path(descriptor["selection_manifest_path"])
+    selection = json.loads(selection_path.read_text(encoding="utf-8"))
+    selection["parent_context_policy"] = PARENT_CONTEXT_POLICY
+    selection["candidate_inventory_sha256"] = inventory_hash
+    _rehash_manifest(selection)
+    _write(selection_path, selection)
+    quote_path = Path(descriptor["quote_manifest_path"])
+    quote = json.loads(quote_path.read_text(encoding="utf-8"))
+    quote["selection_manifest_sha256"] = selection["manifest_sha256"]
+    quote["candidate_inventory_sha256"] = inventory_hash
+    _rehash_manifest(quote)
+    _write(quote_path, quote)
+    artifact["candidate_inventory_sha256"] = inventory_hash
+    artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
+    artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
+    artifact_path = Path(descriptor["artifact_path"])
+    _write(artifact_path, artifact)
+    descriptor["artifact_sha256"] = hash_file(artifact_path)
+    descriptor["selection_manifest_file_sha256"] = hash_file(selection_path)
+    descriptor["selection_manifest_sha256"] = selection["manifest_sha256"]
+    descriptor["quote_manifest_file_sha256"] = hash_file(quote_path)
+    descriptor["quote_manifest_sha256"] = quote["manifest_sha256"]
+    _rehash_manifest(manifest)
+
+
+def test_axis_pack_accepts_current_candidate_relation_bindings_as_derived_fields(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    descriptor = manifest["accepted_points"][0]
+    artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+    artifact["schema_version"] = "phase_a_evidence_selection_artifact_v3"
+    for candidate in artifact["candidate_dispositions"]:
+        candidate["relation_semantic_unit_refs"] = [candidate["semantic_unit_ref"]]
+    _repin_parent_context_candidate_inventory(manifest, descriptor, artifact)
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+
+    assert pack["valid_point_count"] == 2
+
+
+def test_axis_pack_does_not_reinterpret_candidate_relation_bindings_as_historical_v2(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, _ = _generic_fixture(tmp_path, monkeypatch)
+    descriptor = manifest["accepted_points"][0]
+    artifact_path = Path(descriptor["artifact_path"])
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["candidate_dispositions"][0]["relation_semantic_unit_refs"] = [
+        artifact["candidate_dispositions"][0]["semantic_unit_ref"]
+    ]
+    _repin_parent_context_candidate_inventory(manifest, descriptor, artifact)
+
+    with pytest.raises(
+        EvidenceConsumerError, match="candidate disposition inventory changed"
+    ) as caught:
+        build_phase_a_evidence_axis_pack(manifest)
+
+    assert caught.value.boundary == "candidate_access"
+
+
 def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
     axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
     point_ids: list[str] = []
