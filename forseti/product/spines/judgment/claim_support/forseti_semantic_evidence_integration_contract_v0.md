@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v59
-effective_date: 2026-08-26
+version: v65
+effective_date: 2026-08-27
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v59
+# Semantic Evidence Integration Contract v65
 
 ## Purpose
 
@@ -1700,6 +1700,58 @@ new frontier.
 
 ## Changelog
 
+- `v65` / 2026-08-27 — retired the selected-row v3 provider review and made
+  explicit row-owned relation bindings mandatory in current authoring. The
+  existing hidden-label preselection confirmation now returns the smallest
+  nonempty primary-or-same-evidence companion semantic-ref subset with each
+  relation (`phase_a_evidence_quote_manifest_v9`); the v3 selection artifact
+  carries it unchanged, and the v4 consolidation spec must repeat it for every
+  displayed Direct Outcome and Decision State row. Builder and readers reject
+  missing, duplicate, foreign, cross-point, cross-evidence, omitted, or changed
+  attachments. They prove row ownership and transfer integrity, not whether the
+  judgment-authored subset semantically warrants support, counter, or adjacent.
+  This removes one unbatched selected-row whole-axis provider call without
+  removing the pre-existing batched semantic confirmation. It adds no provider
+  stage, deterministic prose classifier, consensus loop, adapter, frozen
+  rewrite, permanent canary, or Deliver judgment. Historical v1/v2
+  consolidation specs and v7/v8 quote manifests remain replayable.
+- `v64` / 2026-08-27 — recorded the now-rejected selected-row v3 experiment.
+  Its exact canonical-policy candidate was not the shipped v3 prompt and was
+  position-unstable: two shade runs flagged 14 and 59 rows, while four formula
+  runs flagged 6, 4, 5, and 4. Four earlier attempts failed before reaching the
+  provider because of orchestration configuration. Repeated stability of the
+  shipped v3 prompt is unmeasured because each axis had only one historical run;
+  that prompt also condensed canonical policy into a third policy. The 24 shade
+  and 3 formula flags remain unadjudicated allegations. This evidence supported
+  retiring recurring ceremony in favor of a lower deterministic attachment
+  boundary; it did not prove those rows wrong, semantic truth, reader-quality
+  improvement, or that all semantic provider cost disappeared.
+- `v63` / 2026-08-27 — tightened every Phase A point-relation prompt after the
+  final all-axis dogfood proved that broad sentiment direction still overrode
+  the bounded predicate and actor scope. The recurring failures included a
+  conditional future repurchase promoted into an aim to finish, liking or
+  purchase intent treated as ownership evidence, non-exhaustive shade lists
+  treated as non-ownership, and a different actor's preference treated as
+  changing a named actor's private state. Support and counter now require the
+  same asserted judgment or behavior state, material object and condition,
+  load-bearing actor scope, and—where applicable—the same superlative,
+  assortment, and attribute scope. Materially overlapping but non-equivalent
+  states remain adjacent; product-family or axis overlap alone is excluded.
+  Focused unit validation passes 156 tests. A fresh seven-case cold dogfood
+  returned the exact expected relations for completion intent, ownership,
+  actor identity, and a different-flavour formula comparator, but it applied a
+  condensed restatement of the boundary rather than the shipped prompt string.
+  This proof's production relation and confirmation waves exercised the
+  asserted-state, superlative, and adjacency-floor sentences on real candidate
+  pools; the cross-actor, ownership, and completion-intent sentences appear in
+  no production prompt in that proof root and stay unexercised outside the
+  condensed dogfood until the affected shade points are regenerated. The first
+  canary receipt is intentionally retained as a proof-expectation failure:
+  exact object scope correctly excluded an e.l.f. dupe from a Trader Joe's
+  ingredient point. The corrected receipt passes. The pre-fix shade consumer remains a
+  stable current critical failure, so the run stopped without rewriting frozen
+  outputs or claiming Phase A completion. Historical token deltas remain
+  `NOT_COMPARABLE`; no Deliver or price-savings claim follows.
 - `v62` / 2026-08-27 — made bounded-point relation judgment preserve every
   material qualifier after hydration dogfood exposed two recurring promotions:
   generic drying had been admitted as severe drying, and similar drying or

@@ -39,15 +39,24 @@ QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v6"
 LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = (
     "phase_a_evidence_quote_manifest_v7"
 )
-PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v8"
+PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = (
+    "phase_a_evidence_quote_manifest_v8"
+)
+PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v9"
 BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
 RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_relation_confirmation_manifest_v2"
 )
 PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION = (
+    "phase_a_evidence_preselection_relation_confirmation_manifest_v2"
+)
+PREVIOUS_PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_preselection_relation_confirmation_manifest_v1"
 )
 PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION = (
+    "phase_a_evidence_preselection_confirmation_batch_manifest_v2"
+)
+PREVIOUS_PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION = (
     "phase_a_evidence_preselection_confirmation_batch_manifest_v1"
 )
 RELATIONS = ("support", "counter", "adjacent", "exclude")
@@ -191,7 +200,7 @@ LITERAL_RELATION_RESPONSE_INSTRUCTION = "Return every candidate_id exactly once 
 POSITIONAL_RELATION_RESPONSE_INSTRUCTION = "Return one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN. Do not return candidate IDs, row numbers, or reason codes."
 BATCHED_RELATION_RESPONSE_INSTRUCTION = "Return the batch_id shown in the envelope exactly as supplied, and one relation for every required row_NNNN property under results_by_candidate_row. Each row_NNNN property corresponds to zero-based supplied candidate position NNNN within this batch only. Do not return candidate IDs, row numbers, or reason codes."
 
-BOUNDED_POINT_RELATION_DEFINITIONS = " Support directly supports the bounded claim and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded claim. Adjacent is relevant context that directly establishes neither direction. Exclude is wrong-scope or non-evidence."
+BOUNDED_POINT_RELATION_DEFINITIONS = " Support directly supports the bounded claim and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded claim. Support and counter must match the bounded point's asserted judgment or behavior state, not merely share its direction; related ownership, use, intent, liking, or a different criterion is adjacent when it overlaps the point and otherwise exclude. A different actor's private judgment, intent, ownership, or behavior cannot support or counter the named actor's private state; it is adjacent only when it otherwise materially overlaps, unless the bounded point itself explicitly asserts a cross-actor pattern. An ownership point requires explicit possession or acquisition; liking, purchase or repurchase intent, and a non-exhaustive owned-shade list do not establish or negate ownership. A conditional future action such as repurchasing when a product runs out does not establish an aim to finish; completion intent requires an explicit goal, plan, aim, or commitment to finish, use up, or pan it. For a favorite, number-one, best, top-ranked, or other superlative point, support or counter requires an explicit semantically equivalent superlative over the same compared assortment and attribute scope; a weaker preference or subset superlative is adjacent. Adjacent must still share the bounded point's material decision object, attribute, outcome, or directly linked condition; merely sharing a product family or axis is exclude. Adjacent is relevant context that directly establishes neither direction. Exclude is wrong-scope or non-evidence."
 
 
 RELATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded claim and ordered, source-owned candidate rows below. Return only the required JSON.
@@ -228,7 +237,7 @@ SELECTED_EVIDENCE_ENVELOPE_JSON:
 
 RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered selected rows below. Return only the required JSON.
 
-Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
+Independently classify every selected row as support, counter, adjacent, or exclude. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Support and counter must match the bounded point's asserted judgment or behavior state, not merely share its direction; related ownership, use, intent, liking, or a different criterion is adjacent when it overlaps the point and otherwise exclude. A different actor's private judgment, intent, ownership, or behavior cannot support or counter the named actor's private state; it is adjacent only when it otherwise materially overlaps, unless the bounded point itself explicitly asserts a cross-actor pattern. An ownership point requires explicit possession or acquisition; liking, purchase or repurchase intent, and a non-exhaustive owned-shade list do not establish or negate ownership. A conditional future action such as repurchasing when a product runs out does not establish an aim to finish; completion intent requires an explicit goal, plan, aim, or commitment to finish, use up, or pan it. For a favorite, number-one, best, top-ranked, or other superlative point, support or counter requires an explicit semantically equivalent superlative over the same compared assortment and attribute scope; a weaker preference or subset superlative is adjacent. Adjacent must still share the bounded point's material decision object, attribute, outcome, or directly linked condition; merely sharing a product family or axis is exclude. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity.
 
 Also decide whether bounded_point is one specific, direction-bearing proposition about one material product attribute or outcome under one compatible condition set. Two tightly joined effects remain one point when the source itself presents them as one experience under the same subject, direction, and conditions; do not split a source-native progression such as becoming dry and cracked merely because it names both effects. Return point_scope=single_point only for that shape. Return point_scope=broad_axis_or_bundle when it merely names an area of experience (for example "hydration experiences" or "value experiences"), combines materially different attributes/outcomes/directions/conditions, or otherwise could make unrelated mentions look corroborative. Give one short point_scope_reason based only on the supplied point and rows.
 
@@ -240,7 +249,7 @@ SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:
 
 PRESELECTION_RELATION_CONFIRMATION_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered candidate rows below. Return only the required JSON.
 
-Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
+Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Support and counter must match the bounded point's asserted judgment or behavior state, not merely share its direction; related ownership, use, intent, liking, or a different criterion is adjacent when it overlaps the point and otherwise exclude. A different actor's private judgment, intent, ownership, or behavior cannot support or counter the named actor's private state; it is adjacent only when it otherwise materially overlaps, unless the bounded point itself explicitly asserts a cross-actor pattern. An ownership point requires explicit possession or acquisition; liking, purchase or repurchase intent, and a non-exhaustive owned-shade list do not establish or negate ownership. A conditional future action such as repurchasing when a product runs out does not establish an aim to finish; completion intent requires an explicit goal, plan, aim, or commitment to finish, use up, or pan it. For a favorite, number-one, best, top-ranked, or other superlative point, support or counter requires an explicit semantically equivalent superlative over the same compared assortment and attribute scope; a weaker preference or subset superlative is adjacent. Adjacent must still share the bounded point's material decision object, attribute, outcome, or directly linked condition; merely sharing a product family or axis is exclude. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
 
 {policy_guidance}
 
@@ -254,7 +263,7 @@ PRESELECTION_RELATION_CONFIRMATION_ENVELOPE_JSON:
 
 PRESELECTION_CONFIRMATION_BATCH_PROMPT = """Do not call tools or inspect the filesystem. Analyze only the bounded point and ordered candidate rows below. Return only the required JSON.
 
-Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
+Independently classify every row as support, counter, adjacent, or exclude before any display cap is applied. Support directly supports the bounded point and every material qualifier in it. A broader, weaker, or merely similar outcome is adjacent rather than support. Severe drying requires explicit drying intensity or a severe consequence explicitly linked to drying; ordinary, quick, possible, or qualified drying is not severe drying, and a severe reaction, injury, peeling, cracking, or pain is not severe drying unless the source explicitly links it to drying. Same requires an explicit comparison or adoption target in the candidate or its exact linked parent; sharing similar symptoms does not establish the same experience. Counter directly opposes or materially qualifies the bounded point. Support and counter must match the bounded point's asserted judgment or behavior state, not merely share its direction; related ownership, use, intent, liking, or a different criterion is adjacent when it overlaps the point and otherwise exclude. A different actor's private judgment, intent, ownership, or behavior cannot support or counter the named actor's private state; it is adjacent only when it otherwise materially overlaps, unless the bounded point itself explicitly asserts a cross-actor pattern. An ownership point requires explicit possession or acquisition; liking, purchase or repurchase intent, and a non-exhaustive owned-shade list do not establish or negate ownership. A conditional future action such as repurchasing when a product runs out does not establish an aim to finish; completion intent requires an explicit goal, plan, aim, or commitment to finish, use up, or pan it. For a favorite, number-one, best, top-ranked, or other superlative point, support or counter requires an explicit semantically equivalent superlative over the same compared assortment and attribute scope; a weaker preference or subset superlative is adjacent. Adjacent must still share the bounded point's material decision object, attribute, outcome, or directly linked condition; merely sharing a product family or axis is exclude. Adjacent is relevant context that does not directly establish either direction. Exclude is wrong-scope or non-evidence. Linked parent context may resolve an omitted referent or terse agreement only when the parent clearly supplies the same subject, attribute or outcome, direction, and material condition; otherwise do not inherit the missing meaning. point_parent_context_ids may clarify bounded_point for this scope decision, but they do not attach their meaning to every candidate. A candidate may use parent content for its own relation only when its parent_context_ids names that exact context. A reply may adopt the parent's experience when it unambiguously says that the same thing happened to its own speaker, but the parent's experience never becomes the reply speaker's merely because both appear in one thread. Preserve product, variant, timing, comparison, condition, uncertainty, and source-role boundaries. A source reporting another person's experience remains adjacent unless the directly quoted speaker's own account is the evidence unit. Creator-authored material remains adjacent influence context and cannot become customer corroboration. Judge meaning, not engagement or popularity. Return a short lowercase snake_case reason_code naming the visible evidence meaning without using those internal relation words.
 
 {policy_guidance}
 
@@ -916,9 +925,16 @@ def _attach_point_parent_context_envelope(
     envelope["point_parent_context_ids"] = [row[0] for row in normalized]
 
 
-def _compact_companion_meanings(row: Mapping[str, Any]) -> list[list[Any]]:
+def _compact_companion_meanings(
+    row: Mapping[str, Any], *, include_semantic_refs: bool = False
+) -> list[list[Any]]:
     return [
         [
+            *(
+                [companion.get("semantic_unit_ref")]
+                if include_semantic_refs
+                else []
+            ),
             companion.get("statement"),
             companion.get("conditions", []),
             companion.get("polarity"),
@@ -2600,7 +2616,10 @@ def _apply_frontier_relation_rejections(
 
 
 def _preselection_relation_confirmation_schema(
-    *, value_policy: bool, batch_id: str | None = None
+    *,
+    value_policy: bool,
+    batch_id: str | None = None,
+    include_relation_refs: bool = False,
 ) -> dict[str, Any]:
     def check_row(relation: str | None = None) -> dict[str, Any]:
         relation_schema: dict[str, Any] = {"type": "string"}
@@ -2620,14 +2639,23 @@ def _preselection_relation_confirmation_schema(
                     if expected_relation == relation
                 ),
             }
+        properties: dict[str, Any] = {
+            "confirmation_row_id": {"type": "string"},
+            "relation": relation_schema,
+            "reason_code": reason_schema,
+        }
+        required = ["confirmation_row_id", "relation", "reason_code"]
+        if include_relation_refs:
+            properties["relation_semantic_unit_refs"] = {
+                "type": "array",
+                "minItems": 1,
+                "items": {"type": "string"},
+            }
+            required.append("relation_semantic_unit_refs")
         return {
             "type": "object",
-            "properties": {
-                "confirmation_row_id": {"type": "string"},
-                "relation": relation_schema,
-                "reason_code": reason_schema,
-            },
-            "required": ["confirmation_row_id", "relation", "reason_code"],
+            "properties": properties,
+            "required": required,
             "additionalProperties": False,
         }
 
@@ -3372,6 +3400,20 @@ LEGACY_RELATION_CONFIRMATION_COLUMNS = (
 RELATION_CONFIRMATION_COLUMNS = LEGACY_RELATION_CONFIRMATION_COLUMNS + (
     "parent_context_ids",
 )
+CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS = (
+    "confirmation_row_id",
+    "primary_semantic_unit_ref",
+    "normalized_meaning",
+    "conditions",
+    "subject_product_ids",
+    "product_version_ids",
+    "source_role",
+    "same_evidence_companion_meanings_with_refs",
+)
+CURRENT_RELATION_CONFIRMATION_COLUMNS = (
+    *CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS,
+    "parent_context_ids",
+)
 
 
 def _quote_prompt_envelope(
@@ -3469,24 +3511,36 @@ def _confirmation_row_presentation(
 
 def _confirmation_prompt_projection(
     presentation: Sequence[tuple[str, Mapping[str, Any]]],
+    *,
+    include_relation_refs: bool = False,
 ) -> tuple[bool, tuple[str, ...], list[list[Any]], list[list[str]]]:
     context_aware, projected, context_rows = _project_parent_context(
         [row for _, row in presentation]
     )
-    columns = (
-        RELATION_CONFIRMATION_COLUMNS
-        if context_aware
-        else LEGACY_RELATION_CONFIRMATION_COLUMNS
-    )
+    if include_relation_refs:
+        columns = (
+            CURRENT_RELATION_CONFIRMATION_COLUMNS
+            if context_aware
+            else CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS
+        )
+    else:
+        columns = (
+            RELATION_CONFIRMATION_COLUMNS
+            if context_aware
+            else LEGACY_RELATION_CONFIRMATION_COLUMNS
+        )
     rows = [
         [
             row_id,
+            *([row["semantic_unit_ref"]] if include_relation_refs else []),
             row["normalized_meaning"],
             row.get("conditions", []),
             row.get("subject_product_ids", []),
             row.get("product_version_ids", []),
             row["source_role"],
-            _compact_companion_meanings(row),
+            _compact_companion_meanings(
+                row, include_semantic_refs=include_relation_refs
+            ),
             *([row.get("parent_context_ids", [])] if context_aware else []),
         ]
         for (row_id, _), row in zip(presentation, projected, strict=True)
@@ -3558,9 +3612,10 @@ def _prepare_quotes_from_labeled(
                 "source_body": bodies.get((row["source_id"], row["evidence_id"])),
             }
         )
-    context_complete_quotes = (
-        schema_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
-    )
+    context_complete_quotes = schema_version in {
+        PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+    }
     quote_envelope, provider_selected_ids = _quote_prompt_envelope(
         manifest["spec"]["bounded_claim"],
         selected,
@@ -3735,6 +3790,8 @@ def prepare_preselection_relation_confirmation(
     manifest: Mapping[str, Any],
     sources: Sequence[Mapping[str, Any]],
     first_pass_response: Mapping[str, Any],
+    *,
+    include_relation_refs: bool = True,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     (
         candidates,
@@ -3745,7 +3802,8 @@ def prepare_preselection_relation_confirmation(
         value_policy,
     ) = _preselection_confirmation_state(manifest, sources, first_pass_response)
     context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
-        presentation
+        presentation,
+        include_relation_refs=include_relation_refs,
     )
     envelope = {
         "bounded_point": manifest["spec"]["bounded_claim"],
@@ -3755,13 +3813,33 @@ def prepare_preselection_relation_confirmation(
     _attach_parent_context_envelope(envelope, context_aware, context_rows)
     _, _, point_context_rows = _project_parent_context(candidates)
     _attach_point_parent_context_envelope(envelope, point_context_rows)
-    prompt = PRESELECTION_RELATION_CONFIRMATION_PROMPT.format(
+    prompt_template = PRESELECTION_RELATION_CONFIRMATION_PROMPT
+    if include_relation_refs:
+        binding_instruction = (
+            "For every row, return relation_semantic_unit_refs as the smallest nonempty "
+            "subset of its supplied primary_semantic_unit_ref and "
+            "same_evidence_companion_meanings_with_refs that makes the returned relation "
+            "true. Use only refs owned by that row; do not infer, repair, or import meaning."
+        )
+        prompt_template = prompt_template.replace(
+            "\n\nThe first-pass relation,",
+            f"\n\n{binding_instruction}\n\nThe first-pass relation,",
+            1,
+        )
+    prompt = prompt_template.format(
         policy_guidance=_policy_guidance(manifest["spec"], candidates),
         envelope=_compact(envelope),
     )
-    schema = _preselection_relation_confirmation_schema(value_policy=value_policy)
+    schema = _preselection_relation_confirmation_schema(
+        value_policy=value_policy,
+        include_relation_refs=include_relation_refs,
+    )
     confirmation_manifest = {
-        "schema_version": PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION,
+        "schema_version": (
+            PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION
+            if include_relation_refs
+            else PREVIOUS_PRESELECTION_RELATION_CONFIRMATION_MANIFEST_VERSION
+        ),
         "selection_manifest_sha256": manifest["manifest_sha256"],
         "candidate_inventory_sha256": manifest["candidate_inventory_sha256"],
         "first_pass_response_sha256": _canonical_json_sha256(first_pass_response),
@@ -3783,6 +3861,8 @@ def prepare_preselection_relation_confirmation(
         ],
         "model_api_calls": 0,
     }
+    if include_relation_refs:
+        confirmation_manifest["relation_binding_required"] = True
     confirmation_manifest["manifest_sha256"] = _canonical_json_sha256(
         confirmation_manifest
     )
@@ -3798,8 +3878,14 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
     *,
     quote_manifest_version: str,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    include_relation_refs = (
+        quote_manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
     _, _, expected_manifest = prepare_preselection_relation_confirmation(
-        manifest, sources, first_pass_response
+        manifest,
+        sources,
+        first_pass_response,
+        include_relation_refs=include_relation_refs,
     )
     if dict(confirmation_manifest) != expected_manifest:
         raise EvidenceConsumerError(
@@ -3827,9 +3913,11 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
             confirmation_response["point_scope_reason"].strip(),
         )
     checks = confirmation_response["relation_checks"]
+    expected_check_fields = {"confirmation_row_id", "relation", "reason_code"}
+    if include_relation_refs:
+        expected_check_fields.add("relation_semantic_unit_refs")
     if not all(
-        isinstance(row, Mapping)
-        and set(row) == {"confirmation_row_id", "relation", "reason_code"}
+        isinstance(row, Mapping) and set(row) == expected_check_fields
         for row in checks
     ):
         raise EvidenceConsumerError(
@@ -3888,6 +3976,31 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
                 "relation_reason_mismatch", "confirmed value reason does not match relation"
             )
         row = by_id[candidate_id]
+        if include_relation_refs:
+            relation_refs = check["relation_semantic_unit_refs"]
+            available_refs = {
+                row["semantic_unit_ref"],
+                *(
+                    companion["semantic_unit_ref"]
+                    for companion in row["same_evidence_companion_meanings"]
+                ),
+            }
+            if (
+                not isinstance(relation_refs, list)
+                or not relation_refs
+                or not all(isinstance(ref, str) and ref for ref in relation_refs)
+                or len(relation_refs) != len(set(relation_refs))
+            ):
+                raise EvidenceConsumerError(
+                    "relation_semantic_binding",
+                    "confirmed relation semantic refs are empty or duplicated",
+                )
+            if set(relation_refs) - available_refs:
+                raise EvidenceConsumerError(
+                    "relation_semantic_binding",
+                    "confirmed relation references a foreign semantic unit",
+                )
+            row["relation_semantic_unit_refs"] = sorted(relation_refs)
         if row["layer"] == "influence_context" and relation in {"support", "counter"}:
             raise EvidenceConsumerError(
                 "creator_customer_laundering",
@@ -3907,6 +4020,8 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
         "changed_first_pass_count": changed,
         "point_scope_reason": confirmation_response["point_scope_reason"].strip(),
     }
+    if include_relation_refs:
+        confirmation_binding["relation_binding_status"] = "passed"
     prompt, schema, quote_manifest = _prepare_quotes_from_labeled(
         manifest,
         sources,
@@ -4081,6 +4196,7 @@ def prepare_batched_preselection_relation_confirmations(
     responses: Mapping[str, Mapping[str, Any]],
     *,
     batch_size: int,
+    include_relation_refs: bool = True,
 ) -> tuple[dict[str, Any], list[tuple[str, dict[str, Any]]]]:
     if (
         isinstance(batch_size, bool)
@@ -4114,7 +4230,8 @@ def prepare_batched_preselection_relation_confirmations(
         subset = presentation[start : start + batch_size]
         confirmation_batch_id = f"confirmation_batch_{batch_index:04d}"
         context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
-            subset
+            subset,
+            include_relation_refs=include_relation_refs,
         )
         envelope = {
             "batch_id": confirmation_batch_id,
@@ -4124,14 +4241,30 @@ def prepare_batched_preselection_relation_confirmations(
         }
         _attach_parent_context_envelope(envelope, context_aware, context_rows)
         _attach_point_parent_context_envelope(envelope, point_context_rows)
-        prompt = PRESELECTION_CONFIRMATION_BATCH_PROMPT.format(
+        prompt_template = PRESELECTION_CONFIRMATION_BATCH_PROMPT
+        if include_relation_refs:
+            binding_instruction = (
+                "For every row, return relation_semantic_unit_refs as the smallest "
+                "nonempty subset of its supplied primary_semantic_unit_ref and "
+                "same_evidence_companion_meanings_with_refs that makes the returned "
+                "relation true. Use only refs owned by that row; do not infer, repair, "
+                "or import meaning."
+            )
+            prompt_template = prompt_template.replace(
+                "\n\nThe first-pass relation,",
+                f"\n\n{binding_instruction}\n\nThe first-pass relation,",
+                1,
+            )
+        prompt = prompt_template.format(
             policy_guidance=_policy_guidance(
                 selection_manifest["spec"], candidates
             ),
             envelope=_compact(envelope),
         )
         schema = _preselection_relation_confirmation_schema(
-            value_policy=value_policy, batch_id=confirmation_batch_id
+            value_policy=value_policy,
+            batch_id=confirmation_batch_id,
+            include_relation_refs=include_relation_refs,
         )
         batches.append(
             {
@@ -4148,7 +4281,11 @@ def prepare_batched_preselection_relation_confirmations(
         )
         prompts_and_schemas.append((prompt, schema))
     confirmation_batch_manifest = {
-        "schema_version": PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION,
+        "schema_version": (
+            PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION
+            if include_relation_refs
+            else PREVIOUS_PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION
+        ),
         "selection_manifest_sha256": selection_manifest["manifest_sha256"],
         "relation_transport": relation_transport,
         "first_pass_response_sha256": _canonical_json_sha256(first_response),
@@ -4160,6 +4297,8 @@ def prepare_batched_preselection_relation_confirmations(
         "value_policy": value_policy,
         "model_api_calls": 0,
     }
+    if include_relation_refs:
+        confirmation_batch_manifest["relation_binding_required"] = True
     confirmation_batch_manifest["manifest_sha256"] = _canonical_json_sha256(
         confirmation_batch_manifest
     )
@@ -4175,11 +4314,15 @@ def _finalize_batched_preselection_relation_confirmations_prepare_quotes(
     *,
     quote_manifest_version: str,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    include_relation_refs = (
+        quote_manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    )
     expected_manifest, _ = prepare_batched_preselection_relation_confirmations(
         batch_manifest,
         sources,
         responses,
         batch_size=confirmation_batch_manifest.get("batch_size"),
+        include_relation_refs=include_relation_refs,
     )
     if dict(confirmation_batch_manifest) != expected_manifest:
         raise EvidenceConsumerError(
@@ -4241,7 +4384,10 @@ def _finalize_batched_preselection_relation_confirmations_prepare_quotes(
         _assemble_batched_relation_response(batch_manifest, sources, responses)
     )
     _, _, canonical_confirmation_manifest = prepare_preselection_relation_confirmation(
-        selection_manifest, sources, first_response
+        selection_manifest,
+        sources,
+        first_response,
+        include_relation_refs=include_relation_refs,
     )
     canonical_confirmation_response = {
         "point_scope": "single_point",
@@ -4322,6 +4468,7 @@ def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
             PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
@@ -4493,6 +4640,7 @@ def finalize_quotes(
     manifest_version = _verified_quote_manifest_version(quote_manifest)
     if manifest_version in {
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }:
         replay = quote_manifest.get("preselection_replay")
@@ -4582,6 +4730,7 @@ def finalize_quotes(
             PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
             QUOTE_MANIFEST_VERSION,
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }
         else [row["selected_id"] for row in selected]
@@ -4610,6 +4759,7 @@ def finalize_quotes(
         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
         QUOTE_MANIFEST_VERSION,
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }:
         derived_provider_ids = [
@@ -4652,6 +4802,7 @@ def finalize_quotes(
                 PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                 QUOTE_MANIFEST_VERSION,
                 LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             }:
                 raise EvidenceConsumerError(
@@ -4677,7 +4828,11 @@ def finalize_quotes(
             if not isinstance(quote, str) or not quote:
                 raise EvidenceConsumerError("quote_exactness", "available quote missing")
             if (
-                manifest_version != PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                manifest_version
+                not in {
+                    PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                }
                 and len(quote) > SHORT_BODY_QUOTE_CHARACTERS
             ):
                 raise EvidenceConsumerError("quote_overlength", "quote exceeds 220 characters")
@@ -4694,6 +4849,7 @@ def finalize_quotes(
                     PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                     QUOTE_MANIFEST_VERSION,
                     LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 }
                 and not _quote_has_complete_end(body, quote)
@@ -4752,6 +4908,7 @@ def finalize_quotes(
                         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
                         QUOTE_MANIFEST_VERSION,
                         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     }
                     else {}
@@ -4769,6 +4926,16 @@ def finalize_quotes(
                 "source_ref": selected_row["source_ref"],
                 "evidence_id": selected_row["evidence_id"],
                 "semantic_unit_ref": selected_row["semantic_unit_ref"],
+                **(
+                    {
+                        "relation_semantic_unit_refs": selected_row[
+                            "relation_semantic_unit_refs"
+                        ]
+                    }
+                    if manifest_version
+                    == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                    else {}
+                ),
                 "independence_key": selected_row["independence_key"],
                 "origin_group_id": selected_row["origin_group_id"],
                 "origin_candidate_count": selected_row["origin_candidate_count"],
@@ -4790,14 +4957,18 @@ def finalize_quotes(
             rows.sort(key=_temporal_display_priority)
     artifact = {
         "schema_version": (
-            "phase_a_evidence_selection_artifact_v2"
-            if manifest_version
-            in {
-                QUOTE_MANIFEST_VERSION,
-                LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-            }
-            else "phase_a_evidence_selection_artifact_v1"
+            "phase_a_evidence_selection_artifact_v3"
+            if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+            else (
+                "phase_a_evidence_selection_artifact_v2"
+                if manifest_version
+                in {
+                    QUOTE_MANIFEST_VERSION,
+                    LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                }
+                else "phase_a_evidence_selection_artifact_v1"
+            )
         ),
         "selection_manifest_sha256": quote_manifest["selection_manifest_sha256"],
         "quote_manifest_sha256": quote_manifest["manifest_sha256"],
@@ -4827,8 +4998,11 @@ def finalize_quotes(
         "model_api_calls": 0,
     }
     if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION:
-        artifact["output_boundary"].append(
-            "quote length never determines whether available source evidence is admissible"
+        artifact["output_boundary"].extend(
+            [
+                "quote length never determines whether available source evidence is admissible",
+                "relation semantic-unit references are judgment-authored and ownership-checked; their semantic warrant is not mechanically proven",
+            ]
         )
     if temporal_policy is not None:
         timeline: dict[int | None, list[str]] = defaultdict(list)
@@ -4849,10 +5023,12 @@ def finalize_quotes(
     if manifest_version in {
         QUOTE_MANIFEST_VERSION,
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     }:
         if manifest_version in {
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         }:
             preselection = quote_manifest.get("preselection_relation_confirmation")
@@ -4862,6 +5038,11 @@ def finalize_quotes(
                 or not isinstance(preselection.get("confirmation_manifest_sha256"), str)
                 or not isinstance(preselection.get("point_scope_reason"), str)
                 or not preselection["point_scope_reason"].strip()
+                or (
+                    manifest_version
+                    == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                    and preselection.get("relation_binding_status") != "passed"
+                )
             ):
                 raise EvidenceConsumerError(
                     "manifest_verification",

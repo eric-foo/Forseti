@@ -39,6 +39,7 @@ NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v2
 NO_FRONTIER_AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v2"
 LEGACY_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
 CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
+CURRENT_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v4"
 LEGACY_CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v1"
 CONSOLIDATED_VIEW_VERSION = "phase_a_evidence_axis_consolidated_view_v2"
 DOGFOOD_TRUTH_INDEX_VERSION = "phase_a_evidence_axis_dogfood_truth_index_v1"
@@ -112,6 +113,7 @@ SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
     "phase_a_evidence_quote_manifest_v6",
     "phase_a_evidence_quote_manifest_v7",
     "phase_a_evidence_quote_manifest_v8",
+    "phase_a_evidence_quote_manifest_v9",
 }
 INDEPENDENCE_POSTURES = {
     "credited",
@@ -131,6 +133,10 @@ DIRECT_OUTCOME_BOUNDARIES = (
     "not a causal judgment",
     "not a commercial-pull score",
     "creator influence is not customer corroboration",
+)
+RELATION_SEMANTIC_WARRANT_BOUNDARY = (
+    "relation semantic-unit references are judgment-authored and ownership-checked; "
+    "their semantic warrant is not mechanically proven"
 )
 EVIDENCE_ACCOUNTING_CONTRACT = {
     "point_meaning_rule": (
@@ -423,6 +429,38 @@ def _point_rows(artifact: Mapping[str, Any], *, point_id: str) -> list[dict[str,
     return rows
 
 
+def _display_row_candidate(
+    row: Mapping[str, Any],
+    candidate_by_id: Mapping[str, Any],
+    *,
+    boundary: str,
+    point_id: str,
+    selected_id: str,
+) -> tuple[list[str], Mapping[str, Any]]:
+    """Resolve the one pinned candidate a display row is allowed to read."""
+
+    candidate_ids = _string_list(
+        row.get("origin_candidate_ids"), boundary=boundary, field="origin_candidate_ids"
+    )
+    if any(candidate_id not in candidate_by_id for candidate_id in candidate_ids):
+        raise EvidenceConsumerError(
+            boundary, f"display candidate missing: {point_id}::{selected_id}"
+        )
+    matching = [
+        candidate_by_id[candidate_id]
+        for candidate_id in candidate_ids
+        if candidate_by_id[candidate_id].get("evidence_id") == row.get("evidence_id")
+        and candidate_by_id[candidate_id].get("semantic_unit_ref")
+        == row.get("semantic_unit_ref")
+    ]
+    if len(matching) != 1:
+        raise EvidenceConsumerError(
+            boundary,
+            f"display row does not resolve to one candidate: {point_id}::{selected_id}",
+        )
+    return candidate_ids, matching[0]
+
+
 def _validated_candidate_parent_contexts(
     candidate: Mapping[str, Any], *, point_id: str, selected_id: str
 ) -> list[dict[str, str]]:
@@ -480,9 +518,10 @@ def _validate_point_binding(
         raise EvidenceConsumerError("point_binding", f"point identity changed: {point_id}")
     if artifact.get("bounded_point") != bounded_point:
         raise EvidenceConsumerError("point_binding", f"bounded point changed: {point_id}")
-    if require_complete_pins and artifact.get("schema_version") != (
-        "phase_a_evidence_selection_artifact_v2"
-    ):
+    if require_complete_pins and artifact.get("schema_version") not in {
+        "phase_a_evidence_selection_artifact_v2",
+        "phase_a_evidence_selection_artifact_v3",
+    }:
         raise EvidenceConsumerError("point_policy", f"unsupported point artifact: {point_id}")
 
     candidates = artifact.get("candidate_dispositions")
@@ -2365,23 +2404,33 @@ def _decision_state_bindings(
 
 
 def _direct_outcome_relation_bindings(
-    spec: Mapping[str, Any], point_projections: Mapping[str, str]
+    spec: Mapping[str, Any],
+    point_projections: Mapping[str, str],
+    *,
+    required: bool,
 ) -> dict[str, dict[str, list[str]]]:
-    """Optionally bind the point-relative meaning when a Direct Outcome row's primary is context."""
+    """Validate explicit row-owned meanings for current Direct Outcome authoring."""
 
     raw_bindings = spec.get("direct_outcome_relation_bindings")
-    if raw_bindings is None:
-        return {}
     direct_point_ids = {
         point_id
         for point_id, projection_mode in point_projections.items()
         if projection_mode == "direct_outcome"
     }
     if not direct_point_ids:
-        raise EvidenceConsumerError(
-            "direct_outcome_relation_binding",
-            "direct-outcome relation bindings supplied without a direct_outcome route",
-        )
+        if raw_bindings not in (None, []):
+            raise EvidenceConsumerError(
+                "direct_outcome_relation_binding",
+                "direct-outcome relation bindings supplied without a direct_outcome route",
+            )
+        return {}
+    if raw_bindings is None:
+        if required:
+            raise EvidenceConsumerError(
+                "direct_outcome_relation_binding",
+                "direct-outcome relation bindings must cover every direct_outcome point",
+            )
+        return {}
     if not isinstance(raw_bindings, list) or not raw_bindings:
         raise EvidenceConsumerError(
             "direct_outcome_relation_binding", "direct-outcome relation bindings are invalid"
@@ -2427,6 +2476,12 @@ def _direct_outcome_relation_bindings(
                 )
             rows[selected_id] = sorted(refs)
         normalized[point_id] = rows
+    if required and set(normalized) != direct_point_ids:
+        missing = sorted(direct_point_ids - set(normalized))
+        raise EvidenceConsumerError(
+            "direct_outcome_relation_binding",
+            f"direct-outcome relation bindings do not cover every routed point: {missing}",
+        )
     return normalized
 
 
@@ -3160,6 +3215,56 @@ def _validate_decision_state_reader_evidence_rows(
                     )
 
 
+def _reader_relation_semantic_unit_refs(
+    *,
+    placement: Mapping[str, Any],
+    decision_state_group: Mapping[str, Any] | None,
+    require_explicit_direct_outcome: bool,
+) -> list[str]:
+    """Recheck row-owned relation refs without assigning semantic meaning."""
+
+    if decision_state_group is not None:
+        raw_refs = decision_state_group.get("relation_semantic_unit_refs")
+        boundary = "decision_state_binding"
+    else:
+        raw_refs = placement.get("relation_semantic_unit_refs")
+        boundary = "direct_outcome_relation_binding"
+        if raw_refs is None and not require_explicit_direct_outcome:
+            return [
+                _required_string(
+                    placement, "semantic_unit_ref", boundary="axis_reader_bundle_verification"
+                )
+            ]
+    refs = _string_list(
+        raw_refs,
+        boundary=boundary,
+        field="relation_semantic_unit_refs",
+    )
+    if not refs or len(refs) != len(set(refs)):
+        raise EvidenceConsumerError(
+            boundary,
+            "reader relation semantic refs are empty or duplicated: "
+            f"{placement.get('point_id')}::{placement.get('selected_id')}",
+        )
+    available_refs = {
+        _required_string(
+            placement, "semantic_unit_ref", boundary="axis_reader_bundle_verification"
+        ),
+        *_string_list(
+            placement.get("same_evidence_companion_meaning_refs"),
+            boundary="axis_reader_bundle_verification",
+            field="same_evidence_companion_meaning_refs",
+        ),
+    }
+    if set(refs) - available_refs:
+        raise EvidenceConsumerError(
+            boundary,
+            "reader relation binding references a foreign semantic unit: "
+            f"{placement.get('point_id')}::{placement.get('selected_id')}",
+        )
+    return refs
+
+
 def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
     """Project the verified view into a compact, complete cold-reader join surface."""
 
@@ -3217,6 +3322,14 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         previous["polarity"] = next(iter(polarities), None)
         group = groups.get(placement["placement_id"])
         point_relation_counts[placement["point_id"]][placement["relation"]] += 1
+        relation_refs = _reader_relation_semantic_unit_refs(
+            placement=placement,
+            decision_state_group=group,
+            require_explicit_direct_outcome=(
+                view.get("spec", {}).get("schema_version")
+                == CURRENT_CONSOLIDATION_SPEC_VERSION
+            ),
+        )
         placement_rows.append(
             {
                 key: value
@@ -3234,9 +3347,7 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
                     ),
                     (
                         "relation_semantic_unit_refs",
-                        group["relation_semantic_unit_refs"]
-                        if group is not None
-                        else placement.get("relation_semantic_unit_refs", [semantic_ref]),
+                        relation_refs,
                     ),
                     (
                         "context_only_semantic_unit_refs",
@@ -3849,9 +3960,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
     if spec_version not in {
         LEGACY_CONSOLIDATION_SPEC_VERSION,
         CONSOLIDATION_SPEC_VERSION,
+        CURRENT_CONSOLIDATION_SPEC_VERSION,
     }:
         raise EvidenceConsumerError("consolidation_spec", "unsupported spec version")
-    is_routed_v2 = spec_version == CONSOLIDATION_SPEC_VERSION
+    is_routed_v2 = spec_version in {
+        CONSOLIDATION_SPEC_VERSION,
+        CURRENT_CONSOLIDATION_SPEC_VERSION,
+    }
+    is_current_v4 = spec_version == CURRENT_CONSOLIDATION_SPEC_VERSION
     if not is_routed_v2:
         legacy_residue = sorted(
             (DECISION_STATE_SPEC_FIELDS | DIRECT_OUTCOME_RELATION_SPEC_FIELDS) & set(spec)
@@ -3912,7 +4028,9 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 )
         decision_state_bindings = _decision_state_bindings(spec, point_projections)
         direct_outcome_relation_bindings = _direct_outcome_relation_bindings(
-            spec, point_projections
+            spec,
+            point_projections,
+            required=is_current_v4,
         )
     else:
         projection_routes = []
@@ -3937,11 +4055,30 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             expected_axis=axis_id,
             require_complete_pins=require_complete_pins,
         )
+        if is_current_v4 and artifact.get("schema_version") != (
+            "phase_a_evidence_selection_artifact_v3"
+        ):
+            raise EvidenceConsumerError(
+                "relation_binding_lineage",
+                f"current authoring requires row-owned relation bindings from the "
+                f"selection artifact: {point_id}",
+            )
+        if not is_current_v4 and artifact.get("schema_version") == (
+            "phase_a_evidence_selection_artifact_v3"
+        ):
+            raise EvidenceConsumerError(
+                "relation_binding_lineage",
+                f"a historical consolidation spec cannot consume row-owned relation "
+                f"bindings and fall back to the primary reference: {point_id}",
+            )
         if is_routed_v2:
             output_boundary = artifact.get("output_boundary")
+            required_boundaries = list(DIRECT_OUTCOME_BOUNDARIES)
+            if is_current_v4:
+                required_boundaries.append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
             missing_boundaries = [
                 boundary
-                for boundary in DIRECT_OUTCOME_BOUNDARIES
+                for boundary in required_boundaries
                 if not isinstance(output_boundary, list) or boundary not in output_boundary
             ]
             if missing_boundaries:
@@ -4004,31 +4141,31 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                     raise EvidenceConsumerError(
                         "point_projection", f"unsupported displayed relation: {relation}"
                     )
-                candidate_ids = _string_list(
-                    row.get("origin_candidate_ids"),
+                candidate_ids, candidate = _display_row_candidate(
+                    row,
+                    candidate_by_id,
                     boundary="point_projection",
-                    field="origin_candidate_ids",
+                    point_id=point_id,
+                    selected_id=selected_id,
                 )
-                if any(candidate_id not in candidate_by_id for candidate_id in candidate_ids):
-                    raise EvidenceConsumerError(
-                        "point_projection", f"display candidate missing: {point_id}::{selected_id}"
-                    )
-                matching = [
-                    candidate_by_id[candidate_id]
-                    for candidate_id in candidate_ids
-                    if candidate_by_id[candidate_id].get("evidence_id") == row.get("evidence_id")
-                    and candidate_by_id[candidate_id].get("semantic_unit_ref")
-                    == row.get("semantic_unit_ref")
-                ]
-                if len(matching) != 1:
-                    raise EvidenceConsumerError(
-                        "point_projection",
-                        f"display row does not resolve to one candidate: {point_id}::{selected_id}",
-                    )
-                candidate = matching[0]
                 if candidate.get("relation") != relation:
                     raise EvidenceConsumerError(
                         "point_projection", f"candidate relation changed: {point_id}::{selected_id}"
+                    )
+                artifact_relation_refs = row.get("relation_semantic_unit_refs")
+                if is_current_v4 and (
+                    not isinstance(artifact_relation_refs, list)
+                    or not artifact_relation_refs
+                    or not all(
+                        isinstance(value, str) and value
+                        for value in artifact_relation_refs
+                    )
+                    or len(artifact_relation_refs) != len(set(artifact_relation_refs))
+                ):
+                    raise EvidenceConsumerError(
+                        "relation_binding_lineage",
+                        f"selection artifact row lacks a complete relation binding: "
+                        f"{point_id}::{selected_id}",
                     )
                 origin_id = _required_string(row, "origin_group_id", boundary="origin_identity")
                 independence_key = _required_string(
@@ -4140,6 +4277,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                 }
                 if is_routed_v2 and point_projections[point_id] == "direct_outcome":
                     relation_refs = point_direct_relation_bindings.pop(selected_id, None)
+                    if relation_refs is None and is_current_v4:
+                        raise EvidenceConsumerError(
+                            "direct_outcome_relation_binding",
+                            f"display row lacks an explicit relation binding: "
+                            f"{point_id}::{selected_id}",
+                        )
                     if relation_refs is not None:
                         available_relation_refs = {
                             row["semantic_unit_ref"],
@@ -4151,6 +4294,12 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                                 f"relation binding references foreign semantic unit: "
                                 f"{point_id}::{selected_id}",
                             )
+                        if is_current_v4 and relation_refs != artifact_relation_refs:
+                            raise EvidenceConsumerError(
+                                "relation_binding_lineage",
+                                f"direct-outcome relation binding changed after selection: "
+                                f"{point_id}::{selected_id}",
+                            )
                         placement["relation_semantic_unit_refs"] = relation_refs
                 placements.append(placement)
                 point_placement_ids.append(placement_id)
@@ -4160,6 +4309,14 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
                         raise EvidenceConsumerError(
                             "decision_state_binding",
                             f"display row lacks a state binding: {point_id}::{selected_id}",
+                        )
+                    if is_current_v4 and state_binding.get(
+                        "relation_semantic_unit_refs"
+                    ) != artifact_relation_refs:
+                        raise EvidenceConsumerError(
+                            "relation_binding_lineage",
+                            f"decision-state relation binding changed after selection: "
+                            f"{point_id}::{selected_id}",
                         )
                     placement["parent_contexts"] = copy.deepcopy(
                         _validated_candidate_parent_contexts(
@@ -4417,6 +4574,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             EVIDENCE_ACCOUNTING_CONTRACT
         )
         view["non_claims"].extend(DIRECT_OUTCOME_BOUNDARIES)
+        if is_current_v4:
+            view["non_claims"].append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
         view["non_claims"].append(
             "multiple dated observations from one origin remain one origin and do not by "
             "themselves establish multiple underlying events"
@@ -4907,12 +5066,13 @@ def build_axis_reader_bundle(
                 placement, "selected_id", boundary="axis_reader_bundle_verification"
             ))
         )
-        relation_refs = (
-            state_binding["relation_semantic_unit_refs"]
-            if state_binding is not None
-            else placement.get(
-                "relation_semantic_unit_refs", [placement["semantic_unit_ref"]]
-            )
+        relation_refs = _reader_relation_semantic_unit_refs(
+            placement=placement,
+            decision_state_group=state_binding,
+            require_explicit_direct_outcome=(
+                validated.get("spec", {}).get("schema_version")
+                == CURRENT_CONSOLIDATION_SPEC_VERSION
+            ),
         )
         context = placement["candidate_context"]
         fact: dict[str, Any] = {

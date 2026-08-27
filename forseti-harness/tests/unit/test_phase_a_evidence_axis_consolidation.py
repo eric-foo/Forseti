@@ -21,9 +21,11 @@ from judgment.phase_a_evidence_axis_consolidation import (
     POINT_READER_RUN_MANIFEST_VERSION,
     CONSOLIDATED_VIEW_VERSION,
     CONSOLIDATION_SPEC_VERSION,
+    CURRENT_CONSOLIDATION_SPEC_VERSION,
     DECISION_STATE_BOUNDARIES,
     DECISION_STATE_CONSUMER_CONTRACT,
     DIRECT_OUTCOME_BOUNDARIES,
+    RELATION_SEMANTIC_WARRANT_BOUNDARY,
     DOGFOOD_TRUTH_INDEX_VERSION,
     EVIDENCE_ACCOUNTING_CONTRACT,
     LEGACY_CONSOLIDATED_VIEW_VERSION,
@@ -720,6 +722,102 @@ def _route_every_point_as_decision_state(spec: dict[str, Any]) -> None:
         {"projection_mode": "decision_state", "point_ids": point_ids}
     ]
     spec["decision_state_bindings"] = bindings
+
+
+def _bind_current_direct_outcome_relations(
+    spec: dict[str, Any],
+    *,
+    point_ids: set[str] | None = None,
+    companion_for: tuple[str, str] | None = None,
+) -> None:
+    """Author explicit fixture bindings; production code never chooses these refs."""
+
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    bindings: list[dict[str, Any]] = []
+    decision_rows = {
+        (binding["point_id"], row["selected_id"]): row[
+            "relation_semantic_unit_refs"
+        ]
+        for binding in spec.get("decision_state_bindings", [])
+        for row in binding["rows"]
+    }
+    for descriptor in axis_pack["points"]:
+        point_id = descriptor["point_id"]
+        artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+        artifact["schema_version"] = "phase_a_evidence_selection_artifact_v3"
+        if RELATION_SEMANTIC_WARRANT_BOUNDARY not in artifact["output_boundary"]:
+            artifact["output_boundary"].append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
+        rows = []
+        for source_group in artifact["source_groups"]:
+            for row in source_group["rows"]:
+                relation_refs = decision_rows.get(
+                    (point_id, row["selected_id"]), [row["semantic_unit_ref"]]
+                )
+                if companion_for == (point_id, row["selected_id"]):
+                    relation_refs = [
+                        row["same_evidence_companion_meanings"][0]["semantic_unit_ref"]
+                    ]
+                row["relation_semantic_unit_refs"] = sorted(relation_refs)
+                if point_ids is None or point_id in point_ids:
+                    rows.append(
+                        {
+                            "selected_id": row["selected_id"],
+                            "relation_semantic_unit_refs": sorted(relation_refs),
+                        }
+                    )
+        artifact_path = Path(descriptor["artifact_path"])
+        _write(artifact_path, artifact)
+        descriptor["artifact_sha256"] = hash_file(artifact_path)
+        if point_ids is None or point_id in point_ids:
+            bindings.append({"point_id": point_id, "rows": rows})
+    if axis_pack.get("schema_version") == AXIS_PACK_VERSION:
+        refreshed_manifest = _manifest(
+            schema_version=AXIS_PACK_MANIFEST_VERSION,
+            axis_id=axis_pack["axis_id"],
+            accepted_points=[
+                {
+                    key: descriptor[key]
+                    for key in (
+                        "point_id",
+                        "bounded_point",
+                        "artifact_path",
+                        "artifact_sha256",
+                        "policy_revision",
+                        "selection_manifest_path",
+                        "selection_manifest_file_sha256",
+                        "selection_manifest_sha256",
+                        "quote_manifest_path",
+                        "quote_manifest_file_sha256",
+                        "quote_manifest_sha256",
+                    )
+                }
+                for descriptor in axis_pack["points"]
+            ],
+            rejected_points=copy.deepcopy(axis_pack["rejected_points"]),
+        )
+        axis_pack = build_phase_a_evidence_axis_pack(refreshed_manifest)
+    axis_path = Path(spec["source_axis_pack_path"])
+    _write(axis_path, axis_pack)
+    spec["source_axis_pack_sha256"] = hash_file(axis_path)
+    spec["schema_version"] = CURRENT_CONSOLIDATION_SPEC_VERSION
+    spec["direct_outcome_relation_bindings"] = bindings
+
+
+def _route_fixture_as_current_mixed(spec: dict[str, Any]) -> tuple[str, str]:
+    _route_every_point_as_decision_state(spec)
+    direct_point_id = "point_a"
+    decision_point_id = "point_b"
+    spec["projection_routes"] = [
+        {"projection_mode": "direct_outcome", "point_ids": [direct_point_id]},
+        {"projection_mode": "decision_state", "point_ids": [decision_point_id]},
+    ]
+    spec["decision_state_bindings"] = [
+        binding
+        for binding in spec["decision_state_bindings"]
+        if binding["point_id"] == decision_point_id
+    ]
+    _bind_current_direct_outcome_relations(spec, point_ids={direct_point_id})
+    return direct_point_id, decision_point_id
 
 
 def _synchronize_semantic_binding_row(
@@ -4912,9 +5010,295 @@ def test_cold_route_names_generic_commands_and_forbids_sibling_inference() -> No
     ):
         assert required in machinery_rows[0]
     assert 'subparsers.add_parser("build-axis-pack")' in runner
+    assert '"prepare-relation-review"' not in runner
+    assert '"finalize-relation-review"' not in runner
     assert 'subparsers.add_parser("build-point-reader-run")' in runner
     assert '"prepare-point-reader-requests"' in runner
     assert '"finalize-point-reader-run"' in runner
     assert 'subparsers.add_parser("validate-axis-pack")' in runner
     assert 'subparsers.add_parser("build-dogfood-truth")' in runner
     assert 'subparsers.add_parser("validate-dogfood-truth")' in runner
+
+
+def test_current_direct_outcome_binding_reaches_both_reader_surfaces_unchanged(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    descriptor = next(
+        row for row in axis_pack["points"] if row["point_id"] == direct_point_id
+    )
+    artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+    authored_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = authored_row["same_evidence_companion_meanings"][0][
+        "semantic_unit_ref"
+    ]
+    _bind_current_direct_outcome_relations(
+        spec,
+        point_ids={direct_point_id},
+        companion_for=(direct_point_id, authored_row["selected_id"]),
+    )
+
+    view = build_axis_consolidated_view(spec)
+    assert RELATION_SEMANTIC_WARRANT_BOUNDARY in view["non_claims"]
+    placement = next(
+        row
+        for row in view["point_placements"]
+        if row["point_id"] == direct_point_id
+        and row["selected_id"] == authored_row["selected_id"]
+    )
+    assert placement["relation_semantic_unit_refs"] == [companion_ref]
+
+    decision_reader = view["decision_state_reader_surface"]
+    assert RELATION_SEMANTIC_WARRANT_BOUNDARY in decision_reader["non_claims"]
+    point_columns = decision_reader["point_table"]["columns"]
+    semantic_rows = _reader_rows(decision_reader["semantic_unit_table"])
+    direct_point = next(
+        row
+        for row in decision_reader["point_table"]["rows"]
+        if row[point_columns.index("point_id")] == direct_point_id
+    )
+    relation_facts = direct_point[point_columns.index("relation_facts")]
+    fact_columns = relation_facts["columns"]
+    compact_fact = next(
+        row
+        for row in relation_facts["rows"]
+        if row[fact_columns.index("selected_id")] == authored_row["selected_id"]
+    )
+    assert [
+        semantic_rows[row_id]["semantic_unit_ref"]
+        for row_id in compact_fact[
+            fact_columns.index("relation_semantic_unit_row_ids")
+        ]
+    ] == [companion_ref]
+
+    view_path = tmp_path / "current_mixed_view.json"
+    _write(view_path, view)
+    reader_manifest, fact_streams = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "current_mixed_facts"
+    )
+    assert RELATION_SEMANTIC_WARRANT_BOUNDARY in reader_manifest["non_claims"]
+    full_fact = next(
+        json.loads(line)
+        for line in fact_streams[direct_point_id].decode("utf-8").splitlines()
+        if json.loads(line)["selected_id"] == authored_row["selected_id"]
+    )
+    assert full_fact["point_id"] == direct_point_id
+    assert full_fact["selected_id"] == authored_row["selected_id"]
+    assert full_fact["relation"] == authored_row["relation"]
+    assert full_fact["evidence"]["evidence_id"] == authored_row["evidence_id"]
+    assert full_fact["point_relative_meaning"][
+        "relation_semantic_unit_refs"
+    ] == [companion_ref]
+
+
+def test_current_owned_relation_ref_substitution_fails_at_lineage_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    descriptor = next(
+        row for row in axis_pack["points"] if row["point_id"] == direct_point_id
+    )
+    artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+    authored_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = authored_row["same_evidence_companion_meanings"][0][
+        "semantic_unit_ref"
+    ]
+    spec_row = next(
+        row
+        for binding in spec["direct_outcome_relation_bindings"]
+        if binding["point_id"] == direct_point_id
+        for row in binding["rows"]
+        if row["selected_id"] == authored_row["selected_id"]
+    )
+    assert spec_row["relation_semantic_unit_refs"] == [
+        authored_row["semantic_unit_ref"]
+    ]
+    spec_row["relation_semantic_unit_refs"] = [companion_ref]
+
+    with pytest.raises(
+        EvidenceConsumerError, match="relation binding changed after selection"
+    ) as caught:
+        build_axis_consolidated_view(spec)
+    assert caught.value.boundary == "relation_binding_lineage"
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    [
+        ("missing_all", "must cover every direct_outcome point"),
+        ("missing_point", "do not cover every routed point"),
+        ("missing_row", "lacks an explicit relation binding"),
+        ("duplicate_ref", "invalid row binding"),
+        ("foreign_ref", "foreign semantic unit"),
+    ],
+)
+def test_current_direct_outcome_bindings_fail_at_the_explicit_boundary(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+    match: str,
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    spec["schema_version"] = CURRENT_CONSOLIDATION_SPEC_VERSION
+    if mutation != "missing_all":
+        _bind_current_direct_outcome_relations(spec)
+        if mutation == "missing_point":
+            spec["direct_outcome_relation_bindings"].pop()
+        elif mutation == "missing_row":
+            spec["direct_outcome_relation_bindings"][0]["rows"].pop()
+        elif mutation == "duplicate_ref":
+            row = spec["direct_outcome_relation_bindings"][0]["rows"][0]
+            row["relation_semantic_unit_refs"] *= 2
+        else:
+            spec["direct_outcome_relation_bindings"][0]["rows"][0][
+                "relation_semantic_unit_refs"
+            ] = ["foreign::semantic-unit"]
+
+    with pytest.raises(EvidenceConsumerError, match=match) as caught:
+        build_axis_consolidated_view(spec)
+    assert caught.value.boundary == "direct_outcome_relation_binding"
+
+
+def test_current_reader_refuses_missing_direct_binding_without_primary_fallback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    view = build_axis_consolidated_view(spec)
+    direct_placement = next(
+        row
+        for row in view["point_placements"]
+        if row["point_id"] == direct_point_id
+    )
+    direct_placement.pop("relation_semantic_unit_refs")
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="relation_semantic_unit_refs must be a string list",
+    ) as caught:
+        consolidation_judgment._decision_state_reader_surface(view)
+    assert caught.value.boundary == "direct_outcome_relation_binding"
+
+
+def test_historical_v2_direct_outcome_keeps_its_stamped_primary_fallback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    _route_every_point_as_decision_state(spec)
+    spec["projection_routes"] = [
+        {"projection_mode": "direct_outcome", "point_ids": ["point_a"]},
+        {"projection_mode": "decision_state", "point_ids": ["point_b"]},
+    ]
+    spec["decision_state_bindings"] = [
+        binding
+        for binding in spec["decision_state_bindings"]
+        if binding["point_id"] == "point_b"
+    ]
+    view = build_axis_consolidated_view(spec)
+    placement = next(
+        row for row in view["point_placements"] if row["point_id"] == "point_a"
+    )
+    assert "relation_semantic_unit_refs" not in placement
+    primary_ref = placement["semantic_unit_ref"]
+
+    reader = view["decision_state_reader_surface"]
+    semantic_rows = _reader_rows(reader["semantic_unit_table"])
+    point_columns = reader["point_table"]["columns"]
+    point_row = next(
+        row
+        for row in reader["point_table"]["rows"]
+        if row[point_columns.index("point_id")] == placement["point_id"]
+    )
+    relation_facts = point_row[point_columns.index("relation_facts")]
+    fact_columns = relation_facts["columns"]
+    fact_row = next(
+        row
+        for row in relation_facts["rows"]
+        if row[fact_columns.index("selected_id")] == placement["selected_id"]
+    )
+    assert [
+        semantic_rows[row_id]["semantic_unit_ref"]
+        for row_id in fact_row[
+            fact_columns.index("relation_semantic_unit_row_ids")
+        ]
+    ] == [primary_ref]
+
+    view_path = tmp_path / "historical_v2_view.json"
+    _write(view_path, view)
+    _, fact_streams = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=tmp_path / "historical_v2_facts"
+    )
+    full_fact = next(
+        json.loads(line)
+        for line in fact_streams[placement["point_id"]].decode("utf-8").splitlines()
+        if json.loads(line)["selected_id"] == placement["selected_id"]
+    )
+    assert full_fact["point_relative_meaning"][
+        "relation_semantic_unit_refs"
+    ] == [primary_ref]
+
+
+def test_historical_spec_cannot_consume_current_row_owned_relation_bindings(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A v2 spec must not strip a v3 artifact's owned refs back to the primary."""
+
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    direct_point_id, _ = _route_fixture_as_current_mixed(spec)
+    axis_pack = json.loads(
+        Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8")
+    )
+    descriptor = next(
+        row for row in axis_pack["points"] if row["point_id"] == direct_point_id
+    )
+    artifact = json.loads(
+        Path(descriptor["artifact_path"]).read_text(encoding="utf-8")
+    )
+    authored_row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = authored_row["same_evidence_companion_meanings"][0][
+        "semantic_unit_ref"
+    ]
+    _bind_current_direct_outcome_relations(
+        spec,
+        point_ids={direct_point_id},
+        companion_for=(direct_point_id, authored_row["selected_id"]),
+    )
+    current_view = build_axis_consolidated_view(copy.deepcopy(spec))
+    current_placement = next(
+        row
+        for row in current_view["point_placements"]
+        if row["point_id"] == direct_point_id
+        and row["selected_id"] == authored_row["selected_id"]
+    )
+    assert current_placement["relation_semantic_unit_refs"] == [companion_ref]
+    assert companion_ref != authored_row["semantic_unit_ref"]
+
+    downgraded = copy.deepcopy(spec)
+    downgraded["schema_version"] = CONSOLIDATION_SPEC_VERSION
+    downgraded.pop("direct_outcome_relation_bindings", None)
+
+    with pytest.raises(
+        EvidenceConsumerError,
+        match="historical consolidation spec cannot consume row-owned relation",
+    ) as caught:
+        build_axis_consolidated_view(downgraded)
+    assert caught.value.boundary == "relation_binding_lineage"

@@ -141,6 +141,19 @@ to drying. Likewise, similar symptoms are adjacent to a same-experience point
 unless the candidate or its exact linked parent supplies an explicit comparison
 or adoption target. This boundary is enforced in both initial relation judgment
 and pre-selection confirmation; display selection cannot repair it later.
+Support and counter must also preserve the bounded point's exact state,
+predicate, scope, and load-bearing actor identity rather than merely matching a
+favorable or unfavorable direction. A different actor's private judgment,
+intent, ownership, or behavior cannot prove or disprove a named actor's private
+state unless the point itself explicitly asserts a cross-actor pattern.
+Ownership needs explicit possession or acquisition; liking, future purchase, or
+an incomplete owned-shade list does not establish or negate it. Likewise,
+repurchasing when a product runs out is not an aim to finish: completion intent
+needs an explicit goal, plan, aim, or commitment to finish, use up, or pan the
+item. Superlatives require an equivalent superlative over the same assortment
+and attribute scope. Other materially overlapping states are adjacent; sharing
+only a product family or axis is excluded. These boundaries apply in the first
+relation pass and every confirmation route.
 
 Frontier specs use the exact bounded point as their direction: evidence that
 the balm is expensive supports that objection, rather than being reversed by
@@ -997,16 +1010,53 @@ retrospective dogfood corrections are bound in
 `docs/review-outputs/adversarial-artifact-reviews/phase_a_hype_trust_relation_narrowing_home_adjudication_v0.md`;
 that one frozen disposition is not a reusable exception for later cycles.
 
-A routed `direct_outcome` point uses the optional
+A historical v2 routed `direct_outcome` point may use the optional
 `direct_outcome_relation_bindings` list of `{point_id, rows}`, with rows of
-`{selected_id, relation_semantic_unit_refs}`, only when a frozen row's primary
-meaning is context. The optional `decision_state_rejected_point_navigation` list
+`{selected_id, relation_semantic_unit_refs}`, when a frozen row's primary meaning
+is context. Current authoring never treats that binding as optional. The optional
+`decision_state_rejected_point_navigation` list
 of `{point_id, navigation_group_id}` places rejected frontier points into an
 existing navigation group and, when present, must cover every rejected point.
 `decision_state_bindings_sha256` is optional in the spec and is checked against
 the builder's own recomputation. Every field named in this paragraph and the one
 above it, apart from `projection_routes`, is rejected in a v1 spec and in a v2
 spec that routes no `decision_state` point.
+
+New authoring uses `phase_a_evidence_quote_manifest_v9`,
+`phase_a_evidence_selection_artifact_v3`, and
+`phase_a_evidence_axis_consolidation_spec_v4`. The existing hidden-label
+preselection confirmation returns, for every confirmed candidate, the relation
+and the smallest nonempty subset of that candidate's primary and same-evidence
+companion semantic-unit references that explains it. This is part of the
+existing batched semantic confirmation call; it adds no selected-row review,
+consensus call, whole-axis reread, or other provider stage.
+
+The v3 selection artifact carries those exact row-owned references. Every
+displayed Direct Outcome and Decision State row in a v4 consolidation spec must
+bind the same nonempty references. The builder rederives point, selected-row,
+candidate, evidence, and semantic-unit ownership and rejects a missing,
+duplicate, foreign, cross-point, cross-evidence, omitted, or changed binding at
+the relation-binding boundary. It never chooses semantic references, infers a
+relation, repairs a relation, or interprets prose. A structurally valid binding
+therefore proves attachment integrity only; whether that chosen subset really
+warrants support, counter, or adjacent remains a bounded judgment question and
+is **not mechanically proven**. Rejected-only and no-frontier routes create no
+point or relation. Historical v1/v2 consolidation specs and v7/v8 quote
+manifests remain replayable; they are not upgraded or restamped. That replay
+covers their own historical artifacts only: a v3 selection artifact routed by a
+v1 or v2 spec is rejected at the relation-binding lineage boundary rather than
+allowed to drop its row-owned references back to the primary reference.
+
+The retired selected-row v3 review was a rejected experiment, not a standing
+diagnostic. The measured canonical-policy candidate was unstable: two shade
+runs produced 14 and 59 invalid-row flags, while four formula runs produced 6,
+4, 5, and 4; four earlier attempts failed before reaching the provider because
+of orchestration configuration. Those counts do not measure repeated stability
+of the shipped v3 prompt, which had only one historical run per axis and also
+condensed canonical policy into a third policy. The 24 shade and 3 formula flags
+remain unadjudicated allegations. Retirement removes one unbatched selected-row
+whole-axis provider call; the pre-existing batched semantic confirmation remains.
+No reader-quality improvement or semantic correctness follows from this change.
 
 The built v2 view stores `decision_state_bindings_sha256` in place of the
 authored bindings and adds `decision_state_index`, `decision_state_groups`,
